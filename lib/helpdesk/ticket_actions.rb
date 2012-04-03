@@ -50,6 +50,10 @@ module Helpdesk::TicketActions
   def update_multiple_tickets
     render :partial => "update_multiple" 
   end
+
+  def impersonate_agent
+    render :partial => "impersonate_agent" 
+  end
   
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])

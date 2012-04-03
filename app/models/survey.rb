@@ -25,4 +25,11 @@ class Survey < ActiveRecord::Base
     # ( account.features?(:surveys, :survey_links) && ticket.requester && 
     #       ticket.requester.customer? && (send_while == s_while) )
   end
+  
+  def store(survey)     
+    self.send_while = survey[:send_while]
+    self.link_text = survey[:link_text]
+    save
+  end
+  
 end
