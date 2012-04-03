@@ -17,6 +17,7 @@ function setUserRole()
 <%- end %> 
 <div class="contact-box clearfix">
 		<div class="action_buttons">
+			<%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user)%>
 			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last" %>
 		</div>
 		<%= user_avatar(@user, :medium, "profile_pic") %>	

@@ -51,7 +51,8 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put,:block => :put }
+  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put,:block => :put, :assume_identity => :get},
+                        :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'

@@ -1,0 +1,15 @@
+<div class="dialog-special">
+  <div class="content">
+     <%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible, :id, :name, current_user), { :class => "full" } %>
+  </div>
+  <div class="button-container">
+    <%= link_to_function t('impersonate_button'), "assume_identity_url()", :class => "uiButton" %>
+  </div>  
+</div> 
+
+
+<% javascript_tag do%>
+  function assume_identity_url() {
+    window.location = '/users/'+$('responder_id').value+'/assume_identity';
+  }
+<%end%>
