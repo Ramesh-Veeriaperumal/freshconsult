@@ -16,7 +16,7 @@ class FBClient
   end
   
   def authorize_url
-    @oauth.url_for_oauth_code(:permissions => ["manage_pages","offline_access","read_stream","publish_stream","manage_notifications"])
+    @oauth.url_for_oauth_code(:permissions => ["manage_pages","offline_access","read_stream","publish_stream","manage_notifications","read_mailbox"])
   end
   
   def auth(code)

@@ -204,6 +204,24 @@ class Helpdesk::NotesController < ApplicationController
        end
       end
   end
+  
+  ##This method can be used to send reply to facebook pvt message
+  ##
+  def facebook_reply
+    fb_page =  @parent.fb_post.facebook_page
+    unless fb_page.blank?
+       begin 
+        @fb_client = FBClient.new fb_page,{:current_account => current_account}
+        facebook_page = @fb_client.get_page
+        post_id =  @parent.fb_post.post_id
+        reply = facebook_page.put_object(post_id , 'messages',:message => @item.body)
+       rescue
+        flash[:notice] = t('facebook.not_authorized')
+        return nil
+       end
+     end
+  end
+  
    def validate_attachment_size
      total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
      if total_size > Helpdesk::Note::Max_Attachment_Size    
