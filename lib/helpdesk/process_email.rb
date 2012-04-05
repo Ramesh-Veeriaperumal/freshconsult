@@ -1,7 +1,8 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
-  
+  include ParserUtil
+
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   def perform
@@ -75,13 +76,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def parse_email(email_text)
       
-      if email_text =~ /(.+) <(.+?)>/
-        name = $1
-        email = $2
-      elsif email_text =~ /<(.+?)>/
-        email = $1
-      end
+      parsed_email = parse_email_text(email_text)
       
+      name = parsed_email[:name]
+      email = parsed_email[:email]
+
       if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
         email = $1  
       end
@@ -106,9 +105,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def parse_orginal_to
-      original_to = parse_email params[:to]            
-      original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+    def parse_orginal_to(account, email_config)
+      original_to_emails = params[:to].split(",")
+
+      if original_to_emails.size == 1
+        original_to = parse_email_text(original_to_emails.first)
+        original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+      else
+        parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
+        original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
+        email_config = original_to_email_config if original_to_email_config
+        original_to_email = email_config ? email_config.friendly_email : account.default_friendly_email
+      end
     end
     
     def parse_to_email
@@ -159,7 +167,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
-        :to_email => parse_orginal_to,
+        :to_email => parse_orginal_to(account, email_config),
         :cc_email => parse_cc_email,
         :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
