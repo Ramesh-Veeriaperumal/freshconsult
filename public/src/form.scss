@@ -694,7 +694,7 @@ input.time{
 			ul.chzn-choices li{ width:auto; }
 			.search-field{ @include min-width(500px); }
 			.search-field .default{ width:100% !important; }
-			ul.chzn-results li{ float:none; display:block; width:100%; }
+			ul.chzn-results li.active-result{ float:none; display:block; width:100%; }
 		}
 		tr.even{
 			td{

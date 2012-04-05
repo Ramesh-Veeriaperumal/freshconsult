@@ -69,7 +69,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
   visitor:
-      - public/javascripts/frameworks/session.js            
+    - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js

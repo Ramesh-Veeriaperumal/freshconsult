@@ -123,7 +123,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         else
           query_params = "?group=#{google_group_uri(self.email, g_group_id)}#{show_deleted}&max-results=#{remaining_results+1}&start-index=#{start_index+1}"
           fetched_g_cnts = fetch_google_contacts(query_params, new_company_list)
-          self.last_sync_index = fetched_g_cnts.length
+          self.last_sync_index += fetched_g_cnts.length
           start_index = 0
           # Aggregate the fetched google contacts. 
           fetched_g_cnts.each {|f_g_cnt|

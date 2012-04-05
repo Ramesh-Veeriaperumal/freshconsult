@@ -8,12 +8,39 @@
   <div class="wrapper">
     <div class="header_links">
       <% if current_user then %>              
-        <%= t('header.welcome') %><span class="font_color"><strong><%= link_to current_user.name, edit_profile_path(current_user) %></strong>-<%= link_to(t('header.signout'), logout_path) %></span>
-      <% else %>
+				<%= content_tag :strong, t('header.welcome') %>
+				<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>
+     <% else %>
         <%= link_to( t('header.login') , login_path) %>
-		<%= link_to( t('signup') , new_support_registration_path) if feature?(:signup_link) %>
-      <% end %>				
-    </div>
+				<%= link_to( t('signup') , new_support_registration_path ) if feature?(:signup_link) %>
+    <% end %>
+    </div>     
+		<% if current_user then %>                        
+		<div class="profile_info" id="LoggedOptions">                          
+			<div class="info user clearfix">
+				<%= user_avatar current_user %>
+				<span><%= truncate(h(current_user.name), :length => 30) %></span>
+			</div>
+			<span class="seperator"></span>
+			<%= link_to "Profile settings", edit_profile_path(current_user), :class => "link" %>
+			<span class="seperator"></span>
+			<% if is_assumed_user? %>    
+				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>
+      <% else %>
+				<div class="info">
+					<h5>Switch agent</h5>      
+					<%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible, :id, :name, current_user), { :class => "customSelect", "data-placeholder"=> "Switch to another agent", "onchange" => "assume_identity_url()", :style => "width:250px" } %>
+					<% javascript_tag do%>
+					  function assume_identity_url() {
+					    window.location = '/users/'+$('responder_id').value+'/assume_identity';
+					  }
+					<%end%>
+				</div>
+			<% end %>                      
+			<span class="seperator"></span>			
+			<%= link_to t('header.signout'), logout_path, :class => "link" %>
+		</div>                                                             
+		<% end %>
   </div>
 	<div class="top_nav_bg"> 
 		<div class="wrapper">

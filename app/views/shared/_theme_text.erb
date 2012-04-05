@@ -7,15 +7,16 @@
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;
 	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;  
 	    
-	body{ background: $background; }
+	body { background: $background; }
 	.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color: darken($background, 15%); }
 	.reminders:before { border-color:$background $background #734e3d #734e3d; }
 		
 	/* Header color */
 	.header { background-color: $header_color; }
-	.brand .logo_text, .header_links, .header_links a, .ui-widget-header  { color: $header_ctxt_color;}
-	.brand .logo_text { border-left-color:lighten($header_color, 10%); }
-	a.new_ticket, .nav_search div.search_bar{ border-color:darken($tab_color, 8%); }
+	.brand .logo_text, .header_links, .header_links a.nav-trigger, .ui-widget-header { color: $header_ctxt_color; }
+	.header_links a.nav-trigger:before { border-top-color: $header_ctxt_color; }
+	.brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
+	a.new_ticket, .nav_search div.search_bar { border-color:darken($tab_color, 8%); }
 		 
 	/* Tab color settings */
 	.top_nav_bg { background: $tab_color; }
