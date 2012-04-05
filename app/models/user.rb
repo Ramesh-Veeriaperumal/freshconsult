@@ -84,7 +84,7 @@ class User < ActiveRecord::Base
   end
 
   def update_tag_names(csv_tag_names)
-    unless csv_tag_names.blank?
+    unless csv_tag_names.nil? # Check only nil so that empty string will remove all the tags.
       updated_tag_names = csv_tag_names.split(",")
       new_tags = []
       updated_tag_names.each { |updated_tag_name|
@@ -152,9 +152,7 @@ class User < ActiveRecord::Base
     self.fb_profile_id = params[:user][:fb_profile_id]
     self.language = params[:user][:language]
     self.address = params[:user][:address]
-    # update tags
-    csv_tag_names = params[:tags][:name] unless params[:tags].blank?
-    update_tag_names(csv_tag_names)
+    self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     signup(portal)
   end
