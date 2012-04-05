@@ -151,13 +151,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
-      user.id ] } }
+      user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }
       
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
+  named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+  
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -166,15 +168,35 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
+  
+  def agent_permission_condition user
+     permissions = {:all_tickets => "" , 
+                   :group_tickets => " AND (group_id in (#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}) OR responder_id= #{user.id}) " , 
+                   :assigned_tickets => " AND (responder_id= #{user.id}) " }
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
+  
+  def get_default_filter_permissible_conditions user
+    
+     permissions = {:all_tickets => "" , 
+                   :group_tickets => " [{\"condition\": \"responder_id\", \"operator\": \"is_in\", \"value\": \"#{user.id}\"}, {\"condition\": \"group_id\", \"operator\": \"is_in\", \"value\": \"#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}\"}] " , 
+                   :assigned_tickets => "[{\"condition\": \"responder_id\", \"operator\": \"is_in\", \"value\": \"#{user.id}\"}]"}
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    
+  end
+  
   #Sphinx configuration starts
   define_index do
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    indexes description
-    indexes notes.body, :as => :note
+   
+     indexes :display_id, :sortable => true
+     indexes :subject, :sortable => true
+     indexes description
+     indexes notes.body, :as => :note
     
-    has account_id, deleted
-    
+     has account_id, deleted
+
     set_property :delta => :delayed
     set_property :field_weights => {
       :display_id   => 10,
@@ -298,7 +320,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "[##{display_id}]"
+    "[#{delimited_display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -314,8 +336,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self[:spam] = (category == :spam)
   end
     
-  def self.extract_id_token(text)
-    pieces = text.match(/\[#([0-9]*)\]/) #by Shan changed to just numeric
+  def self.extract_id_token(text, delimeter)
+    pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
     pieces && pieces[1]
   end
 
@@ -479,14 +501,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
-  REQUESTER_NOTIFICATIONS = [ EmailNotification::NEW_TICKET, 
-    EmailNotification::TICKET_CLOSED, EmailNotification::TICKET_RESOLVED  ]
-  
   def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    
-    REQUESTER_NOTIFICATIONS.include?(notification_type) ? e_notification.requester_notification? : 
-      e_notification.agent_notification?
+    e_notification.requester_notification? or e_notification.agent_notification?
   end
   
   def custom_fields
@@ -494,7 +511,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
+
+  def ticket_id_delimiter
+    delimiter = account.email_commands_setting.ticket_id_delimiter
+    delimiter = delimiter.blank? ? '#' : delimiter
+  end
   
+  def delimited_display_id
+    "#{ticket_id_delimiter}#{display_id}"
+  end
+
   def to_s
     "#{subject} (##{display_id})"
   end
@@ -597,9 +623,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def to_liquid
     { 
       "id"                                => display_id,
+      "raw_id"                            => id,
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
       "description"                       => description_with_attachments,
+      "description_text"                  => description,
       "requester"                         => requester,
       "agent"                             => responder,
       "group"                             => group,
@@ -701,8 +729,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
-          value = send(field.name) 
-          xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+          begin
+           value = send(field.name) 
+           xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+         rescue
+           end 
         end
       end
      end

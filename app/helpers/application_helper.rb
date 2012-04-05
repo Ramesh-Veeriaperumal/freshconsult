@@ -4,7 +4,7 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
-    
+
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -12,10 +12,50 @@ module ApplicationHelper
   def format_float_value(val)
     sprintf( "%0.02f", val) unless val.nil? 
   end
+
+  def timediff_in_words(interval)
+    secs  = interval.to_i
+    mins  = (secs / 60).to_i
+    secs = secs - (mins * 60)
+
+    hours = (mins / 60).to_i
+    mins = mins - (hours * 60)
+
+    days  = (hours / 24).to_i
+    hours = hours - (days * 24)
+
+    if (interval.to_i <= 0) 
+      "-"
+    elsif days > 0
+      "#{days} days and #{hours % 24} hours"
+    elsif hours > 0
+      "#{hours} hours and #{mins % 60} minutes"
+    elsif mins > 0
+      "#{mins} minutes and #{secs % 60} seconds"
+    elsif secs >= 0
+      "#{secs} seconds"
+    end
+
+  end
+
+  def percentage(numerator, denominator)
+    if denominator == 0
+      "-"
+    else
+      format_float_value(100 * numerator / denominator) + '%'
+    end
+  end
   
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
+ 
+  def show_announcements                                                    
+    if permission?(:manage_tickets)
+      @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
+      render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
+    end     
+  end         
 
   def page_title
     portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
@@ -108,8 +148,8 @@ module ApplicationHelper
       tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
-  end
-  
+  end          
+ 
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 
@@ -320,7 +360,7 @@ module ApplicationHelper
       # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
       replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
+      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
     end
   end
 
@@ -337,12 +377,15 @@ module ApplicationHelper
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
-    
+
     case dom_type
       when "text", "number", "email", "multiemail" then
         field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
         element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
+      when "password" then
+        pwd_element_class = " #{ (required) ? 'required' : '' }  text"
+        element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -457,12 +500,4 @@ module ApplicationHelper
     tab || ""
   end
   
-end
-
-module FDTextFilter
-  def escape_html(input)
-    input = input.to_s.gsub("\"", "\\\"")
-    input = input.gsub("\\", "\\\\")
-    return input
-  end
 end

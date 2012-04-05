@@ -22,7 +22,7 @@ module Integrations::GoogleContactsUtil
     def attribute
     end
 
-    def google_contact
+    def google_contacts
     end
     def google_id
     end
@@ -42,7 +42,7 @@ module Integrations::GoogleContactsUtil
   end
 
   def self.parse_id(goog_id_uri)
-    matched_goog_id = /\[*base\/(.*)/.match(goog_id_uri[0]) unless goog_id_uri.blank? # looking for pattern 'any chars/base/<id>'
+    matched_goog_id = /.*[base||full]\/(.*)/.match(goog_id_uri[0]) unless goog_id_uri.blank? # looking for pattern 'any chars/[base or full]/<id>'
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
 
@@ -72,51 +72,58 @@ module Integrations::GoogleContactsUtil
   end
 
   # While exporting the db data into google, db will not contain correct google_id.  For this update_google_id will be useful. 
-  def remove_discrepancy_and_set_google_data(db_contacts, google_contacts, precedence="LATEST", update_google_id=false)
-    puts "BEFORE remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
-    google_contacts.each { |google_contact|
-      db_contacts.each { |db_contact|
-        if is_matched(google_contact, db_contact)
-#          puts "Found a discrepancy. Db contact = #{db_contact.inspect} Google contact , #{google_contact.inspect}"
+  def remove_discrepancy_and_set_google_data(google_account, db_contacts, google_contacts, precedence="LATEST", update_google_id=false)
+    Rails.logger.debug "BEFORE remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
+    google_contacts.each { |goog_cnt|
+      db_contacts.each { |db_cnt|
+        if is_matched(google_account, goog_cnt, db_cnt)
+#          puts "Found a discrepancy. Db contact = #{db_cnt.inspect} Google contact , #{goog_cnt.inspect}"
           if precedence == "LATEST"
-            if google_contact.updated_at == db_contact.updated_at
+            if goog_cnt.updated_at == db_cnt.updated_at
               precedence = "BOTH"
-            elsif db_contact.updated_at > google_contact.updated_at
+            elsif db_cnt.updated_at > goog_cnt.updated_at
               precedence = "DB"
             else
               precedence = "GOOGLE"
             end
           end
-          pre_google_cnt = google_contact.google_contact
+          pre_google_cnts = goog_cnt.google_contacts
           if precedence == "DB"
-            copy(db_contact, google_contact)
-            google_contact.google_contact = pre_google_cnt
-            db_contact.google_contact = pre_google_cnt # This will be used while serializing the db contact to google xml
+            copy(db_cnt, goog_cnt)
+            goog_cnt.google_contacts = pre_google_cnts
+            db_cnt.google_contacts = pre_google_cnts # This will be used while serializing the db contact to google xml
           elsif precedence == "GOOGLE"
-            db_contacts.delete(db_contact)
+            db_contacts.delete(db_cnt)
           elsif precedence == "BOTH"
-            copy(db_contact, google_contact)
-            google_contact.google_contact = pre_google_cnt
-            db_contact.google_contact = pre_google_cnt # This will be used while serializing the db contact to google xml
-            db_contacts.delete(db_contact)
+            copy(db_cnt, goog_cnt)
+            goog_cnt.google_contacts = pre_google_cnts
+            db_cnt.google_contacts = pre_google_cnts # This will be used while serializing the db contact to google xml
+            db_contacts.delete(db_cnt)
           end
+          break;
         end
       }
     }
-    puts "AFTER remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
+    Rails.logger.debug "AFTER remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
   end
 
-  def is_matched(google_contact, db_contact)
-    google_contact.google_contact.id == db_contact.google_contact.google_id.to_s or google_contact.email == db_contact.email or google_contact.second_email == db_contact.email
+  def is_matched(google_account, goog_cnt, db_cnt)
+    if !goog_cnt.blank? and !db_cnt.blank?
+      g_goog_cnt = fetch_current_account_contact(goog_cnt, google_account)
+      g_db_cnt = fetch_current_account_contact(db_cnt, google_account)
+      return ((!g_goog_cnt.blank?) and (g_goog_cnt.google_id == g_db_cnt.google_id or goog_cnt.email == db_cnt.email or goog_cnt.second_email == db_cnt.email))
+    else
+      return false
+    end
   end
 
-  def trimmed_contact_xml(user, sync_group_id=nil)
-    google_xml = user.google_contact.google_xml
+  def trimmed_contact_xml(user, goog_cnt, sync_group_id=nil)
+    google_xml = goog_cnt.google_xml
     return if google_xml.blank?
     doc = REXML::Document.new("<feed xmlns='http://www.w3.org/2005/Atom' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/' xmlns:gContact='http://schemas.google.com/contact/2008' xmlns:batch='http://schemas.google.com/gdata/batch' xmlns:gd='http://schemas.google.com/g/2005'>"+google_xml+"</feed>")
     contact_ele_xml = nil
     doc.elements.each('feed/entry') {|entry_element|
-      # remove id/category
+      # remove id/category, this gets appended while constructing the full xml.
       delete(entry_element, entry_element.get_elements('id'))
       delete(entry_element, entry_element.get_elements('category'))
 
@@ -157,7 +164,7 @@ module Integrations::GoogleContactsUtil
       delete(entry_element, entry_element.get_elements('content')) unless user.description.blank?
 
       #deleted
-      delete(entry_element, entry_element.get_elements('gd:deleted')) unless user.deleted
+#      delete(entry_element, entry_element.get_elements('gd:deleted')) unless user.deleted
 
       #orgName
       delete(entry_element, entry_element.get_elements('gd:organization')) unless user.customer.blank?
@@ -233,8 +240,8 @@ module Integrations::GoogleContactsUtil
   end
 
   def enable_integration(goog_acc)
-    Integrations::Application.install(APP_NAMES[:google_contacts], goog_acc.account)
-    goog_acc.save
+    Integrations::Application.install_or_update(APP_NAMES[:google_contacts], goog_acc.account)
+    goog_acc.save!
   end
 
   private
@@ -258,6 +265,13 @@ module Integrations::GoogleContactsUtil
         end
       }
       to_user.customer = from_user.customer
+    end
+
+    def fetch_current_account_contact(db_cnt, google_account)
+      db_cnt.google_contacts.each {|g_cnt|
+        return g_cnt if g_cnt.google_account_id == google_account.id
+      }
+      return nil
     end
 
 =begin

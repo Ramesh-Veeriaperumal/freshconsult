@@ -1,15 +1,15 @@
 <% content_for :sidebar do -%><%-end %>
-<h3 class="title">Sign in using twitter</h3>
+<h3 class="title"><%=t('.title')%></h3>
 <ul class="ui-form">
   <li class="inline-field">
 	  <div class="admin_help_image">
       <%= get_img("twitter-admin-page.png", :help) %>
       <div class="content">
-        <h2 class="title">Engage your customers, directly on twitter</h2>
+        <h2 class="title"><%=t('.engage_customers')%></h2>
         <p class="info-data">
-          Associate a twitter account to <b> <%= product.name %> </b> and respond to your customers with a tweet or message from within Freshdesk.
-        </p>
-        <a href="<%= @wrapper.authorize_url %>" class="uiButton special large">Add twitter account</a>
+        	<%=t('.associate_account', :product_name => product.name)%>
+		</p>
+        <a href="<%= @wrapper.authorize_url %>" class="uiButton special large"><%=t('.add_twitter')%></a>
       </div>
     </div>
   </li>

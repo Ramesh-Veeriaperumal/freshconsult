@@ -33,4 +33,17 @@
 			</div>
 		<% end %>
 	</div>	
+	<%unless current_user.customer?%>
+	  <div class="sidepanel">
+		<%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
+		<% form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
+			<ul class="ui-form">
+					<label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
+			</ul> 
+			<div class="button-container">
+  				<%= submit_tag t("profile.api_key.reset"), :class => "uiButton", :confirm => t("profile.api_key.reset_warning") %>
+			</div>
+		<% end %>
+	  </div>	
+	<%end%>
 <% end%>

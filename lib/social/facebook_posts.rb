@@ -8,7 +8,7 @@ class Social::FacebookPosts
  
  def fetch
   
-   until_time = Time.zone.now   
+   until_time = @fb_page.fetch_since   
    query = "SELECT post_id,message,actor_id,updated_time,created_time,comments FROM stream WHERE source_id=#{@fb_page.page_id} and actor_id!=#{@fb_page.page_id} and updated_time > #{@fb_page.fetch_since}"
    
    if @fb_page.import_visitor_posts && @fb_page.import_company_posts
@@ -108,7 +108,7 @@ class Social::FacebookPosts
     post_id = feed[:post_id]
     post = @account.facebook_posts.find_by_post_id(post_id)
    
-    comments = @rest.get_connections(post_id, "comments" , {:since =>@fb_page.fetch_since})  
+    comments = @rest.get_connections(post_id, "comments")  
     comments = comments.reject(&:blank?)
    
     unless post.blank?  

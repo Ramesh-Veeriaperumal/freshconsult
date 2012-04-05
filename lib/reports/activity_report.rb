@@ -5,12 +5,15 @@ module Reports::ActivityReport
     unless params[:reports].nil?
       columns_in_use = columns_in_use.concat(params[:reports])
     end
-  
+
     columns_in_use.each do |column_name|
       tickets_count = group_tkts_by_columns({:column_name => column_name })
       tickets_hash = get_tickets_hash(tickets_count,column_name)
       self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_hash", tickets_hash)
     end
+
+    count_of_resolved_tickets
+
   end
   
  def get_tickets_time_line
@@ -107,11 +110,13 @@ module Reports::ActivityReport
   end
   
   def start_date
-    parse_from_date.nil? ? 30.days.ago.to_s(:db): Time.parse(parse_from_date).beginning_of_day.to_s(:db) 
+    parse_from_date.nil? ? (Time.zone.now.ago 30.day).beginning_of_day.to_s(:db) : 
+        Time.zone.parse(parse_from_date).beginning_of_day.to_s(:db) 
   end
   
   def end_date
-    parse_to_date.nil? ? Time.now.to_s(:db): Time.parse(parse_to_date).end_of_day.to_s(:db)
+    parse_to_date.nil? ? Time.zone.now.end_of_day.to_s(:db) : 
+        Time.zone.parse(parse_to_date).end_of_day.to_s(:db)
   end
   
   def parse_from_date
@@ -123,13 +128,70 @@ module Reports::ActivityReport
   end
   
   def previous_start
-    distance_between_dates =  Time.parse(end_date) - Time.parse(start_date)
-    prev_start = Time.parse(previous_end) - distance_between_dates
+    distance_between_dates =  Time.zone.parse(end_date) - Time.zone.parse(start_date)
+    prev_start = Time.zone.parse(previous_end) - distance_between_dates
     prev_start.beginning_of_day.to_s(:db)
   end
   
   def previous_end
-    (Time.parse(start_date) - 1.day).end_of_day.to_s(:db)
+    (Time.zone.parse(start_date).ago 1.day).end_of_day.to_s(:db)
+  end
+  
+  def write_io
+    current_index = 0
+    io = StringIO.new('')
+    book = Spreadsheet::Workbook.new
+    sheet = book.create_worksheet
+    sheet.name = 'Activity Report'
+    row = sheet.row(current_index)
+    columns_in_use = columns
+    unless params[:reports].nil?
+      columns_in_use = columns_in_use.concat(params[:reports])
+      columns_in_use.each do  |column_name|
+        current_index = fill_row(self.instance_variable_get("@#{column_name.to_s.gsub('.', '_')}_hash"),sheet,column_name,current_index)
+      end
+    end
+    unless @current_month_tot_tickets == 0 
+      export_line_chart_data(sheet,current_index)      
+    end
+    book.write(io)
+    io.string
+  end
+  
+  def export_line_chart_data(sheet,current_index)
+    row = sheet.row(current_index+=2)
+      row.push("Date","Created Count","Resolved Count")
+      data_series_hash = {}
+      unless @created_at_hash.nil?
+        @created_at_hash.each do |tkt|
+          data_series_hash.store(tkt.date,{:created_count => tkt.count.to_i})
+        end
+      end
+      unless @resolved_at_hash.nil?
+        @resolved_at_hash.each do |tkt|
+          data_series_hash.store(tkt.date,(data_series_hash.fetch(tkt.date,{:created_count => 0})).merge({:resolved_count,tkt.count.to_i}))
+        end
+      end
+      data_series_hash.each do |date,count_hash|
+        row = sheet.row(current_index+=1)
+        row.push(date,count_hash.fetch(:created_count,0),count_hash.fetch(:resolved_count,0))
+    end
+  end
+  
+  def fill_row(column_hash,sheet,column_name,current_index)
+    row = sheet.row(current_index+=2)
+    row.push("Tickets By #{@pie_chart_labels.fetch(column_name,column_name)}")
+    constants_mapping = Reports::ChartGenerator::TICKET_COLUMN_MAPPING.fetch(column_name.to_s,column_hash)
+    if column_name.eql?(:status)
+      constants_mapping = TicketConstants::STATUS_NAMES_BY_KEY.clone()
+      constants_mapping.delete(TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]) 
+    end
+    constants_mapping.each do |k,v|
+      row = sheet.row(current_index+=1)
+      label = Reports::ChartGenerator::TICKET_COLUMN_MAPPING.has_key?(column_name.to_s) ? v : k
+      row.push(label,column_hash.fetch(k,{}).fetch(:count,0).to_i)
+    end
+    current_index
   end
   
 end

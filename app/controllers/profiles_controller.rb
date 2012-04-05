@@ -1,6 +1,9 @@
 class ProfilesController < ApplicationController
   
-   before_filter :require_user  
+   before_filter :require_user 
+   before_filter :only => [:info] do |c|
+      c.requires_permission :view_users_info
+   end 
    include ModelControllerMethods  
 
   def edit       
@@ -19,10 +22,23 @@ class ProfilesController < ApplicationController
        update_contact
      else
        update_agent
-     end
-  
+     end  
   end
   
+  def reset_api_key
+    begin
+      current_user.reset_single_access_token
+      saved = current_user.save!
+      @profile = current_user.customer? ? current_user : current_user.agent    
+      Rails.logger.debug "single access token reset status #{saved}"
+      flash[:notice] = t("flash.profile.api_key.reset_success")
+    rescue => e
+      Rails.logger.error "Something went wrong while resetting the api key ( #{e.inspect})"
+      flash[:error] = t("flash.profile.api_key.reset_failure")
+    end
+    render :action => :edit
+  end
+
 def destroy
 end
 
@@ -85,7 +101,11 @@ def reset_password
     @user.active = true #by Shan need to revisit..
     @user.save
 end
-  
+
+def info
+  @user_info = current_account.all_users.find(params[:id])
+  render :partial => "profiles/info", :object => @user_info 
+end  
 
 protected
 

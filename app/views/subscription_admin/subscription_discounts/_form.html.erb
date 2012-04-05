@@ -1,23 +1,68 @@
 <%= form.error_messages %>
-<fieldset>
-  <%= form.label :name %>
-  <%= form.text_field :name %>
-  <%= form.label :code %>
-  <%= form.text_field :code %>
-  <%= form.label :amount %>
-  <%= form.text_field :amount %>
-  <%= form.label :percent %>
-  <%= form.check_box :percent %>
-  <%= form.label :start_on %>
-  <%= form.text_field :start_on %>
-  <%= form.label :end_on %>
-  <%= form.text_field :end_on %>
-  <%= form.label :apply_to_recurring %>
-  <%= form.check_box :apply_to_recurring %>
-  <%= form.label :apply_to_setup %>
-  <%= form.check_box :apply_to_setup %>
-  <%= form.label :trial_period_extension %>
-  <%= form.text_field :trial_period_extension %>
-  <%= form.select :plan_id, options_from_collection_for_select(SubscriptionPlan.all, :id, :name) %>
+<fieldset>                   
+	<div class="control-group">
+  	<%= form.label :name, "", :class => "control-label" %>
+		<div class="controls">
+  		<%= form.text_field :name %>
+		</div>
+	</div>
+	<div class="control-group">
+	  <%= form.label :code, "", :class => "control-label" %>
+		<div class="controls">
+	  	<%= form.text_field :code %>
+		</div>
+  </div>
+	<div class="control-group">
+	  <%= form.label :amount, "", :class => "control-label" %>
+		<div class="controls">
+	  	<%= form.text_field :amount %>
+		</div>
+	</div>
+	<div class="control-group">                                
+		<div class="controls">             
+			<label class="checkbox">
+				<%= form.check_box :percent %> 
+				Calculate discount in percentage
+			</label>
+		</div>			
+  </div>
+	<div class="control-group">
+		<%= form.label :start_on, "", :class => "control-label" %>
+		<div class="controls">  
+			<%= form.text_field :start_on %>
+		</div>
+  </div>
+	<div class="control-group">
+		<%= form.label :end_on, "", :class => "control-label" %>
+		<div class="controls">  
+			<%= form.text_field :end_on %> 
+		</div>
+  </div>
+	<div class="control-group">                                            
+		<div class="controls">         
+			<label class="checkbox">
+				<%= form.check_box :apply_to_recurring %>   
+				Apply to recurring
+			</label>
+		</div>			
+	</div>
+	<div class="control-group">                                       
+		<div class="controls">  
+			<label class="checkbox">
+				<%= form.check_box :apply_to_setup %> 
+				Apply to setup
+			</label>
+		</div>			
+  </div>
+	<div class="control-group">
+		<%= form.label :trial_period_extension, "", :class => "control-label" %>
+		<div class="controls">
+		  <%= form.text_field :trial_period_extension %>
+		  <%= form.select :plan_id, options_from_collection_for_select(SubscriptionPlan.all, :id, :name) %>    
+		</div>		
+  </div>
+	<div class="form-actions"> 
+			<%= submit_tag "Save changes", :class => "btn-primary btn" %>
+			<%= link_to "Cancel", admin_subscription_discounts_path, :class => "btn" %>
+  </div>
 </fieldset>
-<%= submit_tag %>

@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   
   layout :choose_layout 
   
-  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel]
+  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel,:show]
   skip_before_filter :set_time_zone
   skip_before_filter :check_account_state
   
@@ -268,8 +268,13 @@ class AccountsController < ApplicationController
     else
       render :action => 'edit'
     end
-  end
+  end  
   
+  def rebrand  
+    responseObj = { :status => 
+        current_portal.update_attributes(params[:account][:main_portal_attributes]) }
+    redirect_to admin_getting_started_index_path        
+  end
   
   def plans
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users

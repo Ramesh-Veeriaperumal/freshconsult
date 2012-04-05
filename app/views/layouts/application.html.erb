@@ -13,7 +13,8 @@
 								<%= yield :sidebar %>					
 							</div>
 						<% end %>  
-						<div class="leftcontent">
+						<div class="leftcontent">  
+							<%= show_announcements %>
 							<%= show_flash %>
 							<div class="flash_info notice" id="noticeajax" style="display:none;"></div>
 							<%= yield :pagetop %>
@@ -29,5 +30,6 @@
     <%= render :partial => "layouts/shared/scripts" %>
     <%= yield :dialogs   %>
     <%= yield :pagefixed %>
+    <%= render :partial => "layouts/integrations" %>
   </body>
 </html>

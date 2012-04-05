@@ -1,0 +1,27 @@
+body { background: url("/images/subscriptionadminbg.png"); }
+
+.navbar-inner { background: url("/images/subscriptionadmintopbg.png"); }
+
+.navbar .nav .active > a, .navbar .nav .active > a:hover { background-color: #203938; }
+
+.navbar-search .search-query { background-color: #497272; }
+
+.navbar .nav > li > a { color: #85acac; }
+
+.navbar-search .search-query:-moz-placeholder { color: #85acac; }
+
+.navbar-search .search-query::-webkit-input-placeholder { color: #85acac; }
+
+.navbar-inner { -moz-box-shadow: 4px 1px 3px rgba(0, 0, 0, 0.75), inset 0 -1px 0 rgba(0, 0, 0, 0.1); -webkit-box-shadow: 4px 1px 3px rgba(0, 0, 0, 0.75), inset 0 -1px 0 rgba(0, 0, 0, 0.1); -o-box-shadow: 4px 1px 3px rgba(0, 0, 0, 0.75), inset 0 -1px 0 rgba(0, 0, 0, 0.1); box-shadow: 4px 1px 3px rgba(0, 0, 0, 0.75), inset 0 -1px 0 rgba(0, 0, 0, 0.1); }
+
+.main-body { padding-top: 70px; }
+
+.divider-vertical { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30); opacity: 0.3; }
+
+h2 + table, h3 + table, h4 + table, h2 + .row { margin-top: 10px; }
+
+.floatr { float: right; }
+
+.admin-logo { position: absolute; margin-left: -40px; margin-top: -5px; }
+
+section { padding-top: 30px; }

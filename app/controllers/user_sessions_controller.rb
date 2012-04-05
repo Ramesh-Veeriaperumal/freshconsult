@@ -138,7 +138,7 @@ require 'openssl'
       @current_user.deliver_account_admin_activation
       SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to root_url     
+      redirect_to admin_getting_started_index_path  
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new
@@ -169,11 +169,12 @@ require 'openssl'
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
     authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
   end
-
+  
   def google_auth_completed    
     resp = request.env[Rack::OpenID::RESPONSE]  
     email = nil
     flash = {}
+    gmail_gadget_temp_token = params[:t]
     if resp.status == :success
       email = get_email resp
       provider = 'open_id' 
@@ -182,7 +183,6 @@ require 'openssl'
       @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
       @current_user = @auth.user unless @auth.blank?
       @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
-      gmail_gadget_temp_token = params[:t]
       unless gmail_gadget_temp_token.blank?
         kvp = KeyValuePair.find_by_key(gmail_gadget_temp_token)
         @gauth_error=true
@@ -215,9 +215,14 @@ require 'openssl'
         @user_session = current_account.user_sessions.new(@current_user)  
         if @user_session.save
           logger.debug " @user session has been saved :: #{@user_session.inspect}"
+          
           if gmail_gadget_temp_token.blank?
-            flash[:notice] = t(:'flash.g_app.authentication_success')
-            redirect_back_or_default('/')
+            flash[:notice] = t(:'flash.g_app.authentication_success')        
+            if (@current_user.account_admin? && @current_user.first_login?)
+               redirect_to admin_getting_started_index_path
+            else
+              redirect_back_or_default('/')            
+            end  
           else
             @current_user.agent.google_viewer_id = google_viewer_id
             @current_user.agent.save!
@@ -229,7 +234,10 @@ require 'openssl'
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
         end
       end
-    elsif !gmail_gadget_temp_token.blank?
+    elsif gmail_gadget_temp_token.blank?
+      flash[:notice] = t(:'flash.g_app.authentication_failed')
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    else
       @notice = t(:'flash.g_app.authentication_failed')
       render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end

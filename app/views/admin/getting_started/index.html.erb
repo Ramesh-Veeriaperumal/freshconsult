@@ -1,0 +1,234 @@
+<%= render :partial => "shared/colorpicker" %>
+<%= include_javascripts :getting_started  %>
+<% javascript_tag do %>
+	var hideDelay=3000;
+	var GettingStarted = {
+		i18n:{},
+		translate:function(key){
+			return GettingStarted.i18n[key];
+		}
+	};
+	
+	jQuery(document).ready(function(){ 		
+		
+		GettingStarted.i18n["validating"] = "<%=t('.validating')%>";
+		GettingStarted.i18n["updating"] = "<%=t('.updating')%>";
+		GettingStarted.i18n["successfully_updated"] = "<%=t('.successfully_updated')%>";
+		GettingStarted.i18n["problem_updating"] = "<%=t('.problem_updating')%>";
+		GettingStarted.i18n["email_invalid"] = "<%=t('.email_invalid')%>";
+		GettingStarted.i18n["emails_invalid"] = "<%=t('.emails_invalid')%>";
+		GettingStarted.i18n["implement_changes"] = "<%=t('.implement_changes')%>";
+		GettingStarted.i18n["email_sent_success"] = "<%=t('.email_sent_success')%>";
+		GettingStarted.i18n["email_send_problem"] = "<%=t('.email_send_problem')%>";
+		GettingStarted.i18n["sending_test_mail_progress"] = "<%=t('.sending_test_mail_progress')%>";
+		GettingStarted.i18n["agent_limit_reached"] = "<%=t('.agent_limit_reached')%>";
+		GettingStarted.i18n["rebrand_header_empty"] = "<%=t('.rebrand_header_empty')%>";
+		GettingStarted.i18n["rebrand_tab_empty"] = "<%=t('.rebrand_tab_empty')%>";
+		GettingStarted.i18n["rebrand_bg_empty"] = "<%=t('.rebrand_bg_empty')%>";
+		GettingStarted.i18n["rebrand_header_invalid"] = "<%=t('.rebrand_header_invalid')%>";
+		GettingStarted.i18n["rebrand_tab_invalid"] = "<%=t('.rebrand_tab_invalid')%>";
+		GettingStarted.i18n["rebrand_bg_invalid"] = "<%=t('.rebrand_bg_invalid')%>";
+		GettingStarted.i18n["agent_email_sending"] = "<%=t('.agent_email_sending')%>";
+		GettingStarted.i18n["agent_email_required"] = "<%=t('.agent_email_required')%>";
+		
+		
+		jQuery("#ResetColors").click(function(){
+			jQuery("#HeaderColor").val("#252525").trigger("keyup");
+			jQuery("#TabColor").val("#006063").trigger("keyup");
+			jQuery("#BackgroundColor").val("#efefef").trigger("keyup");
+		});		
+					
+		jQuery('input#email_config_submit').click( function(event) {						
+			var form = jQuery('form#email_config');
+			var loadingDiv = jQuery("#email_config_status");
+			loadingDiv = (loadingDiv.length>0)? loadingDiv:Loading.getContainer("email_config_status","#email_config_box");
+			var statusBox = loadingDiv.find("#status_update");
+			Loading.updateStatus(statusBox,"update",GettingStarted.translate("validating"));
+			loadingDiv.show();
+			var reply_email_ele = form.children("#reply_to_id");
+			var reply_email = reply_email_ele.val();
+			if(Validate.email(reply_email))
+			{
+				Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
+				loadingDiv.show();
+			}
+			else{
+				Loading.updateStatus(statusBox,"failure",GettingStarted.translate("email_invalid"));
+				reply_email_ele.addClass("gs_error_highlight");
+				reply_email_ele.focus();
+				loadingDiv.delay(hideDelay).hide(1);
+				event.stopPropagation();
+			    return false;
+			}
+		});
+		
+		jQuery('input#agent_invite_submit').click( function(event) {						
+			var form = jQuery('form#agent_invite');
+			var loadingDiv = jQuery("#agent_invite_status");			
+			loadingDiv = (loadingDiv.length>0)? loadingDiv : Loading.getContainer("agent_invite_status","#agent_box");			
+			var statusBox = loadingDiv.find("#status_update");
+			Loading.updateStatus(statusBox,"update",GettingStarted.translate("validating"));
+			loadingDiv.show();
+			var agent_emails_ele = form.children("#agents_invite_email");
+			var agent_emails = agent_emails_ele.val();
+			if(Validate.email(agent_emails))
+			{			  	Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
+		
+			}
+			else{
+			
+                if(Validate.isEmpty(agent_emails)){
+					Loading.updateStatus(statusBox,"failure",GettingStarted.translate("agent_email_required"));
+				  }
+				else{						Loading.updateStatus(statusBox,"failure",GettingStarted.translate("emails_invalid"));
+				}
+				agent_emails_ele.addClass("gs_error_highlight");
+				agent_emails_ele.focus();
+				loadingDiv.delay(hideDelay).hide(1);
+				event.stopPropagation();
+			    return false;
+			}		    
+		});
+		
+		jQuery('input#rebrand_submit').click( function(event) {				
+			
+			var loadingDiv = jQuery("#rebrand_submit_status");
+			loadingDiv = (loadingDiv.length>0)? loadingDiv : Loading.getContainer("#rebrand_submit_status","#rebrand_box");
+			var statusBox = loadingDiv.find("#status_update");
+			
+			var form = jQuery('form#rebrand');
+			
+			
+			var header_color = form.find("#HeaderColor");
+			var tab_color = form.find("#TabColor");
+			var bg_color = form.find("#BackgroundColor");
+			
+									
+			if(!Validate.colorCode(header_color.val())){	
+				var errorMessage = Validate.isEmpty(header_color.val())?GettingStarted.translate("rebrand_header_empty"):GettingStarted.translate("rebrand_header_invalid");			
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				header_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			else if(!Validate.colorCode(tab_color.val())){
+				var errorMessage = Validate.isEmpty(tab_color.val())?GettingStarted.translate("rebrand_tab_empty"):GettingStarted.translate("rebrand_tab_invalid");			
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				tab_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			else if(!Validate.colorCode(bg_color.val())){
+				var errorMessage = Validate.isEmpty(bg_color.val())?GettingStarted.translate("rebrand_bg_empty"):GettingStarted.translate("rebrand_bg_invalid");
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				bg_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			
+			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));		
+			loadingDiv.show();				
+			loadingDiv.delay(3000).hide(1);		
+							
+		});
+	});	
+<% end %>
+<div class="clear gs">
+
+<h2 class="title"><%=t('.title')%> </h2>
+<h3 class="sub_title"><%=t('.sub_title')%></h3>
+
+<div class="clear gs">
+	<div id="email_config_box" class="bigbox float">
+	 <% remote_form_for :email_config, @email_config, :url => admin_email_config_path(@email_config), :html => { :method => :put,:id =>"email_config"} do |f| %>
+		<strong><%=t('.email_config_title')%></strong>
+		<p><%=t('.email_config_sub_title')%></p>
+		<label class="spacer"><%=t('.email_config_field_title')%></label>
+		<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id", :style => "width: 75%", :onclick => "javascript:jQuery(this).removeClass('gs_error_highlight');" %>
+		<%= f.submit t('save'), :class => "uiButton", :id => "email_config_submit", :style => "margin-top: -3p" %>
+		<div id="send_mail_content" class="gs_request">
+		<%= render :partial => "send_mail_content" %>
+		</div>
+		
+	 <%end%>	
+	</div>	
+	
+	
+
+    <div class="float">
+	
+		<div id="agent_box" class="smallbox">			
+		<% remote_form_for @agent, :url => create_multiple_items_agents_path(), :html => { :method => :put,:id =>"agent_invite" } do |f| %>	
+		<strong><%=t('.agent_title')%></strong>
+		<p style="margin-bottom: 25px;"><%=t('.agent_sub_title')%></p>
+		<label><%=t('.agent_send_invite_label')%></label>
+		<input type="text" name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');"/><label><%=t('.agent_invite_multi_info')%></label>
+			<div class="clear positioning">
+				<%= f.submit t('.send_invite'), :class => "uiButton float right", :id => "agent_invite_submit" %>
+			</div>	
+		<%end%>	
+		</div>
+					
+		<div id="social_box" class="smallbox minifier">
+			<strong><%=t('.social_title')%></strong>
+			<p><%=t('.social_sub_title')%></p>
+			<div style="margin-left: 30px;">
+			<a href="<%=@wrapper.authorize_url%>" target="_blank"><div class="twitterbutton float">
+<!--[if lt IE 10]><img src="/images/twitter_32.png" style="float: left; margin: -3px 5px 0 -35px; border: 0;"><![endif]-->				<strong><%=t('.social_twitter')%></strong><samp><%=t('.social_twitter_add')%></samp></div></a>	
+			<a href="<%=@fb_client.authorize_url%>" target="_blank"><div class="facebookbutton float">
+<!--[if lt IE 10]><img src="/images/facebook_32.png" style="float: left; margin: -3px 4px 0 -35px; border: 0;"><![endif]-->								<strong><%=t('.social_facebook')%></strong><samp><%=t('.social_facebook_add')%></samp></div></a>	
+	    	</div>
+	    </div>
+	
+	</div>	
+	
+	<div id="rebrand_box" class="bigbox float">
+		<% form_for :account, @account, :url => rebrand_account_path(),  :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
+		<% f.fields_for :main_portal do |portal| %>
+		<strong><%=t('.rebrand_title')%></strong>
+		<p><%=t('.rebrand_sub_title')%></p>
+		<label><%=t('.rebrand_company_label')%></label>
+		<%= portal.text_field :name, :placeholder => t('.rebrand_company_field_placeholder') %>
+		<%= render :partial => "/shared/logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
+		<label class="spacer"><b><%=t('.rebrand_paint_title')%></b></label>
+
+		<div class="clear">
+			<div class=" float">
+			<label><%=t('.rebrand_color_header')%></label>
+			<input type="color" maxlength="7" id="HeaderColor" class="color required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>" />
+			</div>
+			<div class=" float">
+			<label><%=t('.rebrand_color_tabs')%></label>
+			<input type="color" maxlength="7" id="TabColor" class="color required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>" /> 
+			</div>
+			<div class=" float">
+			<label><%=t('.rebrand_color_background')%></label>
+			<input type="color" maxlength="7" id="BackgroundColor" class="color required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" />
+			</div>
+			<div class="float">
+				<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
+			</div>
+		</div>
+		<div class="clear positioning" style="margin-top: 15px;">
+			<%= submit_tag t('.rebrand_submit_label'), :id => "rebrand_submit",:class => 'uiButton right' %>
+		</div>
+		<%end%>
+		<%end%>
+	</div>	
+		
+</div>
+
+<div class="clear">
+<h3 class="float" ><%=t('.admin_sub_title', :admin_tab => "<a href='/admin/home' target='_blank'><b>Admin</b></a>")%></h3>
+<div class="right"><a href="/helpdesk" class="uiButton"><%=t('.product_link_label')%></a></div>
+</div>
+</div>
+
+
+

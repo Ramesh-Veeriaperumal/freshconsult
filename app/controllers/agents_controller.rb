@@ -84,6 +84,31 @@ class AgentsController < Admin::AdminController
     end    
   end
   
+  def create_multiple_items
+    @agent_emails = params[:agents_invite_email].split(/,/)
+
+    @responseObj = {}
+    if current_account.can_add_agents?(@agent_emails.length)
+      @existing_users = [];
+      @new_users = [];
+      @agent_emails.each do |agent_email|        
+        @user  = current_account.users.new
+        if @user.signup!(:user => { :email => agent_email, :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] })
+          @user.create_agent
+          @new_users << @user
+        else
+          check_email_exist
+          @existing_users << @existing_user
+        end
+        
+      end      
+            
+      @responseObj[:reached_limit] = false
+    else      
+      @responseObj[:reached_limit] = true
+    end              
+  end
+  
   def update
       @agent.occasional = params[:agent][:occasional]
       #check_agent_limit

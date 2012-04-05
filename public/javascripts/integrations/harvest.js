@@ -63,16 +63,16 @@ HarvestWidget.prototype= {
 	},
 
 	loadClient:function(resData) {
-		selectedClientNode = UIUtil.constructDropDown(resData, "harvest-timeentry-clients", "client", "id", ["name"], null, Cookie.retrieve("har_client_id")||"");
+		selectedClientNode = UIUtil.constructDropDown(resData, 'xml', "harvest-timeentry-clients", "client", "id", ["name"], null, Cookie.retrieve("har_client_id")||"");
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "id");
 		this.clientChanged(client_id);
 
-		UIUtil.hideLoading('harvest','clients');
-
+		UIUtil.hideLoading('harvest','clients','-timeentry');
 	},
 
 	loadProject:function(resData) {
 		this.projectData=resData;
+		
 		this.handleLoadProject();
 
 	},
@@ -89,14 +89,13 @@ HarvestWidget.prototype= {
 		}
 		filterBy = null
 		if(client_id) filterBy = {"client-id":client_id};
-		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "harvest-timeentry-projects", "project", "id", ["name"], filterBy, searchTerm||"");
+		selectedProjectNode = UIUtil.constructDropDown(this.projectData,"xml", "harvest-timeentry-projects", "project", "id", ["name"], filterBy, searchTerm||"");
 		if(!selectedProjectNode) {
 			UIUtil.addDropdownEntry("harvest-timeentry-projects", "", "None");
 		}
 		project_id = XmlUtil.getNodeValueStr(selectedProjectNode, "id");
 		this.projectChanged(project_id);
-
-		UIUtil.hideLoading('harvest','projects');
+		UIUtil.hideLoading('harvest','projects','-timeentry');
 	},
 
 	loadTask:function(resData) {
@@ -105,14 +104,14 @@ HarvestWidget.prototype= {
 	},
 
 	handleLoadTask:function() {
-		UIUtil.hideLoading('harvest','tasks');
+		UIUtil.hideLoading('harvest','tasks','-timeentry');
 		if (this.timeEntryXml) {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
 			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
 		}
 		else 
 			searchTerm = Cookie.retrieve("har_task_id")
-		selectedTaskNode = UIUtil.constructDropDown(this.taskData, "harvest-timeentry-tasks", "task", "id", ["name"], null, Cookie.retrieve("har_task_id")||"");
+		selectedTaskNode = UIUtil.constructDropDown(this.taskData,"xml", "harvest-timeentry-tasks", "task", "id", ["name"], null, Cookie.retrieve("har_task_id")||"");
 		if(!selectedTaskNode) {
 			UIUtil.addDropdownEntry("harvest-timeentry-tasks", "", "None");
 		}
@@ -125,6 +124,7 @@ HarvestWidget.prototype= {
 	},
 
 	clientChanged:function(client_id) {
+		
 		if(this.projectData != '') {
 			this.handleLoadProject();
 		}
@@ -132,6 +132,7 @@ HarvestWidget.prototype= {
 	},
 
 	projectChanged:function(project_id) {
+		
 		if(this.taskData != '') {
 			this.handleLoadTask();
 		}

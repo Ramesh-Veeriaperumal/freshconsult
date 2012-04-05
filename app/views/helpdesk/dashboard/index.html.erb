@@ -54,6 +54,14 @@
 		jQuery("#recent_activities").empty();			
 		jQuery(this).hide();	
 	});
+
+	/*new PeriodicalExecuter(function(pe) {
+		jQuery.get(
+		  "/helpdesk/dashboard/latest_summary",
+		  function(data) {
+		      jQuery('#TicketSummary').replaceWith(data);
+		  });
+		}, 60);*/
 	
 <%end%>
 
