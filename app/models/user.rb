@@ -55,7 +55,16 @@ class User < ActiveRecord::Base
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
   named_scope :visible, :conditions => { :deleted => false }
-
+  named_scope :allowed_to_assume, lambda { |user|
+    if user.supervisor?
+      { :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:admin]}, #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}) and id != ?", user.id]} 
+    elsif user.admin?  
+      { :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}) and id != ?", user.id]} 
+    else   
+      { :conditions => ["id != ?", user.id]}  
+    end      
+  }
+      
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }

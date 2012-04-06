@@ -23,13 +23,14 @@
 			</div>
 			<span class="seperator"></span>
 			<%= link_to "Profile settings", edit_profile_path(current_user), :class => "link" %>
-			<span class="seperator"></span>
 			<% if is_assumed_user? %>    
+				<span class="seperator"></span>
 				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>
-      <% else %>
+      		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
+				<span class="seperator"></span>
 				<div class="info">
-					<h5>Switch agent</h5>      
-					<%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible, :id, :name, current_user), { :class => "customSelect", "data-placeholder"=> "Switch to another agent", "onchange" => "assume_identity_url()", :style => "width:250px" } %>
+					<h5>Switch Agent</h5>      
+					<%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible.allowed_to_assume(current_user), :id, :name), { :class => "customSelect", "data-placeholder"=> "Switch to Another Agent", "onchange" => "assume_identity_url()", :style => "width:250px" } %>
 					<% javascript_tag do%>
 					  function assume_identity_url() {
 					    window.location = '/users/'+$('responder_id').value+'/assume_identity';
