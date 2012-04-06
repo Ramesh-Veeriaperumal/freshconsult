@@ -162,13 +162,18 @@ div.bg_pulp{
 	text-align:right;
 	height:46px;
 	margin:2px 12px; 
-	a.nav-trigger{
-		padding:0px 12px 0px 6px;
+	a{
+ 		padding:0px 6px;	 
 		color:#ffffff;
 		text-decoration:none;
 	}
-	a.nav-trigger:hover{
+	a:hover{              
+		@include opacity(0.9);
+		color:#ffffff;
 		text-decoration:none;
+	}
+	a.nav-trigger{
+	 	padding:0px 12px 0px 6px;
 	}             
 	a.nav-trigger:before{           
 		content:"";
