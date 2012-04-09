@@ -1857,6 +1857,15 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    sugarcrm:
+      label: "SugarCRM"
+      desc: "Access key SugarCRM information from user's ticket and profile"
+      form:
+        domain: "Domain"
+        domain_info: "Enter the complete SugarCRM account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of SugarCRM should be exposed to the internet. </span>" 
+        widget_title: "Widget Title"
+        username: "Username"
+        password: "Password"
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"

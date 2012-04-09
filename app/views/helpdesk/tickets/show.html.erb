@@ -1,7 +1,19 @@
 <% content_for :sidebar do -%>
+
+  <% if is_application_installed?("sugarcrm")  %> 	
+	<div id="sugarcrm" class="sidepanel">
+	<%
+	 @liquid_objects = {"requester" => @ticket.requester} %>
+	<% widget_code = get_app_widget_script("sugarcrm", "sugarcrm_widget", @liquid_objects) %>
+	<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
+	</div>
+  <% end %>
+
+
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
+
 <%- end %>
 
 <%= render :partial => "ticket_info" %>       
