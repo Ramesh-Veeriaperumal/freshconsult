@@ -14,8 +14,7 @@ module Has #:nodoc:
       def has_flexiblefields options = {}
         unless includes_flexiblefields?
           
-          has_one :flexifield, :as => :flexifield_set, :dependent => :destroy,
-          :conditions => 'flexifields.flexifield_def_id = #{account_id}'
+          has_one :flexifield, :as => :flexifield_set, :dependent => :destroy
           
           has_many :flexifield_def_entry, :class_name => 'FlexifieldDefEntry'
          

@@ -17,7 +17,6 @@ class Helpdesk::Tag < ActiveRecord::Base
     :class_name => 'User',
     :source => :taggable,
     :source_type => "User",
-    :conditions => 'users.account_id = #{account_id}',
     :through => :tag_uses
 
   has_many :contacts,

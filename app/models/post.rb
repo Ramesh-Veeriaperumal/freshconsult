@@ -11,7 +11,6 @@ class Post < ActiveRecord::Base
   has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :conditions => 'helpdesk_attachments.account_id = #{account_id}',
     :dependent => :destroy
 
   #format_attribute :body

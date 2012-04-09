@@ -1,7 +1,9 @@
 require 'digest/md5'
 
 
-class Helpdesk::Ticket < ActiveRecord::Base 
+class Helpdesk::Ticket < ActiveRecord::Base
+  
+  belongs_to_account
 
   include ActionController::UrlWriter
   include TicketConstants
@@ -28,7 +30,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
       :support_score_on_update, :stop_timesheet_timers
   
-  belongs_to :account
   belongs_to :email_config
   belongs_to :group
  
@@ -42,13 +43,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :notes, 
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
-    :conditions => 'helpdesk_notes.account_id = #{account_id}',
     :dependent => :destroy
     
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable',
-    :conditions => 'helpdesk_activities.account_id = #{account_id}',
     :dependent => :destroy
 
   has_many :reminders, 
@@ -116,8 +115,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
   
-  #named_scope :account_scope, :conditions => ['helpdesk_tickets.account_id = #{account_id}']
-    
   named_scope :all_company_tickets,lambda { |customer| { 
         :joins => :requester,
         :conditions => [" users.customer_id = ?",customer]
