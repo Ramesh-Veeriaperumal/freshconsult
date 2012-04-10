@@ -5,6 +5,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   before_filter :load_object 
   before_filter :check_jira_authenticity, :only => [:install, :update]
+  before_filter :set_md5_sugar_pwd, :only => [:install, :update]
   before_filter :strip_slash, :only => [:install, :update]
   
   def install # also updates
@@ -84,7 +85,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       if params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
         {:inputs => {}}  
       else
-        params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank?
+        params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank? or @installing_application.name == "sugarcrm"
         params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
         {:inputs => params[:configs].to_hash || {}}  
       end
@@ -121,6 +122,12 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
           redirect_to :controller=> 'applications', :action => 'index'
         end
       end
+    end
+
+    def set_md5_sugar_pwd
+      puts "set_md5_sugar_pwd"
+      params[:configs][:password] = Digest::MD5.hexdigest(params[:configs][:password]) if @installing_application.name == "sugarcrm"
+      puts "params pwd : #{params[:configs][:password]}"
     end
 
     def strip_slash
