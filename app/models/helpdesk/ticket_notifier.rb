@@ -44,13 +44,22 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
                   :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type])
     from          params[:ticket].friendly_reply_email
-    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}"
+    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}", "Precedence" => "bulk", "Auto-Submitted" => "auto-replied"
     sent_on       Time.now
     content_type  "text/html"
   end
  
   def get_subject(notification_type, ticket)
-    Liquid::Template.parse(EmailNotification::EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
+    e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
+    if e_notification.agent_notification?
+      a_s_template = Liquid::Template.parse(e_notification.agent_subject_template)
+      return a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+    end
+    
+    if e_notification.requester_notification?
+      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template)
+      return r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+    end
   end
   
   def reply(ticket, note , reply_email, options={})

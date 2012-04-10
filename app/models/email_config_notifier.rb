@@ -9,4 +9,14 @@ class EmailConfigNotifier < ActionMailer::Base
     headers       "Reply-to" => "#{email_config.account.default_friendly_email}"
     content_type  "text/plain"
   end
+  
+  def test_email(email_config)
+    subject       "Wohoo.. Your Freshdesk Test Mail"
+    body          :email_config => email_config
+    from          "Freshdesk Test <rachel@freshdesk.com>"
+    recipients    email_config.reply_email
+    sent_on       Time.now
+    headers       "Reply-to" => "rachel@freshdesk.com"
+    content_type  "text/html"
+  end  
 end

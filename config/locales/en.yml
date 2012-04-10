@@ -124,6 +124,63 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    getting_started:
+        index:
+            config-support-email-address: "Configure your support email address"
+            save-and-next: "Save and Go to next"
+            send_verification_email: Send verification email
+            send_invite: Send Invite
+            title: Cool! Looks like your help desk is ready to roll...
+            sub_title: Here's a bunch of stuff to help you get started
+            email_config_title: What's your support email?
+            email_config_sub_title: Let Freshdesk handle your Support Emails!
+            email_config_field_title: Your Support Email Address
+            send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
+            send_test_mail_info2: (Learn How)
+            send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
+            send_test_mail_link_title: sending a test mail
+            send_test_mail_response1: We've sent a test mail to <b>%{reply_email}</b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
+            send_test_mail_confirm_yes: Yes, i got it.
+            send_test_mail_confirm_no: No, i can't see any ticket.
+            send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
+            send_test_mail_response_no1: There seems to be a problem ->
+            send_test_mail_response_no2: Learn how
+            send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again.( Did you not even receive the test mail at %{reply_email} Wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a> )
+            agent_title: Feeling lonely?
+            agent_sub_title: Invite your team to use Freshdesk
+            agent_send_invite_label: Send Invites to agents
+            agent_invite_field_placeholder: Enter your team members email
+            social_title: Go Social?
+            social_sub_title: Start supporting customers on twitter and facebook
+            social_twitter: Twitter
+            social_twitter_add: Add Account
+            social_facebook: Facebook
+            social_facebook_add: Add a Page
+            rebrand_title: Make it your own!
+            rebrand_sub_title: Rebrand Freshdesk with your logo & colors
+            rebrand_company_label: Company Name
+            rebrand_company_field_placeholder: Enter your company name
+            rebrand_paint_title: Paint your helpdesk
+            rebrand_color_header: Header
+            rebrand_color_tabs: Tabs
+            rebrand_color_background: Background
+            rebrand_submit_label: Rebrand
+            admin_title: Everything Good?
+            admin_sub_title: Don't forget to check out all under-the-hood features you can customize in the "%{admin_tab}" tab
+            product_link_label: Jump into your helpdesk >>
+            validating: Validating...
+            updating: Updating...
+            successfully_updated: Successfully updated.
+            problem_updating: Problem in updating, please try again.
+            email_invalid: Your mail is invalid, please check.
+            emails_invalid: One or more of your mail is invalid.
+            implement_changes: Implementing the changes...
+            email_sent_success: Mail has been succesfully sent.
+            email_send_problem: Problem while sending the mail.
+            sending_test_mail_progress: Sending test mail, please wait...
+            agent_invite_multi_info: Use comma ( , ) to add multiple emails.
+            agent_limit_reached: You have exceeded your agents limit.
+
     day_passes:
       index:
         title: "Day Pass"
@@ -340,6 +397,7 @@ en:
       viewer_id_not_sent_by_gmail: "Wrong Gmail request.  Please try after logging in again."
       gmail_request_unverified: "Wrong Gmail signature.  Please try after logging in again."
       unknown_error: "Unknown server error. Please contact support."
+      account_not_associated: "Your Gmail account is not yet associated to any Freshdesk account.  Go through the navigation link to associate it first."
     daypass:
       success: "%{quantity} Day Passes have been successfully added to your account."
       failed: "Error when adding day passes"
@@ -443,6 +501,7 @@ en:
         no_contact: Unable to contact zendesk . Please verify your zendesk credentials and try again !!
         success: Your data import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
         failure: Unable to import from zendesk...please try again
+        running: Currently one zendesk import is running. you may try later !!
     contacts: 
       create: 
         success: The contact has been created successfully.
@@ -1045,7 +1104,7 @@ en:
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
-      reset_warning: "Once the API key is reset, all the applications using the old key will stop working.  Are you sure to continue?"
+      reset_warning: "Once the API key is reset, all the applications using the old key will stop working.  Are you sure you want to continue?"
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
@@ -1109,6 +1168,8 @@ en:
     modify_agent_template: Modify Agent Email Template
     event: Event
     agent_notification: Agent Notification
+    subject: Subject
+    do_not_delete_ticket_id_from_subject: Ticket conversations will not be managed properly if you delete the ticket id placeholder from the subject
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
   step1: Step 1
@@ -1274,7 +1335,7 @@ en:
     ticket_url: Ticket URL
     integrations:      
       jira: 
-        tooltip: "View the associated Jira Issue"      
+        tooltip: "View the associated JIRA Issue"      
   recent_activity: Recent Activity
   recent_activities: Recent Activites
   forgot_password: Forgot Password
@@ -1672,7 +1733,6 @@ en:
         help: Help
   settings: settings        
   updated_on: "%{user_name} updated on %{note_date}"
-  jira: "Atlassian Jira"
   mobile:
     home:
       remember: "Remember me"
@@ -1712,52 +1772,55 @@ en:
         harvest_note_info: "This text that will be appended at the end of the note, with the time spent log."
         widget_title: "Widget Title"
     google_contacts:
-      label: "Google Contacts"
-      desc: "Periodically synchronize the contacts between Google and Freshdesk."
-      overwrite_local: "Export the Freshdesk contacts and any updates into google contacts"
-      overwrite_remote: "Import the Google contacts and any updates into Freshdesk contacts"
-      merge_local: "Merge the Freshdesk and Google contacts (Freshdesk precedence)"
-      merge_remote: "Merge the Google and Freshdesk contacts (Google precedence)"
-      import_success: "Sucessfully imported google contacts." 
-      fetch_problem: "Problem in fetching google contacts." 
+      label: "Google contacts sync"
+      desc: "Periodically synchronize contacts between Google and Freshdesk."
+      import_success: "Sucessfully imported Google contacts." 
+      fetch_problem: "Problem in fetching Google contacts." 
       import: "Import"
       account_not_configured: "Google account is not configured properly. Please try again."
       OVERWRITE_LOCAL_small: "Export"
       OVERWRITE_REMOTE_small: "Import"
       MERGE_LOCAL_small: "Merge (Freshdesk precedence)"
       MERGE_REMOTE_small: "Merge (Google precedence)"
-      OVERWRITE_LOCAL: "Export the Freshdesk contacts and any updates into google contacts"
-      OVERWRITE_REMOTE: "Import the Google contacts and any updates into Freshdesk contacts"
-      MERGE_LOCAL: "Merge the Freshdesk and Google contacts (Freshdesk precedence)"
-      MERGE_REMOTE: "Merge the Google and Freshdesk contacts (Google precedence)"
-      MERGE_LATEST: "Merge the Freshdesk and Google contacts (Latest update takes precedence)"
-      import_later_success: "Google contacts import started successfully.  You will receive an email to %{email}, after import completes." 
-      import_success_no_stats: "Successfully imported google contacts." 
-      import_success: "Successfully imported google contacts.\nStatus: %{added} Added, %{updated} Updated and %{deleted} Deleted." 
-      fetch_problem: "Problem in fetching google contacts." 
-      import_problem: "Problem in importing google contacts." 
+      OVERWRITE_LOCAL: "Export Freshdesk contacts and any updates into Google contacts"
+      OVERWRITE_REMOTE: "Import Google contacts and any updates into Freshdesk contacts"
+      MERGE_LOCAL: "Merge Freshdesk and Google contacts (Freshdesk precedence)"
+      MERGE_REMOTE: "Merge Google and Freshdesk contacts (Google precedence)"
+      MERGE_LATEST: "Merge Freshdesk and Google contacts (Latest update takes precedence)"
+      import_later_success: "Google contacts import started successfully.  You can check the import status in the settings page itself." 
+      import_success_no_stats: "Successfully imported Google contacts." 
+      import_success: "Successfully imported Google contacts.\nStatus: %{added} Added, %{updated} Updated and %{deleted} Deleted." 
+      fetch_problem: "Problem in fetching Google contacts." 
+      import_problem: "Problem in importing Google contacts." 
       import: "Import"
-      install: "Activate"
+      install: "Import & Activate"
       edit_app: "Update"
       add_more: "Sync new account"
       edit: "Edit"
-      already_exist: "Already this email has been configured for syncing. You can not add the same email again."
+      already_exist: "This email has already been configured. You cannot add the same email again."
       delete: "Delete"
-      internal_error: "Some internal error occured. Please contact support."
+      internal_error: "An internal error occured.  Please contact support."
       account_not_configured: "Google account is not configured properly. Please try again."
-      overwrite_existing_user: "Overwrite existing Contact details in Freshdesk"
-      enable_integration: "After importing start automatic syncing (hourly once)"
-      name: "Account Name"
+      overwrite_existing_user: "Overwrite existing contact details in Freshdesk"
+      enable_integration: "Start automatic syncing after import completes (daily once)."
+      account: "Account"
       email: "Email"
       group: "Sync Group name"
-      tag: "Sync Settings"
+      tag: "Sync Setting"
       tag_label: "Sync tag"
       sync_type: "How to sync?"
       last_sync_time: "Last sync time"
       last_sync_status: "Last sync status"
       last_sync: "Last sync"
-      not_yet_synced: "Not yet started."
+      import_complete: "One time import completed."
+      not_yet_synced: "Syncing not started."
+      syncing_in_progress: "Syncing in progress"
       no_status: "N/A"
+      info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
+      sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Gmail account for syncing contacts."
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/> 
+            <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/>
+            A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
       sync_status:
         added: "added"
         modified: "modified"
@@ -1767,45 +1830,69 @@ en:
       edit_form:
         install_title: "Google contacts sync setting"
         import_title: "Google contacts import setting"
-        all_contacts: "All Groups/Contacts"
         mail_box_detail: "Sync with"
-        import_group: Select Groups to Import (optional)
-        choose_group_title: "Choose the Group to sync and Tag to add"
+        import_group: Select groups to import (optional)
         edit_app_title: "Edit Google contacts sync setting"
       form:
         sync_type: "Synchronization type"
         sync_type_info: "How do you want to synchronize the contacts between Google and Freshdesk."
         account_settings: ""
-        account_settings_info: "You can view the configured google account, its configuration and its sync status here."
-        account_not_configured: "<br/>Google accont settings is not yet configured.  Click %{action} and connect to Google to configure it.<br/><br/>"
+        account_settings_info: ""
+        account_not_configured: "<br/>Google account settings are not yet configured. Click on '%{action}' to configure new account with Google.<br/><br/>"
       update_action:
-        success: "Successfully updated the google account."
-        also: "<br/>Also "
-        error: "Error while updating the google account."
+        success: "Successfully added Google account."
+        also: "  Also "
+        error: "Error while updating Google account."
       delete_action:
-        success: "Successfully deleted the google account."
-        error: "Error while deleting the google account."
+        success: "Successfully deleted Google account."
+        error: "Error while deleting Google account."
     jira:
-      label: "Atlassian Jira"
-      desc: "Convert tickets into issues that can be tracked in Jira."
+      label: "Atlassian JIRA"
+      desc: "Convert tickets into issues that can be tracked in JIRA."
       form:
         domain: "Domain"
-        domain_info: "Enter the complete jira account URL with https/http. Ex. https://example.atlassian.net"
+        domain_info: "Enter the complete JIRA account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of JIRA should be exposed to the internet. </span>" 
         jira_note: "Description text"
-        jira_note_info: "This text will be added to the issue description in Jira"
+        jira_note_info: "This text will be added to the issue description in JIRA."
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    sugarcrm:
+      label: "SugarCRM"
+      desc: "Access key SugarCRM information from user's ticket and profile"
+      form:
+        domain: "Domain"
+        domain_info: "Enter the complete SugarCRM account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of SugarCRM should be exposed to the internet. </span>" 
+        widget_title: "Widget Title"
+        username: "Username"
+        password: "Password"
+    google_analytics:
+      label: "Google Analytics"
+      desc: "Monitor visitor stats on your support portal using Google Analytics"
+      portal: "Portal"
+      account_number: "Enter your Tracking ID"
+      inline_help: "Enter the Tracking ID for "
+      domain: "Domain"
+      form:
+        google_analytics_settings_info: ""
+        google_analytics_settings: ""
+        tracking_id: "Tracking ID for "
+        tracking_id_example: "Eg: UA-123456-1"
+        copy_settings: "Use the above Tracking ID for all portals"
+
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
-  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
   freshbooks_helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
   harvest_helptext: "<h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with Freshdesk, type in your <b>Domain name</b> and click on Enable.<br/><br/>Click on a ticket, go to the <b>Time Sheet tab</b>.  You can then type in your Harvest <b>Username</b> and <b>Password</b> to login. Now you can add your time tracking entry into Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you do not have to type in your Harvest credentials each time."
-  jira_helptext: "<h4>Jira Integration Help</h4><p><br/>To integrate Jira with Freshdesk, enter your Jira administrator username and password. The integration supports both on-demand and on-premise variants, from Jira 4.x upto the latest version - Jira 5.<br/><br/>
+  jira_helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.x upto the latest version - JIRA 5.<br/><br/>
   To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
-  To view details of your linked Freshdesk tickets in Jira, and conversely to view Jira issue details in Freshdesk, the Jira administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
-  <br/><br/>Log on to your Jira account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
+  To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
+  <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
+  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
+  google_analytics_helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
+  <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
   reorder: "Reorder"
   reports:
       tab_heading: "Reports"
@@ -1871,3 +1958,7 @@ en:
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
   email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
+  latest_ticket: "new update"
+  latest_tickets: "new updates"
+  search:
+    no_results_msg: "No results found"  

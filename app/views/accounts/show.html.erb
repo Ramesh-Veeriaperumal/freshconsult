@@ -72,7 +72,7 @@
   		 <div class="action_buttons">
   	 		<%= link_to( "#{t('change')} &rsaquo;", billing_account_url, :class => "last" ) %>
   	 	 </div>
-  		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
+  		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number}" %></label>
   	  </div>
   	</li>
   <% end %>

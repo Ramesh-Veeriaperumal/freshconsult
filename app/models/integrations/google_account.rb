@@ -116,13 +116,14 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     else
       remaining_results = max_results
       start_index = self.last_sync_index
+      new_company_list = {}
       self.import_groups.delete_if { |g_group_id|
         if agg_g_cnts.length > max_results
           false
         else
           query_params = "?group=#{google_group_uri(self.email, g_group_id)}#{show_deleted}&max-results=#{remaining_results+1}&start-index=#{start_index+1}"
-          fetched_g_cnts = fetch_google_contacts(query_params)
-          self.last_sync_index += fetched_g_cnts.length
+          fetched_g_cnts = fetch_google_contacts(query_params, new_company_list)
+          self.last_sync_index = fetched_g_cnts.length
           start_index = 0
           # Aggregate the fetched google contacts. 
           fetched_g_cnts.each {|f_g_cnt|
@@ -130,7 +131,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           }
           # Manipulate the remaining_results
           remaining_results -= fetched_g_cnts.length
-          true
+          agg_g_cnts.length > max_results ? false : true
         end
       }
     end
@@ -299,7 +300,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       fetch_google_contacts("/"+id)
     end
 
-    def fetch_google_contacts(query_params)
+    def fetch_google_contacts(query_params, new_company_list = {})
       google_account = self
       token = google_account.token
       secret = google_account.secret
@@ -314,20 +315,20 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       # Rails.logger.debug goog_contacts_url + "   " + updated_contact_xml
       google_users = []
       begin
-        doc = REXML::Document.new(updated_contact_xml)   
+        doc = REXML::Document.new(updated_contact_xml)
         doc.elements.each('feed/entry') { |contact_entry_element|
           begin
-            converted_user = convert_to_user(contact_entry_element)
+            converted_user = convert_to_user(contact_entry_element, new_company_list)
             google_users.push(converted_user)
           rescue => e
             google_users.push(nil) # In case any exception occurs just store nil value for giving the correct number contacts fetched.
-            Rails.logger.error "Error in processing a contact. contact_entry_element #{contact_entry_element.inspect}:  #{e.inspect}"
+            Rails.logger.error "Error in processing a contact. contact_entry_element #{contact_entry_element.inspect}:  #{e.inspect}\n#{e.backtrace.join("\n\t")}"
           end
         }
       rescue => e
-        Rails.logger.error "Error in parsing the xml: #{updated_contact_xml}.  #{e.inspect}"
+        Rails.logger.error "Error in parsing the xml: #{updated_contact_xml}.  #{e.inspect}\n#{e.backtrace.join("\n\t")}"
       end
-      Rails.logger.info "#{google_users.length} users from google account has been fetched with query #{query_params}. Email #{google_account.email}"
+      Rails.logger.info "#{google_users.length} users from google account has been fetched with query #{query_params}. Email #{google_account.email} #{google_users}"
       return google_users
     end
 
@@ -409,7 +410,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     # This method will take care of creating(add) or fetch/updating(edit) or setting delete flag(delete) an user from google contact entry xml. 
-    def convert_to_user(contact_entry_ele)
+    def convert_to_user(contact_entry_ele, new_company_list={})
       goog_contact_detail = parse_user_xml(contact_entry_ele)
       user = nil
       # Get the user based on his primary email address
@@ -419,11 +420,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       user = find_user_by_google_id(goog_contact_detail[:google_id]) if user.blank?
 
       # Create the user if not able to fetch with any of the above options
-      user = User.new if user.blank?
-      if user.google_contacts.blank?
-        user.google_contacts.build(:google_account=>self) # Will not persist the data in DB even if new_record? is true.
-      end
+      user = User.new(:account=>self.account) if user.blank?
       gcnt = fetch_current_account_contact(user)
+      if gcnt.blank?
+        user.google_contacts.build(:google_account=>self) # Will not persist the data in DB even if new_record? is true.
+        gcnt = user.google_contacts[0]
+      end
       gcnt.google_xml = goog_contact_detail[:google_xml]
       gcnt.google_id = goog_contact_detail[:google_id]
       gcnt.google_group_ids = goog_contact_detail[:google_group_ids]
@@ -433,10 +435,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if orgName.blank?
         user.customer = nil
       else
-        customer = account.customers.find_by_name(orgName)
+        customer = new_company_list[orgName]
+        customer = account.customers.find_by_name(orgName) if customer.blank?
         if customer.blank?
           customer = account.customers.new
           customer.name = orgName
+          new_company_list[orgName] = customer
         end
         user.customer = customer
       end
@@ -464,8 +468,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         if g_cnt
           return false if g_cnt.google_id = goog_id
         else
-          g_cnt = GoogleContact.new(:google_account=>self)
-          db_contact.google_contacts.push(g_cnt)
+          db_contact.google_contacts.build(:google_account=>self)
+          g_cnt = db_contact.google_contacts[0]
         end
         g_cnt.google_id = goog_id
         db_contact.save!

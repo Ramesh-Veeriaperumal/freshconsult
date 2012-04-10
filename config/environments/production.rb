@@ -22,7 +22,7 @@ config.action_view.cache_template_loading            = true
 ActionController::Base.asset_host =  Proc.new { |source, request|
   params = request.parameters
   if params['format'] == 'widget'
-    "https://assets.freshdesk.com"
+    "https://asset.freshdesk.com"
   end
 }
 # Disable delivery errors, bad email addresses will be ignored

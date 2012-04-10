@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do %><div class="sidepanel helpcard"><%=t('integrations.google_contacts.edit_helptext')%></div><% end %>
 <h3 class="title"><%=t("integrations.google_contacts.edit_form.#{@omniauth_origin}_title")%></h3>
 <% 
   action = @omniauth_origin == "import" ? "import_contacts" : "update"
@@ -25,16 +25,16 @@
 			<legend><%=t('integrations.google_contacts.tag')%></legend>
 			<div class="fields">
 				<label class="caption" for="integrations_google_account_sync_tag"><%=t('integrations.google_contacts.tag_label')%></label>
-				<%=text_field_tag "integrations_google_account[sync_tag]", @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, :onchange=>"tag_changed()" ,  "data-placement" => "right", :class=>"form-tooltip mini", :title => 'Using the same sync tag across multiple Google Accounts  allows you to share Freshdesk Contacts with everyone' %>
+				<%=text_field_tag "integrations_google_account[sync_tag]", @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, :onchange=>"tag_changed()" ,  "data-placement" => "right", :class=>"form-tooltip mini", :title => t("integrations.google_contacts.info1")%>
 			</div>
 			
 			<div class="special-notice">
-				A new contact group <strong>Freshdesk Contacts</strong> will be created in your Gmail Account for Contact syncing.
+				<%=t('integrations.google_contacts.sync_group_info', :group_name => @google_account.sync_group_name)%>
 			</div>
 
 			<div class="fields">
 				<label>
-				    <%=t("integrations.google_contacts.overwrite_existing_user")%> <%=check_box_tag :overwrite_existing_user, 1, true, :class => 'iphone' , "data-active-text" => "Yes", "data-inactive-text" => "No" %>
+				    <%=t("integrations.google_contacts.overwrite_existing_user")%> <%=check_box_tag "integrations_google_account[overwrite_existing_user]", 1, true, :class => 'iphone' , "data-active-text" => "Yes", "data-inactive-text" => "No" %>
 					
 				</label>
 			</div>
@@ -107,6 +107,6 @@
 		sync_tag_field = $('integrations_google_account_sync_tag')
 		tag_using_accs = tag_to_acc_map[sync_tag_field.value] || "None of the accounts";
 		tag_usage_status_field = $('tag_usage_status')
-		tag_usage_status_field.innerHTML = tag_using_accs+' sharing the same tag for syncing.'
+		// tag_usage_status_field.innerHTML = tag_using_accs+' sharing the same tag for syncing.'
 	}
 </script>

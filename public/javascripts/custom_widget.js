@@ -56,12 +56,14 @@ Freshdesk.Widget.prototype={
 		if(this.options.login_content != null && !(this.options.username && this.options.password)){
 			this.content_anchor.innerHTML = this.options.login_content();
 		} else {
-			this.content_anchor.innerHTML = this.options.application_content();
+			if (this.options.application_content){
+				this.content_anchor.innerHTML = this.options.application_content();	
+			}
 			if(this.options.application_resources){
-			this.options.application_resources.each(
-				function(reqData){
-					if(reqData) cw.request(reqData);
-				});
+				this.options.application_resources.each(
+					function(reqData){
+						if(reqData) cw.request(reqData);
+					});
 			}
 		}
 	},

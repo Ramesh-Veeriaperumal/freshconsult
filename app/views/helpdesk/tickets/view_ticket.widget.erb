@@ -1,16 +1,18 @@
+  <% if @no_auth %>
+    <div class="alert-message block-message warning">
+      <p><strong><%= t('flash.general.access_denied') %></strong></p>
+    </div>
+  <%else%>
   <% if @ticket.deleted %>
     <div class="alert-message block-message warning">
-      <div class="alert-actions-right">
-        <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
-      </div>
       <p><strong><%= t('this_ticket_has_been_deleted') %></strong></p>
     </div>
   <% end %>
  <div class="request_details">
     <div class="requestCnt request-cnt-first">
       <div class="request-title">
-        <%= content_tag :span, h(@ticket.status_name), :class => "status theme-tab" %>
-        <%= content_tag :span, h(@ticket.priority_name), :class => "priority #{@ticket.priority_key}" %>
+        <%= content_tag :span, h(@ticket.status_name), :class => "status-pointer theme-tab" %>
+        <%= content_tag :span, h(@ticket.priority_name), :class => "priority-pointer #{@ticket.priority_key}" %>
         <%= content_tag :span, "##{@ticket.display_id}", :class => "ticket-id" %>
         <%= content_tag :span, @ticket.subject, :class => "subject" %>
       </div>
@@ -56,3 +58,4 @@
     <% end %> 
   </div>
 </div>
+  <% end %>

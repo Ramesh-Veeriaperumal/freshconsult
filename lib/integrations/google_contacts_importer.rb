@@ -13,9 +13,13 @@ class Integrations::GoogleContactsImporter
     google_accounts.each { |google_account|
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
       begin
-        goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
-        if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
-          goog_cnt_importer.sync_google_contacts
+        if google_account.account.blank? or !google_account.account.active?
+          Rails.logger.info "Account #{google_account.account.name} expired.  Google contacts syncing disabled."
+        else
+          goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
+          if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
+            goog_cnt_importer.sync_google_contacts
+          end
         end
       rescue => err
         Rails.logger.error "Error while syncing google_contacts for account #{google_account.inspect}. \n#{err.message}\n#{err.backtrace.join("\n\t")}"
@@ -24,7 +28,8 @@ class Integrations::GoogleContactsImporter
   end
 
   def import_google_contacts(options = {})
-    sync_google_contacts :sync_type => SyncType::OVERWRITE_REMOTE
+    options[:sync_type] = SyncType::OVERWRITE_REMOTE
+    sync_google_contacts options
   end
 
   def sync_google_contacts(options = {})
@@ -102,7 +107,7 @@ class Integrations::GoogleContactsImporter
         remove_discrepancy_and_set_google_data(@google_account, db_contacts, goog_contacts, discre_precedence) unless db_contacts.blank?
         fetched_db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         fetched_db_stats.each_index { |i|
-          fetched_db_stats.each_index { |j|
+          fetched_db_stats[i].each_index { |j|
             agg_db_stats[i][j] = agg_db_stats[i][j] + fetched_db_stats[i][j]
           }
         }
@@ -111,7 +116,6 @@ class Integrations::GoogleContactsImporter
     end
 
     def update_db_contacts(updated_goog_contacts_hash, overwrite_existing_user = true)
-  #   puts "Inside update_db_contacts #{updated_goog_contacts_hash.inspect}"
       stats=[0,0,0]; err_stats=[0,0,0]
       account = @google_account.account
       updated_goog_contacts_hash.each { |user|
@@ -136,6 +140,7 @@ class Integrations::GoogleContactsImporter
           end
         end
       }
+      Rails.logger.debug "Finished update_db_contacts #{stats}  #{err_stats}"
       return stats, err_stats
     end
 

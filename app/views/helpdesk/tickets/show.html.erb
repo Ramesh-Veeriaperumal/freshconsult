@@ -1,7 +1,19 @@
 <% content_for :sidebar do -%>
+
+  <% if is_application_installed?("sugarcrm")  %> 	
+	<div id="sugarcrm" class="sidepanel">
+	<%
+	 @liquid_objects = {"requester" => @ticket.requester} %>
+	<% widget_code = get_app_widget_script("sugarcrm", "sugarcrm_widget", @liquid_objects) %>
+	<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
+	</div>
+  <% end %>
+
+
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
+
 <%- end %>
 
 <%= render :partial => "ticket_info" %>       
@@ -14,8 +26,7 @@
 			<%= button_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton", :class => "button") if @item.requester && @item.is_twitter?%>
 			<%= button_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "button") if @item.requester && @item.is_facebook?%>
 			<%= button_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton", :class => "button") %>		
-			<%= button_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery
-			(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
+			<%= button_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
 		</div>
 	<% end %>
 </div>		

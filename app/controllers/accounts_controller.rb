@@ -268,8 +268,16 @@ class AccountsController < ApplicationController
     else
       render :action => 'edit'
     end
-  end
+  end  
   
+  def rebrand  
+    responseObj = { :status => 
+        current_portal.update_attributes(params[:account][:main_portal_attributes]) }
+
+    respond_to do |format|
+      format.json { render :json => responseObj.to_json }
+    end
+  end
   
   def plans
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users

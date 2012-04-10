@@ -13,7 +13,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       @installed_application = Integrations::InstalledApplication.new
       @installed_application.application = @installing_application
       @installed_application.account = current_account
-      params[:configs][:domain] = params[:configs][:domain][0..-2] if @installing_application.name == "jira" and params[:configs][:domain].ends_with?('/')
       @installed_application[:configs] = convert_to_configs_hash(params)
 
       begin
@@ -60,7 +59,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       redirect_to :controller=> 'applications', :action => 'index'
     else
       @installing_application = @installed_application.application
-      @installed_application.configs[:inputs]['password'] = decrypt_password unless decrypt_password.blank?
+      @installed_application.configs[:inputs][:password.to_s] = '' unless @installed_application.configs[:inputs][:password.to_s].blank?
       return @installing_application
     end
   end
@@ -82,11 +81,12 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   private
     def convert_to_configs_hash(params)
-      unless params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
+      if params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
+        {:inputs => {}}  
+      else
         params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank?
         params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
-         
-        {:inputs => params[:configs].to_hash}  
+        {:inputs => params[:configs].to_hash || {}}  
       end
     end
 
@@ -109,6 +109,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     def check_jira_authenticity
       if @installing_application.name == "jira"
         begin
+          params[:configs][:password] = decrypt_password if params[:configs][:password].blank? and !@installed_application.configs.blank?
           jira_version = jira_authenticity(params)   
         rescue Exception => msg
           if msg.to_s.include?("Exception:")

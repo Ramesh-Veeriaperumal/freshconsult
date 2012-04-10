@@ -1,0 +1,23 @@
+<legend>Send a notice message to all Freshdesk accounts</legend>
+<%= form.error_messages %>  
+<div class="control-group">
+  <%= form.label :message, "",:class => "control-label" %>
+	<div class="controls">
+  	<%= form.text_area :message, :class => "input-xlarge span5", :rows => "6", :cols => "80" %>
+		<p class="help-block">
+			You can add html or any plain text inside the message
+		</p>
+	</div>
+</div>
+<div class="control-group">
+  <%= form.label :starts_at, "", :class => "control-label" %>
+	<div class="controls">
+  	<%= form.datetime_select :starts_at %>
+	</div>
+</div>
+<div class="control-group">
+  <%= form.label :ends_at, "", :class => "control-label" %>
+	<div class="controls">
+  	<%= form.datetime_select :ends_at %>
+	</div>
+</div>
