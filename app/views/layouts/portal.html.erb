@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+	<head>
+		<%= render :partial => "portal/head" %>   
+		<%= include_stylesheets :common  %>
+		<%= render :partial => "shared/theme.css"  %>
+	</head>
+  <body>                                    
+		<%= render :partial => "portal/body", 
+							 :locals => { :header_content => render(:partial => "layouts/shared/header"),
+													 	:footer_content => render(:partial => "layouts/shared/footer") } %>    
+  </body>
+</html>

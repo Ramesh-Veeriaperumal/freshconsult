@@ -23,7 +23,23 @@ stylesheets:
     - public/stylesheets/autocomplete.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/ie.css
+    - public/stylesheets/ie.css    
+    
+  portal:
+    - public/stylesheets/reset.css
+    - public/stylesheets/layout.css
+    - public/stylesheets/defaults.css
+    - public/stylesheets/application.css
+    - public/stylesheets/test.css
+    - public/stylesheets/validation.css
+    - public/stylesheets/form.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/chosen.css
+    - public/stylesheets/table.css
+    - public/stylesheets/autocomplete.css
+    - public/stylesheets/jquery-ui.css
+    - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/ie.css    
 
   widget:
     - public/stylesheets/reset.css   
@@ -67,9 +83,13 @@ javascripts:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/*.js
-    - public/javascripts/hackz.js    
+    - public/javascripts/hackz.js       
+  aceeditor:
+    - public/javascripts/aceeditor/ace.js
+    - public/javascripts/aceeditor/theme-textmate.js
+    - public/javascripts/aceeditor/mode-javascript.js        
   visitor:
-      - public/javascripts/frameworks/session.js            
+    - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js

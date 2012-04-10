@@ -1,25 +1,9 @@
-<%= include_javascripts :aceeditor %>
-<script type="text/javascript">
-window.onload = function() {
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
-    
-    var JavaScriptMode = require("ace/mode/javascript").Mode;
-    editor.getSession().setMode(new JavaScriptMode());
-};
-</script>
-	
-<h3 class="title">Portal templates</h3>
+<% content_for :sidebar do -%><%- end %>                   
 
-<pre id="editor">
-	function foo(items) {
-    var i;
-    for (i = 0; i &lt; items.length; i++) {
-        alert("Ace Rocks " + items[i]);
-    }
-	}
-</pre>
-
+<h3 class="title">              
+	Portal templates
+</h3>
+<span class="seperator"></span>
 <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
 	<label>Header</label>
 	<%= f.text_area :header %>
@@ -34,7 +18,34 @@ window.onload = function() {
 	<%= f.text_area :custom_css %>        
 	
 	<label>Layout</label>
-	<%= f.text_area :layout %>
+	<%= f.text_area :layout %>              
 
-	<%= submit_tag "Save changes", :class => "btn primary", :disable_with => "Please wait..." %>
+	<span class="seperator"></span>
+	<%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+	<%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
+	
 <% end -%>
+
+<span class="seperator"></span>	                        
+
+<h2 class="title">              
+	Portal pages
+</h2>         
+<div class="seperator"></div>   
+<div class="table-grid">
+	<table>                   
+		<tr> 
+			<th>Page Name</th>
+			<th colspan="2">Content</th>            			
+		</tr>
+		<% @portal_pages.each do |page| %>
+		<tr>                              
+			<td><%= page.page_name %></td>
+			<td><%= page.content %></td>
+			<td>
+				<%= link_to	"Customize", edit_admin_portal_page_path(@portal, page.id), :class => "btn small" %>
+			</td>
+		</tr>
+		<% end %>
+	</table>
+</div>

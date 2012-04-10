@@ -1,6 +1,9 @@
 class HomeController < ApplicationController
-  
-  before_filter :set_content_scope
+	
+ 	before_filter { @hash_of_additional_params = { :format => "html" } }  
+ 	before_filter :set_portal_variables
+  before_filter :set_content_scope        
+	layout "portal"
   
   def index
     redirect_to helpdesk_dashboard_path if (current_user && current_user.permission?(:manage_tickets))
@@ -26,5 +29,9 @@ class HomeController < ApplicationController
         (current_portal.forum_category ? 
             current_portal.forum_category.send("#{@content_scope}topics").newest(5) : [])
     end
-  
+    
+    def set_portal_variables
+      @portal_template = current_portal.template
+    end                     
+    
 end

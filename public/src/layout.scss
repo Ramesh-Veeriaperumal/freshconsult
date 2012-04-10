@@ -23,12 +23,7 @@ html {  height:100%; overflow-y:scroll; }
 
 .fixedWidth{
 	max-width:680px;
-}
-
-#wrap{
-	margin-bottom:0px;
-	text-align:center;
-} 
+}                   
 
 #minwidthfix{
 	width:950px;
@@ -132,6 +127,7 @@ div.bg_pulp{
 	position:relative;
 	padding:5px 0px 0px 0px;
 	background:$header_color;
+	color:#ffffff;
 }
 
 .brand{

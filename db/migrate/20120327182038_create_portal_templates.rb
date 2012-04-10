@@ -7,8 +7,8 @@ class CreatePortalTemplates < ActiveRecord::Migration
       t.text :footer
       t.text :custom_css    ,      :limit => 16777216
       t.text :layout  
-      t.text :contact_info
-
+      t.text :contact_info     
+      t.boolean :active
       t.timestamps
     end
   end

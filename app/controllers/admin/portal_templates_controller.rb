@@ -1,8 +1,11 @@
 class Admin::PortalTemplatesController < Admin::AdminController               
   before_filter :build_object, :only => [:index, :update] 
+  before_filter :get_pages, :only => [:index] 
 
-  def update                                                             
-    if @portal_template.update_attributes(params[:portal_template])
+  def update                                             
+    if params[:preview_button] || !@portal_template.update_attributes(params[:portal_template])
+      render :action => 'new'
+	  else         
       flash[:notice] = "Portal template saved successfully"
     end 
     redirect_to :back  
@@ -10,7 +13,11 @@ class Admin::PortalTemplatesController < Admin::AdminController
  
   protected
     def build_object
-      @portal = current_account.portals.find_by_id(params[:portal_id]) || current_portal 
+      @portal = current_account.portals.find_by_id(params[:portal_id]) || current_portal
       @portal_template = @portal.template || @portal.build_template()
+    end
+                                                           
+    def get_pages
+      @portal_pages = @portal_template.pages
     end
 end

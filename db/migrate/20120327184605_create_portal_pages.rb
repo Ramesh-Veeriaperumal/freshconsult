@@ -1,11 +1,11 @@
 class CreatePortalPages < ActiveRecord::Migration
   def self.up
     create_table :portal_pages do |t|
-      t.integer :portal_template_id, :limit => 8, :null => false
+      t.integer :template_id, :limit => 8, :null => false
       t.integer :account_id, :limit => 8, :null => false
-      t.integer :type, :null => false
-      t.text :content
-
+      t.integer :page_type, :null => false
+      t.text :content           
+      t.boolean :active   
       t.timestamps
     end
   end

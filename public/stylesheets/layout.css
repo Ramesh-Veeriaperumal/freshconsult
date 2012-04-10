@@ -10,8 +10,6 @@ html { height: 100%; overflow-y: scroll; }
 
 .fixedWidth { max-width: 680px; }
 
-#wrap { margin-bottom: 0px; text-align: center; }
-
 #minwidthfix { width: 950px; }
 
 label.overlabel { color: #888888; position: absolute; font-size: 1.0em; font-weight: normal; z-index: 5; margin: 8px; }
@@ -45,7 +43,7 @@ div.bg_pulp { background-color: #F3F1EC; }
 .breadcrumb a:active { color: white; }
 
 /* Header styles */
-.header { overflow: hidden; *zoom: 1; position: relative; padding: 5px 0px 0px 0px; background: #2f3733; }
+.header { overflow: hidden; *zoom: 1; position: relative; padding: 5px 0px 0px 0px; background: #2f3733; color: #ffffff; }
 
 .brand { overflow: hidden; *zoom: 1; position: absolute; left: 0px; margin-left: 8px; text-decoration: none; }
 .brand a { text-decoration: none; }

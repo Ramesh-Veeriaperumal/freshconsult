@@ -1,0 +1,95 @@
+<div id="support-portal" class="container">
+  <header class="header">      
+    <strong>header_content</strong>
+    {{ header_content }}
+  </header>
+  <section class="content wrapper">
+    List of liquid variables as of now
+    
+    <ul>
+      <li>home_link     </li>
+            <li>contact_us_content  </li>
+         <li> </li>
+            <li>portal.language     </li>
+            <li>portal.name</li>
+            <li>portal.fav_icon [will be an 'attachment']</li>
+            <li>portal.logo                              </li>
+            <li>portal.login_url                         </li>
+            <li>portal.logout_url                        </li>
+            <li>portal.signup_url                        </li>
+            <li>portal.new_ticket_url                    </li>
+            <li>portal.tabs</li>
+
+            <li>********** Might need to remove portal.* it is kinda redundant</li>
+
+            <li>tab.name                                                      </li>
+            <li>tab.label                                                     </li>
+            <li>tab.url                                                       </li>
+         <li> </li>
+            <li>current_user                                                  </li>
+            <li>current_user.name                                             </li>
+            <li>current_user.email                                            </li>
+            <li>current_user.phone                                            </li>
+            <li>current_user.can_see_company_tickets?                         </li>
+            <li>current_user.company.name                                     </li>
+
+            <li>solution_categories</li>
+            <li>solution_category.name</li>
+            <li>solution_category.id</li>
+            <li>solution_category.folders</li>
+            <li>solution_category.folder.name</li>
+            <li>solution_category.folder.description</li>
+            <li>solution_category.folder.visibility </li>
+            <li>solution_category.folder.url        </li>
+            <li>solution_category.folder.id         </li>
+            <li>solution_category.folder.solutions  </li>
+            <li>solution_category.folder.solution.title</li>
+            <li>solution_category.folder.solution.body </li>
+            <li>solution_category.folder.solution.body_plain</li>
+            <li>solution_category.folder.solution.url       </li>
+            <li>solution_category.folder.solution.attachments</li>
+            <li>solution_category.folder.solution.tags       </li>
+            <li>solution_category.folder.solution.type ["permanent" or "workaround"]</li>
+            <li>solution_category.folder.solution.status ["draft" or "published"]   </li>
+            <li>solution_category.folder.solution.id                                </li>
+         <li> </li>
+            <li>forum_categories</li>
+            <li>forum_category.name</li>
+            <li>forum_category.id  </li>
+            <li>forum_category.forums</li>
+            <li>forum.name           </li>
+            <li>forum.id             </li>
+            <li>forum.description    </li>
+            <li>forum.type           </li>
+            <li>forum.visibility     </li>
+            <li>forum.url</li>
+                              <li> </li>
+            <li>attachment.name      </li>
+            <li>attachment.url       </li>
+
+            <li>search_term          </li>
+            <li>search_results       </li>
+            <li>search_result.url    </li>
+            <li>search_result.class_name</li>
+         <li> </li>
+            <li>*excerpts</li>
+
+            <li>new_ticket.ticket_fields</li>
+            <li>ticket_field.name       </li>
+            <li>ticket_field.label      </li>
+            <li>ticket_field.label_in_portal</li>
+            <li>ticket_field.field_type     </li>
+            <li>ticket_field.editable?      </li>
+            <li>ticket_field.mandate?       </li>
+            <li>ticket_field.mandate_for_closure?</li>
+            <li>ticket_field.id                  </li>
+            <li>ticket_field.options             </li>
+            <li>ticket_field.option.id                        </li>
+            <li>ticket_field.option.value</li>                     
+    </ul>
+  </section>               
+  <footer class="footer">     
+    <strong>footer_content</strong>
+    {{ footer_content }}
+  </footer>
+</div>
