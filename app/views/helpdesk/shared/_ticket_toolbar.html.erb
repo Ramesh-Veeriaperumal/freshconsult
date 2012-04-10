@@ -25,7 +25,6 @@
 					<%= link_to("Export", { :action => "configure_export" }, :class => "button dialog2", :title => "Export to CSV", "data-width" => "650" ) %>
   
           		<% end %>
-              <%= link_to(t('impersonate_agent_msg'), {:action => "impersonate_agent"}, :class => "button dialog2", :title => t('impersonate_agent_msg'), "data-width" => "360" ) if (current_user.admin? || current_user.supervisor?)%>
           	</th>
           	<th class="toolbar_right"> </th>
       	</tr>
