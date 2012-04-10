@@ -4729,6 +4729,67 @@ a.close{
    	} 
 }
 
+.integration_widget {
+	.content {
+		width: 350px;
+	}
+	@include pie-clearfix;
+	.heading {
+		margin: 10px 0 0;
+		.current_form {
+			font-size:14px;
+			font-weight:bold;
+			color:#000;
+		}
+
+		.other_form {
+			font-size:12px;
+			color:#369;
+			cursor: pointer;
+		}
+
+		.divider {
+			padding:0 15px;
+		}
+	}
+
+	div.field {
+		float:left;
+		margin:5px 0;
+
+		width:100%;
+
+		&.half_width {
+			width:45%;
+			padding: 0 5% 0 0;
+
+			&.right {
+				padding: 0 0 0 5%;
+			}
+		}
+
+	}
+
+	.uiButton[type=submit] {
+		margin:15px 0 10px;
+	}
+
+	.ui-form {
+		background:none;
+		border:none;
+	}
+
+	.loading-fb {
+		width:90%;
+		margin: 3px 5%;
+	}
+
+	.external_link {
+		float: right;
+		clear: both;
+	}
+}
+
 #jira_widget {
 	.content {
 		width: 350px;
@@ -4820,6 +4881,45 @@ a.close{
 		}
 	}
 }
+
+.crm_contact_widget {
+	.content { width:auto; }
+
+	.title {
+		overflow: hidden;
+		padding: 0;
+		margin: 0;
+	}
+
+	.name {
+		width: 165px;
+		background: url(/images/integrations/sugar_icon.png) no-repeat;
+		padding-left:30px;
+		float:left;
+	}
+
+	#multiple-contacts {
+		width: 55px;
+		float:right;
+	}
+	#contact-name {
+		color: #000;
+		font-size: 14px;
+	}
+
+	#contact-desig {
+		font-size: 11px;
+		font-weight: normal;
+	}
+
+	label {
+		font-size:10px;
+		color: #000;
+		font-weight:bold;
+	}
+
+}
+
 
 .twipsy-inner.big {
 	max-width: 300px;

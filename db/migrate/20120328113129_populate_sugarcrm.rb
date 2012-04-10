@@ -25,7 +25,7 @@ class PopulateSugarcrm < ActiveRecord::Migration
     # Add new widget under sugarcrm app
     description = "sugarcrm.widgets.sugarcrm_widget.description"
     script = %{
-      <div id="sugarcrm_widget">
+      <div id="sugarcrm_widget" class="integration_widget crm_contact_widget">
         <div class="content"></div>
       </div>
       <script type="text/javascript">

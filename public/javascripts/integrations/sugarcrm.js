@@ -2,41 +2,44 @@ var SugarWidget = Class.create();
 SugarWidget.prototype= {
 
 	SUGAR_CONTACT:new Template(
-		'<div id="sugarcrm-widget">' +
-			'<img src="/images/integrations/sugar_icon.png"></img>'+
-			'<div id="multiple-contacts" class="field half_width left hide">' +
-			    '<label>Returned Contacts</label> ' +
-			    '<select class="full" id="sugar-contacts" onchange="sugarWidget.contactChanged(this.options[this.selectedIndex].value)"></select> ' +
-			    '<hr/>'+
+			'<div class="title">' +
+				'<div class="name">' +
+					'<span id="contact-name"></span><br />' +
+				    '<span id="contact-desig"></span>'+
+			    '</div>' + 
+				'<div id="multiple-contacts">' +
+					'<div class="toolbar_pagination">'+ 
+						'<a class="disabled prev_page"><span></span></span>' +
+						'<a class="next_page" rel="next"><span></span></a>' +
+					'</div>' +
+			    '</div>' + 
 		    '</div>' + 
-		    '<div id = "sugar-contact-widget">' +
-			    '<span id="contact-name"></span><br />'+
-			    '<span id="contact-desig"></span>'+
-			    '<a target="_blank" id="sugar-view">View in SugarCRM</a></div>'+
-			    '<hr/>'+
-			    '<div id = "sugar-contact">' +
+		    '<hr/>'+
+		    '<div class="field half_width">' +
+		    	'<div id="crm-contact">' +
 				    '<label>Contact</label>' +
-				    '<span id="contact-address"></span>'+
-			    '</div>'+
-			    '<div id = "sugar-phone">' +
+				    '<span id="contact-address"></span>' +
+			    '</div>'+	
+		    	'<div  id="crm-dept">' +
+				    '<label>Department</label>' +
+				    '<span id="contact-dept"></span>' +
+			    '</div>'+	
+		    '</div>'+
+		    '<div class="field half_width">' +
+		    	'<div  id="crm-phone">' +
 				    '<label>Phone</label>' +
 				    '<span id="contact-phone"></span>'+
-				'</div>'+
-				'<div id = "sugar-mobile">' +
+			    '</div>' +
+				'<div id="crm-mobile">' +
 				    '<label>Mobile</label>' +
 				    '<span id="contact-mobile"></span>'+
-				'</div>'+
-				'<div id = "sugar-dept">' +
-				    '<label>Department</label>' +
-				    '<span id="contact-dept"></span>'+
-				'</div>'+
+				'</div>' +
 			'</div>'+
-	    '</div>'),
+			'<div class="external_link"><a target="_blank" id="crm-view">View in SugarCRM</a></div>'),
 
 	SUGAR_CONTACT_NA:new Template(
-		'<div id="sugarcrm-contact-na">' +
-			'<img src="/images/integrations/sugar_icon.png"></img>'+
-			'<span id = "contact-na"> </span>'+
+		'<div class="title">' +
+			'<div class="name"  id="contact-na"></div>'+
 		'</div>'),
 
 	
@@ -85,22 +88,12 @@ SugarWidget.prototype= {
 				if(resJ.result_count == 1){
 					entry_list = resJ.entry_list[0];
 					sugarWidget.renderContact(entry_list);
+
+					jQuery('#multiple-contacts').hide();
 				}
 				else if(resJ.result_count > 1){
 					jQuery('#multiple-contacts').show();
-					dropDownBox = jQuery('#sugar-contacts');
-					var newEntityOption = new Element("option");
-					newEntityOption.value = -1;
-					newEntityOption.innerHTML = "Select a contact to view";
-					dropDownBox.append(newEntityOption);
-
-					for(var i=0; i<resJ.result_count; i++){
-						var newEntityOption = new Element("option");
-						newEntityOption.value = i;
-						newEntityOption.innerHTML = resJ.entry_list[i].name_value_list.name.value;
-						dropDownBox.append(newEntityOption);
-
-					}
+					sugarWidget.contactChanged(0);
 				}
 				
 			}
@@ -128,23 +121,36 @@ SugarWidget.prototype= {
 		jQuery('#sugar-contact-widget').show();
 		jQuery('#contact-name').html('<b>'+fullName+'</b>');
 		jQuery('#contact-desig').text(desig);
-		(address != "") ? (jQuery('#contact-address').html(address).show()) : (jQuery('#sugar-contact').hide()) ;
-		(phone != "") ? jQuery('#contact-phone').text(phone) : (jQuery('#sugar-phone').hide()) ;
-		(mobile != "") ? jQuery('#contact-mobile').text(mobile) : (jQuery('#sugar-mobile').hide()) ;
-		(department != "") ? jQuery('#contact-dept').text(department) : (jQuery('#sugar-dept').hide()) ;
-		jQuery('#sugar-view').attr("href",contactLink);
+		(address != "") ? (jQuery('#contact-address').html(address).show()) : (jQuery('#crm-contact').hide()) ;
+		(phone != "") ? jQuery('#contact-phone').text(phone) : (jQuery('#crm-phone').hide()) ;
+		(mobile != "") ? jQuery('#contact-mobile').text(mobile) : (jQuery('#crm-mobile').hide()) ;
+		(department != "") ? jQuery('#contact-dept').text(department) : (jQuery('#crm-dept').hide()) ;
+		jQuery('#crm-view').attr("href",contactLink);
 	},
 
 	contactChanged:function(value){
 		if(value == -1){
 			jQuery('#sugar-contact-widget').hide();
-			jQuery('#sugar-contact').hide();
-			jQuery('#sugar-phone').hide();
-			jQuery('#sugar-mobile').hide();
-			jQuery('#sugar-dept').hide();
+			jQuery('#crm-contact').hide();
+			jQuery('#crm-phone').hide();
+			jQuery('#crm-mobile').hide();
+			jQuery('#crm-dept').hide();
 		}else{
 			entry_list = sugarWidget.response.entry_list[value];
 			sugarWidget.renderContact(entry_list);
+
+			//Changing the Next and Previous
+			if (value > 0) {
+				jQuery("#multiple-contacts .prev_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value - 1) + ")");
+			} else {
+				jQuery("#multiple-contacts .prev_page").addClass("disabled").attr("href", "javascript:void()");
+			}
+
+			if (value >= sugarWidget.response.entry_list.length - 1) {
+				jQuery("#multiple-contacts .next_page").addClass("disabled").attr("href", "javascript:void()");
+			} else {
+				jQuery("#multiple-contacts .next_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value + 1) + ")");
+			}
 		}
 		
 	},
