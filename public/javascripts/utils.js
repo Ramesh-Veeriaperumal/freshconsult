@@ -309,9 +309,9 @@ active_dialog = null;
        $(node).bind("click", function(ev){
            ev.preventDefault(); 
            elementid = id || node.getAttribute("menuid");
-           element = $(elementid).show(); 
+           element = $(elementid).show().css("visibility", "visible"); 
            $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
-           $(element).find("a").data("menu-active", true);
+           $(element).find("a, li").data("menu-active", true);
            $(node).addClass("selected");
         });
         $(node).data("showAsMenu", true);

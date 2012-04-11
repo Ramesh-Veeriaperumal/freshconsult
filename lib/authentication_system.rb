@@ -22,7 +22,7 @@ module AuthenticationSystem
     end
   
     def is_allowed_to_assume?(user)
-      !is_assumed_user? && (current_user.admin? || ((current_user.supervisor?) && !user.admin? && !user.account_admin?))
+      !is_assumed_user? && !user.account_admin? && (current_user.account_admin? || current_user.admin? || ((current_user.supervisor?) && !user.admin? && !user.account_admin?))
     end
 
     def current_user_session
