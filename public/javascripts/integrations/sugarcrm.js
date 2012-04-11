@@ -160,6 +160,7 @@ SugarWidget.prototype= {
 		sugarWidget.freshdeskWidget.options.application_content = function(){ return sugarWidget.SUGAR_CONTACT_NA.evaluate({});	} 
 		sugarWidget.freshdeskWidget.options.application_resources = null;
 		sugarWidget.freshdeskWidget.display();
+		jQuery("#sugarcrm_widget").removeClass('loading-fb');
 		
 	},
 
