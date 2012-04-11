@@ -44,7 +44,6 @@ SugarWidget.prototype= {
 
 	
 	initialize:function(sugarBundle){
-		console.log(sugarBundle)
 		sugarWidget = this;
 		this.sugarBundle = sugarBundle;
 		var init_reqs = [];
@@ -78,12 +77,13 @@ SugarWidget.prototype= {
 		responseText = sugarWidget.removeRequestKeyword(responseText);
 		resJ = jQuery.parseJSON(responseText);
 		sugarWidget.response = resJ;
+		//Handle Session Timeout
+		if (resJ.number != undefined && resJ.number == 11){
+				sugarWidget.get_sugar_session(sugarWidget.get_sugar_contact);
+				return;
+		}
 		sugarWidget.renderContactWidget();
 		if (resJ.result_count > 0) {
-			//Handle Session Timeout
-			if (resJ.number != undefined && resJ.number == 11){
-				sugarWidget.get_sugar_session(sugarWidget.get_sugar_contact);
-			}else{
 				//renderContact
 				if(resJ.result_count == 1){
 					entry_list = resJ.entry_list[0];
@@ -95,8 +95,6 @@ SugarWidget.prototype= {
 					jQuery('#multiple-contacts').show();
 					sugarWidget.contactChanged(0);
 				}
-				
-			}
 
 		} else{
 			sugarWidget.renderContactNa();
