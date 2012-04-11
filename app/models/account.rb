@@ -137,6 +137,7 @@ class Account < ActiveRecord::Base
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet'
   
+  has_many :support_scores, :class_name => 'SupportScore'
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/

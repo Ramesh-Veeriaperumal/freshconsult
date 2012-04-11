@@ -1,0 +1,21 @@
+	<% if @champions.length > 0 %>
+		<% high_score = @champions[0].tot_score.to_i %> 
+	<% end %>
+	<div class="titlebar" style="margin-top:50px;"><%= t('reports.scoreboard_reports.champions_title')%></div>
+	<% @champions.each do |champion|%>
+	<% unless champion.tot_score.to_i < 0 %>
+	<div class="agentreport">
+		<ul>
+			<li class="nospace"><div class="bignum floatleft">1</div></li>	
+			<li>
+				<div class="floatleft photo"><%= user_avatar(champion.user) %></div>
+				<div class="floatleft agentname"><%= champion.user.display_name %><div>Job Title</div></div>								
+			</li>
+
+			<li>
+				<div class="scorecard" score="<%= (champion.tot_score.to_i / high_score) * 100 %>"></div>
+			</li>			
+		</ul>
+	</div>
+	<% end %>
+	<% end %>

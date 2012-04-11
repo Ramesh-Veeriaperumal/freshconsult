@@ -8,18 +8,18 @@
     <div class="info-data"><%= t('.about_scoreboard')%></div>
     
     <div id="scoreboard_elements">
-    	<h4 class="title">Support Scoreboard - Points Table</h4>
+    	<h4 class="title"><%= t('.points_table_title')%></h4>
         <% remote_form_for :scoreboard_ratings, @scoreboard_ratings, :url => { :action => "update_sb" },  :html => { :method => :put } do |f| %>
         <div>
             <table>
                 <tr>
-                    <th>When Resolution is</th>
-                    <th>Fast (< 1hr)</th>
-                    <th>On time (Within SLA)</th>
-                    <th>Late (Overdue)</th>
+                    <th><%= t(".when_resolution_label")%></th>
+                    <th><%= t(".fast_resolution_label")%></th>
+                    <th><%= t(".ontime_resolution_label")%></th>
+                    <th><%= t(".late_resolution_label")%></th>
                 </tr>
                 <tr>
-                    <td>Points to be awarded</td>
+                    <td><%= t(".point_tobe_awarded_label")%></td>
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
                         <%if scoreboard.resolution_speed != ScoreboardRating::HAPPY_CUSTOMER %>
                             <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
@@ -36,7 +36,7 @@
         </div>
         <br>    
         <div>
-            If the customer says they are "Happy" award <%= @scoreboard_ratings[3][:score]%> bonus points
+            <%= t(".happy_customer_score_label", :happy_score => @scoreboard_ratings[3][:score] )%>
         </div>
         <br>    
         <%= submit_tag t('account.save'), :class => 'uiButton' %>

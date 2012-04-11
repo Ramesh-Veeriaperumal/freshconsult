@@ -1,0 +1,20 @@
+	<% if @sharp_shooters.length > 0 %>
+		<% high_score = @sharp_shooters[0].tot_score.to_i %> 
+	<% end %>
+	<div class="titlebar" style="margin-top: 50px;"><%= t('reports.scoreboard_reports.sharpshooter_title')%></div>
+	<% @sharp_shooters.each do |sharp_shooter|%>
+	<% unless sharp_shooter.tot_score.to_i < 0 %>
+	<div class="agentreport">
+		<ul>
+			<li class="nospace"><div class="bignum floatleft">1</div></li>	
+			<li>
+				<div class="floatleft photo"><%= user_avatar(sharp_shooter.user) %></div>
+				<div class="floatleft agentname"><%= sharp_shooter.user.display_name %><div>Job Title</div></div>								
+			</li>
+			<li>
+				<div class="scorecard" score="<%= (sharp_shooter.tot_score.to_i / high_score) * 100 %>"></div>
+			</li>			
+		</ul>
+	</div>
+	<% end %>
+	<% end %>

@@ -147,6 +147,13 @@ en:
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
+        points_table_title: Support Scoreboard - Points Table
+        when_resolution_label: When resolution is
+        point_tobe_awarded_label: Points to be awarded
+        fast_resolution_label: Fast (< 1 hr)
+        ontime_resolution_label: On time (Within SLA)
+        late_resolution_label: Late (Overdue)
+        happy_customer_score_label: If the customer says they are "Happy" award %{happy_score} bonus points
     getting_started:
         send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
@@ -1981,6 +1988,9 @@ en:
           view_between: View report between
           from: From
           to: To
+      scoreboard_reports:
+        champions_title: Champions
+        sharpshooter_title: Sharp Shooters
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"
