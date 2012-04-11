@@ -44,6 +44,7 @@ SugarWidget.prototype= {
 
 	
 	initialize:function(sugarBundle){
+		jQuery("#sugarcrm_widget").addClass('loading-fb');
 		sugarWidget = this;
 		this.sugarBundle = sugarBundle;
 		var init_reqs = [];
@@ -105,6 +106,7 @@ SugarWidget.prototype= {
 	},
 
 	renderContact:function(entry_list){
+
 		//sugarWidget.renderContactWidget();
 		contactJson = entry_list.name_value_list;
 		fullName = contactJson.name.value;
@@ -124,6 +126,7 @@ SugarWidget.prototype= {
 		(mobile != "") ? jQuery('#contact-mobile').text(mobile) : (jQuery('#crm-mobile').hide()) ;
 		(department != "") ? jQuery('#contact-dept').text(department) : (jQuery('#crm-dept').hide()) ;
 		jQuery('#crm-view').attr("href",contactLink);
+		jQuery("#sugarcrm_widget").removeClass('loading-fb');
 	},
 
 	contactChanged:function(value){
