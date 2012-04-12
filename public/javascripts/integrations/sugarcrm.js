@@ -3,15 +3,10 @@ SugarWidget.prototype= {
 
 	SUGAR_CONTACT:new Template(
 			'<div class="title">' +
+				'<a href="javascript:sugarWidget.renderSearchResults();"> BACK </a>'+
 				'<div class="name">' +
 					'<span id="contact-name"></span><br />' +
 				    '<span id="contact-desig"></span>'+
-			    '</div>' + 
-				'<div id="multiple-contacts">' +
-					'<div class="toolbar_pagination">'+ 
-						'<a class="disabled prev_page"><span></span></span>' +
-						'<a class="next_page" rel="next"><span></span></a>' +
-					'</div>' +
 			    '</div>' + 
 		    '</div>' + 
 		    '<hr/>'+
@@ -42,6 +37,12 @@ SugarWidget.prototype= {
 			'<div class="name"  id="contact-na"></div>'+
 		'</div>'),
 
+	SUGAR_SEARCH_RESULTS:new Template(
+		'<div class="title">' +
+			'<div id="number-returned" class="name"></div>'+
+			'<div id="search-results"></div>'+
+		'</div>'),
+
 	
 	initialize:function(sugarBundle){
 		jQuery("#sugarcrm_widget").addClass('loading-fb');
@@ -61,7 +62,6 @@ SugarWidget.prototype= {
 				application_resources:null
 			});
 			var sugar_session = Cookie.retrieve("sugar_session");
-			console.log(sugar_session);
 			if(sugar_session == "" || sugar_session == null){
 				sugarWidget.get_sugar_session(sugarWidget.get_sugar_contact);
 			}
@@ -93,8 +93,11 @@ SugarWidget.prototype= {
 					jQuery('#multiple-contacts').hide();
 				}
 				else if(resJ.result_count > 1){
-					jQuery('#multiple-contacts').show();
-					sugarWidget.contactChanged(0);
+					//jQuery('#multiple-contacts').show();
+					//sugarWidget.contactChanged(0);
+					sugarWidget.renderSearchResults();
+					jQuery("#sugarcrm_widget").removeClass('loading-fb');
+
 				}
 
 		} else{
@@ -105,9 +108,19 @@ SugarWidget.prototype= {
 		}
 	},
 
+	renderSearchResults:function(){
+		var sugarResults="";
+		sugarWidget.renderSearchResultsWidget();
+		for(var i=0; i<sugarWidget.response.result_count; i++){
+			sugarResults += '<a href="javascript:sugarWidget.contactChanged(' + i + ')">'+resJ.entry_list[i].name_value_list.name.value+'</a><br/>';
+		}
+		jQuery('#number-returned').text(sugarWidget.response.result_count + " results returned for " + sugarWidget.sugarBundle.reqEmail)
+		jQuery('#search-results').html(sugarResults);
+	},
+
 	renderContact:function(entry_list){
 
-		//sugarWidget.renderContactWidget();
+		sugarWidget.renderContactWidget();
 		contactJson = entry_list.name_value_list;
 		fullName = contactJson.name.value;
 		title = contactJson.title.value;
@@ -139,19 +152,21 @@ SugarWidget.prototype= {
 		}else{
 			entry_list = sugarWidget.response.entry_list[value];
 			sugarWidget.renderContact(entry_list);
+			//jQuery("#multiple-contacts .prev_page").addClass("disabled").attr("href", "javascript:void()");
+
 
 			//Changing the Next and Previous
-			if (value > 0) {
-				jQuery("#multiple-contacts .prev_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value - 1) + ")");
-			} else {
-				jQuery("#multiple-contacts .prev_page").addClass("disabled").attr("href", "javascript:void()");
-			}
+			// if (value > 0) {
+			// 	jQuery("#multiple-contacts .prev_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value - 1) + ")");
+			// } else {
+			// 	jQuery("#multiple-contacts .prev_page").addClass("disabled").attr("href", "javascript:void()");
+			// }
 
-			if (value >= sugarWidget.response.entry_list.length - 1) {
-				jQuery("#multiple-contacts .next_page").addClass("disabled").attr("href", "javascript:void()");
-			} else {
-				jQuery("#multiple-contacts .next_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value + 1) + ")");
-			}
+			// if (value >= sugarWidget.response.entry_list.length - 1) {
+			// 	jQuery("#multiple-contacts .next_page").addClass("disabled").attr("href", "javascript:void()");
+			// } else {
+			// 	jQuery("#multiple-contacts .next_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value + 1) + ")");
+			// }
 		}
 		
 	},
@@ -166,6 +181,12 @@ SugarWidget.prototype= {
 
 	renderContactWidget:function(){
 		sugarWidget.freshdeskWidget.options.application_content = function(){ return sugarWidget.SUGAR_CONTACT.evaluate({});	} 
+		sugarWidget.freshdeskWidget.options.application_resources = null;
+		sugarWidget.freshdeskWidget.display();
+	},
+
+	renderSearchResultsWidget:function(){
+		sugarWidget.freshdeskWidget.options.application_content = function(){ return sugarWidget.SUGAR_SEARCH_RESULTS.evaluate({});	} 
 		sugarWidget.freshdeskWidget.options.application_resources = null;
 		sugarWidget.freshdeskWidget.display();
 	},
