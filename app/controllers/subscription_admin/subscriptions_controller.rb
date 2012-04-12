@@ -31,7 +31,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   def charge
     if request.post? && !params[:amount].blank?
       load_object
-      if @subscription.misc_charge(params[:amount])
+      if @subscription.misc_charge(params[:amount].to_f)
         flash[:notice] = 'The card has been charged.'
         redirect_to :action => "show"
       else
