@@ -1,6 +1,7 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
     <%= f.error_messages %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 	  <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">       

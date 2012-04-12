@@ -50,7 +50,11 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def item_url
-      @parent
+      if @parent.is_a?(Helpdesk::Ticket) && !params[:page].nil?
+        helpdesk_ticket_path({:id=> @parent.display_id, :page =>  params[:page]})
+      else
+        @parent
+      end
     end
     
     def email_reply?
