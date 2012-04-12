@@ -1,7 +1,8 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
     <%= f.error_messages %>
-	  <%= hidden_field_tag :tweet, "true", :id => "tweet" %>
+	<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
     <%= f.hidden_field :private , :value => "false" %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">       

@@ -12,6 +12,7 @@
           <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
           <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>
           <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+          <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 		      <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
         </div>
 		<li class="inline-field field" id="notify-email-form-container" style="display:block">
