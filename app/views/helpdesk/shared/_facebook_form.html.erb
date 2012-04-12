@@ -11,7 +11,7 @@
         </label>
 	  </li>				
 	  <li class="inline-field field">
-	    <label class="caption">Comment:</label>
+	    <label class="caption"><%=@ticket.is_fb_message? ? "Reply" : "Comment:"%></label>
 	    <div class="fields">
 	    <%= f.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
       <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
@@ -20,7 +20,8 @@
 	  </li>
       <li class="button-container">
 				<span class="tweet-counter" id="SendFacebookCounter">8000</span>
-        <%= submit_tag("Post", :class => "uiButton") %>
+        <%= submit_tag("Post", :class => "uiButton") if @ticket.is_fb_wall_post? %>
+		 <%= submit_tag("Reply", :class => "uiButton") if @ticket.is_fb_message? %>
       </li>
     </ul> 
   <% end %>

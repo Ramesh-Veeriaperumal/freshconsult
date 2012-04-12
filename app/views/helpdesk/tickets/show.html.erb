@@ -12,7 +12,8 @@
 		<div class="replylinks">
 			<%= button_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :id => "ReplyButton", :class => "button") unless @item.from_email.nil? %>
 			<%= button_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton", :class => "button") if @item.requester && @item.is_twitter?%>
-			<%= button_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "button") if @item.requester && @item.is_facebook?%>
+			<%= button_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "button") if @item.requester && @item.is_fb_wall_post?%>
+			<%= button_to_function("Reply", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "button") if @item.requester && @item.is_fb_message?%>
 			<%= button_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton", :class => "button") %>		
 			<%= button_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
 		</div>
