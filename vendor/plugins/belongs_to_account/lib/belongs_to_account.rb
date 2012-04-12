@@ -9,7 +9,11 @@ module BelongsToAccount
       belongs_to :account
   
       default_scope do
-        { :conditions => { :account_id => Account.current.id } } if Account.current
+       if Account.current
+         { :conditions => { :account_id => Account.current.id } } 
+      else
+        {}
+       end
       end
       
       before_create :set_account_id
