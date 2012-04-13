@@ -63,9 +63,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 body, td, pre { color: #333333; font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif; margin: 8px; font-size: 13px; line-height: 18px; }
 
-p, li { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
+p, li, div { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
 
-code, pre, p, li, div, span { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
+code, pre, p, li { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
 
 h1 { font-size: 2em; }
 

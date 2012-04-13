@@ -289,7 +289,8 @@ active_dialog = null;
     return this;
  }; 
 
- $(document).bind('mousedown', function(e) {
+ $(document).bind('mousedown', function(e) {       
+	if($(e.target).hasClass("chzn-results")) return;
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         

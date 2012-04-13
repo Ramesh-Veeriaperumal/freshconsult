@@ -226,8 +226,8 @@ h4.title { font-size: 1.1em; font-weight: bold; }
 .request_details .preview_pic img { width: 36px; height: 36px; }
 .request_details div.description { position: relative; }
 .request_details div.description .details { font-size: 13px; line-height: 18px; }
-.request_details div.description .details p, .request_details div.description .details li { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
-.request_details div.description .details code, .request_details div.description .details pre, .request_details div.description .details p, .request_details div.description .details li, .request_details div.description .details div, .request_details div.description .details span { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
+.request_details div.description .details p, .request_details div.description .details li, .request_details div.description .details div { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
+.request_details div.description .details code, .request_details div.description .details pre, .request_details div.description .details p, .request_details div.description .details li { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
 .request_details div.description .details h1 { font-size: 2em; }
 .request_details div.description .details h2 { font-size: 1.5em; }
 .request_details div.description .details h3 { font-size: 1.17em; }
@@ -981,8 +981,8 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .tab_panel a.active, .tab_panel a:hover { *zoom: 1; filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE1E1E1'); /* Fallback: */ background: #f5f5f5; /* CSS 3 plus vendor prefixes: */ background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #e1e1e1)); background-image: -webkit-linear-gradient(#f5f5f5, #e1e1e1); background-image: -moz-linear-gradient(#f5f5f5, #e1e1e1); background-image: -o-linear-gradient(#f5f5f5, #e1e1e1); background-image: -ms-linear-gradient(#f5f5f5, #e1e1e1); background-image: linear-gradient(#f5f5f5, #e1e1e1); }
 
 .solutions_text { padding-top: 8px; }
-.solutions_text p, .solutions_text li { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
-.solutions_text code, .solutions_text pre, .solutions_text p, .solutions_text li, .solutions_text div, .solutions_text span { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
+.solutions_text p, .solutions_text li, .solutions_text div { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
+.solutions_text code, .solutions_text pre, .solutions_text p, .solutions_text li { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
 .solutions_text h1 { font-size: 2em; }
 .solutions_text h2 { font-size: 1.5em; }
 .solutions_text h3 { font-size: 1.17em; }
