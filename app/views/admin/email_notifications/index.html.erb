@@ -154,7 +154,7 @@
 						     
 						<% if data[:notification_type] == EmailNotification::NEW_TICKET %>
 							<label><%= t('agent.title') %></label>         
-							<%= select_tag "notify_agents_#{data.id}", options_for_select( @agent_hash[:options].map {|a| [a[1], a[0]] }, data.agents.collect {|a| a.id} ), { :multiple => true, "data-placeholder"=> "Optionally select agents to notify", :class => "customSelect", "data-default" => data.agents.collect{|a| a.id}.join(",") } %>
+							<%= select_tag "notify_agents_#{data.id}", options_for_select( @agent_hash[:options].map {|a| [a[1], a[0]] }, data.agents.collect {|a| a.id} ), { :multiple => true, "data-placeholder"=> t('email_notifications_agent_selection_msg'), :class => "customSelect", "data-default" => data.agents.collect{|a| a.id}.join(",") } %>
 						<% end %>                                
 						<div class="seperator"></div>
 						

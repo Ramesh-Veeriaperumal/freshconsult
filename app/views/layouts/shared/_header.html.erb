@@ -29,8 +29,8 @@
       		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
 				<span class="seperator"></span>
 				<div class="info">
-					<h5>Switch Agent</h5>      
-					<%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible.allowed_to_assume(current_user), :id, :name), { :class => "customSelect", "data-placeholder"=> "Switch to Another Agent", "onchange" => "assume_identity_url()", :style => "width:250px" } %>
+					<h5><%=t('switch_heading')%></h5>      
+					<%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible.allowed_to_assume(current_user), :id, :name), { :class => "customSelect", "data-placeholder"=> t('swith_agent_msg'), "onchange" => "assume_identity_url()", :style => "width:250px" } %>
 					<% javascript_tag do%>
 					  function assume_identity_url() {
 					    window.location = '/users/'+$('responder_id').value+'/assume_identity';

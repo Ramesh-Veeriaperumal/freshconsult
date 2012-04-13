@@ -141,7 +141,7 @@ module AuthenticationSystem
     end
     
     def qualify_for_day_pass?
-      current_user && current_user.occasional_agent? && current_account.subscription.active?
+      current_user && current_user.occasional_agent? && current_account.subscription.active? && !is_assumed_user?
     end
 
     SUPPORTED_API_KEY_FORMATS = ['xml', 'json', 'widget']
