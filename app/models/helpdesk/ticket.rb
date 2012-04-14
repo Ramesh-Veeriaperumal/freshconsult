@@ -6,7 +6,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
-  include ParserUtil
+
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
   
@@ -395,7 +396,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def populate_requester #by Shan temp  
     portal =  email_config.portal if email_config
     unless email.blank?
-      self.email = parse_email_text(email)[:email]
+      self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email) unless email.nil?
         if @requester.nil?
@@ -877,7 +878,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-  end
+    end
+
+    def parse_email(email)
+      if email =~ /(.+) <(.+?)>/
+        name = $1
+        email = $2
+      elsif email =~ /<(.+?)>/
+        email = $1
+      else email =~ EMAIL_REGEX
+        email = $1
+      end
+      email
+    end  
     
 end
   
