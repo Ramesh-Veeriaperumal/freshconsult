@@ -77,7 +77,7 @@ class CapsuleCRM::Person < CapsuleCRM::Party
   
   def attributes_hash
     hsh = {  "firstName" => name ,
-             "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"}, "phone" => {}} ,
+             "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"}} ,
              "organisationId" => organisation_id }
     hsh["contacts"]["phone"] =  {"phoneNumber" => phone, "type" => "Work"} unless phone.blank?
     hsh
