@@ -30,10 +30,10 @@
 				<span class="seperator"></span>
 				<div class="info">
 					<h5><%=t('switch_heading')%></h5>      
-					<%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible.allowed_to_assume(current_user), :id, :name), { :class => "customSelect", "data-placeholder"=> t('swith_agent_msg'), "onchange" => "assume_identity_url()", :style => "width:250px" } %>
+					<%= select_tag 'assumed_select_id', options_from_collection_for_select(current_account.users.technicians.visible.allowed_to_assume(current_user), :id, :name), { :class => "customSelect", "data-placeholder"=> t('swith_agent_msg'), "onchange" => "assume_identity_url()", :style => "width:250px" } %>
 					<% javascript_tag do%>
 					  function assume_identity_url() {
-					    window.location = '/users/'+$('responder_id').value+'/assume_identity';
+					    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
 					  }
 					<%end%>
 				</div>
