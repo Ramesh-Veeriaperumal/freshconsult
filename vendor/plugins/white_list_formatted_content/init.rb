@@ -46,6 +46,7 @@ ActiveRecord::Base.class_eval do
       elsif body.blank? && body_html.blank?
         self.body = self.body_html = "Not given."
       end
+      self.body_html = Nokogiri::HTML(self.body_html).at_css("body").to_html
     end
     
     def update_content # To do :: need to use changed_body_html?

@@ -227,14 +227,14 @@ h4.title { font-size: 1.1em; font-weight: bold; }
 .request_details div.description { position: relative; }
 .request_details div.description .details { font-size: 13px; line-height: 18px; }
 .request_details div.description .details p, .request_details div.description .details li, .request_details div.description .details div { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
-.request_details div.description .details code, .request_details div.description .details pre { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
+.request_details div.description .details code, .request_details div.description .details pre, .request_details div.description .details p, .request_details div.description .details li { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
 .request_details div.description .details h1 { font-size: 2em; }
 .request_details div.description .details h2 { font-size: 1.5em; }
 .request_details div.description .details h3 { font-size: 1.17em; }
 .request_details div.description .details h4 { font-size: 1em; }
 .request_details div.description .details h5 { font-size: .83em; }
 .request_details div.description .details h6 { font-size: .75em; }
-.request_details div.description .details img { border: 0; max-width: 100%; height: auto; }
+.request_details div.description .details img, .request_details div.description .details iframe { border: 0; max-width: 100%; height: auto; }
 .request_details div.description .details table { cursor: default; border: 1px solid #afafaf; }
 .request_details div.description .details table td, .request_details div.description .details table th { cursor: text; font-size: inherit; font-size: 13px; border: 1px solid #afafaf; padding: 4px; }
 .request_details div.description .details em { font-style: italic; }
@@ -982,14 +982,14 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 
 .solutions_text { padding-top: 8px; }
 .solutions_text p, .solutions_text li, .solutions_text div { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
-.solutions_text code, .solutions_text pre { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
+.solutions_text code, .solutions_text pre, .solutions_text p, .solutions_text li { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
 .solutions_text h1 { font-size: 2em; }
 .solutions_text h2 { font-size: 1.5em; }
 .solutions_text h3 { font-size: 1.17em; }
 .solutions_text h4 { font-size: 1em; }
 .solutions_text h5 { font-size: .83em; }
 .solutions_text h6 { font-size: .75em; }
-.solutions_text img { border: 0; max-width: 100%; height: auto; }
+.solutions_text img, .solutions_text iframe { border: 0; max-width: 100%; height: auto; }
 .solutions_text table { cursor: default; border: 1px solid #afafaf; }
 .solutions_text table td, .solutions_text table th { cursor: text; font-size: inherit; font-size: 13px; border: 1px solid #afafaf; padding: 4px; }
 .solutions_text em { font-style: italic; }
