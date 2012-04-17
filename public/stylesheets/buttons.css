@@ -115,11 +115,11 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .button:active, .toolbar_pagination_full a:active, .toolbar_pagination_full span:active, .toolbar_pagination .prev_page:active, .toolbar_pagination .next_page:active, .toolbar_pagination_full .prev_page:active, .toolbar_pagination_full .next_page:active, .slim-button:active { color: #3f3f3f; }
 .button img, .toolbar_pagination_full a img, .toolbar_pagination_full span img, .toolbar_pagination .prev_page img, .toolbar_pagination .next_page img, .toolbar_pagination_full .prev_page img, .toolbar_pagination_full .next_page img, .slim-button img { width: auto; height: auto; }
 
-.close-button { display: inline-block; width: 20px; height: 20px; background: url('/images/symbols-s069e62ca4f.png') 0 -242px no-repeat; }
+.close-button { display: inline-block; width: 20px; height: 20px; background: url('/images/symbols-sa94eb52ffd.png') 0 -242px no-repeat; }
 
 .icon-detail { padding-left: 25px; }
 .icon-detail span { position: absolute; left: 4px; top: 3px; width: 16px; height: 16px; }
-.icon-detail .symbols-add { background: url('/images/symbols-s069e62ca4f.png') 0 -16px no-repeat; }
+.icon-detail .symbols-add { background: url('/images/symbols-sa94eb52ffd.png') 0 -16px no-repeat; }
 
 .slim-button { padding: 1px 8px; font-size: 10px; -moz-border-radius: 8px 8px 8px 8px; -webkit-border-radius: 8px 8px 8px 8px; border-radius: 8px 8px 8px 8px; }
 
@@ -138,9 +138,9 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .toolbar_pagination .prev_page, .toolbar_pagination .next_page { float: left; font-size: 1px; width: 7px; height: 9px; right: 0px; height: 14px; position: absolute; width: 11px; }
 .toolbar_pagination .prev_page span, .toolbar_pagination .next_page span { left: 2px; top: 0px; position: absolute; width: 22px; height: 22px; }
 .toolbar_pagination .prev_page { -moz-border-radius: 3px 0 0 3px; -webkit-border-radius: 3px 0 0 3px; border-radius: 3px 0 0 3px; margin-right: 0px; right: 30px; }
-.toolbar_pagination .prev_page span { background: url('/images/symbols-s069e62ca4f.png') 0 -48px no-repeat; }
+.toolbar_pagination .prev_page span { background: url('/images/symbols-sa94eb52ffd.png') 0 -48px no-repeat; }
 .toolbar_pagination .next_page { -moz-border-radius: 0 3px 3px 0; -webkit-border-radius: 0 3px 3px 0; border-radius: 0 3px 3px 0; margin-left: 0px; border-left: 0; }
-.toolbar_pagination .next_page span { background: url('/images/symbols-s069e62ca4f.png') 0 -70px no-repeat; }
+.toolbar_pagination .next_page span { background: url('/images/symbols-sa94eb52ffd.png') 0 -70px no-repeat; }
 
 .toolbar_pagination_full { text-align: center; }
 .toolbar_pagination_full .disabled.prev_page, .toolbar_pagination_full .disabled.next_page { -moz-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.3); -webkit-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.3); -o-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.3); box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.3); }

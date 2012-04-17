@@ -509,7 +509,20 @@ body h5{
   top: 0;             
 	z-index:20;
 	text-align:right;
-	.btn{ font-weight:bold; padding:4px 9px; }
+	.button{ position:relative; }
+	.reply{ 
+	  padding:4px 9px 4px 26px;         
+    span{
+      position:absolute;
+      width:14px;
+      height:11px;
+      left:7px;
+      top:6px;
+    }       
+	} 
+	.email span{ background: sprite($symbol, reply-email) no-repeat; }
+	.tweet span{ background: sprite($symbol, reply-tweet) no-repeat; }
+ 	.facebook span{ background: sprite($symbol, reply-fb) no-repeat; } 	
 }
                          
 .status-pointer, .priority-pointer{
