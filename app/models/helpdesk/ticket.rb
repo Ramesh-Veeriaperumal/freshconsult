@@ -469,6 +469,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_ticket_states
     self.ticket_states = Helpdesk::TicketState.new
+    ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
     ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
@@ -615,7 +616,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_custom_field   
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
-    self.ff_def = ff_def_id       
+    self.ff_def = ff_def_id
+    self.flexifield.account_id = account_id
     unless self.custom_field.nil?          
       self.assign_ff_values self.custom_field    
     end
