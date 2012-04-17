@@ -68,6 +68,7 @@ class ThirdCRM
     account_admin = account.account_admin
     person.name = account_admin.name
     person.email = account_admin.email
+    person.phone = account_admin.phone
     person.organisation_id = organisation_id
     person_id = person.save
     raise Exception if person_id.blank?
