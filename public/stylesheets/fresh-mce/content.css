@@ -61,7 +61,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 #tag-cloud li a:hover { color: #000000; }
 
-body, td, pre { color: #333333; font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif; margin: 8px; font-size: 13px; line-height: 18px; }
+body, td, pre { color: #333333; font-family: "Helvetica neue", "Helvetica", Arial, Verdana, sans-serif; margin: 8px; font-size: 13px; line-height: 18px; }
 
 p, li { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
 

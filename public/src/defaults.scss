@@ -2,7 +2,7 @@
 @import "base";
 @import "mixins";  
 
-body {	font:12px $blueprint-font-family; background-color: transparent; }
+body {	font:13px $blueprint-font-family; background-color: transparent; }
  
 code, pre {
   padding: 0 3px 2px;
@@ -37,14 +37,16 @@ a:hover{ text-decoration:none;}
 .title{ color:#404040; padding: 6px 0px 10px 0px; font-weight:bold;}
 /*.title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }*/
 h1.title{ font-size:2em; text-transform:capitalize; font-weight:normal; }
-h2.title{ font-size:1.65em; }
+h2.title{ font-size:24px; }
 h3.title, h3.sub_title, h3.title-band{ font-size:1.45em; }
 h4.title { font-size:1.30em; }
 h4.title.margin-set { margin-bottom:8px }
 
 h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
-h3.sub_title{ font-size:1.1em; }
+h3.sub_title{ font-size:1.1em; }  
+h6{ font-size:13px; text-transform:uppercase; line-height:24px; font-weight:bold; }
 
+.sub-title{ font-size:18px; }
 .floatl{ @include float-left; }
 .floatr{ @include float-right; }
 .alignright{text-align:right;}

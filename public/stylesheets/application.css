@@ -262,7 +262,7 @@ h4.title { font-size: 1.1em; font-weight: bold; }
 .request_details .request_desp .sub_title { color: #454545; display: block; font-weight: bold; text-transform: capitalize; font-size: 14px; }
 .request_details .subtitle { margin: 0px; padding: 8px 0px; font-size: 14px; font-weight: bold; color: #333333; }
 
-.seperator { border-bottom: 1px solid #efefef; font-size: 0px; display: block; height: 1px; margin: 5px 0px; }
+.seperator { border-bottom: 1px solid #e5e5e5; font-size: 0px; display: block; height: 1px; margin: 5px 0px; }
 
 .attachment_list, .ui-form .attachment_list { list-style: none; color: #888987; margin-top: 3px; padding: 0px; overflow: hidden; *zoom: 1; }
 .attachment_list li, .ui-form .attachment_list li { list-style-image: none; list-style-type: none; margin-left: 0px; }

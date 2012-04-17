@@ -7,9 +7,14 @@
 }
 label{
    display: block; 
-   color: #666;
-   padding:6px 0 3px 0;
-   font-size:1.4em;
+   color: #323232;
+   padding:0 0 6px 0;
+   font-size:15px;
+}                
+
+.help-text{
+  font-size:13px;
+  color:#888888;
 }
 
 
@@ -88,6 +93,10 @@ textarea{
    line-height:1.4em;
    resize:none;
    padding:3px;
+}       
+
+textarea.auto{
+  height:auto;
 }
 
 input.very_small{

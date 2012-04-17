@@ -1,51 +1,66 @@
-<% content_for :sidebar do -%><%- end %>                   
+<% content_for :sidebar do -%><%- end %>
+<h2 class="title">Advance portal rebranding</h2>
+<h3 class="sub-title">Customize your support portal</h3>
+<span class="seperator"></span>   
+<% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>   
+<div class="customize-form">
+<ul data-tabs="tabs" class="customize-sidebar">
+  <li>
+    <a href="#Pageselements">Page elements</a>
+  </li>
+  <li>
+    <a href="#Customcss">Custom stylesheet</a>
+  </li>
+  <li>
+    <a href="#Pageslayout">Page layout</a>    
+  </li>   
+  <li>                       
+    <h6>Portal pages</h6>
+    <ul>                     
+      <% @portal_pages.each do |page| %>
+  		  <li><%= link_to	page.page_name, edit_admin_portal_page_path(@portal, page.id), :class => "btn small" %> </li>
+  		<% end %>
+      <li>                                          
+        <%= select_tag("page_types", options_for_select(@page_types), :class => "customSelect", "data-placeholder" => "Add Page...") %> 
+      </li>
+    </ul>
+  </li>       
+</ul>     
+   
+  <div class="tab-content">
+  	<div class="active tab-pane" id="Pageselements">
+    	<label>Header</label>  
+    	<label class="help-text">Change the header area of your support portal</label>
+    	<%= f.text_area :header %>
 
-<h3 class="title">              
-	Portal templates
-</h3>
-<span class="seperator"></span>
-<% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
-	<label>Header</label>
-	<%= f.text_area :header %>
-	
-	<label>Footer</label>
-	<%= f.text_area :footer %>
-
-	<label>Contact Information</label>
-	<%= f.text_area :contact_info %>	
+    	<label>Contact Information</label>        
+      <label class="help-text">Add contact information of like phone no. or email. This information will come in the side bar of your support portal</label>
+    	<%= f.text_area :contact_info %>
 		
-	<label>Custom Css</label>
-	<%= f.text_area :custom_css %>        
-	
-	<label>Layout</label>
-	<%= f.text_area :layout %>              
+    	<label>Footer</label>
+    	<label class="help-text">Change the footer area of your support portal</label>	
+    	<%= f.text_area :footer %>
+  	</div>
 
-	<span class="seperator"></span>
-	<%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
-	<%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
-	
-<% end -%>
-
-<span class="seperator"></span>	                        
-
-<h2 class="title">              
-	Portal pages
-</h2>         
-<div class="seperator"></div>   
-<div class="table-grid">
-	<table>                   
-		<tr> 
-			<th>Page Name</th>
-			<th colspan="2">Content</th>            			
-		</tr>
-		<% @portal_pages.each do |page| %>
-		<tr>                              
-			<td><%= page.page_name %></td>
-			<td><%= page.content %></td>
-			<td>
-				<%= link_to	"Customize", edit_admin_portal_page_path(@portal, page.id), :class => "btn small" %>
-			</td>
-		</tr>
-		<% end %>
-	</table>
+  	<div class="tab-pane" id="Customcss">		
+    	<label>Custom stylesheet</label>   
+    	<label class="help-text">Add or overwrite freshdesk default styles with your own custom css</label>
+    	<%= f.text_area :custom_css, :class => "auto", :rows => 24 %>            
+  	</div>
+	     
+  	<div class="tab-pane" id="Pageslayout">
+    	<label>Page layout</label>
+    	<label class="help-text">Customize the entire layout of your support portal</label>	
+    	<%= f.text_area :layout, :class => "auto", :rows => 24 %>       
+  	</div>  
+  	
+  	<div class="tab-pane" id="AddPage">
+  	 <div class="loading-box"></div>
+  	</div>
+  </div>
+</div>                                                                              
+<div class="well">
+  <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+  <%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
 </div>
+<% end -%> 

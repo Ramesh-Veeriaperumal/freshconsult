@@ -1,9 +1,5 @@
-<h3 class="title">New page</h3> 
 <% form_for [:admin, @portal_page] do |f| %>
   <%= f.error_messages %>                          
 	<%= render :partial => "form", :object => f %>
-	<span class="seperator"></span>
-	<%= link_to 'Back', admin_portal_templates_path, :class => "btn" %>
-  <%= f.submit 'Create', :class => "btn primary" %>
 <% end %>
 

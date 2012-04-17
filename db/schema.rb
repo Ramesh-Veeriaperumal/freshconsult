@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120327184605) do
+ActiveRecord::Schema.define(:version => 20120329115633) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -50,6 +50,8 @@ ActiveRecord::Schema.define(:version => 20120327184605) do
     t.datetime "updated_at"
   end
 
+  add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
+
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id"
@@ -78,7 +80,7 @@ ActiveRecord::Schema.define(:version => 20120327184605) do
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ticket_permission"
+    t.integer  "ticket_permission",              :default => 1
     t.boolean  "occasional",                     :default => false
     t.string   "google_viewer_id"
   end
@@ -757,9 +759,9 @@ ActiveRecord::Schema.define(:version => 20120327184605) do
   end
 
   create_table "portal_pages", :force => true do |t|
-    t.integer  "portal_template_id", :limit => 8, :null => false
-    t.integer  "account_id",         :limit => 8, :null => false
-    t.integer  "type",                            :null => false
+    t.integer  "template_id", :limit => 8, :null => false
+    t.integer  "account_id",  :limit => 8, :null => false
+    t.integer  "page_type",                :null => false
     t.text     "content"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -773,6 +775,7 @@ ActiveRecord::Schema.define(:version => 20120327184605) do
     t.text     "custom_css",   :limit => 2147483647
     t.text     "layout"
     t.text     "contact_info"
+    t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -839,7 +842,6 @@ ActiveRecord::Schema.define(:version => 20120327184605) do
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
-  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "social_fb_pages_account_id_and_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|

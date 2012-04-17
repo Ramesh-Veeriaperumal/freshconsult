@@ -17,7 +17,8 @@ class Admin::PortalTemplatesController < Admin::AdminController
       @portal_template = @portal.template || @portal.build_template()
     end
                                                            
-    def get_pages
+    def get_pages                  
+      @page_types = Portal::Page::PAGE_TYPE_OPTIONS
       @portal_pages = @portal_template.pages
     end
 end
