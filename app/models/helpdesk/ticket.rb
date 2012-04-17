@@ -6,9 +6,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
-  
+
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
+
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
@@ -151,7 +151,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
-      user.id ] } }
+      user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }
@@ -320,7 +320,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "[##{display_id}]"
+    "[#{delimited_display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -336,8 +336,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self[:spam] = (category == :spam)
   end
     
-  def self.extract_id_token(text)
-    pieces = text.match(/\[#([0-9]*)\]/) #by Shan changed to just numeric
+  def self.extract_id_token(text, delimeter)
+    pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
     pieces && pieces[1]
   end
 
@@ -501,14 +501,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
-  REQUESTER_NOTIFICATIONS = [ EmailNotification::NEW_TICKET, 
-    EmailNotification::TICKET_CLOSED, EmailNotification::TICKET_RESOLVED  ]
-  
   def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    
-    REQUESTER_NOTIFICATIONS.include?(notification_type) ? e_notification.requester_notification? : 
-      e_notification.agent_notification?
+    e_notification.requester_notification? or e_notification.agent_notification?
   end
   
   def custom_fields
@@ -516,7 +511,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
+
+  def ticket_id_delimiter
+    delimiter = account.email_commands_setting.ticket_id_delimiter
+    delimiter = delimiter.blank? ? '#' : delimiter
+  end
   
+  def delimited_display_id
+    "#{ticket_id_delimiter}#{display_id}"
+  end
+
   def to_s
     "#{subject} (##{display_id})"
   end
@@ -533,7 +537,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     email_config ? email_config.reply_email : account.default_email
   end
   
-  
+  def reply_name
+    email_config ? email_config.name : account.primary_email_config.name
+  end
 
   #Some hackish things for virtual agent rules.
   def tag_names
@@ -725,8 +731,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
-          value = send(field.name) 
-          xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+          begin
+           value = send(field.name) 
+           xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+         rescue
+           end 
         end
       end
      end
@@ -869,10 +878,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-  end
-  
-    
-  def parse_email(email)
+    end
+
+    def parse_email(email)
       if email =~ /(.+) <(.+?)>/
         name = $1
         email = $2
@@ -880,9 +888,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       else email =~ EMAIL_REGEX
         email = $1
-      end  
-     email
- end
- 
+      end
+      email
+    end  
+    
 end
   

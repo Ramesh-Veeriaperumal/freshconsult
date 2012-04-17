@@ -1,0 +1,21 @@
+page << "var loading_div = jQuery('#agent_invite_status');"
+page << "var status_box = loading_div.find('#status_update');"
+if @responseObj[:reached_limit]
+  page << "Loading.updateStatus(status_box,'failure', '"+t('admin.getting_started.index.agent_limit_reached')+"');"
+else
+  page << "Loading.updateStatus(status_box,'success', '"+t('admin.getting_started.index.successfully_sent')+"');"
+end
+
+if @existing_users.length > 0
+   @agents_email = (@existing_users.collect { |a| a[:email] }).join(", ")
+   flash[:notice] = t(:'admin.getting_started.index.agent_email_taken', :emails => @agents_email)
+   show_ajax_flash page
+   if @new_users.length > 0
+     page << "Loading.updateStatus(status_box,'success', '"+t('admin.getting_started.index.agent_email_partial')+"');"     
+   elsif
+     page << "Loading.updateStatus(status_box,'failure', '"+t('admin.getting_started.index.agent_email_exist')+"');"
+   end
+end
+
+page << "loading_div.delay(1000).hide(1);"
+page << "jQuery('#agents_invite_email').val('')"

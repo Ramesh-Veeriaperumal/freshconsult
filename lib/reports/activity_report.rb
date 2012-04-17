@@ -5,12 +5,15 @@ module Reports::ActivityReport
     unless params[:reports].nil?
       columns_in_use = columns_in_use.concat(params[:reports])
     end
-  
+
     columns_in_use.each do |column_name|
       tickets_count = group_tkts_by_columns({:column_name => column_name })
       tickets_hash = get_tickets_hash(tickets_count,column_name)
       self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_hash", tickets_hash)
     end
+
+    count_of_resolved_tickets
+
   end
   
  def get_tickets_time_line
@@ -107,11 +110,13 @@ module Reports::ActivityReport
   end
   
   def start_date
-    parse_from_date.nil? ? 30.days.ago.to_s(:db): Time.parse(parse_from_date).beginning_of_day.to_s(:db) 
+    parse_from_date.nil? ? (Time.zone.now.ago 30.day).beginning_of_day.to_s(:db) : 
+        Time.zone.parse(parse_from_date).beginning_of_day.to_s(:db) 
   end
   
   def end_date
-    parse_to_date.nil? ? Time.now.to_s(:db): Time.parse(parse_to_date).end_of_day.to_s(:db)
+    parse_to_date.nil? ? Time.zone.now.end_of_day.to_s(:db) : 
+        Time.zone.parse(parse_to_date).end_of_day.to_s(:db)
   end
   
   def parse_from_date
@@ -123,13 +128,13 @@ module Reports::ActivityReport
   end
   
   def previous_start
-    distance_between_dates =  Time.parse(end_date) - Time.parse(start_date)
-    prev_start = Time.parse(previous_end) - distance_between_dates
+    distance_between_dates =  Time.zone.parse(end_date) - Time.zone.parse(start_date)
+    prev_start = Time.zone.parse(previous_end) - distance_between_dates
     prev_start.beginning_of_day.to_s(:db)
   end
   
   def previous_end
-    (Time.parse(start_date) - 1.day).end_of_day.to_s(:db)
+    (Time.zone.parse(start_date).ago 1.day).end_of_day.to_s(:db)
   end
   
   def write_io

@@ -12,16 +12,14 @@
 <div class="attachments" id="<%=attach_id%>-container" style="display:none">
   <div id="<%=attach_id%>-attachments"></div>
 </div>
-
 <%# 
   The following is a template used by multifile.js to create rows in
   the attachments table.
  %>
-			
-<textarea id="file-list-template" rows="0" cols="0" style="display:none">
+<script id="file-list-template" type="text/x-jquery-tmpl">			
   <div class="item">
   	<span>
-  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;" inputId="#{inputId}">remove</a>
+  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;" inputId="${inputId}">remove</a>
 	  </span>
   </div>
-</textarea>
+</script>

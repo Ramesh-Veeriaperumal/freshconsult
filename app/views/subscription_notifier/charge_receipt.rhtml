@@ -84,7 +84,7 @@
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 250px;">Freshdesk <%=SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]%> Subscription Plan - <%=@subscription.subscription_plan.name%> (<%=@subscription.free_agents%> agent Free)</td>
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 225px;"> </td>
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="qty"><%=@subscription.paid_agents%></div></td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="cost">$<%=@subscription.amount/(@subscription.paid_agents * @subscription.renewal_period)%></div></td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="cost">$<%=(@subscription.amount/(@subscription.paid_agents * @subscription.renewal_period)).round.to_f%></div></td>
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><span class="price">$<%=@subscription.amount%></span></td>
 		  </tr>
 		  <tr>

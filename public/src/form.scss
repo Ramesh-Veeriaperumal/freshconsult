@@ -698,6 +698,12 @@ input.time{
 			}
 			background-color:#efefef;
 			border-top:1px solid #cfcfcf;
+			.chzn-container{ width:96.8% !important; }             
+			.chzn-drop{ width:100% !important; }
+			ul.chzn-choices li{ width:auto; }
+			.search-field{ @include min-width(500px); }
+			.search-field .default{ width:100% !important; }
+			ul.chzn-results li.active-result{ float:none; display:block; width:100%; }
 		}
 		tr.even{
 			td{

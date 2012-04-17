@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   
   layout :choose_layout 
   
-  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel]
+  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel,:show]
   skip_before_filter :set_time_zone
   skip_before_filter :check_account_state
   
@@ -273,10 +273,7 @@ class AccountsController < ApplicationController
   def rebrand  
     responseObj = { :status => 
         current_portal.update_attributes(params[:account][:main_portal_attributes]) }
-
-    respond_to do |format|
-      format.json { render :json => responseObj.to_json }
-    end
+    redirect_to admin_getting_started_index_path        
   end
   
   def plans

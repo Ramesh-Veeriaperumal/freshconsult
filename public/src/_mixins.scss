@@ -65,20 +65,20 @@
 }
 
 @mixin text-formatting(){
-   p, li{ 
+   p, li, div{ 
       font-size: 13px;
       line-height: 18px;
       font-style: normal;
       margin:0;
    }                          
-	 code, pre{ @include wrap(); }
+   code, pre, p, li{ @include force-wrap; }              
    h1 {font-size: 2em}
    h2 {font-size: 1.5em}
    h3 {font-size: 1.17em}
    h4 {font-size: 1em}
    h5 {font-size: .83em}
    h6 {font-size: .75em}
-   img {border:0; max-width: 100%; height: auto;}
+   img, iframe {border:0; max-width: 100%; height: auto;}
    table {cursor:default; border:1px solid #afafaf; } 
    table td, table th {cursor:text; font-size: inherit; font-size: 13px; border:1px solid #afafaf; padding: 4px; }
    em{ font-style:italic; }

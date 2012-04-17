@@ -102,6 +102,10 @@ javascripts:
     - public/javascripts/timesheet.js
   freshwidget:
     - public/javascripts/freshwidget.js
+  fdwidget:
+    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
   custom_widget:
     - public/javascripts/custom_widget.js
   getting_started:
