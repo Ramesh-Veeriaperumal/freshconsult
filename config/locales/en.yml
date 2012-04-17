@@ -1166,6 +1166,7 @@ en:
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
     login: login
+    assumed_text: "You are viewing as"
     tabs:
       reports: Reports
       dashboard: Dashboard

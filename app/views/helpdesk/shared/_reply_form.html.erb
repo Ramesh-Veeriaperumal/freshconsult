@@ -43,7 +43,7 @@
         <li class="inline-field field">
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @reply_email.first) %>
+              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
 					</div>

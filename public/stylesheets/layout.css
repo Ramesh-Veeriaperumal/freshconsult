@@ -59,7 +59,7 @@ div.bg_pulp { background-color: #F3F1EC; }
 .header_links { float: right; text-align: right; height: 46px; margin: 2px 12px; }
 .header_links a { padding: 0px 6px; color: #ffffff; text-decoration: none; }
 .header_links a:hover { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90); opacity: 0.9; color: #ffffff; text-decoration: none; }
-.header_links a.nav-trigger { padding: 0px 12px 0px 6px; }
+.header_links a.nav-trigger { padding: 0px 12px 0px 6px; font-weight: bold; }
 .header_links a.nav-trigger:before { content: ""; position: absolute; border: 4px solid transparent; border-top-color: #fff; width: 0; top: 6px; right: 9px; }
 
 /* Header Tab styles */

@@ -793,6 +793,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
        running_timesheets.each{|t| t.stop_timer}
     end
    end
+
+   def selected_reply_email
+    to_email.blank? ? friendly_reply_email : to_email
+   end
   
   private
   
