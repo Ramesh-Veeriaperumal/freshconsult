@@ -54,9 +54,11 @@ def import_file base_dir, file_arr
     url = zendesk_url+file_name
     file_path = File.join(base_dir , file_name)      
     url = URI.parse(url)  
-    req = Net::HTTP::Get.new(url.path)  
+    req = Net::HTTP::Get.new(url.request_uri)  
     req.basic_auth usr_name, usr_pwd
-    res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }     
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true if url.scheme == 'https'
+    res = http.start{|http| http.request(req) }     
     case res
     when Net::HTTPSuccess, Net::HTTPRedirection
        File.open(file_path, 'w') {|f| f.write(res.body) }      

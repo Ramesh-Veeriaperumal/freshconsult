@@ -94,7 +94,7 @@ def ticket_post_process ticket_prop , ticket
   end 
   ticket_prop.comments.each do |comment| 
     user = @current_account.all_users.find_by_import_id(comment.user_id)
-    note_props = comment.to_hash.tap { |hs| hs.delete(:public) }.merge({:user_id =>user.id, :private => !comment.public ,:incoming =>user.customer?,
+    note_props = comment.to_hash.tap { |hs| hs.delete(:public) }.merge({:user_id =>user.id, :private => !(comment.public.to_bool) ,:incoming =>user.customer?,
                                                                         :account_id => @current_account.id , :body =>comment.body,:deleted => false ,
                                                                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] , :created_at =>comment.created_at.to_datetime()})
     @note = ticket.notes.build(note_props)
