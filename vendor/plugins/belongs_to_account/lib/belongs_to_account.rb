@@ -17,9 +17,8 @@ module BelongsToAccount
        end
       end
       
-      before_create :set_account_id
-      
-      include InstanceMethods
+      #before_create :set_account_id
+      #include InstanceMethods
     end
   end
   
