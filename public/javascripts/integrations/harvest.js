@@ -10,22 +10,10 @@ HarvestWidget.prototype= {
 		this.inline = loadInline;
 		var init_reqs = []
 		init_reqs = [null, {
-			resource: "clients",
+			resource: "daily",
 			content_type: "application/xml",
 			on_failure: harvestWidget.processFailure,
-			on_success: harvestWidget.loadClient.bind(this)
-		}, {
-			resource: "projects",
-			content_type: "application/xml",
-			on_failure: function(evt){
-			},
-			on_success: harvestWidget.loadProject.bind(this)
-		}, {
-			resource: "tasks",
-			content_type: "application/xml",
-			on_failure: function(evt){
-			},
-			on_success: harvestWidget.loadTask.bind(this)
+			on_success: harvestWidget.loadDaily.bind(this)
 		}];
 		if (harvestBundle.remote_integratable_id) 
 			init_reqs[0] = {
@@ -62,19 +50,31 @@ HarvestWidget.prototype= {
 		}
 	},
 
-	loadClient:function(resData) {
-		selectedClientNode = UIUtil.constructDropDown(resData, 'xml', "harvest-timeentry-clients", "client", "id", ["name"], null, Cookie.retrieve("har_client_id")||"");
-		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "id");
-		this.clientChanged(client_id);
-
-		UIUtil.hideLoading('harvest','clients','-timeentry');
+	loadDaily:function(resData) {
+		clientData = []
+		this.projectData = resData.responseXML
+		this.taskData = {}
+		project_list = XmlUtil.extractEntities(this.projectData, "project")
+		for(i=0;i<project_list.length;i++) {
+			proj_node = project_list[i];
+			proj_id = XmlUtil.getNodeValue(proj_node, "id")
+			client_name = XmlUtil.getNodeValue(proj_node, "client");
+			matched = false
+			for(j=0;j<clientData.length;j++)
+				if (clientData[j]["id"] == client_name) matched = true;
+			if (!matched) clientData.push({"id":client_name, "name":client_name});
+			task_list = XmlUtil.extractEntities(proj_node, "tasks");
+			this.taskData[proj_id] = task_list[0]
+		}
+		this.clientData = {"client": clientData}
+		this.handleLoadClient(); //This will take of progressively calling handleLoadProject and handleLoadTask.
 	},
 
-	loadProject:function(resData) {
-		this.projectData=resData;
-		
-		this.handleLoadProject();
-
+	handleLoadClient:function() {
+		selectedClientNode = UIUtil.constructDropDown(this.clientData, 'hash', "harvest-timeentry-clients", "client", "id", ["name"], null, Cookie.retrieve("har_client_id")||"");
+		client_id = selectedClientNode["id"];
+		this.clientChanged(client_id);
+		UIUtil.hideLoading('harvest','clients','-timeentry');
 	},
 
 	handleLoadProject:function() {
@@ -88,8 +88,8 @@ HarvestWidget.prototype= {
 			client_id = $("harvest-timeentry-clients").value
 		}
 		filterBy = null
-		if(client_id) filterBy = {"client-id":client_id};
-		selectedProjectNode = UIUtil.constructDropDown(this.projectData,"xml", "harvest-timeentry-projects", "project", "id", ["name"], filterBy, searchTerm||"");
+		if(client_id) filterBy = {"client":client_id};
+		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "xml", "harvest-timeentry-projects", "project", "id", ["name"], filterBy, searchTerm||"");
 		if(!selectedProjectNode) {
 			UIUtil.addDropdownEntry("harvest-timeentry-projects", "", "None");
 		}
@@ -98,20 +98,15 @@ HarvestWidget.prototype= {
 		UIUtil.hideLoading('harvest','projects','-timeentry');
 	},
 
-	loadTask:function(resData) {
-		this.taskData=resData;
-		this.handleLoadTask();
-	},
-
 	handleLoadTask:function() {
-		UIUtil.hideLoading('harvest','tasks','-timeentry');
 		if (this.timeEntryXml) {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
 			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
 		}
 		else 
 			searchTerm = Cookie.retrieve("har_task_id")
-		selectedTaskNode = UIUtil.constructDropDown(this.taskData,"xml", "harvest-timeentry-tasks", "task", "id", ["name"], null, Cookie.retrieve("har_task_id")||"");
+		project_id = $("harvest-timeentry-projects").value
+		selectedTaskNode = UIUtil.constructDropDown(this.taskData[project_id], "xml", "harvest-timeentry-tasks", "task", "id", ["name"], null, Cookie.retrieve("har_task_id")||"");
 		if(!selectedTaskNode) {
 			UIUtil.addDropdownEntry("harvest-timeentry-tasks", "", "None");
 		}
@@ -119,12 +114,12 @@ HarvestWidget.prototype= {
 		$("harvest-timeentry-hours").enable();
 		$("harvest-timeentry-notes").enable();
 		$("harvest-timeentry-submit").enable();
+		UIUtil.hideLoading('harvest','tasks','-timeentry');
 
 		jQuery(".harvest_timetracking_widget").removeClass('still_loading');
 	},
 
 	clientChanged:function(client_id) {
-		
 		if(this.projectData != '') {
 			this.handleLoadProject();
 		}
@@ -132,7 +127,6 @@ HarvestWidget.prototype= {
 	},
 
 	projectChanged:function(project_id) {
-		
 		if(this.taskData != '') {
 			this.handleLoadTask();
 		}
@@ -375,12 +369,12 @@ HarvestWidget.prototype= {
 
 	// private methods
 	get_client_id: function(projectData, projectId){
-		projectEntries = XmlUtil.extractEntities(projectData.responseXML, "project");
+		projectEntries = XmlUtil.extractEntities(projectData, "project");
 		var len = projectEntries.length;
 		for (var i = 0; i < len; i++) {
 			projectIdValue = XmlUtil.getNodeValueStr(projectEntries[i], "id");
 			if(projectIdValue == projectId) {
-				return XmlUtil.getNodeValueStr(projectEntries[i], "client-id");
+				return XmlUtil.getNodeValueStr(projectEntries[i], "client");
 			}
 		}
 	},

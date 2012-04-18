@@ -188,13 +188,12 @@ var UIUtil = {
 		if (!keepOldEntries) dropDownBox.innerHTML = "";
 		if(type == "xml"){
 			parser = XmlUtil;
-			data = data.responseXML;
-		}
-		else{
+		} else if(type == "hash"){
+			parser = HashUtil;
+		} else {
 			parser = JsonUtil; 
-			data = data.responseJSON;
 		}
-		
+
 		var entitiesArray = parser.extractEntities(data, entityName);
 		for(i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
@@ -232,9 +231,11 @@ var UIUtil = {
 			}
 			if (dispName.length < 2) dispName = entityEmailValue;
 
-			newEntityOption.value = entityIdValue;
-			newEntityOption.innerHTML = dispName;
-			dropDownBox.appendChild(newEntityOption);
+			if (entityIdValue && dispName) {
+				newEntityOption.value = entityIdValue;
+				newEntityOption.innerHTML = dispName;
+				dropDownBox.appendChild(newEntityOption);
+			}
 			if (foundEntity == "") {
 				foundEntity = entitiesArray[i];
 				newEntityOption.selected = true;
@@ -316,14 +317,14 @@ var XmlUtil = {
 	getNodeValueStr:function(dataNode, nodeName){
 		return this.getNodeValue(dataNode, nodeName) || "";
 	},
-
+/*
 	getNodeAttrValue:function(dataNode, lookupTag, attrName){
 		var element = dataNode.getElementsByTagName(lookupTag);
 		if(element==null || element.length==0){
 			return null;
 		}
 		return element[0].getAttribute(attrName) || null;
-	}
+	}*/
 }
 
 var JsonUtil = {
@@ -365,6 +366,25 @@ var JsonUtil = {
 		return innerValue;
 	}
 
+}
+
+var HashUtil = {
+	extractEntities:function(hash, lookupKey){
+		return hash[lookupKey] || new Array();
+	},
+
+	getNodeValue:function(dataNode, lookupKey){
+		if(dataNode == '') return;
+		var element = dataNode[lookupKey];
+		if(element==null || element.length==0){
+			return null;
+		}
+		return element;
+	},
+
+	getNodeValueStr:function(dataNode, lookupKey){
+		return this.getNodeValue(dataNode, lookupKey) || "";
+	},
 }
 
 var Cookie=Class.create({});

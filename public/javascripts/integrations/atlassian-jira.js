@@ -146,7 +146,7 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadProject:function() {
-		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
+		selectedProjectNode = UIUtil.constructDropDown(this.projectData.responseJSON, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
 		UIUtil.hideLoading('jira','projects','');
 	},
 
@@ -189,7 +189,7 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadIssueTypes:function(resData){
-		selectedProjectNode = UIUtil.constructDropDown(resData, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
+		selectedProjectNode = UIUtil.constructDropDown(resData.responseJSON, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
 		UIUtil.hideLoading('jira','issue-types','');
 	},
 
