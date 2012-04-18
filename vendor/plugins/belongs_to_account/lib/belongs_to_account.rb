@@ -7,7 +7,6 @@ module BelongsToAccount
   module ClassMethods
     def belongs_to_account
       belongs_to :account
-      validates_presence_of :account_id
   
       default_scope do
        if Account.current
