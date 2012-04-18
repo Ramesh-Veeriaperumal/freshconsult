@@ -3,7 +3,7 @@ SugarWidget.prototype= {
 
 	SUGAR_CONTACT:new Template(
 			'<div class="title">' +
-				'<a href="javascript:sugarWidget.renderSearchResults();"> BACK </a>'+
+				
 				'<div class="name">' +
 					'<span id="contact-name"></span><br />' +
 				    '<span id="contact-desig"></span>'+
@@ -30,7 +30,7 @@ SugarWidget.prototype= {
 				    '<span id="contact-mobile"></span>'+
 				'</div>' +
 			'</div>'+
-			'<div class="external_link"><a target="_blank" id="crm-view">View in SugarCRM</a></div>'),
+			'<div class="external_link"><a href="javascript:sugarWidget.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view">View in SugarCRM</a></div>'),
 
 	SUGAR_CONTACT_NA:new Template(
 		'<div class="title">' +
@@ -233,7 +233,7 @@ SugarWidget.prototype= {
 		var entry_list_body = 'method=get_entry_list&input_type=JSON&response_type=JSON&rest_data={"session":"#{session}","module_name":"Contacts","query":"#{email_query}","order_by":"", "offset":0,"select_fields":[],"link_name_to_fields_array":[],"max_results":"","deleted":0}';
 		init_reqs = [{
 			resource: "service/v4/rest.php",
-			method:"post",
+			method:"post",	
 			body:entry_list_body.interpolate({session: Cookie.retrieve("sugar_session")||"", email_query: "contacts.id in (SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address ='"+ sugarWidget.sugarBundle.reqEmail +"')"}),
 			content_type: "",
 			on_failure: sugarWidget.processFailure,
