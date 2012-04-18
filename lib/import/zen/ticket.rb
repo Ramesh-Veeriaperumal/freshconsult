@@ -90,7 +90,7 @@ def ticket_post_process ticket_prop , ticket
   end
   #Attachment
   ticket_prop.attachments.each do |attachment|   
-    Import::Attachment.new(ticket.id ,attachment.url, :ticket )
+    Delayed::Job.enqueue Import::Attachment.new(ticket.id ,attachment.url, :ticket )
   end 
   ticket_prop.comments.each do |comment| 
     user = @current_account.all_users.find_by_import_id(comment.user_id)
@@ -100,7 +100,7 @@ def ticket_post_process ticket_prop , ticket
     @note = ticket.notes.build(note_props)
     @note.save
     comment.attachments.each do |attachment| 
-      Import::Attachment.new(@note.id ,attachment.url, :note )
+      Delayed::Job.enqueue Import::Attachment.new(@note.id ,attachment.url, :note)
     end
   end
 end
