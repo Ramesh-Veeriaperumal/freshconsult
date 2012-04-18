@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406093758) do
+ActiveRecord::Schema.define(:version => 20120409071008) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -526,7 +526,8 @@ ActiveRecord::Schema.define(:version => 20120406093758) do
     t.integer  "ticket_issues_count"
   end
 
-  create_table "helpdesk_notes", :force => true do |t|
+  create_table "helpdesk_notes", :id => false, :force => true do |t|
+    t.integer  "id",           :limit => 8,                             :null => false
     t.text     "body",         :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "source",                             :default => 0
@@ -542,8 +543,7 @@ ActiveRecord::Schema.define(:version => 20120406093758) do
   end
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
-  add_index "helpdesk_notes", ["notable_id"], :name => "index_helpdesk_notes_on_notable_id"
-  add_index "helpdesk_notes", ["notable_type"], :name => "index_helpdesk_notes_on_notable_type"
+  add_index "helpdesk_notes", ["id"], :name => "helpdesk_notes_id"
 
   create_table "helpdesk_picklist_values", :force => true do |t|
     t.integer  "pickable_id",   :limit => 8
@@ -644,7 +644,8 @@ ActiveRecord::Schema.define(:version => 20120406093758) do
   add_index "helpdesk_ticket_issues", ["issue_id"], :name => "index_helpdesk_ticket_issues_on_issue_id"
   add_index "helpdesk_ticket_issues", ["ticket_id"], :name => "index_helpdesk_ticket_issues_on_ticket_id"
 
-  create_table "helpdesk_ticket_states", :force => true do |t|
+  create_table "helpdesk_ticket_states", :id => false, :force => true do |t|
+    t.integer  "id",                     :limit => 8,                    :null => false
     t.integer  "ticket_id",              :limit => 8
     t.datetime "opened_at"
     t.datetime "pending_since"
@@ -662,10 +663,11 @@ ActiveRecord::Schema.define(:version => 20120406093758) do
     t.integer  "account_id",             :limit => 8
   end
 
+  add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8,                             :null => false
+    t.integer  "id",               :limit => 8,  :null => false 
     t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8

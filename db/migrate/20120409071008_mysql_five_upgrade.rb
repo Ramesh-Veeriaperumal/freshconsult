@@ -50,9 +50,9 @@ class MysqlFiveUpgrade < ActiveRecord::Migration
             add UNIQUE index index_users_on_account_id_and_single_access_token(single_access_token ,account_id)
             PARTITION BY HASH(account_id) PARTITIONS 128")     
             
-    execute("alter table helpdesk_ticket_states add index `helpdesk_ticket_states_id` (`id`), 
-            drop primary key,
-            PARTITION BY HASH(account_id) PARTITIONS 128")
+    execute("alter table helpdesk_ticket_states add index `helpdesk_ticket_states_id` (`id`), drop primary KEY")
+    
+    execute("alter table helpdesk_ticket_states PARTITION BY HASH(account_id) PARTITIONS 128")
    
   end
   def self.down
