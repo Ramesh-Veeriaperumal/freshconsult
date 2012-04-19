@@ -1,4 +1,3 @@
----
 en: 
   enabled: "Enabled"
   disabled: "Disabled"
@@ -1314,6 +1313,9 @@ en:
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
+      send_and_resolve: Send and Resolve
+      send: Send
+    facebook_form: 
       send_and_resolve: Send and Resolve
       send: Send
     reported_by: from %{requester}
