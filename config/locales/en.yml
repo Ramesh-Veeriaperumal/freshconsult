@@ -1534,6 +1534,8 @@ en:
         title: "Reply to %{user}"
       history:
         recent_item: Recent Items
+      facebook_form:
+        title: "Reply to %{user}"
     dashboard:
       index:
         todo_title: To-Dos
