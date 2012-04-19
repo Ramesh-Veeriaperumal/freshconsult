@@ -30,7 +30,7 @@ SugarWidget.prototype= {
 				    '<span id="contact-mobile"></span>'+
 				'</div>' +
 			'</div>'+
-			'<div class="external_link"><a href="javascript:sugarWidget.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view">View in SugarCRM</a></div>'),
+			'<div id="search-back" class="external_link"><a href="javascript:sugarWidget.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view">View in SugarCRM</a></div>'),
 
 	SUGAR_CONTACT_NA:new Template(
 		'<div class="title">' +
@@ -48,6 +48,7 @@ SugarWidget.prototype= {
 		jQuery("#sugarcrm_widget").addClass('loading-fb');
 		sugarWidget = this;
 		this.sugarBundle = sugarBundle;
+		this.failureCount = 0;
 		var init_reqs = [];
 		if(sugarBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
@@ -63,7 +64,7 @@ SugarWidget.prototype= {
 			});
 			var sugar_session = Cookie.retrieve("sugar_session");
 			if(sugar_session == "" || sugar_session == null){
-				sugarWidget.get_sugar_session(sugarWidget.get_sugar_contact);
+				sugarWidget.get_sugar_session();
 			}
 			else{
 				sugarWidget.get_sugar_contact();
@@ -79,32 +80,35 @@ SugarWidget.prototype= {
 		resJ = jQuery.parseJSON(responseText);
 		sugarWidget.response = resJ;
 		//Handle Session Timeout
-		if (resJ.number != undefined && resJ.number == 11){
-				sugarWidget.get_sugar_session(sugarWidget.get_sugar_contact);
+		if (resJ.number != undefined && (resJ.number == 11)){
+			sugarWidget.failureCount += 1;
+			if (sugarWidget.failureCount <=5 ){
+				sugarWidget.get_sugar_session();
+			}
+			else{
+				sugarWidget.processFailure();
+				jQuery("#sugarcrm_widget").removeClass('loading-fb');
 				return;
+			}
 		}
-		sugarWidget.renderContactWidget();
+		//sugarWidget.renderContactWidget();
 		if (resJ.result_count > 0) {
 				//renderContact
 				if(resJ.result_count == 1){
 					entry_list = resJ.entry_list[0];
 					sugarWidget.renderContact(entry_list);
-
 					jQuery('#multiple-contacts').hide();
+					jQuery('#search-back').hide();
 				}
 				else if(resJ.result_count > 1){
-					//jQuery('#multiple-contacts').show();
-					//sugarWidget.contactChanged(0);
 					sugarWidget.renderSearchResults();
 					jQuery("#sugarcrm_widget").removeClass('loading-fb');
 
 				}
 
-		} else{
+		} else if(resJ.result_count != undefined){
 			sugarWidget.renderContactNa();
 			jQuery('#contact-na').text('Cannot find requester in SugarCRM');
-			//sugarWidget.renderContactAddForm();
-
 		}
 	},
 
@@ -122,22 +126,32 @@ SugarWidget.prototype= {
 
 		sugarWidget.renderContactWidget();
 		contactJson = entry_list.name_value_list;
-		fullName = contactJson.name.value;
 		title = contactJson.title.value;
 		account = (contactJson.account_name == undefined) ? "" : contactJson.account_name.value;
+		if(account != ""){
+			account_link = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3DAccounts%26action%3DDetailView%26record%3D"+contactJson.account_id.value; 
+			account = "<a target='_blank' href='" + account_link +"'>" + account +"</a>"	
+		}
+		
 		desig = (title != "" && account != "" ) ? (title + ", " + account) : (title + account)
 		address = sugarWidget.get_formatted_address(contactJson);
 		phone = contactJson.phone_work.value;
 		mobile = contactJson.phone_mobile.value;
 		department = contactJson.department.value;
 		contactLink = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3DContacts%26action%3DDetailView%26record%3D"+entry_list.id
+		fullName = "<a target='_blank' href='" + contactLink  +"'>"+contactJson.name.value+"</a>";
 		jQuery('#sugar-contact-widget').show();
-		jQuery('#contact-name').text(fullName);
-		jQuery('#contact-desig').text(desig);
-		(address != "") ? (jQuery('#contact-address').html(address).show()) : (jQuery('#crm-contact').hide()) ;
-		(phone != "") ? jQuery('#contact-phone').text(phone) : (jQuery('#crm-phone').hide()) ;
-		(mobile != "") ? jQuery('#contact-mobile').text(mobile) : (jQuery('#crm-mobile').hide()) ;
-		(department != "") ? jQuery('#contact-dept').text(department) : (jQuery('#crm-dept').hide()) ;
+		jQuery('#contact-name').html(fullName);
+		jQuery('#contact-desig').html(desig);
+		(address != "") ? (jQuery('#contact-address').html(address).show()) : (jQuery('#crm-contact').addClass('hide')) ;
+		(phone != "") ? jQuery('#contact-phone').text(phone) : (jQuery('#crm-phone').addClass('hide')) ;
+		(mobile != "") ? jQuery('#contact-mobile').text(mobile) : (jQuery('#crm-mobile').addClass('hide')) ;
+		(department != "") ? jQuery('#contact-dept').text(department) : (jQuery('#crm-dept').addClass('hide')) ;
+
+		// If there is nothing to show in the left side, hide that too.
+		if (jQuery('#crm-contact').hasClass('hide') && jQuery('#crm-dept').hasClass('hide')) {
+			jQuery('#crm-contact').parent().addClass('hide');
+		}
 		jQuery('#crm-view').attr("href",contactLink);
 		jQuery("#sugarcrm_widget").removeClass('loading-fb');
 	},
@@ -152,21 +166,6 @@ SugarWidget.prototype= {
 		}else{
 			entry_list = sugarWidget.response.entry_list[value];
 			sugarWidget.renderContact(entry_list);
-			//jQuery("#multiple-contacts .prev_page").addClass("disabled").attr("href", "javascript:void()");
-
-
-			//Changing the Next and Previous
-			// if (value > 0) {
-			// 	jQuery("#multiple-contacts .prev_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value - 1) + ")");
-			// } else {
-			// 	jQuery("#multiple-contacts .prev_page").addClass("disabled").attr("href", "javascript:void()");
-			// }
-
-			// if (value >= sugarWidget.response.entry_list.length - 1) {
-			// 	jQuery("#multiple-contacts .next_page").addClass("disabled").attr("href", "javascript:void()");
-			// } else {
-			// 	jQuery("#multiple-contacts .next_page").removeClass("disabled").attr("href","javascript:sugarWidget.contactChanged(" + (value + 1) + ")");
-			// }
 		}
 		
 	},
@@ -214,19 +213,29 @@ SugarWidget.prototype= {
 				resource: "service/v4/rest.php",
 				method:"post",
 				body:session_body.interpolate({username: sugarWidget.sugarBundle.username, password: sugarWidget.sugarBundle.password}),
-				content_type: "",
+				content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
 				on_failure: sugarWidget.processFailure,
 				on_success: function(evt){
-					responseText = evt.responseText;
-					responseText = sugarWidget.removeRequestKeyword(responseText);
-					resJ = jQuery.parseJSON(responseText);
-					Cookie.update("sugar_session", resJ.id);
-					callBack();			
+					sugarWidget.handleSessionSuccess(evt)
 				}
 			}];		
 		sugarWidget.freshdeskWidget.options.application_content = null; 
 		sugarWidget.freshdeskWidget.options.application_resources = init_reqs;
 		sugarWidget.freshdeskWidget.display();
+	},
+
+	handleSessionSuccess:function(evt){
+		responseText = evt.responseText;
+		responseText = sugarWidget.removeRequestKeyword(responseText);
+		resJ = jQuery.parseJSON(responseText);
+		if (resJ.number != undefined && (resJ.number == 10)){
+			alert("Please verify your Sugar credentials and try again.")
+			jQuery("#sugarcrm_widget").removeClass('loading-fb');
+		}
+		else{
+			Cookie.update("sugar_session", resJ.id);
+			sugarWidget.get_sugar_contact();			
+		}
 	},
 
 	get_sugar_contact:function(){
@@ -235,7 +244,7 @@ SugarWidget.prototype= {
 			resource: "service/v4/rest.php",
 			method:"post",	
 			body:entry_list_body.interpolate({session: Cookie.retrieve("sugar_session")||"", email_query: "contacts.id in (SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address ='"+ sugarWidget.sugarBundle.reqEmail +"')"}),
-			content_type: "",
+			content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
 			on_failure: sugarWidget.processFailure,
 			on_success: sugarWidget.handleContactSuccess.bind(this)
 		}];
@@ -247,6 +256,10 @@ SugarWidget.prototype= {
 
 	removeRequestKeyword:function(responseText){
 		return responseText.replace(/request{/g,"{");	
+	},
+
+	processFailure:function(evt){
+		alert("Unable to establish connection with SugarCRM. Please contact Support at support@freshdesk.com")
 	}
 
 

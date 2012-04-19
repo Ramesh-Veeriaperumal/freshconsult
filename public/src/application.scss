@@ -4785,7 +4785,6 @@ a.close{
 	}
 
 	.external_link {
-		float: right;
 		clear: both;
 	}
 }
@@ -4880,6 +4879,7 @@ a.close{
 			}
 		}
 	}
+
 }
 
 .crm_contact_widget {
@@ -4892,10 +4892,8 @@ a.close{
 	}
 
 	.name {
-		width: 165px;
-		background: url(/images/integrations/sugar_icon.png) no-repeat;
-		padding-left:30px;
-		float:left;
+		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		padding:0 0 10px 35px;
 	}
 
 	#multiple-contacts {
@@ -4916,6 +4914,11 @@ a.close{
 		font-size:10px;
 		color: #000;
 		font-weight:bold;
+	}
+
+	#crm-view {
+		float:right;
+		width: auto;
 	}
 
 }

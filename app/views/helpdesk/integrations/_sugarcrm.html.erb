@@ -1,0 +1,6 @@
+<div id="sugarcrm" class="sidepanel">
+	<%
+	 @liquid_objects = {"requester" => @ticket.requester} %>
+	<% widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:sugarcrm], "sugarcrm_widget", @liquid_objects) %>
+	<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
+</div>

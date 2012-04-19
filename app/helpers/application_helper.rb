@@ -359,6 +359,7 @@ module ApplicationHelper
     rel_value = field[:rel]
     url_autofill_validator = field[:validator_type]
     ghost_value = field[:autofill_text]
+    encryption_type = field[:encryption_type]
     element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
@@ -373,6 +374,7 @@ module ApplicationHelper
       when "password" then
         pwd_element_class = " #{ (required) ? 'required' : '' }  text"
         element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
+        element << hidden_field(object_name , "encryptiontype" , :value => encryption_type) unless encryption_type.blank?
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then

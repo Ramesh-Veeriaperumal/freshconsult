@@ -8,11 +8,10 @@ class PopulateSugarcrm < ActiveRecord::Migration
     description = "integrations.sugarcrm.desc"
     listing_order = 7,
     options = {
-        :keys_order => [:title, :domain, :username, :password], 
-        :title => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.widget_title", :default_value => "SugarCRM"},
+        :keys_order => [:domain, :username, :password], 
         :domain => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.domain", :info => "integrations.sugarcrm.form.domain_info", :validator_type => "url_validator" }, 
         :username => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.username" },
-        :password => { :type => :password, :label => "integrations.sugarcrm.form.password" }
+        :password => { :type => :password, :label => "integrations.sugarcrm.form.password", :encryption_type => "md5" }
     }.to_yaml
 
 
