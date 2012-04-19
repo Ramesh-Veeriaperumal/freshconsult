@@ -6,14 +6,9 @@
 	  </div>  
 	<% end %>
 
-	<% if is_application_installed?("sugarcrm")  %> 	
-	<div id="sugarcrm" class="sidepanel">
-	<%
-	 @liquid_objects = {"requester" => @user} %>
-	<% widget_code = get_app_widget_script("sugarcrm", "sugarcrm_widget", @liquid_objects) %>
-	<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
-	</div>
-  <% end %>
+  <% if is_application_installed?("sugarcrm")  %>	
+  	<%= render :partial => "/helpdesk/integrations/sugarcrm", :locals => {:user => @user}%>
+  <%end%>
 
 <%- end %>
 <div class="contact-box clearfix">

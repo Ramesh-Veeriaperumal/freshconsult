@@ -265,7 +265,7 @@ SugarWidget.prototype= {
 		responseText = sugarWidget.removeRequestKeyword(responseText);
 		resJ = jQuery.parseJSON(responseText);
 		if (resJ.number != undefined && (resJ.number == 10)){
-			alert("Please verify your Sugar credentials and try again.")
+			this.freshdeskWidget.alert_failure("Please verify your Sugar credentials and try again.")
 			jQuery("#sugarcrm_widget").removeClass('loading-fb');
 		}
 		else{
@@ -301,7 +301,7 @@ SugarWidget.prototype= {
 	},
 
 	processFailure:function(evt){
-		alert("Unable to establish connection with SugarCRM. Please contact Support at support@freshdesk.com")
+		this.freshdeskWidget.alert_failure("Unable to establish connection with SugarCRM. Please contact Support at support@freshdesk.com")
 	}
 
 
