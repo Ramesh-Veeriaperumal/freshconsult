@@ -5,7 +5,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   before_filter :load_object 
   before_filter :check_jira_authenticity, :only => [:install, :update]
-  before_filter :set_md5_sugar_pwd, :only => [:install, :update]
+  before_filter :md5_pwd_encrypt, :only => [:install, :update]
   before_filter :strip_slash, :only => [:install, :update]
   
   def install # also updates
@@ -85,7 +85,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       if params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
         {:inputs => {}}  
       else
-        params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank? or @installing_application.name == "sugarcrm"
+        params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank? or params[:configs][:encryptiontype] == "md5"
+        if(params[:configs][:password] == '')
+          params[:configs][:password] = @installed_application.configs[:inputs][:password.to_s] unless @installed_application.configs[:inputs][:password.to_s].blank?
+        end
         params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
         {:inputs => params[:configs].to_hash || {}}  
       end
@@ -124,10 +127,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       end
     end
 
-    def set_md5_sugar_pwd
-      puts "set_md5_sugar_pwd"
-      params[:configs][:password] = Digest::MD5.hexdigest(params[:configs][:password]) if @installing_application.name == "sugarcrm"
-      puts "params pwd : #{params[:configs][:password]}"
+    def md5_pwd_encrypt
+      unless params[:configs].blank? or params[:configs][:password].blank?
+        params[:configs][:password] = Digest::MD5.hexdigest(params[:configs][:password]) if params[:configs][:encryptiontype] == "md5"
+      end
     end
 
     def strip_slash
