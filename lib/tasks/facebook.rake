@@ -9,6 +9,9 @@ namespace :facebook do
  
            fb_posts = Social::FacebookPosts.new(fan_page)
            fb_posts.fetch
+           
+           fb_messages = Social::FacebookMessage.new(fan_page)
+           fb_messages.fetch
          
          end ### ends ####
      end
