@@ -49,7 +49,11 @@ module ApplicationHelper
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
- 
+  
+  def show_admin_flash
+    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
+  end   
+
   def show_announcements                                                    
     if permission?(:manage_tickets)
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
@@ -149,7 +153,25 @@ module ApplicationHelper
     end
     navigation
   end          
+<<<<<<< HEAD
  
+=======
+  
+  def subscription_tabs
+    tabs = [
+      [customers_admin_subscriptions_path, :customers, "Customers" ],
+      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+      [admin_subscription_discounts_path, :discounts, "Discounts" ],
+      [admin_subscription_payments_path, :payments, "Payments" ],
+      [admin_subscription_announcements_path, :announcements, "Announcements" ]
+    ]
+
+    navigation = tabs.map do |s| 
+      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
+    end
+  end
+  
+>>>>>>> refs/heads/integrations
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 
@@ -360,7 +382,13 @@ module ApplicationHelper
       # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
       replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
+<<<<<<< HEAD
       return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+=======
+      output = Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+      output
+
+>>>>>>> refs/heads/integrations
     end
   end
 
@@ -372,6 +400,7 @@ module ApplicationHelper
     rel_value = field[:rel]
     url_autofill_validator = field[:validator_type]
     ghost_value = field[:autofill_text]
+    encryption_type = field[:encryption_type]
     element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
@@ -386,6 +415,10 @@ module ApplicationHelper
       when "password" then
         pwd_element_class = " #{ (required) ? 'required' : '' }  text"
         element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
+<<<<<<< HEAD
+=======
+        element << hidden_field(object_name , "encryptiontype" , :value => encryption_type) unless encryption_type.blank?
+>>>>>>> refs/heads/integrations
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
