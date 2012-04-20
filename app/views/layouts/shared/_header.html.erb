@@ -7,9 +7,9 @@
   </div>		
   <div class="wrapper">
     <div class="header_links">
-      <% if current_user then %>              
-				<%= content_tag :strong, t('header.welcome') %>
-				<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>
+      <% if current_user then %>  
+		<%= content_tag(:span, is_assumed_user? ? t('header.assumed_text') : t('header.welcome') ) %>
+		<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>
      <% else %>
         <%= link_to( t('header.login') , login_path) %>
 				<%= link_to( t('signup') , new_support_registration_path ) if feature?(:signup_link) %>

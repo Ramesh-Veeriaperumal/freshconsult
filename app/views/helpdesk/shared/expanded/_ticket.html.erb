@@ -14,7 +14,7 @@
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data" do %>
 			  <%= content_tag :span, "", :class => "tooltip icon-image source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>
-				<%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), h(ticket.requester), :class => 'user_name' ), :date => formated_date(ticket.updated_at)) %>
+				<%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :date => formated_date(ticket.updated_at)) %>
 			<% end %>
 	  <% end %>
   </td>
@@ -23,7 +23,7 @@
       <% if ticket.freshness == :new %>
         <%=t('ticket.unassigned')%>
       <% else %>
-        <span><%=t('assigned_to')%> <%= link_to(h(ticket.responder.display_name), h(ticket.responder), :class => 'username') %></span>
+        <span><%=t('assigned_to')%> <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
       <% end %>
 	  	<ul>
 			<li>
