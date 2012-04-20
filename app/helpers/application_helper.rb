@@ -153,10 +153,7 @@ module ApplicationHelper
     end
     navigation
   end          
-<<<<<<< HEAD
- 
-=======
-  
+
   def subscription_tabs
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
@@ -171,7 +168,6 @@ module ApplicationHelper
     end
   end
   
->>>>>>> refs/heads/integrations
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 
@@ -382,13 +378,7 @@ module ApplicationHelper
       # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
       replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-<<<<<<< HEAD
       return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
-=======
-      output = Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
-      output
-
->>>>>>> refs/heads/integrations
     end
   end
 
@@ -415,10 +405,7 @@ module ApplicationHelper
       when "password" then
         pwd_element_class = " #{ (required) ? 'required' : '' }  text"
         element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
-<<<<<<< HEAD
-=======
         element << hidden_field(object_name , "encryptiontype" , :value => encryption_type) unless encryption_type.blank?
->>>>>>> refs/heads/integrations
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
