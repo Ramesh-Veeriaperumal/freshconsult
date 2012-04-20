@@ -4756,6 +4756,7 @@ a.close{
 	div.field {
 		float:left;
 		margin:5px 0;
+		line-height:18px;
 
 		width:100%;
 
@@ -4889,11 +4890,12 @@ a.close{
 		overflow: hidden;
 		padding: 0;
 		margin: 0;
+		border-bottom: #e5e5e5 solid 1px;
 	}
 
 	.name {
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
-		padding:0 0 10px 35px;
+		padding:0 0 10px 35px;		
 	}
 
 	#multiple-contacts {
@@ -4921,6 +4923,22 @@ a.close{
 		width: auto;
 	}
 
+
+	.contact-type{
+		font-size:10px;
+		color:#fff;
+		text-transform:uppercase; 
+		text-align:center;
+		padding:9px 3px 0;
+		line-height:0;
+		height:9px;      
+		background-color: #0C8AAE;          
+		position:absolute;
+	  	@include right-pointer-title(#0C8AAE,8px);	      
+		@include min-width(48px); 
+		right:16px;	
+		top:3px;
+	}
 }
 
 

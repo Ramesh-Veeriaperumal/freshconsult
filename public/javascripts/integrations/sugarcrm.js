@@ -2,14 +2,13 @@ var SugarWidget = Class.create();
 SugarWidget.prototype= {
 
 	SUGAR_CONTACT:new Template(
-			'<div class="title">' +
-				
+			'<span class="contact-type hide"></span>' +
+			'<div class="title">' +				
 				'<div class="name">' +
 					'<span id="contact-name"></span><br />' +
 				    '<span id="contact-desig"></span>'+
 			    '</div>' + 
 		    '</div>' + 
-		    '<hr/>'+
 		    '<div class="field half_width">' +
 		    	'<div id="crm-contact">' +
 				    '<label>Contact</label>' +
@@ -170,10 +169,12 @@ SugarWidget.prototype= {
 		if(sugarWidget.lead == true){
 			contactLink = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3DLeads%26action%3DDetailView%26record%3D"+entry_list.id
 			jQuery('#crm-contact-type').text("Lead");
+			jQuery('#sugarcrm_widget .contact-type').text("Lead").show();
 		}
 		else{
 			contactLink = sugarWidget.sugarBundle.domain + "/" + "index.php?action=ajaxui#ajaxUILoc=index.php%3Fmodule%3DContacts%26action%3DDetailView%26record%3D"+entry_list.id
-			jQuery('#crm-contact-type').text("Contact");	
+			jQuery('#crm-contact-type').text("Contact");
+			jQuery('#sugarcrm_widget .contact-type').text("Contact").show();
 		}
 		fullName = "<a target='_blank' href='" + contactLink  +"'>"+contactJson.name.value+"</a>";
 		jQuery('#sugar-contact-widget').show();
