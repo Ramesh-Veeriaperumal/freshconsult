@@ -1893,10 +1893,10 @@ en:
         password: "Password"
     sugarcrm:
       label: "SugarCRM"
-      desc: "Access key SugarCRM information from user's ticket and profile"
+      desc: "Bridge the gap between Sales and Support with Freshdesk-SugarCRM integration."
       form:
         domain: "Domain"
-        domain_info: "Enter the complete SugarCRM account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of SugarCRM should be exposed to the internet. </span>" 
+        domain_info: "Enter the complete SugarCRM account URL with https/http. Ex. https://trial.sugarcrm.com/avc321 <br /><span class='italics'> Note: The on-premise variants of SugarCRM should be exposed to the internet. </span>" 
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
@@ -1927,6 +1927,7 @@ en:
   google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
   google_analytics_helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
   <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
+  sugarcrm_helptext: "<h4>SugarCRM Integration Help</h4><p><br/>To integrate SugarCRM with Freshdesk, enter your SugarCRM domain and the administrator username and password.Upon usccessfully enabling the integration, navigate to your Tickets or Customers page to view more details about the customer from SugarCRM.  <br/><br/>  The integration supports both on-demand and on-premise variants, including the latest version 6.4."
   reorder: "Reorder"
   reports:
       tab_heading: "Reports"
