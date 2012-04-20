@@ -389,47 +389,6 @@ var HashUtil = {
 	},
 }
 
-var JsonUtil = {
-	extractEntities:function(resStr, lookupTag){
-		if(resStr instanceof Array)
-			return resStr;
-		else if(resStr instanceof Object)
-		{
-			var result = resStr[lookupTag] || Array();
-			return result;	
-		}
-		
-	},
-	getNodeValue:function(dataNode, lookupTag){
-		if(dataNode == '') return;
-		var element = dataNode[lookupTag];
-		if(element==null || element.length==0){
-			return null;
-		}
-		return element;
-	},
-
-	getNodeValueStr:function(dataNode, nodeName){
-		return this.getNodeValue(dataNode, nodeName) || "";
-	},
-
-	getMultiNodeValue:function(data, dataNodes){
-		var innerJson;
-		var innerValue;
-		var jsonValue = data;
-		var nodeArray = dataNodes.split(".");
-		if(nodeArray.length > 1){
-			for(var i=0; i<(nodeArray.length - 1); i++){
-				innerJson = JsonUtil.extractEntities(jsonValue, nodeArray[i]);
-				jsonValue = innerJson;
-			}
-		innerValue = JsonUtil.getNodeValueStr(jsonValue, nodeArray[nodeArray.length-1]);
-		}
-		return innerValue;
-	}
-
-}
-
 var Cookie=Class.create({});
 Cookie.update = function(cookieId, value, expireDays){
 	var expireString="";
