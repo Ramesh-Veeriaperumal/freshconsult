@@ -15,7 +15,7 @@
 			assetUrl: 		"https://s3.amazonaws.com/assets.freshdesk.com/widget",
 			queryString:   ""
 		},
-		iframe, button, closeButton, overlay, dialog
+		iframeLoaded, widgetHeadHTML, widgetBodyHTML, iframe, button, closeButton, overlay, dialog
 		container = null;
 	
 	 // Utility methods for FreshWidget	
@@ -132,14 +132,14 @@
 			container = document.createElement('div');
 			container.className = "freshwidget-container";
 			container.id = "FreshWidget";
-			container.style.display = 'none';
+			container.style.visibility = 'hidden';
 			document.body.insertBefore(container, document.body.childNodes[0]);
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
 						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png" />' +
 						' <div class="frame-container">' +
-						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" />' +
+						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true"/>' +
 						' </div>'
 						'</div>';
 			
@@ -155,6 +155,13 @@
 			
 			bind(closeButton, 'click', function(){ window.FreshWidget.close(); });
 			bind(overlay, 	  'click', function(){ window.FreshWidget.close(); });
+
+			bind(iframe, 'load', function() {
+				if(!iframeLoaded && iframe.src.indexOf("/widgets/feedback_widget/new?") != -1)
+				{
+					iframeLoaded = true;
+				}	
+			});
 		}
 	 }; 
 	 
@@ -168,13 +175,15 @@
 	 
 	 function showContainer(){ 
 	 	scroll(0,0);
-	 	container.style.display = 'block';
-		widgetFormUrl();
+	 	container.style.visibility = '';
+	 	if(!iframeLoaded) {
+	 		widgetFormUrl();
+	 	}
 	 }
 	 
 	 function close(){
-	 	container.style.display = 'none';
-		loadingIframe();
+	 	container.style.visibility = 'hidden';
+	 	widgetFormUrl();
 	 }
 	 
 	 function initialize(params){ 
@@ -207,7 +216,7 @@
 		iframe 		: function(){
 						return iframe;
 					  }, 
-	    update 		: function(params){
+	     update 		: function(params){
 						catchException(function(){ return updateWidget(params); });
 					  }
 	 }; 

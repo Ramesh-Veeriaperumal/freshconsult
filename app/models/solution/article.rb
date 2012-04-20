@@ -45,7 +45,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   after_create :create_activity
-  attr_accessible :title,:description,:status,:status,:art_type,:folder_id
+  attr_protected :account_id ,:attachments
   
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240

@@ -2,10 +2,11 @@ module Reports::ConstructReport
   
   def build_tkts_hash(val,params)
     @val = val
-    date_condition(params)
+    date_condition
     @global_hash = tkts_by_status(fetch_tkts_by_status)
     merge_hash(:tkt_res_on_time,fetch_tkt_res_on_time)
     merge_hash(:over_due_tkts,fetch_overdue_tkts)
+    merge_hash(:average_first_response_time,fetch_afrt)
     merge_for_fcr(:fcr,fetch_fcr)
     @global_hash
   end
@@ -32,7 +33,7 @@ module Reports::ConstructReport
     if data.has_key?(responder)
       status_hash = data.fetch(responder)
     end
-    status_hash.store(TicketConstants::STATUS_NAMES_BY_KEY[tkt.status],tkt.count)
+    status_hash.store(tkt.status,tkt.count)
     tot_count = status_hash.fetch(:tot_tkts,0) + tkt.count.to_i
     status_hash.store(:tot_tkts,tot_count)
     data.store(responder,status_hash)
@@ -49,31 +50,23 @@ module Reports::ConstructReport
   end
  end
  
- def date_condition(params)
+ def date_condition
    @date_condition ||= begin 
-    date_con = " helpdesk_tickets.created_at between '#{1.month.ago.to_s(:db)}' and now() "
-    unless params[:start_date].blank? and params[:end_date].blank?
-      date_con = " helpdesk_tickets.created_at > '#{DateTime.parse(params[:start_date])}' and helpdesk_tickets.created_at < '#{DateTime.parse(params[:end_date])}' "
-    end
-    date_con
+    " helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}' "
    end
  end
- 
- def fetch_tkts_by_type
-   tkt_scoper.find( 
-     :all,
-     :include => @val, 
-     :select => "count(*) count, ticket_type", 
-     :conditions => @date_condition,
-     :group => "ticket_type")
+
+ def resolved_condition
+  "helpdesk_tickets.status IN (#{TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]}) and (helpdesk_ticket_states.resolved_at is not null) and (#{@date_condition})"
  end
- 
+
  def fetch_tkts_by_status
    tkt_scoper.find( 
      :all,
      :include => @val, 
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
      :select => "count(*) count, #{@val}_id,status", 
-     :conditions => @date_condition,
+     :conditions => resolved_condition,
      :group => "#{@val}_id,status")
  end
  
@@ -83,7 +76,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => ["helpdesk_tickets.status IN (?,?) and helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at and (#{@date_condition})",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
+     :conditions => "#{resolved_condition} and helpdesk_tickets.due_by >=  helpdesk_ticket_states.resolved_at",
      :group => "#{@val}_id")
  end
  
@@ -94,7 +87,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at  || (helpdesk_ticket_states.resolved_at is null and   helpdesk_tickets.due_by < now() )) and (#{@date_condition}) ",
+     :conditions => "#{resolved_condition} and (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at )",
      :group => "#{@val}_id")
  end
  
@@ -104,7 +97,19 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 and (#{@date_condition}) ",
+     :conditions => "#{resolved_condition} and  helpdesk_ticket_states.inbound_count = 1",
+     :group => "#{@val}_id")
+ end
+ 
+ # Average First Response Time
+ # (Time between Ticket Creation and the First Reponse)
+ def fetch_afrt
+   tkt_scoper.find(
+     :all, 
+     :select => "avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) count, #{@val}_id", 
+     :include => @val,
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
+     :conditions => resolved_condition,
      :group => "#{@val}_id")
  end
  
@@ -115,5 +120,24 @@ module Reports::ConstructReport
  def scoper
    Account.current
  end
- 
+
+
+  def start_date
+    parse_from_date.nil? ? (Time.zone.now.ago 30.day).beginning_of_day.to_s(:db) : 
+        Time.zone.parse(parse_from_date).beginning_of_day.to_s(:db) 
+  end
+  
+  def end_date
+    parse_to_date.nil? ? Time.zone.now.end_of_day.to_s(:db) : 
+        Time.zone.parse(parse_to_date).end_of_day.to_s(:db)
+  end
+  
+  def parse_from_date
+    params[:date_range].nil? ? nil : (params[:date_range].split(" - ")[0]) || params[:date_range]
+  end
+  
+  def parse_to_date
+    params[:date_range].nil? ? nil : (params[:date_range].split(" - ")[1]) || params[:date_range]
+  end
+  
 end

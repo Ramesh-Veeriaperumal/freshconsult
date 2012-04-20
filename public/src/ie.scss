@@ -39,9 +39,6 @@
 	      .uniForm .selectInput,
 	      .uniForm select{ height:24px; }
 	      
-	#custom_form li{
-		height:65px !important;
-	}
 	
 	.ui-form{
 		.attachment_list li{
@@ -106,20 +103,6 @@
 		.ui-form{ 
 			@include shadows(0px, 1px, 6px, #cfcfcf );
 //       @include pie;
-		}
-	}
-	
-	.ui-form{
-		li, li.text, li.paragraph{
-			width:100%;
-		}
-		li.dropdown, li.small, li.dropdown_blank{
-			padding-left:2%;
-			padding-right:2%;
-			width:48%;
-		}
-		li.checkbox input{
-			margin:0px;
 		}
 	}
 	

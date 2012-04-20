@@ -57,17 +57,17 @@
 	jQuery("#monitor-topic-lable").toggle(!jQuery("#topic_locked").checked);
 <% end %>
 
-<textarea id="file-list-template" style="display:none">
+<script id="file-list-template" type="text/x-jquery-tmpl">			
   <tr>
     <td class="remove">
-      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">
+      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">
         <%= image_tag("helpdesk/delete.png") %>
       </a>
     </td>
-    <td class="name">#{name}</td>
+    <td class="name">${name}</td>
     <td>
       <label>Description</label>
       <input type="text" name="helpdesk_article[attachments][][description]" />
     </td>
     </tr>
-</textarea>
+</script>

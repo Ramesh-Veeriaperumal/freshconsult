@@ -189,6 +189,7 @@ ROLES:
             manage_forums:          true    # Forums administration
             manage_account:         false   # Account administration
             manage_reports:          false    # Can see and run reports
+            view_users_info:        true    # Can see users info
     admin:
         title:                      Administrator
         description:                Has total access
@@ -202,6 +203,7 @@ ROLES:
             manage_forums:          true    # Forums administration
             manage_account:         false   # Account administration
             manage_reports:          true    # Can see and run reports
+            view_users_info:        true    # Can see users info
     account_admin:
             title:                      Account Admin
             description:                Can manage account
@@ -215,6 +217,7 @@ ROLES:
                manage_forums:          true    # Forums administration
                manage_account:         true   # Account administration
                manage_reports:          true    # Can see and run reports
+               view_users_info:        true    # Can see users info
     supervisor:
         title:                      Supervisor
         description:                Can do everything except administrator including reports
@@ -228,6 +231,7 @@ ROLES:
             manage_forums:          true    # Forums administration
             manage_account:         false   # Account administration
             manage_reports:          true    # Can see and run reports
+            view_users_info:        true    # Can see users info
 
 
 
@@ -272,7 +276,8 @@ EDITOR_OPTIONS: &common
     force_br_newlines:                  true
     force_p_newlines:                   false
     forced_root_block:                  ""
-    gecko_spellcheck: 									true    
+    gecko_spellcheck:                   true
+    
 LARGE_EDITOR:
     <<: *common
     theme_advanced_buttons1:            "bold,italic,underline,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,|,fontselect,fontsizeselect,forecolor,backcolor,|,bullist,numlist,blockquote,"    

@@ -1,0 +1,5 @@
+if @enable 
+  page << "jQuery('#survey_elements').show();"
+else
+  page << "jQuery('#survey_elements').hide();"
+end  

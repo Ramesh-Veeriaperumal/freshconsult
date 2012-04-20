@@ -1,75 +1,74 @@
-<% @page_title = 'Subscriptions' %>
-<%= link_to 'Export Customers', customers_csv_admin_subscriptions_path, :class => "btn btn-primary floatr" %>
-<h2>Revenue Summary</h2>   
-<div class="row">              
-	<% if @stats %>  
-		<div class="span5">	
-  		<table class="table" id="stats">   
-			    <tr>
-			      <th>Last Month</th>  
-						<td><%= number_to_currency(@stats[:last_month]) %></td>                                    
-			    </tr> 
-			    <tr>
-			      <th>Last 30 Days</th>         
-			      <td><%= number_to_currency(@stats[:last_30]) %></td>
-					</tr>
-					<tr>
-						<th>This Month</th>
-			      <td><%= number_to_currency(@stats[:this_month]) %></td>
-			    </tr> 
-		  </table>
-		</div> 
- 	 <% end %>
-<div class="span7">
-<table id="customer_counts" class="table">
-    <tr>
-      <th>Number of Customers</th>
-      <td><%= @customer_count %></td>
-    </tr>
-	 <tr>
-      <th>Paid Customers</th>
-      <td><%= @customer_count - @free_customers %></td>
-    </tr>
-	<tr>
-	  <th>Free Customers</th>
-      <td><%= @free_customers %> </td>
-	</tr>
-    <tr>
-      <th>RPU</th>
-      <td><%= format_float_value(@cmrr) %></td>
-    </tr>
-	<tr>
-      <th>CMRR</th>
-      <td><%=format_float_value(@monthly_revenue)%></td>
-    </tr>
-	<tr>
-	  <th>Agent Count</th>
-      <td><%= @customer_agent_count %> </td>
-	</tr>
-  </table>  
-		   
-  </div>
-</div>
- 
+<div class="row"> 
+	<div class="span8">
+	<%= link_to 'Export Customers', customers_csv_admin_subscriptions_path, :class => "btn btn-success pull-right" %>
+	<h3><%= @page_title = "All accounts" %></h3>
+	<table id="subscriptions" class="table">
+	  <tr>
+	    <th>Account</th>
+	    <th>Amount</th>
+	    <th>Created</th>
+	    <th>Next Renewal</th>
+	    <th>State</th>
+	  </tr>
+	  <% @subscriptions.each do |subscription| %>
+	    <tr class="<%= 'expired' unless subscription.current? %>">
+	      <td><%= link_to(h(subscription.account), [:admin, subscription]) %></td>
+	      <td><%= number_to_currency(subscription.amount) %> <%= "(#{subscription.discount.name})" if subscription.discount %></td>
+	      <td><%= subscription.created_at.to_s(:short_day) %></td>
+	      <td><%= subscription.next_renewal_at.to_s(:short_day) %></td>
+	      <td><%= subscription.state %></td>
+	    </tr>
+	  <% end %>
+	</table>
 
-<h2><%= @page_title %></h2>
-<table id="subscriptions" class="table">
-  <tr>
-    <th>Account</th>
-    <th>Amount</th>
-    <th>Created</th>
-    <th>Next Renewal</th>
-    <th>State</th>
-  </tr>
-  <% @subscriptions.each do |subscription| %>
-    <tr class="<%= 'expired' unless subscription.current? %>">
-      <td><%= link_to(h(subscription.account), [:admin, subscription]) %></td>
-      <td><%= number_to_currency(subscription.amount) %> <%= "(#{subscription.discount.name})" if subscription.discount %></td>
-      <td><%= subscription.created_at.to_s(:short_day) %></td>
-      <td><%= subscription.next_renewal_at.to_s(:short_day) %></td>
-      <td><%= subscription.state %></td>
-    </tr>
-  <% end %>
-</table>
+	<%= will_paginate(@subscriptions) %>
+	</div>  
+	<div class="span4">           
+		<% if @stats %>  
+			<h3>Revenue summary</h3>
+			<table id="customer_counts" class="table table-bordered">
+				<tr>
+	  			<th>Last Month</th>
+					<td><h3><%= number_to_currency(@stats[:last_month]) %></h3></td>
+				</tr> 
+				<tr>
+					<th>Last 30 Days</th>
+					<td><h3><%= number_to_currency(@stats[:last_30]) %></h3></td>
+				</tr>
+				<tr>
+					<th>This Month</th>
+	      	<td><h3><%= number_to_currency(@stats[:this_month]) %></h3></td>
+ 				</tr>	
+			</table>
+	 	 <% end %>     
+	 <h3>Accounts summary</h3>		
+ 	 <table id="customer_counts" class="table table-bordered">
+	    <tr>
+	      <th>Number of Customers</th>
+	      <td><%= @customer_count %></td>
+	    </tr>
+		 	<tr>
+		      <th>Paid Customers</th>
+		      <td><%= @customer_count - @free_customers %></td>
+		    </tr>
+			<tr>
+			  <th>Free Customers</th>
+		      <td><%= @free_customers %> </td>
+			</tr>
+		    <tr>
+		      <th>RPU</th>
+		      <td><%= format_float_value(@cmrr) %></td>
+		    </tr>
+			<tr>
+		      <th>CMRR</th>
+		      <td><%=format_float_value(@monthly_revenue)%></td>
+		    </tr>
+			<tr>
+			  <th>Agent Count</th>
+		      <td><%= @customer_agent_count %> </td>
+			</tr>
+	  </table>
+            
 
-<%= will_paginate(@subscriptions) %>
+  </div> 
+</div>  

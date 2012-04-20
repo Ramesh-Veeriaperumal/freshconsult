@@ -1,5 +1,5 @@
 <%= content_tag (:h3, (params[:formTitle].blank?) ? t('feedbackwidget_defaulttitle') : params[:formTitle], :class => "title") %>
-<% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]) , :html => {:method => :post, :multipart => true }  do |f| %>
+<% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]) , :html => {:method => :post, :multipart => true, :id => "fd_feedback_widget", :target => "freshwidget-submit-frame"}  do |f| %>
   <%= f.error_messages %>
     <ul class="ui-form"> 
       <% current_portal.customer_editable_ticket_fields.each do |field| %>
@@ -30,3 +30,18 @@
 		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %> 
 	</div>
 <% end %>
+<iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="visibility:hidden; width:0px; height:0px;"></iframe>
+<script type="text/javascript">
+	jQuery("document").ready(function(){
+		setTimeout(function() {
+	 		jQuery("#fd_feedback_widget").validate();
+	 	},500);
+	 	jQuery("#freshwidget-submit-frame").bind("load", function() {
+	 		if(jQuery("#freshwidget-submit-frame").contents().find("#ui-widget-container").length != 0) {
+	 			jQuery("#ui-widget-container").hide();
+		 		jQuery("#ui-thanks-container").html(jQuery("#freshwidget-submit-frame").contents().find("#ui-widget-container").html());
+		 		jQuery("#ui-thanks-container").show();
+		 	}
+	 	});
+	});
+</script>

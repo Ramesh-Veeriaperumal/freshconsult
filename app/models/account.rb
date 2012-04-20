@@ -135,7 +135,7 @@ class Account < ActiveRecord::Base
   
   has_many :tags, :class_name =>'Helpdesk::Tag'
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet'
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
   #Scope restriction ends
   

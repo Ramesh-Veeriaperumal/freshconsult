@@ -22,6 +22,15 @@
 		GettingStarted.i18n["email_send_problem"] = "<%=t('.email_send_problem')%>";
 		GettingStarted.i18n["sending_test_mail_progress"] = "<%=t('.sending_test_mail_progress')%>";
 		GettingStarted.i18n["agent_limit_reached"] = "<%=t('.agent_limit_reached')%>";
+		GettingStarted.i18n["rebrand_header_empty"] = "<%=t('.rebrand_header_empty')%>";
+		GettingStarted.i18n["rebrand_tab_empty"] = "<%=t('.rebrand_tab_empty')%>";
+		GettingStarted.i18n["rebrand_bg_empty"] = "<%=t('.rebrand_bg_empty')%>";
+		GettingStarted.i18n["rebrand_header_invalid"] = "<%=t('.rebrand_header_invalid')%>";
+		GettingStarted.i18n["rebrand_tab_invalid"] = "<%=t('.rebrand_tab_invalid')%>";
+		GettingStarted.i18n["rebrand_bg_invalid"] = "<%=t('.rebrand_bg_invalid')%>";
+		GettingStarted.i18n["agent_email_sending"] = "<%=t('.agent_email_sending')%>";
+		GettingStarted.i18n["agent_email_required"] = "<%=t('.agent_email_required')%>";
+		
 		
 		jQuery("#ResetColors").click(function(){
 			jQuery("#HeaderColor").val("#252525").trigger("keyup");
@@ -36,32 +45,21 @@
 			var statusBox = loadingDiv.find("#status_update");
 			Loading.updateStatus(statusBox,"update",GettingStarted.translate("validating"));
 			loadingDiv.show();
-			var reply_email_ele = form.children("#reply_to_id")
+			var reply_email_ele = form.children("#reply_to_id");
 			var reply_email = reply_email_ele.val();
 			if(Validate.email(reply_email))
 			{
 				Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
 				loadingDiv.show();
-				form.ajaxSubmit({
-					success:function(data){
-						Loading.updateStatus(statusBox,"success",GettingStarted.translate("successfully_updated"));
-					},
-					error:function(data){
-						Loading.updateStatus(statusBox,"failure",GettingStarted.translate("problem_updating"));
-					},
-					complete:function(){
-						loadingDiv.delay(hideDelay).hide(1);
-					}
-				});
 			}
 			else{
 				Loading.updateStatus(statusBox,"failure",GettingStarted.translate("email_invalid"));
 				reply_email_ele.addClass("gs_error_highlight");
 				reply_email_ele.focus();
 				loadingDiv.delay(hideDelay).hide(1);
+				event.stopPropagation();
+			    return false;
 			}
-		    event.stopPropagation();
-		    return false;
 		});
 		
 		jQuery('input#agent_invite_submit').click( function(event) {						
@@ -74,65 +72,72 @@
 			var agent_emails_ele = form.children("#agents_invite_email");
 			var agent_emails = agent_emails_ele.val();
 			if(Validate.email(agent_emails))
-			{
-				Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
-					form.ajaxSubmit({
-						success:function(data){
-												
-							if(data["reached_limit"]){
-								Loading.updateStatus(statusBox,"failure", GettingStarted.translate("agent_limit_reached"));
-							}
-							else{								
-								Loading.updateStatus(statusBox,"success", GettingStarted.translate("successfully_updated"));
-								jQuery('form#agent_invite')[0].reset();
-							}
-					
-						},
-						error:function(data){
-							Loading.updateStatus(statusBox,"failure",GettingStarted.translate("problem_updating"));
-						},
-						complete:function(){
-							loadingDiv.delay(hideDelay).hide(1);
-						}
-				});
+			{			  	Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
+		
 			}
 			else{
-				Loading.updateStatus(statusBox,"failure",GettingStarted.translate("emails_invalid"));
+			
+                if(Validate.isEmpty(agent_emails)){
+					Loading.updateStatus(statusBox,"failure",GettingStarted.translate("agent_email_required"));
+				  }
+				else{						Loading.updateStatus(statusBox,"failure",GettingStarted.translate("emails_invalid"));
+				}
 				agent_emails_ele.addClass("gs_error_highlight");
 				agent_emails_ele.focus();
 				loadingDiv.delay(hideDelay).hide(1);
-			}
-		    event.stopPropagation();
-		    return false;
+				event.stopPropagation();
+			    return false;
+			}		    
 		});
 		
 		jQuery('input#rebrand_submit').click( function(event) {				
-			var form = jQuery('form#rebrand');
+			
 			var loadingDiv = jQuery("#rebrand_submit_status");
 			loadingDiv = (loadingDiv.length>0)? loadingDiv : Loading.getContainer("#rebrand_submit_status","#rebrand_box");
-			loadingDiv.show();
 			var statusBox = loadingDiv.find("#status_update");
-			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
-			form.ajaxSubmit({
-				 success:function(data){
-				     
-	Loading.updateStatus(statusBox,"success",GettingStarted.translate("implement_changes"));
-					location.reload(true);
-
-				
-				},
-				error:function(){
-					Loading.updateStatus(statusBox,"failure",GettingStarted.translate("problem_updating"));
-				},
-				complete:function(){
-					loadingDiv.delay(hideDelay).hide(1);
-				}
-			});
 			
-		    event.stopPropagation();
-		    return false;
+			var form = jQuery('form#rebrand');
+			
+			
+			var header_color = form.find("#HeaderColor");
+			var tab_color = form.find("#TabColor");
+			var bg_color = form.find("#BackgroundColor");
+			
+									
+			if(!Validate.colorCode(header_color.val())){	
+				var errorMessage = Validate.isEmpty(header_color.val())?GettingStarted.translate("rebrand_header_empty"):GettingStarted.translate("rebrand_header_invalid");			
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				header_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			else if(!Validate.colorCode(tab_color.val())){
+				var errorMessage = Validate.isEmpty(tab_color.val())?GettingStarted.translate("rebrand_tab_empty"):GettingStarted.translate("rebrand_tab_invalid");			
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				tab_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			else if(!Validate.colorCode(bg_color.val())){
+				var errorMessage = Validate.isEmpty(bg_color.val())?GettingStarted.translate("rebrand_bg_empty"):GettingStarted.translate("rebrand_bg_invalid");
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				bg_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			
+			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));		
+			loadingDiv.show();				
+			loadingDiv.delay(3000).hide(1);		
+							
 		});
-	});
+	});	
 <% end %>
 <div class="clear gs">
 
@@ -141,33 +146,14 @@
 
 <div class="clear gs">
 	<div id="email_config_box" class="bigbox float">
-	 <% form_for :email_config, @email_config, :url => admin_email_config_path(@email_config, :json), :html => { :method => :put,:id =>"email_config"} do |f| %>	
+	 <% remote_form_for :email_config, @email_config, :url => admin_email_config_path(@email_config), :html => { :method => :put,:id =>"email_config"} do |f| %>
 		<strong><%=t('.email_config_title')%></strong>
 		<p><%=t('.email_config_sub_title')%></p>
 		<label class="spacer"><%=t('.email_config_field_title')%></label>
 		<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id", :style => "width: 75%", :onclick => "javascript:jQuery(this).removeClass('gs_error_highlight');" %>
 		<%= f.submit t('save'), :class => "uiButton", :id => "email_config_submit", :style => "margin-top: -3p" %>
 		<div id="send_mail_content" class="gs_request">
-		<div class="gs_request">	
-		<p id="fwdemail"><%=t('.send_test_mail_info1', :to_email => @email_config[:to_email])%></b>
-		<a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_info2')%></a>
-		<b><%= t('.send_test_mail_info3', :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title'),:url => (test_email_admin_email_config_path(@email_config,:json)), :method => :put, :class => "", :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" ) )%></b></p>
-		</div>
-		<div class="gs_response">
-			<p>	
-						<%=t('.send_test_mail_response1',:reply_email => @email_config.reply_email)%><br><br>
-						<a href="javascript:SendTestMail.confirm('yes');" class="uiButton"><%=t('.send_test_mail_confirm_yes')%></a><a href="javascript:SendTestMail.confirm('no');" class="uiButton" style="margin-left:10px;"><%=t('.send_test_mail_confirm_no')%></a>
-			</p>
-		</div>
-		<div class="gs_yes">
-			<p><%=t('.send_test_mail_response_yes')%></p>
-		</div>
-		<div class="gs_no">
-			<p>
-				<%=t('.send_test_mail_response_no1')%>
-					<a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_response_no2')%></a> <%=t('.send_test_mail_response_no3', :to_email =>  @email_config.to_email, :reply_email => @email_config.reply_email, :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title') , :url => (test_email_admin_email_config_path(@email_config,:json)), :method => :put, :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" )) %>
-			</p>
-		</div>	
+		<%= render :partial => "send_mail_content" %>
 		</div>
 		
 	 <%end%>	
@@ -178,7 +164,7 @@
     <div class="float">
 	
 		<div id="agent_box" class="smallbox">			
-		<% form_for @agent, :url => create_multiple_items_agents_path(:json), :html => { :method => :put,:id =>"agent_invite" } do |f| %>	
+		<% remote_form_for @agent, :url => create_multiple_items_agents_path(), :html => { :method => :put,:id =>"agent_invite" } do |f| %>	
 		<strong><%=t('.agent_title')%></strong>
 		<p style="margin-bottom: 25px;"><%=t('.agent_sub_title')%></p>
 		<label><%=t('.agent_send_invite_label')%></label>
@@ -192,23 +178,25 @@
 		<div id="social_box" class="smallbox minifier">
 			<strong><%=t('.social_title')%></strong>
 			<p><%=t('.social_sub_title')%></p>
-			<div>
-			<a href="<%=@wrapper.authorize_url%>" target="_blank"><div class="twitterbutton float"><strong><%=t('.social_twitter')%></strong><samp><%=t('.social_twitter_add')%></samp></div></a>	
-			<a href="<%=@fb_client.authorize_url%>" target="_blank"><div class="facebookbutton float"><strong><%=t('.social_facebook')%></strong><samp><%=t('.social_facebook_add')%></samp></div></a>	
+			<div style="margin-left: 30px;">
+			<a href="<%=@wrapper.authorize_url%>" target="_blank"><div class="twitterbutton float">
+<!--[if lt IE 10]><img src="/images/twitter_32.png" style="float: left; margin: -3px 5px 0 -35px; border: 0;"><![endif]-->				<strong><%=t('.social_twitter')%></strong><samp><%=t('.social_twitter_add')%></samp></div></a>	
+			<a href="<%=@fb_client.authorize_url%>" target="_blank"><div class="facebookbutton float">
+<!--[if lt IE 10]><img src="/images/facebook_32.png" style="float: left; margin: -3px 4px 0 -35px; border: 0;"><![endif]-->								<strong><%=t('.social_facebook')%></strong><samp><%=t('.social_facebook_add')%></samp></div></a>	
 	    	</div>
 	    </div>
 	
 	</div>	
 	
 	<div id="rebrand_box" class="bigbox float">
-		<% form_for :account, @account, :url => rebrand_account_path(:json),  :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
+		<% form_for :account, @account, :url => rebrand_account_path(),  :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
 		<% f.fields_for :main_portal do |portal| %>
 		<strong><%=t('.rebrand_title')%></strong>
 		<p><%=t('.rebrand_sub_title')%></p>
 		<label><%=t('.rebrand_company_label')%></label>
-		<%= portal.text_field :name, :class => "text auto", :placeholder => t('.rebrand_company_field_placeholder') %>
+		<%= portal.text_field :name, :placeholder => t('.rebrand_company_field_placeholder') %>
 		<%= render :partial => "/shared/logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
-		<label><%=t('.rebrand_paint_title')%></label>
+		<label class="spacer"><b><%=t('.rebrand_paint_title')%></b></label>
 
 		<div class="clear">
 			<div class=" float">
@@ -238,7 +226,7 @@
 
 <div class="clear">
 <h3 class="float" ><%=t('.admin_sub_title', :admin_tab => "<a href='/admin/home' target='_blank'><b>Admin</b></a>")%></h3>
-<div class="right uiButton"><a href="/helpdesk"><%=t('.product_link_label')%></a></div>
+<div class="right"><a href="/helpdesk" class="uiButton"><%=t('.product_link_label')%></a></div>
 </div>
 </div>
 

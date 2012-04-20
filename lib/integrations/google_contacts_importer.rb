@@ -119,7 +119,7 @@ class Integrations::GoogleContactsImporter
       stats=[0,0,0]; err_stats=[0,0,0]
       account = @google_account.account
       updated_goog_contacts_hash.each { |user|
-        unless user.blank? || account.blank?
+        unless user.blank? or account.blank? or user.email.blank?
           begin
             sync_tag_id = @google_account.sync_tag.id unless @google_account.sync_tag.blank?
             if user.exist_in_db?
@@ -167,5 +167,5 @@ class Integrations::GoogleContactsImporter
       end
     end
 
-    MAX_RESULTS = 1000
+    MAX_RESULTS = 200
 end

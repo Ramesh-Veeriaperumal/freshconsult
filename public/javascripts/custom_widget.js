@@ -60,10 +60,10 @@ Freshdesk.Widget.prototype={
 				this.content_anchor.innerHTML = this.options.application_content();	
 			}
 			if(this.options.application_resources){
-				this.options.application_resources.each(
-					function(reqData){
-						if(reqData) cw.request(reqData);
-					});
+			this.options.application_resources.each(
+				function(reqData){
+					if(reqData) cw.request(reqData);
+				});
 			}
 		}
 	},
@@ -190,13 +190,12 @@ var UIUtil = {
 		if (!keepOldEntries) dropDownBox.innerHTML = "";
 		if(type == "xml"){
 			parser = XmlUtil;
-			data = data.responseXML;
-		}
-		else{
+		} else if(type == "hash"){
+			parser = HashUtil;
+		} else {
 			parser = JsonUtil; 
-			data = data.responseJSON;
 		}
-		
+
 		var entitiesArray = parser.extractEntities(data, entityName);
 		for(i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
@@ -234,9 +233,11 @@ var UIUtil = {
 			}
 			if (dispName.length < 2) dispName = entityEmailValue;
 
-			newEntityOption.value = entityIdValue;
-			newEntityOption.innerHTML = dispName;
-			dropDownBox.appendChild(newEntityOption);
+			if (entityIdValue && dispName) {
+				newEntityOption.value = entityIdValue;
+				newEntityOption.innerHTML = dispName;
+				dropDownBox.appendChild(newEntityOption);
+			}
 			if (foundEntity == "") {
 				foundEntity = entitiesArray[i];
 				newEntityOption.selected = true;
@@ -318,14 +319,74 @@ var XmlUtil = {
 	getNodeValueStr:function(dataNode, nodeName){
 		return this.getNodeValue(dataNode, nodeName) || "";
 	},
-
+/*
 	getNodeAttrValue:function(dataNode, lookupTag, attrName){
 		var element = dataNode.getElementsByTagName(lookupTag);
 		if(element==null || element.length==0){
 			return null;
 		}
 		return element[0].getAttribute(attrName) || null;
+	}*/
+}
+
+var JsonUtil = {
+	extractEntities:function(resStr, lookupTag){
+		if(resStr instanceof Array)
+			return resStr;
+		else if(resStr instanceof Object)
+		{
+			var result = resStr[lookupTag] || Array();
+			return result;	
+		}
+		
+	},
+	getNodeValue:function(dataNode, lookupTag){
+		if(dataNode == '') return;
+		var element = dataNode[lookupTag];
+		if(element==null || element.length==0){
+			return null;
+		}
+		return element;
+	},
+
+	getNodeValueStr:function(dataNode, nodeName){
+		return this.getNodeValue(dataNode, nodeName) || "";
+	},
+
+	getMultiNodeValue:function(data, dataNodes){
+		var innerJson;
+		var innerValue;
+		var jsonValue = data;
+		var nodeArray = dataNodes.split(".");
+		if(nodeArray.length > 1){
+			for(var i=0; i<(nodeArray.length - 1); i++){
+				innerJson = JsonUtil.extractEntities(jsonValue, nodeArray[i]);
+				jsonValue = innerJson;
+			}
+		innerValue = JsonUtil.getNodeValueStr(jsonValue, nodeArray[nodeArray.length-1]);
+		}
+		return innerValue;
 	}
+
+}
+
+var HashUtil = {
+	extractEntities:function(hash, lookupKey){
+		return hash[lookupKey] || new Array();
+	},
+
+	getNodeValue:function(dataNode, lookupKey){
+		if(dataNode == '') return;
+		var element = dataNode[lookupKey];
+		if(element==null || element.length==0){
+			return null;
+		}
+		return element;
+	},
+
+	getNodeValueStr:function(dataNode, lookupKey){
+		return this.getNodeValue(dataNode, lookupKey) || "";
+	},
 }
 
 var JsonUtil = {

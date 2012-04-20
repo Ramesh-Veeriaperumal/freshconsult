@@ -31,7 +31,8 @@ module EmailCommands
   
   def get_email_cmd_regex(account)
     delimeter = account.email_commands_setting.email_cmds_delimeter
-    email_cmds_regex = Regexp.new("#{delimeter}(.+)#{delimeter}",Regexp::IGNORECASE | Regexp::MULTILINE) unless delimeter.blank?
+    escaped_delimeter = Regexp.escape(delimeter)
+    email_cmds_regex = Regexp.new("#{escaped_delimeter}(.+)#{escaped_delimeter}",Regexp::IGNORECASE | Regexp::MULTILINE) unless escaped_delimeter.blank?
     email_cmds_regex
   end
   

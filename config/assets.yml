@@ -69,7 +69,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
   visitor:
-      - public/javascripts/frameworks/session.js            
+    - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js
@@ -82,10 +82,15 @@ javascripts:
     - public/javascripts/timesheet.js
   freshwidget:
     - public/javascripts/freshwidget.js
+  fdwidget:
+    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
   custom_widget:
     - public/javascripts/custom_widget.js
   getting_started:
     - public/javascripts/getting_started.js
   subscription:                    
+    - public/javascripts/prototype.js  
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js

@@ -2,12 +2,12 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   DUMMY_ACCOUNTS = 2
   DUMMY_MONEY = 137.0
-  DUMMY_AGENTS = 5
-   
-   
+  DUMMY_AGENTS = 5      
   
   include ModelControllerMethods
-  include AdminControllerMethods
+  include AdminControllerMethods 
+  
+  before_filter :set_selected_tab, :only => [ :customers ]
   
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
@@ -31,7 +31,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   def charge
     if request.post? && !params[:amount].blank?
       load_object
-      if @subscription.misc_charge(params[:amount])
+      if @subscription.misc_charge(params[:amount].to_f)
         flash[:notice] = 'The card has been charged.'
         redirect_to :action => "show"
       else
@@ -116,5 +116,9 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     def redirect_url
       action_name == 'destroy' ? { :action => 'index'} : [:admin, @subscription]
     end
+  
+  def set_selected_tab
+     @selected_tab = :customers
+  end
   
 end

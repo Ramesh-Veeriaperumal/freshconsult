@@ -7,12 +7,16 @@ module Integrations::AppsUtil
   end
 
   def get_encrypted_value(params)
-    if params[:encryptiontype] == "md5"
-      params[:password] = Digest::MD5.hexdigest(params[:password])
+    begin
+      if params[:encryptiontype] == "md5"
+      params[:password] = Digest::MD5.hexdigest(params[:password]) unless params[:password].blank?
     else
       public_key_file = 'config/cert/public.pem'
       public_key = OpenSSL::PKey::RSA.new(File.read(public_key_file))
-      params[:password] = Base64.encode64(public_key.public_encrypt(params[:password]))
+      params[:password] = Base64.encode64(public_key.public_encrypt(params[:password])) unless params[:password].blank?
+    end  
+    rescue Exception => e
+      Rails.logger.error("Error encrypting password for the installed application. #{e.message}")
     end
     return params
   end

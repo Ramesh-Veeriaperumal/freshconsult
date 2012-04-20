@@ -111,7 +111,7 @@ JiraWidget.prototype= {
 					if (jiraBundle.remote_integratable_id) {
 						return jiraWidget.JIRA_ISSUE.evaluate({});
 					} else {
-						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject});
+						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject.replace(/"/g,"&quot;")});
 					}
 				},
 				application_resources:init_reqs
@@ -146,7 +146,7 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadProject:function() {
-		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
+		selectedProjectNode = UIUtil.constructDropDown(this.projectData.responseJSON, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
 		UIUtil.hideLoading('jira','projects','');
 	},
 
@@ -189,7 +189,7 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadIssueTypes:function(resData){
-		selectedProjectNode = UIUtil.constructDropDown(resData, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
+		selectedProjectNode = UIUtil.constructDropDown(resData.responseJSON, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
 		UIUtil.hideLoading('jira','issue-types','');
 	},
 
@@ -201,7 +201,6 @@ JiraWidget.prototype= {
 	},
 
 	createJiraIssue:function(resultCallback) {
-
 		this.showSpinner();
 
 		self = this;
@@ -217,13 +216,13 @@ JiraWidget.prototype= {
 				"projectId": projectId,
 				"issueTypeId":typeId,
 				"summary":ticketSummary,
-				"description":jiraBundle.jiraNote,
+				"description":  jQuery('#jira-note').html(), //jiraBundle.jiraNote,
 				"application_id": jiraBundle.application_id,
 				"ticketData":ticketData,
 				"integrated_resource[local_integratable_id]":jiraBundle.ticket_rawId,
 				"integrated_resource[local_integratable_type]": integratable_type
 
-			};
+			};	
 			new Ajax.Request("/integrations/jira_issue/create", {
 				asynchronous: true,
 				method: "post",

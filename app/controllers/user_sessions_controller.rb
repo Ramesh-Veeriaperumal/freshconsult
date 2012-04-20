@@ -121,6 +121,9 @@ require 'openssl'
   end
   
   def destroy
+    session.delete :assumed_user if session.has_key?(:assumed_user)
+    session.delete :original_user if session.has_key?(:original_user)
+
     current_user_session.destroy unless current_user_session.nil? 
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
       return redirect_to current_account.sso_options[:logout_url]
@@ -218,9 +221,14 @@ require 'openssl'
         @user_session = current_account.user_sessions.new(@current_user)  
         if @user_session.save
           logger.debug " @user session has been saved :: #{@user_session.inspect}"
+          
           if gmail_gadget_temp_token.blank?
-            flash[:notice] = t(:'flash.g_app.authentication_success')
-            redirect_back_or_default('/')
+            flash[:notice] = t(:'flash.g_app.authentication_success')        
+            if (@current_user.account_admin? && @current_user.first_login?)
+               redirect_to admin_getting_started_index_path
+            else
+              redirect_back_or_default('/')            
+            end  
           else
             @current_user.agent.google_viewer_id = google_viewer_id
             @current_user.agent.save!
