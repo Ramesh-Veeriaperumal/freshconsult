@@ -6,7 +6,7 @@ class SlaNotifier < ActionMailer::Base
     recipients    agent.email
     from          ticket.account.default_friendly_email
     sent_on       Time.now    
-    headers       "Reply-to" => "#{ticket.account.default_friendly_email}"
+    headers       "Reply-to" => "#{ticket.account.default_friendly_email}", "Precedence" => "bulk", "Auto-Submitted" => "auto-replied"
     content_type  "text/html"
   end
   
