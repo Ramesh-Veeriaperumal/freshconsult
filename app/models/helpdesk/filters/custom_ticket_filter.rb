@@ -225,7 +225,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       handle_empty_filter! 
       all_conditions = sql_conditions
       all_joins = get_joins(sql_conditions)
-      recs = model_class.paginate(:include => [:ticket_states,:responder,:requester],
+      recs = model_class.paginate(:include => [:responder,:requester],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
       recs.wf_filter = self
