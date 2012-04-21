@@ -326,8 +326,7 @@ FreshbooksWidget.prototype = {
 	// Utility methods
 	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		if(this.isRespSuccessful(resData.responseXML)){
-			UIUtil.constructDropDown(resData, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
-			
+			UIUtil.constructDropDown(resData.responseXML, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
 		}
 		return foundEntity;
 	},

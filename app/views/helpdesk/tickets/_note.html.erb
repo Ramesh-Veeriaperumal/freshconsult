@@ -30,21 +30,15 @@
       <%= link_to( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => "Delete this note?" ) %>   
       <% end %>
     </div>
-		<div class="user_details">    
+	<div class="user_details">    
 		<%= user_avatar(note.user) if note.user %>
     <%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name"), :note_date => formated_date(note.created_at) ) %>
 		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span> 
-  	</div> 
+  </div> 
 	<div class="details" id='<%= notedetails %>'>
-		<table>
-			<tr>
-    		<td>  
-					<div class="request_mail">
-						<%= note.body_html %>
-					</div>
-				 </td>
-			 </tr>
-		 </table>
+		<div class="request_mail">
+			<%= note.body_html %>
+		</div>
 	</div>
 	<% unless note.attachments.empty? %>
 		<span class="seperator"></span>

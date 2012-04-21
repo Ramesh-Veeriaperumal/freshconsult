@@ -211,7 +211,7 @@ module Helpdesk::TicketsHelper
       last_reply_content = last_conv.description_html
     else
       last_reply_by = (last_conv.user.name || '')+"&lt;"+(last_conv.user.email || '')+"&gt;" 
-      last_reply_by  = (ticket.reply_name)+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
+      last_reply_by  = (ticket.reply_name || '')+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
       last_reply_content = last_conv.body_html
     end
