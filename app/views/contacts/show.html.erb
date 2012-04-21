@@ -5,6 +5,11 @@
 	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects)%>
 	  </div>  
 	<% end %>
+
+  <% if is_application_installed?("sugarcrm")  %>	
+  	<%= render :partial => "/helpdesk/integrations/sugarcrm", :locals => {:user => @user}%>
+  <%end%>
+
 <%- end %>
 <div class="contact-box clearfix">
 		<div class="action_buttons">

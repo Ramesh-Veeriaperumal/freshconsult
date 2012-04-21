@@ -49,6 +49,7 @@ require 'openssl'
 
   def opensocial_google
     begin
+      Account.reset_current_account
       cert_file  = "#{RAILS_ROOT}/config/cert/#{params['xoauth_public_key']}"
       cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
       public_key = OpenSSL::PKey::RSA.new(cert.public_key)
@@ -57,38 +58,42 @@ require 'openssl'
       req = OAuth::RequestProxy::ActionControllerRequest.new(request)
       sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
       verified = sign.verify
-      puts "verified = #{verified}"
       if verified
-        current_account = Account.find(:first,:conditions=>{:google_domain=>params[:domain]},:order=>"updated_at DESC") unless params[:domain].blank?
-        google_viewer_id = params['opensocial_viewer_id']
-        google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
-        if google_viewer_id.blank?
-          json = {:verified => :false, :reason=>t("flash.gmail_gadgets.viewer_id_not_sent_by_gmail")}
+        account = Account.find(:first,:conditions=>{:google_domain=>params[:domain]},:order=>"updated_at DESC") unless params[:domain].blank?
+        if account.blank?
+          json = {:verified => :false, :reason=>t("flash.gmail_gadgets.account_not_associated")}
         else
-          agent = Agent.find_by_google_viewer_id(google_viewer_id)
-          if agent.blank?
-            json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, current_account)}  
-          elsif agent.user.deleted? or !agent.user.active?
-            json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
+          google_viewer_id = params['opensocial_viewer_id']
+          google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
+          if google_viewer_id.blank?
+            json = {:verified => :false, :reason=>t("flash.gmail_gadgets.viewer_id_not_sent_by_gmail")}
           else
-            json = {:user_exists => :true, :t=>agent.user.single_access_token, 
-                    :url_root=>agent.user.account.full_domain, :ssl_enabled=>agent.user.account.ssl_enabled}
+            agent = account.agents.find_by_google_viewer_id(google_viewer_id)
+            if agent.blank?
+              json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, account)}  
+            elsif agent.user.deleted? or !agent.user.active?
+              json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
+            else
+              json = {:user_exists => :true, :t=>agent.user.single_access_token, 
+                      :url_root=>agent.user.account.full_domain, :ssl_enabled=>agent.user.account.ssl_enabled}
+            end
           end
         end
       else
         json = {:verified => :false, :reason=>t("flash.gmail_gadgets.gmail_request_unverified")}
       end
-    rescue
+    rescue => e
+      Rails.logger.error "Problem in processing google opensocial request. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       json = {:verified => :false, :reason=>t("flash.gmail_gadgets.unknown_error")}
     end
-    puts "result json #{json.inspect}"
+    Rails.logger.debug "result json #{json.inspect}"
     render :json => json
   end
 
   def generate_random_hash(google_viewer_id, account)
      generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
-     KeyValuePair.delete_all(["value=? and obj_type=? and account_id=?", google_viewer_id, TOKEN_TYPE, account])
-     kvp = KeyValuePair.new({:key=>generated_hash, :value=>google_viewer_id, :obj_type=>TOKEN_TYPE, :account_id=>account})
+     KeyValuePair.delete_all(["value=? and obj_type=? and account_id=?", google_viewer_id, TOKEN_TYPE, account.id])
+     kvp = KeyValuePair.new({:key=>generated_hash, :value=>google_viewer_id, :obj_type=>TOKEN_TYPE, :account_id=>account.id})
      kvp.save! # if it throws exception, let it propagate. Without storing this info anyway we cannot proceed. 
      return generated_hash;
   end
