@@ -1,5 +1,5 @@
 class Helpdesk::TicketState <  ActiveRecord::Base
-  belongs_to_account
+  #belongs_to_account
   set_table_name "helpdesk_ticket_states"
   belongs_to :tickets , :class_name =>'Helpdesk::Ticket',:foreign_key =>'ticket_id'
   

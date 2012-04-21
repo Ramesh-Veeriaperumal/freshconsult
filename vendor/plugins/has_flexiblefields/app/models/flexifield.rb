@@ -3,7 +3,7 @@
 
 class Flexifield < ActiveRecord::Base
   
-  belongs_to_account
+  #belongs_to_account
 
   belongs_to :flexifield_set, :polymorphic => true
   belongs_to :flexifield_def, :include => 'flexifield_def_entries'
