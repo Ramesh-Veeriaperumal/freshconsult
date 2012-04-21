@@ -49,6 +49,7 @@ require 'openssl'
 
   def opensocial_google
     begin
+      Account.reset_current_account
       cert_file  = "#{RAILS_ROOT}/config/cert/#{params['xoauth_public_key']}"
       cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
       public_key = OpenSSL::PKey::RSA.new(cert.public_key)
@@ -81,10 +82,11 @@ require 'openssl'
       else
         json = {:verified => :false, :reason=>t("flash.gmail_gadgets.gmail_request_unverified")}
       end
-    rescue
+    rescue => e
+      Rails.logger.error "Problem in processing google opensocial request. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       json = {:verified => :false, :reason=>t("flash.gmail_gadgets.unknown_error")}
     end
-    puts "result json #{json.inspect}"
+    Rails.logger.debug "result json #{json.inspect}"    render :json => json
     render :json => json
   end
 
