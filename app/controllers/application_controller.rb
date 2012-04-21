@@ -3,11 +3,11 @@
 
 class ApplicationController < ActionController::Base
   
+  before_filter :reset_current_account
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
   before_filter :set_locale
-  after_filter  :reset_current_account
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
