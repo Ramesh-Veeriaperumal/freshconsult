@@ -255,7 +255,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   
   def joins
-    ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id  "]
+    ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id and  flexifields.account_id = helpdesk_tickets.account_id "]
   end      
   
   def order_field
