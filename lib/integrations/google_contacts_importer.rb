@@ -12,6 +12,7 @@ class Integrations::GoogleContactsImporter
     google_accounts = Integrations::GoogleAccount.find_all_installed_google_accounts
     google_accounts.each { |google_account|
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
+      Account.reset_current_account
       begin
         goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
         if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
