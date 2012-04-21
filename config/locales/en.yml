@@ -421,6 +421,7 @@ en:
       viewer_id_not_sent_by_gmail: "Wrong Gmail request.  Please try after logging in again."
       gmail_request_unverified: "Wrong Gmail signature.  Please try after logging in again."
       unknown_error: "Unknown server error. Please contact support."
+      account_not_associated: "Your Gmail account is not yet associated to any Freshdesk account.  Go through the navigation link to associate it first."
     daypass:
       success: "%{quantity} Day Passes have been successfully added to your account."
       failed: "Error when adding day passes"

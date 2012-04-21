@@ -30,7 +30,7 @@ HarvestWidget.prototype= {
 				anchor:"harvest_widget",
 				app_name:"Harvest",
 				domain:harvestBundle.domain,
-				ssl_enabled:harvestBundle.ssl_enabled || "false",
+				ssl_enabled:harvestBundle.ssl_enabled || "true",
 				login_content: function(){
 					return harvestWidget.LOGIN_FORM.evaluate({});
 				},
@@ -120,6 +120,7 @@ HarvestWidget.prototype= {
 	},
 
 	clientChanged:function(client_id) {
+		
 		if(this.projectData != '') {
 			this.handleLoadProject();
 		}
@@ -127,6 +128,7 @@ HarvestWidget.prototype= {
 	},
 
 	projectChanged:function(project_id) {
+		
 		if(this.taskData != '') {
 			this.handleLoadTask();
 		}
