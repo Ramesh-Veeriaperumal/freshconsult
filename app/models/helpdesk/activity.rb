@@ -1,9 +1,12 @@
+
 class Helpdesk::Activity < ActiveRecord::Base
   set_table_name "helpdesk_activities"
   
+  belongs_to_account
+  
   serialize :activity_data
 
-  belongs_to :account
+  #belongs_to :account
   belongs_to :user
   belongs_to :notable, :polymorphic => true
   
@@ -12,6 +15,8 @@ class Helpdesk::Activity < ActiveRecord::Base
   validates_presence_of :description, :notable_id, :user_id
   
   before_create :set_short_descr
+  
+  
   
   named_scope :freshest, lambda { |account|
     { :conditions => ["helpdesk_activities.account_id = ? ", account], 
@@ -33,7 +38,7 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   
  named_scope :permissible , lambda {|user| { 
- :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND notable_type = 'Helpdesk::Ticket' "  ,
+ :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND notable_type = 'Helpdesk::Ticket'"  ,
  :conditions => send(:agent_permission ,user) } if user.agent? && !user.agent.all_ticket_permission  }
   
   def self.agent_permission user

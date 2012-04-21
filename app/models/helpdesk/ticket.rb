@@ -1,7 +1,9 @@
 require 'digest/md5'
 
 
-class Helpdesk::Ticket < ActiveRecord::Base 
+class Helpdesk::Ticket < ActiveRecord::Base
+  
+  belongs_to_account
 
   include ActionController::UrlWriter
   include TicketConstants
@@ -28,7 +30,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
       :support_score_on_update, :stop_timesheet_timers
   
-  belongs_to :account
   belongs_to :email_config
   belongs_to :group
  
@@ -37,6 +38,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+  
 
   has_many :notes, 
     :class_name => 'Helpdesk::Note',
@@ -76,6 +78,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
+    :conditions => 'helpdesk_attachments.account_id = #{account_id}',
     :dependent => :destroy
   
   has_one :tweet,
@@ -466,6 +469,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_ticket_states
     self.ticket_states = Helpdesk::TicketState.new
+    ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
     ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
@@ -614,7 +618,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_custom_field   
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
-    self.ff_def = ff_def_id       
+    self.ff_def = ff_def_id
+    self.flexifield.account_id = account_id
     unless self.custom_field.nil?          
       self.assign_ff_values self.custom_field    
     end

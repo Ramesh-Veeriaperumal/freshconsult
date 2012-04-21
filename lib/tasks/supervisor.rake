@@ -31,6 +31,7 @@ namespace :supervisor do
       end
     end
     puts "Supervisor rule check finished at #{Time.zone.now}."
+    Account.reset_current_account 
    end
   end
 end

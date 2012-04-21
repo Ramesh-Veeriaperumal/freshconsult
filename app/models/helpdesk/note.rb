@@ -1,8 +1,10 @@
 class Helpdesk::Note < ActiveRecord::Base
   set_table_name "helpdesk_notes"
+  
+  belongs_to_account
 
-  belongs_to :notable, :polymorphic => true  
-  belongs_to :account
+  belongs_to :notable, :polymorphic => true
+
   belongs_to :user
   
   Max_Attachment_Size = 15.megabyte
