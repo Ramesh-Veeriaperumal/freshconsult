@@ -86,7 +86,7 @@ require 'openssl'
       Rails.logger.error "Problem in processing google opensocial request. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       json = {:verified => :false, :reason=>t("flash.gmail_gadgets.unknown_error")}
     end
-    Rails.logger.debug "result json #{json.inspect}"    render :json => json
+    Rails.logger.debug "result json #{json.inspect}"
     render :json => json
   end
 
