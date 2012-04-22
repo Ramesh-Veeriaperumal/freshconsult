@@ -116,27 +116,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
   
   named_scope :all_company_tickets,lambda { |customer| { 
-        :joins => :requester,
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id ",
         :conditions => [" users.customer_id = ?",customer]
   } 
   }
   
   named_scope :company_tickets_resolved_on_time,lambda { |customer| { 
-        :joins => [:ticket_states,:requester],
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",customer]
   } 
   }
   
    named_scope :resolved_on_time,
-        :joins => :ticket_states,
+        :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
    
   named_scope :first_call_resolution,
-           :joins  => :ticket_states,
+           :joins  => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
 
   named_scope :company_first_call_resolution,lambda { |customer| { 
-        :joins => [:ticket_states,:requester],
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 AND users.customer_id = ?",customer]
   } 
   }
