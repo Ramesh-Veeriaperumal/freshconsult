@@ -250,28 +250,36 @@
     
   end
   
-   map.namespace :solution do |solution|     
-     solution.resources :categories, :collection => {:reorder => :put}  do |category|   
-     category.resources :folders, :collection => {:reorder => :put}  do |folder|
-       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
-         article.resources :tag_uses
-       end
-       end
-     end
-     
-     solution.resources :articles, :only => :show
-         
-     end
+  map.namespace :solution do |solution|     
+    solution.resources :categories, :collection => {:reorder => :put}  do |category|   
+      category.resources :folders, :collection => {:reorder => :put}  do |folder|
+        folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
+          article.resources :tag_uses
+        end
+      end
+    end     
+    solution.resources :articles, :only => :show         
+  end
 
   map.namespace :support do |support|
-     support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-       support.resources :tickets do |ticket|
+    support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     support.resources :company_tickets
-    support.resources :minimal_tickets
     support.resources :registrations
-    
+
+    support.resources :discussions, :only => [:index, :show]
+    support.namespace :discussions do |discussion|
+      discussion.resources :forums, :only => [:show]
+      discussion.resources :topics, :except => [:index]
+    end
+
+    support.resources :solutions, :only => [:index, :show]
+    support.namespace :solutions do |solution|
+      solution.resources :folders, :only => [:show]
+      solution.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
+    end
+
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
         :conditions => { :method => :post }

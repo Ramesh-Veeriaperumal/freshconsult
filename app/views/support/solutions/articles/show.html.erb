@@ -1,0 +1,25 @@
+<% content_for :sidebar do %>
+	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
+<% end %>
+	
+ <div class="artical_section">
+ 	<div class="crumbs">
+	 	<%= link_to "Solutions", solution_categories_path %> &rarr; 
+		<%= link_to @article.folder.category.name, solution_category_path(@article.folder.category) %> &rarr;
+		<%= link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder)%>
+ 	</div>
+	
+	<h2 class="title"><%= @article.title %></h2>  
+	
+	 <span class="seperator"></span>
+	 <div class="solutions_text">
+		<%= @article.description %>
+	 </div>
+	 <ul class="attachment_list">
+	    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
+     </ul>
+	 <span class="seperator"></span> 
+	 <div id="article_voting">
+		<%= render :partial => "/solution/articles/voting", :object => @article %>
+	 </div>
+</div> 

@@ -1,43 +1,26 @@
-	<% content_tag :h3, :class => "title" do
-				concat t('start_typing_a_question')                                                                
-				if allowed_in_portal?(:anonymous_tickets)
-					concat content_tag( :span, " or ", :class => "or-icon")
-					concat link_to(t('header.submit_a_ticket'), new_support_ticket_path, :class => "uiButton special") 
-				end 
-	 	 end %>
-	<div class="search-grey-box  ignore-margin-20">
-		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') } %>
-	</div>
-	<div class="two_col_cont">
-		<% if allowed_in_portal? :open_solutions %>
-			<div class="left_col"> 
-				<%= content_tag( :h3, t('solution.title'), :class => "title" ) %> 
-				<div class="ssp_category_list">	
-				<% @categories.each do |category| %>
-					<div class="<%= cycle('odd', 'even') %>"> 
-						<%= link_to category.name, category %>
-						<%= content_tag(:span, truncate(category.description, :length => 80)) %> 
-					</div> 
-				<% end %>
-				</div>
-			</div>
-		<% end %>
-		<% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
-			<div class="right_col">
-				<% unless (@topics.size == 0) %> 
-					<%= content_tag( :h3, t('recent_forum_posts'), :class => "title" ) %>  
-					<ul class="list_with_icon">
-						<% @topics.each do |topic|  %>
-							<li>
-								<span class="forum-bullet"></span>
-								<%= link_to topic.title, category_forum_topic_path(topic.forum.forum_category_id, topic.forum_id, topic.id), :class => "title" %> 
-								<div class="info_data"> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </div>
-							</li>	
-						<% end %> 
-					</ul> 
-				<% end %>
-			</div>
-		<% end %>
-		
-	</div>  
- 
+<%= content_tag :h2, "Help center" %>
+<%= content_tag :p, t('start_typing_a_question'), :class => "lead" %> 
+<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') } %>
+<hr />
+<% if allowed_in_portal? :open_solutions %>
+	<%= content_tag( :h3, t('solution.title'), :class => "title" ) %> 
+	<% @categories.each do |category| %>
+		<%= content_tag :h5, category.name %>
+		<%= content_tag(:p, truncate(category.description, :length => 80)) %> 
+		<div class="row-fluid">
+			<% category.folders.each do |folder| %>
+				<div class="span4"><%= content_tag :h6, folder.name %></div>
+			<% end %>
+		</div>
+	<% end %>
+<% end %>
+<hr />
+<% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
+	<% unless @topics.empty? %> 
+		<%= content_tag( :h3, t('recent_forum_posts'), :class => "title" ) %>  
+		<% @topics.each do |topic|  %>
+			<%= link_to topic.title, category_forum_topic_path(topic.forum.forum_category_id, topic.forum_id, topic.id) %> 
+			<p> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </p>
+		<% end %> 				
+	<% end %>
+<% end %>

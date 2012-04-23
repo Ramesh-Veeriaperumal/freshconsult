@@ -1,13 +1,12 @@
-<% content_for :sidebar do -%><%- end %>
-
-<h3 class="title"><%= @page_title %></h3>
-<div class="list-group tickets-container">          
- <div class="list-bar">
- 	<%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets", :class => "first" ) %>      
-	<%= link_to(t('helpdesk.tickets.views.open_or_pending'),"/support/tickets/filter/open_or_pending" ) %>     
-	<%= link_to(t('helpdesk.tickets.views.resolved_or_closed') ,"/support/tickets/filter/resolved_or_closed" ) %>
- </div>
- <table class="tickets">	
+<%= content_tag :h2, @page_title %>
+<div class="subnav">
+	<ul class="nav nav-pills">
+ 		<li class="active"><%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets" ) %></li>
+		<li><%= link_to(t('helpdesk.tickets.views.open_or_pending'), "/support/tickets/filter/open_or_pending" ) %></li>     
+		<li><%= link_to(t('helpdesk.tickets.views.resolved_or_closed'), "/support/tickets/filter/resolved_or_closed" ) %></li>
+	</ul>
+</div>
+ <table class="table">	
 	<tbody>
 		<%= each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) %>
 	</tbody>

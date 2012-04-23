@@ -1,0 +1,12 @@
+<% content_for :sidebar do -%><%-end %>
+<h3 id="new_topic" class="title"><%= t('topic.new') %></h3>
+<%= error_messages_for :post %>
+<%= error_messages_for :topic %>
+<% form_for :topic, :url  => category_forum_topics_path(@forum_category,@forum), :html => {:multipart => true, :id => "post-form"} do |f| -%>
+	<%= render :partial => "form", :object => f %>
+	<div class="button-container">
+		<%= submit_tag t('topic.post'), :class => "uiButton" %>
+		<%= link_to t('cancel'), category_forum_path(@forum.forum_category_id,@forum), :class => "uiButton" %>
+	</div>
+<% end -%>
+<%= javascript_tag "$('topic_title').focus();" %>

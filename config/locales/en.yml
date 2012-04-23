@@ -1370,8 +1370,8 @@ en:
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
   import_forum: Forums
   title: Title
-  new_ticket_created: New Ticket Created
-  recent_forum_posts: Recent Forum Posts
+  new_ticket_created: New ticket created
+  recent_forum_posts: Recent forum posts
   description: Description
   tkt_assigned_to_agent: Ticket assigned to Agent
   is: Is

@@ -1,7 +1,9 @@
 class Portal::Page < ActiveRecord::Base
 	set_table_name "portal_pages"
 
-	belongs_to :portal
+	belongs_to :portal                                      
+	
+	validates_uniqueness_of :content, :scope => [:template_id, :page_type]
 
 	PAGE_TYPES = [
     [ :home,      "Home page",              1 ],

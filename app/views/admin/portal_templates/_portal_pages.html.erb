@@ -1,0 +1,3 @@
+<% portal_pages.each do |page| %>
+  <li><%= link_to	page.page_name, "#EditPage", "data-remote-url" => edit_admin_portal_page_path(@portal, page.id) %> </li>
+<% end %>

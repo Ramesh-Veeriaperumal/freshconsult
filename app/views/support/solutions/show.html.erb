@@ -1,0 +1,29 @@
+<h3 class="title"><%=t('solution.title')%></h3> 
+<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>
+<div id="categories_list">			
+	<% @category.each do |category| %>
+		<div class="<%= cycle('odd', 'even') %>">
+			<h4 class="border_title">
+				<% unless @category.folders.empty? %>
+					<%= link_to @category.name + " &raquo;", support_solution_path(@category) %>
+				<% else %>
+					<%= @category.name %>
+				<% end %>
+			</h4>  
+			<ul>			
+	  		<% @category.folders.visible(current_user).each do |folder| %>
+				<li><%= link_to h(folder.name),  solution_category_folder_path(@category, folder)  %>
+				<span>
+				<% if logged_in? && current_user.has_manage_solutions? %>
+					(<%= folder.articles.size %>)
+				<%else%>
+	  				(<%= folder.articles.visible.size %>)
+				<%end%>
+			   </span> 
+			   </li>
+			<% end %> 
+			</ul>
+			<%= content_tag(:span, t('solution_category.info2'), :class => "no_info_text") if (@category.folders.size == 0)  %>
+		</div>
+	<%end%>
+</div>

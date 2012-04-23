@@ -1,4 +1,4 @@
-class Support::RegistrationsController < ApplicationController
+class Support::RegistrationsController < Support::SupportController
   
   before_filter { |c| c.requires_feature :signup_link }
   before_filter :chk_for_logged_in_usr

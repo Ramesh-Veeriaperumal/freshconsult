@@ -1,6 +1,6 @@
 class Solution::Folder < ActiveRecord::Base
   
-  attr_protected :category_id
+  attr_protected :category_id, :account_id
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :category_id
   

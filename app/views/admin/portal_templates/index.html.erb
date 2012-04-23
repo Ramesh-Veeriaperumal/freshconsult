@@ -3,10 +3,10 @@
 <h3 class="sub-title">Customize your support portal</h3>
 <span class="seperator"></span>   
 <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>   
-<div class="customize-form">
+<div class="customize-form clearfix">
 <ul data-tabs="tabs" class="customize-sidebar">
   <li>
-    <a href="#Pageselements">Page elements</a>
+    <a href="#Pageselements" data-toggle="tab">Page elements</a>
   </li>
   <li>
     <a href="#Customcss">Custom stylesheet</a>
@@ -16,14 +16,29 @@
   </li>   
   <li>                       
     <h6>Portal pages</h6>
-    <ul>                     
-      <% @portal_pages.each do |page| %>
-  		  <li><%= link_to	page.page_name, edit_admin_portal_page_path(@portal, page.id), :class => "btn small" %> </li>
-  		<% end %>
-      <li>                                          
-        <%= select_tag("page_types", options_for_select(@page_types), :class => "customSelect", "data-placeholder" => "Add Page...") %> 
-      </li>
-    </ul>
+    <ul id="PortalPages">                     
+      <%= render :partial => "portal_pages", :object => @portal_pages %>
+  	</ul>	
+    <%= select_tag("available_pages", options_for_select(@page_types), :class => "customSelect", "data-placeholder" => "Add Page") %>
+    <% javascript_tag do -%>
+      jQuery("#available_pages").change(function(ev){
+        _pagetype = this.value;
+        jQuery.ajax({
+          type: 'POST',
+          url: "<%= admin_portal_pages_path(:portal_id => @portal.id) %>",
+          data: { portal_page : { page_type : _pagetype } },
+          success: function(data){
+             jQuery("#PortalPages").html(data);
+          }
+       });
+     })   
+     jQuery("#PortalPages a").live("change", function(ev){  
+        jQuery("#EditPage").html('<div class="loading-box"></div>');        
+        jQuery.get(jQuery(this).data("remoteUrl"), function(data){
+           jQuery("#EditPage").html(data);
+        })
+      });
+    <%- end %>
   </li>       
 </ul>     
    
@@ -52,7 +67,11 @@
     	<label>Page layout</label>
     	<label class="help-text">Customize the entire layout of your support portal</label>	
     	<%= f.text_area :layout, :class => "auto", :rows => 24 %>       
-  	</div>  
+  	</div> 
+  	
+  	<div class="tab-pane" id="EditPage">
+  	 <div class="loading-box"></div>
+  	</div> 
   	
   	<div class="tab-pane" id="AddPage">
   	 <div class="loading-box"></div>

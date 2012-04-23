@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120329115633) do
+ActiveRecord::Schema.define(:version => 20120423095922) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -927,6 +927,7 @@ ActiveRecord::Schema.define(:version => 20120329115633) do
     t.integer  "visibility",  :limit => 8
     t.integer  "position"
     t.boolean  "is_default",               :default => false
+    t.integer  "account_id",  :limit => 8
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true

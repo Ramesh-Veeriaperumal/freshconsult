@@ -1,0 +1,36 @@
+<%= content_tag :h2, t('forum.title') %>	
+<div class="forum_list">
+	<div class="forum-group" id="forum_categories_list">
+		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search_all.placeholder'), :url => "/search/topics?search_key=" } %>
+		
+		<%= content_tag :h3, @category.name %>
+		<%= content_tag :p, @category.description, :class => "help-block" %>
+			<div class="row-fluid">	
+			    <% @category.portal_forums.each do |forum| %>
+					<div class="span4"> 
+						<h6>
+							<span class="<%= "forum_type_#{forum.type_symbol}" %> icon"></span>
+							<%= link_to ( h(forum.name), support_category_forum_path(@category, forum), :class => "title" )  %>
+							<span class="subcounter">(<%= content_tag(:span, forum.topics.size, :class => "sub_counter") %>)</span>
+						</h6>
+						<div class="topic-list">
+							<% unless (forum.topics.freshest(current_account).limit(5).size == 0) %> 
+								<div class="list_with_icon">
+									<% forum.topics.freshest(current_account).limit(5).each do |topic| %>
+										<div class="list-item">
+											<span class="forum-bullet"></span>
+											<%= link_to topic.title,category_forum_topic_path(topic.forum.forum_category_id,topic.forum_id,topic.id), :class => "title" %> 
+											<div class="info_data"> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </div>
+										</div>	
+									<% end %> 
+								</div>
+							<% else %>
+								<span class="no_info_text"><%=t('no_topics_text')%> - </span>
+								<%= (link_to t('add_a_topic'), new_category_forum_topic_path(@category, forum)) if logged_in? %>
+							<% end %>	
+						</div>
+					</div> 
+				<% end %>
+			</div>			
+	</div>
+</div>

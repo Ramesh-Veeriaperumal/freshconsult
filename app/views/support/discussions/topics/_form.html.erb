@@ -1,0 +1,73 @@
+<%= include_tiny_mce_if_needed %>
+<ul class="ui-form">
+	<li>
+		<label for="topic_title"><%= t('topic.name') %>*</label>
+		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %></div>
+	</li>	 
+	<li>
+		<label for="topic_body"><%= t('message') %></label>
+		<% if @topic.new_record? %>
+			<%= form.text_area  :body_html, :class => "mceEditor", :id => 'topic_body' %>
+		<% else %>
+			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
+		<% end %>
+	</li>
+	<% if admin? and not @topic.new_record? %>
+		<li id="topic_forum_id">
+	  		<label for="topic_forum_id"><%= t('forum.title') %></label>
+	  		<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
+		</li>
+	<% end %>
+	<li class="inlineChecklist">
+		<% if admin? or current_user.moderator_of?(@topic.forum) %>
+			<label>
+				<%= form.check_box :sticky %> <%= t('topic.sticky') %>
+			</label>
+			<label>
+				<%= form.check_box :locked %> <%= t('topic.locked') %>
+			</label>
+		<% end %>
+		<% if ["new"].include? params[:action] %>
+			<label id="monitor-topic-lable">
+				<%=check_box_tag 'monitor', '',true%> Monitor this topic
+			</label>
+		<%end%>
+	</li>	  
+	<li>
+		<%= render :partial=> "/forum_shared/attachment_form" %>
+	</li>
+	
+	<% unless @topic.new_record? %>
+	<div class="attachment-list-container">
+	    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
+	    <table class="attachment-list">
+	      <%= render(
+	        :partial => '/helpdesk/shared/attachment', 
+	        :collection => @topic.posts.first.attachments,
+	        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
+	    </table>
+	  </div>
+	<%end%>
+</ul>
+
+<% javascript_tag do %>
+	jQuery("#topic_locked").click(function(ev){
+		jQuery("#monitor-topic-lable").toggle(!this.checked);
+	});
+	jQuery("#monitor-topic-lable").toggle(!jQuery("#topic_locked").checked);
+<% end %>
+
+<script id="file-list-template" type="text/x-jquery-tmpl">			
+  <tr>
+    <td class="remove">
+      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">
+        <%= image_tag("helpdesk/delete.png") %>
+      </a>
+    </td>
+    <td class="name">${name}</td>
+    <td>
+      <label>Description</label>
+      <input type="text" name="helpdesk_article[attachments][][description]" />
+    </td>
+    </tr>
+</script>

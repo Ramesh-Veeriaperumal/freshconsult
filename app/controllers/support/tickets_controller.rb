@@ -1,4 +1,4 @@
-class Support::TicketsController < ApplicationController
+class Support::TicketsController < Support::SupportController
   
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   include SupportTicketControllerMethods 

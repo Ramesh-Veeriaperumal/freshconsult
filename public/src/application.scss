@@ -4237,12 +4237,12 @@ a.close{
 }
 
 .ticket-leftcol{
-   width:230px;
-   float:left;
+  width:230px;
+  float:left;
 	@include min-height(477px);
-   border:1px solid #ffffff; 
-   border-width:1px 1px 0 0;
-	@include linear-gradient(color-stops(#f4f4f4, #F1F1F1), top);
+  border:1px solid #ffffff; 
+  border-width:1px 1px 0 0;                                                                          
+	@include background-with-css2-fallback(linear-gradient(#f4f4f4, #F1F1F1), #f4f4f4);
 	
    h3.title{
       color:#888888;
@@ -4254,20 +4254,20 @@ a.close{
    h4.title{
       padding:0 6px 3px 0;
       font-size:11px;
-		text-transform:uppercase;
+		  text-transform:uppercase;
       color:#666666;
    }
    
    .view_filters{
 		.link-item.active, a.link-item:hover{
-         margin:0px -5px;
-         padding-left:13px;
-         background: #e2f1fa;
+       margin:0px -5px;
+       padding-left:13px;
+       background: #e2f1fa;
 		}
 		.link-item.active{
 		   color:#336699;
-         font-weight:bold;
-         @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+       font-weight:bold;                                                                          
+       @include background(linear-gradient(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)));  
 		   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 		}
 		.link-item.active:after{
@@ -4923,7 +4923,7 @@ a.submit_link:hover{
 	background: -webkit-linear-gradient(top,  #eee 5%,#fff 35%); /* Chrome10+,Safari5+ */
 	background: -o-linear-gradient(top,  #eee 5%,#eee 35%); /* Opera 11.10+ */
 	background: -ms-linear-gradient(top,  #eee 5%,#fff 35%); /* IE10+ */
-	background: linear-gradient(top,  #eee 5%,#fff 35%); /* W3C */
+  @include background(linear-gradient(top,  #eee 5%,#fff 35%));
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#ffffff',GradientType=0 ); /* IE6-8 */
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;

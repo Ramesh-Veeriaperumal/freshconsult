@@ -1,7 +1,6 @@
-<h3 class="title">Edit page</h3> 
 <% form_for :portal_page, @portal_page, :url => admin_portal_page_path, :html => { :method => :put } do |f| %>
-  <%= f.error_messages %>                          
-	<%= render :partial => "form", :object => f %>
-	<span class="seperator"></span>
-  <%= f.submit 'Save', :class => "btn primary" %>
+  <%= f.error_messages %>
+  <%= f.hidden_field :page_type %>
+  <%= f.label @portal_page.page_name %> 
+  <%= f.text_area :content, :class => "auto", :rows => 24  %>
 <% end %>

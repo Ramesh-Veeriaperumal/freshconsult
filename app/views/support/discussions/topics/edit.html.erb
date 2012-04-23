@@ -1,0 +1,17 @@
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title"><%= t('topic.edit') %></h3>
+<%= error_messages_for :topic %>
+<% form_for :topic,
+     :url  => category_forum_topic_path(@forum_category, @forum, @topic),
+    :html => {:multipart => true, :method => :put } do |f| -%>
+
+	<%= render :partial => "form", :object => f %>
+	
+	<div class="button-container">
+		<div class="floatl">
+			<%= link_to(t('delete'), category_forum_topic_path(@forum_category,@forum, @topic) , :class => "uiButton red" , :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %> 
+		</div>
+		<%= f.submit t('save'), :class => "uiButton" %>
+		<%= link_to (t('cancel') , category_forum_topic_path(@forum_category,@forum, @topic), :class => "uiButton grey" ) %> 
+	</div>
+<% end -%>

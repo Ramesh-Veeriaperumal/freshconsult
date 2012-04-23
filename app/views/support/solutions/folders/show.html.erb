@@ -1,0 +1,12 @@
+<h3 class="title"><%=t('solution.title')%></h3> 
+<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>
+
+<%= content_tag :h3, @folder.name %>
+<div>			
+	<% @folder.articles.visible(current_user).each do |article| %>
+	<h4><%= link_to h(article.title), support_solutions_article_path(article) %></h4>
+	<p>
+		<%= truncate( h(article.desc_un_html), :length => 250 )  %>
+	</p>
+	<% end %> 
+</div>

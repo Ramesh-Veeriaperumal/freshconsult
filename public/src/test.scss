@@ -1430,6 +1430,7 @@ a.pill.help{
 
 .customize-form{              
   padding:10px 10px 20px 180px;
+  @include min-height(500px);
   .tab-content{
     border-left:1px solid #e5e5e5;
     padding-left:15px;
@@ -1440,7 +1441,7 @@ a.pill.help{
   }
   .customize-sidebar{
     float:left;
-    width:170px;     
+    width:170px;    
     margin-left:-180px;
     li{ 
       padding:6px 0;

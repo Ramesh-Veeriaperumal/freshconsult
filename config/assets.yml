@@ -25,21 +25,9 @@ stylesheets:
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/ie.css    
     
-  portal:
-    - public/stylesheets/reset.css
-    - public/stylesheets/layout.css
-    - public/stylesheets/defaults.css
-    - public/stylesheets/application.css
-    - public/stylesheets/test.css
-    - public/stylesheets/validation.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css
-    - public/stylesheets/table.css
-    - public/stylesheets/autocomplete.css
-    - public/stylesheets/jquery-ui.css
-    - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/ie.css    
+  portal:                
+    - public/stylesheets/portal.css
+    - public/stylesheets/responsive.css    
 
   widget:
     - public/stylesheets/reset.css   
@@ -112,5 +100,5 @@ javascripts:
     - public/javascripts/getting_started.js
   subscription:                    
     - public/javascripts/prototype.js  
-    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery-1.7.2.js
     - public/javascripts/bootstrap.js

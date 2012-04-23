@@ -1,0 +1,87 @@
+<%= content_tag :h2, @forum.name %>
+<%= content_tag :p, @forum.description, :class => "lead" %>
+
+<%# render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => @forum_category.name), :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
+<div class="subnav">
+<ul class="nav nav-pills">
+  <li class="<%= (params[:stamp_type].blank? && params[:order].blank?) ? 'active' : '' %>">
+    <%= link_to(t("forums_order.popular"), support_discussions_forum_path( @forum_category, @forum) ) if @forum.ideas? %>    
+  </li>  
+  <li class="<%= (!params[:order].blank? && params[:order] == 'created_at desc' )? 'active' : '' %>">
+  	<%= link_to(t("forums_order.overview"), support_discussions_forum_path( @forum_category, @forum) ) unless @forum.ideas? %>
+  </li>
+  <li class="<%= (!params[:order].blank? && params[:order] == 'replied_at desc' )? 'active' : '' %>">
+  	<%= link_to t("forums_order.recent"), support_discussions_forum_path( @forum_category, @forum, :order => "replied_at") %>
+  </li>	
+  	<% if @forum.ideas? %>
+		<% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %> 
+		<li class="<%=((params[:stamp_type] == v.to_s)? "active":"")%>">
+			<%= link_to k, support_discussions_forum_path( @forum_category, @forum, :stamp_type  => v ) %>
+		</li>	
+		<% end %>
+	<% end %>
+</ul>
+</div>
+<% unless @topics.empty? %> 
+	<ul class="content-list">
+		<% @topics.each do |topic| %>
+			<% className = (topic.sticky?) ? "sticky" : "" %>
+			<% last_post = topic.last_post %>
+			<li class="<%= className %>"> 
+				<%= user_avatar( (topic.posts_count > 1) ? last_post.user : topic.user ) %>
+				
+					<span class="pull-right badge badge-success">
+						<span class="stamp stamp_type_<%=topic.stamp_type%>"> 
+							<%= h(topic.stamp_name) %>
+						</span>
+					</span>
+				
+					<%= content_tag (:b, "STICKY") if (topic.sticky?) %>				
+					<%= content_tag :h4, link_to(topic.title, support_discussions_topic_path(topic)) %>
+				
+					<p class="help-data"> 
+						<% if topic.posts_count > 1 %>
+							<%= t("topics.last_reply", :post_time => time_ago_in_words(last_post.created_at), :user_link => link_to_user(last_post.user) ) %>
+						<% else %>
+							<%= t("topics.posted_at", :post_time => time_ago_in_words(topic.created_at)) %>
+						<% end %> 
+						-  
+						<% 
+							count = topic.posts_count
+							if topic.posts_count > 1 
+								count -= 1
+						  end 
+						%>
+						<%= pluralize(count, t("reply"), t("replies")) %> 
+						-
+						<%= t("forum.verb.#{topic.forum.type_name.downcase}") %>   
+						<%= link_to_user topic.user %>
+						<%if @forum.ideas?%>
+							|  
+							<span class='idea-likes <%= "leftflat" unless topic.stamp_name.blank? %> '>
+								<span class="like-image"></span>
+								<%= topic.votes_count %> 
+							</span> 
+						<%end%>
+					</p>
+					<%if @forum.questions?%>  
+						<%if topic.posts.answered_posts.count > 0%>
+							<%= t('answered') %>
+						<%end%>
+					<%end%> 
+				  <% if topic.paged? -%>
+				  	<small><%= link_to t('last') %></small>
+				  <% end -%>  
+			</li>
+		<% end %>
+	</ul>
+  <% else %>
+	<div class="big-info">
+		<div class="no-info-text"><%= t('no_topics_text')%></div>
+		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") %>
+	</div>
+<% end %>	
+
+<%= will_paginate @topics %>	
+	 
+	

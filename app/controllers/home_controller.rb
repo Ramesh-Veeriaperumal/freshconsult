@@ -1,9 +1,8 @@
-class HomeController < ApplicationController
+class HomeController < Support::SupportController
 	
  	before_filter { @hash_of_additional_params = { :format => "html" } }  
  	before_filter :set_portal_variables
   before_filter :set_content_scope        
-	layout "portal"
   
   def index
     redirect_to helpdesk_dashboard_path if (current_user && current_user.permission?(:manage_tickets))

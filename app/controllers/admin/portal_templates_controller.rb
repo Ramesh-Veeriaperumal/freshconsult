@@ -18,7 +18,7 @@ class Admin::PortalTemplatesController < Admin::AdminController
     end
                                                            
     def get_pages                  
-      @page_types = Portal::Page::PAGE_TYPE_OPTIONS
+      @page_types = (Portal::Page::PAGE_TYPE_OPTIONS).insert(0, '')
       @portal_pages = @portal_template.pages
     end
 end
