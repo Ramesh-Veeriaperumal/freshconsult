@@ -30,7 +30,7 @@ HarvestWidget.prototype= {
 				anchor:"harvest_widget",
 				app_name:"Harvest",
 				domain:harvestBundle.domain,
-				ssl_enabled:harvestBundle.ssl_enabled || "false",
+				ssl_enabled:harvestBundle.ssl_enabled || "true",
 				login_content: function(){
 					return harvestWidget.LOGIN_FORM.evaluate({});
 				},

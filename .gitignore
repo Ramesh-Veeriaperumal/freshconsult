@@ -6,7 +6,7 @@ doc/api
 doc/app
 db/*.sqlite3
 *.swp
-*Â˜
+*˜
 .DS_Store
 .loadpath
 .project
@@ -15,10 +15,3 @@ db/sphinx/*
 config/development.sphinx.conf
 config/database.yml
 config/sphinx.yml
-
-test/functional/integrations/
-test/unit/helpers/integrations/
-test/unit/integrations/
-db/migrate/20120206172955_update_installed_applications.rb
-app/helpers/integrations/
-db/schema.rb
