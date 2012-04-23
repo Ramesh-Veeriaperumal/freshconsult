@@ -944,6 +944,7 @@ en:
   oneweek: 1 Week
   twoweek: 2 Weeks
   onemonth: 1 Month
+  threemonth: 3 Month
   problem: Problem
   change_plan_info: You can change your plan at any time, your next bill date is %{date}.
   created_on: Created on
@@ -1316,6 +1317,9 @@ en:
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
       send: Send
+    facebook_form: 
+      send_and_resolve: Send and Resolve
+      send: Send
     reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
@@ -1532,6 +1536,8 @@ en:
         title: "Reply to %{user}"
       history:
         recent_item: Recent Items
+      facebook_form:
+        title: "Reply to %{user}"
     dashboard:
       index:
         todo_title: To-Dos
@@ -1711,6 +1717,8 @@ en:
         visitor_posts_info: Freshdesk will convert all visitor posts on this Facebook page as tickets.
         company_posts: Import <strong>"Company posts"</strong> as ticket
         company_posts_info: Freshdesk will convert all Company posts on this Facebook page into tickets.
+        message_thread_time: Message Thread Time
+        message_thread_time_info: Maximum time to consider messages from same user as threaded
         product: Product          
     twitter_handles:
       index:
@@ -2006,6 +2014,7 @@ en:
   category_edit_not_allowed: "This category can't be modified"
   folder_edit_not_allowed: "This folder can't be modified" 
   never: Never
+  always: Always
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/account/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
   no_date_to_display: "No data to display"

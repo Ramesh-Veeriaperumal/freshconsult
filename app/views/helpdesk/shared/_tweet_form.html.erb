@@ -31,6 +31,7 @@
 	   
 	   <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton" ) %>
 	   <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
+	   <%= button_to_function(t('cancel'), "jQuery('#cnt-tweet').slideUp()", :class => "uiButton" ) %>
     </li>
    </ul> 
   <% end %>

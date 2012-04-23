@@ -269,6 +269,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (fb_post) and (fb_post.facebook_page) 
   end
  
+ def is_fb_message?
+   (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
+ end
+
+  def is_fb_wall_post?
+    (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
+  end
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
