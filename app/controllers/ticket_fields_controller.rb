@@ -32,6 +32,12 @@ class TicketFieldsController < Admin::AdminController
   end
 
   def update #To Do - Sending proper status messages to UI.
+
+    #params[:jsonData].slice!(0,1)
+    #params[:jsonData].slice!((params[:jsonData].size - 1),1)
+
+    #params[:jsonData] = "[#{params[:jsonData]}, {'action': 'create', 'type': 'dropdown', 'field_type': 'nested_field', 'label': 'category', 'label_in_portal': 'category', 'description': '', 'active': true, 'required': false, 'required_for_closure': false, 'visible_in_portal': true, 'editable_in_portal': true, 'required_in_portal': false, 'id': 14, 'choices': [['First Choice', '0',[['First Sub1','0',[['first item11','0'],['second item11','0']]],['Sec Sub1','0',[['first item12','0'],['second item12','0']]],['Third Sub1','0']]], ['Second Choice', '0',[['First Sub2','0',[['first item21','0'],['second item21','0']]],['Sec Sub2','0',[['first item22','0'],['second item22','0']]],['Third Sub21','0']]]], levels:[{'label':'sub category', 'label_in_portal': 'sub category', 'description': '', 'id' : 3, 'level':2, 'type':'dropdown', 'position':1},{'label':'item', 'label_in_portal': 'item', 'description': '', 'id' : 4,'level':3, 'type':'dropdown', 'position':1}]}]"
+
     @invalid_fields = []
     field_data = ActiveSupport::JSON.decode params[:jsonData]
     field_data.each_with_index do |f_d, i|
@@ -43,7 +49,7 @@ class TicketFieldsController < Admin::AdminController
       end
       
       unless (action = f_d.delete(:action)).nil?
-        f_d.delete(:choices) unless("custom_dropdown".eql?(f_d[:field_type]) || "default_ticket_type".eql?(f_d[:field_type]))
+        f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || "custom_dropdown".eql?(f_d[:field_type]) || "default_ticket_type".eql?(f_d[:field_type]))
         send("#{action}_field", f_d) 
       end
     end
@@ -72,9 +78,20 @@ class TicketFieldsController < Admin::AdminController
       field_details.delete(:type)
       field_details.delete(:dom_type)
       ticket_field = scoper.find(field_details.delete(:id))
+      nested_fields = field_details.delete(:levels) 
       unless ticket_field.update_attributes(field_details)
         @invalid_fields.push(ticket_field) 
       end
+      if ticket_field.field_type == "nested_field"
+        (nested_fields || []).each do |nested_field|
+          nested_field.symbolize_keys!
+          nested_field.delete(:type)
+          nested_field.delete(:position)
+          nested_ticket_field = ticket_field.nested_ticket_fields.find(nested_field.delete(:id))
+          @invalid_fields.push(ticket_field) and return unless nested_ticket_field.update_attributes(nested_field)
+        end
+      end
+
     end
     
     def delete_field(field_details)

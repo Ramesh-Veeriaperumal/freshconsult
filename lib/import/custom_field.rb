@@ -54,12 +54,28 @@ module Import::CustomField
   def create_field(field_details , account=current_account)
     ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details,account)
     field_details.delete(:id)
+    nested_fields = field_details.delete(:levels)
     ticket_field = account.ticket_fields.build(field_details)
     ticket_field.name = ff_def_entry.flexifield_alias
     ticket_field.flexifield_def_entry = ff_def_entry
     
     @invalid_fields.push(ticket_field) and return unless ticket_field.save
     ticket_field.insert_at(field_details[:position]) unless field_details[:position].blank?
+
+    if ticket_field.field_type == "nested_field"
+      (nested_fields || []).each do |nested_field|
+        nested_field.symbolize_keys!
+        nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field,account)
+        nested_field.delete(:id)
+        nested_field.delete(:position)
+        nested_ticket_field = ticket_field.nested_ticket_fields.build(nested_field)
+        nested_ticket_field.name = nested_ff_def_entry.flexifield_alias
+        nested_ticket_field.account = account
+        nested_ticket_field.flexifield_def_entry = nested_ff_def_entry
+        @invalid_fields.push(ticket_field) and return unless nested_ticket_field.save
+      end
+    end
+
   end
   
   def ff_meta_data(field_details, account=current_account)

@@ -449,7 +449,23 @@ class Helpdesk::TicketsController < ApplicationController
     a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
   end 
-    
+  
+  def get_picklist_choices
+    picklist_id = params[:id]
+    ticket_field_id = params[:ticket_field_id]
+    category_picklist_id = params[:category_picklist_id]
+    if category_picklist_id.nil?
+      picklist_value = current_account.ticket_fields.find(ticket_field_id).picklist_values.find(params[:id])
+      @picklist_choices = picklist_value.sub_picklist_values
+    else
+      picklist_value = current_account.ticket_fields.find(ticket_field_id).picklist_values.find(category_picklist_id)
+      sub_picklist = picklist_value.sub_picklist_values.find(params[:id])
+      @picklist_choices = sub_picklist.sub_picklist_values
+    end
+
+    render :partial => "/shared/picklist_choices"
+  end
+   
   protected
   
     def item_url

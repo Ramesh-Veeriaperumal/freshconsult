@@ -60,6 +60,7 @@ module EmailCommands
       responder = ticket.account.users.find_by_email_or_name(value) 
     end
     ticket.responder = responder if responder && responder.agent?
+    ticket.responder = nil if value =~ /none/i
   end
   
   def product(ticket, value, user)

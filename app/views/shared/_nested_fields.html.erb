@@ -1,0 +1,63 @@
+<%
+   #category_field_value = category.choices.first if category_field_value.blank?
+   category_picklist_value = category.picklist_values.find_by_id(category_field_value) unless category_field_value.blank?
+   nested_fields = category.nested_ticket_fields.all(:order => 'level asc')
+   
+   sub_category_choices = category_picklist_value.nil? ? [] : category_picklist_value.choices
+   sub_category_value = ticket.get_ff_value(nested_fields[0].name) unless category_field_value.blank?
+
+%>
+
+<%= construct_ticket_nested_element :helpdesk_ticket, category_picklist_value, nested_fields[0], sub_category_choices, nested_fields[0].label, "nested_field level2", category.required, sub_category_value if type == "edit" %>
+
+<%= construct_ticket_nested_text_element :helpdesk_ticket, category_picklist_value, nested_fields[0], sub_category_choices, nested_fields[0].label, "dropdown", category.required, sub_category_value if type == "view" %>
+
+<% javascript_tag do %>  
+   jQuery('#helpdesk_ticket_custom_field_'+'<%=category.field_name%>').live("change", function(e){
+      
+      jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[0].field_name%>').html("<option value=''>...</option>");
+      
+      <% if nested_fields.size > 1 %>
+         jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[1].field_name%>').html("<option value=''>...</option>");
+      <%end%>
+      
+      if(this.value != '') {
+         jQuery.post(
+            "/support/tickets/get_picklist_choices/"+this.value,
+            "ticket_field_id=<%=category.id%>",
+            function(data){
+               jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[0].field_name%>').html(data);
+            }
+         );
+      }
+   });
+<% end %>
+
+<% if nested_fields.size > 1 %>
+   <%
+      sub_category_picklist_value = category_picklist_value.sub_picklist_values.find(sub_category_value) unless sub_category_value.blank?
+      item_choices = sub_category_picklist_value.nil? ? [] : sub_category_picklist_value.choices
+      item_value = ticket.get_ff_value(nested_fields[1].name) unless sub_category_value.blank?
+   %>
+
+   <%= construct_ticket_nested_element :helpdesk_ticket, nested_fields[0], nested_fields[1], item_choices, nested_fields[1].label, "nested_field level3", category.required,item_value if type == "edit"%>
+
+   <%= construct_ticket_nested_text_element :helpdesk_ticket, nested_fields[0], nested_fields[1], item_choices, nested_fields[1].label, "dropdown", category.required,item_value if type == "view"%>
+
+   <% javascript_tag do %>  
+      jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[0].field_name%>').live("change", function(e){
+         
+         jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[1].field_name%>').html("<option value=''>...</option>");
+         
+         if(this.value != '') {
+            jQuery.post(
+               "/support/tickets/get_picklist_choices/"+this.value,
+               "ticket_field_id=<%=category.id%>&category_picklist_id="+jQuery('#helpdesk_ticket_custom_field_'+'<%=category.field_name%>').val(),
+               function(data){
+                  jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[1].field_name%>').html(data);
+               }
+            );
+         }
+      });
+   <% end %>
+<% end %>

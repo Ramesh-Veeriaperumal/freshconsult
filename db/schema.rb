@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406055532) do
+ActiveRecord::Schema.define(:version => 20120407111045) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -518,6 +518,19 @@ ActiveRecord::Schema.define(:version => 20120406055532) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "ticket_issues_count"
+  end
+
+  create_table "helpdesk_nested_ticket_fields", :force => true do |t|
+    t.integer  "account_id",              :limit => 8
+    t.integer  "ticket_field_id",         :limit => 8
+    t.string   "name"
+    t.string   "label"
+    t.string   "label_in_portal"
+    t.string   "description"
+    t.integer  "flexifield_def_entry_id", :limit => 8
+    t.integer  "level"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "helpdesk_notes", :force => true do |t|

@@ -7,6 +7,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
     :dependent => :destroy
+  has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy
     
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
@@ -73,7 +74,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :custom_number        => { :type => :custom, :dom_type => "number", 
                                              :va_handler => "numeric"},
                   :custom_dropdown      => { :type => :custom, :dom_type => "dropdown", 
-                                             :va_handler => "dropdown"}
+                                             :va_handler => "dropdown"},
+                  :nested_field         => {:type => :custom, :dom_type => "dropdown_blank",
+                                              :va_handler => "dropdown"}
                 }
 
   def dom_type
@@ -111,6 +114,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
          account.groups.collect { |c| [c.name, c.id] }
        when "default_product" then
          account.products.collect { |e| [e.name, e.id] }.insert(0, ['...', account.primary_email_config.id])
+       when "nested_field" then
+         picklist_values.collect { |c| [c.value, "#{c.id}"] }
        else
          []
     end
@@ -147,7 +152,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   def choices=(c_attr)
     picklist_values.clear
-    c_attr.each { |c| picklist_values.build({:value => c[0]}) }
+    c_attr.each do |c| 
+      if c.size > 2 && c[2].is_a?(Array)
+        picklist_values.build({:value => c[0], :choices => c[2]})
+      else
+        picklist_values.build({:value => c[0]})
+      end
+    end  
   end
   
   protected

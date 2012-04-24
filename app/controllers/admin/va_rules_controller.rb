@@ -130,8 +130,9 @@ class Admin::VaRulesController < Admin::AutomationsController
         filter_hash.push({
           :name => field.name,
           :value => field.label,
+          :field_type => field.field_type,
           :domtype => field.flexifield_def_entry.flexifield_coltype,
-          :choices => field.picklist_values.collect { |c| [ c.value, c.value ] },
+          :choices =>  field.picklist_values.collect { |c| [(field.field_type == "nested_field") ? "#{c.id}":c.value, c.value ] },
           :action => "set_custom_field",
           :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text")
         })

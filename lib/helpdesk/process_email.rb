@@ -154,7 +154,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       email_config = account.email_configs.find_by_to_email(to_email[:email])
       user = get_user(account, from_email,email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
-      unless user.customer?
+      if ( !user.customer? && !user.deleted?)
         e_email = orig_email_from_text
         user = get_user(account, e_email , email_config) unless e_email.nil?
       end
@@ -178,7 +178,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = check_for_spam(ticket)
       #ticket = check_for_auto_responders(ticket)
       
-      process_email_commands(ticket, user, email_config) if user.agent?
+      process_email_commands(ticket, user, email_config) if (user.agent? && !user.deleted?)
 
       begin
         email_cmds_regex = get_email_cmd_regex(account)
@@ -252,7 +252,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def can_be_added_to_ticket?(ticket,user)
-      !user.customer? or
+      ( !user.customer? && !user.deleted?) or
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
       belong_to_same_company?(ticket,user)
