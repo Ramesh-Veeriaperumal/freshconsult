@@ -154,6 +154,10 @@ en:
         ontime_resolution_label: On time (Within SLA)
         late_resolution_label: Late (Overdue)
         happy_customer_score_label: If the customer says they are "Happy" award %{happy_score} bonus points
+        first_call_resolution_label: First Call Resolution
+        when_customer_label: Bonus points when 
+        happy_customer_label: Happy Customer
+        unhappy_customer_label: Unhappy Customer     
     getting_started:
         send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.

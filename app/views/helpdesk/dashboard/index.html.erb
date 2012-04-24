@@ -5,7 +5,26 @@
   	<h3 class="title"><%= t(".todo_title") %></h3>
     <%= render :partial => '/helpdesk/reminders/reminders', 
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
-  </div>                           
+  </div>
+  <% if feature?(:scoreboard) %>
+  <div id="leaderboard" class="sidepanel">
+  	<h3 class="title">Leaderboard</h3>
+  	<% @champions.each_with_index  do |champion, index|%>
+	<% unless champion.tot_score.to_i < 0 %>
+		<div class="agentreport">
+			<ul>
+				<li class="nospace"><div class="bignum floatleft"><%= (index + 1)%></div></li>	
+				<li>
+					<div class="floatleft photo"><%= user_avatar(champion.user, :thumb, 'preview_pic') %></div>
+					<div class="floatleft agentname"><%= champion.user.display_name %><div>Job Title</div></div>								
+				</li>
+				<li class="nospace"><%= champion.tot_score %> points</li>			
+			</ul>
+		</div>
+	<% end %>
+	<% end %>
+  </div>
+  <% end %>                           
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 

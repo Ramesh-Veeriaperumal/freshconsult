@@ -24,9 +24,14 @@ class SurveyResult < ActiveRecord::Base
   def happy?
     (rating == Survey::HAPPY)
   end
+
+  def unhappy?
+    (rating == Survey::UNHAPPY)
+  end
   
   private
     def add_support_score
       SupportScore.happy_customer(surveyable) if happy?
+      SupportScore.unhappy_customer(surveyable) if unhappy?
     end
 end

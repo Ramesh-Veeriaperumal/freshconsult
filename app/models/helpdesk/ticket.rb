@@ -871,6 +871,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if active? && !@old_ticket.active?
         s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
         s_score.destroy if s_score
+        #destroy fcr bonus score if already present
+        fcr_score = support_scores.find_by_score_trigger ScoreboardRating::FIRST_CALL_RESOLUTION
+        fcr_score.destroy if fcr_score
       elsif !active? && @old_ticket.active?
         add_support_score
       end
@@ -878,7 +881,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-  end
+      #for fcr bonus point
+      SupportScore.add_fcr_bonus_score(self)
+    end
   
     
   def parse_email(email)

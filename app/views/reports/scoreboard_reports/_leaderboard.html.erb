@@ -10,12 +10,18 @@
 	<div>
 		<%= render :partial => "sharpshooters" %>		
 	</div>
+	<div>
+		<%= render :partial => "firstcallresolutions" %>		
+	</div>
+	<div>
+		<%= render :partial => "happycustomers" %>		
+	</div>
 
 <script type="text/javascript">
-jQuery(document).ready(function() {
- 	jQuery(".scorecard").each(function() {
- 		//score = jQuery(this).attr("score");
- 		jQuery(this).progressbar({value:jQuery(this).attr("score")});
+/*jQuery(document).ready(function() {
+	jQuery(".scorecard").each(function() {
+ 		var score = parseInt(jQuery(this).attr("score"));
+ 		jQuery(this).progressbar({value:score});
 	});   
- });
+ });*/
 </script>

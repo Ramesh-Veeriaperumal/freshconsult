@@ -2,18 +2,24 @@
 		<% high_score = @sharp_shooters[0].tot_score.to_i %> 
 	<% end %>
 	<div class="titlebar" style="margin-top: 50px;"><%= t('reports.scoreboard_reports.sharpshooter_title')%></div>
-	<% @sharp_shooters.each do |sharp_shooter|%>
+	<% @sharp_shooters.each_with_index do |sharp_shooter, index|%>
 	<% unless sharp_shooter.tot_score.to_i < 0 %>
 	<div class="agentreport">
 		<ul>
-			<li class="nospace"><div class="bignum floatleft">1</div></li>	
-			<li>
-				<div class="floatleft photo"><%= user_avatar(sharp_shooter.user) %></div>
+			<li class="nospace"><div class="bignum floatleft"><%= (index + 1)%></div></li>	
+			<li style="width:35%;">
+				<div class="floatleft photo"><%= user_avatar(sharp_shooter.user, :medium, 'preview_pic') %></div>
 				<div class="floatleft agentname"><%= sharp_shooter.user.display_name %><div>Job Title</div></div>								
 			</li>
-			<li>
-				<div class="scorecard" score="<%= (sharp_shooter.tot_score.to_i / high_score) * 100 %>"></div>
-			</li>			
+			<li style="width:35%;" class="nospace">
+				<!--div class="scorecard" score="<%= ((sharp_shooter.tot_score.to_i / high_score) * 100).to_i %>"></div-->
+				<% progress_percentage =  ((sharp_shooter.tot_score.to_i / high_score) * 100).to_i %>
+				<% progress_color = (progress_percentage > 30 and progress_percentage < 70) ? 'progress-warning' :  ((progress_percentage < 30) ? 'progress-danger' : 'progress-success') %>
+				<div class="progress <%= progress_color%>" style="margin-bottom: 9px;">
+        			<div class="bar" style="width: <%= progress_percentage%>%"></div>
+      			</div>
+      		</li>
+			<li class="nospace"><%= sharp_shooter.tot_score %> points</li>		
 		</ul>
 	</div>
 	<% end %>

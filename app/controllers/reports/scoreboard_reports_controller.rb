@@ -9,11 +9,13 @@ class Reports::ScoreboardReportsController < ApplicationController
  	def generate
  		@champions = list_of_champions()
  		@sharp_shooters = list_of_sharpshooters()
-    		render :partial => "/reports/scoreboard_reports/leaderboard"
-  	end
+    @fcr_agents = list_of_fcr()
+    @happycustomers = list_of_happycustomers()
+    render :partial => "/reports/scoreboard_reports/leaderboard"
+  end
 
  	def set_selected_tab
-   		@selected_tab = :reports
-   	end
+   	@selected_tab = :reports
+  end
 
 end

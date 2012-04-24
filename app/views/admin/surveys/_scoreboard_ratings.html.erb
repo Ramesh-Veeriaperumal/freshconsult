@@ -21,7 +21,7 @@
                 <tr>
                     <td><%= t(".point_tobe_awarded_label")%></td>
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
-                        <%if scoreboard.resolution_speed != ScoreboardRating::HAPPY_CUSTOMER %>
+                        <%if scoreboard.resolution_speed < 100 %>
                             <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
                                 <td> 
                                     <%= sb.text_field :score, :value => scoreboard.score, :class => "score", :size => 10 %>
@@ -36,7 +36,29 @@
         </div>
         <br>    
         <div>
-            <%= t(".happy_customer_score_label", :happy_score => @scoreboard_ratings[3][:score] )%>
+            <h4 class="title"><%= t('.points_table_title')%></h4>
+            <table>
+                <tr>
+                    <th><%= t(".when_customer_label")%></th>
+                    <th><%= t(".first_call_resolution_label")%></th>
+                    <th><%= t(".happy_customer_label")%></th>
+                    <th><%= t(".unhappy_customer_label")%></th>
+                </tr>
+                <tr>
+                    <td><%= t(".point_tobe_awarded_label")%></td>
+                    <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
+                        <%if scoreboard.resolution_speed > 100 %>
+                            <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                                <td> 
+                                    <%= sb.text_field :score, :value => scoreboard.score, :class => "score", :size => 10 %>
+                                    <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
+                                    <%= sb.hidden_field :id, :value => scoreboard.id %>
+                                </td>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                </tr>    
+            </table>
         </div>
         <br>    
         <%= submit_tag t('account.save'), :class => 'uiButton' %>

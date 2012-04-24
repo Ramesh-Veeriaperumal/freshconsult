@@ -10,7 +10,9 @@ ScoreboardRating.seed_many(:account_id, :resolution_speed, [
     [ ScoreboardRating::FAST_RESOLUTION, 3 ],
     [ ScoreboardRating::ON_TIME_RESOLUTION, 1 ],
     [ ScoreboardRating::LATE_RESOLUTION, -1 ],
-    [ ScoreboardRating::HAPPY_CUSTOMER, 3 ]
+    [ ScoreboardRating::FIRST_CALL_RESOLUTION, 3 ],
+    [ ScoreboardRating::HAPPY_CUSTOMER, 3 ],
+    [ ScoreboardRating::UNHAPPY_CUSTOMER, -1 ]
   ].map do |f|
     {
       :account_id => account.id,
