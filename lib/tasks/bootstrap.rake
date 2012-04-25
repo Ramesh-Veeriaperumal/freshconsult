@@ -7,6 +7,7 @@ namespace :db do
 #    Rake::Task["db:migrate"].invoke
     
     Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
+    Rake::Task["db:perform_table_partition"].invoke
     
     puts 'Loading data...'
     Rake::Task["db:seed_fu"].invoke
@@ -30,6 +31,14 @@ namespace :db do
   task :create_trigger => :environment do
     puts 'Creating database trigger for tickets display id...'
     ActiveRecord::Base.connection.execute(TriggerSql.sql_for_populating_ticket_display_id)
+  end
+  
+  task :perform_table_partition => :environment do
+    puts 'Adding auto increment to id columns'
+    PerformTablePartition.add_auto_increment
+    
+    puts ' partition of tables.'
+    PerformTablePartition.process
   end
 
 end

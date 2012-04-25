@@ -64,7 +64,7 @@ module Reports::ConstructReport
    tkt_scoper.find( 
      :all,
      :include => @val, 
-     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
      :select => "count(*) count, #{@val}_id,status", 
      :conditions => resolved_condition,
      :group => "#{@val}_id,status")
@@ -75,7 +75,7 @@ module Reports::ConstructReport
      :all, 
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
-     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id  and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
      :conditions => "#{resolved_condition} and helpdesk_tickets.due_by >=  helpdesk_ticket_states.resolved_at",
      :group => "#{@val}_id")
  end
@@ -86,7 +86,7 @@ module Reports::ConstructReport
      :all, 
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
-     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id  and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
      :conditions => "#{resolved_condition} and (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at )",
      :group => "#{@val}_id")
  end
@@ -96,7 +96,7 @@ module Reports::ConstructReport
      :all, 
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
-     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id  and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
      :conditions => "#{resolved_condition} and  helpdesk_ticket_states.inbound_count = 1",
      :group => "#{@val}_id")
  end
@@ -108,7 +108,7 @@ module Reports::ConstructReport
      :all, 
      :select => "avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) count, #{@val}_id", 
      :include => @val,
-     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id  and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
      :conditions => resolved_condition,
      :group => "#{@val}_id")
  end

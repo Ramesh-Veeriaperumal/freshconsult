@@ -214,6 +214,7 @@ module Delayed
 
     # Moved into its own method so that new_relic can trace it.
     def invoke_job
+      Account.reset_current_account
       payload_object.perform
     end
 
