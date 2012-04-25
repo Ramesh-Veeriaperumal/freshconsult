@@ -203,7 +203,7 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @reply_email = current_account.reply_emails
 
-    add_original_to_email unless @item.to_email.blank?
+    add_original_to_email unless (@item.to_email.blank? && current_account.pass_through_enabled?)
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 

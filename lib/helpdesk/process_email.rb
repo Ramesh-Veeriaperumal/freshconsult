@@ -134,7 +134,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return f_email unless(f_email[:email].blank? || f_email[:email] =~ /(noreply)|(no-reply)/i)
       
       headers = params[:headers]
-      if(!headers.nil? && headers =~ /Reply-[tT]o:(.+)$/)
+      if(!headers.nil? && headers =~ /Reply-[tT]o: (.+)$/)
         rt_email = parse_email($1)
         return rt_email unless rt_email[:email].blank?
       end
@@ -176,7 +176,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      #ticket = check_for_auto_responders(ticket)
+      ticket = check_for_auto_responders(ticket)
       
       process_email_commands(ticket, user, email_config) if (user.agent? && !user.deleted?)
 
@@ -214,7 +214,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Precedence:(\s)*[bulk|junk]/i) || (headers =~ /Auto-Submitted:(\s)*auto-*/i) || (headers =~ /Reply-To:(\s)*<>/i) || (headers =~ /Return-Path:(\s)*<>/i)))
+      if(!headers.blank? && ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) ))
         ticket.spam = true
       end
       ticket  

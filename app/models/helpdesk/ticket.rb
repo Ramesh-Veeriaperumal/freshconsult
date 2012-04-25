@@ -802,7 +802,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
 
    def selected_reply_email
-    to_email.blank? ? friendly_reply_email : to_email
+    ( !to_email.blank? &&  account.pass_through_enabled? ) ? to_email : friendly_reply_email
    end
   
   private
