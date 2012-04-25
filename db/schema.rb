@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406055532) do
+ActiveRecord::Schema.define(:version => 20120412073942) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(:version => 20120406055532) do
     t.text     "session_json"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "referrer_type"
   end
 
   create_table "customers", :force => true do |t|
