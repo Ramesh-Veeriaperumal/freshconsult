@@ -26,6 +26,16 @@
       	<%= t('.company_posts_info')%>
       </div>
 	   <span class="seperator"></span>
+	  <!-- another one... -->
+	  <label class="caption"><%=t('.message_thread_time')%></label>
+      <div class="fields">
+      	<%= select (:social_facebook_page ,:dm_thread_time, Social::FacebookPage::DM_THREADTIME_OPTIONS ,{:selected => facebook_page.dm_thread_time}) %>
+      </div>
+      <div class="info-data tabbed">
+        <%=t('.message_thread_time_info')%>
+      </div>	 	
+	  <!-- --> 
+	    <span class="seperator"></span>
       <label class="caption"><%= t('.product')%></label>
       <div class="fields">
   	    <%= collection_select(:social_facebook_page, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => facebook_page.product_id })%>

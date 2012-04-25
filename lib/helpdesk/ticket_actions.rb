@@ -51,10 +51,6 @@ module Helpdesk::TicketActions
     render :partial => "update_multiple" 
   end
 
-  def impersonate_agent
-    render :partial => "impersonate_agent" 
-  end
-  
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
     params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)

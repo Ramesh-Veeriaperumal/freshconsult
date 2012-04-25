@@ -289,7 +289,8 @@ active_dialog = null;
     return this;
  }; 
 
- $(document).bind('mousedown', function(e) {
+ $(document).bind('mousedown', function(e) {       
+	if($(e.target).hasClass("chzn-results")) return;
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
@@ -309,9 +310,9 @@ active_dialog = null;
        $(node).bind("click", function(ev){
            ev.preventDefault(); 
            elementid = id || node.getAttribute("menuid");
-           element = $(elementid).show(); 
+           element = $(elementid).show().css("visibility", "visible"); 
            $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
-           $(element).find("a").data("menu-active", true);
+           $(element).find("a, li").data("menu-active", true);
            $(node).addClass("selected");
         });
         $(node).data("showAsMenu", true);

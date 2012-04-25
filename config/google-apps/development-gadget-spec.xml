@@ -30,7 +30,7 @@
     <Require feature="setprefs"/> 
   </ModulePrefs>
 
-  <UserPref name="maxmin" default_value="true" datatype="bool" display_name="By default the gadget is in maximized state" />
+  <UserPref name="maxmin" default_value="true" datatype="bool" display_name="By default the gadget is in minimized state" />
 
   <!-- Define the content type and display location. The settings
    "html" and "card" are required for all Gmail contextual gadgets. -->
@@ -158,7 +158,7 @@
 				//Maximized State
 				init();
 			} else {
-				minimize();
+				maximize();
 			}
 		}
 
@@ -283,7 +283,7 @@
 
 		function init() {
 
-			maximize();
+			minimize();
 			// Retrieve the domain of the current user. gadgets.util.getUrlParameters()['parent'] returns a value
 			// of of the form: http(s)://mail.google.com/mail/domain.com/html for Gmail (other containers are similar).
 			

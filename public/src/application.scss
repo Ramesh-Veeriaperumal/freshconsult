@@ -35,6 +35,10 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 	@include shadows(rgba(0,0,0, 0.05), 0px, 1px, 2px);
 } 
 
+.sidepanel{
+	position:relative;
+}
+
 .pagearea{
 	@include min-height(450px);
 	@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 3px);
@@ -94,7 +98,7 @@ ul.activityfeed li{
 	.username{
 	   font-weight:bold;
 	   text-transform:capitalize;
-	}
+	}                 
 	a{ 
 		@include link-colors(#4D769F, #3e71a4, #4D769F, #4D769F, #4D769F);
    	text-decoration:none; 
@@ -509,7 +513,20 @@ body h5{
   top: 0;             
 	z-index:20;
 	text-align:right;
-	.btn{ font-weight:bold; padding:4px 9px; }
+	.button{ position:relative; }
+	.reply{ 
+	  padding:4px 9px 4px 26px;         
+    span{
+      position:absolute;
+      width:14px;
+      height:11px;
+      left:7px;
+      top:6px;
+    }       
+	} 
+	.email span{ background: sprite($symbol, reply-email) no-repeat; }
+	.tweet span{ background: sprite($symbol, reply-tweet) no-repeat; }
+ 	.facebook span{ background: sprite($symbol, reply-fb) no-repeat; } 	
 }
                          
 .status-pointer, .priority-pointer{
@@ -4184,8 +4201,7 @@ a.close{
 .customSelect{ width:100%; } 
    
 .containerFull{
-   @include clearfix;
-   overflow:visible;
+  @include pie-clearfix;
 	margin:-14px -20px;
 	padding:0px 0px 0px 0px;
 }
@@ -4394,8 +4410,65 @@ a.close{
    background:sprite($symbol, setting) no-repeat;
 }
 
-.content .wrapper{
-   overflow:visible;
+.profile_info{     
+	visibility:hidden;
+	right:0;     
+	margin-top:30px;     
+	position:absolute;
+  font-size:13px;
+  background:#ffffff;
+	padding:0 0 10px 0;     
+  z-index:999999;
+	width:300px;
+  @include opacity(0.95);
+  @include corners(5px);
+  @include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
+	&:before{           
+		content:"";
+		position:absolute;
+		border:6px solid transparent;
+		border-bottom-color:#fff;
+		width:1px;        
+		top:-12px; right:40px;
+	}
+	.seperator{
+		border-color:#e0e0e0;
+	}                  
+	.link, h5, .user{          
+		font-size:14px;
+	} 
+	.user{
+		margin:10px 0 5px 0;     
+		span{
+			position:relative;
+		 	top:7px; 
+			color:#888;
+		}
+	}               
+	h5{ padding-bottom:6px; }
+  a.link{
+    display:block;
+    padding:4px 12px 4px 24px;
+    color:#333333;
+    text-decoration:none;
+  }
+  a.link:hover{
+     @include background(linear-gradient(top, #5469f9, #2433f6));
+     @include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
+     @include filter-gradient(#5469f9, #2433f6, vertical); 
+     color:#ffffff;      
+  }
+	.info{
+		padding:4px 24px;
+	}            
+	.user{
+		padding:2px 18px;
+	}
+	.preview_pic img{     
+		width:30px;height:30px;  
+		@include box-shadow( rgba(0, 0, 0, 0.8) 0px 1px 5px inset );
+		@include border-radius(50px);
+	}                              
 }
 
 .list-noinfo{
@@ -4694,6 +4767,68 @@ a.close{
    	} 
 }
 
+
+.integration_widget {
+	.content {
+		width: 350px;
+	}
+	@include pie-clearfix;
+	.heading {
+		margin: 10px 0 0;
+		.current_form {
+			font-size:14px;
+			font-weight:bold;
+			color:#000;
+		}
+
+		.other_form {
+			font-size:12px;
+			color:#369;
+			cursor: pointer;
+		}
+
+		.divider {
+			padding:0 15px;
+		}
+	}
+
+	div.field {
+		float:left;
+		margin:5px 0;
+		line-height:18px;
+
+		width:100%;
+
+		&.half_width {
+			width:45%;
+			padding: 0 5% 0 0;
+
+			&.right {
+				padding: 0 0 0 5%;
+			}
+		}
+
+	}
+
+	.uiButton[type=submit] {
+		margin:15px 0 10px;
+	}
+
+	.ui-form {
+		background:none;
+		border:none;
+	}
+
+	.loading-fb {
+		width:90%;
+		margin: 3px 5%;
+	}
+
+	.external_link {
+		clear: both;
+	}
+}
+
 #jira_widget {
 	.content {
 		width: 350px;
@@ -4784,7 +4919,71 @@ a.close{
 			}
 		}
 	}
+
 }
+
+.crm_contact_widget {
+	.content { width:auto; }
+
+	.title {
+		overflow: hidden;
+		padding: 0;
+		margin: 0;
+		border-bottom: #e5e5e5 solid 1px;
+	}
+
+	.name {
+		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		padding:0 0 10px 35px;		
+	}
+
+	#multiple-contacts {
+		width: 55px;
+		float:right;
+	}
+	#contact-name {
+		color: #000;
+		font-size: 14px;
+	}
+
+	#contact-desig {
+		font-size: 11px;
+		font-weight: normal;
+	}
+
+	label {
+		font-size:10px;
+		color: #000;
+		font-weight:bold;
+	}
+
+	#crm-view {
+		float:right;
+		width: auto;
+	}
+
+
+	.contact-type{
+		font-size:9px;
+		color:#fff;
+		text-transform:uppercase; 
+		text-align:center;
+		padding:8px 3px 0;
+		line-height:0;
+		height:9px;      
+		background-color: #0C8AAE;          
+		position:absolute;
+	  	@include right-pointer-title(#0C8AAE,8px);	      
+		@include min-width(48px); 
+		right:-4px;	
+		top:3px;
+	}
+
+	#contact-na {
+		padding-top:6px;
+	}
+}
+	
 
 .twipsy-inner.big {
 	max-width: 300px;

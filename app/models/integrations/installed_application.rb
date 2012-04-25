@@ -14,7 +14,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   def method_missing(meth_name, *args, &block)
     matched = /configs_(.*)/.match(meth_name.to_s)
     if matched.blank?
-      raise NoMethodError, "undefined method `#{meth_name}' for #{self.to_s}"
+      super
     else
       input_key = matched[1]
       input_values = self[:configs][:inputs] unless self[:configs].blank?

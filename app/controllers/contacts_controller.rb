@@ -109,9 +109,7 @@ class ContactsController < ApplicationController
     else
       @obj.customer_id = nil
     end
-    # update tags
-    csv_tag_names = params[:tags][:name]
-    @obj.update_tag_names(csv_tag_names)
+    @obj.update_tag_names(params[:user][:tags]) # update tags in the user object
     if @obj.update_attributes(params[cname])
       respond_to do |format|
         format.html { redirect_to contacts_url }

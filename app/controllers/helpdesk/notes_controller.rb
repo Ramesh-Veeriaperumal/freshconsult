@@ -50,7 +50,11 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def item_url
-      @parent
+      if @parent.is_a?(Helpdesk::Ticket) && !params[:page].nil?
+        helpdesk_ticket_path({:id=> @parent.display_id, :page =>  params[:page]})
+      else
+        @parent
+      end
     end
     
     def email_reply?
@@ -77,12 +81,8 @@ class Helpdesk::NotesController < ApplicationController
           twt_type = params[:tweet_type] || :mention.to_s
           twt = send("send_tweet_as_#{twt_type}")
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
-        elsif facebook?
-          fb_comment = add_facebook_comment
-          unless fb_comment.blank?
-            fb_comment.symbolize_keys!
-            @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
-          end
+        elsif facebook?  
+            send_facebook_reply  
         end
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
@@ -120,6 +120,25 @@ class Helpdesk::NotesController < ApplicationController
        @parent.update_attribute(:cc_email, cc_array)  
      end
    end
+   
+  def send_facebook_reply
+    
+    if @parent.is_fb_message?
+      fb_reply = add_facebook_reply
+      unless fb_reply.blank?
+        fb_reply.symbolize_keys!
+        @item.create_fb_post({:post_id => fb_reply[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id,
+                              :thread_id =>@parent.fb_post.thread_id , :msg_type =>'dm'})
+      end
+    else
+      fb_comment = add_facebook_comment
+      unless fb_comment.blank?
+        fb_comment.symbolize_keys!
+        @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
+      end
+    end
+    
+  end
    
    def validate_emails email_array
      unless email_array.blank?
@@ -204,6 +223,24 @@ class Helpdesk::NotesController < ApplicationController
        end
       end
   end
+  
+  ##This method can be used to send reply to facebook pvt message
+  ##
+  def add_facebook_reply
+    fb_page =  @parent.fb_post.facebook_page
+    unless fb_page.blank?
+       begin 
+        @fb_client = FBClient.new fb_page,{:current_account => current_account}
+        facebook_page = @fb_client.get_page
+        thread_id =  @parent.fb_post.thread_id
+        reply = facebook_page.put_object(thread_id , 'messages',:message => @item.body)
+       rescue
+        flash[:notice] = t('facebook.not_authorized')
+        return nil
+       end
+     end
+  end
+  
    def validate_attachment_size
      total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
      if total_size > Helpdesk::Note::Max_Attachment_Size    

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120412073942) do
+ActiveRecord::Schema.define(:version => 20120406055532) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -131,7 +131,6 @@ ActiveRecord::Schema.define(:version => 20120412073942) do
     t.text     "session_json"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "referrer_type"
   end
 
   create_table "customers", :force => true do |t|
@@ -818,6 +817,8 @@ ActiveRecord::Schema.define(:version => 20120412073942) do
     t.integer  "account_id",           :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "dm_thread_time",       :limit => 8, :default => 99999999999999999
+    t.integer  "message_since",        :limit => 8, :default => 0
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
@@ -831,6 +832,8 @@ ActiveRecord::Schema.define(:version => 20120412073942) do
     t.integer  "account_id",       :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "msg_type",                      :default => "post"
+    t.string   "thread_id"
   end
 
   create_table "social_tweets", :force => true do |t|

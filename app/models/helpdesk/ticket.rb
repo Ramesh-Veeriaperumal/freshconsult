@@ -6,9 +6,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
-  
+
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
+
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
@@ -269,6 +269,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (fb_post) and (fb_post.facebook_page) 
   end
  
+ def is_fb_message?
+   (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
+ end
+
+  def is_fb_wall_post?
+    (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
+  end
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
@@ -511,12 +518,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
-  
+
   def ticket_id_delimiter
     delimiter = account.email_commands_setting.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
   end
-
+  
   def delimited_display_id
     "#{ticket_id_delimiter}#{display_id}"
   end
@@ -537,7 +544,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     email_config ? email_config.reply_email : account.default_email
   end
   
-  
+  def reply_name
+    email_config ? email_config.name : account.primary_email_config.name
+  end
 
   #Some hackish things for virtual agent rules.
   def tag_names
@@ -729,8 +738,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
-          value = send(field.name) 
-          xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+          begin
+           value = send(field.name) 
+           xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+         rescue
+           end 
         end
       end
      end
@@ -787,6 +799,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
+   end
+
+   def selected_reply_email
+    to_email.blank? ? friendly_reply_email : to_email
    end
   
   private
@@ -873,10 +889,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-  end
-  
-    
-  def parse_email(email)
+    end
+
+    def parse_email(email)
       if email =~ /(.+) <(.+?)>/
         name = $1
         email = $2
@@ -884,9 +899,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       else email =~ EMAIL_REGEX
         email = $1
-      end  
-     email
- end
- 
+      end
+      email
+    end  
+    
 end
   
