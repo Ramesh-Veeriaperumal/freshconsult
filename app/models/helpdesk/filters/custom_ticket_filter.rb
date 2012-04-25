@@ -250,7 +250,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
  end
  
  def users_join
-   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id "
+   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id  and  users.account_id = helpdesk_tickets.account_id  "
  end
   
   
