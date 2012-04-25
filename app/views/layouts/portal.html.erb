@@ -1,98 +1,13 @@
-<!DOCTYPE html> 
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-	<title></title>
-	<meta name="description" content="">
-	<meta name="author" content="">
-
-	<meta name="viewport" content="width=device-width">  
-	<%= include_stylesheets :portal %>
-	<script src="/javascripts/modernizr-2.5.3-respond-1.1.0.min.js"></script>
-</head>
-<body>
-	<header class="header">
-		<div class="wrapper">
-			<div class="header_links">
-				<% if current_user then %>              
-					<%= content_tag :strong, t('header.welcome') %>
-					<%= link_to h(current_user.name), edit_profile_path(current_user) %>
-     			<% else %>
-        			<%= link_to( t('header.login') , login_path) %>
-					<%= link_to( t('signup') , new_support_registration_path ) if feature?(:signup_link) %>
-    			<% end %>
-    		</div> 
-  			<div class="brand">
-    			<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
-      			<%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)) %>
-    			<% end %>      
-    			<h2 class="logo_text"><%= link_to(current_portal.name, "/home") %></h2>
-  			</div>			
-		</div>  		
-		<nav class="portal-nav"> 
-			<div class="wrapper">
-				<div class="pull-right">
-					<%= link_to( "<i class='icon-file'></i> #{t('header.submit_a_ticket')}", new_support_ticket_path, :class => "btn btn-ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
-				</div>
-				<ul class="portal-tabs">
-					<% tabs = [[ '/home',                  :home,		 true ],
-							   [ support_solutions_path,   :solutions,	 true ],
-						       [ support_discussions_path, :forums, 	 true ],
-						       [ support_tickets_path,     :checkstatus, true ],
-						      	 company_tickets_tab ]
-
-						  	navigation = tabs.map do |s| 
-						    	next unless s[2]
-						      	active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0])
-						      	tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
-						    end
-					%> 
-					<%= navigation %>
-				</ul>
-			</div>
-		</nav>	
-	</header>
-	<div id="portal-page">
-		<div class="wrapper">
-			<%= show_flash %>
-			<div class="row-fluid">	
-				<div class="span9">
-					<div class="page-body">
-						<%= yield %>
-					</div>
-				</div>
-				<div class="span3 page-sidebar" id="portal-sidebar">
-					<% if @content_for_sidebar %>
-						<%= yield :sidebar %>					
-					<% end %>
-				</div>
-			</div>
-		</div>
-	</div>
-	<footer id="footer" class="footer">  
-		<div class="wrapper">
-			<div class="footer-content">
-	  			<% unless(current_account.subscription.paid_account?) %>
-		  			<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
-		  			<%= t('footer.by_freshdesk') %>
-				<% end %>
-			</div>
-		</div> 
-	</footer>
-
-	<%= include_javascripts :frameworks %>
-	<%- javascript_tag do -%>
-		(function($){
-			jQuery(document).ready(function(){	
-				<%= yield :script_jquery -%>
-			}); 
-		})(jQuery);
-	<%- end -%>
-
-</body>
+<!DOCTYPE html>
+<html>
+	<head>
+		<%= render :partial => "portal/head" %>   
+		<%= include_stylesheets :common  %>
+		<%= render :partial => "shared/theme.css"  %>
+	</head>
+  	<body>                                    
+		<%= render :partial => "portal/body", 
+							 :locals => { :header_content => render(:partial => "layouts/shared/header"),
+													 	:footer_content => render(:partial => "layouts/shared/footer") } %>    
+  	</body>
 </html>
