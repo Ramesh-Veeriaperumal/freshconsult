@@ -86,7 +86,7 @@ jQuery(document).ready(function() {
 						<% data = @report_data.fetch(obj.id, {}) %>	
 			<% end 
 
-			resolved_count = data.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved], 0).to_i + data.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:closed], 0).to_i
+			resolved_count = data.fetch(:tot_tkts, 0).to_i
 
 			%>
 			<td><%= resolved_count %></td>
