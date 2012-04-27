@@ -26,7 +26,7 @@
 <% end %>
 
 <div id="TicketProperties">
-	<% if @ticket.open? %>
+	<% unless (@ticket.onhold_and_closed? or @ticket.pending?)%>
 		<h3 class="title"><%=t('ticket_due_by_time')%></h3>
 		<ul class="cnt" id="due-by-time-parent">
 		   <li>
@@ -39,7 +39,10 @@
 		<h3 class="title"><%= status_changed_time_value_hash(@ticket.status)[:title] %></h3>
 		<ul class="cnt" id="due-by-time-parent">
 		   <li>
-		   	  <%=formated_date(@ticket.ticket_states.send(status_changed_time_value_hash(@ticket.status)[:method]))%>
+		   	  <% status_method = status_changed_time_value_hash(@ticket.status)[:method]%>
+			  <% unless status_method.empty? %>
+		   	  <%=formated_date(@ticket.ticket_states.send(status_method))%>
+			  <% end %>
 		   </li> 
 		</ul>	
 	<% end %>

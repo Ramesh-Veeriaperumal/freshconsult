@@ -43,14 +43,13 @@ class TicketFieldsController < Admin::AdminController
       end
       
       unless (action = f_d.delete(:action)).nil?
-        f_d.delete(:choices) unless("custom_dropdown".eql?(f_d[:field_type]) || "default_ticket_type".eql?(f_d[:field_type]))
         send("#{action}_field", f_d) 
       end
     end
     
     err_str = ""
     @invalid_fields.each do |tf|
-      tf.errors.each { |attr,msg| err_str << " #{tf.label}  #{attr} #{msg} <br />"  }
+      tf.errors.each { |attr,msg| err_str << " #{tf.label} : #{msg} <br />"  }
     end
      
     unless err_str.empty?

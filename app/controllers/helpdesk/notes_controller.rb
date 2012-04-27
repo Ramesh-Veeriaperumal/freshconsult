@@ -91,7 +91,7 @@ class Helpdesk::NotesController < ApplicationController
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[params[:ticket_status].to_sym()]
+          @parent.status = Helpdesk::TicketStatus::status_keys_by_name(current_account)[params[:ticket_status]]
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])

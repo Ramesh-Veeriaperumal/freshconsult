@@ -2,6 +2,7 @@ module Helpdesk::TicketsHelper
   
   include Wf::HelperMethods
   include TicketsFilter
+  include Helpdesk::Ticketfields::TicketStatus
   
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -224,12 +225,19 @@ module Helpdesk::TicketsHelper
   
   def status_changed_time_value_hash (status)
     case status
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]
+      when RESOLVED
         return {:title => t('ticket_resolved_at_time'), :method => "resolved_at"}
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]
+      when PENDING
         return {:title =>  t('ticket_pending_since_time'), :method => "pending_since"}
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]
+      when CLOSED
         return {:title => t('ticket_closed_at_time'), :method => "closed_at"}
+      else
+        status_name = Helpdesk::TicketStatus::status_names_by_key(current_account)[status]
+        unless status_name.nil?
+          return {:title => "#{status_name} #{t('at')}", :method => "status_updated_at"}
+        else
+          return {:title => t('deleted_status'), :method => ""}  
+        end
     end
   end
   

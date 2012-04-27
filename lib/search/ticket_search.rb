@@ -46,7 +46,7 @@ module Search::TicketSearch
   
    def get_default_choices(criteria_key)
     if criteria_key == :status
-      return TicketConstants::STATUS_NAMES_BY_KEY.sort
+      return Helpdesk::TicketStatus::status_names_by_key(Account.current).sort
     end
     
     if criteria_key == :ticket_type

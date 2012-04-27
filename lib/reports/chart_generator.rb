@@ -2,9 +2,13 @@ module Reports::ChartGenerator
   
   TICKET_COLUMN_MAPPING = {
                             "source" => TicketConstants::SOURCE_NAMES_BY_KEY,
-                            "status" => TicketConstants::STATUS_NAMES_BY_KEY,
                             "priority" => TicketConstants::PRIORITY_NAMES_BY_KEY
                           }  
+                          
+  def ticket_status_mapping
+    Helpdesk::TicketStatus::status_names_by_key(Account.current)
+  end
+  
   def gen_pie_data(value_hash,column_name)
     
     sort_data = Array.new
@@ -80,7 +84,11 @@ module Reports::ChartGenerator
   end
   
   def get_column_value(value,column_name)
-    return TICKET_COLUMN_MAPPING.fetch(column_name).send(:fetch,value.to_i) if TICKET_COLUMN_MAPPING.has_key?(column_name)
+    if TICKET_COLUMN_MAPPING.has_key?(column_name)
+      return TICKET_COLUMN_MAPPING.fetch(column_name).send(:fetch,value.to_i)
+    elsif("status".eql?column_name)
+      ticket_status_mapping.send(:fetch,value.to_i)
+    end
     value
   end
   

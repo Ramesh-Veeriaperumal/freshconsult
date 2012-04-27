@@ -16,6 +16,7 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
   include Search::TicketSearch
+  include Helpdesk::Ticketfields::TicketStatus
   
   layout :choose_layout 
   
@@ -39,7 +40,7 @@ class Helpdesk::TicketsController < ApplicationController
         @user_name = requester.name unless requester.name.blank?
       end
       params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}, 
-                            { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]}"}];
+                            { "condition" => "status", "operator" => "is_in", "value" => "#{OPEN},#{PENDING}"}];
     end
   end
 
@@ -271,7 +272,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def close_multiple
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]       
+    status_id = CLOSED       
     @items.each do |item|
       item.update_attribute(:status , status_id)
     end
@@ -419,7 +420,7 @@ class Helpdesk::TicketsController < ApplicationController
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
     
-    @item.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed] if save_and_close?
+    @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
     else
@@ -428,7 +429,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def close 
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+    status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attribute(:status , status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')

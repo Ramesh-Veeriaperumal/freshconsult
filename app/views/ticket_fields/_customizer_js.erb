@@ -316,8 +316,13 @@
                dialogDOMMap.label.attr("disabled", false);
                dialogDOMMap.label.removeClass("disabled");               
             } 
-            if(sourceData.field_type == 'custom_dropdown' || sourceData.field_type == 'default_ticket_type') 
-               $("#DropFieldChoices").show();
+            switch(sourceData.field_type){
+    case 'custom_dropdown':
+    case 'default_ticket_type':
+    case 'default_status':
+     $("#DropFieldChoices").show();
+    break;
+   }
                
          }catch(e){}
       }

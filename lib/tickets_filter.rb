@@ -1,5 +1,6 @@
 module TicketsFilter
   include TicketConstants
+  include Helpdesk::Ticketfields::TicketStatus
   
   DEFAULT_FILTER = "new_and_my_open"
 
@@ -122,6 +123,10 @@ module TicketsFilter
   
   protected
     def self.load_conditions(user)
+      donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where 
+                  (stop_sla_timer is false and account_id = #{user.account.id} and deleted is false)"
+      onhold_statuses_query = "select status_id from helpdesk_ticket_statuses where 
+      (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and name not in ('Resolved','Closed'))"
       group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
       group_ids = [-1] if group_ids.empty? #The whole group thing is a hack till new views come..
       
@@ -132,22 +137,21 @@ module TicketsFilter
         :responded_by =>    { :responder_id => (user && user.id) || -1 },
         :my_groups    =>    { :group_id => group_ids },
         
-        :new_and_my_open  => ["status = ? and (responder_id is NULL or responder_id = ?)", 
-                                        STATUS_KEYS_BY_TOKEN[:open], user.id],
+        :new_and_my_open  => ["status = ? and (responder_id is NULL or responder_id = ?)", OPEN, user.id],
         
-        :new              => ["status = ? and responder_id is NULL", STATUS_KEYS_BY_TOKEN[:open]],
-        :open             => ["status = ?", STATUS_KEYS_BY_TOKEN[:open]],
+        :new              => ["status = ? and responder_id is NULL", OPEN],
+        :open             => ["status = ?", OPEN],
         #:new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
-        :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
-        :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
-        :due_today        => ["due_by >= ? and due_by <= ? and status not in (?, ?)", Time.zone.now.beginning_of_day.to_s(:db), 
-                                 Time.zone.now.end_of_day.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
-        :overdue          => ["due_by <= ? and status not in (?, ?)", Time.zone.now.to_s(:db), 
-                                        STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
-        :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]],
+        :resolved         => ["status = ?", RESOLVED],
+        :closed           => ["status = ?", CLOSED],
+        :due_today        => ["due_by >= ? and due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.beginning_of_day.to_s(:db), 
+                                 Time.zone.now.end_of_day.to_s(:db)],
+        :overdue          => ["due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.to_s(:db)],
+        :pending          => ["status = ?", PENDING],
+        :on_hold          => ["status in (#{onhold_statuses_query})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
-        :open_or_pending  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , STATUS_KEYS_BY_TOKEN[:open], STATUS_KEYS_BY_TOKEN[:pending] , false],
-        :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed],false]
+        :open_or_pending  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , OPEN, PENDING , false],
+        :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
     end
 

@@ -1,5 +1,7 @@
 class Helpdesk::TicketField < ActiveRecord::Base
   
+  include Helpdesk::Ticketfields::TicketStatus
+  
   set_table_name "helpdesk_ticket_fields"
   attr_protected  :account_id
   
@@ -8,6 +10,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
     :dependent => :destroy
     
+  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :autosave => true, :dependent => :destroy
+  
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
   before_save :set_portal_edit
@@ -49,6 +53,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
   named_scope :type_field, :conditions => { :name => "ticket_type" }
+  named_scope :status_field, :conditions => { :name => "status" }
   
   # Enumerator constant for mapping the CSS class name to the field type
   FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",
@@ -102,7 +107,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::Ticket::STATUS_OPTIONS
+         Helpdesk::TicketStatus::statuses(account, User.current)
        when "default_ticket_type" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
@@ -146,8 +151,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
   
   def choices=(c_attr)
-    picklist_values.clear
-    c_attr.each { |c| picklist_values.build({:value => c[0]}) }
+    if(["custom_dropdown","default_ticket_type"].include?(self.field_type))
+      picklist_values.clear
+      c_attr.each { |c| picklist_values.build({:value => c[0]}) }
+    elsif("default_status".eql?(self.field_type))
+      #c_attr = [{:status_id => 0, :name => "NeedInfo", :customer_display_name => "Awaiting for your response",:stop_sla_timer => true},{:status_id => 0, :name => "Inprogress", :customer_display_name => "Testing Inprogress",:stop_sla_timer => false}]
+      c_attr.each{|attr| update_ticket_status attr}
+    end
   end
   
   protected
@@ -159,6 +169,5 @@ class Helpdesk::TicketField < ActiveRecord::Base
       self.editable_in_portal = false unless visible_in_portal
       self
    end
-  
-  
+
 end
