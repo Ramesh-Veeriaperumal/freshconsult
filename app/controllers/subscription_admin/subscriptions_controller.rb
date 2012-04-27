@@ -53,7 +53,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
    
    def fetch_signups_per_day
-     @signups_per_day = Account.find(:all,:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc").group_by {|a| a.created_at.at_beginning_of_day}
+     @signups_per_day = Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc")
    end
    
    def fetch_signups_per_month
