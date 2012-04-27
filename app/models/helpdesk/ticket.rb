@@ -268,7 +268,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def status_name
     disp_name = User.current.try(:customer?) ? "customer_display_name" : "name"
-    is_valid_ticket_status? ? ticket_status.send(disp_name) : I18n.t('Deleted Status')
+    is_valid_ticket_status? ? ticket_status.send(disp_name) : I18n.t('deleted_status')
   end
   
    def is_twitter?

@@ -2029,3 +2029,4 @@ en:
   status_name_validate_uniqueness_msg: " Status name has already been taken"
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   on_hold_from: "On Hold from %{time_words}"
+  deleted_status: "Deleted Status"
