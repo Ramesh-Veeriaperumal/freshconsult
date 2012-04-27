@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120409071008) do
+ActiveRecord::Schema.define(:version => 20120410122630) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -661,13 +661,30 @@ ActiveRecord::Schema.define(:version => 20120409071008) do
     t.boolean  "group_escalated",                     :default => false
     t.integer  "inbound_count",                       :default => 1
     t.integer  "account_id",             :limit => 8
+    t.datetime "status_updated_at"
+    t.datetime "sla_timer_stopped_at"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
+  create_table "helpdesk_ticket_statuses", :force => true do |t|
+    t.integer  "status_id",             :limit => 8
+    t.string   "name"
+    t.string   "customer_display_name"
+    t.boolean  "stop_sla_timer",                     :default => false
+    t.boolean  "deleted",                            :default => false
+    t.boolean  "is_default",                         :default => false
+    t.integer  "account_id",            :limit => 8
+    t.integer  "ticket_field_id",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_ticket_statuses", ["ticket_field_id", "status_id"], :name => "index_helpdesk_ticket_statuses_on_ticket_field_id_and_status_id", :unique => true
+
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8,  :null => false 
+    t.integer  "id",               :limit => 8,                             :null => false
     t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
