@@ -72,7 +72,8 @@ class SearchController < ApplicationController
       begin
         if main_portal?
           @items = ThinkingSphinx.search params[:search_key], 
-                                        :with => s_options,#, :star => true
+                                        :with => s_options,#, :star => true,
+                                        :match_mode => :any,
                                         :classes => f_classes, :per_page => 10
         else
           search_portal_content(f_classes, s_options)
@@ -115,7 +116,8 @@ class SearchController < ApplicationController
       begin
         @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
-                                        :star => Regexp.new('\w+@*\w+', nil, 'u'), :match_mode => :any, 
+                                        :star => Regexp.new('(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u'),
+                                        :match_mode => :any,
                                         :page => params[:page], :per_page => 10
         process_results
       rescue Exception => e
