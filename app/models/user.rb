@@ -297,6 +297,10 @@ class User < ActiveRecord::Base
   end
   ##Authorization copy ends here
   
+  def url_protocol
+    account.ssl_enabled? ? 'https' : 'http'
+  end
+
   def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
     portal ||= account.main_portal
     reset_perishable_token!
@@ -313,7 +317,7 @@ class User < ActiveRecord::Base
     
     UserNotifier.deliver_password_reset_instructions(self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)) , 
+          'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host), :protocol=> url_protocol) , 
           :subject => Liquid::Template.parse(subj_template).render ,:reply_email => portal.product.friendly_email)
   end
   
@@ -334,7 +338,7 @@ class User < ActiveRecord::Base
     
     UserNotifier.send_later(:deliver_user_activation, self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+          'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host), :protocol=> url_protocol), 
         :subject => Liquid::Template.parse(subj_template).render , :reply_email => portal.product.friendly_email)
   end
   
@@ -346,7 +350,7 @@ class User < ActiveRecord::Base
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       UserNotifier.send_later(:deliver_user_activation, self, 
           :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host), :protocol=> url_protocol), 
           :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => portal.product.friendly_email)
     end
   end

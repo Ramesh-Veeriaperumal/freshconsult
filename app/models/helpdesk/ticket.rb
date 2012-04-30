@@ -648,8 +648,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
       "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host),
+      "url"                               => helpdesk_ticket_url(self, :host => account.host, :prorocol=> url_protocol),
+      "portal_url"                        => support_ticket_url(self, :host => portal_host, :prorocol=> url_protocol),
       "portal_name"                       => portal_name,
       #"attachments"                      => liquidize_attachments(attachments),
       #"latest_comment"                   => liquidize_comment(latest_comment),
@@ -657,6 +657,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
       #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+  end
+
+  def url_protocol
+    account.ssl_enabled? ? 'https' : 'http'
   end
   
   def description_with_attachments
