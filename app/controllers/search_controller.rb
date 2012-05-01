@@ -69,6 +69,7 @@ class SearchController < ApplicationController
       s_options = { :account_id => current_account.id }      
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
       s_options.merge!(:visibility => get_visibility(f_classes)) 
+      s_options.merge!(:status => 2) if f_classes.include?(Solution::Article) and (current_user.blank? || current_user.customer?)
       begin
         if main_portal?
           @items = ThinkingSphinx.search params[:search_key], 
