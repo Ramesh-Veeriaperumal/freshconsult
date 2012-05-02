@@ -3,11 +3,7 @@
 	jQuery('input#account_features_survey_links').click( function(event) {						
 		    var form = jQuery('form#survey_enable');
 		    form.submit();
-	});
-	jQuery('input#account_features_scoreboard').click( function(event) {						
-		    var form = jQuery('form#scoreboard_enable');
-		    form.submit();
-	});		
+	});	
   });
 
 <% end %>
@@ -15,5 +11,3 @@
 <h3 class="title"><%=t('.title')%></h3>
   
 <%= render :partial => "satisfaction_settings" %>
-
-<%= render :partial => "scoreboard_ratings" %>

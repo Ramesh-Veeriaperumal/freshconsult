@@ -1,5 +1,0 @@
-if @enable_sb 
-  page << "jQuery('#scoreboard_elements').show();"
-else
-  page << "jQuery('#scoreboard_elements').hide();"
-end

@@ -35,7 +35,8 @@ module Admin::HomeHelper
           ['/social/twitters',            'twitter-setting',feature?(:twitter) ],
 #          ['/admin/surveys',              'survey',           current_account.features?(:surveys, :survey_links) ],
           ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ],
-          ['/admin/surveys',               'survey-settings', current_account.features?(:surveys)      ]
+          ['/admin/surveys',              'survey-settings', current_account.features?(:surveys)      ],
+          ['/admin/scoreboard',           'scoreboard-settings', current_account.features?(:scoreboard)      ]
       ]],
         
       [ t(".everything_else"), [
