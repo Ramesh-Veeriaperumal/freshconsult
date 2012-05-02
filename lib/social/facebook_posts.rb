@@ -16,7 +16,8 @@ class Social::FacebookPosts
    end
           
    feeds = @rest.fql_query(query)
-   until_time = feeds.collect {|f| f["updated_time"]}.compact.max unless feeds.blank?        
+   updated_time = feeds.collect {|f| f["updated_time"]}.compact.max unless feeds.blank?  
+   until_time = Time.parse(updated_time).to_i unless updated_time.blank?
    create_ticket_from_feeds feeds               
    @fb_page.update_attribute(:fetch_since, until_time) unless until_time.blank?
  end

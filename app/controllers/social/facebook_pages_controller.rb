@@ -6,7 +6,7 @@ class Social::FacebookPagesController < Admin::AdminController
     c.requires_permission :manage_users
   end
   
-  before_filter :fb_client , :only => [:authdone, :index]
+  before_filter :fb_client , :only => [:authdone, :index,:edit]
   before_filter :build_item, :only => [:authdone]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   
@@ -37,8 +37,15 @@ class Social::FacebookPagesController < Admin::AdminController
   
   def add_to_db fb_pages
     fb_pages.each do |fb_page|
-        begin
-          scoper.create(fb_page)
+        begin   
+          page = scoper.find_by_page_id(fb_page[:page_id]) 
+          unless page.blank?
+            page_params = fb_page.tap { |fb| fb.delete(:fetch_since) }
+            page.update_attributes(page_params)
+          else
+            scoper.create(fb_page)
+          end
+          
         rescue        
         end
      end

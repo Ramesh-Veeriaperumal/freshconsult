@@ -217,8 +217,9 @@ class Helpdesk::NotesController < ApplicationController
         facebook_page = @fb_client.get_page
         post_id =  @parent.fb_post.post_id
         comment = facebook_page.put_comment(post_id, @item.body) 
-       rescue
-        flash[:notice] = t('facebook.not_authorized')
+      rescue => e
+        fb_page.update_attributes({ :reauth_required => true, :last_error => e.message})
+        flash[:notice] = e.message
         return nil
        end
       end
@@ -234,8 +235,9 @@ class Helpdesk::NotesController < ApplicationController
         facebook_page = @fb_client.get_page
         thread_id =  @parent.fb_post.thread_id
         reply = facebook_page.put_object(thread_id , 'messages',:message => @item.body)
-       rescue
-        flash[:notice] = t('facebook.not_authorized')
+      rescue => e
+        fb_page.update_attributes({ :reauth_required => true, :last_error => e.message})
+        flash[:notice] = e.message
         return nil
        end
      end

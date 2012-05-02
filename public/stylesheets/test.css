@@ -416,3 +416,9 @@ a.pill.help { background-color: #669933; font-size: 13px; }
 .forum-title { font-size: 16px; margin: 10px 20px 2px; }
 
 .breadcrumbs { background-color: #F8F8F8; border-bottom: 1px solid #E8E8E8; color: #999999; font-size: 12px; padding: 8px 20px; margin-bottom: 8px; }
+
+.label-important { background-color: #b94a48 !important; }
+
+.label-important:hover { background-color: #953b39; }
+
+.align-fix { vertical-align: middle; }
