@@ -3,6 +3,7 @@ require 'mime/types'
 class Helpdesk::Attachment < ActiveRecord::Base
 
   set_table_name "helpdesk_attachments"
+  belongs_to_account
 
   belongs_to :attachable, :polymorphic => true
   

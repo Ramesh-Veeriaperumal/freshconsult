@@ -6,6 +6,7 @@ namespace :twitter do
   task :fetch => :environment do    
     puts "Twitter task initialized at #{Time.zone.now}"
     Account.active_accounts.each do |account|
+      Account.reset_current_account
       twitter_handles = account.twitter_handles.find(:all, :conditions => ["capture_dm_as_ticket = 1 or capture_mention_as_ticket = 1"])    
       twitter_handles.each do |twt_handle| 
         sandbox do ### starts ####

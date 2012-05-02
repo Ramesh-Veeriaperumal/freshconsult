@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  
+  belongs_to_account
   include ActionController::UrlWriter
   include SavageBeast::UserInit
   include SentientUser
@@ -19,7 +21,6 @@ class User < ActiveRecord::Base
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
   EMAIL_REGEX = /(\A[A-Z0-9_\.%\+\-\'=]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
   
-  belongs_to :account
   belongs_to :customer
   
   has_many :authorizations, :dependent => :destroy
