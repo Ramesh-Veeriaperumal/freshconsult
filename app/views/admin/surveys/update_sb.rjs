@@ -1,2 +1,0 @@
-#flash[:notice] = t(:'admin.surveys.successfully_updated')
-show_ajax_flash page
