@@ -20,6 +20,7 @@
   </td>
 
   <td class="assign">
+  	<% line_through = ticket.ticket_status.deleted? ? "text-decoration:line-through" : "" %>
       <% if ticket.freshness == :new %>
         <%=t('ticket.unassigned')%>
       <% else %>
@@ -27,7 +28,7 @@
       <% end %>
 	  	<ul>
 			<li>
-		    <%=t('ticket.status')%> <span><%= h(ticket.status_name) %></span>
+		    <%=t('ticket.status')%> <span style="<%= line_through %>"><%= h(ticket.status_name) %></span>
 		  </li>
 			<li class="priority">
 			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
@@ -37,8 +38,8 @@
 	
   <td class="sla">
     <% if( ticket.active? ) %>
-		<% if(ticket.onhold?)%>
-			<%= t('on_hold_from', :time_words => distance_of_time_in_words_to_now(ticket.ticket_states.sla_timer_stopped_at))%>	
+		<% if(ticket.onhold? or ticket.ticket_status.deleted?)%>
+			<%= t('since_time', :time_words => distance_of_time_in_words_to_now(ticket.ticket_states.status_updated_at))%>	
   	  	<% elsif(Time.now > ticket.due_by ) %>
 			  <%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 		<% else %>

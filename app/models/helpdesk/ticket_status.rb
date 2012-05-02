@@ -4,7 +4,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   set_table_name "helpdesk_ticket_statuses"
   
-  validates_presence_of :name, :message => I18n.t('status_name_validate_presence_of_msg')
+  validates_length_of :name, :in => 1..25
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg')
   validates_uniqueness_of :customer_display_name, :scope => :account_id, :message => I18n.t('status_cust_disp_name_uniqueness_msg')
   
@@ -22,10 +22,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   def self.display_name(user=nil)
     user.try(:customer?) ? "customer_display_name" : "name"
   end
+
+  def self.translate_status_name(status, user=nil)
+      DEFAULT_STATUSES.include?(status.status_id) ? I18n.t("#{status.send(display_name(user)).downcase}") : status.send(display_name(user))
+  end
   
   def self.statuses(account, user=nil)
     statuses = account.ticket_status_values
-    statuses.map{|status| [status.send(display_name(user)), status.status_id]}
+    statuses.map{|status| [translate_status_name(status,user), status.status_id]}
   end
   
   def self.status_keys_by_name(account, user=nil)
@@ -34,7 +38,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   def self.status_names_by_key(account, user=nil)
     statuses = account.ticket_status_values
-    Hash[*statuses.map{|status| [status.status_id, status.send(display_name(user))]}.flatten]
+    Hash[*statuses.map{|status| [status.status_id, translate_status_name(status,user)]}.flatten]
   end
   
   def self.donot_stop_sla_statuses(account)

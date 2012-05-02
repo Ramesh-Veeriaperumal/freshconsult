@@ -5,6 +5,8 @@ module Helpdesk::Ticketfields::TicketStatus
   RESOLVED = 4 # Resolved Status
   CLOSED = 5 # Closed Status
 
+  DEFAULT_STATUSES = [OPEN, PENDING, RESOLVED, CLOSED]
+
   # In order to save modified records through autosave we need to manipulate the loaded ticket_statuses array itself in the self
   def update_ticket_status(attr)
     t_s = nil

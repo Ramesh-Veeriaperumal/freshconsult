@@ -26,7 +26,9 @@
 <% end %>
 
 <div id="TicketProperties">
-	<% unless (@ticket.onhold_and_closed? or @ticket.pending?)%>
+	<% line_through = @ticket.ticket_status.deleted? ? "text-decoration:line-through" : "" %>
+	<% unless (@ticket.onhold_and_closed? or @ticket.pending? or @ticket.ticket_status.deleted?)%>
+		<h3 class="title" style="<%= line_through %>"><%= h(@ticket.status_name) %></h3>
 		<h3 class="title"><%=t('ticket_due_by_time')%></h3>
 		<ul class="cnt" id="due-by-time-parent">
 		   <li>
@@ -36,13 +38,10 @@
 		   </li> 
 		</ul>	
 	<% else %>
-		<h3 class="title"><%= status_changed_time_value_hash(@ticket.status)[:title] %></h3>
+		<h3 class="title" style="<%= line_through %>"><%= h(status_changed_time_value_hash(@ticket)[:title]) %></h3>
 		<ul class="cnt" id="due-by-time-parent">
 		   <li>
-		   	  <% status_method = status_changed_time_value_hash(@ticket.status)[:method]%>
-			  <% unless status_method.empty? %>
-		   	  <%=formated_date(@ticket.ticket_states.send(status_method))%>
-			  <% end %>
+		   	  <span class="cnt"><%= t('since') %></span><%=formated_date(@ticket.ticket_states.send(status_changed_time_value_hash(@ticket)[:method]))%>
 		   </li> 
 		</ul>	
 	<% end %>
@@ -56,7 +55,7 @@
 		          field_value = (field.is_default_field?) ? ticket[field.field_name] : @item.get_ff_value(field.name)
 		          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 		      %>
-          <%= construct_ticket_element :helpdesk_ticket, field, field.label, dom_type, field.required, field_value %>
+		    <%= construct_ticket_element :helpdesk_ticket, field, field.label, dom_type, field.required, field_value %>
          <% end %>
        <% end %>
        <% javascript_tag do %>  
@@ -74,6 +73,11 @@
                             }
              });
            });
+         <% if @ticket.ticket_status.deleted? %>
+         	jQuery("#helpdesk_ticket_status")
+         		.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.ticket_status.name %> </option>')
+         		.val("<%=@ticket.status%>")
+         <% end %>
        <% end %>
 			<!--form values ends here-->
 			<!-- Custom fields ends here-->

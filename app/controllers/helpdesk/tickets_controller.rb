@@ -25,6 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
+  before_filter :check_ticket_status, :only => [:update]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -544,6 +545,13 @@ class Helpdesk::TicketsController < ApplicationController
   
   def save_and_close?
     !params[:save_and_close].blank?
+  end
+
+  def check_ticket_status
+    if params["helpdesk_ticket"]["status"].blank?
+      flash[:error] = t("change_deleted_status_msg")
+      redirect_to item_url
+    end
   end
  
 end

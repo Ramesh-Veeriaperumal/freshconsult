@@ -12,7 +12,6 @@
   <div class="request_details">
     <div class="requestCnt request-cnt-first">
       <div class="request-title">
-        <%= content_tag :span, h(@ticket.status_name), :class => "status-pointer theme-tab" %>
         <%= content_tag :span, h(@ticket.priority_name), :class => "priority-pointer #{@ticket.priority_key}" %>
         <%= content_tag :span, "##{h(@ticket.display_id)}", :class => "ticket-id" %>
         <%= content_tag :span, h(@ticket.subject), :class => "subject" %>

@@ -223,22 +223,9 @@ module Helpdesk::TicketsHelper
     
   end
   
-  def status_changed_time_value_hash (status)
-    case status
-      when RESOLVED
-        return {:title => t('ticket_resolved_at_time'), :method => "resolved_at"}
-      when PENDING
-        return {:title =>  t('ticket_pending_since_time'), :method => "pending_since"}
-      when CLOSED
-        return {:title => t('ticket_closed_at_time'), :method => "closed_at"}
-      else
-        status_name = Helpdesk::TicketStatus::status_names_by_key(current_account)[status]
-        unless status_name.nil?
-          return {:title => "#{status_name} #{t('at')}", :method => "status_updated_at"}
-        else
-          return {:title => t('deleted_status'), :method => ""}  
-        end
-    end
+  def status_changed_time_value_hash (ticket)
+    status_name = ticket.status_name
+    return {:title => "#{status_name}", :method => "status_updated_at"}        
   end
   
   def default_twitter_body_val (ticket)
