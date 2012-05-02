@@ -16,6 +16,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     "custom_dropdown" => "choicelist",
     "custom_checkbox" => "checkbox",
     "custom_number"   => "number",
+    "nested_field"    => "choicelist",
   }
 
   OPERATOR_LIST =  {
@@ -128,13 +129,15 @@ class Admin::VaRulesController < Admin::AutomationsController
     def add_custom_filters filter_hash
       current_account.ticket_fields.custom_fields.each do |field|
         filter_hash.push({
+          :id => field.id,
           :name => field.name,
           :value => field.label,
           :field_type => field.field_type,
           :domtype => field.flexifield_def_entry.flexifield_coltype,
           :choices =>  field.picklist_values.collect { |c| [(field.field_type == "nested_field") ? "#{c.id}":c.value, c.value ] },
           :action => "set_custom_field",
-          :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text")
+          :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
+          :nested_fields => nested_fields(field)
         })
       end
     end

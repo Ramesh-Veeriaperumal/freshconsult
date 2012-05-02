@@ -7,7 +7,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
     :dependent => :destroy
-  has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy
+  has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
     
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter

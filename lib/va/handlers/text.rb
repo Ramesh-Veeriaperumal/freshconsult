@@ -9,6 +9,14 @@ class Va::Handlers::Text < Va::RuleHandler
       !is(evaluate_on_value)
     end
 
+    def is(evaluate_on_value, field_value)
+      evaluate_on_value && evaluate_on_value.casecmp(field_value) == 0
+    end
+
+    def is_not(evaluate_on_value, field_value)
+      !is(evaluate_on_value, field_value)
+    end
+
     def contains(evaluate_on_value)
       evaluate_on_value && evaluate_on_value.downcase.include?(value.downcase)
     end
@@ -23,6 +31,14 @@ class Va::Handlers::Text < Va::RuleHandler
 
     def ends_with(evaluate_on_value)
       evaluate_on_value && evaluate_on_value.downcase.ends_with?(value.downcase)
+    end
+    
+    def filter_query_is(field_key,field_value)
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} = #{field_value}"
+    end
+    
+    def filter_query_is_not(field_key,field_values)
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != #{field_value}"
     end
     
     def filter_query_is

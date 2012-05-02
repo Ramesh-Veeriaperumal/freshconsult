@@ -125,12 +125,15 @@ class Admin::AutomationsController < Admin::AdminController
     def add_custom_actions action_hash
        current_account.ticket_fields.custom_fields.each do |field|
          action_hash.push({ 
-           :name => field.name, 
+           :id => field.id,
+           :name => field.name,
+           :field_type => field.field_type, 
            :value => "Set #{field.label} as", 
            :domtype => field.flexifield_def_entry.flexifield_coltype, 
-           :choices => field.picklist_values.collect { |c| [ c.value, c.value ] }, 
+           :choices => field.picklist_values.collect { |c| [(field.field_type == "nested_field") ? "#{c.id}":c.value, c.value ] },
            :action => "set_custom_field", 
-           :handler => field.flexifield_def_entry.flexifield_coltype
+           :handler => field.flexifield_def_entry.flexifield_coltype,
+           :nested_fields => nested_fields(field)
            })
        end
     end
@@ -138,4 +141,13 @@ class Admin::AutomationsController < Admin::AdminController
     def check_automation_feature
       requires_feature :scenario_automations 
     end
+
+    def nested_fields ticket_field
+      if ticket_field.field_type == "nested_field"
+        ticket_field.nested_ticket_fields.collect {|nested_field| [nested_field.field_name,nested_field.label,nested_field.level]}
+      else
+        []
+      end
+    end
+
 end
