@@ -234,7 +234,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :account_id => ticket.account_id
         )
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
-        process_email_commands(ticket, user, ticket.email_config) if user.agent?
+        process_email_commands(ticket, user, ticket.email_config, note) if user.agent?
         
         begin
           email_cmds_regex = get_email_cmd_regex(ticket.account)
