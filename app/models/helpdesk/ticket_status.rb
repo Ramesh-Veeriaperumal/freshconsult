@@ -59,9 +59,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   def update_tickets_sla_on_status_change
     if stop_sla_timer_changed?
-      send_later(update_tickets_dueby)
+      send_later(:update_tickets_dueby)
     elsif deleted_changed?
-      send_later(update_tickets_sla)
+      send_later(:update_tickets_sla)
     end
   end
   
@@ -92,8 +92,6 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
  def onhold_and_closed?
    Helpdesk::TicketStatus.onhold_and_closed_statuses(account).include?(status_id)
  end
-  
-  private
   
     def update_tickets_sla
       tkt_states = tickets.visible.find(:all,

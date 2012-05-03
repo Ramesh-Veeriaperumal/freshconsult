@@ -75,7 +75,7 @@
            });
          <% if @ticket.ticket_status.deleted? %>
          	jQuery("#helpdesk_ticket_status")
-         		.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.ticket_status.name %> </option>')
+         		.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
          		.val("<%=@ticket.status%>")
          <% end %>
        <% end %>
