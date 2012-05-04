@@ -25,6 +25,16 @@
       <div class="info-data tabbed">
       	<%= t('.company_posts_info')%>
       </div>
+	  <!--import direct message starts -->
+	  <span class="seperator"></span>
+      <label class="checkbox">
+        <%= check_box "social_facebook_page", :import_dms, { :checked => facebook_page.import_dms } %> 
+        <%= t('.direct_messages')%>
+      </label>
+      <div class="info-data tabbed">
+      	<%= t('.direct_messages_info' , :reauth_url => @fb_client.authorize_url )%>
+      </div>
+	  <!--import direct message ends -->
 	   <span class="seperator"></span>
 	  <!-- another one... -->
 	  <label class="caption"><%=t('.message_thread_time')%></label>

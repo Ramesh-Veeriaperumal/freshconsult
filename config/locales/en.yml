@@ -1705,6 +1705,8 @@ en:
     facebook_pages:
       index:
         title: "Facebook Pages"
+        reauthorize: Reauthorize
+        reauth_required : Reauthorization required
       enable_facebook_page:
         associate: Select the facebook pages you would like to associate to the Helpdesk.
       engage_info:
@@ -1719,7 +1721,9 @@ en:
         company_posts_info: Freshdesk will convert all Company posts on this Facebook page into tickets.
         product: Product     
         message_thread_time: Message Thread Time
-        message_thread_time_info: Maximum time to consider messages from same user as threaded     
+        message_thread_time_info: Maximum time to consider messages from same user as threaded  
+        direct_messages: Import <strong>"Direct messages"</strong> as ticket
+        direct_messages_info: Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>
     twitter_handles:
       index:
         title: "Twitter Accounts"
