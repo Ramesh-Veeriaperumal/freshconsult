@@ -115,9 +115,9 @@ class SearchController < ApplicationController
   
     def search
       begin
-        @items = ThinkingSphinx.search params[:search_key], 
-                                        :with => { :account_id => current_account.id, :deleted => false }, 
-                                        :star => Regexp.new('(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u'),
+        @items = ThinkingSphinx.search filter_key(params[:search_key]), 
+                                        :with => { :account_id => current_account.id, :deleted => false },
+                                        :star => false,
                                         :match_mode => :any,
                                         :page => params[:page], :per_page => 10
         process_results
@@ -150,5 +150,28 @@ class SearchController < ApplicationController
   
     def solutions_allowed_in_portal? #Kinda duplicate
       render :nothing => true and return unless allowed_in_portal?(:open_solutions)
+  end
+  
+  private
+  
+  def filter_key(query)
+    email_regex  = Regexp.new('(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
+    default_regex = Regexp.new('\w+', nil, 'u')
+    enu = query.gsub(/("#{email_regex}(.*?#{email_regex})?"|(?![!-])#{email_regex})/u)
+    unless enu.count > 0
+      enu = query.gsub(/("#{default_regex}(.*?#{default_regex})?"|(?![!-])#{default_regex})/u)
     end
+    enu.each do
+      pre, proper, post = $`, $&, $'
+      is_operator = pre.match(%r{(\W|^)[@~/]\Z}) || pre.match(%r{(\W|^)@\([^\)]*$})
+      is_quote    = proper.starts_with?('"') && proper.ends_with?('"')
+      has_star    = pre.ends_with?("*") || post.starts_with?("*")
+      if is_operator || is_quote || has_star
+          proper
+      else
+         "*#{proper}*"
+      end
+    end
+  end
+
 end
