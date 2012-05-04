@@ -51,6 +51,7 @@ module EmailCommands
   def group(ticket, value, user, note)
     group = ticket.account.groups.find_by_name(value)      
     ticket.group = group unless group.nil?
+    ticket.group = nil if value =~ /none/i
   end
 
   def action(ticket,value,user, note)
