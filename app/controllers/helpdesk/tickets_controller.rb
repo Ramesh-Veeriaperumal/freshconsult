@@ -195,9 +195,15 @@ class Helpdesk::TicketsController < ApplicationController
   
   def add_original_to_email
       original_to = parse_email_text(@item.to_email)[:email]
-      email_config_emails = current_account.email_configs.collect { |ec| ec.reply_email }
-      @reply_email.delete_if {|email| parse_email_text(email)[:email] ==  original_to}
-      @reply_email.insert(0, @item.to_email) 
+      friendly_original_to = @item.to_email 
+      @reply_email.each do |email|
+        temp_email = parse_email_text(email)[:email]
+        if temp_email ==  original_to
+          friendly_original_to = email
+          @reply_email.delete(email)
+        end
+      end
+      @reply_email.unshift(friendly_original_to) 
   end
 
   def show
