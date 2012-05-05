@@ -195,6 +195,7 @@ class ConversionMetric < ActiveRecord::Base
   
   def update_keywords(*url)
     url = self[:first_referrer] if url.blank?
+    return if url.blank?
     self[:keywords] = get_ads_keywords(url) if is_google_ads_display?(url)
     url_split = split_url(url)
      if is_utm?(url)
