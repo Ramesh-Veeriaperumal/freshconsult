@@ -9,8 +9,7 @@ class Helpdesk::AttachmentsController < ApplicationController
 
   def show
     redir_url = AWS::S3::S3Object.url_for(@attachment.content.path,@attachment.content.bucket_name,
-                                          :expires_in => 300.seconds,
-                                          :use_ssl => @attachment.account.ssl_enabled?)
+                                          :expires_in => 300.seconds)
     respond_to do |format|
       format.html do
         redirect_to(  redir_url.gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
