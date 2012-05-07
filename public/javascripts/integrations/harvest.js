@@ -5,7 +5,7 @@ HarvestWidget.prototype= {
 
 	initialize:function(harvestBundle, loadInline){
 		harvestWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
-		this.projectData = "";
+		this.projectData = ""; this.executed_date = new Date();
 		this.taskData = "";
 		this.inline = loadInline;
 		var init_reqs = []
@@ -55,12 +55,12 @@ HarvestWidget.prototype= {
 		this.projectData = resData.responseXML
 		this.taskData = {}
 		project_list = XmlUtil.extractEntities(this.projectData, "project")
-		for(i=0;i<project_list.length;i++) {
+		for(var i=0;i<project_list.length;i++) {
 			proj_node = project_list[i];
 			proj_id = XmlUtil.getNodeValue(proj_node, "id")
 			client_name = XmlUtil.getNodeValue(proj_node, "client");
 			matched = false
-			for(j=0;j<clientData.length;j++)
+			for(var j=0;j<clientData.length;j++)
 				if (clientData[j]["id"] == client_name) matched = true;
 			if (!matched) clientData.push({"id":client_name, "name":client_name});
 			task_list = XmlUtil.extractEntities(proj_node, "tasks");
@@ -284,6 +284,7 @@ HarvestWidget.prototype= {
 					"request[task_id]": $("harvest-timeentry-tasks").value,
 					"request[notes]": $("harvest-timeentry-notes").value,
 					"request[hours]": $("harvest-timeentry-hours").value,
+					"request[spent_at]": this.executed_date.toString("ddd, dd MMM yyyy"),
 					resource: "daily/update/"+harvestBundle.remote_integratable_id,
 					content_type: "application/xml",
 					method: "post",
@@ -333,9 +334,10 @@ HarvestWidget.prototype= {
 		}
 	},
 
-	updateNotesAndTimeSpent:function(notes, timeSpent, billable) {
+	updateNotesAndTimeSpent:function(notes, timeSpent, billable, executed_date) {
 		$("harvest-timeentry-hours").value = timeSpent;
 		$("harvest-timeentry-notes").value = (notes+"\n"+harvestBundle.harvestNote).escapeHTML();
+		this.executed_date = new Date(executed_date);
 	},
 
 	// This is method needs to be called by the external time entry code to map the remote and local integrated resorce ids.

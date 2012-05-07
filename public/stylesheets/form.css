@@ -399,6 +399,7 @@ table.summary-report thead td { text-align: center; font-weight: bold; padding: 
 .request_panel .ui-form li.field { border: 0; padding: 0; }
 .request_panel .ui-form label, .request_panel .ui-form div.fields label { font-size: 13px; color: #333333; }
 .request_panel .ui-form div.field { width: 23%; float: left; margin-left: 2%; }
+.request_panel .ui-form div.field-35 { width: 33%; float: left; margin-left: 2%; }
 .request_panel .ui-form div.field.first { margin-left: 0; }
 .request_panel .ui-form label.overlabel { margin: 2px 8px; color: #888888; font-size: 12px; }
 .request_panel .ui-form fieldset { padding: 10px 0; position: relative; }

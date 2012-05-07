@@ -1340,9 +1340,14 @@ table.summary-report{
 		label, div.fields label{
 			font-size:13px;
 			color:#333333;
-		}			
+		}
 		div.field{
 			width:23%;
+			float:left;
+			margin-left:2%;
+		}
+		div.field-35{
+			width:33%;
 			float:left;
 			margin-left:2%;
 		}
