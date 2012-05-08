@@ -38,7 +38,7 @@ module Reports::ConstructReport
                 sum(case when helpdesk_ticket_states.inbound_count = 1 then 1 else 0 end ) fcr, 
                 sum(case when (helpdesk_tickets.due_by >= helpdesk_ticket_states.resolved_at) then 1 else 0 end) otr, 
                 count(*) count", 
-     :conditions => date_condition,
+     :conditions => "#{date_condition} AND #{@val}_id IS NOT NULL",
      :group => "#{@val}_id")
  end
 

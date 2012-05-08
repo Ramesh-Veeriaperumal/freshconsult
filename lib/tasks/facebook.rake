@@ -7,12 +7,14 @@ namespace :facebook do
       facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])    
       facebook_pages.each do |fan_page| 
         sandbox do ### starts ####
- 
+           @fan_page = fan_page
            fb_posts = Social::FacebookPosts.new(fan_page)
            fb_posts.fetch
            
-           fb_messages = Social::FacebookMessage.new(fan_page)
-           fb_messages.fetch
+           if fan_page.import_dms
+              fb_messages = Social::FacebookMessage.new(fan_page)
+              fb_messages.fetch
+           end
          
          end ### ends ####
      end
@@ -57,11 +59,13 @@ namespace :facebook do
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Exception => e
+        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
         puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue 
+        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
         puts e.to_s
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
       end

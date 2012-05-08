@@ -3,15 +3,16 @@
 	<%=t('.associate')%>
 </p> 
 <ul class="admin_list">
-	<%= hidden_field(:user, :profile_id, :id => "profile_id", :value => @fb_pages.first[:profile_id]) %>	
+	
 	<% @fb_pages.each do |fb_page| %>	
+	
 	<li>
 		<div class="preview_pic">
     	<%= image_tag (fb_page[:page_img_url]) %>
     	<span class="fb_pic"></span>
   	</div>		
     <h2 class="title">
-			<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page[:page_id] , nil) %>
+			<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page.to_json , nil) %>
 			<%= fb_page[:page_name] %>
 		</h2>
 	</li>			
