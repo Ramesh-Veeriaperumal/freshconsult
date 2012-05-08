@@ -731,7 +731,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
       custom_field[method]
     end
   end
-  
+
+  def to_json(options = {}, deep=true)
+    options[:methods] = [:status_name,:priority_name,:requester_name,:responder_name]
+    if deep
+      self.load_flexifield
+      options[:include] = [:notes,:attachments]
+      options[:except] = [:account_id,:import_id]
+      options[:methods].push(:custom_field)
+    end
+    json_str = super options
+    json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
+  end
+
+
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])

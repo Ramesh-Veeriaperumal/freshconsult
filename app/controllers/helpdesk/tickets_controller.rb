@@ -136,7 +136,17 @@ class Helpdesk::TicketsController < ApplicationController
   
   def user_tickets
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    render :layout => "widgets/contacts"
+
+    respond_to do |format|
+      format.json do
+        render :json => @items.to_json
+      end
+
+      format.widget do
+        render :layout => "widgets/contacts"    
+      end
+    end
+    
   end
 
   def view_ticket
