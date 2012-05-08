@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
   has_one :data_export,:dependent => :destroy
   
   has_one :email_commands_setting,:dependent => :destroy
-  has_one :conversion_metric
+  has_one :conversion_metric,:dependent => :destroy
   
   has_one :logo,
     :as => :attachable,
