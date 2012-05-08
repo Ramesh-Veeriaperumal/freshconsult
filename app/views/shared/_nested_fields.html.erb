@@ -23,7 +23,7 @@
       
       if(this.value != '') {
          jQuery.post(
-            "/support/tickets/get_picklist_choices/"+this.value,
+            "/support/tickets/category_choices/"+this.value,
             "ticket_field_id=<%=category.id%>",
             function(data){
                jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[0].field_name%>').html(data);
@@ -51,7 +51,7 @@
          
          if(this.value != '') {
             jQuery.post(
-               "/support/tickets/get_picklist_choices/"+this.value,
+               "/support/tickets/sub_category_choices/"+this.value,
                "ticket_field_id=<%=category.id%>&category_picklist_id="+jQuery('#helpdesk_ticket_custom_field_'+'<%=category.field_name%>').val(),
                function(data){
                   jQuery('#helpdesk_ticket_custom_field_'+'<%=nested_fields[1].field_name%>').html(data);

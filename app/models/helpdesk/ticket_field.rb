@@ -50,7 +50,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
   named_scope :type_field, :conditions => { :name => "ticket_type" }
-  
+  named_scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
+
   # Enumerator constant for mapping the CSS class name to the field type
   FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",
                                               :form_field => "subject", :visible_in_view_form => false },
@@ -119,7 +120,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
        else
          []
     end
-  end  
+  end
+
+  def nested_filter_choices
+    picklist_values.collect { |c| ["#{c.id}", c.value] }
+  end
   
   def dropdown_selected(dropdown_values, selected_value)  
       selected_text = ""

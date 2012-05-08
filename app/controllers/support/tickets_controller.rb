@@ -1,5 +1,7 @@
 class Support::TicketsController < ApplicationController
-  
+
+  include Helpdesk::PicklistUtility
+
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   include SupportTicketControllerMethods 
   before_filter { |c| c.requires_permission :portal_request }
@@ -53,23 +55,7 @@ class Support::TicketsController < ApplicationController
      end                                       
      redirect_to :back
   end
-  
-  def get_picklist_choices
-    picklist_id = params[:id]
-    ticket_field_id = params[:ticket_field_id]
-    category_picklist_id = params[:category_picklist_id]
-    if category_picklist_id.nil?
-      picklist_value = current_account.ticket_fields.find(ticket_field_id).picklist_values.find(params[:id])
-      @picklist_choices = picklist_value.sub_picklist_values
-    else
-      picklist_value = current_account.ticket_fields.find(ticket_field_id).picklist_values.find(category_picklist_id)
-      sub_picklist = picklist_value.sub_picklist_values.find(params[:id])
-      @picklist_choices = sub_picklist.sub_picklist_values
-    end
-
-    render :partial => "/shared/picklist_choices"
-  end
-  
+    
   protected 
 
     def cname
