@@ -145,8 +145,8 @@ class Helpdesk::Note < ActiveRecord::Base
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
-      elsif outbound_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self , notable.reply_email,{:include_cc => true})   if source.eql?(SOURCE_KEYS_BY_TOKEN["email"])      
+      elsif inbound_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self , notable.reply_email,{:include_cc => true})      
       end
       
       notable.updated_at = created_at
@@ -161,7 +161,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
      
      def set_note_as_private
-       self.private = true if note?
+       self.private = true if note? && !user.customer?
       end 
     
     def add_activity

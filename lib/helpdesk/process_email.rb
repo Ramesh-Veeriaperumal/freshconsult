@@ -237,7 +237,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )
-        note.incoming = user.customer?
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
         
         begin
