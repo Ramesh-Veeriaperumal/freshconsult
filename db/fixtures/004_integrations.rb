@@ -94,13 +94,14 @@ unless Account.current
                  }
   end
 
+  # Populate JIRA
   jira_app = Integrations::Application.seed(:name) do |s|
     s.name = "jira"  # Do not change the name.
     s.display_name = "integrations.jira.label" 
     s.description = "integrations.jira.desc"
     s.listing_order = 5
     s.options = {
-                  keys_order => [:title, :domain, :username, :password, :jira_note], 
+                  :keys_order => [:title, :domain, :username, :password, :jira_note], 
                   :title => { :type => :text, :required => true, :label => "integrations.jira.form.widget_title", :default_value => "Atlassian Jira"},
                   :domain => { :type => :text, :required => true, :label => "integrations.jira.form.domain", :info => "integrations.jira.form.domain_info", :validator_type => "url_validator" }, 
                   :jira_note => { :type => :text, :required => false, :label => "integrations.jira.form.jira_note", 
@@ -122,6 +123,36 @@ unless Account.current
         jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", jiraNote:"{{jira.jira_note | escape_html}}", ticketId:"{{ticket.id}}", ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject}}", ticketDesc:"{{ticket.description_text}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}" } ;
        </script>}
     s.application_id = jira_app.id
+  end
+
+  # Populate Workflow MAX
+  wfmax_app = Integrations::Application.seed(:name) do |s|
+    s.name = "workflow_max"  # Do not change the name.
+    s.display_name = "integrations.workflow_max.label" 
+    s.description = "integrations.workflow_max.desc"
+    s.listing_order = 8
+    s.options = {
+                  :keys_order => [:title, :api_key, :account_key, :workflow_max_note], 
+                  :title => { :type => :text, :required => true, :label => "integrations.workflow_max.form.widget_title", :default_value => "Workflow MAX"},
+                  :api_key => { :type => :text, :required => true, :label => "integrations.workflow_max.form.api_key", :info => "integrations.workflow_max.form.api_key_info" },
+                  :account_key => { :type => :text, :required => true, :label => "integrations.workflow_max.form.account_key", :info => "integrations.workflow_max.form.account_key_info" },
+                  :workflow_max_note => { :type => :text, :required => false, :label => "integrations.workflow_max.form.workflow_max_note", 
+                                      :info => "integrations.workflow_max.form.workflow_max_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' }
+                }
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "workflow_max_timeentry_widget"
+    s.description = "workflow_max.widgets.timeentry_widget.description"
+    s.script = %{
+      <div id="workflow_max_widget" title="{{workflow_max.title}}">
+        <div class="content"></div>
+      </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/workflow_max.js");
+        workflowMaxBundle={ k:"{{workflow_max.api_key}}", a:"{{workflow_max.account_key}}", api_url:"https://api.workflowmax.com" , application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", workflowMaxNote:"{{workflow_max.workflow_max_note | escape_html}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}"};
+      </script>}
+    s.application_id = wfmax_app.id
   end
 
 end
