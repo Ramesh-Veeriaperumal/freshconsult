@@ -1,25 +1,49 @@
+<% javascript_tag do %>  
+  function refresh_tickets(){
+    jQuery("#save_filter").show();
+    jQuery("#FilterOptions input[name=filter_name]").val("");
+    jQuery(".view_filters .active").removeClass("active");
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
+  }
+<% end %>
 <%
-category_id = "#{field_id}_category"
-sub_category_id = "#{field_id}_sub_category"
-sub_category_item_id = "#{field_id}_item_sub_category"
+  category_id = "#{field_id}_category"
+  sub_category_id = "#{field_id}_sub_category"
+  sub_category_item_id = "#{field_id}_item_sub_category"
 %>
 <% options = options.unshift(["...","-1"]) %>
-<%= select_tag name,options_for_select(options.map {|k, v| [k, v.to_s]}), :id=> category_id, :class => "dropdown nested_field" %>
+<%= select_tag name,options_for_select(options.map {|k, v| [k, v.to_s]}, selected_val), :id=> category_id, :class => "dropdown nested_field" %>
 <%
-sub_category  = nested_fields[0] if nested_fields.size > 0
-item  = nested_fields[1] if nested_fields.size > 1
+  sub_category  = nested_fields[0] if nested_fields.size > 0
+  item  = nested_fields[1] if nested_fields.size > 1
+  if !sub_category.nil? && !selected_val.blank?
+    category_picklist_value = current_account.ticket_fields.find(field_id).picklist_values.find_by_id(selected_val)
+    unless category_picklist_value.nil?
+      sub_category[:options] = category_picklist_value.choices
+      sub_category[:options].unshift(["...",""])
+
+      sub_category_selected = current_options[sub_category[:condition].to_s]
+
+      if !item.nil? && !sub_category_selected.blank?
+        sub_category_picklist_value = category_picklist_value.sub_picklist_values.find_by_id(sub_category_selected) 
+        item[:options] = sub_category_picklist_value.choices unless sub_category_picklist_value.nil?
+        item[:options].unshift(["...",""])
+      end
+    end 
+  end
 %>
-<%if !sub_category.nil? %>
+<% unless sub_category.nil? %>
   <% content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}", 
                 :class       => "ff_item", 
                 :condition   => sub_category[:condition],
                 :operator    => sub_category[:operator],
                 :container   => 'nested_field' } do %>
     <h4 class="title"><%= sub_category[:name] %></h4>
-    <%= select_tag sub_category[:name],options_for_select(sub_category[:options].map {|k, v| [k, v.to_s]}, @current_options[sub_category[:condition].to_s].to_s), :id=> sub_category_id, :class => "dropdown nested_field" %>
+    <%= select_tag sub_category[:name],options_for_select(sub_category[:options].map {|k, v| [k, v.to_s]}, current_options[sub_category[:condition].to_s].to_s), :id=> sub_category_id, :class => "dropdown nested_field" %>
   <%end%>
   <% javascript_tag do %>  
-     jQuery('#'+'<%=category_id%>').live("change", function(e){
+     jQuery('#'+'<%=category_id%>').bind("change", function(e){
         
         jQuery('#'+'<%=sub_category_id%>').html("<option value=''>...</option>");
         
@@ -36,31 +60,37 @@ item  = nested_fields[1] if nested_fields.size > 1
               }
            );
         }
+        refresh_tickets();
      });
   <% end %>                
-  <%if !item.nil? %>
+  <% unless item.nil? %>
       <% content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
                     :class       => "ff_item", 
                     :condition   => item[:condition],
                     :operator    => item[:operator],
                     :container   => 'nested_field' } do %>
         <h4 class="title"><%= item[:name] %></h4>
-        <%= select_tag item[:name],options_for_select(item[:options].map {|k, v| [k, v.to_s]}, @current_options[item[:condition].to_s].to_s), :id=> sub_category_item_id, :class => "dropdown nested_field"%>
+        <%= select_tag item[:name],options_for_select(item[:options].map {|k, v| [k, v.to_s]}, current_options[item[:condition].to_s].to_s), :id=> sub_category_item_id, :class => "dropdown nested_field"%>
       <%end%>
       <% javascript_tag do %>  
-            jQuery('#'+'<%=sub_category_id%>').live("change", function(e){
+            jQuery('#'+'<%=sub_category_id%>').bind("change", function(e){
                
-               jQuery('#'+'<%=sub_category_item_id%>').html("<option value=''>...</option>");
+              jQuery('#'+'<%=sub_category_item_id%>').html("<option value=''>...</option>");
                
-               if(this.value != '') {
-                  jQuery.post(
-                     "/support/tickets/sub_category_choices/"+this.value,
-                     "ticket_field_id=<%=field_id%>&category_picklist_id="+jQuery('#'+'<%=category_id%>').val(),
-                     function(data){
-                        jQuery('#'+'<%=sub_category_item_id%>').html(data);
-                     }
-                  );
-               }
+              if(this.value != '') {
+                jQuery.post(
+                  "/support/tickets/sub_category_choices/"+this.value,
+                  "ticket_field_id=<%=field_id%>&category_picklist_id="+jQuery('#'+'<%=category_id%>').val(),
+                  function(data){
+                    jQuery('#'+'<%=sub_category_item_id%>').html(data);
+                  }
+                );
+              }
+              refresh_tickets();
+            });
+
+            jQuery('#'+'<%=sub_category_item_id%>').bind("change", function(e){
+              refresh_tickets();
             });
       <% end %>                
   <%end%>

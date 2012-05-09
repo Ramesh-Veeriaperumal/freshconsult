@@ -122,10 +122,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
   end
 
-  def nested_filter_choices
-    picklist_values.collect { |c| ["#{c.id}", c.value] }
-  end
-  
   def dropdown_selected(dropdown_values, selected_value)  
       selected_text = ""
       dropdown_values.each do |i|
