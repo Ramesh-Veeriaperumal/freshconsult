@@ -8,6 +8,13 @@ class Account < ActiveRecord::Base
   serialize :preferences, Hash
   serialize :sso_options, Hash
   
+  
+  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
+  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
+  has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
+  has_many :flexifields, :dependent => :delete_all
+  has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
+  
   has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
   has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
@@ -95,9 +102,9 @@ class Account < ActiveRecord::Base
   
   has_one :business_calendar, :dependent => :destroy
   
-  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :destroy
+  
   has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
-  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :destroy
+  
   
   has_many :portal_forums,:through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} 
   has_many :portal_topics, :through => :portal_forums# , :order => 'replied_at desc', :limit => 5
@@ -133,7 +140,7 @@ class Account < ActiveRecord::Base
   has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
 
   
-  has_many :tags, :class_name =>'Helpdesk::Tag'
+  has_many :tags, :class_name =>'Helpdesk::Tag', :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
