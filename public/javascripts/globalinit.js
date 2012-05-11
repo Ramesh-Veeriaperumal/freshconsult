@@ -166,16 +166,23 @@ var $J = jQuery.noConflict();
       $("form.uniForm").validate(validateOptions);
       $("form.ui-form").validate(validateOptions);
 
-      // Make Textareas to expand automatically when editing it
-      // Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
-      if(!$.browser.msie) $("textarea.auto-expand").autoResize();
-
-
 		$('.single_click_link').live('click',function(ev) {
 			if (! $(ev.srcElement).is('a')) {
 				window.location = $(this).find('a').first().attr('href');
 			}
 		});
+
+    $("input[rel=companion]")
+      .live({ 
+        "keyup": function(ev){
+          selector = $(this).data("companion");
+          if($(this).data("companionEmpty")) $(selector).val(this.value);
+        }, 
+        "focus": function(ev){
+          selector = $(this).data("companion");
+          $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
+        }
+      });
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
 		$('.tickets tbody tr').live('click',function(ev) {

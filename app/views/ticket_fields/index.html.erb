@@ -24,6 +24,9 @@
             <li data-type="dropdown" data-field-type="custom_dropdown">
                 <a href="javascript:void(0)" class="button"> <%= t(".dropdown") %> </a>
             </li>
+            <li data-type="dropdown" data-field-type="nested_field">
+                <a href="javascript:void(0)" class="button"> <%= t(".nestedfield") %> </a>
+            </li>
         </ul> 
 
     <span class="seperator"></span> 
@@ -37,12 +40,23 @@
   </div> 
 	<div class="button-container" id="button_panel">
 		<%= link_to "&larr; #{ t('cancel_and_back') }", "/admin/home", :class => "uiButton floatl" %>
-		<%= submit_tag t(".save"), :class => "uiButton", :id => "SaveForm" %>
+		<%= submit_tag t(".save"), :class => "uiButton special", :id => "SaveForm", :disable_with => "Saving ticket fields..." %>
 	</div>
 <%end%>
 <% content_for :dialogs do %>
 	<%= render :partial => "formfield_props" %>
 <% end %>
 <% content_for :pagefixed do %>
-  <%= render :partial => "customizer_js" %>
+  <% javascript_tag do %>
+    // Localizing ticket fields js elements
+    tf_settings = <%= @ticket_field_json.to_json %>;
+    tf_lang = {
+      untitled:           '<%= t("ticket_fields.untitled") %>',
+      first_choice:       '<%= t("ticket_fields.first_choice") %>',
+      second_choice:      '<%= t("ticket_fields.second_choice") %>', 
+      no_choice_message:  '<%= t("ticket_fields.no_choice_message") %>',
+      confirm_delete:     '<%= t("ticket_fields.confirm_delete") %>'
+    };
+  <% end %>
+  <%= include_javascripts :ticket_fields %>
 <% end %> 

@@ -65,14 +65,8 @@ module Import::CustomField
     if ticket_field.field_type == "nested_field"
       (nested_fields || []).each do |nested_field|
         nested_field.symbolize_keys!
-        nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field,account)
-        nested_field.delete(:id)
-        nested_field.delete(:position)
-        nested_ticket_field = ticket_field.nested_ticket_fields.build(nested_field)
-        nested_ticket_field.name = nested_ff_def_entry.flexifield_alias
-        nested_ticket_field.account = account
-        nested_ticket_field.flexifield_def_entry = nested_ff_def_entry
-        @invalid_fields.push(ticket_field) and return unless nested_ticket_field.save
+        nested_field.delete(:action)
+        create_nested_field(ticket_field, nested_field, account)
       end
     end
 
@@ -97,6 +91,17 @@ module Import::CustomField
     }
   end
   
+    def create_nested_field(ticket_field, nested_field, account=current_account)        
+        nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field,account)
+        nested_field.delete(:id)
+        nested_field.delete(:position)
+        nested_ticket_field = ticket_field.nested_ticket_fields.build(nested_field)
+        nested_ticket_field.name = nested_ff_def_entry.flexifield_alias
+        nested_ticket_field.account = account
+        nested_ticket_field.flexifield_def_entry = nested_ff_def_entry
+        @invalid_fields.push(ticket_field) and return unless nested_ticket_field.save
+   end
+
   def field_name(label,account=current_account)
     "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}"
   end

@@ -2,9 +2,9 @@
 /* generic form styles */
 .loading-center { background-position: center 40%; }
 
-label { display: block; color: #666; padding: 6px 0 3px 0; font-size: 1.4em; }
+label { display: block; padding: 5px 0; font-size: 1.4em; }
 
-input[type=text], select, input.text { width: 95%; margin: 0 0 3px 0; color: #3f3f3f; padding: 3px; font-size: 16px; }
+input[type=text], select, input.text { width: 95%; margin: 0 0 3px 0; color: #3f3f3f; padding: 3px; font-size: 13px; }
 
 select { padding: 1px; font-size: 13px; font-weight: normal; width: auto; }
 
@@ -12,7 +12,7 @@ select { padding: 1px; font-size: 13px; font-weight: normal; width: auto; }
 
 input[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] { background-color: #f5f5f5; border-color: #ddd; cursor: not-allowed; }
 
-textarea { height: 100px; width: 96%; font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif; }
+textarea { width: 99%; font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; }
 
 input:focus { outline: none; }
 
@@ -20,14 +20,14 @@ textarea, input { outline: none; }
 
 input.password { width: 240px; }
 
-input.text, input[type=text], textarea { border: 1px solid #cfcfcf; font-weight: 400; padding: 5px; -moz-border-radius: 3px; -webkit-border-radius: 3px; -o-border-radius: 3px; -ms-border-radius: 3px; -khtml-border-radius: 3px; border-radius: 3px; }
+input.text, input[type=text], textarea { border: 1px solid #C6C6C6; font-weight: 400; padding: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; -moz-box-shadow: #dfdfdf 1px 1px 2px inset; -webkit-box-shadow: #dfdfdf 1px 1px 2px inset; -o-box-shadow: #dfdfdf 1px 1px 2px inset; box-shadow: #dfdfdf 1px 1px 2px inset; }
 
 div.color { position: relative; padding-top: 0px; }
 div.color .mColorPickerTrigger { position: absolute; top: 3px; left: 230px; }
 div.color input { width: 220px; font-size: 16px; border: 1px solid #afafaf; }
 div.color span { display: inline; }
 
-textarea { overflow: auto; font-size: 1.0em; line-height: 1.4em; resize: none; padding: 3px; }
+textarea { overflow: auto; font-size: 13px; line-height: 18px; resize: none; padding: 3px; }
 
 input.very_small { width: 200px; }
 
@@ -63,17 +63,16 @@ a.addchoice:active { color: #333333; }
 
 a.addchoice:hover { background-color: #e8e8e8; }
 
-.colsets fieldset { *zoom: 1; margin: 1px 0 0 0; padding: 2px 1px; border: 0; position: relative; background-color: #f1f1f1; border: 1px solid #cfcfcf; }
+.colsets fieldset { *zoom: 1; margin: 1px 0 0 0; padding: 2px 1px; position: relative; }
 .colsets fieldset:after { content: ""; display: table; clear: both; }
 .colsets fieldset b { font-size: 11px; }
+.colsets fieldset .sort_handle { left: -6px; }
 .colsets fieldset .dropchoice, .colsets fieldset .tags { *zoom: 1; float: left; margin: 0 5px 0 0; padding: 0; }
 .colsets fieldset .dropchoice:after, .colsets fieldset .tags:after { content: ""; display: table; clear: both; }
 .colsets fieldset .dropchoice input, .colsets fieldset .tags input { margin-right: 5px; width: 100%; }
-.colsets fieldset .dropchoice { width: 76%; }
 .colsets fieldset .tags { width: 50%; display: none; }
-.colsets fieldset img { cursor: pointer; position: absolute; right: 8px; top: 5px; }
-.colsets a.addchoice { border: 1px solid #dfdfdf; background-color: #f3f3f3; background-position: 5px 5px; font-size: 12px; padding: 6px 10px 6px 25px; }
-.colsets a.addchoice:hover { background-color: #f8f8f8; }
+.colsets fieldset img { float: left; margin: 5px 12px 0 5px; cursor: pointer; }
+.colsets a.addchoice { border: 0; background-color: transparent; background-position: 31px 7px; font-size: 12px; padding: 8px 10px 6px 63px; }
 
 .choicelist { overflow: hidden; *zoom: 1; }
 .choicelist label { font-size: 1.1em; }
@@ -90,10 +89,16 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form .hidden { display: none; }
 .ui-form li.dropdown, .ui-form li.small, .ui-form li.dropdown_blank, .ui-form li.number { width: 46%; }
 .ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input { width: auto; }
+.ui-form li.nestedfield, .ui-form li.nested_field { width: 96%; padding-bottom: 16px; }
+.ui-form li.nestedfield select, .ui-form li.nested_field select { width: 95%; max-width: 600px; }
+.ui-form li.nested_field { padding-bottom: 0px; }
+.ui-form li.nested_field.level2, .ui-form li.nested_field.level3 { padding-top: 0; }
+.ui-form li.nested_field.level2 label, .ui-form li.nested_field.level2 select, .ui-form li.nested_field.level3 label, .ui-form li.nested_field.level3 select { margin-left: 30px; }
+.ui-form li.nested_field.level3 { padding-bottom: 20px; }
 .ui-form li.dropdown select, .ui-form li.dropdown_blank select { margin-bottom: 8px; }
-.ui-form div.checkbox, .ui-form label.checkbox { padding-bottom: 5px; font-size: 1.1em; position: relative; }
-.ui-form div.checkbox input, .ui-form label.checkbox input { float: left; margin-left: 4px; margin-top: 4px; margin-right: 9px; }
-.ui-form label, .ui-form li.checkbox { font-weight: normal; margin: 0; line-height: 18px; color: #565656; font-size: 1em; font-weight: 400; }
+.ui-form div.checkbox, .ui-form label.checkbox { padding-bottom: 5px; padding-left: 18px; font-size: 1.1em; position: relative; }
+.ui-form div.checkbox input[type="checkbox"], .ui-form label.checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
+.ui-form label, .ui-form li.checkbox { font-weight: normal; margin: 0; line-height: 18px; color: #565656; font-size: 13px; font-weight: 400; }
 .ui-form label.overlabel { color: #999999; margin-left: 8px; margin-top: 0; font-size: 14px; }
 .ui-form li.checkbox { overflow: hidden; *zoom: 1; padding-top: 16px; padding-bottom: 16px; }
 .ui-form li.checkbox input { float: left; margin-right: 6px; margin-top: 4px; }
@@ -306,12 +311,15 @@ input.search { -moz-border-radius: 3px 3px 3px 3px; -webkit-border-radius: 3px 3
 .sidepanel .close { right: 14px; }
 
 .ui-dialog-form { font-size: 80%; }
-.ui-dialog-form .info-data { padding-left: 24px; display: block; font-size: 1.2em; margin-top: -5px; }
+.ui-dialog-form .info-data { padding-left: 18px; font-size: 1.2em; margin-top: -5px; }
+.ui-dialog-form .button-panel { padding: 8px 0; }
+.ui-dialog-form .primary { font-weight: bold; }
+.ui-dialog-form a.button-link { display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; margin-left: 35px; font-size: 13px; margin-top: -3px; }
+.ui-dialog-form a.button-link { *display: inline; }
 .ui-dialog-form a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; background: url("../images/close_delete.png") no-repeat center; z-index: 999; }
+.ui-dialog-form .ctrlHolder { margin-bottom: 10px; }
 
-fieldset.nestedChoices { overflow: hidden; *zoom: 1; display: block; margin: 1px 0; padding: 2px; border: 1px dotted #cfcfcf; border-right-color: #e2e2e2; border-bottom-color: #e2e2e2; background-color: rgba(0, 0, 0, 0.01); display: block; }
-
-.dialog-panel { position: absolute; width: 320px; z-index: 999999; -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); *zoom: 1; filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE9E9E9'); /* Fallback: */ background: #f5f5f5; /* CSS 3 plus vendor prefixes: */ background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #e9e9e9)); background-image: -webkit-linear-gradient(#f5f5f5, #e9e9e9); background-image: -moz-linear-gradient(#f5f5f5, #e9e9e9); background-image: -o-linear-gradient(#f5f5f5, #e9e9e9); background-image: -ms-linear-gradient(#f5f5f5, #e9e9e9); background-image: linear-gradient(#f5f5f5, #e9e9e9); -moz-border-radius: 4px 4px 4px 4px; -webkit-border-radius: 4px 4px 4px 4px; border-radius: 4px 4px 4px 4px; /*	@include pie;*/ }
+.dialog-panel { position: absolute; width: 650px; left: 50%; top: 60px; margin-left: -310px; z-index: 999999; background: #f7f7f7; border: 1px solid #999999; -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); -o-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); -moz-border-radius: 4px; -webkit-border-radius: 4px; -o-border-radius: 4px; -ms-border-radius: 4px; -khtml-border-radius: 4px; border-radius: 4px; }
 
 .border-top { margin-top: 6px; padding-top: 6px; border-top: 1px dotted #cfcfcf; }
 
@@ -519,3 +527,56 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .inputs-list li + li { padding-top: 2px; }
 
 .inputs-list input[type=radio], .inputs-list input[type=checkbox] { margin-bottom: 0; margin-left: -20px; float: left; }
+
+.nested-selectboxs li { position: relative; }
+.nested-selectboxs select { width: 100%; }
+.nested-selectboxs .connector { border: 1px solid #c1c1c1; border-width: 0 0 1px 1px; position: absolute; height: 16px; width: 55px; left: -58px; top: -5px; }
+.nested-selectboxs .subcategory { margin-top: 27px; }
+.nested-selectboxs .item { margin-top: 54px; }
+
+/* Classes copies from bootstrap */
+:-moz-placeholder { color: #999999; }
+
+::-webkit-input-placeholder { color: #999999; }
+
+.row-fluid { width: 100%; *zoom: 1; }
+
+.row-fluid:before, .row-fluid:after { display: table; content: ""; }
+
+.row-fluid:after { clear: both; }
+
+.row-fluid > [class*="span"] { float: left; margin-left: 2.127659574%; }
+
+.row-fluid > [class*="span"]:first-child { margin-left: 0; }
+
+.row-fluid > .span12 { width: 99.99999998999999%; }
+
+.row-fluid > .span11 { width: 91.489361693%; }
+
+.row-fluid > .span10 { width: 82.97872339599999%; }
+
+.row-fluid > .span9 { width: 74.468085099%; }
+
+.row-fluid > .span8 { width: 65.95744680199999%; }
+
+.row-fluid > .span7 { width: 57.446808505%; }
+
+.row-fluid > .span6 { width: 48.93617020799999%; }
+
+.row-fluid > .span5 { width: 40.425531911%; }
+
+.row-fluid > .span4 { width: 31.914893614%; }
+
+.row-fluid > .span3 { width: 23.404255317%; }
+
+.row-fluid > .span2 { width: 14.89361702%; }
+
+.row-fluid > .span1 { width: 6.382978723%; }
+
+.radio, .checkbox { padding-left: 18px; }
+
+.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
+
+.controls > .radio:first-child, .controls > .checkbox:first-child { padding-top: 5px; }
+
+.disabled { color: #afafaf; }

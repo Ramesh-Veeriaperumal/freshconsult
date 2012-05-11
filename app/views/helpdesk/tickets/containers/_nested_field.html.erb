@@ -43,7 +43,7 @@
     <%= select_tag sub_category[:name],options_for_select(sub_category[:options].map {|k, v| [k, v.to_s]}, current_options[sub_category[:condition].to_s].to_s), :id=> sub_category_id, :class => "dropdown nested_field" %>
   <%end%>
   <% javascript_tag do %>  
-     jQuery('#'+'<%=category_id%>').bind("change", function(e){
+     jQuery('#'+'<%=category_id%>').live("change", function(e){
         
         jQuery('#'+'<%=sub_category_id%>').html("<option value=''>...</option>");
         
@@ -73,7 +73,7 @@
         <%= select_tag item[:name],options_for_select(item[:options].map {|k, v| [k, v.to_s]}, current_options[item[:condition].to_s].to_s), :id=> sub_category_item_id, :class => "dropdown nested_field"%>
       <%end%>
       <% javascript_tag do %>  
-            jQuery('#'+'<%=sub_category_id%>').bind("change", function(e){
+            jQuery('#'+'<%=sub_category_id%>').live("change", function(e){
                
               jQuery('#'+'<%=sub_category_item_id%>').html("<option value=''>...</option>");
                
@@ -89,10 +89,16 @@
               refresh_tickets();
             });
 
-            jQuery('#'+'<%=sub_category_item_id%>').bind("change", function(e){
+            jQuery('#'+'<%=sub_category_item_id%>').live("change", function(e){
               refresh_tickets();
             });
       <% end %>                
-  <%end%>
+  <% else %>
+    <% javascript_tag do %>
+      jQuery('#'+'<%=sub_category_id%>').live("change", function(e){
+        refresh_tickets();
+      });
+    <% end %>
+  <% end %>
 <%end%>
 

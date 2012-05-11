@@ -32,4 +32,8 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
     sub_picklist_values.collect { |c| [c.value, "#{c.id}"]}
   end
 
+  def nested_choices
+    sub_picklist_values.collect { |c| [c.value, "#{c.id}", c.nested_choices]}
+  end
+
 end

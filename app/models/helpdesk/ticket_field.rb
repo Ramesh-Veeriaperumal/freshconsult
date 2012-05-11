@@ -119,7 +119,19 @@ class Helpdesk::TicketField < ActiveRecord::Base
          picklist_values.collect { |c| [c.value, "#{c.id}"] }
        else
          []
-    end
+     end
+  end  
+  
+  def nested_choices
+    picklist_values.collect { |c| [c.value, "#{c.id}", c.nested_choices] }
+  end
+
+  def levels
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal , :description => l.description, :level => l.level, :position => 1, :type => "dropdown" } } if field_type == "nested_field"
+  end
+
+  def level_three_present
+    (nested_ticket_fields.last.level == 3) if field_type == "nested_field"
   end
 
   def dropdown_selected(dropdown_values, selected_value)  

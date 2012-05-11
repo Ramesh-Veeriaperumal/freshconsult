@@ -67,12 +67,11 @@ en:
       description: Description
       product: Product
       ticket_type: Type
-    customizer_js:
-      untitled: Untitled
-      first_choice: First Choice
-      second_choice: Second Choice
-      confirm_delete: Are you sure you want to delete this field?
-      no_choice_message: "At least one valid choice has to be present"
+    untitled: Untitled
+    first_choice: First Choice
+    second_choice: Second Choice
+    confirm_delete: Are you sure you want to delete this field?
+    no_choice_message: "At least one valid choice has to be present"
     index: 
       number: Number
       add_custom_field: Add a Custom Field
@@ -84,22 +83,23 @@ en:
       save: Save Ticket fields
       drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
       dropdown: Dropdown
+      nestedfield: "Dependant field"
     formfield_props: 
       label: Field Label
       add_new_choice: Add new choice
-      customer_mandatory: Mandatory for ticket submission
-      customer_edit: Can edit the field
+      customer_mandatory: Required when submitting the form
+      customer_edit: Customer can edit
       agent_info1: Field cannot be blank when submitting the ticket
       agent_info2: Field cannot be blank when closing the ticket
-      agent_mandatory_submission: Mandatory for submission
+      agent_mandatory_submission: Required when submitting the form
       customer_info1: Field cannot be blank when submitting the ticket online.
       for_agents: For Agents
       dropdown_choices: Dropdown Choices
       label_in_portal: Label in Portal
-      customer_visible: Visible to customers
+      customer_visible: Displayed to customer
       description: Description
       for_customer: For Customers
-      agent_mandatory_closure: Mandatory for closure
+      agent_mandatory_closure: Required when closing the ticket
       choices: Choices
       label_in_portal_info: The label that is displayed in your self service portal
   folder: 
