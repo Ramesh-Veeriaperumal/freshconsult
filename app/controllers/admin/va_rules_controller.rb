@@ -9,14 +9,15 @@ class Admin::VaRulesController < Admin::AutomationsController
     :checkbox    => [ "selected", "not_selected" ],
     :choicelist  => [ "is", "is_not" ],
     :number      => [ "is", "is_not" ],
-    :hours       => [ "is", "greater_than", "less_than" ]
+    :hours       => [ "is", "greater_than", "less_than" ],
+    :nestedlist  => [ "is" ]
   }
   
   CF_OPERATOR_TYPES = {
     "custom_dropdown" => "choicelist",
     "custom_checkbox" => "checkbox",
     "custom_number"   => "number",
-    "nested_field"    => "choicelist",
+    "nested_field"    => "nestedlist",
   }
 
   OPERATOR_LIST =  {
