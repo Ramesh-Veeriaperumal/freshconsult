@@ -79,7 +79,7 @@ h5 { font-size: .83em; }
 
 h6 { font-size: .75em; }
 
-img, iframe { border: 0; max-width: 100%; }
+img, iframe { border: 0; max-width: 100%; height: auto; }
 
 table { cursor: default; border: 1px solid #afafaf; }
 

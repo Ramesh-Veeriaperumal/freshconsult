@@ -1,7 +1,6 @@
 class Social::FacebookMessage
   
  def initialize(fb_page  , options = {} )
-    fb_page = Account.first.facebook_pages.first
     @account = options[:current_account]  || fb_page.account
     @rest = Koala::Facebook::GraphAndRestAPI.new(fb_page.page_token)
     @fb_page = fb_page
@@ -17,12 +16,9 @@ class Social::FacebookMessage
 def create_ticket_from_threads threads
       threads.each do |thread|
         thread.symbolize_keys! 
-        puts "Thread id is :#{thread[:id]}"
         fb_msg = @account.facebook_posts.latest_thread(thread[:id] , 1) ##latest thread
-        puts "fb message:#{fb_msg.inspect}"
         previous_ticket = fb_msg.first.postable unless fb_msg.blank?       
         last_reply = (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_facebook_message.blank?) ? previous_ticket.notes.latest_facebook_message.first : previous_ticket  unless previous_ticket.blank?
-        puts "last reply: #{last_reply}"
         if last_reply && (Time.zone.now < (last_reply.created_at + @fb_page.dm_thread_time.seconds)) 
             add_message_as_note thread  , previous_ticket
         else
@@ -55,11 +51,9 @@ def add_message_as_note thread, ticket
 end
 
 def add_message_as_ticket thread
-  puts "add_message_as_ticket :thread#{thread.inspect}"
   group_id = @fb_page.product.group_id unless @fb_page.product.blank?
   messages = thread[:messages].symbolize_keys!
   messages = get_new_data_set messages
-  puts "add_message_as_ticket new data set#{messages.inspect}"
   message = messages.last #Need to check last is giving the first message/or we need to find the least created date
   return unless message
   message.symbolize_keys!
@@ -108,7 +102,6 @@ end
   
   
   def truncate_subject(subject , count)
-    puts "truncate subject #{subject}"
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
   end
     

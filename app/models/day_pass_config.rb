@@ -20,7 +20,7 @@ class DayPassConfig < ActiveRecord::Base
       
       #3. Create the day pass and return
       Time.zone = user.time_zone #fix for first time logging users in order to avoid taking account time zone 
-                                 #for cases where both of them are different
+                                 #for cases where both of them are different      
       user.account.day_pass_usages.create( :granted_on => DayPassUsage.start_time, 
             :user => user, :usage_info => usage_info )
     end

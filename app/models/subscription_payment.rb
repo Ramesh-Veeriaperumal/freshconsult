@@ -10,8 +10,8 @@ class SubscriptionPayment < ActiveRecord::Base
   def self.stats
     {
       :last_month => calculate(:sum, :amount, :conditions => { :created_at => (1.month.ago.beginning_of_month .. 1.month.ago.end_of_month) }),
-      :this_month => calculate(:sum, :amount, :conditions => { :created_at => (Time.now.beginning_of_month .. Time.now.end_of_month) }),
-      :last_30 => calculate(:sum, :amount, :conditions => { :created_at => (1.month.ago .. Time.now) })
+      :this_month => calculate(:sum, :amount, :conditions => { :created_at => (Time.zone.now.beginning_of_month .. Time.zone.now.end_of_month) }),
+      :last_30 => calculate(:sum, :amount, :conditions => { :created_at => (1.month.ago .. Time.zone.now) })
     }
   end
   

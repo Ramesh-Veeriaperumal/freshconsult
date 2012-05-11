@@ -124,7 +124,8 @@
       admin.resources :subscription_affiliates, :as => 'affiliates'
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
-    end
+      admin.resources :conversion_metrics, :as => 'metrics'
+      end
   end
   
   map.namespace :widgets do |widgets|

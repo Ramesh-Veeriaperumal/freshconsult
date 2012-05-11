@@ -232,6 +232,10 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def self.reset_current_account
+    Thread.current[:account] = nil
+  end
+  
   def self.actual_customer_count
     Account.count('id',:distinct => true,:joins => :subscription_payments)
   end

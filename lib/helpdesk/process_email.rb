@@ -10,6 +10,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
+      account.make_current
+      
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
@@ -30,7 +32,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+      Account.reset_current_account
     end
+    
   end
   
   def create_article(account, from_email, to_email)
