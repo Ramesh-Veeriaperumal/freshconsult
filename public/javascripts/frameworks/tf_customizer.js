@@ -458,7 +458,7 @@
             setAction(sourceData, "edit"); 
 
             constFieldDOM(sourceData.toObject(), $(SourceField));
-            console.info(sourceData.toJSON());
+            //console.info(sourceData.toJSON());
          }
       }     
       
@@ -657,7 +657,9 @@
       $("#SaveForm").click(function(e){
          var jsonData = getCustomFieldJson();
          $("#field_values").val(jsonData.toJSON());
-         console.log(jsonData.toJSON());
+         this.value = $(this).data("commit")
+         $(this).prop("disabled", true);
+         //console.log(jsonData.toJSON());
          //return false;
       });
     }

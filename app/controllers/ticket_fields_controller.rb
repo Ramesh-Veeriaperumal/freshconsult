@@ -89,9 +89,7 @@ class TicketFieldsController < Admin::AdminController
         (nested_fields || []).each do |nested_field|
           nested_field.symbolize_keys!
           nested_field[:action] ||= 'edit'
-          puts "$$$$$$$ Nested field #{nested_field}  "
           action = nested_field.delete(:action)
-          puts "$$$$$$$ Nested field #{nested_field}  "
           send("#{action}_nested_field", ticket_field, nested_field) 
         end
       end

@@ -40,7 +40,7 @@
   </div> 
 	<div class="button-container" id="button_panel">
 		<%= link_to "&larr; #{ t('cancel_and_back') }", "/admin/home", :class => "uiButton floatl" %>
-		<%= submit_tag t(".save"), :class => "uiButton special", :id => "SaveForm", :disable_with => "Saving ticket fields..." %>
+		<%= submit_tag t(".save"), :class => "uiButton special", :id => "SaveForm", "data-commit" => "Saving ticket fields..." %>
 	</div>
 <%end%>
 <% content_for :dialogs do %>
