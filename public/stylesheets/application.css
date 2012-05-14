@@ -1,7 +1,7 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-sf57b42e196.png') no-repeat; }
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-s3222652bc1.png') no-repeat; }
 
 .application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira { background: url('/images/application-logo-s71f4a7ace1.png') no-repeat; }
 
@@ -9,7 +9,7 @@
 .sync-status-sprite, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.freshdesk, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.google { background: url('/images/sync-status-sfc752d10f8.png') no-repeat; }
 
 /*Report tab icons */
-.reports-icon-sprite, .report_items .reports-icon-agents, .report_items .reports-icon-customer, .report_items .reports-icon-groups, .report_items .reports-icon-helpdesk, .report_items .reports-icon-timesheet { background: url('/images/reports-icon-s6b971c8467.png') no-repeat; }
+.reports-icon-sprite, .report_items .reports-icon-agents, .report_items .reports-icon-customer, .report_items .reports-icon-groups, .report_items .reports-icon-helpdesk, .report_items .reports-icon-survey, .report_items .reports-icon-timesheet { background: url('/images/reports-icon-se6bdc3becd.png') no-repeat; }
 
 /* Bullet icon */
 body { color: #333; background: #efefef; min-width: 1122px; }
@@ -1431,7 +1431,8 @@ a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; b
 .report_items .reports-icon-customer { background-position: 0 -60px; }
 .report_items .reports-icon-groups { background-position: 0 -120px; }
 .report_items .reports-icon-helpdesk { background-position: 0 -180px; }
-.report_items .reports-icon-timesheet { background-position: 0 -240px; }
+.report_items .reports-icon-survey { background-position: 0 -240px; }
+.report_items .reports-icon-timesheet { background-position: 0 -300px; }
 .report_items:after { content: ""; display: table; clear: both; }
 .report_items li { margin: 25px 40px 25px 20px; float: left; }
 .report_items li a { min-height: 26px; display: block; padding: 10px; border-radius: 6px; color: #333; width: 160px; text-align: center; }
@@ -1609,3 +1610,78 @@ a.submit_link:hover { text-decoration: none; }
 .hovercard div { font-size: 12px; margin-bottom: 2px; }
 
 .survey_settings { padding: 10px; margin: 10px; }
+
+/* SURVEY REPORT RELATED STYLES */
+.agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 15px 0; padding: 15px 0; }
+
+.usercomment { border-bottom: 1px dotted #e5e5e5; margin: 0; }
+
+.agentreport > ul { margin: 0; padding: 0; }
+
+.agentreport > ul > li { list-style: none; padding: 0; margin-left: 40px; float: left; overflow: hidden; }
+
+.floatleft { float: left; }
+
+.floatright { float: right; }
+
+.photo { box-sizing: border-box; width: 46px; height: 46px; background-color: grey; margin-right: 5px; }
+
+.smallphoto { width: 30px !important; height: 30px !important; }
+
+.agentname { font-weight: bold; font-size: 14px; width: 180px; }
+
+.agentname > div { font-weight: normal; font-size: 12px; margin-top: 3px; }
+
+.happy { background: transparent url("/images/smile.jpg") 0 0 no-repeat; box-sizing: border-box; width: 46px; height: 44px; margin-right: 5px; }
+
+.bignum { font-size: 28px; }
+
+.bignum > span { font-size: 16px; font-weight: normal; }
+
+.bottomtext { font-size: 12px; font-weight: normal; margin-top: -1px; }
+
+.nospace { margin-left: 0 !important; }
+
+.noborder { border-bottom: none; }
+
+.chevron { font-weight: bold; margin-top: 13px; color: grey; }
+
+.titlebar { box-sizing: border-box; border-bottom: 1px solid #e5e5e5; text-transform: uppercase; overflow: hidden; }
+
+.titlebar > div { margin-bottom: 5px; font-size: 13px; text-transform: none; word-spacing: 4px; }
+
+.comment { margin-left: 10px; font-size: 13px; line-height: 18px; word-spacing: 2px; width: 90%; }
+
+.comment > div { margin-bottom: 5px; line-height: 14px; }
+
+.comment > div > strong { display: block; }
+
+.comment > div > span { font-size: 12px; color: #999; }
+
+.agent_report_list .agentreport { border-bottom: 1px solid #e5e5e5; }
+
+.agent_report_list { color: #000; }
+
+.smallsmiley, .mediumsmiley, .bigsmiley { box-sizing: border-box; background-image: url(../images/smiley.png); background-repeat: no-repeat; }
+
+.smallsmiley { width: 18px; height: 18px; margin-top: 7px; }
+
+.mediumsmiley { width: 58px; height: 58px; }
+
+.happymediumsmiley { background-image: url(../images/happy_48.png); }
+
+.neutralmediumsmiley { background-image: url(../images/neutral_48.png); }
+
+.unhappymediumsmiley { background-image: url(../images/unhappy_48.png); }
+
+.happysmallsmiley { background-image: url(../images/happy_18.png); }
+
+.neutralsmallsmiley { background-image: url(../images/neutral_18.png); }
+
+.unhappysmallsmiley { background-image: url(../images/unhappy_18.png); }
+
+.smileytext { margin: 8px 0 0 5px; }
+
+.all_link .all_link, .happy_link .happy_link, .unhappy_link .unhappy_link, .neutral_link .neutral_link { color: black; font-weight: bold; }
+
+/* SURVEY REPORT RELATED STYLES ENDS */

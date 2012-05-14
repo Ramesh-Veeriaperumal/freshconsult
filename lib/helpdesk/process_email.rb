@@ -2,7 +2,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   
-  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\b)/
   
   def perform
     from_email = parse_from_email
@@ -74,7 +74,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_email(email_text)
-      
       if email_text =~ /(.+) <(.+?)>/
         name = $1
         email = $2
@@ -89,7 +88,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       name ||= ""
       domain = (/@(.+)/).match(email).to_a[1]
-      
       {:name => name, :email => email, :domain => domain}
     end
     

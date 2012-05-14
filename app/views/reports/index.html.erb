@@ -12,6 +12,10 @@
 		<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer', :url => customer_activity_url}) %>
 		<%= report_item({:label => t('reports.helpdesk_title_nav'), :class => 'helpdesk', :url => helpdesk_activity_url}) %>
 	<% end %>
+	<% if feature?(:surveys) %>
+		<%= report_item({:label => t('reports.surveys_title_nav'), :class => 'survey', :url => 
+			survey_activity_url}) %>
+	<% end %>
 	<% if feature?(:scoreboard) %>
 		<%= report_item({:label => t('reports.scoreboard_title_nav'), :class => 'scoreboard', :url => 
 			scoreboard_activity_url}) %>

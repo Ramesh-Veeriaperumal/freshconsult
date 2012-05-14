@@ -130,7 +130,13 @@ en:
               thanks_info: Thanks for taking time to rate our support experience.
               feedback_info: Your feedback is very much appreciated.
               feedback_optional: Feedback is optional
-              send: Send Feedback
+              send: Send
+              thanks: Thank you very much for rating us!
+              sorry: But, really sorry for the inconvenience.
+              happy_info: It has been our pleasure to serve you, glad you were happy with our service
+              neutral_info: Wish you were a little more happy.
+              unhappy_info: We will ensure that we will take extra care the next time around.
+              additional_info: Additionally, you could also share your experience working with us.
   admin:
     surveys:
      successfully_updated: Survey settings has been successfully updated.
@@ -1951,6 +1957,7 @@ en:
       customer_title: "Customer Activity Report"
       helpdesk_title_nav: "Helpdesk Activity Report"
       customer_title_nav: "Customer Activity Report"
+      surveys_title_nav: "Survey Report"
       scoreboard_title_nav: "Leaderboard"
       select_time_period: "Select Time period"
       generate_button: "Generate"
@@ -1958,6 +1965,7 @@ en:
       timeline_chart_title: "Tickets Received vs Resolved"
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
+      satisfaction_title: "Satisfaction Report"
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
@@ -1995,6 +2003,24 @@ en:
       scoreboard_reports:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
+      survey_reports:
+        list:
+            no_feedback: Nobody has given any feedback during this time.
+        list_content:
+              rating_msg_none: nobody is %{rating}
+              rating_msg_single: only one is %{rating}
+              rating_msg_multiple: %{count} are %{rating}
+              rating_primary_msg_single: only one customer is %{rating}
+              rating_primary_msg_multiple: %{count} customers are %{rating}
+              happy: happy
+              neutral: neutral
+              unhappy: unhappy
+        sidebar:
+          from: From
+          to: To
+          filter_by: Filter By
+          view_report_date: View reports during
+
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"

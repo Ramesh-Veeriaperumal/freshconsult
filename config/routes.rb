@@ -102,7 +102,9 @@
   map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
   map.scoreboard_activity '/scoreboard/reports', :controller => 'reports/scoreboard_reports', :action => 'index' 
   map.scoreboard_activity_generate '/scoreboard/reports/generate', :controller => 'reports/scoreboard_reports', :action => 'generate'
-  
+  map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
+  map.survey_report_details '/survey/report_details', :controller => 'reports/survey_reports', :action => 'report_details'
+    
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any },
