@@ -217,7 +217,7 @@ class User < ActiveRecord::Base
   has_many :reminders, 
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
-  has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" , :dependent => :destroy
+  has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
   
   has_many :open_tickets, :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id",
   :conditions => {:status => [TicketConstants::STATUS_KEYS_BY_TOKEN[:open],TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]]},
