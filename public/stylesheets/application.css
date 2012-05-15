@@ -220,7 +220,7 @@ h4.title { font-size: 1.1em; font-weight: bold; }
 .request_details .request-cnt-first div.description .app-link { position: absolute; margin-left: -20px; margin-top: 38px; }
 .request_details .request-cnt-first div.description .user_details { color: #777777; padding: 13px 20px 0 25px; }
 .request_details .request-cnt-first div.description .user_details .preview_pic { left: -5px; }
-.request_details .request-cnt-first div.description .user_details .info { margin-top: 5px; }
+.request_details .request-cnt-first div.description .user_details .info { margin-top: 3px; margin-left:46px;}
 .request_details .request-cnt-first div.description .user_details .light { font-style: italic; color: #afafaf; }
 .request_details .request-cnt-first div.description .user_details .loading-edit { position: absolute; width: 16px; height: 11px; margin: 3px 8px; }
 .request_details .facebook_post { overflow: hidden; *zoom: 1; }
