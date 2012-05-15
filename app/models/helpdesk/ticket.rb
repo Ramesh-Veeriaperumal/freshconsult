@@ -1,14 +1,16 @@
 require 'digest/md5'
 
 
-class Helpdesk::Ticket < ActiveRecord::Base 
+class Helpdesk::Ticket < ActiveRecord::Base
+  
+  belongs_to_account
 
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
-  
+
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
+
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
@@ -28,7 +30,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
       :support_score_on_update, :stop_timesheet_timers
   
-  belongs_to :account
   belongs_to :email_config
   belongs_to :group
  
@@ -37,11 +38,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+  
 
   has_many :notes, 
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
     :dependent => :destroy
+    
+  has_many :sphinx_notes, 
+    :class_name => 'Helpdesk::Note',
+    :conditions => 'helpdesk_tickets.account_id = helpdesk_notes.account_id',
+    :as => 'notable'
     
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -113,27 +120,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
   
   named_scope :all_company_tickets,lambda { |customer| { 
-        :joins => :requester,
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id ",
         :conditions => [" users.customer_id = ?",customer]
   } 
   }
   
   named_scope :company_tickets_resolved_on_time,lambda { |customer| { 
-        :joins => [:ticket_states,:requester],
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",customer]
   } 
   }
   
    named_scope :resolved_on_time,
-        :joins => :ticket_states,
+        :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
    
   named_scope :first_call_resolution,
-           :joins  => :ticket_states,
+           :joins  => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
 
   named_scope :company_first_call_resolution,lambda { |customer| { 
-        :joins => [:ticket_states,:requester],
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 AND users.customer_id = ?",customer]
   } 
   }
@@ -151,7 +158,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
-      user.id ] } }
+      user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }
@@ -193,11 +200,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
      indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
-     indexes notes.body, :as => :note
+     indexes sphinx_notes.body, :as => :note
     
      has account_id, deleted
 
-    set_property :delta => :delayed
+    #set_property :delta => :delayed
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -269,6 +276,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (fb_post) and (fb_post.facebook_page) 
   end
  
+ def is_fb_message?
+   (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
+ end
+
+  def is_fb_wall_post?
+    (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
+  end
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
@@ -466,6 +480,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_ticket_states
     self.ticket_states = Helpdesk::TicketState.new
+    ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
     ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
@@ -501,14 +516,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
-  REQUESTER_NOTIFICATIONS = [ EmailNotification::NEW_TICKET, 
-    EmailNotification::TICKET_CLOSED, EmailNotification::TICKET_RESOLVED  ]
-  
   def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    
-    REQUESTER_NOTIFICATIONS.include?(notification_type) ? e_notification.requester_notification? : 
-      e_notification.agent_notification?
+    e_notification.requester_notification? or e_notification.agent_notification?
   end
   
   def custom_fields
@@ -516,12 +526,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
-  
+
   def ticket_id_delimiter
     delimiter = account.email_commands_setting.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
   end
-
+  
   def delimited_display_id
     "#{ticket_id_delimiter}#{display_id}"
   end
@@ -542,7 +552,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     email_config ? email_config.reply_email : account.default_email
   end
   
-  
+  def reply_name
+    email_config ? email_config.name : account.primary_email_config.name
+  end
 
   #Some hackish things for virtual agent rules.
   def tag_names
@@ -617,7 +629,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_custom_field   
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
-    self.ff_def = ff_def_id       
+    self.ff_def = ff_def_id
+    self.flexifield.account_id = account_id
     unless self.custom_field.nil?          
       self.assign_ff_values self.custom_field    
     end
@@ -734,8 +747,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
-          value = send(field.name) 
-          xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+          begin
+           value = send(field.name) 
+           xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+         rescue
+           end 
         end
       end
      end
@@ -792,6 +808,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
+   end
+
+   def selected_reply_email
+    to_email.blank? ? friendly_reply_email : to_email
    end
   
   private
@@ -871,9 +891,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if active? && !@old_ticket.active?
         s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
         s_score.destroy if s_score
-        #destroy fcr bonus score if already present
-        fcr_score = support_scores.find_by_score_trigger ScoreboardRating::FIRST_CALL_RESOLUTION
-        fcr_score.destroy if fcr_score
       elsif !active? && @old_ticket.active?
         add_support_score
       end
@@ -881,12 +898,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-      #for fcr bonus point
-      SupportScore.add_fcr_bonus_score(self)
     end
-  
-    
-  def parse_email(email)
+
+    def parse_email(email)
       if email =~ /(.+) <(.+?)>/
         name = $1
         email = $2
@@ -894,9 +908,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       else email =~ EMAIL_REGEX
         email = $1
-      end  
-     email
- end
- 
+      end
+      email
+    end  
+    
 end
   

@@ -12,7 +12,6 @@ module Helpdesk::TimeSheetsHelper
       unless get_app_details(app[0]).blank?
          content_tag :fieldset, :class => "integration still_loading #{app[0]}_timetracking_widget" do
            "<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
-
             '<div class="integration_container">' + widget_code_with_ticket_id + '</div>' +
            content_tag(:span, check_box_tag("#{app[0]}-timeentry-enabled", "1", :checked => 'checked'), :class => "app-logo application-logo-#{app[0]}-small")      
            #Liquid::Template.parse(widget_include).render("ticket" => @ticket)
@@ -26,7 +25,7 @@ module Helpdesk::TimeSheetsHelper
       unless get_app_details(app[0]).blank? 
         page << "try{"
         page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {"
-        page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}', #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable});"
+        page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
         page << "#{app[2]}.logTimeEntry();"
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
         page << "}"
@@ -72,7 +71,10 @@ module Helpdesk::TimeSheetsHelper
   
   private 
     def integrated_apps 
-      [["freshbooks", "freshbooks_timeentry_widget", "freshbooksWidget"],
-       ["harvest",    "harvest_timeentry_widget",    "harvestWidget"]]
+      [
+        [Integrations::Constants::APP_NAMES[:freshbooks],   "#{Integrations::Constants::APP_NAMES[:freshbooks]}_timeentry_widget",   "freshbooksWidget"],
+        [Integrations::Constants::APP_NAMES[:harvest],      "#{Integrations::Constants::APP_NAMES[:harvest]}_timeentry_widget",      "harvestWidget"],
+        [Integrations::Constants::APP_NAMES[:workflow_max], "#{Integrations::Constants::APP_NAMES[:workflow_max]}_timeentry_widget", "workflowMaxWidget"],
+      ]
     end
 end

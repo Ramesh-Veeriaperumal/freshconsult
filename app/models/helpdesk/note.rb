@@ -1,8 +1,10 @@
 class Helpdesk::Note < ActiveRecord::Base
   set_table_name "helpdesk_notes"
+  
+  belongs_to_account
 
-  belongs_to :notable, :polymorphic => true  
-  belongs_to :account
+  belongs_to :notable, :polymorphic => true
+
   belongs_to :user
   
   Max_Attachment_Size = 15.megabyte
@@ -47,6 +49,11 @@ class Helpdesk::Note < ActiveRecord::Base
       :order => "helpdesk_notes.created_at DESC"
     }
   }
+  
+  named_scope :latest_facebook_message,
+              :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
+              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 
+              :order => "created_at desc"
 
   SOURCES = %w{email form note status meta twitter feedback facebook}
   

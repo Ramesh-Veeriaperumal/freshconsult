@@ -1,7 +1,8 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
     <%= f.error_messages %>
-	  <%= hidden_field_tag :tweet, "true", :id => "tweet" %>
+	<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
     <%= f.hidden_field :private , :value => "false" %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">       
@@ -30,6 +31,7 @@
 	   
 	   <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton" ) %>
 	   <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
+	   <%= button_to_function(t('cancel'), "jQuery('#cnt-tweet').slideUp()", :class => "uiButton" ) %>
     </li>
    </ul> 
   <% end %>

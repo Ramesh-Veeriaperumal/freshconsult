@@ -3,7 +3,8 @@ require 'fastercsv'
 class Helpdesk::TicketsController < ApplicationController  
   
   include ActionView::Helpers::TextHelper
-  
+  include ParserUtil
+
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :show, :custom_view_save, :latest_ticket_count]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
@@ -71,7 +72,7 @@ class Helpdesk::TicketsController < ApplicationController
   def user_ticket
     @user = current_account.users.find_by_email(params[:email])
     if !@user.nil?
-      @tickets =  current_account.tickets.requester_active(@user)
+      @tickets =  current_account.tickets.visible.requester_active(@user)
     else
       @tickets = []
     end
@@ -192,10 +193,17 @@ class Helpdesk::TicketsController < ApplicationController
     RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
   end
   
+  def add_original_to_email
+      original_to = parse_email_text(@item.to_email)[:email]
+      email_config_emails = current_account.email_configs.collect { |ec| ec.reply_email }
+      @reply_email.delete_if {|email| parse_email_text(email)[:email] ==  original_to}
+      @reply_email.insert(0, @item.to_email) 
+  end
+
   def show
     @reply_email = current_account.reply_emails
-    
-    @reply_email.push(@item.to_email) unless @item.to_email.blank?
+
+    add_original_to_email unless @item.to_email.blank?
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 

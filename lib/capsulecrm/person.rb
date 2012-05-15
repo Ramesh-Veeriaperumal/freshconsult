@@ -79,7 +79,7 @@ class CapsuleCRM::Person < CapsuleCRM::Party
     hsh = {  "firstName" => name ,
              "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"}} ,
              "organisationId" => organisation_id }
-    hsh[:contacts][:phone] =  {"phoneNumber" => phone, "type" => "Work"} unless phone.blank?
+    hsh["contacts"]["phone"] =  {"phoneNumber" => phone, "type" => "Work"} unless phone.blank?
     hsh
   end
 

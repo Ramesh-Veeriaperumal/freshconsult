@@ -225,7 +225,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       handle_empty_filter! 
       all_conditions = sql_conditions
       all_joins = get_joins(sql_conditions)
-      recs = model_class.paginate(:include => [:ticket_states,:responder, {:requester =>  :avatar}],
+      recs = model_class.paginate(:include => [:ticket_states,:responder,:requester],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
       recs.wf_filter = self
@@ -250,12 +250,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
  end
  
  def users_join
-   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id "
+   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id  and  users.account_id = helpdesk_tickets.account_id  "
  end
   
   
   def joins
-    ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id  "]
+    ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id and  flexifields.account_id = helpdesk_tickets.account_id "]
   end      
   
   def order_field

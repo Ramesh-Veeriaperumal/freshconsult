@@ -51,7 +51,8 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put,:block => :put }
+  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put,:block => :put, :assume_identity => :get},
+                        :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
@@ -126,7 +127,8 @@
       admin.resources :subscription_affiliates, :as => 'affiliates'
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
-    end
+      admin.resources :conversion_metrics, :as => 'metrics'
+      end
   end
   
   map.namespace :widgets do |widgets|

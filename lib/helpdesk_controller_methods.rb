@@ -22,7 +22,7 @@ module HelpdeskControllerMethods
     #redirect_back_or_default redirect_url
     respond_to do |format|
       format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
-      format.xml  { head 200 }
+      format.xml  { render :xml => @item, :status => :created, :location => url_for(@item) }
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
     end

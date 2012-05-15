@@ -79,16 +79,10 @@
         <% end %>
         <div class="request-wrapper">
         <div id="description-full" class="request_mail details min_height">
-          <span class="seperator"></span>                                  
-					<table>
-						<tr>
-          		<td>
-								<div class="request_mail">
-									<%= @ticket.description_html %>
-								</div>
-						  </td>	
-						</tr>
-  				</table>
+          <span class="seperator"></span>
+          <div class="request_mail">
+            <%= @ticket.description_html %>
+          </div>
         </div>      
         <% unless @ticket.attachments.empty? %>
           <span class="seperator"></span>
@@ -99,8 +93,8 @@
         <% end %>
         <% unless @ticket.ticket_topic.nil? %>
           <div class="info-highlight">
-            <%= t("helpdesk.tickets.show.linked_ticket")%>
-            "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+            <%= t("helpdesk.tickets.show.linked_ticket") %>
+            "<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
           </div>
         <% end %>
       </div>

@@ -18,8 +18,8 @@ class Admin::GettingStartedController < Admin::AdminController
   end
   
   def delete_logo
-    current_account.main_portal.logo.destroy
-    render :text => "success"
+  	 current_account.main_portal.logo.destroy
+ 	   render :text => "success"
   end
     
   protected

@@ -135,7 +135,7 @@ class Account < ActiveRecord::Base
   
   has_many :tags, :class_name =>'Helpdesk::Tag'
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet'
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
   has_many :support_scores, :class_name => 'SupportScore'
   #Scope restriction ends
@@ -231,6 +231,10 @@ class Account < ActiveRecord::Base
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
+  end
+  
+  def self.reset_current_account
+    Thread.current[:account] = nil
   end
   
   def self.actual_customer_count

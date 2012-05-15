@@ -1,14 +1,17 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
-  
-  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\b)/
+  include ParserUtil
+
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
+      account.make_current
+      
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
@@ -29,7 +32,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+      Account.reset_current_account
     end
+    
   end
   
   def create_article(account, from_email, to_email)
@@ -74,13 +79,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_email(email_text)
-      if email_text =~ /(.+) <(.+?)>/
-        name = $1
-        email = $2
-      elsif email_text =~ /<(.+?)>/
-        email = $1
-      end
       
+      parsed_email = parse_email_text(email_text)
+      
+      name = parsed_email[:name]
+      email = parsed_email[:email]
+
       if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
         email = $1  
       end
@@ -88,6 +92,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       name ||= ""
       domain = (/@(.+)/).match(email).to_a[1]
+      
       {:name => name, :email => email, :domain => domain}
     end
     
@@ -104,9 +109,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def parse_orginal_to
-      original_to = parse_email params[:to]            
-      original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+    def parse_orginal_to(account, email_config)
+      original_to_emails = params[:to].split(",")
+
+      if original_to_emails.size == 1
+        original_to = parse_email_text(original_to_emails.first)
+        original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+      else
+        parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
+        original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
+        email_config = original_to_email_config if original_to_email_config
+        original_to_email = email_config ? email_config.friendly_email : account.default_friendly_email
+      end
     end
     
     def parse_to_email
@@ -124,7 +138,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return f_email unless(f_email[:email].blank? || f_email[:email] =~ /(noreply)|(no-reply)/i)
       
       headers = params[:headers]
-      if(!headers.nil? && headers =~ /Reply-to:(.+)$/i)
+      if(!headers.nil? && headers =~ /Reply-[tT]o:(.+)$/)
         rt_email = parse_email($1)
         return rt_email unless rt_email[:email].blank?
       end
@@ -157,7 +171,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
-        :to_email => parse_orginal_to,
+        :to_email => parse_orginal_to(account, email_config),
         :cc_email => parse_cc_email,
         :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
@@ -170,9 +184,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       process_email_commands(ticket, user, email_config) if user.agent?
 
-      email_cmds_regex = get_email_cmd_regex(account)
-      ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
-      ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+      begin
+        email_cmds_regex = get_email_cmd_regex(account)
+        ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
+        ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
 
       begin
         ticket.save!
@@ -221,9 +239,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         )
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
-        email_cmds_regex = get_email_cmd_regex(ticket.account)
-        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,ticket.reply_email) if(!params[:text].blank? && email_cmds_regex)
-        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), ticket.reply_email) if(!params[:html].blank? && email_cmds_regex)
+        
+        begin
+          email_cmds_regex = get_email_cmd_regex(ticket.account)
+          note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,ticket.reply_email) if(!params[:text].blank? && email_cmds_regex)
+          note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), ticket.reply_email) if(!params[:html].blank? && email_cmds_regex)
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
+        end
         ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)

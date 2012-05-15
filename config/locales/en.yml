@@ -1,4 +1,3 @@
----
 en: 
   enabled: "Enabled"
   disabled: "Disabled"
@@ -304,7 +303,7 @@ en:
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
-        select_solution_category: Select a forum category...
+        select_solution_category: Select a solution category...
         top_level_solution_info: You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
@@ -451,6 +450,7 @@ en:
       viewer_id_not_sent_by_gmail: "Wrong Gmail request.  Please try after logging in again."
       gmail_request_unverified: "Wrong Gmail signature.  Please try after logging in again."
       unknown_error: "Unknown server error. Please contact support."
+      account_not_associated: "Your Gmail account is not yet associated to any Freshdesk account.  Go through the navigation link to associate it first."
     daypass:
       success: "%{quantity} Day Passes have been successfully added to your account."
       failed: "Error when adding day passes"
@@ -973,6 +973,7 @@ en:
   oneweek: 1 Week
   twoweek: 2 Weeks
   onemonth: 1 Month
+  threemonth: 3 Month
   problem: Problem
   change_plan_info: You can change your plan at any time, your next bill date is %{date}.
   created_on: Created on
@@ -1195,6 +1196,7 @@ en:
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
     login: login
+    assumed_text: "You are viewing as"
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -1343,6 +1345,9 @@ en:
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
+      send: Send
+    facebook_form: 	  	
+      send_and_resolve: Send and Resolve	  	
       send: Send
     reported_by: from %{requester}
     close_btn: Close
@@ -1558,6 +1563,8 @@ en:
         removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
+      facebook_form:  	
+        title: "Reply to %{user}"
       history:
         recent_item: Recent Items
     dashboard:
@@ -1727,6 +1734,8 @@ en:
     facebook_pages:
       index:
         title: "Facebook Pages"
+        reauthorize: Reauthorize
+        reauth_required : Reauthorization required
       enable_facebook_page:
         associate: Select the facebook pages you would like to associate to the Helpdesk.
       engage_info:
@@ -1739,7 +1748,11 @@ en:
         visitor_posts_info: Freshdesk will convert all visitor posts on this Facebook page as tickets.
         company_posts: Import <strong>"Company posts"</strong> as ticket
         company_posts_info: Freshdesk will convert all Company posts on this Facebook page into tickets.
-        product: Product          
+        product: Product     
+        message_thread_time: Message Thread Time
+        message_thread_time_info: Maximum time to consider messages from same user as threaded  
+        direct_messages: Import <strong>"Direct messages"</strong> as ticket
+        direct_messages_info: Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>
     twitter_handles:
       index:
         title: "Twitter Accounts"
@@ -1803,6 +1816,7 @@ en:
   integrations:
     capsule_crm:
       label: "Capsule CRM"
+      helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
     capsule:
       label: "Capsule CRM"
       desc: "You can view Contact information from Capsule CRM in Freshdesk. This information can be accessed in the Ticket Details page and Contact Details Page."
@@ -1817,6 +1831,7 @@ en:
     freshbooks:
       label: "Freshbooks"
       desc: "You can log time spent on tickets into your Freshbooks projects and tasks."
+      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
       form:
         freshbooks_note: "Notes text"
         freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
@@ -1828,6 +1843,7 @@ en:
     harvest:
       label: "Harvest"
       desc: "You can log time spent on tickets into your Harvest projects and tasks."
+      helptext: "<h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with Freshdesk, type in your <b>Domain name</b> and click on Enable.<br/><br/>Click on a ticket, go to the <b>Time Sheet tab</b>.  You can then type in your Harvest <b>Username</b> and <b>Password</b> to login. Now you can add your time tracking entry into Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you do not have to type in your Harvest credentials each time."
       form:
         domain: "Domain"
         domain_info: "Enter the domain alone without https. Ex: example.harvestapp.com"
@@ -1837,6 +1853,7 @@ en:
     google_contacts:
       label: "Google contacts sync"
       desc: "Periodically synchronize contacts between Google and Freshdesk."
+      helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
       import_success: "Sucessfully imported Google contacts." 
       fetch_problem: "Problem in fetching Google contacts." 
       import: "Import"
@@ -1912,6 +1929,10 @@ en:
     jira:
       label: "Atlassian JIRA"
       desc: "Convert tickets into issues that can be tracked in JIRA."
+      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.x upto the latest version - JIRA 5.<br/><br/>
+        To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
+        To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
+        <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
       form:
         domain: "Domain"
         domain_info: "Enter the complete JIRA account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of JIRA should be exposed to the internet. </span>" 
@@ -1923,6 +1944,8 @@ en:
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"
+      helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
+        <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
       portal: "Portal"
       account_number: "Enter your Tracking ID"
       inline_help: "Enter the Tracking ID for "
@@ -1933,20 +1956,31 @@ en:
         tracking_id: "Tracking ID for "
         tracking_id_example: "Eg: UA-123456-1"
         copy_settings: "Use the above Tracking ID for all portals"
-
+    sugarcrm:
+      label: "SugarCRM"
+      helptext: "<h4>Sugar CRM Integration Help</h4><p><br/> You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
+      desc: "You can view contact information from SugarCRM in Freshdesk."
+      form:
+        domain: "SugarCRM Account URL"
+        domain_info: "For example, if your SugarCRM URL is <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , enter <strong> http://mycompany.xyz/sugar </strong><br /><br /> Note: The on-premise variant of SugarCRM should be connected to the internet. </span>" 
+        widget_title: "Widget Title"
+        username: "Username"
+        password: "Password"
+    workflow_max:
+      label: "Workflow Max"
+      desc: "You can log time spent on tickets into your Workflow Max jobs and tasks."
+      helptext: "<h4>Workflow Max Integration Help</h4><p><br/> To integrate Workflow Max time tracking with Freshdesk, you have to get the Account Key and API Key from <a href='mailto:support@workflowmax.com'>WorkflowMax Support</a>.  Enter the keys into the specified fields to complete the integration. <br/><br/>Once integrated, click on any ticket and go to the Time Sheet tab. You may then choose the staff, job and task to add time entries into Workflow Max."
+      form:
+        workflow_max_note: "Notes text to append"
+        workflow_max_note_info: "This text will be appended at the end of the note, with the time spent log."
+        api_key: "API Key"
+        api_key_info: "Request your API Key from Workflow Max support and paste the same here."
+        account_key: "Account Key"
+        account_key_info: "Request your Account Key from Workflow Max support and paste the same here."
+        widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
-  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
-  freshbooks_helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
-  harvest_helptext: "<h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with Freshdesk, type in your <b>Domain name</b> and click on Enable.<br/><br/>Click on a ticket, go to the <b>Time Sheet tab</b>.  You can then type in your Harvest <b>Username</b> and <b>Password</b> to login. Now you can add your time tracking entry into Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you do not have to type in your Harvest credentials each time."
-  jira_helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.x upto the latest version - JIRA 5.<br/><br/>
-  To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
-  To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
-  <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
-  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
-  google_analytics_helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
-  <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
   reorder: "Reorder"
   reports:
       tab_heading: "Reports"
@@ -1975,6 +2009,7 @@ en:
         fcr_count: "First Contact Resolution"
         fcr_percent: "FCR %"
         avg_1st_response_time: "Avg. first response time"
+        helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"
         yesterday: "Yesterday"
@@ -2046,6 +2081,7 @@ en:
   category_edit_not_allowed: "This category can't be modified"
   folder_edit_not_allowed: "This folder can't be modified" 
   never: Never
+  always: Always
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/account/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
   no_date_to_display: "No data to display"
@@ -2055,3 +2091,12 @@ en:
   latest_tickets: "new updates"
   search:
     no_results_msg: "No results found"  
+  assumed_identity_msg: "You've assumed your identity as %{user_name}."
+  assuming_identity_not_allowed_msg: "You are not allowed to assume this user."
+  identity_reverted_msg: "You have reverted your identify back to you."
+  identity_reverted_error_msg: "Sorry, we couldn't find your original user."
+  assume_identity_button: "Assume Identity"
+  revert_identity_link_msg: "Revert Identity"
+  swith_agent_msg: "Switch to Another Agent"
+  switch_heading: "Switch Agent"
+  email_notifications_agent_selection_msg: "Select agents to notify"

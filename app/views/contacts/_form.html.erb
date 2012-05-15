@@ -72,7 +72,7 @@
 			<%= label(:user, :job_title, t('user.title')) %>
 			<%= text_field(:user, :job_title, :class => "text" ) %>
 		</li>
-		<% fields_for :tags  do |tag|
+		<% 
 			tag_csv = @user.tags.collect{|tg| tg.name+", "}
 			if tag_csv.blank?
 				tag_csv=""
@@ -81,10 +81,9 @@
 			end 
 		%>
 		<li>
-			<%= tag.label(:name, t('tag.title')) %>
-			<%= tag.text_field :name , :value => tag_csv, :class => "text" %>
+			<%= label(:user, :tags, t('tag.title')) %>
+			<%= text_field :user, :tags, :value => tag_csv, :class => "text" %>
 		</li>
-		<%end%>
 
 		<li>
 			<%

@@ -276,6 +276,7 @@ EDITOR_OPTIONS: &common
     force_br_newlines:                  true
     force_p_newlines:                   false
     forced_root_block:                  ""
+    gecko_spellcheck:                   true
     
 LARGE_EDITOR:
     <<: *common

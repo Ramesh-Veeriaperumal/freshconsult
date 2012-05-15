@@ -16,7 +16,7 @@ class FBClient
   end
   
   def authorize_url
-    @oauth.url_for_oauth_code(:permissions => ["manage_pages","offline_access","read_stream","publish_stream","manage_notifications"])
+    @oauth.url_for_oauth_code(:permissions => ["manage_pages","offline_access","read_stream","publish_stream","manage_notifications","read_mailbox"])
   end
   
   def auth(code)
@@ -33,7 +33,8 @@ class FBClient
       page_info = @graph.get_object(page_id)
       page_info.symbolize_keys!
       fb_pages << {:profile_id => profile_id , :access_token =>oauth_access_token, :page_id=> page_id,:page_name => page_info[:name], 
-                   :page_token => page[:access_token],:page_img_url => page_info[:picture], :page_link => page_info[:link] , :fetch_since => 0} unless page[:access_token].blank?
+                   :page_token => page[:access_token],:page_img_url => page_info[:picture], :page_link => page_info[:link] , :fetch_since => 0,
+                   :reauth_required => false , :last_error => nil} unless page[:access_token].blank?
     
     end
     fb_pages

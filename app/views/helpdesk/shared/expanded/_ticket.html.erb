@@ -8,12 +8,12 @@
   	  <%= user_avatar(ticket.requester) %>
 			<span class="need-attention-icon"></span>
       <h3>
-        <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{ticket.display_id}", :class => "info-data"), helpdesk_ticket_path({:id=>ticket.display_id, :page=> params[:page]}), :title => truncate(ticket.description, { :length => 350, :omission => "..." }), :class => "ticket-description-tip" ) %> 
+        <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}), :class => "ticket-description-tip" ) %> 
+        <%= content_tag :span, h(truncate(ticket.description, { :length => 350, :omission => "..." })), :class => "hide" %>
 	  	</h3>
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data" do %>
-			  <%= content_tag :span, "", :class => "tooltip icon-image source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %> 
-				<!-- <%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :date => formated_date(ticket.created_at)) %> -->
+			  <%= content_tag :span, "", :class => "tooltip icon-image source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>
 				<%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :date => formated_date(ticket.updated_at)) %>
 			<% end %>
 	  <% end %>
@@ -27,10 +27,10 @@
       <% end %>
 	  	<ul>
 			<li>
-		    <%=t('ticket.status')%> <span><%= ticket.status_name %></span>
+		    <%=t('ticket.status')%> <span><%= h(ticket.status_name) %></span>
 		  </li>
 			<li class="priority">
-			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= ticket.priority_name %></span>
+			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
   </td>

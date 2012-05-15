@@ -31,7 +31,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   def charge
     if request.post? && !params[:amount].blank?
       load_object
-      if @subscription.misc_charge(params[:amount])
+      if @subscription.misc_charge(params[:amount].to_f)
         flash[:notice] = 'The card has been charged.'
         redirect_to :action => "show"
       else
@@ -53,7 +53,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
    
    def fetch_signups_per_day
-     @signups_per_day = Account.find(:all,:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc").group_by {|a| a.created_at.at_beginning_of_day}
+     @signups_per_day = Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc")
    end
    
    def fetch_signups_per_month

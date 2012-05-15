@@ -43,7 +43,7 @@
         <li class="inline-field field">
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.friendly_reply_email) %>
+              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
 					</div>
@@ -93,7 +93,8 @@
         <%= f.hidden_field :private , :value => false %>
         <!--reply source will be always email-->
         <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
-		<%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:reply_ticket_status  )%>
+        <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+		    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:reply_ticket_status  )%>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-reply">
                 <% unless local_assigns[:no_attachments] %>
@@ -103,9 +104,9 @@
         </li>
     </ul>
     <div class="button-container">
-    	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special" ) %>
+    	<%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
     	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
-			<%= button_to_function(t('cancel'), "jQuery('#cnt-reply').slideUp()", :class => "uiButton" ) %>
+		<%= button_to_function(t('cancel'), "jQuery('#cnt-reply').slideUp()", :class => "uiButton" ) %>
     </div>
 
     <% end %>

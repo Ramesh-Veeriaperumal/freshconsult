@@ -12,10 +12,15 @@ class Integrations::GoogleContactsImporter
     google_accounts = Integrations::GoogleAccount.find_all_installed_google_accounts
     google_accounts.each { |google_account|
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
+      Account.reset_current_account
       begin
-        goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
-        if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
-          goog_cnt_importer.sync_google_contacts
+        if google_account.account.blank? or !google_account.account.active?
+          Rails.logger.info "Account #{google_account.account.name} expired.  Google contacts syncing disabled."
+        else
+          goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
+          if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
+            goog_cnt_importer.sync_google_contacts
+          end
         end
       rescue => err
         Rails.logger.error "Error while syncing google_contacts for account #{google_account.inspect}. \n#{err.message}\n#{err.backtrace.join("\n\t")}"
@@ -24,7 +29,8 @@ class Integrations::GoogleContactsImporter
   end
 
   def import_google_contacts(options = {})
-    sync_google_contacts :sync_type => SyncType::OVERWRITE_REMOTE
+    options[:sync_type] = SyncType::OVERWRITE_REMOTE
+    sync_google_contacts options
   end
 
   def sync_google_contacts(options = {})
@@ -114,7 +120,7 @@ class Integrations::GoogleContactsImporter
       stats=[0,0,0]; err_stats=[0,0,0]
       account = @google_account.account
       updated_goog_contacts_hash.each { |user|
-        unless user.blank? || account.blank?
+        unless user.blank? or account.blank? or user.email.blank?
           begin
             sync_tag_id = @google_account.sync_tag.id unless @google_account.sync_tag.blank?
             if user.exist_in_db?
@@ -162,5 +168,5 @@ class Integrations::GoogleContactsImporter
       end
     end
 
-    MAX_RESULTS = 1000
+    MAX_RESULTS = 200
 end

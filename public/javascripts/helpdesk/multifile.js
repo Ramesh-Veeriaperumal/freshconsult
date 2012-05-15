@@ -8,8 +8,10 @@ Helpdesk.Multifile = {
     },
 
     onFileSelected: function(input){ 
-        this.addFileToList(input);
-        this.duplicateInput(input);
+        if(jQuery(input).css("display") != "none"){ 
+            this.addFileToList(input);
+            this.duplicateInput(input);
+        }
     },
 
     duplicateInput: function(input){

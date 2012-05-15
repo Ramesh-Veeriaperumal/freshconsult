@@ -63,9 +63,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 body, td, pre { color: #333333; font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif; margin: 8px; font-size: 13px; line-height: 18px; }
 
-p, li { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
+p, li, div { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
 
-code, pre { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
+code, pre, p, li { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
 
 h1 { font-size: 2em; }
 
@@ -79,7 +79,7 @@ h5 { font-size: .83em; }
 
 h6 { font-size: .75em; }
 
-img { border: 0; max-width: 100%; height: auto; }
+img, iframe { border: 0; max-width: 100%; height: auto; }
 
 table { cursor: default; border: 1px solid #afafaf; }
 
