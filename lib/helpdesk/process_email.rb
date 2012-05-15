@@ -2,7 +2,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
-  include Helpdesk::StringUtil
   
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
@@ -12,7 +11,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       account.make_current
-      
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
