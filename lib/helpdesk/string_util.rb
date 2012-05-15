@@ -23,7 +23,7 @@ module Helpdesk::StringUtil
     old_msg = text[index,text.size]
     #Sanitizing the split code   
     original_msg = Nokogiri::HTML(original_msg).at_css("body").inner_html
-    old_msg  = sanitize_old_msg(old_msg) unless old_msg.blank?
+    old_msg  = Nokogiri::HTML(old_msg).at_css("body").inner_html unless old_msg.blank?
 
     unless old_msg.blank?
      original_msg = original_msg +
@@ -34,16 +34,4 @@ module Helpdesk::StringUtil
     return original_msg
 end
 
-
- def sanitize_old_msg html
-      doc = Nokogiri::HTML(html)
-      begin
-        doc.css("blockquote").each_with_index do |node , index|
-          node.remove if index > 0
-        end
-      rescue
-      end
-    html = doc.at_css("body").inner_html 
-    return html
- end
 end
