@@ -1,3 +1,4 @@
+<%= javascript_include_tag  '/javascripts/report/date' %>
 <% 
   # Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
   @liquid_values = { "requester" => @ticket.requester, "ticket" => @ticket, "agent" => (@ticket.responder || current_user) }

@@ -197,13 +197,12 @@ var UIUtil = {
 		}
 
 		var entitiesArray = parser.extractEntities(data, entityName);
-		for(i=0;i<entitiesArray.length;i++) {
+		for(var i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
 				matched = true;
 				for (var filterKey in filterBy) {
 					filterValue = filterBy[filterKey];
-					actualVal = parser.getNodeValueStr(entitiesArray[i], filterKey);
-					if(filterValue != actualVal) {
+					if(!this.isMatched(entitiesArray[i], filterKey, filterValue)) {
 						matched = false;
 						break;
 					}
@@ -224,7 +223,7 @@ var UIUtil = {
 				}
 			}
 			dispName = ""
-			for(d=0;d<dispNames.length;d++) {
+			for(var d=0;d<dispNames.length;d++) {
 				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
 					dispName += dispNames[d];
 				} else {
@@ -244,6 +243,21 @@ var UIUtil = {
 			}
 		}
 		return foundEntity;
+	},
+
+	isMatched: function(dataNode, filterKey, filterValue) {
+		keys = filterKey.split(',');
+		if(keys.length>1) {
+			first_level_nodes = parser.extractEntities(dataNode, keys[0]);
+			for(var i=0;i<first_level_nodes.length;i++) {
+				actualVal = parser.getNodeValueStr(first_level_nodes[i], keys[1]);
+				if(actualVal == filterValue) return true;
+			}
+			return false;
+		} else {
+			actualVal = parser.getNodeValueStr(dataNode, filterKey);
+			return actualVal == filterValue;
+		}
 	},
 
 	addDropdownEntry: function(dropDownBoxId, value, name, addItFirst) {
@@ -305,14 +319,16 @@ var XmlUtil = {
 
 	getNodeValue:function(dataNode, lookupTag){
 		if(dataNode == '') return;
+		if(lookupTag instanceof Array) {
+			var element = dataNode.getElementsByTagName(lookupTag[0]);
+			if(element == null || element.length == 0) return null;
+			dataNode = element[0]
+			lookupTag = lookupTag[1]
+		}
 		var element = dataNode.getElementsByTagName(lookupTag);
-		if(element==null || element.length==0){
-			return null;
-		}
+		if(element == null || element.length == 0) return null;
 		childNode = element[0].childNodes[0]
-		if(childNode == null){
-			return"";
-		}
+		if(childNode == null) return"";
 		return childNode.nodeValue;
 	},
 
