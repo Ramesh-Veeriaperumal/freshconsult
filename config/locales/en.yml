@@ -2047,3 +2047,4 @@ en:
   swith_agent_msg: "Switch to Another Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
+  ticket_cc_email_more: "more"

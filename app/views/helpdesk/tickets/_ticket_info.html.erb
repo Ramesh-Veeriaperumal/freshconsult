@@ -46,7 +46,7 @@
                 <%if @ticket.cc_email.length < 3 %>
                   <%= content_tag :span, "Cc: " + @ticket.cc_email.collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
                 <% else %>
-                  <%= content_tag :span, "Cc: " + @ticket.cc_email[0,2].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ @ticket.cc_email[2,@cc_email_count].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@cc_email_count-2} more</a>", :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                  <%= content_tag :span, "Cc: " + @ticket.cc_email[0,2].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ @ticket.cc_email[2,@cc_email_count].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@cc_email_count-2} "+t('ticket_cc_email_more')+"</a>", :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
                 <% end %>             
             </div>
           <% end %> 
