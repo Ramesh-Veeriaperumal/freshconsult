@@ -333,6 +333,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     original_msg = text[0, index]
     old_msg = text[index,text.size]
+    
+    #Sanitizing the split code   
+    original_msg = Nokogiri::HTML(original_msg).at_css("body").inner_html
+    old_msg  = Nokogiri::HTML(old_msg).at_css("body").inner_html unless old_msg.blank?
    
     unless old_msg.blank?
      original_msg = original_msg +
