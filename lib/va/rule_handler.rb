@@ -27,7 +27,7 @@ class Va::RuleHandler
 
     (nested_rules || []).each do |nested_rule|
       if evaluate_on.respond_to?(nested_rule[:name])
-        to_ret = evaluate_rule(evaluate_on.send(nested_rule[:name]),nested_rule[:value])
+        to_ret = send(condition.operator, evaluate_on.send(nested_rule[:name]),nested_rule[:value])
         return to_ret unless to_ret
       else
         RAILS_DEFAULT_LOGGER.debug "############### The ticket did not respond to #{nested_rule[:name]} property"
@@ -37,7 +37,7 @@ class Va::RuleHandler
   end
 
   def matches(evaluate_on)
-    if rule_type = "nested_rule"
+    if rule_type == "nested_rule"
       match_nested_rules(evaluate_on)  
     else
       if evaluate_on.respond_to?(condition.key)
@@ -52,13 +52,13 @@ class Va::RuleHandler
   end
   
   def filter_query
-    if rule_type = "nested_rule"
-      conditions = send('filter_query_#{condition.operator}', condition.key, value)
+    if rule_type == "nested_rule"
+      query_conditions = send("filter_query_#{condition.operator}", condition.key, value)
       (nested_rules || []).each do |nested_rule|
-        condition = send('filter_query_#{condition.operator}', nested_rule[:name], nested_rule[:value])
-        conditions = "#{conditions} and #{condition}"
+        query_condition = send("filter_query_#{condition.operator}", nested_rule[:name], nested_rule[:value])
+        query_conditions = "#{query_conditions} and #{query_condition}"
       end
-      ["(#{conditions})"]
+      ["(#{query_conditions})"]
     else
       send("filter_query_#{condition.operator}")
     end

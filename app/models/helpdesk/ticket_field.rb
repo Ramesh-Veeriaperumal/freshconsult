@@ -77,7 +77,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :custom_dropdown      => { :type => :custom, :dom_type => "dropdown", 
                                              :va_handler => "dropdown"},
                   :nested_field         => {:type => :custom, :dom_type => "dropdown_blank",
-                                              :va_handler => "dropdown"}
+                                              :va_handler => "text"}
                 }
 
   def dom_type
