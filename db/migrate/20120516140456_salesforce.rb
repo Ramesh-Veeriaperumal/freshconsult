@@ -3,14 +3,14 @@ class Salesforce < ActiveRecord::Migration
   @widget_name = "salesforce_widget"
 
   def self.up
-  	salesforce = Integrations::Application.create(
+    salesforce = Integrations::Application.create(
         :name => @app_name,
         :display_name => "integrations.salesforce.label", 
         :description => "integrations.salesforce.desc", 
         :listing_order => 8,
         :options => { 
                       :keys_order => [:salesforce_settings], 
-                      
+                      :direct_install => true,
                       :salesforce_settings => {:type => :custom, 
                           :partial => "/integrations/applications/salesforce", 
                           :required => false, :label => "integrations.salesforce.form.salesforce_settings", 
@@ -36,8 +36,8 @@ class Salesforce < ActiveRecord::Migration
   end
 
   def self.down
-  	Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
-  	execute("DELETE installed_applications FROM installed_applications INNER JOIN applications ON applications.ID=installed_applications.application_id WHERE applications.name='#{@app_name}'")
+    Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
+    execute("DELETE installed_applications FROM installed_applications INNER JOIN applications ON applications.ID=installed_applications.application_id WHERE applications.name='#{@app_name}'")
     execute("DELETE widgets FROM widgets INNER JOIN applications ON widgets.APPLICATION_ID=applications.ID WHERE widgets.name='#{@widget_name}'")
   end
 end
