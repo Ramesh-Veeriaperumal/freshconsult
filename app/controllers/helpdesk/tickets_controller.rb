@@ -41,6 +41,36 @@ class Helpdesk::TicketsController < ApplicationController
       params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}, 
                             { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]}"}];
     end
+
+    company_name = params[:company_name]
+    unless company_name.blank?
+      @user_name = company_name
+
+      company = current_account.customers.find_by_name(company_name)
+      if company.nil?
+        response = {:errors => {:no_company => true}}
+
+        respond_to do |format|      
+          format.html  do
+          end      
+          format.xml do
+            render :xml => response.to_xml
+          end      
+          format.json do
+            render :json => response.to_json
+          end      
+          format.atom do
+          end
+        end
+
+        return false
+
+      else
+        @user_name = company.name unless company.name.blank?
+      end
+      params[:data_hash] = [{ "condition" => "users.customer_id", "operator" => "is_in", "value" => company.id}, 
+                            { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:resolved]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]}"}];
+    end
   end
 
   def load_ticket_filter
@@ -103,21 +133,19 @@ class Helpdesk::TicketsController < ApplicationController
         
     respond_to do |format|      
       format.html  do
-      end      
+      end
       format.xml do
         render :xml => @items.to_xml
       end      
       format.json do
-        
-        json = "["
-        @items.each { |tic| json << tic.to_json[10..-2] + ","}  
-        #Removing the root node, so that it conforms to JSON REST API standards
-        # 10..-2 will remove "{ticket:" and the last "}"
-
-        # Now we have to remove the last comma to have a valid JSON encoded string.
-        render :json => json[0..-2] + "]"
-
-      end      
+        json = "["; sep=""
+        @items.each { |tic| 
+          #Removing the root node, so that it conforms to JSON REST API standards
+          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+          json << sep + tic.to_json({}, false)[19..-2]; sep=","
+        }
+        render :json => json + "]"
+      end
       format.atom do
       end
     end
@@ -140,6 +168,10 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.json do
         render :json => @items.to_json
+      end
+
+      format.xml do
+        render :xml => @items.to_xml
       end
 
       format.widget do
@@ -234,7 +266,7 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @item.to_xml  
       }
       format.json {
-        render :json => Hash.from_xml(@item.to_xml)
+        render :json => @item.to_json
       }
       format.js
     end

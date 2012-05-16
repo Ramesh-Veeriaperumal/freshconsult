@@ -102,6 +102,12 @@ class Helpdesk::Note < ActiveRecord::Base
   def outbound_email?
     source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
   end 
+
+  def to_json(options = {})
+    options[:methods] = [:user_name]
+    options[:except] = [:account_id,:notable_id,:notable_type]
+    super options
+  end
   
   def to_liquid
     { 
@@ -190,5 +196,14 @@ class Helpdesk::Note < ActiveRecord::Base
     def liquidize_body
       attachments.empty? ? body_html : 
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    end
+
+    # The below 2 methods are used only for to_json 
+    def user_name
+      user.name || user_info
+    end
+    
+    def user_info
+      user.get_info if user
     end
 end

@@ -1,5 +1,5 @@
 /* Theme Colors and layout Defaults */
-body { font: 12px "Lucida Grande", Geneva, Arial, Verdana, sans-serif; background-color: transparent; }
+body { font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif; background-color: transparent; }
 
 code, pre { padding: 0 3px 2px; font-family: Menlo, Monaco, "Courier New", monospace; font-size: 12px; color: #333333; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
 
@@ -42,7 +42,8 @@ h3.sub_title { font-size: 1.1em; }
 
 .aligncenter { text-align: center; }
 
-.info_data, .info-data { color: #888888; font-size: 12px; line-height: 18px; padding-bottom: 6px; }
+.info_data, .info-data { color: #888888; font-size: 11px; line-height: 15px; padding-bottom: 6px; }
+.info_data a, .info_data a.user_name, .info-data a, .info-data a.user_name { font-weight: bold; color: #666; }
 
 .borderbottom { border-bottom: 1px dotted #EFEFEF; }
 

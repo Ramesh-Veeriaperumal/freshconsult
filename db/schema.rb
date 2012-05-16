@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
-    t.boolean  "ssl_enabled",                    :default => false
+    t.boolean  "ssl_enabled",                    :default => true
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -49,8 +49,6 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
 
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
@@ -80,7 +78,7 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ticket_permission",              :default => 1
+    t.integer  "ticket_permission"
     t.boolean  "occasional",                     :default => false
     t.string   "google_viewer_id"
   end
@@ -132,6 +130,22 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "referrer_type"
+  end
+
+  create_table "custom_reports", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "date_condition_type"
+    t.string   "date_condition"
+    t.text     "fields_selected"
+    t.string   "match_type"
+    t.text     "filter_options"
+    t.text     "schedule_options"
+    t.text     "output_options"
+    t.datetime "last_run"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "customers", :force => true do |t|
@@ -210,6 +224,7 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
     t.text     "account_info"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "domain_name"
   end
 
   create_table "email_commands_settings", :force => true do |t|
@@ -384,7 +399,7 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
     t.integer  "account_id",          :limit => 8
   end
 
-  add_index "flexifields", ["flexifield_def_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
+  add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
   add_index "flexifields", ["id"], :name => "flexifields_id"
 
@@ -668,7 +683,7 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8,  :null => false 
+    t.integer  "id",               :limit => 8,                             :null => false
     t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
@@ -706,7 +721,6 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
   add_index "helpdesk_tickets", ["account_id", "updated_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_updated_at_and_id"
   add_index "helpdesk_tickets", ["id"], :name => "helpdesk_tickets_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
-  add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
@@ -840,6 +854,7 @@ ActiveRecord::Schema.define(:version => 20120502092118) do
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "social_fb_pages_account_id_and_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|

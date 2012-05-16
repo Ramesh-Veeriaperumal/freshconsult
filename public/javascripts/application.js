@@ -81,3 +81,26 @@ var ReplyForm = {
 /*Event.addBehavior({
   '#search,#monitor_submit': function() { this.hide(); }
 })*/
+
+setCookie = function (name,value,expires_in_days)
+{
+  var exdate=new Date();
+  exdate.setDate(exdate.getDate() + expires_in_days);
+  var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString());
+  document.cookie=name + "=" + c_value;
+}
+
+getCookie = function(name)
+{
+  var i,x,y,ARRcookies=document.cookie.split(";");
+  for (i=0;i<ARRcookies.length;i++)
+  {
+    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+    x=x.replace(/^\s+|\s+$/g,"");
+    if (x==name)
+    {
+      return unescape(y);
+    }
+  }
+}
