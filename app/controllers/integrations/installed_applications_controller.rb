@@ -22,6 +22,11 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
             Rails.logger.info "Redirecting to google_contacts oauth."
             redirect_to "/auth/google?origin=install"
             return
+          elsif @installing_application.name == "salesforce"
+            Rails.logger.info "Redirecting to salesforce oauth."
+            redirect_to "/auth/salesforce?origin=#{current_account.id}"
+            Rails.logger.info "URL redirect fail"
+            return
           end
           flash[:notice] = t(:'flash.application.install.success')   
         else

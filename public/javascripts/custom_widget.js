@@ -79,7 +79,11 @@ Freshdesk.Widget.prototype={
 			reqData.username = this.options.username
 			reqData.use_server_password = this.options.use_server_password
 			reqData.app_name = this.options.app_name
-		} else {
+		}
+		else if(this.options.auth_type == 'OAuth'){
+			reqHeader = {Authorization:"OAuth " + this.options.oauth_token}
+		} 
+		else {
 			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
 		}
 		new Ajax.Request("/http_request_proxy/fetch",{
@@ -133,6 +137,7 @@ Freshdesk.Widget.prototype={
 	},
 
 	alert_failure:function(errorMsg) {
+		console.log(this.error_anchor);
 		if (this.error_anchor == null || this.error_anchor !== "") {
 			alert(errorMsg);
 		} else {

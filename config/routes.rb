@@ -69,6 +69,7 @@
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put}
+    integration.resources :salesforce, :collection => {:get_access_token => :get}
   end
 
   map.namespace :admin do |admin|

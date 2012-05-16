@@ -4,6 +4,7 @@ module Integrations::Constants
     :harvest => "harvest", 
     :google_contacts => "google_contacts", 
     :sugarcrm => "sugarcrm", 
-    :workflow_max => "workflow_max"
+    :workflow_max => "workflow_max",
+    :salesforce => "salesforce"
   }
 end

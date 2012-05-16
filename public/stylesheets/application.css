@@ -3,7 +3,8 @@
 /* Importing admin icons */
 .admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-sfc937d85a5.png') no-repeat; }
 
-.application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira, .application-logo-sugarcrm, .application-logo-workflow_max-small, .application-logo-workflow_max { background: url('/images/application-logo-s5f9bfcc4b7.png') no-repeat; }
+.application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira, .application-logo-salesforce, .application-logo-sugarcrm, .application-logo-workflow_max { background: url('/images/application-logo-s4ef3907dbd.png') no-repeat; }
+
 
 /* Google sync status icons */
 .sync-status-sprite, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.freshdesk, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.google { background: url('/images/sync-status-sfc752d10f8.png') no-repeat; }
@@ -67,7 +68,7 @@ ul.activityfeed li div.preview_pic img { width: 40px; height: 40px; }
 .left_connected { position: relative; left: 3px; border-right: 0px; margin: 12px 0px; }
 
 .ui-list_with_icon { margin-left: 0; padding-top: 5px; list-style: none; margin: 0px; padding: 0px; }
-.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1317017399') no-repeat 3px 9px; list-style-type: none; }
+.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1325141607') no-repeat 3px 9px; list-style-type: none; }
 .ui-list_with_icon li { padding: 4px 0px 4px 18px; color: #41658a; position: relative; }
 .ui-list_with_icon li img { position: absolute; left: 0px; top: 4px; }
 .ui-list_with_icon li a { color: #527eaa; font-size: 1.0em; line-height: 1.5; text-decoration: none; }
@@ -664,7 +665,7 @@ h4.border_title { font-size: 16px; border-bottom: 1px solid #ebebeb; padding-bot
 .solution-list .odd a:hover, .solution-list .even a:hover { color: #3399cc; }
 .solution-list .odd a:active, .solution-list .even a:active { color: #4d769f; }
 .solution-list .odd ul, .solution-list .even ul { margin-left: 0; }
-.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1317017399') no-repeat -0.5px 5px; list-style-type: none; }
+.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1325141607') no-repeat -0.5px 5px; list-style-type: none; }
 .solution-list .odd li, .solution-list .even li { line-height: 22px; padding: 0px 0px 4px 18px; color: black; }
 .solution-list .odd li a, .solution-list .even li a { font-size: 13px; color: #21759b; }
 .solution-list .odd li a:visited, .solution-list .even li a:visited { color: #21759b; }
@@ -1180,7 +1181,9 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 
 .application-logo-jira { background-position: 0 -226px; }
 
-.application-logo-sugarcrm { background-position: 0 -261px; }
+.application-logo-salesforce { background-position: 0 -261px; }
+
+.application-logo-sugarcrm { background-position: 0 -311px; }
 
 .application-logo-workflow_max-small { background-position: 0 -296px; }
 
@@ -1544,6 +1547,7 @@ a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; b
 .crm_contact_widget .content { width: auto; }
 .crm_contact_widget .title { overflow: hidden; padding: 0; margin: 0; border-bottom: #e5e5e5 solid 1px; }
 .crm_contact_widget .name { background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat; padding: 0 0 10px 35px; }
+.crm_contact_widget .salesforce-name { background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat; padding: 0 0 10px 35px; }
 .crm_contact_widget #multiple-contacts { width: 55px; float: right; }
 .crm_contact_widget #contact-name { color: #000; font-size: 14px; }
 .crm_contact_widget #contact-desig { font-size: 11px; font-weight: normal; }

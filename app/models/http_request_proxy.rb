@@ -33,7 +33,10 @@ class HttpRequestProxy
       end
       resource = resource ? "/" + resource : ""
       remote_url = domain + resource
+
+      if auth_header.blank?
       auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
+      end
       options = Hash.new
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line

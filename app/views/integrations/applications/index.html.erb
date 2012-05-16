@@ -10,8 +10,13 @@
 					<div class="logo application-logo-<%= application.name %>"></div>
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
-					  if i_app_index.nil?%>
-		  	    		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>	
+					  if i_app_index.nil?
+					  	if application[:options][:direct_install].blank? %>
+					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+					  	<% else %>
+					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", url_for(:controller => 'integrations/installed_applications', :action => 'install', :id => application.id) , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable"), :method => :put %>		
+					  	<% end %>
+		  	    		
 					<%else%>
 		  	    		<%= link_to image_tag("symbols/setting.png"), configure_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
 		  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	

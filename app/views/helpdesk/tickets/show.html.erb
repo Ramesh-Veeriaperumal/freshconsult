@@ -1,8 +1,7 @@
 <% content_for :sidebar do -%>
-
-  <% if is_application_installed?("sugarcrm")  %>   
      <%= render :partial => "/helpdesk/integrations/sugarcrm", :locals => {:user => @ticket.requester} %>
-  <% end %>             
+	 <%= render :partial => "/helpdesk/integrations/salesforce", :locals => {:user => @ticket.requester} %>
+  
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
