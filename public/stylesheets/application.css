@@ -3,7 +3,7 @@
 /* Importing admin icons */
 .admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-sfc937d85a5.png') no-repeat; }
 
-.application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira, .application-logo-sugarcrm { background: url('/images/application-logo-s0309baee2e.png') no-repeat; }
+.application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira, .application-logo-sugarcrm, .application-logo-workflow_max-small, .application-logo-workflow_max { background: url('/images/application-logo-s5f9bfcc4b7.png') no-repeat; }
 
 /* Google sync status icons */
 .sync-status-sprite, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.freshdesk, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.google { background: url('/images/sync-status-sfc752d10f8.png') no-repeat; }
@@ -223,7 +223,7 @@ h4.title { font-size: 1.1em; font-weight: bold; }
 .request_details .request-cnt-first div.description .app-link { position: absolute; margin-left: -20px; margin-top: 38px; }
 .request_details .request-cnt-first div.description .user_details { color: #777777; padding: 13px 20px 0 25px; }
 .request_details .request-cnt-first div.description .user_details .preview_pic { left: -5px; }
-.request_details .request-cnt-first div.description .user_details .info { margin-top: 5px; }
+.request_details .request-cnt-first div.description .user_details .info { margin-top: 3px; margin-left:46px;}
 .request_details .request-cnt-first div.description .user_details .light { font-style: italic; color: #afafaf; }
 .request_details .request-cnt-first div.description .user_details .loading-edit { position: absolute; width: 16px; height: 11px; margin: 3px 8px; }
 .request_details .facebook_post { overflow: hidden; *zoom: 1; }
@@ -1211,6 +1211,10 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .application-logo-jira { background-position: 0 -226px; }
 
 .application-logo-sugarcrm { background-position: 0 -261px; }
+
+.application-logo-workflow_max-small { background-position: 0 -296px; }
+
+.application-logo-workflow_max { background-position: 0 -313px; }
 
 .deactivated li { background: #f8f8f8; padding-bottom: 0px; }
 .deactivated li a.item_info { color: #666666; font-size: 1.16em; padding-top: 4px; display: block; }

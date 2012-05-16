@@ -1340,9 +1340,14 @@ table.summary-report{
 		label, div.fields label{
 			font-size:13px;
 			color:#333333;
-		}			
+		}
 		div.field{
 			width:23%;
+			float:left;
+			margin-left:2%;
+		}
+		div.field-35{
+			width:33%;
 			float:left;
 			margin-left:2%;
 		}
@@ -1368,7 +1373,7 @@ table.summary-report{
 			border-top:1px solid #e3e3e3;
 			.app-logo{
 				position:absolute;
-				width:51px;
+				width:64px;
 				top:0;
 				left:0;
 				padding-right:25px;

@@ -214,6 +214,11 @@ module Helpdesk::TicketsHelper
       last_reply_by  = (ticket.reply_name || '')+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
       last_reply_content = last_conv.body_html
+      unless last_reply_content.blank?
+        doc = Nokogiri::HTML(last_reply_content)
+        doc.at_css("div.freshdesk_quote").remove unless doc.at_css("div.freshdesk_quote").blank?
+        last_reply_content = doc.at_css("body").inner_html 
+      end
     end
     content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+

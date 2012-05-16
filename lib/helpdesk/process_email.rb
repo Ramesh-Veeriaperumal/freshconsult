@@ -2,7 +2,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
-
+  
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   def perform
@@ -11,7 +11,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       account.make_current
-      
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
@@ -227,23 +226,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email, ticket.email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
-      if can_be_added_to_ticket?(ticket,user)
+      if can_be_added_to_ticket?(ticket,user)        
+        body = show_quoted_text(params[:text],ticket.reply_email)
+        body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
-          :body => show_quoted_text(params[:text],ticket.reply_email),
-          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), ticket.reply_email),
+          :body => body,
+          :body_html => body_html ,
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )
-        note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
         
         begin
           email_cmds_regex = get_email_cmd_regex(ticket.account)
-          note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,ticket.reply_email) if(!params[:text].blank? && email_cmds_regex)
-          note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), ticket.reply_email) if(!params[:html].blank? && email_cmds_regex)
+          note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
+          note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
         end
@@ -330,7 +331,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     original_msg = text[0, index]
     old_msg = text[index,text.size]
-   
+    
+    #Sanitizing the split code   
+    original_msg = Nokogiri::HTML(original_msg).at_css("body").inner_html unless original_msg.blank?
+    old_msg  = Nokogiri::HTML(old_msg).at_css("body").inner_html unless old_msg.blank?
+    
+  
     unless old_msg.blank?
      original_msg = original_msg +
      "<div class='freshdesk_quote'>" +
