@@ -1,31 +1,11 @@
-	
-	<%@summary.each do |key,value|%>
-			<%= render :partial => "/reports/survey_reports/list_content", :locals => {:content => value,:is_list => false} %>
+<%= include_stylesheets :satisfaction  %>
+
+   <%@summary.each do |key,value|%>
+			<%= render :partial => "/reports/survey_reports/details_header", :locals => {:content => value} %>
    <%end%>
 
-
-<div class="titlebar">Feedback
-	<%sel_link = (params[:rating].blank?) ? "all_link" : (params[:rating].to_i == Survey::HAPPY) ? "happy_link" : (params[:rating].to_i == Survey::UNHAPPY) ? "unhappy_link" : "neutral_link"%>
-	<div class="floatright <%=sel_link%>">
-		<%= link_to_remote "All",{:url => {:action =>'report_details', :entity_id =>params[:entity_id], :category=>params[:category]},:update => "report_list"}, {:class => "all_link"}  %> |
-		<%= link_to_remote "Happy",{:url => {:action =>'report_details', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::HAPPY},:update => "report_list"}, {:class => "happy_link"}  %> |
-		<%= link_to_remote "Neutral",{:url => {:action =>'report_details', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::NEUTRAL},:update => "report_list"}, {:class => "neutral_link"}  %> | 
-		<%= link_to_remote "Not Happy",{:url => {:action =>'report_details', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::UNHAPPY},:update => "report_list"}, {:class => "unhappy_link"}  %>
-	</div>			
+<div id="report_feedback">
+	<%@summary.each do |key,value|%>
+			<%= render :partial => "/reports/survey_reports/feedbacks" %>
+   <%end%>
 </div>
-
-<%@remarks.each do |remarks|%>
-<div class="usercomment">
-	<%smiley = (remarks[:rating].to_i == Survey::HAPPY) ? "happysmallsmiley": (remarks[:rating].to_i == Survey::UNHAPPY) ? "sadsmallsmiley" : "oksmallsmiley"%>
-	<div class="smallsmiley floatleft <%=smiley%>"></div>
-	<div class="comment floatleft">
-		<div><strong><%=remarks[:name]%></strong> <span><%=remarks[:created_at].strftime("%H:%M %p, %b %Y")%></span></div>
-	    <%=remarks[:body]%>
-	</div>
-</div>
-<%end%>
-<%if @remarks.blank?%>
-<div class="usercomment">
-	Nobody has given any feedback.
-</div>
-<%end%>

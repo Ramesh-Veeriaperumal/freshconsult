@@ -4,7 +4,7 @@
 				<%if(params[:category].blank? || params[:category]=="agent") %>
 					<% user = User.find_by_id(content[:entity_id])%>
 					<%=user_avatar(user)%>
-				<%end%>	
+				<%end%>
 					<div class="floatleft agentname"><%=content[:name]%><div><%=content[:title]%></div></div>									
 			</li>
 			<% @rating = content[:rating].sort_by{ |key,val| val } %>
@@ -17,7 +17,7 @@
 				</div>
 			</li>
 			
-			<li>
+			<li class="sub_rating">
 				<div style="overflow: hidden;">					
 					<div class="<%=@rating[1][0]%>smallsmiley smallsmiley floatleft"></div>
 					<% rating_per = ((@rating[1][1]*100)/content[:total]).to_f.round %>

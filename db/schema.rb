@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120503111200) do
+ActiveRecord::Schema.define(:version => 20120515112054) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -1025,7 +1025,9 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.integer  "score_trigger"
   end
 
-  create_table "survey_handles", :force => true do |t|
+  create_table "survey_handles", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "account_id",       :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
     t.string   "id_token"
@@ -1037,14 +1039,21 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.integer  "survey_result_id", :limit => 8
   end
 
-  create_table "survey_remarks", :force => true do |t|
+  add_index "survey_handles", ["id"], :name => "survey_handles_id"
+
+  create_table "survey_remarks", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "account_id",       :limit => 8
     t.integer  "note_id",          :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "survey_result_id", :limit => 8
   end
 
-  create_table "survey_results", :force => true do |t|
+  add_index "survey_remarks", ["id"], :name => "survey_remarks_id"
+
+  create_table "survey_results", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
     t.integer  "account_id",       :limit => 8
     t.integer  "survey_id",        :limit => 8
     t.integer  "surveyable_id",    :limit => 8
@@ -1056,6 +1065,8 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "survey_results", ["id"], :name => "survey_results_id"
 
   create_table "surveys", :force => true do |t|
     t.integer  "account_id", :limit => 8

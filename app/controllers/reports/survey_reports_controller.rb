@@ -1,5 +1,7 @@
 class Reports::SurveyReportsController < ApplicationController
 	
+	before_filter { |c| c.requires_permission :manage_reports }
+		
 	include Reports::SurveyReport
 	
 	def index
@@ -7,8 +9,7 @@ class Reports::SurveyReportsController < ApplicationController
 		if params[:category].blank? || params[:category] == "agent"
 			@reports_list = SurveyResult.fetch_agent_report(current_account.id,conditional_params)
 		elsif params[:category] == "group"
-			@reports_list = SurveyResult.fetch_group_report(current_account.id,conditional_params)
-			puts "GROUP REPORTS LIST >>>> #{@reports_list.to_yaml}"
+			@reports_list = SurveyResult.fetch_group_report(current_account.id,conditional_params)			
 		else
 			@reports_list = SurveyResult.fetch_company_report(current_account.id,conditional_params)
 		end		
@@ -30,6 +31,20 @@ class Reports::SurveyReportsController < ApplicationController
 		end				
 		
 		render :partial => 'report_details'
+		
+	end
+	
+	def feedbacks
+		
+		if params[:category].blank? || params[:category] == "agent"			
+			@remarks = SurveyResult.fetch_agent_report_details(current_account.id,conditional_params)
+		elsif params[:category] == "group"
+			@remarks = SurveyResult.fetch_group_report_details(current_account.id,conditional_params)
+		else 
+			@remarks = SurveyResult.fetch_company_report_details(current_account.id,conditional_params)
+		end
+		
+		render :partial => 'feedbacks'
 		
 	end
 	

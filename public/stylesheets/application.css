@@ -67,7 +67,7 @@ ul.activityfeed li div.preview_pic img { width: 40px; height: 40px; }
 .left_connected { position: relative; left: 3px; border-right: 0px; margin: 12px 0px; }
 
 .ui-list_with_icon { margin-left: 0; padding-top: 5px; list-style: none; margin: 0px; padding: 0px; }
-.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1317017399') no-repeat 3px 9px; list-style-type: none; }
+.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1337001488') no-repeat 3px 9px; list-style-type: none; }
 .ui-list_with_icon li { padding: 4px 0px 4px 18px; color: #41658a; position: relative; }
 .ui-list_with_icon li img { position: absolute; left: 0px; top: 4px; }
 .ui-list_with_icon li a { color: #527eaa; font-size: 1.0em; line-height: 1.5; text-decoration: none; }
@@ -666,7 +666,7 @@ h4.border_title { font-size: 16px; border-bottom: 1px solid #ebebeb; padding-bot
 .solution-list .odd a:hover, .solution-list .even a:hover { color: #3399cc; }
 .solution-list .odd a:active, .solution-list .even a:active { color: #4d769f; }
 .solution-list .odd ul, .solution-list .even ul { margin-left: 0; }
-.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1317017399') no-repeat -0.5px 5px; list-style-type: none; }
+.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1337001488') no-repeat -0.5px 5px; list-style-type: none; }
 .solution-list .odd li, .solution-list .even li { line-height: 22px; padding: 0px 0px 4px 18px; color: black; }
 .solution-list .odd li a, .solution-list .even li a { font-size: 13px; color: #21759b; }
 .solution-list .odd li a:visited, .solution-list .even li a:visited { color: #21759b; }
@@ -1668,9 +1668,11 @@ a.submit_link:hover { text-decoration: none; }
 
 .usercomment { border-bottom: 1px dotted #e5e5e5; margin: 0; }
 
-.agentreport > ul { margin: 0; padding: 0; }
+.agentreport > ul { margin: 0 0 0 25px; padding: 0; }
 
-.agentreport > ul > li { list-style: none; padding: 0; margin-left: 40px; float: left; overflow: hidden; }
+.agentreport > ul > li { list-style: none; padding: 0; margin-left: 65px; float: left; overflow: hidden; }
+
+.agentreport > ul > li.sub_rating { margin-top: -8px; }
 
 .floatleft { float: left; }
 
@@ -1680,13 +1682,13 @@ a.submit_link:hover { text-decoration: none; }
 
 .smallphoto { width: 30px !important; height: 30px !important; }
 
-.agentname { font-weight: bold; font-size: 14px; width: 180px; }
+.agentname { font-weight: bold; font-size: 14px; width: 180px; margin-top: 9px; }
 
-.agentname > div { font-weight: normal; font-size: 12px; margin-top: 3px; }
+.agentname > div { font-weight: normal; font-size: 12px; }
 
 .happy { background: transparent url("/images/smile.jpg") 0 0 no-repeat; box-sizing: border-box; width: 46px; height: 44px; margin-right: 5px; }
 
-.bignum { font-size: 28px; }
+.bignum { font-size: 20px; margin: 2px 0 0 7px; }
 
 .bignum > span { font-size: 16px; font-weight: normal; }
 
@@ -1714,23 +1716,23 @@ a.submit_link:hover { text-decoration: none; }
 
 .agent_report_list { color: #000; }
 
-.smallsmiley, .mediumsmiley, .bigsmiley { box-sizing: border-box; background-image: url(../images/smiley.png); background-repeat: no-repeat; }
+.smallsmiley, .mediumsmiley, .bigsmiley { box-sizing: border-box; background-repeat: no-repeat; }
 
-.smallsmiley { width: 18px; height: 18px; margin-top: 7px; }
+.smallsmiley { width: 20px; height: 20px; margin-top: 7px; }
 
-.mediumsmiley { width: 58px; height: 58px; }
+.mediumsmiley { width: 42px; height: 42px; }
 
-.happymediumsmiley { background-image: url(../images/happy_48.png); }
+.happymediumsmiley { background-image: url(../images/happy-smily-tab.png); }
 
-.neutralmediumsmiley { background-image: url(../images/neutral_48.png); }
+.neutralmediumsmiley { background-image: url(../images/neutral-smily-tab.png); }
 
-.unhappymediumsmiley { background-image: url(../images/unhappy_48.png); }
+.unhappymediumsmiley { background-image: url(../images/unhappy-smily-tab.png); }
 
-.happysmallsmiley { background-image: url(../images/happy_18.png); }
+.happysmallsmiley { background-image: url(../images/happy-smily-small.png); }
 
-.neutralsmallsmiley { background-image: url(../images/neutral_18.png); }
+.neutralsmallsmiley { background-image: url(../images/neutral-smily-small.png); }
 
-.unhappysmallsmiley { background-image: url(../images/unhappy_18.png); }
+.unhappysmallsmiley { background-image: url(../images/unhappy-smily-small.png); }
 
 .smileytext { margin: 8px 0 0 5px; }
 

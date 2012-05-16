@@ -1,4 +1,7 @@
 class SurveyResult < ActiveRecord::Base
+	
+  belongs_to_account
+    
   has_one :survey_remark, :dependent => :destroy
   belongs_to :surveyable, :polymorphic => true
   
@@ -15,10 +18,11 @@ class SurveyResult < ActiveRecord::Base
     note.save
     
     create_survey_remark({
+      :account_id => account_id,
       :note_id => note.id
     })
     
-    add_support_score
+    # add_support_score
   end
   
   def happy?
@@ -63,7 +67,7 @@ class SurveyResult < ActiveRecord::Base
   end
   
   def self.fetch_agent_report_details(account_id,condition)
-  	sql_query = %(select users.name,survey_remarks.created_at,body,rating from survey_results 
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_remarks.created_at,body,rating from survey_results 
   				  inner join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id inner join 
   				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
   				  users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
@@ -78,7 +82,7 @@ class SurveyResult < ActiveRecord::Base
   end
   
   def self.fetch_group_report_details(account_id,condition)
-  	sql_query = %(select users.name,survey_remarks.created_at,body,rating,agent_groups.user_id,agent_groups.group_id from agent_groups
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_remarks.created_at,body,rating,agent_groups.user_id,agent_groups.group_id from agent_groups
 				  inner join survey_results on survey_results.agent_id=agent_groups.user_id
   				  inner join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id inner join 
   				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
@@ -94,7 +98,7 @@ class SurveyResult < ActiveRecord::Base
   end
   
   def self.fetch_company_report_details(account_id,condition)
-  	sql_query = %(select users.name,survey_remarks.created_at,body,rating from survey_results 
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_remarks.created_at,body,rating from survey_results 
   				  inner join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id inner join 
   				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
   				  users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
@@ -147,4 +151,5 @@ class SurveyResult < ActiveRecord::Base
       SupportScore.happy_customer(surveyable) if happy?
       SupportScore.unhappy_customer(surveyable) if unhappy?
     end
+    
 end
