@@ -123,18 +123,46 @@ en:
     recent: Recent
     popular: Popular
   payment_info: Payment information
+  support:
+      surveys:
+          new:
+              thanks_info: Thanks for taking time to rate our support experience.
+              feedback_info: Your feedback is very much appreciated.
+              feedback_optional: Feedback is optional
+              send: Send
+              thanks: Thank you very much for rating us!
+              sorry: But, really sorry for the inconvenience.
+              happy_info: It has been our pleasure to serve you, glad you were happy with our service
+              neutral_info: Wish you were a little more happy.
+              unhappy_info: We will ensure that we will take extra care the next time around.
+              additional_info: Additionally, you could also share your experience working with us.
   admin:
     surveys:
      successfully_updated: Survey settings has been successfully updated.
+     error_updated: Error while updating survey settings.
      index:    
         title: Survey Settings
+     satisfaction_settings:    
         enable_label: Enable Customer Satisfaction Surveys
         link_text_label: Survey Link Text
         link_text_input: Please take a minute to rate your customer support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Send survey link after the ticket is resolved. Let customers give feedback whenever they want
-        send_while_option2: Send survey link in every email. Let customers give feedback whenever they want.
-            
+        send_while_option1: Send survey link in every email. Let customers give feedback whenever they want.
+        send_while_option2: Send survey link after the ticket is resolved. Let customers give feedback whenever they want        
+     scoreboard_ratings:
+        enable_scoreboard_label: Enable Support Scoreboard
+        about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
+        points_table_title: Support Scoreboard - Points Table
+        when_resolution_label: When resolution is
+        point_tobe_awarded_label: Points to be awarded
+        fast_resolution_label: Fast (< 1 hr)
+        ontime_resolution_label: On time (Within SLA)
+        late_resolution_label: Late (Overdue)
+        happy_customer_score_label: If the customer says they are "Happy" award %{happy_score} bonus points
+        first_call_resolution_label: First Call Resolution
+        when_customer_label: Bonus points when 
+        happy_customer_label: Happy Customer
+        unhappy_customer_label: Unhappy Customer     
     getting_started:
         send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
@@ -343,6 +371,7 @@ en:
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
+        survey-settings: Survey Settings
         rebranding: Helpdesk Rebranding
         account-settings: Account Settings
         customer-portal: Customer Portal
@@ -1972,12 +2001,15 @@ en:
       customer_title: "Customer Activity Report"
       helpdesk_title_nav: "Helpdesk Activity Report"
       customer_title_nav: "Customer Activity Report"
+      surveys_title_nav: "Survey Report"
+      scoreboard_title_nav: "Leaderboard"
       select_time_period: "Select Time period"
       generate_button: "Generate"
       pie_chart_title_prefix: "Tickets By "
       timeline_chart_title: "Tickets Received vs Resolved"
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
+      satisfaction_title: "Satisfaction Report"
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
@@ -2013,6 +2045,27 @@ en:
           view_between: View report between
           from: From
           to: To
+      scoreboard_reports:
+        champions_title: Champions
+        sharpshooter_title: Sharp Shooters
+      survey_reports:
+        list:
+            no_feedback: Nobody has given any feedback during this time.
+        list_content:
+              rating_msg_none: nobody is %{rating}
+              rating_msg_single: only one is %{rating}
+              rating_msg_multiple: %{count} are %{rating}
+              rating_primary_msg_single: only one customer is %{rating}
+              rating_primary_msg_multiple: %{count} customers are %{rating}
+              happy: happy
+              neutral: neutral
+              unhappy: unhappy
+        sidebar:
+          from: From
+          to: To
+          filter_by: Filter By
+          view_report_date: View reports during
+
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"

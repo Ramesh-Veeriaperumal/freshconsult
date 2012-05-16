@@ -4,6 +4,8 @@ class Support::SurveysController < ApplicationController
   def new
     @rating = Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], Survey::HAPPY)
     @survey_handle.create_survey_result @rating
+    @account = Account.find_by_id @survey_handle.survey[:account_id]
+    render :partial => 'new'
   end
   
   def create

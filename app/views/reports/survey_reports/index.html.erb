@@ -1,0 +1,20 @@
+<link type="text/css" rel="stylesheet" media="screen, print, projection" href="/stylesheets/reports.css?1335346881">
+<div id="report-container" class="report-container">
+<div id="ticket-toolbar" class="toolbar">
+		<span class="floatr">
+			<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
+		</span>
+		<h3 class="title" id="report-main-title">		          
+		  <%= t('reports.satisfaction_title') %><br />		  
+		</h3>
+		<span id="date_range_title" style="align:left"><%= params[:date_range] %></span>		                                                        
+</div>
+
+<% content_for :sidebar do %>
+	<%= render :partial => "/reports/survey_reports/sidebar" %>
+<%end%>
+	
+ <div id="report_list">
+	<%= render :partial => "/reports/survey_reports/list" %>
+</div>
+</div>

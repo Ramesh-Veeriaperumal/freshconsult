@@ -159,10 +159,11 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def send_reply_email
+      puts "<<<< THIS IS FROM REPLY METHOD >>>> #{request.host}"
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , :bcc_emails =>validate_emails(params[:bcc_emails])})  
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , :bcc_emails =>validate_emails(params[:bcc_emails]) , :req_host => request.host , :req_port => request.port })  
       flash[:notice] = t(:'flash.tickets.reply.success')
     end
 

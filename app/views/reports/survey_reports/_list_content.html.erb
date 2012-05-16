@@ -1,0 +1,39 @@
+<div class="agentreport">
+		<ul>
+			<li class="nospace">
+				<%if(params[:category].blank? || params[:category]=="agent") %>
+					<% user = User.find_by_id(content[:entity_id])%>
+					<%=user_avatar(user)%>
+				<%end%>
+					<div class="floatleft agentname"><%=content[:name]%><div><%=content[:title]%></div></div>									
+			</li>
+			<% @rating = content[:rating].sort_by{ |key,val| val } %>
+			<li>
+				<div class="<%=@rating[2][0]%>mediumsmiley mediumsmiley floatleft"></div>
+				<% rating_per = ((@rating[2][1]*100)/content[:total]).to_f.round %>
+				<% count_title = (@rating[2][1]==1) ? t('.rating_primary_msg_single', :rating => t('.'+@rating[2][0])) : t('.rating_primary_msg_multiple', :count => @rating[2][1], :rating => t('.'+@rating[2][0]))%>
+				<div class="bignum floatleft"><%=rating_per%><span>%</span>
+					<div class="bottomtext"><%=count_title%></div>
+				</div>
+			</li>
+			
+			<li class="sub_rating">
+				<div style="overflow: hidden;">					
+					<div class="<%=@rating[1][0]%>smallsmiley smallsmiley floatleft"></div>
+					<% rating_per = ((@rating[1][1]*100)/content[:total]).to_f.round %>
+					<% count_title = (@rating[1][1]==0) ? t('.rating_msg_none', :rating => t('.'+@rating[1][0])) : (@rating[1][1]==1) ? t('.rating_msg_single', :rating => t('.'+@rating[1][0])) : t('.rating_msg_multiple', :count => @rating[1][1], :rating => t('.'+@rating[1][0]))%>
+					<div class="floatleft smileytext"><b><%=rating_per%>%</b>, <%=count_title%></div>
+				</div>
+				<div style="overflow: hidden;">
+					<div class="<%=@rating[0][0]%>smallsmiley smallsmiley floatleft"></div>
+					<% rating_per = ((@rating[0][1]*100)/content[:total]).to_f.round %>
+					<% count_title = (@rating[0][1]==0) ? t('.rating_msg_none', :rating => t('.'+@rating[0][0])) : (@rating[0][1]==1) ? t('.rating_msg_single', :rating => t('.'+@rating[0][0])) : t('.rating_msg_multiple', :count => @rating[0][1], :rating => t('.'+@rating[0][0]))%>					
+					<div class="floatleft smileytext"><b><%=rating_per%>%</b>, <%=count_title%></div>
+				</div>
+				
+				
+			</li>			
+		</ul>
+	</div>
+	
+	

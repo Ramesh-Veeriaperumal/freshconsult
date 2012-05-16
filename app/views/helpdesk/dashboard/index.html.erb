@@ -5,7 +5,7 @@
   	<h3 class="title"><%= t(".todo_title") %></h3>
     <%= render :partial => '/helpdesk/reminders/reminders', 
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
-  </div>                           
+  </div>
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 

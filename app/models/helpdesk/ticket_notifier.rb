@@ -1,4 +1,4 @@
-class Helpdesk::TicketNotifier < ActionMailer::Base
+class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -71,7 +71,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note)
+                  :survey_handle => SurveyHandle.create_handle(ticket, note), :host => options[:host], :port => options[:port]
     headers       "Reply-to" => "#{reply_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"

@@ -1,0 +1,11 @@
+<%= include_stylesheets :satisfaction  %>
+
+   <%@summary.each do |key,value|%>
+			<%= render :partial => "/reports/survey_reports/details_header", :locals => {:content => value} %>
+   <%end%>
+
+<div id="report_feedback">
+	<%@summary.each do |key,value|%>
+			<%= render :partial => "/reports/survey_reports/feedbacks" %>
+   <%end%>
+</div>

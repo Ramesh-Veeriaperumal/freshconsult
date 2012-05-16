@@ -54,8 +54,11 @@ stylesheets:
   subscription:
     - public/stylesheets/bootstrap.css
     - public/stylesheets/bootstrap-responsive.css
-    - public/stylesheets/subscription.css    
-
+    - public/stylesheets/subscription.css
+  
+  satisfaction:
+    - public/stylesheets/satisfaction.css      
+  	
 javascripts:
   defaults:
     - public/javascripts/prototype.js
