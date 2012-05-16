@@ -124,7 +124,8 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form .conditionset { border: 1px solid #cfcfcf; margin: 4px 0; }
 .ui-form .conditionset fieldset { *zoom: 1; padding: 5px 0 5px 4px; border-bottom: 1px solid #cfcfcf; background: #efefef; position: relative; }
 .ui-form .conditionset fieldset:after { content: ""; display: table; clear: both; }
-.ui-form .conditionset fieldset * { float: left; width: auto; margin: 2px 4px; }
+.ui-form .conditionset fieldset * { float: left; margin: 2px 4px; }
+.ui-form .conditionset fieldset .nested_field { clear: left; }
 .ui-form .conditionset fieldset label.error, .ui-form .conditionset fieldset label.warning { clear: left; }
 .ui-form .conditionset fieldset .add, .ui-form .conditionset fieldset .delete { position: absolute; margin: 0; padding: 0; cursor: pointer; right: 10px; top: 5px; }
 .ui-form .conditionset fieldset div.controls { width: 95%; }

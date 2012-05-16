@@ -1,6 +1,11 @@
 <%
-   #category_field_value = category.choices.first if category_field_value.blank?
+   stale_entry_found = false
    category_picklist_value = category.picklist_values.find_by_id(category_field_value) unless category_field_value.blank?
+   if category_picklist_value.blank? && !category_field_value.blank?
+      category_field_value = category.choices.first
+      category_picklist_value = category.picklist_values.find_by_id(category_field_value) unless category_field_value.blank?
+      stale_entry_found = true
+   end
    nested_fields = category.nested_ticket_fields.all(:order => 'level asc')
    
    sub_category_choices = category_picklist_value.nil? ? [] : category_picklist_value.choices
@@ -35,9 +40,9 @@
 
 <% if nested_fields.size > 1 %>
    <%
-      sub_category_picklist_value = category_picklist_value.sub_picklist_values.find(sub_category_value) unless sub_category_value.blank?
+      sub_category_picklist_value = category_picklist_value.sub_picklist_values.find(sub_category_value) if !sub_category_value.blank? && !stale_entry_found
       item_choices = sub_category_picklist_value.nil? ? [] : sub_category_picklist_value.choices
-      item_value = ticket.get_ff_value(nested_fields[1].name) unless sub_category_value.blank?
+      item_value = ticket.get_ff_value(nested_fields[1].name) if !sub_category_value.blank? && !stale_entry_found
    %>
 
    <%= construct_ticket_nested_element :helpdesk_ticket, nested_fields[0], nested_fields[1], item_choices, nested_fields[1].label, "nested_field level3", category.required,item_value if type == "edit"%>

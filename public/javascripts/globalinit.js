@@ -12,8 +12,13 @@ var $J = jQuery.noConflict();
    $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
    $.validator.addClassRules("tweet", { tweet: 140 });
    $.validator.addClassRules("facebook", { tweet: 8000 });
-    
- 
+   $.validator.addMethod("notEqual", function(value, element, param) {
+      var target = $(param).unbind(".validate-equalTo").bind("blur.validate-equalTo", function() {
+        $(element).valid();
+      });
+      return value != target.val();
+    }, "This element should not be equal to");
+
    $.validator.addMethod("multiemail", function(value, element) {
        if (this.optional(element)) // return true on optional element
          return true;

@@ -69,10 +69,10 @@
            hideNestedTextarea();
       });
       $("#nest-category").change(function(ev){    
-          $("#nest-subcategory").html(nestedTree.getSubcategory($(this).val())).trigger("change");
+          $("#nest-subcategory").html(nestedTree.getSubcategory($(this).children('option:selected').text())).trigger("change");
       });
       $("#nest-subcategory").change(function(ev){
-          $("#nest-item").html(nestedTree.getItems($("#nest-category").val(), $(this).val()));
+          $("#nest-item").html(nestedTree.getItems($("#nest-category option:selected").text(), $(this).children("option:selected").text()));
       });               
       $("#nested-edit-button").click(function(ev){ 
           ev.preventDefault();          
@@ -528,7 +528,8 @@
               },                          
               agentlevel2label: {
                 "required":{
-                  depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") }
+                  depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") },
+                  notEqual: "#agentlabel"
                 }
               },
               customerslevel2label: {
@@ -538,12 +539,12 @@
               },                          
               agentlevel3label: {
                 "required":{
-                  depends: function(element){ return nestedTree.third_level }
+                  depends: function(element){ return (($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level); }
                 }
               },
               customerslevel3label: {
                 "required":{
-                  depends: function(element){ return nestedTree.third_level }
+                  depends: function(element){ return (($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level); }
                 }
               }
             },

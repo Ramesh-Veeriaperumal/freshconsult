@@ -394,12 +394,14 @@ a.addchoice:hover{
 			padding:5px 0 5px 4px;
 			border-bottom:1px solid #cfcfcf;
 			background:#efefef;
-			position:relative;
-			
+			position:relative;			
 			*{
 				float:left;
-				width:auto;
 				margin:2px 4px;
+			}
+
+			.nested_field{
+				clear: left;
 			}
 			
 			label.error, label.warning{

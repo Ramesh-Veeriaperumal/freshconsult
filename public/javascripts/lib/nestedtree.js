@@ -17,6 +17,19 @@
  * 3. A set of select options for each category, subcategory or item
  */ 
 
+var $t = Class.create({
+  initialize: function(id) {
+    this.id = id || 0; 
+    this.children = $H();
+  },
+  set: function(key, child){
+    this.children.set(key, child);
+  },
+  get: function(key){
+    return this.children.get(key);
+  }
+});
+
 var NestedField = Class.create({
   initialize: function(data) {                  
     this._blank = "...";   
@@ -41,14 +54,14 @@ var NestedField = Class.create({
   parseObject: function(_obj){
 	_self = this; 
 	_obj.each(function(_category){
-		_self.tree.set(_category[0], $H());     
+		_self.tree.set(_category[0], new $t(_category[1]));     
 		if(!_category[2]) return;
 		    _category[2].each(function(_subcategory){
-				 _self.tree.get(_category[0]).set(_subcategory[0], $H());
+				 _self.tree.get(_category[0]).set(_subcategory[0], new $t(_subcategory[1]));
          _self.setSecondPresent();
 				 if(!_subcategory[2]) return;
 					_subcategory[2].each(function(_item){
-					    _self.tree.get(_category[0]).get(_subcategory[0]).set(_item[0], $H());
+					    _self.tree.get(_category[0]).get(_subcategory[0]).set(_item[0], new $t(_item[1]));
               _self.setThirdPresent();
 					});
 			});
@@ -68,55 +81,55 @@ var NestedField = Class.create({
                if(_item == '') return;
                switch(_caseoption){
                   case 0:
-                     _self.tree.set(_item, $H());
+                     _self.tree.set(_item, new $t());
                      _category = _item;
                   break;
                   case 1:   
-                    _self.tree.get(_category).set(_item, $H());
+                    _self.tree.get(_category).set(_item, new $t());
                     _subcategory = _item;
                     _self.setSecondPresent();
                   break;
                   case 2:
-                    _self.tree.get(_category).get(_subcategory).set(_item, $H());
+                    _self.tree.get(_category).get(_subcategory).set(_item, new $t());
                     _self.setThirdPresent();
                   break;
                }
             }catch(e){            }
         });     
-    console.log(this.tree.toJSON());
+    //console.log(this.tree.toJSON());
   },
   setThirdPresent: function(){ this.third_level = true; },
   setSecondPresent: function(){ this.second_level = true; },  
   getCategory: function(){
       _categories = [];
-      this.tree.each(function(o){  _categories.push("<option>"+o.key+"</option>") });         
+      this.tree.each(function(o){  _categories.push("<option value="+o.value.id+">"+o.key+"</option>") });         
       return _categories.join();
   }, 
   getSubcategory: function(category_key){
       _subcategories = [];
-      if(this.tree.get(category_key))
-        this.tree.get(category_key).each(function(o){ _subcategories.push("<option>"+o.key+"</option>") });          
-      if(!_subcategories.first()) _subcategories = ["<option>"+this._blank+"</option>"];
+      if(this.tree.get(category_key).children)
+        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+o.value.id+">"+o.key+"</option>") });          
+      if(!_subcategories.first()) _subcategories = ["<option value='0'>"+this._blank+"</option>"];
 
-      console.log("subcategory: "+_subcategories);
+      //console.log("subcategory: "+_subcategories);
       return _subcategories.join();   
   },
   getItems: function(category_key, subcategory_key){    
       _items = [];
       if(this.tree.get(category_key))
-        if(this.tree.get(category_key).get(subcategory_key))
-            this.tree.get(category_key).get(subcategory_key).each(function(o){ _items.push("<option>"+o.key+"</option>") });
+        if(this.tree.get(category_key).get(subcategory_key).children)
+            this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value="+o.value.id+">"+o.key+"</option>") });
 
-      console.log("ITEMS: "+_items);
+      //console.log("ITEMS: "+_items);
       return (_items.first()) ? _items.join() : false;
   },
   toString: function(){
       _self = this, _treeString = "";
       _self.tree.each(function(_category){
          _treeString += _category.key + "\n";
-         _category.value.each(function(_subcategory){
+         _category.value.children.each(function(_subcategory){
             _treeString += "\t" + _subcategory.key + "\n";  
-            _subcategory.value.each(function(_item){
+            _subcategory.value.children.each(function(_item){
                 _treeString += "\t\t" + _item.key + "\n";      
             });
          });
@@ -127,15 +140,15 @@ var NestedField = Class.create({
         _self = this, _category_array = [];
         _self.tree.each(function(_category){  
             var _subcategory_array = [];
-            _category.value.each(function(_subcategory){  
+            _category.value.children.each(function(_subcategory){  
                 var _item_array = [];
-                _subcategory.value.each(function(_item){
-                   _item_array.push([_item.key, 0]);  
+                _subcategory.value.children.each(function(_item){
+                   _item_array.push([_item.key, _item.value.id]);  
                });                                              
-               _subcategory_array.push((_item_array.size()) ? [_subcategory.key, 0, _item_array] : [_subcategory.key, 0]);               
+               _subcategory_array.push((_item_array.size()) ? [_subcategory.key, _subcategory.value.id, _item_array] : [_subcategory.key, _subcategory.value.id]);               
             });               
-           _category_array.push((_subcategory_array.size()) ? [_category.key, 0, _subcategory_array] : [_category.key, 0]);
+           _category_array.push((_subcategory_array.size()) ? [_category.key, _category.value.id, _subcategory_array] : [_category.key, _category.value.id]);
         });          
         return _category_array;      
-  },
+  }
 });

@@ -1,6 +1,6 @@
 <% content_for :pagefixed do %>
   <%= stylesheet_link_tag "autosuggest_inquisitor" %>
-  <%= javascript_include_tag "autosuggest" %>
+  <%= include_javascripts :conditional %>
   <% javascript_tag do %>
   	// Condition Parsing 
   	// This template contains the dom population information 
@@ -81,17 +81,24 @@
   					c_dom = FactoryUI.dropdown(choices, "value");
   					jQuery(c_dom).val(initFeed["value"]);
   				}	
-  				break;
+  			break;
+        case 'nested_field':
+          _opts = { category_name: filter.name, 
+                    nested_fields: filter.nested_fields,
+                    type: compName, 
+                    initData: initFeed };
+          if(!filter.tree) filter.tree = new NestedField(filter.choices);          
+          c_dom = jQuery("<div class='nested_field' />").nestedselect(filter.tree, _opts);
+        break;
 				
   			default:
-  				c_dom = "";
+  			c_dom = "";
   		}			
   		return c_dom;
   	}
   	var active_email_body = null;
   <% end %>
-
-  <%= javascript_include_tag "condition-filter" %>
+  
 <% end %>
 
 <% content_for :onload_script do %>	
