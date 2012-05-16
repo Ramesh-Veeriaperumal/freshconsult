@@ -655,11 +655,14 @@
          showFieldDialog(this); 
       });
 
-      $("#SaveForm").click(function(e){
+      $("#SaveForm").click(function(ev){
+         ev.preventDefault();
          var jsonData = getCustomFieldJson();
          $("#field_values").val(jsonData.toJSON());
          this.value = $(this).data("commit")
          $(this).prop("disabled", true);
+         $("#Updateform").trigger("submit");
+         //console.log(this);
          //console.log(jsonData.toJSON());
          //return false;
       });
