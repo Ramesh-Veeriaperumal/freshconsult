@@ -1929,7 +1929,7 @@ en:
         copy_settings: "Use the above Tracking ID for all portals"
     sugarcrm:
       label: "SugarCRM"
-      helptext: "You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
+      helptext: "<h4>Sugar CRM Integration Help</h4><p><br/> You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
       desc: "You can view contact information from SugarCRM in Freshdesk."
       form:
         domain: "SugarCRM Account URL"
@@ -1938,16 +1938,16 @@ en:
         username: "Username"
         password: "Password"
     workflow_max:
-      label: "Workflow MAX"
-      desc: "You can log time spent on tickets into your Workflow MAX jobs and tasks."
-      helptext: "##### Add Some help text here #####"
+      label: "Workflow Max"
+      desc: "You can log time spent on tickets into your Workflow Max jobs and tasks."
+      helptext: "<h4>Workflow Max Integration Help</h4><p><br/> To integrate Workflow Max time tracking with Freshdesk, you have to get the Account Key and API Key from <a href='mailto:support@workflowmax.com'>WorkflowMax Support</a>.  Enter the keys into the specified fields to complete the integration. <br/><br/>Once integrated, click on any ticket and go to the Time Sheet tab. You may then choose the staff, job and task to add time entries into Workflow Max."
       form:
         workflow_max_note: "Notes text to append"
         workflow_max_note_info: "This text will be appended at the end of the note, with the time spent log."
         api_key: "API Key"
-        api_key_info: "Request the API Key to Workflow MAX support and paste the same here."
+        api_key_info: "Request your API Key from Workflow Max support and paste the same here."
         account_key: "Account Key"
-        account_key_info: "Request the Account Key to Workflow MAX support and paste the same here."
+        account_key_info: "Request your Account Key from Workflow Max support and paste the same here."
         widget_title: "Widget Title"
   widgets:
     contact_widget:

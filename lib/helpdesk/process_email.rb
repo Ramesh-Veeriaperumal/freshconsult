@@ -2,7 +2,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
-  include Helpdesk::StringUtil
   
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
@@ -12,7 +11,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       account.make_current
-      
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
@@ -240,6 +238,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )
+        note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
         
         begin
@@ -308,7 +307,44 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         content_ids  
     end
+  
+  def show_quoted_text(text, address)
+    
+    return text if text.blank?
+    
+    regex_arr = [
+      Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+      Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
+      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
+      Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
+      Regexp.new("<div>\n<br>On.*?wrote:"),
+      Regexp.new("On.*?wrote:"),
+      Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
+      Regexp.new("from:\s*", Regexp::IGNORECASE)
+    ]
+    tl = text.length
 
+    #calculates the matching regex closest to top of page
+    index = regex_arr.inject(tl) do |min, regex|
+        (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
+    end
+    
+    original_msg = text[0, index]
+    old_msg = text[index,text.size]
+    
+    #Sanitizing the split code   
+    original_msg = Nokogiri::HTML(original_msg).at_css("body").inner_html
+    old_msg  = Nokogiri::HTML(old_msg).at_css("body").inner_html unless old_msg.blank?
+    
+  
+    unless old_msg.blank?
+     original_msg = original_msg +
+     "<div class='freshdesk_quote'>" +
+     "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
+     "</div>"
+    end   
+    return original_msg
+end
     def get_envelope_to
       envelope = params[:envelope]
       envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
