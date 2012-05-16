@@ -1775,6 +1775,7 @@ en:
   integrations:
     capsule_crm:
       label: "Capsule CRM"
+      helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
     capsule:
       label: "Capsule CRM"
       desc: "You can view Contact information from Capsule CRM in Freshdesk. This information can be accessed in the Ticket Details page and Contact Details Page."
@@ -1789,6 +1790,7 @@ en:
     freshbooks:
       label: "Freshbooks"
       desc: "You can log time spent on tickets into your Freshbooks projects and tasks."
+      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
       form:
         freshbooks_note: "Notes text"
         freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
@@ -1800,6 +1802,7 @@ en:
     harvest:
       label: "Harvest"
       desc: "You can log time spent on tickets into your Harvest projects and tasks."
+      helptext: "<h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with Freshdesk, type in your <b>Domain name</b> and click on Enable.<br/><br/>Click on a ticket, go to the <b>Time Sheet tab</b>.  You can then type in your Harvest <b>Username</b> and <b>Password</b> to login. Now you can add your time tracking entry into Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you do not have to type in your Harvest credentials each time."
       form:
         domain: "Domain"
         domain_info: "Enter the domain alone without https. Ex: example.harvestapp.com"
@@ -1809,6 +1812,7 @@ en:
     google_contacts:
       label: "Google contacts sync"
       desc: "Periodically synchronize contacts between Google and Freshdesk."
+      helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
       import_success: "Sucessfully imported Google contacts." 
       fetch_problem: "Problem in fetching Google contacts." 
       import: "Import"
@@ -1884,6 +1888,10 @@ en:
     jira:
       label: "Atlassian JIRA"
       desc: "Convert tickets into issues that can be tracked in JIRA."
+      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.x upto the latest version - JIRA 5.<br/><br/>
+        To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
+        To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
+        <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
       form:
         domain: "Domain"
         domain_info: "Enter the complete JIRA account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of JIRA should be exposed to the internet. </span>" 
@@ -1892,19 +1900,11 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
-    sugarcrm:
-      label: "SugarCRM"
-      helptext: "To integrate SugarCRM with Freshdesk, key in your SugarCRM account URL"
-      desc: "You can view contact information from SugarCRM in Freshdesk."
-      form:
-        domain: "SugarCRM Account URL"
-        domain_info: "For example, if your SugarCRM URL is <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , enter <strong> http://mycompany.xyz/sugar </strong><br /><br /> Note: The on-premise variant of SugarCRM should be connected to the internet. </span>" 
-        widget_title: "Widget Title"
-        username: "Username"
-        password: "Password"
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"
+      helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
+        <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
       portal: "Portal"
       account_number: "Enter your Tracking ID"
       inline_help: "Enter the Tracking ID for "
@@ -1915,21 +1915,31 @@ en:
         tracking_id: "Tracking ID for "
         tracking_id_example: "Eg: UA-123456-1"
         copy_settings: "Use the above Tracking ID for all portals"
-
+    sugarcrm:
+      label: "SugarCRM"
+      helptext: "You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
+      desc: "You can view contact information from SugarCRM in Freshdesk."
+      form:
+        domain: "SugarCRM Account URL"
+        domain_info: "For example, if your SugarCRM URL is <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , enter <strong> http://mycompany.xyz/sugar </strong><br /><br /> Note: The on-premise variant of SugarCRM should be connected to the internet. </span>" 
+        widget_title: "Widget Title"
+        username: "Username"
+        password: "Password"
+    workflow_max:
+      label: "Workflow MAX"
+      desc: "You can log time spent on tickets into your Workflow MAX jobs and tasks."
+      helptext: "##### Add Some help text here #####"
+      form:
+        workflow_max_note: "Notes text to append"
+        workflow_max_note_info: "This text will be appended at the end of the note, with the time spent log."
+        api_key: "API Key"
+        api_key_info: "Request the API Key to Workflow MAX support and paste the same here."
+        account_key: "Account Key"
+        account_key_info: "Request the Account Key to Workflow MAX support and paste the same here."
+        widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
-  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
-  freshbooks_helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
-  harvest_helptext: "<h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with Freshdesk, type in your <b>Domain name</b> and click on Enable.<br/><br/>Click on a ticket, go to the <b>Time Sheet tab</b>.  You can then type in your Harvest <b>Username</b> and <b>Password</b> to login. Now you can add your time tracking entry into Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you do not have to type in your Harvest credentials each time."
-  jira_helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.x upto the latest version - JIRA 5.<br/><br/>
-  To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
-  To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
-  <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
-  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
-  google_analytics_helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
-  <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
-  sugarcrm_helptext: "You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list.  "
   reorder: "Reorder"
   reports:
       tab_heading: "Reports"

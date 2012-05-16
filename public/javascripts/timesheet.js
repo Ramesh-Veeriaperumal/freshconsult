@@ -58,10 +58,9 @@ TicketTimesheet.prototype = {
 		   		harvestWidget.resetIntegratedResourceIds()
 		     if (typeof freshbooksWidget != 'undefined' && freshbooksWidget) 
 		   		freshbooksWidget.resetIntegratedResourceIds()
+         if (typeof workflowMaxWidget != 'undefined' && workflowMaxWidget) 
+          workflowMaxWidget.resetIntegratedResourceIds()
         });
-
-
-    //     console.log('Positioning the buttons');
 
     // //Positioning the button container below the integration widgets
     // var widgets_height = jQuery("#timeentry_apps_add").height();
