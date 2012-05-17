@@ -39,7 +39,7 @@ class SurveyResult < ActiveRecord::Base
   				  where users.account_id=#{account_id} )
   		
   	sql_query += "and agents.user_id=#{condition[:entity_id]} " unless condition[:entity_id].blank?
-  	sql_query += "and agents.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
+  	sql_query += "and survey_results.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
   	sql_query += "group by agents.id,rating"
 	survey_reports = Survey.find_by_sql(sql_query)
 	generate_reports_list(survey_reports,"agent")
@@ -52,7 +52,7 @@ class SurveyResult < ActiveRecord::Base
   				  where groups.account_id=#{account_id} )
   		
   	sql_query += "and agent_groups.group_id=#{condition[:entity_id]} " unless condition[:entity_id].blank?
-  	sql_query += "and agent_groups.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
+  	sql_query += "and survey_results.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
   	sql_query += "group by agent_groups.group_id,rating"
 	survey_reports = Survey.find_by_sql(sql_query)
 	generate_reports_list(survey_reports,"group")
