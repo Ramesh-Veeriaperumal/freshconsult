@@ -23,7 +23,7 @@
 	font-size: 14px;
 	max-width: 150px;
 	text-align: left;
-	margin: 12px 0 0 25px;
+	margin: 15px 0 0 25px;
 	line-height: 18px;
 }
 
@@ -35,8 +35,7 @@
 	padding-top: 13px;
 }
 
-.yoda-img{
-	background: url("../images/yoda-img.png") no-repeat;
+.agent-img{
 	width:39px;
 	height:39px;
 	display: block;
@@ -100,10 +99,9 @@
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border:1px solid #f3f3f3;
-	height:39px;
+	min-height:39px;
 	min-width:27%;
-	float: left;
-	/*box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.10);*/
+	float: left;	
 }
 
 .right-box{
@@ -120,7 +118,7 @@
 }
 
 .content-set{
-	margin-bottom: 11px;
+	margin: 30px 0 0 25px;
 	@include clearfix;
 }
 
@@ -130,6 +128,12 @@
 	height:39px;
 	display: block;
 	float: left;
+}
+
+.content-img div.preview_pic img,.agent-img div.preview_pic img{
+	width:39px;
+	height:39px;
+	border-radius:5px;
 }
 
 .content-2-img{
@@ -145,10 +149,9 @@
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
-	height:37px;
-	max-width: 143px;
-	margin-left: 40px;
-	margin-top: 1px;
+	min-height:37px;
+	max-width: 142px;
+	margin: 1px 0 1px 40px;	
 }
 
 .happy-smily-small{
@@ -158,7 +161,7 @@
 	display: block;
 	float: right;
 	position: relative;
-	top: -29px;
+	top: 9px;
 	left: -4px;
 }
 
@@ -169,7 +172,7 @@
 	display: block;
 	float: right;
 	position: relative;
-	top: -29px;
+	top: 9px;
 	left: -4px;
 }
 
@@ -180,7 +183,7 @@
 	display: block;
 	float: right;
 	position: relative;
-	top: -29px;
+	top: 9px;
 	left: -4px;
 }
 
@@ -188,15 +191,17 @@
 	font-size:13px;
 	position: relative;
 	left: 10px;
+	display:block;
+	line-height:15px;
+	padding-top:2px;
 }
 
 .box-date{
 	font-size:11px;
 	font-weight:normal;
-	text-align:center;
-	margin:0 0 0px 10px;
-	position: relative;
-	bottom: 5px;
+	text-align:left;
+	margin:3px 0 0px 10px;
+	display:block;
 }
 
 .box-content{

@@ -1791,4 +1791,8 @@ a.submit_link:hover { text-decoration: none; }
 
 .all_link .all_link, .happy_link .happy_link, .unhappy_link .unhappy_link, .neutral_link .neutral_link { color: black; font-weight: bold; }
 
+.no-feedback { font-size: 16px; font-weight: bold; text-align: center; }
+
+.satisfaction-head { padding: 10px 20px 0; }
+
 /* SURVEY REPORT RELATED STYLES ENDS */
