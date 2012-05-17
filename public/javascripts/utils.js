@@ -419,4 +419,39 @@ active_dialog = null;
     }
   };
 
+  
+  $.fn.animateHighlight = function(originalBg, highlightColor, duration) {
+    var highlightBg = highlightColor || "#FFFF9C";
+    var animateMs = duration || 1500;
+    var originalBg = originalBg || 'transparent';
+    this.stop().css("background-color", highlightBg).animate({backgroundColor: originalBg }, animateMs, function () {
+      jQuery(this).removeAttr('style');
+    });
+  };
+ 
+
 })( jQuery );
+
+
+setCookie = function (name,value,expires_in_days)
+{
+  var exdate=new Date();
+  exdate.setDate(exdate.getDate() + expires_in_days);
+  var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString());
+  document.cookie=name + "=" + c_value;
+}
+
+getCookie = function(name)
+{
+  var i,x,y,ARRcookies=document.cookie.split(";");
+  for (i=0;i<ARRcookies.length;i++)
+  {
+    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+    x=x.replace(/^\s+|\s+$/g,"");
+    if (x==name)
+    {
+      return unescape(y);
+    }
+  }
+}

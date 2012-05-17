@@ -50,7 +50,8 @@
 		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
     jQuery(".filter_item").bind("change", function(){
       jQuery("#save_filter").show();
-      jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved');
+      jQuery("#delete_filter").hide();
+      jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
 			jQuery("#FilterOptions input[name=filter_name]").val("");
       jQuery(".view_filters .active").removeClass("active");
       getFilterData();
