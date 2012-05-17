@@ -250,6 +250,10 @@ module ApplicationHelper
     comment_path(args_hash, 'reply')
   end
   
+  def fwd_path(args_hash)
+    comment_path(args_hash, 'forwarded')
+  end
+  
   def twitter_path(args_hash)
     comment_path(args_hash, 'tweet')
   end

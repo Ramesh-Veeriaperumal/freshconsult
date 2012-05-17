@@ -457,7 +457,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def included_in_cc?(from_email)
-    (cc_email) and  (cc_email.any? {|email| email.include?(from_email) })
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
   
   def cache_old_model
@@ -830,6 +831,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def selected_reply_email
     ( !to_email.blank? &&  account.pass_through_enabled? ) ? to_email : friendly_reply_email
    end
+  
+  def cc_email_hash
+    if cc_email.is_a?(Array) 
+      {:cc_emails => "#{cc_email}", :fwd_emails => []}
+    else
+      cc_email
+    end
+  end
   
   private
   
