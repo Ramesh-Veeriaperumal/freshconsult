@@ -54,7 +54,7 @@
 						<%= t(".addcc") %>
 					</a>
 					<a href="#" class="slim-button"  rel="cc_button" data-input="#include_bcc" data-parent="#bcc-form-container" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_bcc_btn" >
-						<%= t(".addbcc") %>
+						<%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
 					</a>
 					<%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
         </div>

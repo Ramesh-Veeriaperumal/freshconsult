@@ -57,8 +57,6 @@
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
 
-			console.log(formid + " " + link.id );
-
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 
