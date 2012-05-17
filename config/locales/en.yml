@@ -1516,6 +1516,11 @@ en:
   undo: Undo
   total: "Total"
   helpdesk:
+    ticket_notifier:
+        reply:
+            happy: Awesome
+            neutral: Fine
+            unhappy: Not Good
     time_sheets:
       index:
         no_timeentry: "No time entry logged for this ticket"

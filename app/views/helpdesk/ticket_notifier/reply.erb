@@ -6,15 +6,15 @@
 	  <div style="display:table-row;font-size:14px;">
 		<div style="display:table-cell;padding:3px;">
 		<img src="http://admin.freshdesk.com/images/happy-smily.png" />	
-		<%= link_to "Great experience", @survey_handle.survey_url(@ticket, Survey::HAPPY) %>
+		<%= link_to t(".happy"), @survey_handle.survey_url(@ticket, Survey::HAPPY) %>
 		</div>
 		<div style="display:table-cell;padding:3px;">
 		<img src="http://admin.freshdesk.com/images/neutral-smily.png">	
-		<%= link_to "OK experience", @survey_handle.survey_url(@ticket, Survey::NEUTRAL) %>
+		<%= link_to t(".neutral"), @survey_handle.survey_url(@ticket, Survey::NEUTRAL) %>
 		</div>
 		<div style="display:table-cell;padding:3px;">
 		<img src="http://admin.freshdesk.com/images/unhappy-smily.png" />
-		<%= link_to "Not good", @survey_handle.survey_url(@ticket, Survey::UNHAPPY) %>
+		<%= link_to t(".unhappy"), @survey_handle.survey_url(@ticket, Survey::UNHAPPY) %>
 	  </div>
    </div>
 </div>	
