@@ -33,45 +33,23 @@ class Helpdesk::TicketsController < ApplicationController
     unless email.blank?
       requester = current_account.all_users.find_by_email(email) 
       @user_name = email
-      if(requester.blank?)
-        requester_id = 0
+      unless requester.nil?
+        params[:requester_id] = requester.id;
       else
-        requester_id = requester.id
-        @user_name = requester.name unless requester.name.blank?
+        @response_errors = {:no_email => true}
       end
-      params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}, 
-                            { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]}"}];
     end
 
     company_name = params[:company_name]
     unless company_name.blank?
-      @user_name = company_name
-
       company = current_account.customers.find_by_name(company_name)
-      if company.nil?
-        response = {:errors => {:no_company => true}}
-
-        respond_to do |format|      
-          format.html  do
-          end      
-          format.xml do
-            render :xml => response.to_xml
-          end      
-          format.json do
-            render :json => response.to_json
-          end      
-          format.atom do
-          end
-        end
-
-        return false
-
+      unless(company.nil?)
+        params[:company_id] = company.id
       else
-        @user_name = company.name unless company.name.blank?
+        @response_errors = {:no_company => true}
       end
-      params[:data_hash] = [{ "condition" => "users.customer_id", "operator" => "is_in", "value" => company.id}, 
-                            { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:resolved]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]}"}];
     end
+
   end
 
   def load_ticket_filter
@@ -126,28 +104,31 @@ class Helpdesk::TicketsController < ApplicationController
       @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
     end
 
-    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
-    @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-    @show_options = show_options
-    @current_view = @ticket_filter.id || @ticket_filter.name
-    @is_default_filter = (!is_num?(@template.current_filter))
-        
     respond_to do |format|      
       format.html  do
+        @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+        @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
+        @show_options = show_options
+        @current_view = @ticket_filter.id || @ticket_filter.name
+        @is_default_filter = (!is_num?(@template.current_filter))
       end
+      
       format.xml do
-        render :xml => @items.to_xml
-      end      
-      format.json do
-        json = "["; sep=""
-        @items.each { |tic| 
-          #Removing the root node, so that it conforms to JSON REST API standards
-          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-          json << sep + tic.to_json({}, false)[19..-2]; sep=","
-        }
-        render :json => json + "]"
+        render :xml => @response_errors.nil? ? @items.to_xml : @response_errors.to_xml(:root => 'errors')
       end
-      format.atom do
+
+      format.json do
+        unless @response_errors.nil?
+          render :json => {:errors => @response_errors}.to_json
+        else
+          json = "["; sep=""
+          @items.each { |tic| 
+            #Removing the root node, so that it conforms to JSON REST API standards
+            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+          }
+          render :json => json + "]"
+        end
       end
     end
   end
