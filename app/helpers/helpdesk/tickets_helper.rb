@@ -14,7 +14,7 @@ module Helpdesk::TicketsHelper
   def drop_down_views(viewlist, selected_item, menuid = "leftViewMenu")
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, (link_to strip_tags(selected_item[:name]), "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
+        content_tag(:div, (link_to strip_tags(selected_item), "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
         content_tag(:div, viewlist.map { |s| view_menu_links(s) }, :class => "fd-menu", :id => menuid)
     end
   end
@@ -80,10 +80,17 @@ module Helpdesk::TicketsHelper
       top_views_array.insert(show_max-1, top_views_array.slice!(top_index))
     end
 
+    cannot_delete = false
     selected_item =  top_views_array.select { |v| v[:id] == selected }.first
+    unless selected_item.blank?
+      selected_item_name = selected_item[:name]
+    else
+      selected_item_name = ((SELECTORS.select { |v| v.first == selected.to_sym }.first)[1] || top_views_array.first[:name]).to_s
+      cannot_delete = true
+    end
 
-    top_view_html = drop_down_views(top_views_array, selected_item ).to_s +
-      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete")}), :id => "view_manage_links"  unless selected_item[:default])
+    top_view_html = drop_down_views(top_views_array, selected_item_name ).to_s +
+      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete")}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
   end
   
   def filter_select( prompt = t('helpdesk.tickets.views.select'))    
