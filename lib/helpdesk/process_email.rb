@@ -171,7 +171,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:name => from_email[:name],
         :requester => user,
         :to_email => parse_orginal_to(account, email_config),
-        :cc_email => parse_cc_email,
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => []},
         :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -230,7 +230,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         body = show_quoted_text(params[:text],ticket.reply_email)
         body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
         note = ticket.notes.build(
-          :private => false,
+          :private => from_fwd_emails?(ticket, from_email),
           :incoming => true,
           :body => body,
           :body_html => body_html ,
@@ -349,5 +349,13 @@ end
       envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
       envelope_to
     end    
+    
+    def from_fwd_emails?(ticket,from_email)
+      unless ticket.cc_email_hash.nil?
+        ticket.cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+      else
+        false
+      end
+    end
   
 end

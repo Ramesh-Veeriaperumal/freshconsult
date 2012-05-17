@@ -36,10 +36,12 @@ class Support::NotesController < ApplicationController
   end
   
   def update_cc_list
-    cc_array = (!@ticket.cc_email.blank?) ?  @ticket.cc_email : []
+    old_fwd_email_list =  @ticket.cc_email_hash.nil? ? [] : @ticket.cc_email_hash[:fwd_emails]
+    cc_array = @ticket.cc_email_hash.nil? ? [] : @ticket.cc_email_hash[:cc_emails]
     cc_array.push(current_user.email)
     cc_array.uniq
-    @ticket.update_attribute(:cc_email, cc_array)
+    cc_hash = {:cc_emails => cc_array, :fwd_emails => old_fwd_email_list}
+    @ticket.update_attribute(:cc_email, cc_hash)
   end
   
 end

@@ -645,6 +645,9 @@ en:
         out_email: 
           short: "{{user_path}} has sent a {{reply_path}}"
           long: "{{user_path}} has sent a {{reply_path}} to the ticket {{notable_path}}"
+          private:
+            short: "{{user_path}} has {{fwd_path}} the ticket to {{to_emails}}"
+            long: "The ticket {{notable_path}} has been {{fwd_path}} to {{to_emails}} by {{user_path}}"
         in_email: 
           short: "{{user_path}} sent an {{email_response_path}}"
           long: "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}"
@@ -2116,3 +2119,6 @@ en:
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
   ticket_cc_email_more: "more"
+  fwd_to: "Forward"
+  fwd_success_msg: "The ticket has been successfully forwarded"
+  validate_fwd_to_email_msg: "Please enter a valid email address"
