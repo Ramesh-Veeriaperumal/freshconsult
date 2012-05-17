@@ -17,6 +17,21 @@ module Search::TicketSearch
         :operator => get_op_from_field(col), :options => get_custom_choices(col), :value => "" })
         i = i+ 1     
       end 
+
+      Account.current.ticket_fields.nested_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+        nested_fields = []
+
+        col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+          nested_fields.push({get_op_list('dropdown').to_sym => 'dropdown',:condition => get_id_from_field(nested_col).to_sym ,:name => nested_col.label , :container => 'dropdown',     
+          :operator => get_op_list('dropdown'), :options => [], :value => "" , :field_type => "nested_field"})     
+        end
+
+        defs.insert(i,{get_op_from_field(col).to_sym => get_container_from_field(col),:condition => get_id_from_field(col).to_sym, 
+          :name => col.label , :container => get_container_from_field(col), :operator => get_op_from_field(col), 
+          :options => get_custom_choices(col), :value => "" , :field_type => "nested_field", :field_id => col.id, :nested_fields => nested_fields})
+        i = i+ 1
+      end
+
       defs
     end
   end
@@ -27,7 +42,7 @@ module Search::TicketSearch
   end
   
   def get_container_from_field(tf)
-    tf.field_type.gsub('custom_', '')
+    tf.field_type.gsub('custom_', '').gsub('nested_field','dropdown')
   end
   
   def get_op_from_field(tf)
@@ -43,7 +58,7 @@ module Search::TicketSearch
   def get_custom_choices(tf)
     choice_array = tf.choices
   end
-  
+
    def get_default_choices(criteria_key)
     if criteria_key == :status
       return TicketConstants::STATUS_NAMES_BY_KEY.sort

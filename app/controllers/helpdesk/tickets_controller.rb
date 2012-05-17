@@ -4,6 +4,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   include ActionView::Helpers::TextHelper
   include ParserUtil
+  include Helpdesk::PicklistUtility
 
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :show, :custom_view_save, :latest_ticket_count]
@@ -237,15 +238,21 @@ class Helpdesk::TicketsController < ApplicationController
   
   def add_original_to_email
       original_to = parse_email_text(@item.to_email)[:email]
-      email_config_emails = current_account.email_configs.collect { |ec| ec.reply_email }
-      @reply_email.delete_if {|email| parse_email_text(email)[:email] ==  original_to}
-      @reply_email.insert(0, @item.to_email) 
+      friendly_original_to = @item.to_email 
+      @reply_email.each do |email|
+        temp_email = parse_email_text(email)[:email]
+        if temp_email ==  original_to
+          friendly_original_to = email
+          @reply_email.delete(email)
+        end
+      end
+      @reply_email.unshift(friendly_original_to) 
   end
 
   def show
     @reply_email = current_account.reply_emails
 
-    add_original_to_email unless @item.to_email.blank?
+    add_original_to_email if ( !@item.to_email.blank? && current_account.pass_through_enabled?)
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -491,7 +498,7 @@ class Helpdesk::TicketsController < ApplicationController
     a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
   end 
-    
+  
   protected
   
     def item_url
