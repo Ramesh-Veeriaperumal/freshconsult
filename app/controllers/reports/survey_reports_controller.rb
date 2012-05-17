@@ -1,7 +1,8 @@
 class Reports::SurveyReportsController < ApplicationController
 	
 	before_filter { |c| c.requires_permission :manage_reports }
-		
+	before_filter :set_selected_tab
+			
 	include Reports::SurveyReport
 	
 	def index
@@ -57,5 +58,11 @@ class Reports::SurveyReportsController < ApplicationController
 		condition[:end_date] = end_date
 		return condition
 	end		
+	
+	protected
+	
+	def set_selected_tab
+      @selected_tab = :reports
+  	end
   
 end

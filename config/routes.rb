@@ -203,7 +203,7 @@
 #    end
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  , :latest_ticket_count => :post}, 
-                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
+                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any, :category_choices => :put, :sub_category_choices => :put } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -265,7 +265,7 @@
 
   map.namespace :support do |support|
      support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-       support.resources :tickets do |ticket|
+       support.resources :tickets, :member => {:category_choices => :put, :sub_category_choices => :put} do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     support.resources :company_tickets

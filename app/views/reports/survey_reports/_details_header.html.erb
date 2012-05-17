@@ -3,7 +3,7 @@
         <li class="first min-width">        	
 			<% user = User.find_by_id(params[:entity_id])%>
             <%if content[:category].blank? || content[:category]=="agent" %>
-                    <span class="yoda-img"><%=user_avatar(user)%></span>
+                    <span class="agent-img"><%=user_avatar(user)%></span>
             <%end%>        
             <p class="topic-head"><%=content[:name]%></p>
         </li>

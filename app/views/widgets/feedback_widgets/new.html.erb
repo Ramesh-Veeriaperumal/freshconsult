@@ -19,6 +19,7 @@
                                        (field.dom_type == "requester" && logged_in?) ? @ticket.email : "",
                                        field_name_correction
                                        %>
+        <%= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  nil, :type => "edit"}) if field.field_type == "nested_field"%>                                       
       <% end %>                                                              
       <li>
         <%= render :partial=>"/helpdesk/shared/attachment_form"  %>
