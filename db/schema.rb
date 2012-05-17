@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120515112054) do
+ActiveRecord::Schema.define(:version => 20120517125341) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -1051,6 +1051,7 @@ ActiveRecord::Schema.define(:version => 20120515112054) do
     t.datetime "updated_at"
     t.integer  "survey_id",        :limit => 8
     t.integer  "survey_result_id", :limit => 8
+    t.boolean  "rated",                         :default => false
   end
 
   add_index "survey_handles", ["id"], :name => "survey_handles_id"

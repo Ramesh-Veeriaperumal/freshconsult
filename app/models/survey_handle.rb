@@ -41,6 +41,8 @@ class SurveyHandle < ActiveRecord::Base
       :rating => rating
     })
     
+    self.rated = true
+    
     #Chose not to add support score at this point. Rather will do that when he gives
     #feedback (natural next step..)
     
