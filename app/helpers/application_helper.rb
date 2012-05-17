@@ -427,7 +427,32 @@ module ApplicationHelper
     element
   end
 
+  def construct_ticket_nested_element(object_name, parent_field, nested_field, choices, field_label, dom_type, required, field_value = "", field_name = "")
+
+    element_class   = " #{ (required) ? 'required' : '' } #{dom_type}"
+    field_label    += " #{ (required) ? '*' : '' }"
+    field_name      = nested_field.field_name
+    object_name     = "#{object_name.to_s}[custom_field]"
+    label = label_tag object_name+"_"+nested_field.field_name, field_label
+    element = label + select(object_name, field_name, choices, {:include_blank => "...", :selected => field_value},{:class => element_class})
+    content_tag :li, element, :class => dom_type
+  end
+
+  def construct_ticket_nested_text_element(object_name, parent_field, nested_field, choices, field_label, dom_type, required, field_value = "", field_name = "")
+    field_name      = nested_field.field_name
+    object_name     = "#{object_name.to_s}[custom_field]"
+    
+    label = label_tag object_name+"_"+nested_field.field_name, field_label, :class => "name_label" 
+    
+    field_value = nested_field.dropdown_selected(choices, field_value)
+    
+    element = label + label_tag(field_name, field_value, :class => "value_label")
+    
+    content_tag :li, element unless (field_value == "" || field_value == "...")     
+  end
+
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
+    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     field_name      = (field_name.blank?) ? field.field_name : field_name
@@ -443,6 +468,8 @@ module ApplicationHelper
       when "dropdown" then
         element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
       when "dropdown_blank" then
+        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+      when "nested_field" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)

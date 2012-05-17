@@ -397,6 +397,10 @@ class Account < ActiveRecord::Base
     !subscription.card_number.nil?
   end
 
+  def pass_through_enabled?
+    email_commands_setting.pass_through_enabled
+  end
+
   protected
   
     def valid_domain?

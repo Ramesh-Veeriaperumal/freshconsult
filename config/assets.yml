@@ -4,7 +4,7 @@ compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
 javascript_compressor:  uglifier    # (yui, closure)
 allow_debugging:        on
-  
+
 stylesheets:
   print:
     - public/stylesheets/print.css
@@ -31,10 +31,10 @@ stylesheets:
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
     - public/stylesheets/ie.css 
-  
+
   freshwidget:
     - public/stylesheets/freshwidget.css
-    
+
   gadget:
     - public/stylesheets/reset.css
     - public/stylesheets/layout.css
@@ -69,8 +69,21 @@ javascripts:
   frameworks:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/sprintf.js
-    - public/javascripts/frameworks/plugins/*.js
-    - public/javascripts/hackz.js    
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
+    - public/javascripts/frameworks/plugins/jquery.cookie.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.noblecount.js
+    - public/javascripts/frameworks/plugins/jquery.overlabel.js
+    - public/javascripts/frameworks/plugins/jquery.pageless.js
+    - public/javascripts/frameworks/plugins/jquery.placeholder.js    
+    - public/javascripts/frameworks/plugins/jquery.qtip.js
+    - public/javascripts/frameworks/plugins/jquery.tinymce.js
+    - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
+    - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/frameworks/plugins/jquery.ui.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/hackz.js
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace: 
@@ -79,7 +92,7 @@ javascripts:
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
-    - public/javascripts/json2.js
+    - public/javascripts/lib/json2.js
     - public/javascripts/globalinit.js
   timesheet:
     - public/javascripts/timesheet.js
@@ -97,3 +110,12 @@ javascripts:
     - public/javascripts/prototype.js  
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
+  conditional:
+    - public/javascripts/autosuggest.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/frameworks/plugins/jquery.nestedselect.js
+    - public/javascripts/condition-filter.js  
+  ticket_fields:
+    - public/javascripts/frameworks/plugins/jquery.tabby.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/frameworks/tf_customizer.js
