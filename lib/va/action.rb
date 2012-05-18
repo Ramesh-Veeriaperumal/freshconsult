@@ -135,6 +135,16 @@ class Va::Action
       act_on.spam = true 
       add_activity("Marked the ticket <b>#{act_on} </b> as spam")
     end
+
+    def set_nested_fields(act_on)
+      _hash = @act_hash
+      ([{:name => _hash[:category_name], :value => _hash[:value]}]+_hash[:nested_rules]).each do |field|
+        if act_on.respond_to?("#{field[:name]}=")
+          act_on.send("#{field[:name]}=", field[:value])          
+          add_activity("Value changed for field #{field[:name].humanize()}")
+        end        
+      end
+    end
     
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.

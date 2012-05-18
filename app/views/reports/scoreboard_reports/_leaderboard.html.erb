@@ -1,0 +1,27 @@
+	<div id="ticket-toolbar" class="toolbar">
+		<h3 class="title" id="report-main-title">
+		  <span><%= params[:date_range] %></span>        
+		  <%= t('reports.scoreboard_title_nav')%>
+		</h3>                                                                           
+	</div>
+	<div>
+		<%= render :partial => "champions" %>		
+	</div>
+	<div>
+		<%= render :partial => "sharpshooters" %>		
+	</div>
+	<div>
+		<%= render :partial => "firstcallresolutions" %>		
+	</div>
+	<div>
+		<%= render :partial => "happycustomers" %>		
+	</div>
+
+<script type="text/javascript">
+/*jQuery(document).ready(function() {
+	jQuery(".scorecard").each(function() {
+ 		var score = parseInt(jQuery(this).attr("score"));
+ 		jQuery(this).progressbar({value:score});
+	});   
+ });*/
+</script>

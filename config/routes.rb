@@ -101,8 +101,11 @@
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
   map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
   map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
-
-  
+  map.scoreboard_activity '/scoreboard/reports', :controller => 'reports/scoreboard_reports', :action => 'index' 
+  map.scoreboard_activity_generate '/scoreboard/reports/generate', :controller => 'reports/scoreboard_reports', :action => 'generate'
+  map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
+  map.survey_report_details '/survey/report_details', :controller => 'reports/survey_reports', :action => 'report_details'
+    
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any },
@@ -200,7 +203,7 @@
 #    end
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  , :latest_ticket_count => :post}, 
-                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
+                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any, :category_choices => :put, :sub_category_choices => :put } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -262,7 +265,7 @@
 
   map.namespace :support do |support|
      support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-       support.resources :tickets do |ticket|
+       support.resources :tickets, :member => {:category_choices => :put, :sub_category_choices => :put} do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     support.resources :company_tickets

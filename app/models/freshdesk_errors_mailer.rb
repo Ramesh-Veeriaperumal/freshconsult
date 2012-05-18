@@ -1,7 +1,7 @@
 class FreshdeskErrorsMailer < ActionMailer::Base
   
   def error_email(object, params, e, options={}) 
-    recipients    "kiran@freshdesk.com"
+    recipients    "dev-ops@freshdesk.com"
     from          "rachel@freshdesk.com"
     subject       (options[:subject] || "Error in #{object.class.name}")
     sent_on       Time.now

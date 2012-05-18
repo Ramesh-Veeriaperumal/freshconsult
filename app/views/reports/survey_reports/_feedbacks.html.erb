@@ -1,0 +1,31 @@
+<div class="content-area">
+	
+<%@remarks.each do |remarks|%>
+	
+	<div class="content-set">
+		<div class="left-box">
+			<% user = User.find_by_id(remarks[:customer_id])%>
+			<span class="content-img"><%=user_avatar(user)%></span>
+			<%smiley = (remarks[:rating].to_i == Survey::HAPPY) ? "happy-smily-small": (remarks[:rating].to_i == Survey::UNHAPPY) ? "unhappy-smily-small" : "neutral-smily-small"%>
+			<span class="<%=smiley%>"></span>					
+			<p class="inner-box">
+				<strong class="box-title"><%=remarks[:name]%></strong>		
+				<span class="box-date">on <%=remarks[:created_at].strftime("%d %b %Y")%></span>
+			</p>			
+		</div>
+		<div class="right-box">
+			<div class="container-arrow"></div>
+			<span class="cote"></span>
+			<p class="box-content"><%=remarks[:body]%></p>			
+		</div>
+	</div>
+	
+<%end%>
+
+<%if @remarks.blank?%>
+<div class="usercomment no-feedback">
+	<%=t("reports.survey_reports.list.no_feedback")%>
+</div>
+<%end%>
+
+</div>

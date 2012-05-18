@@ -1,4 +1,7 @@
 class Helpdesk::Note < ActiveRecord::Base
+
+  include ParserUtil
+
   set_table_name "helpdesk_notes"
   
   belongs_to_account
@@ -104,6 +107,12 @@ class Helpdesk::Note < ActiveRecord::Base
   def outbound_email?
     source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
   end 
+
+  def to_json(options = {})
+    options[:methods] = [:user_name]
+    options[:except] = [:account_id,:notable_id,:notable_type]
+    super options
+  end
   
   def to_liquid
     { 
@@ -118,7 +127,13 @@ class Helpdesk::Note < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => :attachments,:except => [:account_id,:notable_id,:notable_type]) 
    end
-    
+
+  def create_fwd_note_activity(to_emails)
+    notable.create_activity(user, 'activities.tickets.conversation.out_email.private.long',
+            {'eval_args' => {'fwd_path' => ['fwd_path', 
+                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_emails(to_emails)},
+            'activities.tickets.conversation.out_email.private.short')  
+  end
 
   protected
     def save_response_time
@@ -168,10 +183,12 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if outbound_email?
-        notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
+        unless private?
+          notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
             {'eval_args' => {'reply_path' => ['reply_path', 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
             'activities.tickets.conversation.out_email.short')
+        end
       elsif inbound_email?
         notable.create_activity(user, 'activities.tickets.conversation.in_email.long', 
           {'eval_args' => {'email_response_path' => ['email_response_path', 
@@ -193,5 +210,18 @@ class Helpdesk::Note < ActiveRecord::Base
     def liquidize_body
       attachments.empty? ? body_html : 
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    end
+
+    # The below 2 methods are used only for to_json 
+    def user_name
+      user.name || user_info
+    end
+    
+    def user_info
+      user.get_info if user
+    end
+
+    def parse_to_emails(emails)
+      emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
     end
 end

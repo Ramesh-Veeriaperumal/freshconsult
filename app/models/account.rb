@@ -144,6 +144,7 @@ class Account < ActiveRecord::Base
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
+  has_many :support_scores, :class_name => 'SupportScore'
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -201,7 +202,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ,:facebook, :timesheets ],
+        :surveys, :scoreboard, :facebook, :timesheets ],
       :inherits => [ :basic ]
     },
     
@@ -215,7 +216,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :timesheets ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets ],
       :inherits => [ :sprout ]
     },
     
@@ -227,8 +228,8 @@ class Account < ActiveRecord::Base
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
-  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true, :scoreboard => true, 
-    :survey_links => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
+    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
     
   
   has_features do
@@ -394,6 +395,10 @@ class Account < ActiveRecord::Base
   
   def has_credit_card?
     !subscription.card_number.nil?
+  end
+
+  def pass_through_enabled?
+    email_commands_setting.pass_through_enabled
   end
 
   protected

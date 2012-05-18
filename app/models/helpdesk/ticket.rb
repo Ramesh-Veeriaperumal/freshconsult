@@ -457,7 +457,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def included_in_cc?(from_email)
-    (cc_email) and  (cc_email.any? {|email| email.include?(from_email) })
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
   
   def cache_old_model
@@ -657,8 +658,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
       "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host),
+      "url"                               => helpdesk_ticket_url(self, :host => account.host, :prorocol=> url_protocol),
+      "portal_url"                        => support_ticket_url(self, :host => portal_host, :prorocol=> url_protocol),
       "portal_name"                       => portal_name,
       #"attachments"                      => liquidize_attachments(attachments),
       #"latest_comment"                   => liquidize_comment(latest_comment),
@@ -666,6 +667,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
       #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+  end
+
+  def url_protocol
+    account.ssl_enabled? ? 'https' : 'http'
   end
   
   def description_with_attachments
@@ -739,7 +744,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
       custom_field[method]
     end
   end
-  
+
+  def to_json(options = {}, deep=true)
+    options[:methods] = [:status_name,:priority_name,:requester_name,:responder_name]
+    if deep
+      self.load_flexifield
+      options[:include] = [:notes,:attachments]
+      options[:except] = [:account_id,:import_id]
+      options[:methods].push(:custom_field)
+    end
+    json_str = super options
+    json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
+  end
+
+
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -811,8 +829,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
 
    def selected_reply_email
-    to_email.blank? ? friendly_reply_email : to_email
+    ( !to_email.blank? &&  account.pass_through_enabled? ) ? to_email : friendly_reply_email
    end
+  
+  def cc_email_hash
+    if cc_email.is_a?(Array) 
+      {:cc_emails => "#{cc_email}", :fwd_emails => []}
+    else
+      cc_email
+    end
+  end
   
   private
   

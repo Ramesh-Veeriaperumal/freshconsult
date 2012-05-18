@@ -11,10 +11,10 @@ module Helpdesk::TicketsHelper
     end  
   end
   
-  def drop_down_views(viewlist, menuid = "leftViewMenu")
+  def drop_down_views(viewlist, selected_item, menuid = "leftViewMenu")
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, ( link_to "#{viewlist.size-1} more views", "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}" }), :class => "link-item" ) +
+        content_tag(:div, (link_to strip_tags(selected_item), "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
         content_tag(:div, viewlist.map { |s| view_menu_links(s) }, :class => "fd-menu", :id => menuid)
     end
   end
@@ -79,11 +79,18 @@ module Helpdesk::TicketsHelper
     if( show_max-1 < top_index )
       top_views_array.insert(show_max-1, top_views_array.slice!(top_index))
     end
-    
-    top_view_html = 
-        (top_views_array.shift(show_max).map do |s|
-            view_menu_links(s, "link-item", (s[:id] == selected)) unless( s[:id] == -1 )
-        end).to_s + drop_down_views(top_views_array).to_s
+
+    cannot_delete = false
+    selected_item =  top_views_array.select { |v| v[:id] == selected }.first
+    unless selected_item.blank?
+      selected_item_name = selected_item[:name]
+    else
+      selected_item_name = ((SELECTORS.select { |v| v.first == selected.to_sym }.first)[1] || top_views_array.first[:name]).to_s
+      cannot_delete = true
+    end
+
+    top_view_html = drop_down_views(top_views_array, selected_item_name ).to_s +
+      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
   end
   
   def filter_select( prompt = t('helpdesk.tickets.views.select'))    
@@ -214,6 +221,11 @@ module Helpdesk::TicketsHelper
       last_reply_by  = (ticket.reply_name || '')+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
       last_reply_content = last_conv.body_html
+      unless last_reply_content.blank?
+        doc = Nokogiri::HTML(last_reply_content)
+        doc.at_css("div.freshdesk_quote").remove unless doc.at_css("div.freshdesk_quote").blank?
+        last_reply_content = doc.at_css("body").inner_html 
+      end
     end
     content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
@@ -254,5 +266,5 @@ module Helpdesk::TicketsHelper
     end
     show_params
   end
-  
+
 end
