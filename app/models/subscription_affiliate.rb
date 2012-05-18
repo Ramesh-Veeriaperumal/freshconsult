@@ -19,9 +19,12 @@ class SubscriptionAffiliate < ActiveRecord::Base
   end
   
   def self.add_affiliate(account)
-    if !account.conversion_metric.nil? and 
-      account.conversion_metric.first_referrer.include?(affiliate_param)
-      uri = account.conversion_metric.first_referrer
+    begin
+    metrics = account.conversion_metric
+    if !metrics.nil? and 
+      (metrics.first_referrer.include?(affiliate_param) || 
+       metrics.referrer.include?(affiliate_param))
+      uri = metrics.referrer.include?(affiliate_param) ? metrics.referrer : metrics.first_referrer
       env = Rack::MockRequest.env_for(uri)
       req = Rack::Request.new(env)
       params = req.params
@@ -34,6 +37,10 @@ class SubscriptionAffiliate < ActiveRecord::Base
        account.subscription.affiliate = affiliate  
        account.subscription.save
       end
+    end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Error creating subscription affiliate"})
     end
   end
   
