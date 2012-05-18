@@ -39,7 +39,7 @@ class SurveyResult < ActiveRecord::Base
   				  where users.account_id=#{account_id} )
   		
   	sql_query += "and agents.user_id=#{condition[:entity_id]} " unless condition[:entity_id].blank?
-  	sql_query += "and agents.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
+  	sql_query += "and survey_results.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
   	sql_query += "group by agents.id,rating"
 	survey_reports = Survey.find_by_sql(sql_query)
 	generate_reports_list(survey_reports,"agent")
@@ -52,7 +52,7 @@ class SurveyResult < ActiveRecord::Base
   				  where groups.account_id=#{account_id} )
   		
   	sql_query += "and agent_groups.group_id=#{condition[:entity_id]} " unless condition[:entity_id].blank?
-  	sql_query += "and agent_groups.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
+  	sql_query += "and survey_results.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
   	sql_query += "group by agent_groups.group_id,rating"
 	survey_reports = Survey.find_by_sql(sql_query)
 	generate_reports_list(survey_reports,"group")
@@ -67,8 +67,8 @@ class SurveyResult < ActiveRecord::Base
   end
   
   def self.fetch_agent_report_details(account_id,condition)
-  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_remarks.created_at,body,rating from survey_results 
-  				  inner join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id inner join 
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_results.created_at,body,rating from survey_results 
+  				  left join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id left join 
   				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
   				  users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
   				  
@@ -82,9 +82,9 @@ class SurveyResult < ActiveRecord::Base
   end
   
   def self.fetch_group_report_details(account_id,condition)
-  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_remarks.created_at,body,rating,agent_groups.user_id,agent_groups.group_id from agent_groups
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_results.created_at,body,rating,agent_groups.user_id,agent_groups.group_id from agent_groups
 				  inner join survey_results on survey_results.agent_id=agent_groups.user_id
-  				  inner join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id inner join 
+  				  left join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id left join 
   				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
   				  users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
   	
@@ -98,8 +98,8 @@ class SurveyResult < ActiveRecord::Base
   end
   
   def self.fetch_company_report_details(account_id,condition)
-  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_remarks.created_at,body,rating from survey_results 
-  				  inner join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id inner join 
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_results.created_at,body,rating from survey_results 
+  				  left join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id left join 
   				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
   				  users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
   				  

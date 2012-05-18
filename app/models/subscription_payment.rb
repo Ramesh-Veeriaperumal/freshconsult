@@ -1,4 +1,7 @@
 class SubscriptionPayment < ActiveRecord::Base
+  
+  include HTTParty
+  
   belongs_to :subscription
   belongs_to :account
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
@@ -6,6 +9,7 @@ class SubscriptionPayment < ActiveRecord::Base
   before_create :set_info_from_subscription
   before_create :calculate_affiliate_amount
   after_create :send_receipt
+  after_create :update_affiliate, :if => :affiliate
   
   def self.stats
     {
@@ -26,7 +30,7 @@ class SubscriptionPayment < ActiveRecord::Base
       return unless affiliate
       self.affiliate_amount = amount * affiliate.rate
     end
-
+    
     def send_receipt
       return unless amount > 0
       if setup?
@@ -37,6 +41,26 @@ class SubscriptionPayment < ActiveRecord::Base
         SubscriptionNotifier.deliver_charge_receipt(self)
       end
       true
-    end
+  end
+  
+   def update_affiliate
+    send_later(:make_api_call)
+  end
+ 
+ def make_api_call
+    begin
+     if subscription.subscription_payments.first.created_at > 1.year.ago
+      response = HTTParty.get('https://shareasale.com/q.cfm',:query => {:amount => amount,
+                                         :tracking => id,
+                                         :transtype => "sale",
+                                         :merchantID => SubscriptionAffiliate.merchant_id,
+                                         :userID => affiliate.token})
+     end
 
+   rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Error contacting shareAsale #{id}"})
+     end
+ end
+  
 end

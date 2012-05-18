@@ -3,96 +3,11 @@
 <head>
 	
 	<link rel="stylesheet" href="/stylesheets/support/rating.css">
-		
-<!-- <style type="text/css">
-	/* FEEDBACK PAGE STYLES */
-.gradientbg{
-	margin: 0; 
-	padding: 0;	
-	width: 100%;
-	background: #fff; /* Old browsers */
-	background: -moz-linear-gradient(top,  #dde7da 5%, #fff 35%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(5%,#dde7da), color-stop(35%,#fff)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #dde7da 5%,#fff 35%); /* Chrome10+,Safari5+ */
-	background: -o-linear-gradient(top,  #bbee90 5%,#7caf71 35%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #bbee90 5%,#7caf71 35%); /* IE10+ */
-	background: linear-gradient(top,  #bbee90 5%,#7caf71 35%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bbee90', endColorstr='#7caf71',GradientType=0 ); /* IE6-8 */
-	background-repeat: no-repeat;
-
-}
-
-.content{
-	overflow: hidden;
-	position: relative;
-}
-
-.content .position{
-	width: 600px;
-	margin: 0 auto;
-}
-
-.logo{ 
-	text-align: center;
-	margin-bottom: 100px;
-}
-
-.content .text{
-	font-size: 28px;
-}
-
-.content .happymediumsmiley, .content .okmediumsmiley, .content .sadmediumsmiley{
-	margin-right: 10px;
-}
-
-.textarea{
-	margin-top: 30px;
-}
-
-
-.textarea textarea{
-		width: 100%;
-		height: 100px;
-}
-/* FEEDBACK PAGE STYLES  ENDS */
-</style> -->
+	<%= include_javascripts :survey  %>
 
 </head>
 <body>
-
 	
-	<!-- <div class="content">
-		
-		<div class="position">
-		
-			<div class="logo">
-				<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
-    			  <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png" : @account.main_portal.logo.content.url(:logo)) %>
-    			<% end %>      
-    			<%= link_to(@account.main_portal.name, "http://"+@account[:full_domain], :class => "logo_text") %>
-    		</div>
-			
-			<div class="happymediumsmiley mediumsmiley floatleft"></div>
-			<%if @rating==Survey::HAPPY%>
-			<div class="text">We are glad to know that you are <b>happy</b> with our support. Please share your experience with us.</div>
-			<%elsif @rating==Survey::UNHAPPY%>
-			<div class="text">We are sorry to know that you are <b>not happy</b> with our support. Please help us to improve with your feedback.</div>
-			<%else%>
-			<div class="text">We are trying to achieve the best of support to you. Please help us to improve with your feedback.</div>
-			<%end%>
-			<div class="textarea">		
-			<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post } do |f| -%>
-				<%= text_area(:survey, :feedback, :class => "text" ) %>
-			
-				<%= f.submit t('.send'), :class => "uiButton" %>
-			<%end%>
-			</div>
-		
-		</div>
-	
-	</div> -->
-	
-	<% puts "#{@account.main_portal}"%>
 	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
 		<div class="wrapper">
 			<div class="star-logo"><%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png" : @account.main_portal.logo.content.url(:logo)) %></div>
@@ -128,13 +43,11 @@
 		<div>
 			<div class="search-bar">
 				<p class="search-top"><%= t('.additional_info') %></p>
-				<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post } do |f| -%>
+				<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
 					
-					<%= text_area(:survey, :feedback, :autocomplet => "off", :rel => "ghostwriter", :size => "24", :width => "100%", :class=> "textfield") %>
+					<%= text_area(:survey, :feedback, :autocomplet => "off", :rel => "ghostwriter", :size => "24", :width => "100%", :class=> "textfield required", :style=>"display:block;") %>
 					
-					<div>
-						<!-- <div class="button"></div>
-												<div class="button-text">Send</div> -->
+					<div>						
 						<%= f.submit t('.send'), :class => "button button-text" %>
 					</div>
 				<%end%>		
@@ -143,6 +56,9 @@
 
 	</div>
 	
-	
+	<script>
+		$("#survey_form").validate();
+	</script>
+
 </body>
 </html>

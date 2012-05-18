@@ -1,6 +1,6 @@
 <div class="agentreport">
 		<ul>
-			<li class="nospace">
+			<li class="nospace sat-list-title">
 				<%if(params[:category].blank? || params[:category]=="agent") %>
 					<% user = User.find_by_id(content[:entity_id])%>
 					<%=user_avatar(user)%>
@@ -8,7 +8,7 @@
 					<div class="floatleft agentname"><%=content[:name]%><div><%=content[:title]%></div></div>									
 			</li>
 			<% @rating = content[:rating].sort_by{ |key,val| val } %>
-			<li>
+			<li class="sat-priority-rating">
 				<div class="<%=@rating[2][0]%>mediumsmiley mediumsmiley floatleft"></div>
 				<% rating_per = ((@rating[2][1]*100)/content[:total]).to_f.round %>
 				<% count_title = (@rating[2][1]==1) ? t('.rating_primary_msg_single', :rating => t('.'+@rating[2][0])) : t('.rating_primary_msg_multiple', :count => @rating[2][1], :rating => t('.'+@rating[2][0]))%>
