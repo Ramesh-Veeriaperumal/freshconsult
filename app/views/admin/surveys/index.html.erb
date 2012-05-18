@@ -11,3 +11,9 @@
 <h3 class="title"><%=t('.title')%></h3>
   
 <%= render :partial => "satisfaction_settings" %>
+
+<% content_for :sidebar do %>
+<div class="sidepanel helpcard">
+	<p>	<%= t('admin.surveys.helptext') %> </p>
+</div>
+<%end%>

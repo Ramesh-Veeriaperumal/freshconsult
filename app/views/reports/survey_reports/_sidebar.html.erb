@@ -28,6 +28,9 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
  </div>		
 </div>
 
+<div class="sidepanel helpcard">
+	<p>	<%= t('.helptext') %> </p>
+</div>
 
 <% javascript_tag do %> 	
 	jQuery(document).ready(function() {
