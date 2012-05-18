@@ -5,7 +5,10 @@
 	
 	$bg_ctxt_color:	    if(lightness($background) > 50, black, white) !default;
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;
-	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;  
+	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;
+	$subtxt_color: if(lightness($background) > 50, #333, #CCC) !default;
+	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
+
 	    
 	body { background: $background; }
 	.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color: darken($background, 15%); }
@@ -55,5 +58,43 @@
 		color:#7f7f7f;
 		border-color:#a4a4a4;
 		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+	}
+
+	.ticket-leftcol h3.title, .ticket-leftcol h4.title, .contentCol .view_filters .link-item .nav-trigger {
+		color:$bg_ctxt_color;
+	}
+	.ticket-leftcol h4.title{
+		&:before {
+			content:"";
+			width: 0;
+			height: 0;
+			line-height:0;
+			padding:0;
+			display:inline-block;
+			position: relative;
+			top:-2px;
+			margin-right: 5px;
+			border-top: 5px solid transparent;
+			border-bottom: 5px solid transparent;
+			border-left: 5px solid $bg_ctxt_color;
+		}
+	}
+	
+
+	.ticket-leftcol .leftFilter .item, .drop-right {
+		color:$subtxt_color;	
+	}
+
+	.drop-right:hover {
+		color: $alternate_txt_color;
+		background-color: $bg_ctxt_color;
+	}
+
+	.contentCol .view_filters .link-item .nav-trigger.selected, .contentCol .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {
+		color: $alternate_txt_color;
+		background-color: $bg_ctxt_color;
+	}
+	.sort-bar {
+		color:$subtxt_color;	
 	}
 <% end %>
