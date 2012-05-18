@@ -134,7 +134,7 @@ class Subscription < ActiveRecord::Base
     if amount == 0 || (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
       begin
         update_attributes(:next_renewal_at => self.next_renewal_at.advance(:months => self.renewal_period), :state => 'active')
-        subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
+        subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :affiliate => affiliate) unless amount == 0
        rescue Exception => err
          SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => account.full_domain, :custom_message => "Charge failed" })
        end
@@ -151,7 +151,7 @@ class Subscription < ActiveRecord::Base
   # be created, but the subscription itself is not modified.
   def misc_charge(amount)
     if amount == 0 || (@response = gateway.purchase((amount * 100).to_i, billing_id)).success?
-      s_payment = subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true)
+      s_payment = subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true, :affiliate => affiliate)
       SubscriptionNotifier.deliver_misc_receipt(s_payment)
       true
     else
@@ -166,7 +166,7 @@ class Subscription < ActiveRecord::Base
     if(@response = gateway.purchase((amount_to_charge * 100).to_i, billing_id)).success?
       s_payment = subscription_payments.create(:account => account, 
             :amount => amount_to_charge, :transaction_id => @response.authorization, 
-            :misc => true)
+            :misc => true, :affiliate => affiliate)
 
       SubscriptionNotifier.deliver_day_pass_receipt(quantity, s_payment)
       s_payment
