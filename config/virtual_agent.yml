@@ -72,3 +72,4 @@ handlers:
     date_time: Va::Handlers::DateTime
     dropdown:  Va::Handlers::Text
     checkbox: Va::Handlers::Boolean
+    nested_field: Va::Handlers::NestedField
