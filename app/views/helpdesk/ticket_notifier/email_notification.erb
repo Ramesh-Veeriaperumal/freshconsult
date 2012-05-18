@@ -5,15 +5,15 @@
 	<h3 style="display:table-caption;"><%= @survey_handle.survey.link_text %></div>
 	  <div style="display:table-row;font-size:14px;">
 		<div style="display:table-cell;padding:3px;">
-		<img src="http://admin.freshdesk.com/images/happy-smily.png">	
+		<img src='http://<%=@ticket.account[:full_domain]%>/images/happy-smily-tab.png'>	
 		<%= link_to t("helpdesk.ticket_notifier.reply.happy"), @survey_handle.survey_url(@ticket, Survey::HAPPY) %>
 		</div>
 		<div style="display:table-cell;padding:3px;">
-		<img src="http://admin.freshdesk.com/images/neutral-smily.png">
+		<img src='http://<%=@ticket.account[:full_domain]%>/images/neutral-smily-tab.png'>
 		<%= link_to t("helpdesk.ticket_notifier.reply.neutral"), @survey_handle.survey_url(@ticket, Survey::NEUTRAL) %>
 		</div>
 		<div style="display:table-cell;padding:3px;">
-		<img src="http://admin.freshdesk.com/images/unhappy-smily.png">
+		<img src='http://<%=@ticket.account[:full_domain]%>/images/unhappy-smily-tab.png'>
 		<%= link_to t("helpdesk.ticket_notifier.reply.unhappy"), @survey_handle.survey_url(@ticket, Survey::UNHAPPY) %>
 	  </div>
    </div>
