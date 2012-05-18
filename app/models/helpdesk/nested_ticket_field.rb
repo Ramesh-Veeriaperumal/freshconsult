@@ -27,14 +27,8 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   end
 
   def dropdown_selected(dropdown_values, selected_value)
-      selected_text = ""
-      dropdown_values.each do |i|
-          if (i[1] == selected_value)
-             selected_text = i[0]
-             break
-          end
-      end
-      selected_text
+      selected_value = dropdown_values.select { |i| i[1] == selected_value }.first
+      (selected_value && !selected_value[0].blank?) ?  selected_value[0] : ""
   end
 
   def populate_label
