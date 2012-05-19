@@ -14,7 +14,7 @@
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data hideForList" do %>
 			  <%= content_tag :span, "", :class => "tooltip icon-image grey-source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>
-				<%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :time_words => time_ago_in_words(ticket.updated_at), :date => formated_date(ticket.updated_at)) %>
+				<%= t("ticket.reported_on_ticket_list", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :time_words => time_ago_in_words(ticket.updated_at), :date => formated_date(ticket.updated_at)) %>
 			<% end %>
 	  <% end %>
   </td>
