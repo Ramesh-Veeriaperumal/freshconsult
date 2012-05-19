@@ -126,7 +126,7 @@ var NestedField = Class.create({
 
   getSubcategoryList: function(category_key){
       try{
-      if(category_key != "-1")
+      if(category_key && category_key != "-1")
         return this.tree.get(category_key).children || [];
       else
         return $H();      
@@ -136,7 +136,7 @@ var NestedField = Class.create({
   getItemsList: function(category_key, subcategory_key){    
       try{
       _children = []
-      if(subcategory_key != "-1" && this.tree.get(category_key))
+      if(subcategory_key && subcategory_key != "-1" && this.tree.get(category_key))
         _children = this.tree.get(category_key).get(subcategory_key).children
       else
         return $H();
