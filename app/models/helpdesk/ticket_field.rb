@@ -116,14 +116,18 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_product" then
          account.products.collect { |e| [e.name, e.id] }.insert(0, ['...', account.primary_email_config.id])
        when "nested_field" then
-         picklist_values.collect { |c| [c.value, "#{c.id}"] }
+         picklist_values.collect { |c| [c.value, c.value] }
        else
          []
      end
   end  
   
   def nested_choices
-    picklist_values.collect { |c| [c.value, "#{c.id}", c.nested_choices] }
+    picklist_values.collect { |c| [c.value, c.value, c.nested_choices] }
+  end
+
+  def nested_levels
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, :name => l.name, :level => l.level } } if field_type == "nested_field"
   end
 
   def levels

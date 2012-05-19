@@ -456,6 +456,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
   end
   
+  def included_in_fwd_emails?(from_email)
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }) 
+  end
+  
   def included_in_cc?(from_email)
     (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
                      (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
@@ -658,8 +662,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
       "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host, :prorocol=> url_protocol),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host, :prorocol=> url_protocol),
+      "url"                               => helpdesk_ticket_url(self, :host => account.host, :protocol=> url_protocol),
+      "portal_url"                        => support_ticket_url(self, :host => portal_host, :protocol=> url_protocol),
       "portal_name"                       => portal_name,
       #"attachments"                      => liquidize_attachments(attachments),
       #"latest_comment"                   => liquidize_comment(latest_comment),

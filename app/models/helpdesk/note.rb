@@ -91,6 +91,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def tweet?
     source == SOURCE_KEYS_BY_TOKEN["twitter"]    
   end
+  
+  def feedback?
+    source == SOURCE_KEYS_BY_TOKEN["feedback"]    
+  end
 
   def private_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && private
@@ -107,7 +111,11 @@ class Helpdesk::Note < ActiveRecord::Base
   def outbound_email?
     source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
   end 
-
+  
+  def fwd_email?
+    email? and private
+  end
+  
   def to_json(options = {})
     options[:methods] = [:user_name]
     options[:except] = [:account_id,:notable_id,:notable_type]
@@ -138,9 +146,9 @@ class Helpdesk::Note < ActiveRecord::Base
   protected
     def save_response_time
       if human_note_for_ticket?
-        ticket_state = notable.ticket_states     
-        if "Customer".eql?(User::USER_ROLES_NAMES_BY_KEY[user.user_role])      
-          ticket_state.requester_responded_at=Time.zone.now          
+        ticket_state = notable.ticket_states   
+        if user.customer?  
+          ticket_state.requester_responded_at=Time.zone.now if !(email? and notable.included_in_fwd_emails?(user.email))
         else
           ticket_state.agent_responded_at=Time.zone.now unless private
           ticket_state.first_response_time=Time.zone.now if ticket_state.first_response_time.nil? && !private
@@ -152,11 +160,11 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer? 
-        unless notable.open?
+      if user.customer?      	
+        unless notable.open? || feedback?
           notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
-        end 
+        end
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?

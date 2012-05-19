@@ -84,6 +84,8 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/hackz.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace: 
@@ -99,9 +101,12 @@ javascripts:
   freshwidget:
     - public/javascripts/freshwidget.js
   fdwidget:
+    - public/javascripts/prototype.js
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
   custom_widget:
     - public/javascripts/custom_widget.js
   getting_started:
@@ -111,8 +116,7 @@ javascripts:
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
   conditional:
-    - public/javascripts/autosuggest.js
-    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
     - public/javascripts/condition-filter.js  
   ticket_fields:

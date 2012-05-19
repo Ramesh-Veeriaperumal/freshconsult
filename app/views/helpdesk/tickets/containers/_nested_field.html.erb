@@ -13,7 +13,7 @@
   sub_category_item_id = "#{field_id}_item_sub_category"
 %>
 <% options = options.unshift(["...","-1"]) %>
-<%= select_tag name,options_for_select(options.map {|k, v| [k, v.to_s]}, selected_val), :id=> category_id, :class => "dropdown nested_field" %>
+<%= select_tag name, options_for_select(options.map {|k, v| [k, v.to_s]}, selected_val), :id => category_id, :class => "dropdown nested_field" %>
 <%
   sub_category  = nested_fields[0] if nested_fields.size > 0
   item  = nested_fields[1] if nested_fields.size > 1
@@ -40,65 +40,35 @@
                 :operator    => sub_category[:operator],
                 :container   => 'nested_field' } do %>
     <h4 class="title"><%= sub_category[:name] %></h4>
-    <%= select_tag sub_category[:name],options_for_select(sub_category[:options].map {|k, v| [k, v.to_s]}, current_options[sub_category[:condition].to_s].to_s), :id=> sub_category_id, :class => "dropdown nested_field" %>
+    <%= select_tag sub_category[:name], "", :id => sub_category_id, :class => "dropdown nested_field" %>
   <%end%>
-  <% javascript_tag do %>  
-     jQuery('#'+'<%=category_id%>').live("change", function(e){
         
-        jQuery('#'+'<%=sub_category_id%>').html("<option value=''>...</option>");
-        
-        <% if nested_fields.size > 1 %>
-           jQuery('#'+'<%=sub_category_item_id%>').html("<option value=''>...</option>");
-        <%end%>
-        
-        if(this.value != '') {
-           jQuery.post(
-              "/support/tickets/category_choices/"+this.value,
-              "ticket_field_id=<%=field_id%>",
-              function(data){
-                 jQuery('#'+'<%=sub_category_id%>').html(data);
-              }
-           );
-        }
-        refresh_tickets();
-     });
-  <% end %>                
   <% unless item.nil? %>
+      <% item_val = current_options[item[:condition].to_s].to_s %>
       <% content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
                     :class       => "ff_item", 
                     :condition   => item[:condition],
                     :operator    => item[:operator],
                     :container   => 'nested_field' } do %>
         <h4 class="title"><%= item[:name] %></h4>
-        <%= select_tag item[:name],options_for_select(item[:options].map {|k, v| [k, v.to_s]}, current_options[item[:condition].to_s].to_s), :id=> sub_category_item_id, :class => "dropdown nested_field"%>
-      <%end%>
-      <% javascript_tag do %>  
-            jQuery('#'+'<%=sub_category_id%>').live("change", function(e){
-               
-              jQuery('#'+'<%=sub_category_item_id%>').html("<option value=''>...</option>");
-               
-              if(this.value != '') {
-                jQuery.post(
-                  "/support/tickets/sub_category_choices/"+this.value,
-                  "ticket_field_id=<%=field_id%>&category_picklist_id="+jQuery('#'+'<%=category_id%>').val(),
-                  function(data){
-                    jQuery('#'+'<%=sub_category_item_id%>').html(data);
-                  }
-                );
-              }
-              refresh_tickets();
-            });
-
-            jQuery('#'+'<%=sub_category_item_id%>').live("change", function(e){
-              refresh_tickets();
-            });
-      <% end %>                
-  <% else %>
-    <% javascript_tag do %>
-      jQuery('#'+'<%=sub_category_id%>').live("change", function(e){
-        refresh_tickets();
-      });
-    <% end %>
+        <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field"%>
+      <% end %>
   <% end %>
+  <% content_for :pagefixed do %>
+  <% javascript_tag do %>
+      jQuery('#<%=category_id%>')
+        .nested_select_tag({
+          initValues: { 
+            item_val: '<%= item_val %>',
+            subcategory_val: '<%= current_options[sub_category[:condition].to_s].to_s %>',
+            category_val: '<%= selected_val %>'            
+          },
+          default_option: "<option value='-1'>...</option>",
+          data_tree: <%= options.to_json %>,
+          subcategory_id: '<%= sub_category_id %>',
+          item_id: '<%= sub_category_item_id %>',
+          change_callback: refresh_tickets
+        });
+    <% end %>
+    <% end %>
 <%end%>
-

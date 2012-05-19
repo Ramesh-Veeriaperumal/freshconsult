@@ -28,7 +28,7 @@ module Search::TicketSearch
 
         defs.insert(i,{get_op_from_field(col).to_sym => get_container_from_field(col),:condition => get_id_from_field(col).to_sym, 
           :name => col.label , :container => get_container_from_field(col), :operator => get_op_from_field(col), 
-          :options => get_custom_choices(col), :value => "" , :field_type => "nested_field", :field_id => col.id, :nested_fields => nested_fields})
+          :options => col.nested_choices, :value => "" , :field_type => "nested_field", :field_id => col.id, :nested_fields => nested_fields})
         i = i+ 1
       end
 
