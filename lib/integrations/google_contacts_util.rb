@@ -46,6 +46,7 @@ module Integrations::GoogleContactsUtil
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
 
+  
   def self.get_prime_sec_email(contact_xml_as_hash)
     primary_email = nil
     second_email = nil
@@ -59,18 +60,7 @@ module Integrations::GoogleContactsUtil
     }
     return primary_email, second_email
   end
-
-  def self.get_oauth_keys
-    if Rails.env.production?
-      ['freshdesk.com', 'f7NgGAv6TKqew3O5Xb85SadF']
-    elsif Rails.env.staging?
-      ['freshpo.com', 'mZ4Mvav/PzfC5X2lOn2+Qi+o']
-    elsif Rails.env.development?
-#      ['freshpo.com', 'mZ4Mvav/PzfC5X2lOn2+Qi+o']
-      ['663183371165.apps.googleusercontent.com', 'Td7XaDzfHiNZzZChgmHjJUHy']
-    end
-  end
-
+  
   # While exporting the db data into google, db will not contain correct google_id.  For this update_google_id will be useful. 
   def remove_discrepancy_and_set_google_data(google_account, db_contacts, google_contacts, precedence="LATEST", update_google_id=false)
     Rails.logger.debug "BEFORE remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"

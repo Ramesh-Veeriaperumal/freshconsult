@@ -54,7 +54,7 @@ SugarWidget.prototype= {
 				application_id:sugarBundle.application_id,
 				integratable_type:"crm",
 				anchor:"sugarcrm_widget",
-				app_name:"sugarcrm",
+				app_name:"Sugar CRM",
 				domain:sugarBundle.domain,
 				ssl_enabled:sugarBundle.ssl_enabled || "false",
 				login_content: null,

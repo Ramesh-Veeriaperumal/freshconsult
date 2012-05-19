@@ -7,14 +7,8 @@ class Salesforce < ActiveRecord::Migration
         :name => @app_name,
         :display_name => "integrations.salesforce.label", 
         :description => "integrations.salesforce.desc", 
-        :listing_order => 8,
-        :options => { 
-                      :keys_order => [:salesforce_settings], 
-                      :direct_install => true,
-                      :salesforce_settings => {:type => :custom, 
-                          :partial => "/integrations/applications/salesforce", 
-                          :required => false, :label => "integrations.salesforce.form.salesforce_settings", 
-                          :info => "integrations.salesforce.form.salesforce_settings_info" }})
+        :listing_order => 9,
+        :options => {:direct_install => true})
     salesforce.save
     res = execute("SELECT id FROM applications WHERE name='#{@app_name}'")
     res.data_seek(0)
@@ -26,10 +20,11 @@ class Salesforce < ActiveRecord::Migration
     script = %{
       <div id="salesforce_widget" class="integration_widget crm_contact_widget">
         <div class="content"></div>
-      </div>
+        <div class="salesforce-name error hide"></div>
+        </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/salesforce.js");
-        salesforceBundle={domain:"{{salesforce.domain}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}" } ;
+        salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}" } ;
        </script>}
     execute("INSERT INTO widgets(name, description, script, application_id) VALUES ('#{@widget_name}', '#{description}', '#{script}', #{app_id})")
 

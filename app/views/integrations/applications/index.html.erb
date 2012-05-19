@@ -14,11 +14,13 @@
 					  	if application[:options][:direct_install].blank? %>
 					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  	<% else %>
-					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", url_for(:controller => 'integrations/installed_applications', :action => 'install', :id => application.id) , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable"), :method => :put %>		
+					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", "http://localhost:3000/auth/salesforce?origin=#{@current_account_id}" , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  	<% end %>
 		  	    		
-					<%else%>
+					<%else
+					if application[:options][:direct_install].blank? %>
 		  	    		<%= link_to image_tag("symbols/setting.png"), configure_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
+		  	    	<% end %>
 		  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 					<%end%>
 				</div>

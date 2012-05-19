@@ -1900,6 +1900,12 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    salesforce:
+      label: "Salesforce"
+      desc: "Connect your support and sales team with Freshdesk-Salesforce integration"
+      form:
+        salesforce_settings_info: ""
+        salesforce_settings: "Salesforce Settings"
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"
@@ -1937,16 +1943,6 @@ en:
         account_key: "Account Key"
         account_key_info: "Request the Account Key to Workflow MAX support and paste the same here."
         widget_title: "Widget Title"
-  widgets:
-    contact_widget:
-      description: "Display a contact or option to add the contact into capsule."
-
-    salesforce:
-      label: "Salesforce"
-      desc: "Connect your support and sales team with Freshdesk-Salesforce integration"
-      form:
-        salesforce_settings_info: ""
-        salesforce_settings: "Salesforce Settings"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

@@ -3,6 +3,7 @@
 
 class Integrations::GoogleAccount < ActiveRecord::Base
   include Integrations::GoogleContactsUtil
+  include Integrations::OauthHelper
 
   belongs_to :account
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
@@ -43,7 +44,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
   def create_google_group(group_name)
     xml_to_send = CREATE_GROUP_XML.gsub("$group_name", group_name)
-    access_token = prepare_access_token(self.token, self.secret)
+    access_token = get_oauth_access_token(self.token, self.secret)
     response = access_token.post(google_groups_uri(self), xml_to_send, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"})
     Rails.logger.debug "response #{response.inspect}"
     if response.code == "200" || response.code == "201"
@@ -63,7 +64,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     unless query_params.blank?
       goog_groups_url = goog_groups_url+query_params 
     end
-    access_token = prepare_access_token(token, secret)
+    access_token = get_oauth_access_token(token, secret)
     updated_groups_xml = access_token.get(goog_groups_url).body
     updated_groups_hash = XmlSimple.xml_in(updated_groups_xml)['entry'] || []
     Rails.logger.debug "#{updated_groups_hash.length} groups from google account has been fetched with query #{query_params}. #{google_account.email}"
@@ -149,7 +150,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         batch_operation_xml << "</feed>"
         # puts "batch_operation_xml #{batch_operation_xml}"
         uri = google_contact_batch_uri(self)
-        access_token = prepare_access_token(self.token, self.secret)
+        access_token = get_oauth_access_token(self.token, self.secret)
         batch_response = access_token.post(uri, batch_operation_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
         stats = handle_batch_response(batch_response, stats)
         slice_no += 1
@@ -236,7 +237,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       else
         goog_contact_entry_xml = covert_to_contact_xml(db_contact)
         goog_contacts_url = google_contact_uri(google_account)
-        access_token = prepare_access_token(google_account.token, google_account.secret)
+        access_token = get_oauth_access_token(google_account.token, google_account.secret)
         response = access_token.post(goog_contacts_url, goog_contact_entry_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"})
         Rails.logger.debug "Adding contact #{db_contact}, response #{response.inspect}"
         if response.code == "200" || response.code == "201"
@@ -266,7 +267,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           goog_contact_entry_xml = covert_to_contact_xml(db_contact)
           goog_contacts_url = google_contact_uri(google_account)+"/"+goog_contact_id
     #        puts goog_contact_entry_xml +" "+goog_contacts_url 
-          access_token = prepare_access_token(google_account.token, google_account.secret)
+          access_token = get_oauth_access_token(google_account.token, google_account.secret)
           response = access_token.put(goog_contacts_url, goog_contact_entry_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
           Rails.logger.debug "Updating contact #{db_contact}, response #{response.inspect}"
           if response.code == "200" || response.code == "201"
@@ -289,7 +290,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           return covert_to_batch_contact_xml(db_contact, DELETE)
         else
           goog_contacts_url = google_contact_uri(google_account)+"/"+goog_contact_id
-          access_token = prepare_access_token(google_account.token, google_account.secret)
+          access_token = get_oauth_access_token(google_account.token, google_account.secret)
           response = access_token.delete(goog_contacts_url, {"If-Match" => "*"})
           Rails.logger.info "Deleted contact #{db_contact}, response #{response.inspect}"
         end
@@ -310,7 +311,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       unless query_params.blank?
         goog_contacts_url = goog_contacts_url+query_params 
       end
-      access_token = prepare_access_token(token, secret)
+      access_token = get_oauth_access_token(token, secret)
       updated_contact_xml = access_token.get(goog_contacts_url, "GData-Version" => "3.0").body
       # Rails.logger.debug goog_contacts_url + "   " + updated_contact_xml
       google_users = []
@@ -380,18 +381,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       xml_str
     end
 
-    def prepare_access_token(oauth_token, oauth_token_secret)
-      # TODO get the below detail from yml config
-      oauth_s = Integrations::GoogleContactsUtil.get_oauth_keys
-      consumer = OAuth::Consumer.new(oauth_s[0], oauth_s[1],
-          { :site => "https://www.google.com/"})
-      # now create the access token object from passed values
-      token_hash = { :oauth_token => oauth_token,
-                                   :oauth_token_secret => oauth_token_secret
-                               }
-      access_token = OAuth::AccessToken.from_hash(consumer, token_hash )
-      return access_token
-    end
 
     def google_contact_uri(google_account)
       return "http://www.google.com/m8/feeds/contacts/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
@@ -402,11 +391,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     def google_groups_uri(google_account)
-      return "http://www.google.com/m8/feeds/groups/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
+      return "https://www.google.com/m8/feeds/groups/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
     end
 
     def google_group_uri(email, group_id)
-      return "http://www.google.com/m8/feeds/groups/"+email+"/base/"+group_id # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
+      return "https://www.google.com/m8/feeds/groups/"+email+"/base/"+group_id # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
     end
 
     # This method will take care of creating(add) or fetch/updating(edit) or setting delete flag(delete) an user from google contact entry xml. 

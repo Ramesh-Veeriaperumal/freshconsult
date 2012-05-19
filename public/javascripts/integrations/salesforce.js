@@ -3,7 +3,7 @@ SalesforceWidget.prototype= {
 
 	SALESFORCE_CONTACT:new Template(
 			'<span class="contact-type hide">#{contactType}</span>' +
-			'<div class="title">' +				
+			'<div class="title">' +
 				'<div class="salesforce-name">' +
 					'<span id="contact-name">#{contactName}</span><br />' +
 				    '<span id="contact-desig">#{contactDesig}</span>'+
@@ -63,24 +63,16 @@ SalesforceWidget.prototype= {
 				application_content: null,
 				application_resources:null
 			});
-			salesforceWidget.get_contact();
+			if(salesforceBundle.reqEmail == ""){
+			salesforceWidget.freshdeskWidget.alert_failure('Email not available for this requester. Please make sure a valid Email is set for this requester ');
+			jQuery("#salesforce_widget").removeClass('loading-fb');
+			}
+			else{
+				salesforceWidget.get_contact();	
+			}
+			
 		}
 	},	
-
-	get_access_token:function(){
-		console.log("Getting Access Token");
-		new Ajax.Request("/integrations/salesforce/get_access_token", {
-				asynchronous: true,
-				method: "get",
-				onSuccess: function(evt){
-					resJ = evt.responseJSON;
-					console.log(resJ);
-					salesforceBundle.token = resJ.access_token;
-					salesforceWidget.get_contact();
-				}
-			});
-	},
-
 
 	get_contact:function(){
 		var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(Account.Name, AccountId, Phone, Id, Department, Email, isDeleted, Name, MailingCity, MailingCountry, MailingState, MailingStreet, MobilePhone, OwnerId, Title ), Lead(Id, City, Company, IsConverted, ConvertedAccountId, ConvertedContactId, Country, Name, MobilePhone, Phone, State, Status, Street, Title)");
@@ -195,15 +187,18 @@ SalesforceWidget.prototype= {
 
 	processFailure:function(evt){
 		if (evt.status == 401) {
-			console.log("Session Expired. Getting new access token");
-			salesforceWidget.get_access_token();
-		}
-		else{
-			aler
+			//salesforceWidget.get_access_token();
+			salesforceWidget.freshdeskWidget.refresh_access_token();
+			if(salesforceWidget.freshdeskWidget.options.token){
+				salesforceWidget.freshdeskWidget.options.oauth_token = token;
+				salesforceWidget.get_contact();	
+			}
+			else{
+				salesforceWidget.freshdeskWidget.alert_failure('Unable to connect to Salesforce. Please try again later.')
+			}
+
 		}
 	}
-
-
 }
 
 

@@ -35,7 +35,7 @@ class HttpRequestProxy
       remote_url = domain + resource
 
       if auth_header.blank?
-      auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
+        auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
       end
       options = Hash.new
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.

@@ -1,6 +1,5 @@
 <% content_for :sidebar do -%>
-     <%= render :partial => "/helpdesk/integrations/sugarcrm", :locals => {:user => @ticket.requester} %>
-	 <%= render :partial => "/helpdesk/integrations/salesforce", :locals => {:user => @ticket.requester} %>
+     <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
   
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>

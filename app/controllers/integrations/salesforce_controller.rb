@@ -1,6 +1,7 @@
 class Integrations::SalesforceController < ApplicationController
-	include Integrations::Oauth2Helper
+	include Integrations::OauthHelper
 	def get_access_token
+	if logged_in?
 		Rails.logger.debug "Getting new access token from Salesforce  " + params.inspect
 		app_id = Integrations::Application.find(:first, :conditions => {:name => 'salesforce'}).id
 		salesforce_app = Integrations::InstalledApplication.find(:first, :conditions => {:account_id => current_account, :application_id => app_id})
@@ -9,5 +10,6 @@ class Integrations::SalesforceController < ApplicationController
 		salesforce_app[:configs][:inputs]['oauth_token'] = access_token.token
 		salesforce_app.save!
 		render :json => {:access_token => access_token.token}
+	end
 	end
 end

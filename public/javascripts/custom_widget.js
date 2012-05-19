@@ -3,6 +3,7 @@ var Freshdesk = {}
 Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
+		freshdeskWidget = this;
 		this.options = widgetOptions || {};
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
 		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
@@ -137,12 +138,28 @@ Freshdesk.Widget.prototype={
 	},
 
 	alert_failure:function(errorMsg) {
-		console.log(this.error_anchor);
-		if (this.error_anchor == null || this.error_anchor !== "") {
+		if (this.error_anchor == null || this.error_anchor == "") {
 			alert(errorMsg);
 		} else {
+			jQuery(this.error_anchor).removeClass('hide').parent().removeClass('loading-fb');
 			this.error_anchor.innerHTML = errorMsg;
 		}
+	},
+
+	refresh_access_token:function(){
+		console.log("Refreshing Access Token");
+		new Ajax.Request("/integrations/salesforce/get_access_token", {
+				asynchronous: true,
+				method: "get",
+				onSuccess: function(evt){
+					resJ = evt.responseJSON;
+					console.log(resJ);
+					freshdeskWidget.options.oauth_token = resJ.access_token;
+				},
+				onFailure: function(evt){
+					freshdeskWidget.options.oauth_token = null;
+				}
+			});
 	},
 
 	create_integrated_resource:function(resultCallback) {
