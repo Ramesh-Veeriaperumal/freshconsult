@@ -1,4 +1,5 @@
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 /*  html5doctor.com Reset Stylesheet (Eric Meyer's Reset Reloaded + HTML5 baseline) v1.4 2009-07-27 | Authors: Eric Meyer & Richard Clark html5doctor.com/html-5-reset-stylesheet/
 */
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; outline: 0; font-weight: inherit; font-style: inherit; font-size: 100%; font-family: inherit; vertical-align: baseline; }
@@ -61,6 +62,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 #tag-cloud li a:hover { color: #000000; }
 
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 body { font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif; background-color: transparent; }
 
 code, pre { padding: 0 3px 2px; font-family: Menlo, Monaco, "Courier New", monospace; font-size: 12px; color: #333333; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
@@ -104,8 +106,8 @@ h3.sub_title { font-size: 1.1em; }
 
 .aligncenter { text-align: center; }
 
-.info_data, .info-data { color: #888888; font-size: 11px; line-height: 15px; padding-bottom: 6px; }
-.info_data a, .info_data a.user_name, .info-data a, .info-data a.user_name { font-weight: bold; color: #666; }
+.info_data, .info-data { color: #888888; font-size: 11px; line-height: 15px; padding-bottom: 6px; margin-left: 16px; }
+.info_data a, .info_data a.user_name, .info-data a, .info-data a.user_name { font-weight: bold; color: #888; }
 
 .borderbottom { border-bottom: 1px dotted #EFEFEF; }
 
@@ -160,6 +162,7 @@ label.error { color: red; }
 .negtiveMargin { margin: 0 -20px -16px; }
 
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 /* generic form styles */
 .loading-center { background-position: center 40%; }
 
@@ -745,6 +748,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .disabled { color: #afafaf; }
 
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 .ui-datepicker { background: #ffffff; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=95); opacity: 0.95; -moz-border-radius: 5px 5px 5px 5px; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }
 
 .ui-datepicker-title { color: #333333; }
@@ -898,6 +902,7 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .toolbar_pagination .current, .toolbar_pagination_full .current { background: #ffffff; border-color: #dfdfdf; }
 
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 .ie6 .wrapper, .ie7 .wrapper { width: expression((document.body.clientWidth < 982)? "982px" : "90%"); width: 980px; }
 .ie6 ul.header-tabs li.active a, .ie6 ul.header-tabs li.active a:hover, .ie7 ul.header-tabs li.active a, .ie7 ul.header-tabs li.active a:hover { top: 1px; padding-top: 7px; }
 .ie6 input, .ie6 button, .ie7 input, .ie7 button { overflow: visible; }
