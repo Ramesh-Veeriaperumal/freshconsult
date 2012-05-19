@@ -432,7 +432,6 @@ module ApplicationHelper
   end
 
   def construct_ticket_nested_element(object_name, parent_field, nested_field, choices, field_label, dom_type, required, field_value = "", field_name = "")
-
     element_class   = " #{ (required) ? 'required' : '' } #{dom_type}"
     field_label    += " #{ (required) ? '*' : '' }"
     field_name      = nested_field.field_name
@@ -474,7 +473,7 @@ module ApplicationHelper
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "nested_field" then
-        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -483,6 +482,21 @@ module ApplicationHelper
         element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
+  end
+
+  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {})        
+    _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
+    _javascript_opts = {
+      :data_tree => _field.nested_choices,
+      :initValues => _field_values
+    }
+    _field.nested_levels.each do |l|       
+      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = sanitize_to_id(_name +"_"+ l[:name])
+      _category += content_tag :div, content_tag(:label, l[:label]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "tabbed"
+    end
+    
+    _category + javascript_tag("jQuery('##{sanitize_to_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")        
+
   end
   
   def construct_ticket_text_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")

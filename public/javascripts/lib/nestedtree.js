@@ -19,7 +19,7 @@
 
 var $t = Class.create({
   initialize: function(id) {
-    this.id = id || 0; 
+    this.id = id || "0"; 
     this.children = $H();
   },
   set: function(key, child){
@@ -123,6 +123,28 @@ var NestedField = Class.create({
       //console.log("ITEMS: "+_items);
       return (_items.first()) ? _items.join() : false;
   },
+
+  getSubcategoryList: function(category_key){
+      try{
+      if(category_key != "-1")
+        return this.tree.get(category_key).children || [];
+      else
+        return $H();      
+      }catch(e){  }
+  },
+
+  getItemsList: function(category_key, subcategory_key){    
+      try{
+      _children = []
+      if(subcategory_key != "-1" && this.tree.get(category_key))
+        _children = this.tree.get(category_key).get(subcategory_key).children
+      else
+        return $H();
+
+      return _children;
+      }catch(e){  }
+  },
+
   toString: function(){
       _self = this, _treeString = "";
       _self.tree.each(function(_category){
