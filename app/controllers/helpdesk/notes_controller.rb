@@ -290,9 +290,17 @@ class Helpdesk::NotesController < ApplicationController
 
   def validate_fwd_to_email
     if("fwd".eql?(params[:email_type]))
-      if(validate_emails(params[:to_emails]).nil? || params[:to_emails].blank?)
+      if(params[:to_emails].blank?)
         flash[:error] = t('validate_fwd_to_email_msg')
         redirect_to item_url
+      else
+        if (params[:to_emails].any? { |email| email.include?@parent.requester.email })
+          flash[:error] = t('use_reply_option')
+          redirect_to item_url
+        elsif((validate_emails(params[:to_emails])).blank?)
+          flash[:error] = t('validate_fwd_to_email_msg')
+          redirect_to item_url
+        end
       end
     end
   end
