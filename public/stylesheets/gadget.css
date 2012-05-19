@@ -1,4 +1,5 @@
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 .gmail-gadget-sprite, body#gcgadget #maxmin.maximize, body#gcgadget #maxmin.minimize { background: url('/images/gmail-gadget-sc229b52652.png') no-repeat; }
 
 body#gcgadget { color: #333; background: none; min-width: 620px; }
