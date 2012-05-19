@@ -40,25 +40,33 @@
          if(opts.type != "action"){
             $(this).append(category)
                    .append(category_name)
-                   .append(subcategory)
-                   .append(items)
-                   .append(rule_type)
+                   .append(subcategory);
+
+            if(_fields.items != "")
+              $(this).append(items);
+
+            $(this).append(rule_type)
                    .append(nested_rules);
+
+            
          }else{
             category_name.prop("value", "set_nested_fields");
             $(this).append(category_name)
                    .append("<input type='hidden' name='category_name' value='"+opts.category_name+"' />")
                    .append(category)
                    .append(nested_rules)
-                   .append(subcategory)
-                   .append(items);
+                   .append(subcategory);
+
+            if(_fields.items != "")       
+              $(this).append(items);
          }
        });
 
      }, 
      setNestedRule : function( nested_rules, subcategory_name, subcategory, item_name, item ){
         //console.log(item);
-        nested_rules.val('[{ name :'+subcategory_name+', value : '+subcategory+'}, { name : '+item_name+', value : '+item+' }]');
+        item_check = (item) ? (', { name : '+item_name+', value : '+item+' }') : "";
+        nested_rules.val('[{ name :'+subcategory_name+', value : '+subcategory+'}'+item_check+']');
      }
   };
 
