@@ -124,6 +124,12 @@ var NestedField = Class.create({
       return (_items.first()) ? _items.join() : false;
   },
 
+  getCategoryList: function(){
+      _categories = [];
+      this.tree.each(function(o){  _categories.push(o.key) });
+      return _categories;
+  },
+
   getSubcategoryList: function(category_key){
       try{
       if(category_key && category_key != "-1")
