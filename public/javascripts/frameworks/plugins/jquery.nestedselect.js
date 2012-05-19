@@ -34,7 +34,8 @@
 
          if(_init.nested_rules){
             subcategory.val(_init.nested_rules[0].value || "").trigger("change");
-            items.val(_init.nested_rules[1].value || "").trigger("change");
+            if(tree.third_level)
+              items.val(_init.nested_rules[1].value || "").trigger("change");
          }
 
          if(opts.type != "action"){
@@ -42,7 +43,7 @@
                    .append(category_name)
                    .append(subcategory);
 
-            if(_fields.items != "")
+            if(tree.third_level)
               $(this).append(items);
 
             $(this).append(rule_type)
@@ -57,7 +58,7 @@
                    .append(nested_rules)
                    .append(subcategory);
 
-            if(_fields.items != "")       
+            if(tree.third_level)
               $(this).append(items);
          }
        });
