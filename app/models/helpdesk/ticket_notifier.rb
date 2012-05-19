@@ -71,7 +71,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note), :host => options[:host], :port => options[:port]
+                  :survey_handle => SurveyHandle.create_handle(ticket, note)
     headers       "Reply-to" => "#{reply_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"

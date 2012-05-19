@@ -44,6 +44,10 @@
 		  </tr>
 		  <tr>
 		    <th>Agents</th>
+		    <td><%=@subscription.agent_limit%>  Free - <%= @subscription.free_agents %>  Full time - <%= @subscription.account.full_time_agents.count %> Total - <%= @subscription.account.all_agents.count %></td>
+		  </tr>
+		  <tr>
+		    <th>Active Agents</th>
 		    <td><%= @subscription.account.agents.count %></td>
 		  </tr>
 		</table>   

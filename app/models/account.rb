@@ -176,7 +176,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
-  after_create :add_to_crm
+  after_create :add_to_crm,:add_affiliate_information
   after_update :update_users_language
   
   before_destroy :update_google_domain
@@ -539,7 +539,11 @@ class Account < ActiveRecord::Base
     
     def subscription_next_renewal_at
        subscription.next_renewal_at
-    end
+   end
+   
+   def add_affiliate_information
+    SubscriptionAffiliate.add_affiliate(self)
+   end
    
    
   

@@ -140,6 +140,19 @@ en:
     surveys:
      successfully_updated: Survey settings has been successfully updated.
      error_updated: Error while updating survey settings.
+     helptext: "<p><b>How to setup survey ?</b> <br>
+
+     If you are looking at ways to measure customer satisfaction, Survey Settings is the ideal option that gives you a holistic view of your customer service efficiency. With this feature you can add a “Customer Satisfaction” section in the response emails that you send, and your customers can cast their votes here.
+     <br><br><br>
+     <b>What should you do to set this up?</b><br>
+
+     1.Enable the Customer Satisfaction Surveys checkbox<br>
+     2.Specify the Survey Link Text. The default text goes as “Please let us know your opinion on our support experience.”<br>
+     3.Select when you want to send the survey link<br>
+     <p style='margin-left:20px;'>a) In the email that goes out once the ticket is resolved<br>
+     b) In every email that you send<br>
+     </p></p>"
+     
      index:    
         title: Survey Settings
      satisfaction_settings:    
@@ -1522,7 +1535,7 @@ en:
     ticket_notifier:
         reply:
             happy: Awesome
-            neutral: Fine
+            neutral: Just Okay
             unhappy: Not Good
     time_sheets:
       index:
@@ -2073,6 +2086,7 @@ en:
           to: To
           filter_by: Filter By
           view_report_date: View reports during
+          helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p style='margin-left:15px;'>1.Filter the report results with respect to Agents, Group or Company<br>2.View reports for a particular timeframe</p></p>"
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"

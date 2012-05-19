@@ -120,3 +120,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/tf_customizer.js
+  survey:
+    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
