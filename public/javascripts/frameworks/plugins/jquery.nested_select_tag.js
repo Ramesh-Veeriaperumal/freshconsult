@@ -11,7 +11,7 @@
             _vals = opts.initValues;
 
          _category.bind("change", function(ev){
-            _subcategory.html("<option value='-1'>...</option>");
+            _subcategory.html(opts.default_option);
             (_tree.getSubcategoryList(_category.val())).each(function(pair){
               $("<option />")
                 .html(pair.key)
@@ -21,29 +21,35 @@
             //console.log(_subcategory.val());
             
             _subcategory.trigger("change");
-            _subcategory.prop("disabled", (_category.val() == -1));
+            _subcategory.prop("disabled", (!_category.val() || _category.val() == -1));
          });
 
          _subcategory.bind("change", function(ev){
             if(!_subcategory.data("initialLoad")){              
               _subcategory.val(_vals["subcategory_val"]);
               _subcategory.data("initialLoad", true);
+            }else{
+              if(!_item.get(0))
+                opts.change_callback();
             }
-            _item.html("<option value='-1'>...</option>");
-            //console.info(_category.val() + "   " + _subcategory.val());
-            (_tree.getItemsList(_category.val(), _subcategory.val())).each(function(pair){
-              $("<option />")
-                .html(pair.key)
-                .val(pair.key)
-                .appendTo(_item);
-            });       
-            _item.trigger("change");  
-            _item.prop("disabled", (_subcategory.val() == -1));
+            if(_item.get(0)){
+              _item.html(opts.default_option);
+              //console.info(_category.val() + "   " + _subcategory.val());
+              (_tree.getItemsList(_category.val(), _subcategory.val())).each(function(pair){
+                $("<option />")
+                  .html(pair.key)
+                  .val(pair.key)
+                  .appendTo(_item);
+              });  
+               
+
+              _item.prop("disabled", (!_subcategory.val() || _subcategory.val() == -1));
+            }
          });
 
-         _item.bind("change", function(ev){
+         _item.bind("change", function(ev){            
             if(_item.data("initialLoad")){
-              opts.change_callback();              
+               opts.change_callback();             
             }else{              
               _item.val(_vals["item_val"]);
               _item.data("initialLoad", true);
@@ -75,6 +81,7 @@
   $.fn.nested_select_tag.defaults = {
      data_tree: [],
      initValues: {},
+     default_option: "<option value=''>...</option>",
      change_callback: function(){}
   };
 

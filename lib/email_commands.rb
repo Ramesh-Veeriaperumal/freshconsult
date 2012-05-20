@@ -51,7 +51,7 @@ module EmailCommands
   def group(ticket, value, user, note)
     group = ticket.account.groups.find_by_name(value)      
     ticket.group = group unless group.nil?
-    ticket.group = nil if value =~ /none/i
+    ticket.group = nil if value && (value.casecmp("none") == 0)
   end
 
   def action(ticket,value,user, note)
@@ -62,13 +62,13 @@ module EmailCommands
   end
   
   def agent(ticket, value, user, note)
-    if value =~ /me/i
+    if value && (value.casecmp("me") == 0)
       responder = user
     else
       responder = ticket.account.users.find_by_email_or_name(value) 
     end
     ticket.responder = responder if responder && responder.agent?
-    ticket.responder = nil if value =~ /none/i
+    ticket.responder = nil if value && (value.casecmp("none") == 0)
   end
   
   def product(ticket, value, user, note)

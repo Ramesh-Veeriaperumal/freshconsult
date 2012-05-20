@@ -376,7 +376,7 @@
                 $("#nestedContainer").show();         
                 $("#NestedFieldLabels").show();
                 if(typeof sourceData.choices == "string"){                    
-                    $("#nestedEdit").show();                    
+                    showNestedTextarea();
                 }else{   
                     $("#nested-selectboxs").show();  
                 }                           
@@ -468,6 +468,9 @@
 
           if(levels.size() < 2) levels.push({level:3});
 
+          if(!sourceData.get("level_three_present") && !nestedTree.third_level)
+            levels.pop();
+
           sourceData.set("levels", levels.map(function(item){
             return { 
                 label           : $("#agentlevel"+item.level+"label").val(),
@@ -539,7 +542,7 @@
               },                          
               agentlevel3label: {
                 "required":{
-                  depends: function(element){ return (($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level); }
+                  depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level; }
                 }
               },
               customerslevel3label: {

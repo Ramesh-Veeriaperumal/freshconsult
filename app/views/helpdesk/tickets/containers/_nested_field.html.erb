@@ -44,6 +44,7 @@
   <%end%>
         
   <% unless item.nil? %>
+      <% item_val = current_options[item[:condition].to_s].to_s %>
       <% content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
                     :class       => "ff_item", 
                     :condition   => item[:condition],
@@ -57,21 +58,16 @@
   <% javascript_tag do %>
       jQuery('#<%=category_id%>')
         .nested_select_tag({
-          initValue: { 
-            item_val: '<%= current_options[item[:condition].to_s].to_s %>',
+          initValues: { 
+            item_val: '<%= item_val %>',
             subcategory_val: '<%= current_options[sub_category[:condition].to_s].to_s %>',
-            category_val: '<%= selected_val %>',
+            category_val: '<%= selected_val %>'            
           },
+          default_option: "<option value='-1'>...</option>",
           data_tree: <%= options.to_json %>,
           subcategory_id: '<%= sub_category_id %>',
           item_id: '<%= sub_category_item_id %>',
-          change_callback: function(){
-            jQuery("#save_filter").show();
-              jQuery("#FilterOptions input[name=filter_name]").val("");
-              jQuery(".view_filters .active").removeClass("active");
-              getFilterData();
-              jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
-            }
+          change_callback: refresh_tickets
         });
     <% end %>
     <% end %>

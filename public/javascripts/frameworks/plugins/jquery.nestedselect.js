@@ -7,58 +7,89 @@
          var opts = $.extend( {}, $.fn.nestedselect.defaults, options ),
              _fields = opts.nested_fields,
              _init = opts.initData,
-             category = $("<select name='value' />").append(tree.getCategory()).val(_init.value || ""),
+             category = $("<select name='value' />"),
              category_name = $("<input type='hidden' value='"+opts.category_name+"' name='name' />"),
-             category_val = category.children('option:selected').text(),
-             subcategory = $("<select />").append(tree.getSubcategory(category_val)),
-             subcategory_val = subcategory.children('option:selected').text(),
-             items = $("<select />").append(tree.getItems(category_val, subcategory_val)),
+             subcategory = $("<select />"),
+             items = $("<select />"),
              rule_type = $("<input type='hidden' name='rule_type' value='nested_rule' />"),
              nested_rules = $("<input type='hidden' name='nested_rules' value='' />");
+        
+        
+           (tree.getCategoryList()||[]).each(function(key){
+              $("<option />")
+                .html(key)
+                .val(key)
+                .appendTo(category);
+            });
 
-         category.bind("change", function(ev){
-            subcategory
-                .html(tree.getSubcategory($(this).children('option:selected').text()))
-                .trigger("change");
+         category
+            .val(_init.value || "")
+            .bind("change", function(ev){
+              subcategory.empty();
+              (tree.getSubcategoryList(category.val())||[]).each(function(pair){
+                $("<option />")
+                  .html(pair.key)
+                  .val(pair.key)
+                  .appendTo(subcategory);
+            });
+
+            subcategory.trigger("change");
          });
 
          subcategory.bind("change", function(ev){
-            items.html(tree.getItems(category.children('option:selected').text(), $(this)
-                 .children('option:selected').text()))
-                 .trigger("change");
+          if(!subcategory.data("initialLoad")){         
+            if(_init.nested_rules) subcategory.val(_init.nested_rules[0].value);
+            subcategory.data("initialLoad", true);
+          }
+          if(tree.third_level){
+            item.empty();
+            (tree.getItemsList(category.val(), subcategory.val())).each(function(pair){
+              $("<option />")
+                .html(pair.key)
+                .val(pair.key)
+                .appendTo(item);
+            });  
+            items.trigger("change");
+          }else{
+            methods.setNestedRule(nested_rules, _fields.subcategory.name, subcategory.val(), _fields.items.name, items.val());
+          }
          })
 
          items.bind("change", function(ev){
             methods.setNestedRule(nested_rules, _fields.subcategory.name, subcategory.val(), _fields.items.name, items.val());
          });
 
-         if(_init.nested_rules){
-            subcategory.val(_init.nested_rules[0].value || "").trigger("change");
-            items.val(_init.nested_rules[1].value || "").trigger("change");
-         }
-
+         category.trigger("change");
          if(opts.type != "action"){
             $(this).append(category)
                    .append(category_name)
-                   .append(subcategory)
-                   .append(items)
-                   .append(rule_type)
+                   .append(subcategory);
+
+            if(tree.third_level)
+              $(this).append(items);
+
+            $(this).append(rule_type)
                    .append(nested_rules);
+
+            
          }else{
             category_name.prop("value", "set_nested_fields");
             $(this).append(category_name)
                    .append("<input type='hidden' name='category_name' value='"+opts.category_name+"' />")
                    .append(category)
                    .append(nested_rules)
-                   .append(subcategory)
-                   .append(items);
+                   .append(subcategory);
+
+            if(tree.third_level)
+              $(this).append(items);
          }
        });
 
      }, 
      setNestedRule : function( nested_rules, subcategory_name, subcategory, item_name, item ){
         //console.log(item);
-        nested_rules.val('[{ name :'+subcategory_name+', value : '+subcategory+'}, { name : '+item_name+', value : '+item+' }]');
+        item_check = (item) ? (', { name : '+item_name+', value : '+item+' }') : "";
+        nested_rules.val('[{ name :'+subcategory_name+', value : '+subcategory+'}'+item_check+']');
      }
   };
 

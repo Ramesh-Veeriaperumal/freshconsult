@@ -72,7 +72,7 @@
             <%= f.label(:reply_email, "To:", :class => "caption" ) %>
             <div class="fields">
                 <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("to_emails", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
+                  new Autocompleter.MultiValue("to_emails", "", $A(), {frequency: 0.1, acceptNewValues: true});
                 <%- end %>
                 <input type="text" id="to_emails" name="to_emails" />
             </div>
@@ -89,7 +89,7 @@
             </div>
             <div class="fields" id="fwd_cc_emails_id" rel="cc_div" data-button="#add_cc_btn"  data-parent="#cc-form-container"> 
                 <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("fwd_cc_emails", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
+                  new Autocompleter.MultiValue("fwd_cc_emails", "", $A(), {frequency: 0.1, acceptNewValues: true});
 				<%- end %>
                 <input type="text" id="fwd_cc_emails" name="fwd_cc_emails" />
             </div>
@@ -141,7 +141,7 @@
     </ul>
     <div class="button-container">
     	<%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
-    	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
+    	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton", :id => "send_resolve_btn") %>
 		<%= button_to_function(t('cancel'), "jQuery('#cnt-reply').slideUp()", :class => "uiButton" ) %>
     </div>
 
