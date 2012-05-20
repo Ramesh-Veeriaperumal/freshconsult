@@ -2074,6 +2074,7 @@ en:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
       survey_reports:
+        back_to: Back to List View
         list:
             no_feedback: Nobody has given any feedback during this time.
         list_content:

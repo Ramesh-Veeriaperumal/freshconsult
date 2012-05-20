@@ -7,7 +7,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 
 <div class="sidepanel">
  <div >	
- 	<% remote_form_for(survey_activity_url, { :method => :post, :id => 'report_filters',:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
+ 	<% remote_form_for(survey_activity_url, { :method => :post, :html => {:id => 'report_filters'},:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
  	<ul class="ui-form">
     	   <li class="inline-field">
 			<b><%=t('.filter_by')%></b>
