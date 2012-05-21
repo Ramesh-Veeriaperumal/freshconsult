@@ -43,10 +43,10 @@ class Va::Handlers::NestedField < Va::RuleHandler
     end
    
     def filter_query_is(field_key,field_value)
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} = #{field_value.to_s}"
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} = '#{field_value.to_s}'"
     end
     
     def filter_query_is_not(field_key,field_values)
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != #{field_value.to_s}"
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != '#{field_value.to_s}'"
     end
 end
