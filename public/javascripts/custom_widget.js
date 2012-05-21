@@ -3,7 +3,6 @@ var Freshdesk = {}
 Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
-		freshdeskWidget = this;
 		this.options = widgetOptions || {};
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
 		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
@@ -146,18 +145,19 @@ Freshdesk.Widget.prototype={
 		}
 	},
 
-	refresh_access_token:function(){
-		console.log("Refreshing Access Token");
-		new Ajax.Request("/integrations/salesforce/get_access_token", {
+	refresh_access_token:function(callback){
+		widgetMain = this;
+		this.options.oauth_token = null;
+		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name, {
 				asynchronous: true,
 				method: "get",
 				onSuccess: function(evt){
 					resJ = evt.responseJSON;
-					console.log(resJ);
-					freshdeskWidget.options.oauth_token = resJ.access_token;
+					widgetMain.options.oauth_token = resJ.access_token;
+					if(callback) callback();
 				},
 				onFailure: function(evt){
-					freshdeskWidget.options.oauth_token = null;
+					widgetMain.options.oauth_token = null;
 				}
 			});
 	},

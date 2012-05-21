@@ -6,12 +6,10 @@ require 'omniauth/strategies/twitter'
 
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   oauth_keys = Integrations::OauthHelper.get_oauth_keys
-  provider :google, oauth_keys[:google][:consumer_key], oauth_keys[:google][:consumer_secret]
-  provider :twitter,  oauth_keys[:twitter][:consumer_key], oauth_keys[:twitter][:consumer_secret]
+  oauth_keys.map { |oauth_provider, key_hash|
+    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
+  }
   provider :open_id,  :store => OpenID::Store::Filesystem.new('./omnitmp')
-  provider :salesforce, oauth_keys[:salesforce][:consumer_key], oauth_keys[:salesforce][:consumer_secret]
-  #provider :salesforce, '3MVG9rFJvQRVOvk736MwC8D50imcmC8mwRYbuC9cSVuq98AuOSCEfPHpLPPvOHDgr3IsFQplzOz7f5c.JID7c', '1614738053314605388'
-  provider :facebook, oauth_keys[:facebook][:consumer_key], oauth_keys[:facebook][:consumer_secret]
 end
 
 

@@ -43,7 +43,6 @@ SalesforceWidget.prototype= {
 		'</div>'),
 
 	initialize:function(salesforceBundle){
-		console.log(salesforceBundle);
 		jQuery("#salesforce_widget").addClass('loading-fb');
 		salesforceWidget = this;
 		this.salesforceBundle = salesforceBundle;
@@ -92,7 +91,6 @@ SalesforceWidget.prototype= {
 	handleContactSuccess:function(response){
 		resJson = response.responseJSON;
 		salesforceWidget.response = resJson;
-		console.log(resJson);
 		if (resJson.length > 0) {
 			//renderContact
 			if(resJson.length == 1){
@@ -188,14 +186,14 @@ SalesforceWidget.prototype= {
 	processFailure:function(evt){
 		if (evt.status == 401) {
 			//salesforceWidget.get_access_token();
-			salesforceWidget.freshdeskWidget.refresh_access_token();
-			if(salesforceWidget.freshdeskWidget.options.token){
-				salesforceWidget.freshdeskWidget.options.oauth_token = token;
+			salesforceWidget.freshdeskWidget.refresh_access_token(function(){
+				if(salesforceWidget.freshdeskWidget.options.oauth_token){
 				salesforceWidget.get_contact();	
 			}
 			else{
 				salesforceWidget.freshdeskWidget.alert_failure('Unable to connect to Salesforce. Please try again later.')
-			}
+			}	
+			});
 
 		}
 	}

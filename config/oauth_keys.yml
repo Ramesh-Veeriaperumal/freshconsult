@@ -8,16 +8,16 @@ development:
 
 staging:
  salesforce:
-  consumer_token: 3MVG9rFJvQRVOvk736MwC8D50imcmC8mwRYbuC9cSVuq98AuOSCEfPHpLPPvOHDgr3IsFQplzOz7f5c.JID7c
-  consumer_secret: 1614738053314605388
+  consumer_token: 3MVG9Y6d_Btp4xp60b6f8yPqWRsZB9nr02K6G7bTQv9dHq8oGEfa3Ys4JNY6sKjyiBktMyYRTUCXelwxQP.Re
+  consumer_secret: 8884773765604569749
  google:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
 
 production:
  salesforce:
-  consumer_token: 3MVG9rFJvQRVOvk736MwC8D50imcmC8mwRYbuC9cSVuq98AuOSCEfPHpLPPvOHDgr3IsFQplzOz7f5c.JID7c
-  consumer_secret: 1614738053314605388
+  consumer_token: 3MVG9Y6d_Btp4xp60b6f8yPqWRkjrDU3ep1Hn.0nu7q9FwYBAHJSYtnMFarqJ.lVhvOFSloO_Zo0O3InRi8T5
+  consumer_secret: 3752245235028562825
  google:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF

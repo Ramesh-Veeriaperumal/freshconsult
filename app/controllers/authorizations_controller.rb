@@ -73,7 +73,6 @@ class AuthorizationsController < ApplicationController
   end
 
   def create_for_salesforce(params)
-    Rails.logger.debug "Account ID from omniauth origin : #{request.env.inspect}"
     account_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
     access_token = get_oauth2_access_token(@omniauth.credentials.refresh_token);
     account = Account.find(:first, :conditions => {:id => account_id})

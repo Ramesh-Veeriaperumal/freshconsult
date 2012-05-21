@@ -1,18 +1,11 @@
-<% if is_application_installed?(Integrations::Constants::APP_NAMES[:sugarcrm]) %> 
-<div id="sugarcrm" class="sidepanel">
-	<%
-	 @liquid_objects = {"requester" => user} %>
-	<% widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:sugarcrm], "sugarcrm_widget", @liquid_objects) %>
-	<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
-</div>
-<% end %>
-
-<% if is_application_installed?(Integrations::Constants::APP_NAMES[:salesforce])  %>   
-<% puts user %>
-	<div id="salesforce" class="sidepanel">
+<%crm_apps=[:sugarcrm, :salesforce]
+crm_apps.each { |crm_app| 
+if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>   
+	<div id="<%=crm_app%>" class="sidepanel">
 		<%
 		 @liquid_objects = {"requester" => user}
-		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:salesforce], "salesforce_widget", @liquid_objects) %>
+		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[crm_app], "#{crm_app}_widget", @liquid_objects) %>
 		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
 </div>
-<% end %> 
+<% end 
+}%> 

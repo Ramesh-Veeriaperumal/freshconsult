@@ -28,7 +28,7 @@ class HttpRequestProxy
       end
 
       unless /http.*/.match(domain)
-        http_s = ssl_enabled == "true"?"https":"http";
+        http_s = ssl_enabled == "true"? "https":"http";
         domain = http_s+"://"+ domain
       end
       resource = resource ? "/" + resource : ""

@@ -383,7 +383,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
 
     def google_contact_uri(google_account)
-      return "http://www.google.com/m8/feeds/contacts/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
+      return "https://www.google.com/m8/feeds/contacts/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
     end
 
     def google_contact_batch_uri(google_account)
