@@ -12,7 +12,11 @@
 		  </tr>           
 		  <tr>
 		    <th>Contact information</th>
-		    <td><%= @subscription.account.account_admin.email %> <%= @subscription.account.account_admin.phone %></td>
+		    <td><%= @subscription.account.account_admin.email %> <%= @subscription.account.account_admin.phone %> </td>
+		  </tr>
+		  <tr>
+		    <th>Last login</th>
+		    <td><%= @subscription.account.account_admin.last_login_at %> Login count - <%=@subscription.account.account_admin.login_count%> Valid - <%=@subscription.account.account_admin.valid?%></td>
 		  </tr>
 		  <tr>
 		    <th>Monthly Revenue</th>
@@ -47,11 +51,30 @@
 		    <td><%=@subscription.agent_limit%>  Free - <%= @subscription.free_agents %>  Full time - <%= @subscription.account.full_time_agents.count %> Total - <%= @subscription.account.all_agents.count %></td>
 		  </tr>
 		  <tr>
-		    <th>Active Agents</th>
-		    <td><%= @subscription.account.agents.count %></td>
+		    <th>Tickets</th>
+		    <td><%= @subscription.account.tickets.count %></td>
+		  </tr>
+		  <tr>
+		    <th>Multi product</th>
+		    <td><%= @subscription.account.portals.count > 1 %></td>
+		  </tr>
+		  <tr>
+		    <th>Social</th>
+		    <td>Twitter - <%= !@subscription.account.twitter_handles.blank? %> Facebook - <%= !@subscription.account.facebook_pages.blank?%></td>
 		  </tr>
 		</table>   
-	</div>       
+	</div> 
+	<div class="span4">
+	<table id="sample-tickets" class="table table-bordered">
+		<tr><th>Sample tickets</th></tr>
+		<tr>
+		<% @subscription.account.tickets.find(:all,:order => 'created_at desc',:limit => 5).each do |tkt| %>
+		  <td><%=tkt.subject%></td>
+		<%end%>
+		</tr>
+		
+    <table>	
+	</div>	      
 	<div class="span4">
 		<h3>Transactions</h3>
 		<table id="transactions" class="table">
