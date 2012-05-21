@@ -42,12 +42,12 @@
             subcategory.data("initialLoad", true);
           }
           if(tree.third_level){
-            item.empty();
+            items.empty();
             (tree.getItemsList(category.val(), subcategory.val())).each(function(pair){
               $("<option />")
                 .html(pair.key)
                 .val(pair.key)
-                .appendTo(item);
+                .appendTo(items);
             });  
             items.trigger("change");
           }else{
@@ -56,6 +56,10 @@
          })
 
          items.bind("change", function(ev){
+            if(!items.data("initialLoad")){
+              if(_init.nested_rules) items.val(_init.nested_rules[1].value);
+              items.data("initialLoad", true);
+            }
             methods.setNestedRule(nested_rules, _fields.subcategory.name, subcategory.val(), _fields.items.name, items.val());
          });
 
