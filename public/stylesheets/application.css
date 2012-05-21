@@ -1,7 +1,7 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-sfacbc6f4da.png') no-repeat; }
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-s7ff03d5a26.png') no-repeat; }
 
 .application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira, .application-logo-sugarcrm, .application-logo-workflow_max-small, .application-logo-workflow_max { background: url('/images/application-logo-s5f9bfcc4b7.png') no-repeat; }
 
@@ -9,7 +9,7 @@
 .sync-status-sprite, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.freshdesk, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.google { background: url('/images/sync-status-sfc752d10f8.png') no-repeat; }
 
 /*Report tab icons */
-.reports-icon-sprite, .report_items .reports-icon-agents, .report_items .reports-icon-customer, .report_items .reports-icon-groups, .report_items .reports-icon-helpdesk, .report_items .reports-icon-survey, .report_items .reports-icon-timesheet { background: url('/images/reports-icon-se6bdc3becd.png') no-repeat; }
+.reports-icon-sprite, .report_items .reports-icon-agents, .report_items .reports-icon-customer, .report_items .reports-icon-groups, .report_items .reports-icon-helpdesk, .report_items .reports-icon-survey, .report_items .reports-icon-timesheet { background: url('/images/reports-icon-s51d193b3b3.png') no-repeat; }
 
 /*Ticket View icons */
 .ticket-view-sprite, #ticket_view_choices .icon .ticket-view-detail, #ticket_view_choices .icon .ticket-view-list { background: url('/images/ticket-view-s64cc2f2cf3.png') no-repeat; }
@@ -70,7 +70,7 @@ ul.activityfeed li div.preview_pic img { width: 40px; height: 40px; }
 .left_connected { position: relative; left: 3px; border-right: 0px; margin: 12px 0px; }
 
 .ui-list_with_icon { margin-left: 0; padding-top: 5px; list-style: none; margin: 0px; padding: 0px; }
-.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1318328674') no-repeat 3px 9px; list-style-type: none; }
+.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1337001488') no-repeat 3px 9px; list-style-type: none; }
 .ui-list_with_icon li { padding: 4px 0px 4px 18px; color: #41658a; position: relative; }
 .ui-list_with_icon li img { position: absolute; left: 0px; top: 4px; }
 .ui-list_with_icon li a { color: #527eaa; font-size: 1.0em; line-height: 1.5; text-decoration: none; }
@@ -671,7 +671,7 @@ h4.border_title { font-size: 16px; border-bottom: 1px solid #ebebeb; padding-bot
 .solution-list .odd a:hover, .solution-list .even a:hover { color: #3399cc; }
 .solution-list .odd a:active, .solution-list .even a:active { color: #4d769f; }
 .solution-list .odd ul, .solution-list .even ul { margin-left: 0; }
-.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1318328674') no-repeat -0.5px 5px; list-style-type: none; }
+.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1337001488') no-repeat -0.5px 5px; list-style-type: none; }
 .solution-list .odd li, .solution-list .even li { line-height: 22px; padding: 0px 0px 4px 18px; color: black; }
 .solution-list .odd li a, .solution-list .even li a { font-size: 13px; color: #21759b; }
 .solution-list .odd li a:visited, .solution-list .even li a:visited { color: #21759b; }
