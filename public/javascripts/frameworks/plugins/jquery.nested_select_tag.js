@@ -8,7 +8,7 @@
             _category = $(this),
             _subcategory = $("#" + opts.subcategory_id),
             _item = $("#" + opts.item_id),
-            _vals = opts.initValues;
+            _vals = (opts.initValues || {});
 
          _category.bind("change", function(ev){
             _subcategory.html(opts.default_option);
