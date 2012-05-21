@@ -772,6 +772,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
           begin
            value = send(field.name) 
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+
+           if(field.field_type == "nested_field")
+              field.nested_ticket_fields.each do |nested_field|
+                nested_field_value = send(nested_field.name)
+                xml.tag!(nested_field.name.gsub(/[^0-9A-Za-z_]/, ''), nested_field_value) unless nested_field_value.blank?
+              end
+           end
+         
          rescue
            end 
         end
