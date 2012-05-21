@@ -8,7 +8,7 @@
             _category = $(this),
             _subcategory = $("#" + opts.subcategory_id),
             _item = $("#" + opts.item_id),
-            _vals = opts.initValues;
+            _vals = (opts.initValues || {});
 
          _category.bind("change", function(ev){
             _subcategory.html(opts.default_option);
@@ -32,7 +32,7 @@
               if(!_item.get(0))
                 opts.change_callback();
             }
-            if(_item.get(0)){
+            if(_tree.third_level){
               _item.html(opts.default_option);
               //console.info(_category.val() + "   " + _subcategory.val());
               (_tree.getItemsList(_category.val(), _subcategory.val())).each(function(pair){
@@ -40,14 +40,13 @@
                   .html(pair.key)
                   .val(pair.key)
                   .appendTo(_item);
-              });  
-               
-
+              });                 
+              _item.trigger("change");
               _item.prop("disabled", (!_subcategory.val() || _subcategory.val() == -1));
             }
          });
 
-         _item.bind("change", function(ev){            
+         _item.bind("change", function(ev){
             if(_item.data("initialLoad")){
                opts.change_callback();             
             }else{              

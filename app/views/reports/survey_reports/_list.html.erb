@@ -7,5 +7,10 @@
 <%end%>
 
 <% javascript_tag do %>
-jQuery("#date_range_title").html("<%=params['date_range']%>")
+	jQuery("#date_range_title").html("<%=params['date_range']%>")
+	
+	<%if @reports_list.blank?%>
+			jQuery("#back_to_con").hide();
+	<%end%>	
+	
 <%end%>

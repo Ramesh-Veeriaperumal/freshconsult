@@ -30,7 +30,7 @@
 
 .content-set { margin: 15px 0 0 25px; overflow: hidden; *zoom: 1; }
 
-.content-img { background: url("../images/content-img.png") no-repeat; width: 39px; height: 39px; display: block; float: left; }
+.content-img { width: 39px; height: 39px; display: block; float: left; }
 
 .content-img div.preview_pic img, .agent-img div.preview_pic img { width: 39px; height: 39px; border-radius: 5px; }
 

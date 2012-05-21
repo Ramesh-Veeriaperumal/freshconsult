@@ -517,16 +517,17 @@ body h5{
 	z-index:20;
 	text-align:right;
 	.button{ position:relative; }
-	.reply{ 
-	  padding:4px 9px 4px 26px;         
-    span{
-      position:absolute;
-      width:14px;
-      height:11px;
-      left:7px;
-      top:6px;
-    }       
+	.reply, .forward{ 
+	  	padding:4px 9px 4px 26px;         
+	    span{
+	      position:absolute;
+	      width:14px;
+	      height:11px;
+	      left:7px;
+	      top:6px;
+	    }       
 	} 
+	.forward span{ background: sprite($symbol, reply-forward) no-repeat; }
 	.email span{ background: sprite($symbol, reply-email) no-repeat; }
 	.tweet span{ background: sprite($symbol, reply-tweet) no-repeat; }
  	.facebook span{ background: sprite($symbol, reply-fb) no-repeat; } 	
@@ -5614,5 +5615,9 @@ margin:10px;
 
 .sat-priority-rating{
   width:260px;
+}
+.link_text_info{
+			font-size:11px;
+			color:#888888;
 }
 /* SURVEY REPORT RELATED STYLES ENDS */ 
