@@ -1,7 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-s7ff03d5a26.png') no-repeat; }
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-s435f9a1bc2.png') no-repeat; }
 
 .application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira, .application-logo-sugarcrm, .application-logo-workflow_max-small, .application-logo-workflow_max { background: url('/images/application-logo-s5f9bfcc4b7.png') no-repeat; }
 
@@ -9,7 +10,7 @@
 .sync-status-sprite, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.freshdesk, .ui-form .inline-field .google_contacts_sync div.fields ul.sync_status li.google { background: url('/images/sync-status-sfc752d10f8.png') no-repeat; }
 
 /*Report tab icons */
-.reports-icon-sprite, .report_items .reports-icon-agents, .report_items .reports-icon-customer, .report_items .reports-icon-groups, .report_items .reports-icon-helpdesk, .report_items .reports-icon-survey, .report_items .reports-icon-timesheet { background: url('/images/reports-icon-s51d193b3b3.png') no-repeat; }
+.reports-icon-sprite, .report_items .reports-icon-agents, .report_items .reports-icon-customer, .report_items .reports-icon-groups, .report_items .reports-icon-helpdesk, .report_items .reports-icon-survey, .report_items .reports-icon-timesheet { background: url('/images/reports-icon-se6bdc3becd.png') no-repeat; }
 
 /*Ticket View icons */
 .ticket-view-sprite, #ticket_view_choices .icon .ticket-view-detail, #ticket_view_choices .icon .ticket-view-list { background: url('/images/ticket-view-s64cc2f2cf3.png') no-repeat; }
@@ -1065,6 +1066,10 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 #ticket_view_choices .icon .ticket-view-detail { background-position: 0 0; }
 #ticket_view_choices .icon .ticket-view-list { background-position: 0 -18px; }
 
+/*body.ticket_list .content .wrapper {
+	background: #efefef;
+	border-radius: 10px;
+}*/
 .tickets, .tickets-expanded { width: 100%; color: #5f5f5f; }
 .tickets th, .tickets-expanded th { background: none; padding: 0px 6px; }
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th { vertical-align: top; }
