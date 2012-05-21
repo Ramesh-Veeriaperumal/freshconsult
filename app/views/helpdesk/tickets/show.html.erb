@@ -16,7 +16,7 @@
 		<div class="replylinks">
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
 			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-reply', this)", :id => "FwdButton", 
-				:class => "button email reply") unless @item.from_email.nil? %>
+				:class => "button forward reply") unless @item.from_email.nil? %>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
 			<%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
