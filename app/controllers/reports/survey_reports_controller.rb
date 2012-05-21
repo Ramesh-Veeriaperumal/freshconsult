@@ -8,13 +8,12 @@ class Reports::SurveyReportsController < ApplicationController
 	def index
 				
 		if params[:category].blank? || params[:category] == "agent"
-			@reports_list = SurveyResult.fetch_agent_report(current_account.id,conditional_params)
+			@reports_list = current_account.survey_results.fetch_agent_report(current_account.id,conditional_params)			
 		elsif params[:category] == "group"
-			@reports_list = SurveyResult.fetch_group_report(current_account.id,conditional_params)			
-		else
-			# @reports_list = SurveyResult.fetch_company_report(current_account.id,conditional_params)
+			@reports_list = current_account.survey_results.fetch_group_report(current_account.id,conditional_params)			
+		else			
 			report_details and return			
-		end		
+		end
     	
     	render :partial => 'list' unless params[:category].blank?
     		
@@ -22,14 +21,14 @@ class Reports::SurveyReportsController < ApplicationController
 	
 	def report_details
 		if params[:category].blank? || params[:category] == "agent"
-			@summary = SurveyResult.fetch_agent_report(current_account.id,conditional_params)
-			@remarks = SurveyResult.fetch_agent_report_details(current_account.id,conditional_params)
+			@summary = current_account.survey_results.fetch_agent_report(current_account.id,conditional_params)
+			@remarks = current_account.survey_results.fetch_agent_report_details(current_account.id,conditional_params)
 		elsif params[:category] == "group"
-			@summary = SurveyResult.fetch_group_report(current_account.id,conditional_params)
-			@remarks = SurveyResult.fetch_group_report_details(current_account.id,conditional_params)
+			@summary = current_account.survey_results.fetch_group_report(current_account.id,conditional_params)
+			@remarks = current_account.survey_results.fetch_group_report_details(current_account.id,conditional_params)
 		else
-			@summary = SurveyResult.fetch_company_report(current_account.id,conditional_params)
-			@remarks = SurveyResult.fetch_company_report_details(current_account.id,conditional_params)
+			@summary = current_account.survey_results.fetch_company_report(current_account.id,conditional_params)
+			@remarks = current_account.survey_results.fetch_company_report_details(current_account.id,conditional_params)
 		end				
 		
 		render :partial => 'report_details'
@@ -39,11 +38,11 @@ class Reports::SurveyReportsController < ApplicationController
 	def feedbacks
 		
 		if params[:category].blank? || params[:category] == "agent"			
-			@remarks = SurveyResult.fetch_agent_report_details(current_account.id,conditional_params)
+			@remarks = current_account.survey_results.fetch_agent_report_details(current_account.id,conditional_params)
 		elsif params[:category] == "group"
-			@remarks = SurveyResult.fetch_group_report_details(current_account.id,conditional_params)
+			@remarks = current_account.survey_results.fetch_group_report_details(current_account.id,conditional_params)
 		else 
-			@remarks = SurveyResult.fetch_company_report_details(current_account.id,conditional_params)
+			@remarks = current_account.survey_results.fetch_company_report_details(current_account.id,conditional_params)
 		end
 		
 		render :partial => 'feedbacks'
