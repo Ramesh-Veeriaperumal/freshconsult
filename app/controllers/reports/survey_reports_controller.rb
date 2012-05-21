@@ -12,7 +12,8 @@ class Reports::SurveyReportsController < ApplicationController
 		elsif params[:category] == "group"
 			@reports_list = SurveyResult.fetch_group_report(current_account.id,conditional_params)			
 		else
-			@reports_list = SurveyResult.fetch_company_report(current_account.id,conditional_params)
+			# @reports_list = SurveyResult.fetch_company_report(current_account.id,conditional_params)
+			report_details and return			
 		end		
     	
     	render :partial => 'list' unless params[:category].blank?

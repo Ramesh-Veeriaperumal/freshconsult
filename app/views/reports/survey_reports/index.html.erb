@@ -1,8 +1,8 @@
 <link type="text/css" rel="stylesheet" media="screen, print, projection" href="/stylesheets/reports.css?1335346881">
 <div id="report-container" class="report-container">
 <div class="satisfaction-head">
-		<span class="floatr">
-			<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
+		<span id="back_to_con" class="floatr">	
+			<%= link_to_function("&larr; #{t('reports.survey_reports.back_to')}", :onclick => "jQuery(\"#report_filters\").submit();", :class => "slim-button", :id => "back_to_link") %>
 		</span>
 		<h3 class="title" id="report-main-title">		          
 		  <%= t('reports.satisfaction_title') %><br />		  

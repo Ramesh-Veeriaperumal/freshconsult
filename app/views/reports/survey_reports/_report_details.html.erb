@@ -9,3 +9,9 @@
 			<%= render :partial => "/reports/survey_reports/feedbacks" %>
    <%end%>
 </div>
+
+<% javascript_tag do %>
+		<% if !params[:category].blank? and params[:category]!="company" %> 
+		   jQuery("#back_to_con").show();
+		<%end%>   
+<%end%>

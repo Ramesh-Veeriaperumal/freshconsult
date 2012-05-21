@@ -386,7 +386,7 @@ en:
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
-        survey-settings: Survey Settings
+        survey-settings: Customer Satisfaction Settings
         rebranding: Helpdesk Rebranding
         account-settings: Account Settings
         customer-portal: Customer Portal
@@ -2026,7 +2026,7 @@ en:
       customer_title: "Customer Activity Report"
       helpdesk_title_nav: "Helpdesk Activity Report"
       customer_title_nav: "Customer Activity Report"
-      surveys_title_nav: "Survey Report"
+      surveys_title_nav: "Customer Satisfaction Report"
       scoreboard_title_nav: "Leaderboard"
       select_time_period: "Select Time period"
       generate_button: "Generate"
@@ -2074,21 +2074,22 @@ en:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
       survey_reports:
+        back_to: Back to List View
         list:
             no_feedback: Nobody has given any feedback during this time.
         list_content:
-              rating_msg_none: nobody is %{rating}
-              rating_msg_single: only one is %{rating}
-              rating_msg_multiple: %{count} are %{rating}
-              rating_primary_msg_single: only one customer is %{rating}
-              rating_primary_msg_multiple: %{count} customers are %{rating}
-              happy: happy
-              neutral: neutral
-              unhappy: unhappy
+              rating_msg_none: nobody said %{rating}
+              rating_msg_single: one said %{rating}
+              rating_msg_multiple: %{count} said %{rating}
+              rating_primary_msg_single: one customer said %{rating}
+              rating_primary_msg_multiple: %{count} customers said %{rating}
+              happy: awesome
+              neutral: just okay
+              unhappy: not good
         sidebar:
           from: From
           to: To
-          filter_by: Filter By
+          filter_by: Satisfaction Views
           view_report_date: View reports during
           helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p style='margin-left:15px;'>1.Filter the report results with respect to Agents, Group or Company<br>2.View reports for a particular timeframe</p></p>"
 

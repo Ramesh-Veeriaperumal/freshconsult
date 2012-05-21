@@ -6,17 +6,16 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 
 <div class="sidepanel">
- <div class="ui-form">	
- 	<% remote_form_for(survey_activity_url, { :method => :post, :id => 'report_filters',:update => "report_list" }) do %>
-	<b><%=t('.filter_by')%></b>
-	<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR) ,{ :multiple => false, :class => "customSelect auto"}%>
-	<br /><br />
-	<b><%=t('.view_report_date')%></b>
-	<ul>
+ <div >	
+ 	<% remote_form_for(survey_activity_url, { :method => :post, :html => {:id => 'report_filters'},:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
+ 	<ul class="ui-form">
     	   <li class="inline-field">
-				<div>
+			<b><%=t('.filter_by')%></b>
+			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
+		   </li>	
+    	   <li class="inline-field">				
+					<b><%=t('.view_report_date')%></b>
 					<%= text_field_tag :date_range, date_range, :class => "required"%>
-				</div>
 			</li>
 			<li class="inline-field">
 				<div>
