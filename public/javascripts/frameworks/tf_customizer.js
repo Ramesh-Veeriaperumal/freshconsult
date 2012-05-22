@@ -380,6 +380,14 @@
       function DialogOnLoad(sourceField){ 
         // Dialog Population Method
         try {
+            $("#TicketProperties").find(':input').each(function() {
+                switch(this.type) {
+                    case 'text':
+                    case 'textarea':
+                        $(this).val('');
+                        break;
+                }
+            });
             $("#ChoiceListValidation").next("label").hide();
             $(SourceField).removeClass("active");
             SourceField = sourceField;
@@ -404,11 +412,12 @@
             if(sourceData.field_type == 'nested_field'){ 
                 $("#nestedContainer").show();         
                 $("#NestedFieldLabels").show();
-                if(typeof sourceData.choices == "string"){                    
-                    showNestedTextarea();
-                }else{   
-                    $("#nested-selectboxs").show();  
-                }                           
+                //if(typeof sourceData.choices == "string"){                    
+                //    showNestedTextarea();
+                //}else{   
+                $("#nested-selectboxs").show();  
+                //}                        
+                nestedTree.readData(sourceData.choices);
                 $("#nestedTextarea").val(nestedTree.toString());   
                 $("#nest-category").html(nestedTree.getCategory()).trigger("change");
                 sourceData.levels.each(function(item){
