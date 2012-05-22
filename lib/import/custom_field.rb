@@ -66,7 +66,8 @@ module Import::CustomField
       (nested_fields || []).each do |nested_field|
         nested_field.symbolize_keys!
         nested_field.delete(:action)
-        create_nested_field(ticket_field, nested_field, account)
+        is_saved = create_nested_field(ticket_field, nested_field, account)
+        ticket_field.destroy and return unless is_saved
       end
     end
 
@@ -99,8 +100,10 @@ module Import::CustomField
         nested_ticket_field.name = nested_ff_def_entry.flexifield_alias
         nested_ticket_field.account = account
         nested_ticket_field.flexifield_def_entry = nested_ff_def_entry
-        @invalid_fields.push(ticket_field) and return unless nested_ticket_field.save
-   end
+        is_saved = nested_ticket_field.save
+        @invalid_fields.push(nested_ticket_field) unless is_saved
+        is_saved
+    end
 
   def field_name(label,account=current_account)
     "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}"
