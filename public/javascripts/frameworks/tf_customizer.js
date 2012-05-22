@@ -639,17 +639,21 @@
          offset.left += ($(element).width() - 50) ; 
          offset.top  -= 50;
 
-         $("#CustomFieldsDialog")
-            .position({
-               my:"left center",
-               at:"center center",
-               of: element,
-               collision: "fit fit",
-               offset: "-50 -100"
-            });
+         // $("#CustomFieldsDialog")
+         //    .position({
+         //       my:"left center",
+         //       at:"center center",
+         //       of: element,
+         //       collision: "fit fit",
+         //       offset: "-50 -100"
+         //    });
+        $("#CustomFieldsDialog").css("top", jQuery(document).scrollTop()+"px");
 
          if (dialogHidden) {
-            $("#CustomFieldsDialog").show().css("visibility", "visible")
+            $("#CustomFieldsDialog")
+              .show()
+              .css("visibility", "visible");            
+
             dialogHidden = false;
          }
       };

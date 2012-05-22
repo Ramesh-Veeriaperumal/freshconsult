@@ -138,32 +138,32 @@ en:
               additional_info: Additionally, you could also share your experience working with us.
   admin:
     surveys:
-     successfully_updated: Survey settings has been successfully updated.
+     successfully_updated: Customer Satisfaction settings has been successfully updated.
      error_updated: Error while updating survey settings.
      helptext: "<p><b>Why enable satisfaction surveys?</b> <br>
 
      Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
      <br><br>
-     <b>Creating your survey:</b><br>
+     <b>Creating your satisfaction survey:</b><br>
      The following steps let you collect feedback from your customers through a link in your response emails:<br>
      1.Enable the Customer Satisfaction Surveys checkbox<br>
-     2.Specify the Survey Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
      <br>
-     <b>Choose which emails have the survey link:</b><br>
-     You can choose whether survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
+     <b>Choose which emails have the satisfaction survey link:</b><br>
+     You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
      <br><br>
      You can learn more about satisfaction surveys from our solutions page.     
      </p>"
      
      index:    
-        title: Survey Settings
+        title: Customer Satisfaction Settings
      satisfaction_settings:    
         enable_label: Enable Customer Satisfaction Surveys
-        link_text_label: Survey Link Text
+        link_text_label: Satisfaction survey link text
         link_text_input: Please take a minute to rate your customer support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Send survey link in every email. Let customers give feedback whenever they want.
-        send_while_option2: Send survey link after the ticket is resolved. Let customers give feedback whenever they want        
+        send_while_option1: Send satisfaction survey link in every email. Let customers give feedback whenever they want.
+        send_while_option2: Send satisfaction survey link after the ticket is resolved. Let customers give feedback after ticket is resolved.        
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    

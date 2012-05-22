@@ -137,13 +137,19 @@ class Va::Action
     end
 
     def set_nested_fields(act_on)
-      _hash = @act_hash
-      ([{:name => _hash[:category_name], :value => _hash[:value]}]+_hash[:nested_rules]).each do |field|
-        if act_on.respond_to?("#{field[:name]}=")
-          act_on.send("#{field[:name]}=", field[:value])          
-          add_activity("Value changed for field #{field[:name].humanize()}")
-        end        
+      custom_ff_fields = {}
+
+      category = act_on.account.ticket_fields.find_by_name(@act_hash[:category_name]) 
+
+      if category
+        custom_ff_fields[@act_hash[:category_name].to_sym] = @act_hash[:value]
+
+        @act_hash[:nested_rules].each do |field|
+          nested_field = category.nested_ticket_fields.find_by_name(field[:name])
+          custom_ff_fields[field[:name].to_sym] = field[:value] unless nested_field.nil?
+        end
       end
+      act_on.custom_field = custom_ff_fields  unless custom_ff_fields.blank?
     end
     
   private

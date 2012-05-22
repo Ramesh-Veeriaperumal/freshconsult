@@ -6,7 +6,9 @@ require 'fileutils'
 class Helpdesk::ExportData < Struct.new(:params)
   
   def perform
+   begin
     @current_account = Account.find_by_full_domain(params[:domain])
+    @current_account.make_current
     @data_export = @current_account.data_export   
     
     @out_dir = "#{RAILS_ROOT}/tmp/#{@current_account.id}" 
@@ -34,7 +36,10 @@ class Helpdesk::ExportData < Struct.new(:params)
     update_export_status
     DataExportMailer.deliver_export_email({:email => params[:email], :domain => params[:domain], :url =>  url})
     delete_zip_file zip_file_path  #cleaning up the directory
-    
+   rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+   end
+   Account.reset_current_account
   end
   
   def delete_zip_file(zip_file_path)
