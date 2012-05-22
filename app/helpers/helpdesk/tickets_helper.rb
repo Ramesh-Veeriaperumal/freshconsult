@@ -5,7 +5,7 @@ module Helpdesk::TicketsHelper
   
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to(strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])), :class => ( selected ? "active #{cls}": "#{cls}" ))
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])), :class => ( selected ? "active #{cls}": "#{cls}" ))
     else
       content_tag(:span, "", :class => "seperator")
     end  
@@ -15,7 +15,7 @@ module Helpdesk::TicketsHelper
     unless viewlist.empty?
       more_menu_drop = 
         content_tag(:div, (link_to strip_tags(selected_item), "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
-        content_tag(:div, viewlist.map { |s| view_menu_links(s) }, :class => "fd-menu", :id => menuid)
+        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }, :class => "fd-menu", :id => menuid)
     end
   end
   
