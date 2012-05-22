@@ -9,10 +9,12 @@
 <body>
 	
 	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
-		<div class="wrapper">
-			<div class="star-logo"><%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png" : @account.main_portal.logo.content.url(:logo)) %></div>
-			<div class="logo"><%=@account.main_portal.name%></div>
-		</div>
+		<div class="brand">
+	    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
+	          <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png" : @account.main_portal.logo.content.url(:logo)) %>
+	        <% end %>
+	        <%= link_to(@account.main_portal.name, "/home", :class => "logo_text") %>
+    	</div>
 	</div>
 	
 	<div class="wrapper">
