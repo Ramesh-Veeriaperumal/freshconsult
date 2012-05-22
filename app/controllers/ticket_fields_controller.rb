@@ -36,11 +36,6 @@ class TicketFieldsController < Admin::AdminController
 
   def update #To Do - Sending proper status messages to UI.
 
-    #params[:jsonData].slice!(0,1)
-    #params[:jsonData].slice!((params[:jsonData].size - 1),1)
-
-    #params[:jsonData] = "[#{params[:jsonData]}, {'action': 'create', 'type': 'dropdown', 'field_type': 'nested_field', 'label': 'category', 'label_in_portal': 'category', 'description': '', 'active': true, 'required': false, 'required_for_closure': false, 'visible_in_portal': true, 'editable_in_portal': true, 'required_in_portal': false, 'id': 14, 'choices': [['First Choice', '0',[['First Sub1','0',[['first item11','0'],['second item11','0']]],['Sec Sub1','0',[['first item12','0'],['second item12','0']]],['Third Sub1','0']]], ['Second Choice', '0',[['First Sub2','0',[['first item21','0'],['second item21','0']]],['Sec Sub2','0',[['first item22','0'],['second item22','0']]],['Third Sub21','0']]]], levels:[{'label':'sub category', 'label_in_portal': 'sub category', 'description': '', 'id' : 3, 'level':2, 'type':'dropdown', 'position':1},{'label':'item', 'label_in_portal': 'item', 'description': '', 'id' : 4,'level':3, 'type':'dropdown', 'position':1}]}]"
-
     @invalid_fields = []
     field_data = ActiveSupport::JSON.decode params[:jsonData]
     field_data.each_with_index do |f_d, i|
