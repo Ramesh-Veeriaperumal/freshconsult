@@ -12,6 +12,9 @@ class CreateHelpdeskNestedTicketFields < ActiveRecord::Migration
 
       t.timestamps
     end
+
+    add_index :helpdesk_nested_ticket_fields, [:account_id, :name], 
+          :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
   end
 
   def self.down

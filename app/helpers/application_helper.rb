@@ -454,7 +454,7 @@ module ApplicationHelper
     content_tag :li, element unless (field_value == "" || field_value == "...")     
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
@@ -473,7 +473,7 @@ module ApplicationHelper
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -486,7 +486,7 @@ module ApplicationHelper
 
   # The field_value(init value) for the nested field should be in the the following format
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
-  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {})        
+  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)        
     _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
@@ -494,7 +494,7 @@ module ApplicationHelper
     }
     _field.nested_levels.each do |l|       
       _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = sanitize_to_id(_name +"_"+ l[:name])
-      _category += content_tag :div, content_tag(:label, l[:label]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "tabbed"
+      _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "tabbed"
     end
     
     _category + javascript_tag("jQuery('##{sanitize_to_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")        
