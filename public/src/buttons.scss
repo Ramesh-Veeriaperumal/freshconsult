@@ -338,7 +338,13 @@ div.action_buttons:hover{
       top:-37px;
 		}
 	}
-}                      
+}  
+
+#ticket-sub-toolbar .page_info .toolbar_pagination {
+  .prev_page, .next_page{     
+    top:-14px;
+  }
+}
 
 .request-title .toolbar_pagination{
   top:-2px;

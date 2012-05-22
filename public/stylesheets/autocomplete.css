@@ -1,18 +1,17 @@
 /* Theme Colors and layout Defaults */
-/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 /* Used suggestions on all examples */
 div.autocomplete { position: relative; }
 
 div.autocomplete ul { list-style-type: none; position: absolute; z-index: 99999; padding: 0; margin: 0; width: 100%; }
 
-div.autocomplete ul li { background: #EEE; border: 1px solid #CCC; border-top: none; padding: 4px 12px; font-family: "Lucida Grande","Verdana"; font-size: 11px; margin: 0 !important; white-space: nowrap !important; cursor: pointer; /*  text-overflow: ellipsis; */ overflow: hidden; }
+div.autocomplete ul li { background: #EEE; border: 1px solid #CCC; border-top: none; padding: 4px 12px; font-size: 11px; margin: 0 !important; white-space: nowrap !important; cursor: pointer; /*  text-overflow: ellipsis; */ overflow: hidden; }
 
 div.autocomplete ul li.selected { background: #78959D; border: none; padding: 4px 13px 5px; color: #FFF; }
 
 /* Only used on multi select fields */
 ul.multi_value_field { overflow: hidden; list-style-type: none; padding: 0 3px; margin: 0; border: 1px solid #999; height: auto !important; width: 98%; border: 1px solid #CFCFCF; background: #ffffff; }
 
-ul.multi_value_field li, ul.multi_value_field input { display: block; float: left; margin: 3px 5px 2px 0; list-style-type: none; -x-system-font: none; font-family: "Lucida Grande","Verdana"; font-size: 13px; width: auto; position: relative; -moz-box-shadow: white 0 0 0; -webkit-box-shadow: white 0 0 0; box-shadow: white 0 0 0; }
+ul.multi_value_field li, ul.multi_value_field input { display: block; float: left; margin: 3px 5px 2px 0; list-style-type: none; -x-system-font: none; font-size: 13px; width: auto; position: relative; -moz-box-shadow: white 0 0 0; -webkit-box-shadow: white 0 0 0; box-shadow: white 0 0 0; }
 
 ul.multi_value_field li.search_field_item { padding: 0; border: 0; }
 ul.multi_value_field li.search_field_item input { border: 0 !important; margin: 0 !important; outline: 0 !important; padding: 3px 0 3px !important; width: auto; background: none !important; }
