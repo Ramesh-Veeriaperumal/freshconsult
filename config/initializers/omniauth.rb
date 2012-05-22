@@ -1,7 +1,6 @@
 #config/initializers/omniauth.rb
 require 'openid/store/filesystem'
 require 'omniauth'
-require 'omniauth/strategies/salesforce'
 require 'omniauth/strategies/twitter'
 
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do

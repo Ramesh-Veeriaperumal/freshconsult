@@ -181,9 +181,12 @@ module Integrations::GoogleContactsUtil
       unless is_primary.blank? || is_primary != "true"
         goog_contact_detail[:primary_email] = email_element.attribute('address').value
       else
-        goog_contact_detail[:second_email] = email_element.attribute('address').value if rel.end_with?("home")
+        addr = email_element.attribute('address').value
+        goog_contact_detail[:second_email] = addr
+        goog_contact_detail[:primary_email] = addr if goog_contact_detail[:primary_email].blank?
       end
     }
+    goog_contact_detail[:second_email] = nil if goog_contact_detail[:second_email] == goog_contact_detail[:primary_email]
 
     goog_contact_detail[:google_id] = Integrations::GoogleContactsUtil.parse_id([entry_element.get_text('id').value]) #id
     goog_contact_detail[:name] = entry_element.get_text('gd:name/gd:fullName').value #name
@@ -201,8 +204,8 @@ module Integrations::GoogleContactsUtil
       value = formatted_addr_element.text.strip
       if rel.end_with?("work")
         goog_contact_detail[:postalAddress_work] = value
-      elsif rel.end_with?("home")
-        goog_contact_detail[:postalAddress_home] = value
+      elsif goog_contact_detail[:postalAddress_work].blank?
+        goog_contact_detail[:postalAddress_work] = value
       end
     }
     #phoneNumber
@@ -213,6 +216,10 @@ module Integrations::GoogleContactsUtil
         goog_contact_detail[:phoneNumber_work] = value
       elsif rel.end_with?("mobile")
         goog_contact_detail[:phoneNumber_mobile] = value
+      elsif goog_contact_detail[:phoneNumber_work].blank?
+        goog_contact_detail[:phoneNumber_work] = value 
+      elsif goog_contact_detail[:phoneNumber_home].blank?
+        goog_contact_detail[:phoneNumber_home] = value 
       end
     }
     #orgName

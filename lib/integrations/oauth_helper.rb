@@ -2,25 +2,18 @@ module Integrations::OauthHelper
 
   	def get_oauth2_access_token(refresh_token)
       oauth_s = Integrations::OauthHelper.get_oauth_keys('salesforce')
-      client = OAuth2::Client.new oauth_s["consumer_token"], oauth_s["consumer_secret"],
-               { :site          => 'https://login.salesforce.com',
-                 :authorize_url => '/services/oauth2/authorize',
-                 :token_url     => '/services/oauth2/token'
-                }
-      token_hash = { :refresh_token => refresh_token, :client_options => {
-        :site          => 'https://login.salesforce.com',
-        :authorize_url => '/services/oauth2/authorize',
-        :token_url     => '/services/oauth2/token'
-      },
-      :header_format => 'OAuth %s'}
+      oauth_options = Integrations::OauthHelper.get_oauth_options('salesforce')
+      client = OAuth2::Client.new oauth_s["consumer_token"], oauth_s["consumer_secret"], oauth_options
+               
+      token_hash = { :refresh_token => refresh_token, :client_options => oauth_options, :header_format => 'OAuth %s'}
       access_token = OAuth2::AccessToken.from_hash(client, token_hash)
       access_token.refresh! 
     end
 
     def get_oauth_access_token(oauth_token, oauth_token_secret)
       oauth_s = Integrations::OauthHelper.get_oauth_keys('google')
-      consumer = OAuth::Consumer.new(oauth_s["consumer_token"], oauth_s["consumer_secret"],
-          { :site => "https://www.google.com/"})
+      oauth_options = Integrations::OauthHelper.get_oauth_options('google')
+      consumer = OAuth::Consumer.new(oauth_s["consumer_token"], oauth_s["consumer_secret"], oauth_options)
       # now create the access token object from passed values
       token_hash = { :oauth_token => oauth_token,
                      :oauth_token_secret => oauth_token_secret
@@ -29,6 +22,16 @@ module Integrations::OauthHelper
       return access_token
     end
 
+    def self.get_oauth_options(provider)
+      config = File.join(Rails.root, 'config', 'oauth_keys.yml')
+      options_hash = (YAML::load_file @config)['oauth_options'][provider]      
+      options_hash.map { |key, value|
+        options_hash.delete(key)
+        key = key.to_sym
+        options_hash[key] = value
+      }
+      options_hash
+    end
 
     def self.get_oauth_keys(provider=nil)
       #### Fetch specific OAuth keys ####

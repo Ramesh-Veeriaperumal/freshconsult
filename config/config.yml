@@ -32,13 +32,6 @@ crm:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
 
-salesforce:
-    development:
-      redirect_url: "http://localhost:3000"
-    production:
-      redirect_url: "https://login.freshdesk.com"
-    staging:
-      redirect_url: "http://elderscrolls.freshpo.com"
 
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false
