@@ -15,6 +15,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :url => ":s3_alias_url",
     :s3_host_alias => "cdn.freshdesk.com",
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
+    
+   
  
   
     #before_validation_on_create :set_random_secret

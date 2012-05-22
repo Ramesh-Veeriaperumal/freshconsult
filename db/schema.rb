@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120503111200) do
+ActiveRecord::Schema.define(:version => 20120517125341) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -218,6 +218,7 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "ticket_id_delimiter",               :default => "#"
+    t.boolean  "pass_through_enabled",              :default => true
   end
 
   create_table "email_configs", :force => true do |t|
@@ -526,6 +527,21 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.datetime "updated_at"
     t.integer  "ticket_issues_count"
   end
+
+  create_table "helpdesk_nested_ticket_fields", :force => true do |t|
+    t.integer  "account_id",              :limit => 8
+    t.integer  "ticket_field_id",         :limit => 8
+    t.string   "name"
+    t.string   "label"
+    t.string   "label_in_portal"
+    t.string   "description"
+    t.integer  "flexifield_def_entry_id", :limit => 8
+    t.integer  "level"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
@@ -1025,7 +1041,9 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.integer  "score_trigger"
   end
 
-  create_table "survey_handles", :force => true do |t|
+  create_table "survey_handles", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "account_id",       :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
     t.string   "id_token"
@@ -1035,16 +1053,24 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.datetime "updated_at"
     t.integer  "survey_id",        :limit => 8
     t.integer  "survey_result_id", :limit => 8
+    t.boolean  "rated",                         :default => false
   end
 
-  create_table "survey_remarks", :force => true do |t|
+  add_index "survey_handles", ["id"], :name => "survey_handles_id"
+
+  create_table "survey_remarks", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "account_id",       :limit => 8
     t.integer  "note_id",          :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "survey_result_id", :limit => 8
   end
 
-  create_table "survey_results", :force => true do |t|
+  add_index "survey_remarks", ["id"], :name => "survey_remarks_id"
+
+  create_table "survey_results", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
     t.integer  "account_id",       :limit => 8
     t.integer  "survey_id",        :limit => 8
     t.integer  "surveyable_id",    :limit => 8
@@ -1056,6 +1082,8 @@ ActiveRecord::Schema.define(:version => 20120503111200) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "survey_results", ["id"], :name => "survey_results_id"
 
   create_table "surveys", :force => true do |t|
     t.integer  "account_id", :limit => 8

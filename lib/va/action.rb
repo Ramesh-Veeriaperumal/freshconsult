@@ -135,6 +135,22 @@ class Va::Action
       act_on.spam = true 
       add_activity("Marked the ticket <b>#{act_on} </b> as spam")
     end
+
+    def set_nested_fields(act_on)
+      custom_ff_fields = {}
+
+      category = act_on.account.ticket_fields.find_by_name(@act_hash[:category_name]) 
+
+      if category
+        custom_ff_fields[@act_hash[:category_name].to_sym] = @act_hash[:value]
+
+        @act_hash[:nested_rules].each do |field|
+          nested_field = category.nested_ticket_fields.find_by_name(field[:name])
+          custom_ff_fields[field[:name].to_sym] = field[:value] unless nested_field.nil?
+        end
+      end
+      act_on.custom_field = custom_ff_fields  unless custom_ff_fields.blank?
+    end
     
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.

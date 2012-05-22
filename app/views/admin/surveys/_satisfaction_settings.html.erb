@@ -1,0 +1,24 @@
+<% remote_form_for :account, @account, :url => {:action => "enable"},  :html => { :method => :put, :id => "survey_enable" } do |account| %>
+<ul class="ui-form">
+	
+	<li><%= account.feature_check_box :survey_links %><%= t('.enable_label') %></li>
+	
+</ul>
+<%end%>
+<br> <br>
+<div id="survey_elements">
+<% remote_form_for :survey, @survey, :url => { :action => "update" },  :html => { :method => :put } do |f| %>
+<ul class="ui-form">
+	<li>
+		<%=t('.link_text_label')%><%= f.text_field :link_text, :value => @survey[:link_text], :class => "time"  %>
+		<br/> <span class="link_text_info"><%=t('.link_text_info')%></span>
+	</li>
+	<li><%= f.radio_button :send_while, Survey::RESOLVED_NOTIFICATION %> <%=t('.send_while_option2')%></li>
+	<li><%= f.radio_button :send_while, Survey::ANY_EMAIL_RESPONSE %> <%=t('.send_while_option1')%></li>
+</ul>
+<div class="button-container">
+	<%= submit_tag t('account.save'), :class => 'uiButton' %>
+	<a class="uiButton" href="/admin/home">Cancel</a>
+</div>
+<%end%>
+</div>

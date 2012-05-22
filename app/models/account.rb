@@ -8,11 +8,19 @@ class Account < ActiveRecord::Base
   serialize :preferences, Hash
   serialize :sso_options, Hash
   
+  
+  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
+  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
+  has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
+  has_many :flexifields, :dependent => :delete_all
+  has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
+  
   has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
   has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }, :order => "name"
-  has_many :portals 
+  has_many :portals
+  has_many :survey_results
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
   accepts_nested_attributes_for :main_portal
  
@@ -22,7 +30,7 @@ class Account < ActiveRecord::Base
   has_one :data_export,:dependent => :destroy
   
   has_one :email_commands_setting,:dependent => :destroy
-  has_one :conversion_metric
+  has_one :conversion_metric,:dependent => :destroy
   
   has_one :logo,
     :as => :attachable,
@@ -95,9 +103,9 @@ class Account < ActiveRecord::Base
   
   has_one :business_calendar, :dependent => :destroy
   
-  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :destroy
+  
   has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
-  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :destroy
+  
   
   has_many :portal_forums,:through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} 
   has_many :portal_topics, :through => :portal_forums# , :order => 'replied_at desc', :limit => 5
@@ -133,10 +141,11 @@ class Account < ActiveRecord::Base
   has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
 
   
-  has_many :tags, :class_name =>'Helpdesk::Tag'
+  has_many :tags, :class_name =>'Helpdesk::Tag', :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
+  has_many :support_scores, :class_name => 'SupportScore'
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -168,7 +177,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
-  after_create :add_to_crm
+  after_create :add_to_crm,:add_affiliate_information
   after_update :update_users_language
   
   before_destroy :update_google_domain
@@ -194,7 +203,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ,:facebook, :timesheets ],
+        :surveys, :scoreboard, :facebook, :timesheets ],
       :inherits => [ :basic ]
     },
     
@@ -208,7 +217,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :timesheets ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets ],
       :inherits => [ :sprout ]
     },
     
@@ -220,8 +229,8 @@ class Account < ActiveRecord::Base
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
-  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true, :scoreboard => true, 
-    :survey_links => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
+    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
     
   
   has_features do
@@ -389,6 +398,10 @@ class Account < ActiveRecord::Base
     !subscription.card_number.nil?
   end
 
+  def pass_through_enabled?
+    email_commands_setting.pass_through_enabled
+  end
+
   protected
   
     def valid_domain?
@@ -527,7 +540,11 @@ class Account < ActiveRecord::Base
     
     def subscription_next_renewal_at
        subscription.next_renewal_at
-    end
+   end
+   
+   def add_affiliate_information
+    SubscriptionAffiliate.add_affiliate(self)
+   end
    
    
   

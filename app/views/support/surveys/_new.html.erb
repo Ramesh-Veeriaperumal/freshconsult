@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<link rel="stylesheet" href="/stylesheets/support/rating.css">
+	<%= include_javascripts :survey  %>
+
+</head>
+<body>
+	
+	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
+		<div class="wrapper">
+			<div class="star-logo"><%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png" : @account.main_portal.logo.content.url(:logo)) %></div>
+			<div class="logo"><%=@account.main_portal.name%></div>
+		</div>
+	</div>
+	
+	<div class="wrapper">
+		
+			<div class="position">
+			<div class="pointer"></div>
+			<div class="highlighter">
+				<div class="smily">
+					<% rating_img = (@rating==Survey::HAPPY) ? "happy" : (@rating==Survey::UNHAPPY) ? "unhappy" : "neutral" %>
+					<img src="/images/<%=rating_img%>-smily.png">
+				</div>
+				<div>
+				<%if @rating==Survey::HAPPY%>	
+					<h1><%= t('.thanks') %></h1>
+					<h2><%= t('.happy_info') %></h2>
+				<%elsif @rating==Survey::UNHAPPY%>
+					<h1><%= t('.thanks') %> <%= t('.sorry') %></h1>
+					<h2><%= t('.unhappy_info') %></h2>					
+				<%else%>
+					<h1><%= t('.thanks') %></h1>
+					<h2><%= t('.neutral_info') %></h2>	
+				<%end%>
+				</div>
+			</div>
+		</div>
+	 	
+		<div class="clear"></div>
+		<div>
+			<div class="search-bar">
+				<p class="search-top"><%= t('.additional_info') %></p>
+				<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
+					<div class="text_con">
+						<%= text_area(:survey, :feedback, :autocomplet => "off", :rel => "ghostwriter", :size => "24", :width => "100%", :class=> "textfield required", :style=>"display:block;resize:none;") %>
+					</div>	
+					
+					<div>						
+						<%= f.submit t('.send'), :class => "button button-text" %>
+					</div>
+				<%end%>		
+			</div>
+		</div>
+
+	</div>
+	
+	<script>
+		$("#survey_form").validate();
+	</script>
+
+</body>
+</html>

@@ -5,36 +5,56 @@
   </td>
 
   <td class="name">
-  	  <%= user_avatar(ticket.requester) %>
+	<span class="hideForList"><%= user_avatar(ticket.requester) %></span>
+	<div class="ticket_subject">
+		<h3>
 			<span class="need-attention-icon"></span>
-      <h3>
-        <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}), :class => "ticket-description-tip" ) %> 
-        <%= content_tag :span, h(truncate(ticket.description, { :length => 350, :omission => "..." })), :class => "hide" %>
-	  	</h3>
-	  <% unless ticket.requester.nil? %>
-			<% content_tag :div, :class => "info-data" do %>
-			  <%= content_tag :span, "", :class => "tooltip icon-image source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>
-				<%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :date => formated_date(ticket.updated_at)) %>
+			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}), :class => "ticket-description-tip" ) %> 
+			<%=render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket} %>
+		</h3>
+		<% unless ticket.requester.nil? %>
+			<% content_tag :div, :class => "info-data hideForList" do %>
+			  <%= content_tag :span, "", :class => "tooltip icon-image grey-source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>
+				<%= t("ticket.reported_on_ticket_list", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :time_words => time_ago_in_words(ticket.updated_at), :date => formated_date(ticket.updated_at)) %>
 			<% end %>
-	  <% end %>
+		<% end %>
+	</div>
   </td>
-
-  <td class="assign">
-      <% if ticket.freshness == :new %>
-        <%=t('ticket.unassigned')%>
-      <% else %>
-        <span><%=t('assigned_to')%> <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
-      <% end %>
+  <td class="requester_info hideForDetails">
+  	<%= h(ticket.requester.display_name) %>
+  </td>
+  <td class="ticket_info hideForDetails"><%= t("helpdesk.tickets.tabular_view.time_ago", :time_in_words => time_ago_in_words(ticket.updated_at)) %></td>
+  <td class="assign hideForList">
 	  	<ul>
+	  		<li>
+				<% if ticket.freshness == :new %>
+					<span><%=t('ticket.unassigned')%></span>
+				<% else %>
+				<%=t('assigned_to')%>: <span><%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span> 	
+				<% end %>
+			</li>
 			<li>
-		    <%=t('ticket.status')%> <span><%= h(ticket.status_name) %></span>
-		  </li>
+				<%=t('ticket.status')%>: <span><%= h(ticket.status_name) %></span>
+			</li>
 			<li class="priority">
-			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
+				<%=t('ticket.priority')%>: <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
   </td>
-	
+  <td class="hideForDetails">
+  	<% if ticket.freshness == :new %>
+		<span><%=t('ticket.unassigned')%></span>
+	<% else %>
+	<%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'user_name' ) %>
+	<% end %>
+  </td>
+  <td class="hideForDetails">
+  	<%= h(ticket.status_name) %>
+  </td>
+  <td class="hideForDetails">
+  	<span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
+  </td>
+<!-- 	
   <td class="sla">
     <% if( ticket.active? ) %>
   	  <% if(Time.now > ticket.due_by ) %>
@@ -49,5 +69,5 @@
 	      <%= t('resolved_late') %>	    
 	    <% end %>
 	  <% end %>
-  </td>
+  </td> -->
 </tr>

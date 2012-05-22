@@ -1,4 +1,7 @@
 class Helpdesk::Note < ActiveRecord::Base
+
+  include ParserUtil
+
   set_table_name "helpdesk_notes"
   
   belongs_to_account
@@ -6,6 +9,8 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :notable, :polymorphic => true
 
   belongs_to :user
+
+  before_create :set_note_as_private
   
   Max_Attachment_Size = 15.megabyte
 
@@ -86,6 +91,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def tweet?
     source == SOURCE_KEYS_BY_TOKEN["twitter"]    
   end
+  
+  def feedback?
+    source == SOURCE_KEYS_BY_TOKEN["feedback"]    
+  end
 
   def private_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && private
@@ -103,6 +112,16 @@ class Helpdesk::Note < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
   end 
   
+  def fwd_email?
+    email? and private
+  end
+  
+  def to_json(options = {})
+    options[:methods] = [:user_name]
+    options[:except] = [:account_id,:notable_id,:notable_type]
+    super options
+  end
+  
   def to_liquid
     { 
       "commenter" => user,
@@ -116,14 +135,20 @@ class Helpdesk::Note < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => :attachments,:except => [:account_id,:notable_id,:notable_type]) 
    end
-    
+
+  def create_fwd_note_activity(to_emails)
+    notable.create_activity(user, 'activities.tickets.conversation.out_email.private.long',
+            {'eval_args' => {'fwd_path' => ['fwd_path', 
+                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_emails(to_emails)},
+            'activities.tickets.conversation.out_email.private.short')  
+  end
 
   protected
     def save_response_time
       if human_note_for_ticket?
-        ticket_state = notable.ticket_states     
-        if "Customer".eql?(User::USER_ROLES_NAMES_BY_KEY[user.user_role])      
-          ticket_state.requester_responded_at=Time.zone.now          
+        ticket_state = notable.ticket_states   
+        if user.customer?  
+          ticket_state.requester_responded_at=Time.zone.now if !(email? and notable.included_in_fwd_emails?(user.email))
         else
           ticket_state.agent_responded_at=Time.zone.now unless private
           ticket_state.first_response_time=Time.zone.now if ticket_state.first_response_time.nil? && !private
@@ -135,18 +160,16 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer? 
-        unless notable.open?
+      if user.customer?      	
+        unless notable.open? || feedback?
           notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
-        end 
+        end
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
-      else
-        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, 
-            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
+      elsif inbound_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self , notable.reply_email,{:include_cc => true})      
       end
       
       notable.updated_at = created_at
@@ -159,16 +182,21 @@ class Helpdesk::Note < ActiveRecord::Base
       notable.ticket_states.update_attribute(:inbound_count,inbound_count+=1)
      end
     end
-      
+     
+     def set_note_as_private
+       self.private = true if note? && !user.customer?
+      end 
     
     def add_activity
       return unless human_note_for_ticket?
       
       if outbound_email?
-        notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
+        unless private?
+          notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
             {'eval_args' => {'reply_path' => ['reply_path', 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
             'activities.tickets.conversation.out_email.short')
+        end
       elsif inbound_email?
         notable.create_activity(user, 'activities.tickets.conversation.in_email.long', 
           {'eval_args' => {'email_response_path' => ['email_response_path', 
@@ -190,5 +218,18 @@ class Helpdesk::Note < ActiveRecord::Base
     def liquidize_body
       attachments.empty? ? body_html : 
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    end
+
+    # The below 2 methods are used only for to_json 
+    def user_name
+      user.name || user_info
+    end
+    
+    def user_info
+      user.get_info if user
+    end
+
+    def parse_to_emails(emails)
+      emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
     end
 end

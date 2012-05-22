@@ -1,4 +1,4 @@
-class Helpdesk::TicketNotifier < ActionMailer::Base
+class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -66,8 +66,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
  
   def reply(ticket, note , reply_email, options={})
     subject       formatted_subject(ticket)
-    recipients    ticket.requester.email
-    cc            ticket.cc_email if !options[:include_cc].blank? and !ticket.cc_email.nil?
+    recipients    fwd_email?(options) ? options[:to_emails] : ticket.requester.email 
+    cc            cc_emails(ticket,options)
     bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html,
@@ -117,5 +117,19 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   
   def formatted_subject(ticket)
     "Re: #{ticket.encode_display_id} #{ticket.subject}"
+  end
+  
+  def fwd_email?(options)
+    "fwd".eql?(options[:email_type])
+  end
+
+  def cc_emails(ticket, options)
+    if (!options[:include_cc].blank? and !ticket.cc_email.nil?)
+      if(fwd_email?(options))
+        options[:fwd_cc_emails]
+      else
+        ticket.cc_email_hash[:cc_emails]
+      end
+    end
   end
 end
