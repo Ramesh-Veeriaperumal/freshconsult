@@ -81,7 +81,7 @@ class AuthorizationsController < ApplicationController
     app_name = Integrations::Constants::APP_NAMES[:salesforce]
     config_params = {'refresh_token' => @omniauth.credentials.refresh_token, 'oauth_token' => access_token.token, 'instance_url' => access_token.params['instance_url']}
     Integrations::Application.install_or_update(app_name, account.id, config_params)
-    redirect_url = protocol +  domain + ".freshdesk.com" + "/integrations/applications"
+    redirect_url = protocol +  domain + "/integrations/applications"
     redirect_to redirect_url
   end
 
