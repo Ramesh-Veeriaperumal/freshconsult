@@ -92,18 +92,22 @@ module Import::CustomField
     }
   end
   
-    def create_nested_field(ticket_field, nested_field, account=current_account)        
-        nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field,account)
-        nested_field.delete(:id)
-        nested_field.delete(:position)
-        nested_ticket_field = ticket_field.nested_ticket_fields.build(nested_field)
-        nested_ticket_field.name = nested_ff_def_entry.flexifield_alias
-        nested_ticket_field.account = account
-        nested_ticket_field.flexifield_def_entry = nested_ff_def_entry
-        is_saved = nested_ticket_field.save
-        @invalid_fields.push(nested_ticket_field) unless is_saved
-        is_saved
-    end
+  def create_nested_field(ticket_field, nested_field, account=current_account)
+      incorrect_data = (nested_field[:label].blank? || nested_field[:type].blank? || nested_field[:level].blank?)        
+      
+      @invalid_fields.push(ticket_field) and ticket_field.errors.add_to_base("Incorrect values for level 2 and level 3 for dependant field") and return false if incorrect_data
+      
+      nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field,account)
+      nested_field.delete(:id)
+      nested_field.delete(:position)
+      nested_ticket_field = ticket_field.nested_ticket_fields.build(nested_field)
+      nested_ticket_field.name = nested_ff_def_entry.flexifield_alias
+      nested_ticket_field.account = account
+      nested_ticket_field.flexifield_def_entry = nested_ff_def_entry
+      is_saved = nested_ticket_field.save
+      @invalid_fields.push(nested_ticket_field) unless is_saved
+      is_saved
+  end
 
   def field_name(label,account=current_account)
     "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}"
