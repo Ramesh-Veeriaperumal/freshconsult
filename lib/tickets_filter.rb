@@ -1,10 +1,10 @@
 module TicketsFilter
   include TicketConstants
   
-  DEFAULT_FILTER = "new_and_my_open"
+  DEFAULT_FILTER = "new_my_open"
 
   SELECTORS = [
-    [:new_and_my_open,  I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
+    [:new_and_my_open,  I18n.t('helpdesk.tickets.views.new_my_open'), [:visible]  ],
     [:my_open,          I18n.t('helpdesk.tickets.views.my_open'), [:visible, :responded_by, :open]  ],
     [:my_resolved,      I18n.t('helpdesk.tickets.views.my_resolved'), [:visible, :responded_by, :resolved] ],
     [:my_closed,        I18n.t('helpdesk.tickets.views.my_closed'), [:visible, :responded_by, :closed]  ],

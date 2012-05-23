@@ -1,0 +1,102 @@
+<div style="font-weight:bold;">
+	<%= javascript_include_tag :defaults %>
+	<%= calendar_date_select_includes 'silver' %>
+	<% CalendarDateSelect.format = :iso_date %>	
+ 	<div style="display:block;">
+	<table cellspacing="0" cellpadding="0">
+	 <tr>
+		<td>
+	<% form_tag "/metrics", :method => 'get', :class => "pull-right" do %>
+	  <p>                                                                     
+	    <%= calendar_date_select_tag 'start_date', ((params[:start_date].blank?) ? "" : params[:start_date])%>
+		 	to
+        <%= calendar_date_select_tag :end_date, ((params[:end_date].blank?) ? "" : params[:end_date]) %>
+	    <%= submit_tag "Search", :name => nil, :class => "btn" %>
+	  </p>
+	<% end %>
+	</td></tr></table>
+	</div>
+	<%if(!params[:start_date].blank?)%>
+		  Conversion Metrics for the duration <%=params[:start_date]%> to <%=params[:end_date]%><br><br>
+	<%else%>
+		  Conversion Metrics for last 30 days <br><br>
+	<%end%>
+	<table id="metrics_summary" class="table table-bordered" style="width:50%;">
+	  <tr>
+	    <th>First Referrer</th>
+	    <th>Signups</th>
+	    <th>Trial C</th>
+		<th>Paid C</th>
+		<th>Free C</th>
+		<th>Conversion %</th>
+		<th>Revenue $</th>
+		<th>ARPU</th>
+	  </tr>
+	  <%@summary.each do |k,v|%>
+	  <% next if k.to_s.eql?("total") %>
+	  <tr>
+	    <td><%=v[:name]%></td>
+	    <td><%=v[:signup]%></td>          
+	    <td><%=v[:trial]%></td>
+		<td><%=v[:paid]%></td>
+		<td><%=v[:free]%></td>
+		<% conversion = ( (v[:signup] > 0) ? ((v[:paid]* 100).to_f / v[:signup].to_f).round : 0 ) %>
+		<td><%= conversion %>%</td>
+		<td><%=v[:revenue]%></td>
+		<% arpu = ( (v[:paid]>0)? (v[:revenue].to_f/v[:paid].to_f).round : 0 ) %>
+		<td><%= arpu %></td>
+	  </tr>
+	<%end%> 
+  	<tr>
+	    <td><%=@summary[:total][:name]%></td>
+	    <td><%=@summary[:total][:signup]%></td>          
+	    <td><%=@summary[:total][:trial]%></td>
+		<td><%=@summary[:total][:paid]%></td>
+		<td><%=@summary[:total][:free]%></td>
+		<% conversion = ( (@summary[:total][:paid]>0) ? ((@summary[:total][:paid]* 100).to_f / @summary[:total][:signup].to_f).round : 0 ) %>
+		<td><%= conversion %>%</td>
+		<td><%=@summary[:total][:revenue]%></td>
+		<% arpu = ( (@summary[:total][:revenue]>0)? (@summary[:total][:revenue].to_f/@summary[:total][:paid].to_f).round : 0 ) %>
+		<td><%= arpu %></td>
+	  </tr>
+	
+	</table>
+	
+	<div style="padding:10px;"> Conversion Metrics </div>
+	<div class="span8">
+		<table id="metrics" class="table">
+		  <tr>
+			<th>Name</th>
+		    <th>Signup Referrer</th>
+		    <th>First Referrer</th>
+			<th>First Landing Url</th>
+			<th>Visits</th>
+			<th>Search Engine</th>
+			<th>Keywords</th>
+		  </tr>
+		  <% @conversion_metrics.each_with_index do |metric,i| %>
+		 
+		   <%unless metric.referrer.nil?%>
+				
+		    <tr class="<%= metric.get_css_class %>">
+			  <td>
+				<%=metric.account.name%><br>
+				( <a href="http://<%=metric.account.full_domain%>" target="_blank"><%= metric.trim_domain(metric.account.full_domain) %></a> <%=metric.subscription.state%>, <%=metric.subscription.amount%> )
+			  </td>
+		      <td><a href="<%= metric.referrer %>" target="_blank">
+				<%= metric.get_referrer_category(metric.referrer,false) %>
+			  </a></td>
+			  <td><a href="<%= metric.first_referrer %>" target="_blank">				
+				<%= metric.get_referrer_category(metric.first_referrer,true) %>
+				</a></td>
+			  <td><a href="<%= metric.first_landing_url %>" target="_blank"><%= metric.parse_landing_url(metric.first_landing_url) %></a></td>
+			  <td><%= metric.visits %></td>
+			  <td><%= (metric.search_engine || "None") %></td>
+			  <td><% if(!metric.keywords.blank? and metric.is_url?(metric.keywords)) %><a href="<%=metric.keywords%>" target="_blank"%><%=metric.get_host(metric.keywords)%></a><%else%><%= (!metric.keywords.blank? ? metric.trim_url(metric.keywords) : "None") %><% end %></td>
+		    </tr>
+			<%end%>
+		  <% end %>      
+		</table>
+		<%= will_paginate(@subscriptions) %>
+	</div>
+</div>

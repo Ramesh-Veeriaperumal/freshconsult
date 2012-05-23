@@ -1,0 +1,65 @@
+.top-title, .top-time, .topic-head, .box-title, .cote, .tab-text { font-family: "Helvetica Neue", Arial, sans-serif; color: #303030; font-weight: bold; line-height: 24px; }
+
+.top-title { font-size: 20px; padding-bottom: 3px; }
+
+.top-date { font-size: 11px; color: #303030; font-weight: bold; line-height: 24px; }
+
+.topic-head { font-size: 14px; max-width: 150px; text-align: left; margin: 15px 0 0 25px; line-height: 18px; }
+
+.tab-text { font-size: 12px; color: #333; font-weight: normal; display: block; padding-top: 13px; }
+
+.agent-img { width: 39px; height: 39px; display: block; margin: 10px 0 0 -25px; float: left; }
+
+.tabs .active > a, .tabs .active > a:hover { height: 60px; line-height: 30px; }
+
+.tabs > li > a { height: 60px; line-height: 30px; }
+
+.happy-smily { background: url("../images/happy-smily-tab.png") no-repeat; float: left; padding-left: 10px; position: relative; width: 42px; height: 42px; margin-left: -8px; margin-top: 10px; }
+
+.neutral-smily { background: url("../images/neutral-smily-tab.png") no-repeat; float: left; padding-left: 10px; position: relative; width: 42px; height: 42px; margin-left: -8px; margin-top: 10px; }
+
+.unhappy-smily { background: url("../images/unhappy-smily-tab.png") no-repeat; float: left; padding-left: 10px; position: relative; width: 42px; height: 42px; margin-left: -8px; margin-top: 10px; }
+
+.tabs, .pills { margin: 0 0 0px; padding: 0; list-style: none; zoom: 1; }
+
+.content-area { margin: 30px 0; }
+
+.left-box { background-color: #f3f3f3; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; border: 1px solid #f3f3f3; min-height: 39px; min-width: 27%; float: left; }
+
+.right-box { background-color: #f3f3f3; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; border: 1px solid #f3f3f3; min-height: 39px; width: 68%; margin-right: 25px; float: right; position: relative; }
+
+.content-set { margin: 15px 0 0 25px; overflow: hidden; *zoom: 1; }
+
+.content-img { width: 39px; height: 39px; display: block; float: left; }
+
+.content-img div.preview_pic img, .agent-img div.preview_pic img { width: 39px; height: 39px; border-radius: 5px; }
+
+.content-2-img { background: url("../images/content-2-img.png") no-repeat; width: 39px; height: 39px; display: block; float: left; }
+
+.inner-box { background-color: #fff; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; min-height: 37px; max-width: 142px; margin: 1px 0 1px 40px; }
+
+.happy-smily-small { background: url("../images/happy-smily-small.png") no-repeat; width: 20px; height: 20px; display: block; float: right; position: relative; top: 9px; left: -4px; }
+
+.unhappy-smily-small { background: url("../images/unhappy-smily-small.png") no-repeat; width: 20px; height: 20px; display: block; float: right; position: relative; top: 9px; left: -4px; }
+
+.neutral-smily-small { background: url("../images/neutral-smily-small.png") no-repeat; width: 20px; height: 20px; display: block; float: right; position: relative; top: 9px; left: -4px; }
+
+.box-title { font-size: 13px; position: relative; left: 10px; display: block; line-height: 15px; padding-top: 2px; }
+
+.box-date { font-size: 11px; font-weight: normal; text-align: left; margin: 3px 0 0px 10px; display: block; }
+
+.box-content { font-size: 13px; font-weight: normal; margin: 0px 0 0px 18px; color: #333; padding: 5px; letter-spacing: -0.1em; text-align: left; }
+
+.container-arrow { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-right: 8px solid #f3f3f3; left: -9px; top: 11px; position: absolute; }
+
+.cote { margin-top: 2px; margin-left: 5px; background: url("../images/cote-img.png") no-repeat; width: 16px; height: 13px; display: block; position: absolute; }
+
+.tab-width { width: 21%; }
+
+.tab-bottom { margin-top: -10px; }
+
+.report-grid { width: 10%; }
+
+.top-p { padding-top: 18px; position: absolute; left: 12px; }
+
+.min-width { min-width: 184px; }

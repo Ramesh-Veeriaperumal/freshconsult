@@ -2,8 +2,12 @@ class Support::SurveysController < ApplicationController
   before_filter :load_handle
   
   def new
+  	send_error and return if @survey_handle.rated?
+  	
     @rating = Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], Survey::HAPPY)
     @survey_handle.create_survey_result @rating
+    @account = Account.find_by_id @survey_handle.survey[:account_id]
+    render :partial => 'new'
   end
   
   def create
@@ -20,10 +24,12 @@ class Support::SurveysController < ApplicationController
   protected
     def load_handle
       @survey_handle = current_account.survey_handles.find_by_id_token(params[:survey_code])
-      
-      unless @survey_handle
-        flash[:warning] = "Invalid survey code, you might have already given the feedback"
-        redirect_to root_path
-      end
+      send_error unless @survey_handle
     end
+    
+    def send_error
+      flash[:warning] = "Invalid survey code, you might have already given the feedback"
+      redirect_to root_path
+    end
+    
 end

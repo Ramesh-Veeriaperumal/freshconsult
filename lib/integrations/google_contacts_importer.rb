@@ -12,6 +12,7 @@ class Integrations::GoogleContactsImporter
     google_accounts = Integrations::GoogleAccount.find_all_installed_google_accounts
     google_accounts.each { |google_account|
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
+      Account.reset_current_account
       begin
         if google_account.account.blank? or !google_account.account.active?
           Rails.logger.info "Account #{google_account.account.name} expired.  Google contacts syncing disabled."

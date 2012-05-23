@@ -1,0 +1,25 @@
+	<% if @happycustomers.length > 0 %>
+		<% high_score = @happycustomers[0].tot_score.to_i %> 
+	<% end %>
+	<div class="titlebar" style="margin-top:50px;">Happy Customers</div>
+	<% @happycustomers.each_with_index  do |happycustomer, index|%>
+	<% unless happycustomer.tot_score.to_i < 0 %>
+	<div class="agentreport">
+		<ul>
+			<li class="nospace"><div class="bignum floatleft"><%= (index + 1)%></div></li>	
+			<li style="width:35%;">
+				<div class="floatleft photo"><%= user_avatar(happycustomer.user, :thumb, 'preview_pic') %></div>
+				<div class="floatleft agentname"><%= happycustomer.user.display_name %><div>Job Title</div></div>								
+			</li>
+			<li style="width:35%;" class="nospace">
+				<% progress_percentage =  ((happycustomer.tot_score.to_i / high_score) * 100).to_i %>
+				<% progress_color = (progress_percentage > 30 and progress_percentage < 70) ? 'progress-warning' :  ((progress_percentage < 30) ? 'progress-danger' : 'progress-success') %>
+				<div class="progress <%= progress_color%>" style="margin-bottom: 9px;">
+        			<div class="bar" style="width: <%= ((happycustomer.tot_score.to_i / high_score) * 100).to_i %>%"></div>        			
+      			</div>
+			</li>
+			<li class="nospace"><%= happycustomer.tot_score %> points</li>			
+		</ul>
+	</div>
+	<% end %>
+	<% end %>

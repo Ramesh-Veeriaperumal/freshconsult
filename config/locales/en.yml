@@ -67,12 +67,11 @@ en:
       description: Description
       product: Product
       ticket_type: Type
-    customizer_js:
-      untitled: Untitled
-      first_choice: First Choice
-      second_choice: Second Choice
-      confirm_delete: Are you sure you want to delete this field?
-      no_choice_message: "At least one valid choice has to be present"
+    untitled: Untitled
+    first_choice: First Choice
+    second_choice: Second Choice
+    confirm_delete: Are you sure you want to delete this field?
+    no_choice_message: "At least one valid choice has to be present"
     index: 
       number: Number
       add_custom_field: Add a Custom Field
@@ -84,22 +83,23 @@ en:
       save: Save Ticket fields
       drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
       dropdown: Dropdown
+      nestedfield: "Dependant field"
     formfield_props: 
       label: Field Label
       add_new_choice: Add new choice
-      customer_mandatory: Mandatory for ticket submission
-      customer_edit: Can edit the field
+      customer_mandatory: Required when submitting the form
+      customer_edit: Customer can edit
       agent_info1: Field cannot be blank when submitting the ticket
       agent_info2: Field cannot be blank when closing the ticket
-      agent_mandatory_submission: Mandatory for submission
+      agent_mandatory_submission: Required when submitting the form
       customer_info1: Field cannot be blank when submitting the ticket online.
       for_agents: For Agents
       dropdown_choices: Dropdown Choices
       label_in_portal: Label in Portal
-      customer_visible: Visible to customers
+      customer_visible: Displayed to customer
       description: Description
       for_customer: For Customers
-      agent_mandatory_closure: Mandatory for closure
+      agent_mandatory_closure: Required when closing the ticket
       choices: Choices
       label_in_portal_info: The label that is displayed in your self service portal
   folder: 
@@ -123,18 +123,61 @@ en:
     recent: Recent
     popular: Popular
   payment_info: Payment information
+  support:
+      surveys:
+          new:
+              thanks_info: Thanks for taking time to rate our support experience.
+              feedback_info: Your feedback is very much appreciated.
+              feedback_optional: Feedback is optional
+              send: Send
+              thanks: Thank you very much for rating us!
+              sorry: But, really sorry for the inconvenience.
+              happy_info: It has been our pleasure to serve you, glad you were happy with our service
+              neutral_info: Wish you were a little more happy.
+              unhappy_info: We will ensure that we will take extra care the next time around.
+              additional_info: Additionally, you could also share your experience working with us.
   admin:
     surveys:
-     successfully_updated: Survey settings has been successfully updated.
+     successfully_updated: Customer Satisfaction settings has been successfully updated.
+     error_updated: Error while updating survey settings.
+     helptext: "<p><b>Why enable satisfaction surveys?</b> <br>
+
+     Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
+     <br><br>
+     <b>Creating your satisfaction survey:</b><br>
+     The following steps let you collect feedback from your customers through a link in your response emails:<br>
+     1.Enable the Customer Satisfaction Surveys checkbox<br>
+     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+     <br>
+     <b>Choose which emails have the satisfaction survey link:</b><br>
+     You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
+     <br><br>
+     You can learn more about satisfaction surveys from our solutions page.     
+     </p>"
+     
      index:    
-        title: Survey Settings
+        title: Customer Satisfaction Settings
+     satisfaction_settings:    
         enable_label: Enable Customer Satisfaction Surveys
-        link_text_label: Survey Link Text
+        link_text_label: Satisfaction survey link text
         link_text_input: Please take a minute to rate your customer support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Send survey link after the ticket is resolved. Let customers give feedback whenever they want
-        send_while_option2: Send survey link in every email. Let customers give feedback whenever they want.
-            
+        send_while_option1: Send satisfaction survey link in every email. Let customers give feedback whenever they want.
+        send_while_option2: Send satisfaction survey link after the ticket is resolved. Let customers give feedback after ticket is resolved.        
+     scoreboard_ratings:
+        enable_scoreboard_label: Enable Support Scoreboard
+        about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
+        points_table_title: Support Scoreboard - Points Table
+        when_resolution_label: When resolution is
+        point_tobe_awarded_label: Points to be awarded
+        fast_resolution_label: Fast (< 1 hr)
+        ontime_resolution_label: On time (Within SLA)
+        late_resolution_label: Late (Overdue)
+        happy_customer_score_label: If the customer says they are "Happy" award %{happy_score} bonus points
+        first_call_resolution_label: First Call Resolution
+        when_customer_label: Bonus points when 
+        happy_customer_label: Happy Customer
+        unhappy_customer_label: Unhappy Customer     
     getting_started:
         send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
@@ -343,6 +386,7 @@ en:
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
+        survey-settings: Customer Satisfaction Settings
         rebranding: Helpdesk Rebranding
         account-settings: Account Settings
         customer-portal: Customer Portal
@@ -616,6 +660,9 @@ en:
         out_email: 
           short: "{{user_path}} has sent a {{reply_path}}"
           long: "{{user_path}} has sent a {{reply_path}} to the ticket {{notable_path}}"
+          private:
+            short: "{{user_path}} has {{fwd_path}} the ticket to {{to_emails}}"
+            long: "The ticket {{notable_path}} has been {{fwd_path}} to {{to_emails}} by {{user_path}}"
         in_email: 
           short: "{{user_path}} sent an {{email_response_path}}"
           long: "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}"
@@ -944,6 +991,7 @@ en:
   oneweek: 1 Week
   twoweek: 2 Weeks
   onemonth: 1 Month
+  threemonth: 3 Month
   problem: Problem
   change_plan_info: You can change your plan at any time, your next bill date is %{date}.
   created_on: Created on
@@ -1262,7 +1310,8 @@ en:
   ok: Ok
   back: Back
   ticket:
-    reported_on: "from %{username}, last updated on %{date}"
+    reported_on: "from %{username}, Last updated: on %{date}"
+    reported_on_ticket_list: "from %{username}, Last updated: <span class='emphasize'>%{time_words} ago</span> on %{date}"
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
@@ -1316,6 +1365,9 @@ en:
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
       send: Send
+    facebook_form: 	  	
+      send_and_resolve: Send and Resolve	  	
+      send: Send
     reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
@@ -1327,7 +1379,7 @@ en:
     type: Type
     execute_scenario: Execute Scenario
     note_form: 
-      private_note: This is a private note, don't show this to the requester
+      private_note: This is a private note. It will not be shown to the requester.
       form_title: Add a Note
       add_and_resolve: Add and Resolve
       notify_agents: Notify Agents
@@ -1483,6 +1535,11 @@ en:
   undo: Undo
   total: "Total"
   helpdesk:
+    ticket_notifier:
+        reply:
+            happy: Awesome
+            neutral: Just Okay
+            unhappy: Not Good
     time_sheets:
       index:
         no_timeentry: "No time entry logged for this ticket"
@@ -1530,6 +1587,8 @@ en:
         removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
+      facebook_form:  	
+        title: "Reply to %{user}"
       history:
         recent_item: Recent Items
     dashboard:
@@ -1548,6 +1607,15 @@ en:
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
       no_email_found: "User with email %{email} is not available in the system."
+      overlay_reply_time: " replied, %{time_in_words} ago"
+      overlay_fwd_time: " forwarded, %{time_in_words} ago"
+      tabular_view:
+        title: "Title"
+        posted: "Posted"
+        assigned: "Assigned"
+        status: "Status"
+        priority: "Priority"
+        time_ago: "%{time_in_words} ago"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -1641,6 +1709,8 @@ en:
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
+    title: "Filter Tickets"
+    unsaved_view: "Unsaved View"
     sort_fields:
       due_by: Due by time
       date_created: Date Created
@@ -1699,6 +1769,8 @@ en:
     facebook_pages:
       index:
         title: "Facebook Pages"
+        reauthorize: Reauthorize
+        reauth_required : Reauthorization required
       enable_facebook_page:
         associate: Select the facebook pages you would like to associate to the Helpdesk.
       engage_info:
@@ -1711,7 +1783,11 @@ en:
         visitor_posts_info: Freshdesk will convert all visitor posts on this Facebook page as tickets.
         company_posts: Import <strong>"Company posts"</strong> as ticket
         company_posts_info: Freshdesk will convert all Company posts on this Facebook page into tickets.
-        product: Product          
+        product: Product     
+        message_thread_time: Message Thread Time
+        message_thread_time_info: Maximum time to consider messages from same user as threaded  
+        direct_messages: Import <strong>"Direct messages"</strong> as ticket
+        direct_messages_info: Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>
     twitter_handles:
       index:
         title: "Twitter Accounts"
@@ -1923,7 +1999,7 @@ en:
         copy_settings: "Use the above Tracking ID for all portals"
     sugarcrm:
       label: "SugarCRM"
-      helptext: "You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
+      helptext: "<h4>Sugar CRM Integration Help</h4><p><br/> You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
       desc: "You can view contact information from SugarCRM in Freshdesk."
       form:
         domain: "SugarCRM Account URL"
@@ -1932,16 +2008,16 @@ en:
         username: "Username"
         password: "Password"
     workflow_max:
-      label: "Workflow MAX"
-      desc: "You can log time spent on tickets into your Workflow MAX jobs and tasks."
-      helptext: "##### Add Some help text here #####"
+      label: "Workflow Max"
+      desc: "You can log time spent on tickets into your Workflow Max jobs and tasks."
+      helptext: "<h4>Workflow Max Integration Help</h4><p><br/> To integrate Workflow Max time tracking with Freshdesk, you have to get the Account Key and API Key from <a href='mailto:support@workflowmax.com'>WorkflowMax Support</a>.  Enter the keys into the specified fields to complete the integration. <br/><br/>Once integrated, click on any ticket and go to the Time Sheet tab. You may then choose the staff, job and task to add time entries into Workflow Max."
       form:
         workflow_max_note: "Notes text to append"
         workflow_max_note_info: "This text will be appended at the end of the note, with the time spent log."
         api_key: "API Key"
-        api_key_info: "Request the API Key to Workflow MAX support and paste the same here."
+        api_key_info: "Request your API Key from Workflow Max support and paste the same here."
         account_key: "Account Key"
-        account_key_info: "Request the Account Key to Workflow MAX support and paste the same here."
+        account_key_info: "Request your Account Key from Workflow Max support and paste the same here."
         widget_title: "Widget Title"
   widgets:
     contact_widget:
@@ -1956,12 +2032,15 @@ en:
       customer_title: "Customer Activity Report"
       helpdesk_title_nav: "Helpdesk Activity Report"
       customer_title_nav: "Customer Activity Report"
+      surveys_title_nav: "Customer Satisfaction Report"
+      scoreboard_title_nav: "Leaderboard"
       select_time_period: "Select Time period"
       generate_button: "Generate"
       pie_chart_title_prefix: "Tickets By "
       timeline_chart_title: "Tickets Received vs Resolved"
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
+      satisfaction_title: "Satisfaction Report"
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
@@ -1997,6 +2076,29 @@ en:
           view_between: View report between
           from: From
           to: To
+      scoreboard_reports:
+        champions_title: Champions
+        sharpshooter_title: Sharp Shooters
+      survey_reports:
+        back_to: Back to List View
+        list:
+            no_feedback: Nobody has given any feedback during this time.
+        list_content:
+              rating_msg_none: nobody said %{rating}
+              rating_msg_single: one said %{rating}
+              rating_msg_multiple: %{count} said %{rating}
+              rating_primary_msg_single: one customer said %{rating}
+              rating_primary_msg_multiple: %{count} customers said %{rating}
+              happy: awesome
+              neutral: just okay
+              unhappy: not good
+        sidebar:
+          from: From
+          to: To
+          filter_by: Satisfaction Views
+          view_report_date: View reports during
+          helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p style='margin-left:15px;'>1.Filter the report results with respect to Agents, Group or Company<br>2.View reports for a particular timeframe</p></p>"
+
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"
@@ -2022,6 +2124,7 @@ en:
   category_edit_not_allowed: "This category can't be modified"
   folder_edit_not_allowed: "This folder can't be modified" 
   never: Never
+  always: Always
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/account/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
   no_date_to_display: "No data to display"
@@ -2040,3 +2143,8 @@ en:
   swith_agent_msg: "Switch to Another Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
+  ticket_cc_email_more: "more"
+  fwd_to: "Forward"
+  fwd_success_msg: "The ticket has been successfully forwarded"
+  validate_fwd_to_email_msg: "Please enter a valid email address"
+  use_reply_option: "Please use Reply option for sending an email to the requester"

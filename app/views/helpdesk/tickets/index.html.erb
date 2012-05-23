@@ -13,16 +13,14 @@
     jQuery(this).hide();
   });
 <% end %>
-<div class="containerFull greyImage">
-  <div id="leftcol" class="ticket-leftcol">
-    <div class="leftFilter" id="all-views">
-      <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
-    </div>  
-	  <div class="leftFilter" style="display:<%=(@current_view != "deleted" && @current_view != "spam" && @current_view != "monitored_by")?"block":"none"%>">    
+<% content_for :layoutType do -%>ticket_list<%- end %>
+<div class="containerFull">
+  <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != "deleted" && @current_view != "spam" && @current_view != "monitored_by")?"block":"none"%>">
+	  <div class="leftFilter">    
   	  <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
 	  </div>
   </div>
-  <div id="rightCol" class="contentCol hasRightCol">
+  <div id="rightCol" class="contentCol <%="hasRightCol" unless (@current_view == "deleted" or @current_view == "spam" or @current_view == "monitored_by") %>">
 	  <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } %>
   </div>
 </div>

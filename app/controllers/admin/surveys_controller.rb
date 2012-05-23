@@ -1,9 +1,10 @@
 class Admin::SurveysController < Admin::AdminController
-   
+     
+  before_filter { |c| c.requires_feature :surveys }
+     
   def index
-    @account = current_account    
+    @account = current_account
     @survey = current_account.survey
-    @scoreboard_ratings = current_account.scoreboard_ratings
   end
   
   def enable
@@ -20,5 +21,5 @@ class Admin::SurveysController < Admin::AdminController
     @survey = current_account.survey
     @survey.store(params[:survey])        
   end
-  
+
 end

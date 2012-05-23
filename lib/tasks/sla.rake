@@ -6,7 +6,7 @@ namespace :sla do
       puts "SLA Escalation task initialized at #{Time.zone.now}"
       accounts = Account.active_accounts
       accounts.each do |account|     
-    
+      account.make_current
      overdue_tickets = account.tickets.visible.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
      overdue_tickets.each do |ticket|      
       sla_policy_id = nil
@@ -49,8 +49,9 @@ namespace :sla do
       send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
       gr_ticket.ticket_states.update_attribute(:group_escalated , true)
     end
-    end
+  end
     puts "SLA Escalation task completed at #{Time.zone.now}"
+    Account.reset_current_account 
    end
   end
 end

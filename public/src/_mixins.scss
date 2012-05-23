@@ -72,6 +72,53 @@
 	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
+@mixin arrow-up($color:#000000) {
+  &:before {
+    content:"";
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid $color;
+  }
+}
+@mixin arrow-right($color:#000000)  {
+  &:before {
+    content:"";
+    width: 0;
+    height: 0;
+    line-height:0;
+    padding:0;
+    @include inline-block;
+    position: relative;
+    top:-2px;
+    margin-right: 5px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid $color;
+  }
+}
+@mixin arrow-left($color:#000000)  {
+  &:before {
+    content:"";
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-right: 5px solid $color;
+  }
+}
+@mixin arrow-down($color:#000000)  {
+  &:before {
+    content:"";
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid $color;
+  }
+}
+
 @mixin rotate($degree: -90deg, $location: bottom left) {
 	-moz-transform:rotate($degree); 
 	-moz-transform-origin: $location;
