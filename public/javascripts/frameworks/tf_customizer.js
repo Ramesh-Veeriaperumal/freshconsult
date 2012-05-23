@@ -76,7 +76,7 @@
 
       // Map any document related actions here
       $(document).keyup(function(e){
-         if (e.keyCode == 27) { hideDialog(); } // Capturing ESC keypress event to make dialog hide after it becomes open
+         if (e.keyCode == 27) { $("#cancel-button").trigger("click"); } // Capturing ESC keypress event to make dialog hide after it becomes open
       })
 
       // Init for Dropdown textarea
@@ -263,7 +263,6 @@
                           showFieldDialog(constFieldDOM(getFreshField(type, field_type), ui.item));
 
                        ticket_fields_modified = true;
-                       ui.item.data("fresh", false);
                      }
                   }
                })
@@ -287,7 +286,9 @@
       }
 
       $("#close_button, #cancel-button").click(function(e){
-         hideDialog();
+        if($(SourceField).data("fresh"))
+           $(SourceField).remove(); 
+        hideDialog();
       });
 
       function innerLevelExpand(checkbox){ 
@@ -366,6 +367,7 @@
       function hideDialog(){ 
          jQuery("#CustomFieldsDialog").css({"visibility":"hidden"});
          jQuery("#nestedTextarea").prop("rows", 6);
+         $("#SaveForm").prop("disabled", false);
          dialogHidden = true;
       }
 
@@ -497,6 +499,7 @@
 
             constFieldDOM(sourceData.toObject(), $(SourceField));
             //console.info(sourceData.toJSON());
+            $(SourceField).data("fresh", false);
          }
       }     
       
@@ -703,6 +706,7 @@
          //       collision: "fit fit",
          //       offset: "-50 -100"
          //    });
+        $("#SaveForm").prop("disabled", true);
         $("#CustomFieldsDialog").css("top", jQuery(document).scrollTop()+"px");
 
          if (dialogHidden) {
