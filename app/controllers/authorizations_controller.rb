@@ -28,12 +28,10 @@ class AuthorizationsController < ApplicationController
     elsif @omniauth['provider'] == "twitter"
       twitter_id = @omniauth['info']['nickname']
       @current_user = current_account.all_users.find_by_twitter_id(twitter_id)  unless  current_account.blank?
-      @current_user.twitter_id = twitter_id
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "facebook"
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = current_account.all_users.find_by_fb_profile_id(fb_profile_id)  unless  current_account.blank?
-      @current_user.fb_profile_id = fb_profile_id
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "google"
       # Move this to GoogleAccount model.
@@ -121,10 +119,14 @@ class AuthorizationsController < ApplicationController
   
   def create_from_hash(hash)
     user = current_account.users.new
-    user.name =  hash['info']['name']
-    user.email =  hash['info']['email']
+    user.name = hash['info']['name']
+    user.email = hash['info']['email']
+    unless hash['info']['nickname'].blank?
+      user.twitter_id = hash['info']['nickname'] if hash['provider'] == 'twitter'
+      user.fb_profile_id = hash['info']['nickname'] if hash['provider'] == 'facebook'
+    end
     user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-    user.active = true   
+    user.active = true
     user.save 
     user.reset_persistence_token! 
     Authorization.create(:user_id => user.id, :uid => hash['uid'], :provider => hash['provider'],:account_id => current_account.id)

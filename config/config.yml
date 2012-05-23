@@ -32,13 +32,10 @@ crm:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
 
-salesforce:
-    development:
-      redirect_url: "http://localhost:3000"
-    production:
-      redirect_url: "https://login.freshdesk.com"
-    staging:
-      redirect_url: "http://login.freshpo.com"
+integrations_url:
+    development: "http://localhost:3000"
+    production: "https://login.freshdesk.com"
+    staging: "http://login.freshpo.com"
  
 
 

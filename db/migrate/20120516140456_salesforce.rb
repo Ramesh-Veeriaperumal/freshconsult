@@ -8,7 +8,7 @@ class Salesforce < ActiveRecord::Migration
         :display_name => "integrations.salesforce.label", 
         :description => "integrations.salesforce.desc", 
         :listing_order => 9,
-        :options => {:direct_install => true})
+        :options => {:direct_install => true, :oauth_url: "/auth/salesforce?origin={{account_id}}"})
     salesforce.save
     res = execute("SELECT id FROM applications WHERE name='#{@app_name}'")
     res.data_seek(0)

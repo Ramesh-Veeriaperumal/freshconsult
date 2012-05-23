@@ -11,11 +11,15 @@
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
 					  if i_app_index.nil?
+					  	#use direct_install option in applications to install the application directly from the "Enable" in applications menu.
 					  	if application[:options][:direct_install].blank? %>
 					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  	<% else 
-					  		unless application[:options][:auth_url].blank?
-					  			 auth_url = AppConfig['salesforce'][Rails.env]['redirect_url'] + Liquid::Template.parse(application[:options][:auth_url]).render("account_id" => @current_account_id)%>
+					  		if application[:options][:oauth_url].blank? %>
+					  			<!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
+
+					  		<% else 
+					  			 auth_url = AppConfig['integrations_url'][Rails.env] + Liquid::Template.parse(application[:options][:oauth_url]).render("account_id" => @current_account_id)%>
 						  		 <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  		<% end %>
 					  	<% end %>
