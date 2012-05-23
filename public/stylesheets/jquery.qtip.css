@@ -160,7 +160,7 @@
 /* Tipsy style */
 .ui-tooltip-tipsy { border: 0 solid #000; border: 0 solid rgba(0, 0, 0, 0.87); }
 
-.ui-tooltip-tipsy .ui-tooltip-titlebar, .ui-tooltip-tipsy .ui-tooltip-content { background: transparent; background: rgba(0, 0, 0, 0.87); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#D9000000,endColorstr=#D9000000); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#D9000000,endColorstr=#D9000000)"; color: white; border: 0 dashed transparent; font-size: 11px; font-family: 'Lucida Grande', sans-serif; font-weight: bold; line-height: 16px; text-shadow: 0 1px black; }
+.ui-tooltip-tipsy .ui-tooltip-titlebar, .ui-tooltip-tipsy .ui-tooltip-content { background: transparent; background: rgba(0, 0, 0, 0.87); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#D9000000,endColorstr=#D9000000); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#D9000000,endColorstr=#D9000000)"; color: white; border: 0 dashed transparent; font-size: 11px; font-weight: bold; line-height: 16px; text-shadow: 0 1px black; }
 
 .ui-tooltip-tipsy .ui-tooltip-titlebar { padding: 6px 35px 0 10; }
 
