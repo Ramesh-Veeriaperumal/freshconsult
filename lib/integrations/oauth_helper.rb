@@ -23,7 +23,7 @@ module Integrations::OauthHelper
     end
 
     def self.get_oauth_options(provider)
-      config = File.join(Rails.root, 'config', 'oauth_keys.yml')
+      config = File.join(Rails.root, 'config', 'oauth_config.yml')
       options_hash = (YAML::load_file @config)['oauth_options'][provider]      
       options_hash.map { |key, value|
         options_hash.delete(key)
@@ -35,7 +35,7 @@ module Integrations::OauthHelper
 
     def self.get_oauth_keys(provider=nil)
       #### Fetch specific OAuth keys ####
-      @config = File.join(Rails.root, 'config', 'oauth_keys.yml')
+      @config = File.join(Rails.root, 'config', 'oauth_config.yml')
 		  key_hash = (YAML::load_file @config)[Rails.env]
 
     	#### Facebook OAuth Keys ####

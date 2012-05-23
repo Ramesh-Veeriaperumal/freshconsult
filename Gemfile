@@ -20,7 +20,6 @@ gem "omniauth-openid"
 gem "omniauth-google"
 gem "omniauth-facebook"
 gem "omniauth-salesforce"
-gem "omniauth-twitter"
 
 gem "jira4r", "0.3.0"
 gem "ruby-openid", "2.1.8", :require => "openid"

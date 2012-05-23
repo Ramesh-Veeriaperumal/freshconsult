@@ -15,8 +15,7 @@
 					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  	<% else 
 					  		unless application[:options][:auth_url].blank?
-					  			 callback_url = Integrations::OauthHelper.get_oauth_keys('salesforce')
-					  			 auth_url = callback_url['callback_url'] + Liquid::Template.parse(application[:options][:auth_url]).render("account_id" => @current_account_id)%>
+					  			 auth_url = AppConfig['salesforce'][Rails.env]['redirect_url'] + Liquid::Template.parse(application[:options][:auth_url]).render("account_id" => @current_account_id)%>
 						  		 <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  		<% end %>
 					  	<% end %>
