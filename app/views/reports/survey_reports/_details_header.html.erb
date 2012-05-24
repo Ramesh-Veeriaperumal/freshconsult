@@ -4,8 +4,9 @@
 			<% user = User.find_by_id(params[:entity_id])%>
             <%if content[:category].blank? || content[:category]=="agent" %>
                     <span class="agent-img"><%=user_avatar(user)%></span>
-            <%end%>        
-            <p class="topic-head"><%=content[:name]%></p>
+            <%end%>            
+            <% name = (!params[:category].blank? && params[:category]=="company")? current_account.main_portal[:name] : content[:name]%>
+            <p class="topic-head"><%=name%></p>
         </li>
         <li class="first active report-grid">
         	<% link_title = "<span class='tab-text top-p'>All ("+content[:total].to_s+")</span>" %>
