@@ -1,5 +1,7 @@
 module Delayed
   class PerformableMethod < Struct.new(:object, :method, :args)
+    attr_accessor :account
+    
     CLASS_STRING_FORMAT = /^CLASS\:([A-Z][\w\:]+)$/
     AR_STRING_FORMAT    = /^AR\:([A-Z][\w\:]+)\:(\d+)$/
 
@@ -9,6 +11,7 @@ module Delayed
       self.object = dump(object)
       self.args   = args.map { |a| dump(a) }
       self.method = method.to_sym
+      self.account = dump(Account.current) if Account.current
     end
     
     def display_name  
@@ -20,9 +23,11 @@ module Delayed
     end    
 
     def perform
-      load(object).send(method, *args.map{|a| load(a)})
-    rescue ActiveRecord::RecordNotFound
-      # We cannot do anything about objects which were deleted in the meantime
+       Account.reset_current_account
+       load(account).send(:make_current) if account
+       load(object).send(method, *args.map{|a| load(a)})
+      rescue ActiveRecord::RecordNotFound
+           # We cannot do anything about objects which were deleted in the meantime
       true
     end
 
