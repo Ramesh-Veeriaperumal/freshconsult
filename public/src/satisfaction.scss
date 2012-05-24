@@ -46,6 +46,7 @@
 .tabs .active > a, .tabs .active > a:hover{
 	height: 60px;
 	line-height: 30px;
+	font-weight:bold;
 }
 
 .tabs > li > a{
@@ -100,7 +101,7 @@
 	border-radius: 3px;
 	border:1px solid #f3f3f3;
 	min-height:39px;
-	min-width:27%;
+	min-width:211px;
 	float: left;	
 }
 
@@ -110,10 +111,8 @@
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border:1px solid #f3f3f3;
-	min-height:39px;
-	width:68%;
-	margin-right: 25px;
-	float: right;
+	min-height:39px;	
+	margin: 0 25px 0 222px;	
 	position: relative;
 }
 
@@ -208,8 +207,7 @@
 	font-weight:normal;
 	margin: 0px 0 0px 18px;
 	color: #333;
-	padding:5px;
-	letter-spacing: -0.10em;
+	padding:5px;	
 	text-align:left;
 }
 
@@ -237,6 +235,10 @@
 
 .tab-width{
 	width:21%;
+}
+
+.tab-width .active{
+  font-weight:bold;
 }
 
 .tab-bottom{
