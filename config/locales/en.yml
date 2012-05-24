@@ -2142,3 +2142,4 @@ en:
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
   use_reply_option: "Please use Reply option for sending an email to the requester"
+  index_tooltip_loading_msg: "Loading..."
