@@ -158,7 +158,7 @@ en:
      index:    
         title: Customer Satisfaction Settings
      satisfaction_settings:    
-        enable_label: Enable Customer Satisfaction Surveys
+        enable_label: Enable customer satisfaction surveys
         link_text_label: Satisfaction survey link text
         link_text_input: Please take a minute to rate your customer support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer

@@ -491,9 +491,15 @@ a.addchoice:hover{
 	}
 }
 
-.threecol-form label{
+.threecol-form .item{
 	float:left;
-	width:33%
+	width:33%;
+	label{	
+		@include inline-block;
+	}
+	.level{
+		margin-left:20px;
+	}
 }
 
 .ui-form .inline-field{
@@ -606,9 +612,8 @@ a.addchoice:hover{
 	}
 	.business_days{
 		label{
-			float:left;
-			font-size:12px;
-			padding-right:8px;
+			@include inline-block;
+			padding-right:20px;
 		}
 	}
 	.holidaylist{
