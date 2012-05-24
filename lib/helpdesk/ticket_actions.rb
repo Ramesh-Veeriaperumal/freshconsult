@@ -248,5 +248,21 @@ module Helpdesk::TicketActions
       URI.unescape(CGI::escape(Base64.decode64(string)))
    end
   
- 
+   # Method used set the ticket.ids in params[:data_hash] based on tags.name
+  def serialize_params_for_tags
+    return if params[:data_hash].nil? 
+
+    action_hash = params[:data_hash].kind_of?(Array) ? params[:data_hash] : 
+      ActiveSupport::JSON.decode(params[:data_hash])
+    
+    action_hash.each_with_index do |filter, index|
+      next if filter["value"].nil? || !filter["condition"].eql?("helpdesk_tags.name")
+      value = current_account.tickets.permissible(current_user).with_tag_names(filter["value"].split(",")).join(",")
+      action_hash[index]={ :condition => "helpdesk_tickets.id", :operator => "is_in", :value => value }
+      break
+    end
+    
+    params[:data_hash] = action_hash;
+  end
+  
 end

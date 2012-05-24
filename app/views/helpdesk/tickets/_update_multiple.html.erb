@@ -2,16 +2,29 @@
   <div class="content solution-list">
   	<ul>
   	<% helpdesk_submit_options = []%>
-  	 <% current_portal.ticket_fields.each  do |field| %>
+  	<% current_portal.ticket_fields.each  do |field| %>
 		<% if field.visible_in_view_form? %>
-			<% if ((field.dom_type == "dropdown") || (field.dom_type == "dropdown_blank")) %>
-				<%
-				    object_name     = "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
-				    label = label_tag object_name+"_"+field.field_name, field.label
-					helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '_custom_field' : '' }"+"_"+field.field_name
-					element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('no_change'), :selected => t('no_change')},{:class => field.dom_type})
-				%>
-			    <%=content_tag :li, element, :class => cycle('odd', 'even') %>
+      <%
+        dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type  
+      %>
+      <%if ((dom_type == "dropdown") || (dom_type == "dropdown_blank") || (dom_type == "nested_field"))%>
+        <%
+          object_name     = "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+			    label = label_tag object_name+"_"+field.field_name, field.label
+
+          if field.field_type == "nested_field"
+            helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+field.field_name
+              field.nested_ticket_fields.each do |nested_ticket_fields|
+                  helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+nested_ticket_fields.field_name
+
+              end 
+            element = label + nested_field_tag(object_name, field.field_name, field, {:include_blank => t('no_change'), :selected => {}}, {:class => dom_type}, {}, false)
+          else
+            helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '_custom_field' : '' }"+"_"+field.field_name
+            element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('no_change'), :selected => t('no_change')},{:class => dom_type})   
+          end
+        %>  
+			  <%=content_tag :li, element, :class => cycle('odd', 'even') %>
 			<%end%>
 		<%end%>
 	 <%end%>	

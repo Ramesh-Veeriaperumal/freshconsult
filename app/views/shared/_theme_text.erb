@@ -6,7 +6,7 @@
 	$bg_ctxt_color:	    if(lightness($background) > 50, black, white) !default;
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;
 	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;
-	$subtxt_color: if(lightness($background) > 50, #333, #CCC) !default;
+	$subtxt_color: if(lightness($background) > 50, #222, #EEE) !default;
 	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
 	$alternate_bg_color: if(lightness($background) > 50, #666, #AAA) !default;
 
@@ -64,23 +64,6 @@
 	.ticket-leftcol h3.title, .ticket-leftcol h4.title, .contentCol .view_filters .link-item .nav-trigger {
 		color:$bg_ctxt_color;
 	}
-	.ticket-leftcol h4.title{
-		&:before {
-			content:"";
-			width: 0;
-			height: 0;
-			line-height:0;
-			padding:0;
-			display:inline-block;
-			position: relative;
-			top:-2px;
-			margin-right: 5px;
-			border-top: 5px solid transparent;
-			border-bottom: 5px solid transparent;
-			border-left: 5px solid $bg_ctxt_color;
-		}
-	}
-	
 
 	.ticket-leftcol .leftFilter .item, .drop-right {
 		color:$subtxt_color;	

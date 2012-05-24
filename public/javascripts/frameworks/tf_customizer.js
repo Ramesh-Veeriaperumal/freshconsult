@@ -14,12 +14,34 @@
           sourceDomMap	   = null,
           dialogHidden	   = true,
           nestedTree       = new NestedField(""),
+          sourceData       = null,
           dialogContainer  = "div#CustomFieldsDialog";
+
+      $.validator.addMethod("nestedTree", function(value, element, param) {
+        _condition = true;
+        if(sourceData.field_type == "nested_field"){
+          nestedTree.readData(value);
+          _condition = nestedTree.second_level;
+        }
+        return _condition;
+      }, "You need atleast one category & sub-category");    
+      $.validator.addMethod("uniqueNames", function(value, element, param) {
+        _condition = true;
+        levels = [1, 2, 3];
+        if(sourceData.field_type == "nested_field"){
+          current_level = $(element).data("level");
+          levels.each(function(i){
+            if(current_level == i || !_condition) return;            
+            _condition = ($("#agentlevel"+i+"label").val().strip().toLowerCase() != $(element).val().strip().toLowerCase())
+          });
+        }
+        return _condition;
+      }, "Agent label should not be same as other two levels");    
 
       // Mapping individual dom elements to its data counterparts
       var dialogDOMMap = {
          field_type:             jQuery(dialogContainer+' input[name|="customtype"]'),
-         label:                  jQuery(dialogContainer+' input[name|="customlabel"], #agentlabel'),
+         label:                  jQuery(dialogContainer+' input[name|="customlabel"], #agentlevel1label'),
          label_in_portal:        jQuery(dialogContainer+' input[name|="customlabel_in_portal"], #customerslabel'),
          description:            jQuery(dialogContainer+' input[name|="customdesc"]'),
          active:                 jQuery(dialogContainer+' input[name|="customactive"]'),
@@ -52,21 +74,22 @@
                  action:                 "create" // delete || edit || create
              });
 
+      // Map any document related actions here
+      $(document).keyup(function(e){
+         if (e.keyCode == 27) { $("#cancel-button").trigger("click"); } // Capturing ESC keypress event to make dialog hide after it becomes open
+      })
+
       // Init for Dropdown textarea
-      $("#nestedTextarea").tabby();
+      $("#nestedTextarea")
+          .bind("focusin", function(ev){
+            jQuery(this).prop("rows", 18);
+          })
+          .tabby();
       $("#nestedDoneEdit").click(function(ev){   
             ev.preventDefault();
             nestedTree.readData($('#nestedTextarea').val());
-            if(((nestedTree.toString().strip() != "") && nestedTree.second_level)){
-              $("#nest-category").html(nestedTree.getCategory()).trigger("change");  
-              $("#nestedDoneHide").trigger("click");   
-            }else{
-              $('#nestedTextarea-error').show();
-            }
-      });                                                                                                   
-      $("#nestedDoneHide").click(function(ev){
-           ev.preventDefault();
-           hideNestedTextarea();
+            $("#nestedTextarea").trigger("blur");
+            setTimeout(hideNestedTextarea, 200);
       });
       $("#nest-category").change(function(ev){    
           $("#nest-subcategory").html(nestedTree.getSubcategory($(this).children('option:selected').text())).trigger("change");
@@ -81,15 +104,17 @@
 
       function showNestedTextarea(){
         $('#nestedTextarea-error').hide();
-        $("#Commitfieldtype").prop("disabled", true);
+        //$("#Commitfieldtype").prop("disabled", true);
         $("#nestedEdit").slideDown();
         $("#nested-selectboxs").slideUp();
       }
 
       function hideNestedTextarea(){
-        $("#Commitfieldtype").prop("disabled", false);
-        $("#nestedEdit").slideUp();
-        $("#nested-selectboxs").slideDown(); 
+        //$("#Commitfieldtype").prop("disabled", false);
+        if(!$("#nestedTextarea").hasClass("error")){              
+          $("#nestedEdit").slideUp();
+          $("#nested-selectboxs").slideDown(); 
+        }
       }
 
       function constFieldDOM(dataItem, container){
@@ -130,7 +155,7 @@
             case 'dropdown':
             case 'dropdown_blank':
               if(dataItem.field_type == "nested_field"){
-               nestedTree.readData(dataItem.choices);
+               nestedTree = new NestedField(dataItem.choices);
                category = $("<select disabled='disabled' />").append(nestedTree.getCategory());
                fieldContainer.append(label).append(category);
 
@@ -229,14 +254,16 @@
             start: function(ev, ui) {
                      saveDataObj();
                    },
-            stop: function(ev, ui) {     
-                     field_label = ui.item.text();
-                     type = ui.item.data('type');
-                     field_type = ui.item.data('fieldType');                     
-                     if(type)
-                        showFieldDialog(constFieldDOM(getFreshField(type, field_type), ui.item));
+            stop: function(ev, ui) {    
+                     if(ui.item.data("fresh")){
+                       field_label = ui.item.text();
+                       type = ui.item.data('type');
+                       field_type = ui.item.data('fieldType');
+                       if(type)
+                          showFieldDialog(constFieldDOM(getFreshField(type, field_type), ui.item));
 
-                     ticket_fields_modified = true;
+                       ticket_fields_modified = true;
+                     }
                   }
                })
          .droppable();
@@ -259,7 +286,9 @@
       }
 
       $("#close_button, #cancel-button").click(function(e){
-         hideDialog();
+        if($(SourceField).data("fresh"))
+           $(SourceField).remove(); 
+        hideDialog();
       });
 
       function innerLevelExpand(checkbox){ 
@@ -337,6 +366,8 @@
 
       function hideDialog(){ 
          jQuery("#CustomFieldsDialog").css({"visibility":"hidden"});
+         jQuery("#nestedTextarea").prop("rows", 6);
+         $("#SaveForm").prop("disabled", false);
          dialogHidden = true;
       }
 
@@ -351,6 +382,14 @@
       function DialogOnLoad(sourceField){ 
         // Dialog Population Method
         try {
+            $("#TicketProperties").find(':input').each(function() {
+                switch(this.type) {
+                    case 'text':
+                    case 'textarea':
+                        $(this).val('');
+                        break;
+                }
+            });
             $("#ChoiceListValidation").next("label").hide();
             $(SourceField).removeClass("active");
             SourceField = sourceField;
@@ -358,7 +397,7 @@
 
             $(sourceField).addClass("active");
 
-            var sourceData = $(sourceField).data("raw");
+            sourceData = $(sourceField).data("raw");
 
             dialogDOMMap.field_type.val(sourceData.type);
             dialogDOMMap.label.val(sourceData.label);
@@ -375,11 +414,12 @@
             if(sourceData.field_type == 'nested_field'){ 
                 $("#nestedContainer").show();         
                 $("#NestedFieldLabels").show();
-                if(typeof sourceData.choices == "string"){                    
-                    showNestedTextarea();
-                }else{   
-                    $("#nested-selectboxs").show();  
-                }                           
+                //if(typeof sourceData.choices == "string"){                    
+                //    showNestedTextarea();
+                //}else{   
+                $("#nested-selectboxs").show();  
+                //}                        
+                nestedTree.readData(sourceData.choices);
                 $("#nestedTextarea").val(nestedTree.toString());   
                 $("#nest-category").html(nestedTree.getCategory()).trigger("change");
                 sourceData.levels.each(function(item){
@@ -447,8 +487,8 @@
             sourceData.set("required_in_portal"    , dialogDOMMap.required_in_portal.prop("checked"));
    
             if(_field_type == 'nested_field'){
-              setNestedFields(sourceData);
-              sourceData.set("label", $("#agentlabel").val());
+              setNestedFields(sourceData);              
+              sourceData.set("label", $("#agentlevel1label").val());
               sourceData.set("label_in_portal", $("#customerslabel").val());
               sourceData.set("choices", nestedTree.toArray());  
             }else{
@@ -459,6 +499,7 @@
 
             constFieldDOM(sourceData.toObject(), $(SourceField));
             //console.info(sourceData.toJSON());
+            $(SourceField).data("fresh", false);
          }
       }     
       
@@ -489,8 +530,8 @@
          .submit(function(){ return false; })
          .validate({
             submitHandler: function(){
-               saveDataObj();
-               hideDialog();
+              saveDataObj();
+              hideDialog();
             },
             rules: {
                choicelist: {
@@ -522,7 +563,8 @@
               agentlabel: {
                 "required":{
                   depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") }
-                }
+                },
+                "uniqueNames": true
               },
               customerslabel: {
                 "required":{
@@ -531,9 +573,9 @@
               },                          
               agentlevel2label: {
                 "required":{
-                  depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") },
-                  notEqual: "#agentlabel"
-                }
+                  depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") }
+                },
+                "uniqueNames": true
               },
               customerslevel2label: {
                 "required":{
@@ -542,21 +584,38 @@
               },                          
               agentlevel3label: {
                 "required":{
-                  depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level; }
-                }
+                  depends: function(element){
+                    return (($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level); 
+                  }
+                },
+                "uniqueNames": true
               },
               customerslevel3label: {
                 "required":{
-                  depends: function(element){ return (($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level); }
+                  depends: function(element){ 
+                    return (($("#NestedFieldLabels").css("display") != "none") && nestedTree.third_level); 
+                  }
                 }
+              },
+              nestedTextarea: {
+                "required": {
+                  depends: function(element){ return ($("#NestedFieldLabels").css("display") != "none") }
+                },
+                "nestedTree": true
               }
             },
 
             messages: {
                choicelist: tf_lang.no_choice_message,
-               agentlevel2label: "Label required for 3rd level items",
-               customerslevel2label: "Label required for 3rd level items"
-            }
+               agentlevel3label: {
+                required: "Label required for 3rd level items"
+               },
+               customerslevel3label: {
+                required: "Label required for 3rd level items"
+               }
+            },
+            onkeyup: false,
+            onclick: false
          });
 
          
@@ -647,6 +706,7 @@
          //       collision: "fit fit",
          //       offset: "-50 -100"
          //    });
+        $("#SaveForm").prop("disabled", true);
         $("#CustomFieldsDialog").css("top", jQuery(document).scrollTop()+"px");
 
          if (dialogHidden) {

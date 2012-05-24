@@ -9,10 +9,12 @@
 <body>
 	
 	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
-		<div class="wrapper">
-			<div class="star-logo"><%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png" : @account.main_portal.logo.content.url(:logo)) %></div>
-			<div class="logo"><%=@account.main_portal.name%></div>
-		</div>
+		<div class="brand">
+	    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
+	          <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png" : @account.main_portal.logo.content.url(:logo)) %>
+	        <% end %>
+	        <%= link_to(@account.main_portal.name, "/home", :class => "logo_text") %>
+    	</div>
 	</div>
 	
 	<div class="wrapper">
@@ -44,8 +46,9 @@
 			<div class="search-bar">
 				<p class="search-top"><%= t('.additional_info') %></p>
 				<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
-					
-					<%= text_area(:survey, :feedback, :autocomplet => "off", :rel => "ghostwriter", :size => "24", :width => "100%", :class=> "textfield required", :style=>"display:block;") %>
+					<div class="text_con">
+						<%= text_area(:survey, :feedback, :autocomplet => "off", :rel => "ghostwriter", :size => "24", :width => "100%", :class=> "textfield required", :style=>"display:block;resize:none;") %>
+					</div>	
 					
 					<div>						
 						<%= f.submit t('.send'), :class => "button button-text" %>

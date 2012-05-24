@@ -5,7 +5,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :flexifield_def_entry, :dependent => :destroy
-  has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
+  has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',:include => :sub_picklist_values,
     :dependent => :destroy
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
     
@@ -123,7 +123,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end  
   
   def nested_choices
-    picklist_values.collect { |c| [c.value, c.value, c.nested_choices] }
+    self.picklist_values.collect { |c| 
+      [c.value, c.value, c.sub_picklist_values.collect { |sub_c|
+            [sub_c.value, sub_c.value, sub_c.sub_picklist_values.collect { |i_c| [i_c.value,i_c.value] } ] }
+      ]
+    }
   end
 
   def nested_levels
@@ -154,12 +158,35 @@ class Helpdesk::TicketField < ActiveRecord::Base
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) do |xml|
-      xml.choices do
-        self.choices.each do |k,v|  
-          if v != "0"
+      if field_type == "nested_field"
+        xml.nested_ticket_fields do
+          nested_ticket_fields.each do |nested_ticket_field|
+            xml.nested_ticket_field do
+              xml.tag!("id",nested_ticket_field.id)
+              xml.tag!("name",nested_ticket_field.name)
+              xml.tag!("label",nested_ticket_field.label)
+              xml.tag!("label_in_portal",nested_ticket_field.label_in_portal)
+              xml.tag!("level",nested_ticket_field.level)
+            end
+          end
+        end
+        xml.choices do
+          picklist_values.each do |picklist_value|
             xml.option do
-              xml.tag!("id",k)
-              xml.tag!("value",v)
+              xml.tag!("id",picklist_value.id)
+              xml.tag!("value",picklist_value.value)
+              to_xml_nested_fields(xml, picklist_value)
+            end
+          end
+        end
+      else
+        xml.choices do
+          choices.each do |k,v|  
+            if v != "0"
+              xml.option do
+                xml.tag!("id",k)
+                xml.tag!("value",v)
+              end
             end
           end
         end
@@ -167,6 +194,20 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
   end
   
+  def to_xml_nested_fields(xml, picklist_value)
+    return if picklist_value.sub_picklist_values.empty?
+    
+    xml.choices do
+      picklist_value.sub_picklist_values.each do |sub_picklist_value|
+        xml.option do
+          xml.tag!("id",sub_picklist_value.id)
+          xml.tag!("value",sub_picklist_value.value)
+          to_xml_nested_fields(xml, sub_picklist_value)
+        end
+      end
+    end
+  end
+
   def choices=(c_attr)
     picklist_values.clear
     c_attr.each do |c| 

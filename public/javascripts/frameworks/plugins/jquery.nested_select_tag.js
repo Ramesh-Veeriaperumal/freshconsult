@@ -3,12 +3,16 @@
   var methods = {
      init : function( options ) {
        return this.each(function(){
-         var opts = $.extend( {}, $.fn.nested_select_tag.defaults, options ),
+         var defaults = $.fn.nested_select_tag.defaults;
+            
+         var opts = $.extend( {}, defaults, options ),
             _tree = new NestedField(opts.data_tree),
             _category = $(this),
             _subcategory = $("#" + opts.subcategory_id),
             _item = $("#" + opts.item_id),
             _vals = (opts.initValues || {});
+
+         opts["default_option"] = "<option value=''>"+opts["include_blank"]+"</option>";   
 
          _category.bind("change", function(ev){
             _subcategory.html(opts.default_option);
@@ -18,7 +22,6 @@
                 .val(pair.key)
                 .appendTo(_subcategory);
             });
-            //console.log(_subcategory.val());
             
             _subcategory.trigger("change");
             _subcategory.prop("disabled", (!_category.val() || _category.val() == -1));
@@ -34,7 +37,6 @@
             }
             if(_tree.third_level){
               _item.html(opts.default_option);
-              //console.info(_category.val() + "   " + _subcategory.val());
               (_tree.getItemsList(_category.val(), _subcategory.val())).each(function(pair){
                 $("<option />")
                   .html(pair.key)
@@ -80,6 +82,7 @@
   $.fn.nested_select_tag.defaults = {
      data_tree: [],
      initValues: {},
+     include_blank: "...",
      default_option: "<option value=''>...</option>",
      change_callback: function(){}
   };

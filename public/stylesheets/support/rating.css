@@ -25,6 +25,61 @@ body{
   float: left;
 }
 
+.brand:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+.brand {
+    left: 0;
+    margin-left: 140px;
+    position: absolute;
+    text-decoration: none;
+    top: 3px;
+}
+
+.brand .logo {
+    margin: 0 0 0 4px;
+}
+
+.brand .logo_text{
+	margin:15px 0 0 5px;
+	font-size:18px;
+	color:#f5f5f5;
+}
+
+.brand .logo, .brand .logo_text {
+    float: left;
+    position: relative;
+    z-index: 5;
+}
+
+.brand a {
+    text-decoration: none;
+}
+
+a {
+    color: #336699;
+    font-weight: inherit;
+    text-decoration: none;
+}
+
+a {
+    color: #0069D6;
+    font-weight: inherit;
+    line-height: inherit;
+    text-decoration: none;
+}
+
+a {
+    background: none repeat scroll 0 0 transparent;
+    font-size: 100%;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+
 .logo{
   color: #fff;
   font-size:20px;
@@ -171,6 +226,7 @@ input{
   position: relative;
   top: -58px;
   right: 10px;
+  margin-top:25px;
 }
 
 .button-text{
@@ -184,6 +240,9 @@ input{
   text-shadow: 0px 2px 3px #555;
 }
 
+.text_con{
+ height:30px;
+}
 
 
 

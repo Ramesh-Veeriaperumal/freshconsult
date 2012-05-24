@@ -1,23 +1,26 @@
 <div class="agentreport">
-		<ul>
-			<li class="nospace sat-list-title">
+		
+			<div class="nospace sat-list-title" style="display:inline-block;">	
 				<%if(params[:category].blank? || params[:category]=="agent") %>
 					<% user = User.find_by_id(content[:entity_id])%>
 					<%=user_avatar(user)%>
 				<%end%>
-					<div class="floatleft agentname"><%=content[:name]%><div><%=content[:title]%></div></div>									
-			</li>
+					<div class="floatleft agentname"><%=content[:name]%><div><%=content[:title]%></div></div>
+			</div>											
+			
 			<% @rating = content[:rating].sort_by{ |key,val| val } %>
-			<li class="sat-priority-rating">
+			<div class="floatr overall-rating">
+			<div class="sat-priority-rating" style="display:inline-block;">
 				<div class="<%=@rating[2][0]%>mediumsmiley mediumsmiley floatleft"></div>
 				<% rating_per = ((@rating[2][1]*100)/content[:total]).to_f.round %>
 				<% count_title = (@rating[2][1]==1) ? t('.rating_primary_msg_single', :rating => t('.'+@rating[2][0])) : t('.rating_primary_msg_multiple', :count => @rating[2][1], :rating => t('.'+@rating[2][0]))%>
-				<div class="bignum floatleft"><%=rating_per%><span>%</span>
+				<div class="floatleft">
+					<span class="bignum"><%=rating_per%>%</span>
 					<div class="bottomtext"><%=count_title%></div>
 				</div>
-			</li>
+			</div>
 			
-			<li class="sub_rating">
+			<div class="sub_rating" style="display:inline-block;">
 				<div style="overflow: hidden;">					
 					<div class="<%=@rating[1][0]%>smallsmiley smallsmiley floatleft"></div>
 					<% rating_per = ((@rating[1][1]*100)/content[:total]).to_f.round %>
@@ -32,8 +35,9 @@
 				</div>
 				
 				
-			</li>			
-		</ul>
+			</div>			
+		</div>	
+		
 	</div>
 	
 	<% javascript_tag do %>
