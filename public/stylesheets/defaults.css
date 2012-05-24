@@ -42,7 +42,7 @@ h3.sub_title { font-size: 1.1em; }
 
 .aligncenter { text-align: center; }
 
-.info_data, .info-data { color: #888888; font-size: 11px; line-height: 15px; padding-bottom: 6px; margin-left: 16px; }
+.info_data, .info-data { color: #333; padding: 6px 0 18px; }
 .info_data a, .info_data a.user_name, .info-data a, .info-data a.user_name { font-weight: bold; color: #888; }
 
 .borderbottom { border-bottom: 1px dotted #EFEFEF; }

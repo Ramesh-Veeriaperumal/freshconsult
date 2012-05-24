@@ -72,11 +72,9 @@
 <% end %>
 
 <h3 class="title"><%=t('business_hours.title')%></h3>
-	<% form_for :business_calenders, @business_calendars, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
-	<ul class="ui-form business_hours"> 
-		<li>
-			<label><%=t('business_hours.helpdesk_hours')%></label>			
-		</li>
+	<% form_for :business_calenders, @business_calendars, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours" } do |f| %>
+	<ul class="business_hours ui-form"> 
+		<li><h4 class="title"><%=t('business_hours.helpdesk_hours')%></h4></li>
 		<li>
 			<table class="business_time">
 				<tr>
@@ -98,7 +96,7 @@
 								<strong>to </strong>
 								<%= f.text_field :end_of_workday, :class => "time"  %>
 							</div>
-							<div class="info_data"><%=t('business_hours.info4')%></div>
+							<h5 class="title"><%=t('business_hours.info4')%></h5>
 							<div id="DAYS_LIST" class="business_days checkbox">
 								<% weekdays = @business_calendars.business_time_data[:weekdays] %>
 								<% weekday_human_list = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ] %>
@@ -117,11 +115,11 @@
 			</table> 
 		</li>
 		<li> 
-			<%= content_tag (:label, t('business_hours.holiday_list'))%> 
+			<%= content_tag (:h4, t('business_hours.holiday_list'), :class => "title")%> 
 			<span class="info_data"><%=t('business_hours.info5')%></span>
 			<table>
 				<tr>
-					<td width="55%" class="holidaylist" style="padding-right:10px;"> 
+					<td width="55%" class="holidaylist"> 
 						<%= f.hidden_field :holiday_data, :id=>"holiday_data" %>
 						<ul class="nobullets" id="HolidayList" style="display:none"></ul>
  
