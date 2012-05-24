@@ -160,11 +160,10 @@ var $J = jQuery.noConflict();
         });
       });
       
-      $(".admin_list li")
-         .hover(
-            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-         );
+      $(".admin_list li").hover(
+        function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+        function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+      );
 
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
@@ -194,6 +193,8 @@ var $J = jQuery.noConflict();
       if (! $(ev.target).is('input[type=checkbox]') && ! $(ev.target).is('a')) {
 				var checkbox = $(this).find('input[type=checkbox]').first();
 				checkbox.prop('checked',!checkbox.prop('checked'));
+
+        $(this).toggleClass('active');
 			}
 		});
 		

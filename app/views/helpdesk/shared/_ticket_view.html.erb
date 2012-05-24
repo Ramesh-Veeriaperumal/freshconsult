@@ -9,7 +9,7 @@
   <%= render :partial => "/helpdesk/shared/ticket_sort" unless @items.empty? %>
 </div>
 
-<div id="ticket-list-body">
+<div id="ticket-list-body"><div id="ticket-list-body-content">
 	<div id="ticket-toolbar" class="toolbar">
 	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" %>
 	</div>
@@ -23,7 +23,7 @@
 	    <%= render :partial => "/helpdesk/shared/tickets" %>
 	  </div>    
 	<% end %>
-</div>
+</div></div>
 <% javascript_tag do %>
 	/* new PeriodicalExecuter(function(pe) {
 		params = jQuery("#FilterOptions").serializeArray(); 

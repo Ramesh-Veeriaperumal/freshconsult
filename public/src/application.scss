@@ -1688,7 +1688,7 @@ ul.item_list{
 			text-decoration:none;
 		}	
 		div.preview_pic{
-			margin-right:5px;
+			margin-right:0px;
 			img{
 				width:32px;
 				height:32px;		
@@ -3240,9 +3240,9 @@ div.addReminder{
       .preview_pic{
          margin:0px; 
          margin-top:3px;
-         margin-left:-40px;         
+         margin-left:-48px;         
          @include corners(5px);
-         border:1px solid #cfcfcf;
+         border:1px solid #9a9a9a;
          height:30px;
          img{ 
             width:30px; height:30px;
@@ -4359,32 +4359,36 @@ a.close{
    color:#666666;
    @include corners(4px);
    text-decoration:none;
-}
-
-.drop-right:after{
-   content:"";
-   position:absolute;
-   width:13px; height:12px;
-   margin-top:2px; margin-left: 3px;
-   background: sprite($symbol, drrow-down) no-repeat;   
-}
-
-.drop-right.selected{
-   color:#ffffff;
-   *{ color:#ffffff; }
-}
-
-.drop-right:hover{
-   color: #FFF;
-   background-color:#888888;
-   border-bottom :#afafaf dotter 1px;  
+   &:after{
+		content:"";
+		width: 0;
+		height: 0;
+		border-left: 4px solid transparent;
+		border-right: 4px solid transparent;
+		border-top: 4px solid #888;
+		position: absolute;
+		margin: 5px 0 0 5px; 
+	}
 }
 
 .drop-right.selected{
-   background-color:#888888;
-   @include single-box-shadow(rgba(0, 0, 0, 0.6), 0px, 1px, 2px, false, true);
+   *{ color:#888; }
 }
 
+.drop-right.selected, .drop-right:hover{
+   color: #888;
+}
+
+.leftFilter .drop-right:after{
+		content:"";
+		width: 0;
+		height: 0;
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-top: 6px solid #888;
+		position: absolute;
+		margin: 6px 3px 0 8px; 
+	}
 .ticket-leftcol{
 	width:230px;
 	float:left;
@@ -4398,7 +4402,7 @@ a.close{
       margin:0;
    }
    h4.title{
-		padding:0 6px 10px 0;
+		padding:0 6px 2px 0;
 		font-size:14px;
 		color:#333;
    }
@@ -4419,7 +4423,7 @@ a.close{
 			display:none;
       	}
 	   	.ff_item{
-			margin:0 6px 10px 6px;
+			margin:0 6px 0;
 			padding:4px 2px;
 		}
 	   	.item{
@@ -4436,6 +4440,7 @@ a.close{
 		select{
 			width:96%;
 		}
+
 	}
 }
 
@@ -4446,13 +4451,13 @@ a.close{
 .page_info{
    float:right;
    width:250px;
-   text-align:right;
-   margin-right:6px;
    position:relative;
    top: -15px;
-   .offset {
-   	float:left;
-   	width:150px;
+   text-align: right;
+   .toolbar_pagination{
+   		width:70px;
+   		height:1px;
+   		margin-top:2px;
    }
 }
 
@@ -4494,32 +4499,37 @@ a.close{
 			display:inline-block;
 			color:#444444;
 			text-decoration:none;
-			padding:10px 8px 15px;
+			padding:10px 8px 5px 3px;
 			width: auto;
 			position:relative;
 
 			.nav-trigger {
 				font-size: 16px;
 				color:#000;
+				font-weight:bold;
+				@include text-shadow(#ffffff, 2px, 2px, 2px);
 
-				&:hover {
-					color: #FFF;
-					background-color: #888888;
-
-					b { color: #FFF;}
-				}
 				&.selected {
 					color: #FFF;
-					background-color: #888888;
 				}
 				&.unsaved {
 					font-style:italic;
 				}
 
-
 			}
 		}
+   }
 
+   .leftFilter {
+
+		#save_filter, #view_manage_links {
+			visibility: hidden;
+		}
+		&:hover{
+			#save_filter, #view_manage_links {
+				visibility: visible;
+			}
+		}
    }
    
 }
@@ -4566,7 +4576,7 @@ a.close{
 	border:none;
 	font-size:11px;
 	color:#777777;
-	padding: 5px 10px;
+	padding: 5px 0 5px 3px;
 }
 
 
@@ -4601,10 +4611,8 @@ a.close{
 
    }
    a:hover{
-      @include background(linear-gradient(rgba(188,188,188,1), rgba(206,206,206,0.1)));
-      @include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
-      @include filter-gradient(rgba(188,188,188,1), rgba(206,206,206,0.1), vertical); 
-      color:#000 ;
+      color:#FFF;
+      background: #999;
       .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
    }
 }
@@ -5539,8 +5547,11 @@ margin:10px;
 	}
 	#ticket-list-body {
 		background: white;
-		border: #ccc solid 1px;
-		@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 8px);
+		border: #FFF solid 1px;
+		#ticket-list-body-content {
+			border: #dbdbdb solid 2px;
+		}
+
 	}
 }
 
