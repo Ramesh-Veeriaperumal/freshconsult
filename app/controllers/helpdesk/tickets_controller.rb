@@ -479,6 +479,15 @@ class Helpdesk::TicketsController < ApplicationController
     render :text => a_template || ""
   end 
   
+  def latest_note
+    ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
+    if ticket.nil?
+      render :text => t("flash.general.access_denied")
+    else
+      render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+    end
+  end
+
   protected
   
     def item_url
