@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120517125341) do
+ActiveRecord::Schema.define(:version => 20120524131553) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -1081,6 +1081,7 @@ ActiveRecord::Schema.define(:version => 20120517125341) do
     t.integer  "rating"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "group_id",         :limit => 8
   end
 
   add_index "survey_results", ["id"], :name => "survey_results_id"
