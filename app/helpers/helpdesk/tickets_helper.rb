@@ -210,7 +210,7 @@ module Helpdesk::TicketsHelper
   
   def bind_last_conv (ticket, signature)
  
-    last_conv = ticket.notes.public.last ? ticket.notes.public.last : ticket
+    last_conv = ticket.notes.visible.public.last ? ticket.notes.visible.public.last : ticket
     
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
