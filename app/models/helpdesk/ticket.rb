@@ -166,6 +166,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
   named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+
+  named_scope :with_tag_names, lambda { |tag_names| {
+            :joins => :tags,
+            :select => "helpdesk_tickets.id", 
+            :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
+  }            
   
   def self.agent_permission user
     
@@ -542,7 +548,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_s
+    begin
     "#{subject} (##{display_id})"
+    rescue ActiveRecord::MissingAttributeError
+      "#{id}"
+    end
   end
   
   def self.search_display(ticket)
