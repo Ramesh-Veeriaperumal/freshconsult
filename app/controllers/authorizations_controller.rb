@@ -77,9 +77,16 @@ class AuthorizationsController < ApplicationController
     domain = account.full_domain
     protocol = (account.ssl_enabled?) ? "https://" : "http://"
     app_name = Integrations::Constants::APP_NAMES[:salesforce]
-    config_params = {'refresh_token' => @omniauth.credentials.refresh_token, 'oauth_token' => access_token.token, 'instance_url' => access_token.params['instance_url']}
-    Integrations::Application.install_or_update(app_name, account.id, config_params)
-    redirect_url = protocol +  domain + "/integrations/applications"
+    config_params = "{'app_name':'#{app_name}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{access_token.params['instance_url']}'}"
+    config_params = config_params.gsub("'","\"")
+    app_config = KeyValuePair.new
+    app_config.key = "salesforce_oauth_config"
+    app_config.value = config_params
+    app_config.account_id = account.id
+    app_config.save!
+    #Integrations::Application.install_or_update(app_name, account.id, config_params)
+    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/salesforce"
+    #redirect_url = "http://localhost:3000/integrations/applications/oauth_install/salesforce"
     redirect_to redirect_url
   end
 

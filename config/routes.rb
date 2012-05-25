@@ -70,6 +70,7 @@
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put}
     integration.oauth_action '/refresh_access_token/:provider', :controller => 'oauth_util', :action => 'get_access_token'
+    integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
   end
 
   map.namespace :admin do |admin|
