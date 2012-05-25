@@ -1718,6 +1718,12 @@ a.submit_link:hover { text-decoration: none; }
 .gs_error_highlight { border: 1px solid red !important; }
 
 /* Getting Started page style ends */
+#report_list .table-list li div { color: #000; font-size: 1em; padding-bottom: 1px; padding-top: 0px; }
+
+#report_list .table-list li { padding: 1px 20px; }
+
+#report_list .table-list li div.bignum { font-size: 20px; }
+
 .hovercard { font-size: 14px; float: left; margin-bottom: 2px; }
 .hovercard .smalltext { color: #999; font-size: 12px; margin-bottom: 2px; }
 .hovercard div { font-size: 12px; margin-bottom: 2px; }
@@ -1730,7 +1736,7 @@ a.submit_link:hover { text-decoration: none; }
 .ticket_list .pagearea #ticket-list-body #ticket-list-body-content { border: #dbdbdb solid 2px; }
 
 /* SURVEY REPORT RELATED STYLES */
-.agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 15px 0; padding: 15px 0; }
+.agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 10px 0; padding: 15px 0; }
 
 .usercomment { border-bottom: 1px dotted #e5e5e5; margin: 0; }
 
@@ -1740,51 +1746,33 @@ a.submit_link:hover { text-decoration: none; }
 
 .agentreport > ul > li.sub_rating { margin-top: -8px; }
 
-.floatleft { float: left; }
+.agentreport .floatleft { float: left; }
+.agentreport .floatright { float: right; }
+.agentreport .photo { box-sizing: border-box; width: 46px; height: 46px; background-color: grey; margin-right: 5px; }
+.agentreport .smallphoto { width: 30px !important; height: 30px !important; }
+.agentreport .agentname { font-weight: bold; font-size: 14px; width: 180px; margin-top: 5px; }
+.agentreport .agentname > div { font-weight: normal; font-size: 12px; }
+.agentreport .happy { background: transparent url("/images/smile.jpg") 0 0 no-repeat; box-sizing: border-box; width: 46px; height: 44px; margin-right: 5px; }
+.agentreport .bignum { font-size: 20px; margin: 2px 0 0 7px; }
+.agentreport .bignum > span { font-size: 16px; font-weight: normal; }
+.agentreport .bottomtext { font-size: 12px; font-weight: normal; margin: -1px 0 0 8px; }
+.agentreport .nospace { margin-left: 0 !important; }
+.agentreport .noborder { border-bottom: none; }
+.agentreport .chevron { font-weight: bold; margin-top: 13px; color: grey; }
+.agentreport .titlebar { box-sizing: border-box; border-bottom: 1px solid #e5e5e5; text-transform: uppercase; overflow: hidden; }
+.agentreport .titlebar > div { margin-bottom: 5px; font-size: 13px; text-transform: none; word-spacing: 4px; }
+.agentreport .comment { margin-left: 10px; font-size: 13px; line-height: 18px; word-spacing: 2px; width: 90%; }
+.agentreport .comment > div { margin-bottom: 5px; line-height: 14px; }
+.agentreport .comment > div > strong { display: block; }
+.agentreport .comment > div > span { font-size: 12px; color: #999; }
 
-.floatright { float: right; }
-
-.photo { box-sizing: border-box; width: 46px; height: 46px; background-color: grey; margin-right: 5px; }
-
-.smallphoto { width: 30px !important; height: 30px !important; }
-
-.agentname { font-weight: bold; font-size: 14px; width: 180px; margin-top: 9px; }
-
-.agentname > div { font-weight: normal; font-size: 12px; }
-
-.happy { background: transparent url("/images/smile.jpg") 0 0 no-repeat; box-sizing: border-box; width: 46px; height: 44px; margin-right: 5px; }
-
-.bignum { font-size: 20px; margin: 2px 0 0 7px; }
-
-.bignum > span { font-size: 16px; font-weight: normal; }
-
-.bottomtext { font-size: 12px; font-weight: normal; margin-top: -1px; }
-
-.nospace { margin-left: 0 !important; }
-
-.noborder { border-bottom: none; }
-
-.chevron { font-weight: bold; margin-top: 13px; color: grey; }
-
-.titlebar { box-sizing: border-box; border-bottom: 1px solid #e5e5e5; text-transform: uppercase; overflow: hidden; }
-
-.titlebar > div { margin-bottom: 5px; font-size: 13px; text-transform: none; word-spacing: 4px; }
-
-.comment { margin-left: 10px; font-size: 13px; line-height: 18px; word-spacing: 2px; width: 90%; }
-
-.comment > div { margin-bottom: 5px; line-height: 14px; }
-
-.comment > div > strong { display: block; }
-
-.comment > div > span { font-size: 12px; color: #999; }
-
-.agent_report_list .agentreport { border-bottom: 1px solid #e5e5e5; }
+#report_list .table-list { margin: 10px 0 0 0; }
 
 .agent_report_list { color: #000; }
 
 .smallsmiley, .mediumsmiley, .bigsmiley { box-sizing: border-box; background-repeat: no-repeat; }
 
-.smallsmiley { width: 20px; height: 20px; margin-top: 7px; }
+.smallsmiley { width: 20px; height: 20px; margin-top: 5px; }
 
 .mediumsmiley { width: 42px; height: 42px; }
 
@@ -1808,9 +1796,13 @@ a.submit_link:hover { text-decoration: none; }
 
 .satisfaction-head { padding: 10px 20px 0; }
 
-.sat-list-title { width: 300px; }
+.sat-list-title { width: 40%; }
 
-.sat-priority-rating { width: 260px; }
+.overall-rating { width: 59%; }
+
+.sat-priority-rating { width: 55%; }
+
+.sub_rating { width: 44%; }
 
 .link_text_info { font-size: 11px; color: #888888; }
 
