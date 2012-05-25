@@ -158,12 +158,12 @@ en:
      index:    
         title: Customer Satisfaction Settings
      satisfaction_settings:    
-        enable_label: Enable customer satisfaction surveys
+        enable_label: Customer Satisfaction Surveys
         link_text_label: Satisfaction survey link text
-        link_text_input: Please take a minute to rate your customer support experience
+        link_text_input: Please let us know your opinion on our support experience.
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Send satisfaction survey link in every email. Let customers give feedback whenever they want.
-        send_while_option2: Send satisfaction survey link after the ticket is resolved. Let customers give feedback after ticket is resolved.        
+        send_while_option1: Add survey link on all email sent to customer.
+        send_while_option2: Add survey link only on email sent after a ticket is resolved.
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
