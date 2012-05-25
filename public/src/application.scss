@@ -890,10 +890,6 @@ h4.title{
 					font-size:11px;
 					max-width:100%;
 				} 
-
-				&.checkbox {
-					padding-left: 18px;
-				}
 			}
 			li.button-container{
 				border-bottom:0px;
@@ -3140,15 +3136,15 @@ div.addReminder{
 .grey-source-forum{   background: sprite($symbol, grey-source-forum) no-repeat; }
 
 #ticket_view_choices {
-	@include inline-block;
+	display: inline-block;
 	.icon {
 		cursor: pointer;
 		float:left;
 		text-indent:-9999em;
 		display:inline-block;
-		zoom:1;
 		border:solid #aaa 1px;
 		border-radius:3px 0 0 3px;
+		/*@include border-radius(3px,0,0,3px);*/
 		width:24px;
 		height:18px;
 		padding:1px 3px;
@@ -3159,16 +3155,17 @@ div.addReminder{
 			
 			@include background(linear-gradient(rgba(147,147,147,1), rgba(206,206,206,0.1)));
 			background-color:#e2e2e2;
-			*background-color: #cecece;
 		}
 
 		&.right {
 			border-radius:0 3px 3px 0;
+			/*@include border-radius(0,3px,3px,0);*/
+			/*border-left:#aaa solid 1px;*/
 			border-right:#aaa solid 1px;
 		}
 
 		a.ticket-view-choice {
-			float:left;
+			display: inline-block;
 			width:24px;
 			height:18px;
 		}
@@ -3177,11 +3174,6 @@ div.addReminder{
 
 	}
 
-}
-
-body.ticket_list .content .wrapper {
-	/*background: #efefef;*/
-	border-radius: 10px;
 }
 .tickets, .tickets-expanded{
 	width:100%;
@@ -3266,7 +3258,7 @@ body.ticket_list .content .wrapper {
 	}
 	
 	.need-attention .name h3{
-		/*background: #fffb9a;*/
+		background: #fffb9a;
 		a{		font-weight:bold; }
 	}
 	
@@ -4446,7 +4438,7 @@ a.close{
 
    		#view_manage_links {
    			display: inline-block;
-   			zoom:1;
+   			
    		}
 		.link-item.active, a.link-item:hover{
          margin:0px -5px;
