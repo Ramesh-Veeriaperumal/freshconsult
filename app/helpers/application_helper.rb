@@ -498,7 +498,7 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless (field_value == "" || field_value == "...")     
+    content_tag :li, element unless (field_value.nil? || field_value == "" || field_value == "...")     
   end
    
   def pageless(total_pages, url, message=t("loading.items"), params = {})
