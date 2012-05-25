@@ -3139,7 +3139,7 @@ div.addReminder{
 		border-bottom:1px solid #efefef;
 		a{
 			text-decoration:none;
-			color:#5a8ec1; 
+			color:#888; 
 		}
 	}
 	tr.even td{ background-color:#f9f9f9; }
@@ -3190,7 +3190,7 @@ div.addReminder{
             font-size: 13px;
             line-height: 20px;
             padding: 0px 0 4px 2px;
-            color:#888;
+            color:#527eaa;
          }
          a:hover{
             color:#000;
@@ -3205,7 +3205,6 @@ div.addReminder{
 	
 	.need-attention .name h3 a{
 		font-weight:bold;
-		color:#444;
 	}
 	
 	.need-attention-icon{ 
@@ -4262,7 +4261,7 @@ a.close{
    }
    h4.title{
       padding:0 6px 3px 0;
-      font-size:11px;
+      font-size:12px;
       color:#666666;
    }
    

@@ -1043,7 +1043,7 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .tickets th, .tickets-expanded th { background: none; padding: 0px 6px; }
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th { vertical-align: top; }
 .tickets td, .tickets-expanded td { padding: 10px 8px 10px 10px; background-color: #ffffff; border-bottom: 1px solid #efefef; }
-.tickets td a, .tickets-expanded td a { text-decoration: none; color: #5a8ec1; }
+.tickets td a, .tickets-expanded td a { text-decoration: none; color: #888; }
 .tickets tr.even td, .tickets-expanded tr.even td { background-color: #f9f9f9; }
 .tickets tr:hover td, .tickets tr.active td, .tickets tr:hover.even td, .tickets-expanded tr:hover td, .tickets-expanded tr.active td, .tickets-expanded tr:hover.even td { background-color: #e6f3f9; background-image: url(../images/overlay-top-shadow.png); background-position: top left; border-bottom: 1px solid #dfdfdf; background-repeat: repeat-x; }
 .tickets .check, .tickets-expanded .check { width: 25px; padding-left: 0px; padding-top: 12px; text-align: right; position: relative; }
@@ -1053,11 +1053,11 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .tickets .name .preview_pic, .tickets .name-user .preview_pic, .tickets-expanded .name .preview_pic, .tickets-expanded .name-user .preview_pic { margin: 0px; margin-top: 3px; margin-left: -65px; -moz-border-radius: 3px 3px 3px 3px; -webkit-border-radius: 3px 3px 3px 3px; border-radius: 3px 3px 3px 3px; border: 1px solid #cfcfcf; height: 40px; }
 .tickets .name .preview_pic img, .tickets .name-user .preview_pic img, .tickets-expanded .name .preview_pic img, .tickets-expanded .name-user .preview_pic img { width: 40px; height: 40px; -moz-border-radius: 5px 5px 5px 5px; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }
 .tickets .name h3, .tickets .name-user h3, .tickets-expanded .name h3, .tickets-expanded .name-user h3 { padding-bottom: 4px; }
-.tickets .name h3 a, .tickets .name-user h3 a, .tickets-expanded .name h3 a, .tickets-expanded .name-user h3 a { font-size: 13px; line-height: 20px; padding: 0px 0 4px 2px; color: #888; }
+.tickets .name h3 a, .tickets .name-user h3 a, .tickets-expanded .name h3 a, .tickets-expanded .name-user h3 a { font-size: 13px; line-height: 20px; padding: 0px 0 4px 2px; color: #527eaa; }
 .tickets .name h3 a:hover, .tickets .name-user h3 a:hover, .tickets-expanded .name h3 a:hover, .tickets-expanded .name-user h3 a:hover { color: #000; }
 .tickets .name div, .tickets .name-user div, .tickets-expanded .name div, .tickets-expanded .name-user div { color: #888; }
 .tickets .name-user, .tickets-expanded .name-user { padding-left: 20px; }
-.tickets .need-attention .name h3 a, .tickets-expanded .need-attention .name h3 a { font-weight: bold; color: #444; }
+.tickets .need-attention .name h3 a, .tickets-expanded .need-attention .name h3 a { font-weight: bold; }
 .tickets .need-attention-icon, .tickets-expanded .need-attention-icon { width: 13px; height: 13px; padding: 0px; float: left; background: none; position: absolute; margin-left: -16px; margin-top: 3px; }
 .tickets .need-attention .need-attention-icon, .tickets-expanded .need-attention .need-attention-icon { background: url('/images/symbols-s751dfcfb9e.png') 0 -381px no-repeat; }
 .tickets .assign ul, .tickets-expanded .assign ul { margin: 0; padding: 0; border: 0; overflow: hidden; *zoom: 1; }
@@ -1387,7 +1387,7 @@ a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; b
 
 .ticket-leftcol { width: 230px; float: left; min-height: 477px; height: auto !important; height: 477px; border: 1px solid #ffffff; border-width: 1px 1px 0 0; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f4f4f4), color-stop(100%, #f1f1f1)); background-image: -webkit-linear-gradient(top, #f4f4f4, #f1f1f1); background-image: -moz-linear-gradient(top, #f4f4f4, #f1f1f1); background-image: -o-linear-gradient(top, #f4f4f4, #f1f1f1); background-image: -ms-linear-gradient(top, #f4f4f4, #f1f1f1); background-image: linear-gradient(top, #f4f4f4, #f1f1f1); }
 .ticket-leftcol h3.title { color: #888888; font-size: 12px; text-transform: uppercase; padding: 8px 8px 4px 8px; margin: 0; }
-.ticket-leftcol h4.title { padding: 0 6px 3px 0; font-size: 11px; color: #666666; }
+.ticket-leftcol h4.title { padding: 0 6px 3px 0; font-size: 12px; color: #666666; }
 .ticket-leftcol .view_filters .link-item.active, .ticket-leftcol .view_filters a.link-item:hover { margin: 0px -5px; padding-left: 13px; background: #e2f1fa; }
 .ticket-leftcol .view_filters .link-item.active { color: #336699; font-weight: bold; background-image: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #d9edf9), color-stop(100%, #ebf5fb)); background-image: -webkit-linear-gradient(bottom, #d9edf9, #ebf5fb); background-image: -moz-linear-gradient(bottom, #d9edf9, #ebf5fb); background-image: -o-linear-gradient(bottom, #d9edf9, #ebf5fb); background-image: -ms-linear-gradient(bottom, #d9edf9, #ebf5fb); background-image: linear-gradient(bottom, #d9edf9, #ebf5fb); -moz-box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.07); -webkit-box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.07); -o-box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.07); box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.07); }
 .ticket-leftcol .view_filters .link-item.active:after { content: ""; position: absolute; right: 9px; top: 8px; width: 11px; height: 11px; background: url('/images/symbols-s751dfcfb9e.png') 0 -92px no-repeat; }
