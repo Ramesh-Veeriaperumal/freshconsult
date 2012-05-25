@@ -243,7 +243,8 @@ a.addchoice:hover { background-color: #e8e8e8; }
 
 .ui-form { padding: 6px 0 12px 0; position: relative; border: 1px solid #EFEFEF; background-color: #F8F8F8; 	/*li:last-child{
 		border-bottom: 0; 	box-shadow: none;
-	}*/ }
+	}*/ /*li.dropdown, li.dropdown_blank{ select{ margin-bottom:8px; }
+}*/ }
 .ui-form div.field-box { padding: 6px 2% 10px 2%; overflow: hidden; *zoom: 1; }
 .ui-form li { padding: 8px 2% 8px 2%; margin: 0; display: inline; float: left; width: 96%; }
 .ui-form li div.field-box { padding: 4px 0 8px 0; }
@@ -251,13 +252,8 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form .hidden { display: none; }
 .ui-form li.dropdown, .ui-form li.small, .ui-form li.dropdown_blank, .ui-form li.number { width: 46%; }
 .ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input { width: auto; }
-.ui-form li.nestedfield, .ui-form li.nested_field { width: 96%; padding-bottom: 16px; }
-.ui-form li.nestedfield select, .ui-form li.nested_field select { width: 95%; max-width: 600px; }
-.ui-form li.nested_field { padding-bottom: 0px; }
-.ui-form li.nested_field.level2, .ui-form li.nested_field.level3 { padding-top: 0; }
-.ui-form li.nested_field.level2 label, .ui-form li.nested_field.level2 select, .ui-form li.nested_field.level3 label, .ui-form li.nested_field.level3 select { margin-left: 30px; }
-.ui-form li.nested_field.level3 { padding-bottom: 20px; }
-.ui-form li.dropdown select, .ui-form li.dropdown_blank select { margin-bottom: 8px; }
+.ui-form li.nestedfield, .ui-form li.nested_field { width: 46%; }
+.ui-form li.nestedfield select, .ui-form li.nested_field select { min-width: 35%; width: auto !important; width: 35%; }
 .ui-form div.checkbox, .ui-form label.checkbox { padding-bottom: 5px; padding-left: 18px; font-size: 1.1em; position: relative; }
 .ui-form div.checkbox input[type="checkbox"], .ui-form label.checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
 .ui-form label, .ui-form li.checkbox { font-weight: normal; margin: 0; line-height: 18px; color: #565656; font-size: 13px; font-weight: 400; }
@@ -307,6 +303,11 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form .conditionset fieldset span.sort_handle:hover { background-color: #fafafa; }
 .ui-form .conditionset fieldset label.checkbox { width: 100%; font-size: 13px; }
 .ui-form .conditionset div { margin: 0; padding: 0; }
+
+li.nested_field .level_2, li.nested_field .level_3 { border-left: 1px dotted #afafaf; padding-left: 10px; display: none; }
+li.nested_field select { min-width: 90%; width: auto !important; width: 90%; }
+
+.rtCnt .rtDetails li.nested_field .level_2 label, .rtCnt .rtDetails li.nested_field .level_3 label { font-weight: normal; }
 
 .threecol-form .item { float: left; width: 33%; }
 .threecol-form .item label { display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; }
@@ -750,6 +751,8 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .controls > .radio:first-child, .controls > .checkbox:first-child { padding-top: 5px; }
 
 .disabled { color: #afafaf; }
+
+.required_star { color: #d00; font-size: 16px; font-weight: bold; position: relative; top: 4px; }
 
 /* Theme Colors and layout Defaults */
 .ui-datepicker { background: #ffffff; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=95); opacity: 0.95; -moz-border-radius: 5px 5px 5px 5px; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }

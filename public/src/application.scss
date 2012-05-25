@@ -548,7 +548,7 @@ body h5{
 .priority-pointer{
 	top:9px; 	
 	position:absolute;
-  @include pointer-title;     
+ 	@include pointer-title;     
 }          
 
 .request-title{
@@ -843,7 +843,7 @@ h4.title{
 	.rtDetails{         
 		@include min-height(550px);       
 		@include pie-clearfix;
-	  @include box-shadow(0 0 40px rgba(0, 0, 0, 0.05) inset);
+	  	@include box-shadow(0 0 40px rgba(0, 0, 0, 0.05) inset);
 		margin:0px 78px 0px 0px;  
 		padding-top:5px; 
 		z-index:10; 
@@ -860,23 +860,21 @@ h4.title{
 		.ui-list_with_icon{
 			margin:6px;
 		}
-      .cnt-special{
-         padding-top:4px;
-         margin:8px 0;
-         border:1px dotted #cfcfcf;
-         border-width:1px 0;
-         background-color:#f3f3f3;
-      }
+      	.cnt-special{
+         	padding-top:4px;
+         	margin:8px 0;
+         	border:1px dotted #cfcfcf;
+         	border-width:1px 0;
+        	background-color:#f3f3f3;
+        }
 		.cnt{
 			@include no-bullets;
 			margin-top:-6px;
 			padding:0px 10px 8px 10px;
 			li{
 				border-bottom:1px solid #f3f3f3;
-				padding:6px 0px;
-				a{
-					text-decoration:none;
-				}
+				padding:6px 0px 10px;
+				a{ text-decoration:none; }
 				label{
 					display:block;
 					font-size:11px;
@@ -3272,6 +3270,9 @@ div.addReminder{
 	.email-reply{ 
 		background: sprite($ticketicon, email-reply);
 	}
+	.email-forward{ 
+		background: sprite($ticketicon, email-forward);
+	}
 	.email-receive{
 		background: sprite($ticketicon, email-receive);
 	}
@@ -4262,11 +4263,10 @@ a.close{
    h4.title{
       padding:0 6px 3px 0;
       font-size:11px;
-		text-transform:uppercase;
       color:#666666;
    }
    
-   .view_filters{
+      .view_filters{
 		.link-item.active, a.link-item:hover{
          margin:0px -5px;
          padding-left:13px;
@@ -4318,9 +4318,16 @@ a.close{
          display:none;
       }
    	.ff_item{
-         margin:0 6px 4px 6px;
-			padding:4px 2px;
-			border-bottom:1px dotted #cfcfcf;
+        margin:0 6px 4px 6px;
+		padding:4px 2px;
+		border-bottom:1px dotted #cfcfcf;
+		.level_2, .level_3{
+				border-left:1px dotted #afafaf;
+				border-bottom: 0;
+   				padding:0 0 0 10px;
+   				margin:0px;
+				h4.title{ font-weight:normal; padding-top:3px; }
+			}
       }
    	.item{
    		padding-bottom:2px;
@@ -4333,6 +4340,8 @@ a.close{
 			background:#ffffcc;
 			color:#000000;
 		}
+
+	select { width: 96%;}
    }
 }
 
@@ -4340,22 +4349,10 @@ a.close{
    margin-left:231px;
 } 
 
-.page_info{
-   float:right;
-   width:200px;
-   text-align:right;
-   margin-right:6px;
-   position:relative;
-}
-
 .contentCol{
    border-left:1px solid #cfcfcf;
    background-color:#ffffff;
 }
-
-.hasRightCol{
-   margin-left:231px;
-} 
 
 .page_info{
    float:right;
@@ -4363,11 +4360,6 @@ a.close{
    text-align:right;
    margin-right:6px;
    position:relative;
-}
-
-.contentCol{
-   border-left:1px solid #cfcfcf;
-   background-color:#ffffff;
 }
 
 .toolbar{
