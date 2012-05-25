@@ -260,20 +260,12 @@ a.addchoice:hover{
       width:46%;
       input{ width:auto; }
    }
-   li.nestedfield, li.nested_field{ width:96%; padding-bottom:16px; }                             
-   li.nestedfield select, li.nested_field select{ width:95%; max-width:600px; } 
-   li.nested_field{ padding-bottom: 0px; }
-   li.nested_field.level2, li.nested_field.level3{ 
-      padding-top:0;
-   	  label, select{ margin-left:30px;  }
-   }
-   li.nested_field.level3{
-   	  padding-bottom:20px;
-   }
+   li.nestedfield, li.nested_field{ width:46%; }                             
+   li.nestedfield select, li.nested_field select{ @include min-width(35%); }    
 
-   li.dropdown, li.dropdown_blank{
+   /*li.dropdown, li.dropdown_blank{
       select{ margin-bottom:8px; }
-   }
+   }*/
    div.checkbox, label.checkbox{
       padding-bottom:5px;
       padding-left:18px;
@@ -491,6 +483,21 @@ a.addchoice:hover{
 		
 	}
 }
+
+li.nested_field{
+   	.level_2, .level_3{ 
+   		border-left:1px dotted #afafaf;
+   		padding-left:10px;
+   		display: none;    	
+   	}
+	select{ @include min-width(90%); }
+}
+
+.rtCnt .rtDetails li.nested_field {
+	.level_2, .level_3{
+		label{ font-weight:normal; }
+	}
+} 
 
 .threecol-form .item{
 	float:left;
@@ -1889,4 +1896,12 @@ ul.ui-form .inputs-list{
 
 .disabled{
 	color:#afafaf;
+}
+
+.required_star{
+	color: #d00;
+	font-size:16px;
+	font-weight:bold;
+	position: relative;
+	top:4px;
 }

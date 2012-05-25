@@ -160,14 +160,14 @@
                category = $("<select disabled='disabled' />").append(nestedTree.getCategory());
                fieldContainer.append(label).append(category);
 
-               _nested = $("<div class='tabbed' />").appendTo(fieldContainer);
-               dataItem.levels.each(function(item){
-                  if(item.label){
-                    _nested
-                      .append("<label>"+item.label+"</label>")  
-                      .append("<select disabled='disabled'><option>...</option></select>");
-                  }
-               });  
+               // _nested = $("<div class='tabbed' />").appendTo(fieldContainer);
+               // dataItem.levels.each(function(item){
+               //    if(item.label){
+               //      _nested
+               //        .append("<label>"+item.label+"</label>")  
+               //        .append("<select disabled='disabled'><option>...</option></select>");
+               //    }
+               // });  
 
               }else{
                $(dataItem.choices).each(function(ci, choice){
