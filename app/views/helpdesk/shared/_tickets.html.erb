@@ -5,7 +5,7 @@
     <tbody>
       <tr class="headings hideForDetails">
         <td class="check"></td>
-        <td class="name"><%= t('helpdesk.tickets.tabular_view.title') %></td>
+        <td><%= t('helpdesk.tickets.tabular_view.title') %></td>
         <td colspan="2"><%= t('helpdesk.tickets.tabular_view.posted') %></td>
         <td><%= t('helpdesk.tickets.tabular_view.assigned') %></td>
         <td><%= t('helpdesk.tickets.tabular_view.status') %></td>
@@ -57,7 +57,6 @@
 	  <% else %>
 	  
 	  <% end %>
-	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %> <br />
-    <%= t('wf.messages.no_tickets_subtext', :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open')), :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'))) %>
+	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %>
 	</div>
 <% end %>

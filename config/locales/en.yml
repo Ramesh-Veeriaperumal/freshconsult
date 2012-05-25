@@ -1830,7 +1830,6 @@ en:
     messages:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
-      no_tickets_subtext: "Goto %{view_1} or %{view_2}"
   conversation: Conversation
   save_this_view: "Save this View..."
   loading:
