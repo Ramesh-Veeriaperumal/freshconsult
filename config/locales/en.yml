@@ -1324,7 +1324,7 @@ en:
   ok: Ok
   back: Back
   ticket:
-    reported_on: "from %{username}, Last updated: <strong>%{time_words} ago</strong> on %{date}"
+    reported_on: "from %{username}, last updated on %{date}"
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
@@ -1620,16 +1620,6 @@ en:
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
       no_email_found: "User with email %{email} is not available in the system."
-      overlay_reply_time: " replied, %{time_in_words} ago"
-      overlay_fwd_time: " forwarded, %{time_in_words} ago"
-      tabular_view:
-        title: "Title"
-        posted: "Posted"
-        assigned: "Assigned"
-        status: "Status"
-        priority: "Priority"
-        time_ago: "%{time_in_words} ago"
-        sla: "Due By"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -1723,8 +1713,6 @@ en:
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
-    title: "Filter Tickets"
-    unsaved_view: "Unsaved View"
     sort_fields:
       due_by: Due by time
       date_created: Date Created
