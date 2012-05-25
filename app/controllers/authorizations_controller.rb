@@ -82,7 +82,8 @@ class AuthorizationsController < ApplicationController
     config_params = config_params.gsub("'","\"")
     key_value_pair = KeyValuePair.find_by_account_id_and_key(account_id, 'salesforce_oauth_config')
     key_value_pair.delete unless key_value_pair.blank?
-    create_key_value_pair("salesforce_oauth_config", config_params, account.id)
+    #KeyValuePair is used to store salesforce configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
+    create_key_value_pair("salesforce_oauth_config", config_params, account.id) 
     #Integrations::Application.install_or_update(app_name, account.id, config_params)
     redirect_url = protocol +  domain + "/integrations/applications/oauth_install/salesforce"
     #redirect_url = "http://localhost:3000/integrations/applications/oauth_install/salesforce"
