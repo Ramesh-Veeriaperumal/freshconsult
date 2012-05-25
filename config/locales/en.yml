@@ -1978,7 +1978,7 @@ en:
         password: "Password"
     salesforce:
       label: "Salesforce"
-      desc: "Connect your support and sales team with Freshdesk-Salesforce integration"
+      desc: "You can view contact information from Salesforce in Freshdesk."
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
