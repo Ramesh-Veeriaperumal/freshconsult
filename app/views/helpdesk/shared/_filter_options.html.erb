@@ -58,15 +58,6 @@
 		jQuery("#FilterOptions input[name=page]").val(1);
   }
 
-  function refresh_tickets(){
-    jQuery("#save_filter").show();
-    jQuery("#delete_filter").hide();
-    jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
-    jQuery("#FilterOptions input[name=filter_name]").val("");
-    jQuery(".view_filters .active").removeClass("active");
-    getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
-  }
   
 	jQuery(document).ready(function(){
 		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
