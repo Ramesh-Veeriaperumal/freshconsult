@@ -18,7 +18,7 @@
 
 .ui-tooltip-content { position: relative; padding: 5px 9px; overflow: hidden; border-width: 1px; border-style: solid; text-align: left; word-wrap: break-word; overflow: hidden; }
 
-.ui-tooltip-titlebar { position: relative; min-height: 14px; padding: 5px 35px 5px 10px; overflow: hidden; border-width: 1px 1px 0; border-style: solid; font-weight: bold; }
+.ui-tooltip-titlebar { position: relative; min-height: 14px; padding: 5px 35px 5px 10px; overflow: hidden; border-width: 0; border-style: solid; font-weight: bold; }
 
 .ui-tooltip-titlebar + .ui-tooltip-content { border-top-width: 0px !important; }
 
@@ -43,9 +43,9 @@
 .ui-tooltip-titlebar .ui-state-hover { border-color: #AAA; color: #111; }
 
 /* Ticket tooltip style */
-.ui-tooltip-ticket { max-width: 650px !important; margin-left: 20px; }
+.ui-tooltip-ticket { max-width: 600px !important; min-width: 500px; margin-left: 20px; }
 
-.ui-tooltip-ticket .ui-tooltip-content { padding: 0.8em 1em; color: #000000; text-align: justify; font-size: 1.0em; background-color: #FFFDE1; border-color: #d0cdaa; line-height: 22px; margin-left: -14px; }
+.ui-tooltip-ticket .ui-tooltip-content { padding: 10px; color: #000000; text-align: justify; font-size: 1.0em; background-color: #FFFDE1; border-color: #d0cdaa; margin-left: -14px; }
 
 /* Light tooltip style */
 .ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content { border-color: #E2E2E2; color: #454545; }
@@ -107,12 +107,12 @@
 
 .ui-tooltip .ui-tooltip-tip { margin: 0 auto; overflow: hidden; background: transparent !important; border: 0px dashed transparent !important; z-index: 10; }
 
-.ui-tooltip .ui-tooltip-tip, .ui-tooltip .ui-tooltip-tip * { position: absolute; line-height: 0.1px !important; font-size: 0.1px !important; color: #123456; background: transparent; border: 0px dashed transparent; }
+.ui-tooltip .ui-tooltip-tip, .ui-tooltip .ui-tooltip-tip * { display: none; position: absolute; line-height: 0.1px !important; font-size: 0.1px !important; color: #123456; background: transparent; border: 0px dashed transparent; }
 
 #qtip-overlay { position: absolute; left: -10000em; top: -10000em; background-color: black; opacity: 0.7; filter: alpha(opacity=70); -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)"; }
 
 /* Add shadows to your tooltips in: FF3+, Chrome 2+, Opera 10.6+, IE6+, Safari 2+ */
-.ui-tooltip-shadow { -webkit-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15); -moz-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15); box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15); }
+.ui-tooltip-shadow { -webkit-box-shadow: 0 3px 10px 0px rgba(0, 0, 0, 0.2); -moz-box-shadow: 0 3px 10px 0px rgba(0, 0, 0, 0.2); box-shadow: 0 3px 10px 0px rgba(0, 0, 0, 0.2); }
 
 .ui-tooltip-shadow .ui-tooltip-titlebar, .ui-tooltip-shadow .ui-tooltip-content { filter: progid:DXImageTransform.Microsoft.Shadow(Color='gray', Direction=135, Strength=3); -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Color='gray', Direction=135, Strength=3)"; }
 

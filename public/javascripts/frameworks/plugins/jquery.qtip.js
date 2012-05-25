@@ -690,7 +690,7 @@ function QTip(target, options, id, attr)
 				.append(
 					// Create content element
 					elements.content = $('<div />', {
-						'class': uitooltip + '-content',
+						'class': uitooltip + '-content' + ' ' + uitooltip + '-shadow',
 						'id': tooltipID + '-content',
 						'aria-atomic': TRUE
 					})
@@ -1503,7 +1503,7 @@ PLUGINS = QTIP.plugins = {
 	Corner: function(corner) {
 		corner = ('' + corner).replace(/([A-Z])/, ' $1').replace(/middle/gi, 'center').toLowerCase();
 		this.x = (corner.match(/left|right/i) || corner.match(/center/) || ['inherit'])[0].toLowerCase();
-		this.y = (corner.match(/top|bottom|center/i) || ['inherit'])[0].toLowerCase();
+		this.y = (corner.match(/top|bottom|center|ticket/i) || ['inherit'])[0].toLowerCase();
 
 		this.precedance = (corner.charAt(0).search(/^(t|b)/) > -1) ? 'y' : 'x';
 		this.string = function() { return this.precedance === 'y' ? this.y+this.x : this.x+this.y; };
@@ -1965,7 +1965,8 @@ function calculateTip(corner, width, height)
 		topcenter:		[[0,height],		[width2,0],				[width,height]],
 		bottomcenter:	[[0,0],				[width,0],				[width2,height]],
 		rightcenter:	[[0,0],				[width,height2],		[0,height]],
-		leftcenter:		[[width,0],			[width,height],		[0,height2]]
+		leftcenter:		[[width,0],			[width,height],		[0,height2]],
+		ticketleft:   [[width,0],			[width,height],		[0,height2]],
 	};
 
 	// Set common side shapes
@@ -2058,6 +2059,7 @@ function Tip(qTip, command)
 		if(offset.bottom !== undefined) { offset.top = offset.bottom; }
 		offset.option = Math.max(0, opts.offset);
 
+		console.log(offset);
 		pos.left -= offset.left.charAt ? offset.option : (offset.right ? -1 : 1) * offset.left;
 		pos.top -= offset.top.charAt ? offset.option : (offset.bottom ? -1 : 1) * offset.top;
 
@@ -2265,6 +2267,7 @@ function Tip(qTip, command)
 				opts.border === TRUE ? borderWidth(corner, NULL, TRUE) : opts.border;
 
 			// Calculate coordinates
+			// console.log("Mimic" + mimic.string());
 			coords = calculateTip(mimic, width , height);
 
 			// Determine tip size
@@ -2297,6 +2300,7 @@ function Tip(qTip, command)
 				
 				// Translate origin
 				context.translate(translate[0], translate[1]);
+				// console.log("Cordinated" + coords.toSource());
 				
 				// Draw the tip
 				context.beginPath();

@@ -11,7 +11,7 @@
 				<span class="user"><%= h(latest_note.user.name) %></span><%= t( "#{action_msg}", :time_in_words => time_ago_in_words(latest_note.created_at)) %>
 			</div>
 			<div class="note">
-				<%= h(truncate(latest_note.body, { :length => 150, :omission => "..." })) %>
+				<%= truncate(latest_note.body, { :length => 150, :omission => "..." }) %>
 			</div>
 		</div>
 		<%

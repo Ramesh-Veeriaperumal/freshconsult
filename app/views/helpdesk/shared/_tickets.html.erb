@@ -23,12 +23,13 @@
         var tipUrl = jQuery(item).data("tipUrl");
         jQuery(item).qtip({
             position: { 
-              my: 'bottom left',
-              at: 'top  left',
+              my: 'top center',
+              at: 'bottom center',
+              target: _self.parent(),
               viewport: jQuery(window) 
             }, 
            style : {
-            classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
+            classes: 'ui-tooltip-ticket ui-tooltip-rounded'
            },             
            content: {
               text: '<%= t("index_tooltip_loading_msg")%>',
@@ -58,6 +59,6 @@
 	  
 	  <% end %>
 	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %> <br />
-    <%= t('wf.messages.no_tickets_subtext', :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open')), :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'))) %>
+    <span class="small"><%= t('wf.messages.no_tickets_subtext', :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open')), :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'))) %></span>
 	</div>
 <% end %>

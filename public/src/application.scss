@@ -20,8 +20,7 @@ $bullet-icon:"symbols/request_nav_seperator.gif";
 body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
 
 /* Priority Color Codes */
-$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;	
-$RGBCOL_PRI_HIGH: #cc5600;		$RGBCOL_PRI_MEDIUM: #0a9458;		$RGBCOL_PRI_LOW: #0c8aae;		$RGBCOL_PRI_URGENT: #cc0000;	
+$COL_PRI_HIGH: #ffb613;		$COL_PRI_MEDIUM: #008ff9;		$COL_PRI_LOW: #7ebf00;		$COL_PRI_URGENT: #de0000;
 
 /* PAGE AREA STYLE */ 
 
@@ -466,7 +465,7 @@ div.preview_pic{
 		background:#ffffff;
 		width:50px;
 		height:50px;
-		@include corners(6px); 
+		@include corners(4px); 
 	}
 	span.tweet_pic, span.fb_pic{
 	   position:absolute;
@@ -3186,7 +3185,7 @@ div.addReminder{
 
 .tickets, .tickets-expanded{
 
-	$priority-default-alpha: 0.2;
+	$priority-default-alpha: 1;
 	$priority-hover-alpha: 1;
 	width:100%;
 	table-layout: fixed;
@@ -3222,8 +3221,9 @@ div.addReminder{
 		/*background-image:url(../images/overlay-top-shadow.png);*/
 		/*background-position:top left;*/
 		/*background-repeat:repeat-x;*/
-		border-top:1px solid #e8e8e8;
-		border-bottom:1px solid #e8e8e8;
+		/*border-top:2px solid #e8e8e8;
+		border-bottom:1px solid #e8e8e8;*/
+		background: #fefef7;
 
 		&.check {
 			&.priority-high {
@@ -3246,7 +3246,6 @@ div.addReminder{
 		padding-left:0px;
 		padding-top:12px; 
 		text-align:right;
-		position:relative;
 		border-left: solid 6px transparent;
 		&.priority-high {
 			border-left: solid 6px rgba($COL_PRI_HIGH, $priority-default-alpha);
@@ -3289,11 +3288,11 @@ div.addReminder{
          height:30px;
          img{ 
             width:30px; height:30px;
-            @include corners(5px);
          }
       }
 
       span.info-data {
+      	font-size: 14px;
       	font-weight:normal;
       	margin-left:0;
       }
@@ -4434,6 +4433,7 @@ a.close{
 		position: absolute;
 		margin: 6px 3px 0 8px; 
 	}
+
 .ticket-leftcol{
 	width:230px;
 	float:left;
@@ -4584,34 +4584,42 @@ a.close{
 	position: absolute;
 }
 .ticket_overlay_content {
-	width:350px;
+	width:500px;
 	display:inline-block;
 	.preview_pic {
 		display:inline-block;
 		img{
 			width: 30px;
 			height:30px;	
+			border: 1px solid #9a9a9a;
 		}
+
+		margin-right:5px;
+	}
+
+	.freshdesk_quote {
+
 	}
 
 	.text {
 		color:#333;
 		font-size: 12px;
 		display: inline-block;
-		width: 280px;
+		width: 420px;
 		.user_and_time {
 			background: url(../images/overlay/replied.png) no-repeat;
-			padding-left: 25px;
+			padding-left: 27px;
 			min-height:13px;
-			margin-bottom:10px;
+			margin-bottom:0px;
 			.user {
 				font-weight:bold;
 			}
 		}
 
 		.note {
+			margin-top:0;
 			background: url(../images/overlay/note_quote.png) no-repeat;
-			padding-left: 25px;
+			padding-left: 27px;
 			min-height:13px;
 
 		}
@@ -4746,6 +4754,10 @@ a.close{
 	text-align:center;
 	color:#666666;
 	@include text-shadow(#ffffff, 0px, 1px, 1px);
+
+	.small {
+		font-size: 0.8em;
+	}
 }
 .sidepanel {
 	.cnt {
