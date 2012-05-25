@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
     if !current_account.active? 
       if permission?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
-        return render :partial => "/shared/redirect_to_plans"
+        return redirect_to(plan_account_url)
       else
         flash[:notice] = t('suspended_plan_admin_info',:email => current_account.account_admin.email) 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)

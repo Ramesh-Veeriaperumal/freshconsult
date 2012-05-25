@@ -5,11 +5,7 @@
 	
 	$bg_ctxt_color:	    if(lightness($background) > 50, black, white) !default;
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;
-	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;
-	$subtxt_color: if(lightness($background) > 50, #222, #EEE) !default;
-	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
-	$alternate_bg_color: if(lightness($background) > 50, #666, #AAA) !default;
-
+	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;  
 	    
 	body { background: $background; }
 	.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color: darken($background, 15%); }
@@ -53,29 +49,11 @@
 	} 
 	.footerContent, .footerContent a{ color:$bg_ctxt_color; border-color:$bg_ctxt_color;  }
 	.footerContent a:hover{ color:$bg_ctxt_color; }
-	
-	.ticket-leftcol h3.title, .ticket-leftcol h4.title, .contentCol .view_filters .link-item .nav-trigger {
-		color:$bg_ctxt_color;
-	}
 
-	.ticket-leftcol .leftFilter .item, .drop-right {
-		color:$subtxt_color;	
+	.iphone-inactive.uiButton{
+		background-color:#e7e7e7;
+		color:#7f7f7f;
+		border-color:#a4a4a4;
+		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
 	}
-
-	.drop-right:hover {
-		color: $alternate_txt_color;
-		background-color: $alternate_bg_color;
-	}
-
-	.contentCol .view_filters .link-item .nav-trigger.selected, .contentCol .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {
-		color: $alternate_txt_color;
-		background-color: $alternate_bg_color;
-	}
-	.sort-bar {
-		color:$subtxt_color;	
-	}
-
-	#view_manage_links a, #save_filter {
-	color: invert($background);
-}
 <% end %>

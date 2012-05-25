@@ -39,7 +39,6 @@ class Helpdesk::TicketsController < ApplicationController
         @response_errors = {:no_email => true}
       end
     end
-
     company_name = params[:company_name]
     unless company_name.blank?
       company = current_account.customers.find_by_name(company_name)
@@ -49,7 +48,6 @@ class Helpdesk::TicketsController < ApplicationController
         @response_errors = {:no_company => true}
       end
     end
-
   end
 
   def load_ticket_filter
@@ -152,10 +150,6 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => @items.to_json
       end
 
-      format.xml do
-        render :xml => @items.to_xml
-      end
-
       format.widget do
         render :layout => "widgets/contacts"    
       end
@@ -254,7 +248,7 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @item.to_xml  
       }
       format.json {
-        render :json => @item.to_json
+        render :json => Hash.from_xml(@item.to_xml)
       }
       format.js
     end

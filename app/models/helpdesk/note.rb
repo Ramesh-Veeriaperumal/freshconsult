@@ -121,7 +121,7 @@ class Helpdesk::Note < ActiveRecord::Base
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
   end
-  
+
   def to_liquid
     { 
       "commenter" => user,

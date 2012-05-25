@@ -1,29 +1,21 @@
-<div class="leftFilter" id="all-views">
-  <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
-
-  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
+<div id="ticket-toolbar" class="toolbar">
+  <%= render :partial => "/helpdesk/shared/ticket_toolbar" %>
 </div>
-
 
 <div id="ticket-sub-toolbar">
   <%= render :partial => "/helpdesk/shared/ticket_sort" unless @items.empty? %>
 </div>
-
-<div id="ticket-list-body">
-	<div id="ticket-toolbar" class="toolbar">
-	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" %>
-	</div>
-
-	<div id="recent_ticket_count" class='more-tweets'>
-	  1 new update
-	</div>
-
-	<% form_tag "", { :id => "tickets-expanded",  :method => :put } do %>
-	  <div id="ticket-list" class="detailed_view">
-	    <%= render :partial => "/helpdesk/shared/tickets" %>
-	  </div>    
-	<% end %>
+     
+<div id="recent_ticket_count" class='more-tweets'>
+  1 new update
 </div>
+
+<% form_tag "", { :id => "tickets-expanded",  :method => :put } do %>
+  <div id="ticket-list">
+    <%= render :partial => "/helpdesk/shared/tickets" %>
+  </div>    
+<% end %>
+
 <% javascript_tag do %>
 	/* new PeriodicalExecuter(function(pe) {
 		params = jQuery("#FilterOptions").serializeArray(); 
@@ -56,26 +48,4 @@
 	      }); 
 		jQuery(this).hide();	
 	});	
-
-	jQuery('.ticket-view-choice').click(function() {
-		if (jQuery(this).hasClass('ticket-view-detail')) {
-			jQuery("#ticket-list").removeClass("list_view").addClass("detailed_view");
-			setCookie('ticket_view_choice','detail',365);
-		}
-		if (jQuery(this).hasClass('ticket-view-list')) {
-			jQuery("#ticket-list").removeClass("detailed_view").addClass("list_view");
-			setCookie('ticket_view_choice','list',365);
-		}
-		jQuery(this).parent().addClass('active').siblings().removeClass('active');
-	});
-
-	jQuery(function() {
-		var choice = getCookie('ticket_view_choice');
-		if (choice == 'list') {
-			jQuery('.ticket-view-choice.ticket-view-list').click();
-		} else {
-			jQuery('.ticket-view-choice.ticket-view-detail').click();
-		}
-
-	})
 <%end%>
