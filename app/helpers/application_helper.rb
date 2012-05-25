@@ -486,19 +486,21 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field.field_name, field_label, :class => "name_label" 
         
     if(field.field_type == "nested_field")
-      element = label + label_tag(field_name, field_value[:category_val], :class => "value_label") unless (field_value[:category_val].blank?)
-      field.nested_levels.each do |l|
-        _name = label_tag("", l[:label_in_portal], :class => "name_label")
-        _field_value = field_value[(l[:level] == 2) ? :subcategory_val : (l[:level] == 3) ? :item_val : ""]
-        _value = label_tag(field_name, _field_value, :class => "value_label") 
-        element += content_tag(:div, _name + _value, :class => "tabbed") unless (_field_value.blank?)
+      unless field_value[:category_val].blank?
+        element = label + label_tag(field_name, field_value[:category_val], :class => "value_label")
+        field.nested_levels.each do |l|
+          _name = label_tag("", l[:label_in_portal], :class => "name_label")
+          _field_value = field_value[(l[:level] == 2) ? :subcategory_val : (l[:level] == 3) ? :item_val : ""]
+          _value = label_tag(field_name, _field_value, :class => "value_label") 
+          element += content_tag(:div, _name + _value, :class => "tabbed") unless (_field_value.blank? || field_value[:subcategory_val].blank?)
+        end
       end
     else
       field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless (field_value.nil? || field_value == "" || field_value == "...")     
+    content_tag :li, element unless (element.blank? || field_value.nil? || field_value == "" || field_value == "...")     
   end
    
   def pageless(total_pages, url, message=t("loading.items"), params = {})
