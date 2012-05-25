@@ -197,7 +197,7 @@ ul.activityfeed li{
 	}
 }
 
-.user_name{ font-weight:normal; color:#527eaa; }
+.user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
 
 .pageSeperator{
@@ -3179,7 +3179,10 @@ div.addReminder{
 
 }
 
-
+body.ticket_list .content .wrapper {
+	/*background: #efefef;*/
+	border-radius: 10px;
+}
 .tickets, .tickets-expanded{
 	width:100%;
 	table-layout: fixed;
@@ -3226,28 +3229,19 @@ div.addReminder{
    }
 	
 	.name, .name-user{
-      width:53%;
-      padding-left:40px;
+      width:63%;
+      padding-left:65px;
       .preview_pic{
          margin:0px; 
          margin-top:3px;
-         margin-left:-40px;
-         @include corners(5px);
+         margin-left:-65px;         
+         @include corners(3px);
          border:1px solid #cfcfcf;
-         height:30px;
+         height:40px;
          img{ 
-            width:30px; height:30px;
+            width:40px; height:40px;
             @include corners(5px);
          }
-      }
-
-      span.info-data {
-      	margin-left:0;
-      }
-
-      .emphasize {
-      	/*color:#333;*/
-      	font-weight:bold;
       }
 
       h3{
@@ -3282,7 +3276,7 @@ div.addReminder{
 	   padding:0px;
 	   display:none;
 	   background:none; 
-	   margin-left:0;
+	   margin-left:-16px;
 	   margin-top:3px;
 	}
 	.need-attention .need-attention-icon{
