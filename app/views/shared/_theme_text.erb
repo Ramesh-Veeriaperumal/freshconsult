@@ -8,7 +8,6 @@
 	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;
 	$subtxt_color: if(lightness($background) > 50, #333, #CCC) !default;
 	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
-	$alternate_bg_color: if(lightness($background) > 50, #666, #AAA) !default;
 
 	$filterTextShadow: if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
 
@@ -83,18 +82,14 @@
 
 	.drop-right:hover {
 		color: $alternate_txt_color;
-		background-color: $alternate_bg_color;
+		background-color: $bg_ctxt_color;
 	}
 
 	.contentCol .view_filters .link-item .nav-trigger.selected, .contentCol .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {
 		color: $alternate_txt_color;
-		background-color: $alternate_bg_color;
+		background-color: $bg_ctxt_color;
 	}
 	.sort-bar {
 		color:$subtxt_color;	
 	}
-
-	#view_manage_links a, #save_filter {
-	color: invert($background);
-}
 <% end %>
