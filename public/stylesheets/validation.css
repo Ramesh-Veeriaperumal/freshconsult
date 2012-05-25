@@ -1,4 +1,5 @@
 /* Theme Colors and layout Defaults */
+/*$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;*/
 #errorExplanation, .errorExplanation { overflow: hidden; *zoom: 1; padding: 14px 20px; margin: 0px 0px 10px 0px; background-color: #feefd6; }
 #errorExplanation h2, .errorExplanation h2 { display: none; }
 #errorExplanation p, .errorExplanation p { color: #333; margin: 0px; padding: 0px; font-size: 13px; color: #993333; }

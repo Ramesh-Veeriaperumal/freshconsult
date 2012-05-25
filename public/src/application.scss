@@ -3194,29 +3194,18 @@ div.addReminder{
 	td{
 		padding: 6px 10px;
 		background-color:#ffffff;
-		border-top:1px solid #ffffff;
-		border-bottom:1px solid #ffffff;
 		a{
 			text-decoration:none;
 			color:#5a8ec1; 
 		}
 	}
-	tr.even td{ 
-		background-color:#f9f9f9; 
-		border-top:1px solid #f9f9f9;
-		border-bottom:1px solid #f9f9f9;
-	}
-	tr.active td{
-		background-color:#f2f0e3;
-		border-top:1px solid #f2f0e3;
-		border-bottom:1px solid #f2f0e3;
-	}
-	tr:hover td, tr:hover.even td{
-		/*background-image:url(../images/overlay-top-shadow.png);*/
-		/*background-position:top left;*/
-		/*background-repeat:repeat-x;*/
-		border-top:1px solid #e8e8e8;
-		border-bottom:1px solid #e8e8e8;
+	tr.even td{ background-color:#f9f9f9; }
+	tr:hover td, tr.active td, tr:hover.even td{
+		background-color:#e6f3f9;
+		background-image:url(../images/overlay-top-shadow.png);
+		background-position:top left;
+		border-bottom:1px solid #dfdfdf;
+		background-repeat:repeat-x;
 	}
 	.check{
 		width:25px;
@@ -3253,7 +3242,6 @@ div.addReminder{
       }
 
       span.info-data {
-      	font-weight:normal;
       	margin-left:0;
       }
 
@@ -3263,20 +3251,18 @@ div.addReminder{
       }
 
       h3{
-		margin-bottom:4px;
-		width: 100%;
-		overflow: hidden;
-		word-break: break-all;
+         margin-bottom:4px;
+         display: inline-block;
 
-		a{
-			font-size: 14px;
-			line-height: 20px;
-			padding: 0px 0 4px 2px;
+         a{
+            font-size: 14px;
+            line-height: 20px;
+            padding: 0px 0 4px 2px;
 			color:#4886c2;
-		}
-		a:hover{
-			color:#000;
-		}
+         }
+         a:hover{
+            color:#000;
+         }
       }
       div{ color:#888; }
    }
@@ -3351,10 +3337,6 @@ div.addReminder{
 		}
 		td.ticket_info {
 			white-space:nowrap;
-		}
-
-		h3 a {
-			@include wrap();
 		}
 	}	
 	.hideForList {
@@ -4398,15 +4380,17 @@ a.close{
 	
    h3.title{
       color:#333;
-      font-size:16px;
+      font-size:15px;
       font-weight:normal;
-      padding:8px 8px 10px 8px;
+      padding:8px 8px 4px 8px;
       margin:0;
    }
    h4.title{
 		padding:0 6px 10px 0;
-		font-size:14px;
+		font-size:11px;
+		text-transform:uppercase;
 		color:#333;
+		@include arrow-right(#000000);
    }
    
    .leftFilter{
@@ -4451,15 +4435,10 @@ a.close{
 
 .page_info{
    float:right;
-   width:250px;
+   width:200px;
    text-align:right;
    margin-right:6px;
    position:relative;
-   top: -15px;
-   .offset {
-   	float:left;
-   	width:150px;
-   }
 }
 
 .contentCol{
@@ -4500,7 +4479,7 @@ a.close{
 			display:inline-block;
 			color:#444444;
 			text-decoration:none;
-			padding:10px 8px 15px;
+			padding:10px 8px 5px;
 			width: auto;
 			position:relative;
 
@@ -4603,7 +4582,6 @@ a.close{
       color:#333333;
       text-decoration:none;
       position:relative;
-      &.active { font-weight:bold;}      
       .icon{
          position:absolute;
          left:5px;
@@ -4611,14 +4589,13 @@ a.close{
          width:16px;
          height:16px;
       }
-      .ticksymbol{ background: sprite($symbol, selected) no-repeat; }
-
+      .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
    a:hover{
-      @include background(linear-gradient(rgba(188,188,188,1), rgba(206,206,206,0.1)));
+      @include background(linear-gradient(top, #5469f9, #2433f6));
       @include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
-      @include filter-gradient(rgba(188,188,188,1), rgba(206,206,206,0.1), vertical); 
-      color:#000 ;
+      @include filter-gradient(#5469f9, #2433f6, vertical); 
+      color:#ffffff;
       .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
    }
 }
