@@ -137,11 +137,12 @@ class Va::Action
     end
 
     def set_nested_fields(act_on)
-      custom_ff_fields = {}
+      custom_ff_fields = act_on.custom_field || {}
 
       category = act_on.account.ticket_fields.find_by_name(@act_hash[:category_name]) 
 
       if category
+        custom_ff_fields.symbolize_keys!
         custom_ff_fields[@act_hash[:category_name].to_sym] = @act_hash[:value]
 
         @act_hash[:nested_rules].each do |field|
@@ -150,8 +151,12 @@ class Va::Action
         end
       end
       act_on.custom_field = custom_ff_fields  unless custom_ff_fields.blank?
+      custom_ff_fields.each do |key,value|
+        act_on.write_attribute(key,value)
+      end
+      
     end
-    
+
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
       begin
