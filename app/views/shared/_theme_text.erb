@@ -10,6 +10,8 @@
 	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
 	$alternate_bg_color: if(lightness($background) > 50, #666, #AAA) !default;
 
+	$filterTextShadow: if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
+
 	    
 	body { background: $background; }
 	.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color: darken($background, 15%); }
@@ -58,18 +60,17 @@
 		color:$bg_ctxt_color;
 	}
 
+	.contentCol .view_filters .link-item .nav-trigger {
+		text-shadow: $filterTextShadow;
+	}
+
 	.ticket-leftcol .leftFilter .item, .drop-right {
 		color:$subtxt_color;	
 	}
 
-	.drop-right:hover {
-		color: $alternate_txt_color;
-		background-color: $alternate_bg_color;
-	}
-
-	.contentCol .view_filters .link-item .nav-trigger.selected, .contentCol .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {
-		color: $alternate_txt_color;
-		background-color: $alternate_bg_color;
+	.drop-right:hover, .contentCol .view_filters .link-item .nav-trigger.selected, .contentCol .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {
+		color: $subtxt_color;
+		
 	}
 	.sort-bar {
 		color:$subtxt_color;	

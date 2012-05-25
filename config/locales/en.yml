@@ -814,7 +814,7 @@ en:
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
   posted_by: Posted by
-  already_overdue: Already Overdue for %{time_words}
+  already_overdue: Overdue by %{time_words}
   automations: 
     new: New Scenario
     title: Scenario Automations
@@ -1630,6 +1630,7 @@ en:
         status: "Status"
         priority: "Priority"
         time_ago: "%{time_in_words} ago"
+        sla: "Due By"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -1829,6 +1830,7 @@ en:
     messages:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
+      no_tickets_subtext: "Goto %{view_1} or %{view_2}"
   conversation: Conversation
   save_this_view: "Save this View..."
   loading:

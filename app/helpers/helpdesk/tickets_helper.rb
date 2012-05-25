@@ -74,11 +74,6 @@ module Helpdesk::TicketsHelper
       { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
       { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
     ])
-    top_index = top_views_array.index{|v| v[:id] == selected} || 0
-
-    if( show_max-1 < top_index )
-      top_views_array.insert(show_max-1, top_views_array.slice!(top_index))
-    end
 
     cannot_delete = false
     selected_item =  top_views_array.select { |v| v[:id] == selected }.first
