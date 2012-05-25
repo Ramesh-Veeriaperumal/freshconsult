@@ -40,7 +40,7 @@
 
          subcategory.bind("change", function(ev){
           if(!subcategory.data("initialLoad")){         
-            if(_init.nested_rules[0]) subcategory.val(_init.nested_rules[0].value);
+            if(_init.nested_rules && _init.nested_rules[0]) subcategory.val(_init.nested_rules[0].value);
             subcategory.data("initialLoad", true);
           }
           if(tree.third_level){
@@ -59,7 +59,7 @@
 
          items.bind("change", function(ev){
             if(!items.data("initialLoad")){
-              if(_init.nested_rules[1]) items.val(_init.nested_rules[1].value);
+              if(_init.nested_rules && _init.nested_rules[1]) items.val(_init.nested_rules[1].value);
               items.data("initialLoad", true);
             }
             methods.setNestedRule(nested_rules, _fields.subcategory.name, subcategory.val(), _fields.items.name, items.val());
