@@ -1,0 +1,1 @@
+page << "change_enable_status(#{current_account.features?(:survey_links)});"
