@@ -1,18 +1,13 @@
 <div class="ticket_overlay_tip">
 	<div class="ticket_overlay_content">
-		<%
-		latest_note = ticket.notes.visible.exclude_source('meta').newest_first.first
-		unless latest_note.nil?
-		action_msg = latest_note.fwd_email? ? 'helpdesk.tickets.overlay_fwd_time' : 'helpdesk.tickets.overlay_reply_time'
-		%>
-		<%= user_avatar(latest_note.user) %>
-		<div class="text">
-			<div class="user_and_time">
-				<span class="user"><%= h(latest_note.user.name) %></span><%= t( "#{action_msg}", :time_in_words => time_ago_in_words(latest_note.created_at)) %>
-			</div>
-			<div class="note">
-				<%= h(truncate(latest_note.body, { :length => 150, :omission => "..." })) %>
-			</div>
+	<%
+	latest_note = ticket.notes.visible.newest_first.first
+	unless latest_note.nil?
+	%>
+	<%= user_avatar(latest_note.user, :small) %>
+	<div class="text">
+		<div class="user_and_time">
+			<span class="user"><%= h(latest_note.user.name) %></span><%= t('helpdesk.tickets.overlay_reply_time', :time_in_words => time_ago_in_words(latest_note.created_at)) %>
 		</div>
 		<%
 		else
