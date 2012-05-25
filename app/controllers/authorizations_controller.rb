@@ -77,7 +77,8 @@ class AuthorizationsController < ApplicationController
     domain = account.full_domain
     protocol = (account.ssl_enabled?) ? "https://" : "http://"
     app_name = Integrations::Constants::APP_NAMES[:salesforce]
-    config_params = "{'app_name':'#{app_name}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{access_token.params['instance_url']}'}"
+    instance_url = access_token.params['instance_url']
+    config_params = "{'app_name':'#{app_name}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{instance_url}'}"
     config_params = config_params.gsub("'","\"")
     app_config = KeyValuePair.new
     app_config.key = "salesforce_oauth_config"
