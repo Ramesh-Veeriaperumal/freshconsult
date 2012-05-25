@@ -1111,7 +1111,6 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .detailed_view .hideForDetails { display: none; }
 
 .list_view .tickets tr.headings td, .list_view .tickets tr.headings:hover td, .list_view .tickets-expanded tr.headings td, .list_view .tickets-expanded tr.headings:hover td { background: #eee; border-top: solid 1px #e7e7e7; border-bottom: solid 1px #e7e7e7; font-size: 12px; color: #888; }
-.list_view .tickets td.ticket_info, .list_view .tickets-expanded td.ticket_info { white-space: nowrap; }
 .list_view .tickets h3 a, .list_view .tickets-expanded h3 a { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
 .list_view .hideForList { display: none; }
 .list_view .user_name { font-weight: normal; }
