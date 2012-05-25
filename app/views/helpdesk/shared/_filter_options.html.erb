@@ -70,9 +70,13 @@
 	jQuery(document).ready(function(){
 		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
     jQuery(".filter_item").bind("change", function(){
-      refresh_tickets();
-    });	 
-
+      jQuery("#save_filter").show();
+      jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved');
+			jQuery("#FilterOptions input[name=filter_name]").val("");
+      jQuery(".view_filters .active").removeClass("active");
+      getFilterData();
+      jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
+    });	
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");

@@ -90,7 +90,7 @@ module Helpdesk::TicketsHelper
     end
 
     top_view_html = drop_down_views(top_views_array, selected_item_name ).to_s +
-      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
+      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete")}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
   end
   
   def filter_select( prompt = t('helpdesk.tickets.views.select'))    

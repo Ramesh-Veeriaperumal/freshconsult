@@ -3328,14 +3328,11 @@ div.addReminder{
 	.hideForList {
 		display:none;
 	}
-	.user_name {
-		font-weight:normal;
-	}
 	.name, .name-user {
 		padding-left:10px;
 		width: 50%;
 		h3 a {
-			font-size: 13px;
+			font-size: 12px;
 			line-height: 16px;
 		}
 	}
@@ -4349,8 +4346,6 @@ a.close{
 }
 
 .drop-right:hover{
-   color: #FFF;
-   background-color:#888888;
    border-bottom :#afafaf dotter 1px;  
 }
 
@@ -4473,21 +4468,9 @@ a.close{
 				font-size: 16px;
 				color:#000;
 
-				&:hover {
-					color: #FFF;
-					background-color: #888888;
-
-					b { color: #FFF;}
-				}
-				&.selected {
-					color: #FFF;
-					background-color: #888888;
-				}
 				&.unsaved {
 					font-style:italic;
 				}
-
-
 			}
 		}
 
@@ -4546,6 +4529,7 @@ a.close{
 	font-size:11px;
 	color:#777777;
 	padding: 5px 10px;
+	b{ color:#666666; }
 }
 
 
