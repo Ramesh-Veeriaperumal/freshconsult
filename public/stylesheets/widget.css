@@ -746,9 +746,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .radio, .checkbox { padding-left: 18px; }
 
-.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; }
-
-.controls > .radio:first-child, .controls > .checkbox:first-child { padding-top: 5px; }
+.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
 
 .disabled { color: #afafaf; }
 

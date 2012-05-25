@@ -89,7 +89,7 @@
     admin.resources :portal, :only => [ :index, :update ]
     admin.resources :canned_responses
     admin.resources :products
-    admin.resources :surveys, :only => [ :index ]
+    admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
   end
