@@ -57,6 +57,7 @@
 	  <% else %>
 	  
 	  <% end %>
-	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %>
+	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %> <br />
+    <%= t('wf.messages.no_tickets_subtext', :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open')), :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'))) %>
 	</div>
 <% end %>

@@ -17,6 +17,7 @@
 /* Bullet icon */
 body { color: #333; background: #efefef; min-width: 1122px; }
 
+/* Priority Color Codes */
 /* PAGE AREA STYLE */
 .sp_border, .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info { border: 1px solid #c9c9c9; }
 
@@ -1074,7 +1075,16 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .tickets tr.even td, .tickets-expanded tr.even td { background-color: #f9f9f9; border-top: 1px solid #f9f9f9; border-bottom: 1px solid #f9f9f9; }
 .tickets tr.active td, .tickets-expanded tr.active td { background-color: #f2f0e3; border-top: 1px solid #f2f0e3; border-bottom: 1px solid #f2f0e3; }
 .tickets tr:hover td, .tickets tr:hover.even td, .tickets-expanded tr:hover td, .tickets-expanded tr:hover.even td { /*background-image:url(../images/overlay-top-shadow.png);*/ /*background-position:top left;*/ /*background-repeat:repeat-x;*/ border-top: 1px solid #e8e8e8; border-bottom: 1px solid #e8e8e8; }
-.tickets .check, .tickets-expanded .check { width: 25px; padding-left: 0px; padding-top: 12px; text-align: right; position: relative; }
+.tickets tr:hover td.check.priority-high, .tickets tr:hover.even td.check.priority-high, .tickets-expanded tr:hover td.check.priority-high, .tickets-expanded tr:hover.even td.check.priority-high { border-left: solid 6px #cc5600; }
+.tickets tr:hover td.check.priority-medium, .tickets tr:hover.even td.check.priority-medium, .tickets-expanded tr:hover td.check.priority-medium, .tickets-expanded tr:hover.even td.check.priority-medium { border-left: solid 6px #0a9458; }
+.tickets tr:hover td.check.priority-low, .tickets tr:hover.even td.check.priority-low, .tickets-expanded tr:hover td.check.priority-low, .tickets-expanded tr:hover.even td.check.priority-low { border-left: solid 6px #0c8aae; }
+.tickets tr:hover td.check.priority-urgent, .tickets tr:hover.even td.check.priority-urgent, .tickets-expanded tr:hover td.check.priority-urgent, .tickets-expanded tr:hover.even td.check.priority-urgent { border-left: solid 6px #cc0000; }
+.tickets .check, .tickets-expanded .check { width: 25px; padding-left: 0px; padding-top: 12px; text-align: right; position: relative; border-left: solid 6px transparent; }
+.tickets .check.priority-high, .tickets-expanded .check.priority-high { border-left: solid 6px rgba(204, 86, 0, 0.2); }
+.tickets .check.priority-medium, .tickets-expanded .check.priority-medium { border-left: solid 6px rgba(10, 148, 88, 0.2); }
+.tickets .check.priority-low, .tickets-expanded .check.priority-low { border-left: solid 6px rgba(12, 138, 174, 0.2); }
+.tickets .check.priority-urgent, .tickets-expanded .check.priority-urgent { border-left: solid 6px rgba(204, 0, 0, 0.2); }
+.tickets .headings td.check, .tickets-expanded .headings td.check { border-left: solid 6px #EEE; }
 .tickets th.check, .tickets-expanded th.check { padding: 5px 5px 0 0; }
 .tickets th.toolbar_right, .tickets-expanded th.toolbar_right { text-align: right; width: 80px; vertical-align: middle; padding-right: 0px; }
 .tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user { width: 53%; padding-left: 40px; }
@@ -1100,7 +1110,7 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 
 .detailed_view .hideForDetails { display: none; }
 
-.list_view .tickets tr.headings td, .list_view .tickets tr.headings:hover td, .list_view .tickets-expanded tr.headings td, .list_view .tickets-expanded tr.headings:hover td { background: #eee; border-bottom: solid 1px #e7e7e7; font-size: 12px; color: #888; }
+.list_view .tickets tr.headings td, .list_view .tickets tr.headings:hover td, .list_view .tickets-expanded tr.headings td, .list_view .tickets-expanded tr.headings:hover td { background: #eee; border-top: solid 1px #e7e7e7; border-bottom: solid 1px #e7e7e7; font-size: 12px; color: #888; }
 .list_view .tickets td.ticket_info, .list_view .tickets-expanded td.ticket_info { white-space: nowrap; }
 .list_view .tickets h3 a, .list_view .tickets-expanded h3 a { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
 .list_view .hideForList { display: none; }

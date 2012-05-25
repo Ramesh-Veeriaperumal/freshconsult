@@ -1,6 +1,6 @@
 <tr class="<%= cycle('odd', 'even') %> <%= subject_style(ticket, "need-attention") %>">
 	
-  <td class="check">
+  <td class="check priority-<%=ticket.priority_key%>">
     <%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
   </td>
 
