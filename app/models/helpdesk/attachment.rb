@@ -44,7 +44,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
  
  def image?
-   (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 1000000)
+   (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
   end
   
   
