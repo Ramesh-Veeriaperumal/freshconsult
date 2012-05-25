@@ -22,6 +22,8 @@ input.password { width: 240px; }
 
 input.text, input[type=text], textarea { border: 1px solid #C6C6C6; font-weight: 400; padding: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; -moz-box-shadow: #dfdfdf 1px 1px 2px inset; -webkit-box-shadow: #dfdfdf 1px 1px 2px inset; -o-box-shadow: #dfdfdf 1px 1px 2px inset; box-shadow: #dfdfdf 1px 1px 2px inset; }
 
+.search_bar input[type=text] { -moz-box-shadow: none; -webkit-box-shadow: none; -o-box-shadow: none; box-shadow: none; }
+
 div.color { position: relative; padding-top: 0px; }
 div.color .mColorPickerTrigger { position: absolute; top: 3px; left: 230px; }
 div.color input { width: 220px; font-size: 16px; border: 1px solid #afafaf; }
@@ -315,7 +317,7 @@ input.search { -moz-border-radius: 3px 3px 3px 3px; -webkit-border-radius: 3px 3
 .ui-dialog-form .info-data { padding-left: 18px; font-size: 1.2em; margin-top: -5px; }
 .ui-dialog-form .button-panel { padding: 8px 0; }
 .ui-dialog-form .primary { font-weight: bold; }
-.ui-dialog-form a.button-link { display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; margin-left: 35px; font-size: 13px; margin-top: -3px; }
+.ui-dialog-form a.button-link { display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; font-size: 13px; margin-top: 6px; margin-right: 3px; }
 .ui-dialog-form a.button-link { *display: inline; }
 .ui-dialog-form a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; background: url("../images/close_delete.png") no-repeat center; z-index: 999; }
 .ui-dialog-form .ctrlHolder { margin-bottom: 10px; }
@@ -530,9 +532,10 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .inputs-list input[type=radio], .inputs-list input[type=checkbox] { margin-bottom: 0; margin-left: -20px; float: left; }
 
+.nested-selectboxs { margin-bottom: 10px; }
 .nested-selectboxs li { position: relative; }
 .nested-selectboxs select { width: 100%; }
-.nested-selectboxs .connector { border: 1px solid #c1c1c1; border-width: 0 0 1px 1px; position: absolute; height: 16px; width: 55px; left: -58px; top: -5px; }
+.nested-selectboxs .connector { border: 1px solid #c1c1c1; border-width: 0 0 1px 1px; position: absolute; height: 16px; width: 35px; left: -38px; top: -5px; }
 .nested-selectboxs .subcategory { margin-top: 27px; }
 .nested-selectboxs .item { margin-top: 54px; }
 
@@ -577,7 +580,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .radio, .checkbox { padding-left: 18px; }
 
-.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
+.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; }
 
 .controls > .radio:first-child, .controls > .checkbox:first-child { padding-top: 5px; }
 

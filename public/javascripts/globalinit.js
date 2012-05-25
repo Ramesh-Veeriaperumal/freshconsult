@@ -13,10 +13,7 @@ var $J = jQuery.noConflict();
    $.validator.addClassRules("tweet", { tweet: 140 });
    $.validator.addClassRules("facebook", { tweet: 8000 });
    $.validator.addMethod("notEqual", function(value, element, param) {
-      var target = $(param).unbind(".validate-equalTo").bind("blur.validate-equalTo", function() {
-        $(element).valid();
-      });
-      return value != target.val();
+      return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
     }, "This element should not be equal to");
 
    $.validator.addMethod("multiemail", function(value, element) {

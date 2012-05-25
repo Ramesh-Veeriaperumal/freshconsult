@@ -10,6 +10,8 @@
 	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
 	$alternate_bg_color: if(lightness($background) > 50, #666, #AAA) !default;
 
+	$filterTextShadow: if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
+
 	    
 	body { background: $background; }
 	.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color: darken($background, 15%); }
@@ -66,7 +68,7 @@
 	}
 
 	.contentCol .view_filters .link-item .nav-trigger {
-		text-shadow: $alternate_txt_color 2px 2px 2px;
+		text-shadow: $filterTextShadow;
 	}
 
 	.ticket-leftcol .leftFilter .item, .drop-right {

@@ -60,6 +60,10 @@ input.text, input[type=text], textarea{
 	@include box-shadow(#dfdfdf 1px 1px 2px inset);
 }
 
+.search_bar input[type=text] {
+	@include box-shadow(none);
+}
+
 div.color{
 	position:relative;
 	padding-top:0px;
@@ -1013,7 +1017,7 @@ input.search{
 	}                   
 	.button-panel{ padding:8px 0; }
 	.primary{ font-weight:bold; }
-    a.button-link{ @include inline-block; margin-left:35px;font-size:13px; margin-top:-3px; }
+    a.button-link{ @include inline-block; font-size:13px; margin-top:6px; margin-right:3px; }
 	a.close{
     	position:absolute;
     	right:5px;
@@ -1778,7 +1782,8 @@ ul.ui-form .inputs-list{
   float: left;
 }                                   
 
-.nested-selectboxs{    
+.nested-selectboxs{
+  margin-bottom:10px;
   li{
     position:relative;
   }
@@ -1790,8 +1795,8 @@ ul.ui-form .inputs-list{
     border-width: 0 0 1px 1px;
     position:absolute;
     height:16px;
-    width:55px;
-    left:-58px;
+    width:35px;
+    left:-38px;
     top:-5px;
   }
   .subcategory{
@@ -1873,7 +1878,6 @@ ul.ui-form .inputs-list{
 .radio input[type="radio"],
 .checkbox input[type="checkbox"] {
   float: left;
-  margin-left: -18px;
 }
 .controls > .radio:first-child,
 .controls > .checkbox:first-child {
