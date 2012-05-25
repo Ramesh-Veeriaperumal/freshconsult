@@ -131,24 +131,13 @@ var NestedField = Class.create({
   },
 
   getSubcategoryList: function(category_key){
-      try{
-      if(category_key && category_key != "-1")
-        return this.tree.get(category_key).children || [];
-      else
-        return $H();      
-      }catch(e){  }
+      //console.log(this.tree.get(category_key).children.toJSON());
+      return ((category_key && category_key != "-1") ? this.tree.get(category_key).children : $H()) || $H()
   },
 
-  getItemsList: function(category_key, subcategory_key){    
-      try{
-      _children = []
-      if(subcategory_key && subcategory_key != "-1" && this.tree.get(category_key))
-        _children = this.tree.get(category_key).get(subcategory_key).children
-      else
-        return $H();
-
-      return _children;
-      }catch(e){  }
+  getItemsList: function(category_key, subcategory_key){          
+      //console.log(this.tree.get(category_key) + "  " + subcategory_key);
+      return ((subcategory_key && subcategory_key != "-1" && this.tree.get(category_key)) ? this.tree.get(category_key).get(subcategory_key).children : $H()) || $H();
   },
 
   toString: function(){

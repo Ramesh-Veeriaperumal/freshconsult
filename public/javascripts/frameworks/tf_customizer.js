@@ -89,6 +89,7 @@
             ev.preventDefault();
             nestedTree.readData($('#nestedTextarea').val());
             $("#nestedTextarea").trigger("blur");
+            $("#nest-category").html(nestedTree.getCategory()).trigger("change");
             setTimeout(hideNestedTextarea, 200);
       });
       $("#nest-category").change(function(ev){    

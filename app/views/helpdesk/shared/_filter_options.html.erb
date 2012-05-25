@@ -46,7 +46,7 @@
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
       }
                         
-      if(value && value.length && value != -1){
+      if(value && value.length && ((container != "nested_field") || ((container == "nested_field") && (value != -1)))){
         query_hash.push({ 
           condition : this.getAttribute("condition"), 
           operator  : this.getAttribute("operator"),

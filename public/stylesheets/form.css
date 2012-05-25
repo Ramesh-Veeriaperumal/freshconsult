@@ -12,7 +12,7 @@ select { padding: 1px; font-size: 13px; font-weight: normal; width: auto; }
 
 input[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] { background-color: #f5f5f5; border-color: #ddd; cursor: not-allowed; }
 
-textarea { width: 99%; font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; }
+textarea { height: 100px; width: 99%; font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; }
 
 input:focus { outline: none; }
 
@@ -148,7 +148,10 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form .conditionset fieldset label.checkbox { width: 100%; font-size: 13px; }
 .ui-form .conditionset div { margin: 0; padding: 0; }
 
-.threecol-form label { float: left; width: 33%; }
+.threecol-form .item { float: left; width: 33%; }
+.threecol-form .item label { display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; }
+.threecol-form .item label { *display: inline; }
+.threecol-form .item .level { margin-left: 20px; }
 
 .ui-form .inline-field { /*border-bottom:1px dotted #cfcfcf;*/ padding-top: 8px; }
 .ui-form .inline-field .caption { float: left; }
@@ -178,7 +181,8 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .business_hours .business_time div.timerange input, .business_hours .business_time div.timerange strong { float: left; }
 .business_hours .business_time div.timerange input { width: 80px; }
 .business_hours .business_time div.timerange strong { font-weight: normal; padding: 0 10px; }
-.business_hours .business_days label { float: left; font-size: 12px; padding-right: 8px; }
+.business_hours .business_days label { display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; padding-right: 20px; }
+.business_hours .business_days label { *display: inline; }
 .business_hours .holidaylist { padding-left: 0; }
 .business_hours .holidaylist ul { color: #444444; overflow: hidden; *zoom: 1; background-color: white; padding: 10px 5px 5px 10px; margin: 0; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px; border-radius: 6px 6px 6px 6px; }
 .business_hours .holidaylist ul li { position: relative; margin-right: 20px; }
@@ -321,6 +325,7 @@ input.search { -moz-border-radius: 3px 3px 3px 3px; -webkit-border-radius: 3px 3
 .ui-dialog-form a.button-link { *display: inline; }
 .ui-dialog-form a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; background: url("../images/close_delete.png") no-repeat center; z-index: 999; }
 .ui-dialog-form .ctrlHolder { margin-bottom: 10px; }
+.ui-dialog-form textarea { height: auto; }
 
 .dialog-panel { position: absolute; width: 650px; left: 50%; top: 60px; margin-left: -310px; z-index: 999999; background: #f7f7f7; border: 1px solid #999999; -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); -o-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); -moz-border-radius: 4px; -webkit-border-radius: 4px; -o-border-radius: 4px; -ms-border-radius: 4px; -khtml-border-radius: 4px; border-radius: 4px; }
 

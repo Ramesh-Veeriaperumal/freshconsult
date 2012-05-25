@@ -11,6 +11,7 @@ en:
   paid_with: "Paid with"
   date_title: "Date"
   status: "Status"
+  preview: "Preview"
   proceed_now: "\n\nProceed now?"
   meta:
    language_name: 'English'
@@ -85,7 +86,20 @@ en:
       dropdown: Dropdown
       nestedfield: "Dependant field"
     formfield_props: 
-      label: Field Label
+      form_title: "Field properties"
+      behavior: "Behavior"
+      label: "Field Label"
+      nested_label: "Nested field labels"
+      level1: "Level 1"
+      level2: "Level 2"
+      level3: "Level 3"
+      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a href=''>Learn more</a> "
+      dropdown_items_edit: "Dropdown items - edit view"
+      dropdown_items_preview: "Dropdown items - Preview"
+      nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+      delete_field: "Delete field"
+      field_label_agents: "Field label for agents"
+      field_label_customer: "Field label for customers"
       add_new_choice: Add new choice
       customer_mandatory: Required when submitting the form
       customer_edit: Customer can edit
@@ -158,7 +172,7 @@ en:
      index:    
         title: Customer Satisfaction Settings
      satisfaction_settings:    
-        enable_label: Enable Customer Satisfaction Surveys
+        enable_label: Enable customer satisfaction surveys
         link_text_label: Satisfaction survey link text
         link_text_input: Please take a minute to rate your customer support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
@@ -2143,3 +2157,4 @@ en:
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
   use_reply_option: "Please use Reply option for sending an email to the requester"
+  index_tooltip_loading_msg: "Loading..."

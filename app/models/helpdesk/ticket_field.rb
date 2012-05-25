@@ -5,7 +5,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :flexifield_def_entry, :dependent => :destroy
-  has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
+  has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',:include => :sub_picklist_values,
     :dependent => :destroy
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
     
@@ -123,7 +123,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end  
   
   def nested_choices
-    picklist_values.collect { |c| [c.value, c.value, c.nested_choices] }
+    self.picklist_values.collect { |c| 
+      [c.value, c.value, c.sub_picklist_values.collect { |sub_c|
+            [sub_c.value, sub_c.value, sub_c.sub_picklist_values.collect { |i_c| [i_c.value,i_c.value] } ] }
+      ]
+    }
   end
 
   def nested_levels

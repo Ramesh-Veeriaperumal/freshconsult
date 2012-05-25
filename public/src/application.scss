@@ -5530,6 +5530,21 @@ a.submit_link:hover{
 	}
 
 /* Getting Started page style ends */
+#report_list .table-list li div{
+    color: #000;
+	font-size:1em;
+	padding-bottom:1px;
+	padding-top:0px;
+}
+
+#report_list .table-list li{
+	padding: 1px 20px;
+}
+
+#report_list .table-list li div.bignum{
+	font-size:20px;
+}
+
 .hovercard {
 	font-size: 14px;
 	float: left;
@@ -5570,7 +5585,7 @@ margin:10px;
 }
 
 /* SURVEY REPORT RELATED STYLES */
-.agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 15px 0; padding: 15px 0; }
+.agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 10px 0; padding: 15px 0; }
  
 .usercomment { border-bottom: 1px dotted #e5e5e5; margin: 0; }
  
@@ -5579,7 +5594,8 @@ margin:10px;
 .agentreport > ul > li { list-style: none; padding: 0; float: left; overflow: hidden; }
 
 .agentreport > ul > li.sub_rating{margin-top:-8px;}
- 
+
+.agentreport{
 .floatleft { float: left; }
  
 .floatright { float: right; }
@@ -5588,7 +5604,7 @@ margin:10px;
  
 .smallphoto { width: 30px !important; height: 30px !important; }
  
-.agentname { font-weight: bold; font-size: 14px; width: 180px; margin-top: 9px;}
+.agentname { font-weight: bold; font-size: 14px; width: 180px; margin-top: 5px;}
  
 .agentname > div { font-weight: normal; font-size: 12px; }
  
@@ -5598,7 +5614,7 @@ margin:10px;
  
 .bignum > span { font-size: 16px; font-weight: normal; }
  
-.bottomtext { font-size: 12px; font-weight: normal; margin-top: -1px; }
+.bottomtext { font-size: 12px; font-weight: normal; margin: -1px 0 0 8px;}
  
 .nospace { margin-left: 0 !important; }
  
@@ -5617,14 +5633,19 @@ margin:10px;
 .comment > div > strong { display: block; }
  
 .comment > div > span { font-size: 12px; color: #999; }
- 
-.agent_report_list .agentreport { border-bottom: 1px solid #e5e5e5; }
+}
+
+#report_list {
+	.table-list {
+		margin:10px 0 0 0;
+	}
+}
  
 .agent_report_list { color: #000; }
  
 .smallsmiley, .mediumsmiley, .bigsmiley { box-sizing: border-box; background-repeat: no-repeat; }
  
-.smallsmiley { width: 20px; height: 20px; margin-top: 7px; }
+.smallsmiley { width: 20px; height: 20px; margin-top: 5px; }
  
 .mediumsmiley { width: 42px; height: 42px; }
  
@@ -5655,12 +5676,21 @@ margin:10px;
 }
 
 .sat-list-title{
-  width:300px;
+  width:40%;
+}
+
+.overall-rating{
+ width:59%;
 }
 
 .sat-priority-rating{
-  width:260px;
+  width:55%;
 }
+
+.sub_rating{
+  width:44%;
+}
+
 .link_text_info{
 			font-size:11px;
 			color:#888888;

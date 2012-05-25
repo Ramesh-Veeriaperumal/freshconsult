@@ -9,12 +9,11 @@
 	<div class="ticket_subject">
 		<h3>
 			<span class="need-attention-icon"></span>
-			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}), :class => "ticket-description-tip" ) %> 
-			<%=render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket} %>
+			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}), :class => "ticket-description-tip", "data-tip-url" => latest_note_helpdesk_ticket_url(ticket) ) %> 
 		</h3>
 		<% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data hideForList" do %>
-			  <%= content_tag :span, "", :class => "tooltip icon-image grey-source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>
+			  <%= content_tag :span, "", :class => "tooltip icon-image grey-source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase), "data-placement" => "left" %>
 				<%= t("ticket.reported_on_ticket_list", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :time_words => time_ago_in_words(ticket.updated_at), :date => formated_date(ticket.updated_at)) %>
 			<% end %>
 		<% end %>
