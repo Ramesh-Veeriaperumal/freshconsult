@@ -61,6 +61,7 @@
     jQuery("#save_filter").show();
     jQuery("#delete_filter").hide();
     jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
+    jQuery("#leftViewMenu a.active").removeClass('active').children('span').remove();
     jQuery("#FilterOptions input[name=filter_name]").val("");
     jQuery(".view_filters .active").removeClass("active");
     getFilterData();

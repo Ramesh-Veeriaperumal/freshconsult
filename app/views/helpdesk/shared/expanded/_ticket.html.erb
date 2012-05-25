@@ -1,6 +1,6 @@
 <tr class="<%= cycle('odd', 'even') %> <%= subject_style(ticket, "need-attention") %>">
 	
-  <td class="check">
+  <td class="check priority-<%=ticket.priority_key%>">
     <%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
   </td>
 
@@ -53,8 +53,8 @@
   <td class="hideForDetails">
   	<span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
   </td>
-<!-- 	
-  <td class="sla">
+
+  <td class="sla hideForList">
     <% if( ticket.active? ) %>
   	  <% if(Time.now > ticket.due_by ) %>
 			  <%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
@@ -68,5 +68,5 @@
 	      <%= t('resolved_late') %>	    
 	    <% end %>
 	  <% end %>
-  </td> -->
+  </td>
 </tr>

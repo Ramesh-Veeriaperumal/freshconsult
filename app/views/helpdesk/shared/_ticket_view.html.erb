@@ -9,7 +9,7 @@
   <%= render :partial => "/helpdesk/shared/ticket_sort" unless @items.empty? %>
 </div>
 
-<div id="ticket-list-body">
+<div id="ticket-list-body"><div id="ticket-list-body-content">
 	<div id="ticket-toolbar" class="toolbar">
 	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" %>
 	</div>
@@ -23,7 +23,10 @@
 	    <%= render :partial => "/helpdesk/shared/tickets" %>
 	  </div>    
 	<% end %>
-</div>
+</div></div>
+
+<div class="hide"<div id="loading-for-filters"> <br /> <br /> <h1 class="center" align="center"><%= t('loading.items') %>...</h1> </div></div>
+
 <% javascript_tag do %>
 	/* new PeriodicalExecuter(function(pe) {
 		params = jQuery("#FilterOptions").serializeArray(); 
@@ -67,6 +70,10 @@
 			setCookie('ticket_view_choice','list',365);
 		}
 		jQuery(this).parent().addClass('active').siblings().removeClass('active');
+	});
+
+	jQuery('#leftViewMenu a').click(function(ev) {
+		jQuery("#loading-for-filters").dialog({  modal:true, width:500, height:200, position:'top', resizable: false, draggable: false, closeOnEscape:false });
 	});
 
 	jQuery(function() {
