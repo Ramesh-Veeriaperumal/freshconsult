@@ -1689,7 +1689,7 @@ en:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
-        delete_note: "Delete this note?"
+        delete_note: "Remove this from the ticket converstion?"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
