@@ -42,7 +42,7 @@
 		    <%= t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 	    <% end %>  
 	  <% else %>
-	    <% if( ticket.ticket_states.resolved_at < ticket.due_by ) %>
+		<% if( ticket.ticket_states.resolved_at.nil? || ticket.ticket_states.resolved_at < ticket.due_by ) %>
 	      <%= t('resolved_on_time') %>	      
 	    <% else %>
 	      <%= t('resolved_late') %>	    
