@@ -93,7 +93,7 @@ en:
       level1: "Level 1"
       level2: "Level 2"
       level3: "Level 3"
-      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a href='https://support.freshdesk.com/solution/categories/5235/folders/10738/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a> "
+      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
       dropdown_items_preview: "Dropdown items - Preview"
       nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
