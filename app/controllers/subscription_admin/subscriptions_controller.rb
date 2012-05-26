@@ -28,6 +28,18 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     render :action => 'show'
   end
   
+  def add_day_passes
+    @subscription = Subscription.find(params[:id])
+    if request.post? and !params[:passes_count].blank?
+      day_pass_config = @subscription.account.day_pass_config
+      passes_count = params[:passes_count].to_i
+      raise "Maximum 30 Day passes can be extended at a time." if passes_count > 30
+      day_pass_config.update_attributes(:available_passes => (day_pass_config.available_passes +  passes_count))
+      Rails.logger.info "ADDED #{passes_count} DAY PASSES FOR ACCOUNT ##{@subscription.account_id}-#{@subscription.account}"
+    end
+    render :action => 'show'
+  end
+  
   def charge
     if request.post? && !params[:amount].blank?
       load_object
