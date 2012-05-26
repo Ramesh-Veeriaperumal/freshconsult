@@ -257,10 +257,10 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form div.checkbox, .ui-form label.checkbox { padding-bottom: 5px; padding-left: 18px; font-size: 1.1em; position: relative; }
 .ui-form div.checkbox input[type="checkbox"], .ui-form label.checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
 .ui-form label, .ui-form li.checkbox { font-weight: normal; margin: 0; line-height: 18px; color: #565656; font-size: 13px; font-weight: 400; }
-.ui-form label.overlabel { color: #999999; margin-left: 8px; margin-top: 0; font-size: 14px; }
-.ui-form li.checkbox { overflow: hidden; *zoom: 1; padding-top: 16px; padding-bottom: 16px; }
-.ui-form li.checkbox input { float: left; margin-right: 6px; margin-top: 4px; }
-.ui-form li.checkbox label { position: relative; font-size: 0.8em; top: -8px; left: 3px; }
+.ui-form label.overlabel { color: #999999; margin-top: 0; font-size: 14px; }
+.ui-form li.checkbox { overflow: hidden; *zoom: 1; padding-left: 18px; }
+.ui-form li.checkbox input { float: left; margin-right: 6px; }
+.ui-form li.checkbox label { position: relative; font-size: 0.9em; top: -6px; left: 1px; }
 .ui-form .largefield label { font-size: 1.4em; }
 .ui-form .largefield input { font-size: 1.4em; }
 .ui-form .check_box { overflow: hidden; *zoom: 1; }
@@ -331,8 +331,9 @@ li.nested_field select { min-width: 90%; width: auto !important; width: 90%; }
 .ui-login, .ui-signup { text-align: center; display: block; padding: 18px 0; }
 .ui-login .ui-form, .ui-signup .ui-form { background: none; border: 0; margin: 4px auto; -moz-border-radius: 12px 12px 12px 12px; -webkit-border-radius: 12px 12px 12px 12px; border-radius: 12px 12px 12px 12px; -moz-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1); box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1); text-align: left; padding: 25px; border: 1px solid #c2c2c2; background: #ffffff; }
 .ui-login .ui-form ul, .ui-signup .ui-form ul { margin: 0; }
-.ui-login .ui-form ul li, .ui-signup .ui-form ul li { border-bottom: 0; padding: 5px 0; }
+.ui-login .ui-form ul li, .ui-signup .ui-form ul li { border-bottom: 0; padding-top: 5px; padding-bottom: 5px; }
 .ui-login .ui-form ul li input.text, .ui-signup .ui-form ul li input.text { margin: 3px 0 5px 0; width: 320px; }
+.ui-login .ui-form ul .checkbox, .ui-signup .ui-form ul .checkbox { padding-left: 24px; }
 
 .business_hours td { vertical-align: top; }
 .business_hours td.borderleft { border-left: 1px solid #d8d8d8; }
