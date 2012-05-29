@@ -15,7 +15,7 @@ class Admin::AutomationsController < Admin::AdminController
   def create
     @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
     @va_rule.match_type ||= :all
-    
+    set_nested_fields_data @va_rule.action_data
     if @va_rule.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default redirect_url
@@ -31,8 +31,8 @@ class Admin::AutomationsController < Admin::AdminController
   end
 
   def update
-    @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
-    
+    @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]    
+    set_nested_fields_data @va_rule.action_data
     if @va_rule.update_attributes(params[:va_rule])
       flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
       redirect_back_or_default redirect_url
@@ -77,6 +77,12 @@ class Admin::AutomationsController < Admin::AdminController
     
     def edit_data
       @action_input = ActiveSupport::JSON.encode @va_rule.action_data
+    end
+
+    def set_nested_fields_data(data)
+      data.each do |f|        
+        f["nested_rules"] = (ActiveSupport::JSON.decode f["nested_rules"]).map{ |a| a.symbolize_keys! } if (f["nested_rules"])
+      end
     end
     
     def load_config
@@ -125,12 +131,15 @@ class Admin::AutomationsController < Admin::AdminController
     def add_custom_actions action_hash
        current_account.ticket_fields.custom_fields.each do |field|
          action_hash.push({ 
-           :name => field.name, 
+           :id => field.id,
+           :name => field.name,
+           :field_type => field.field_type, 
            :value => "Set #{field.label} as", 
-           :domtype => field.flexifield_def_entry.flexifield_coltype, 
-           :choices => field.picklist_values.collect { |c| [ c.value, c.value ] }, 
+           :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
+           :choices => (field.field_type == "nested_field") ? field.nested_choices : field.picklist_values.collect { |c| [c.value, c.value ] },
            :action => "set_custom_field", 
-           :handler => field.flexifield_def_entry.flexifield_coltype
+           :handler => field.flexifield_def_entry.flexifield_coltype,
+           :nested_fields => nested_fields(field)
            })
        end
     end
@@ -138,4 +147,15 @@ class Admin::AutomationsController < Admin::AdminController
     def check_automation_feature
       requires_feature :scenario_automations 
     end
+
+    def nested_fields ticket_field
+      nestedfields = { :subcategory => "", :items => "" }
+      if ticket_field.field_type == "nested_field"
+        ticket_field.nested_ticket_fields.each do |field|
+          nestedfields[(field.level == 2) ? :subcategory : :items] = { :name => field.field_name, :label => field.label }      
+        end
+      end
+      nestedfields
+    end
+
 end

@@ -26,7 +26,7 @@ class UserNotifier < ActionMailer::Base
     subject "#{AppConfig['app_name']} Account Activation"
     sent_on Time.now
     body(:account_admin => account_admin, 
-          :activation_url => register_url(:activation_code => account_admin.perishable_token, :host => account_admin.account.host ))
+          :activation_url => register_url(:activation_code => account_admin.perishable_token, :host => account_admin.account.host , :protocol => account_admin.url_protocol ))
     content_type  "text/html"
   end
   

@@ -31,15 +31,26 @@
 				    </div> 
 	        <% end %>
 
-          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name") %>  
+          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name") %>
           <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
-
+          on <%= formated_date(@ticket.created_at) %>
           <div class="info"> 
-            <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
-      		<%= content_tag :span, "sent to " + @ticket.to_email.gsub("<","&lt;").gsub(">","&gt;"), :class => "light" if @ticket.to_email && (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>
+            <%= content_tag :span, "To: " + @ticket.to_email.gsub("<","&lt;").gsub(">","&gt;"), :class => "" if @ticket.to_email && (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %> via <%= @ticket.source_name %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %> 
           <%= content_tag :span, t("helpdesk.tickets.show.meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
           </div> 
+          <% unless @ticket.cc_email_hash.nil? %>
+            <% @cc_email_count = @ticket.cc_email_hash[:cc_emails].length %> 
+            <div class="info">
+				<%if @cc_email_count > 0 %>            	           
+                	<%if @cc_email_count < 3 %>
+                  		<%= content_tag :span, "Cc: " + @ticket.cc_email_hash[:cc_emails].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                	<% else %>
+                  		<%= content_tag :span, "Cc: " + @ticket.cc_email_hash[:cc_emails][0,2].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ @ticket.cc_email_hash[:cc_emails][2,@cc_email_count].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@cc_email_count-2} "+t('ticket_cc_email_more')+"</a>", :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                	<% end %>
+				<% end %>             
+            </div>
+          <% end %> 
         </div>
         <% unless @ticket.deleted %>
           <div class="ticket_actions">          	

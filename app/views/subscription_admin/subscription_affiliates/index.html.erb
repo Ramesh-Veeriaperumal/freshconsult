@@ -1,16 +1,16 @@
 <h1><%= @page_title = 'Affiliates' %></h1>
 <%= link_to('Add a new affiliate', :action => 'new') %>
-<table id="affiliates">
+<table id="affiliates" class="table">
   <tr>
     <th>Name</th>
-    <th>Affiliate URL</th>
     <th>Rate</th>
+	<th>Commission</th>
   </tr>
   <% @subscription_affiliates.each do |affiliate| %>
     <tr>
-      <td><%= link_to(h(affiliate.name), [:admin, affiliate]) %></td>
-      <td><%= plans_url(:host => AppConfig['base_domain'], :ref => affiliate.token) %></td>
+      <td><%= link_to("#{affiliate.name} - #{affiliate.token}" , [:admin, affiliate]) %></td>
       <td><%= number_to_percentage(affiliate.rate * 100, :precision => 0) %></td>
+	  <td><%= number_to_currency(affiliate.fees) %></td>
     </tr>
   <% end %>
 </table>

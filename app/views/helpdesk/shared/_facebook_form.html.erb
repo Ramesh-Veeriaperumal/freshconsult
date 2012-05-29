@@ -4,30 +4,32 @@
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 	  <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <ul class="ui-form dont-validate">
-      <li class="inline-field field">       
-        <%= content_tag( :h4, "Reply to Facebook post",:class => "title" ) %>
+      <li class="inline-field field">     
+	   <%= content_tag( :h4, t(".title", :user => @ticket.requester.name), :class => "title" ) %>  
         <label class="caption">From:</label>
         <label class="fields">
         	<strong>&nbsp;<%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %></strong>
         </label>
 	  </li>				
 	  <li class="inline-field field">
-	    <label class="caption">Comment:</label>
+	    <label class="caption"><%=@ticket.is_fb_message? ? "Reply" : "Comment:"%></label>
 	    <div class="fields">
 	    <%= f.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
       <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
       <%= f.hidden_field :private , :value => "false" %>
+	  <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:fb_ticket_status  )%>
 	    </div>
 	  </li>
-      <li class="button-container">
-				<span class="tweet-counter" id="SendFacebookCounter">8000</span>
-        <%= submit_tag("Post", :class => "uiButton") %>
-      </li>
+	 <li class="button-container">
+    	<%= submit_tag(t('ticket.facebook_form.send'), :class => "uiButton special" ) %>
+    	<%= submit_tag(t('ticket.facebook_form.send_and_resolve'), :onclick => "jQuery('#fb_ticket_status').val('resolved');" , :class => "uiButton") %>
+		<%= button_to_function(t('cancel'), "jQuery('#cnt-fb-post').slideUp()", :class => "uiButton" ) %>
+    </li>
     </ul> 
   <% end %>
 </div> 
 
 <% content_for :onload_script do %>
 	jQuery("#HelpdeskFbComment").validate();	
-  jQuery('#send-fb-post-cnt-fb-post-body').NobleCount('#SendFacebookCounter', { on_negative : "error", max_chars: 8000}); 
+  //jQuery('#send-fb-post-cnt-fb-post-body').NobleCount('#SendFacebookCounter', { on_negative : "error", max_chars: 8000}); 
 <% end %>

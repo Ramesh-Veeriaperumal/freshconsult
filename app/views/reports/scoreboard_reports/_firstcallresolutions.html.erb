@@ -1,0 +1,25 @@
+	<% if @fcr_agents.length > 0 %>
+		<% high_score = @fcr_agents[0].tot_score.to_i %> 
+	<% end %>
+	<div class="titlebar" style="margin-top:50px;">First Call Resolution</div>
+	<% @fcr_agents.each_with_index  do |fcr_agent, index|%>
+	<% unless fcr_agent.tot_score.to_i < 0 %>
+	<div class="agentreport">
+		<ul>
+			<li class="nospace"><div class="bignum floatleft"><%= (index + 1)%></div></li>	
+			<li style="width:55%;">
+				<div class="floatleft photo"><%= user_avatar(fcr_agent.user, :thumb, 'preview_pic') %></div>
+				<div class="floatleft agentname"><%= fcr_agent.user.display_name %><div>Job Title</div></div>								
+			</li>
+			<li style="width:20%;" class="nospace">
+				<% progress_percentage =  ((fcr_agent.tot_score.to_i / high_score) * 100).to_i %>
+				<% progress_color = (progress_percentage > 30 and progress_percentage < 70) ? 'progress-warning' :  ((progress_percentage < 30) ? 'progress-danger' : 'progress-success') %>
+				<div class="progress <%= progress_color%>" style="margin-bottom: 9px;">
+        			<div class="bar" style="width: <%= ((fcr_agent.tot_score.to_i / high_score) * 100).to_i %>%"></div>        			
+      			</div>
+			</li>
+			<li class="nospace"><%= fcr_agent.tot_score %> points</li>			
+		</ul>
+	</div>
+	<% end %>
+	<% end %>

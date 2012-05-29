@@ -28,6 +28,18 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     render :action => 'show'
   end
   
+  def add_day_passes
+    @subscription = Subscription.find(params[:id])
+    if request.post? and !params[:passes_count].blank?
+      day_pass_config = @subscription.account.day_pass_config
+      passes_count = params[:passes_count].to_i
+      raise "Maximum 30 Day passes can be extended at a time." if passes_count > 30
+      day_pass_config.update_attributes(:available_passes => (day_pass_config.available_passes +  passes_count))
+      Rails.logger.info "ADDED #{passes_count} DAY PASSES FOR ACCOUNT ##{@subscription.account_id}-#{@subscription.account}"
+    end
+    render :action => 'show'
+  end
+  
   def charge
     if request.post? && !params[:amount].blank?
       load_object
@@ -53,7 +65,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
    
    def fetch_signups_per_day
-     @signups_per_day = Account.find(:all,:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc").group_by {|a| a.created_at.at_beginning_of_day}
+     @signups_per_day = Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc")
    end
    
    def fetch_signups_per_month
@@ -83,7 +95,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
                                            :conditions => {:state => 'active'} )
     csv_string = FasterCSV.generate do |csv| 
       # header row 
-      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount"] 
+      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Twitter","Facebook","Ticket Count","Multi Product","Free agents","Full Time","Ocassional","Last Login","Login Count"] 
  
       # data rows 
       subscriptions.each do |sub|
@@ -91,7 +103,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
         user = account.account_admin
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
         csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
-                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL'] 
+                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',!sub.account.twitter_handles.blank?,!sub.account.facebook_pages.blank?,sub.account.tickets.count,sub.account.portals.count > 1,
+                sub.free_agents,sub.account.full_time_agents.count,sub.account.all_agents.count - (sub.account.full_time_agents.count ||= 0),sub.account.account_admin.last_login_at,sub.account.account_admin.login_count] 
       end 
     end 
  

@@ -72,13 +72,20 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       Account.current.ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
+
+      Account.current.ticket_fields.nested_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+        defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
+        col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+          defs[get_id_from_field(nested_col).to_sym] = {get_op_list('dropdown').to_sym => 'dropdown' ,:name => nested_col.label , :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
+        end
+      end
       
       ##### Some hack for default values
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
       defs[:requester_id] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => :requester_id, :container => :dropdown})  # Added for email based custom view, which will be used in integrations.
-      
+      defs[:"helpdesk_tickets.id"] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_tickets.id", :container => :dropdown})
       defs
     end
   end
@@ -143,12 +150,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
 
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
+    action_hash.push({ "condition" => "requester_id", "operator" => "is_in", "value" => params[:requester_id]}) unless params[:requester_id].blank?
+    action_hash.push({ "condition" => "users.customer_id", "operator" => "is_in", "value" => params[:company_id]}) unless params[:company_id].blank?
     self.query_hash = action_hash
 
     action_hash.each do |filter|
       add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].nil?
     end
 
+    
     if params[:wf_submitted] == 'true'
       validate!
     end
@@ -244,7 +254,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def get_joins(all_conditions)
     all_joins = joins
-    all_joins[0].concat(tag_joins) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins
@@ -252,10 +261,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
  def monitor_ships_join
    " INNER JOIN helpdesk_subscriptions ON helpdesk_subscriptions.ticket_id = helpdesk_tickets.id  "
- end
-
- def tag_joins
-   " INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id = helpdesk_tickets.id INNER JOIN helpdesk_tags ON helpdesk_tag_uses.tag_id = helpdesk_tags.id  "
  end
  
  def users_join

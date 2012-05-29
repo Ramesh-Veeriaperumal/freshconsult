@@ -84,8 +84,16 @@
 				       <% 
 				          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
 				          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+				          if(field.field_type == "nested_field")
+				          	field_value = {}
+				          	field.nested_levels.each do |ff|
+				          		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
+				          	end
+				          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
+				          end
 				       %>
 		          	   <%= construct_ticket_text_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
+		          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "view"}) if field.field_type == "nested_field"%>
 		             <% end %>
 		           <% end %>
 			   </ul>
@@ -99,9 +107,17 @@
 						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
 						       <% 
 						          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+						          if(field.field_type == "nested_field")
+						          	field_value = {}
+						          	field.nested_levels.each do |ff|
+						          	field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
+						          	end
+						          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
+						          end
 						          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 						       %>
 				          	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
+				          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 				             <% end %>
 				           <% end %>
 							<li class="button-container">

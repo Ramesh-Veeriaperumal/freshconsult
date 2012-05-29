@@ -34,8 +34,7 @@
 			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
-  </td>
-	
+  </td>	
   <td class="sla">
     <% if( ticket.active? ) %>
 		<% if(ticket.onhold? or ticket.ticket_status.deleted?)%>
@@ -46,7 +45,7 @@
 		    <%= t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 	    <% end %>  
 	<% else %>
-	    <% if( ticket.ticket_states.resolved_at < ticket.due_by ) %>
+		<% if( ticket.ticket_states.resolved_at.nil? || ticket.ticket_states.resolved_at < ticket.due_by ) %>
 	      <%= t('resolved_on_time') %>	      
 	    <% else %>
 	      <%= t('resolved_late') %>	    

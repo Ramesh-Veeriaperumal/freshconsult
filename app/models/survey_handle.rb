@@ -1,4 +1,7 @@
 class SurveyHandle < ActiveRecord::Base
+	
+  belongs_to_account
+  	
   include ActionController::UrlWriter
   
   NOTIFICATION_VS_SEND_WHILE = {
@@ -10,7 +13,7 @@ class SurveyHandle < ActiveRecord::Base
   belongs_to :response_note, :class_name => 'Helpdesk::Note'
   belongs_to :survey_result
   
-  def self.create_handle(ticket, note)
+  def self.create_handle(ticket, note)  	
     create_handle_internal(ticket, Survey::ANY_EMAIL_RESPONSE, note)
   end
   
@@ -33,10 +36,13 @@ class SurveyHandle < ActiveRecord::Base
       :surveyable_id => surveyable_id,
       :surveyable_type => surveyable_type,
       :customer_id => surveyable.requester_id,
-      :agent_id => surveyable.responder_id,
+      :agent_id => response_note ? response_note.user_id : surveyable.responder_id,
+      :group_id => surveyable.group_id,
       :response_note_id => response_note_id,
       :rating => rating
     })
+    
+    self.rated = true
     
     #Chose not to add support score at this point. Rather will do that when he gives
     #feedback (natural next step..)
@@ -45,7 +51,7 @@ class SurveyHandle < ActiveRecord::Base
   end
   
   private
-    def self.create_handle_internal(ticket, send_while, note = nil)
+    def self.create_handle_internal(ticket, send_while, note = nil)      
       return nil unless ticket.account.survey.can_send?(ticket, send_while)
       
       s_handle = ticket.survey_handles.build({
@@ -53,6 +59,7 @@ class SurveyHandle < ActiveRecord::Base
           Time.now.to_f.to_s).downcase,
         :sent_while => send_while
       })
+      s_handle.account_id = ticket.account_id
       s_handle.survey_id = ticket.account.survey.id
       s_handle.response_note_id = note.id if note
       s_handle.save
@@ -63,4 +70,5 @@ class SurveyHandle < ActiveRecord::Base
     def clear_survey_result
       survey_result.destroy
     end
+    
 end

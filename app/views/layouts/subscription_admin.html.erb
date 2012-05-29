@@ -27,11 +27,12 @@
 		              <%=
 		              	  [
 										      [customers_admin_subscriptions_path(), :customers, "Customers" ],
-										#      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+										      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
 										      [admin_subscription_discounts_path, :discounts, "Discounts" ],
 										      [admin_subscription_payments_path, :payments, "Payments" ],
 										      [admin_subscription_announcements_path, :announcements, "Announcements" ],
-										      [admin_subscription_plans_path, :plans, "Plans" ]      
+										      [admin_subscription_plans_path, :plans, "Plans" ],      
+											  [admin_conversion_metrics_path, :metrics, "Metrics" ]
 										    ].map do |s| 
 										      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
 										    end

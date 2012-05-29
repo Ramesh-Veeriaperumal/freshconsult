@@ -9,13 +9,15 @@ class Admin::VaRulesController < Admin::AutomationsController
     :checkbox    => [ "selected", "not_selected" ],
     :choicelist  => [ "is", "is_not" ],
     :number      => [ "is", "is_not" ],
-    :hours       => [ "is", "greater_than", "less_than" ]
+    :hours       => [ "is", "greater_than", "less_than" ],
+    :nestedlist  => [ "is" ]
   }
   
   CF_OPERATOR_TYPES = {
     "custom_dropdown" => "choicelist",
     "custom_checkbox" => "checkbox",
     "custom_number"   => "number",
+    "nested_field"    => "nestedlist",
   }
 
   OPERATOR_LIST =  {
@@ -67,8 +69,9 @@ class Admin::VaRulesController < Admin::AutomationsController
     
     def set_filter_data
       @va_rule.filter_data = params[:filter_data].blank? ? [] : ActiveSupport::JSON.decode(params[:filter_data])
+      set_nested_fields_data @va_rule.filter_data
     end
-    
+
     def edit_data
       @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data
       super
@@ -112,9 +115,9 @@ class Admin::VaRulesController < Admin::AutomationsController
                                                    
       filter_hash = filter_hash + additional_filters
       add_custom_filters filter_hash
-      @filter_defs   = ActiveSupport::JSON.encode filter_hash
-      @op_types        = ActiveSupport::JSON.encode OPERATOR_TYPES
-      @op_list        = ActiveSupport::JSON.encode OPERATOR_LIST
+      @filter_defs  = ActiveSupport::JSON.encode filter_hash
+      @op_types     = ActiveSupport::JSON.encode OPERATOR_TYPES
+      @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
     end
     
     def additional_actions
@@ -128,12 +131,15 @@ class Admin::VaRulesController < Admin::AutomationsController
     def add_custom_filters filter_hash
       current_account.ticket_fields.custom_fields.each do |field|
         filter_hash.push({
+          :id => field.id,
           :name => field.name,
           :value => field.label,
-          :domtype => field.flexifield_def_entry.flexifield_coltype,
-          :choices => field.picklist_values.collect { |c| [ c.value, c.value ] },
+          :field_type => field.field_type,
+          :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
+          :choices =>  (field.field_type == "nested_field") ? field.nested_choices : field.picklist_values.collect { |c| [c.value, c.value ] },
           :action => "set_custom_field",
-          :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text")
+          :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
+          :nested_fields => nested_fields(field)
         })
       end
     end

@@ -43,6 +43,14 @@
       <b><%= field.label %></b>
       <%= (field.is_default_field?) ? @ticket[field.field_name] : @item.get_ff_value(field.name) %>      
     </span>
+    <% if field.field_type == "nested_field" %>
+      <% field.nested_ticket_fields.each do |nested_field| %>
+        <span>
+          <b><%= nested_field.label %></b>
+          <%= @item.get_ff_value(nested_field.name) %>      
+        </span>
+      <% end %>
+    <% end %>
   <% end %>  
 <% end %>  
 </div>

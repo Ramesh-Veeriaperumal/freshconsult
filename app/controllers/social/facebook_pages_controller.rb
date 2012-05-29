@@ -6,7 +6,7 @@ class Social::FacebookPagesController < Admin::AdminController
     c.requires_permission :manage_users
   end
   
-  before_filter :fb_client , :only => [:authdone, :index]
+  before_filter :fb_client , :only => [:authdone, :index,:edit]
   before_filter :build_item, :only => [:authdone]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   
@@ -15,31 +15,39 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def authdone
-    fb_pages = nil
     begin      
-      fb_pages = @fb_client.auth(params[:code])
+      @fb_pages = @fb_client.auth(params[:code])
     rescue
       flash[:error] = t('facebook.not_authorized')
     end
-
-    @fb_pages = add_to_db fb_pages unless fb_pages.blank?
   end
  
   def enable_pages
-    usr_prof_id = params[:user][:profile_id]
-    page_ids = params[:enable][:pages]
-    page_ids = page_ids.reject(&:blank?)   
-    scoper.update_all({:enable_page => false} , :profile_id =>usr_prof_id)
-    scoper.update_all({:enable_page => true} , :page_id =>page_ids)
-    fetch_fb_wall_posts page_ids
+    pages = params[:enable][:pages]
+    pages = pages.reject(&:blank?)   
+    add_to_db pages
     redirect_to :action => :index
   end
   
   def add_to_db fb_pages
     fb_pages.each do |fb_page|
-        begin
-          scoper.create(fb_page)
-        rescue        
+        fb_page = ActiveSupport::JSON.decode fb_page
+        fb_page.symbolize_keys!
+        fb_page = fb_page.merge!({:enable_page =>true})
+        begin   
+          page = scoper.find_by_page_id(fb_page[:page_id]) 
+          unless page.blank?
+            page_params = fb_page.tap { |fb| fb.delete(:fetch_since) }
+            page.update_attributes(page_params)
+          else
+            page = scoper.new(fb_page)
+            if page.save
+              fetch_fb_wall_posts page
+            end
+          end
+          
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
         end
      end
   end
@@ -85,13 +93,9 @@ class Social::FacebookPagesController < Admin::AdminController
       edit_social_facebook_url(@item)
   end
   
-  def fetch_fb_wall_posts page_ids
-      page_ids.each do |page_id|
-        fb_page = scoper.find_by_page_id(page_id)
-        fb_posts = Social::FacebookPosts.new(fb_page)
-        fb_posts.fetch
-      end
-      
+  def fetch_fb_wall_posts fb_page 
+    fb_posts = Social::FacebookPosts.new(fb_page)
+    fb_posts.fetch    
   end
   
   def fb_call_back_url
