@@ -12,9 +12,6 @@
 /*Report tab icons */
 @import "reports-icon/*.png";
 
-/*Ticket View icons */
-@import "ticket-view/*.png";
-
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
 body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
@@ -197,7 +194,7 @@ ul.activityfeed li{
 	}
 }
 
-.user_name{ font-weight:normal; color:#527eaa; }
+.user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
 
 .pageSeperator{
@@ -551,7 +548,7 @@ body h5{
 .priority-pointer{
 	top:9px; 	
 	position:absolute;
-  @include pointer-title;     
+ 	@include pointer-title;     
 }          
 
 .request-title{
@@ -846,7 +843,7 @@ h4.title{
 	.rtDetails{         
 		@include min-height(550px);       
 		@include pie-clearfix;
-	  @include box-shadow(0 0 40px rgba(0, 0, 0, 0.05) inset);
+	  	@include box-shadow(0 0 40px rgba(0, 0, 0, 0.05) inset);
 		margin:0px 78px 0px 0px;  
 		padding-top:5px; 
 		z-index:10; 
@@ -863,23 +860,21 @@ h4.title{
 		.ui-list_with_icon{
 			margin:6px;
 		}
-      .cnt-special{
-         padding-top:4px;
-         margin:8px 0;
-         border:1px dotted #cfcfcf;
-         border-width:1px 0;
-         background-color:#f3f3f3;
-      }
+      	.cnt-special{
+         	padding-top:4px;
+         	margin:8px 0;
+         	border:1px dotted #cfcfcf;
+         	border-width:1px 0;
+        	background-color:#f3f3f3;
+        }
 		.cnt{
 			@include no-bullets;
 			margin-top:-6px;
 			padding:0px 10px 8px 10px;
 			li{
 				border-bottom:1px solid #f3f3f3;
-				padding:6px 0px;
-				a{
-					text-decoration:none;
-				}
+				padding:6px 0px 10px;
+				a{ text-decoration:none; }
 				label{
 					display:block;
 					font-size:11px;
@@ -890,10 +885,6 @@ h4.title{
 					font-size:11px;
 					max-width:100%;
 				} 
-
-				&.checkbox {
-					padding-left: 18px;
-				}
 			}
 			li.button-container{
 				border-bottom:0px;
@@ -3131,57 +3122,9 @@ div.addReminder{
 .source-chat{   background: sprite($symbol, source-chat) no-repeat; }
 .source-forum{   background: sprite($symbol, source-forum) no-repeat; }
 
-.grey-source-email{   background: sprite($symbol, grey-source-email) no-repeat; }
-.grey-source-facebook{   background: sprite($symbol, grey-source-facebook) no-repeat; }
-.grey-source-twitter{   background: sprite($symbol, grey-source-twitter) no-repeat; }
-.grey-source-portal{   background: sprite($symbol, grey-source-portal) no-repeat; }
-.grey-source-phone{   background: sprite($symbol, grey-source-phone) no-repeat; }
-.grey-source-chat{   background: sprite($symbol, grey-source-chat) no-repeat; }
-.grey-source-forum{   background: sprite($symbol, grey-source-forum) no-repeat; }
-
-#ticket_view_choices {
-	@include inline-block;
-	.icon {
-		cursor: pointer;
-		float:left;
-		text-indent:-9999em;
-		display:inline-block;
-		zoom:1;
-		border:solid #aaa 1px;
-		border-radius:3px 0 0 3px;
-		width:24px;
-		height:18px;
-		padding:1px 3px;
-		border-right:#fff solid 1px;
-		@include background(linear-gradient(rgba(231,231,231,1), rgba(208,208,208,0.1)));
-		background-color:#e2e2e2;
-		&.active {
-			
-			@include background(linear-gradient(rgba(147,147,147,1), rgba(206,206,206,0.1)));
-			background-color:#e2e2e2;
-			*background-color: #cecece;
-		}
-
-		&.right {
-			border-radius:0 3px 3px 0;
-			border-right:#aaa solid 1px;
-		}
-
-		a.ticket-view-choice {
-			float:left;
-			width:24px;
-			height:18px;
-		}
-
-		@include all-ticket-view-sprites;
-
-	}
-
-}
-
-
 .tickets, .tickets-expanded{
 	width:100%;
+	table-layout: fixed;
 	color:#5f5f5f;
 	th{
 		background:none;
@@ -3191,31 +3134,21 @@ div.addReminder{
 		vertical-align:top;
 	}
 	td{
-		padding: 6px 10px;
+		padding:10px 8px 10px 10px;
 		background-color:#ffffff;
-		border-top:1px solid #ffffff;
-		border-bottom:1px solid #ffffff;
+		border-bottom:1px solid #efefef;
 		a{
 			text-decoration:none;
-			color:#5a8ec1; 
+			color:#888; 
 		}
 	}
-	tr.even td{ 
-		background-color:#f9f9f9; 
-		border-top:1px solid #f9f9f9;
-		border-bottom:1px solid #f9f9f9;
-	}
-	tr.active td{
-		background-color:#f2f0e3;
-		border-top:1px solid #f2f0e3;
-		border-bottom:1px solid #f2f0e3;
-	}
-	tr:hover td, tr:hover.even td{
+	tr.even td{ background-color:#f9f9f9; }
+	tr:hover td, tr.active td, tr:hover.even td{
+		background-color:#e6f3f9;
 		background-image:url(../images/overlay-top-shadow.png);
 		background-position:top left;
+		border-bottom:1px solid #dfdfdf;
 		background-repeat:repeat-x;
-		border-top:1px solid #e8e8e8;
-		border-bottom:1px solid #e8e8e8;
 	}
 	.check{
 		width:25px;
@@ -3230,48 +3163,38 @@ div.addReminder{
 	
 	th.toolbar_right{
       text-align:right;
+      width: 80px;
       vertical-align:middle;
       padding-right:0px;
    }
 	
 	.name, .name-user{
-      width:73%;
-      padding-left:50px;
+      width:63%;
+      padding-left:65px;
       .preview_pic{
          margin:0px; 
          margin-top:3px;
-         margin-left:-40px;         
-         @include corners(5px);
+         margin-left:-65px;         
+         @include corners(3px);
          border:1px solid #cfcfcf;
-         height:30px;
+         height:40px;
          img{ 
-            width:30px; height:30px;
+            width:40px; height:40px;
             @include corners(5px);
          }
       }
 
-      span.info-data {
-      	font-weight:normal;
-      	margin-left:0;
-      }
-
-      .emphasize {
-      	/*color:#333;*/
-      	font-weight:bold;
-      }
-
       h3{
-		margin-bottom:4px;
-		word-break: break-all;
-		a{
-			font-size: 14px;
-			line-height: 20px;
-			padding: 0px 0 4px 2px;
-			color:#4886c2;
-		}
-		a:hover{
-			color:#000;
-		}
+         padding-bottom:4px;
+         a{
+            font-size: 13px;
+            line-height: 20px;
+            padding: 0px 0 4px 2px;
+            color:#527eaa;
+         }
+         a:hover{
+            color:#000;
+         }
       }
       div{ color:#888; }
    }
@@ -3280,30 +3203,30 @@ div.addReminder{
 		padding-left:20px;
 	}
 	
-	.need-attention .name h3{
-		/*background: #fffb9a;*/
-		a{		font-weight:bold; }
+	.need-attention .name h3 a{
+		font-weight:bold;
 	}
 	
 	.need-attention-icon{ 
 	   width:13px; 
 	   height:13px; 
 	   padding:0px;
-	   display:inline-block;
+	   float:left;
 	   background:none; 
-	   margin-left:0;
+	   position:absolute;
+	   margin-left:-16px;
 	   margin-top:3px;
 	}
 	.need-attention .need-attention-icon{
       background: sprite($symbol, need-attention) no-repeat;  
-      margin-left:0;
 	}
 	.assign{
 		ul{
+			@include inline-block-list;
 			li{
 				padding:4px 7px 0px 0px; 
 				color:#999999;
-				font-size:11px;
+				font-size:12px;
 				span{
 					color:#444444;
 					text-transform:capitalize;
@@ -3325,47 +3248,11 @@ div.addReminder{
 				}
 		}
 	}
+   .assign, .even .assign{
+      border-left:1px dotted #dfdfdf;
+   }
 }	  
-
-.detailed_view {
-	.hideForDetails {
-		display: none;
-	}
-}
  
-.list_view {
-	.tickets, .tickets-expanded{
-		tr.headings, & tr.headings:hover {
-			td{
-				background:#eee;
-				border-bottom:solid 1px #e7e7e7;
-				font-size:12px;
-				color:#888;
-			}
-		}
-		td.ticket_info {
-			white-space:nowrap;
-		}
-
-		h3 a {
-			@include wrap();
-		}
-	}	
-	.hideForList {
-		display:none;
-	}
-	.user_name {
-		font-weight:normal;
-	}
-	.name, .name-user {
-		padding-left:10px;
-		width: 50%;
-		h3 a {
-			font-size: 13px;
-			line-height: 16px;
-		}
-	}
-}
 .conversation-sprite{ 
 	position:relative;
 	display:inline;
@@ -3381,6 +3268,9 @@ div.addReminder{
 	}
 	.email-reply{ 
 		background: sprite($ticketicon, email-reply);
+	}
+	.email-forward{ 
+		background: sprite($ticketicon, email-forward);
 	}
 	.email-receive{
 		background: sprite($ticketicon, email-receive);
@@ -3700,7 +3590,6 @@ div.addReminder{
 	   .info-data{
 	      color:#888;
 	      font-size:13px;
-
 	   }
 	   .col-center{
 	      width:380px; 
@@ -3952,34 +3841,6 @@ p.info-text{
 }
 
 .highlight-text span{background:#ffffcc;}
-
-.arrow {
-	width:0;
-	height:0;
-	&.up {	
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
-		border-bottom: 5px solid black;
-	}
-
-	&.down {
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
-		border-top: 5px solid #f00;
-	}
-
-	&.right {
-		border-top: 5px solid transparent;
-		border-bottom: 5px solid transparent;
-		border-left: 5px solid green;
-	}
-
-	&.left {
-		border-top: 5px solid transparent;
-		border-bottom: 5px solid transparent; 
-		border-right:5px solid blue;
-	}
-}
 
 a.close{
    position: absolute;
@@ -4346,7 +4207,7 @@ a.close{
 .containerFull{
   @include pie-clearfix;
 	margin:-14px -20px;
-	padding:0px 0px 0px 0px;
+	padding:0px;
 }
 
 .greyImage{
@@ -4369,15 +4230,13 @@ a.close{
    background: sprite($symbol, drrow-down) no-repeat;   
 }
 
-.drop-right.selected{
+.drop-right:hover, .drop-right.selected{
    color:#ffffff;
    *{ color:#ffffff; }
 }
 
 .drop-right:hover{
-   color: #FFF;
-   background-color:#888888;
-   border-bottom :#afafaf dotter 1px;  
+   background-color:#afafaf;   
 }
 
 .drop-right.selected{
@@ -4386,89 +4245,27 @@ a.close{
 }
 
 .ticket-leftcol{
-	width:230px;
-	float:left;
+   width:230px;
+   float:left;
 	@include min-height(477px);
+   border:1px solid #ffffff; 
+   border-width:1px 1px 0 0;
+	@include linear-gradient(color-stops(#f4f4f4, #F1F1F1), top);
 	
    h3.title{
-      color:#333;
-      font-size:16px;
-      font-weight:normal;
-      padding:8px 8px 10px 8px;
+      color:#888888;
+      font-size:12px;
+      text-transform:uppercase;
+      padding:8px 8px 4px 8px;
       margin:0;
    }
    h4.title{
-		padding:0 6px 10px 0;
-		font-size:14px;
-		color:#333;
+      padding:0 6px 3px 0;
+      font-size:12px;
+      color:#666666;
    }
    
-   .leftFilter{
-		margin:6px;
-   		padding:5px;
-		position:relative;
-
-	   	.checkboxSet{
-	   		margin-bottom:10px;
-	   	}
-
-	   	#save_filter{
-			position:relative;
-			top:4px;
-			left:2px;
-			display:none;
-      	}
-	   	.ff_item{
-			margin:0 6px 10px 6px;
-			padding:4px 2px;
-		}
-	   	.item{
-			padding-bottom:2px;
-			padding-top:2px;
-			font-size:12px;
-			color:#444444; 
-			input{margin:0 4px 3px 0; }
-	   	} 
-		.item:hover span{
-			background:#ffffcc;
-			color:#000000;
-		}
-		select{
-			width:96%;
-		}
-	}
-}
-
-.hasRightCol{
-   margin-left:231px;
-} 
-
-.page_info{
-   float:right;
-   width:250px;
-   text-align:right;
-   margin-right:6px;
-   position:relative;
-   top: -15px;
-   .offset {
-   	float:left;
-   	width:150px;
-   }
-}
-
-.contentCol{
-   border-left:1px solid #cfcfcf;
-   background-color:#ffffff;
-
-
-   .view_filters{
-   		display:inline-block;
-   		margin:10px 0 0;
-
-   		#view_manage_links {
-   			display: inline-block;
-   			zoom:1;
-   		}
+      .view_filters{
 		.link-item.active, a.link-item:hover{
          margin:0px -5px;
          padding-left:13px;
@@ -4489,71 +4286,81 @@ a.close{
 		   height:11px;
 		   background: sprite($symbol, arrow-selected-right) no-repeat;
 		}
-		.link-item{ 
-			font-size:13px;
-			display:inline-block;
-			color:#444444;
-			text-decoration:none;
-			padding:10px 8px 15px;
-			width: auto;
-			position:relative;
-
-			.nav-trigger {
-				font-size: 16px;
-				color:#000;
-
-				&:hover {
-					color: #FFF;
-					background-color: #888888;
-
-					b { color: #FFF;}
-				}
-				&.selected {
-					color: #FFF;
-					background-color: #888888;
-				}
-				&.unsaved {
-					font-style:italic;
-				}
-
-
-			}
-		}
-
+      .link-item{ 
+         font-size:13px;
+         display:block;
+         color:#444444;
+         text-decoration:none;
+         padding:5px 8px;
+         position:relative;
+      } 
    }
    
-}
-
-.ticket_overlay_content {
-	width:350px;
-	display:inline-block;
-	.preview_pic {
-		display:inline-block;
-	}
-
-	.text {
-		color:#333;
-		font-size: 12px;
-		display: inline-block;
-		width: 280px;
-		.user_and_time {
-			background: url(../images/overlay/replied.png) no-repeat;
-			padding-left: 25px;
-			min-height:13px;
-			margin-bottom:10px;
-			.user {
-				font-weight:bold;
+   .leftFilter{
+		$bordercolor:#cfcfcf;
+		@include corners(3px);		
+   	background: #fafafa;
+		@include single-box-shadow(#ffffff, 0px, 1px, 1px);
+		margin:6px;
+   	padding:5px;
+		position:relative;
+		border:1px solid $bordercolor;  
+		border-bottom-color:darken($bordercolor, 5%);
+		border-right-color:darken($bordercolor, 5%);
+   	.checkboxSet{
+   		margin-bottom:10px;
+   	}
+   	#save_filter{
+         position:relative;
+         top:4px;
+         left:2px;
+         display:none;
+      }
+   	.ff_item{
+        margin:0 6px 4px 6px;
+		padding:4px 2px;
+		border-bottom:1px dotted #cfcfcf;
+		.level_2, .level_3{
+				border-left:1px dotted #afafaf;
+				border-bottom: 0;
+   				padding:0 0 0 10px;
+   				margin:0px;
+				h4.title{ font-weight:normal; padding-top:3px; }
 			}
+      }
+   	.item{
+   		padding-bottom:2px;
+			padding-top:2px;
+   		font-size:12px;
+   		color:#444444; 
+   		input{margin:0 4px 3px 0; }
+   	} 
+		.item:hover span{
+			background:#ffffcc;
+			color:#000000;
 		}
 
-		.note {
-			background: url(../images/overlay/note_quote.png) no-repeat;
-			padding-left: 25px;
-			min-height:13px;
-
-		}
-	}
+	select { width: 96%;}
+   }
 }
+
+.hasRightCol{
+   margin-left:231px;
+} 
+
+.contentCol{
+   border-left:1px solid #cfcfcf;
+   background-color:#ffffff;
+}
+
+.page_info{
+   float:right;
+   width:200px;
+   text-align:right;
+   margin-right:6px;
+   position:relative;
+}
+
 .toolbar{
    background:#f4f4f4;
 	padding:5px 8px 8px 0;
@@ -4562,11 +4369,10 @@ a.close{
 }
 
 .sort-bar{
-	background: none;
-	border:none;
 	font-size:11px;
 	color:#777777;
-	padding: 5px 10px;
+	padding: 5px 10px 5px 40px;
+	b{ color:#666666; }
 }
 
 
@@ -4589,7 +4395,6 @@ a.close{
       color:#333333;
       text-decoration:none;
       position:relative;
-      &.active { font-weight:bold;}      
       .icon{
          position:absolute;
          left:5px;
@@ -4597,14 +4402,13 @@ a.close{
          width:16px;
          height:16px;
       }
-      .ticksymbol{ background: sprite($symbol, selected) no-repeat; }
-
+      .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
    a:hover{
-      @include background(linear-gradient(rgba(188,188,188,1), rgba(206,206,206,0.1)));
+      @include background(linear-gradient(top, #5469f9, #2433f6));
       @include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
-      @include filter-gradient(rgba(188,188,188,1), rgba(206,206,206,0.1), vertical); 
-      color:#000 ;
+      @include filter-gradient(#5469f9, #2433f6, vertical); 
+      color:#ffffff;
       .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
    }
 }
@@ -5543,22 +5347,6 @@ padding:10px;
 margin:10px;
 }
 
-.ticket_list .pagearea{
-	background: none;
-	border:none;
-	@include shadows(rgba(0,0,0, 0.05), 0px, 0px, 0px);	
-
-	.contentCol {
-		background: none;
-		border:none;
-	}
-	#ticket-list-body {
-		background: white;
-		border: #ccc solid 1px;
-		@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 8px);
-	}
-}
-
 /* SURVEY REPORT RELATED STYLES */
 .agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 10px 0; padding: 15px 0; }
  
@@ -5659,7 +5447,11 @@ margin:10px;
 }
 
 .sat-priority-rating{
-  width:55%;
+  width:55%;  
+}
+
+.sat-priority-rating div{
+  margin-top:9px;
 }
 
 .sub_rating{

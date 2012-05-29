@@ -11,6 +11,7 @@ en:
   paid_with: "Paid with"
   date_title: "Date"
   status: "Status"
+  preview: "Preview"
   proceed_now: "\n\nProceed now?"
   meta:
    language_name: 'English'
@@ -83,9 +84,22 @@ en:
       save: Save Ticket fields
       drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
       dropdown: Dropdown
-      nestedfield: "Dependant field"
+      nestedfield: "Dependent field"
     formfield_props: 
-      label: Field Label
+      form_title: "Field properties"
+      behavior: "Behavior"
+      label: "Field Label"
+      nested_label: "Nested field labels"
+      level1: "Level 1"
+      level2: "Level 2"
+      level3: "Level 3"
+      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a href='https://support.freshdesk.com/solution/categories/5235/folders/10738/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a> "
+      dropdown_items_edit: "Dropdown items - edit view"
+      dropdown_items_preview: "Dropdown items - Preview"
+      nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+      delete_field: "Delete field"
+      field_label_agents: "Field label for agents"
+      field_label_customer: "Field label for customers"
       add_new_choice: Add new choice
       customer_mandatory: Required when submitting the form
       customer_edit: Customer can edit
@@ -158,12 +172,12 @@ en:
      index:    
         title: Customer Satisfaction Settings
      satisfaction_settings:    
-        enable_label: Enable Customer Satisfaction Surveys
+        enable_label: Customer Satisfaction Surveys
         link_text_label: Satisfaction survey link text
-        link_text_input: Please take a minute to rate your customer support experience
+        link_text_input: Please let us know your opinion on our support experience.
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Send satisfaction survey link in every email. Let customers give feedback whenever they want.
-        send_while_option2: Send satisfaction survey link after the ticket is resolved. Let customers give feedback after ticket is resolved.        
+        send_while_option1: Add survey link on all email sent to customer.
+        send_while_option2: Add survey link only on email sent after a ticket is resolved.
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
@@ -800,7 +814,7 @@ en:
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
   posted_by: Posted by
-  already_overdue: Already Overdue for %{time_words}
+  already_overdue: Overdue by %{time_words}
   automations: 
     new: New Scenario
     title: Scenario Automations
@@ -1310,8 +1324,7 @@ en:
   ok: Ok
   back: Back
   ticket:
-    reported_on: "from %{username}, Last updated: on %{date}"
-    reported_on_ticket_list: "from %{username}, Last updated: <span class='emphasize'>%{time_words} ago</span> on %{date}"
+    reported_on: "from %{username}, last updated on %{date}"
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
@@ -1607,15 +1620,6 @@ en:
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
       no_email_found: "User with email %{email} is not available in the system."
-      overlay_reply_time: " replied, %{time_in_words} ago"
-      overlay_fwd_time: " forwarded, %{time_in_words} ago"
-      tabular_view:
-        title: "Title"
-        posted: "Posted"
-        assigned: "Assigned"
-        status: "Status"
-        priority: "Priority"
-        time_ago: "%{time_in_words} ago"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -1709,8 +1713,6 @@ en:
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
-    title: "Filter Tickets"
-    unsaved_view: "Unsaved View"
     sort_fields:
       due_by: Due by time
       date_created: Date Created

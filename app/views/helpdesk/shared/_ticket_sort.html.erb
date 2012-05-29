@@ -1,12 +1,11 @@
 <div class="sort-bar toolbar">
   <div class="page_info">
-    <div class="offset">
+    <%= will_paginate @items, :page_links => false, :class => "toolbar_pagination", :previous_label => "<span></span>", :next_label => "<span></span>" %>  
+    <span>
       Showing 
       <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b> of 
       <b><%= @items.total_entries %></b>
-    </div> 
-    <%= will_paginate @items, :page_links => false, :class => "toolbar_pagination", :previous_label => "<span></span>", :next_label => "<span></span>" %>  
-             
+    </span>          
   </div>
 
   <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">

@@ -65,15 +65,16 @@ module Helpdesk::TicketActions
     flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
-    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false} ] if current_account.has_multiple_products?
-    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false, :type => :field_type} ] if current_account.has_multiple_products?
+    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
-    flexi_fields.each do |flexi_field|
-      if flexi_field.field_type == "nested_field"
-        nested_flexi_fields = flexi_field.nested_ticket_fields(:include => :flexifield_def_entry)
-        csv_headers = csv_headers + nested_flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
-      end
-    end
+    # csv_headers.each do |flexi_field|
+    #   if flexi_field.type == "nested_field"
+    #     nested_flexi_fields = flexi_field.nested_ticket_fields(:include => :flexifield_def_entry)
+    #     #csv_headers = csv_headers + nested_flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    #     flexi_field[:levels] = flexi_field.nested_levels
+    #   end
+    # end
 
     render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
   end
