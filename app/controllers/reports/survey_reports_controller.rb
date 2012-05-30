@@ -1,5 +1,6 @@
 class Reports::SurveyReportsController < ApplicationController
 	
+	before_filter { |c| c.requires_feature :surveys }
 	before_filter { |c| c.requires_permission :manage_reports }
 	before_filter :set_selected_tab
 			
