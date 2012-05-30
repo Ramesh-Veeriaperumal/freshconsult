@@ -1,6 +1,15 @@
 class EmailNotification < ActiveRecord::Base
   belongs_to :account
   attr_protected  :account_id
+
+
+
+  def after_find
+    if (self.version == 1)
+      self.requester_template = (RedCloth.new(requester_template).to_html) if requester_template
+      self.agent_template = (RedCloth.new(agent_template).to_html) if agent_template
+    end
+  end
   
   has_many :email_notification_agents, :class_name => "EmailNotificationAgent", :dependent => :destroy
   
@@ -70,11 +79,11 @@ class EmailNotification < ActiveRecord::Base
   end
   
   def formatted_agent_template
-    format_template agent_template
+    agent_template
   end
   
   def formatted_requester_template
-    format_template requester_template
+    requester_template
   end
   
   def self.disable_notification (account)
@@ -96,7 +105,4 @@ class EmailNotification < ActiveRecord::Base
         (my_hash = n_hash[notification_type]).nil? || !my_hash[user_role].eql?(false)
     end
     
-    def format_template(template)
-      RedCloth.new(template).to_html if template
-    end
 end

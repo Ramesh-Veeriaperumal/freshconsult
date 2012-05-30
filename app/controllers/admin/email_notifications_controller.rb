@@ -1,5 +1,7 @@
 class Admin::EmailNotificationsController < Admin::AdminController 
   
+  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+  
   def index
     e_notifications = current_account.email_notifications
     by_type = Hash[*e_notifications.map { |n| [n.notification_type, n] }.flatten]
