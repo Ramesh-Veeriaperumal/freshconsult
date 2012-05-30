@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120530102021) do
+ActiveRecord::Schema.define(:version => 20120530142849) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -669,7 +669,7 @@ ActiveRecord::Schema.define(:version => 20120530102021) do
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8,  :null => false 
+    t.integer  "id",               :limit => 8,                             :null => false
     t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
