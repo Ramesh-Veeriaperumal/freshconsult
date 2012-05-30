@@ -26,7 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity, :support_score_on_create
-  before_update :cache_old_model, :update_dueby, :update_converted_cc_email_hash
+  before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
       :support_score_on_update, :stop_timesheet_timers
   
@@ -856,49 +856,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def cc_email_hash
     if cc_email.is_a?(Array)     
-      {:cc_emails => cc_email, :fwd_emails => [], :version => 2 }
-    elsif(cc_email.is_a?(Hash))
-      convert_cc_email_hash
+      {:cc_emails => cc_email, :fwd_emails => [] }
     else
       cc_email
     end
   end
-
-  def convert_cc_email_hash
-    unless cc_email.has_key?(:version)
-      cc_emails_val = cc_email[:cc_emails]
-      fwd_emails = cc_email[:fwd_emails]
-      if cc_emails_val.is_a?(String)
-        cc_emails_val = convert_cc_email_values cc_emails_val
-        {:cc_emails => cc_emails_val, :fwd_emails => fwd_emails, :version => 2 }
-      elsif (cc_emails_val.is_a?(Array) and cc_emails_val.size == 1)
-        cc_emails_val = convert_cc_email_values cc_emails_val[0]
-        {:cc_emails => cc_emails_val, :fwd_emails => fwd_emails, :version => 2 } 
-      else
-        {:cc_emails => cc_emails_val, :fwd_emails => fwd_emails, :version => 2 } 
-      end
-    else
-      cc_email
-    end
-  end
-
-  def update_converted_cc_email_hash
-    if(cc_email.is_a?(Hash))
-      self.cc_email = convert_cc_email_hash
-    end
-  end
-  
-  
 
   private
   
-    # bug fix for cc_email value conversion from string to array
-    def convert_cc_email_values(email_str)
-        email_arr = email_str.scan /([a-zA-Z0-9._%+-]+@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum|[a-zA-Z]{2}))/
-        email_arr.collect{|email| email[0]}
-    end
-    # bug fix ends here
-    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')
