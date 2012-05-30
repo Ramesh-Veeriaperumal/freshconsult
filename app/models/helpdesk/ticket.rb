@@ -881,12 +881,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
       cc_email
     end
   end
- 
+
   def update_converted_cc_email_hash
     if(cc_email.is_a?(Hash))
       self.cc_email = convert_cc_email_hash
     end
   end
+  
+  
 
   private
   
