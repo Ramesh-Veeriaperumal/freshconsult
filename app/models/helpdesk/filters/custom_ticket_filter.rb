@@ -141,13 +141,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
     
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
-    action_hash.push({ "condition" => "requester_id", "operator" => "is_in", "value" => params[:requester_id]}) unless params[:requester_id].blank?
-    action_hash.push({ "condition" => "users.customer_id", "operator" => "is_in", "value" => params[:company_id]}) unless params[:company_id].blank?
     self.query_hash = action_hash
    
     action_hash.each do |filter|
       add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].nil?
     end
+    
+    add_condition("requester_id", "is_in", params[:requester_id]) unless params[:requester_id].blank?
+    add_condition("users.customer_id", "is_in", params[:company_id]) unless params[:company_id].blank?
 
     if params[:wf_submitted] == 'true'
       validate!
