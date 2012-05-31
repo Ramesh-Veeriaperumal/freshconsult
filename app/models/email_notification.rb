@@ -2,7 +2,9 @@ class EmailNotification < ActiveRecord::Base
   belongs_to :account
   attr_protected  :account_id
 
-
+def before_create
+  self.version = 2
+end
 
   def after_find
     if (self.version == 1)

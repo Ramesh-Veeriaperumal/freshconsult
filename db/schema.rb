@@ -257,7 +257,7 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
     t.integer  "notification_type"
     t.text     "requester_subject_template"
     t.text     "agent_subject_template"
-    t.integer  "version",                                 :default => 2
+    t.integer  "version",                                 :default => 1
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
