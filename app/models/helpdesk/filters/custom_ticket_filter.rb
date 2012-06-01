@@ -147,7 +147,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].nil?
     end
 
-    add_requester_conditions
+    add_requester_conditions(params)
 
     if params[:wf_submitted] == 'true'
       validate!
@@ -156,7 +156,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     return self
   end
 
-  def add_requester_conditions
+  def add_requester_conditions(params)
     add_condition("requester_id", :is_in, params[:requester_id]) unless params[:requester_id].blank?
     add_condition("users.customer_id", :is_in, params[:company_id]) unless params[:company_id].blank?
   end
