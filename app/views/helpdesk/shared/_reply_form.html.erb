@@ -72,7 +72,7 @@
             <%= f.label(:reply_email, "To:", :class => "caption" ) %>
             <div class="fields">
                 <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("to_emails", "", $A(), {frequency: 0.1, acceptNewValues: true});
+                  new Autocompleter.MultiValue("to_emails", "", $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
                 <%- end %>
                 <input type="text" id="to_emails" name="to_emails" />
             </div>
@@ -83,13 +83,13 @@
             </label>
 			<div class="fields" id="reply_cc_emails_id" rel="cc_div" data-button="#add_cc_btn"  data-parent="#cc-form-container">
                 <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email_hash[:cc_emails].map{|item|[item, item]}.to_json unless reply_cc_emails_blank %>), {frequency: 0.1, acceptNewValues: true});
+                  new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email_hash[:cc_emails].map{|item|[item, item]}.to_json unless reply_cc_emails_blank %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 				<%- end %>
                 <input type="text" id="cc_emails" name="cc_emails" />
             </div>
             <div class="fields" id="fwd_cc_emails_id" rel="cc_div" data-button="#add_cc_btn"  data-parent="#cc-form-container"> 
                 <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("fwd_cc_emails", "", $A(), {frequency: 0.1, acceptNewValues: true});
+                  new Autocompleter.MultiValue("fwd_cc_emails", "", $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 				<%- end %>
                 <input type="text" id="fwd_cc_emails" name="fwd_cc_emails" />
             </div>
@@ -102,7 +102,7 @@
 
           <div class="fields">
             <% content_for :onload_script do -%>
-              new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
+              new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 				    <% end %>
             <input type="text" id="bcc_emails" name="bcc_emails" />
           </div>
