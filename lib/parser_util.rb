@@ -14,4 +14,9 @@ module ParserUtil
        		{:name => "", :email => email_text}	
       	end
 	end
+  
+  def parse_to_comma_sep_emails(emails)
+    emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
+  end
+  
 end
