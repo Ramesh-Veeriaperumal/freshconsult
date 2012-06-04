@@ -211,7 +211,6 @@ h4.title { font-size: 1.1em; font-weight: bold; }
 .request_details { margin: -13px -20px 20px -20px; }
 .request_details .ticket_actions { position: absolute; right: 18px; top: 10px; }
 .request_details .ticket_actions .action_buttons { margin-top: 0px; }
-.request_details .ticket_actions .action_buttons a { font-size: 10px; }
 .request_details .ticket_actions .item-right-actions { margin-top: 8px; margin-left: 6px; }
 .request_details .bookmark { display: none; }
 .request_details .requestCnt { position: relative; position: relative; }
