@@ -117,29 +117,29 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-      old_cc_list = @parent.cc_email_hash.nil? ? [] : @parent.cc_email_hash[:cc_emails]
-      old_fwd_email_list =  @parent.cc_email_hash.nil? ? [] : @parent.cc_email_hash[:fwd_emails]
+      cc_email_hash_value = @parent.cc_email_hash # cc_email_hash value can be either nil or hash
+      if cc_email_hash_value.nil?
+        cc_email_hash_value = {:cc_emails => [], :fwd_emails => []}
+      end
       if @item.fwd_email?
+        old_fwd_email_list =  cc_email_hash_value[:fwd_emails]
         fwd_to_array = validate_emails params[:to_emails]
         unless fwd_to_array.nil?
-          fwd_to_array.compact
           fwd_cc_array = validate_emails params[:fwd_cc_emails]
-          fwd_cc_array = fwd_cc_array.try(:compact)
           fwd_bcc_array = validate_emails params[:bcc_emails]  
-          fwd_bcc_array = fwd_bcc_array.try(:compact) 
           fwd_cc_array.try(:concat,fwd_bcc_array) unless fwd_bcc_array.nil?
           fwd_to_array.concat(fwd_cc_array) unless fwd_cc_array.nil?
           fwd_to_array.concat(old_fwd_email_list)
         end
         fwd_to_array ||= []
-        cc_hash = {:cc_emails => old_cc_list , :fwd_emails => fwd_to_array.uniq}
+        cc_email_hash_value[:fwd_emails] = fwd_to_array.uniq
       else
         cc_array = validate_emails params[:cc_emails]
         cc_array = cc_array.compact unless cc_array.nil?
         cc_array ||= []
-        cc_hash = {:cc_emails => cc_array , :fwd_emails => old_fwd_email_list}
+        cc_email_hash_value[:cc_emails] = cc_array.uniq
       end
-      @parent.update_attribute(:cc_email, cc_hash)  
+      @parent.update_attribute(:cc_email, cc_email_hash_value)      
    end
    
   def send_facebook_reply

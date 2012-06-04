@@ -851,17 +851,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
   
   def cc_email_hash
-    if cc_email.is_a?(Array) 
-      {:cc_emails => "#{cc_email}", :fwd_emails => []}
+    if cc_email.is_a?(Array)     
+      {:cc_emails => cc_email, :fwd_emails => [] }
     else
       cc_email
     end
   end
-  
+
   private
   
-    
-    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')

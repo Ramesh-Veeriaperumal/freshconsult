@@ -1776,6 +1776,7 @@ en:
         reauth_required : Reauthorization required
       enable_facebook_page:
         associate: Select the facebook pages you would like to associate to the Helpdesk.
+        no_page_info: Oops!.. Looks like you don't have a Facebook page. <a href="https://www.facebook.com/pages/create.php" target='_blank'>Create one and start supporting!..</a>
       engage_info:
         title: Add your Facebook pages
         engage_customers: Engage your customers, directly on Facebook

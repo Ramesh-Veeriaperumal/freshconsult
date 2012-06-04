@@ -28,7 +28,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
 
-
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def add_requester_filter

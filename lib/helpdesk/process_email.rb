@@ -354,8 +354,9 @@ end
     end    
     
     def from_fwd_emails?(ticket,from_email)
-      unless ticket.cc_email_hash.nil?
-        ticket.cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+      cc_email_hash_value = ticket.cc_email_hash
+      unless cc_email_hash_value.nil?
+        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
       else
         false
       end

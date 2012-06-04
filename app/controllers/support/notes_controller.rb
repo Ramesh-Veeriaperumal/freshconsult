@@ -36,12 +36,17 @@ class Support::NotesController < ApplicationController
   end
   
   def update_cc_list
-    old_fwd_email_list =  @ticket.cc_email_hash.nil? ? [] : @ticket.cc_email_hash[:fwd_emails]
-    cc_array = @ticket.cc_email_hash.nil? ? [] : @ticket.cc_email_hash[:cc_emails]
-    cc_array.push(current_user.email)
-    cc_array.uniq
-    cc_hash = {:cc_emails => cc_array, :fwd_emails => old_fwd_email_list}
-    @ticket.update_attribute(:cc_email, cc_hash)
+    cc_email_hash_value = @ticket.cc_email_hash
+    if cc_email_hash_value.nil?
+      cc_email_hash_value = {:cc_emails => [], :fwd_emails => []}
+    end
+    cc_array = cc_email_hash_value[:cc_emails]
+    if(cc_array.is_a?(Array)) # bug fix for string cc_emails value
+      cc_array.push(current_user.email)
+      cc_array.uniq
+      cc_email_hash_value[:cc_emails] = cc_array
+      @ticket.update_attribute(:cc_email, cc_email_hash_value)
+    end
   end
   
 end
