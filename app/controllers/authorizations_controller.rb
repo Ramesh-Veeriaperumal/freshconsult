@@ -80,15 +80,22 @@ class AuthorizationsController < ApplicationController
     instance_url = access_token.params['instance_url']
     config_params = "{'app_name':'#{app_name}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{instance_url}'}"
     config_params = config_params.gsub("'","\"")
-    app_config = KeyValuePair.new
-    app_config.key = "salesforce_oauth_config"
-    app_config.value = config_params
-    app_config.account_id = account.id
-    app_config.save!
+    key_value_pair = KeyValuePair.find_by_account_id_and_key(account_id, 'salesforce_oauth_config')
+    key_value_pair.delete unless key_value_pair.blank?
+    #KeyValuePair is used to store salesforce configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
+    create_key_value_pair("salesforce_oauth_config", config_params, account.id) 
     #Integrations::Application.install_or_update(app_name, account.id, config_params)
     redirect_url = protocol +  domain + "/integrations/applications/oauth_install/salesforce"
     #redirect_url = "http://localhost:3000/integrations/applications/oauth_install/salesforce"
     redirect_to redirect_url
+  end
+
+  def create_key_value_pair(key, value, account_id)
+      app_config = KeyValuePair.new
+      app_config.key = key
+      app_config.value = value
+      app_config.account_id = account_id
+      app_config.save!  
   end
 
   def create_session
