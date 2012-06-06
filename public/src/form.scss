@@ -41,6 +41,7 @@ textarea[readonly] {
 }     
 
 textarea {
+   height: 100px;
    width: 99%;
    font-family:$blueprint-font-family;
 }
@@ -58,6 +59,10 @@ input.text, input[type=text], textarea{
 	padding:5px;
 	@include border-radius(5px);
 	@include box-shadow(#dfdfdf 1px 1px 2px inset);
+}
+
+.search_bar input[type=text] {
+	@include box-shadow(none);
 }
 
 div.color{
@@ -259,20 +264,12 @@ a.addchoice:hover{
       width:46%;
       input{ width:auto; }
    }
-   li.nestedfield, li.nested_field{ width:96%; padding-bottom:16px; }                             
-   li.nestedfield select, li.nested_field select{ width:95%; max-width:600px; } 
-   li.nested_field{ padding-bottom: 0px; }
-   li.nested_field.level2, li.nested_field.level3{ 
-      padding-top:0;
-   	  label, select{ margin-left:30px;  }
-   }
-   li.nested_field.level3{
-   	  padding-bottom:20px;
-   }
+   li.nestedfield, li.nested_field{ width:46%; }                             
+   li.nestedfield select, li.nested_field select{ @include min-width(35%); }    
 
-   li.dropdown, li.dropdown_blank{
+   /*li.dropdown, li.dropdown_blank{
       select{ margin-bottom:8px; }
-   }
+   }*/
    div.checkbox, label.checkbox{
       padding-bottom:5px;
       padding-left:18px;
@@ -294,23 +291,20 @@ a.addchoice:hover{
 
 	label.overlabel{
 		color:#999999;
-		margin-left:8px;
 		margin-top:0;
 		font-size:14px;	
 	}	 
 	li.checkbox{
 		@include clearfix;
-		padding-top:16px;
-		padding-bottom:16px;		
+		padding-left: 18px;
 		input{
 			float:left;
 			margin-right:6px;
-			margin-top:4px;
 		} 
 		label{
 			position:relative;
-			font-size:0.8em;
-			top:-8px; left:3px;
+			font-size:0.9em;
+			top:-6px; left:1px;
 		}
 	}	
 	
@@ -491,9 +485,30 @@ a.addchoice:hover{
 	}
 }
 
-.threecol-form label{
+li.nested_field{
+   	.level_2, .level_3{ 
+   		border-left:1px dotted #afafaf;
+   		padding-left:10px;
+   		display: none;    	
+   	}
+	select{ @include min-width(90%); }
+}
+
+.rtCnt .rtDetails li.nested_field {
+	.level_2, .level_3{
+		label{ font-weight:normal; }
+	}
+} 
+
+.threecol-form .item{
 	float:left;
-	width:33%
+	width:33%;
+	label{	
+		@include inline-block;
+	}
+	.level{
+		margin-left:20px;
+	}
 }
 
 .ui-form .inline-field{
@@ -573,7 +588,11 @@ a.addchoice:hover{
 					width:320px;	
 				}
 				border-bottom:0;
-				padding:5px 0;
+				padding-top:5px;
+				padding-bottom:5px;
+			}
+			.checkbox{
+				padding-left:24px;
 			}
 		}
 	}
@@ -606,9 +625,8 @@ a.addchoice:hover{
 	}
 	.business_days{
 		label{
-			float:left;
-			font-size:12px;
-			padding-right:8px;
+			@include inline-block;
+			padding-right:20px;
 		}
 	}
 	.holidaylist{
@@ -1026,6 +1044,7 @@ input.search{
     .ctrlHolder{
     	margin-bottom:10px;
     }
+    textarea{ height:auto; }
 }
 
 .dialog-panel{
@@ -1874,12 +1893,17 @@ ul.ui-form .inputs-list{
 .radio input[type="radio"],
 .checkbox input[type="checkbox"] {
   float: left;
-}
-.controls > .radio:first-child,
-.controls > .checkbox:first-child {
-  padding-top: 5px;
+  margin-left: -18px;
 }
 
 .disabled{
 	color:#afafaf;
+}
+
+.required_star{
+	color: #d00;
+	font-size:16px;
+	font-weight:bold;
+	position: relative;
+	top:4px;
 }

@@ -1,6 +1,6 @@
-de: 
+﻿de: 
   meta:
-   language_name: 'German'
+    language_name: 'German'
   enabled: "Aktiviert"
   disabled: "Deaktiviert"
   tip_on: "Klicken zum Aktivieren"
@@ -21,6 +21,7 @@ de:
   reset_my_password: "Eigenes Passwort zurücksetzen "
   assign: "Zuweisen"
   signup: "Registrieren"
+  signup_title: "Bei %{current_portal} anmelden"
   trial_expired_on: "Testversion ist abgelaufen am"
   upgrade_trial: "Verlängern Sie jetzt Ihre Testversion!"
   add_note: "Notiz hinzufügen"
@@ -122,6 +123,85 @@ de:
     popular: "Beliebt"
   payment_info: "Zahlungsdaten"
   admin:
+    surveys:
+     successfully_updated: "Die Umfrage-Einstellungen wurden erfolgreich aktualisiert."
+     index:    
+        title: "Umfrage-Einstellungen"
+        enable_label: "Umfragen zur Kundenzufriedenheit aktivieren"
+        link_text_label: "Umfragelinktext"
+        link_text_input: "Bitte nehmen Sie sich eine Minute Zeit, um Ihre Erfahrungen mit der Kundenbetreuung zu bewerten"
+        link_text_info: "Dieser Text erscheint unterhalb Ihrer Signatur am Ende Ihrer E-Mail an Ihren Kunden"
+        send_while_option1: "Umfragelink senden, nachdem Ticket gelöst wurde. Kunden die Möglichkeit geben, jederzeit Rückmeldungen zu senden"
+        send_while_option2: "Umfragelink in jeder E-Mail senden. Kunden die Möglichkeit geben, jederzeit Rückmeldungen zu senden."
+
+    getting_started:
+        send_mail_content:
+            send_test_mail_info1: "Vergewissern Sie sich, dass Sie in Ihren E-Mail-Einstellungen Weiterleiten an <b> %{to_email} </b> aktiviert haben."
+            send_test_mail_info2: "(Erfahren Sie mehr)"
+            send_test_mail_info3: "Wenn Sie denken, dass bisher alles gut ist, versuchen Sie <b>%{send_test_mail_link} </b>            send_test_mail_link_title: Testmail wird gesendet"
+            send_test_mail_response1: "Es wurde eine Testmail an <b><span id=reply_email_1>%{reply_email}</span></b> gesendet. Wenn alles richtig funktioniert, sehen Sie das  <a href=&quot;/helpdesk/tickets&quot; target=&quot;_blank&quot;>neue Ticket</a> in der Ticket-Ansicht."
+            send_test_mail_confirm_yes: "Ja, ich habe es."
+            send_test_mail_confirm_no: "Nein, ich sehe kein Ticket."
+            send_test_mail_response_yes: "Herzlichen Glückwunsch! Sie haben Ihre Supportmail erfolgreich mit Ihrem Helpdesk-Portal verbunden. Viel Spaß mit dem Support!"
+            send_test_mail_response_no1: "Es scheint ein Problem vorzuliegen ->"
+            send_test_mail_response_no2: "(Erfahren Sie mehr)"
+            send_test_mail_response_no3: "um E-Mails an <b>%{to_email}</b> weiterzuleiten und testen Sie den %{send_test_mail_link} erneut. Falls Sie die E-Mail nicht in Ihrem Postfach empfangen haben, warten Sie bitte einige Minuten, und falls das Problem weiterhin besteht, <a href=&quot;https://support.freshdesk.com/&quot; target=&quot;_blank&quot;>lassen Sie es uns bitte wissen</a>."
+
+        index:
+            config-support-email-address: "Konfigurieren Sie Ihre Support-E-Mail-Adresse"
+            save-and-next: "Speichern und weiter zum nächsten"
+            send_verification_email: "Bestätigungsmail senden"
+            send_invite: "Einladung schicken"
+            title: "Cool! Sieht so aus, als wäre Ihr Helpdesk startklar ..."
+            sub_title: "Hier finden Sie einige hilfreiche Hinweise für die ersten Schritte"
+            email_config_title: "Wie lautet Ihre Support-E-Mail-Adresse?"
+            email_config_sub_title: "Bearbeiten Sie Ihre Supportmails mit Freshdesk!"
+            email_config_field_title: "Ihre E-Mail-Adresse für den Support"
+            agent_title: "Sind Sie einsam?"
+            agent_sub_title: "Laden Sie Ihr Team zu Freshdesk ein"
+            agent_send_invite_label: "Einladungen an Agenten senden"
+            agent_invite_field_placeholder: "Geben Sie die E-Mail-Adressen Ihrer Teammitglieder ein"
+            social_title: "Sozial aktiv werden?"
+            social_sub_title: "Betreuen Sie Ihre Kunden über Twitter und Facebook"
+            social_twitter: "Twitter"
+            social_twitter_add: "Kunden hinzufügen"
+            social_facebook: "Facebook"
+            social_facebook_add: "Eine Seite hinzufügen"
+            rebrand_title: "Individuell gestalten!"
+            rebrand_sub_title: "Gestalten Sie Freshdesk mit Ihrem Logo und Ihren Farben"
+            rebrand_company_label: "Firmenname"
+            rebrand_company_field_placeholder: "Geben Sie Ihren Firmennamen ein"
+            rebrand_paint_title: "Geben Sie Ihrem Helpdesk Farbe"
+            rebrand_color_header: "Kopfzeile"
+            rebrand_color_tabs: "Registerkarten"
+            rebrand_color_background: "Hintergrund"
+            rebrand_submit_label: "Neues Image geben"
+            admin_title: "Alles nach Wunsch?"
+            admin_sub_title: "Vergessen Sie nicht, alle inkludierten Funktionen auf der Registerkarte &quot;%{admin_tab}&quot; anzusehen, die Sie an Ihre Bedürfnisse anpassen können"
+            product_link_label: "Direkt zu Ihrem Helpdesk >>"
+            validating: "Validierung läuft ..."
+            updating: "Wird aktualisiert ..."
+            successfully_updated: "Erfolgreich aktualisiert."
+            successfully_sent: "Erfolgreich gesendet."
+            problem_updating: "Problem beim Aktualisieren, bitte versuchen Sie es erneut."
+            email_invalid: "Ihre E-Mail ist gültig, bitte überprüfen."
+            emails_invalid: "Eine oder mehrere Ihrer E-Mails ist (sind) ungültig."
+            implement_changes: "Änderungen werden implementiert ..."
+            email_sent_success: "E-Mail wurde erfolgreich gesendet."
+            email_send_problem: "Problem beim Senden der E-Mail."
+            sending_test_mail_progress: "Testmail wird gesendet, bitte warten ..."
+            agent_invite_multi_info: "Verwenden Sie Kommata (,), um mehrere E-Mails hinzuzufügen."
+            agent_limit_reached: "Sie haben das Limit Ihres Agenten überschritten."
+            rebrand_header_invalid: "Der Kopfzeilenfarbcode ist ungültig."
+            rebrand_tab_invalid: "Der Registerkartenfarbcode ist ungültig."
+            rebrand_bg_invalid: "Der Hintergrundfarbcode ist ungültig."
+            rebrand_header_empty: "Es ist ein Kopfzeilenfarbcode erforderlich."
+            rebrand_tab_empty: "Es ist ein Registerkartenfarbcode erforderlich."
+            rebrand_bg_empty: "Es ist ein Hintergrundfarbcode erforderlich."
+            agent_email_taken: "Die folgenden E-Mails wurde bereits ausgewählt:<br> %{emails}            agent_email_exist: E-Mail(s) bereits ausgewählt."
+            agent_email_partial: "Teilweise erfolgreich."
+            agent_email_sending: "Einladungen werden gesendet ..."
+            agent_email_required: "Zum Senden der Einladung ist eine Email-ID erforderlich"
     day_passes:
       index:
         title: "Tagespass"
@@ -191,8 +271,8 @@ de:
       portal: 
         select_forum_category: "Forenkategorie auswählen..."
         portal_rebranding: "Rebranding für Ihr Portal"
-        cname_configure_info: "Bevor Sie dieses Feld ausfüllen, gewährleisten Sie bitte, dass ein CNAME DNS-Record in Ihrer DNS-Zonendatei von <strong>help.<b id=&quot;domain_info_name&quot;>mycompanyname</b>.com</strong> auf %{full_domain} zeigt. Der entsprechende Webmaster sollte Ihnen bei Fragen und Problemen zur Seite stehen."
-        select_solution_category: "Forenkategorie auswählen..."
+        cname_configure_info: "Bevor Sie dieses Feld ausfüllen, gewährleisten Sie bitte, dass ein CNAME DNS-Record in Ihrer DNS-Zonendatei von <strong>help.<b id=&quot;domain_info_name&quot;>mycompanyname</b>.com</strong> auf %{full_domain} zeigt. Der entsprechende Webmaster sollte Ihnen bei Fragen und Problemen zur Seite stehen"
+        select_solution_category: "Wählen Sie eine Lölsungskategorie aus ..."
         top_level_solution_info: "Sie können eine Lösungskategorie diesem Produkt zuweisen. Alle anderen Lösungen werden den Kunden nicht angezeigt, wenn diese den Lösungs-Tab im Produktportal aufrufen."
         portal_settings: "Portal-Einstellung"
         portal_name_info: "Der Name wird im Produktportal neben dem Header-Logo angezeigt."
@@ -332,12 +412,13 @@ de:
   flash:
     gmail_gadgets:
       kvp_missing: "Ungültige Authentifizierung.  Bitte öffnen Sie die Mail erneut und versuchen Sie es erneut."
-      user_missing: "Ihre E-Mail ist nicht in Freshdesk vorhanden.  Fügen Sie einen Techniker mit Ihrer E-Mail hinzu und versuchen Sie es erneut."
+      user_missing: "Ihre E-Mail ist nicht in Freshdesk vorhanden.  Fügen Sie einen Agenten mit Ihrer E-Mail hinzu und versuchen Sie es erneut."
       agent_missing: "Sie sind in Freshdesk kein Techniker.  Bitte konvertieren Sie den Benutzer zum Techniker und versuchen Sie es erneut."
       agent_not_active: "Ihre E-Mail wurde möglicherweise in Freshdesk gelöscht oder deaktiviert.  Bitte aktivieren Sie sie und versuchen Sie es erneut."
       viewer_id_not_sent_by_gmail: "Falsche Gmail-Anfrage.  Bitte versuchen Sie es nach der Anmeldung erneut."
       gmail_request_unverified: "Falsche Gmail-Signatur.  Bitte versuchen Sie es nach der Anmeldung erneut."
       unknown_error: "Unbekannter Serverfehler. Bitte wenden Sie sich an den Support."
+      account_not_associated: "Ihr Gmail-Konto ist noch keinem Freshdesk-Konto zugeordnet.  Folgen Sie dem Navigationslink, um es zuerst zuzuordnen."
     daypass:
       success: "%{quantity} Tagespässe wurden erfolgreich zu Ihrem Konto hinzugefügt."
       failed: "Fehler beim Hinzufügen der Tagespässe"
@@ -371,6 +452,9 @@ de:
       authentication_success: "Authentifizierung erfolgreich abgeschlossen"
       no_subdomain: "Diese Subdomain existiert leider nicht. Bitte versuchen Sie mit einem anderen Namen."
     profile: 
+      api_key:
+        reset_success: "Der API-Schlüssel wurde erfolgreich zurückgesetzt."
+        reset_failure: "Fehler beim Zurücksetzen des API-Schlüssels."
       change_password: 
         failure: "Konnte Passwort nicht ändern. Bitte überprüfen Sie das aktuelle."
         success: "Passwort erfolgreich geändert. Bitte melden Sie sich erneut an."
@@ -797,25 +881,28 @@ de:
   save_reply: "Antwort speichern"
   forum_shared:
     topic_vote:
-      unlike: "Nicht mehr gut finden"
+      unlike: "Gefällt mir nicht"
       ideas:
         vote_button: "Ich finde diese Idee gut"
-        vote_info_1: "%{vote} Personen finden diese Idee gut"
-        vote_info_2: "%{vote} Personen finden diese Idee gut"
-        vote_info_include_1: "Sie finden diese Idee gut"
-        vote_info_include_2: "%{vote} Personen \&quot;einschließlich Sie\&quot; finden diese Idee gut"
+        vote_info_1: "<a id='users-voted' href='#' title='See who likes this'> %{vote} Person</a> gefällt diese Idee"
+        vote_info_2: "<a id='users-voted' href='#' title='See who like this'> %{vote} Personen</a> gefällt diese Idee"
+        vote_info_include_1: "Ihnen gefällt diese Idee"
+        vote_info_include_2: "Sie und <a id='users-voted' href='#' title='See who like this'> %{vote} Personen</a> gefällt diese Idee"
+        voted_users_widget_title: "Personen, denen diese Idee gefällt"
       problem:
         vote_button: "Ich bin von diesem Problem betroffen"
-        vote_info_1: "%{vote} Personen haben diese Problem"
-        vote_info_2: "%{vote} Personen haben dieses Problem"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> hat dieses Problem"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} Personen</a> haben dieses Problem"
         vote_info_include_1: "Sie sind von diesem Problem betroffen"
-        vote_info_include_2: "%{vote} Personen \&quot;einschließlich Sie\&quot; haben dieses Problem"
+        vote_info_include_2: "Sie und <a id='users-voted' href='#' title='See who have this'> %{vote} Personen</a> haben dieses Problem"
+        voted_users_widget_title: "Personen, die von diesem Problem betroffen sind"
       howto:
         vote_button: "Ich habe diese Frage"
-        vote_info_1: "%{vote} Personen haben diese Frage"
-        vote_info_2: "%{vote} Personen haben diese Frage"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> hat diese Frage"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} Personen</a> haben diese Frage"
         vote_info_include_1: "Sie haben diese Frage"
-        vote_info_include_2: "%{vote} Personen \&quot;einschließlich Sie\&quot; haben diese Frage"
+        vote_info_include_2: "Sie und <a id='users-voted' href='#' title='See who have this'> %{vote} Personen</a> haben diese Frage"
+        voted_users_widget_title: "Personen, die diese Frage haben"
     post:
       posted_on: "%{user_name} am %{post_date}"
       edit_post: "Beitrag bearbeiten"
@@ -853,6 +940,7 @@ de:
   oneweek: "1 Woche"
   twoweek: "2 Wochen"
   onemonth: "1 Monat"
+  threemonth: "3 Monat"
   problem: "Problem"
   change_plan_info: "Sie können Ihren Tarif jederzeit ändern, Ihr nächstes Rechnungsdatum ist %{date}."
   created_on: "Erstellt am"
@@ -1036,6 +1124,10 @@ de:
     current_password: "Altes Passwort"
     confirm_password: "Passwort bestätigen"
     new_password: "Neues Passwort"
+    api_key:
+      title: "Ihr API-Schlüssel"
+      reset: "API-Schlüssel zurücksetzen"
+      reset_warning: "Sobald der API-Schlüssel zurückgesetzt wurde, funktionieren alle Anwendungen, die den alten Schlüssel verwenden, nicht mehr.  Sind Sie sicher, dass Sie fortfahren möchten?"
   add_to_do: "Zu Aufgaben hinzufügen"
   subject_or_description: "Thema oder Beschreibung"
   premium_details: "Alles aus der &quot;Pro&quot;-Edition und zusätzlich Unterstützung mehrerer Produkte, Unterstützung mehrerer Zeitzonen, Community-, E-Mail- & Telefon-Support"
@@ -1070,6 +1162,7 @@ de:
     new_ticket: "Neues Ticket"
     submit_a_ticket: "Ticket öffnen"
     login: "Anmelden"
+    assumed_text: "Sie sehen an als"
     tabs:
       reports: "Berichte"
       dashboard: "Dashboard"
@@ -1099,6 +1192,8 @@ de:
     modify_agent_template: "E-Mail-Vorlage für Anfragende bearbeiten"
     event: "Ereignis"
     agent_notification: "Benachrichtigung an Techniker"
+    subject: "Betreff"
+    do_not_delete_ticket_id_from_subject: "Um Kundenantworten als Ticketunterhaltungen zu erfassen, sollte der Platzhalter für die Ticket-ID nicht aus der Betreffzeile entfernt werden"
   errors_in_plan_change: "Fehler beim Ändern aufgetreten:"
   formatting_help: "Formatierungshilfe"
   step1: "Schritt 1"
@@ -1217,6 +1312,9 @@ de:
       reply_email_id: "Antwort von folgender E-Mail-Adresse senden"
       send_and_resolve: "Senden und lösen"
       send: "Senden"
+    facebook_form: 	  	
+      send_and_resolve: "Senden und lösen	  	"
+      send: "Senden"
     reported_by: "von %{requester}"
     close_btn: "Schließen"
     close_btn_title: "Ticket schließen"
@@ -1228,7 +1326,7 @@ de:
     type: "Typ"
     execute_scenario: "Scenario ausführen"
     note_form: 
-      private_note: "Dies ist eine private Notiz, zeige Sie dem Anfragenden nicht an"
+      private_note: "Diese Notiz ist privat. Sie wird für den Anforderer nicht angezeigt."
       form_title: "Notiz hinzufügen"
       add_and_resolve: "Hinzufügen und lösen"
       notify_agents: "Techniker benachrichtigen"
@@ -1257,16 +1355,19 @@ de:
     submit_ticket: "Senden "
     stop_monitor_btn_title: "Ticket nicht mehr folgen"
     merge_btn: "Zusammenführen"
-    split_ticket: "Aufteilen"
+    split_ticket: "Teilen"
     tweets: "Tweets"
     agent_notify: "hat eine Notiz hinzugefügt und möchte, dass Sie sie sich ansehen"
     note_content: "Inhalt der Notiz"
     ticket_url: "Ticket-URL"
-  recent_activity: "Neueste Aktivitäten"
+    integrations:      
+      jira: 
+        tooltip: "Zugeordnetes JIRA-Issue ansehen"
+  recent_activity: "Neueste Aktivität"
   recent_activities: "Letzte Aktivitäten"
   forgot_password: "Passwort vergessen"
   change_plan: "Edition ändern"
-  feedbackwidget_embed_code_intro: "Kopieren Sie den Code unterhalb und fügen ihn in Ihrem Website-Template an der gewünschten Stelle vor dem </body>-Tag ein, um das Freshdesk-Widget an der entsprechende Stelle zu platzieren."
+  feedbackwidget_embed_code_intro: "Kopieren Sie den Code unterhalb und fügen ihn in Ihrem Website-Template an der gewünschten Stelle vor dem &lt;/body&gt;-Tag ein, um das Freshdesk-Widget an der entsprechende Stelle zu platzieren."
   import_forum: "Foren"
   title: "Titel"
   new_ticket_created: "Neues Ticket erstellt"
@@ -1378,7 +1479,7 @@ de:
   message: "Nachricht"
   ticket_was: "Ticket war"
   tickets_were: "Tickets waren"
-  undo: "Rückgängig machen"
+  undo: "Rückgängig"
   total: "Insgesamt"
   helpdesk:
     time_sheets:
@@ -1428,6 +1529,10 @@ de:
         removebcc: "Bcc entfernen"
       tweet_form:
         title: "Antworten an %{user}"
+      facebook_form:  	
+        title: "Antworten an %{user}"
+      history:
+        recent_item: "Neueste Elemente"
     dashboard:
       index:
         todo_title: "Aufgaben"
@@ -1595,6 +1700,8 @@ de:
     facebook_pages:
       index:
         title: "Facebook-Seiten"
+        reauthorize: "Erneut autorisieren"
+        reauth_required : "Erneute Autorisierung erforderlich"
       enable_facebook_page:
         associate: "Wählen Sie die Facebook-Seiten aus, die Sie Helpdesk zuordnen möchten."
       engage_info:
@@ -1607,10 +1714,19 @@ de:
         visitor_posts_info: "Freshdesk wandelt alle Besucherbeiträge auf dieser Facebook-Seite in Tickets um."
         company_posts: "Import von <strong>&quot;Unternehmensbeiträgen&quot;</strong> als Ticket"
         company_posts_info: "Freshdesk wandelt alle Unternehmensbeiträge auf dieser Facebook-Seite in Tickets um."
-        product: "Produkt          "
+        product: "Produkt     "
+        message_thread_time: "Nachrichtenthreadzeit"
+        message_thread_time_info: "Maximale Zeit, für die Nachrichten von demselben Benutzer als Teil des Threads betrachtet werden  "
+        direct_messages: "Import von <strong>&quot;Direktnachrichten&quot;</strong> als Ticket"
+        direct_messages_info: "Freshbook konvertiert alle Direktnachrichten auf dieser Facebook-Seite zu Tickets. Bei der ersten Aktivierung müssen Sie sich möglicherweise <a href='{{reauth_url}}'>bei Facebook erneut autorisieren.</a>"
     twitter_handles:
       index:
         title: "Twitter-Konten"
+      signin_info:
+        title: "Anmelden mit Twitter"
+        engage_customers: "Binden Sie Ihre Kunden direkt in Twitter ein"
+        associate_account: "Ordnen Sie <b> %{product_name} </b> ein Twitter-Konto zu und antworten Sie Ihren Kunden direkt aus Freshdesk mit einem Tweet oder einer Nachricht."
+        add_twitter: "Twitter-Konto hinzufügen"
   all_due: "Alle "
   due_today: "Heute"
   due_tomo: "Morgen"
@@ -1659,9 +1775,14 @@ de:
         help: "Hilfe"
   settings: "Einstellungen        "
   updated_on: "%{user_name} aktualisiert am%{note_date}"
+  mobile:
+    home:
+      remember: "Meine Angaben speichern"
+      login: "Anmelden"
   integrations:
     capsule_crm:
       label: "Capsule CRM"
+      helptext: "<h4>Verknüpfung von Capsule zu Freshdesk</h4><p><br/>Sie können in Capsule CRM eine Verknüpfung erstellen, um die Tickets des Kontakts in Freshdesk anzusehen.</p> <p>Gehen Sie dazu zu Ihren <br /><b>Einstellungen -> Benutzerdefinierte Felder -> Für Personen & Unternehmen</b></p><p> Klicken Sie anschließend auf \&quot;Neu hinzufügen...\&quot; und wählen Sie <b>\&quot;Generierter Link\&quot;</b></p> <p>Kopieren Sie die URl genau so, wie unten gezeigt und fügen Sie sie in Capsule CRM als Linkdefinition ein: <span class=\&quot;info-code\&quot;>http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
     capsule:
       label: "Capsule CRM"
       desc: "Sie können Kontaktinformationen von Capsule CRM in Freshdesk ansehen. Diese Informationen sind über die Ticketdetailseite und die Kontaktdetailseite verfügbar."
@@ -1676,6 +1797,7 @@ de:
     freshbooks:
       label: "Freshbooks"
       desc: "Sie können für Tickets aufgewendete Zeit in Ihren Freshbooks-Projekten und -Aufgaben erfassen."
+      helptext: "<h4>Hilfe zur Freshbooks-Integration</h4><p><br/>Um Freshbooks mit Freshdesk zu integrieren, benötigen Sie zunächst die Freshbooks-API und den Authentifizierungstoken. <br/><br/>Melden Sie sich bei Ihrem Freshbooks-Konto an, klicken Sie auf die Registerkarte <b>Personen</b> und wechseln Sie zum Bereich <b>Mitarbeiter und Lieferanten</b>. Klicken Sie im Administrationsbereich auf <b>Bearbeiten</b>.  Hier finden Sei Ihre API-URL und den Authentifizierungstoken.<br/><br/>Klicken Sie in Freshdesk auf ein Ticket und wechseln Sie zur Registerkarte Zeittabelle.  Nun können Sie Ihren Zeitverfolgungseintrag in Freshdesk hinzufügen."
       form:
         freshbooks_note: "Notizentext"
         freshbooks_note_info: "Dieser Text wird an das Ende der Notiz angehängt, zusammen mit dem Zeitaufwandsprotokoll."
@@ -1687,6 +1809,7 @@ de:
     harvest:
       label: "Harvest"
       desc: "Sie können für Tickets aufgewendete Zeit in Ihren Harvest-Projekten und -Aufgaben erfassen."
+      helptext: "<h4>Hilfe zur Harvest-Integration</h4><p><br/>Um Harvest mit Freshdesk zu integrieren, geben Sie Ihren <b>Domainnamen</b> ein und klicken Sie auf Aktivieren.<br/><br/>Klicken sie auf ein Ticket und wechseln Sie zur Registerkarte <b>Zeittabelle</b>.  Anschließend können Sie zur Anmeldung Ihren <b>Benutzernamen</b> und Ihr <b>Kennwort</b> für Harvest eingeben. Nun können Sie Ihren Zeitverfolgungseintrag in Harvest hinzufügen.<br/><br/>Hinweis: Wenn Sie auf <b>Meine Angaben speichern</b> klicken, müssen Sie Ihre Harvest-Anmeldedaten nicht jedes Mal eingeben."
       form:
         domain: "Domäne"
         domain_info: "Geben Sie die Domäne allein ein, ohne HTTPS. Z. B.: example.harvestapp.com"
@@ -1694,12 +1817,9 @@ de:
         harvest_note_info: "Dieser Text wird an das Ende der Notiz angehängt, zusammen mit dem Zeitaufwandsprotokoll."
         widget_title: "Widget-Titel"
     google_contacts:
-      label: "Google Kontakte"
+      label: "Google-Kontakte synchronisieren"
       desc: "Regelmäßiges Synchronisieren der Kontakte zwischen Google und Freshdesk."
-      overwrite_local: "Exportieren der Freshdesk-Kontakte und Updates zu den Google-Kontakten"
-      overwrite_remote: "Importieren der Google-Kontakte und Updates zu den Freshdesk-Kontakten"
-      merge_local: "Zusammenführen der Freshdesk- und Google-Kontakte (Freshdesk-Vorrang)"
-      merge_remote: "Zusammenführen der Google- und Freshdesk-Kontakte (Google-Vorrang)"
+      helptext: "<h4>Konfigurationshilfe zum Synchronisieren der Google-Kontakte</h4><p><br/> Klicken Sie auf <b>‘Neues Konto synchronisieren’</b>, um ein neues Google-Konto zum Synchronisieren hinzuzufügen. Geben Sie den Zugriff für Freshdesk auf die Google-Kontakte frei, wenn Sie dazu aufgefordert werden (Geben Sie Ihren Google-Benutzernamen und Ihre Kennwort ein).<br/><br/>Sie können ein Konto löschen, wenn Sie nicht mehr mit diesem Konto synchronisieren möchten.<br/><br/><b>Hinweis:</b> Es wird empfohlen, dass Sie eine Sicherungskopie Ihrer Google-Kontakte anlegen, bevor Sie mit der Synchronisierung beginnen."
       import_success: "Google-Kontakte erfolgreich importiert."
       fetch_problem: "Problem beim Abrufen der Google-Kontakte."
       import: "Importieren"
@@ -1713,31 +1833,40 @@ de:
       MERGE_LOCAL: "Zusammenführen der Freshdesk- und Google-Kontakte (Freshdesk-Vorrang)"
       MERGE_REMOTE: "Zusammenführen der Google- und Freshdesk-Kontakte (Google-Vorrang)"
       MERGE_LATEST: "Zusammenführen der Freshdesk- und Google-Kontakte (Letzte Aktualisierungen haben Vorrang)"
-      import_later_success: "Import der Google-Kontakte wurde erfolgreich gestartet  Nach Abschluss des Imports erhalten Sie eine E-Mail-Benachrichtigung an %{email}."
+      import_later_success: "Import der Google-Kontakte wurde erfolgreich gestartet  Sie können den Importstatus auf der Einstellungsseite überprüfen."
       import_success_no_stats: "Google-Kontakte erfolgreich importiert."
       import_success: "Google-Kontakte erfolgreich importiert.Status: %{added} hinzugefügt, %{updated} aktualisiert und %{deleted} gelöscht."
       fetch_problem: "Problem beim Abrufen der Google-Kontakte."
       import_problem: "Problem beim Import der Google-Kontakte."
       import: "Importieren"
-      install: "Aktivieren"
+      install: "Importieren und aktivieren"
       edit_app: "Aktualisieren"
-      add_more: "Autorisieren"
+      add_more: "Neues Konto synchronisieren"
       edit: "Bearbeiten"
-      already_exist: "Es wurde bereits ein E-Mail-Konto konfiguriert. Es können keine weiteren Konten hinzugefügt werden."
+      already_exist: "Diese E-Mail wurde bereits konfiguriert. Sie können dieselbe E-Mail nicht erneut hinzufügen."
       delete: "Löschen"
-      internal_error: "Es ist ein interner Fehler aufgetreten. Bitte wenden Sie sich an den Support."
+      internal_error: "Es ist ein interner Fehler aufgetreten.  Bitte wenden Sie sich an den Support."
       account_not_configured: "Das Google-Konto ist nicht richtig konfiguriert. Bitte versuchen Sie es erneut."
       overwrite_existing_user: "Bestehende Kontaktdetails in Freshdesk überschreiben"
-      enable_integration: "Nach dem Import automatisch Synchronisierung starten (einmal pro Stunde)"
-      name: "Kontoname"
+      enable_integration: "Automatische Synchronisierung starten, sobald der Import abgeschlossen ist (ein Mal täglich)."
+      account: "Konto"
       email: "E-Mail"
-      group: "Gruppe zum Import"
-      tag: "Tag zum Hinzufügen/Export"
+      group: "Synchronisierungsgruppenname"
+      tag: "Synchronisierungseinstellungen"
+      tag_label: "Synchronisierungstag"
       sync_type: "Wie funktioniert die Synchronisierung?"
       last_sync_time: "Letzte Synchronisierungszeit"
       last_sync_status: "Letzter Synchronisierungsstatus"
-      not_yet_synced: "Die Synchronisierung wurde noch nicht gestartet."
+      last_sync: "Letzte Synchronisierung"
+      import_complete: "Einmaliger Import abgeschlossen."
+      not_yet_synced: "Die Synchronisierung wurde nicht gestartet."
+      syncing_in_progress: "Synchronisierung läuft"
       no_status: "N/A"
+      info1: "Das Verwenden desselben Synchronisierungstags für mehrere Google-Konten ermöglicht Ihnen das Teilen der Freshdesk-Kontakte mit allen Konten.  Wenn Sie keine Kontakte in Google synchronisieren möchten, können Sie es leer lassen."
+      sync_group_info: "Es wird eine neue Kontaktgruppe <strong>%{group_name}</strong> in Ihrem Gmail-Konto zur Synchronisierung von Kontakten erstellt."
+      edit_helptext: "&quot;<h4>Synchronisierungshilfe für Google-Kontakte</h4><p><br/> <b>Wählen Sie Gruppen zum Import aus (optional)</b> <br/> Zugleich mit der Konfiguration der Google-Synchronisierung können Sie optional Kontakte aus den hier aufgelisteten bestehenden Gruppen importieren. Bitte wählen Sie die Gruppen aus, aus denen Sie Kontakte in Freshdesk importieren möchten.<br/><br/> "
+
+
       sync_status:
         added: "hinzugefügt"
         modified: "geändert"
@@ -1747,29 +1876,77 @@ de:
       edit_form:
         install_title: "Synchronisierungseinstellungen der Google-Kontakte"
         import_title: "Importeinstellungen der Google-Kontakte"
-        all_contacts: "Alle Gruppen/Kontakte"
-        mail_box_detail: "Postfachdetails"
-        choose_group_title: "Auswahl der Gruppe zur Synchronisierung und des Tags zum Hinzufügen"
+        mail_box_detail: "Synchronisieren mit"
+        import_group: "Wählen Sie Gruppen zum Import aus (optional)"
         edit_app_title: "Synchronisierungseinstellungen der Google-Kontakte bearbeiten"
       form:
         sync_type: "Synchronisierungstyp"
         sync_type_info: "Wie möchten Sie die Kontakte zwischen Google und Freshdesk synchronisieren?"
         account_settings: "&quot;&quot;"
-        account_settings_info: "Sie können sich hier das konfigurierte Google-Konto, seine Einstellungen und seinen Synchronisierungsstatus ansehen."
-        account_not_configured: "<br/>Die Google-Kontoeinstellungen sind noch nicht konfiguriert.  Klicken Sie auf %{action} und verbinden Sie sich zum Konfigurieren mit Google.<br/><br/>"
+        account_settings_info: "&quot;&quot;"
+        account_not_configured: "<br/>Die Google-Kontoeinstellungen sind noch nicht konfiguriert. Klicken Sie auf '%{action}' zum Konfigurieren des neuen Kontos mit Google.<br/><br/>"
       update_action:
-        success: "Google-Konto wurden erfolgreich aktualisiert."
+        success: "Google-Konto wurde erfolgreich hinzugefügt."
+        also:   "Ebenfalls "
         error: "Fehler beim Aktualisieren des Google-Kontos."
       delete_action:
         success: "Google-Konto wurde erfolgreich gelöscht."
         error: "Fehler beim Löschen des Google-Kontos."
+    jira:
+      label: "Atlassian JIRA"
+      desc: "Konvertieren Sie Tickets zu Issues, die in JIRA verfolgt werden können."
+      helptext: "&quot;<h4>Hilfe zur JIRA-Integration</h4><p><br/>Um JIRA mit Freshdesk zu integrieren, geben Sie Ihren JIRA-Adminstratornamen und das Kennwort ein. Die Integration unterstützt sowohl die On-Demand- wie auch die On-Premise-Variante, von JIRA 4.x bis zur neuesten Version, JIRA 5.<br/><br/>"
+
+
+
+      form:
+        domain: "Domäne"
+        domain_info: "Geben Sie eine vollständige JIRA-Konto-URL mit HTTPS/HTTP ein. Z. B.: https://beispiel.atlassian.net. <br /><span class='italics'> Hinweis: Die On-Premise-Varianten von JIRA sollten über eine Internetverbindung verfügen. </span>"
+        jira_note: "Beschreibungstext"
+        jira_note_info: "Dieser Text wird der Issue-Beschreibung in JIRA hinzugefügt."
+        widget_title: "Widget-Titel"
+        username: "Benutzername"
+        password: "Kennwort"
+    google_analytics:
+      label: "Google Analytik"
+      desc: "Überwachen Sie die Besucherstatistiken auf Ihrem Supportportal mit Hilfe von Google Analytics"
+      helptext: "&quot;<h4>Hilfe zur Google Analytics-Integration</h4><p><br/>Um Google Analytics mit Freshdesk zu integrieren ist es empfehlenswert, dass Sie in dem Google Analytics-Konto Ihres Unternehmens eine spezielle Eigenschaft erstellen."
+
+      portal: "Portal"
+      account_number: "Geben Sie Ihre Verfolgungs-ID ein"
+      inline_help: "Geben Sie die Verfolgungs-ID ein für "
+      domain: "Domäne"
+      form:
+        google_analytics_settings_info: "&quot;&quot;"
+        google_analytics_settings: "&quot;&quot;"
+        tracking_id: "Verfolgungs-ID für "
+        tracking_id_example: "Z. B.: UA-123456-1"
+        copy_settings: "Die oben stehende Verfolgungs-ID für alle Portale verwenden"
+    sugarcrm:
+      label: "SugarCRM"
+      helptext: "Sie können auf den Ticket- und Kontaktseiten von Freshdesk auf SugarCRM-Kontaktinformationen zugreifen. <br /><br /> Die folgenden Datenpunkte werden verfügbar sein - Name, Titel, Unternehmen, Abteilung, Kontaktadresse, Telefon- und Mobiltelefonnummern. <br /><br />Bitte beachten Sie, dass die Suchfunktion auf der E-Mail-Adresse basiert. Wenn mehrere Kontakte dieselbe E-Mail-Adresse haben, werden alle als Liste angezeigt."
+      desc: "Sie können Kontaktinformationen von SugarCRM in Freshdesk ansehen."
+      form:
+        domain: "URL des SugarCRM-Kontos"
+        domain_info: "Wenn Ihre SugarCRM-URL zum Beispiel <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> ist,geben Sie <strong> http://mycompany.xyz/sugar ein </strong><br /><br /> Hinweis: Die On-Premise-Varianten von SugarCRM sollten über eine Internetverbindung verfügen. </span>"
+        widget_title: "Widget-Titel"
+        username: "Benutzername"
+        password: "Kennwort"
+    workflow_max:
+      label: "WorkflowMax"
+      desc: "Sie können für Tickets aufgewendete Zeit in Ihren WorkflowMax-Jobs und -Aufgaben erfassen."
+      helptext: "##### Fügen Sie hier den Hilfetext ein #####"
+      form:
+        workflow_max_note: "Notizentext zum Anhängen"
+        workflow_max_note_info: "Dieser Text wird an das Ende der Notiz angehängt, zusammen mit dem Zeitaufwandsprotokoll."
+        api_key: "API-Schlüssel"
+        api_key_info: "Fordern Sie den API-Schlüssel für WorkflowMax-Support an und kopieren Sie ihn hierher."
+        account_key: "Kontoschlüssel"
+        account_key_info: "Fordern Sie den Kontoschlüssel für WorkflowMax-Support an und kopieren Sie ihn hierher."
+        widget_title: "Widget-Titel"
   widgets:
     contact_widget:
       description: "Einen Kontakt oder eine Option anzeigen, um den Kontakt in Capsule hinzuzufügen."
-  capsule_crm_helptext: "<h4>Verknüpfung von Capsule zu Freshdesk</h4><p>Sie können in Capsule CRM eine Verknüpfung erstellen, um die Tickets des Kontakts in Freshdesk anzusehen.</p> <p>Gehen Sie dazu zu Ihren <br /><b>Einstellungen -> Benutzerdefinierte Felder -> Für Personen & Unternehmen</b></p><p> Klicken Sie anschließend auf \&quot;Neu hinzufügen...\&quot; und wählen Sie <b>\&quot;Generierter Link\&quot;</b></p> <p>Kopieren Sie die URl genau so, wie unten gezeigt und fügen Sie sie in Capsule CRM als Linkdefinition ein: <span class=\&quot;info-code\&quot;>http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
-  freshbooks_helptext: "<h4>Hilfe zur Freshbooks-Integration</h4><p><br/>Um Freshbooks mit Freshdesk zu integrieren, benötigen Sie zunächst die Freshbooks-API und den Authentifizierungstoken. <br/><br/>Melden Sie sich bei Ihrem Freshbooks-Konto an, klicken Sie auf die Registerkarte <b>Personen</b> und wechseln Sie zum Bereich <b>Mitarbeiter und Lieferanten</b>. Klicken Sie im Administrationsbereich auf <b>Bearbeiten</b>.  Hier finden Sei Ihre API-URL und den Authentifizierungstoken.<br/><br/>Klicken Sie in Freshdesk auf ein Ticket und wechseln Sie zur Registerkarte Zeittabelle.  Nun können Sie Ihren Zeitverfolgungseintrag in Freshdesk hinzufügen."
-  harvest_helptext: "<h4>Hilfe zur Harvest-Integration</h4><p><br/>Um Harvest mit Freshdesk zu integrieren, geben Sie Ihren <b>Domainnamen</b> ein und klicken Sie auf Aktivieren.<br/><br/>Klicken sie auf ein Ticket und wechseln Sie zur Registerkarte <b>Zeittabelle</b>.  Anschließend können Sie zur Anmeldung Ihren <b>Benutzernamen</b> und Ihr <b>Kennwort</b> für Harvest eingeben. Nun können Sie Ihren Zeitverfolgungseintrag in Harvest hinzufügen.<br/><br/>Hinweis: Wenn Sie auf <b>Meine Angaben speichern</b> klicken, müssen Sie Ihre Harvest-Anmeldedaten nicht jedes Mal eingeben."
-
   reorder: "Sortieren"
   reports:
       tab_heading: "Berichte"
@@ -1786,7 +1963,19 @@ de:
       timeline_chart_title: "Erhaltene vs. gelöste Tickets"
       customer_activity_title: "Aktivitätsbericht"
       helpdesk_activity_title: "Helpdesk-Aktivitätsbericht"
+      summary_report:
+        back_to_reports: "Zurück zu den Berichten"
+        show_report: "Bericht anzeigen"
+        tickets_resolved: "Tickets gelöst"
+        on_time_resolution: "Zeitgerechte Lösung"
+        on_time_resolution_percent: "RZL %"
+        fcr_count: "Erstkontaktlösung"
+        fcr_percent: "EKL %"
+        avg_1st_response_time: "Durchschnittliche Erstantwortzeit"
+        helptext: "Die in dem Bericht berechneten Statistiken beziehen sich auf die Anzahl der gelösten Tickets. <br /> Im Rahmen von von SLAs gelöste Tickets werden unter &quot;Zeitgerechte Lösung&quot; zusammengefasst. <br /> Die Spalte &quot;Erstkontaktlösung&quot; zeigt Tickets, die im Rahmen der Erstantwort gelöst wurden.<br /> Die &quot;Durchschnittliche Erstantwortzeit&quot; zeigt die Zeit an, die zwischen der Erstellung des Tickets und der ersten Antwort eines Agenten vergangen ist."
       date_ranges:
+        today: "Heute"
+        yesterday: "Gestern"
         last_7_days: "Letzte 7 Tage"
         last_30_days: "Letzte 30 Tage"
         last_90_days: "Letzte 90 Tage"
@@ -1794,6 +1983,7 @@ de:
       summary:
         title: "Ticketübersicht"
         total_tickets: "Tickets gesamt"
+        received_tickets: "Erhaltene Tickets"
         open_tickets: "Offene Tickets"
         pending_tickets : "Offene Tickets"
         resolved_tickets: "Gelöste Tickets"
@@ -1805,6 +1995,9 @@ de:
           select_customer: "Kunden wählen"
           select_agent: "Techniker wählen"
           select_billable: "Abrechenbar/Nicht abrechenbar wählen"
+          view_between: "Bericht anzeigen zwischen"
+          from: "Von"
+          to: "Bis"
   delete_the_ticket: "Ticket löschen"
   mark_as_spam: "Als Spam markieren"
   bulk_update: "Bulk-Update"
@@ -1830,9 +2023,22 @@ de:
   category_edit_not_allowed: "Diese Kategorie kann nicht geändert werden"
   folder_edit_not_allowed: "Dieser Ordner kann nicht geändert werden"
   never: "Nie"
+  always: "Immer"
   maximum_agents_admin_msg: "Sie haben die maximale Anzahl von Vollzeittechnikern für Ihr Abonnement erreicht. Sie müssen einen vorhandenen Vollzeittechniker löschen oder <a href='/account/plans'>für Ihr Konto ein Upgrade durchführen</a>, um einen neuen Techniker zu erstellen. Sollten Sie nur gelegentlich einen Techniker benötigen, können Sie unten einen hinzufügen"
   maximum_agents_msg: "Sie haben die maximale Anzahl von Technikern für Ihr Abonnement erreicht. Sie müssen einen vorhandenen Techniker löschen oder sich an Ihren Kontoadministrator wenden, um für Ihr Konto ein Upgrade durchzuführen. Sollten Sie nur gelegentlich einen Techniker benötigen, können Sie unten einen hinzufügen"
   no_date_to_display: "Keine Daten zur Anzeige vorhanden"
   email_command_delimeter_length_error_msg:  "Bitte geben Sie mindestens drei Zeichen als Trennzeichen ein."
   email_command_del_info_data: "Tipp: Wählen Sie eine eindeutige Kombination aus mindestens drei Zeichen als Trennzeichen (Sonderzeichen sind empfehlenswert), die keinen Konflikt zu regulären E-Mail-Antworten darstellt."
-
+  latest_ticket: "neue Aktualisierung"
+  latest_tickets: "neue Aktualisierungen"
+  search:
+    no_results_msg: "Keine Ergebnisse gefunden"
+  assumed_identity_msg: "Sie haben Ihre Identität als %{user_name} angenommen."
+  assuming_identity_not_allowed_msg: "Sie sind nicht berechtigt, die Identität dieses Benutzers anzunehmen."
+  identity_reverted_msg: "Sie haben wieder Ihre eigene Identität angenommen."
+  identity_reverted_error_msg: "Es tut uns leid, wir können Ihren ursprünglichen Benutzer nicht finden."
+  assume_identity_button: "Identität annehmen"
+  revert_identity_link_msg: "Identität wiederherstellen"
+  swith_agent_msg: "Zu einem anderen Agenten wechseln"
+  switch_heading: "Agenten wechseln"
+  email_notifications_agent_selection_msg: "Wählen Sie die zu benachrichtigenden Agenten aus"

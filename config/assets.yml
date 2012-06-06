@@ -57,7 +57,8 @@ stylesheets:
     - public/stylesheets/subscription.css
   
   satisfaction:
-    - public/stylesheets/satisfaction.css      
+    - public/stylesheets/reports.css
+    - public/stylesheets/satisfaction.css
   	
 javascripts:
   defaults:

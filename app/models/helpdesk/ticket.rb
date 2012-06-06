@@ -26,7 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity, :support_score_on_create
-  before_update :cache_old_model, :update_dueby 
+  before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
       :support_score_on_update, :stop_timesheet_timers
   
@@ -166,6 +166,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
   named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+
+  named_scope :with_tag_names, lambda { |tag_names| {
+            :joins => :tags,
+            :select => "helpdesk_tickets.id", 
+            :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
+  }            
   
   def self.agent_permission user
     
@@ -542,7 +548,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_s
+    begin
     "#{subject} (##{display_id})"
+    rescue ActiveRecord::MissingAttributeError
+      "#{id}"
+    end
   end
   
   def self.search_display(ticket)
@@ -845,17 +855,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
   
   def cc_email_hash
-    if cc_email.is_a?(Array) 
-      {:cc_emails => "#{cc_email}", :fwd_emails => []}
+    if cc_email.is_a?(Array)     
+      {:cc_emails => cc_email, :fwd_emails => [] }
     else
       cc_email
     end
   end
-  
+
   private
   
-    
-    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')

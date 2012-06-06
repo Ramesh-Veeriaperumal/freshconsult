@@ -179,14 +179,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket = check_for_auto_responders(ticket)
-      
-      process_email_commands(ticket, user, email_config) if (user.agent? && !user.deleted?)
+      ticket = check_for_auto_responders(ticket)      
 
       begin
-        email_cmds_regex = get_email_cmd_regex(account)
-        ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
-        ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+        if (user.agent? && !user.deleted?)
+          process_email_commands(ticket, user, email_config)
+          email_cmds_regex = get_email_cmd_regex(account)
+          ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
+          ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+        end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
@@ -237,13 +238,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
-        )
-        process_email_commands(ticket, user, ticket.email_config, note) if user.agent?
+        )       
         
         begin
-          email_cmds_regex = get_email_cmd_regex(ticket.account)
-          note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
-          note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          if (user.agent? && !user.deleted?)
+            process_email_commands(ticket, user, ticket.email_config, note)
+            email_cmds_regex = get_email_cmd_regex(ticket.account)
+            note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
+            note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          end
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
         end
@@ -351,8 +354,9 @@ end
     end    
     
     def from_fwd_emails?(ticket,from_email)
-      unless ticket.cc_email_hash.nil?
-        ticket.cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+      cc_email_hash_value = ticket.cc_email_hash
+      unless cc_email_hash_value.nil?
+        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
       else
         false
       end

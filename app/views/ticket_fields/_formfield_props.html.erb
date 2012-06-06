@@ -1,11 +1,11 @@
-<div id="CustomFieldsDialog" style="visibility:hidden;position:absolute;left:0;width:100%;">
+<div id="CustomFieldsDialog" style="visibility:hidden;position:absolute;left:0; top:0; width:100%;">
 <div class="dialog-panel sidepanel">
   <a href="javascript:void(0)" id="close_button" class="close"></a>
-  <h2 class="title" id="dialog-title">Field properties</h2>
+  <h2 class="title" id="dialog-title"><%= t(".form_title") %></h2>
   <form class="ui-dialog-form" id="TicketProperties" action="#">
   	<input type="hidden" name="customtype" value="" />
     <div class="ctrlHolder">
-      <h3 class="title">Behavior</h3>
+      <h3 class="title"><%=t(".behavior")%></h3>
       <div class="row-fluid">
         <div class="span6" id="AgentMandatory">
           <%= content_tag(:label, t(".for_agents"), :class => "caption") %>
@@ -37,7 +37,7 @@
       </div>
     </div>    
     <div class="ctrlHolder" id="FieldLabels">
-      <h3 class="title">Label</h3>
+      <h3 class="title"><%= t(".label") %></h3>
       <div class="row-fluid">
         <fieldset class="span6">
       	  <%= content_tag(:label, t(".for_agents"), :class => "caption") %>
@@ -50,22 +50,22 @@
       </div>
     </div>
     <div class="ctrlHolder" id="NestedFieldLabels">
-      <h3 class="title">Nested field labels</h3>
+      <h3 class="title"><%= t(".nested_label") %></h3>
       <div class="row-fluid">
         <fieldset class="span4">
-          <%= content_tag(:label, "Level 1", :class => "caption") %>
-          <input type="text" placeholder="Field label for agents *" rel="companion" data-companion="#customerslabel" name="agentlabel" value="" id="agentlevel1label" data-level="1" />
-          <input type="text" placeholder="Field label for customers *" id="customerslabel" name="customerslabel" value="" />
+          <%= content_tag(:label, t(".level1"), :class => "caption") %>
+          <input type="text" placeholder="<%= t('.field_label_agents') %> *" rel="companion" data-companion="#customerslabel" name="agentlabel" value="" id="agentlevel1label" data-level="1" />
+          <input type="text" placeholder="<%= t('.field_label_customer') %> *" id="customerslabel" name="customerslabel" value="" />
         </fieldset>
         <fieldset class="span4">
-          <%= content_tag(:label, "Level 2", :class => "caption") %>
-          <input type="text" placeholder="Field label for agents *" rel="companion" data-companion="#customerslevel2label" id="agentlevel2label" name="agentlevel2label" value="" data-level="2" />
-        <input type="text" placeholder="Field label for customers *" id="customerslevel2label" name="customerslevel2label" value="" />
+          <%= content_tag(:label, t(".level2"), :class => "caption") %>
+          <input type="text" placeholder="<%= t('.field_label_agents') %> *" rel="companion" data-companion="#customerslevel2label" id="agentlevel2label" name="agentlevel2label" value="" data-level="2" />
+        <input type="text" placeholder="<%= t('.field_label_customer') %> *" id="customerslevel2label" name="customerslevel2label" value="" />
         </fieldset>
         <fieldset class="span4">
-          <%= content_tag(:label, "Level 3", :class => "caption") %>
-          <input type="text" placeholder="Field label for agents" rel="companion" data-companion="#customerslevel3label" id="agentlevel3label" name="agentlevel3label" value="" data-level="3" />
-          <input type="text" placeholder="Field label for customers" id="customerslevel3label" name="customerslevel3label" value="" />
+          <%= content_tag(:label, t(".level3"), :class => "caption") %>
+          <input type="text" placeholder="<%= t('.field_label_agents') %>" rel="companion" data-companion="#customerslevel3label" id="agentlevel3label" name="agentlevel3label" value="" data-level="3" />
+          <input type="text" placeholder="<%= t('.field_label_customer') %>" id="customerslevel3label" name="customerslevel3label" value="" />
         </fieldset>
       </div>
     </div>
@@ -77,19 +77,18 @@
     </div> 
     <div class="ctrlHolder" id="nestedContainer">	    
 			<div id="nestedEdit" class="hide">
-        <a href="#" id="nestedDoneEdit" class="primary button-link floatr">Preview</a>
-        <%= content_tag(:h3, "Dropdown items - edit view", :class => "title") %>          
+        <a href="#" id="nestedDoneEdit" class="primary button-link floatr"><%= t("preview") %></a>
+        <%= content_tag(:h3, t(".dropdown_items_edit"), :class => "title") %>          
         <div class="alert-message">
-            Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a href="#">Learn more</a> 
+          <%= t(".nestedfield_helptext") %>
         </div>
 	      <textarea id="nestedTextarea" rows="6" name="nestedTextarea" class="paragraph" rel="nestedfield"></textarea>
-        <label id="nestedTextarea-error" class="error hide">You need atleast one category & sub-category</label>	      
 		  </div>
       <div id="nested-selectboxs">
-        <a href='#' class='button-link primary floatr' id='nested-edit-button'>Edit</a>
-        <%= content_tag(:h3, "Dropdown items - Preview", :class => "title") %>          
+        <a href='#' class='button-link primary floatr' id='nested-edit-button'><%= t("edit") %></a>
+        <%= content_tag(:h3, t(".dropdown_items_preview"), :class => "title") %>          
         <div class="alert-message">
-          This is the “Preview” of sample dropdown items, use the freeform textarea in “Edit view” to edit items
+          <%= t(".nestedfield_helptext_preview") %>
         </div>
         <ul class="nested-selectboxs row-fluid">
           <li class="span4">
@@ -127,9 +126,9 @@
           
 		<span class="seperator"></span> 
 		<div class="alignright">
-			<a class="uiButton delete floatl" id="DeleteField">Delete field</a> 
-			<input type="submit" value="Done" id="Commitfieldtype" class="uiButton special" /> 
-			<a class="uiButton" id="cancel-button">Cancel</a> 
+			<a class="uiButton delete floatl" id="DeleteField"><%= t(".delete_field") %></a> 
+			<input type="submit" value="<%= t('done') %>" id="Commitfieldtype" class="uiButton special" /> 
+			<a class="uiButton" id="cancel-button"><%= t('cancel') %></a> 
 		</div>
   </form>   
 </div>

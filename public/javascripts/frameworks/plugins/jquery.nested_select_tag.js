@@ -3,25 +3,32 @@
   var methods = {
      init : function( options ) {
        return this.each(function(){
-         var opts = $.extend( {}, $.fn.nested_select_tag.defaults, options ),
+         var defaults = $.fn.nested_select_tag.defaults;
+            
+         var opts = $.extend( {}, defaults, options ),
             _tree = new NestedField(opts.data_tree),
             _category = $(this),
             _subcategory = $("#" + opts.subcategory_id),
             _item = $("#" + opts.item_id),
             _vals = (opts.initValues || {});
 
+         opts["default_option"] = "<option value=''>"+opts["include_blank"]+"</option>";   
+
          _category.bind("change", function(ev){
+            var _items_present = false;
             _subcategory.html(opts.default_option);
             (_tree.getSubcategoryList(_category.val())).each(function(pair){
+              _items_present = true;
               $("<option />")
                 .html(pair.key)
                 .val(pair.key)
                 .appendTo(_subcategory);
             });
-            //console.log(_subcategory.val());
             
             _subcategory.trigger("change");
-            _subcategory.prop("disabled", (!_category.val() || _category.val() == -1));
+            _condition = (!_items_present || (!_category.val() || _category.val() == -1));
+
+            _subcategory.prop("disabled", _condition).parent().toggle(!_condition);
          });
 
          _subcategory.bind("change", function(ev){
@@ -33,16 +40,18 @@
                 opts.change_callback();
             }
             if(_tree.third_level){
+              var _items_present = false;
               _item.html(opts.default_option);
-              //console.info(_category.val() + "   " + _subcategory.val());
               (_tree.getItemsList(_category.val(), _subcategory.val())).each(function(pair){
+                _items_present = true;
                 $("<option />")
                   .html(pair.key)
                   .val(pair.key)
                   .appendTo(_item);
               });                 
               _item.trigger("change");
-              _item.prop("disabled", (!_subcategory.val() || _subcategory.val() == -1));
+              _condition = (!_items_present || (!_subcategory.val() || _subcategory.val() == -1));
+              _item.prop("disabled", _condition).parent().toggle(!_condition);
             }
          });
 
@@ -80,7 +89,9 @@
   $.fn.nested_select_tag.defaults = {
      data_tree: [],
      initValues: {},
+     include_blank: "...",
      default_option: "<option value=''>...</option>",
+     inline_labels: true,
      change_callback: function(){}
   };
 

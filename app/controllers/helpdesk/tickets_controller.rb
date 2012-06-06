@@ -24,6 +24,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
+  before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -36,6 +37,15 @@ class Helpdesk::TicketsController < ApplicationController
         params[:requester_id] = requester.id;
       else
         @response_errors = {:no_email => true}
+      end
+    end
+    company_name = params[:company_name]
+    unless company_name.blank?
+      company = current_account.customers.find_by_name(company_name)
+      unless(company.nil?)
+        params[:company_id] = company.id
+      else
+        @response_errors = {:no_company => true}
       end
     end
 
@@ -479,6 +489,15 @@ class Helpdesk::TicketsController < ApplicationController
     render :text => a_template || ""
   end 
   
+  def latest_note
+    ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
+    if ticket.nil?
+      render :text => t("flash.general.access_denied")
+    else
+      render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+    end
+  end
+
   protected
   
     def item_url
@@ -573,5 +592,5 @@ class Helpdesk::TicketsController < ApplicationController
   def save_and_close?
     !params[:save_and_close].blank?
   end
- 
+
 end

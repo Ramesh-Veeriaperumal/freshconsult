@@ -6,7 +6,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   
   belongs_to :pickable, :polymorphic => true
 
-  has_many :sub_picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
+  has_many :sub_picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue', :include => :sub_picklist_values,
     :dependent => :destroy
   
   acts_as_list
@@ -30,10 +30,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def choices
     sub_picklist_values.collect { |c| [c.value, c.value]}
-  end
-
-  def nested_choices
-    sub_picklist_values.collect { |c| [c.value, c.value, c.nested_choices]}
   end
 
 end

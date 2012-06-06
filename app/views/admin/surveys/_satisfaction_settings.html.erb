@@ -1,24 +1,69 @@
-<% remote_form_for :account, @account, :url => {:action => "enable"},  :html => { :method => :put, :id => "survey_enable" } do |account| %>
 <ul class="ui-form">
 	
-	<li><%= account.feature_check_box :survey_links %><%= t('.enable_label') %></li>
-	
-</ul>
-<%end%>
-<br> <br>
-<div id="survey_elements">
-<% remote_form_for :survey, @survey, :url => { :action => "update" },  :html => { :method => :put } do |f| %>
-<ul class="ui-form">
 	<li>
-		<%=t('.link_text_label')%><%= f.text_field :link_text, :value => @survey[:link_text], :class => "time"  %>
-		<br/> <span class="link_text_info"><%=t('.link_text_info')%></span>
+		<strong style="font-size:12px;margin-left:15px;"><%= t('.enable_label') %></strong>
+		<div id="survey_link_con" class="floatr">				
+		<%if @account.features?(:survey_links)%>
+		   <%= link_to_function "<strong> #{t('application.enabled')} </strong><span></span>", "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-active" %>
+		<%else%>
+		   <%= link_to_function "<strong> #{t('application.disabled')} </strong><span></span>", "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-inactive" %>
+		<%end%>
+		</div>		
 	</li>
-	<li><%= f.radio_button :send_while, Survey::RESOLVED_NOTIFICATION %> <%=t('.send_while_option2')%></li>
-	<li><%= f.radio_button :send_while, Survey::ANY_EMAIL_RESPONSE %> <%=t('.send_while_option1')%></li>
-</ul>
-<div class="button-container">
+	<li id="survey_elements" <%unless @account.features?(:survey_links)%>style="display:none"<%end%>>	
+	<hr/>
+<% remote_form_for :survey, @survey, :url => { :action => "update" },  :html => { :method => :put } do |f| %>
+<ul>
+	<li><strong><%=t('.link_text_label')%></strong><br/> <span class="link_text_info"><%=t('.link_text_info')%></span></li>
+	<li>
+		<!-- <%= f.text_field :link_text, :value => @survey[:link_text], :class => "time"  %> -->
+		<%= f.text_area(:link_text, :value => @survey[:link_text], :autocomplete => "off", :rel => "ghostwriter", :size => "16", :class=> "textfield required", :style=>"display:block;resize:none;width:70%;") %>				
+	</li>
+	
+	<li>
+		<strong>Choose which emails have the satisfaction survey link</strong><br>
+		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::RESOLVED_NOTIFICATION %> <%=t('.send_while_option2')%></label>
+		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::ANY_EMAIL_RESPONSE %> <%=t('.send_while_option1')%></label>
+	</li>
+	<li class="button-container">
 	<%= submit_tag t('account.save'), :class => 'uiButton' %>
 	<a class="uiButton" href="/admin/home">Cancel</a>
-</div>
+	</li>
+</ul>
 <%end%>
-</div>
+</li>
+</ul>
+
+<% javascript_tag do %>
+    function update_status(status_url){
+    	jQuery.ajax({
+    		url: status_url,
+    		type: "post"	
+    	})
+    }
+    
+    function enable(){
+    	update_status("/admin/surveys/enable");
+    }
+    
+    function disable(){
+    	update_status("/admin/surveys/disable");
+    }
+    
+    function toggle_status(){
+    	jQuery('#survey_status_link').hasClass("iphone-active")? disable() : enable();    	
+    }
+    
+	function change_enable_status(status){
+	   if(status){
+		jQuery('#survey_elements').show();
+		jQuery('#survey_status_link').removeClass("iphone-inactive").addClass("iphone-active");
+		jQuery('#survey_status_link').html('<strong> <%=t('application.enabled')%> </strong><span></span>');		
+	   }
+	   else{
+	   	jQuery('#survey_elements').hide();
+	   	jQuery('#survey_status_link').removeClass("iphone-active").addClass("iphone-inactive");
+	   	jQuery('#survey_status_link').html('<strong> <%=t('application.disabled')%> </strong><span></span>');	   	
+	   }
+	}
+<%end%>
