@@ -5,7 +5,7 @@ class Helpdesk::NotesController < ApplicationController
   
   include HelpdeskControllerMethods
   
-  before_filter :validate_attachment_size , :only =>[:create]
+  before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -75,8 +75,11 @@ class Helpdesk::NotesController < ApplicationController
 
     def process_item
       Thread.current[:notifications] = current_account.email_notifications
-      if @parent.is_a? Helpdesk::Ticket      
-        send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+      if @parent.is_a? Helpdesk::Ticket
+        if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+          send_reply_email
+          @item.create_fwd_note_activity(params[:to_emails]) if @item.fwd_email?
+        end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
           twt = send("send_tweet_as_#{twt_type}")
@@ -114,12 +117,30 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-     if !params[:include_cc].blank?
-       cc_array = validate_emails params[:cc_emails]
-       cc_array = cc_array.compact unless cc_array.nil?
-       @parent.update_attribute(:cc_email, cc_array)  
-     end
-   end
+      cc_email_hash_value = @parent.cc_email_hash # cc_email_hash value can be either nil or hash
+      if cc_email_hash_value.nil?
+        cc_email_hash_value = {:cc_emails => [], :fwd_emails => []}
+      end
+      if @item.fwd_email?
+        old_fwd_email_list =  cc_email_hash_value[:fwd_emails]
+        fwd_to_array = validate_emails params[:to_emails]
+        unless fwd_to_array.nil?
+          fwd_cc_array = validate_emails params[:fwd_cc_emails]
+          fwd_bcc_array = validate_emails params[:bcc_emails]  
+          fwd_cc_array.try(:concat,fwd_bcc_array) unless fwd_bcc_array.nil?
+          fwd_to_array.concat(fwd_cc_array) unless fwd_cc_array.nil?
+          fwd_to_array.concat(old_fwd_email_list)
+        end
+        fwd_to_array ||= []
+        cc_email_hash_value[:fwd_emails] = fwd_to_array.uniq
+      else
+        cc_array = validate_emails params[:cc_emails]
+        cc_array = cc_array.compact unless cc_array.nil?
+        cc_array ||= []
+        cc_email_hash_value[:cc_emails] = cc_array.uniq
+      end
+      @parent.update_attribute(:cc_email, cc_email_hash_value)
+    end
    
   def send_facebook_reply
     
@@ -159,11 +180,20 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def send_reply_email
+      puts "<<<< THIS IS FROM REPLY METHOD >>>> #{request.host}"
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , :bcc_emails =>validate_emails(params[:bcc_emails])})  
-      flash[:notice] = t(:'flash.tickets.reply.success')
+      if @item.fwd_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
+                :bcc_emails =>validate_emails(params[:bcc_emails]),
+                :to_emails => validate_emails(params[:to_emails]), :fwd_cc_emails => validate_emails(params[:fwd_cc_emails])})
+        flash[:notice] = t(:'fwd_success_msg')
+      else
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
+                :bcc_emails =>validate_emails(params[:bcc_emails]), :req_host => request.host , :req_port => request.port})
+        flash[:notice] = t(:'flash.tickets.reply.success')
+      end
     end
 
     def create_error
@@ -260,4 +290,21 @@ class Helpdesk::NotesController < ApplicationController
    return twt_text
   end
 
+  def validate_fwd_to_email
+    if(@item.fwd_email?)
+      if(params[:to_emails].blank?)
+        flash[:error] = t('validate_fwd_to_email_msg')
+        redirect_to item_url
+      else
+        if (params[:to_emails].any? { |email| email.include?@parent.requester.email })
+          flash[:error] = t('use_reply_option')
+          redirect_to item_url
+        elsif((validate_emails(params[:to_emails])).blank?)
+          flash[:error] = t('validate_fwd_to_email_msg')
+          redirect_to item_url
+        end
+      end
+    end
+  end
+  
 end

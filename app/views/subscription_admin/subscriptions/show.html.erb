@@ -7,12 +7,20 @@
 		<h3>Summary</h3>
 		<table id="subscription" class="table table-bordered">
 		  <tr>
+		    <th>Account ID</th>
+		    <td><%= h(@subscription.account_id) %></td>
+		  </tr>           
+		  <tr>
 		    <th>Name</th>
 		    <td><%= h(@subscription.account) %></td>
 		  </tr>           
 		  <tr>
 		    <th>Contact information</th>
-		    <td><%= @subscription.account.account_admin.email %> <%= @subscription.account.account_admin.phone %></td>
+		    <td><%= @subscription.account.account_admin.email %> <%= @subscription.account.account_admin.phone %> </td>
+		  </tr>
+		  <tr>
+		    <th>Last login</th>
+		    <td><%= @subscription.account.account_admin.last_login_at %> Login count - <%=@subscription.account.account_admin.login_count%> Valid - <%=@subscription.account.account_admin.valid?%></td>
 		  </tr>
 		  <tr>
 		    <th>Monthly Revenue</th>
@@ -39,15 +47,55 @@
 		    <td><%= @subscription.discount ? "#{@subscription.discount.name} (#{@subscription.discount.code}) - #{discount_label(@subscription.discount)}" : 'None' %></td>
 		  </tr>
 		  <tr>
+		    <th>Remaining Day Passes</th>
+		    <td><%= @subscription.account.day_pass_config.available_passes %></td>
+		  </tr>
+		  <tr>
 		    <th>State</th>
 		    <td><%= @subscription.state %></td>
 		  </tr>
 		  <tr>
 		    <th>Agents</th>
-		    <td><%= @subscription.account.agents.count %></td>
+		    <td><%=@subscription.agent_limit%>  Free - <%= @subscription.free_agents %>  Full time - <%= @subscription.account.full_time_agents.count %> Total - <%= @subscription.account.all_agents.count %></td>
+		  </tr>
+		  <tr>
+		    <th>Tickets</th>
+		    <td><%= @subscription.account.tickets.count %></td>
+		  </tr>
+		  <tr>
+		    <th>Multi product</th>
+		    <td><%= @subscription.account.portals.count > 1 %></td>
+		  </tr>
+		  <tr>
+		    <th>Social</th>
+		    <td>Twitter - <%= !@subscription.account.twitter_handles.blank? %> Facebook - <%= !@subscription.account.facebook_pages.blank?%></td>
+		  </tr>
+		  <tr>
+		    <th>Email Configured</th>
+		    <td><%= (@subscription.account.all_email_configs.collect {|ec| "#{ec.name} - #{ec.reply_email} - #{ec.active}"}).join("<br>") %></td>
+		  </tr>
+		  <tr>
+		    <th>Portals</th>
+		    <td><%= (@subscription.account.portals.collect {|por| "#{por.name} - #{por.portal_url} - #{por.language}"}).join("<br>") %></td>
+		  </tr>
+		  <tr>
+		    <th>Security</th>
+		    <td>SSO - <%= @subscription.account.sso_enabled? %>  https - <%= @subscription.account.ssl_enabled? %> </td>
 		  </tr>
 		</table>   
-	</div>       
+	</div> 
+	<div class="span4">
+	<table id="sample-tickets" class="table table-bordered">
+		<tr><th>Sample tickets</th></tr>
+		<% @subscription.account.tickets.find(:all,:order => 'created_at desc',:limit => 5).each do |tkt| %>
+		  <tr>
+		  <td><%=tkt.subject%></td>
+		  </tr>
+		<%end%>
+		
+		
+    <table>	
+	</div>	      
 	<div class="span4">
 		<h3>Transactions</h3>
 		<table id="transactions" class="table">
@@ -91,6 +139,13 @@
 		<% form_tag({:action => 'extend_trial'}, :id => 'trial_form', :class => "well form-inline") do %>
 		  <input type="text" name="trial_days" id="trial_days" placeholder="No. of trial days" />
 		  <input type="submit" value="Extend trial" class="btn" />
+		<% end %>
+
+		<h3>Add Day Passes</h3>
+
+		<% form_tag({:action => 'add_day_passes'}, :id => 'trial_form', :class => "well form-inline") do %>
+		  <input type="text" name="passes_count" id="passes_count" placeholder="No. of day passes" />
+		  <input type="submit" value="Add Passes" class="btn" />
 		<% end %>
 	</div>    
 	

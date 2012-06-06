@@ -1,4 +1,21 @@
   <% content_for :onload_script do -%>
+    jQuery('[rel=cc_div]').bind("cc_visibility", function(eo){
+		_condition = (jQuery(this).find("input[type=hidden]").size() > 0)
+		jQuery(jQuery(this).data("parent")).toggle(_condition);
+		jQuery(jQuery(this).data("button")).trigger("textChange");
+	})
+	jQuery('a[rel=cc_button]').click(function(ev){
+		ev.preventDefault();
+		jQuery(jQuery(this).data("parent")).toggle();
+		jQuery(this).trigger("textChange");
+		
+	}).bind("textChange", function(ev){
+		_condition = (jQuery(jQuery(this).data("parent")).css("display") != "none");
+		jQuery(this).text( _condition ? jQuery(this).data("hideText") : jQuery(this).data("showText"));	
+		jQuery(jQuery(this).data("input")).prop("checked", _condition);
+	});
+	
+  
                   function lookup(searchString, callback) { 
                     new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
                                                               { parameters: {name: searchString, rand: (new Date()).getTime()},
@@ -27,36 +44,54 @@
        bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
        fixed_bcc = (@email_config.bcc_email.blank?) ? [] : @email_config.bcc_email.split( /,* /).map{|item|[item, item]}
        bcc_drop_box_email += fixed_bcc  
+
+		reply_cc_emails_blank = @ticket.cc_email_hash.nil? ? true : @ticket.cc_email_hash[:cc_emails].blank?
      %>
        
     <ul class="ui-form dont-validate">
 				<div class="request_form_options">
-					<a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
-						<%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
+					<a href="#" class="slim-button" rel="cc_button" data-input="#include_cc" data-parent="#cc-form-container" data-show-text="<%= t(".addcc")%>" data-hide-text="<%= t(".removecc")%>" id="add_cc_btn">
+						<%= t(".addcc") %>
 					</a>
-					<a href="javascript:void(0)" onclick="showHideBcc(this)" class="slim-button" >
+					<a href="#" class="slim-button"  rel="cc_button" data-input="#include_bcc" data-parent="#bcc-form-container" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_bcc_btn" >
 						<%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
 					</a>
 					<%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
         </div>
-        <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
-        <li class="inline-field field">
+        <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title", :id => "reply_email_id" ) %>
+		<%= content_tag( :h4, t("fwd_to"), :class => "title", :id => "fwd_title" ) %>
+        <li class="inline-field field" >
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
               <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email) %>
-              <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
+              <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!reply_cc_emails_blank)? "checked" : "" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
 					</div>
         </li>
-        <li class="inline-field field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
+        <li class="inline-field field" id="fwd_to_mail">
+            <%= f.label(:reply_email, "To:", :class => "caption" ) %>
+            <div class="fields">
+                <% content_for :onload_script do -%>
+                  new Autocompleter.MultiValue("to_emails", "", $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+                <%- end %>
+                <input type="text" id="to_emails" name="to_emails" />
+            </div>
+        </li>
+        <li class="inline-field field hide" id="cc-form-container">
             <label class="caption">
                 <%= t(".cc") %>:
             </label>
-            <div class="fields">
+			<div class="fields" id="reply_cc_emails_id" rel="cc_div" data-button="#add_cc_btn"  data-parent="#cc-form-container">
                 <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email.map{|item|[item, item]}.to_json unless @ticket.cc_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
+                  new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email_hash[:cc_emails].map{|item|[item, item]}.to_json unless reply_cc_emails_blank %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 				<%- end %>
                 <input type="text" id="cc_emails" name="cc_emails" />
+            </div>
+            <div class="fields" id="fwd_cc_emails_id" rel="cc_div" data-button="#add_cc_btn"  data-parent="#cc-form-container"> 
+                <% content_for :onload_script do -%>
+                  new Autocompleter.MultiValue("fwd_cc_emails", "", $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+				<%- end %>
+                <input type="text" id="fwd_cc_emails" name="fwd_cc_emails" />
             </div>
         </li>
         
@@ -67,7 +102,7 @@
 
           <div class="fields">
             <% content_for :onload_script do -%>
-              new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
+              new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 				    <% end %>
             <input type="text" id="bcc_emails" name="bcc_emails" />
           </div>
@@ -105,7 +140,7 @@
     </ul>
     <div class="button-container">
     	<%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
-    	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
+    	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton", :id => "send_resolve_btn") %>
 		<%= button_to_function(t('cancel'), "jQuery('#cnt-reply').slideUp()", :class => "uiButton" ) %>
     </div>
 
@@ -113,28 +148,6 @@
 </div>
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
-    function showHideCc(link){
-       jQuery("#cc-form-container").toggle();
-       if( $("include_cc").checked ){
-         jQuery(link).text('<%= t(".addcc") %>');
-         $("include_cc").checked = false;
-       }else{
-         jQuery(link).text('<%= t(".removecc") %>');
-         $("include_cc").checked = true;
-       }
-    }
-	
-	 function showHideBcc(link){
-       jQuery("#bcc-form-container").toggle();
-       if( $("include_bcc").checked ){
-         jQuery(link).text('<%= t(".addbcc") %>');
-         $("include_bcc").checked = false;
-       }else{
-         jQuery(link).text('<%= t(".removebcc") %>');
-         $("include_bcc").checked = true;
-       }
-    }
-    
   	jQuery("#HelpdeskReply").validate();	
   <% end %>
 <% end %>

@@ -250,6 +250,10 @@ module ApplicationHelper
     comment_path(args_hash, 'reply')
   end
   
+  def fwd_path(args_hash)
+    comment_path(args_hash, 'forwarded')
+  end
+  
   def twitter_path(args_hash)
     comment_path(args_hash, 'tweet')
   end
@@ -427,9 +431,10 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false)
+    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    field_label    += " #{ (required) ? '*' : '' }"
+    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
@@ -444,6 +449,8 @@ module ApplicationHelper
         element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+      when "nested_field" then
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -453,18 +460,47 @@ module ApplicationHelper
     end
     content_tag :li, element, :class => dom_type
   end
+
+  # The field_value(init value) for the nested field should be in the the following format
+  # { :category_val => "", :subcategory_val => "", :item_val => "" }
+  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)        
+    _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
+    _javascript_opts = {
+      :data_tree => _field.nested_choices,
+      :initValues => _field_values
+    }.merge!(_opt)
+
+    _field.nested_levels.each do |l|       
+      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = sanitize_to_id(_name +"_"+ l[:name])
+      _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+    end
+    
+    _category + javascript_tag("jQuery('##{sanitize_to_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")        
+
+  end
   
   def construct_ticket_text_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     
     label = label_tag object_name+"_"+field.field_name, field_label, :class => "name_label" 
+        
+    if(field.field_type == "nested_field")
+      unless field_value[:category_val].blank?
+        element = label + label_tag(field_name, field_value[:category_val], :class => "value_label")
+        field.nested_levels.each do |l|
+          _name = label_tag("", l[:label_in_portal], :class => "name_label")
+          _field_value = field_value[(l[:level] == 2) ? :subcategory_val : (l[:level] == 3) ? :item_val : ""]
+          _value = label_tag(field_name, _field_value, :class => "value_label") 
+          element += content_tag(:div, _name + _value, :class => "tabbed") unless (_field_value.blank? || field_value[:subcategory_val].blank?)
+        end
+      end
+    else
+      field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+      element = label + label_tag(field_name, field_value, :class => "value_label")
+    end
     
-    field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
-    
-    element = label + label_tag(field_name, field_value, :class => "value_label")
-    
-    content_tag :li, element unless (field_value == "" || field_value == "...")     
+    content_tag :li, element unless (element.blank? || field_value.nil? || field_value == "" || field_value == "...")     
   end
    
   def pageless(total_pages, url, message=t("loading.items"), params = {})

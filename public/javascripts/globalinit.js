@@ -12,8 +12,10 @@ var $J = jQuery.noConflict();
    $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
    $.validator.addClassRules("tweet", { tweet: 140 });
    $.validator.addClassRules("facebook", { tweet: 8000 });
-    
- 
+   $.validator.addMethod("notEqual", function(value, element, param) {
+      return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
+    }, "This element should not be equal to");
+
    $.validator.addMethod("multiemail", function(value, element) {
        if (this.optional(element)) // return true on optional element
          return true;
@@ -166,16 +168,23 @@ var $J = jQuery.noConflict();
       $("form.uniForm").validate(validateOptions);
       $("form.ui-form").validate(validateOptions);
 
-      // Make Textareas to expand automatically when editing it
-      // Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
-      if(!$.browser.msie) $("textarea.auto-expand").autoResize();
-
-
 		$('.single_click_link').live('click',function(ev) {
 			if (! $(ev.srcElement).is('a')) {
 				window.location = $(this).find('a').first().attr('href');
 			}
 		});
+
+    $("input[rel=companion]")
+      .live({ 
+        "keyup": function(ev){
+          selector = $(this).data("companion");
+          if($(this).data("companionEmpty")) $(selector).val(this.value);
+        }, 
+        "focus": function(ev){
+          selector = $(this).data("companion");
+          $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
+        }
+      });
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
 		$('.tickets tbody tr').live('click',function(ev) {

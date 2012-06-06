@@ -26,7 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity, :support_score_on_create
-  before_update :cache_old_model, :update_dueby 
+  before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
       :support_score_on_update, :stop_timesheet_timers
   
@@ -166,6 +166,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
   named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+
+  named_scope :with_tag_names, lambda { |tag_names| {
+            :joins => :tags,
+            :select => "helpdesk_tickets.id", 
+            :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
+  }            
   
   def self.agent_permission user
     
@@ -456,8 +462,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
   end
   
+  def included_in_fwd_emails?(from_email)
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }) 
+  end
+  
   def included_in_cc?(from_email)
-    (cc_email) and  (cc_email.any? {|email| email.include?(from_email) })
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
   
   def cache_old_model
@@ -537,7 +548,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_s
+    begin
     "#{subject} (##{display_id})"
+    rescue ActiveRecord::MissingAttributeError
+      "#{id}"
+    end
   end
   
   def self.search_display(ticket)
@@ -657,8 +672,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
       "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host),
+      "url"                               => helpdesk_ticket_url(self, :host => account.host, :protocol=> url_protocol),
+      "portal_url"                        => support_ticket_url(self, :host => portal_host, :protocol=> url_protocol),
       "portal_name"                       => portal_name,
       #"attachments"                      => liquidize_attachments(attachments),
       #"latest_comment"                   => liquidize_comment(latest_comment),
@@ -666,6 +681,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
       #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+  end
+
+  def url_protocol
+    account.ssl_enabled? ? 'https' : 'http'
   end
   
   def description_with_attachments
@@ -739,7 +758,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
       custom_field[method]
     end
   end
-  
+
+  def to_json(options = {}, deep=true)
+    options[:methods] = [:status_name,:priority_name,:requester_name,:responder_name]
+    if deep
+      self.load_flexifield
+      options[:include] = [:notes,:attachments]
+      options[:except] = [:account_id,:import_id]
+      options[:methods].push(:custom_field)
+    end
+    json_str = super options
+    json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
+  end
+
+
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -750,6 +782,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
           begin
            value = send(field.name) 
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+
+           if(field.field_type == "nested_field")
+              field.nested_ticket_fields.each do |nested_field|
+                nested_field_value = send(nested_field.name)
+                xml.tag!(nested_field.name.gsub(/[^0-9A-Za-z_]/, ''), nested_field_value) unless nested_field_value.blank?
+              end
+           end
+         
          rescue
            end 
         end
@@ -811,13 +851,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
 
    def selected_reply_email
-    to_email.blank? ? friendly_reply_email : to_email
+    ( !to_email.blank? &&  account.pass_through_enabled? ) ? to_email : friendly_reply_email
    end
+  
+  def cc_email_hash
+    if cc_email.is_a?(Array)     
+      {:cc_emails => cc_email, :fwd_emails => []}
+    else
+      cc_email
+    end
+  end
   
   private
   
-    
-    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')

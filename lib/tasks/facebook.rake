@@ -6,7 +6,7 @@ namespace :facebook do
       Account.reset_current_account
       facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])    
       facebook_pages.each do |fan_page| 
-        sandbox do ### starts ####
+        fb_sandbox do ### starts ####
            @fan_page = fan_page
            fb_posts = Social::FacebookPosts.new(fan_page)
            fb_posts.fetch
@@ -25,7 +25,7 @@ namespace :facebook do
   ##Need to consider the 
  
   
-  def sandbox
+  def fb_sandbox
       begin
         yield
       rescue Errno::ECONNRESET => e

@@ -341,16 +341,24 @@ Autocompleter.MultiValue = Class.create({
     this.searchField.clear();
     this.searchField.focus();
   },
-  
+
   addEntry: function(id, title) {
-    title = title || id;
-    if (!this.selectedEntries().include('' + id)) {
-      this.searchFieldItem.insert({before: this.createSelectedElement(id, title)});
-    };
-    var emptyValueField = this.emptyValueElement();
-    if (emptyValueField) {
-      emptyValueField.remove();
-    };
+    var items = [id],index,titleArr=[title];
+    if(this.options.separatorRegEx){
+        items = id.split(this.options.separatorRegEx);
+        titleArr = title.split(this.options.separatorRegEx);
+    }
+    for(index=0;index<items.length;index++){
+      id = items[index],title=titleArr[index];
+      title = title || id;
+      if (!this.selectedEntries().include('' + id)) {
+        this.searchFieldItem.insert({before: this.createSelectedElement(id, title)});
+      };
+      var emptyValueField = this.emptyValueElement();
+      if (emptyValueField) {
+        emptyValueField.remove();
+      };
+    }
   },
   
   removeEntry: function(entryElement) {
