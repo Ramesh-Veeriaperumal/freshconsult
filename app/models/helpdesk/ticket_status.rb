@@ -5,8 +5,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   set_table_name "helpdesk_ticket_statuses"
   
   validates_length_of :name, :in => 1..25
-  validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg')
-  validates_uniqueness_of :customer_display_name, :scope => :account_id, :message => I18n.t('status_cust_disp_name_uniqueness_msg')
+  validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
+  validates_uniqueness_of :customer_display_name, :scope => :account_id, :message => I18n.t('status_cust_disp_name_uniqueness_msg'), :case_sensitive => false
   
   attr_protected :account_id, :status_id
   belongs_to :account
@@ -33,7 +33,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
   
   def self.status_keys_by_name(account, user=nil)
-    Hash[*statuses(account,user).flatten]
+    Hash[*statuses(account,user).flatten].insensitive
   end
   
   def self.status_names_by_key(account, user=nil)

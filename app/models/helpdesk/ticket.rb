@@ -250,7 +250,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
 
   def set_default_values
-    self.status = OPEN unless (Helpdesk::TicketStatus::status_names_by_key(account).key?(self.status) or ticket_status.deleted?)
+    self.status = OPEN unless (Helpdesk::TicketStatus::status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= account.ticket_type_values.first.value
     self.subject ||= ''
@@ -893,7 +893,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
     def create_status_activity
       create_activity(User.current, 'activities.tickets.status_change.long',
-          {'status_name' => status_name}, 'activities.tickets.status_change.short')
+          {'status_name' => Helpdesk::TicketStatus.translate_status_name(ticket_status)}, 'activities.tickets.status_change.short')
     end
   
     def create_priority_activity

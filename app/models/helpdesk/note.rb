@@ -161,7 +161,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer? 
-        if notable.onhold_and_closed? and !feedback?
+        if (fwd_email? and notable.onhold?) or (notable.onhold_and_closed? and !feedback? and !fwd_email?) 
           notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
