@@ -31,7 +31,7 @@ $use-mozilla-ellipsis-binding:true;
 @import "blueprint/typography";
  
 // Typography Configuration
-$blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;
+$blueprint-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 $symbol: sprite-map("symbols/*.png");
 $ticketicon: sprite-map("ticket-icon/*.png");
 $icons: sprite-map("icons/*.png");

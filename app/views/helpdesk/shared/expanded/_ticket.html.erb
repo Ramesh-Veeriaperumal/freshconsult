@@ -33,8 +33,7 @@
 			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
-  </td>
-	
+  </td>	
   <td class="sla">
     <% if( ticket.active? ) %>
   	  <% if(Time.now > ticket.due_by ) %>

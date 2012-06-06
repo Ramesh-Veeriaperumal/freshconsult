@@ -65,8 +65,17 @@ module Helpdesk::TicketActions
     flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
-    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false} ] if current_account.has_multiple_products?
-    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false, :type => :field_type} ] if current_account.has_multiple_products?
+    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
+
+    # csv_headers.each do |flexi_field|
+    #   if flexi_field.type == "nested_field"
+    #     nested_flexi_fields = flexi_field.nested_ticket_fields(:include => :flexifield_def_entry)
+    #     #csv_headers = csv_headers + nested_flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    #     flexi_field[:levels] = flexi_field.nested_levels
+    #   end
+    # end
+
     render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
   end
   
@@ -196,20 +205,24 @@ module Helpdesk::TicketActions
   end
   
   def add_note_to_source_ticket
-      @source_ticket.notes.create(
+      @soucre_note = @source_ticket.notes.create(
         :body => params[:source][:note],
         :private => params[:source][:is_private] || false,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+        :source => params[:source][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id
       )
+      
+      if !@soucre_note.private
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, @source_ticket, @soucre_note , @source_ticket.reply_email,{:include_cc => true})
+      end
   end
   
   def add_note_to_target_ticket
     @target_note = @target_ticket.notes.create(
         :body_html => params[:target][:note],
         :private => params[:target][:is_private] || false,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+        :source => params[:target][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id
       )
@@ -217,6 +230,9 @@ module Helpdesk::TicketActions
      @source_ticket.attachments.each do |attachment|      
       url = attachment.content.url.split('?')[0]
       @target_note.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
+    end
+    if !@target_note.private
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , @target_ticket.reply_email,{:include_cc => true})
     end
   end
   
@@ -233,5 +249,21 @@ module Helpdesk::TicketActions
       URI.unescape(CGI::escape(Base64.decode64(string)))
    end
   
- 
+   # Method used set the ticket.ids in params[:data_hash] based on tags.name
+  def serialize_params_for_tags
+    return if params[:data_hash].nil? 
+
+    action_hash = params[:data_hash].kind_of?(Array) ? params[:data_hash] : 
+      ActiveSupport::JSON.decode(params[:data_hash])
+    
+    action_hash.each_with_index do |filter, index|
+      next if filter["value"].nil? || !filter["condition"].eql?("helpdesk_tags.name")
+      value = current_account.tickets.permissible(current_user).with_tag_names(filter["value"].split(",")).join(",")
+      action_hash[index]={ :condition => "helpdesk_tickets.id", :operator => "is_in", :value => value }
+      break
+    end
+    
+    params[:data_hash] = action_hash;
+  end
+  
 end

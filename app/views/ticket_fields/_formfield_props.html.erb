@@ -1,68 +1,135 @@
-<div id="CustomFieldsDialog" style="display:none;position:absolute;">
+<div id="CustomFieldsDialog" style="visibility:hidden;position:absolute;left:0; top:0; width:100%;">
 <div class="dialog-panel sidepanel">
-	<a href="javascript:void(0)" id="close_button" class="close"></a>
-        <form class="ui-dialog-form" id="TicketProperties" action="#">
-        	<input type="hidden" name="customtype" value="" />
-            <div class="ctrlHolder">
-            	<%= content_tag(:label, t(".label"), :class => "caption") %>
-                <fieldset>
-                    <input type="text" autocompelete="off" name="customlabel" size="35" maxlength="50" class="required text" value="" />
-                </fieldset>
-            </div>
-            <div class="ctrlHolder">
-              <%= content_tag(:label, t(".label_in_portal"), :class => "caption") %>
-              <div class="info_data"><%= t('.label_in_portal_info') %></div>
-              <fieldset>
-                <input type="text" initial-value="" name="customlabel_in_portal" size="35" maxlength="50" class="required text" value="" />
-              </fieldset>
-            </div>
-            <div class="ctrlHolder" style="display:none;">
-              <%= content_tag(:label, t(".description"), :class => "caption") %>
-              <fieldset> 
-                <input type="text" name="customdesc" size="35" maxlength="50" class="text" value="" id="customdesc" />
-              </fieldset> 
-            </div> 
-            <div class="ctrlHolder colsets border-top" id="DropFieldChoices">
-              <%= content_tag(:label, t(".dropdown_choices"), :class => "caption") %>
-              <input type="hidden" name="choicelist" id="ChoiceListValidation" value="" />
-                <div name="customchoices" class="customchoices">
-                  <fieldset>
-                    <span class="sort_handle"></span>
-                    <span class="dropchoice"><input type="text" name="choice" /></span><span class="tags"><input type="text" /></span><img src="/images/delete.png" />
-                  </fieldset>
-                </div>
-                <a class="addchoice" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
-            </div> 
-            <div class="ctrlHolder border-top" id="AgentMandatory">
-            	<%= content_tag(:label, t(".for_agents"), :class => "caption") %>
-	            <fieldset> 
-	              <label><input type="checkbox" name="agentrequired" /> <%= t(".agent_mandatory_submission") %> </label>
-                <span class="info-data"> <%= t(".agent_info1") %> </span>
-              </fieldset>				
-              <fieldset> 
-                <label><input type="checkbox" name="agentclosure" /> <%= t(".agent_mandatory_closure") %> </label>
-                <span class="info-data"><%= t(".agent_info2") %></span>
-              </fieldset> 
-            </div>
-            <div class="ctrlHolder border-top" id="CustomerConditions">
-              <%= content_tag(:label, t(".for_customer"), :class => "caption") %>
-              <fieldset id="nestedConfig">
-                 <label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /><%= t(".customer_visible") %> </label></li>
-                 <fieldset id="nestedlvl2" class="nestedChoices" style="display:none;">
-                   <label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t(".customer_edit") %> </label>
-                   <fieldset id="nestedlvl3" class="nestedChoices" style="display:none;">
-                     <label><input type="checkbox" name="customerrequired" /> <%= t(".customer_mandatory") %> </label>
-                     <span class="info-data"><%= t(".customer_info1") %></span>
-                   </fieldset>
-                 </fieldset>
-               </fieldset>  
-            </div> 
-			<span class="seperator"></span> 
-			<div class="alignright">
-				<!--input type="button" class="button" id="SaveField" value="Save" /-->
-				<a class="uiButton delete small floatl" id="DeleteField"><%= t("delete") %></a> 
-				<input type="submit" value="<%= t("ok") %>" class="uiButton small" /> 
-			</div>
-    </form>   
+  <a href="javascript:void(0)" id="close_button" class="close"></a>
+  <h2 class="title" id="dialog-title"><%= t(".form_title") %></h2>
+  <form class="ui-dialog-form" id="TicketProperties" action="#">
+  	<input type="hidden" name="customtype" value="" />
+    <div class="ctrlHolder">
+      <h3 class="title"><%=t(".behavior")%></h3>
+      <div class="row-fluid">
+        <div class="span6" id="AgentMandatory">
+          <%= content_tag(:label, t(".for_agents"), :class => "caption") %>
+          <fieldset> 
+            <label class="checkbox"><input type="checkbox" name="agentrequired" /><%= t(".agent_mandatory_submission") %> </label>
+          </fieldset>       
+          <fieldset> 
+            <label class="checkbox"><input type="checkbox" name="agentclosure" /><%= t(".agent_mandatory_closure") %> </label>
+          </fieldset> 
+        </div>
+        <div class="span6" id="CustomerConditions">
+          <%= content_tag(:label, t(".for_customer"), :class => "caption") %>
+          <fieldset id="nestedConfig">
+            <label class="checkbox"><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" />
+              <%= t(".customer_visible") %> 
+            </label>
+             <fieldset id="nestedlvl2" class="nestedChoices">
+               <label class="checkbox">
+                <input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t(".customer_edit") %> 
+               </label>
+               <fieldset id="nestedlvl3" class="nestedChoices">
+                 <label class="checkbox"><input type="checkbox" name="customerrequired" />
+									<%= t(".customer_mandatory") %> 
+								 </label>
+               </fieldset>
+             </fieldset>
+           </fieldset>  
+        </div>
+      </div>
+    </div>    
+    <div class="ctrlHolder" id="FieldLabels">
+      <h3 class="title"><%= t(".label") %></h3>
+      <div class="row-fluid">
+        <fieldset class="span6">
+      	  <%= content_tag(:label, t(".for_agents"), :class => "caption") %>
+          <input type="text" rel="companion" data-companion="#customlabelportal" name="customlabel" value="" />
+        </fieldset>
+        <fieldset class="span6">
+          <%= content_tag(:label, t(".for_customer"), :class => "caption") %>
+          <input type="text" name="customlabel_in_portal" id="customlabelportal" value="" />
+        </fieldset>
+      </div>
+    </div>
+    <div class="ctrlHolder" id="NestedFieldLabels">
+      <h3 class="title"><%= t(".nested_label") %></h3>
+      <div class="row-fluid">
+        <fieldset class="span4">
+          <%= content_tag(:label, t(".level1"), :class => "caption") %>
+          <input type="text" placeholder="<%= t('.field_label_agents') %> *" rel="companion" data-companion="#customerslabel" name="agentlabel" value="" id="agentlevel1label" data-level="1" />
+          <input type="text" placeholder="<%= t('.field_label_customer') %> *" id="customerslabel" name="customerslabel" value="" />
+        </fieldset>
+        <fieldset class="span4">
+          <%= content_tag(:label, t(".level2"), :class => "caption") %>
+          <input type="text" placeholder="<%= t('.field_label_agents') %> *" rel="companion" data-companion="#customerslevel2label" id="agentlevel2label" name="agentlevel2label" value="" data-level="2" />
+        <input type="text" placeholder="<%= t('.field_label_customer') %> *" id="customerslevel2label" name="customerslevel2label" value="" />
+        </fieldset>
+        <fieldset class="span4">
+          <%= content_tag(:label, t(".level3"), :class => "caption") %>
+          <input type="text" placeholder="<%= t('.field_label_agents') %>" rel="companion" data-companion="#customerslevel3label" id="agentlevel3label" name="agentlevel3label" value="" data-level="3" />
+          <input type="text" placeholder="<%= t('.field_label_customer') %>" id="customerslevel3label" name="customerslevel3label" value="" />
+        </fieldset>
+      </div>
+    </div>
+    <div class="ctrlHolder hide">
+      <%= content_tag(:label, t(".description"), :class => "caption") %>
+      <fieldset> 
+        <input type="text" name="customdesc" size="35" maxlength="50" class="text" value="" id="customdesc" />
+      </fieldset> 
+    </div> 
+    <div class="ctrlHolder" id="nestedContainer">	    
+			<div id="nestedEdit" class="hide">
+        <a href="#" id="nestedDoneEdit" class="primary button-link floatr"><%= t(".preview") %></a>
+        <%= content_tag(:h3, t(".dropdown_items_edit"), :class => "title") %>          
+        <div class="alert-message">
+          <%= t(".nestedfield_helptext") %>
+        </div>
+	      <textarea id="nestedTextarea" rows="6" name="nestedTextarea" class="paragraph" rel="nestedfield"></textarea>
+		  </div>
+      <div id="nested-selectboxs">
+        <a href='#' class='button-link primary floatr' id='nested-edit-button'><%= t("edit") %></a>
+        <%= content_tag(:h3, t(".dropdown_items_preview"), :class => "title") %>          
+        <div class="alert-message">
+          <%= t(".nestedfield_helptext_preview") %>
+        </div>
+        <ul class="nested-selectboxs row-fluid">
+          <li class="span4">
+            <select name="nest-category" id="nest-category">
+              <option>...</option>
+            </select>
+          </li>
+          <li class="span4 subcategory">   
+  					<span class="connector"></span>
+  					<select name="nest-subcategory" id="nest-subcategory">
+          		<option>...</option>
+          	</select>
+  			 	</li>
+          <li class="span4 item">               
+  					<span class="connector"></span>
+  					<select name="nest-item" id="nest-item">
+          		<option>...</option>
+          	</select>
+  				</li>            
+        </ul>
+      </div>
+    </div>
+    <div class="ctrlHolder colsets" id="DropFieldChoices" style="display:none;">
+      <%= content_tag(:h3, t(".dropdown_choices"), :class => "title") %>
+      <input type="hidden" name="choicelist" id="ChoiceListValidation" value="" />
+        <div name="customchoices" class="customchoices">
+          <fieldset>
+            <span class="sort_handle"></span>
+            <img src="/images/delete.png" />
+            <span class="dropchoice"><input type="text" name="choice" /></span>
+          </fieldset>
+        </div>
+        <a class="addchoice" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
+    </div> 
+          
+		<span class="seperator"></span> 
+		<div class="alignright">
+			<a class="uiButton delete floatl" id="DeleteField"><%= t(".delete_field") %></a> 
+			<input type="submit" value="<%= t('done') %>" id="Commitfieldtype" class="uiButton special" /> 
+			<a class="uiButton" id="cancel-button"><%= t('cancel') %></a> 
+		</div>
+  </form>   
 </div>
 </div>

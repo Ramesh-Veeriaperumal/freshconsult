@@ -241,7 +241,10 @@ protected
  end
 
  def check_agent_limit
-    redirect_to :back if current_account.reached_agent_limit? 
+   if current_account.reached_agent_limit? 
+    flash[:notice] = t('maximum_agents_msg')
+    redirect_to :back 
+   end
   end
 
 end

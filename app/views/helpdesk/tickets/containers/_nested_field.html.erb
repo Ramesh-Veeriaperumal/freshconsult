@@ -1,0 +1,74 @@
+<% javascript_tag do %>  
+  function refresh_tickets(){
+    jQuery("#save_filter").show();
+    jQuery("#FilterOptions input[name=filter_name]").val("");
+    jQuery(".view_filters .active").removeClass("active");
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
+  }
+<% end %>
+<%
+  category_id = "#{field_id}_category"
+  sub_category_id = "#{field_id}_sub_category"
+  sub_category_item_id = "#{field_id}_item_sub_category"
+%>
+<% options = options.unshift(["...","-1"]) %>
+<%= select_tag name, options_for_select(options.map {|k, v| [k, v.to_s]}, selected_val), :id => category_id, :class => "dropdown nested_field" %>
+<%
+  sub_category  = nested_fields[0] if nested_fields.size > 0
+  item  = nested_fields[1] if nested_fields.size > 1
+  if !sub_category.nil? && !selected_val.blank?
+    category_picklist_value = current_account.ticket_fields.find(field_id).picklist_values.find_by_id(selected_val)
+    unless category_picklist_value.nil?
+      sub_category[:options] = category_picklist_value.choices
+      sub_category[:options].unshift(["...",""])
+
+      sub_category_selected = current_options[sub_category[:condition].to_s]
+
+      if !item.nil? && !sub_category_selected.blank?
+        sub_category_picklist_value = category_picklist_value.sub_picklist_values.find_by_id(sub_category_selected) 
+        item[:options] = sub_category_picklist_value.choices unless sub_category_picklist_value.nil?
+        item[:options].unshift(["...",""])
+      end
+    end 
+  end
+%>
+<% unless sub_category.nil? %>
+  <% content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}", 
+                :class       => "ff_item level_2", 
+                :condition   => sub_category[:condition],
+                :operator    => sub_category[:operator],
+                :container   => 'nested_field' } do %>
+    <h4 class="title"><%= sub_category[:name] %></h4>
+    <%= select_tag sub_category[:name], "", :id => sub_category_id, :class => "dropdown nested_field" %>
+  <%end%>
+        
+  <% unless item.nil? %>
+      <% item_val = current_options[item[:condition].to_s].to_s %>
+      <% content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
+                    :class       => "ff_item level_3", 
+                    :condition   => item[:condition],
+                    :operator    => item[:operator],
+                    :container   => 'nested_field' } do %>
+        <h4 class="title"><%= item[:name] %></h4>
+        <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field"%>
+      <% end %>
+  <% end %>
+  <% content_for :pagefixed do %>
+  <% javascript_tag do %>
+      jQuery('#<%=category_id%>')
+        .nested_select_tag({
+          initValues: { 
+            item_val: '<%= item_val %>',
+            subcategory_val: '<%= current_options[sub_category[:condition].to_s].to_s %>',
+            category_val: '<%= selected_val %>'            
+          },
+          default_option: "<option value='-1'>...</option>",
+          data_tree: <%= options.to_json %>,
+          subcategory_id: '<%= sub_category_id %>',
+          item_id: '<%= sub_category_item_id %>',
+          change_callback: refresh_tickets
+        });
+    <% end %>
+    <% end %>
+<%end%>

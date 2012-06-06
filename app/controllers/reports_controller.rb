@@ -17,6 +17,7 @@ class ReportsController < ApplicationController
   end
  
  protected 
+ 
   def scoper
     current_account
   end
