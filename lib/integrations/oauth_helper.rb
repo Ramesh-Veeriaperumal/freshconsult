@@ -54,8 +54,7 @@ module Integrations::OauthHelper
     	consumer_secret = tokens['consumer_secret'][Rails.env]
     	key_hash[:twitter] = {}
       key_hash[:twitter] = {"consumer_token" => consumer_key, "consumer_secret" => consumer_secret}
-
-      puts key_hash.inspect
+      
 
       if provider.blank?
 

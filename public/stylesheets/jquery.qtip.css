@@ -43,7 +43,7 @@
 .ui-tooltip-titlebar .ui-state-hover { border-color: #AAA; color: #111; }
 
 /* Ticket tooltip style */
-.ui-tooltip-ticket { max-width: 650px !important; margin-left: -20px; }
+.ui-tooltip-ticket { max-width: 650px !important; margin-left: 20px; }
 
 .ui-tooltip-ticket .ui-tooltip-content { padding: 0.8em 1em; color: #000000; text-align: justify; font-size: 1.0em; background-color: #FFFDE1; border-color: #d0cdaa; line-height: 22px; margin-left: -14px; }
 
