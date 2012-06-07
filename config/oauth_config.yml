@@ -17,12 +17,12 @@ development:
 staging:
  salesforce:
   #freshbugs tokens
-  #consumer_token: 3MVG9Y6d_Btp4xp60b6f8yPqWRsZB9nr02K6G7bTQv9dHq8oGEfa3Ys4JNY6sKjyiBktMyYRTUCXelwxQP.Re
-  #consumer_secret: 8884773765604569749
+  consumer_token: 3MVG9Y6d_Btp4xp60b6f8yPqWRsZB9nr02K6G7bTQv9dHq8oGEfa3Ys4JNY6sKjyiBktMyYRTUCXelwxQP.Re
+  consumer_secret: 8884773765604569749
 
   #freshpo
-  consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
-  consumer_secret: 7527225363657893740
+  # consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
+  # consumer_secret: 7527225363657893740
  
  google:
   consumer_token: freshpo.com
