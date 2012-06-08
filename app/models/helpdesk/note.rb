@@ -139,7 +139,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def create_fwd_note_activity(to_emails)
     notable.create_activity(user, 'activities.tickets.conversation.out_email.private.long',
             {'eval_args' => {'fwd_path' => ['fwd_path', 
-                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_emails(to_emails)},
+                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_comma_sep_emails(to_emails)},
             'activities.tickets.conversation.out_email.private.short')  
   end
 
@@ -161,7 +161,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer?      	
-        unless notable.open? || feedback?
+        unless notable.open? || feedback? || (fwd_email? and !notable.pending?)
           notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
@@ -229,7 +229,4 @@ class Helpdesk::Note < ActiveRecord::Base
       user.get_info if user
     end
 
-    def parse_to_emails(emails)
-      emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
-    end
 end
