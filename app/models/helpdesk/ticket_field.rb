@@ -111,7 +111,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::TicketStatus::choices(account)
+         Helpdesk::TicketStatus::statuses(account)
        when "default_ticket_type" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
