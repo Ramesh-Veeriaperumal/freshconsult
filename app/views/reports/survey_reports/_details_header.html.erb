@@ -10,28 +10,28 @@
         </li>
         <li class="first active report-grid">
         	<% link_title = "<span class='tab-text top-p'>All ("+content[:total].to_s+")</span>" %>
-            <%= link_to_remote link_title,{:url => {:action =>'feedbacks', :entity_id =>params[:entity_id], :category=>params[:category]},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "all_link",:id=>"PagesTab",:href=>"#Pages"}  %>            
+            <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category]},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "all_link",:id=>"PagesTab",:href=>"#Pages"}  %>            
         </li>
         <li class="tab-width">
         	
            <%link_title = "<span class='happy-smily'></span><span class='tab-text'>"+
             	 (((content[:happy]*100)/content[:total]).to_f.round).to_s + "%" +
             	 "<p class='tab-bottom'>"+content[:happy].to_s+" responses</p></span>" %> 
-            	<%= link_to_remote link_title,{:url => {:action =>'feedbacks', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::HAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "happy_link",:id=>"PagesTab",:href=>"#Pages"}  %> 
+            	<%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::HAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "happy_link",:id=>"PagesTab",:href=>"#Pages"}  %> 
         </li>
         <li class="tab-width">
         	
            <%link_title = "<span class='happy-smily neutral-smily'></span><span class='tab-text'>"+
             	 (((content[:neutral]*100)/content[:total]).to_f.round).to_s + "%" +
             	 "<p class='tab-bottom'>"+content[:neutral].to_s+" responses</p></span>" %>             
-            <%= link_to_remote link_title,{:url => {:action =>'feedbacks', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::NEUTRAL},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "neutral_link",:id=>"PagesTab",:href=>"#Pages"}  %>
+            <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::NEUTRAL},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "neutral_link",:id=>"PagesTab",:href=>"#Pages"}  %>
         </li>
         <li class="tab-width">
         	
         	<%link_title = "<span class='happy-smily unhappy-smily'></span><span class='tab-text'>"+
             	 (((content[:unhappy]*100)/content[:total]).to_f.round).to_s + "%" +
             	 "<p class='tab-bottom'>"+content[:unhappy].to_s+" responses</p></span>" %>            
-            <%= link_to_remote link_title,{:url => {:action =>'feedbacks', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::UNHAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "unhappy_link",:id=>"PagesTab",:href=>"#Pages"}  %>
+            <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category],:rating => Survey::UNHAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "unhappy_link",:id=>"PagesTab",:href=>"#Pages"}  %>
         </li>
     </ul> 
 </div>
