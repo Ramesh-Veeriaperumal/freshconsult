@@ -103,7 +103,7 @@ Freshdesk.Widget.prototype={
 	},
 
 	resource_failure:function(evt, reqData){
-		
+		resJ = evt.responseJSON;
 		if (evt.status == 401) {
 			this.options.username = null;
 			this.options.password = null;
@@ -112,9 +112,11 @@ Freshdesk.Widget.prototype={
 			if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 				reqData.on_failure(evt);
 			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
-		} else if (evt.status == 403) {
-			this.alert_failure(this.app_name+" forbidden the request.  Check if your "+this.app_name+" account is still valid.");
-		} else if (evt.status == 502) {
+		} 
+		else if (evt.status == 403) {
+			this.alert_failure(this.app_name+" declined the request. \n\n " + this.app_name + " returns the following error : " + resJ[0].message);
+		} 
+		else if (evt.status == 502) {
 			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
 			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
