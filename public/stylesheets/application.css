@@ -1554,7 +1554,7 @@ a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; b
 .crm_contact_widget .content { width: auto; }
 .crm_contact_widget .title { overflow: hidden; padding: 0; margin: 0; border-bottom: #e5e5e5 solid 1px; }
 .crm_contact_widget .name { background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat; padding: 0 0 10px 35px; }
-.crm_contact_widget .salesforce-name { background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat; padding: 0 0 10px 35px; }
+.crm_contact_widget .salesforce-name { background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat; padding: 0 0 10px 45px; }
 .crm_contact_widget .error.name, .crm_contact_widget .error.salesforce-name { color: #F00; }
 .crm_contact_widget #multiple-contacts { width: 55px; float: right; }
 .crm_contact_widget #contact-name { color: #000; font-size: 14px; }
