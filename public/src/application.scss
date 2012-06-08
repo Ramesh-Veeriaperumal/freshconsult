@@ -32,7 +32,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 }
 
 .sidepanel, .rtCnt{
-	@include shadows(rgba(0,0,0, 0.05), 0px, 1px, 2px);
+	@include box-shadow(rgba(0,0,0, 0.05) 0px 1px 2px);
 } 
 
 .sidepanel{
@@ -41,7 +41,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 
 .pagearea{
 	@include min-height(450px);
-	@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 3px);
+	@include box-shadow(rgba(0,0,0, 0.2) 0px 2px 3px);
 	position:relative;
 }
 
@@ -51,15 +51,14 @@ ul.activityfeed, ul.summary{
 }
 
 ul.summary{
-// @include pie;
-	@include corners(6px);    
+	@include border-radius(6px);    
 	background:#fafafa; 
 	@include background-with-css2-fallback(linear-gradient(white, #fafafa));
 	border:1px solid #efefef; 
 	margin-bottom:10px; 
 	li{ 
 		@include float-left; 
-		width:19.5%;
+		width:16.3%;
 		margin:2px 0px;
 		padding:0px 0px 4px 0px;
 		border-right:1px solid #e8e8e8; 

@@ -55,11 +55,11 @@ stylesheets:
     - public/stylesheets/bootstrap.css
     - public/stylesheets/bootstrap-responsive.css
     - public/stylesheets/subscription.css
-  
+
   satisfaction:
     - public/stylesheets/reports.css
     - public/stylesheets/satisfaction.css
-  	
+
 javascripts:
   defaults:
     - public/javascripts/prototype.js
@@ -77,11 +77,11 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.noblecount.js
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
-    - public/javascripts/frameworks/plugins/jquery.placeholder.js    
     - public/javascripts/frameworks/plugins/jquery.qtip.js
     - public/javascripts/frameworks/plugins/jquery.tinymce.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/hackz.js

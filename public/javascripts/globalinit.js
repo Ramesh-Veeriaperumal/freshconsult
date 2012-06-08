@@ -108,6 +108,7 @@ var $J = jQuery.noConflict();
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
+      $("input[rel=toggle]").livequery(function(){ $(this).itoggle(); });
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
