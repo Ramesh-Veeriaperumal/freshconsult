@@ -10,15 +10,29 @@
 					<div class="logo application-logo-<%= application.name %>"></div>
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
-					  if i_app_index.nil?%>
-		  	    		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>	
-					<%else%>
-		  	    		<%= link_to image_tag("symbols/setting.png"), configure_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
-		  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
-					<%end%>
+					  if i_app_index.nil?
+					  	#use direct_install option in applications to install the application directly from the "Enable" in applications menu.
+					  	if application[:options][:direct_install].blank? %>
+					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+					  	<% else 
+					  		if application[:options][:oauth_url].blank? %>
+					  			<!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
+
+					  		<% else 
+					  			 auth_url = AppConfig['integrations_url'][Rails.env] + Liquid::Template.parse(application[:options][:oauth_url]).render("account_id" => current_account.id)%>
+						  		 <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+					  		<% end %>
+					  	<% end %>
+		  	    		
+					  <%else
+						if application[:options][:direct_install].blank? %>
+			  	    		<%= link_to image_tag("symbols/setting.png"), configure_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
+			  	    	<% end %>
+			  	    	<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
+					  <%end%>
 				</div>
 				<div class="col-center">
-				  <%if i_app_index.nil?%>
+				  <%if i_app_index.nil? or !application[:options][:direct_install].blank?%>
 					  <%= content_tag(:h2, t(application.display_name)) %>
 					<%else%>
 					  <%= content_tag(:h2, link_to(t(application.display_name),configure_integrations_installed_application_path(@installed_applications[i_app_index]), :title => t("application.configure_addon") )) %>

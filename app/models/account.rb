@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   has_many :portals
   has_many :survey_results
   has_many :survey_remarks
+
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
   accepts_nested_attributes_for :main_portal
  
@@ -231,8 +232,7 @@ class Account < ActiveRecord::Base
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
-    
+    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false}
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|

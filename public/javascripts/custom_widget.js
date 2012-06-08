@@ -79,7 +79,11 @@ Freshdesk.Widget.prototype={
 			reqData.username = this.options.username
 			reqData.use_server_password = this.options.use_server_password
 			reqData.app_name = this.options.app_name
-		} else {
+		}
+		else if(this.options.auth_type == 'OAuth'){
+			reqHeader = {Authorization:"OAuth " + this.options.oauth_token}
+		} 
+		else {
 			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
 		}
 		new Ajax.Request("/http_request_proxy/fetch",{
@@ -133,11 +137,29 @@ Freshdesk.Widget.prototype={
 	},
 
 	alert_failure:function(errorMsg) {
-		if (this.error_anchor == null || this.error_anchor !== "") {
+		if (this.error_anchor == null || this.error_anchor == "") {
 			alert(errorMsg);
 		} else {
+			jQuery(this.error_anchor).removeClass('hide').parent().removeClass('loading-fb');
 			this.error_anchor.innerHTML = errorMsg;
 		}
+	},
+
+	refresh_access_token:function(callback){
+		widgetMain = this;
+		this.options.oauth_token = null;
+		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name, {
+				asynchronous: true,
+				method: "get",
+				onSuccess: function(evt){
+					resJ = evt.responseJSON;
+					widgetMain.options.oauth_token = resJ.access_token;
+					if(callback) callback();
+				},
+				onFailure: function(evt){
+					widgetMain.options.oauth_token = null;
+				}
+			});
 	},
 
 	create_integrated_resource:function(resultCallback) {
