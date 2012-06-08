@@ -259,7 +259,7 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form label, .ui-form li.checkbox { font-weight: normal; margin: 0; line-height: 18px; color: #565656; font-size: 13px; font-weight: 400; }
 .ui-form label.overlabel { color: #999999; margin-left: 8px; margin-top: 0; font-size: 14px; }
 .ui-form li.checkbox { overflow: hidden; *zoom: 1; padding-top: 16px; padding-bottom: 16px; }
-.ui-form li.checkbox input { float: left; margin-right: 6px; margin-top: 4px; }
+.ui-form li.checkbox input { float: left; margin-right: 6px; margin-top: 4px; margin-left: 0; }
 .ui-form li.checkbox label { position: relative; font-size: 0.8em; top: -8px; left: 3px; }
 .ui-form .largefield label { font-size: 1.4em; }
 .ui-form .largefield input { font-size: 1.4em; }
@@ -746,7 +746,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .radio, .checkbox { padding-left: 18px; }
 
-.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
+.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: 0px; }
 
 .disabled { color: #afafaf; }
 
@@ -860,7 +860,7 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .button:visited, .toolbar_pagination_full a:visited, .toolbar_pagination_full span:visited, .toolbar_pagination .prev_page:visited, .toolbar_pagination .next_page:visited, .toolbar_pagination_full .prev_page:visited, .toolbar_pagination_full .next_page:visited, .slim-button:visited { color: #3f3f3f; }
 .button:hover, .toolbar_pagination_full a:hover, .toolbar_pagination_full span:hover, .toolbar_pagination .prev_page:hover, .toolbar_pagination .next_page:hover, .toolbar_pagination_full .prev_page:hover, .toolbar_pagination_full .next_page:hover, .slim-button:hover { color: #666666; }
 .button:active, .toolbar_pagination_full a:active, .toolbar_pagination_full span:active, .toolbar_pagination .prev_page:active, .toolbar_pagination .next_page:active, .toolbar_pagination_full .prev_page:active, .toolbar_pagination_full .next_page:active, .slim-button:active { color: #3f3f3f; }
-.button img, .toolbar_pagination_full a img, .toolbar_pagination_full span img, .toolbar_pagination .prev_page img, .toolbar_pagination .next_page img, .toolbar_pagination_full .prev_page img, .toolbar_pagination_full .next_page img, .slim-button img { width: auto; height: auto; }
+.button img, .toolbar_pagination_full a img, .toolbar_pagination_full span img, .toolbar_pagination .prev_page img, .toolbar_pagination .next_page img, .toolbar_pagination_full .prev_page img, .toolbar_pagination_full .next_page img, .slim-button img { width: auto; height: auto; margin: 0 3px -3px 0 !important; }
 
 .close-button { display: inline-block; width: 20px; height: 20px; background: url('/images/symbols-s751dfcfb9e.png') 0 -242px no-repeat; }
 

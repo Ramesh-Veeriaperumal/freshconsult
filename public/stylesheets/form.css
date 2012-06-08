@@ -99,7 +99,7 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form label, .ui-form li.checkbox { font-weight: normal; margin: 0; line-height: 18px; color: #565656; font-size: 13px; font-weight: 400; }
 .ui-form label.overlabel { color: #999999; margin-left: 8px; margin-top: 0; font-size: 14px; }
 .ui-form li.checkbox { overflow: hidden; *zoom: 1; padding-top: 16px; padding-bottom: 16px; }
-.ui-form li.checkbox input { float: left; margin-right: 6px; margin-top: 4px; }
+.ui-form li.checkbox input { float: left; margin-right: 6px; margin-top: 4px; margin-left: 0; }
 .ui-form li.checkbox label { position: relative; font-size: 0.8em; top: -8px; left: 3px; }
 .ui-form .largefield label { font-size: 1.4em; }
 .ui-form .largefield input { font-size: 1.4em; }
@@ -586,7 +586,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .radio, .checkbox { padding-left: 18px; }
 
-.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
+.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: 0px; }
 
 .disabled { color: #afafaf; }
 

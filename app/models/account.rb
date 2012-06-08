@@ -230,7 +230,7 @@ class Account < ActiveRecord::Base
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
+    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false}
     
   
   has_features do

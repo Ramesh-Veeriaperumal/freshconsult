@@ -303,6 +303,7 @@ a.addchoice:hover{
 			float:left;
 			margin-right:6px;
 			margin-top:4px;
+			margin-left:0;
 		} 
 		label{
 			position:relative;
@@ -1892,7 +1893,7 @@ ul.ui-form .inputs-list{
 .radio input[type="radio"],
 .checkbox input[type="checkbox"] {
   float: left;
-  margin-left: -18px;
+  margin-left: 0px;
 }
 
 .disabled{
