@@ -5,11 +5,6 @@ class SurveyResult < ActiveRecord::Base
   has_one :survey_remark, :dependent => :destroy
   belongs_to :surveyable, :polymorphic => true
   
-  has_one :user,:conditions => {:deleted => false}, :foreign_key => :customer_id
-  belongs_to :agent,:conditions => {:deleted => false},:class_name => 'User', :foreign_key => :agent_id
-  belongs_to :customer,:conditions => {:deleted => false},:class_name => 'User', :foreign_key => :customer_id
-  belongs_to :group,:class_name => 'Group', :foreign_key => :group_id
-  
   def add_feedback(feedback)
     note = surveyable.notes.build({
       :user_id => customer_id,
@@ -36,6 +31,84 @@ class SurveyResult < ActiveRecord::Base
 
   def unhappy?
     (rating == Survey::UNHAPPY)
+  end
+  
+  def self.fetch_agent_report(account_id,condition)  	
+  	sql_query = %(select users.id, users.name, job_title as title, rating,count(*) as total from agents 
+  				  inner join users on users.id=agents.user_id inner join survey_results on survey_results.agent_id=users.id 
+  				  where users.account_id=#{account_id} )
+  		
+  	sql_query += "and agents.user_id=#{condition[:entity_id]} " unless condition[:entity_id].blank?
+  	sql_query += "and survey_results.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
+  	sql_query += "group by agents.id,rating"
+	survey_reports = Survey.find_by_sql(sql_query)
+	generate_reports_list(survey_reports,"agent")
+  end
+ 
+  def self.fetch_group_report(account_id,condition)
+  	sql_query = %(select groups.id as id, groups.name, groups.description as title, rating,count(*) as total 
+  				  from groups inner join survey_results on survey_results.group_id=groups.id
+  				  where groups.account_id=#{account_id} )
+  		
+  	sql_query += "and groups.id=#{condition[:entity_id]} " unless condition[:entity_id].blank?
+  	sql_query += "and survey_results.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' "
+  	sql_query += "group by groups.id,rating"
+	  
+	  survey_reports = Survey.find_by_sql(sql_query)
+	  generate_reports_list(survey_reports,"group")
+  end
+  
+  def self.fetch_company_report(account_id,condition)
+  	sql_query = %(select accounts.id, accounts.name, full_domain as title, rating,count(*) as total from accounts 
+  				  inner join survey_results on survey_results.account_id=accounts.id 
+  				  where accounts.id=#{account_id} and survey_results.created_at between '#{condition[:start_date]}' and '#{condition[:end_date]}' group by rating)	
+	survey_reports = Survey.find_by_sql(sql_query)
+	generate_reports_list(survey_reports,"account")
+  end
+  
+  def self.fetch_agent_report_details(account_id,condition)
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_results.created_at,body,rating from survey_results 
+  				  left join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id left join 
+  				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
+  				  users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
+  				  
+  	condition.each do |key,val|
+  		sql_query += " and survey_results.rating=#{val}" if key == :rating
+  		sql_query += " and survey_results.agent_id=#{val}" if key == :entity_id
+  	end
+  	
+	Survey.find_by_sql(sql_query)
+	
+  end
+  
+  def self.fetch_group_report_details(account_id,condition)
+  	sql_query = %(select survey_results.customer_id, users.name,survey_results.created_at,
+  	            body,rating,groups.id from groups inner join 
+  	            survey_results on survey_results.group_id=groups.id left join 
+  	            survey_remarks on survey_remarks.survey_result_id=survey_results.id left join 
+  				      helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
+  				      users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
+  	
+  	condition.each do |key,val|
+  		sql_query += " and survey_results.rating=#{val}" if key == :rating
+  		sql_query += " and groups.id=#{val}" if key == :entity_id
+  	end
+  	
+	  Survey.find_by_sql(sql_query)
+  end
+  
+  def self.fetch_company_report_details(account_id,condition)
+  	sql_query = %(select survey_results.customer_id as customer_id, users.name,survey_results.created_at,body,rating from survey_results 
+  				  left join survey_remarks on survey_remarks.`survey_result_id`=survey_results.id left join 
+  				  helpdesk_notes on survey_remarks.note_id=helpdesk_notes.id inner join users on 
+  				  users.id=survey_results.customer_id where survey_results.account_id=#{account_id})
+  				  
+  	condition.each do |key,val|
+  		sql_query += " and survey_results.rating=#{val}" if key == :rating  		
+  	end
+  	
+	Survey.find_by_sql(sql_query)
+	
   end
   
   private
