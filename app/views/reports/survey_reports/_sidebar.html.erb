@@ -7,16 +7,11 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 
 <div class="sidepanel">
  <div >	
- 	<% remote_form_for(survey_activity_url, { :method => :post, :html => {:id => 'report_filters'}, :update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
+ 	<% remote_form_for(survey_activity_url, { :method => :post, :html => {:id => 'report_filters'},:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
  	<ul class="ui-form">
     	   <li class="inline-field">
 			<b><%=t('.filter_by')%></b>
-			<%
-				selected_option = :agent;
-				selected_option = :group if params[:category]=="group"
-				selected_option = :company if params[:category]=="company"
-			%>
-			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :onchange => "javascript: return validate_request(event);", :multiple => false, :class => "customSelect filter_item chzn-done"}%>
+			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
 		   </li>	
     	   <li class="inline-field">				
 					<b><%=t('.view_report_date')%></b>
@@ -72,18 +67,4 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 	});
 		
 	});
-
-	function validate_request(ev){
-
-	    var fieldVal = jQuery("#category").val();
-	    console.log(" CATEGORY => "+fieldVal);
-
-	    if( fieldVal == "company"){
-		 location.href = "<%=survey_report_details_url%>?category=company";
-		 ev.preventDefault();
-		 return false;
-                }
-
-	}
-
 <%end%>
