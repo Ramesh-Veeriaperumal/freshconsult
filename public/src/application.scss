@@ -4946,6 +4946,17 @@ a.close{
 		padding:0 0 10px 35px;		
 	}
 
+	.salesforce-name {
+		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
+		padding:0 0 10px 45px;  
+ 	}
+
+ 	.error {
+		&.name, &.salesforce-name {
+		color: #F00;
+		}
+ 	}
+
 	#multiple-contacts {
 		width: 55px;
 		float:right;

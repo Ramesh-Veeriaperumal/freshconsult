@@ -54,7 +54,7 @@ SugarWidget.prototype= {
 				application_id:sugarBundle.application_id,
 				integratable_type:"crm",
 				anchor:"sugarcrm_widget",
-				app_name:"sugarcrm",
+				app_name:"Sugar CRM",
 				domain:sugarBundle.domain,
 				ssl_enabled:sugarBundle.ssl_enabled || "false",
 				login_content: null,
@@ -177,18 +177,19 @@ SugarWidget.prototype= {
 			jQuery('#sugarcrm_widget .contact-type').text("Contact").show();
 		}
 		fullName = "<a target='_blank' href='" + contactLink  +"'>"+contactJson.name.value+"</a>";
+		address = (address != "") ? address : "N/A" ;
+		phone = (phone != "") ? phone : "N/A" ;
+		mobile = (mobile != "") ? mobile : "N/A" ;
+		department = (department != "") ? department : "N/A" ;
 		jQuery('#sugar-contact-widget').show();
 		jQuery('#contact-name').html(fullName);
 		jQuery('#contact-desig').html(desig);
-		(address != "") ? (jQuery('#contact-address').html(address).show()) : (jQuery('#crm-contact').addClass('hide')) ;
-		(phone != "") ? jQuery('#contact-phone').text(phone) : (jQuery('#crm-phone').addClass('hide')) ;
-		(mobile != "") ? jQuery('#contact-mobile').text(mobile) : (jQuery('#crm-mobile').addClass('hide')) ;
-		(department != "") ? jQuery('#contact-dept').text(department) : (jQuery('#crm-dept').addClass('hide')) ;
+		jQuery('#contact-address').html(address);
+		jQuery('#contact-phone').text(phone)
+		jQuery('#contact-mobile').text(mobile);
+		jQuery('#contact-dept').text(department);
 
-		// If there is nothing to show in the left side, hide that too.
-		if (jQuery('#crm-contact').hasClass('hide') && jQuery('#crm-dept').hasClass('hide')) {
-			jQuery('#crm-contact').parent().addClass('hide');
-		}
+		
 		jQuery('#crm-view').attr("href",contactLink);
 		jQuery("#sugarcrm_widget").removeClass('loading-fb');
 	},

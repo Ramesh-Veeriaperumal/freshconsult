@@ -45,6 +45,7 @@ class Social::TwitterHandlesController < ApplicationController
     request_token = @wrapper.request_tokens          
     session[:request_token] = request_token.token
     session[:request_secret] = request_token.secret
+    @auth_redirect_url = request_token.authorize_url
     @twitter_handles = all_twitters   
    }
       
@@ -52,8 +53,7 @@ class Social::TwitterHandlesController < ApplicationController
         flash[:error] = t('twitter.not_authorized')
         redirect_to admin_home_index_url
       end
-  end
-  
+  end  
   def signin
     request_token = @wrapper.request_tokens          
     session[:request_token] = request_token.token
@@ -174,7 +174,7 @@ class Social::TwitterHandlesController < ApplicationController
     in_reply_to_status_id = nil
     
     return_value = sandbox(0) { 
-     in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id_str
+     in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id
     }
     
     if return_value == 0
@@ -218,7 +218,7 @@ class Social::TwitterHandlesController < ApplicationController
       unless reply_twitter.nil?
         @wrapper = TwitterWrapper.new reply_twitter
         twitter  = @wrapper.get_twitter
-        user_follows = twitter.friendship_exists?(params[:req_twt_id], reply_twitter.screen_name)
+        user_follows = twitter.friendship?(params[:req_twt_id], reply_twitter.screen_name)
       end
      render :json =>{:user_follows => user_follows }.to_json
    end

@@ -11,40 +11,42 @@ class TwitterWrapper
     @tokens = YAML::load_file @config
     @callback_url = "#{options[:callback_url]}"
     @callback_url = "#{@callback_url}?product_id=#{@product.id}"
-    @auth = Twitter::OAuth.new @tokens['consumer_token'][Rails.env], @tokens['consumer_secret'][Rails.env]
+    @consumer ||= OAuth::Consumer.new @tokens['consumer_token'][Rails.env], @tokens['consumer_secret'][Rails.env], {:site => "http://api.twitter.com"}
     @twitter_handle = twitter_handle
+    Twitter.configure do |config|
+      config.consumer_key = @tokens['consumer_token'][Rails.env]
+      config.consumer_secret = @tokens['consumer_secret'][Rails.env]
+    end
+
   end
 
   def request_tokens   
-    rtoken = @auth.request_token  (:oauth_callback => @callback_url)       
-  end
-
-  def authorize_url
-    @auth.request_token(:oauth_callback => @callback_url).authorize_url
+    rtoken = @consumer.get_request_token(:oauth_callback => @callback_url)       
   end
 
 ##Need to consider re-authorize where we dont need to add the same twitter handle again
-  def auth(rtoken, rsecret, verifier)    
-    @auth.authorize_from_request(rtoken, rsecret, verifier)        
-    @twitter_handle.access_token, @twitter_handle.access_secret = @auth.access_token.token, @auth.access_token.secret
+  def auth(rtoken,rsecret, verifier)    
+    request_token = OAuth::RequestToken.new(@consumer,rtoken,rsecret)
+    access_token = request_token.get_access_token(:oauth_verifier => verifier)        
+    @twitter_handle.access_token, @twitter_handle.access_secret = access_token.token, access_token.secret
     @twitter_handle.account_id = @account.id
     set_twitter_user   
   end
   
   def set_twitter_user
-    @auth.authorize_from_access(@twitter_handle.access_token, @twitter_handle.access_secret)
-    twitter = Twitter::Base.new @auth
+    twitter = Twitter::Client.new(:oauth_token => @twitter_handle.access_token,
+                                  :oauth_token_secret => @twitter_handle.access_secret)
+    
     cred = twitter.verify_credentials
-    twitter_id = cred.id_str
     @twitter_handle.screen_name = cred.screen_name   
-    @twitter_handle.twitter_user_id = twitter_id.to_i()
+    @twitter_handle.twitter_user_id = cred.id.to_i()
     @twitter_handle
   end
 
   def get_twitter    
-    @auth.authorize_from_access(@twitter_handle.access_token, @twitter_handle.access_secret)
-    twitter = Twitter::Base.new @auth
-    twitter.home_timeline(:count => 1)
+    twitter = Twitter::Client.new(:oauth_token => @twitter_handle.access_token,
+                                  :oauth_token_secret => @twitter_handle.access_secret)
+    #twitter.home_timeline.first
     twitter
   end
   

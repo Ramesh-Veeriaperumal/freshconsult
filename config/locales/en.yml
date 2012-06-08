@@ -1729,7 +1729,7 @@ en:
         remember: Remember me on this computer
         login: Login
         forgot: I forgot my password?
-        sign_in_using: Sign In using
+        sign_in_using: Sign In
         sign_in_using_google: Sign in using your Google account
         help: Help
   delete_reminder: Delete this ToDo?
@@ -1979,6 +1979,12 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    salesforce:
+      label: "Salesforce"
+      desc: "You can view contact information from Salesforce in Freshdesk."
+      form:
+        salesforce_settings_info: ""
+        salesforce_settings: "Salesforce Settings"
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"

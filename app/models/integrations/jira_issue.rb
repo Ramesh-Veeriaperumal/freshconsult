@@ -21,8 +21,8 @@ class Integrations::JiraIssue
 		resData = @jira.createIssue(issue)
 		Rails.logger.debug "Received response for creating a new issue : #{resData.inspect}"
 		params['remoteKey'] = resData.key unless resData.key.blank? 
-		resData = update(params)
-		return resData.to_json
+		resData = update(params, resData)
+		resData.to_json
 	end
 
 	def get_issue_types(params)
@@ -40,7 +40,7 @@ class Integrations::JiraIssue
 		@jira.deleteIssue(params['integrated_resource']['remote_integratable_id'])
 	end
 
-	def update(params)
+	def update(params, resData = nil)
         customId = customFieldChecker
         if(customId)
 			customField = Jira4R::V2::RemoteFieldValue.new
@@ -58,7 +58,7 @@ class Integrations::JiraIssue
 		if(comment == true && commentResponse != nil)
 			resData = nil
 		end	
-		return resData
+		resData
 	end
 
     def delete_custom_field
