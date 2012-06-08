@@ -30,9 +30,13 @@ class AuthorizationsController < ApplicationController
       @current_user = current_account.all_users.find_by_twitter_id(twitter_id)  unless  current_account.blank?
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "facebook"
-      fb_profile_id = @omniauth['info']['nickname']
-      @current_user = current_account.all_users.find_by_fb_profile_id(fb_profile_id)  unless  current_account.blank?
-      create_for_sso(@omniauth)
+      fb_email = @omniauth['info']['email']
+      unless current_account.blank?
+        @current_user = current_account.all_users.find_by_email(fb_email) unless fb_email.blank?
+        fb_profile_id = @omniauth['info']['nickname']
+        @current_user = current_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
+        create_for_sso(@omniauth)
+      end
     elsif @omniauth['provider'] == "google"
       # Move this to GoogleAccount model.
       user_info = @omniauth['info']
