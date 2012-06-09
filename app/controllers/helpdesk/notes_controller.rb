@@ -140,7 +140,6 @@ class Helpdesk::NotesController < ApplicationController
         cc_email_hash_value[:cc_emails] = cc_array.uniq
       end
       @parent.update_attribute(:cc_email, cc_email_hash_value)      
-   end
    
   def send_facebook_reply
     

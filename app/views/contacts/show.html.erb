@@ -6,9 +6,7 @@
 	  </div>  
 	<% end %>
 
-  <% if is_application_installed?("sugarcrm")  %>	
-  	<%= render :partial => "/helpdesk/integrations/sugarcrm", :locals => {:user => @user}%>
-  <%end%>
+  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @user}%>
 
 <%- end %>
 <div class="contact-box clearfix">

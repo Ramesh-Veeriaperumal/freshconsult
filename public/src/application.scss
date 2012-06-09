@@ -581,10 +581,7 @@ h4.title{
 		position:absolute;
 		right:18px; 
 		top:10px;
-		.action_buttons{
-			margin-top:0px;
-			a{ font-size:10px; }
-		} 
+		.action_buttons{ margin-top:0px; } 
 		.item-right-actions{
 		   margin-top:8px;
 		   margin-left:6px;
@@ -4948,6 +4945,17 @@ a.close{
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
 		padding:0 0 10px 35px;		
 	}
+
+	.salesforce-name {
+		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
+		padding:0 0 10px 45px;  
+ 	}
+
+ 	.error {
+		&.name, &.salesforce-name {
+		color: #F00;
+		}
+ 	}
 
 	#multiple-contacts {
 		width: 55px;

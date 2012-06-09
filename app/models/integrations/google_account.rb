@@ -3,13 +3,14 @@
 
 class Integrations::GoogleAccount < ActiveRecord::Base
   include Integrations::GoogleContactsUtil
+  include Integrations::OauthHelper
 
   belongs_to :account
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
   attr_protected :account_id, :sync_tag_id
   serialize :last_sync_status, Hash
   has_many :google_contacts, :dependent => :destroy
-  attr_accessor :last_sync_index, :import_groups, :donot_update_sync_time # Non persisted property used only for importing.
+  attr_accessor :last_sync_index, :import_groups, :donot_update_sync_time, :access_token # Non persisted property used only for importing.
 
   def self.find_or_create(params, account)
     id = params[:id]
@@ -380,21 +381,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       xml_str
     end
 
-    def prepare_access_token(oauth_token, oauth_token_secret)
-      # TODO get the below detail from yml config
-      oauth_s = Integrations::GoogleContactsUtil.get_oauth_keys
-      consumer = OAuth::Consumer.new(oauth_s[0], oauth_s[1],
-          { :site => "https://www.google.com/"})
-      # now create the access token object from passed values
-      token_hash = { :oauth_token => oauth_token,
-                                   :oauth_token_secret => oauth_token_secret
-                               }
-      access_token = OAuth::AccessToken.from_hash(consumer, token_hash )
-      return access_token
-    end
 
     def google_contact_uri(google_account)
-      return "http://www.google.com/m8/feeds/contacts/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
+      return "https://www.google.com/m8/feeds/contacts/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
     end
 
     def google_contact_batch_uri(google_account)
@@ -402,11 +391,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     def google_groups_uri(google_account)
-      return "http://www.google.com/m8/feeds/groups/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
+      return "https://www.google.com/m8/feeds/groups/"+google_account.email+"/full" # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
     end
 
     def google_group_uri(email, group_id)
-      return "http://www.google.com/m8/feeds/groups/"+email+"/base/"+group_id # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
+      return "https://www.google.com/m8/feeds/groups/"+email+"/base/"+group_id # No need to append '/' at the end. The url would look elegant if you append any params in this url. 
     end
 
     # This method will take care of creating(add) or fetch/updating(edit) or setting delete flag(delete) an user from google contact entry xml. 
@@ -490,6 +479,13 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         return g_cnt if g_cnt.google_account_id == self.id
       }
       return nil
+    end
+
+    def prepare_access_token(token, secret)
+      if self.access_token.blank?
+        self.access_token = get_oauth_access_token(token, secret)
+      end
+      self.access_token
     end
 
     CREATE="create"

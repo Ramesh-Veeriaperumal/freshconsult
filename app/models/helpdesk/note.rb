@@ -161,7 +161,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer?      	
-        unless notable.open? || feedback?
+        unless notable.open? || feedback? || (fwd_email? and !notable.pending?)
           notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end

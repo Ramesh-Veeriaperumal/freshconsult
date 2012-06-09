@@ -65,7 +65,7 @@ body, td, pre { color: #333333; font-family: "Helvetica Neue", Arial, Helvetica,
 
 p, li, div { font-size: 13px; line-height: 18px; font-style: normal; margin: 0; }
 
-code, pre, p, li { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; }
+code, pre, p, li, span { white-space: pre; white-space: pre-wrap; white-space: pre-line; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: -moz-pre-wrap; white-space: -hp-pre-wrap; word-wrap: break-word; white-space: pre-line !important; white-space: pre-wrap !important; }
 
 h1 { font-size: 2em; }
 
@@ -79,7 +79,7 @@ h5 { font-size: .83em; }
 
 h6 { font-size: .75em; }
 
-img, iframe { border: 0; max-width: 100%; height: auto; }
+img, iframe { border: 0; max-width: 100%; }
 
 table { cursor: default; border: 1px solid #afafaf; }
 
