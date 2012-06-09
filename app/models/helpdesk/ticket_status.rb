@@ -3,13 +3,15 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   
   set_table_name "helpdesk_ticket_statuses"
+
+  belongs_to_account
   
   validates_length_of :name, :in => 1..25
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
   validates_uniqueness_of :customer_display_name, :scope => :account_id, :message => I18n.t('status_cust_disp_name_uniqueness_msg'), :case_sensitive => false
   
   attr_protected :account_id, :status_id
-  belongs_to :account
+  
   belongs_to :ticket_field, :class_name => 'Helpdesk::TicketField'
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key => "status", :primary_key => "status_id",
