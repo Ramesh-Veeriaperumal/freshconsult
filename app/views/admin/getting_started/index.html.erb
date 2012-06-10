@@ -179,7 +179,7 @@
 			<strong><%=t('.social_title')%></strong>
 			<p><%=t('.social_sub_title')%></p>
 			<div style="margin-left: 30px;">
-			<a href="<%=@wrapper.authorize_url%>" target="_blank"><div class="twitterbutton float">
+			<a href="<%=@auth_redirect_url%>" target="_blank"><div class="twitterbutton float">
 <!--[if lt IE 10]><img src="/images/twitter_32.png" style="float: left; margin: -3px 5px 0 -35px; border: 0;"><![endif]-->				<strong><%=t('.social_twitter')%></strong><samp><%=t('.social_twitter_add')%></samp></div></a>	
 			<a href="<%=@fb_client.authorize_url%>" target="_blank"><div class="facebookbutton float">
 <!--[if lt IE 10]><img src="/images/facebook_32.png" style="float: left; margin: -3px 4px 0 -35px; border: 0;"><![endif]-->								<strong><%=t('.social_facebook')%></strong><samp><%=t('.social_facebook_add')%></samp></div></a>	
