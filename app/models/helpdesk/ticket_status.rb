@@ -106,7 +106,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
                       :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS ?', nil])
       tkt_states.each do |t_s|
         fetch_ticket = account.tickets.visible.find(t_s.id) 
-        fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now #if(sla_stopped_at.nil?)
+        fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
         fetch_ticket.ticket_states.save
       end
     end
@@ -121,7 +121,6 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
         tkt_states.each do |t_s|
           begin
             fetch_ticket = account.tickets.visible.find(t_s.id)
-            #fetch_ticket.cache_old_model
             fetch_ticket.set_dueby(true)
             fetch_ticket.send(:update_without_callbacks)
             fetch_ticket.ticket_states.sla_timer_stopped_at = nil

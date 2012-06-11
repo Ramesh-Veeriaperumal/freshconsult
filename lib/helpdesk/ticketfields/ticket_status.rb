@@ -27,6 +27,7 @@ module Helpdesk::Ticketfields::TicketStatus
     attr.delete(:status_id)
     unless t_s.nil?
       t_s.attributes = attr
+      validate_default_statuses(t_s)
       ticket_statuses[index] = t_s
     else
       t_s = ticket_statuses.build() 
@@ -34,5 +35,19 @@ module Helpdesk::Ticketfields::TicketStatus
       t_s.account = account
     end
   end
+
+  private
+
+    def validate_default_statuses(t_s)
+      if(DEFAULT_STATUSES.include?(t_s.status_id))
+        t_s.deleted = false
+        t_s.is_default = true
+        if(t_s.status_id == OPEN)
+          t_s.stop_sla_timer = false
+        elsif([RESOLVED,CLOSED].include?(t_s.status_id))
+          t_s.stop_sla_timer = true  
+        end
+      end  
+    end
   
 end
