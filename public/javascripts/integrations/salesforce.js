@@ -117,7 +117,7 @@ SalesforceWidget.prototype= {
 		phone = contact.Phone;
 		mobile = contact.MobilePhone;
 		if(contact.attributes.type == "Contact"){
-			account = contact.Account.Name;
+			account = (contact.Account) ? contact.Account.Name : null;
 			department = contact.Department;
 			address = salesforceWidget.getFormattedAddress(contact.MailingStreet, contact.MailingState, contact.MailingCity, contact.MailingCountry);
 		}
