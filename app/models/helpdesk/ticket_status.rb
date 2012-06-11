@@ -8,7 +8,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   validates_length_of :name, :in => 1..25
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
-  validates_uniqueness_of :customer_display_name, :scope => :account_id, :message => I18n.t('status_cust_disp_name_uniqueness_msg'), :case_sensitive => false
+  #validates_uniqueness_of :customer_display_name, :scope => :account_id, :message => I18n.t('status_cust_disp_name_uniqueness_msg'), :case_sensitive => false
   
   attr_protected :account_id, :status_id
   

@@ -9,6 +9,7 @@ module Helpdesk::Ticketfields::TicketStatus
 
   # In order to save modified records through autosave we need to manipulate the loaded ticket_statuses array itself in the self
   def update_ticket_status(attr)
+    attr.symbolize_keys!
     t_s = nil
     index = -1
     ticket_statuses.each do |st|
@@ -23,6 +24,7 @@ module Helpdesk::Ticketfields::TicketStatus
       end
     end
 
+    attr.delete(:status_id)
     unless t_s.nil?
       t_s.attributes = attr
       ticket_statuses[index] = t_s
@@ -33,10 +35,4 @@ module Helpdesk::Ticketfields::TicketStatus
     end
   end
   
-  def delete_ticket_status(id)
-    ticket_status = Account.current.ticket_status_values.find_by_status_id(id)
-    ticket_status.deleted = true
-    ticket_status.save
-  end
-
 end
