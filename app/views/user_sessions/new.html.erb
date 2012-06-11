@@ -30,7 +30,7 @@
 					<b><%= t(".sign_in_using") %>:</b>
 					<%= link_to(image_tag("google.png", :alt => t(".sign_in_using_google")) + "Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") if feature?(:google_signin) %>
 					<%= link_to(image_tag("twitter.png", :alt => "Twitter") + "Twitter", "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
-					<%= link_to(image_tag("facebook.png", :alt => "Facebook") + "Facebook", "/auth/facebook", :class => "button") if feature?(:facebook_signin) %>
+
 				</div>
 			 </li>
 			<%end%>
