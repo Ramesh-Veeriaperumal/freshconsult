@@ -29,7 +29,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       DEFAULT_STATUSES.include?(status.status_id) ? I18n.t("#{status.send(display_name(user)).downcase}") : status.send(display_name(user))
   end
 
-  def self.choices(account)
+  def self.statuses_list(account)
     statuses = account.ticket_status_values
     statuses.map{|status| { :status_id => status.status_id, :name => status.name, :customer_display_name => status.customer_display_name, :stop_sla_timer => status.stop_sla_timer, :deleted => status.deleted } }
   end

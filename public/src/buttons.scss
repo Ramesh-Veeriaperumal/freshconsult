@@ -438,7 +438,7 @@ div.action_buttons:hover{
       @include background-clip(padding-box);
       @include background(linear-gradient(top, #d9d9d9, #ffffff));
       @include border-radius(12px);
-      @include box-shadow(#f2f2f2 0 0 0 1px inset, 1px 0 2px rgba(0, 0, 0, 0.3));
+      @include box-shadow(#f2f2f2 0 0 0 1px inset);
       @include transition-property(margin);
       @include transition-duration(0.2s);
     }
@@ -450,7 +450,7 @@ div.action_buttons:hover{
   &.active{        
     .toggle-container{ left:0; }
     .toggle-handle{ margin-left:-20px; }
-    .toggle-handle span{ @include box-shadow(#f2f2f2 0 0 0 1px inset, -1px 0 2px rgba(0, 0, 0, 0.3)); };
+    .toggle-handle span{ @include box-shadow(#f2f2f2 0 0 0 1px inset); };
   }
   p{
     visibility: hidden; 

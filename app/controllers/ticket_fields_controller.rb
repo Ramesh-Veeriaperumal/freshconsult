@@ -22,7 +22,7 @@ class TicketFieldsController < Admin::AdminController
             :visible_in_portal      => field.visible_in_portal,
             :editable_in_portal     => field.editable_in_portal,
             :required_in_portal     => field.required_in_portal,
-            :choices                => (field.field_type == "nested_field") ? field.nested_choices : field.choices,
+            :choices                => get_choices(field),
             :levels                 => field.levels,
             :level_three_present    => field.level_three_present
           }
@@ -87,6 +87,17 @@ class TicketFieldsController < Admin::AdminController
           action = nested_field.delete(:action)
           send("#{action}_nested_field", ticket_field, nested_field) 
         end
+      end
+    end
+
+    def get_choices(field)
+      case field.field_type
+        when "nested_field" then
+          field.nested_choices
+        when "default_status" then
+          Helpdesk::TicketStatus::statuses_list(current_account)
+        else 
+          field.choices
       end
     end
     

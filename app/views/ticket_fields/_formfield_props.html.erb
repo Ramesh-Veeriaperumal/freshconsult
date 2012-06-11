@@ -122,7 +122,7 @@
             </span>
             <span class="dropchoice">&nbsp;</span>
             <span class="dropchoice"><label>Display message for customer</label></span>
-            <label class="floatl">On ticket submission</label>
+            <label class="floatl">Start SLA timer</label>
           </fieldset>
         </div>
         <div name="statuschoices" class="customchoices" id="statuschoices"></div>        
@@ -138,7 +138,7 @@
             <span class="dropchoice"><input type="text" rel="status-companion" name="name" value="${name}" {{if (status_id == 2 || status_id == 3 || status_id == 4 || status_id == 5) }} disabled="disabled" {{/if}} /></span>
             <span class="dropchoice"><input type="text" name="customer_display_name" value="${customer_display_name}" /></span>
             {{if (status_id != 2 && status_id != 4 && status_id != 5) }}
-            <input rel="toggle" type="checkbox" name="stop_sla_timer" {{if stop_sla_timer}}checked="checked"{{/if}} value=true /> SLA
+            <input rel="toggle" type="checkbox" name="stop_sla_timer" {{if stop_sla_timer}}checked="checked"{{/if}} value=true />
             {{/if}}
           </fieldset>
         </script>
