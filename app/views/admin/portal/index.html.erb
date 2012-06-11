@@ -35,6 +35,12 @@
 		</li>
 		<li>
 			<label>
+		      <%= f.feature_check_box :facebook_signin %> <%=t('portal_customizer_facebook_signin')%>
+		    </label>
+			<%= content_tag( :div, t('portal_customizer_anon_for_fb'), :class => "info-data tabbed" ) %>
+		</li>
+		<li>
+			<label>
 		      <%= f.feature_check_box :signup_link %> <%=t('portal_signup')%>
 		    </label>
 			<%= content_tag( :div, t('portal_signup_anon'), :class => "info-data tabbed" ) %>
