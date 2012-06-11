@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(:version => 20120605113350) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
+    t.integer "account_id",    :limit => 8
   end
 
   create_table "authorizations", :force => true do |t|
@@ -501,7 +502,7 @@ ActiveRecord::Schema.define(:version => 20120605113350) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "attachable_type"=>"14", "account_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
