@@ -24,7 +24,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
-  before_filter :serialize_params_for_tags , :only => [:index, :custom_search]
+  before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   

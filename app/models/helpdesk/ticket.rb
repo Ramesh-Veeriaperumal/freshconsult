@@ -861,7 +861,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       cc_email
     end
   end
-  
+
   private
   
     def create_source_activity
