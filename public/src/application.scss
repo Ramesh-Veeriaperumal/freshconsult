@@ -4934,6 +4934,10 @@ a.close{
 		padding: 0;
 		margin: 0;
 		border-bottom: #e5e5e5 solid 1px;
+
+		&.contact-na {
+			border-bottom: none;
+		}
 	}
 
 	.name {
@@ -4943,7 +4947,8 @@ a.close{
 
 	.salesforce-name {
 		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		padding:0 0 10px 45px;  
+		padding:7px 0 10px 45px;  
+		min-height:30px;
  	}
 
  	.error {
@@ -4996,6 +5001,10 @@ a.close{
 
 	#contact-na {
 		padding-top:6px;
+
+		&.salesforce-name {
+			padding-top: 10px;
+		}
 	}
 }
 	
