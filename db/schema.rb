@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(:version => 20120525161936) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
+    t.integer "account_id",    :limit => 8
   end
 
   create_table "authorizations", :force => true do |t|
@@ -684,7 +685,7 @@ ActiveRecord::Schema.define(:version => 20120525161936) do
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8,  :null => false 
+    t.integer  "id",               :limit => 8,                             :null => false
     t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
@@ -763,7 +764,7 @@ ActiveRecord::Schema.define(:version => 20120525161936) do
 
   create_table "key_value_pairs", :force => true do |t|
     t.string  "key"
-    t.string  "value"
+    t.text    "value"
     t.string  "obj_type"
     t.integer "account_id", :limit => 8
   end
@@ -1042,7 +1043,7 @@ ActiveRecord::Schema.define(:version => 20120525161936) do
   end
 
   create_table "survey_handles", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "id",               :limit => 8,                    :null => false
     t.integer  "account_id",       :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
