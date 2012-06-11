@@ -800,7 +800,6 @@ en:
   portal_customizer_option_solutions: Users can view public solutions without logging in
   portal_customizer_google_signin: Allow users to Sign in using Google
   portal_customizer_twitter_signin: Allow users to Sign in using Twitter
-  portal_customizer_facebook_signin: Allow users to Sign in using Facebook
   portal_signup: Allow customers to Sign Up from the customer portal
   portal_captcha: Make captcha compulsory while submitting ticket without logging in
   to_email: To Email
@@ -1054,7 +1053,6 @@ en:
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
-  portal_customizer_anon_for_fb: Enable this feature if you want users to be able to sign in using their Facebook username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!

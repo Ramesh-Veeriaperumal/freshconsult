@@ -13,10 +13,8 @@ class AuthorizationsController < ApplicationController
     provider_name = @omniauth['provider']
     if provider_name == 'open_id' or provider_name == 'google' 
       requires_feature(:google_signin)
-    elsif provider_name == 'twitter'
+    elsif
       requires_feature(:twitter_signin)
-    elsif provider_name == 'facebook'
-      requires_feature(:facebook_signin)
     end
   end
   

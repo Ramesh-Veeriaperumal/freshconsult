@@ -24,7 +24,7 @@
 				<span class="seperator"></span>
 				<div class="help_text"><b><Help><%= t('.help') %>:</b> <%= link_to(t('.forgot'), new_password_reset_path ) %> </div>
 			</li>
-			<%if feature?(:google_signin) or feature?(:twitter_signin) or feature?(:facebook_signin) %>
+			<%if feature?(:google_signin) or feature?(:twitter_signin) %>
 			 <li>
 				<div>
 					<b><%= t(".sign_in_using") %>:</b>
