@@ -30,6 +30,7 @@
               <div>340 S Lemon Ave #7585</div>
               <div>Walnut CA 91789</div>
               <div>USA</div>
+			  <div>Tax ID 33-1218825</div>
             </td>
           </tr>
         </table>              
@@ -47,12 +48,21 @@
             <div><strong><strong><%=@subscription.account.account_admin.name%></strong></strong></div>
             </td>
         </tr>
+		<%if @subscription.billing_address%>
+		<tr>
+		  <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Address</td>
+		  <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
+              <div><%=@subscription.billing_address.humanize.gsub("\n","<br>")%></div>
+            </td>	
+		</tr>
+		<%else%>
 		<tr>
           <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Company Name</td>
           <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
             <div><strong><strong><%=@subscription.account.name%></strong></strong></div>
-            </td>
+          </td>
         </tr>
+		<%end%>
       </table>
       <table style="border-collapse: collapse; margin-top: 1px; width: 300px; float: right;">
           <tr>
