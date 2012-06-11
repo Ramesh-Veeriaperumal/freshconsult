@@ -5,8 +5,8 @@ SalesforceWidget.prototype= {
 			'<span class="contact-type hide">#{contactType}</span>' +
 			'<div class="title">' +
 				'<div class="salesforce-name">' +
-					'<span id="contact-name">#{contactName}</span><br />' +
-				    '<span id="contact-desig">#{contactDesig}</span>'+
+					'<div id="contact-name">#{contactName}</div>' +
+				    '<div id="contact-desig">#{contactDesig}</div>'+
 			    '</div>' + 
 		    '</div>' + 
 		    '<div class="field half_width">' +
@@ -32,7 +32,7 @@ SalesforceWidget.prototype= {
 			'<div class="external_link"><a id="search-back" href="javascript:salesforceWidget.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view" href="#{contactLink}">View <span id="crm-contact-type">#{contactType}</span> in Salesforce</a></div>'),
 
 	SALESFORCE_CONTACT_NA:new Template(
-		'<div class="title">' +
+		'<div class="title contact-na">' +
 			'<div class="salesforce-name"  id="contact-na">Cannot find requester in Salesforce</div>'+
 		'</div>'),
 
