@@ -184,7 +184,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
      
      def set_note_as_private
-       self.private = true if note? && !user.customer?
+       self.private = true if note? && !user.customer? && !notable.import_id
       end 
     
     def add_activity
