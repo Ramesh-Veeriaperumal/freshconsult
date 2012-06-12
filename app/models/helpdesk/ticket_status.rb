@@ -65,10 +65,10 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
   
   def update_tickets_sla_on_status_change
-    if stop_sla_timer_changed?
-      send_later(:update_tickets_dueby)
-    elsif deleted_changed?
+    if deleted_changed?
       send_later(:update_tickets_sla)
+    elsif stop_sla_timer_changed?
+      send_later(:update_tickets_dueby)  
     end
   end
   
@@ -102,11 +102,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
     def update_tickets_sla
       tkt_states = tickets.visible.find(:all,
-                      :joins => :ticket_states, 
-                      :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS ?', nil])
+                      :joins => :ticket_states)
       tkt_states.each do |t_s|
-        fetch_ticket = account.tickets.visible.find(t_s.id) 
-        fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
+        fetch_ticket = account.tickets.visible.find(t_s.id)
+        if (stop_sla_timer? or deleted?)
+          fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
+        else
+          fetch_ticket.ticket_states.sla_timer_stopped_at = nil
+        end
         fetch_ticket.ticket_states.save
       end
     end
