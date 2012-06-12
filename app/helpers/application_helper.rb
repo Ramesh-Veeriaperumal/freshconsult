@@ -495,6 +495,9 @@ module ApplicationHelper
           element += content_tag(:div, _name + _value, :class => "tabbed") unless (_field_value.blank? || field_value[:subcategory_val].blank?)
         end
       end
+    elsif(field.field_type == "default_status")
+      field_value = field.dropdown_selected(field.all_status_choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+      element = label + label_tag(field_name, field_value, :class => "value_label")
     else
       field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
       element = label + label_tag(field_name, field_value, :class => "value_label")

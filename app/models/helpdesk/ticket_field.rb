@@ -111,7 +111,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::TicketStatus::statuses(account)
+         Helpdesk::TicketStatus::statuses(account,User.current)
        when "default_ticket_type" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
@@ -133,6 +133,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
             [sub_c.value, sub_c.value, sub_c.sub_picklist_values.collect { |i_c| [i_c.value,i_c.value] } ] }
       ]
     }
+  end
+
+  def all_status_choices
+    self.ticket_statuses.collect{|st| [Helpdesk::TicketStatus::translate_status_name(st,User.current), st.status_id]}
   end
 
   def nested_levels

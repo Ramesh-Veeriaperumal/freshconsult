@@ -2156,3 +2156,7 @@ en:
   validate_fwd_to_email_msg: "Please enter a valid email address"
   use_reply_option: "Please use Reply option for sending an email to the requester"
   index_tooltip_loading_msg: "Loading..."
+  being_processed: "Being Processed"
+  awaiting_your_reply: "Awaiting your Reply"
+  this_ticket_has_been_resolved: "This ticket has been Resolved"
+  this_ticket_has_been_closed: "This ticket has been Closed"
