@@ -26,7 +26,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def self.translate_status_name(status, user=nil)
-      DEFAULT_STATUSES.include?(status.status_id) ? I18n.t("#{status.send(display_name(user)).downcase}") : status.send(display_name(user))
+      DEFAULT_STATUSES.include?(status.status_id) ? I18n.t("#{status.send(display_name).downcase}") : status.send(display_name(user))
   end
 
   def self.statuses_list(account)
