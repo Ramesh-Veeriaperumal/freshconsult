@@ -382,9 +382,9 @@ input.time { font-weight: normal; font-size: 12px; }
 .report table .group_by_day_criteria { width: 15%; }
 .report table .hours { width: 10%; text-align: right; }
 
-.grid ul { list-style: none; margin: 0; padding: 0; background: #efefef; border-top: 1px solid #cfcfcf; padding: 8px 12px; overflow: hidden; *zoom: 1; }
-.grid ul li { list-style-image: none; list-style-type: none; margin-left: 0px; }
-.grid ul li { margin: 0; padding: 0; float: left; width: 33%; }
+.grid ul.row { list-style: none; margin: 0; padding: 0; background: #efefef; border-top: 1px solid #cfcfcf; padding: 8px 12px; overflow: hidden; *zoom: 1; }
+.grid ul.row li { list-style-image: none; list-style-type: none; margin-left: 0px; }
+.grid ul.row li.list { margin: 0; padding: 0; float: left; width: 33%; }
 
 span.sort_handle { position: relative; left: 0; top: 1px; width: 25px; height: 25px; cursor: move; background: url(/images/sort_handle.gif) no-repeat; -moz-border-radius: 5px 5px 5px 5px; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }
 

@@ -1,0 +1,46 @@
+<% javascript_tag do %>	
+	jQuery(document).ready(function(){
+		jQuery("input[name$=_subject_template]").live("focus", function(){
+			active_email_body = jQuery(this);
+		});
+			
+	jQuery('input[type="text"]').click(function(){
+		active_email_body = jQuery(this);
+	});
+
+
+
+	jQuery("#placeholder-list-1 a").click(function(ev){       
+      if(active_email_body.get(0)){
+        var placeHolderText = jQuery(this).data("placeholder");  
+        
+
+        if(active_email_body.hasClass("desc_info")){
+  			placeHolderText='<span style="color: #1f497d;">'+placeHolderText+'</span>';
+			active_email_body.insertHtml(placeHolderText);
+
+        }else{
+          insertTextAtCursor(active_email_body.get(0), placeHolderText);
+        }
+		  }
+	});
+	
+	jQuery('#placeholder_close').click(function(){
+			jQuery('#place-dialog').hide();	
+		});
+		jQuery('#place-dialog').draggable();
+	});
+<% end %>
+
+<div class="placeholder-info" id="place-dialog" style="display:none;">		
+	<a href="javascript:void(0)" id="placeholder_close" class="close"></a>
+  	<h3 class="title"><%=t('automations.available_placeholders')%></h3>
+	<div class="intro"><%=t('automations.info4')%>.</div>
+	<div id="placeholder-list-1" class="placeholder-list">
+		<dl>
+			<% ticket_placeholders.each do |ph| %>
+				<dt><a class="uiButton small tooltip" href="javascript:void(0)" data-placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
+			<% end %>
+		</dl>	
+	</div> 
+</div>

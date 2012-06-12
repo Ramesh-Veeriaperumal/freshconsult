@@ -1,4 +1,6 @@
 <% content_for :layoutType do%>single<% end %>
+<%= javascript_include_tag "redactor/redactor.min.js" %>
+<%= stylesheet_link_tag "redactor/css/redactor.css" %>
 <% javascript_tag do %>
 	var active_email_body = null;
 	jQuery(document).ready(function(){
@@ -6,54 +8,71 @@
 		var active_link     = null;
 		var notifyType =$H();
 		var hideData=null;
+		var editorName =null;
 		jQuery("a.notify_check").bind("click", function(ev){
 			//jQuery(active_template).hide();
 			hideData = (jQuery(this).parents("tr").attr("notify_type"));
 			var emailTr = jQuery(this).parents("tr").next();
 			if(active_link != null && active_link == this){
-				jQuery(active_template).slideUp(1000); 
-				jQuery("#"+active_link.getAttribute("showdiv")).slideUp(1000);
+				jQuery(active_template).hide(); 
+				jQuery("#"+active_link.getAttribute("showdiv")).hide();
 				active_link = null;
-			}else{			
-				jQuery(active_template).slideUp(1000);	
-				jQuery("#"+jQuery(active_link).attr("showdiv")).slideUp(1000);
-				jQuery('#place-dialog').slideUp(1000);
+			}
+			else{			
+				jQuery(active_template).hide();	
+				jQuery("#"+jQuery(active_link).attr("showdiv")).hide();
+				jQuery('#place-dialog').hide();
 				
 				active_template = jQuery(emailTr).show(); 
-				jQuery("#"+this.getAttribute("showdiv")).slideDown(1000);
+				jQuery("#"+this.getAttribute("showdiv")).show();
+				
 				active_link = this;
+
+
+				var template_name=jQuery("#"+active_link.getAttribute("showdiv")).get(0).id;
+				var index =template_name.indexOf('_div');
+				editorName=template_name.substring(0,index);
+			
+				jQuery("#"+editorName+"_"+hideData).redactor({autoformat: false,focus: true});
+				active_email_body=jQuery("#"+editorName+"_"+hideData);
+					
 			}
 		});
-		jQuery("a.close_template").bind("click", function(ev){
-				
-				
-				jQuery(active_link).parent().parent().next().find("textarea").each(function(index){
-				var editorCache = $H();
-				if(jQuery("#"+active_link.getAttribute("showdiv")).get(0).id == $(this).name+"_div_"+hideData)
-				{
-					editorCache[$(this).name]=tinyMCE.activeEditor.getContent();
-					notifyType[hideData]=editorCache;
-				}
-			});
+	jQuery("a.close_template").bind("click", function(ev){
 			
-				jQuery(active_template).slideUp(1000);	
-				jQuery("#"+jQuery(active_link).attr("showdiv")).slideUp(1000);
-				jQuery('#place-dialog').slideUp(1000);
-				hideData=null;
+			jQuery(active_link).parent().parent().next().find("textarea").each(function(index){
+			var editorCache = $H();
+			if(jQuery("#"+active_link.getAttribute("showdiv")).get(0).id == $(this).name+"_div_"+hideData)
+			{
+				editorCache[$(this).name]=jQuery("#"+editorName+"_"+hideData).getCode();
+				notifyType[hideData]=editorCache;
+			}
 		});
 		
-		jQuery("a.reset_template").bind("click", function(ev){
+			jQuery(active_template).hide();	
+			jQuery("#"+jQuery(active_link).attr("showdiv")).hide();
+			jQuery('#place-dialog').hide();
+			hideData=null;
+	});
+		
+	jQuery("a.reset_template").bind("click", function(ev){
       jQuery(this).prevAll("input[name$=_subject_template]")
         .val(jQuery(this).prevAll("input[name$=_subject_template_hid]").val());
-			agent_template = jQuery(this).prevAll("textarea.desc_info");
-			  tinyMCE.activeEditor.setContent(agent_template.prev().val());
-		  agent_select = jQuery(this).prevAll("select.customSelect");
+			template = jQuery(this).prevAll("textarea.desc_info");
+			hidname=editorName+"_"+hideData+"_hid";
+			 
+
+			jQuery("#"+editorName+"_"+hideData).setCode(jQuery(this).prevAll("input[name$="+hidname+"]").val());
+			
+		  agent_select = jQuery(this).find("select.customSelect");
 		  jQuery.each(agent_select.children("options"), function(i, item){
-         item.removeAttribute("selected");
+    	     item.removeAttribute("selected");
 		  });         
 		  agent_select.val((agent_select.data('default')+"").split(","));		  
 		  agent_select.trigger("liszt:updated");
-		});
+	});
+
+
 		
 		jQuery("#Updateform").submit(function(){
 			allNotificationsDom   = jQuery("tr.main_rows");
@@ -92,15 +111,24 @@
 			jQuery("#AllNotification").val(allNotifications.toJSON()); 
 			jQuery("#NotifyAgents").val(notifyAgents.toJSON());
 		});
+
+
 		jQuery('.link_placeholder').live("click", function(ev){
 		    ev.preventDefault();
-				active_email_body = jQuery(this).parent().find('input[type="text"]');
-				jQuery('#place-dialog').slideDown();			
+				active_email_body=jQuery("#"+editorName+"_"+hideData);
+				jQuery("#"+editorName+"_"+hideData).live("click",function(){
+			});
+				jQuery('#place-dialog').slideDown();	
+
 		});
-		
+
+		jQuery('input[type="text"]').live('blur',function(){
+						active_email_body = jQuery("#"+editorName+"_"+hideData);
+		});		
+			
 	});
 <% end %>
-<%= include_tiny_mce_if_needed %>
+
 <h3 class="title"><%=t('email_notifications.title')%></h3>
 <div>
 	<% form_for :update, @email_notifications, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
@@ -154,8 +182,9 @@
 						<%end%>						
 						
 						<label><%= t('message') %></label>
-						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
-						<textarea name="requester_template" class="desc_info requesteremail mceEditor"><%=sanitize( h("#{data.requester_template}"), :tags => %w(p span strong))%></textarea>
+						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" name="<%= "requester_template_#{data.id}_hid"%>"/>
+						
+						<textarea name="requester_template" class="desc_info requesteremail" id="<%="requester_template_#{data.id}"%>" ><%=sanitize( h("#{data.requester_template}"), :tags => %w(p span strong))%></textarea>
 						<div class="seperator"></div>						
 						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
 						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
@@ -174,8 +203,8 @@
 						<%end%>
 											     
 						<label><%= t('message') %></label>
-						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
-						<textarea name="agent_template" class="desc_info agentemail mceEditor"><%= h ("#{data.agent_template}") %></textarea>
+						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" name="<%= "agent_template_#{data.id}_hid"%>"/>
+						<textarea name="agent_template" class="desc_info agentemail" id="<%= "agent_template_#{data.id}"%>"><%=sanitize( h("#{data.agent_template}"), :tags => %w(p span strong))%></textarea>
 						     
 						<% if data[:notification_type] == EmailNotification::NEW_TICKET %>
 							<label><%= t('agent.title') %></label>         
@@ -200,5 +229,5 @@
 </div>
 
 <% content_for :pagefixed do %>
-	<%= render :partial => "/shared/placeholder_help" %>
+	<%= render :partial => "shared/notification_placeholder" %>
 <% end %>

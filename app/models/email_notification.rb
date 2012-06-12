@@ -1,7 +1,11 @@
 class EmailNotification < ActiveRecord::Base
   belongs_to :account
   attr_protected  :account_id
+  before_create :set_default_version
 
+  def set_default_version
+    self.version = 2
+  end
 
 
   def after_find
