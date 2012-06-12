@@ -10,15 +10,16 @@
             _container = $("<span />", { 'class': 'toggle-container' }),
             _handle = $("<span />", { 'class': 'toggle-handle' }).append("<span></span>"),
             _proxy = $("<p />").html((opts.checkedLabel.length > opts.uncheckedLabel.length) ? opts.checkedLabel : opts.uncheckedLabel)
+            _invert = opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked')
             _ibutton = $("<a />", {
               'href': "#",
-              'class': opts.buttonClass + " " + (_checkbox.prop('checked') ? "active" : "")
+              'class': opts.buttonClass + " " + (_invert ? "active" : "")
             }).append(_container)
               .append(_proxy)
               .bind("click", function(ev){
                 ev.preventDefault();
                 $(this).toggleClass('active');
-                _checkbox.prop("checked", $(this).hasClass('active'));
+                _checkbox.prop("checked", opts.inverted ? !$(this).hasClass('active') : $(this).hasClass('active'));
               });
 
         _container.append(_onLabel).append(_handle).append(_offLabel);
@@ -44,7 +45,8 @@
     checkedLabel: "on",
     uncheckedLabel: "off",
     activeClass: "",
-    inactiveClass: ""
+    inactiveClass: "",
+    inverted: false
   };
 
 })( jQuery );

@@ -15,14 +15,14 @@
 	     </a>
 	  </li>
 	  <% end %>
-	  <% if (filter_count(:pending)) %>
-	  <li>
+	  <%# if (filter_count(:pending)) %>
+	  <!-- <li>
 	     <a href="/helpdesk/tickets/filter/pending">
 				<%= content_tag :span, t(".pending") %>
 		   	<h4><%= filter_count(:pending) %></h4>
 	     </a>
-	  </li>
-	  <% end %>
+	  </li> -->
+	  <%# end %>
 	  <% if (filter_count(:on_hold)) %>
 	  <li>
 	     <a href="/helpdesk/tickets/filter/on_hold">
