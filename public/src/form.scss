@@ -763,14 +763,14 @@ input.time{
 }
 
 .grid{
-   ul{
+   ul.row{
       @include no-bullets;
       margin:0; padding:0;
       background:#efefef;
       border-top:1px solid #cfcfcf;
       padding:8px 12px;
       @include clearfix;
-      li{
+      li.list{
          margin:0; padding:0;
          float:left;
          width:33%;
