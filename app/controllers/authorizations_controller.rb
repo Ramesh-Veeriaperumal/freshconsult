@@ -98,8 +98,6 @@ class AuthorizationsController < ApplicationController
     portal_url = user_account.full_domain if portal_url.blank?
     protocol = (user_account.ssl_enabled?) ? "https://" : "http://"
     @portal_url = protocol + portal_url
-    puts "user_account : #{user_account.inspect}"
-
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
       @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
@@ -120,11 +118,7 @@ class AuthorizationsController < ApplicationController
   def create_session
     @user_session = @current_user.account.user_sessions.new(@current_user)
     if @user_session.save
-      if(@portal_url.blank?)
         redirect_back_or_default('/') if grant_day_pass
-      else
-        redirect_to @portal_url
-      end
     else
       flash[:notice] = t(:'flash.g_app.authentication_failed')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -156,7 +150,13 @@ class AuthorizationsController < ApplicationController
       @new_auth = create_from_hash(hash, user_account) 
       @current_user = @new_auth.user
     end
-    create_session
+    if (@omniauth['provider'] == "facebook")
+      create_key_value_pair(@current_user.id, "pending", user_account.id)
+      redirect_to @portal_url + "/sso/login?provider=facebook&uid=#{hash['uid']}" 
+    else
+      create_session
+    end
+    
   end
   
   def create_from_hash(hash, user_account = nil)
