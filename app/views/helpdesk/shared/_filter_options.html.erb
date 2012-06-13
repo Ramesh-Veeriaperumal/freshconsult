@@ -6,7 +6,7 @@
       <input type="hidden" name="filter_name" value="<%= @current_view %>" />
       <input type="hidden" name="wf_order" value="<%= current_wf_order %>" />
       <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
-  		<input type="hidden" name="page" value="1" />
+      <input type="hidden" name="page" value="1" />
     </form>
       <% @show_options.each_with_index do |c_hash, i| %> 
         <%
@@ -16,7 +16,7 @@
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 
-    	  <% content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+        <% content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
                               :class       => "ff_item", 
                               :condition   => c_hash[:condition],
                               :operator    => c_hash[:operator],
@@ -28,7 +28,7 @@
    
 
 <% javascript_tag do %> 
-	var query_hash  = $A();
+  var query_hash  = $A();
   
   function getFilterData(){
     query_hash = $A(); 
@@ -55,28 +55,28 @@
         });
       }
     });
-		jQuery("#FilterOptions input[name=page]").val(1);
+    jQuery("#FilterOptions input[name=page]").val(1);
   }
 
   
-	jQuery(document).ready(function(){
-		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
+  jQuery(document).ready(function(){
+    jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
     jQuery(".filter_item").bind("change", function(){
       jQuery("#save_filter").show();
-			jQuery("#FilterOptions input[name=filter_name]").val("");
+      jQuery("#FilterOptions input[name=filter_name]").val("");
       jQuery(".view_filters .active").removeClass("active");
       getFilterData();
       jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
-    });	
+    }); 
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
-    });	
-		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
-			ev.preventDefault();
-			jQuery(document).scrollTop(0);
-			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
-		});		
+    }); 
+    jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
+      ev.preventDefault();
+      jQuery(document).scrollTop(0);
+      jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
+    });   
   });
   
   jQuery("#FilterOptions").change(function(){

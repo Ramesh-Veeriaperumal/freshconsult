@@ -1,16 +1,8 @@
 <!--input type="hidden" id="latest_updated_at" value="<%= @latest_updated_at %>"></input-->
 
 <% unless @items.empty? %>
-  <table class="tickets">	
+  <table class="tickets"> 
     <tbody>
-      <tr class="headings hideForDetails">
-        <td></td>
-        <td><%= t('helpdesk.tickets.tabular_view.title') %></td>
-        <td colspan="2"><%= t('helpdesk.tickets.tabular_view.posted') %></td>
-        <td><%= t('helpdesk.tickets.tabular_view.assigned') %></td>
-        <td><%= t('helpdesk.tickets.tabular_view.status') %></td>
-        <td><%= t('helpdesk.tickets.tabular_view.priority') %></td>
-      </tr>
       <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @items %>
     </tbody>
   </table>
@@ -43,13 +35,13 @@
      jQuery(".nav-trigger").showAsMenu();
   <% end %>
 <% else %>
-	<div class="list-noinfo">
-	  <% view_name = t("helpdesk.tickets.views.this_view") %>
-	  <% unless @is_default_filter.nil? %>
-	    <% view_name = (@is_default_filter)? t("helpdesk.tickets.views.#{@current_view}") : @ticket_filter.name %>
-	  <% else %>
-	  
-	  <% end %>
-	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %>
-	</div>
+  <div class="list-noinfo">
+    <% view_name = t("helpdesk.tickets.views.this_view") %>
+    <% unless @is_default_filter.nil? %>
+      <% view_name = (@is_default_filter)? t("helpdesk.tickets.views.#{@current_view}") : @ticket_filter.name %>
+    <% else %>
+    
+    <% end %>
+    <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %>
+  </div>
 <% end %>

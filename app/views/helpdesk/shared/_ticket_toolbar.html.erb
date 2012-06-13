@@ -1,37 +1,32 @@
   <table class="tickets" width="100%">
-	  <thead>
-	  	<tr>
-				<th class="check">
-					<input type="checkbox" id="helpdesk-select-all"  />
-				</th>
-		    <th> 
-		    	<% if @current_view == "deleted" %>
-    			  <%= link_to_function(t('undelete'), "helpdesk_submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
-    			<% else %>
-    			  <%= link_to_function(t('delete'), "helpdesk_submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
-    			<% end %>
-			
-    			<% if @current_view == "spam" %>
-    			  <%= link_to_function(t('ticket.unflag_spam'), "helpdesk_submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
-    			<% else %>
-    			  <%= link_to_function(t('ticket.flag_spam'), "helpdesk_submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
-    			<% end %> 
-			
-    			<% if @current_view != "deleted" && @current_view != "spam" %>
-    				<%= link_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
-    				<%= link_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
-		            <%= link_to(t('ticket.assign_to_agent'), { :action => "assign_to_agent" }, :class => "button dialog2", :title => t('ticket.assign_to_agent'), "data-width" => "360" ) %>
-	            	<%= link_to(t('bulk_update'), { :action => "update_multiple_tickets"}, :class => "button dialog2", :title => t('update_multiple_tickets'), "data-width" => "360" ) %>
-					<%= link_to("Export", { :action => "configure_export" }, :class => "button dialog2", :title => "Export to CSV", "data-width" => "650" ) %>
+    <thead>
+      <tr>
+        <th class="check">
+          <input type="checkbox" id="helpdesk-select-all"  />
+        </th>
+        <th> 
+          <% if @current_view == "deleted" %>
+            <%= link_to_function(t('undelete'), "helpdesk_submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+          <% else %>
+            <%= link_to_function(t('delete'), "helpdesk_submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
+          <% end %>
+      
+          <% if @current_view == "spam" %>
+            <%= link_to_function(t('ticket.unflag_spam'), "helpdesk_submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+          <% else %>
+            <%= link_to_function(t('ticket.flag_spam'), "helpdesk_submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+          <% end %> 
+      
+          <% if @current_view != "deleted" && @current_view != "spam" %>
+            <%= link_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+            <%= link_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+                <%= link_to(t('ticket.assign_to_agent'), { :action => "assign_to_agent" }, :class => "button dialog2", :title => t('ticket.assign_to_agent'), "data-width" => "360" ) %>
+                <%= link_to(t('bulk_update'), { :action => "update_multiple_tickets"}, :class => "button dialog2", :title => t('update_multiple_tickets'), "data-width" => "360" ) %>
+          <%= link_to("Export", { :action => "configure_export" }, :class => "button dialog2", :title => "Export to CSV", "data-width" => "650" ) %>
   
-          		<% end %>
-          	</th>
-          	<th class="toolbar_right">
-              <ul id="ticket_view_choices">
-                <li class="icon active"><a class="ticket-view-detail ticket-view-choice"></a></li>
-                <li class="icon right"><a class="ticket-view-list ticket-view-choice"></a></li>
-              </ul>
+              <% end %>
             </th>
-      	</tr>
+            <th class="toolbar_right"> </th>
+        </tr>
     </thead>
   </table>
