@@ -21,12 +21,13 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   named_scope :visible, :conditions => {:deleted => false}
   
-  def self.display_name(user=nil)
+  def self.display_name
+    user = User.current
     user.try(:customer?) ? "customer_display_name" : "name"
   end
 
-  def self.translate_status_name(status, user=nil)
-    st_name = status.send(display_name(user))
+  def self.translate_status_name(status, disp_col_name=nil)
+    st_name = disp_col_name.nil? ? status.send(display_name) : status.send(disp_col_name)
     DEFAULT_STATUSES.include?(status.status_id) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : st_name 
   end
 
@@ -35,18 +36,20 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     statuses.map{|status| { :status_id => status.status_id, :name => status.name, :customer_display_name => status.customer_display_name, :stop_sla_timer => status.stop_sla_timer, :deleted => status.deleted } }
   end
   
-  def self.statuses(account, user=nil)
+  def self.statuses(account)
+    disp_col_name = self.display_name
     statuses = account.ticket_status_values
-    statuses.map{|status| [translate_status_name(status,user), status.status_id]}
+    statuses.map{|status| [translate_status_name(status, disp_col_name), status.status_id]}
   end
   
-  def self.status_keys_by_name(account, user=nil)
-    Hash[*statuses(account,user).flatten].insensitive
+  def self.status_keys_by_name(account)
+    Hash[*statuses(account).flatten].insensitive
   end
   
-  def self.status_names_by_key(account, user=nil)
+  def self.status_names_by_key(account)
+    disp_col_name = self.display_name
     statuses = account.ticket_status_values
-    Hash[*statuses.map{|status| [status.status_id, translate_status_name(status,user)]}.flatten]
+    Hash[*statuses.map{|status| [status.status_id, translate_status_name(status, disp_col_name)]}.flatten]
   end
   
   def self.donot_stop_sla_statuses(account)

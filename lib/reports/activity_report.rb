@@ -185,7 +185,7 @@ module Reports::ActivityReport
     row.push("Tickets By #{@pie_chart_labels.fetch(column_name,column_name)}")
     constants_mapping = Reports::ChartGenerator::TICKET_COLUMN_MAPPING.fetch(column_name.to_s,column_hash)
     if column_name.eql?(:status)
-      constants_mapping = Helpdesk::TicketStatus::status_names_by_key(Account.current).clone()
+      constants_mapping = Helpdesk::TicketStatus.status_names_by_key(Account.current).clone()
       constants_mapping.delete(CLOSED) 
     end
     constants_mapping.each do |k,v|

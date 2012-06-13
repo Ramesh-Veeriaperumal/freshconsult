@@ -99,7 +99,7 @@ class Admin::AutomationsController < Admin::AdminController
         { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown", 
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] } },
         { :name => "status", :value => t('set_status_as'), :domtype => "dropdown", 
-          :choices => Helpdesk::TicketStatus::status_names_by_key(current_account).sort},
+          :choices => Helpdesk::TicketStatus.status_names_by_key(current_account).sort},
         { :name => -1, :value => "------------------------------" },
         { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
         { :name => -1, :value => "------------------------------" },

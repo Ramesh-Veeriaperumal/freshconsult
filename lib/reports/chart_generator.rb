@@ -6,7 +6,7 @@ module Reports::ChartGenerator
                           }  
                           
   def ticket_status_mapping
-    Helpdesk::TicketStatus::status_names_by_key(Account.current)
+    Helpdesk::TicketStatus.status_names_by_key(Account.current)
   end
   
   def gen_pie_data(value_hash,column_name)

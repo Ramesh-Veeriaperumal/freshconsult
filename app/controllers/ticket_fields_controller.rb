@@ -95,7 +95,7 @@ class TicketFieldsController < Admin::AdminController
         when "nested_field" then
           field.nested_choices
         when "default_status" then
-          Helpdesk::TicketStatus::statuses_list(current_account)
+          Helpdesk::TicketStatus.statuses_list(current_account)
         else 
           field.choices
       end
