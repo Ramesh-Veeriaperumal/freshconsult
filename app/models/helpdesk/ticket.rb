@@ -864,7 +864,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
     to_emails_array
   end
-  
+
   private
   
     def create_source_activity

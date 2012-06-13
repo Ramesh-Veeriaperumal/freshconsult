@@ -5,8 +5,8 @@ SugarWidget.prototype= {
 			'<span class="contact-type hide"></span>' +
 			'<div class="title">' +				
 				'<div class="name">' +
-					'<span id="contact-name"></span><br />' +
-				    '<span id="contact-desig"></span>'+
+					'<div id="contact-name"></div>' +
+				    '<div id="contact-desig"></div>'+
 			    '</div>' + 
 		    '</div>' + 
 		    '<div class="field half_width">' +
@@ -32,7 +32,7 @@ SugarWidget.prototype= {
 			'<div class="external_link"><a id="search-back" href="javascript:sugarWidget.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view">View <span id="crm-contact-type"></span> in SugarCRM</a></div>'),
 
 	SUGAR_CONTACT_NA:new Template(
-		'<div class="title">' +
+		'<div class="title contact-na">' +
 			'<div class="name"  id="contact-na"></div>'+
 		'</div>'),
 

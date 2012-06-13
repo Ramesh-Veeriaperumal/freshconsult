@@ -31,6 +31,22 @@ ActiveRecord::Schema.define(:version => 20120611075046) do
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
 
+  create_table "addresses", :force => true do |t|
+    t.string   "first_name"
+    t.string   "last_name"
+    t.text     "address1"
+    t.text     "address2"
+    t.string   "country"
+    t.string   "state"
+    t.string   "city"
+    t.string   "zip"
+    t.integer  "account_id",       :limit => 8
+    t.integer  "addressable_id",   :limit => 8
+    t.string   "addressable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
     t.text     "content",      :limit => 2147483647
@@ -91,6 +107,7 @@ ActiveRecord::Schema.define(:version => 20120611075046) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
+    t.integer "account_id",    :limit => 8
   end
 
   create_table "authorizations", :force => true do |t|
@@ -485,7 +502,7 @@ ActiveRecord::Schema.define(:version => 20120611075046) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "attachable_type"=>"14", "account_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -684,7 +701,7 @@ ActiveRecord::Schema.define(:version => 20120611075046) do
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8,  :null => false 
+    t.integer  "id",               :limit => 8,                             :null => false
     t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
@@ -763,7 +780,7 @@ ActiveRecord::Schema.define(:version => 20120611075046) do
 
   create_table "key_value_pairs", :force => true do |t|
     t.string  "key"
-    t.string  "value"
+    t.text    "value"
     t.string  "obj_type"
     t.integer "account_id", :limit => 8
   end
@@ -1042,7 +1059,7 @@ ActiveRecord::Schema.define(:version => 20120611075046) do
   end
 
   create_table "survey_handles", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "id",               :limit => 8,                    :null => false
     t.integer  "account_id",       :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"

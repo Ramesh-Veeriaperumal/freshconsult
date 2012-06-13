@@ -1,4 +1,16 @@
-<% content_for :layoutType do -%>single<%- end %>
+<% content_for :sidebar do -%>
+<div class="sidepanel">
+<p class="intro">	
+You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date.
+</p>   
+<br />
+<p class="intro">
+Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan.
+</p>
+</div>
+<%- end %>
+
+
 
 <% if @subscription && @subscription.errors.any? %>
   <div class="errorExplanation">
@@ -22,6 +34,8 @@
 <div class="button-container">
 	<%= link_to( t('back_plans_billing'), account_url, :class => "uiButton floatl" ) %>
 </div>
+
+
 
 <% if @subscription.needs_payment_info? -%>
   <!--p>
