@@ -9,8 +9,6 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :notable, :polymorphic => true
 
   belongs_to :user
-
-  before_create :set_note_as_private
   
   Max_Attachment_Size = 15.megabyte
 
@@ -168,8 +166,10 @@ class Helpdesk::Note < ActiveRecord::Base
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
-      elsif inbound_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self , notable.reply_email,{:include_cc => true})      
+      else    
+        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
+           notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
       
       notable.updated_at = created_at
@@ -182,10 +182,6 @@ class Helpdesk::Note < ActiveRecord::Base
       notable.ticket_states.update_attribute(:inbound_count,inbound_count+=1)
      end
     end
-     
-     def set_note_as_private
-       self.private = true if note? && !user.customer? && !notable.import_id
-      end 
     
     def add_activity
       return unless human_note_for_ticket?

@@ -35,7 +35,14 @@
           <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
           on <%= formated_date(@ticket.created_at) %>
           <div class="info"> 
-            <%= content_tag :span, "To: " + @ticket.to_email.gsub("<","&lt;").gsub(">","&gt;"), :class => "" if @ticket.to_email && (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %> via <%= @ticket.source_name %>
+            <%if @to_emails && @to_emails.length > 0 %>                        
+                  <%if @to_emails.length < 3 %>
+                      <%= content_tag :span, "To: " + @to_emails.collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                  <% else %>
+                      <%= content_tag :span, "To: " + @to_emails[0,2].collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ @to_emails[2,@to_emails.length].collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@to_emails.length-2} "+t('ticket_cc_email_more')+"</a>", :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                  <% end %>
+            <% end %> 
+            via <%= @ticket.source_name %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %> 
           <%= content_tag :span, t("helpdesk.tickets.show.meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
           </div> 

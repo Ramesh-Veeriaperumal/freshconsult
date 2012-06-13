@@ -804,6 +804,7 @@ en:
   portal_customizer_option_solutions: Users can view public solutions without logging in
   portal_customizer_google_signin: Allow users to Sign in using Google
   portal_customizer_twitter_signin: Allow users to Sign in using Twitter
+  portal_customizer_facebook_signin: Allow users to Sign in using Facebook
   portal_signup: Allow customers to Sign Up from the customer portal
   portal_captcha: Make captcha compulsory while submitting ticket without logging in
   to_email: To Email
@@ -1056,7 +1057,8 @@ en:
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
-  portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
+  portal_customizer_anon_for_t: Enable this feature if you want customers to be able to sign in using their Twitter username and password. 
+  portal_customizer_anon_for_f: Enable this feature if you want customers to be able to sign in using their Facebook username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
@@ -1396,7 +1398,7 @@ en:
     type: Type
     execute_scenario: Execute Scenario
     note_form: 
-      private_note: This is a private note. It will not be shown to the requester.
+      private_note: This is a private note,  don't show this to the requester.
       form_title: Add a Note
       add_and_resolve: Add and Resolve
       notify_agents: Notify Agents
@@ -1734,7 +1736,7 @@ en:
         remember: Remember me on this computer
         login: Login
         forgot: I forgot my password?
-        sign_in_using: Sign In using
+        sign_in_using: Sign In
         sign_in_using_google: Sign in using your Google account
         help: Help
   delete_reminder: Delete this ToDo?
@@ -1984,6 +1986,12 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    salesforce:
+      label: "Salesforce"
+      desc: "You can view contact information from Salesforce in Freshdesk."
+      form:
+        salesforce_settings_info: ""
+        salesforce_settings: "Salesforce Settings"
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"

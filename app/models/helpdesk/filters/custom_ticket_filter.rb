@@ -19,6 +19,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::onhold_statuses(Account.current)).join(',')},
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
+  
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
                       "deleted" =>  [spam_condition(false),deleted_condition(true)],

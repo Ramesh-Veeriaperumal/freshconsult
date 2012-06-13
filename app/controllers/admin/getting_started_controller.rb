@@ -3,7 +3,8 @@ class Admin::GettingStartedController < Admin::AdminController
   before_filter :build_twitter_item, :twitter_wrapper, :build_fb_item, :fb_client
   
   def index
-    request_token = @wrapper.request_tokens          
+    request_token = @wrapper.request_tokens   
+    @auth_redirect_url = request_token.authorize_url
     session[:request_token] = request_token.token
     session[:request_secret] = request_token.secret    
     @email_configs = current_account.all_email_configs

@@ -141,7 +141,7 @@ class Helpdesk::NotesController < ApplicationController
       end
       @parent.update_attribute(:cc_email, cc_email_hash_value)      
    end
-   
+
   def send_facebook_reply
     
     if @parent.is_fb_message?

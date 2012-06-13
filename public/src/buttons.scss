@@ -71,7 +71,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	@include corners(4px);
 	text-align:center;
 }
-.uiButton:hover, .fdbutton:hover, .forum_button:hover, .uiButton-active:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
+.uiButton:hover, .uiButton-active:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
 
 .special.uiButton{ 
    background-color:darken($tab_color, 6%); 
@@ -155,7 +155,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
  }
 }
 
-
 .ui-after-submit{
    border-color:#cfcfcf;
 	background-color:#eeeeee;
@@ -166,9 +165,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0);   
 }
 
-.uiButton:active, .fdbutton:active, .uiButton-active:active { top: 1px; }
+.uiButton:active, .uiButton-active:active { top: 1px; }
 .small.uiButton, .small.uiButton:visited { font-size: 11px;  }
-.uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited { font-size: 12px; }
+.uiButton, .uiButton:visited { font-size: 12px; }
 .medium.uiButton, .medium.uiButton:visited { font-size: 14px; }
 .large.uiButton, .large.uiButton:visited { font-size: 1.36em; padding: 8px 14px 9px; }
 
@@ -197,34 +196,15 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
   box-shadow: none;
 }
 
-.forum_button{
-	@include anchor-button;
-    padding: 4px 14px;    
-    margin: 2px; 
-    border:1px solid #cfcfcf;
-    text-align:center;
-    font-size: 12px;
-    font-weight:bold;
-    color: #333333;
-    @include corners(14px);
-    background-color:#eeeeee;
-    background-repeat:repeat-x;
-	background-image:url(../images/overlay-button.png); 
-	text-shadow: 1px 1px 0 white;
-	background-position:top left; 
-	margin-top:20px;
-}
-.small.forum_button{ font-size:11px; padding:1px 14px; }
-
 div.action_buttons{
 	position:relative;
 	float:right;
-	@include corners(4px);
+	@include border-radius(4px);
 	margin:-5px 6px 2px 5px;
 	background-image:url(../images/overlay-button.png);
 	background-color:#f8f8f8;
 	background-repeat:repeat-x; 
-	padding:4px 7px 3px 3px; 
+	padding:2px 7px 3px 3px; 
 	border:1px solid darken(#f2f2f2, 5%);
 	a{
 		text-decoration:none;
@@ -255,24 +235,27 @@ div.action_buttons:hover{
 }
 
 .button, .slim-button {
-	@include anchor-button;
-   white-space: nowrap;
-   text-align: center;
-   font-size: 11px;
-   overflow: hidden;
-   padding: 4px 8px;
-   margin: 2px;
-    
+  @include inline-block;
+  margin: 0.7em 0.5em 0.7em;
+  font-size: 100%;
+  line-height: 130%;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  overflow: hidden;
+  padding: 4px 8px;
+  margin: 2px;    
 	@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
-   @include corners(4px);
-	@include inset-shadows(rgba(0, 0, 0, 0.05), 0px, -2px, 0px);
-	@include shadows(rgba(0, 0, 0, 0.05), 0px, 1px, 0px);	
-   background-image:url(../images/overlay-button.png);
+  @include border-radius(4px);
+	@include box-shadow(rgba(0, 0, 0, 0.05) 0 -2px 0 inset);
+	@include box-shadow(rgba(0, 0, 0, 0.05) 0  1px 0);	
+  background-image:url(../images/overlay-button.png);
 	background-color:#f8f8f8;
-	img{ width:auto; height:auto; }	
-   border: 1px solid #cfcfcf;
-   cursor: pointer;
-   position:relative;   
+	img{ width:auto; height:auto; margin: 0 3px -3px 0 !important; }	
+  border: 1px solid #cfcfcf;
+  position:relative;   
 }
 
 .close-button{

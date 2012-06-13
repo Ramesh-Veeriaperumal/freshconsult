@@ -59,7 +59,7 @@ require 'openssl'
       sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
       verified = sign.verify
       if verified
-        account = Account.find(:first,:conditions=>{:google_domain=>params[:domain]},:order=>"updated_at DESC") unless params[:domain].blank?
+        account = find_account_by_google_domain(params[:domain])
         if account.blank?
           json = {:verified => :false, :reason=>t("flash.gmail_gadgets.account_not_associated")}
         else
@@ -156,11 +156,8 @@ require 'openssl'
   def openid_google
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
-    signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?   
-    #signup_url = "http://localhost:3000/account/signup_google?domain="+domain_name unless domain_name.blank?
-    @current_account = Account.find(:first,:conditions=>{:google_domain=>domain_name},:order=>"updated_at DESC")
-    full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}" unless domain_name.blank?
-    @current_account = Account.find_by_full_domain(full_domain) if @current_account.blank?
+    signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?
+    @current_account = find_account_by_google_domain(domain_name)
     cust_url = @current_account.full_domain unless @current_account.blank?   
     if @current_account.blank?      
       flash[:notice] = "There is no account associated with your domain. You may signup here"
@@ -178,6 +175,17 @@ require 'openssl'
     authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
   end
   
+  def find_account_by_google_domain(google_domain_name)
+    unless google_domain_name.blank?
+      account = Account.find(:first,:conditions=>{:google_domain=>google_domain_name},:order=>"updated_at DESC")
+      if account.blank?
+        full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+        account = Account.find_by_full_domain(full_domain)
+      end
+      account
+    end
+  end
+
   def google_auth_completed    
     resp = request.env[Rack::OpenID::RESPONSE]  
     email = nil

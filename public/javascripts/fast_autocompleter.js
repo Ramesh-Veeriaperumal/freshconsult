@@ -341,7 +341,7 @@ Autocompleter.MultiValue = Class.create({
     this.searchField.clear();
     this.searchField.focus();
   },
-  
+
   addEntry: function(id, title) {
     var items = [id],index,titleArr=[title];
     if(this.options.separatorRegEx){
