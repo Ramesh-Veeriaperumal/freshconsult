@@ -4,9 +4,9 @@ development:
  callback_url: http://localhost.local:3000/social/facebook/authdone  
 staging:
  #freshpo
- app_id: 177912822282439
- secret_key: 81297d69e2deaf8152a7b0b96508c161
- callback_url: http://login.freshpo.com/social/facebook/authdone 
+ #app_id: 177912822282439
+ #secret_key: 81297d69e2deaf8152a7b0b96508c161
+ #callback_url: http://login.freshpo.com/social/facebook/authdone 
 
  #freshitil
  # app_id: 315147931896525 
@@ -14,9 +14,9 @@ staging:
  # callback_url: https://login.freshitil.com/social/facebook/authdone 
 
  #freshbugs
- # app_id: 235038579942982 
- # secret_key: 13f90c9038dc120787bed4a29f9bea0f
- # callback_url: https://login.freshbugs.com/social/facebook/authdone 
+  app_id: 235038579942982 
+  secret_key: 13f90c9038dc120787bed4a29f9bea0f
+  callback_url: https://login.freshbugs.com/social/facebook/authdone 
 
 test:
  app_id: 128260310615386
