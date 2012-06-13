@@ -135,9 +135,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
     }
   end
 
-  def all_status_choices
-    disp_col_name = Helpdesk::TicketStatus.display_name
+  def all_status_choices(disp_col_name=nil)
+    disp_col_name = disp_col_name.nil? ? "customer_display_name" : "name"
     self.ticket_statuses.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, disp_col_name), st.status_id]}
+  end
+
+  def visible_status_choices(disp_col_name=nil)
+    disp_col_name = disp_col_name.nil? ? "customer_display_name" : "name"
+    self.ticket_statuses.visible.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, disp_col_name), st.status_id]}
   end
 
   def nested_levels

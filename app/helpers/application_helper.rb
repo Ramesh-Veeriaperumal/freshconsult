@@ -446,7 +446,11 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+        if (field.field_type == "default_status" and in_portal)
+          element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
+        else
+          element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+        end
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "nested_field" then
