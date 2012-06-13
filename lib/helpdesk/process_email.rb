@@ -109,6 +109,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_orginal_to(account, email_config)
+      return unless params[:to]
       original_to_emails = params[:to].split(",")
 
       if original_to_emails.size == 1
