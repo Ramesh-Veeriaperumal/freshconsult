@@ -229,6 +229,8 @@ class Helpdesk::TicketsController < ApplicationController
 
     add_original_to_email if ( !@item.to_email.blank? && current_account.pass_through_enabled?)
 
+    @to_emails = @ticket.to_emails
+
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})

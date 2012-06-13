@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(:version => 20120612094533) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
+    t.integer "account_id",    :limit => 8
   end
 
   create_table "authorizations", :force => true do |t|
@@ -233,7 +234,7 @@ ActiveRecord::Schema.define(:version => 20120612094533) do
     t.integer  "account_id",           :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "ticket_id_delimiter",               :default => "#"
+    t.string   "ticket_id_delimiter",               :default => "[#ticket_id]"
     t.boolean  "pass_through_enabled",              :default => true
   end
 
@@ -556,6 +557,9 @@ ActiveRecord::Schema.define(:version => 20120612094533) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+  
+  add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
+ 
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
