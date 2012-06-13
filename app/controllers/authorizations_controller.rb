@@ -30,13 +30,7 @@ class AuthorizationsController < ApplicationController
       @current_user = current_account.all_users.find_by_twitter_id(twitter_id)  unless  current_account.blank?
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "facebook"
-      fb_email = @omniauth['info']['email']
-      unless current_account.blank?
-        @current_user = current_account.all_users.find_by_email(fb_email) unless fb_email.blank?
-        fb_profile_id = @omniauth['info']['nickname']
-        @current_user = current_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
-        create_for_sso(@omniauth)
-      end
+      create_for_facebook(params)
     elsif @omniauth['provider'] == "google"
       # Move this to GoogleAccount model.
       user_info = @omniauth['info']
@@ -105,7 +99,11 @@ class AuthorizationsController < ApplicationController
   def create_session
     @user_session = @current_user.account.user_sessions.new(@current_user)
     if @user_session.save
-      redirect_back_or_default('/') if grant_day_pass
+      if(@portal_url.blank?)
+        redirect_back_or_default('/') if grant_day_pass
+      else
+        redirect_to @portal_url
+      end
     else
       flash[:notice] = t(:'flash.g_app.authentication_failed')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -122,12 +120,16 @@ class AuthorizationsController < ApplicationController
      @current_user.save!
   end
 
-  def create_for_sso(hash)
+  def create_for_sso(hash, user_account=nil)
     if !@current_user.blank? and !@auth.blank?
       return show_deleted_message if @current_user.deleted?
       make_usr_active
     elsif !@current_user.blank?
-      @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => current_account.id) #Add an auth to existing user
+      if user_account.blank?
+        @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => current_account.id) #Add an auth to existing user  
+      else
+        @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => user_account.id) #Add an auth to existing user
+      end
       make_usr_active
     else  
       @new_auth = create_from_hash(hash) 
