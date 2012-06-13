@@ -43,7 +43,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     email_config = account.email_configs.find_by_to_email(to_email[:email])
     user = get_user(account, from_email,email_config)
     
-    article_params[:title] = params[:subject].gsub(Regexp.new("\\[#{account.email_commands_setting.ticket_id_delimiter}([0-9]*)\\]"),"")
+    article_params[:title] = params[:subject].gsub(Regexp.new(Regexp.escape(account.email_commands_setting.ticket_id_delimiter).gsub("ticket_id","([0-9]*)")),"")
     article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
     article_params[:user] = user.id
     article_params[:account] = account.id
@@ -152,6 +152,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       return cc_array.uniq
     end
+
+    def parse_to_emails
+      to_emails = params[:to].split(",") if params[:to]
+      parsed_to_emails = []
+      (to_emails || []).each do |email|
+        parsed_email = parse_email_text(email)
+        parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email]}>") if !parsed_email.blank? && !parsed_email[:email].blank?
+      end
+      parsed_to_emails
+    end
     
     def create_ticket(account, from_email, to_email)
       email_config = account.email_configs.find_by_to_email(to_email[:email])
@@ -171,7 +181,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:name => from_email[:name],
         :requester => user,
         :to_email => parse_orginal_to(account, email_config),
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => []},
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :to_emails => parse_to_emails},
         :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
