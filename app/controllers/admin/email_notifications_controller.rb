@@ -17,6 +17,8 @@ class Admin::EmailNotificationsController < Admin::AdminController
                   :obj => by_type[EmailNotification::TICKET_UNATTENDED_IN_GROUP] },
       { :type => t('tkt_assigned_to_agent'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::TICKET_ASSIGNED_TO_AGENT] },
+      { :type => t('agent_adds_comment'), :requester => true, :agent => false,
+                  :obj => by_type[EmailNotification::COMMENTED_BY_AGENT] },
       { :type => t('first_response_sla'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::FIRST_RESPONSE_SLA_VIOLATION] },
       { :type => t('requester_replies'), :requester => false, :agent => true, 

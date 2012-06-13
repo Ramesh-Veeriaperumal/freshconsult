@@ -1394,7 +1394,7 @@ en:
     type: Type
     execute_scenario: Execute Scenario
     note_form: 
-      private_note: This is a private note. It will not be shown to the requester.
+      private_note: This is a private note,  don't show this to the requester.
       form_title: Add a Note
       add_and_resolve: Add and Resolve
       notify_agents: Notify Agents
