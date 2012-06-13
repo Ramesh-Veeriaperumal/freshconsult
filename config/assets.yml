@@ -132,4 +132,4 @@ javascripts:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
   redactor:
-    - public/javascripts/redactor/redactor.min.js
+    - public/javascripts/redactor/redactor.js
