@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120605113350) do
+ActiveRecord::Schema.define(:version => 20120612094533) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -107,7 +107,6 @@ ActiveRecord::Schema.define(:version => 20120605113350) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
-    t.integer "account_id",    :limit => 8
   end
 
   create_table "authorizations", :force => true do |t|
@@ -502,7 +501,7 @@ ActiveRecord::Schema.define(:version => 20120605113350) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "attachable_type"=>"14", "account_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -557,8 +556,6 @@ ActiveRecord::Schema.define(:version => 20120605113350) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
@@ -1008,6 +1005,7 @@ ActiveRecord::Schema.define(:version => 20120605113350) do
     t.boolean  "misc"
     t.integer  "subscription_affiliate_id", :limit => 8
     t.decimal  "affiliate_amount",                       :precision => 6,  :scale => 2, :default => 0.0
+    t.text     "meta_info"
   end
 
   add_index "subscription_payments", ["account_id"], :name => "index_subscription_payments_on_account_id"

@@ -1,5 +1,7 @@
 class SubscriptionPayment < ActiveRecord::Base
   
+  serialize :meta_info
+  
   include HTTParty
   
   belongs_to :subscription
