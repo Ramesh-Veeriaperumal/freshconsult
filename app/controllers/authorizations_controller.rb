@@ -151,14 +151,20 @@ class AuthorizationsController < ApplicationController
       end
       make_usr_active
     else  
-      @new_auth = create_from_hash(hash) 
+      @new_auth = create_from_hash(hash, user_account) 
       @current_user = @new_auth.user
     end
     create_session
   end
   
-  def create_from_hash(hash)
-    user = current_account.users.new
+  def create_from_hash(hash, user_account = nil)
+    if user_account.blank?
+      account = current_account
+    else
+      account = user_account
+    end
+    user = account.users.new  
+    
     user.name = hash['info']['name']
     user.email = hash['info']['email']
     unless hash['info']['nickname'].blank?
@@ -169,7 +175,7 @@ class AuthorizationsController < ApplicationController
     user.active = true
     user.save 
     user.reset_persistence_token! 
-    Authorization.create(:user_id => user.id, :uid => hash['uid'], :provider => hash['provider'],:account_id => current_account.id)
+    Authorization.create(:user_id => user.id, :uid => hash['uid'], :provider => hash['provider'],:account_id => account.id)
   end
   
   def failure
