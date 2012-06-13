@@ -88,6 +88,24 @@ class AuthorizationsController < ApplicationController
     redirect_to redirect_url
   end
 
+  def create_for_facebook(params)
+    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    portal = Portal.find_by_id(portal_id)
+    user_account = portal.account
+    portal_url = portal.portal_url
+    portal_url = user_account.full_domain if portal_url.blank?
+    protocol = (account.ssl_enabled?) ? "https://" : "http://"
+    @portal_url = protocol + portal_url
+
+    fb_email = @omniauth['info']['email']
+    unless user_account.blank?
+      @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
+      fb_profile_id = @omniauth['info']['nickname']
+      @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
+      create_for_sso(@omniauth, user_account)
+    end
+  end
+
   def create_key_value_pair(key, value, account_id)
       app_config = KeyValuePair.new
       app_config.key = key
