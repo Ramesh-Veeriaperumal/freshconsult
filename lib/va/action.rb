@@ -29,7 +29,7 @@ class Va::Action
     when 'priority'
       "Changed the priority to <b>#{TicketConstants::PRIORITY_NAMES_BY_KEY[value.to_i]}</b>"
     when 'status'
-      "Changed the status to <b>#{TicketConstants::STATUS_NAMES_BY_KEY[value.to_i]}</b>"
+      "Changed the status to <b>#{Helpdesk::TicketStatus.status_names_by_key(act_on.account)[value.to_i]}</b>"
     when 'ticket_type'
       "Changed the ticket type to <b>#{value}</b>"
     when 'responder_id'

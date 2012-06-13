@@ -158,9 +158,9 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer?      	
-        unless notable.open? || feedback? || (fwd_email? and !notable.pending?)
-          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
+      if user.customer? 
+        if (fwd_email? and notable.onhold?) or (notable.onhold_and_closed? and !feedback? and !fwd_email?) 
+          notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)

@@ -184,7 +184,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :to_email => parse_orginal_to(account, email_config),
         :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :to_emails => parse_to_emails},
         :email_config => email_config,
-        :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
+        :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
         #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )

@@ -104,7 +104,7 @@ class Admin::VaRulesController < Admin::AutomationsController
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }, 
           :operatortype => "choicelist" },
         { :name => "status", :value => t('ticket.status'), :domtype => "dropdown", 
-          :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+          :choices => Helpdesk::TicketStatus.status_names_by_key(current_account).sort, :operatortype => "choicelist"},
         { :name => "source", :value => t('ticket.source'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => -1, :value => "------------------------------" },

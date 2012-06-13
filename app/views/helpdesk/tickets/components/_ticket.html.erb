@@ -26,23 +26,27 @@
 <% end %>
 
 <div id="TicketProperties">
-	<% if @ticket.open? %>
-		<h3 class="title"><%=t('ticket_due_by_time')%></h3>
-		<ul class="cnt" id="due-by-time-parent">
-		   <li>
-				<a id="edit-due-by-time" data-placement="topRight" href="#" data-widget-container="due-date-dialog-container">
-					<%= formated_date(ticket.due_by) %>
-				</a> 
-		   </li> 
-		</ul>	
+	<div class="status_container" id="due-by-time-parent">
+	<% unless (@ticket.onhold_and_closed? or @ticket.pending? or @ticket.ticket_status.deleted?)%>
+		<h3 class="title"><%= h(@ticket.status_name) %></h3>
+		<p>
+			<%=t('ticket_due_by_time')%>
+			<a id="edit-due-by-time" data-placement="topRight" href="#" data-widget-container="due-date-dialog-container">
+				<%= formated_date(ticket.due_by) %>
+			</a>
+		</p>
 	<% else %>
-		<h3 class="title"><%= status_changed_time_value_hash(@ticket.status)[:title] %></h3>
-		<ul class="cnt" id="due-by-time-parent">
-		   <li>
-		   	  <%=formated_date(@ticket.ticket_states.send(status_changed_time_value_hash(@ticket.status)[:method]))%>
-		   </li> 
-		</ul>	
+		<% if @ticket.ticket_status.deleted? %>
+			<h3 class="title deleted tooltip" data-placement="left" title="<%=t('status_deleted')%>"><%= h(status_changed_time_value_hash(@ticket)[:title]) %></h3>
+		<% else %>
+			<h3 class="title"><%= h(status_changed_time_value_hash(@ticket)[:title]) %></h3>
+		<% end %>
+		<p>
+			<%= t('since') %>
+			<%= formated_date(@ticket.ticket_states.send(status_changed_time_value_hash(@ticket)[:method])) %>
+		</p>
 	<% end %>
+	</div>
 	<h3 class="title"><%=t('ticket.properties')%></h3>	
 	<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
 	   <ul class="cnt">
@@ -80,6 +84,11 @@
                             }
              });
            });
+         <% if @ticket.ticket_status.deleted? %>
+         	jQuery("#helpdesk_ticket_status")
+         		.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
+         		.val("<%=@ticket.status%>")
+         <% end %>
        <% end %>
 			<!--form values ends here-->
 			<!-- Custom fields ends here-->

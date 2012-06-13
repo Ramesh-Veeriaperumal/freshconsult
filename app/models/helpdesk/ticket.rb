@@ -8,6 +8,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
+  include Helpdesk::Ticketfields::TicketStatus
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
@@ -26,7 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity, :support_score_on_create
-  before_update :cache_old_model, :update_dueby
+  before_update :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
       :support_score_on_update, :stop_timesheet_timers
   
@@ -96,6 +97,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
+  
+  belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
+  delegate :active?, :open?, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
+  
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
@@ -117,7 +122,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :conditions => [" helpdesk_ticket_states.resolved_at >= ? and helpdesk_ticket_states.resolved_at <= ?", start, stop] }
         }
 
-  named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
+  named_scope :resolved_and_closed_tickets, :conditions => {:status => [RESOLVED,CLOSED]}
   
   named_scope :all_company_tickets,lambda { |customer| { 
         :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id ",
@@ -154,13 +159,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "helpdesk_tickets.created_at > ?", duration ] } }
  
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
-  named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
+  named_scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
       user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
-    [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
+    [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
       user.id ] } }
       
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
@@ -238,13 +243,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
-  validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
+  #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
   
 
   def set_default_values
-    self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
+    self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= account.ticket_type_values.first.value
     self.subject ||= ''
@@ -267,11 +272,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def status=(val)
-    self[:status] = STATUS_KEYS_BY_TOKEN[val] || val
+    self[:status] = (Helpdesk::TicketStatus.status_keys_by_name(account)[val] unless account.nil?) || val
   end
 
   def status_name
-    STATUS_NAMES_BY_KEY[status]
+    Helpdesk::TicketStatus.translate_status_name(ticket_status)
   end
   
    def is_twitter?
@@ -361,29 +366,31 @@ class Helpdesk::Ticket < ActiveRecord::Base
     pieces && pieces[1]
   end
 
+  def load_ticket_status
+    if status_changed?
+      self.ticket_status = account.ticket_status_values.find_by_status_id(status)
+    end
+  end
+
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def update_dueby
-    set_dueby unless priority == @old_ticket.priority
+    set_dueby if priority_changed?
+    set_dueby(true) if status_changed?
   end
   
-  def set_dueby 
+  def set_dueby(start_sla_timer=nil)
     set_account_time_zone   
-    createdTime = created_at || Time.zone.now
     self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil?
-     
+    
     sla_policy_id = requester.customer.sla_policy_id unless requester.customer.nil?
     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
     sla_detail = Helpdesk::SlaDetail.find(:first, :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
-     
-    if sla_detail.override_bhrs      
-      self.due_by = createdTime + sla_detail.resolution_time.seconds      
-      self.frDueBy = createdTime + sla_detail.response_time.seconds       
-    else      
-      self.due_by = get_business_time(sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
-      self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
-    end 
-     set_user_time_zone if User.current
-     logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
+    
+    set_dueby_on_priority_change(sla_detail) if start_sla_timer.nil?  #unless (priority == @old_ticket.priority) 
+    set_dueby_on_status_change(sla_detail) unless start_sla_timer.nil? 
+    
+    set_user_time_zone if User.current
+    logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
  
   def get_business_time time
@@ -483,9 +490,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if status != @old_ticket.status
-      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
-      #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == STATUS_KEYS_BY_TOKEN[:open])
+      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
+      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
+      #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == OPEN)
     end
   end
   
@@ -494,9 +501,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
-    ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
-    ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-    ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == STATUS_KEYS_BY_TOKEN[:closed])     
+    ticket_states.pending_since=Time.zone.now if (status == PENDING)
+    ticket_states.set_resolved_at_state if (status == RESOLVED)
+    ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == CLOSED)
+    ticket_states.status_updated_at = Time.zone.now
+    ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
   end
 
   def update_ticket_states 
@@ -507,14 +516,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if status != @old_ticket.status
-      if (status == STATUS_KEYS_BY_TOKEN[:open])
+      if (status == OPEN)
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
       end
       
-      ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
-      ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+      ticket_states.pending_since=Time.zone.now if (status == PENDING)
+      ticket_states.set_resolved_at_state if (status == RESOLVED)
       ticket_states.set_closed_at_state if closed?
+      
+      ticket_states.status_updated_at = Time.zone.now
+      if(ticket_status.stop_sla_timer)
+        ticket_states.sla_timer_stopped_at ||= Time.zone.now 
+      else
+        ticket_states.sla_timer_stopped_at = nil
+      end
     end    
     ticket_states.save
   end
@@ -660,7 +676,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "requester"                         => requester,
       "agent"                             => responder,
       "group"                             => group,
-      "status"                            => STATUS_NAMES_BY_KEY[status],
+      "status"                            => status_name,
+      "requester_status_name"             => Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name"),
       "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
       "source"                            => SOURCE_NAMES_BY_KEY[source],
       "ticket_type"                       => ticket_type,
@@ -709,27 +726,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   #Liquid ends here
 
-  #When the requester responds to this ticket, need to know whether to reopen?
-  def active?
-    !([STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]].include?(status))
-  end
-  
-  def open?
-    (status == STATUS_KEYS_BY_TOKEN[:open])
-  end
-  
-  def closed?
-    (status == STATUS_KEYS_BY_TOKEN[:closed])
-  end
-  
-  def resolved?
-    (status == STATUS_KEYS_BY_TOKEN[:resolved])
-  end
-  
-   def pending?
-    (status == STATUS_KEYS_BY_TOKEN[:pending])
-  end
-  
   def method_missing(method, *args, &block)
     begin
       super
@@ -840,7 +836,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def stop_timesheet_timers
-    if status != @old_ticket.status && (status == STATUS_KEYS_BY_TOKEN[:resolved] or status == STATUS_KEYS_BY_TOKEN[:closed])
+    if status != @old_ticket.status && (status == RESOLVED or status == CLOSED)
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
@@ -900,7 +896,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
     def create_status_activity
       create_activity(User.current, 'activities.tickets.status_change.long',
-          {'status_name' => status_name}, 'activities.tickets.status_change.short')
+          {'status_name' => Helpdesk::TicketStatus.translate_status_name(ticket_status, "name")}, 'activities.tickets.status_change.short')
     end
   
     def create_priority_activity
@@ -959,7 +955,36 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       end
       email
-    end  
-    
+  end
+ 
+  def set_dueby_on_priority_change(sla_detail)
+    createdTime = created_at || Time.zone.now
+    if sla_detail.override_bhrs      
+      self.due_by = createdTime + sla_detail.resolution_time.seconds      
+      self.frDueBy = createdTime + sla_detail.response_time.seconds       
+    else      
+      self.due_by = get_business_time(sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
+      self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
+    end
+  end
+
+  def set_dueby_on_status_change(sla_detail)
+    unless (ticket_status.stop_sla_timer or ticket_states.sla_timer_stopped_at.nil?) 
+      if sla_detail.override_bhrs 
+        elapsed_time = Time.zone.now - ticket_states.sla_timer_stopped_at  
+        new_due_by = self.due_by + elapsed_time
+        new_frDueBy = self.frDueBy + elapsed_time
+      
+        self.due_by = new_due_by if self.due_by > ticket_states.sla_timer_stopped_at
+        self.frDueBy = new_frDueBy if self.frDueBy > ticket_states.sla_timer_stopped_at
+      else
+        bhrs_during_elapsed_time =  Time.parse(ticket_states.sla_timer_stopped_at.to_s).business_time_until(Time.zone.now)
+        
+        self.due_by = bhrs_during_elapsed_time.div(60).business_minute.after(self.due_by) if self.due_by > ticket_states.sla_timer_stopped_at      
+        self.frDueBy =  bhrs_during_elapsed_time.div(60).business_minute.after(self.frDueBy) if self.frDueBy > ticket_states.sla_timer_stopped_at
+      end
+    end
+  end
+  
 end
   

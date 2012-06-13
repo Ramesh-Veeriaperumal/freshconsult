@@ -22,7 +22,7 @@ class TicketFieldsController < Admin::AdminController
             :visible_in_portal      => field.visible_in_portal,
             :editable_in_portal     => field.editable_in_portal,
             :required_in_portal     => field.required_in_portal,
-            :choices                => (field.field_type == "nested_field") ? field.nested_choices : field.choices,
+            :choices                => get_choices(field),
             :levels                 => field.levels,
             :level_three_present    => field.level_three_present
           }
@@ -47,14 +47,14 @@ class TicketFieldsController < Admin::AdminController
       end
       
       unless (action = f_d.delete(:action)).nil?
-        f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || "custom_dropdown".eql?(f_d[:field_type]) || "default_ticket_type".eql?(f_d[:field_type]))
+#        f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || "custom_dropdown".eql?(f_d[:field_type]) || "default_ticket_type".eql?(f_d[:field_type]))
         send("#{action}_field", f_d) 
       end
     end
     
     err_str = ""
     @invalid_fields.each do |tf|
-      tf.errors.each { |attr,msg| err_str << " #{tf.label}  #{attr} #{msg} <br />"  }
+      tf.errors.each { |attr,msg| err_str << " #{tf.label} : #{msg} <br />"  }
     end
      
     unless err_str.empty?
@@ -87,6 +87,17 @@ class TicketFieldsController < Admin::AdminController
           action = nested_field.delete(:action)
           send("#{action}_nested_field", ticket_field, nested_field) 
         end
+      end
+    end
+
+    def get_choices(field)
+      case field.field_type
+        when "nested_field" then
+          field.nested_choices
+        when "default_status" then
+          Helpdesk::TicketStatus.statuses_list(current_account)
+        else 
+          field.choices
       end
     end
     

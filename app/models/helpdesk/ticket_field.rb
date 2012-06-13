@@ -1,5 +1,7 @@
 class Helpdesk::TicketField < ActiveRecord::Base
   
+  include Helpdesk::Ticketfields::TicketStatus
+  
   set_table_name "helpdesk_ticket_fields"
   attr_protected  :account_id
   
@@ -9,6 +11,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :dependent => :destroy
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
     
+  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :autosave => true, :dependent => :destroy
+  
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
   before_save :set_portal_edit
@@ -50,6 +54,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
   named_scope :type_field, :conditions => { :name => "ticket_type" }
+  named_scope :status_field, :conditions => { :name => "status" }
   named_scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
 
   # Enumerator constant for mapping the CSS class name to the field type
@@ -106,7 +111,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::Ticket::STATUS_OPTIONS
+         Helpdesk::TicketStatus.statuses(account)
        when "default_ticket_type" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
@@ -128,6 +133,16 @@ class Helpdesk::TicketField < ActiveRecord::Base
             [sub_c.value, sub_c.value, sub_c.sub_picklist_values.collect { |i_c| [i_c.value,i_c.value] } ] }
       ]
     }
+  end
+
+  def all_status_choices(disp_col_name=nil)
+    disp_col_name = disp_col_name.nil? ? "customer_display_name" : "name"
+    self.ticket_statuses.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, disp_col_name), st.status_id]}
+  end
+
+  def visible_status_choices(disp_col_name=nil)
+    disp_col_name = disp_col_name.nil? ? "customer_display_name" : "name"
+    self.ticket_statuses.visible.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, disp_col_name), st.status_id]}
   end
 
   def nested_levels
@@ -209,14 +224,19 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def choices=(c_attr)
-    picklist_values.clear
-    c_attr.each do |c| 
-      if c.size > 2 && c[2].is_a?(Array)
-        picklist_values.build({:value => c[0], :choices => c[2]})
-      else
-        picklist_values.build({:value => c[0]})
+    if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
+      picklist_values.clear
+      c_attr.each do |c| 
+        if c.size > 2 && c[2].is_a?(Array)
+          picklist_values.build({:value => c[0], :choices => c[2]})
+        else
+          picklist_values.build({:value => c[0]})
+        end
       end
-    end  
+    elsif("default_status".eql?(self.field_type))
+      #c_attr = [{:status_id => 0, :name => "NeedInfo", :customer_display_name => "Awaiting for your response",:stop_sla_timer => true},{:status_id => 0, :name => "Inprogress", :customer_display_name => "Testing Inprogress",:stop_sla_timer => false}]
+      c_attr.each{|attr| update_ticket_status attr}
+    end
   end
   
   protected
@@ -228,6 +248,5 @@ class Helpdesk::TicketField < ActiveRecord::Base
       self.editable_in_portal = false unless visible_in_portal
       self
    end
-  
-  
+
 end

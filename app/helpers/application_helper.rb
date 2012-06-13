@@ -446,7 +446,11 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+        if (field.field_type == "default_status" and in_portal)
+          element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
+        else
+          element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+        end
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "nested_field" then
@@ -495,6 +499,9 @@ module ApplicationHelper
           element += content_tag(:div, _name + _value, :class => "tabbed") unless (_field_value.blank? || field_value[:subcategory_val].blank?)
         end
       end
+    elsif(field.field_type == "default_status")
+      field_value = field.dropdown_selected(field.all_status_choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+      element = label + label_tag(field_name, field_value, :class => "value_label")
     else
       field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
       element = label + label_tag(field_name, field_value, :class => "value_label")

@@ -32,7 +32,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 }
 
 .sidepanel, .rtCnt{
-	@include shadows(rgba(0,0,0, 0.05), 0px, 1px, 2px);
+	@include box-shadow(rgba(0,0,0, 0.05) 0px 1px 2px);
 } 
 
 .sidepanel{
@@ -41,7 +41,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 
 .pagearea{
 	@include min-height(450px);
-	@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 3px);
+	@include box-shadow(rgba(0,0,0, 0.2) 0px 2px 3px);
 	position:relative;
 }
 
@@ -51,15 +51,14 @@ ul.activityfeed, ul.summary{
 }
 
 ul.summary{
-// @include pie;
-	@include corners(6px);    
+	@include border-radius(6px);    
 	background:#fafafa; 
 	@include background-with-css2-fallback(linear-gradient(white, #fafafa));
 	border:1px solid #efefef; 
 	margin-bottom:10px; 
 	li{ 
 		@include float-left; 
-		width:19.5%;
+		@include min-width(16.3%);
 		margin:2px 0px;
 		padding:0px 0px 4px 0px;
 		border-right:1px solid #e8e8e8; 
@@ -2733,6 +2732,26 @@ a.page_title{
 	margin:0px 2px;
 }
 
+.status_container{
+	background-color:#fffbc9;
+	border-bottom:1px solid #fff46e;
+	margin-top:-5px;
+	margin-bottom:13px;
+	padding:6px 0; 
+	p{
+		padding:0 10px;
+		margin:0;
+		color: #94875a;
+		font-style:italic;
+	}		
+	.deleted{
+		text-decoration:line-through;
+		color:#9f9366;
+		font-style:italic;
+	}
+}
+
+
 
 .ignore-margin-20{
 	margin-left:-20px;
@@ -3162,7 +3181,7 @@ div.addReminder{
    }
 	
 	.name, .name-user{
-      width:63%;
+      width:56%;
       padding-left:65px;
       .preview_pic{
          margin:0px; 
@@ -3213,16 +3232,20 @@ div.addReminder{
 	.need-attention .need-attention-icon{
       background: sprite($symbol, need-attention) no-repeat;  
 	}
+	.sla{
+		width:20%;
+	}
 	.assign{
+		width:20%;
 		ul{
 			@include inline-block-list;
+			overflow: visible;
 			li{
 				padding:4px 7px 0px 0px; 
 				color:#999999;
 				font-size:12px;
 				span{
 					color:#444444;
-					text-transform:capitalize;
 				}					
 			}
 			.priority{
