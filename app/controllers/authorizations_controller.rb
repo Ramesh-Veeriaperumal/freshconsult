@@ -96,6 +96,7 @@ class AuthorizationsController < ApplicationController
     portal_url = user_account.full_domain if portal_url.blank?
     protocol = (user_account.ssl_enabled?) ? "https://" : "http://"
     @portal_url = protocol + portal_url
+    puts "user_account : #{user_account.inspect}"
 
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
