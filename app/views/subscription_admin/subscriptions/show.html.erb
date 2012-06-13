@@ -70,16 +70,29 @@
 		    <th>Social</th>
 		    <td>Twitter - <%= !@subscription.account.twitter_handles.blank? %> Facebook - <%= !@subscription.account.facebook_pages.blank?%></td>
 		  </tr>
+		  <tr>
+		    <th>Email Configured</th>
+		    <td><%= (@subscription.account.all_email_configs.collect {|ec| "#{ec.name} - #{ec.reply_email} - #{ec.active}"}).join("<br>") %></td>
+		  </tr>
+		  <tr>
+		    <th>Portals</th>
+		    <td><%= (@subscription.account.portals.collect {|por| "#{por.name} - #{por.portal_url} - #{por.language}"}).join("<br>") %></td>
+		  </tr>
+		  <tr>
+		    <th>Security</th>
+		    <td>SSO - <%= @subscription.account.sso_enabled? %>  https - <%= @subscription.account.ssl_enabled? %> </td>
+		  </tr>
 		</table>   
 	</div> 
 	<div class="span4">
 	<table id="sample-tickets" class="table table-bordered">
 		<tr><th>Sample tickets</th></tr>
-		<tr>
 		<% @subscription.account.tickets.find(:all,:order => 'created_at desc',:limit => 5).each do |tkt| %>
+		  <tr>
 		  <td><%=tkt.subject%></td>
+		  </tr>
 		<%end%>
-		</tr>
+		
 		
     <table>	
 	</div>	      

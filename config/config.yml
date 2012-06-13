@@ -35,8 +35,9 @@ crm:
 integrations_url:
     development: "http://localhost:3000"
     production: "https://login.freshdesk.com"
-    staging: "https://login.freshbugs.com"
- 
+    # staging: "https://login.freshbugs.com"
+    staging: "https://login.freshpo.com"
+
 
 
 # Set this to true if you want to require CC info when creating a trial account for a paid plan

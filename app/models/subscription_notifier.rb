@@ -14,7 +14,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def setup_bcc
-     @bcc = AppConfig['sub_bcc_email'][RAILS_ENV] if Rails.env.production?
+    @bcc = AppConfig['sub_bcc_email'][RAILS_ENV] if Rails.env.production?
   end
   
   def welcome(account)
@@ -44,15 +44,11 @@ class SubscriptionNotifier < ActionMailer::Base
     @content_type = "text/html"
   end
   
-  def setup_receipt(subscription_payment)
-    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
-    @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
-  end
-  
-  def misc_receipt(subscription_payment)
+  def misc_receipt(subscription_payment,description)
     setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
-    @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
+    @body = { :subscription => subscription_payment.subscription, :subscription_payment => subscription_payment, :description => description }
+    @content_type = "text/html"
   end
   
   def charge_failure(subscription)
@@ -62,19 +58,5 @@ class SubscriptionNotifier < ActionMailer::Base
     @content_type = "text/html"
   end
   
-  def plan_changed(subscription)
-    setup_email(subscription.account.account_admin, "Your #{AppConfig['app_name']} plan has been changed")
-    @body = { :subscription => subscription }    
-  end
   
-  def account_deleted(account)
-    setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
-    @body = { :account => account }    
-    @content_type = "text/html"
-  end
-  
-  def password_reset(reset)
-    setup_email(reset.user, 'Password Reset Request')
-    @body = { :reset => reset }
-  end
 end

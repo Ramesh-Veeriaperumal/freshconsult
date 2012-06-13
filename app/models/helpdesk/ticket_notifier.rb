@@ -142,4 +142,5 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def fwd_formatted_subject(ticket)
     "Fwd: #{ticket.encode_display_id} #{ticket.subject}"
   end
+  
 end

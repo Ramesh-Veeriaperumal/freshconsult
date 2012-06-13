@@ -141,6 +141,25 @@ class Helpdesk::NotesController < ApplicationController
       end
       @parent.update_attribute(:cc_email, cc_email_hash_value)      
    end
+
+  def send_facebook_reply
+    
+    if @parent.is_fb_message?
+      fb_reply = add_facebook_reply
+      unless fb_reply.blank?
+        fb_reply.symbolize_keys!
+        @item.create_fb_post({:post_id => fb_reply[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id,
+                              :thread_id =>@parent.fb_post.thread_id , :msg_type =>'dm'})
+      end
+    else
+      fb_comment = add_facebook_comment
+      unless fb_comment.blank?
+        fb_comment.symbolize_keys!
+        @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
+      end
+    end
+    
+  end
    
   def send_facebook_reply
     

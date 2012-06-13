@@ -581,10 +581,7 @@ h4.title{
 		position:absolute;
 		right:18px; 
 		top:10px;
-		.action_buttons{
-			margin-top:0px;
-			a{ font-size:10px; }
-		} 
+		.action_buttons{ margin-top:0px; } 
 		.item-right-actions{
 		   margin-top:8px;
 		   margin-left:6px;
@@ -1921,7 +1918,6 @@ h4.border_title{
    border-bottom:1px solid #ebebeb;
    padding-bottom:6px;
    margin-bottom:8px;
-   text-transform:capitalize;
 }
 
 .forum-category-list{
@@ -2050,7 +2046,6 @@ h4.border_title{
 			font-size:16px; 
 			@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 			font-weight:bold;
-			text-transform:capitalize;
 			text-decoration:none;
 			padding-bottom:4px;
 		} 
@@ -2260,7 +2255,6 @@ h4.border_title{
 	div.item{
 		padding:5px;
 		em{
-			text-transform:capitalize;
 			font-size:11px;
 			color:#527EAA;
 		}
@@ -2931,7 +2925,6 @@ a.page_title{
 		li{
 			padding:6px 0px 6px 20px;
 			border-bottom:1px solid #f1edd1;
-			text-transform:capitalize;
 			position:relative;
 			input{
 			   float:left;
@@ -3638,7 +3631,6 @@ div.addReminder{
 	a{
 		font-size:12px;
 		color:#666666;
-		text-transform:capitalize;
 		text-decoration:none;
 		border-left:1px solid #d6d6d6;
 		border-right:1px solid #ebebeb;
@@ -4942,6 +4934,10 @@ a.close{
 		padding: 0;
 		margin: 0;
 		border-bottom: #e5e5e5 solid 1px;
+
+		&.contact-na {
+			border-bottom: none;
+		}
 	}
 
 	.name {
@@ -4951,7 +4947,8 @@ a.close{
 
 	.salesforce-name {
 		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		padding:0 0 10px 45px;  
+		padding:7px 0 10px 45px;  
+		min-height:30px;
  	}
 
  	.error {
@@ -5004,6 +5001,10 @@ a.close{
 
 	#contact-na {
 		padding-top:6px;
+
+		&.salesforce-name {
+			padding-top: 10px;
+		}
 	}
 }
 	
