@@ -69,6 +69,7 @@ class AuthorizationsController < ApplicationController
   end
 
   def create_for_salesforce(params)
+    Account.reset_current_account
     account_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
     access_token = get_oauth2_access_token(@omniauth.credentials.refresh_token);
     account = Account.find(:first, :conditions => {:id => account_id})
@@ -89,6 +90,7 @@ class AuthorizationsController < ApplicationController
   end
 
   def create_for_facebook(params)
+    Account.reset_current_account
     portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
