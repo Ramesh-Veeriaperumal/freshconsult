@@ -38,7 +38,8 @@
   <td class="sla">
     <% if( ticket.active? ) %>
 		<% if(ticket.onhold? or ticket.ticket_status.deleted?)%>
-			<%= t('since_time', :time_words => distance_of_time_in_words_to_now(ticket.ticket_states.status_updated_at))%>	
+			<% on_hold_time = ticket.pending? ? ticket.ticket_states.pending_since : ticket.ticket_states.status_updated_at %>
+			<%= t('since_time', :time_words => distance_of_time_in_words_to_now(on_hold_time))%>	
   	  	<% elsif(Time.now > ticket.due_by ) %>
 			  <%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 		<% else %>

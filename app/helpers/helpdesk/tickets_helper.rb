@@ -230,7 +230,17 @@ module Helpdesk::TicketsHelper
   
   def status_changed_time_value_hash (ticket)
     status_name = ticket.status_name
-    return {:title => "#{status_name}", :method => "status_updated_at"}        
+    status = ticket.status
+    case status
+      when RESOLVED
+        return {:title => "#{status_name}", :method => "resolved_at"}
+      when PENDING
+        return {:title =>  "#{status_name}", :method => "pending_since"}
+      when CLOSED
+        return {:title => "#{status_name}", :method => "closed_at"}
+      else
+        return {:title => "#{status_name}", :method => "status_updated_at"}
+    end
   end
   
   def default_twitter_body_val (ticket)
