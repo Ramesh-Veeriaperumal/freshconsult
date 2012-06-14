@@ -8,10 +8,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
   belongs_to :account
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',:include => :sub_picklist_values,
-    :dependent => :destroy
+    :dependent => :destroy, :order => "position"
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
     
-  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :autosave => true, :dependent => :destroy
+  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :autosave => true, :dependent => :destroy, :order => "position"
   
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
@@ -235,7 +235,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       end
     elsif("default_status".eql?(self.field_type))
       #c_attr = [{:status_id => 0, :name => "NeedInfo", :customer_display_name => "Awaiting for your response",:stop_sla_timer => true},{:status_id => 0, :name => "Inprogress", :customer_display_name => "Testing Inprogress",:stop_sla_timer => false}]
-      c_attr.each{|attr| update_ticket_status attr}
+      c_attr.each_with_index{|attr,position| update_ticket_status(attr,position)}
     end
   end
   

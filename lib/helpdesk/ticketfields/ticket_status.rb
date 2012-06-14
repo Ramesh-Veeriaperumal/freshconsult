@@ -5,10 +5,11 @@ module Helpdesk::Ticketfields::TicketStatus
   RESOLVED = 4 # Resolved Status
   CLOSED = 5 # Closed Status
 
-  DEFAULT_STATUSES = [OPEN, PENDING, RESOLVED, CLOSED]
+  DEFAULT_STATUSES = {OPEN => "Open", PENDING => "Pending", RESOLVED => "Resolved", CLOSED => "Closed"}
 
   # In order to save modified records through autosave we need to manipulate the loaded ticket_statuses array itself in the self
-  def update_ticket_status(attr)
+  def update_ticket_status(attr,position)
+    attr[:position] = position+1
     attr.symbolize_keys!
     t_s = nil
     index = -1
@@ -23,7 +24,7 @@ module Helpdesk::Ticketfields::TicketStatus
         break
       end
     end
-
+    
     attr.delete(:status_id)
     unless t_s.nil?
       t_s.attributes = attr
@@ -39,7 +40,8 @@ module Helpdesk::Ticketfields::TicketStatus
   private
 
     def validate_default_statuses(t_s)
-      if(DEFAULT_STATUSES.include?(t_s.status_id))
+      if(DEFAULT_STATUSES.keys.include?(t_s.status_id))
+        t_s.name = DEFAULT_STATUSES[t_s.status_id]
         t_s.deleted = false
         t_s.is_default = true
         if(t_s.status_id == OPEN)
