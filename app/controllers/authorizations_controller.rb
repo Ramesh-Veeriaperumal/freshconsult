@@ -83,9 +83,9 @@ class AuthorizationsController < ApplicationController
     key_value_pair.delete unless key_value_pair.blank?
     #KeyValuePair is used to store salesforce configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
     create_key_value_pair("salesforce_oauth_config", config_params, account.id) 
-    #Integrations::Application.install_or_update(app_name, account.id, config_params)
-    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/salesforce"
-    #redirect_url = "http://localhost:3000/integrations/applications/oauth_install/salesforce"
+    
+    redirect_url = (Rails.env == "development") ? "http://localhost:3000/integrations/applications/oauth_install/salesforce" : (protocol +  domain + "/integrations/applications/oauth_install/salesforce")
+     
     redirect_to redirect_url
   end
 
@@ -94,16 +94,15 @@ class AuthorizationsController < ApplicationController
     portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
-    portal_url = portal.portal_url
-    portal_url = user_account.full_domain if portal_url.blank?
+    portal_url = portal_url.host
     protocol = (user_account.ssl_enabled?) ? "https://" : "http://"
-    @portal_url = protocol + portal_url
+    portal_url = protocol + portal_url
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
       @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
-      create_for_sso(@omniauth, user_account)
+      create_for_sso(@omniauth, user_account, portal_url)
     end
   end
 
@@ -135,7 +134,7 @@ class AuthorizationsController < ApplicationController
      @current_user.save!
   end
 
-  def create_for_sso(hash, user_account=nil)
+  def create_for_sso(hash, user_account = nil, portal_url = nil)
     if !@current_user.blank? and !@auth.blank?
       return show_deleted_message if @current_user.deleted?
       make_usr_active
@@ -152,7 +151,7 @@ class AuthorizationsController < ApplicationController
     end
     if (@omniauth['provider'] == "facebook")
       create_key_value_pair(@current_user.id, "pending", user_account.id)
-      redirect_to @portal_url + "/sso/login?provider=facebook&uid=#{hash['uid']}" 
+      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{hash['uid']}" 
     else
       create_session
     end
