@@ -94,7 +94,7 @@ class AuthorizationsController < ApplicationController
     portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
-    portal_url = portal_url.host
+    portal_url = portal.host
     protocol = (user_account.ssl_enabled?) ? "https://" : "http://"
     portal_url = protocol + portal_url
     fb_email = @omniauth['info']['email']
