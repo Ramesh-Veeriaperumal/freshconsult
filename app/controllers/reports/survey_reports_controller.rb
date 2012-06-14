@@ -9,26 +9,36 @@ class Reports::SurveyReportsController < ApplicationController
 
 	def index
 
-		if params[:category].blank? || params[:category] == "agent"
+		if agent?
 			agent_list
-		elsif params[:category] == "group"
+		elsif group?
 			group_list
 		else
 			report_details and return
-		end
-
-    		render :partial => 'list' unless (params[:category].blank? || params[:uitype]=="main")
+		end		
     		
 	end	
 
+	def list
+		if agent?
+			agent_list
+		elsif group?
+			group_list
+		else
+			report_details and return
+		end		
+
+		render :partial => "list"	
+	end
+
 	def fetch_details
-		if params[:category].blank? || params[:category] == "agent"
+		if agent?
 
 			agent_list
 
 			agent_remarks
 
-		elsif params[:category] == "group"
+		elsif group?
 
 			group_list
 
@@ -45,7 +55,7 @@ class Reports::SurveyReportsController < ApplicationController
 
 	def report_details
 
-		fetch_details		
+		fetch_details
 
 	end
 
@@ -59,9 +69,9 @@ class Reports::SurveyReportsController < ApplicationController
 
 	def feedbacks
 
-		if params[:category].blank? || params[:category] == "agent"
+		if agent?
 			agent_remarks
-		elsif params[:category] == "group"
+		elsif group?
 			group_remarks
 		else 
 			overall_remarks
@@ -77,9 +87,9 @@ class Reports::SurveyReportsController < ApplicationController
       		
       		count = 0
 
-		      unless params[:entity_id].blank? 
-		      	conditions = "survey_results.agent_id = #{params[:entity_id]}" if (params[:category] == "agent" || params[:category].blank?)
-		      	conditions = "survey_results.group_id = #{params[:entity_id]}" if (params[:category] == "group")
+		      unless params[:entity_id].blank? || company?
+		      	conditions = "survey_results.agent_id = #{params[:entity_id]}" if agent?
+		      	conditions = "survey_results.group_id = #{params[:entity_id]}" if group?
 		      	count+=1
 		      end	
 
@@ -114,7 +124,8 @@ class Reports::SurveyReportsController < ApplicationController
 							 :select => "users.id as id,users.name as name,survey_results.rating as rating,users.job_title as title,count(*) as total",
 							 :joins => :agent, 
 							 :group => "survey_results.agent_id,survey_results.rating",
-							 :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+							 :conditions => conditional_params
+							 ).paginate(:page => params[:page], :per_page => page_limit)
       
       @reports_list = current_account.survey_results.generate_reports_list(survey_reports,"agent")
 
@@ -126,7 +137,8 @@ class Reports::SurveyReportsController < ApplicationController
 								:select => "group_id as id,groups.name as name,survey_results.rating as rating,groups.description as title,count(*) as total",
 								:joins => :group, 
 								:group => "survey_results.group_id,survey_results.rating",
-								:conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+								:conditions => conditional_params
+								).paginate(:page => params[:page], :per_page => page_limit)
       
       @reports_list = current_account.survey_results.generate_reports_list(survey_reports,"group")
 
@@ -137,7 +149,9 @@ class Reports::SurveyReportsController < ApplicationController
     								:joins => [:account],    								
 								:select => "account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total",								
 								:group => "survey_results.account_id,survey_results.rating",
-								:conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+								:conditions => conditional_params
+								).paginate(:page => params[:page], :per_page => page_limit)
+
     	@reports_list = current_account.survey_results.generate_reports_list(survey_reports,"company")
     end
 
@@ -145,7 +159,8 @@ class Reports::SurveyReportsController < ApplicationController
     	
  	@remarks = current_account.survey_results.find(:all, 								
  							    :include => [:survey_remark],	
-							   :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+							   :conditions => conditional_params
+							   ).paginate(:page => params[:page], :per_page => page_limit)
     end
     
     def group_remarks()
@@ -153,13 +168,30 @@ class Reports::SurveyReportsController < ApplicationController
  	
  	@remarks = current_account.survey_results.find(:all, 								
  							    :include => [:survey_remark],	
-							   :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+							   :conditions => conditional_params
+							   ).paginate(:page => params[:page], :per_page => page_limit)
     end
     
     def overall_remarks()
     	
  	@remarks = current_account.survey_results.find(:all, 								
  							    :include => [:survey_remark],	
-							   :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+							   :conditions => conditional_params
+							   ).paginate(:page => params[:page], :per_page => page_limit)
     end
+
+    private
+
+    def agent?
+    	(params[:category].blank? || params[:category] == "agent")
+    end
+
+    def group?
+    	(params[:category] == "group")
+    end
+  
+    def company?
+    	(params[:category] == "company")
+    end
+
 end
