@@ -39,15 +39,6 @@
 			}
 		});
 	jQuery("a.close_template").bind("click", function(ev){
-			
-			jQuery(active_link).parent().parent().next().find("textarea").each(function(index){
-			var editorCache = $H();
-			if(jQuery("#"+active_link.getAttribute("showdiv")).get(0).id == $(this).name+"_div_"+hideData)
-			{
-				editorCache[$(this).name]=jQuery("#"+editorName+"_"+hideData).getCode();
-				notifyType[hideData]=editorCache;
-			}
-		});
 		
 			jQuery(active_template).hide();	
 			jQuery("#"+jQuery(active_link).attr("showdiv")).hide();
@@ -93,15 +84,6 @@
 				jQuery.each(jQuery(item).next().find("textarea"), function(index, textareaItem){
 					
 				tempHash[textareaItem.name] = textareaItem.value;
-
-					var template_data =notifyType[currentNotify];
-					if(typeof template_data != 'undefined'){
-						
-						if(typeof template_data[textareaItem.name] != 'undefined'){
-							tempHash[textareaItem.name] = template_data[textareaItem.name];
-						}
-			
-					}
 			
 				});
 				
