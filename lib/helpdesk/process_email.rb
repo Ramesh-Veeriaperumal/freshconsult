@@ -112,14 +112,19 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return unless params[:to]
       original_to_emails = params[:to].split(",")
 
+      parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
+      parsed_to_emails += parse_cc_email
+      original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
+
       if original_to_emails.size == 1
-        original_to = parse_email_text(original_to_emails.first)
-        original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+        if original_to_email_config
+          original_to_email =  original_to_email_config.friendly_email     
+        else
+          original_to = parse_email_text(original_to_emails.first)
+          original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+        end
       else
-        parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
-        original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
-        email_config = original_to_email_config if original_to_email_config
-        original_to_email = email_config ? email_config.friendly_email : account.default_friendly_email
+        original_to_email = original_to_email_config ? original_to_email_config.friendly_email : account.default_friendly_email
       end
     end
     
