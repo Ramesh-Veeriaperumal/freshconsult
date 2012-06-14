@@ -160,6 +160,13 @@
   			jQuery(".ccEmailMoreLink").text('');
   		}
   	}
+
+  	function showHideToEmailContainer(){
+  		jQuery(".toEmailMoreContainer").toggle();
+  		if(jQuery(".toEmailMoreContainer").css("display") == "inline"){
+  			jQuery(".toEmailMoreLink").text('');
+  		}
+  	}
 	
   <% end %>
 

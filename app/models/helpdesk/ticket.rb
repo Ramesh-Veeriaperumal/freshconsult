@@ -9,6 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include TicketConstants
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
+  include ParserUtil
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
@@ -855,11 +856,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_emails
-    cc_email_hash_value = cc_email_hash
-    to_emails_array = (cc_email_hash_value[:to_emails] || []) unless cc_email_hash_value.nil?
+    to_emails_array = (cc_email[:to_emails] || []).clone unless cc_email.nil?
     to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
     to_emails_array
   end
+
+  def to_cc_emails
+    return [] if cc_email.nil?
+    to_emails_array = []
+    cc_emails_array = (cc_email[:cc_emails] || [])
+    to_emails_array = (cc_email[:to_emails] || []).clone
+    to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
+    (cc_emails_array + to_emails_array).uniq
+  end  
 
   private
   
