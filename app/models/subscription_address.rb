@@ -11,7 +11,7 @@ class SubscriptionAddress
   end
   
   def validate
-    [ :state, :zip, :first_name, :last_name].each do |field|
+    [ :state, :zip, :first_name, :last_name,:address1, :city, :country].each do |field|
       errors.add field, "cannot be blank" if self.send(field).blank?
     end
   end

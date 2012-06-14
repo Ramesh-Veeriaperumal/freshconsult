@@ -387,6 +387,10 @@ class Account < ActiveRecord::Base
     ticket_fields.type_field.first.picklist_values
   end
   
+  def ticket_status_values
+    ticket_fields.status_field.first.ticket_statuses.visible
+  end
+  
   def has_multiple_products?
     !products.empty?
   end

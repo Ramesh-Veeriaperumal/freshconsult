@@ -189,8 +189,9 @@ a.addchoice:hover{
 		.dropchoice, .tags{
 			@include pie-clearfix;
 			float:left;
-			margin:0 5px 0 0;
+			margin:0 20px 0 0;
 			padding:0;
+			width:30%;
 			input{
 				margin-right:5px;
 				width:100%;
@@ -204,6 +205,16 @@ a.addchoice:hover{
 			float: left;
 			margin:5px 12px 0 5px;
 			cursor: pointer;
+		}
+		.deleteChoice{
+			float: left;
+			margin:5px 12px 0 5px;
+			cursor: pointer;
+			background: sprite($symbol, delete) no-repeat;	
+			width:16px; height:16px;
+		}
+		.deleteChoice.disabled{
+			background: sprite($symbol, delete-inactive) no-repeat;				
 		}
 	}
 	a.addchoice{
