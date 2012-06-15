@@ -33,7 +33,7 @@
 				var index =template_name.indexOf('_div');
 				editorName=template_name.substring(0,index);
 			
-				jQuery("#"+editorName+"_"+hideData).redactor({autoformat: false,focus: true});
+				jQuery("#"+editorName+"_"+hideData).redactor({autoformat: false,focus: true,path: '/javascripts/redactor'});
 				active_email_body=jQuery("#"+editorName+"_"+hideData);
 					
 			}
