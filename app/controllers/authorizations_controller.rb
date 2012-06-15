@@ -150,8 +150,9 @@ class AuthorizationsController < ApplicationController
       @current_user = @new_auth.user
     end
     if (@omniauth['provider'] == "facebook")
-      create_key_value_pair(@current_user.id, "pending", user_account.id)
-      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{hash['uid']}" 
+      random_hash = Digest::MD5.hexdigest(((DateTime.now.to_f * 1000).to_i).to_s)
+      create_key_value_pair(@current_user.id, (DateTime.now.to_f * 1000).to_i, user_account.id)
+      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{hash['uid']}&challenge=#{random_hash}" 
     else
       create_session
     end

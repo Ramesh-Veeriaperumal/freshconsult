@@ -61,7 +61,7 @@
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
-  map.resources :sso, :collection => {:login => :get}
+  map.resources :sso, :collection => {:login => :get, :facebook => :get}
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
     integration.resources :applications, :member =>{:show => :get}

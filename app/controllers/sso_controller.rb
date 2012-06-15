@@ -5,7 +5,10 @@ class SsoController < ApplicationController
 			curr_user = auth.user 
 			#verify_fb_pending(curr_user)
 			kv = KeyValuePair.find_by_account_id_and_key(current_account.id, curr_user.id)
-			if(kv.blank? == false and kv.value == "pending")
+			random_hash = Digest::MD5.hexdigest(kv.value)
+			expiry = kv.value.to_i + 60000 
+			curr_time = (DateTime.now.to_f * 1000).to_i
+			if(kv.blank? == false and random_hash == params['challenge'] and curr_time <= expiry)
 				user_session = curr_user.account.user_sessions.new(curr_user) 
 				kv.delete
 				redirect_back_or_default('/') if user_session.save
@@ -15,4 +18,10 @@ class SsoController < ApplicationController
 			end
 		end
 	end
+
+	def facebook
+		redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=#{current_portal.id}"
+	end
+
+
 end
