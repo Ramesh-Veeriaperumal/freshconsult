@@ -14,10 +14,11 @@ class Reports::SurveyReportsController < ApplicationController
 		elsif group?
 			group_list
 		else
-			report_details and return
-		end		
+			overall_summary
+			redirect_to survey_overall_report_path(:category => Survey::OVERALL) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
+		end
     		
-	end	
+	end
 
 	def list
 		if agent?
@@ -25,8 +26,9 @@ class Reports::SurveyReportsController < ApplicationController
 		elsif group?
 			group_list
 		else
-			report_details and return
-		end		
+			overall_summary
+			redirect_to survey_overall_report_path(:category => Survey::OVERALL) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
+		end
 
 		render :partial => "list"	
 	end
@@ -127,7 +129,7 @@ class Reports::SurveyReportsController < ApplicationController
 							 :conditions => conditional_params
 							 ).paginate(:page => params[:page], :per_page => page_limit)
       
-      @reports_list = current_account.survey_results.generate_reports_list(survey_reports,"agent")
+      @reports_list = current_account.survey_results.generate_reports_list(survey_reports,Survey::AGENT)
 
     end
 
@@ -140,7 +142,7 @@ class Reports::SurveyReportsController < ApplicationController
 								:conditions => conditional_params
 								).paginate(:page => params[:page], :per_page => page_limit)
       
-      @reports_list = current_account.survey_results.generate_reports_list(survey_reports,"group")
+      @reports_list = current_account.survey_results.generate_reports_list(survey_reports,Survey::GROUP)
 
     end
 
@@ -152,7 +154,7 @@ class Reports::SurveyReportsController < ApplicationController
 								:conditions => conditional_params
 								).paginate(:page => params[:page], :per_page => page_limit)
 
-    	@reports_list = current_account.survey_results.generate_reports_list(survey_reports,"company")
+    	@reports_list = current_account.survey_results.generate_reports_list(survey_reports,Survey::OVERALL)
     end
 
     def agent_remarks
@@ -183,15 +185,15 @@ class Reports::SurveyReportsController < ApplicationController
     private
 
     def agent?
-    	(params[:category].blank? || params[:category] == "agent")
+    	(params[:category].blank? || params[:category] == Survey::AGENT)
     end
 
     def group?
-    	(params[:category] == "group")
+    	(params[:category] == Survey::GROUP)
     end
   
     def company?
-    	(params[:category] == "company")
+    	(params[:category] == Survey::OVERALL)
     end
 
 end

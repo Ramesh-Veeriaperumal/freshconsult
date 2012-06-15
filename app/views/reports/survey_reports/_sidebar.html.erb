@@ -14,8 +14,8 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 			<b><%=t('.filter_by')%></b>
 			<%
 				selected_option = :agent;
-				selected_option = :group if params[:category]=="group"
-				selected_option = :company if params[:category]=="company"
+				selected_option = :group if params[:category]== Survey::GROUP
+				selected_option = :company if params[:category]== Survey::OVERALL
 			%>
 			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
 		   </li>	
@@ -43,7 +43,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 		var category =  jQuery("#category").val();
 		var date_range =  jQuery("#date_range").serialize();
 		if(category == "company"){
-			location.href = encodeURI("/survey/report_details/<%=current_account.id%>/"+category+"?"+date_range);
+			location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
 			return false;	
 		}
 		return true;

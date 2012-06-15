@@ -7,7 +7,16 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 
 <div class="sidepanel">
  <div > 
-    <% form_for(survey_report_details_url, { :method => :post, :html => {:id => 'report_filters'},:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
+<%        
+
+        if params[:category] == Survey::OVERALL
+            details_link = survey_overall_report_url(:category=> params[:category])
+        else
+            details_link  = survey_detail_report_url(:entity_id => params[:entity_id], :category=> params[:category])            
+        end        
+
+%>
+    <% form_for(details_link, { :action => details_link, :method => :post, :html => {:id => 'date_filter'}, :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
     <ul class="ui-form">
            <input type="hidden" name="category" value="<%=params[:category]%>">
            <input type="hidden" name="rating" value="<%=params[:rating]%>">
@@ -28,17 +37,6 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 
 <% javascript_tag do %>     
     jQuery(document).ready(function() {
-        jQuery("#report_filters").change(function(){
-        jQuery("#report_list").html("<div class='loading-box'></div>"); 
-        jQuery.ajax({
-        url: '<%=survey_activity_url%>',
-        type: "POST",
-        data: jQuery(this).serializeArray(),
-        success: function(data){ 
-           jQuery("#report_list").hide().html(data).fadeIn(300);
-            }
-            });
-        });         
         jQuery("#date_range").daterangepicker({
         earliestDate: Date.parse('1/1/2009'),
         latestDate: new Date(),
