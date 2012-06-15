@@ -4,13 +4,13 @@
 <div class="satisfaction-head">
 		<span id="back_to_con" class="floatr">	
 			<%
-				category = "agent" if params[:category].blank?
+				category = Survey::AGENT if params[:category].blank?
 				category = params[:category] unless params[:category].blank?
 
 				if params[:date_range].blank?
-		   			back_to_link = survey_back_to_list_url(:category=> category)
+		   			back_to_link = survey_back_to_list_url(:category=> category,:view => :list)
 		   		else
-		   			back_to_link = survey_back_to_list_url(:category=> category, :date_range => params[:date_range])
+		   			back_to_link = survey_back_to_list_url(:category=> category, :view => :list, :date_range => params[:date_range])
 		   		end	
 			%>
 			<%= link_to("&larr; #{t('reports.survey_reports.back_to')}", back_to_link, {:method => :post,:class => "slim-button", :id => "back_to_link"}) %>
@@ -44,7 +44,7 @@
 
 <% javascript_tag do %>
 		var isRefreshed = false;
-		<% if !params[:category].blank? and params[:category]!="company" %> 
+		<% if !params[:category].blank? and params[:category]!=Survey::OVERALL %> 
 		   jQuery("#back_to_con").show();		 
 		<%end%>
 		jQuery('#report_feedback').pageless({

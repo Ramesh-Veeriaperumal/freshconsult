@@ -19,6 +19,12 @@ class Survey < ActiveRecord::Base
   CUSTOMER_RATINGS_BY_TOKEN = CUSTOMER_RATINGS.invert
   
   FILTER_BY_ARR = [["By Agents" , :agent] , ["By Groups", :group] , ["Overall Helpdesk" , :company]]
+
+  AGENT = "agent"
+  GROUP = "group"
+  OVERALL = "company"
+
+  LIST = "list"
   
   belongs_to :account
   has_many :survey_handles, :dependent => :destroy
