@@ -60,6 +60,9 @@ stylesheets:
     - public/stylesheets/reports.css
     - public/stylesheets/satisfaction.css
 
+  redactor:
+    - public/javascripts/redactor/css/redactor.css 
+
 javascripts:
   defaults:
     - public/javascripts/prototype.js
@@ -127,3 +130,5 @@ javascripts:
   survey:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+  redactor:
+    - public/javascripts/redactor/redactor.js
