@@ -63,7 +63,7 @@ window.FactoryUI = {
 		hiddenBox = jQuery("<input type='hidden' />")
 					.prop({ "name" : name, "value" : false });
 		checkBox  = jQuery("<input type='checkbox' />")
-					.prop({ "name" : name, "checked": "checked", value: true });
+					.prop({ "name" : name, "checked": checked, value: true });
 
 		return labelBox.append(hiddenBox).append(checkBox).append(label);
 	}
