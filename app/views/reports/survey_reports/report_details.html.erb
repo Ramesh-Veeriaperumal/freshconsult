@@ -1,24 +1,28 @@
  <%= include_stylesheets :satisfaction  %>
 
+<%
+date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{Time.now.strftime("%d %B %Y")}" :  h(params[:date_range])
+%>
+
    <div id="report-container" class="report-container">
 <div class="satisfaction-head">
 		<span id="back_to_con" class="floatr">	
-			<%
-				category = Survey::AGENT if params[:category].blank?
-				category = params[:category] unless params[:category].blank?
+		<%
+			category = Survey::AGENT if params[:category].blank?
+			category = params[:category] unless params[:category].blank?
 
-				if params[:date_range].blank?
-		   			back_to_link = survey_back_to_list_url(:category=> category,:view => :list)
-		   		else
-		   			back_to_link = survey_back_to_list_url(:category=> category, :view => :list, :date_range => params[:date_range])
-		   		end	
-			%>
-			<%= link_to("&larr; #{t('reports.survey_reports.back_to')}", back_to_link, {:method => :post,:class => "slim-button", :id => "back_to_link"}) %>
+			if params[:date_range].blank?
+	   			back_to_link = survey_back_to_list_url(:category=> category,:view => :list)
+	   		else
+	   			back_to_link = survey_back_to_list_url(:category=> category, :view => :list, :date_range => params[:date_range])
+	   		end
+		%>
+		<%= link_to("&larr; #{t('reports.survey_reports.back_to')}", back_to_link, {:method => :post,:class => "slim-button", :id => "back_to_link"}) %>
 		</span>
 		<h3 class="title" id="report-main-title">		          
 		  <%= t('reports.satisfaction_title') %><br />		  
 		</h3>
-		<span id="date_range_title" style="align:left"><%= params[:date_range] %></span>		                                                        
+		<span id="date_range_title" style="align:left"><%= params[:date_range] %></span>                                                        
 </div>
 
   <div id="report_list">  
@@ -50,7 +54,7 @@
 		jQuery('#report_feedback').pageless({
 		    currentPage:1,
 		    totalPages : <%=@remarks.total_pages%>,
-      		    url : "<%=survey_feedbacks_url%>",
+      		    url : "<%=survey_feedbacks_url(:date_range => date_range)%>",
       	                loaderMsg : "",
       	                params:{category:"<%=params[:category]%>",rating:"<%=params[:rating]%>",entity_id:"<%=params[:entity_id]%>"}
 		});		
