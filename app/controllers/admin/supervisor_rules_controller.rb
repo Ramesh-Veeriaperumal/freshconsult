@@ -20,7 +20,7 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
       :domtype => "number", :operatortype => "hours" },
     { :name => "agent_responded_at", :value => I18n.t('ticket.agent_responded_at'), 
       :domtype => "number", :operatortype => "hours" },
-    { :name => "first_response_due", :value => I18n.t('ticket.first_response_due'), 
+    { :name => "first_response_time", :value => I18n.t('ticket.first_response_due'), 
       :domtype => "number", :operatortype => "hours" },
     { :name => "due_by", :value => I18n.t('ticket.due_by'), :domtype => "number",
       :operatortype => "hours" },
