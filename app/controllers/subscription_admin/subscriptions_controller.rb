@@ -104,7 +104,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
         csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
                 sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',!sub.account.twitter_handles.blank?,!sub.account.facebook_pages.blank?,sub.account.tickets.count,sub.account.portals.count > 1,
-                sub.free_agents,sub.account.full_time_agents.count,sub.account.all_agents.count - (sub.account.full_time_agents.count ||= 0),sub.account.account_admin.last_login_at,sub.account.account_admin.login_count] 
+                sub.free_agents,sub.account.full_time_agents.count,sub.account.agents.count - (sub.account.full_time_agents.count ||= 0),sub.account.account_admin.last_login_at,sub.account.account_admin.login_count] 
       end 
     end 
  

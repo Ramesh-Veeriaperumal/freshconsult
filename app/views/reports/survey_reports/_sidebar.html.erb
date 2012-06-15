@@ -6,12 +6,18 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 
 <div class="sidepanel">
- <div >	
- 	<% remote_form_for(survey_activity_url, { :method => :post, :html => {:id => 'report_filters'},:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
+ <div >
+ 	<% remote_form_for( survey_list_path, {:url => survey_list_url, :before => "if(!validate_request()){return false;}",:method => :post, :html => {:id => 'report_filters'},
+ 			:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
  	<ul class="ui-form">
     	   <li class="inline-field">
 			<b><%=t('.filter_by')%></b>
-			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
+			<%
+				selected_option = :agent;
+				selected_option = :group if params[:category]=="group"
+				selected_option = :company if params[:category]=="company"
+			%>
+			<%=select_tag :category , options_for_select(Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
 		   </li>	
     	   <li class="inline-field">				
 					<b><%=t('.view_report_date')%></b>
@@ -32,18 +38,31 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 </div>
 
 <% javascript_tag do %> 	
+
+	function validate_request(){
+		var category =  jQuery("#category").val();
+		var date_range =  jQuery("#date_range").serialize();
+		if(category == "company"){
+			location.href = encodeURI("/survey/report_details/<%=current_account.id%>/"+category+"?"+date_range);
+			return false;	
+		}
+		return true;
+	}
+
 	jQuery(document).ready(function() {
 	    jQuery("#report_filters").change(function(){
-    	jQuery("#report_list").html("<div class='loading-box'></div>"); 
-    	jQuery.ajax({
-        url: '<%=survey_activity_url%>',
-        type: "POST",
-        data: jQuery(this).serializeArray(),
-        success: function(data){ 
-		   jQuery("#report_list").hide().html(data).fadeIn(300);
-        	}
-			});
-      	});      	
+    			jQuery("#report_list").html("<div class='loading-box'></div>"); 
+		    	jQuery.ajax({
+		        			url: '<%=survey_list_url%>',
+		        			type: "POST",
+		        			beforeSend: validate_request,
+		        			data: jQuery(this).serializeArray(),
+		        			success: function(data){ 
+				   		jQuery("#report_list").hide().html(data).fadeIn(300);
+		        			}
+				});
+	    });
+
 		jQuery("#date_range").daterangepicker({
 		earliestDate: Date.parse('1/1/2009'),
 		latestDate: new Date(),
@@ -65,6 +84,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 		ev.preventDefault();
 		return false;
 	});
-		
-	});
+
+	});	
+
 <%end%>

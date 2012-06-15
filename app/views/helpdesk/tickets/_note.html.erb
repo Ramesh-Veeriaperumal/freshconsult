@@ -19,17 +19,17 @@
 		</div> 
 		<div class="actions">
 	  	<% if permission?(:manage_tickets) %>
-      <%= link_to_remote( t("edit"), { :loading => "$('loading_#{notedetails}').show();", 
-                                        :loaded  => "$('loading_#{notedetails}').hide();", 
-                                        :update  => notedetails, 
-										:complete => "jQuery('##{notedetails}').removeClass('details')",
-                                        :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
-                                        :method => :GET },
-                                      { :class => "slim-button" }) %> 
-      <% if note.incoming %>
-        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id }, :method => :post, :class => "slim-button tooltip", :title => t(".split_this_as_new_ticket"), :confirm => t(".split_ticket_confirm") if @item && !@item.fb_post %>
-      <% end %>
-      <%= link_to( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => "Delete this note?" ) %>   
+	      	<%= link_to_remote( t("edit"), { :loading => "$('loading_#{notedetails}').show();", 
+	                                        :loaded  => "$('loading_#{notedetails}').hide();", 
+	                                        :update  => notedetails, 
+											:complete => "jQuery('##{notedetails}').removeClass('details')",
+	                                        :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
+	                                        :method => :GET },
+	                                      { :class => "slim-button" }) if(note.user && note.user.agent?) %> 
+	      <% if note.incoming %>
+	        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id }, :method => :post, :class => "slim-button tooltip", :title => t(".split_this_as_new_ticket"), :confirm => t(".split_ticket_confirm") if @item && !@item.fb_post %>
+	      <% end %>
+	      <%= link_to( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => t(".delete_note") ) if(note.user && note.user.agent?) %>   
       <% end %>
     </div>
 	<div class="user_details">    

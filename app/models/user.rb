@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   include SavageBeast::UserInit
   include SentientUser
   #include ParserUtil
+  include Helpdesk::Ticketfields::TicketStatus
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -201,7 +202,7 @@ class User < ActiveRecord::Base
   end
 
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
+    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model
@@ -220,7 +221,7 @@ class User < ActiveRecord::Base
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
   
   has_many :open_tickets, :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id",
-  :conditions => {:status => [TicketConstants::STATUS_KEYS_BY_TOKEN[:open],TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]]},
+  :conditions => {:status => [OPEN,PENDING]},
   :order => "created_at desc"
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy

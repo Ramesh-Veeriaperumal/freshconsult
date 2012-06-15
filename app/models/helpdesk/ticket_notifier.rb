@@ -16,8 +16,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
     
     if e_notification.requester_notification? and !ticket.out_of_office?
-      r_template = Liquid::Template.parse(e_notification.formatted_requester_template)
-      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template)
+      r_template = Liquid::Template.parse(e_notification.formatted_requester_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
+      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,

@@ -9,9 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 
 ActiveRecord::Schema.define(:version => 20120530142849) do
 
+=======
+ActiveRecord::Schema.define(:version => 20120614091645) do
+>>>>>>> 5ee3a26d88c2f5fec925d7babe417e1129f97432
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -32,6 +36,22 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+
+  create_table "addresses", :force => true do |t|
+    t.string   "first_name"
+    t.string   "last_name"
+    t.text     "address1"
+    t.text     "address2"
+    t.string   "country"
+    t.string   "state"
+    t.string   "city"
+    t.string   "zip"
+    t.integer  "account_id",       :limit => 8
+    t.integer  "addressable_id",   :limit => 8
+    t.string   "addressable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
@@ -93,6 +113,7 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
+    t.integer "account_id",    :limit => 8
   end
 
   create_table "authorizations", :force => true do |t|
@@ -219,7 +240,7 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
     t.integer  "account_id",           :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "ticket_id_delimiter",               :default => "#"
+    t.string   "ticket_id_delimiter",               :default => "[#ticket_id]"
     t.boolean  "pass_through_enabled",              :default => true
   end
 
@@ -543,8 +564,9 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
+  
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
+ 
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
@@ -681,10 +703,28 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
     t.boolean  "group_escalated",                     :default => false
     t.integer  "inbound_count",                       :default => 1
     t.integer  "account_id",             :limit => 8
+    t.datetime "status_updated_at"
+    t.datetime "sla_timer_stopped_at"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
+
+  create_table "helpdesk_ticket_statuses", :force => true do |t|
+    t.integer  "status_id",             :limit => 8
+    t.string   "name"
+    t.string   "customer_display_name"
+    t.boolean  "stop_sla_timer",                     :default => false
+    t.boolean  "deleted",                            :default => false
+    t.boolean  "is_default",                         :default => false
+    t.integer  "account_id",            :limit => 8
+    t.integer  "ticket_field_id",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "position"
+  end
+
+  add_index "helpdesk_ticket_statuses", ["ticket_field_id", "status_id"], :name => "index_helpdesk_ticket_statuses_on_ticket_field_id_and_status_id", :unique => true
 
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                             :null => false
@@ -766,7 +806,7 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
 
   create_table "key_value_pairs", :force => true do |t|
     t.string  "key"
-    t.string  "value"
+    t.text    "value"
     t.string  "obj_type"
     t.integer "account_id", :limit => 8
   end
@@ -994,6 +1034,7 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
     t.boolean  "misc"
     t.integer  "subscription_affiliate_id", :limit => 8
     t.decimal  "affiliate_amount",                       :precision => 6,  :scale => 2, :default => 0.0
+    t.text     "meta_info"
   end
 
   add_index "subscription_payments", ["account_id"], :name => "index_subscription_payments_on_account_id"
@@ -1045,7 +1086,7 @@ ActiveRecord::Schema.define(:version => 20120530142849) do
   end
 
   create_table "survey_handles", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "id",               :limit => 8,                    :null => false
     t.integer  "account_id",       :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
