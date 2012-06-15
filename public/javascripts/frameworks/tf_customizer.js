@@ -1,4 +1,4 @@
-/**
+  /**
  * @author venom
  */ 
  
@@ -77,7 +77,18 @@
       // Map any document related actions here
       $(document).keyup(function(e){
          if (e.keyCode == 27) { $("#cancel-button").trigger("click"); } // Capturing ESC keypress event to make dialog hide after it becomes open
-      })
+      });
+
+      $("input[rel=status-companion]")
+        .live({ 
+          "keyup": function(ev){            
+            if($(this).data("companionEmpty")) $(this).parent().parent().find("input[name=customer_display_name]").val(this.value);
+          }, 
+          "focus": function(ev){
+            _entity = $(this).parent().parent().find("input[name=customer_display_name]");
+            $(this).data("companionEmpty", (_entity && _entity.val().strip() === ""));
+          }
+      });
 
       // Init for Dropdown textarea
       $("#nestedTextarea")
@@ -154,7 +165,7 @@
             break;
          
             case 'dropdown':
-            case 'dropdown_blank':
+            case 'dropdown_blank':              
               if(dataItem.field_type == "nested_field"){
                nestedTree = new NestedField(dataItem.choices);
                category = $("<select disabled='disabled' />").append(nestedTree.getCategory());
@@ -170,10 +181,15 @@
                // });  
 
               }else{
-               $(dataItem.choices).each(function(ci, choice){
-                  field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
-               });
-
+                if(dataItem.field_type == "default_status"){
+                  dataItem.choices.each(function(item){
+                    field.append("<option value=" + item.status_id + ">" + item.name + "</option>");
+                  });
+                }else{
+                  $(dataItem.choices).each(function(ci, choice){
+                    field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
+                  });
+                }
                field.wrapInner("<select "+fieldAttr+" disabled='true' />");
                fieldContainer.append(label);
              }
@@ -330,6 +346,37 @@
             .append(dropSpan)            
             .appendTo(dom);  
       }
+
+      function addStatusinDialog(_data){
+        _template = $("#statusTemplate").template();
+        _data = _data || [{ status_id : 0, name : "", customer_display_name : "", stop_sla_timer : false }]
+        _data.each(function(item){
+          $.tmpl( _template, item ).appendTo( (item.deleted) ? "#statuschoicesdeleted" : "#statuschoices" );  
+        });
+        
+      }
+
+      function getAllStatusChoices(){
+        var allstatus = [];
+        $.each($("#statuschoices fieldset"), function(i, item){
+          var _status = $H();
+          $.each($(item).find("input"), function(_i, _item){
+            _value = _item.value;
+            if(_item.type == "checkbox")
+              _value = ($(_item).prop("checked"));
+            
+            if(_item.name == "status_id")
+              _value = parseInt(_item.value);
+
+            if(_item.name == "customer_display_name")
+              _value = _item.value || $(_item).parent().parent().find("input[name=name]").val();
+
+            _status.set(_item.name, _value);
+          });
+          allstatus.push(_status.toObject());          
+        });
+        return allstatus;
+      }
       
       function getAllChoices(dom){      
          var choices = $A();         
@@ -345,18 +392,33 @@
          return choices;
       }
 
-      jQuery(".deleteChoice")
+      jQuery("#DropFieldChoices .deleteChoice")
          .live('click', function(){
-                           if (jQuery(this).parent().siblings().size() !== 0) {
-                              jQuery(this).parent().remove();
-                              saveAllChoices();
-                           }
+                          if(jQuery(this).parent().siblings().size() !== 0) {
+                            jQuery(this).parent().remove();
+                            saveAllChoices();
+                          }
                         });
 
-      jQuery(".addchoice")
+      jQuery("#statuschoices .deleteChoice")
+         .live('click', function(){
+                          if(jQuery(this).hasClass('disabled')) return;
+                            jQuery(this)
+                              .parent()
+                              .hide()
+                              .find("input[name=deleted]")
+                              .prop("checked", true);
+                        });
+
+      jQuery("#addchoice")
          .live('click', function(){
                            addChoiceinDialog();
                         }); 
+
+      jQuery("#addstatus")
+        .live("click", function(){
+          addStatusinDialog();
+        });
 
       function saveAllChoices(){
          var sourceData = $H($(SourceField).data("raw"));
@@ -411,26 +473,31 @@
             $("#nestedContainer").hide();
             $("#nested-selectboxs").hide();
             $("#nestedEdit").hide();
+            $("#StatusFieldChoices").hide();
+            $("#statuschoices").empty();
             
-            if(sourceData.field_type == 'nested_field'){ 
-                $("#nestedContainer").show();         
-                $("#NestedFieldLabels").show();
-                //if(typeof sourceData.choices == "string"){                    
-                //    showNestedTextarea();
-                //}else{   
-                $("#nested-selectboxs").show();  
-                //}                        
-                nestedTree.readData(sourceData.choices);
-                $("#nestedTextarea").val(nestedTree.toString());   
-                $("#nest-category").html(nestedTree.getCategory()).trigger("change");
-                sourceData.levels.each(function(item){
-                  $("#agentlevel"+item.level+"label").val(item.label);
-                  $("#customerslevel"+item.level+"label").val(item.label_in_portal);
-                });
+            if(sourceData.field_type == "nested_field"){ 
+              $("#nestedContainer").show();         
+              $("#NestedFieldLabels").show();
+              //if(typeof sourceData.choices == "string"){                    
+              //    showNestedTextarea();
+              //}else{   
+              $("#nested-selectboxs").show();  
+              //}                        
+              nestedTree.readData(sourceData.choices);
+              $("#nestedTextarea").val(nestedTree.toString());   
+              $("#nest-category").html(nestedTree.getCategory()).trigger("change");
+              sourceData.levels.each(function(item){
+                $("#agentlevel"+item.level+"label").val(item.label);
+                $("#customerslevel"+item.level+"label").val(item.label_in_portal);
+              });
+            }else if(sourceData.field_type == "default_status"){
+              $("#StatusFieldChoices").show();
+              addStatusinDialog(sourceData.choices);
             }else{
-                sourceData.choices.each(function(item){
-                   addChoiceinDialog(item, dialogDOMMap.choices);
-                });                
+              sourceData.choices.each(function(item){
+                 addChoiceinDialog(item, dialogDOMMap.choices);
+              });
             }
 
             $("#NestedFieldLabels").toggle(sourceData.field_type == 'nested_field');
@@ -464,9 +531,14 @@
                $('#DeleteField').show();
                dialogDOMMap.label.attr("disabled", false);
                dialogDOMMap.label.removeClass("disabled");               
-            } 
-            if(sourceData.field_type == 'custom_dropdown' || sourceData.field_type == 'default_ticket_type') 
-               $("#DropFieldChoices").show();
+            }  
+
+            switch(sourceData.field_type){
+              case 'custom_dropdown':
+              case 'default_ticket_type':
+                $("#DropFieldChoices").show();
+              break;
+            }           
                
         }catch(e){}
       }
@@ -492,6 +564,9 @@
               sourceData.set("label", $("#agentlevel1label").val());
               sourceData.set("label_in_portal", $("#customerslabel").val());
               sourceData.set("choices", nestedTree.toArray());  
+            }else if(_field_type == "default_status"){
+              sourceData.set("choices", getAllStatusChoices());
+              //console.log(getAllStatusChoices());
             }else{
               sourceData.set("choices", getAllChoices(dialogDOMMap.choices));  
             }
