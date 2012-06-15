@@ -18,19 +18,17 @@ class ContactsController < ApplicationController
     end
   end
   
-  def index
+   def index
+    @contacts = scoper.filter(params[:letter],params[:page])
     respond_to do |format|
       format.html do
         @tags = current_account.tags.with_taggable_type(User.to_s)
-        @contacts = scoper.filter(params[:letter],params[:page])
       end
       format.xml  do
-        @contacts = scoper.all
        render :xml => @contacts.to_xml
       end
 
       format.json  do
-        @contacts = scoper.all
        render :json => @contacts.to_json
       end
       format.atom do
