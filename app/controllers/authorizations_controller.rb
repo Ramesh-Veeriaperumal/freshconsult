@@ -11,13 +11,13 @@ class AuthorizationsController < ApplicationController
     @omniauth = request.env['omniauth.auth'] 
     @auth = Authorization.find_from_hash(@omniauth,current_account.id)
     provider_name = @omniauth['provider']
-    if provider_name == 'open_id' or provider_name == 'google' 
-      requires_feature(:google_signin)
-    elsif
-      requires_feature(:twitter_signin)
+
+    if provider_name == :open_id or provider_name == :twitter or provider_name == :facebook
+      provider_name = provider_name == :open_id ? :google : provider_name
+      requires_feature("#{provider_name}_signin")
     end
   end
-  
+
   def create
     Rails.logger.debug "@omniauth "+@omniauth.inspect
     @omniauth_origin = session["omniauth.origin"]
