@@ -76,7 +76,7 @@ class Helpdesk::NotesController < ApplicationController
     def process_item
       Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket
-        if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+        if @item.email_conversation?
           send_reply_email
           @item.create_fwd_note_activity(params[:to_emails]) if @item.fwd_email?
         end

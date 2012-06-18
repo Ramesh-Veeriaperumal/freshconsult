@@ -246,12 +246,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       if can_be_added_to_ticket?(ticket,user)        
         body = show_quoted_text(params[:text],ticket.reply_email)
         body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+        from_fwd_recipients = from_fwd_emails?(ticket, from_email)
         note = ticket.notes.build(
-          :private => from_fwd_emails?(ticket, from_email),
+          :private => from_fwd_recipients,
           :incoming => true,
           :body => body,
           :body_html => body_html ,
-          :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+          :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )       
