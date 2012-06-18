@@ -22,7 +22,6 @@ class AuthorizationsController < ApplicationController
     Rails.logger.debug "@omniauth "+@omniauth.inspect
     @omniauth_origin = session["omniauth.origin"]
     if @omniauth['provider'] == :open_id
-      puts 'Open ID Provider'
       @current_user = current_account.all_users.find_by_email(@omniauth['info']['email'])  unless  current_account.blank?
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "twitter"
@@ -32,39 +31,42 @@ class AuthorizationsController < ApplicationController
     elsif @omniauth['provider'] == "facebook"
       create_for_facebook(params)
     elsif @omniauth['provider'] == "google"
-      # Move this to GoogleAccount model.
-      user_info = @omniauth['info']
-      unless user_info.blank?
-        if @omniauth_origin.blank? || @omniauth_origin.include?("integrations") 
-          Rails.logger.error "The session variable to omniauth is not preserved or not set properly."
-          @omniauth_origin = "install"
-        end
-        @google_account = Integrations::GoogleAccount.new
-        @db_google_account = Integrations::GoogleAccount.find_by_account_id_and_email(current_account, user_info["email"])
-        if !@db_google_account.blank? && @omniauth_origin == "install"
-          Rails.logger.error "As already an account has been configured can not configure one more account."
-          flash[:error] = t("integrations.google_contacts.already_exist")
-          redirect_to configure_integrations_installed_application_path(params[:iapp_id]) 
-        else
-          @existing_google_accounts = Integrations::GoogleAccount.find_all_by_account_id(current_account)
-          @google_account.account = current_account
-          @google_account.token = @omniauth['credentials']['token']
-          @google_account.secret = @omniauth['credentials']['secret']
-          @google_account.name = user_info["name"]
-          @google_account.email = user_info["email"]
-          @google_account.sync_group_name = "Freshdesk Contacts"
-          Rails.logger.debug "@google_account details #{@google_account.inspect} existing_google_accounts #{@existing_google_accounts.inspect}"
-          # Fetch all the groups
-          @google_groups = @google_account.fetch_all_google_groups
-          # Reuse the group id, if the group with same name already exist.
-          @google_groups.each { |g_group|
-            @google_account.sync_group_id = g_group.group_id if g_group.name == @google_account.sync_group_name
-          }
-          render 'integrations/google_accounts/edit'
-        end
-      end
+      create_for_google(params)
     elsif @omniauth['provider'] == "salesforce"
       create_for_salesforce(params)
+    end
+  end
+
+  def create_for_google(params)
+    user_info = @omniauth['info']
+    unless user_info.blank?
+      if @omniauth_origin.blank? || @omniauth_origin.include?("integrations") 
+        Rails.logger.error "The session variable to omniauth is not preserved or not set properly."
+        @omniauth_origin = "install"
+      end
+      @google_account = Integrations::GoogleAccount.new
+      @db_google_account = Integrations::GoogleAccount.find_by_account_id_and_email(current_account, user_info["email"])
+      if !@db_google_account.blank? && @omniauth_origin == "install"
+        Rails.logger.error "As already an account has been configured can not configure one more account."
+        flash[:error] = t("integrations.google_contacts.already_exist")
+        redirect_to configure_integrations_installed_application_path(params[:iapp_id]) 
+      else
+        @existing_google_accounts = Integrations::GoogleAccount.find_all_by_account_id(current_account)
+        @google_account.account = current_account
+        @google_account.token = @omniauth['credentials']['token']
+        @google_account.secret = @omniauth['credentials']['secret']
+        @google_account.name = user_info["name"]
+        @google_account.email = user_info["email"]
+        @google_account.sync_group_name = "Freshdesk Contacts"
+        Rails.logger.debug "@google_account details #{@google_account.inspect} existing_google_accounts #{@existing_google_accounts.inspect}"
+        # Fetch all the groups
+        @google_groups = @google_account.fetch_all_google_groups
+        # Reuse the group id, if the group with same name already exist.
+        @google_groups.each { |g_group|
+          @google_account.sync_group_id = g_group.group_id if g_group.name == @google_account.sync_group_name
+        }
+        render 'integrations/google_accounts/edit'
+      end
     end
   end
 
@@ -102,7 +104,11 @@ class AuthorizationsController < ApplicationController
       @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
-      create_for_sso(@omniauth, user_account, portal_url)
+      create_for_sso(@omniauth, user_account)
+      curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
+      random_hash = Digest::MD5.hexdigest(curr_time)
+      create_key_value_pair(@current_user.id, curr_time, user_account.id)
+      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
     end
   end
 
@@ -134,7 +140,7 @@ class AuthorizationsController < ApplicationController
      @current_user.save!
   end
 
-  def create_for_sso(hash, user_account = nil, portal_url = nil)
+  def create_for_sso(hash, user_account = nil)
     if !@current_user.blank? and !@auth.blank?
       return show_deleted_message if @current_user.deleted?
       make_usr_active
@@ -149,14 +155,7 @@ class AuthorizationsController < ApplicationController
       @new_auth = create_from_hash(hash, user_account) 
       @current_user = @new_auth.user
     end
-    if (@omniauth['provider'] == "facebook")
-      random_hash = Digest::MD5.hexdigest(((DateTime.now.to_f * 1000).to_i).to_s)
-      create_key_value_pair(@current_user.id, (DateTime.now.to_f * 1000).to_i, user_account.id)
-      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{hash['uid']}&challenge=#{random_hash}" 
-    else
-      create_session
-    end
-    
+    create_session unless @omniauth['provider'] == "facebook"
   end
   
   def create_from_hash(hash, user_account = nil)
