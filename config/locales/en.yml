@@ -180,8 +180,11 @@ en:
         link_text_label: Satisfaction survey link text
         link_text_input: Please let us know your opinion on our support experience.
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Add survey link on all email sent to customer.
-        send_while_option2: Add survey link only on email sent after a ticket is resolved.
+        send_while_option1: All email sent to customer.
+        send_while_option2: Emails sent after a ticket is "Resolved".
+        send_while_option3: Emails sent after a ticket is "Closed".
+        send_while_title: Choose which emails have the satisfaction survey link
+        
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    

@@ -5,7 +5,8 @@ class SurveyHandle < ActiveRecord::Base
   include ActionController::UrlWriter
   
   NOTIFICATION_VS_SEND_WHILE = {
-    EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION
+    EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION,
+    EmailNotification::TICKET_CLOSED => Survey::CLOSED_NOTIFICATION
   }
   
   belongs_to :survey

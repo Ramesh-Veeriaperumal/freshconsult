@@ -21,9 +21,10 @@
 	</li>
 	
 	<li>
-		<strong>Choose which emails have the satisfaction survey link</strong><br>
+		<strong><%=t('.send_while_title')%></strong><br>
 		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::RESOLVED_NOTIFICATION %> <%=t('.send_while_option2')%></label>
-		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::ANY_EMAIL_RESPONSE %> <%=t('.send_while_option1')%></label>
+		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::CLOSED_NOTIFICATION %> <%=t('.send_while_option3')%></label>
+		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::ANY_EMAIL_RESPONSE %> <%=t('.send_while_option1')%></label>		
 	</li>
 	<li class="button-container">
 	<%= submit_tag t('account.save'), :class => 'uiButton' %>
