@@ -2172,3 +2172,4 @@ en:
   awaiting_your_reply: "Awaiting your Reply"
   this_ticket_has_been_resolved: "This ticket has been Resolved"
   this_ticket_has_been_closed: "This ticket has been Closed"
+  status_name_validate_presence_msg: " Status name can't be blank"

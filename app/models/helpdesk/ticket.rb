@@ -280,6 +280,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.translate_status_name(ticket_status)
   end
   
+  def source_name
+    SOURCE_NAMES_BY_KEY(source)
+  end
+
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
@@ -753,7 +757,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name,:priority_name,:requester_name,:responder_name]
+    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
     if deep
       self.load_flexifield
       options[:include] = [:notes,:attachments]
