@@ -946,11 +946,20 @@ var RTOOLBAR = {};
 				var _self = this;
 				$(swatch).click(function() 
 				{
-					if ($.browser.mozilla)
+					if ($.browser.mozilla)// fix for the font color/background color not set in firefox. merged from 7.6.4 redactor version to our 7.6.3 version for our use.
 					{
-						_self.execCommand('useCSS', false, false);
-						_self.execCommand(mode, $(this).attr('rel'));
-						_self.execCommand('useCSS', false, true);
+						if (mode == 'hilitecolor')
+						{
+						       _self.execCommand('useCSS', false);
+						       _self.execCommand(mode, $(this).attr('rel'));
+						       _self.execCommand('useCSS', true);
+						}
+						else
+						{
+						       _self.execCommand('styleWithCSS', false);
+						       _self.execCommand(mode, $(this).attr('rel'));
+						       _self.execCommand('styleWithCSS', true);
+						}
 					}
 					else
 					{
