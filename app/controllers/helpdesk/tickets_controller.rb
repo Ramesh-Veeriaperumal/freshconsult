@@ -248,7 +248,7 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @item.to_xml  
       }
       format.json {
-        render :json => Hash.from_xml(@item.to_xml)
+        render :json => @item.to_json
       }
       format.js
     end
