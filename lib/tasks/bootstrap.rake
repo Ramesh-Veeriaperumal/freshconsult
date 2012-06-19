@@ -42,6 +42,14 @@ namespace :db do
     puts ' partition of tables.'
     PerformTablePartition.process
   end
+  
+  task :perform_table_partition => :environment do
+    puts 'Adding auto increment to id columns'
+    PerformTablePartition.add_auto_increment
+    
+    puts ' partition of tables.'
+    PerformTablePartition.process
+  end
 
 end
 #SAAS ends here

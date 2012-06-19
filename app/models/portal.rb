@@ -55,6 +55,10 @@ class Portal < ActiveRecord::Base
   def customer_editable_ticket_fields
     filter_fields account.ticket_fields.customer_editable
   end
+
+  def host
+    portal_url.blank? ? account.full_domain : portal_url
+  end
   
   private
     def handle_icon(icon_field, icon_attr)
