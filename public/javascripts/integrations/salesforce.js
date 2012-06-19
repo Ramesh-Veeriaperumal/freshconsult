@@ -33,7 +33,7 @@ SalesforceWidget.prototype= {
 
 	SALESFORCE_CONTACT_NA:new Template(
 		'<div class="title contact-na">' +
-			'<div class="salesforce-name"  id="contact-na">Cannot find requester in Salesforce</div>'+
+			'<div class="salesforce-name"  id="contact-na">Cannot find #{requesterName} in Salesforce</div>'+
 		'</div>'),
 
 	SALESFORCE_SEARCH_RESULTS:new Template(
@@ -47,7 +47,6 @@ SalesforceWidget.prototype= {
 		salesforceWidget = this;
 		this.salesforceBundle = salesforceBundle;
 		var init_reqs = [];
-
 		if(salesforceBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
 				application_id:salesforceBundle.application_id,
@@ -74,7 +73,7 @@ SalesforceWidget.prototype= {
 	},	
 
 	get_contact:function(){
-		var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(Account.Name, AccountId, Phone, Id, Department, Email, isDeleted, Name, MailingCity, MailingCountry, MailingState, MailingStreet, MobilePhone, OwnerId, Title ), Lead(Id, City, Company, IsConverted, ConvertedAccountId, ConvertedContactId, Country, Name, MobilePhone, Phone, State, Status, Street, Title)");
+		var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(" + salesforceBundle.contactFields + "), Lead(" + salesforceBundle.leadFields + ")");
 		init_reqs = [{
 			domain: salesforceBundle.domain,
 			resource: "services/data/v20.0/search?q="+sosl,
@@ -178,12 +177,13 @@ SalesforceWidget.prototype= {
 	},
 
 	renderContactNa:function(){
-		salesforceWidget.freshdeskWidget.options.application_content = function(){ return salesforceWidget.SALESFORCE_CONTACT_NA.evaluate({});} 
+		salesforceWidget.freshdeskWidget.options.application_content = function(){ return salesforceWidget.SALESFORCE_CONTACT_NA.evaluate({requesterName : salesforceBundle.reqName});} 
 		salesforceWidget.freshdeskWidget.options.application_resources = null;
 		salesforceWidget.freshdeskWidget.display();
 	},
 
 	processFailure:function(evt){
+		resJson = evt.responseJSON;
 		if (evt.status == 401) {
 			//salesforceWidget.get_access_token();
 			salesforceWidget.freshdeskWidget.refresh_access_token(function(){
@@ -195,6 +195,9 @@ SalesforceWidget.prototype= {
 			}	
 			});
 
+		}
+		else{
+			salesforceWidget.freshdeskWidget.alert_failure(resJson[0].message);
 		}
 	}
 }

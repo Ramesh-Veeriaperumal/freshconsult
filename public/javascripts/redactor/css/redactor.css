@@ -1,7 +1,8 @@
 .redactor_box {
 	position: relative;
-	border: 1px solid #ddd;	
+	border: 1px solid #c6c6c6;	
 	line-height: 0;
+	border-radius: 5px;
 }
 .redactor_box, .redactor_box textarea {
 	background-color: #fff;
@@ -60,16 +61,10 @@ body .redactor_box_fullscreen {
 	line-height: 0 !important;
 	list-style: none;
 	font-size: 0;
-	background: #f2f2f2;
-	background: -moz-linear-gradient(top,  #f5f5f5 0%, #ddd 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#ddd));
-	background: -webkit-linear-gradient(top,  #f5f5f5 0%,#ddd 100%);
-	background: -o-linear-gradient(top,  #f5f5f5 0%,#ddd 100%);
-	background: -ms-linear-gradient(top,  #f5f5f5 0%,#ddd 100%);
-	background: linear-gradient(top,  #f5f5f5 0%,#ddd 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#dddddd',GradientType=0 );
 	overflow: hidden;	
-	border-bottom: 1px solid #c2c2c2;
+	border-bottom: 1px solid #f2f2f2;
+	border-radius:5px 5px 0 0;
+	background: -moz-linear-gradient(center top , #F2F2F2 0px, #fff 100%) repeat scroll 0 0 transparent;
 }
 .redactor_toolbar li {
 	float: left !important;
@@ -80,8 +75,8 @@ body .redactor_box_fullscreen {
 .redactor_toolbar li.redactor_separator {
 	float: left;		
 	height: 34px;
-	border-left: 1px solid #d7d7d7;
-	border-right: 1px solid #eee;	
+	border-left: 1px solid #f2f2f2;
+	border-right: 1px solid #fff;	
 	padding: 0;
 	margin: 0 2px 0 3px;
 }
@@ -112,8 +107,10 @@ li.redactor_toolbar_right {
 }
 	
 .redactor_toolbar li a:hover {
-	border-color: #98a6ba;
-	background-color: #dde4ef;
+	border-color: #e3e3e3;
+	background-color: #f2f2f2;
+	border-radius: 5px;
+	background: -moz-linear-gradient(center top , #fff 0px, #f2f2f2 100%) repeat scroll 0 0 transparent;
 }
 .redactor_toolbar li a:active, .redactor_toolbar li a.act {
 	border-color: #b5b5b5;
@@ -157,12 +154,13 @@ body .redactor_toolbar li a.redactor_btn_normalscreen span		  { background-posit
 	font-family: Arial, Tahoma, Verdana, Helvetica, sans-serif;
 	background-color: #f5f5f5;
 	padding-top: 2px;
-	line-height: 4px;
+	line-height: 6px;
 	font-size: 12px;
 	color: #ddd;
 	text-align: center;
 	text-shadow: 0 -1px 0 #aaa;
 	cursor: s-resize;
+	border-radius: 0px 0px 5px 5px;
 }
 
 
