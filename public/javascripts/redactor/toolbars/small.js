@@ -1,12 +1,6 @@
 if (typeof RTOOLBAR == 'undefined') var RTOOLBAR = {};
 
 RTOOLBAR['small'] = {
-	html:
-	{
-		title: RLANG.html,
-		func: 'toggle',
-		separator: true
-	},	
 	bold:
 	{
 		title: RLANG.bold,
