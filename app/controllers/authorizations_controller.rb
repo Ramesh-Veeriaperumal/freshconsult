@@ -9,7 +9,7 @@ class AuthorizationsController < ApplicationController
 
   def fetch_request_details
     @omniauth = request.env['omniauth.auth'] 
-    @auth = Authorization.find_from_hash(@omniauth,current_account.id)
+    @auth = Authorization.find_from_hash(@omniauth,current_account.id) unless @omniauth['provider'] == "facebook"
     provider_name = @omniauth['provider']
 
     if provider_name == :open_id or provider_name == :twitter or provider_name == :facebook
@@ -102,6 +102,7 @@ class AuthorizationsController < ApplicationController
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
       @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
+      @auth = Authorization.find_from_hash(@omniauth,user_account.id)
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
       create_for_sso(@omniauth, user_account)
@@ -141,29 +142,21 @@ class AuthorizationsController < ApplicationController
   end
 
   def create_for_sso(hash, user_account = nil)
+    account = (user_account.blank?) ? current_account : user_account
     if !@current_user.blank? and !@auth.blank?
       return show_deleted_message if @current_user.deleted?
       make_usr_active
     elsif !@current_user.blank?
-      if user_account.blank?
-        @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => current_account.id) #Add an auth to existing user  
-      else
-        @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => user_account.id) #Add an auth to existing user
-      end
+      @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => account.id) #Add an auth to existing user  
       make_usr_active
     else  
-      @new_auth = create_from_hash(hash, user_account) 
+      @new_auth = create_from_hash(hash, account) 
       @current_user = @new_auth.user
     end
     create_session unless @omniauth['provider'] == "facebook"
   end
   
-  def create_from_hash(hash, user_account = nil)
-    if user_account.blank?
-      account = current_account
-    else
-      account = user_account
-    end
+  def create_from_hash(hash, account)
     user = account.users.new  
     user.name = hash['info']['name']
     user.email = hash['info']['email']
