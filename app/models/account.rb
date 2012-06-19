@@ -21,6 +21,7 @@ class Account < ActiveRecord::Base
   has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }, :order => "name"
   has_many :portals
   has_many :survey_results
+  has_many :survey_remarks
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
   accepts_nested_attributes_for :main_portal
  
@@ -384,6 +385,10 @@ class Account < ActiveRecord::Base
   
   def ticket_type_values
     ticket_fields.type_field.first.picklist_values
+  end
+  
+  def ticket_status_values
+    ticket_fields.status_field.first.ticket_statuses.visible
   end
   
   def has_multiple_products?

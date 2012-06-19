@@ -106,8 +106,12 @@
   map.scoreboard_activity '/scoreboard/reports', :controller => 'reports/scoreboard_reports', :action => 'index' 
   map.scoreboard_activity_generate '/scoreboard/reports/generate', :controller => 'reports/scoreboard_reports', :action => 'generate'
   map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
-  map.survey_report_details '/survey/report_details', :controller => 'reports/survey_reports', :action => 'report_details'
+  map.survey_back_to_list '/survey/reports/:category/:view', :controller => 'reports/survey_reports', :action => 'index'
+  map.survey_list '/survey/reports_list', :controller => 'reports/survey_reports', :action => 'list'
+  map.survey_detail_report '/survey/report_details/:entity_id/:category', :controller => 'reports/survey_reports', :action => 'report_details'
+  map.survey_overall_report '/survey/overall_report/:category', :controller => 'reports/survey_reports', :action => 'report_details'
   map.survey_feedbacks '/reports/survey_reports/feedbacks', :controller => 'reports/survey_reports', :action => 'feedbacks'
+  map.survey_refresh_details '/reports/survey_reports/refresh_details', :controller => 'reports/survey_reports', :action => 'refresh_details'
     
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
