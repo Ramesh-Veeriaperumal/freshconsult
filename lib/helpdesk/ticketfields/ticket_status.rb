@@ -31,6 +31,7 @@ module Helpdesk::Ticketfields::TicketStatus
       validate_default_statuses(t_s)
       ticket_statuses[index] = t_s
     else
+      return if(attr[:deleted]) # no need to create deleted statuses
       t_s = ticket_statuses.build() 
       t_s.attributes = attr
       t_s.account = account
