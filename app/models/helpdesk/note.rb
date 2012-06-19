@@ -58,7 +58,7 @@ class Helpdesk::Note < ActiveRecord::Base
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 
               :order => "created_at desc"
 
-  SOURCES = %w{email form note status meta twitter feedback facebook}
+  SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
   
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
@@ -103,15 +103,19 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def inbound_email?
-    source == SOURCE_KEYS_BY_TOKEN["email"] && incoming
+    email_conversation? && incoming
   end
   
   def outbound_email?
-    source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
+    email_conversation? && !incoming
   end 
   
   def fwd_email?
-    email? and private
+    source == SOURCE_KEYS_BY_TOKEN["forward_email"]
+  end
+
+  def email_conversation?
+    email? or fwd_email?
   end
   
   def to_json(options = {})

@@ -246,12 +246,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       if can_be_added_to_ticket?(ticket,user)        
         body = show_quoted_text(params[:text],ticket.reply_email)
         body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+        from_fwd_recipients = from_fwd_emails?(ticket, from_email)
         note = ticket.notes.build(
-          :private => from_fwd_emails?(ticket, from_email),
+          :private => from_fwd_recipients,
           :incoming => true,
           :body => body,
           :body_html => body_html ,
-          :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+          :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )       
@@ -351,11 +352,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     original_msg = text[0, index]
     old_msg = text[index,text.size]
     
-    #Sanitizing the split code   
-    original_msg = Nokogiri::HTML(original_msg).at_css("body").inner_html unless original_msg.blank?
-    old_msg  = Nokogiri::HTML(old_msg).at_css("body").inner_html unless old_msg.blank?
-    
-  
+    #Sanitizing the original msg   
+    unless original_msg.blank?
+      sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+      original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
+    end
+    #Sanitizing the old msg   
+    unless old_msg.blank?
+      sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+      old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
+    end
+      
     unless old_msg.blank?
      original_msg = original_msg +
      "<div class='freshdesk_quote'>" +
