@@ -3246,6 +3246,8 @@ div.addReminder{
 				font-size:12px;
 				span{
 					color:#444444;
+					white-space: pre-wrap;
+    				word-wrap: break-word;
 				}					
 			}
 			.priority{
