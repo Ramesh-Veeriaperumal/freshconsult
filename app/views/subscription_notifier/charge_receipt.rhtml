@@ -75,7 +75,7 @@
               <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;"><div id="date"><%= Time.now.to_s(:short_day).strip %></div></td>
           </tr>
           <tr>
-              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Due Date</td>
+              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Next Renewal</td>
               <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;"><div style="background-position: left -165px;"><%= @subscription.next_renewal_at.to_s(:short_day).strip %> (Upon receipt)</div></td>
           </tr>
       </table>
