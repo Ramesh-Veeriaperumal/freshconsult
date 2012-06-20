@@ -183,6 +183,7 @@ en:
         send_while_option1: All email sent to customer.
         send_while_option2: Emails sent after a ticket is "Resolved".
         send_while_option3: Emails sent after a ticket is "Closed".
+        send_while_option4: Allow agents to add survey links to specific emails.
         send_while_title: Choose which emails have the satisfaction survey link
         
      scoreboard_ratings:
@@ -1387,6 +1388,7 @@ en:
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
       send: Send
+      send_satisfaction_survey: Include satisfaction survey link
     facebook_form: 	  	
       send_and_resolve: Send and Resolve	  	
       send: Send
