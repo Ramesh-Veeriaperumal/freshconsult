@@ -103,7 +103,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def inbound_email?
-    email_conversation? && incoming
+    email? && incoming
   end
   
   def outbound_email?

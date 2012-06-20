@@ -248,11 +248,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
         from_fwd_recipients = from_fwd_emails?(ticket, from_email)
         note = ticket.notes.build(
-          :private => from_fwd_recipients,
+          :private => (from_fwd_recipients and user.customer?) ? true : false ,
           :incoming => true,
           :body => body,
           :body_html => body_html ,
-          :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+          :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )       
