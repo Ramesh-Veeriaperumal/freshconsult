@@ -1070,6 +1070,7 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .tickets .assign ul li, .tickets-expanded .assign ul li { *display: inline; }
 .tickets .assign ul li, .tickets-expanded .assign ul li { padding: 4px 7px 0px 0px; color: #999999; font-size: 12px; }
 .tickets .assign ul li span, .tickets-expanded .assign ul li span { color: #444444; white-space: pre-wrap; word-wrap: break-word; }
+.tickets .assign ul li span.deleted, .tickets-expanded .assign ul li span.deleted { text-decoration: line-through; font-style: italic; }
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 { /* Low priority style */ color: #666666; }
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 { /* Medium priority style */ color: #cc6633; }
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 { /* High priority style */ color: #cc6633; }

@@ -3248,6 +3248,10 @@ div.addReminder{
 					color:#444444;
 					white-space: pre-wrap;
     				word-wrap: break-word;
+    				&.deleted{
+    					text-decoration:line-through;
+    					font-style: italic;
+    				}
 				}					
 			}
 			.priority{
