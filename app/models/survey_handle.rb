@@ -14,8 +14,10 @@ class SurveyHandle < ActiveRecord::Base
   belongs_to :response_note, :class_name => 'Helpdesk::Note'
   belongs_to :survey_result
   
-  def self.create_handle(ticket, note)  	
-    create_handle_internal(ticket, Survey::ANY_EMAIL_RESPONSE, note)
+  def self.create_handle(ticket, note, specific_include)  	
+    create_handle_internal(ticket, 
+      (specific_include) ? Survey::SPECIFIC_EMAIL_RESPONSE : Survey::ANY_EMAIL_RESPONSE , 
+      note)
   end
   
   def self.create_handle_for_notification(ticket, notification_type)
