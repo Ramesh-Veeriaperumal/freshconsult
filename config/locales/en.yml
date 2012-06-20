@@ -1352,7 +1352,7 @@ en:
     priority: Priority
     to_do: Tickets To-Do
     activity: Activity
-    sort_by: Sort by
+    sort_by: Sorted by
     restore_btn_title: Restore this ticket from trash
     subject: Subject
     created_at: Hours since created

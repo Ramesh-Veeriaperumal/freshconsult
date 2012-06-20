@@ -437,7 +437,7 @@ setCookie = function (name,value,expires_in_days)
 {
   var exdate=new Date();
   exdate.setDate(exdate.getDate() + expires_in_days);
-  var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString());
+  var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString()) + '; path=/';
   document.cookie=name + "=" + c_value;
 }
 

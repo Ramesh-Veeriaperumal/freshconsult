@@ -21,7 +21,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 
 /* Priority Color Codes */
 $COL_PRI_HIGH: #ffb613;		$COL_PRI_MEDIUM: #008ff9;		$COL_PRI_LOW: #7ebf00;		$COL_PRI_URGENT: #de0000;
-
+$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 4px;
 /* PAGE AREA STYLE */ 
 
 .sp_border{
@@ -3206,6 +3206,8 @@ div.addReminder{
 			text-decoration:none;
 			color:#5a8ec1; 
 		}
+
+		
 	}
 	tr.even td{ 
 		background-color:#f9f9f9; 
@@ -3218,46 +3220,45 @@ div.addReminder{
 		border-bottom:1px solid #f2f0e3;
 	}
 	tr:hover td, tr:hover.even td{
-		/*background-image:url(../images/overlay-top-shadow.png);*/
-		/*background-position:top left;*/
-		/*background-repeat:repeat-x;*/
-		/*border-top:2px solid #e8e8e8;
-		border-bottom:1px solid #e8e8e8;*/
 		background: #fefef7;
-
-		&.check {
-			&.priority-high {
-				border-left: solid 6px rgba($COL_PRI_HIGH, $priority-hover-alpha);
-			}
-			&.priority-medium {
-				border-left: solid 6px rgba($COL_PRI_MEDIUM, $priority-hover-alpha);
-			}
-			&.priority-low {
-				border-left: solid 6px rgba($COL_PRI_LOW, $priority-hover-alpha);
-			}
-			&.priority-urgent {
-				border-left: solid 6px rgba($COL_PRI_URGENT, $priority-hover-alpha);
-			}
-
-		}
 	}
 	.check{
 		width:25px;
-		padding-left:0px;
-		padding-top:12px; 
+		padding:13px 10px 1px 0; 
 		text-align:right;
-		border-left: solid 6px transparent;
-		&.priority-high {
-			border-left: solid 6px rgba($COL_PRI_HIGH, $priority-default-alpha);
-		}
-		&.priority-medium {
-			border-left: solid 6px rgba($COL_PRI_MEDIUM, $priority-default-alpha);
-		}
-		&.priority-low {
-			border-left: solid 6px rgba($COL_PRI_LOW, $priority-default-alpha);
-		}
-		&.priority-urgent {
-			border-left: solid 6px rgba($COL_PRI_URGENT, $priority-default-alpha);
+	}
+
+	tr, tr.even, tr.active, tr:hover {
+		td {
+			&.priority-border {
+				padding:0;
+				width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
+			}
+			&.priority-high {
+				background-color: rgba($COL_PRI_HIGH, $priority-default-alpha);
+			}
+			&.priority-medium {
+				background-color: rgba($COL_PRI_MEDIUM, $priority-default-alpha);
+			}
+			&.priority-low {
+				background-color: rgba($COL_PRI_LOW, $priority-default-alpha);
+			}
+			&.priority-urgent {
+				background-color: rgba($COL_PRI_URGENT, $priority-default-alpha);
+			}
+
+			&.priority-high, &.priority-medium, &.priority-low, &.priority-urgent {
+				background-image: url(../images/priority-bg-pattern.png);
+			}
+
+			.border-sep {
+				height:1px;
+				position: relative;
+				bottom:0px;
+				left:-$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
+				width: $TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
+				background:#ffffff;
+			}
 		}
 	}
 
@@ -3277,7 +3278,7 @@ div.addReminder{
    }
 	
 	.name, .name-user{
-      width:53%;
+      width:65%;
       padding-left:40px;
       .preview_pic{
          margin:0px; 
@@ -3312,10 +3313,10 @@ div.addReminder{
 			font-size: 14px;
 			line-height: 20px;
 			padding: 0px 0 4px 2px;
-			color:#4886c2;
+			color:#06C;
 		}
 		a:hover{
-			color:#000;
+			color:#4886c2;
 		}
       }
       div{ color:#888; }
@@ -3332,12 +3333,12 @@ div.addReminder{
 	
 	.need-attention-icon{ 
 	   width:13px; 
-	   height:13px; 
+	   height:10px; 
 	   padding:0px;
 	   display:none;
 	   background:none; 
 	   margin-left:0;
-	   margin-top:3px;
+	   margin-top:6px;
 	}
 	.need-attention .need-attention-icon{
       background: sprite($symbol, need-attention) no-repeat;  

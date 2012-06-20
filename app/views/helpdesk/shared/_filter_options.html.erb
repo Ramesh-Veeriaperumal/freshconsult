@@ -11,19 +11,22 @@
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
-          else    
+          elsif     
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 
-    	  <% content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
-                              :class       => "ff_item", 
-                              :condition   => c_hash[:condition],
-                              :operator    => c_hash[:operator],
-                              :container   => container } do %>
-          <h4 class="title"><%= c_hash[:name] %></h4>
-          <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
-        <% end %>
-      <% end %>
+    	  <% 
+        unless c_hash[:options].blank?
+          content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+                                :class       => "ff_item", 
+                                :condition   => c_hash[:condition],
+                                :operator    => c_hash[:operator],
+                                :container   => container } do %>
+            <h4 class="title"><%= c_hash[:name] %></h4>
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
+          <% end
+          end 
+        end %>
    
 
 <% javascript_tag do %> 
@@ -60,7 +63,9 @@
   function refresh_tickets(){
     jQuery("#save_filter").show();
     jQuery("#delete_filter").hide();
-    jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
+    if (!jQuery("#active_filter").hasClass('unsaved')) {
+      jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
+    }
     jQuery("#leftViewMenu a.active").removeClass('active').children('span').remove();
     jQuery("#FilterOptions input[name=filter_name]").val("");
     jQuery(".view_filters .active").removeClass("active");
