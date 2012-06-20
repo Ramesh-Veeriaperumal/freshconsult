@@ -70,6 +70,7 @@ gem "insensitive_hash", "0.2.3"
 gem "redis","2.2.2"
 gem "resque"
 gem 'resque-scheduler', :require => 'resque_scheduler'
+gem 'resque_mailer', "1.0.1"
 gem 'resque-status'
 gem 'resque-retry'
 
