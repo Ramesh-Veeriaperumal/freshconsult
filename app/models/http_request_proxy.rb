@@ -1,12 +1,22 @@
 class HttpRequestProxy
 
   def fetch(params, request)
+    method = request.env["REQUEST_METHOD"].downcase
+    auth_header = request.headers['HTTP_AUTHORIZATION']
+    user_agent = request.headers['HTTP_USER_AGENT']
+    requestParams = {:method => method, :auth_header => auth_header, :user_agent => user_agent}
+    fetch_using_req_params(params, requestParams)
+  end
+
+  def fetch_using_req_params(params, requestParams)
     response_code = 200
     content_type = params[:content_type] || "application/json"
     accept_type = params[:accept_type] || "application/json"
     response_type = "application/json"
     begin
-      method = request.env["REQUEST_METHOD"].downcase
+      method = requestParams[:method]
+      auth_header = requestParams[:auth_header]
+      user_agent = requestParams[:user_agent] + " Freshdesk"
       domain = params[:domain]
       method = params[:method] || method
       ssl_enabled = params[:ssl_enabled]
@@ -14,9 +24,6 @@ class HttpRequestProxy
       user = params[:username]
       pass = params[:password]
       entity_name = params[:entity_name]
-      auth_header = request.headers['HTTP_AUTHORIZATION']
-      user_agent = request.headers['HTTP_USER_AGENT'] + " Freshdesk"
-
       if entity_name.blank?
         post_request_body = params[:body] unless params[:body].blank?
       else

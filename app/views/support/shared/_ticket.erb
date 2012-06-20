@@ -1,5 +1,5 @@
 <tr class="<%= cycle('stripe', '') %>">
-	<td width="1px"></td>
+	<td width="1%">&nbsp;</td>
   <td class="name" width="70%">
       <%= user_avatar(ticket.requester) %>
       <h3> <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => truncate(ticket.description, 350, "..."), :class => "ticket-description-tip" ) %> </h3>

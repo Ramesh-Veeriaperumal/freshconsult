@@ -3246,6 +3246,8 @@ div.addReminder{
 				font-size:12px;
 				span{
 					color:#444444;
+					white-space: pre-wrap;
+    				word-wrap: break-word;
 				}					
 			}
 			.priority{
@@ -5024,6 +5026,8 @@ a.close{
 
 	#contact-na {
 		padding-top:6px;
+		font-weight: normal;
+		color:#CCC;
 
 		&.salesforce-name {
 			padding-top: 10px;

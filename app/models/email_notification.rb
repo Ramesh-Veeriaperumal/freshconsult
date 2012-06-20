@@ -3,10 +3,6 @@ class EmailNotification < ActiveRecord::Base
   attr_protected  :account_id
   before_create :set_default_version
 
-  def set_default_version
-    self.version = 2
-  end
-
 
   def after_find
     if (self.version == 1)
@@ -109,4 +105,8 @@ class EmailNotification < ActiveRecord::Base
         (my_hash = n_hash[notification_type]).nil? || !my_hash[user_role].eql?(false)
     end
     
+
+    def set_default_version
+      self.version = 2
+    end
 end
