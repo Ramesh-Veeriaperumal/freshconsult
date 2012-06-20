@@ -527,5 +527,4 @@ class Account < ActiveRecord::Base
    def subscription_next_renewal_at
        subscription.next_renewal_at
    end
-  
 end
