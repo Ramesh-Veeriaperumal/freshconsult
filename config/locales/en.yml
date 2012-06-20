@@ -143,6 +143,8 @@ en:
   payment_info: Payment information
   support:
       surveys:
+          thanks_for_feedback: "We have received your feedback. Thank you very much."
+          feedback_already_done: "You have already given feedback for this response."
           new:
               thanks_info: Thanks for taking time to rate our support experience.
               feedback_info: Your feedback is very much appreciated.
@@ -1388,7 +1390,7 @@ en:
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
       send: Send
-      send_satisfaction_survey: Include satisfaction survey link
+      send_satisfaction_survey: Include satisfaction survey
     facebook_form: 	  	
       send_and_resolve: Send and Resolve	  	
       send: Send
