@@ -84,7 +84,7 @@ Rails::Initializer.run do |config|
   #config.reload_plugins = true if RAILS_ENV == 'development'
   
   config.action_controller.allow_forgery_protection = false
-
+  config.middleware.use 'ResqueWeb'
 end
 
 ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"

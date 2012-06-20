@@ -67,6 +67,12 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
+gem "redis","2.2.2"
+gem "resque"
+gem 'resque-scheduler', :require => 'resque_scheduler'
+gem 'resque-status'
+gem 'resque-retry'
+
 group :development do
    gem "rspec", "1.3.1"
    gem "thoughtbot-shoulda","2.10.2"
