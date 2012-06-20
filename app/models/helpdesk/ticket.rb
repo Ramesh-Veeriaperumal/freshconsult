@@ -27,10 +27,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
-      :create_initial_activity, :support_score_on_create
+      :create_initial_activity
   before_update :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-      :support_score_on_update, :stop_timesheet_timers
+       :stop_timesheet_timers
   
   belongs_to :email_config
   belongs_to :group
@@ -937,22 +937,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
     
-    def support_score_on_create
-      add_support_score unless active?
-    end
+    # def support_score_on_create
+    #   add_support_score unless active?
+    # end
     
-    def support_score_on_update
-      if active? && !@old_ticket.active?
-        s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
-        s_score.destroy if s_score
-      elsif !active? && @old_ticket.active?
-        add_support_score
-      end
-    end
+    # def support_score_on_update
+    #   if active? && !@old_ticket.active?
+    #     s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
+    #     s_score.destroy if s_score
+    #   elsif !active? && @old_ticket.active?
+    #     add_support_score
+    #   end
+    # end
     
-    def add_support_score
-      SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-    end
+    # def add_support_score
+    #   SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
+    # end
 
     def parse_email(email)
       if email =~ /(.+) <(.+?)>/
