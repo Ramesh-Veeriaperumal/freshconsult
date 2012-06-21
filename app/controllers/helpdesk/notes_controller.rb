@@ -190,7 +190,7 @@ class Helpdesk::NotesController < ApplicationController
         flash[:notice] = t(:'fwd_success_msg')
       else        
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
-                :bcc_emails =>validate_emails(params[:bcc_emails]), :req_host => request.host , :req_port => request.port, 
+                :bcc_emails =>validate_emails(params[:bcc_emails]),
                 :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
         flash[:notice] = t(:'flash.tickets.reply.success')
       end
