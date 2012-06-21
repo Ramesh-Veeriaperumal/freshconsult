@@ -5,7 +5,8 @@
 					<% user = User.find_by_id(content[:entity_id])%>
 					<%=user_avatar(user)%>
 				<%end%>
-					<div class="floatleft agentname"><%=content[:name]%><div><%=content[:title]%></div></div>
+				<% name = (!params[:category].blank? && params[:category]=="company")? current_account.main_portal[:name] : content[:name]%>
+					<div class="floatleft agentname"><%=name%><div><%=content[:title]%></div></div>
 			</div>											
 			
 			<% @rating = content[:rating].sort_by{ |key,val| val } %>
