@@ -67,7 +67,8 @@ class User < ActiveRecord::Base
       { :conditions => ["id != ?", user.id]}  
     end      
   }
-      
+  named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
@@ -101,6 +102,11 @@ class User < ActiveRecord::Base
       new_tags = []
       updated_tag_names.each { |updated_tag_name|
         updated_tag_name = updated_tag_name.strip
+        m=false
+        new_tags.each { |fetched_tag|
+          m=true if fetched_tag.name == updated_tag_name
+        }
+        next if m
         # TODO Below line executes query for every iteration.  Better to use some cached objects.
         new_tags.push self.account.tags.find_by_name(updated_tag_name) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
       }
