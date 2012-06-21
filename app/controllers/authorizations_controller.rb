@@ -109,6 +109,8 @@ class AuthorizationsController < ApplicationController
       create_for_sso(@omniauth, user_account)
       curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
       random_hash = Digest::MD5.hexdigest(curr_time)
+      key_value_pair = KeyValuePair.find_by_account_id_and_key(user_account.id, @current_user.id)
+      key_value_pair.delete unless key_value_pair.blank?
       create_key_value_pair(@current_user.id, curr_time, user_account.id)
       redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
     end
