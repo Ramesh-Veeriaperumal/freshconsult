@@ -158,9 +158,9 @@ unless Account.current
   #Populate Salesforce
   salesforce_app = Integrations::Application.seed(:name) do |s|
     s.name = "salesforce"
-    s.display_name => "integrations.salesforce.label", 
-    s.description => "integrations.salesforce.desc", 
-    s.listing_order => 9,
+    s.display_name => "integrations.salesforce.label"
+    s.description => "integrations.salesforce.desc" 
+    s.listing_order => 9
     s.options => {:direct_install => true, :oauth_url => "/auth/salesforce?origin={{account_id}}"})
   end
 
