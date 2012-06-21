@@ -111,16 +111,22 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
  end
   
     def update_tickets_sla
-      tkt_states = tickets.visible.find(:all,
-                      :joins => :ticket_states)
+      tkt_states = tickets.visible
       tkt_states.each do |t_s|
-        fetch_ticket = account.tickets.visible.find(t_s.id)
-        if (stop_sla_timer? or deleted?)
-          fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
-        else
-          fetch_ticket.ticket_states.sla_timer_stopped_at = nil
+        begin
+          fetch_ticket = tickets.visible.find_by_id(t_s.id)
+          next if(fetch_ticket.nil?)
+          if (stop_sla_timer? or deleted?)
+            fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
+          else
+            fetch_ticket.ticket_states.sla_timer_stopped_at = nil
+          end
+          fetch_ticket.ticket_states.save
+        rescue Exception => e
+            NewRelic::Agent.notice_error(e)
+            RAILS_DEFAULT_LOGGER.debug "SLA timer stopped at time update failed for Ticket ID : #{t_s.id} on status update"
+            RAILS_DEFAULT_LOGGER.debug "Error message ::: #{e.message}"
         end
-        fetch_ticket.ticket_states.save
       end
     end
   
@@ -133,14 +139,17 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
                         :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL'])
         tkt_states.each do |t_s|
           begin
-            fetch_ticket = account.tickets.visible.find(t_s.id)
-            if(fetch_ticket.due_by > fetch_ticket.ticket_states.sla_timer_stopped_at)
+            fetch_ticket = tickets.visible.find_by_id(t_s.id)
+            next if(fetch_ticket.nil?)
+            sla_timer_stopped_at_time = fetch_ticket.ticket_states.sla_timer_stopped_at
+            if(!sla_timer_stopped_at_time.nil? and fetch_ticket.due_by > sla_timer_stopped_at_time)
               fetch_ticket.set_dueby(true)
               fetch_ticket.send(:update_without_callbacks)
             end
             fetch_ticket.ticket_states.sla_timer_stopped_at = nil
             fetch_ticket.ticket_states.save
           rescue Exception => e
+            NewRelic::Agent.notice_error(e)
             RAILS_DEFAULT_LOGGER.debug "Due by time update failed for Ticket ID : #{t_s.id} on status update"
             RAILS_DEFAULT_LOGGER.debug "Error message ::: #{e.message}"
           end
