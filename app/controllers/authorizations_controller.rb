@@ -72,21 +72,22 @@ class AuthorizationsController < ApplicationController
 
   def create_for_salesforce(params)
     Account.reset_current_account
-    account_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
-    access_token = get_oauth2_access_token(@omniauth.credentials.refresh_token);
-    account = Account.find(:first, :conditions => {:id => account_id})
-    domain = account.full_domain
+    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    access_token = get_oauth2_access_token(@omniauth.credentials.refresh_token)
+    portal = Portal.find_by_id(portal_id)
+    account = portal.account
+    domain = portal.host
     protocol = (account.ssl_enabled?) ? "https://" : "http://"
     app_name = Integrations::Constants::APP_NAMES[:salesforce]
     instance_url = access_token.params['instance_url']
     config_params = "{'app_name':'#{app_name}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{instance_url}'}"
     config_params = config_params.gsub("'","\"")
-    key_value_pair = KeyValuePair.find_by_account_id_and_key(account_id, 'salesforce_oauth_config')
+    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, 'salesforce_oauth_config')
     key_value_pair.delete unless key_value_pair.blank?
     #KeyValuePair is used to store salesforce configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
     create_key_value_pair("salesforce_oauth_config", config_params, account.id) 
     
-    redirect_url = (Rails.env == "development") ? "http://localhost:3000/integrations/applications/oauth_install/salesforce" : (protocol +  domain + "/integrations/applications/oauth_install/salesforce")
+    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/salesforce"
      
     redirect_to redirect_url
   end
@@ -108,6 +109,8 @@ class AuthorizationsController < ApplicationController
       create_for_sso(@omniauth, user_account)
       curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
       random_hash = Digest::MD5.hexdigest(curr_time)
+      key_value_pair = KeyValuePair.find_by_account_id_and_key(user_account.id, @current_user.id)
+      key_value_pair.delete unless key_value_pair.blank?
       create_key_value_pair(@current_user.id, curr_time, user_account.id)
       redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
     end
