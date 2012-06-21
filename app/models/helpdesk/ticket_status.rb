@@ -130,12 +130,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       else
         tkt_states = tickets.visible.find(:all,
                         :joins => :ticket_states,
-                        :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL and due_by > helpdesk_ticket_states.sla_timer_stopped_at'])
+                        :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL'])
         tkt_states.each do |t_s|
           begin
             fetch_ticket = account.tickets.visible.find(t_s.id)
-            fetch_ticket.set_dueby(true)
-            fetch_ticket.send(:update_without_callbacks)
+            if(fetch_ticket.due_by > fetch_ticket.ticket_states.sla_timer_stopped_at)
+              fetch_ticket.set_dueby(true)
+              fetch_ticket.send(:update_without_callbacks)
+            end
             fetch_ticket.ticket_states.sla_timer_stopped_at = nil
             fetch_ticket.ticket_states.save
           rescue Exception => e
