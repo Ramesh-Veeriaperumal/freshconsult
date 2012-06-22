@@ -91,9 +91,13 @@ SalesforceWidget.prototype= {
 	},
 
 	fetch_field_metadata:function(){
+		reqData = {
+			"oauth_token":salesforceBundle.token
+		};
 		new Ajax.Request("/integrations/salesforce/fields_metadata", {
 			asynchronous: true,
 			method: "get",
+			parameters: reqData,
 			onSuccess: function(evt){					
 				resJ = evt.responseJSON
 				if(resJ['error'] != undefined){
