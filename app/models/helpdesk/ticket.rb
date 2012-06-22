@@ -350,7 +350,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "#{ticket_id_delimiter}#{display_id}"
+    "[#{ticket_id_delimiter}#{display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
