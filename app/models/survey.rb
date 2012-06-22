@@ -5,7 +5,8 @@ class Survey < ActiveRecord::Base
   ANY_EMAIL_RESPONSE = 1
   RESOLVED_NOTIFICATION = 2
   CLOSED_NOTIFICATION = 3
-  
+  SPECIFIC_EMAIL_RESPONSE = 4
+
   #customer rating
   HAPPY = 1
   NEUTRAL = 2

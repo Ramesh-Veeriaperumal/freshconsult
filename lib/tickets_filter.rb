@@ -150,7 +150,7 @@ module TicketsFilter
         :pending          => ["status = ?", PENDING],
         :on_hold          => ["status in (#{onhold_statuses_query})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
-        :open_or_pending  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , OPEN, PENDING , false],
+        :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED , false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
     end
