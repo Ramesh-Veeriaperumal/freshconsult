@@ -43,7 +43,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     email_config = account.email_configs.find_by_to_email(to_email[:email])
     user = get_user(account, from_email,email_config)
     
-    article_params[:title] = params[:subject].gsub(Regexp.new(Regexp.escape(account.email_commands_setting.ticket_id_delimiter).gsub("ticket_id","([0-9]*)")),"")
+    article_params[:title] = params[:subject].gsub(Regexp.new("\\[#{account.email_commands_setting.ticket_id_delimiter}([0-9]*)\\]"),"")
     article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
     article_params[:user] = user.id
     article_params[:account] = account.id
@@ -116,7 +116,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_to_emails += parse_cc_email
       original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
 
-      if original_to_emails.size == 1
+      if parsed_to_emails.size == 1
         if original_to_email_config
           original_to_email =  original_to_email_config.friendly_email     
         else
