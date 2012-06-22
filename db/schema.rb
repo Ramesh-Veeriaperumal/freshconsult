@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120615115305) do
+ActiveRecord::Schema.define(:version => 20120622054834) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -234,7 +234,7 @@ ActiveRecord::Schema.define(:version => 20120615115305) do
     t.integer  "account_id",           :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "ticket_id_delimiter",               :default => "[#ticket_id]"
+    t.string   "ticket_id_delimiter",               :default => "#"
     t.boolean  "pass_through_enabled",              :default => true
   end
 

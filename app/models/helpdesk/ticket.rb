@@ -350,7 +350,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    ticket_id_delimiter.gsub("ticket_id","#{display_id}")
+    "#{ticket_id_delimiter}#{display_id}"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -367,7 +367,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
     
   def self.extract_id_token(text, delimeter)
-    pieces = text.match(Regexp.new(Regexp.escape(delimeter).gsub("ticket_id","([0-9]*)"))) #by Shan changed to just numeric
+    pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
     pieces && pieces[1]
   end
 
@@ -561,7 +561,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def ticket_id_delimiter
     delimiter = account.email_commands_setting.ticket_id_delimiter
-    delimiter = delimiter.blank? ? '[#ticket_id]' : delimiter
+    delimiter = delimiter.blank? ? '#' : delimiter
   end
   
   def to_s
