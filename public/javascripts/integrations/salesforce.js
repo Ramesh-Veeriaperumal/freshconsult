@@ -73,17 +73,42 @@ SalesforceWidget.prototype= {
 	},	
 
 	get_contact:function(){
-		var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(" + salesforceBundle.contactFields + "), Lead(" + salesforceBundle.leadFields + ")");
-		init_reqs = [{
-			domain: salesforceBundle.domain,
-			resource: "services/data/v20.0/search?q="+sosl,
-			content_type: "application/json",
-			on_failure: salesforceWidget.processFailure,
-			on_success: salesforceWidget.handleContactSuccess
-		}];
-		salesforceWidget.freshdeskWidget.options.application_content = null; 
-		salesforceWidget.freshdeskWidget.options.application_resources = init_reqs;
-		salesforceWidget.freshdeskWidget.display();
+		if(salesforceBundle.contactFields == "" || salesforceBundle.leadFields == "")
+			this.fetch_field_metadata();
+		else{
+			var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(" + salesforceBundle.contactFields + "), Lead(" + salesforceBundle.leadFields + ")");
+			init_reqs = [{
+				domain: salesforceBundle.domain,
+				resource: "services/data/v20.0/search?q="+sosl,
+				content_type: "application/json",
+				on_failure: salesforceWidget.processFailure,
+				on_success: salesforceWidget.handleContactSuccess
+			}];
+			salesforceWidget.freshdeskWidget.options.application_content = null; 
+			salesforceWidget.freshdeskWidget.options.application_resources = init_reqs;
+			salesforceWidget.freshdeskWidget.display();
+			}
+	},
+
+	fetch_field_metadata:function(){
+		new Ajax.Request("/integrations/salesforce/fields_metadata", {
+			asynchronous: true,
+			method: "get",
+			onSuccess: function(evt){					
+				resJ = evt.responseJSON
+				if(resJ['error'] != undefined){
+						salesforceWidget.freshdeskWidget.alert_failure(resJ['error']);
+				}
+				else{
+					salesforceBundle.contactFields = resJ['contact_fields'];
+					salesforceBundle.leadFields = resJ['lead_fields'];
+					salesforceWidget.get_contact();
+				}
+			},
+			onFailure: function(evt){
+				salesforceWidget.freshdeskWidget.alert_failure(resJ['error']);
+			}
+		});
 
 	},
 
@@ -188,13 +213,15 @@ SalesforceWidget.prototype= {
 			//salesforceWidget.get_access_token();
 			salesforceWidget.freshdeskWidget.refresh_access_token(function(){
 				if(salesforceWidget.freshdeskWidget.options.oauth_token){
-				salesforceWidget.get_contact();	
-			}
-			else{
-				salesforceWidget.freshdeskWidget.alert_failure('Unable to connect to Salesforce. Please try again later.')
-			}	
+					salesforceWidget.get_contact();	
+				}
+				else{
+					salesforceWidget.freshdeskWidget.alert_failure('Unable to connect to Salesforce. Please try again later.')
+				}	
 			});
-
+		}
+		else if(resJson[0].errorCode == "INVALID_FIELD"){
+			salesforceWidget.fetch_field_metadata();
 		}
 		else{
 			salesforceWidget.freshdeskWidget.alert_failure(resJson[0].message);
