@@ -65,7 +65,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   def self.onhold_statuses(account)
     statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => ["stop_sla_timer = true
-               and name not in ('Resolved','Closed')"])
+               and status_id not in (?,?)", RESOLVED, CLOSED])
     statuses.collect { |status| status.status_id }
   end
   
