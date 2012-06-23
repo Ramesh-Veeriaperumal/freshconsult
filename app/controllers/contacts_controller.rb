@@ -19,26 +19,20 @@ class ContactsController < ApplicationController
   end
   
   def index
-    @contacts = scoper.filter(params[:letter],params[:page])
+    begin
+      @contacts = scoper.filter(params[:letter],params[:page])
+    rescue Exception => e
+      @contacts = {:error => get_formatted_message(e)}
+    end
     respond_to do |format|
       format.html do
         @tags = current_account.tags.with_taggable_type(User.to_s)
       end
       format.xml  do
-        begin
-          @contacts = scoper.all
-        rescue Exception => e
-          @contacts = {:error => get_formatted_message(e)}
-        end
         render :xml => @contacts.to_xml(:root => "users")
       end
 
       format.json  do
-        begin
-          @contacts = scoper.all
-        rescue Exception => e
-          @contacts = {:error => get_formatted_message(e)}
-        end
         render :json => @contacts.to_json
       end
       format.atom do
