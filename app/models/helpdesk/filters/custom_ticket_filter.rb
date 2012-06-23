@@ -16,7 +16,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def on_hold_filter
-    [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::onhold_statuses(Account.current)).join(',')},
+    [{ "condition" => "status", "operator" => "is_in", "value" => PENDING},
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
   
