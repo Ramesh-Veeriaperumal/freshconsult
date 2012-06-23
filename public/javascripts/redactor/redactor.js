@@ -358,6 +358,9 @@ var RTOOLBAR = {};
 		syncCode: function()
 		{
 			var html = this.formating(this.$editor.html());
+			if (this.$editor.attr('style') != undefined && this.$editor.attr('style') != '') {
+				html = "<span style='" + this.$editor.attr('style') + "'>" + html + '</span>';
+			}
 			this.$el.val(html);			
 		},
 		
@@ -735,10 +738,16 @@ var RTOOLBAR = {};
 				html = html.replace(/ jQuery(.*?)=\"(.*?)\"/gi, '');
 			}
 
-			html = html.replace(/<font([\w\W]*?)color="(.*?)">([\w\W]*?)<\/font\>/gi, '<span style="color: $2;">$3</span>');
-			html = html.replace(/<font([\w\W]*?)>([\w\W]*?)<\/font\>/gi, "<span$1>$2</span>");
-			html = html.replace(/<span>([\w\W]*?)<\/span>/gi, '$1');
+			html = html.replace(/<font([\w\W]*?)color="(.*?)">([\w\W]*?)<\/font\>/gi, '<span style="color: $2;" $1>$3</span>');
 
+			html = html.replace(/<font([\w\W]*?)>([\w\W]*?)<\/font\>/gi, "<span$1>$2</span>");
+
+			if(!$.browser.msie) 
+			{
+				html = html.replace(/<span style="(.*?)"\s+style="(.*?)"[\s]*>([\w\W]*?)<\/span\>/gi, '<span style="$1; $2">$3</span>');				
+			}
+
+			html = html.replace(/<span>([\w\W]*?)<\/span>/gi, '$1');
 			// mini clean
 			html = html.replace(/ class="Apple-style-span"/gi, '');
 			html = html.replace(/ class="Apple-tab-span"/gi, '');
@@ -948,18 +957,10 @@ var RTOOLBAR = {};
 				{
 					if ($.browser.mozilla)// fix for the font color/background color not set in firefox. merged from 7.6.4 redactor version to our 7.6.3 version for our use.
 					{
-						if (mode == 'hilitecolor')
-						{
-						       _self.execCommand('useCSS', false);
-						       _self.execCommand(mode, $(this).attr('rel'));
-						       _self.execCommand('useCSS', true);
-						}
-						else
-						{
-						       _self.execCommand('styleWithCSS', false);
-						       _self.execCommand(mode, $(this).attr('rel'));
-						       _self.execCommand('styleWithCSS', true);
-						}
+				       _self.execCommand('useCSS', false,false);
+				       _self.execCommand(mode, $(this).attr('rel'));
+				       _self.execCommand('useCSS', false,true);
+				
 					}
 					else
 					{
