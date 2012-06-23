@@ -126,7 +126,7 @@ module TicketsFilter
       donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where 
                   (stop_sla_timer is false and account_id = #{user.account.id} and deleted is false)"
       onhold_statuses_query = "select status_id from helpdesk_ticket_statuses where 
-      (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and name not in ('Resolved','Closed'))"
+      (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and status_id not in (#{RESOLVED},#{CLOSED}))"
       group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
       group_ids = [-1] if group_ids.empty? #The whole group thing is a hack till new views come..
       
@@ -144,11 +144,11 @@ module TicketsFilter
         #:new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
         :resolved         => ["status = ?", RESOLVED],
         :closed           => ["status = ?", CLOSED],
-        :due_today        => ["due_by >= ? and due_by <= ? and status = ? ", Time.zone.now.beginning_of_day.to_s(:db), 
-                                 Time.zone.now.end_of_day.to_s(:db),OPEN],
-        :overdue          => ["due_by <= ? and status = ?", Time.zone.now.to_s(:db),OPEN],
+        :due_today        => ["due_by >= ? and due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.beginning_of_day.to_s(:db), 
+                                 Time.zone.now.end_of_day.to_s(:db)],
+        :overdue          => ["due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.to_s(:db)],
         :pending          => ["status = ?", PENDING],
-        :on_hold          => ["status = ?",PENDING],
+        :on_hold          => ["status in (#{onhold_statuses_query})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
         :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED , false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
