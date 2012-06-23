@@ -518,6 +518,7 @@ class Account < ActiveRecord::Base
 
     def populate_seed_data
       PopulateAccountSeed.populate_for(self)
+      populate_ticket_types
     end
 
    def send_welcome_email
@@ -527,4 +528,13 @@ class Account < ActiveRecord::Base
    def subscription_next_renewal_at
        subscription.next_renewal_at
    end
+
+   def populate_ticket_types
+    if ticket_type_values.count < 5
+      ticket_type_field = ticket_fields.type_field.first
+      ticket_type_field.choices = [["Question"],["Incident"],["Problem"],["Feature Request"],["Lead"] ]
+      ticket_type_field.save
+    end
+   end 
+
 end
