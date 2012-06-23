@@ -1,13 +1,4 @@
 PATH
-  remote: vendor/gems/twitter-2.1.1
-  specs:
-    twitter (2.1.1)
-      activesupport (~> 2.3.8)
-      faraday (~> 0.7)
-      multi_json (~> 1.0)
-      simple_oauth (~> 0.1)
-
-PATH
   remote: vendor/gems/classifier-1.3.1
   specs:
     classifier (1.3.1)
@@ -21,6 +12,15 @@ PATH
   remote: vendor/gems/tiny_mce-0.1.9
   specs:
     tiny_mce (0.1.9)
+
+PATH
+  remote: vendor/gems/twitter-2.1.1
+  specs:
+    twitter (2.1.1)
+      activesupport (~> 2.3.8)
+      faraday (~> 0.7)
+      multi_json (~> 1.0)
+      simple_oauth (~> 0.1)
 
 GEM
   remote: http://rubygems.org/
