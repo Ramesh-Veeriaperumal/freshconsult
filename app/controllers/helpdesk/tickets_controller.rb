@@ -429,6 +429,15 @@ class Helpdesk::TicketsController < ApplicationController
     @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
     render :partial => "agent_groups", :locals =>{ :blank_value => blank_value}
   end
+
+  def get_ticket_agents
+    ticket = current_account.tickets.find_by_display_id(params[:id])
+    unless ticket.blank?
+      @agents = current_account.agents
+      @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>ticket.group.id ,:users =>{:account_id =>current_account.id} } ) unless ticket.group.blank?
+    end
+    render :partial => "get_ticket_agents", :locals => {:ticket_id => ticket.display_id}
+  end
   
   def new
     unless params[:topic_id].nil?

@@ -22,6 +22,10 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 /* Priority Color Codes */
 $COL_PRI_HIGH: #ffb613;		$COL_PRI_MEDIUM: #008ff9;		$COL_PRI_LOW: #7ebf00;		$COL_PRI_URGENT: #de0000;
 $TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 4px;
+
+$priority-default-alpha: 1;
+$priority-hover-alpha: 1;
+
 /* PAGE AREA STYLE */ 
 
 .sp_border{
@@ -3181,12 +3185,17 @@ div.addReminder{
 	}
 
 }
+.tickets , .tickets-expanded {
+	td.priority-border, th.priority-border {
+		padding:0;
+		width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
+	}
+}
+
 
 
 .tickets, .tickets-expanded{
 
-	$priority-default-alpha: 1;
-	$priority-hover-alpha: 1;
 	width:100%;
 	table-layout: fixed;
 	color:#5f5f5f;
@@ -3214,19 +3223,29 @@ div.addReminder{
 		border-top:1px solid #f9f9f9;
 		border-bottom:1px solid #f9f9f9;
 	}
-	tr.active td{
+	tr:hover td, tr:hover.even td{
+		background: #fefef7;
+	}
+
+	tr.active td, tr.active:hover td, tr.active.even td{
 		background-color:#f2f0e3;
 		border-top:1px solid #f2f0e3;
 		border-bottom:1px solid #f2f0e3;
-	}
-	tr:hover td, tr:hover.even td{
-		background: #fefef7;
 	}
 	.check{
 		width:25px;
 		padding:13px 10px 1px 0; 
 		text-align:right;
 	}
+
+	.headings td.check {
+		border-left: solid 6px #EEE;
+	}
+	th.check{
+		padding:5px 5px 0 0;
+
+	}
+	
 
 	tr, tr.even, tr.active, tr:hover {
 		td {
@@ -3261,15 +3280,6 @@ div.addReminder{
 			}
 		}
 	}
-
-	.headings td.check {
-		border-left: solid 6px #EEE;
-	}
-	th.check{
-		padding:5px 5px 0 0;
-
-	}
-	
 	th.toolbar_right{
       text-align:right;
       width: 80px;
@@ -4642,7 +4652,7 @@ a.close{
 }
 
 
-.fd-menu{
+.fd-menu, .fd-ajaxmenu{
    position:absolute;
    display:none;
    font-size:13px;
@@ -4677,8 +4687,28 @@ a.close{
       background: #999;
       .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
    }
-}
 
+}
+.fd-ajaxmenu {
+	width: auto;
+	min-width:75px;
+	padding:3px;
+	a, li {
+		padding: 2px 15px;
+		cursor: pointer;
+	}
+
+	&.loading {
+		background-image:url('/images/loading.gif');
+		background-repeat:no-repeat;
+		background-position: center;
+		padding:20px 10px;
+
+		a, li {
+			display:none;
+		}
+	}
+}
 .setting_bottom{
    position:absolute;
    right:7px;

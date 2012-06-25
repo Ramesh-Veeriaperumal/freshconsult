@@ -2,6 +2,7 @@
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
 	$J("#helpdesk-select-all").live("click", function(ev){
 		$J("#tickets-expanded input[type=checkbox]").prop("checked", $J(this).prop("checked"));
+    $J("#tickets-expanded input[type=checkbox]").trigger('change');
 	});	
 
   $J("#select_view_id").live("change", function(ev){

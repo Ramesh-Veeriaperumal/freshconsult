@@ -116,6 +116,8 @@ var $J = jQuery.noConflict();
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
+      $('.quick-action.ajax-menu').livequery(function() { $(this).showAsAjaxMenu();});
+      $('.quick-action.dynamic-menu').livequery(function() { $(this).showPreloadedMenu();});
       
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
@@ -187,13 +189,21 @@ var $J = jQuery.noConflict();
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
 		$('.tickets tbody tr').live('click',function(ev) {
-      if (! $(ev.target).is('input[type=checkbox]') && ! $(ev.target).is('a')) {
+      if (! $(ev.target).is('input[type=checkbox]') && ! $(ev.target).is('a') && ! $(ev.target).is('.quick-action')) {
 				var checkbox = $(this).find('input[type=checkbox]').first();
 				checkbox.prop('checked',!checkbox.prop('checked'));
-
-        $(this).toggleClass('active');
+        checkbox.trigger('change');
 			}
 		});
+
+    $('.tickets tbody tr .check :checkbox').live('change', function() {
+        console.log('checkbox');
+        if ($(this).prop('checked')) {
+          $(this).parent().parent().addClass('active');
+        } else {
+          $(this).parent().parent().removeClass('active');
+        }
+    })
 		
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())

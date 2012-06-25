@@ -318,6 +318,83 @@ active_dialog = null;
         $(node).data("showAsMenu", true);
      });
    };
+
+  $.fn.showAsAjaxMenu = function(){
+    this.each(function(i, node){
+
+      $(node).bind("click", function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        if ($(node).data('options-fetched') != true) {
+          if (typeof($(document).data('dynamic-menu-count')) == "undefined") {
+            $(document).data('dynamic-menu-count',0);
+          }
+          menuid = $(document).data('dynamic-menu-count') + 1;
+          $(document).data('dynamic-menu-count',menuid);
+
+          menu_container = $('<div>');
+          menu_container.attr('id',menuid);
+          menu_container.addClass('loading fd-ajaxmenu');
+          // menu_container.width($(node).width());
+          menu_container.insertAfter($(node));
+
+          $(node).data('menuid',menuid);
+
+          $.ajax({
+            url: $(node).data('options-url'),
+            success: function (data, textStatus, jqXHR) {
+              console.log(data);
+              console.log('#' + menuid);
+              $('#' + menuid).removeClass('loading').html(data);
+              $(node).data('options-fetched',true);
+            }
+          });
+        }
+
+        menu = $('#' + $(node).data('menuid'));
+        menu.show().css('visibility','visible');
+        $(document).data({ "active-menu": true, "active-menu-element": menu, "active-menu-parent": node });
+
+        $(node).addClass("selected");
+      });
+    });
+  };
+
+  $.fn.showPreloadedMenu = function(){
+    this.each(function(i, node){
+
+      $(node).bind("click", function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        if ($(node).data('options-fetched') != true) {
+          if (typeof($(document).data('dynamic-menu-count')) == "undefined") {
+            $(document).data('dynamic-menu-count',0);
+          }
+          menuid = $(document).data('dynamic-menu-count') + 1;
+          $(document).data('dynamic-menu-count',menuid);
+          menu_container = $('<div>');
+          menu_container.attr('id',menuid);
+          menu_container.addClass('loading fd-ajaxmenu');
+          console.log($(node).data('options'));
+          menu_container.append($($(node).data('options')).html());
+          console.log($($(node).data('options')).html());
+          console.log(menu_container);
+          menu_container.insertAfter($(node));
+          $(node).data('menuid',menuid);
+          $(node).data('options-fetched',true)
+        } else {
+          menuid = $(node).data('menuid');
+        }
+        menu = $('#' + menuid);
+        menu.show().removeClass('loading').css('visibility','visible');
+        $(document).data({ "active-menu": true, "active-menu-element": menu, "active-menu-parent": node });
+
+        $(node).addClass("selected");
+      });
+    });
+  };
   // jQuery autoGrowInput plugin by James Padolsey
   // See related thread: http://stackoverflow.com/questions/931207/is-there-a-jquery-autogrow-plugin-for-text-fields
   $.fn.autoGrowInput = function(o) {

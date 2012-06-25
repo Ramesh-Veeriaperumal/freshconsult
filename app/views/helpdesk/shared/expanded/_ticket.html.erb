@@ -7,9 +7,9 @@
   <td class="name">
 	<span class="hideForList"><%= user_avatar(ticket.requester) %></span>
 	<div class="ticket_subject">
-		<h3>
+		<h3 class="ticket-description-tip" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
 			<span class="need-attention-icon"></span>
-			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}), :class => "ticket-description-tip", "data-tip-url" => latest_note_helpdesk_ticket_url(ticket) ) %> 
+			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}) ) %> 
 		</h3>
 		<% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data hideForList" do %>
@@ -25,17 +25,17 @@
   <td class="ticket_info hideForDetails"><%= t("helpdesk.tickets.tabular_view.time_ago", :time_in_words => time_ago_in_words(ticket.updated_at)) %></td>
   <td class="assign hideForList">
 	  	<ul>
-	  		<li>
+	  		<li class="quick-action ajax-menu" data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
 				<% if ticket.freshness == :new %>
 					<span><%=t('ticket.unassigned')%></span>
 				<% else %>
-				<%=t('assigned_to')%>: <span><%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span> 	
+				<%=t('assigned_to')%>: <span><%= h(ticket.responder.display_name) %></span> 	
 				<% end %>
 			</li>
-			<li>
+			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-options="#ticket_statuses">
 				<%=t('ticket.status')%>: <span><%= h(ticket.status_name) %></span>
 			</li>
-			<li class="priority">
+			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-options="false">
 				<%=t('ticket.priority')%>: <span><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
