@@ -19,19 +19,6 @@ module TicketConstants
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
   SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
 
-  STATUSES = [
-    #[ :new,         "New",        1 ], 
-    [ :open,        I18n.t('open'),       2 ], 
-    [ :pending,     I18n.t('pending'),    3 ], 
-    [ :resolved,    I18n.t('resolved'),   4 ], 
-    [ :closed,      I18n.t('closed'),     5 ]
-  ]
-
-  STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
-  STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
-  STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
-  STATUS_KEYS_BY_NAME = Hash[*STATUSES.map { |i| [i[1], i[2]] }.flatten]
-  
   PRIORITIES = [
     [ :low,       I18n.t('low'),         1 ], 
     [ :medium,    I18n.t('medium'),      2 ], 

@@ -1,5 +1,1 @@
-if @enable 
-  page << "jQuery('#survey_elements').show();"
-else
-  page << "jQuery('#survey_elements').hide();"
-end  
+page << "change_enable_status(#{current_account.features?(:survey_links)});"

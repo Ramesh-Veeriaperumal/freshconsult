@@ -5,6 +5,7 @@ en:
   tip_off: "Click to Disable"
   credit_card: "Card on file"
   referral: "Referral credit"  
+  status_deleted: "Status deleted"
   success: "Success"
   failure: "Error ..."
   amount: "Amount"
@@ -84,7 +85,7 @@ en:
       save: Save Ticket fields
       drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
       dropdown: Dropdown
-      nestedfield: "Dependant field"
+      nestedfield: "Dependent field"
     formfield_props: 
       form_title: "Field properties"
       behavior: "Behavior"
@@ -93,9 +94,12 @@ en:
       level1: "Level 1"
       level2: "Level 2"
       level3: "Level 3"
-      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a href=''>Learn more</a> "
+      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
       dropdown_items_preview: "Dropdown items - Preview"
+      status_choices: "Status choices"
+      display_to_customer: "Display message for customer"
+      sla_timer: "SLA timer"
       nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
       delete_field: "Delete field"
       field_label_agents: "Field label for agents"
@@ -139,6 +143,8 @@ en:
   payment_info: Payment information
   support:
       surveys:
+          thanks_for_feedback: "We have received your feedback. Thank you very much."
+          feedback_already_done: "You have already given feedback for this response."
           new:
               thanks_info: Thanks for taking time to rate our support experience.
               feedback_info: Your feedback is very much appreciated.
@@ -172,12 +178,16 @@ en:
      index:    
         title: Customer Satisfaction Settings
      satisfaction_settings:    
-        enable_label: Enable customer satisfaction surveys
+        enable_label: Customer Satisfaction Surveys
         link_text_label: Satisfaction survey link text
-        link_text_input: Please take a minute to rate your customer support experience
+        link_text_input: Please let us know your opinion on our support experience.
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Send satisfaction survey link in every email. Let customers give feedback whenever they want.
-        send_while_option2: Send satisfaction survey link after the ticket is resolved. Let customers give feedback after ticket is resolved.        
+        send_while_option1: All email sent to customer.
+        send_while_option2: Emails sent after a ticket is "Resolved".
+        send_while_option3: Emails sent after a ticket is "Closed".
+        send_while_option4: Allow agents to add survey links to specific emails.
+        send_while_title: Choose which emails have the satisfaction survey link
+        
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
@@ -800,6 +810,7 @@ en:
   portal_customizer_option_solutions: Users can view public solutions without logging in
   portal_customizer_google_signin: Allow users to Sign in using Google
   portal_customizer_twitter_signin: Allow users to Sign in using Twitter
+  portal_customizer_facebook_signin: Allow users to Sign in using Facebook
   portal_signup: Allow customers to Sign Up from the customer portal
   portal_captcha: Make captcha compulsory while submitting ticket without logging in
   to_email: To Email
@@ -1052,7 +1063,8 @@ en:
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
-  portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
+  portal_customizer_anon_for_t: Enable this feature if you want customers to be able to sign in using their Twitter username and password. 
+  portal_customizer_anon_for_f: Enable this feature if you want customers to be able to sign in using their Facebook username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
@@ -1379,6 +1391,7 @@ en:
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
       send: Send
+      send_satisfaction_survey: Include satisfaction survey
     facebook_form: 	  	
       send_and_resolve: Send and Resolve	  	
       send: Send
@@ -1393,7 +1406,7 @@ en:
     type: Type
     execute_scenario: Execute Scenario
     note_form: 
-      private_note: This is a private note. It will not be shown to the requester.
+      private_note: This is a private note,  don't show this to the requester.
       form_title: Add a Note
       add_and_resolve: Add and Resolve
       notify_agents: Notify Agents
@@ -1700,6 +1713,7 @@ en:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
+        delete_note: "Remove this from the ticket converstion?"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
@@ -1742,7 +1756,7 @@ en:
         remember: Remember me on this computer
         login: Login
         forgot: I forgot my password?
-        sign_in_using: Sign In using
+        sign_in_using: Sign In
         sign_in_using_google: Sign in using your Google account
         help: Help
   delete_reminder: Delete this ToDo?
@@ -1788,6 +1802,7 @@ en:
         reauth_required : Reauthorization required
       enable_facebook_page:
         associate: Select the facebook pages you would like to associate to the Helpdesk.
+        no_page_info: Oops!.. Looks like you don't have a Facebook page. <a href="https://www.facebook.com/pages/create.php" target='_blank'>Create one and start supporting!..</a>
       engage_info:
         title: Add your Facebook pages
         engage_customers: Engage your customers, directly on Facebook
@@ -1992,6 +2007,12 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    salesforce:
+      label: "Salesforce"
+      desc: "You can view contact information from Salesforce in Freshdesk."
+      form:
+        salesforce_settings_info: ""
+        salesforce_settings: "Salesforce Settings"
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"
@@ -2153,9 +2174,24 @@ en:
   swith_agent_msg: "Switch to Another Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
+  on_hold: "On Hold"
+  status_name_validate_uniqueness_msg: " Status name has already been taken"
+  status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
+  since: "Since"
+  since_time: "Since %{time_words}"
+  change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
   fwd_to: "Forward"
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
   use_reply_option: "Please use Reply option for sending an email to the requester"
   index_tooltip_loading_msg: "Loading..."
+  being_processed: "Being Processed"
+  awaiting_your_reply: "Awaiting your Reply"
+  this_ticket_has_been_resolved: "This ticket has been Resolved"
+  this_ticket_has_been_closed: "This ticket has been Closed"
+  status_name_validate_presence_msg: " Status name can't be blank"
+  open_tickets: "Open Tickets"
+  resolved_tickets: "Resolved Tickets"
+  waiting_on_customer: "Waiting on Customer"
+  waiting_on_third_party: "Waiting on Third Party"

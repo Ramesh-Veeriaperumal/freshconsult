@@ -1,7 +1,7 @@
 <% content_for :sidebar do -%><%-end %>
 <% unless @twitter_handles.empty? %>
   <div class="floatr">
-    <%= link_to "Add Account", @wrapper.authorize_url, :class => "uiButton special medium" %> 
+    <%= link_to "Add Account", @auth_redirect_url, :class => "uiButton special medium" %> 
   </div>
   <h3 class="title"><%=t('.title')%></h3>
   <ul class="admin_list">

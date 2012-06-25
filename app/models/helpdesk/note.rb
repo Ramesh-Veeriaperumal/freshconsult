@@ -9,8 +9,6 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :notable, :polymorphic => true
 
   belongs_to :user
-
-  before_create :set_note_as_private
   
   Max_Attachment_Size = 15.megabyte
 
@@ -60,7 +58,7 @@ class Helpdesk::Note < ActiveRecord::Base
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 
               :order => "created_at desc"
 
-  SOURCES = %w{email form note status meta twitter feedback facebook}
+  SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
   
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
@@ -105,15 +103,19 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def inbound_email?
-    source == SOURCE_KEYS_BY_TOKEN["email"] && incoming
+    email? && incoming
   end
   
   def outbound_email?
-    source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
+    email_conversation? && !incoming
   end 
   
   def fwd_email?
-    email? and private
+    source == SOURCE_KEYS_BY_TOKEN["forward_email"]
+  end
+
+  def email_conversation?
+    email? or fwd_email?
   end
   
   def to_json(options = {})
@@ -121,7 +123,7 @@ class Helpdesk::Note < ActiveRecord::Base
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
   end
-  
+
   def to_liquid
     { 
       "commenter" => user,
@@ -139,7 +141,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def create_fwd_note_activity(to_emails)
     notable.create_activity(user, 'activities.tickets.conversation.out_email.private.long',
             {'eval_args' => {'fwd_path' => ['fwd_path', 
-                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_emails(to_emails)},
+                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_comma_sep_emails(to_emails)},
             'activities.tickets.conversation.out_email.private.short')  
   end
 
@@ -160,16 +162,18 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer?      	
-        unless notable.open? || feedback?
-          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
+      if user.customer? 
+        if (fwd_email? and notable.onhold?) or (notable.onhold_and_closed? and !feedback? and !fwd_email?) 
+          notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
-      elsif inbound_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self , notable.reply_email,{:include_cc => true})      
+      else    
+        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
+           notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
       
       notable.updated_at = created_at
@@ -182,10 +186,6 @@ class Helpdesk::Note < ActiveRecord::Base
       notable.ticket_states.update_attribute(:inbound_count,inbound_count+=1)
      end
     end
-     
-     def set_note_as_private
-       self.private = true if note? && !user.customer?
-      end 
     
     def add_activity
       return unless human_note_for_ticket?
@@ -229,7 +229,4 @@ class Helpdesk::Note < ActiveRecord::Base
       user.get_info if user
     end
 
-    def parse_to_emails(emails)
-      emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
-    end
 end

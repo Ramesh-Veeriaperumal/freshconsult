@@ -16,8 +16,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
     
     if e_notification.requester_notification? and !ticket.out_of_office?
-      r_template = Liquid::Template.parse(e_notification.formatted_requester_template)
-      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template)
+      r_template = Liquid::Template.parse(e_notification.formatted_requester_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
+      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
@@ -64,14 +64,34 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
  
-  def reply(ticket, note , reply_email, options={})
+  def reply(ticket, note , reply_email, options={})    
     subject       formatted_subject(ticket)
-    recipients    fwd_email?(options) ? options[:to_emails] : ticket.requester.email 
-    cc            cc_emails(ticket,options)
+    recipients    ticket.requester.email
+    cc            ticket.cc_email_hash[:cc_emails] if !options[:include_cc].blank? and !ticket.cc_email.nil?
     bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note)
+                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey])
+    headers       "Reply-to" => "#{reply_email}"
+    sent_on       Time.now
+    content_type  "multipart/alternative"
+
+    note.attachments.each do |a|
+      attachment  :content_type => a.content_content_type, 
+                  :body => File.read(a.content.to_file.path), 
+                  :filename => a.content_file_name
+    end
+    
+    content_type  "text/html"
+  end
+
+  def forward(ticket, note , reply_email, options={})
+    subject       fwd_formatted_subject(ticket)
+    recipients    options[:to_emails]
+    cc            options[:fwd_cc_emails] unless options[:include_cc].blank?
+    bcc           options[:bcc_emails]
+    from          reply_email
+    body          :ticket => ticket, :body => note.body_html
     headers       "Reply-to" => "#{reply_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"
@@ -118,18 +138,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def formatted_subject(ticket)
     "Re: #{ticket.encode_display_id} #{ticket.subject}"
   end
-  
-  def fwd_email?(options)
-    "fwd".eql?(options[:email_type])
-  end
 
-  def cc_emails(ticket, options)
-    if (!options[:include_cc].blank? and !ticket.cc_email.nil?)
-      if(fwd_email?(options))
-        options[:fwd_cc_emails]
-      else
-        ticket.cc_email_hash[:cc_emails]
-      end
-    end
+  def fwd_formatted_subject(ticket)
+    "Fwd: #{ticket.encode_display_id} #{ticket.subject}"
   end
+  
 end

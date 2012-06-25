@@ -59,7 +59,7 @@
 	      <%= @account.plan.renewal_period == 1 ? 'every month' : "every #{@account.plan.renewal_period} months" %>.
 	    <% end if @account.needs_payment_info? %>
 	
-	    <input type="submit" value="Create my account" class="fdbutton" />
+	    <input type="submit" value="Create my account" class="uiButton" />
 	  </li>
 	  </ul>
 <% end %>

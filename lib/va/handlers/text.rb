@@ -13,7 +13,7 @@ class Va::Handlers::Text < Va::RuleHandler
       !is(evaluate_on_value, field_value)
     end
 
-    def contains_value(evaluate_on_value)
+    def contains(evaluate_on_value)
       evaluate_on_value && evaluate_on_value.downcase.include?(value.downcase)
     end
 

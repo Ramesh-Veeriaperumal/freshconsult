@@ -17,7 +17,7 @@ class Support::SurveysController < ApplicationController
       @survey_handle.destroy
     end
     
-    flash[:notice] = "Thanks for the feedback" #change the text
+    flash[:notice] = I18n.t('support.surveys.thanks_for_feedback')
     redirect_to root_path
   end
   
@@ -28,7 +28,7 @@ class Support::SurveysController < ApplicationController
     end
     
     def send_error
-      flash[:warning] = "Invalid survey code, you might have already given the feedback"
+      flash[:warning] = I18n.t('support.surveys.feedback_already_done')
       redirect_to root_path
     end
     
