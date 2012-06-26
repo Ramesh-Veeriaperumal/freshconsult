@@ -234,7 +234,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       return unless @choices
       if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
         picklist_values.clear
-        c_attr.each do |c| 
+        @choices.each do |c| 
           if c.size > 2 && c[2].is_a?(Array)
             picklist_values.build({:value => c[0], :choices => c[2]})
           else
@@ -242,7 +242,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
           end
         end
       elsif("default_status".eql?(self.field_type))
-        c_attr.each_with_index{|attr,position| update_ticket_status(attr,position)}
+        @choices.each_with_index{|attr,position| update_ticket_status(attr,position)}
       end
     end
     
