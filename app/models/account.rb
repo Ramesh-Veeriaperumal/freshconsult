@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
   accepts_nested_attributes_for :main_portal
 
-  has_one :conversion_metric, :dependent => :destroy
+  has_one :conversion_metric
   accepts_nested_attributes_for :conversion_metric
  
   has_many :features
