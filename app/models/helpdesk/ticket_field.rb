@@ -13,6 +13,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :autosave => true, :dependent => :destroy, :order => "position"
   
+  before_validation :populate_choices
+
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
   before_save :set_portal_edit
@@ -224,22 +226,26 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def choices=(c_attr)
-    if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
-      picklist_values.clear
-      c_attr.each do |c| 
-        if c.size > 2 && c[2].is_a?(Array)
-          picklist_values.build({:value => c[0], :choices => c[2]})
-        else
-          picklist_values.build({:value => c[0]})
-        end
-      end
-    elsif("default_status".eql?(self.field_type))
-      #c_attr = [{:status_id => 0, :name => "NeedInfo", :customer_display_name => "Awaiting for your response",:stop_sla_timer => true},{:status_id => 0, :name => "Inprogress", :customer_display_name => "Testing Inprogress",:stop_sla_timer => false}]
-      c_attr.each_with_index{|attr,position| update_ticket_status(attr,position)}
-    end
+    @choices = c_attr
   end
   
   protected
+    def populate_choices
+      return unless @choices
+      if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
+        picklist_values.clear
+        c_attr.each do |c| 
+          if c.size > 2 && c[2].is_a?(Array)
+            picklist_values.build({:value => c[0], :choices => c[2]})
+          else
+            picklist_values.build({:value => c[0]})
+          end
+        end
+      elsif("default_status".eql?(self.field_type))
+        c_attr.each_with_index{|attr,position| update_ticket_status(attr,position)}
+      end
+    end
+    
     def populate_label
       self.label = name.titleize if label.blank?
       self.label_in_portal = label if label_in_portal.blank?
