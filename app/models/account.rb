@@ -24,7 +24,9 @@ class Account < ActiveRecord::Base
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
   accepts_nested_attributes_for :main_portal
 
-  has_one :conversion_metric,accepts_nested_attributes_for :conversion_metric
+  has_one :conversion_metric
+
+  accepts_nested_attributes_for :conversion_metric
  
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
