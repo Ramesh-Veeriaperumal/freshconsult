@@ -860,16 +860,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_emails
-    to_emails_array = (cc_email[:to_emails] || []).clone unless cc_email.nil?
+    emails_hash = cc_email_hash
+    to_emails_array = (emails_hash[:to_emails] || []).clone unless emails_hash.nil?
     to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
     to_emails_array
   end
 
   def to_cc_emails
-    return [] if cc_email.nil?
+    emails_hash = cc_email_hash
+    return [] if emails_hash.nil?
     to_emails_array = []
-    cc_emails_array = (cc_email[:cc_emails] || [])
-    to_emails_array = (cc_email[:to_emails] || []).clone
+    cc_emails_array = (emails_hash[:cc_emails] || [])
+    to_emails_array = (emails_hash[:to_emails] || []).clone
     to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
     (cc_emails_array + to_emails_array).uniq
   end  

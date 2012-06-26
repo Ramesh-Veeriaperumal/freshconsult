@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
   accepts_nested_attributes_for :main_portal
 
   has_one :conversion_metric
+
   accepts_nested_attributes_for :conversion_metric
  
   has_many :features
@@ -117,6 +118,8 @@ class Account < ActiveRecord::Base
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
+
+  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
@@ -384,7 +387,7 @@ class Account < ActiveRecord::Base
   end
   
   def ticket_status_values
-    ticket_fields.status_field.first.ticket_statuses.visible
+    ticket_statuses.visible
   end
   
   def has_multiple_products?
@@ -529,5 +532,6 @@ class Account < ActiveRecord::Base
    def subscription_next_renewal_at
        subscription.next_renewal_at
    end
+
 
 end

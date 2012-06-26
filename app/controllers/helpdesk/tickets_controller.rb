@@ -287,6 +287,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def update_multiple
+    params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless params[nscname][:custom_field].nil?
     @items.each do |item|
       params[nscname].each do |key, value|
         if(!value.blank?)
