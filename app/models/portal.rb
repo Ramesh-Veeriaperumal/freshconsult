@@ -1,4 +1,6 @@
 class Portal < ActiveRecord::Base
+  include ActionController::UrlWriter
+
   serialize :preferences, Hash
   
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
@@ -61,6 +63,26 @@ class Portal < ActiveRecord::Base
 
   def layout
     self.template.layout    
+  end
+  
+  def to_liquid
+    PortalDrop.new self
+  end
+  
+  def portal_login_path
+    login_path(:host => portal_url)
+  end
+  
+  def portal_logout_path
+    logout_path(:host => portal_url)
+  end
+  
+  def signup_path
+    new_support_registration_path(:host => portal_url)
+  end
+  
+  def new_ticket_path
+    new_support_ticket_path(:host => portal_url)
   end
   
   private

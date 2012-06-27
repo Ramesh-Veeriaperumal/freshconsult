@@ -26,5 +26,8 @@ class ForumCategory < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
   
+  def to_liquid
+    Forum::CategoryDrop.new self
+  end
   
  end
