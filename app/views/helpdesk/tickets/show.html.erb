@@ -12,9 +12,9 @@
 	<%= ticket_tabs %>        
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
-			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-reply', this)", :id => "FwdButton", 
-				:class => "button forward reply") unless @item.from_email.nil? %>
+			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply", :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]) unless @item.from_email.nil? %>
+			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-reply', this)", 
+				:id => "FwdButton", :class => "button forward reply", :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"]) %>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
 			<%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
@@ -71,6 +71,7 @@
 						jQuery('#fwd_cc_emails_id').show()
 						jQuery('#send_resolve_btn').hide()
 						jQuery('#helpdesk_note_private').val(true)	
+						jQuery('#helpdesk_note_source').val(jQuery(link).attr("source")) <!-- forward_email source id -->
 						jQuery('#fwd_cc_emails_id').trigger("cc_visibility");					
 					}else{
 						jQuery('#fwd_title').hide()
@@ -80,6 +81,7 @@
 						jQuery('#reply_cc_emails_id').show()
 						jQuery('#send_resolve_btn').show()
 						jQuery('#helpdesk_note_private').val(false);
+						jQuery('#helpdesk_note_source').val(jQuery(link).attr("source")) <!-- email source id -->
 						jQuery('#reply_cc_emails_id').trigger("cc_visibility");
 					}
 					
@@ -158,6 +160,13 @@
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
   			jQuery(".ccEmailMoreLink").text('');
+  		}
+  	}
+
+  	function showHideToEmailContainer(){
+  		jQuery(".toEmailMoreContainer").toggle();
+  		if(jQuery(".toEmailMoreContainer").css("display") == "inline"){
+  			jQuery(".toEmailMoreLink").text('');
   		}
   	}
 	

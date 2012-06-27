@@ -14,16 +14,16 @@ module SeedFu
       if ENV["SEED"]
         filter = ENV["SEED"].gsub(/,/, "|")
         seed_files.reject!{ |file| !(file =~ /#{filter}/) }
-        puts "\n == Filtering seed files against regexp: #{filter}"
+        RAILS_DEFAULT_LOGGER.debug "\n == Filtering seed files against regexp: #{filter}"
       end
   
       seed_files.each do |file|
         pretty_name = file.sub("#{RAILS_ROOT}/", "")
-        puts "\n== Seed from #{pretty_name} " + ("=" * (60 - (17 + File.split(file).last.length)))
+        RAILS_DEFAULT_LOGGER.debug "\n== Seed from #{pretty_name} " + ("=" * (60 - (17 + File.split(file).last.length)))
   
         old_level = ActiveRecord::Base.logger.level
         begin
-          ActiveRecord::Base.logger.level = 7
+          #ActiveRecord::Base.logger.level = 7
   
           ActiveRecord::Base.transaction do
             if pretty_name[-3..pretty_name.length] == '.gz'
@@ -99,7 +99,7 @@ module SeedFu
         record.send("#{k}=", v)
       end
       raise "Error Saving: #{record.inspect}" unless record.save
-      puts " - #{@model_class} #{condition_hash.inspect}"      
+      RAILS_DEFAULT_LOGGER.debug " - #{@model_class} #{condition_hash.inspect}"      
       record
     end
 

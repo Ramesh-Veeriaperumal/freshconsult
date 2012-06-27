@@ -111,6 +111,38 @@
         </ul>
       </div>
     </div>
+    <div class="ctrlHolder colsets" id="StatusFieldChoices" style="display:none;">
+      <%= content_tag(:h3, t(".status_choices"), :class => "title") %>
+      <input type="hidden" name="choicelist" id="ChoiceListValidation" value="" />
+        <div class="customchoices">
+          <fieldset>
+            <span style="visibility:hidden">
+              <span class="sort_handle"></span>
+              <span class="deleteChoice"></span>            
+            </span>
+            <span class="dropchoice">&nbsp;</span>
+            <span class="dropchoice"><label><%= t(".display_to_customer") %></label></span>
+            <label class="floatl"><%= t('.sla_timer') %></label>
+          </fieldset>
+        </div>
+        <div name="statuschoices" class="customchoices" id="statuschoices"></div>        
+        <a class="addchoice" id="addstatus" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
+        <div name="statuschoicesdeleted" class="customchoices deleted" id="statuschoicesdeleted"></div>
+        <script id="statusTemplate" type="text/x-jquery-tmpl">
+          <fieldset>
+            <span class="sort_handle"></span>
+            <span class="deleteChoice {{if (status_id == 2 || status_id == 4 || status_id == 3 || status_id == 5)}} disabled {{/if}}">
+            </span>            
+            <input type="hidden" name="status_id" value="${status_id}" />
+            <input type="checkbox" name="deleted" {{if deleted}}checked="checked"{{/if}} class="hide" />
+            <span class="dropchoice"><input type="text" rel="status-companion" name="name" value="${name}" {{if (status_id == 2 || status_id == 3 || status_id == 4 || status_id == 5) }} disabled="disabled" {{/if}} /></span>
+            <span class="dropchoice"><input type="text" name="customer_display_name" value="${customer_display_name}" /></span>
+            {{if (status_id != 2 && status_id != 4 && status_id != 5) }}
+            <input rel="toggle" type="checkbox" name="stop_sla_timer" data-inverted=true {{if stop_sla_timer}}checked="checked"{{/if}} value=true />
+            {{/if}}
+          </fieldset>
+        </script>
+    </div> 
     <div class="ctrlHolder colsets" id="DropFieldChoices" style="display:none;">
       <%= content_tag(:h3, t(".dropdown_choices"), :class => "title") %>
       <input type="hidden" name="choicelist" id="ChoiceListValidation" value="" />
@@ -121,7 +153,7 @@
             <span class="dropchoice"><input type="text" name="choice" /></span>
           </fieldset>
         </div>
-        <a class="addchoice" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
+        <a class="addchoice" id="addchoice" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
     </div> 
           
 		<span class="seperator"></span> 

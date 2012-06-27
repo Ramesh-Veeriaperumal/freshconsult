@@ -109,16 +109,22 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_orginal_to(account, email_config)
+      return unless params[:to]
       original_to_emails = params[:to].split(",")
 
-      if original_to_emails.size == 1
-        original_to = parse_email_text(original_to_emails.first)
-        original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+      parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
+      parsed_to_emails += parse_cc_email
+      original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
+
+      if parsed_to_emails.size == 1
+        if original_to_email_config
+          original_to_email =  original_to_email_config.friendly_email     
+        else
+          original_to = parse_email_text(original_to_emails.first)
+          original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+        end
       else
-        parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
-        original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
-        email_config = original_to_email_config if original_to_email_config
-        original_to_email = email_config ? email_config.friendly_email : account.default_friendly_email
+        original_to_email = original_to_email_config ? original_to_email_config.friendly_email : account.default_friendly_email
       end
     end
     
@@ -152,6 +158,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       return cc_array.uniq
     end
+
+    def parse_to_emails
+      to_emails = params[:to].split(",") if params[:to]
+      parsed_to_emails = []
+      (to_emails || []).each do |email|
+        parsed_email = parse_email_text(email)
+        parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email]}>") if !parsed_email.blank? && !parsed_email[:email].blank?
+      end
+      parsed_to_emails
+    end
     
     def create_ticket(account, from_email, to_email)
       email_config = account.email_configs.find_by_to_email(to_email[:email])
@@ -171,9 +187,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:name => from_email[:name],
         :requester => user,
         :to_email => parse_orginal_to(account, email_config),
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => []},
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :to_emails => parse_to_emails},
         :email_config => email_config,
-        :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
+        :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
         #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
@@ -230,15 +246,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       if can_be_added_to_ticket?(ticket,user)        
         body = show_quoted_text(params[:text],ticket.reply_email)
         body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+        from_fwd_recipients = from_fwd_emails?(ticket, from_email)
         note = ticket.notes.build(
-          :private => from_fwd_emails?(ticket, from_email),
+          :private => (from_fwd_recipients and user.customer?) ? true : false ,
           :incoming => true,
           :body => body,
           :body_html => body_html ,
-          :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+          :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )       
+        note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
         
         begin
           if (user.agent? && !user.deleted?)

@@ -16,8 +16,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
     
     if e_notification.requester_notification? and !ticket.out_of_office?
-      r_template = Liquid::Template.parse(e_notification.formatted_requester_template)
-      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template)
+      r_template = Liquid::Template.parse(e_notification.formatted_requester_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
+      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
@@ -64,14 +64,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
  
-  def reply(ticket, note , reply_email, options={})
+  def reply(ticket, note , reply_email, options={})    
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     cc            ticket.cc_email_hash[:cc_emails] if !options[:include_cc].blank? and !ticket.cc_email.nil?
     bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note)
+                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey])
     headers       "Reply-to" => "#{reply_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"

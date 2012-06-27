@@ -18,18 +18,22 @@ class ContactsController < ApplicationController
     end
   end
   
-   def index
-    @contacts = scoper.filter(params[:letter],params[:page])
+  def index
+    begin
+      @contacts = scoper.filter(params[:letter],params[:page])
+    rescue Exception => e
+      @contacts = {:error => get_formatted_message(e)}
+    end
     respond_to do |format|
       format.html do
         @tags = current_account.tags.with_taggable_type(User.to_s)
       end
       format.xml  do
-       render :xml => @contacts.to_xml
+        render :xml => @contacts.to_xml(:root => "users")
       end
 
       format.json  do
-       render :json => @contacts.to_json
+        render :json => @contacts.to_json
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -208,11 +212,14 @@ protected
   end
 
   def scoper
-    if params[:tag].blank?
-      current_account.contacts
-    else
+    if !params[:tag].blank?
       tag = current_account.tags.find(params[:tag])
       tag.contacts
+    elsif !params[:query].blank?
+      query = params[:query]
+      current_account.contacts.with_conditions(convert_query_to_conditions(query))
+    else
+      current_account.contacts
     end
   end
 
@@ -245,4 +252,36 @@ protected
    end
   end
 
+  private
+    def convert_query_to_conditions(query_str)
+      matches = query_str.split(/((\S+)\s*(is|like)\s*("([^\\"]|\\"|\\\\)*"|(\S+))\s*(or|and)?\s*)/)
+      if matches.size > 1
+        conditions = []; c_i=0
+        matches.size.times{|i| 
+          pos = i%7
+          conditions[0] = "#{conditions[0]}#{matches[i]} " if(pos == 2) # property
+          if(pos == 3) # operator
+            oper = matches[i] == "is" ? "=" : matches[i]
+            conditions[0] = "#{conditions[0]}#{oper} "
+          end
+          if(pos == 4) # match value
+            conditions[0] = "#{conditions[0]}? "
+            matches[i] = matches[i][1..-1] if matches[i][0] == 34 # remove opening double quote
+            matches[i] = matches[i][0..-2] if matches[i][-1] == 34 # remove closing double quote
+            matches[i] = matches[i].gsub("\\\\", "\\") # remove escape chars
+            matches[i] = matches[i].gsub("\\\"", "\"") # remove escape chars
+            matches[i] = "%#{matches[i]}%" if matches[i-1] == "like"
+            conditions[c_i+=1] = matches[i]
+          end
+          conditions[0] = "#{conditions[0]}#{matches[i]} " if(pos == 6) # condition and/or
+        }
+        conditions
+      else
+        raise "Not able to parse the query."
+      end
+    end
+
+    def get_formatted_message(exception)
+      exception.message # TODO: Proper error reporting.
+    end
 end

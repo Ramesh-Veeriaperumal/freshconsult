@@ -33,7 +33,7 @@ SalesforceWidget.prototype= {
 
 	SALESFORCE_CONTACT_NA:new Template(
 		'<div class="title contact-na">' +
-			'<div class="salesforce-name"  id="contact-na">Cannot find requester in Salesforce</div>'+
+			'<div class="salesforce-name"  id="contact-na">Cannot find #{requesterName} in Salesforce</div>'+
 		'</div>'),
 
 	SALESFORCE_SEARCH_RESULTS:new Template(
@@ -47,7 +47,6 @@ SalesforceWidget.prototype= {
 		salesforceWidget = this;
 		this.salesforceBundle = salesforceBundle;
 		var init_reqs = [];
-
 		if(salesforceBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
 				application_id:salesforceBundle.application_id,
@@ -74,17 +73,46 @@ SalesforceWidget.prototype= {
 	},	
 
 	get_contact:function(){
-		var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(Account.Name, AccountId, Phone, Id, Department, Email, isDeleted, Name, MailingCity, MailingCountry, MailingState, MailingStreet, MobilePhone, OwnerId, Title ), Lead(Id, City, Company, IsConverted, ConvertedAccountId, ConvertedContactId, Country, Name, MobilePhone, Phone, State, Status, Street, Title)");
-		init_reqs = [{
-			domain: salesforceBundle.domain,
-			resource: "services/data/v20.0/search?q="+sosl,
-			content_type: "application/json",
-			on_failure: salesforceWidget.processFailure,
-			on_success: salesforceWidget.handleContactSuccess
-		}];
-		salesforceWidget.freshdeskWidget.options.application_content = null; 
-		salesforceWidget.freshdeskWidget.options.application_resources = init_reqs;
-		salesforceWidget.freshdeskWidget.display();
+		if(salesforceBundle.contactFields == "" || salesforceBundle.leadFields == "")
+			this.fetch_field_metadata();
+		else{
+			var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(" + salesforceBundle.contactFields + "), Lead(" + salesforceBundle.leadFields + ")");
+			init_reqs = [{
+				domain: salesforceBundle.domain,
+				resource: "services/data/v20.0/search?q="+sosl,
+				content_type: "application/json",
+				on_failure: salesforceWidget.processFailure,
+				on_success: salesforceWidget.handleContactSuccess
+			}];
+			salesforceWidget.freshdeskWidget.options.application_content = null; 
+			salesforceWidget.freshdeskWidget.options.application_resources = init_reqs;
+			salesforceWidget.freshdeskWidget.display();
+			}
+	},
+
+	fetch_field_metadata:function(){
+		reqData = {
+			"oauth_token":salesforceBundle.token
+		};
+		new Ajax.Request("/integrations/salesforce/fields_metadata", {
+			asynchronous: true,
+			method: "get",
+			parameters: reqData,
+			onSuccess: function(evt){					
+				resJ = evt.responseJSON
+				if(resJ['error'] != undefined){
+						salesforceWidget.freshdeskWidget.alert_failure(resJ['error']);
+				}
+				else{
+					salesforceBundle.contactFields = resJ['contact_fields'];
+					salesforceBundle.leadFields = resJ['lead_fields'];
+					salesforceWidget.get_contact();
+				}
+			},
+			onFailure: function(evt){
+				salesforceWidget.freshdeskWidget.alert_failure(resJ['error']);
+			}
+		});
 
 	},
 
@@ -178,23 +206,29 @@ SalesforceWidget.prototype= {
 	},
 
 	renderContactNa:function(){
-		salesforceWidget.freshdeskWidget.options.application_content = function(){ return salesforceWidget.SALESFORCE_CONTACT_NA.evaluate({});} 
+		salesforceWidget.freshdeskWidget.options.application_content = function(){ return salesforceWidget.SALESFORCE_CONTACT_NA.evaluate({requesterName : salesforceBundle.reqName});} 
 		salesforceWidget.freshdeskWidget.options.application_resources = null;
 		salesforceWidget.freshdeskWidget.display();
 	},
 
 	processFailure:function(evt){
+		resJson = evt.responseJSON;
 		if (evt.status == 401) {
 			//salesforceWidget.get_access_token();
 			salesforceWidget.freshdeskWidget.refresh_access_token(function(){
 				if(salesforceWidget.freshdeskWidget.options.oauth_token){
-				salesforceWidget.get_contact();	
-			}
-			else{
-				salesforceWidget.freshdeskWidget.alert_failure('Unable to connect to Salesforce. Please try again later.')
-			}	
+					salesforceWidget.get_contact();	
+				}
+				else{
+					salesforceWidget.freshdeskWidget.alert_failure('Unable to connect to Salesforce. Please try again later.')
+				}	
 			});
-
+		}
+		else if(resJson[0].errorCode == "INVALID_FIELD"){
+			salesforceWidget.fetch_field_metadata();
+		}
+		else{
+			salesforceWidget.freshdeskWidget.alert_failure(resJson[0].message);
 		}
 	}
 }

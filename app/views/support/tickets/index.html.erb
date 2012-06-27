@@ -4,8 +4,8 @@
 <div class="list-group tickets-container">          
  <div class="list-bar">
  	<%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets", :class => "first" ) %>      
-	<%= link_to(t('helpdesk.tickets.views.open_or_pending'),"/support/tickets/filter/open_or_pending" ) %>     
-	<%= link_to(t('helpdesk.tickets.views.resolved_or_closed') ,"/support/tickets/filter/resolved_or_closed" ) %>
+	<%= link_to(t('open_tickets'),"/support/tickets/filter/open_or_pending" ) %>     
+	<%= link_to(t('resolved_tickets') ,"/support/tickets/filter/resolved_or_closed" ) %>
  </div>
  <table class="tickets">	
 	<tbody>
