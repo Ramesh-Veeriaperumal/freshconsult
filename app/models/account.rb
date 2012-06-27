@@ -518,7 +518,7 @@ class Account < ActiveRecord::Base
 
     def populate_seed_data
       PopulateAccountSeed.populate_for(self)
-      populate_ticket_types
+      #populate_ticket_types
     end
 
    def send_welcome_email
