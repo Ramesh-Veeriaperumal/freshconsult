@@ -22,11 +22,13 @@
                 .appendTo(category);
             });
 
+
          category
             .val(_init.value || "")
             .bind("change", function(ev){
               subcategory.empty();
-              (tree.getSubcategoryList(category.val())||[]).each(function(pair){
+
+              (tree.getSubcategoryList(category.val())||$H()).each(function(pair){
                 $("<option />")
                   .html(pair.key)
                   .val(pair.key)
@@ -38,7 +40,7 @@
 
          subcategory.bind("change", function(ev){
           if(!subcategory.data("initialLoad")){         
-            if(_init.nested_rules) subcategory.val(_init.nested_rules[0].value);
+            if(_init.nested_rules && _init.nested_rules[0]) subcategory.val(_init.nested_rules[0].value);
             subcategory.data("initialLoad", true);
           }
           if(tree.third_level){
@@ -57,13 +59,14 @@
 
          items.bind("change", function(ev){
             if(!items.data("initialLoad")){
-              if(_init.nested_rules) items.val(_init.nested_rules[1].value);
+              if(_init.nested_rules && _init.nested_rules[1]) items.val(_init.nested_rules[1].value);
               items.data("initialLoad", true);
             }
             methods.setNestedRule(nested_rules, _fields.subcategory.name, subcategory.val(), _fields.items.name, items.val());
          });
 
          category.trigger("change");
+
          if(opts.type != "action"){
             $(this).append(category)
                    .append(category_name)
@@ -74,7 +77,6 @@
 
             $(this).append(rule_type)
                    .append(nested_rules);
-
             
          }else{
             category_name.prop("value", "set_nested_fields");
@@ -92,8 +94,8 @@
      }, 
      setNestedRule : function( nested_rules, subcategory_name, subcategory, item_name, item ){
         //console.log(item);
-        item_check = (item) ? (', { name : '+item_name+', value : '+item+' }') : "";
-        nested_rules.val('[{ name :'+subcategory_name+', value : '+subcategory+'}'+item_check+']');
+        item_check = (item) ? (', { name : "'+item_name+'", value : "'+item+'" }') : "";
+        nested_rules.val('[{ name : "'+subcategory_name+'", value : "'+subcategory+'" }'+item_check+']');
      }
   };
 

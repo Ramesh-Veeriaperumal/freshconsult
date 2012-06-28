@@ -16,6 +16,7 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
   include Search::TicketSearch
+  include Helpdesk::Ticketfields::TicketStatus
   
   layout :choose_layout 
   
@@ -24,6 +25,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
+  before_filter :check_ticket_status, :only => [:update]
+  before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -38,7 +41,6 @@ class Helpdesk::TicketsController < ApplicationController
         @response_errors = {:no_email => true}
       end
     end
-
     company_name = params[:company_name]
     unless company_name.blank?
       company = current_account.customers.find_by_name(company_name)
@@ -48,7 +50,6 @@ class Helpdesk::TicketsController < ApplicationController
         @response_errors = {:no_company => true}
       end
     end
-
   end
 
   def load_ticket_filter
@@ -151,10 +152,6 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => @items.to_json
       end
 
-      format.xml do
-        render :xml => @items.to_xml
-      end
-
       format.widget do
         render :layout => "widgets/contacts"    
       end
@@ -234,6 +231,9 @@ class Helpdesk::TicketsController < ApplicationController
 
     add_original_to_email if ( !@item.to_email.blank? && current_account.pass_through_enabled?)
 
+    @to_emails = @ticket.to_emails
+    @to_cc_emails = @ticket.to_cc_emails
+
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
@@ -287,6 +287,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def update_multiple
+    params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless params[nscname][:custom_field].nil?
     @items.each do |item|
       params[nscname].each do |key, value|
         if(!value.blank?)
@@ -300,7 +301,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def close_multiple
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]       
+    status_id = CLOSED       
     @items.each do |item|
       item.update_attribute(:status , status_id)
     end
@@ -447,8 +448,10 @@ class Helpdesk::TicketsController < ApplicationController
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
-    
-    @item.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed] if save_and_close?
+
+    @item.email_config = current_portal.product if current_portal
+        
+    @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
     else
@@ -457,7 +460,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def close 
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+    status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attribute(:status , status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
@@ -479,6 +482,15 @@ class Helpdesk::TicketsController < ApplicationController
     render :text => a_template || ""
   end 
   
+  def latest_note
+    ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
+    if ticket.nil?
+      render :text => t("flash.general.access_denied")
+    else
+      render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+    end
+  end
+
   protected
   
     def item_url
@@ -573,5 +585,12 @@ class Helpdesk::TicketsController < ApplicationController
   def save_and_close?
     !params[:save_and_close].blank?
   end
- 
+
+  def check_ticket_status
+    if params["helpdesk_ticket"]["status"].blank?
+      flash[:error] = t("change_deleted_status_msg")
+      redirect_to item_url
+    end
+  end
+
 end

@@ -25,13 +25,22 @@
 		</li>
 		<li class="inline-field">
 	 		<span class="seperator"></span>
-			<label>Select fields to export</label>
+			<h4 class="title">Select fields to export</h4>
 			<div class="threecol-form">
 	 			<% csv_headers.each do |head| %>
-  			<label class="checkbox"> 
-    			<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
-					<%= head[:label] %>
-  			</label>
+	 			  	<div class="item <%= head[:type] %>">
+		  				<label class="checkbox prime"> 
+		    				<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
+							<%= head[:label] %>														
+		  				</label>
+		  				<% head[:levels].each do |level| %>
+		  					<br />
+			  				<label class="checkbox level"> 
+			    				<%= check_box_tag "export_fields[#{level[:label]}]", level[:name], false  %> 
+								<%= level[:label] %>
+			  				</label>
+			  			<% end %>
+	  			    </div>	
 	 			<% end %>
 			</div>
 		<li>
@@ -42,21 +51,26 @@
 <%end%>
 
 <% javascript_tag do %>
-  jQuery("#exportFilter").submit(function() {
-  	 getFilterData();
- 		 jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
- 		 jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
-		 setTimeout(function(){
-			active_dialog.dialog("close");
-			jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
-		 }, 1000);
+  jQuery("#exportFilter").submit(function() {  	
+ 	getFilterData();
+	jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
+	jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+	setTimeout(function(){
+		active_dialog.dialog("close");
+		jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
+	}, 1000);
   });
 
   jQuery("#date_filter").change(function(){
   	jQuery("#datepicker").toggle(jQuery("#date_filter").val() == "<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>");
   });
 
-	var date_today = new Date();
+  jQuery("div.nested_field label.prime").change(function(ev){  	
+  	_condition = !jQuery(this).children("input").prop("checked");
+  	jQuery(this).siblings(".level").children("input").prop({ "checked": !_condition });
+  });
+
+  var date_today = new Date();
   jQuery(document).ready(function() {
 		var dates = jQuery( "#start_date, #end_date" ).datepicker({
 			changeMonth: true, 

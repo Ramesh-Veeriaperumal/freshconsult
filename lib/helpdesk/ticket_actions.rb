@@ -1,5 +1,7 @@
 module Helpdesk::TicketActions
   
+  include Helpdesk::Ticketfields::TicketStatus
+  
   def create_the_ticket(need_captcha = nil)
     @ticket = current_account.tickets.build(params[:helpdesk_ticket])
      set_default_values
@@ -22,7 +24,7 @@ module Helpdesk::TicketActions
   end
 
   def set_default_values
-    @ticket.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(@ticket.status)
+    @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0
     @ticket.email ||= current_user && current_user.email
     @ticket.email_config_id ||= current_portal.product.id
@@ -65,15 +67,16 @@ module Helpdesk::TicketActions
     flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
-    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false} ] if current_account.has_multiple_products?
-    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false, :type => :field_type} ] if current_account.has_multiple_products?
+    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
-    flexi_fields.each do |flexi_field|
-      if flexi_field.field_type == "nested_field"
-        nested_flexi_fields = flexi_field.nested_ticket_fields(:include => :flexifield_def_entry)
-        csv_headers = csv_headers + nested_flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
-      end
-    end
+    # csv_headers.each do |flexi_field|
+    #   if flexi_field.type == "nested_field"
+    #     nested_flexi_fields = flexi_field.nested_ticket_fields(:include => :flexifield_def_entry)
+    #     #csv_headers = csv_headers + nested_flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    #     flexi_field[:levels] = flexi_field.nested_levels
+    #   end
+    # end
 
     render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
   end
@@ -200,7 +203,7 @@ module Helpdesk::TicketActions
   end
   
   def close_source_ticket
-    @source_ticket.update_attribute(:status , Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed])
+    @source_ticket.update_attribute(:status , CLOSED)
   end
   
   def add_note_to_source_ticket
@@ -248,5 +251,21 @@ module Helpdesk::TicketActions
       URI.unescape(CGI::escape(Base64.decode64(string)))
    end
   
- 
+   # Method used set the ticket.ids in params[:data_hash] based on tags.name
+  def serialize_params_for_tags
+    return if params[:data_hash].nil? 
+
+    action_hash = params[:data_hash].kind_of?(Array) ? params[:data_hash] : 
+      ActiveSupport::JSON.decode(params[:data_hash])
+    
+    action_hash.each_with_index do |filter, index|
+      next if filter["value"].nil? || !filter["condition"].eql?("helpdesk_tags.name")
+      value = current_account.tickets.permissible(current_user).with_tag_names(filter["value"].split(",")).join(",")
+      action_hash[index]={ :condition => "helpdesk_tickets.id", :operator => "is_in", :value => value }
+      break
+    end
+    
+    params[:data_hash] = action_hash;
+  end
+  
 end

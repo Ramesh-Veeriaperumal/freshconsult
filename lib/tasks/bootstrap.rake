@@ -31,6 +31,8 @@ namespace :db do
   task :create_trigger => :environment do
     puts 'Creating database trigger for tickets display id...'
     ActiveRecord::Base.connection.execute(TriggerSql.sql_for_populating_ticket_display_id)
+    puts 'Creating database trigger for ticket_statuses status id...'
+    ActiveRecord::Base.connection.execute(TriggerSql.sql_for_populating_custom_status_id)
   end
   
   task :perform_table_partition => :environment do

@@ -69,20 +69,20 @@
 	    <%= country_select :address, :country, ['United States', 'Canada'] %>
 	</div>
 </div>
-<!--div class="field-box">
-	<label class="caption">Address</label>
+<div class="field-box">
+	<%= content_tag( :label, "Address *", :class => "caption" ) %> 
 	<div class="fields">
-		<%# text_field :address, :address1, :size => 20 %><br/>
-		<%# text_field :address, :address2, :size => 20 %>
+		<%= text_field :address, :address1, :size => 20, :class => "required" %><br/>
+		<%= text_field :address, :address2, :size => 20 %>
 	</div>
 </div>
 
 <div class="field-box">
-	<label class="caption">City</label> 
+	<%= content_tag( :label, "City *", :class => "caption" ) %> 
 	<div class="fields">
-		<%# text_field :address, :city, :size => 20 %>
+		<%= text_field :address, :city, :size => 20, :class => "required" %>
 	</div>
-</div-->
+</div>
 
 <div class="field-box">
 	<%= content_tag( :label, "#{t('state')} *", :class => "caption" ) %>  

@@ -1,6 +1,18 @@
-	  <%@reports_list.each do |key,value|%>
-		<%= link_to_remote (render :partial => "/reports/survey_reports/list_content", :locals => {:content => value,:is_list => true})  ,{:url => {:action =>'report_details', :entity_id =>value[:entity_id], :category=>value[:category]},:update => "report_list",:loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');"}, {:class => "agent_report_list"}  %>	
-	  <%end%>
+	  <ul class="table-list">
+		  <%@reports_list.each do |key,value|%>
+		   <li>
+		   	<%		   		
+		   		if params[:date_range].blank?
+		   			link_url = survey_detail_report_url(:entity_id => value[:entity_id], :category=> value[:category])
+		   		else
+		   			link_url = survey_detail_report_url(:entity_id => value[:entity_id], 
+		   				:category=> value[:category],:date_range => params[:date_range])
+		   		end
+		   	%>
+			<%= link_to ((render :partial => "/reports/survey_reports/list_content", :locals => {:content => value,:is_list => true})  ,link_url, {:class => "agent_report_list"})  %>
+			</li>	
+		  <%end%>
+	  </ul>
   
 <%if @reports_list.blank?%>
 	 <h1 style="font-size:18px;text-align:center;margin-top:50px;"> <%=t('.no_feedback')%> </h1>
@@ -8,9 +20,10 @@
 
 <% javascript_tag do %>
 	jQuery("#date_range_title").html("<%=params['date_range']%>")
-	
+
 	<%if @reports_list.blank?%>
 			jQuery("#back_to_con").hide();
 	<%end%>	
+
 	
-<%end%>
+<%end%> 

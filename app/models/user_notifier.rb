@@ -17,7 +17,7 @@ class UserNotifier < ActionMailer::Base
     recipients    user.email
     sent_on       Time.now
     headers       "Reply-to" => "#{user.account.default_friendly_email}"
-    content_type  "text/plain"
+    content_type  "text/html"
   end
   
   def account_admin_activation(account_admin)

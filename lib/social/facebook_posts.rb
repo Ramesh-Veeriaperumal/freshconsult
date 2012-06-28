@@ -47,7 +47,7 @@ class Social::FacebookPosts
           :email_config_id => @fb_page.product_id,
           :group_id => group_id,
           :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-          :created_at => Time.at(feed[:created_time]).to_s(:db),
+          :created_at => Time.zone.at(feed[:created_time]).to_s(:db),
           :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id} )
       
        if @ticket.save

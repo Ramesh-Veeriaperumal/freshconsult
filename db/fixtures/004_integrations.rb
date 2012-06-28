@@ -155,4 +155,29 @@ unless Account.current
     s.application_id = wfmax_app.id
   end
 
+  #Populate Salesforce
+  salesforce_app = Integrations::Application.seed(:name) do |s|
+    s.name = "salesforce"
+    s.display_name = "integrations.salesforce.label"
+    s.description = "integrations.salesforce.desc" 
+    s.listing_order = 9
+    s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin={{account_id}}"}
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "salesforce_widget"
+    s.description = "salesforce.widgets.salesforce_widget.description"
+    s.script = %{
+      <div id="salesforce_widget" class="integration_widget crm_contact_widget">
+        <div class="content"></div>
+        <div class="salesforce-name error hide"></div>
+        </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/salesforce.js");
+        salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}" } ;
+       </script>}
+    s.application_id = salesforce_app.id
+  end
+
+
 end

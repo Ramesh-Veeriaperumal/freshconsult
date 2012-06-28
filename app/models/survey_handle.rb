@@ -5,7 +5,8 @@ class SurveyHandle < ActiveRecord::Base
   include ActionController::UrlWriter
   
   NOTIFICATION_VS_SEND_WHILE = {
-    EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION
+    EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION,
+    EmailNotification::TICKET_CLOSED => Survey::CLOSED_NOTIFICATION
   }
   
   belongs_to :survey
@@ -13,8 +14,10 @@ class SurveyHandle < ActiveRecord::Base
   belongs_to :response_note, :class_name => 'Helpdesk::Note'
   belongs_to :survey_result
   
-  def self.create_handle(ticket, note)  	
-    create_handle_internal(ticket, Survey::ANY_EMAIL_RESPONSE, note)
+  def self.create_handle(ticket, note, specific_include)  	
+    create_handle_internal(ticket, 
+      (specific_include) ? Survey::SPECIFIC_EMAIL_RESPONSE : Survey::ANY_EMAIL_RESPONSE , 
+      note)
   end
   
   def self.create_handle_for_notification(ticket, notification_type)
@@ -36,7 +39,8 @@ class SurveyHandle < ActiveRecord::Base
       :surveyable_id => surveyable_id,
       :surveyable_type => surveyable_type,
       :customer_id => surveyable.requester_id,
-      :agent_id => surveyable.responder_id,
+      :agent_id => response_note ? response_note.user_id : surveyable.responder_id,
+      :group_id => surveyable.group_id,
       :response_note_id => response_note_id,
       :rating => rating
     })

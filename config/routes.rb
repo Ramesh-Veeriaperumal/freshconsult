@@ -61,7 +61,7 @@
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
-
+  map.resources :sso, :collection => {:login => :get, :facebook => :get}
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
     integration.resources :applications, :member =>{:show => :get}
@@ -69,6 +69,9 @@
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put}
+    integration.resources :salesforce, :collection => {:fields_metadata => :get}
+    integration.oauth_action '/refresh_access_token/:provider', :controller => 'oauth_util', :action => 'get_access_token'
+    integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
   end
 
   map.namespace :admin do |admin|
@@ -89,7 +92,7 @@
     admin.resources :portal, :only => [ :index, :update ]
     admin.resources :canned_responses
     admin.resources :products
-    admin.resources :surveys, :only => [ :index ]
+    admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
   end
@@ -104,7 +107,12 @@
   map.scoreboard_activity '/scoreboard/reports', :controller => 'reports/scoreboard_reports', :action => 'index' 
   map.scoreboard_activity_generate '/scoreboard/reports/generate', :controller => 'reports/scoreboard_reports', :action => 'generate'
   map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
-  map.survey_report_details '/survey/report_details', :controller => 'reports/survey_reports', :action => 'report_details'
+  map.survey_back_to_list '/survey/reports/:category/:view', :controller => 'reports/survey_reports', :action => 'index'
+  map.survey_list '/survey/reports_list', :controller => 'reports/survey_reports', :action => 'list'
+  map.survey_detail_report '/survey/report_details/:entity_id/:category', :controller => 'reports/survey_reports', :action => 'report_details'
+  map.survey_overall_report '/survey/overall_report/:category', :controller => 'reports/survey_reports', :action => 'report_details'
+  map.survey_feedbacks '/reports/survey_reports/feedbacks', :controller => 'reports/survey_reports', :action => 'feedbacks'
+  map.survey_refresh_details '/reports/survey_reports/refresh_details', :controller => 'reports/survey_reports', :action => 'refresh_details'
     
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
@@ -124,7 +132,7 @@
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates'
+      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
@@ -203,7 +211,7 @@
 #    end
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  , :latest_ticket_count => :post}, 
-                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
+                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any, :latest_note => :get } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'

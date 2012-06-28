@@ -6,7 +6,7 @@ class ActivationsController < ApplicationController
   
   def send_invite
     user = current_account.all_users.find params[:id]
-    user.deliver_contact_activation(current_portal) if user and user.has_email?
+    user.deliver_activation_instructions!(current_portal) if user and user.has_email?
     
     flash[:notice] = t('users.activations.send_invite_success')
     redirect_to(:back)

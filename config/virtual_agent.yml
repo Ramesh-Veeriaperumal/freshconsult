@@ -8,7 +8,8 @@ default_fields:
         
     to_email:
         handler: email
-        
+    cc_email:
+        handler: email
     subject:
         handler: text
 
@@ -57,7 +58,7 @@ default_fields:
         <<: *date_time
     agent_responded_at:
         <<: *date_time
-    first_response_due:
+    first_response_time:
         <<: *date_time
     due_by:
         <<: *date_time
