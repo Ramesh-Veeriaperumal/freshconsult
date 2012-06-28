@@ -164,7 +164,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_to_emails = []
       (to_emails || []).each do |email|
         parsed_email = parse_email_text(email)
-        parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email]}>") if !parsed_email.blank? && !parsed_email[:email].blank?
+        parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email].strip}>") if !parsed_email.blank? && !parsed_email[:email].blank?
       end
       parsed_to_emails
     end
