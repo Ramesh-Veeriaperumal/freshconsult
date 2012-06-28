@@ -380,20 +380,9 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-    to_ret = { 
-      "id"   => id,
-      "name"  => to_s,
-      "email" => email,
-      "phone" => phone,
-      "mobile" => mobile,
-      "job_title" => job_title,
-      "user_role" => user_role,
-      "time_zone" => time_zone,
-    }
+
+    UserDrop.new self
     
-    to_ret["company_name"] = customer.name if customer
-    
-    to_ret
   end
   
   def has_manage_forums?
