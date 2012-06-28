@@ -150,7 +150,7 @@ class Helpdesk::Note < ActiveRecord::Base
       if human_note_for_ticket?
         ticket_state = notable.ticket_states   
         if user.customer?  
-          ticket_state.requester_responded_at=Time.zone.now if !(email? and notable.included_in_fwd_emails?(user.email))
+          ticket_state.requester_responded_at=Time.zone.now unless replied_by_third_party?
         else
           ticket_state.agent_responded_at=Time.zone.now unless private
           ticket_state.first_response_time=Time.zone.now if ticket_state.first_response_time.nil? && !private
@@ -162,8 +162,8 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer? 
-        if (fwd_email? and notable.onhold?) or (notable.onhold_and_closed? and !feedback? and !fwd_email?) 
+      if user.customer?
+        if (replied_by_third_party? and notable.onhold?) or (notable.onhold_and_closed? and !feedback? and !replied_by_third_party?) 
           notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
@@ -227,6 +227,12 @@ class Helpdesk::Note < ActiveRecord::Base
     
     def user_info
       user.get_info if user
+    end
+
+    # Replied by third pary to the forwarded email
+    # Use this method only after checking human_note_for_ticket? and user.customer?
+    def replied_by_third_party? 
+      private_note? and incoming and notable.included_in_fwd_emails?(user.email)
     end
 
 end
