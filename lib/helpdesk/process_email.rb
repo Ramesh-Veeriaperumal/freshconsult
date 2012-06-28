@@ -260,6 +260,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         
         begin
           if (user.agent? && !user.deleted?)
+            ticket.responder ||= user
             process_email_commands(ticket, user, ticket.email_config, note)
             email_cmds_regex = get_email_cmd_regex(ticket.account)
             note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
