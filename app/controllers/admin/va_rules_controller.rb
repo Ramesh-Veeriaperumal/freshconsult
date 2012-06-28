@@ -89,7 +89,7 @@ class Admin::VaRulesController < Admin::AutomationsController
         { :name => -1, :value => "--- #{t('click_to_select_filter')} ---" },
         { :name => "from_email", :value => t('from_email'), :domtype => "autocompelete", 
           :data_url => autocomplete_helpdesk_authorizations_path, :operatortype => "email" },
-        { :name => "cc_email", :value => t('to_email'), :domtype => "text",
+        { :name => "to_email", :value => t('to_email'), :domtype => "text",
           :operatortype => "email" },
         { :name => -1, :value => "--------------------------" },
         { :name => "subject", :value => t('ticket.subject'), :domtype => "text",
