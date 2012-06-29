@@ -8,7 +8,7 @@ module Helpdesk::TicketActions
     unless cc_emails.blank?
       cc_emails.reject!(&:empty?) 
       cc_emails = cc_emails.uniq
-      ticket_params = ticket_params.merge(:cc_email => {:cc_emails => cc_emails})
+      ticket_params = ticket_params.merge(:cc_email => {:cc_emails => cc_emails, :fwd_emails => []})
     end
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
