@@ -90,6 +90,7 @@ FreshbooksWidget.prototype = {
 	loadClientList:function(resData){
 		tot_pages = this.fetchMultiPages(resData, "clients", this.CLIENT_LIST_REQ, this.loadClientList)
 		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail, tot_pages>1);
+		UIUtil.sortDropdown("freshbooks-timeentry-clients");
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
 		UIUtil.hideLoading('freshbooks','clients','-timeentry');
 		$("freshbooks-timeentry-clients").enable();

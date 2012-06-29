@@ -306,6 +306,12 @@ var UIUtil = {
 		}
 	},
 
+	sortDropdown: function(dropDownBoxId) {
+		jQuery("#"+dropDownBoxId).html(jQuery("#"+dropDownBoxId+" option").sort(function (a, b) {
+				return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+		}))
+	},
+
 	hideLoading: function(integrationName,fieldName,context) {
 		jQuery("#" + integrationName + context + '-' + fieldName).removeClass('hide');
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');

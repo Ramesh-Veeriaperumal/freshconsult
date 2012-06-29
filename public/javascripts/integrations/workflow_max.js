@@ -66,9 +66,7 @@ WorkflowMaxWidget.prototype = {
 		filterBy = staff_id ? {"Staff,ID":staff_id} : null
 		if(this.isRespSuccessful(this.jobData)) {
 			selectedJobNode = UIUtil.constructDropDown(this.jobData, 'xml', "workflow-max-timeentry-jobs", "Job", "ID", [["Client", "Name"], " ", "-", " ", "Name"], filterBy, searchTerm||"", false);
-			jQuery("#workflow-max-timeentry-jobs").html(jQuery("#workflow-max-timeentry-jobs option").sort(function (a, b) {
-   				return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
-			}))
+			UIUtil.sortDropdown("workflow-max-timeentry-jobs");
 		}
 		UIUtil.hideLoading('workflow-max','jobs','-timeentry');
 		$("workflow-max-timeentry-jobs").enable();
