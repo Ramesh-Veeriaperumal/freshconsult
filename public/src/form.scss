@@ -1922,9 +1922,15 @@ ul.ui-form .inputs-list{
 }
 
 .new_ticket_cc_button{
-	position: absolute;
-	margin-top:-29px;
-	right:36px;
+	float:right;
+	margin-top:-25px;
+	width:7.8%;
+	a{
+		text-decoration:underline;
+		&:hover{
+			text-decoration:none;
+		}
+	}
 }
 
 #cc_emails_sec .chzn-container,#cc_emails_sec .search-field input{

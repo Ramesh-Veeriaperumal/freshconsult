@@ -595,7 +595,9 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .required_star { color: #d00; font-size: 16px; font-weight: bold; position: relative; top: 4px; }
 
-.new_ticket_cc_button { position: absolute; margin-top: -29px; right: 36px; }
+.new_ticket_cc_button { float: right; margin-top: -25px; width: 7.8%; }
+.new_ticket_cc_button a { text-decoration: underline; }
+.new_ticket_cc_button a:hover { text-decoration: none; }
 
 #cc_emails_sec .chzn-container, #cc_emails_sec .search-field input { width: 91% !important; }
 
