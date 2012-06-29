@@ -273,30 +273,28 @@ module ApplicationHelper
   
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders #To do.. i18n
-    place_holders = [
-      ['{{ticket.id}}', 		 			'Ticket ID' ,				'Unique ticket ID.'],
-      ['{{ticket.subject}}',     			'Subject', 					'Ticket subject.'],
-      ['{{ticket.description}}', 			'Description', 				'Ticket description.'],
-      ['{{ticket.url}}', 		 			'Ticket URL' ,						'Full URL path to ticket.'],
-      ['{{ticket.portal_url}}', 'Product specific ticket URL',	'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
-      ['{{ticket.status}}', 	 			'Status' , 					'Ticket status.'],
-      ['{{ticket.priority}}', 	 			'Priority', 				'Ticket priority.'],
-      ['{{ticket.source}}', 	 			'Source', 					'The source channel of the ticket.'],
-      ['{{ticket.ticket_type}}', 			'Ticket type', 				'Ticket type.'],
-      ['{{ticket.tags}}', 					'Tags', 					'Ticket tags.'],
-      ['{{ticket.due_by_time}}', 			'Due by time',				'Ticket due by time.'],
-      ['{{ticket.requester.name}}', 		'Requester name', 			'Name of the requester who raised the ticket.'],
-      ['{{ticket.requester.email}}',		'Requester email', 			"Requester's email."],
-      ['{{ticket.requester.company_name}}', 'Requester company name', 	"Requester's company name."], #??? should it be requester.company.name?!
-      ['{{ticket.group.name}}', 			'Group name',				'Ticket group.'],
-      ['{{ticket.agent.name}}', 			'Agent name',				'Name of the agent who is currently working on the ticket.'],
-      ['{{ticket.agent.email}}', 			'Agent email',				"Agent's email."],
-      ['{{ticket.latest_public_comment}}',  'Last public comment',	'Latest public comment for this ticket.'],
+    [
+      ['{{ticket.id}}',           'Ticket ID' ,       'Unique ticket ID.'],
+      ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
+      ['{{ticket.description}}',      'Description',        'Ticket description.'],
+      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
+      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
+      ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
+      ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],
+      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.'],
+      ['{{ticket.ticket_type}}',      'Ticket type',        'Ticket type.'],
+      ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
+      ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
+      ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
+      ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
+      ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
+      ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
+      ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']
     ]
-    place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
-    place_holders
   end
   
   # Avatar helper for user profile image
