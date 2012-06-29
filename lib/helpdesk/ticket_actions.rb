@@ -3,8 +3,15 @@ module Helpdesk::TicketActions
   include Helpdesk::Ticketfields::TicketStatus
   
   def create_the_ticket(need_captcha = nil)
-    @ticket = current_account.tickets.build(params[:helpdesk_ticket])
-     set_default_values
+    ticket_params = params[:helpdesk_ticket]
+    cc_emails = params[:cc_emails]
+    unless cc_emails.blank?
+      cc_emails.reject!(&:empty?) 
+      cc_emails = cc_emails.uniq
+      ticket_params = ticket_params.merge(:cc_email => {:cc_emails => cc_emails})
+    end
+    @ticket = current_account.tickets.build(ticket_params)
+    set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
     return false unless @ticket.save
@@ -19,10 +26,14 @@ module Helpdesk::TicketActions
         :user_id => current_user && current_user.id
       )
     end
+    notify_cc_people cc_emails unless cc_emails.blank? 
     @ticket
     
   end
 
+  def notify_cc_people cc_emails
+      Helpdesk::TicketNotifier.send_later(:deliver_send_cc_email, @ticket , {:cc_emails => cc_emails})
+  end
   def set_default_values
     @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0

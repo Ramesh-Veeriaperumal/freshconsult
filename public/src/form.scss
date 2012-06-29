@@ -11,7 +11,7 @@ label{
    font-size:1.4em;
 }
 input[type=text], select, input.text { 
-   width: 95%;
+   width: 90%;
    margin:0 0 3px 0;
    color:#3f3f3f;
    padding:3px;
@@ -1919,4 +1919,18 @@ ul.ui-form .inputs-list{
 	font-weight:bold;
 	position: relative;
 	top:4px;
+}
+
+.new_ticket_cc_button{
+	position: absolute;
+	margin-top:-29px;
+	right:36px;
+}
+
+#cc_emails_sec .chzn-container,#cc_emails_sec .search-field input{
+	width:91% !important;
+}
+
+#cc_emails_sec .chzn-drop{
+	width:100% !important;
 }
