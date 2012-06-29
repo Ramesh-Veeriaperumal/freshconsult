@@ -308,7 +308,9 @@ var UIUtil = {
 
 	sortDropdown: function(dropDownBoxId) {
 		jQuery("#"+dropDownBoxId).html(jQuery("#"+dropDownBoxId+" option").sort(function (a, b) {
-				return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+				a = a.text.toLowerCase();
+				b = b.text.toLowerCase();
+				return a == b ? 0 : a < b ? -1 : 1
 		}))
 	},
 
