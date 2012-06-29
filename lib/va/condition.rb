@@ -2,11 +2,17 @@ class Va::Condition
   
   attr_accessor :handler, :key, :operator
   
+  
+  DISPATCHER_COLUMNS = {
+    'to_email'                => 'to_emails'
+  }
+
   QUERY_COLUMNS = {
     'subject_or_description'  => [ 'helpdesk_tickets.subject', 'helpdesk_tickets.description' ],
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
-    'company_name'            => 'customers.name'
+    'company_name'            => 'customers.name',
+    'to_email'                =>  'helpdesk_tickets.cc_email'
   }
   
   def initialize(rule, account)
@@ -17,6 +23,10 @@ class Va::Condition
   
   def matches(evaluate_on)
     handler.matches(evaluate_on)
+  end
+  
+  def dispatcher_key
+    return (DISPATCHER_COLUMNS.key?(key)) ? DISPATCHER_COLUMNS[key] : key
   end
   
   def filter_query

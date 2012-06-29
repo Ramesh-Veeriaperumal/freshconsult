@@ -287,6 +287,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def update_multiple
+    params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless params[nscname][:custom_field].nil?
     @items.each do |item|
       params[nscname].each do |key, value|
         if(!value.blank?)
@@ -447,7 +448,9 @@ class Helpdesk::TicketsController < ApplicationController
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
-    
+
+    @item.email_config = current_portal.product if current_portal
+
     @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist

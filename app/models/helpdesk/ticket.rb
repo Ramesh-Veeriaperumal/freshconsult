@@ -350,7 +350,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "#{ticket_id_delimiter}#{display_id}"
+    "[#{ticket_id_delimiter}#{display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -475,12 +475,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def included_in_fwd_emails?(from_email)
-    (cc_email_hash) and  (cc_email[:fwd_emails].any? {|email| email.include?(from_email) }) 
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }) 
   end
   
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email[:cc_emails].any? {|email| email.include?(from_email) }) or 
-                     (cc_email[:fwd_emails].any? {|email| email.include?(from_email) }))
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
   
   def cache_old_model
@@ -671,34 +671,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
-    { 
-      "id"                                => display_id,
-      "raw_id"                            => id,
-      "encoded_id"                        => encode_display_id,
-      "subject"                           => subject,
-      "description"                       => description_with_attachments,
-      "description_text"                  => description,
-      "requester"                         => requester,
-      "agent"                             => responder,
-      "group"                             => group,
-      "status"                            => status_name,
-      "requester_status_name"             => Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name"),
-      "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
-      "source"                            => SOURCE_NAMES_BY_KEY[source],
-      "ticket_type"                       => ticket_type,
-      "tags"                              => tag_names.join(', '),
-      "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
-      "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host, :protocol=> url_protocol),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host, :protocol=> url_protocol),
-      "portal_name"                       => portal_name,
-      #"attachments"                      => liquidize_attachments(attachments),
-      #"latest_comment"                   => liquidize_comment(latest_comment),
-      "latest_public_comment"             => liquidize_comment(latest_public_comment)
-      #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
-      #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
-    }
+
+    Helpdesk::TicketDrop.new self
+    
   end
 
   def url_protocol
@@ -860,16 +835,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_emails
-    to_emails_array = (cc_email[:to_emails] || []).clone unless cc_email.nil?
+    emails_hash = cc_email_hash
+    to_emails_array = (emails_hash[:to_emails] || []).clone unless emails_hash.nil?
     to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
     to_emails_array
   end
 
   def to_cc_emails
-    return [] if cc_email.nil?
+    emails_hash = cc_email_hash
+    return [] if emails_hash.nil?
     to_emails_array = []
-    cc_emails_array = (cc_email[:cc_emails] || [])
-    to_emails_array = (cc_email[:to_emails] || []).clone
+    cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
+    to_emails_array = (emails_hash[:to_emails] || []).clone
     to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
     (cc_emails_array + to_emails_array).uniq
   end  

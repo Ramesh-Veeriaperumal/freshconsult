@@ -18,8 +18,8 @@ class Va::RuleHandler
   end
 
   def matches(evaluate_on)
-    if evaluate_on.respond_to?(condition.key)
-      evaluate_rule(evaluate_on.send(condition.key))
+    if evaluate_on.respond_to?(condition.dispatcher_key)
+      evaluate_rule(evaluate_on.send(condition.dispatcher_key))
     end
   end
   

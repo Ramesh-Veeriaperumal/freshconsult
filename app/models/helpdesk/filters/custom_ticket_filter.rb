@@ -175,9 +175,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @sql_conditions  ||= begin
 
       if errors? 
-        all_sql_conditions = " 1 = 2 " 
+        all_sql_conditions = [" 1 = 2 "] 
       else
-        all_sql_conditions = ""
+        all_sql_conditions = [""]
         condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
@@ -209,26 +209,20 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
             raise Wf::FilterException.new("Unsupported operator  for container #{condition.container.class.name}")
           end
           
-          if all_sql_conditions.size > 0
-            all_sql_conditions << ( match.to_sym == :any ? "  OR" : " AND ")
+          if all_sql_conditions[0].size > 0
+            all_sql_conditions[0] << ( match.to_sym == :any ? "  OR" : " AND ")
           end
-          all_sql_conditions << sql_condition[0]
+          
+          all_sql_conditions[0] << sql_condition[0]
           sql_condition[1..-1].each do |c|
-            if c.kind_of?(Array)
-              all_sql_conditions.sub!("?", c.map{ |value| ActiveRecord::Base.sanitize(value) }.join(","))
-            elsif c.kind_of?(String)
-              all_sql_conditions.sub!("?", ActiveRecord::Base.sanitize(c.to_s))
-            else
-              all_sql_conditions.sub!("?", c.to_s)
-            end
+            all_sql_conditions << c
           end
         end
       end
       
-      [all_sql_conditions]
+      all_sql_conditions
     end
   end
-  
   def serialize_to_params(merge_params = {})
     params = {}
     params[:wf_type]        = self.class.name
