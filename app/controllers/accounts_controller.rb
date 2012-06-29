@@ -1,6 +1,7 @@
 class AccountsController < ApplicationController
   
   include ModelControllerMethods
+  include FreshdeskCore::Model
   
   layout :choose_layout 
   
@@ -9,6 +10,7 @@ class AccountsController < ApplicationController
   skip_before_filter :check_account_state
   
   before_filter :build_user, :only => [ :new, :create ]
+  before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
   before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans, :calculate_amount ]
   before_filter :load_discount, :only => [ :plans, :plan, :show, :calculate_amount ]
@@ -73,12 +75,8 @@ class AccountsController < ApplicationController
     build_object
     build_primary_email_and_portal
     build_user
-    build_plan  
-    
-    begin
-      store_metrics
-    rescue
-    end
+    build_plan
+    build_metrics
     
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
@@ -385,7 +383,7 @@ class AccountsController < ApplicationController
     if request.post? and !params[:confirm].blank?
       SubscriptionNotifier.deliver_account_deleted(current_account)
       create_deleted_customers_info
-      current_account.destroy
+      perform_destroy(current_account)
       redirect_to "http://www.freshdesk.com"
     end
   end
@@ -502,42 +500,48 @@ class AccountsController < ApplicationController
     
     def admin_selected_tab
       @selected_tab = :admin
-    end
+    end    
     
-    def store_metrics
-      return if params[:session_json].blank?
-        
-      metrics =  JSON.parse(params[:session_json])
-      metrics_obj = {}
-
-      metrics_obj[:referrer] = metrics["current_session"]["referrer"]
-      metrics_obj[:landing_url] = metrics["current_session"]["url"]
-      metrics_obj[:first_referrer] = params[:first_referrer]
-      metrics_obj[:first_landing_url] = params[:first_landing_url]
-      metrics_obj[:country] = metrics["locale"]["country"]
-      metrics_obj[:language] = metrics["locale"]["lang"]
-      metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
-      metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
-      metrics_obj[:visits] = params[:pre_visits]
-
-      if metrics["device"]["is_mobile"]
-        metrics_obj[:device] = "M"
-      elsif  metrics["device"]["is_phone"]
-        metrics_obj[:device] = "P"
-      elsif  metrics["device"]["is_tablet"]
-        metrics_obj[:device] = "T"
-      else
-        metrics_obj[:device] = "C"  
-      end
-
-      metrics_obj[:browser] = metrics["browser"]["browser"]                 
-      metrics_obj[:os] = metrics["browser"]["os"]
-      metrics_obj[:offset] = metrics["time"]["tz_offset"]
-      metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
-      metrics_obj[:session_json] = metrics
-
-      c_metric = @account.build_conversion_metric(metrics_obj)
-      c_metric.save
-    end
     
+    def build_metrics
+
+          return if params[:session_json].blank?
+            
+          begin  
+                  metrics =  JSON.parse(params[:session_json])
+                  metrics_obj = {}
+            
+                  metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+                  metrics_obj[:landing_url] = metrics["current_session"]["url"]
+                  metrics_obj[:first_referrer] = params[:first_referrer]
+                  metrics_obj[:first_landing_url] = params[:first_landing_url]
+                  metrics_obj[:country] = metrics["locale"]["country"]
+                  metrics_obj[:language] = metrics["locale"]["lang"]
+                  metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+                  metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+                  metrics_obj[:visits] = params[:pre_visits]
+            
+                  if metrics["device"]["is_mobile"]
+                    metrics_obj[:device] = "M"
+                  elsif  metrics["device"]["is_phone"]
+                    metrics_obj[:device] = "P"
+                  elsif  metrics["device"]["is_tablet"]
+                    metrics_obj[:device] = "T"
+                  else
+                    metrics_obj[:device] = "C"  
+                  end
+            
+                  metrics_obj[:browser] = metrics["browser"]["browser"]                 
+                  metrics_obj[:os] = metrics["browser"]["os"]
+                  metrics_obj[:offset] = metrics["time"]["tz_offset"]
+                  metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+                  metrics_obj[:session_json] = metrics
+                
+                  @account.conversion_metric_attributes = metrics_obj
+
+           rescue => e
+                Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")                
+           end
+
+        end        
 end

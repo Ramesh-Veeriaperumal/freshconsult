@@ -7,8 +7,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   belongs_to_account
   
   validates_length_of :name, :in => 1..25
+  validates_presence_of :name, :message => I18n.t('status_name_validate_presence_msg')
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
-  #validates_uniqueness_of :customer_display_name, :scope => :account_id, :message => I18n.t('status_cust_disp_name_uniqueness_msg'), :case_sensitive => false
   
   attr_protected :account_id, :status_id
   
@@ -30,7 +30,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.translate_status_name(status, disp_col_name=nil)
     st_name = disp_col_name.nil? ? status.send(display_name) : status.send(disp_col_name)
-    DEFAULT_STATUSES.keys.include?(status.status_id) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : st_name 
+    DEFAULT_STATUSES.keys.include?(status.status_id) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : st_name
   end
 
   def self.statuses_list(account)
@@ -65,7 +65,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   def self.onhold_statuses(account)
     statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => ["stop_sla_timer = true
-               and name not in ('Resolved','Closed')"])
+               and status_id not in (?,?)", RESOLVED, CLOSED])
     statuses.collect { |status| status.status_id }
   end
   
@@ -111,16 +111,22 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
  end
   
     def update_tickets_sla
-      tkt_states = tickets.visible.find(:all,
-                      :joins => :ticket_states)
+      tkt_states = tickets.visible
       tkt_states.each do |t_s|
-        fetch_ticket = account.tickets.visible.find(t_s.id)
-        if (stop_sla_timer? or deleted?)
-          fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
-        else
-          fetch_ticket.ticket_states.sla_timer_stopped_at = nil
+        begin
+          fetch_ticket = tickets.visible.find_by_id(t_s.id)
+          next if(fetch_ticket.nil?)
+          if (stop_sla_timer? or deleted?)
+            fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
+          else
+            fetch_ticket.ticket_states.sla_timer_stopped_at = nil
+          end
+          fetch_ticket.ticket_states.save
+        rescue Exception => e
+            NewRelic::Agent.notice_error(e)
+            RAILS_DEFAULT_LOGGER.debug "SLA timer stopped at time update failed for Ticket ID : #{t_s.id} on status update"
+            RAILS_DEFAULT_LOGGER.debug "Error message ::: #{e.message}"
         end
-        fetch_ticket.ticket_states.save
       end
     end
   
@@ -130,15 +136,20 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       else
         tkt_states = tickets.visible.find(:all,
                         :joins => :ticket_states,
-                        :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL and due_by > helpdesk_ticket_states.sla_timer_stopped_at'])
+                        :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL'])
         tkt_states.each do |t_s|
           begin
-            fetch_ticket = account.tickets.visible.find(t_s.id)
-            fetch_ticket.set_dueby(true)
-            fetch_ticket.send(:update_without_callbacks)
+            fetch_ticket = tickets.visible.find_by_id(t_s.id)
+            next if(fetch_ticket.nil?)
+            sla_timer_stopped_at_time = fetch_ticket.ticket_states.sla_timer_stopped_at
+            if(!sla_timer_stopped_at_time.nil? and fetch_ticket.due_by > sla_timer_stopped_at_time)
+              fetch_ticket.set_dueby(true)
+              fetch_ticket.send(:update_without_callbacks)
+            end
             fetch_ticket.ticket_states.sla_timer_stopped_at = nil
             fetch_ticket.ticket_states.save
           rescue Exception => e
+            NewRelic::Agent.notice_error(e)
             RAILS_DEFAULT_LOGGER.debug "Due by time update failed for Ticket ID : #{t_s.id} on status update"
             RAILS_DEFAULT_LOGGER.debug "Error message ::: #{e.message}"
           end
