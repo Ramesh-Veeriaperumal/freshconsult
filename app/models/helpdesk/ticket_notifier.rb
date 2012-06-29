@@ -104,6 +104,24 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     content_type  "text/html"
   end
+
+   def send_cc_email(ticket,options={})
+    subject       formatted_subject(ticket)
+    recipients    options[:cc_emails] unless options[:cc_emails].blank?
+    from          ticket.friendly_reply_email
+    body          :ticket => ticket, :body => ticket.body_html
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}"
+    sent_on       Time.now
+    content_type  "multipart/alternative"
+
+    ticket.attachments.each do |a|
+      attachment  :content_type => a.content_content_type, 
+                  :body => File.read(a.content.to_file.path), 
+                  :filename => a.content_file_name
+    end
+    
+    content_type  "text/html"
+  end
   
   def notify_comment(ticket, note , reply_email, options={})
     subject       formatted_subject(ticket)

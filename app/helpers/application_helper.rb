@@ -442,8 +442,11 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
-      when "text", "number", "email" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+      when "email" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = add_cc_field_tag element if (feature?(:portal_cc) && current_user && current_user.customer? && current_user.customer)
+      when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
@@ -465,6 +468,10 @@ module ApplicationHelper
         element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
+  end
+
+  def add_cc_field_tag element     
+    element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) 
   end
 
   # The field_value(init value) for the nested field should be in the the following format
