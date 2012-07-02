@@ -2,8 +2,10 @@ class Helpdesk::DashboardController < ApplicationController
   
   helper 'helpdesk/tickets' #by Shan temp
   include Reports::ScoreboardReport
+  include Mobile::MobileHelperMethods
 
   before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :set_mobile, :only => [:index]
 
   def index
     @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10)

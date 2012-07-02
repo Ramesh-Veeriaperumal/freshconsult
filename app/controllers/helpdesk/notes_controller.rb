@@ -4,8 +4,10 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods
+  include Mobile::MobileHelperMethods
   
   before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
+  before_filter :set_mobile , :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 

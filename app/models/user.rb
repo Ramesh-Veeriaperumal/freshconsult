@@ -439,8 +439,30 @@ class User < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
   
-  
+  def avatar_url 
+    avatar.content.url unless avatar.nil?
+  end
  
+  def is_agent
+    agent?
+  end
+
+  def is_customer
+    customer?
+  end
+  
+  def to_mob_json
+    options = { 
+      :methods => [:avatar_url,:is_agent,:is_customer],
+      :only => [:id,:name]
+    }
+    to_json options
+  end
+
+  def recent_tickets(limit = 5)
+    tickets.newest(limit)
+  end
+
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?

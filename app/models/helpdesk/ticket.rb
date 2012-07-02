@@ -46,6 +46,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
     :dependent => :destroy
+
+   has_many :public_notes,
+    :class_name => 'Helpdesk::Note',
+    :as => 'notable', :conditions => {:private =>  false}
     
   has_many :sphinx_notes, 
     :class_name => 'Helpdesk::Note',
@@ -731,6 +735,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def requester_name
+    requester.name || requester_info
+  end
+
   def to_json(options = {}, deep=true)
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
     if deep
@@ -851,6 +859,43 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (cc_emails_array + to_emails_array).uniq
   end  
 
+  def to_mob_json(only_public_notes=false)
+    notes_option = {
+      :only => [:created_at,:user_id,:id],
+      :include => {
+        :user => {
+          :only => [:name,:email,:id],
+          :methods => [:avatar_url]
+        }
+      },
+      :methods => [:body_mobile]
+    }
+
+    json_inlcude = {
+      :responder => {
+        :only => [:name,:email,:id],
+        :methods => [:avatar_url]
+      },
+      :requester => {
+        :only => [:name,:email,:id],
+        :methods => [:avatar_url]
+      }
+    }
+
+    if only_public_notes
+     json_inlcude[:public_notes] = notes_option 
+    else 
+     json_inlcude[:notes] = notes_option
+    end
+
+    options = {
+      :only => [:id,:display_id,:subject,:description,:description_html,:deleted,:spam,:cc_email,:due_by,:created_at],
+      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name],
+      :include => json_inlcude
+    }
+    to_json(options,false) 
+  end
+  
   private
   
     def create_source_activity

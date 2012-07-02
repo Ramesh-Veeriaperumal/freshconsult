@@ -1,8 +1,11 @@
 class HomeController < ApplicationController
   
-  before_filter :set_content_scope
+  include Mobile::MobileHelperMethods
+
+  before_filter :set_content_scope, :set_mobile
   
   def index
+    redirect_to MOBILE_URL and return if (current_user && mobile?)
     redirect_to helpdesk_dashboard_path if (current_user && current_user.permission?(:manage_tickets))
     redirect_to login_path unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
     
@@ -10,7 +13,9 @@ class HomeController < ApplicationController
     if allowed_in_portal?(:open_solutions)
       @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
     end
-    
+    if params[:format] == "mob"
+      @user_session = current_account.user_sessions.new
+    end
     @topics = recent_topics if allowed_in_portal?(:open_forums)
   end
  

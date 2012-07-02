@@ -406,6 +406,34 @@ class Account < ActiveRecord::Base
     email_commands_setting.pass_through_enabled
   end
 
+  def to_mob_json(deep=false)
+    json_include = {
+      :main_portal => {
+        :only => [:name, :preferences],
+        :methods => [:logo_url,:fav_icon_url]
+      }
+    }
+    options = {
+      :only => [:name],
+    }
+    if deep
+      json_include.merge!({
+        :canned_responses => {
+          :methods => [:my_canned_responses],
+          :only => [:title,:id]
+        },
+        :scn_automations =>{
+          :only => [:id,:name]
+        }
+      })
+      options.merge!({
+        :methods => [:reply_emails],
+      })
+    end
+    options[:include] = json_include;
+    to_json options
+  end
+  
   protected
   
     def valid_domain?

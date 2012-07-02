@@ -10,6 +10,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
+
+  before_filter :set_mobile, :only => [:show, :update, :create,:get_ca_response_content,:execute_scenario]
   
   before_filter { |c| c.requires_permission :manage_tickets }
   
@@ -17,6 +19,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
+  include Mobile::MobileHelperMethods
   
   layout :choose_layout 
   
@@ -256,6 +259,9 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => @item.to_json
       }
       format.js
+      format.mob {
+        render :json => @item.to_mob_json
+      }
     end
   end
   
@@ -265,9 +271,17 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
       flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
       #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
-      redirect_to item_url
+      if mobile?
+        render :json => { :success => true, :item => @item }.to_json
+      else
+        redirect_to item_url
+      end
     else
-      edit_error
+      if mobile?
+        render :json => { :failure => true, :errors => edit_error }.to_json
+      else
+        edit_error
+      end
     end
   end
 
@@ -326,12 +340,17 @@ class Helpdesk::TicketsController < ApplicationController
     @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
       { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
 
-    flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
+    unless mobile?
+      flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
                                       :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+    end
 
     respond_to do |format|
       format.html { redirect_to :back }
       format.js
+      format.mob { 
+        render :json => {:success => true,:id => @item.id}.to_json 
+      }
     end
   end 
   
@@ -478,7 +497,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
+    content = mobile? ? ca_resp.content : ca_resp.content_html
+    a_template = Liquid::Template.parse(content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
   end 
   

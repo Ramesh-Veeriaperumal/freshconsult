@@ -1,0 +1,42 @@
+Ext.define('Freshdesk.view.ContactDetails', {
+    extend: 'Ext.Container',
+    alias: 'widget.contactDetails',
+    initialize : function(){
+        this.callParent(arguments);
+        var me = this;
+        var back = {
+            xtype: 'button',
+            text: 'Back',
+            ui:'back headerBtn',
+            handler: this.goBack,
+            scope: this,
+            align:'left'
+        };  
+        var TopTitlebar = {
+            xtype: 'titlebar',
+            title: 'Info',
+            docked: 'top',
+            ui:'header',
+            items: [
+                back,
+                { xtype: 'spacer' }
+            ]
+        };
+
+        var contactForm = {
+            xtype:'contactform',
+        };
+        var contactInfo = {
+            xtype:'contactInfo'
+        };     
+
+        this.add([TopTitlebar,contactInfo]);
+    },
+    goBack: function(){
+        history.back();
+    },
+    config: {
+        fullscreen: true,
+        layout: { type: 'vbox', align: 'justify', pack: 'justify'  }
+    }
+});

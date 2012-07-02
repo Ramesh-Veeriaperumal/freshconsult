@@ -2,12 +2,14 @@ class Support::TicketsController < ApplicationController
 
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   include SupportTicketControllerMethods 
+  include Mobile::MobileHelperMethods
   before_filter { |c| c.requires_permission :portal_request }
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
   before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
   before_filter :load_item, :only =>[:update]
+  before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
   
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -23,14 +25,32 @@ class Support::TicketsController < ApplicationController
   def update
     if @item.update_attributes(params[:helpdesk_ticket])
       flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
-      redirect_to @item
+      if mobile?
+        mob { render :json => { :success => true, :item => @item }.to_json
+      else
+        redirect_to @item
+      end
     end
   end
 
   def filter   
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
-    render :index
+    if mobile?
+      unless @response_errors.nil?
+        render :json => {:errors => @response_errors}.to_json
+      else
+        json = "["; sep=""
+        @tickets.each { |tic| 
+          #Removing the root node, so that it conforms to JSON REST API standards
+          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+          json << sep + tic.to_json({}, false)[19..-2]; sep=","
+        }
+        render :json => json + "]"
+      end
+    else
+      render :index
+    end  
   end
   
   def close_ticket
@@ -38,6 +58,7 @@ class Support::TicketsController < ApplicationController
      status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
      logger.debug "close the ticket...with status id  #{status_id}"
      res = Hash.new
+     mob_json = {}
      if @item.update_attribute(:status , status_id)
        # res["success"] = true
        #        res["status"] = 'Closed'
@@ -45,13 +66,20 @@ class Support::TicketsController < ApplicationController
        #        res["message"] = "Successfully updated"
        #        render :json => ActiveSupport::JSON.encode(res)
        flash[:notice] = "Successfully updated"
+       mob_json[:success] = true
      else
        # res["success"] = false
        # res["message"] = "closing the ticket failed"
        # render :json => ActiveSupport::JSON.encode(res)      
        flash[:notice] = "Closing the ticket failed"
-     end                                       
-     redirect_to :back
+       mob_json[:failure] = true
+     end
+     if mobile?
+      mob_json[:item] = @item;
+      render :json => mob_json.to_json
+     else                                        
+      redirect_to :back
+    end
   end
     
   protected 

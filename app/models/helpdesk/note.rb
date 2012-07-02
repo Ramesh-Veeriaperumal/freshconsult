@@ -124,6 +124,11 @@ class Helpdesk::Note < ActiveRecord::Base
     super options
   end
 
+  def body_mobile
+    body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
+      body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))
+  end
+  
   def to_liquid
     { 
       "commenter" => user,

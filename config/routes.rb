@@ -289,6 +289,10 @@
     anonymous.resources :requests
   end
 
+  map.namespace :mobile do |mobile|
+    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get}
+  end
+  
   map.root :controller => "home"
   #map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'
   

@@ -4,6 +4,7 @@ module SupportTicketControllerMethods
   
   def show
     @ticket = Helpdesk::Ticket.find_by_param(params[:id], current_account)
+    render :json => @ticket.to_mob_json(true) if mobile?
     return if current_user && @ticket.requester_id == current_user.id
     return if permission?(:manage_tickets)
     return if current_user && current_user.client_manager?  &&@ticket.requester.customer == current_user.customer
