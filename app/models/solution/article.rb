@@ -124,6 +124,10 @@ class Solution::Article < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
   
+  def to_liquid
+    Solution::ArticleDrop.new self
+  end
+  
   private    
     def create_activity
       activities.create(

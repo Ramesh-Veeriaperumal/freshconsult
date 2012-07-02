@@ -113,5 +113,9 @@ class Forum < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
+  
+  def to_liquid
+    Forum::ForumDrop.new self
+  end
    
 end

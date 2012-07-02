@@ -29,5 +29,9 @@ class Solution::Category < ActiveRecord::Base
   def self.get_default_categories_visibility(user)
     user.customer? ? {:is_default=>false} : {}
   end
+  
+  def to_liquid
+    Solution::CategoryDrop.new self
+  end
    
 end
