@@ -421,9 +421,9 @@ class User < ActiveRecord::Base
     day_pass_usages.on_the_day(start_time).first
   end
   
-  def self.filter(letter, page)
+  def self.filter(letter, page, state = "active")
   paginate :per_page => 10, :page => page,
-           :conditions => ['name like ?', "#{letter}%"],
+           :conditions => [ 'name like ? and deleted = ?', "#{letter}%", !state.eql?("active") ],
            :order => 'name'
   end
   

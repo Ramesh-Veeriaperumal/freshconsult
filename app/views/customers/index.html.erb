@@ -1,3 +1,8 @@
+<% content_for :onload_script do %>
+	$J("#customers-select-all").live("click", function(ev){
+		$J("#companies input[type=checkbox]").prop("checked", $J(this).prop("checked"));
+	});
+<% end %>
 <%content_for :sidebar do%>
 	<div class="sidepanel">
 	<h3 class="title"><%=t('company.quick_company')%></h3> 
@@ -12,20 +17,34 @@
 	<% end %>
 	</div>
 <%end%> 
-<%= render(:partial => '/shared/companyheader', :locals => {:type => "company"}) %>
-<ul id="companies" class="content_list company-list">
-	<% @customers.each do |customer| %>
-	  <li class="<%= cycle('stripe', '') %>">		  	
-		<div class="item_actions">
-	    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "button") %>
-	    	<%= link_to t('delete'), customer, :confirm =>  "#{t('company.info1')}?", :method => :delete, :class => "button" %>
-		</div> 
-	    <div class="item_information">
-	    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			
-			<div><%= h customer.description %></div>
-		</div>		    
-	  </li>
-	<% end %>
-</ul>	
+<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
+<% form_tag "", { :id => "tickets-expanded", :method => :put } do %>
+	<% if @customers.length > 0 %>
+		<ul id="companies" class="content_list company-list">
+			<% @customers.each do |customer| %>
+			  <li class="<%= cycle('stripe', '') %>">		  	
+				<div class="item_actions">
+			    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "button") %>
+			    	<%= link_to t('delete'), {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  "#{t('company.info1')}?", :method => 'delete', :class => "button" %>
+				</div> 
+			    <div class="item_information">
+			    	<%= check_box_tag('ids[]', customer.to_param, false, :class => 'selector') %>
+			    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			
+					<div><%= h customer.description %></div>
+				</div>		    
+			  </li>
+			<% end %>
+		</ul>	
 
-<%= will_paginate @customers %>
+		<%= will_paginate @customers %>
+	<% else %>
+		<div class="big-info">
+			<div class="no-info-text">
+				<% if params[:state].blank? or params[:state].eql?('active') %>
+					<%= t('companies.active.no_companies_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+					<%= t('companies.active.no_companies') if params[:letter].blank? %>
+				<% end %>
+			</div>
+		</div>
+	<% end %>
+<% end %>
