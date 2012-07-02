@@ -8,7 +8,7 @@ namespace :sla do
       accounts.each do |account|     
       account.make_current
      overdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states, :readonly => false, 
-                        :conditions =>['due_by <=? AND isescalated=? AND status IN (?) AND helpdesk_ticket_states.sla_timer_stopped_at IS ?', Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
+                        :conditions =>['due_by <=? AND isescalated=? AND status IN (?)', Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
      overdue_tickets.each do |ticket|      
       sla_policy_id = nil
       unless ticket.requester.customer.nil?     
@@ -25,7 +25,7 @@ namespace :sla do
      end
     
       froverdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states , :readonly => false , 
-                            :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND helpdesk_ticket_states.sla_timer_stopped_at IS ? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil,nil] )
+                            :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
       froverdue_tickets.each do |fr_ticket|
       
       fr_sla_policy_id = nil

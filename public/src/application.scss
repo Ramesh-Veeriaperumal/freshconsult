@@ -58,7 +58,7 @@ ul.summary{
 	margin-bottom:10px; 
 	li{ 
 		@include float-left; 
-		@include min-width(16.3%);
+		width:19.5%;
 		margin:2px 0px;
 		padding:0px 0px 4px 0px;
 		border-right:1px solid #e8e8e8; 
@@ -3246,6 +3246,12 @@ div.addReminder{
 				font-size:12px;
 				span{
 					color:#444444;
+					white-space: pre-wrap;
+    				word-wrap: break-word;
+    				&.deleted{
+    					text-decoration:line-through;
+    					font-style: italic;
+    				}
 				}					
 			}
 			.priority{
@@ -5024,6 +5030,8 @@ a.close{
 
 	#contact-na {
 		padding-top:6px;
+		font-weight: normal;
+		color:#CCC;
 
 		&.salesforce-name {
 			padding-top: 10px;

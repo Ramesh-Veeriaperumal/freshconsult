@@ -14,8 +14,8 @@ class Reports::SurveyReportsController < ApplicationController
 		elsif group?
 			group_list
 		else
-			overall_summary
-			redirect_to survey_overall_report_path(:category => Survey::OVERALL) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
+			overall_summary			
+			redirect_to survey_overall_report_path(overall_params) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
 		end
     		
 	end
@@ -26,8 +26,8 @@ class Reports::SurveyReportsController < ApplicationController
 		elsif group?
 			group_list
 		else
-			overall_summary
-			redirect_to survey_overall_report_path(:category => Survey::OVERALL) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
+			overall_summary			
+			redirect_to survey_overall_report_path(overall_params) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
 		end
 
 		render :partial => "list"	
@@ -194,6 +194,13 @@ class Reports::SurveyReportsController < ApplicationController
   
     def company?
     	(params[:category] == Survey::OVERALL)
+    end
+
+    def overall_params
+    	custom_params = Hash.new
+	custom_params[:category] = Survey::OVERALL
+	custom_params[:date_range] = params[:date_range] unless params[:date_range].blank?
+	return custom_params
     end
 
 end

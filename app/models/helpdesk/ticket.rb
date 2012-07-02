@@ -27,10 +27,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
-      :create_initial_activity, :support_score_on_create
+      :create_initial_activity
   before_update :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-      :support_score_on_update, :stop_timesheet_timers
+       :stop_timesheet_timers
   
   belongs_to :email_config
   belongs_to :group
@@ -280,6 +280,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.translate_status_name(ticket_status)
   end
   
+  def source_name
+    SOURCE_NAMES_BY_KEY(source)
+  end
+
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
@@ -346,7 +350,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    ticket_id_delimiter.gsub("ticket_id","#{display_id}")
+    "[#{ticket_id_delimiter}#{display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -363,7 +367,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
     
   def self.extract_id_token(text, delimeter)
-    pieces = text.match(Regexp.new(Regexp.escape(delimeter).gsub("ticket_id","([0-9]*)"))) #by Shan changed to just numeric
+    pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
     pieces && pieces[1]
   end
 
@@ -557,7 +561,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def ticket_id_delimiter
     delimiter = account.email_commands_setting.ticket_id_delimiter
-    delimiter = delimiter.blank? ? '[#ticket_id]' : delimiter
+    delimiter = delimiter.blank? ? '#' : delimiter
   end
   
   def to_s
@@ -667,6 +671,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
+
+    # Helpdesk::TicketDrop.new self
+
     { 
       "id"                                => display_id,
       "raw_id"                            => id,
@@ -695,6 +702,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
       #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+    
   end
 
   def url_protocol
@@ -753,7 +761,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name,:priority_name,:requester_name,:responder_name]
+    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
     if deep
       self.load_flexifield
       options[:include] = [:notes,:attachments]
@@ -856,16 +864,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_emails
-    to_emails_array = (cc_email[:to_emails] || []).clone unless cc_email.nil?
+    emails_hash = cc_email_hash
+    to_emails_array = (emails_hash[:to_emails] || []).clone unless emails_hash.nil?
     to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
     to_emails_array
   end
 
   def to_cc_emails
-    return [] if cc_email.nil?
+    emails_hash = cc_email_hash
+    return [] if emails_hash.nil?
     to_emails_array = []
-    cc_emails_array = (cc_email[:cc_emails] || [])
-    to_emails_array = (cc_email[:to_emails] || []).clone
+    cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
+    to_emails_array = (emails_hash[:to_emails] || []).clone
     to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
     (cc_emails_array + to_emails_array).uniq
   end  
@@ -937,22 +947,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
     
-    def support_score_on_create
-      add_support_score unless active?
-    end
+    # def support_score_on_create
+    #   add_support_score unless active?
+    # end
     
-    def support_score_on_update
-      if active? && !@old_ticket.active?
-        s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
-        s_score.destroy if s_score
-      elsif !active? && @old_ticket.active?
-        add_support_score
-      end
-    end
+    # def support_score_on_update
+    #   if active? && !@old_ticket.active?
+    #     s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
+    #     s_score.destroy if s_score
+    #   elsif !active? && @old_ticket.active?
+    #     add_support_score
+    #   end
+    # end
     
-    def add_support_score
-      SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-    end
+    # def add_support_score
+    #   SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
+    # end
 
     def parse_email(email)
       if email =~ /(.+) <(.+?)>/

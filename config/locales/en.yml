@@ -143,6 +143,8 @@ en:
   payment_info: Payment information
   support:
       surveys:
+          thanks_for_feedback: "We have received your feedback. Thank you very much."
+          feedback_already_done: "You have already given feedback for this response."
           new:
               thanks_info: Thanks for taking time to rate our support experience.
               feedback_info: Your feedback is very much appreciated.
@@ -180,8 +182,12 @@ en:
         link_text_label: Satisfaction survey link text
         link_text_input: Please let us know your opinion on our support experience.
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Add survey link on all email sent to customer.
-        send_while_option2: Add survey link only on email sent after a ticket is resolved.
+        send_while_option1: All email sent to customer.
+        send_while_option2: Emails sent after a ticket is "Resolved".
+        send_while_option3: Emails sent after a ticket is "Closed".
+        send_while_option4: Allow agents to add survey links to specific emails.
+        send_while_title: Choose which emails have the satisfaction survey link
+        
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
@@ -1331,7 +1337,7 @@ en:
   back: Back
   ticket:
     reported_on: "from %{username}, last updated on %{date}"
-    thanks: Thank you for submitting a feedback
+    thanks: Thank you for submitting feedback
     group: Group
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
@@ -1384,6 +1390,7 @@ en:
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
       send: Send
+      send_satisfaction_survey: Include satisfaction survey
     facebook_form: 	  	
       send_and_resolve: Send and Resolve	  	
       send: Send
@@ -1974,7 +1981,7 @@ en:
     jira:
       label: "Atlassian JIRA"
       desc: "Convert tickets into issues that can be tracked in JIRA."
-      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.x upto the latest version - JIRA 5.<br/><br/>
+      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/>
         To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
         To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
         <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
@@ -2090,6 +2097,8 @@ en:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
       survey_reports:
+        feedbacks:
+            in_response_to: -- In response to  
         back_to: Back to List View
         list:
             no_feedback: Nobody has given any feedback during this time.
@@ -2169,3 +2178,8 @@ en:
   awaiting_your_reply: "Awaiting your Reply"
   this_ticket_has_been_resolved: "This ticket has been Resolved"
   this_ticket_has_been_closed: "This ticket has been Closed"
+  status_name_validate_presence_msg: " Status name can't be blank"
+  open_tickets: "Open Tickets"
+  resolved_tickets: "Resolved Tickets"
+  waiting_on_customer: "Waiting on Customer"
+  waiting_on_third_party: "Waiting on Third Party"

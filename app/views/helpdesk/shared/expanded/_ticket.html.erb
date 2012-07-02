@@ -20,7 +20,7 @@
   </td>
 
   <td class="assign">
-  	<% line_through = ticket.ticket_status.deleted? ? "text-decoration:line-through" : "" %>
+  	<% status_tag_attrs = ticket.ticket_status.deleted? ? "class=\"tooltip deleted\" title=\"#{t('status_deleted')}\"" : "" %>
       <% if ticket.freshness == :new %>
         <%=t('ticket.unassigned')%>
       <% else %>
@@ -28,8 +28,8 @@
       <% end %>
 	  	<ul>
 			<li>
-		    <%=t('ticket.status')%> <span style="<%= line_through %>"><%= h(ticket.status_name) %></span>
-		  </li>
+		   	  <%=t('ticket.status')%> <span <%= status_tag_attrs %> ><%= h(ticket.status_name) %></span>
+		    </li>
 			<li class="priority">
 			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
 			</li>

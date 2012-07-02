@@ -126,7 +126,7 @@ module TicketsFilter
       donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where 
                   (stop_sla_timer is false and account_id = #{user.account.id} and deleted is false)"
       onhold_statuses_query = "select status_id from helpdesk_ticket_statuses where 
-      (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and name not in ('Resolved','Closed'))"
+      (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and status_id not in (#{RESOLVED},#{CLOSED}))"
       group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
       group_ids = [-1] if group_ids.empty? #The whole group thing is a hack till new views come..
       
@@ -150,7 +150,7 @@ module TicketsFilter
         :pending          => ["status = ?", PENDING],
         :on_hold          => ["status in (#{onhold_statuses_query})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
-        :open_or_pending  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , OPEN, PENDING , false],
+        :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED , false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
     end

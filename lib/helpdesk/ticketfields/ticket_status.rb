@@ -18,7 +18,7 @@ module Helpdesk::Ticketfields::TicketStatus
       if(st.status_id == attr[:status_id])
         t_s = st
         break
-      elsif(st.name == attr[:name] and st.deleted?)
+      elsif((st.name).casecmp(attr[:name]) == 0 and st.deleted?)
         t_s = st
         t_s.deleted = false # restore the deleted status if the user adds the status with the same name
         break
@@ -31,6 +31,7 @@ module Helpdesk::Ticketfields::TicketStatus
       validate_default_statuses(t_s)
       ticket_statuses[index] = t_s
     else
+      return if(attr[:deleted]) # no need to create deleted statuses
       t_s = ticket_statuses.build() 
       t_s.attributes = attr
       t_s.account = account

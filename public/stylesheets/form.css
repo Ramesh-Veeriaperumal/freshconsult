@@ -4,7 +4,7 @@
 
 label { display: block; padding: 5px 0; font-size: 1.4em; }
 
-input[type=text], select, input.text { width: 95%; margin: 0 0 3px 0; color: #3f3f3f; padding: 3px; font-size: 13px; }
+input[type=text], select, input.text { width: 90%; margin: 0 0 3px 0; color: #3f3f3f; padding: 3px; font-size: 13px; }
 
 select { padding: 1px; font-size: 13px; font-weight: normal; width: auto; }
 
@@ -101,7 +101,7 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form label, .ui-form li.checkbox { font-weight: normal; margin: 0; line-height: 18px; color: #565656; font-size: 13px; font-weight: 400; }
 .ui-form label.overlabel { color: #999999; margin-top: 0; font-size: 14px; }
 .ui-form li.checkbox { overflow: hidden; *zoom: 1; padding-left: 18px; }
-.ui-form li.checkbox input { float: left; margin-right: 6px; }
+.ui-form li.checkbox input { float: left; margin-right: 6px; margin-top: 4px; margin-left: 0; }
 .ui-form li.checkbox label { position: relative; font-size: 0.9em; top: -6px; left: 1px; }
 .ui-form .largefield label { font-size: 1.4em; }
 .ui-form .largefield input { font-size: 1.4em; }
@@ -589,8 +589,16 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .radio, .checkbox { padding-left: 18px; }
 
-.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: -18px; }
+.radio input[type="radio"], .checkbox input[type="checkbox"] { float: left; margin-left: 0px; }
 
 .disabled { color: #afafaf; }
 
 .required_star { color: #d00; font-size: 16px; font-weight: bold; position: relative; top: 4px; }
+
+.new_ticket_cc_button { float: right; margin-top: -25px; width: 7.8%; }
+.new_ticket_cc_button a { text-decoration: underline; }
+.new_ticket_cc_button a:hover { text-decoration: none; }
+
+#cc_emails_sec .chzn-container, #cc_emails_sec .search-field input { width: 91% !important; }
+
+#cc_emails_sec .chzn-drop { width: 100% !important; }

@@ -76,7 +76,7 @@ class Helpdesk::NotesController < ApplicationController
     def process_item
       Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket
-        if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+        if @item.email_conversation?
           send_reply_email
           @item.create_fwd_note_activity(params[:to_emails]) if @item.fwd_email?
         end
@@ -90,7 +90,7 @@ class Helpdesk::NotesController < ApplicationController
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[params[:ticket_status]]
+          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])
@@ -179,8 +179,7 @@ class Helpdesk::NotesController < ApplicationController
       (email =~ /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/) ? true : false
     end
 
-    def send_reply_email
-      puts "<<<< THIS IS FROM REPLY METHOD >>>> #{request.host}"
+    def send_reply_email      
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
@@ -189,9 +188,10 @@ class Helpdesk::NotesController < ApplicationController
                 :bcc_emails =>validate_emails(params[:bcc_emails]),
                 :to_emails => validate_emails(params[:to_emails]), :fwd_cc_emails => validate_emails(params[:fwd_cc_emails])})
         flash[:notice] = t(:'fwd_success_msg')
-      else
+      else        
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
-                :bcc_emails =>validate_emails(params[:bcc_emails]), :req_host => request.host , :req_port => request.port})
+                :bcc_emails =>validate_emails(params[:bcc_emails]),
+                :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
         flash[:notice] = t(:'flash.tickets.reply.success')
       end
     end
