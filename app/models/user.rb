@@ -380,6 +380,9 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
+
+    # UserDrop.new self
+
     to_ret = { 
       "id"   => id,
       "name"  => to_s,
@@ -394,6 +397,7 @@ class User < ActiveRecord::Base
     to_ret["company_name"] = customer.name if customer
     
     to_ret
+    
   end
   
   def has_manage_forums?

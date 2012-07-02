@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120623115920) do
+ActiveRecord::Schema.define(:version => 20120627171748) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -1200,6 +1200,8 @@ ActiveRecord::Schema.define(:version => 20120623115920) do
     t.boolean  "blocked",                          :default => false
     t.datetime "blocked_at"
     t.string   "address"
+    t.datetime "deleted_at"
+    t.boolean  "whitelisted",                      :default => false
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
