@@ -381,7 +381,22 @@ class User < ActiveRecord::Base
   
   def to_liquid
 
-    UserDrop.new self
+    # UserDrop.new self
+
+    to_ret = { 
+      "id"   => id,
+      "name"  => to_s,
+      "email" => email,
+      "phone" => phone,
+      "mobile" => mobile,
+      "job_title" => job_title,
+      "user_role" => user_role,
+      "time_zone" => time_zone,
+    }
+    
+    to_ret["company_name"] = customer.name if customer
+    
+    to_ret
     
   end
   
