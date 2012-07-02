@@ -82,8 +82,15 @@ Ext.application({
 
         //adding listners to ajax for showing the loading mask .. global.
         Ext.Ajax.addListener('beforerequest',function(){Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'})})
-        Ext.Ajax.addListener('requestcomplete',function(){Ext.Viewport.setMasked(false)})
-        Ext.Ajax.addListener('requestexception',function(){Ext.Viewport.setMasked(false)})
+        Ext.Ajax.addListener('requestcomplete',function(){
+            Ext.Viewport.setMasked(false)
+        })
+        Ext.Ajax.addListener('requestexception',function(me,response){
+            if(response.status == 302){
+                window.location = JSON.parse(response.responseText).Location;
+            }
+            Ext.Viewport.setMasked(false)
+        })
     },
 
     onUpdated: function() {

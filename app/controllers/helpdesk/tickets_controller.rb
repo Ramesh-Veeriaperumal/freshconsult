@@ -11,7 +11,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
 
-  before_filter :set_mobile, :only => [:show, :update, :create,:get_ca_response_content,:execute_scenario]
+  before_filter :set_mobile, :only => [:show,:update, :create,:get_ca_response_content,:execute_scenario]
   
   before_filter { |c| c.requires_permission :manage_tickets }
   
@@ -76,6 +76,9 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def check_user
+    if mobile? and !"mob".eql?(params[:format]) and !current_user.nil?
+      return redirect_to mobile_ticket_url(params[:id])
+    end
     if !current_user.nil? and current_user.customer?
       return redirect_to(support_ticket_url(@ticket))
     end

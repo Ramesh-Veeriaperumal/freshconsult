@@ -3,6 +3,7 @@ class Mobile::TicketsController < ApplicationController
   include Mobile::MobileHelperMethods
 
   #before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :require_user_login
   before_filter :set_mobile
   before_filter :check_permistions, :only =>[:agent_view_list,:get_suggested_solutions,:requester_info]
   #FILTER_NAMES = [:open, :on_hold, :due_today, :new, :all_tickets]

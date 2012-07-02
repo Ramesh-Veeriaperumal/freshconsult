@@ -26,7 +26,7 @@ class Support::TicketsController < ApplicationController
     if @item.update_attributes(params[:helpdesk_ticket])
       flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
       if mobile?
-        mob { render :json => { :success => true, :item => @item }.to_json
+        render :json => { :success => true, :item => @item }.to_json
       else
         redirect_to @item
       end

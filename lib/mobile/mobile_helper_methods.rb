@@ -23,4 +23,12 @@ module Mobile::MobileHelperMethods
         params[:format] = "mob"
       end
     end
+
+    def require_user_login
+     render :json=>{:status_code=>302, :Location=>login_url},:status => 302 unless current_user
+    end
+
+    def mobile_ticket_url(id)
+      "#{MOBILE_URL}#tickets/show/#{id}"
+    end 
 end

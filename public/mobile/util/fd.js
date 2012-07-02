@@ -1,5 +1,11 @@
 var FD = FD || {};
 FD.Util = {
+    Ajax : function(){
+
+    },
+    getJSON : function(options){
+
+    },
 	reBrand: function(data){
 		Ext.Viewport.getAt(1).setBranding(data);
 	},

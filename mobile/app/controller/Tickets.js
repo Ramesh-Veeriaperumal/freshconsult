@@ -37,7 +37,11 @@ Ext.define('Freshdesk.controller.Tickets', {
         }
         else{
             Ext.Ajax.request({
-                url: '/helpdesk/tickets/'+id,
+                url: '/helpdesk/tickets/show/'+id,
+                params:{
+                    format:'mob'
+                },
+                method:'GET',
                 headers: {
                     "Accept": "application/json"
                 },

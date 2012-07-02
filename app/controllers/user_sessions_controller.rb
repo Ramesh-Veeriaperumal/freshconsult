@@ -24,6 +24,9 @@ require 'openssl'
     end
     
     @user_session = current_account.user_sessions.new
+    if mobile?
+      redirect_to root_url
+    end
   end
  
   def sso_login
