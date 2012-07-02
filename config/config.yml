@@ -8,8 +8,8 @@ free_plan_agts: 1
 base_domain: 
     development: freshdesk-dev.com
     production: freshdesk.com
-    staging: freshitil.com
-    test: freshitil.com
+    staging: freshpo.com
+    test: freshpo.com
 
 demo_site:
     development: "localhost:388"
