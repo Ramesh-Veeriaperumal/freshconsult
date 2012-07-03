@@ -16,7 +16,12 @@
 	<script src="/javascripts/modernizr-2.5.3-respond-1.1.0.min.js"></script>
 </head>
 <body>
-	<header class="header">
+	
+	<%= render :partial => "portal/body", 
+			   :locals => { :header_content => render(:partial => "layouts/shared/header"),
+							:footer_content => render(:partial => "layouts/shared/footer"),
+							:portal => current_portal } %>    
+	<!-- <header class="header">
 		<div class="wrapper">
 			<div class="header_links">
 				<% if current_user then %>              
@@ -93,6 +98,6 @@
 			}); 
 		})(jQuery);
 	<%- end -%>
-
+ -->
 </body>
 </html>
