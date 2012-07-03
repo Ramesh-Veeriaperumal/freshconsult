@@ -15,9 +15,6 @@ class Import::Zen::Start < Struct.new(:params)
  
   
   def perform
-    params.symbolize_keys!
-    params[:zendesk].symbolize_keys! if params[:zendesk]
-
     @current_account = Account.find_by_full_domain(params[:domain])   
     @current_account.make_current    
     return if @current_account.blank?

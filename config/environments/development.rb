@@ -28,4 +28,3 @@ end
 
 require 'ftools'
 File.copy('config/sphinx_development.yml', 'config/sphinx.yml', true)
-File.copy('config/redis_development.yml', 'config/redis.yml', true)

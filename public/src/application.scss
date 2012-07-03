@@ -1467,50 +1467,32 @@ h4.list_title{
 	} 
 }
 
-.contacts_sub_header{
-	@include clearfix;
-	border-bottom:1px solid #dedede;	
-	padding: 8px 20px;
-	margin:0px -20px;
-}
-
-.customer_status_tab{
-	margin-left: 20px;
-	a{
-		color:#3E71A4;
-	}
-	span{
-		&.active{
-			a{
-				color:#000;
-				font-weight:bold;
-			}
-		}
-	}
-}
-
 .alpha_sort_list{ 
-	@include pie-clearfix;
+	@include clearfix;
 	display:block;
 	list-style:none;
-	display:block;	
-	background: #fff;
-	float:right;	
+	display:block;
+	padding:4px 20px;
+	margin:0 -20px;	
+	border-bottom:1px solid #dedede;	
+	background: #efefef;
 	li{
 		float:left;
+		margin:0px;
+		padding:2px 0px;
 		a{
 			font-weight:bold;
 			text-decoration:none;
 			color: #909090;
-			padding: 4px;
+			@include border-radius(4px);
+			padding: 4px 5px;
 		}
 	}
 	li.active a, li a:hover{
-		color:#333333;
-		border-color:#000;
-		background: #fff;
-		@include box-shadow(rgba(0, 0, 0, 0.4) 0 1px 3px inset);
-		@include border-radius(5px);		
+			color:#333333;
+			border-color:#f5f5f5f;
+			background: #fff;
+			@include box-shadow(rgba(0, 0, 0, 0.25) 0px 0px 2px inset);
 	}
 } 
 
@@ -3057,14 +3039,14 @@ div.addReminder{
 	b{
 		margin-right:10px;
 		padding:5px 0px 0px 0px;
-		float:right;
+		float:left;
 	}
 	display:block;
 	a{
 		background:#cfcfcf; 
 		position:relative;
 		top:1px;
-		float:right;
+		float:left;
 		text-decoration:none;
 		padding:6px 8px;
 		margin:0px 0px 0px 0px;
@@ -4405,10 +4387,6 @@ a.close{
 	padding:5px 8px 8px 0;
 	border-bottom:1px solid #dfdfdf;
 	border-top:1px solid #ffffff;
-}
-
-.customers-toolbar{
-	float:left;
 }
 
 .sort-bar{

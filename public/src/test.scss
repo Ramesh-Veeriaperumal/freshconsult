@@ -406,20 +406,6 @@ a.menu:after, .dropdown-toggle:after {
 .tabs li.open a.menu:after, .tabs .dropdown.open .dropdown-toggle:after {
   border-top-color: #555;
 }
-
-.right-tabs{
-  margin:0px -20px; 
-  padding:10px 9px 0 50px;
-  a{ font-weight:bold; }
-  @include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
-}
-.right-tabs > li{
-  float: right;
-}
-.right-tabs .active > a, .right-tabs .active > a:hover {
-  color: #000;
-}
-
 .pills a {
   margin: 5px 3px 5px 0;
   padding: 0 15px;
