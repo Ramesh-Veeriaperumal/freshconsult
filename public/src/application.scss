@@ -1475,7 +1475,7 @@ h4.list_title{
 }
 
 .customer_status_tab{
-	margin-left: 20px;
+	margin-left: 26px;
 	a{
 		color:#3E71A4;
 	}
@@ -3456,6 +3456,11 @@ div.addReminder{
 		border-bottom:1px solid #efefef; 
 		color:#656565;
 		position:relative;
+		.customers_selector{
+		 	float:left;
+		 	margin-top:8px;
+		 	margin-right:8px;
+		 }
 		.preview_pic{
 			float:left;
 			margin-right:10px;
@@ -4409,6 +4414,20 @@ a.close{
 
 .customers-toolbar{
 	float:left;
+	input{
+		float:left;
+		margin-top: 10px;
+		margin-right: 8px;
+	}
+	.bulk-action{
+		float:left;
+		display:none;
+		a{
+			&.uiButton{
+				margin-right: 4px;
+			}
+		}
+	}
 }
 
 .sort-bar{

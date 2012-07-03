@@ -522,7 +522,7 @@ h4.list_title { margin: 3px 8px; padding: 0px; }
 
 .contacts_sub_header { overflow: hidden; *zoom: 1; border-bottom: 1px solid #dedede; padding: 8px 20px; margin: 0px -20px; }
 
-.customer_status_tab { margin-left: 20px; }
+.customer_status_tab { margin-left: 26px; }
 .customer_status_tab a { color: #3E71A4; }
 .customer_status_tab span.active a { color: #000; font-weight: bold; }
 
@@ -1132,6 +1132,7 @@ div.addReminder form label.overlabel { margin: 2px 5px 4px 10px; padding: 0px; f
 .admin_list li, .content_list li, .table-list li { list-style-image: none; list-style-type: none; margin-left: 0px; }
 .admin_list li, .content_list li, .table-list li { *zoom: 1; padding: 8px 20px; background: #FAFAFA; border-bottom: 1px solid #efefef; color: #656565; position: relative; /*		 div.item_actions{ 			visibility:hidden; 		}*/ }
 .admin_list li:after, .content_list li:after, .table-list li:after { content: ""; display: table; clear: both; }
+.admin_list li .customers_selector, .content_list li .customers_selector, .table-list li .customers_selector { float: left; margin-top: 8px; margin-right: 8px; }
 .admin_list li .preview_pic, .content_list li .preview_pic, .table-list li .preview_pic { float: left; margin-right: 10px; margin-top: -4px; }
 .admin_list li .preview_pic img, .content_list li .preview_pic img, .table-list li .preview_pic img { margin: 6px 3px 0px 3px; width: 36px; height: 36px; }
 .admin_list li div, .content_list li div, .table-list li div { padding-top: 3px; font-size: 1.1em; padding-bottom: 5px; }
@@ -1427,6 +1428,9 @@ a.close { position: absolute; right: 5px; top: 5px; width: 28px; height: 28px; b
 .toolbar { background: #f4f4f4; padding: 5px 8px 8px 0; border-bottom: 1px solid #dfdfdf; border-top: 1px solid #ffffff; }
 
 .customers-toolbar { float: left; }
+.customers-toolbar input { float: left; margin-top: 10px; margin-right: 8px; }
+.customers-toolbar .bulk-action { float: left; display: none; }
+.customers-toolbar .bulk-action a.uiButton { margin-right: 4px; }
 
 .sort-bar { font-size: 11px; color: #777777; padding: 5px 10px 5px 40px; }
 .sort-bar b { color: #666666; }
