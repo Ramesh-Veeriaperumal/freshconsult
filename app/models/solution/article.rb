@@ -32,8 +32,8 @@ class Solution::Article < ActiveRecord::Base
     indexes :desc_un_html, :as => :description
     indexes tags.name , :as => :tags
 
-    has account_id, user_id
-    has folder.category_id, :as => :category_id
+    has account_id, user_id, status
+    has folder.category_id, :as => :category_id 
     has '0', :as => :deleted, :type => :boolean    
     has folder.visibility , :as => :visibility, :type => :integer
 

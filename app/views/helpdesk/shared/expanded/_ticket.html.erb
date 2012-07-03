@@ -14,40 +14,43 @@
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data" do %>
 			  <%= content_tag :span, "", :class => "tooltip icon-image source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>
-				<%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), h(ticket.requester), :class => 'user_name' ), :date => formated_date(ticket.updated_at)) %>
+				<%= t("ticket.reported_on", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :date => formated_date(ticket.updated_at)) %>
 			<% end %>
 	  <% end %>
   </td>
 
   <td class="assign">
+  	<% status_tag_attrs = ticket.ticket_status.deleted? ? "class=\"tooltip deleted\" title=\"#{t('status_deleted')}\"" : "" %>
       <% if ticket.freshness == :new %>
         <%=t('ticket.unassigned')%>
       <% else %>
-        <span><%=t('assigned_to')%> <%= link_to(h(ticket.responder.display_name), h(ticket.responder), :class => 'username') %></span>
+        <span><%=t('assigned_to')%> <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
       <% end %>
 	  	<ul>
 			<li>
-		    <%=t('ticket.status')%> <span><%= h(ticket.status_name) %></span>
-		  </li>
+		   	  <%=t('ticket.status')%> <span <%= status_tag_attrs %> ><%= h(ticket.status_name) %></span>
+		    </li>
 			<li class="priority">
 			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
-  </td>
-	
+  </td>	
   <td class="sla">
     <% if( ticket.active? ) %>
-  	  <% if(Time.now > ticket.due_by ) %>
+		<% if(ticket.onhold? or ticket.ticket_status.deleted?)%>
+			<% on_hold_time = ticket.pending? ? ticket.ticket_states.pending_since : ticket.ticket_states.status_updated_at %>
+			<%= t('since_time', :time_words => distance_of_time_in_words_to_now(on_hold_time))%>	
+  	  	<% elsif(Time.now > ticket.due_by ) %>
 			  <%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
-		  <% else %>
+		<% else %>
 		    <%= t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 	    <% end %>  
-	  <% else %>
-	    <% if( ticket.ticket_states.resolved_at < ticket.due_by ) %>
+	<% else %>
+		<% if( ticket.ticket_states.resolved_at.nil? || ticket.ticket_states.resolved_at < ticket.due_by ) %>
 	      <%= t('resolved_on_time') %>	      
 	    <% else %>
 	      <%= t('resolved_late') %>	    
 	    <% end %>
-	  <% end %>
+	<% end %>
   </td>
 </tr>

@@ -18,7 +18,7 @@ module Reports::HelpdeskReport
  def group_tkts_by_columns(vals={})
     scoper.find( 
      :all,
-     :joins => :flexifield,
+     :joins => "INNER JOIN flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id and helpdesk_tickets.account_id = flexifields.account_id",
      :select => "count(*) count, #{vals[:column_name]}",
      :conditions => ["#{vals[:column_name]} is NOT NULL"],
      :group => "#{vals[:column_name]}")
@@ -28,7 +28,7 @@ module Reports::HelpdeskReport
     Account.current.tickets.visible.find( 
      :all,
      :select => "count(*) count,DATE(helpdesk_ticket_states.#{type}) date",
-     :joins => :ticket_states,
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
      :conditions => fetch_condition(type),
      :group => "DATE(helpdesk_ticket_states.#{type})")
   end
@@ -46,8 +46,8 @@ module Reports::HelpdeskReport
   def count_of_resolved_tickets
     @count_of_resolved_tickets ||= Account.current.tickets.visible.find( 
      :all,
-     :joins => :ticket_states,
-     :conditions => " (helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}' )").count
+     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
+     :conditions => " (helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}')").count
   end
 
   def count_of_fcr

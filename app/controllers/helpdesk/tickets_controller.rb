@@ -16,6 +16,7 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
   include Search::TicketSearch
+  include Helpdesk::Ticketfields::TicketStatus
   
   layout :choose_layout 
   
@@ -24,6 +25,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
+  before_filter :check_ticket_status, :only => [:update]
+  before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -32,14 +35,20 @@ class Helpdesk::TicketsController < ApplicationController
     unless email.blank?
       requester = current_account.all_users.find_by_email(email) 
       @user_name = email
-      if(requester.blank?)
-        requester_id = 0
+      unless requester.nil?
+        params[:requester_id] = requester.id;
       else
-        requester_id = requester.id
-        @user_name = requester.name unless requester.name.blank?
+        @response_errors = {:no_email => true}
       end
-      params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}, 
-                            { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]}"}];
+    end
+    company_name = params[:company_name]
+    unless company_name.blank?
+      company = current_account.customers.find_by_name(company_name)
+      unless(company.nil?)
+        params[:company_id] = company.id
+      else
+        @response_errors = {:no_company => true}
+      end
     end
   end
 
@@ -95,30 +104,31 @@ class Helpdesk::TicketsController < ApplicationController
       @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
     end
 
-    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
-    @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-    @show_options = show_options
-    @current_view = @ticket_filter.id || @ticket_filter.name
-    @is_default_filter = (!is_num?(@template.current_filter))
-        
     respond_to do |format|      
       format.html  do
-      end      
+        @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+        @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
+        @show_options = show_options
+        @current_view = @ticket_filter.id || @ticket_filter.name
+        @is_default_filter = (!is_num?(@template.current_filter))
+      end
+      
       format.xml do
-        render :xml => @items.to_xml
-      end      
+        render :xml => @response_errors.nil? ? @items.to_xml : @response_errors.to_xml(:root => 'errors')
+      end
+
       format.json do
-        
-        json = "["
-        @items.each { |tic| json << tic.to_json[10..-2] + ","}  
-        #Removing the root node, so that it conforms to JSON REST API standards
-        # 10..-2 will remove "{ticket:" and the last "}"
-
-        # Now we have to remove the last comma to have a valid JSON encoded string.
-        render :json => json[0..-2] + "]"
-
-      end      
-      format.atom do
+        unless @response_errors.nil?
+          render :json => {:errors => @response_errors}.to_json
+        else
+          json = "["; sep=""
+          @items.each { |tic| 
+            #Removing the root node, so that it conforms to JSON REST API standards
+            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+          }
+          render :json => json + "]"
+        end
       end
     end
   end
@@ -136,7 +146,17 @@ class Helpdesk::TicketsController < ApplicationController
   
   def user_tickets
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    render :layout => "widgets/contacts"
+
+    respond_to do |format|
+      format.json do
+        render :json => @items.to_json
+      end
+
+      format.widget do
+        render :layout => "widgets/contacts"    
+      end
+    end
+    
   end
 
   def view_ticket
@@ -195,15 +215,24 @@ class Helpdesk::TicketsController < ApplicationController
   
   def add_original_to_email
       original_to = parse_email_text(@item.to_email)[:email]
-      email_config_emails = current_account.email_configs.collect { |ec| ec.reply_email }
-      @reply_email.delete_if {|email| parse_email_text(email)[:email] ==  original_to}
-      @reply_email.insert(0, @item.to_email) 
+      friendly_original_to = @item.to_email 
+      @reply_email.each do |email|
+        temp_email = parse_email_text(email)[:email]
+        if temp_email ==  original_to
+          friendly_original_to = email
+          @reply_email.delete(email)
+        end
+      end
+      @reply_email.unshift(friendly_original_to) 
   end
 
   def show
     @reply_email = current_account.reply_emails
 
-    add_original_to_email unless @item.to_email.blank?
+    add_original_to_email if ( !@item.to_email.blank? && current_account.pass_through_enabled?)
+
+    @to_emails = @ticket.to_emails
+    @to_cc_emails = @ticket.to_cc_emails
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -224,7 +253,7 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @item.to_xml  
       }
       format.json {
-        render :json => Hash.from_xml(@item.to_xml)
+        render :json => @item.to_json
       }
       format.js
     end
@@ -258,6 +287,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def update_multiple
+    params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless params[nscname][:custom_field].nil?
     @items.each do |item|
       params[nscname].each do |key, value|
         if(!value.blank?)
@@ -271,7 +301,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def close_multiple
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]       
+    status_id = CLOSED       
     @items.each do |item|
       item.update_attribute(:status , status_id)
     end
@@ -418,8 +448,10 @@ class Helpdesk::TicketsController < ApplicationController
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
-    
-    @item.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed] if save_and_close?
+
+    @item.email_config = current_portal.product if current_portal
+
+    @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
     else
@@ -428,7 +460,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def close 
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+    status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attribute(:status , status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
@@ -449,7 +481,16 @@ class Helpdesk::TicketsController < ApplicationController
     a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
   end 
-    
+  
+  def latest_note
+    ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
+    if ticket.nil?
+      render :text => t("flash.general.access_denied")
+    else
+      render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+    end
+  end
+
   protected
   
     def item_url
@@ -544,5 +585,12 @@ class Helpdesk::TicketsController < ApplicationController
   def save_and_close?
     !params[:save_and_close].blank?
   end
- 
+
+  def check_ticket_status
+    if params["helpdesk_ticket"]["status"].blank?
+      flash[:error] = t("change_deleted_status_msg")
+      redirect_to item_url
+    end
+  end
+
 end

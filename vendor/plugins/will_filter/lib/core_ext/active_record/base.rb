@@ -43,4 +43,12 @@ class ActiveRecord::Base
     filter_class.new(self).deserialize_from_params(params).results
   end
   
+  def current_scoped_methods #:nodoc:
+    if m = scoped_methods.last and m.is_a?(Proc)
+      unscoped { m.call }
+    else
+      scoped_methods.last
+    end
+  end
+  
 end

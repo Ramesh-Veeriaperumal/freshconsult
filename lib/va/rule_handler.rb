@@ -9,10 +9,17 @@ class Va::RuleHandler
     rule_hash[:value]
   end
   
+  def rule_type
+    rule_hash[:rule_type]
+  end
+
+  def nested_rules
+    rule_hash[:nested_rules]
+  end
+
   def matches(evaluate_on)
-    if evaluate_on.respond_to?(condition.key)
-      #return evaluate_on.send(filter.key).send(operator_fn(@operator), @values)
-      evaluate_rule(evaluate_on.send(condition.key))
+    if evaluate_on.respond_to?(condition.dispatcher_key)
+      evaluate_rule(evaluate_on.send(condition.dispatcher_key))
     end
   end
   

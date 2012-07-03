@@ -9,7 +9,7 @@
         <p class="info-data">
         	<%=t('.associate_account', :product_name => product.name)%>
 		</p>
-        <a href="<%= @wrapper.authorize_url %>" class="uiButton special large"><%=t('.add_twitter')%></a>
+        <a href="<%= @auth_redirect_url %>" class="uiButton special large"><%=t('.add_twitter')%></a>
       </div>
     </div>
   </li>

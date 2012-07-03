@@ -5,6 +5,9 @@
 	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects)%>
 	  </div>  
 	<% end %>
+
+  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @user}%>
+
 <%- end %>
 <div class="contact-box clearfix">
 		<div class="action_buttons">

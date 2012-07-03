@@ -1,5 +1,4 @@
 class Support::TicketsController < Support::SupportController
-  
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   include SupportTicketControllerMethods 
   before_filter { |c| c.requires_permission :portal_request }
@@ -35,7 +34,7 @@ class Support::TicketsController < Support::SupportController
   
   def close_ticket
     @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
-     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+     status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
      logger.debug "close the ticket...with status id  #{status_id}"
      res = Hash.new
      if @item.update_attribute(:status , status_id)
@@ -53,7 +52,7 @@ class Support::TicketsController < Support::SupportController
      end                                       
      redirect_to :back
   end
-   
+    
   protected 
 
     def cname

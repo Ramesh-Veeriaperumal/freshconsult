@@ -2,7 +2,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
-
+  
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   def perform
@@ -10,6 +10,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
+      account.make_current
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
@@ -30,7 +31,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+      Account.reset_current_account
     end
+    
   end
   
   def create_article(account, from_email, to_email)
@@ -106,16 +109,22 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_orginal_to(account, email_config)
+      return unless params[:to]
       original_to_emails = params[:to].split(",")
 
-      if original_to_emails.size == 1
-        original_to = parse_email_text(original_to_emails.first)
-        original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+      parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
+      parsed_to_emails += parse_cc_email
+      original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
+
+      if parsed_to_emails.size == 1
+        if original_to_email_config
+          original_to_email =  original_to_email_config.friendly_email     
+        else
+          original_to = parse_email_text(original_to_emails.first)
+          original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
+        end
       else
-        parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
-        original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
-        email_config = original_to_email_config if original_to_email_config
-        original_to_email = email_config ? email_config.friendly_email : account.default_friendly_email
+        original_to_email = original_to_email_config ? original_to_email_config.friendly_email : account.default_friendly_email
       end
     end
     
@@ -134,7 +143,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return f_email unless(f_email[:email].blank? || f_email[:email] =~ /(noreply)|(no-reply)/i)
       
       headers = params[:headers]
-      if(!headers.nil? && headers =~ /Reply-to:(.+)$/i)
+      if(!headers.nil? && headers =~ /Reply-[tT]o: (.+)$/)
         rt_email = parse_email($1)
         return rt_email unless rt_email[:email].blank?
       end
@@ -149,12 +158,22 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       return cc_array.uniq
     end
+
+    def parse_to_emails
+      to_emails = params[:to].split(",") if params[:to]
+      parsed_to_emails = []
+      (to_emails || []).each do |email|
+        parsed_email = parse_email_text(email)
+        parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email].strip}>") if !parsed_email.blank? && !parsed_email[:email].blank?
+      end
+      parsed_to_emails
+    end
     
     def create_ticket(account, from_email, to_email)
       email_config = account.email_configs.find_by_to_email(to_email[:email])
       user = get_user(account, from_email,email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
-      unless user.customer?
+      if ( !user.customer? && !user.deleted?)
         e_email = orig_email_from_text
         user = get_user(account, e_email , email_config) unless e_email.nil?
       end
@@ -168,22 +187,23 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:name => from_email[:name],
         :requester => user,
         :to_email => parse_orginal_to(account, email_config),
-        :cc_email => parse_cc_email,
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :to_emails => parse_to_emails},
         :email_config => email_config,
-        :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
+        :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
         #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      #ticket = check_for_auto_responders(ticket)
-      
-      process_email_commands(ticket, user, email_config) if user.agent?
+      ticket = check_for_auto_responders(ticket)      
 
       begin
-        email_cmds_regex = get_email_cmd_regex(account)
-        ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
-        ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+        if (user.agent? && !user.deleted?)
+          process_email_commands(ticket, user, email_config)
+          email_cmds_regex = get_email_cmd_regex(account)
+          ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
+          ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+        end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
@@ -214,7 +234,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Precedence:(\s)*[bulk|junk]/i) || (headers =~ /Auto-Submitted:(\s)*auto-*/i) || (headers =~ /Reply-To:(\s)*<>/i) || (headers =~ /Return-Path:(\s)*<>/i)))
+      if(!headers.blank? && ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) ))
         ticket.spam = true
       end
       ticket  
@@ -223,23 +243,29 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email, ticket.email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
-      if can_be_added_to_ticket?(ticket,user)
+      if can_be_added_to_ticket?(ticket,user)        
+        body = show_quoted_text(params[:text],ticket.reply_email)
+        body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+        from_fwd_recipients = from_fwd_emails?(ticket, from_email)
         note = ticket.notes.build(
-          :private => false,
+          :private => (from_fwd_recipients and user.customer?) ? true : false ,
           :incoming => true,
-          :body => show_quoted_text(params[:text],ticket.reply_email),
-          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), ticket.reply_email),
-          :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+          :body => body,
+          :body_html => body_html ,
+          :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
-        )
+        )       
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
-        process_email_commands(ticket, user, ticket.email_config) if user.agent?
         
         begin
-          email_cmds_regex = get_email_cmd_regex(ticket.account)
-          note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,ticket.reply_email) if(!params[:text].blank? && email_cmds_regex)
-          note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), ticket.reply_email) if(!params[:html].blank? && email_cmds_regex)
+          if (user.agent? && !user.deleted?)
+            ticket.responder ||= user
+            process_email_commands(ticket, user, ticket.email_config, note)
+            email_cmds_regex = get_email_cmd_regex(ticket.account)
+            note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
+            note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          end
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
         end
@@ -252,7 +278,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def can_be_added_to_ticket?(ticket,user)
-      !user.customer? or
+      ( !user.customer? && !user.deleted?) or
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
       belong_to_same_company?(ticket,user)
@@ -326,7 +352,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     original_msg = text[0, index]
     old_msg = text[index,text.size]
-   
+    
+    #Sanitizing the original msg   
+    unless original_msg.blank?
+      sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+      original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
+    end
+    #Sanitizing the old msg   
+    unless old_msg.blank?
+      sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+      old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
+    end
+      
     unless old_msg.blank?
      original_msg = original_msg +
      "<div class='freshdesk_quote'>" +
@@ -340,5 +377,14 @@ end
       envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
       envelope_to
     end    
+    
+    def from_fwd_emails?(ticket,from_email)
+      cc_email_hash_value = ticket.cc_email_hash
+      unless cc_email_hash_value.nil?
+        cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email]) }
+      else
+        false
+      end
+    end
   
 end

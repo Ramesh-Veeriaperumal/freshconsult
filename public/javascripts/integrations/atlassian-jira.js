@@ -85,7 +85,7 @@ JiraWidget.prototype= {
 			init_reqs = [{
 				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
-				on_failure: jiraWidget.processFailure,
+				on_failure: jiraWidget.processFailureCreate,
 				on_success: jiraWidget.displayIssue.bind(this)
 			}];	
 		}  else {
@@ -146,7 +146,7 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadProject:function() {
-		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
+		selectedProjectNode = UIUtil.constructDropDown(this.projectData.responseJSON, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
 		UIUtil.hideLoading('jira','projects','');
 	},
 
@@ -189,7 +189,7 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadIssueTypes:function(resData){
-		selectedProjectNode = UIUtil.constructDropDown(resData, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
+		selectedProjectNode = UIUtil.constructDropDown(resData.responseJSON, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
 		UIUtil.hideLoading('jira','issue-types','');
 	},
 
@@ -597,16 +597,20 @@ JiraWidget.prototype= {
 	}, 
 
 	processFailure: function(evt) {
-		if (evt.status == 401) {
+		if (evt.status == 401) 
 			alert("Username or password is incorrect.");
-		} else if (evt.status == 404) {
-			var error_json = evt.responseJSON
-			alert(error_json['errorMessages']);
+		else{
+			alert("Jira reports the following error : " + evt.responseJSON.errorMessages[0]);
+		}
+	},
+
+	processFailureCreate: function(evt) {
+		if (evt.status == 404) {
 			jiraWidget.freshdeskWidget.delete_integrated_resource(jiraBundle.integrated_resource_id);
 			jiraWidget.displayCreateWidget();
 		} 
 		else{
-			// log("Server Error")
+			this.processFailure(evt);
 		}
 	}
 }

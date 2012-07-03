@@ -6,10 +6,19 @@ module Integrations::AppsUtil
     @installed_applications = Integrations::InstalledApplication.find(:all, :conditions => ["account_id = ?", current_account])
   end
 
-  def get_encrypted_value(text)
-  	public_key_file = 'config/cert/public.pem'
-  	public_key = OpenSSL::PKey::RSA.new(File.read(public_key_file))
-  	encrypted_value = Base64.encode64(public_key.public_encrypt(text))
+  def get_encrypted_value(params)
+    begin
+      if params[:encryptiontype] == "md5"
+      params[:password] = Digest::MD5.hexdigest(params[:password]) unless params[:password].blank?
+    else
+      public_key_file = 'config/cert/public.pem'
+      public_key = OpenSSL::PKey::RSA.new(File.read(public_key_file))
+      params[:password] = Base64.encode64(public_key.public_encrypt(params[:password])) unless params[:password].blank?
+    end  
+    rescue Exception => e
+      Rails.logger.error("Error encrypting password for the installed application. #{e.message}")
+    end
+    return params
   end
 
   def self.get_decrypted_value(encrypted_value)

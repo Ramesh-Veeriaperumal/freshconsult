@@ -5,7 +5,7 @@
   	<h3 class="title"><%= t(".todo_title") %></h3>
     <%= render :partial => '/helpdesk/reminders/reminders', 
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
-  </div>                           
+  </div>
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
@@ -22,12 +22,14 @@
 </div>
 <%= will_paginate @items %>
 <% content_for :pagefixed do %> 
-  <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities"), { :activity_id => @items.first.id}) %>  
+  <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities"), { :activity_id => @items.first.id}) unless @items.empty?%>
+  <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) if @items.empty? %>
 <% end %>
 
 <% content_for :onload_script do %>
 	activity_count = 0;
 	previous_id = jQuery('#Pages li').first().prop('id');
+    if(previous_id == undefined) previous_id = 0;
   jQuery("#Pages div.activity_time").humaneDates(); 
   new PeriodicalExecuter(function(pe) {
     jQuery.get(
@@ -41,6 +43,7 @@
       			jQuery('#recent_activities_count')
       			  .html(plural(activity_count, "<%= t('recent_activity') %>", "<%= t('recent_activities') %>"));
       			previous_id = jQuery('#recent_activities li.activity').first().attr('id');
+			    if(previous_id == undefined) previous_id = 0;
       			jQuery('#recent_activities_count').slideDown();
       		}                                                      
 					jQuery("div.activity_time").humaneDates();

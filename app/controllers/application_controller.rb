@@ -3,11 +3,12 @@
 
 class ApplicationController < ActionController::Base
   
+  before_filter :reset_current_account
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
   before_filter :set_locale
-
+  
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
   include HelpdeskSystem
@@ -67,6 +68,10 @@ class ApplicationController < ActionController::Base
   
   def set_default_locale
     I18n.locale = I18n.default_locale
+  end
+  
+  def reset_current_account
+    Thread.current[:account] = nil
   end
   
 end

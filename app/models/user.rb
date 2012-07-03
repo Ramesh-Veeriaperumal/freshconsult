@@ -1,8 +1,11 @@
 class User < ActiveRecord::Base
+  
+  belongs_to_account
   include ActionController::UrlWriter
   include SavageBeast::UserInit
   include SentientUser
   #include ParserUtil
+  include Helpdesk::Ticketfields::TicketStatus
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -19,7 +22,6 @@ class User < ActiveRecord::Base
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
   EMAIL_REGEX = /(\A[A-Z0-9_\.%\+\-\'=]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
   
-  belongs_to :account
   belongs_to :customer
   
   has_many :authorizations, :dependent => :destroy
@@ -65,7 +67,8 @@ class User < ActiveRecord::Base
       { :conditions => ["id != ?", user.id]}  
     end      
   }
-      
+  named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
@@ -99,6 +102,11 @@ class User < ActiveRecord::Base
       new_tags = []
       updated_tag_names.each { |updated_tag_name|
         updated_tag_name = updated_tag_name.strip
+        m=false
+        new_tags.each { |fetched_tag|
+          m=true if fetched_tag.name == updated_tag_name
+        }
+        next if m
         # TODO Below line executes query for every iteration.  Better to use some cached objects.
         new_tags.push self.account.tags.find_by_name(updated_tag_name) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
       }
@@ -200,7 +208,7 @@ class User < ActiveRecord::Base
   end
 
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
+    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model
@@ -216,10 +224,10 @@ class User < ActiveRecord::Base
   has_many :reminders, 
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
-  has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" , :dependent => :destroy
+  has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
   
   has_many :open_tickets, :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id",
-  :conditions => {:status => [TicketConstants::STATUS_KEYS_BY_TOKEN[:open],TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]]},
+  :conditions => {:status => [OPEN,PENDING]},
   :order => "created_at desc"
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
@@ -297,6 +305,10 @@ class User < ActiveRecord::Base
   end
   ##Authorization copy ends here
   
+  def url_protocol
+    account.ssl_enabled? ? 'https' : 'http'
+  end
+
   def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
     portal ||= account.main_portal
     reset_perishable_token!
@@ -313,7 +325,7 @@ class User < ActiveRecord::Base
     
     UserNotifier.deliver_password_reset_instructions(self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)) , 
+          'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)) , 
           :subject => Liquid::Template.parse(subj_template).render ,:reply_email => portal.product.friendly_email)
   end
   
@@ -334,7 +346,7 @@ class User < ActiveRecord::Base
     
     UserNotifier.send_later(:deliver_user_activation, self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+          'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
         :subject => Liquid::Template.parse(subj_template).render , :reply_email => portal.product.friendly_email)
   end
   
@@ -346,7 +358,7 @@ class User < ActiveRecord::Base
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       UserNotifier.send_later(:deliver_user_activation, self, 
           :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
           :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => portal.product.friendly_email)
     end
   end
@@ -368,6 +380,9 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
+
+    # UserDrop.new self
+
     to_ret = { 
       "id"   => id,
       "name"  => to_s,
@@ -382,6 +397,7 @@ class User < ActiveRecord::Base
     to_ret["company_name"] = customer.name if customer
     
     to_ret
+    
   end
   
   def has_manage_forums?

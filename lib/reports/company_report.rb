@@ -25,21 +25,21 @@ module Reports::CompanyReport
   def count_of_tickets_last_month()
    @last_month_tot_tickets = scoper(previous_start,previous_end).find(
      :all,
-     :joins => :requester,
+     :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id ",
      :conditions => { :users => {:customer_id => "#{params[:customer_id]}"}}).count
   end
 
   def count_of_resolved_tickets
     @count_of_resolved_tickets ||= Account.current.tickets.visible.find( 
      :all,
-     :joins => [:requester, :ticket_states],
+     :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
      :conditions => ["(`users`.`customer_id` = ?) AND (helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}' )",params[:customer_id] ]).count
   end
 
   def group_tkts_by_columns(vals={})
     scoper.find(
      :all,
-     :joins => [:requester, :flexifield],
+     :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id and helpdesk_tickets.account_id = flexifields.account_id",
      :select => "count(*) count, #{vals[:column_name]}",
      :conditions => [" users.customer_id = ? and #{vals[:column_name]} is NOT NULL",params[:customer_id]],
      :group => "#{vals[:column_name]}")
@@ -49,7 +49,7 @@ module Reports::CompanyReport
     Account.current.tickets.visible.find(
      :all,
      :select => "count(*) count,DATE(helpdesk_ticket_states.#{type}) date",
-     :joins => [:ticket_states, :requester],
+     :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
      :conditions => fetch_condition(type),
      :group => "DATE(helpdesk_ticket_states.#{type})")
   end

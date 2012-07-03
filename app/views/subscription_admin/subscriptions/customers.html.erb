@@ -3,10 +3,10 @@
 	 <div class="span3">
 			<h3>Last 30 days signups</h3>
 			<table id="customers" class="table">
-				<%@signups_per_day.each do |day,accs|%>
+				<%@signups_per_day.each do |date,count|%>
 				  <tr>
-			       <td><%=day.strftime("%d-%B")%></td>
-			       <td><%= accs.size %></td>
+			       <td><%=date%></td>
+			       <td><%=count%></td>
 			     </tr>
 				<%end%>
 			</table>

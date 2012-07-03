@@ -1732,7 +1732,7 @@ QTIP.defaults = {
 		{
 			// Make sure ajax options are enabled and bind event
 			if(opts && opts.url) {
-				tooltip.bind('tooltipshow'+namespace, self.load);
+				tooltip.unbind(namespace)[ opts.once ? 'one' : 'bind' ]('tooltipshow'+namespace, self.load);
 			}
 
 			return self;
@@ -1783,7 +1783,7 @@ QTIP.defaults = {
 			}
 
 			// Error handler
-			function errorHandler(xh, status, error){ api.set('content.text', status + ': ' + error); after(); }
+			function errorHandler(xh, status, error){ /*api.set('content.text', status + ': ' + error); after();*/ }
 
 			// Setup $.ajax option object and process the request
 			$.ajax( $.extend({ success: successHandler, error: errorHandler, context: api }, opts, { url: url }) );

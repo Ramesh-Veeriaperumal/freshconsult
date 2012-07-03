@@ -7,13 +7,13 @@ FreshbooksWidget.prototype = {
 	TASK_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?> <request method="task.list" > <project_id>#{project_id}</project_id> </request>'),
 	CREATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.create"> <time_entry> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> <staff_id>#{staff_id}</staff_id> </time_entry></request>'),
 	RETRIEVE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.get"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
-	UPDATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <staff_id>#{staff_id}</staff_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> </time_entry></request>'),
+	UPDATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <staff_id>#{staff_id}</staff_id> <hours>#{hours}</hours> <date>#{date}</date> <notes><![CDATA[#{notes}]]></notes> </time_entry></request>'),
 	UPDATE_TIMEENTRY_ONLY_HOURS_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <hours>#{hours}</hours> </time_entry></request>'),
 	DELETE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.delete"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
 
 	initialize:function(freshbooksBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
-		this.projectData = ""; init_reqs = []
+		this.projectData = ""; init_reqs = []; this.executed_date = new Date();
 		init_reqs = [null, {
 			body: widgetInst.STAFF_LIST_REQ.evaluate({}),
 			content_type: "application/xml",
@@ -326,8 +326,7 @@ FreshbooksWidget.prototype = {
 	// Utility methods
 	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		if(this.isRespSuccessful(resData.responseXML)){
-			UIUtil.constructDropDown(resData, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
-			
+			UIUtil.constructDropDown(resData.responseXML, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
 		}
 		return foundEntity;
 	},
@@ -337,7 +336,7 @@ FreshbooksWidget.prototype = {
 		if(resEntities.length>0){
 			var errorStr = XmlUtil.getNodeValueStr(resEntities[0],"error");
 			if(errorStr != ""){
-				alert("Freshbooks reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+				alert("Freshbooks reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fixing the error manually.  If you can not do so, contact support.");
 				return false;
 			}
 		}
@@ -372,7 +371,8 @@ FreshbooksWidget.prototype = {
 					project_id: $("freshbooks-timeentry-projects").value,
 					task_id: $("freshbooks-timeentry-tasks").value,
 					notes: $("freshbooks-timeentry-notes").value,
-					hours: $("freshbooks-timeentry-hours").value
+					hours: $("freshbooks-timeentry-hours").value,
+					date: this.executed_date.toString("yyyy-MM-dd")
 				});
 				this.freshdeskWidget.request({
 					body: body,
@@ -423,9 +423,10 @@ FreshbooksWidget.prototype = {
 		$("freshbooks-timeentry-submit").hide();
 	},
 
-	updateNotesAndTimeSpent:function(notes, timeSpent, billable) {
+	updateNotesAndTimeSpent:function(notes, timeSpent, billable, executed_date) {
 		$("freshbooks-timeentry-hours").value = timeSpent;
 		$("freshbooks-timeentry-notes").value = (notes+"\n"+freshbooksBundle.freshbooksNote).escapeHTML();
+		this.executed_date = new Date(executed_date);
 	},
 
 	// This is method needs to be called by the external time entry code to map the remote and local integrated resorce ids.

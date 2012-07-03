@@ -2,6 +2,8 @@
 # and open the template in the editor.
 
 class Flexifield < ActiveRecord::Base
+  
+  belongs_to_account
 
   belongs_to :flexifield_set, :polymorphic => true
   belongs_to :flexifield_def, :include => 'flexifield_def_entries'
@@ -38,6 +40,7 @@ class Flexifield < ActiveRecord::Base
   
     ff_field = to_ff_field ff_alias    
     if ff_field       
+      ff_value = nil if ff_value.blank?
       write_attribute ff_field, ff_value
     else
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"

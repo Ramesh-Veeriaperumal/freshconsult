@@ -2,6 +2,7 @@ module Helpdesk::TicketsHelper
   
   include Wf::HelperMethods
   include TicketsFilter
+  include Helpdesk::Ticketfields::TicketStatus
   
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -203,7 +204,7 @@ module Helpdesk::TicketsHelper
   
   def bind_last_conv (ticket, signature)
  
-    last_conv = ticket.notes.public.last ? ticket.notes.public.last : ticket
+    last_conv = ticket.notes.visible.public.last ? ticket.notes.visible.public.last : ticket
     
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
@@ -211,9 +212,14 @@ module Helpdesk::TicketsHelper
       last_reply_content = last_conv.description_html
     else
       last_reply_by = (last_conv.user.name || '')+"&lt;"+(last_conv.user.email || '')+"&gt;" 
-      last_reply_by  = (ticket.reply_name)+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
+      last_reply_by  = (ticket.reply_name || '')+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
       last_reply_content = last_conv.body_html
+      unless last_reply_content.blank?
+        doc = Nokogiri::HTML(last_reply_content)
+        doc.at_css("div.freshdesk_quote").remove unless doc.at_css("div.freshdesk_quote").blank?
+        last_reply_content = doc.at_css("body").inner_html 
+      end
     end
     content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
@@ -222,14 +228,18 @@ module Helpdesk::TicketsHelper
     
   end
   
-  def status_changed_time_value_hash (status)
+  def status_changed_time_value_hash (ticket)
+    status_name = ticket.status_name
+    status = ticket.status
     case status
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]
-        return {:title => t('ticket_resolved_at_time'), :method => "resolved_at"}
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]
-        return {:title =>  t('ticket_pending_since_time'), :method => "pending_since"}
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]
-        return {:title => t('ticket_closed_at_time'), :method => "closed_at"}
+      when RESOLVED
+        return {:title => "#{status_name}", :method => "resolved_at"}
+      when PENDING
+        return {:title =>  "#{status_name}", :method => "pending_since"}
+      when CLOSED
+        return {:title => "#{status_name}", :method => "closed_at"}
+      else
+        return {:title => "#{status_name}", :method => "status_updated_at"}
     end
   end
   

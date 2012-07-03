@@ -5,7 +5,7 @@ class Helpdesk::NotesController < ApplicationController
   
   include HelpdeskControllerMethods
   
-  before_filter :validate_attachment_size , :only =>[:create]
+  before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -75,23 +75,22 @@ class Helpdesk::NotesController < ApplicationController
 
     def process_item
       Thread.current[:notifications] = current_account.email_notifications
-      if @parent.is_a? Helpdesk::Ticket      
-        send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+      if @parent.is_a? Helpdesk::Ticket
+        if @item.email_conversation?
+          send_reply_email
+          @item.create_fwd_note_activity(params[:to_emails]) if @item.fwd_email?
+        end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
           twt = send("send_tweet_as_#{twt_type}")
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
-        elsif facebook?
-          fb_comment = add_facebook_comment
-          unless fb_comment.blank?
-            fb_comment.symbolize_keys!
-            @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
-          end
+        elsif facebook?  
+            send_facebook_reply  
         end
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[params[:ticket_status].to_sym()]
+          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])
@@ -118,12 +117,49 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-     if !params[:include_cc].blank?
-       cc_array = validate_emails params[:cc_emails]
-       cc_array = cc_array.compact unless cc_array.nil?
-       @parent.update_attribute(:cc_email, cc_array)  
-     end
+      cc_email_hash_value = @parent.cc_email_hash # cc_email_hash value can be either nil or hash
+      if cc_email_hash_value.nil?
+        cc_email_hash_value = {:cc_emails => [], :fwd_emails => []}
+      end
+      if @item.fwd_email?
+        old_fwd_email_list =  cc_email_hash_value[:fwd_emails]
+        fwd_to_array = validate_emails params[:to_emails]
+        unless fwd_to_array.nil?
+          fwd_cc_array = validate_emails params[:fwd_cc_emails]
+          fwd_bcc_array = validate_emails params[:bcc_emails]  
+          fwd_cc_array.try(:concat,fwd_bcc_array) unless fwd_bcc_array.nil?
+          fwd_to_array.concat(fwd_cc_array) unless fwd_cc_array.nil?
+          fwd_to_array.concat(old_fwd_email_list)
+        end
+        fwd_to_array ||= []
+        cc_email_hash_value[:fwd_emails] = fwd_to_array.uniq
+      else
+        cc_array = validate_emails params[:cc_emails]
+        cc_array = cc_array.compact unless cc_array.nil?
+        cc_array ||= []
+        cc_email_hash_value[:cc_emails] = cc_array.uniq
+      end
+      @parent.update_attribute(:cc_email, cc_email_hash_value)      
    end
+
+  def send_facebook_reply
+    
+    if @parent.is_fb_message?
+      fb_reply = add_facebook_reply
+      unless fb_reply.blank?
+        fb_reply.symbolize_keys!
+        @item.create_fb_post({:post_id => fb_reply[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id,
+                              :thread_id =>@parent.fb_post.thread_id , :msg_type =>'dm'})
+      end
+    else
+      fb_comment = add_facebook_comment
+      unless fb_comment.blank?
+        fb_comment.symbolize_keys!
+        @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
+      end
+    end
+    
+  end
    
    def validate_emails email_array
      unless email_array.blank?
@@ -143,12 +179,21 @@ class Helpdesk::NotesController < ApplicationController
       (email =~ /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/) ? true : false
     end
 
-    def send_reply_email
+    def send_reply_email      
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , :bcc_emails =>validate_emails(params[:bcc_emails])})  
-      flash[:notice] = t(:'flash.tickets.reply.success')
+      if @item.fwd_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
+                :bcc_emails =>validate_emails(params[:bcc_emails]),
+                :to_emails => validate_emails(params[:to_emails]), :fwd_cc_emails => validate_emails(params[:fwd_cc_emails])})
+        flash[:notice] = t(:'fwd_success_msg')
+      else        
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
+                :bcc_emails =>validate_emails(params[:bcc_emails]),
+                :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
+        flash[:notice] = t(:'flash.tickets.reply.success')
+      end
     end
 
     def create_error
@@ -202,12 +247,32 @@ class Helpdesk::NotesController < ApplicationController
         facebook_page = @fb_client.get_page
         post_id =  @parent.fb_post.post_id
         comment = facebook_page.put_comment(post_id, @item.body) 
-       rescue
-        flash[:notice] = t('facebook.not_authorized')
+      rescue => e
+        fb_page.update_attributes({ :reauth_required => true, :last_error => e.message})
+        flash[:notice] = e.message
         return nil
        end
       end
   end
+  
+  ##This method can be used to send reply to facebook pvt message
+  ##
+  def add_facebook_reply
+    fb_page =  @parent.fb_post.facebook_page
+    unless fb_page.blank?
+       begin 
+        @fb_client = FBClient.new fb_page,{:current_account => current_account}
+        facebook_page = @fb_client.get_page
+        thread_id =  @parent.fb_post.thread_id
+        reply = facebook_page.put_object(thread_id , 'messages',:message => @item.body)
+      rescue => e
+        fb_page.update_attributes({ :reauth_required => true, :last_error => e.message})
+        flash[:notice] = e.message
+        return nil
+       end
+     end
+  end
+  
    def validate_attachment_size
      total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
      if total_size > Helpdesk::Note::Max_Attachment_Size    
@@ -225,4 +290,21 @@ class Helpdesk::NotesController < ApplicationController
    return twt_text
   end
 
+  def validate_fwd_to_email
+    if(@item.fwd_email?)
+      if(params[:to_emails].blank?)
+        flash[:error] = t('validate_fwd_to_email_msg')
+        redirect_to item_url
+      else
+        if (params[:to_emails].any? { |email| email.include?@parent.requester.email })
+          flash[:error] = t('use_reply_option')
+          redirect_to item_url
+        elsif((validate_emails(params[:to_emails])).blank?)
+          flash[:error] = t('validate_fwd_to_email_msg')
+          redirect_to item_url
+        end
+      end
+    end
+  end
+  
 end

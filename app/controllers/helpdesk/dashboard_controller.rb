@@ -1,6 +1,7 @@
 class Helpdesk::DashboardController < ApplicationController
   
   helper 'helpdesk/tickets' #by Shan temp
+  include Reports::ScoreboardReport
 
   before_filter { |c| c.requires_permission :manage_tickets }
 
@@ -9,6 +10,8 @@ class Helpdesk::DashboardController < ApplicationController
     if request.xhr?
       render(:partial => "ticket_note", :collection => @items)
     end
+    #for leaderboard widget
+    @champions = list_of_champions()
   end
   
   def latest_activities
@@ -20,7 +23,7 @@ class Helpdesk::DashboardController < ApplicationController
   def latest_summary
     render :partial => "summary"
   end
-  
+
   protected
     def recent_activities(activity_id)
       if activity_id

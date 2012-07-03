@@ -6,8 +6,9 @@ namespace :sla do
       puts "SLA Escalation task initialized at #{Time.zone.now}"
       accounts = Account.active_accounts
       accounts.each do |account|     
-    
-     overdue_tickets = account.tickets.visible.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
+      account.make_current
+     overdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states, :readonly => false, 
+                        :conditions =>['due_by <=? AND isescalated=? AND status IN (?)', Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
      overdue_tickets.each do |ticket|      
       sla_policy_id = nil
       unless ticket.requester.customer.nil?     
@@ -23,7 +24,8 @@ namespace :sla do
         ticket.update_attribute(:isescalated , true)
      end
     
-      froverdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND status=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
+      froverdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states , :readonly => false , 
+                            :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
       froverdue_tickets.each do |fr_ticket|
       
       fr_sla_policy_id = nil
@@ -44,13 +46,14 @@ namespace :sla do
     
     ##Tickets left unassigned in group
     
-    tickets_unpicked = account.tickets.visible.find(:all, :joins => [:ticket_states,:group] , :readonly => false , :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
+    tickets_unpicked = account.tickets.visible.find(:all, :joins => [:ticket_states,:group] , :readonly => false , :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticketfields::TicketStatus::OPEN,nil] )
     tickets_unpicked.each do |gr_ticket| 
       send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
       gr_ticket.ticket_states.update_attribute(:group_escalated , true)
     end
-    end
+  end
     puts "SLA Escalation task completed at #{Time.zone.now}"
+    Account.reset_current_account 
    end
   end
 end

@@ -11,7 +11,7 @@ class EmailController < ApplicationController
   end
 
   def create
-    #Delayed::Job.enqueue Helpdesk::ProcessEmail.new(params)
+    # Delayed::Job.enqueue Helpdesk::ProcessEmail.new(params)
     Helpdesk::ProcessEmail.new(params).perform
     
     render :layout => 'email'

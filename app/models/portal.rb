@@ -9,14 +9,13 @@ class Portal < ActiveRecord::Base
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    #:conditions => ['description = ?', 'logo' ],
-    :conditions => { :description => 'logo' },
+    :conditions =>  [' description = ? ', 'logo' ],
     :dependent => :destroy
   
   has_one :fav_icon,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :conditions => ['description = ?', 'fav_icon' ],
+    :conditions => [' description = ?', 'fav_icon' ], 
     :dependent => :destroy
   
   has_one :template, :class_name => 'Portal::Template'
@@ -61,6 +60,7 @@ class Portal < ActiveRecord::Base
     filter_fields account.ticket_fields.customer_editable
   end
 
+<<<<<<< HEAD
   def layout
     self.template.layout    
   end
@@ -83,6 +83,10 @@ class Portal < ActiveRecord::Base
   
   def new_ticket_path
     new_support_ticket_path(:host => portal_url)
+=======
+  def host
+    portal_url.blank? ? account.full_domain : portal_url
+>>>>>>> refs/heads/Master
   end
   
   private

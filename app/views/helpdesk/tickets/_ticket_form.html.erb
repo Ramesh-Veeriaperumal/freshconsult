@@ -4,6 +4,13 @@
 <% current_portal.ticket_fields.each do |field|
     if is_edit
       field_value = ((field.is_default_field?) ? @item[field.field_name] : @item.get_ff_value(field.name)) 
+      if(field.field_type == "nested_field")
+        field_value = {}
+        field.nested_levels.each do |ff|
+          field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @item.get_ff_value(ff[:name])
+        end
+        field_value.merge!({:category_val => @item.get_ff_value(field.name)})
+      end
     end
     unless params[:topic_id].nil? && !field.is_default_field?
       field_value = @item[field.field_name]
@@ -11,6 +18,8 @@
     field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{field.name}") : field.label
   %>
   <%= construct_ticket_element :helpdesk_ticket, field, field_label, field.dom_type, field.required, field_value %>
+  
+  <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 <% end %>
 <% content_for :onload_script do -%> 
   jQuery('#helpdesk_ticket_group_id')

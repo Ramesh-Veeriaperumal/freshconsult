@@ -36,6 +36,12 @@
     		<%= form.select :subscription_discount_id, SubscriptionDiscount.all(:order => 'name').collect {|d| ["#{d.name} (#{d.code}) - #{discount_label(d)}", d.id]}, :include_blank => true %>                                              
 			</div>
 		</div>
+		<div class="control-group">
+			<%= form.label :free_agents, "", :class => "control-label" %>
+			<div class="controls">
+    		<%= form.text_field :free_agents %>
+			</div>
+		</div>	
   </fieldset>  
 	<div class="form-actions">
   	<%= submit_tag "Save changes", :class => "btn btn-primary" %>

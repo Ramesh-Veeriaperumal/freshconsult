@@ -15,7 +15,7 @@
 <% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
 	<ul class="ui-form">
 		<li class="inline-field">  
-			<% if @subscription.state == 'trial' %>
+			<% if @subscription.trial? %>
 				<div class="info-highlight"> 
 					<h3 class="title">
   					<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit) %>
@@ -30,7 +30,7 @@
 				<%= hidden_field_tag :charge_now, "false", :id => "chargenow" %>
 				<span class="seperator"></span>
 				<div class="button-container">
-					<% if @subscription.state == 'trial' %>
+					<% if @subscription.trial? %>
 						<%= link_to( "&larr; #{t('select_another_plan')}", account_url, :class => "uiButton floatl" ) %>
 						<%= submit_tag t('.begin_subscription'), :class => "uiButton special", :id => "begin_subscription" %>	
 					<% else %>

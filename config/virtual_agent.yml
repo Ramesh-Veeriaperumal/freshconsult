@@ -8,7 +8,6 @@ default_fields:
         
     to_email:
         handler: email
-        
     subject:
         handler: text
 
@@ -57,7 +56,7 @@ default_fields:
         <<: *date_time
     agent_responded_at:
         <<: *date_time
-    first_response_due:
+    first_response_time:
         <<: *date_time
     due_by:
         <<: *date_time
@@ -72,3 +71,4 @@ handlers:
     date_time: Va::Handlers::DateTime
     dropdown:  Va::Handlers::Text
     checkbox: Va::Handlers::Boolean
+    nested_field: Va::Handlers::NestedField

@@ -25,10 +25,11 @@ class ForumsController < ApplicationController
 
     if @forum.ideas? and params[:order].blank?
       conditions =  {:stamp_type => params[:stamp_type]} unless params[:stamp_type].blank?
-      @topics = @forum.topics.find(:all, :include => :votes, :conditions => conditions).sort_by { |u| -u.votes.size }
+      @topics = @forum.topics.find(:all, :include => :votes, :conditions => conditions).sort_by { |u| [-u.sticky,-u.votes.size] }
     else
       params[:order] = "created_at" if params[:order].blank? 
       params[:order] = params[:order] + " desc" unless params[:order].include?("desc")
+      params[:order] = "sticky desc, #{params[:order]}"
       @topics = @forum.topics.find(:all,:order => params[:order])
     end
     

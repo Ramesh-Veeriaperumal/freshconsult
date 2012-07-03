@@ -49,7 +49,11 @@ module ApplicationHelper
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
- 
+  
+  def show_admin_flash
+    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
+  end   
+
   def show_announcements                                                    
     if permission?(:manage_tickets)
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
@@ -149,7 +153,21 @@ module ApplicationHelper
     end
     navigation
   end          
- 
+
+  def subscription_tabs
+    tabs = [
+      [customers_admin_subscriptions_path, :customers, "Customers" ],
+      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+      [admin_subscription_discounts_path, :discounts, "Discounts" ],
+      [admin_subscription_payments_path, :payments, "Payments" ],
+      [admin_subscription_announcements_path, :announcements, "Announcements" ]
+    ]
+
+    navigation = tabs.map do |s| 
+      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
+    end
+  end
+  
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 
@@ -232,6 +250,10 @@ module ApplicationHelper
     comment_path(args_hash, 'reply')
   end
   
+  def fwd_path(args_hash)
+    comment_path(args_hash, 'forwarded')
+  end
+  
   def twitter_path(args_hash)
     comment_path(args_hash, 'tweet')
   end
@@ -252,24 +274,24 @@ module ApplicationHelper
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders #To do.. i18n
     [
-      ['{{ticket.id}}', 		 			'Ticket ID' ,				'Unique ticket ID.'],
-      ['{{ticket.subject}}',     			'Subject', 					'Ticket subject.'],
-      ['{{ticket.description}}', 			'Description', 				'Ticket description.'],
-      ['{{ticket.url}}', 		 			'Ticket URL' ,						'Full URL path to ticket.'],
-      ['{{ticket.portal_url}}', 'Product specific ticket URL',	'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
-      ['{{ticket.status}}', 	 			'Status' , 					'Ticket status.'],
-      ['{{ticket.priority}}', 	 			'Priority', 				'Ticket priority.'],
-      ['{{ticket.source}}', 	 			'Source', 					'The source channel of the ticket.'],
-      ['{{ticket.ticket_type}}', 			'Ticket type', 				'Ticket type.'],
-      ['{{ticket.tags}}', 					'Tags', 					'Ticket tags.'],
-      ['{{ticket.due_by_time}}', 			'Due by time',				'Ticket due by time.'],
-      ['{{ticket.requester.name}}', 		'Requester name', 			'Name of the requester who raised the ticket.'],
-      ['{{ticket.requester.email}}',		'Requester email', 			"Requester's email."],
-      ['{{ticket.requester.company_name}}', 'Requester company name', 	"Requester's company name."], #??? should it be requester.company.name?!
-      ['{{ticket.group.name}}', 			'Group name',				'Ticket group.'],
-      ['{{ticket.agent.name}}', 			'Agent name',				'Name of the agent who is currently working on the ticket.'],
-      ['{{ticket.agent.email}}', 			'Agent email',				"Agent's email."],
-      ['{{ticket.latest_public_comment}}',  'Last public comment',	'Latest public comment for this ticket.'],
+      ['{{ticket.id}}',           'Ticket ID' ,       'Unique ticket ID.'],
+      ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
+      ['{{ticket.description}}',      'Description',        'Ticket description.'],
+      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
+      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
+      ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
+      ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],
+      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.'],
+      ['{{ticket.ticket_type}}',      'Ticket type',        'Ticket type.'],
+      ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
+      ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
+      ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
+      ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
+      ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
+      ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
+      ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
       ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']
     ]
@@ -372,6 +394,7 @@ module ApplicationHelper
     rel_value = field[:rel]
     url_autofill_validator = field[:validator_type]
     ghost_value = field[:autofill_text]
+    encryption_type = field[:encryption_type]
     element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
@@ -386,6 +409,7 @@ module ApplicationHelper
       when "password" then
         pwd_element_class = " #{ (required) ? 'required' : '' }  text"
         element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
+        element << hidden_field(object_name , "encryptiontype" , :value => encryption_type) unless encryption_type.blank?
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -407,31 +431,63 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false)
+    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    field_label    += " #{ (required) ? '*' : '' }"
+    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
-      when "text", "number", "email" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+      when "email" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = add_cc_field_tag element if (feature?(:portal_cc) && current_user && current_user.customer? && current_user.customer)
+      when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+        if (field.field_type == "default_status" and in_portal)
+          element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
+        else
+          element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+        end
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+      when "nested_field" then
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
+        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
+  end
+
+  def add_cc_field_tag element     
+    element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) 
+  end
+
+  # The field_value(init value) for the nested field should be in the the following format
+  # { :category_val => "", :subcategory_val => "", :item_val => "" }
+  def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)        
+    _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
+    _javascript_opts = {
+      :data_tree => _field.nested_choices,
+      :initValues => _field_values
+    }.merge!(_opt)
+
+    _field.nested_levels.each do |l|       
+      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = sanitize_to_id(_name +"_"+ l[:name])
+      _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+    end
+    
+    _category + javascript_tag("jQuery('##{sanitize_to_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")        
+
   end
   
   def construct_ticket_text_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
@@ -439,12 +495,26 @@ module ApplicationHelper
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     
     label = label_tag object_name+"_"+field.field_name, field_label, :class => "name_label" 
+        
+    if(field.field_type == "nested_field")
+      unless field_value[:category_val].blank?
+        element = label + label_tag(field_name, field_value[:category_val], :class => "value_label")
+        field.nested_levels.each do |l|
+          _name = label_tag("", l[:label_in_portal], :class => "name_label")
+          _field_value = field_value[(l[:level] == 2) ? :subcategory_val : (l[:level] == 3) ? :item_val : ""]
+          _value = label_tag(field_name, _field_value, :class => "value_label") 
+          element += content_tag(:div, _name + _value, :class => "tabbed") unless (_field_value.blank? || field_value[:subcategory_val].blank?)
+        end
+      end
+    elsif(field.field_type == "default_status")
+      field_value = field.dropdown_selected(field.all_status_choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+      element = label + label_tag(field_name, field_value, :class => "value_label")
+    else
+      field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+      element = label + label_tag(field_name, field_value, :class => "value_label")
+    end
     
-    field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
-    
-    element = label + label_tag(field_name, field_value, :class => "value_label")
-    
-    content_tag :li, element unless (field_value == "" || field_value == "...")     
+    content_tag :li, element unless (element.blank? || field_value.nil? || field_value == "" || field_value == "...")     
   end
    
   def pageless(total_pages, url, message=t("loading.items"), params = {})

@@ -376,6 +376,7 @@ class Wf::Filter < ActiveRecord::Base
     
     unless valid_operator?(condition_key, operator_key)
       opers = definition[condition_key]
+      return unless opers
       operator_key = first_sorted_operator(opers)
     end
     

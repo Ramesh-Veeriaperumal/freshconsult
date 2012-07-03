@@ -8,6 +8,8 @@ class Subscription < ActiveRecord::Base
   belongs_to :discount, :class_name => 'SubscriptionDiscount', :foreign_key => 'subscription_discount_id'
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
+  has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy
+  
   before_create :set_renewal_at
   before_update  :cache_old_model,:charge_plan_change_mis
   before_destroy :destroy_gateway_record
@@ -115,6 +117,7 @@ class Subscription < ActiveRecord::Base
     if @response.success?
       self.card_number = creditcard.display_number
       self.card_expiration = "%02d-%d" % [creditcard.expiry_date.month, creditcard.expiry_date.year]
+      update_billing_address(gw_options[:billing_address])
       set_billing
     else
       errors.add_to_base(@response.message)
@@ -134,7 +137,7 @@ class Subscription < ActiveRecord::Base
     if amount == 0 || (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
       begin
         update_attributes(:next_renewal_at => self.next_renewal_at.advance(:months => self.renewal_period), :state => 'active')
-        subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
+        create_payment(amount) unless amount == 0
        rescue Exception => err
          SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => account.full_domain, :custom_message => "Charge failed" })
        end
@@ -151,8 +154,8 @@ class Subscription < ActiveRecord::Base
   # be created, but the subscription itself is not modified.
   def misc_charge(amount)
     if amount == 0 || (@response = gateway.purchase((amount * 100).to_i, billing_id)).success?
-      s_payment = subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true)
-      SubscriptionNotifier.deliver_misc_receipt(s_payment)
+      s_payment = create_payment(amount,true)
+      SubscriptionNotifier.deliver_misc_receipt(s_payment,fetch_pro_rata_description)
       true
     else
       errors.add_to_base(@response.message)
@@ -165,8 +168,11 @@ class Subscription < ActiveRecord::Base
     
     if(@response = gateway.purchase((amount_to_charge * 100).to_i, billing_id)).success?
       s_payment = subscription_payments.create(:account => account, 
-            :amount => amount_to_charge, :transaction_id => @response.authorization, 
-            :misc => true)
+                                               :amount => amount_to_charge, 
+                                               :transaction_id => @response.authorization, 
+                                               :misc => true, 
+                                               :affiliate => affiliate,
+                                               :meta_info => {:description => "Freshdesk daypass #{quantity}"})
 
       SubscriptionNotifier.deliver_day_pass_receipt(quantity, s_payment)
       s_payment
@@ -252,6 +258,10 @@ class Subscription < ActiveRecord::Base
     state == 'active'
   end
   
+  def trial?
+    state == 'trial'
+  end
+  
   protected
   
     def set_billing
@@ -276,7 +286,7 @@ class Subscription < ActiveRecord::Base
       else
         if (!next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")) 
           if (amount == 0) ||  (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
-            subscription_payments.build(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
+            create_payment(amount) unless amount == 0
             self.state = 'active'
             self.next_renewal_at = Time.now.advance(:months => renewal_period)
           else
@@ -415,6 +425,41 @@ class Subscription < ActiveRecord::Base
     
     def set_free_plan_agnt_limit
       self.agent_limit = AppConfig['free_plan_agts'] if free_plan?
-    end
+   end
+   
+    def update_billing_address(address)
+      billing_address = self.billing_address
+      billing_address = build_billing_address unless billing_address
+      [ :state, :zip, :first_name, :last_name,:address1,:address2, :city, :country].each do |field|
+        billing_address[field] =  address.fetch(field)
+      end
+      billing_address.account = account
+      billing_address.save
+  end
   
-end
+  def fetch_pro_rata_description
+    pro_rata_descrition = "Freshdesk #{SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[renewal_period]} Subscription Plan - #{subscription_plan.name} "
+    pro_rata_descrition = "#{pro_rata_descrition} (#{agent_limit - @old_subscription.agent_limit} agents)" if agent_limit_changed? and agent_limit > @old_subscription.agent_limit
+    pro_rata_descrition = "#{pro_rata_descrition} for #{trial_days} days"
+    pro_rata_descrition
+  end
+  
+  def create_payment(amount_to_charge,misc=false)
+    subscription_payments.create(:account => account, 
+                                 :amount => amount_to_charge, 
+                                 :transaction_id => @response.authorization, 
+                                 :affiliate => affiliate,
+                                 :misc => misc,
+                                 :meta_info => build_meta_info(misc))
+  end
+  
+  def build_meta_info(misc)
+    meta_info = {:plan => subscription_plan_id, 
+                 :discount => subscription_discount_id, 
+                 :agents => paid_agents,
+                 :free_agents => free_agents,
+                 :renewal_period => renewal_period}
+    meta_info[:description] = fetch_pro_rata_description if misc
+    meta_info
+  end
+ end

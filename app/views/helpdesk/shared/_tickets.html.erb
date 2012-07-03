@@ -10,28 +10,28 @@
     <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
   </div>
   <% javascript_tag do %>
-      jQuery(".ticket-description-tip").qtip({
-    	  position: { 
-    	      my: 'bottom left',
-    	      at: 'top  left',
-    	      viewport: jQuery(window) 
-    	 }, 
-    	 style : {
-    	 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
-    	 },             
-    	 content: {
-       		text: function(api) {
-       			return jQuery(this).next().html();
-       		}
-       	},
-    	 show: {
-    	    solo: true,
-    	    delay: 200,
-    	    effect: function(offset) {
-    	        jQuery(this).show("fade", 240); // "this" refers to the tooltip
-    	    }
-    	 }
-     });  
+    jQuery(".ticket-description-tip").qtip({
+      position: { 
+          my: 'bottom left',
+          at: 'top  left',
+          viewport: jQuery(window) 
+     }, 
+     style : {
+       classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
+     },             
+     content: {
+         text: function(api) {
+           return jQuery(this).next().html();
+        }
+       },
+     show: {
+        solo: true,
+        delay: 200,
+        effect: function(offset) {
+            jQuery(this).show("fade", 240); // "this" refers to the tooltip
+        }
+     }
+   });          
      jQuery(".nav-trigger").showAsMenu();
   <% end %>
 <% else %>

@@ -100,7 +100,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
       feed_data:
          function(dataFeed){
             dataFeed.each(function(rule){
-               try{
+              try{
                   var r_dom	= domUtil.getContainer(name);
                   var inner	= jQuery("<div />");
                   var data_id = rule.name + itemManager.get();
@@ -109,6 +109,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
                      opType = hg_data.get(rule.name).operatortype;
                      inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
                   }	
+                  if(rule.name == "set_nested_fields")
+                  	rule.name = rule.category_name;
+
+                  //console.log(data_id, name, rule].join(">>>>"));
                   inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
                   jQuery.data(r_dom, "inner")
@@ -118,7 +122,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   list_C = jQuery(parentDom).find(setting.rule_dom);
                   r_dom.appendTo(list_C);
                   postProcessCondition(hg_data.get(rule.name), data_id);
-               }catch(e){}
+             }catch(e){}
             });
          },
 

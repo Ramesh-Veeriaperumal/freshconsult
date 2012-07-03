@@ -5,7 +5,7 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   has_many :tag_uses,
     :class_name => 'Helpdesk::TagUse',
-    :dependent => :destroy
+    :dependent => :delete_all
 
   has_many :tickets,
     :class_name => 'Helpdesk::Ticket',

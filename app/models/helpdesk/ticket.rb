@@ -1,11 +1,15 @@
 require 'digest/md5'
 
 
-class Helpdesk::Ticket < ActiveRecord::Base 
+class Helpdesk::Ticket < ActiveRecord::Base
+  
+  belongs_to_account
 
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
+  include Helpdesk::Ticketfields::TicketStatus
+  include ParserUtil
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
@@ -23,12 +27,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
-      :create_initial_activity, :support_score_on_create
-  before_update :cache_old_model, :update_dueby 
+      :create_initial_activity
+  before_update :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-      :support_score_on_update, :stop_timesheet_timers
+       :stop_timesheet_timers
   
-  belongs_to :account
   belongs_to :email_config
   belongs_to :group
  
@@ -37,11 +40,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+  
 
   has_many :notes, 
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
     :dependent => :destroy
+    
+  has_many :sphinx_notes, 
+    :class_name => 'Helpdesk::Note',
+    :conditions => 'helpdesk_tickets.account_id = helpdesk_notes.account_id',
+    :as => 'notable'
     
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -89,6 +98,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
+  
+  belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
+  delegate :active?, :open?, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
+  
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
@@ -110,30 +123,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :conditions => [" helpdesk_ticket_states.resolved_at >= ? and helpdesk_ticket_states.resolved_at <= ?", start, stop] }
         }
 
-  named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
+  named_scope :resolved_and_closed_tickets, :conditions => {:status => [RESOLVED,CLOSED]}
   
   named_scope :all_company_tickets,lambda { |customer| { 
-        :joins => :requester,
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id ",
         :conditions => [" users.customer_id = ?",customer]
   } 
   }
   
   named_scope :company_tickets_resolved_on_time,lambda { |customer| { 
-        :joins => [:ticket_states,:requester],
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",customer]
   } 
   }
   
    named_scope :resolved_on_time,
-        :joins => :ticket_states,
+        :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
    
   named_scope :first_call_resolution,
-           :joins  => :ticket_states,
+           :joins  => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
 
   named_scope :company_first_call_resolution,lambda { |customer| { 
-        :joins => [:ticket_states,:requester],
+        :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
         :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 AND users.customer_id = ?",customer]
   } 
   }
@@ -147,18 +160,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "helpdesk_tickets.created_at > ?", duration ] } }
  
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
-  named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
+  named_scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
       user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
-    [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
+    [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
       user.id ] } }
       
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
   named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+
+  named_scope :with_tag_names, lambda { |tag_names| {
+            :joins => :tags,
+            :select => "helpdesk_tickets.id", 
+            :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
+  }            
   
   def self.agent_permission user
     
@@ -193,11 +212,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
      indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
-     indexes notes.body, :as => :note
+     indexes sphinx_notes.body, :as => :note
     
      has account_id, deleted
 
-    set_property :delta => :delayed
+    #set_property :delta => :delayed
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -225,13 +244,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
-  validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
+  #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
   
 
   def set_default_values
-    self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
+    self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= account.ticket_type_values.first.value
     self.subject ||= ''
@@ -254,13 +273,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def status=(val)
-    self[:status] = STATUS_KEYS_BY_TOKEN[val] || val
+    self[:status] = (Helpdesk::TicketStatus.status_keys_by_name(account)[val] unless account.nil?) || val
   end
 
   def status_name
-    STATUS_NAMES_BY_KEY[status]
+    Helpdesk::TicketStatus.translate_status_name(ticket_status)
   end
   
+  def source_name
+    SOURCE_NAMES_BY_KEY(source)
+  end
+
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
@@ -269,6 +292,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (fb_post) and (fb_post.facebook_page) 
   end
  
+ def is_fb_message?
+   (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
+ end
+
+  def is_fb_wall_post?
+    (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
+  end
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
@@ -320,7 +350,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "[#{delimited_display_id}]"
+    "[#{ticket_id_delimiter}#{display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -341,29 +371,31 @@ class Helpdesk::Ticket < ActiveRecord::Base
     pieces && pieces[1]
   end
 
+  def load_ticket_status
+    if status_changed?
+      self.ticket_status = account.ticket_status_values.find_by_status_id(status)
+    end
+  end
+
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def update_dueby
-    set_dueby unless priority == @old_ticket.priority
+    set_dueby if priority_changed?
+    set_dueby(true) if status_changed?
   end
   
-  def set_dueby 
+  def set_dueby(start_sla_timer=nil)
     set_account_time_zone   
-    createdTime = created_at || Time.zone.now
     self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil?
-     
+    
     sla_policy_id = requester.customer.sla_policy_id unless requester.customer.nil?
     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
     sla_detail = Helpdesk::SlaDetail.find(:first, :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
-     
-    if sla_detail.override_bhrs      
-      self.due_by = createdTime + sla_detail.resolution_time.seconds      
-      self.frDueBy = createdTime + sla_detail.response_time.seconds       
-    else      
-      self.due_by = get_business_time(sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
-      self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
-    end 
-     set_user_time_zone if User.current
-     logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
+    
+    set_dueby_on_priority_change(sla_detail) if start_sla_timer.nil?  #unless (priority == @old_ticket.priority) 
+    set_dueby_on_status_change(sla_detail) unless start_sla_timer.nil? 
+    
+    set_user_time_zone if User.current
+    logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
  
   def get_business_time time
@@ -442,8 +474,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
   end
   
+  def included_in_fwd_emails?(from_email)
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }) 
+  end
+  
   def included_in_cc?(from_email)
-    (cc_email) and  (cc_email.any? {|email| email.include?(from_email) })
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
   
   def cache_old_model
@@ -458,19 +495,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if status != @old_ticket.status
-      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
-      #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == STATUS_KEYS_BY_TOKEN[:open])
+      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
+      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
+      #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == OPEN)
     end
   end
   
   def save_ticket_states
     self.ticket_states = Helpdesk::TicketState.new
+    ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
-    ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
-    ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-    ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == STATUS_KEYS_BY_TOKEN[:closed])     
+    ticket_states.pending_since=Time.zone.now if (status == PENDING)
+    ticket_states.set_resolved_at_state if (status == RESOLVED)
+    ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == CLOSED)
+    ticket_states.status_updated_at = Time.zone.now
+    ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
   end
 
   def update_ticket_states 
@@ -481,14 +521,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if status != @old_ticket.status
-      if (status == STATUS_KEYS_BY_TOKEN[:open])
+      if (status == OPEN)
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
       end
       
-      ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
-      ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+      ticket_states.pending_since=Time.zone.now if (status == PENDING)
+      ticket_states.set_resolved_at_state if (status == RESOLVED)
       ticket_states.set_closed_at_state if closed?
+      
+      ticket_states.status_updated_at = Time.zone.now
+      if(ticket_status.stop_sla_timer)
+        ticket_states.sla_timer_stopped_at ||= Time.zone.now 
+      else
+        ticket_states.sla_timer_stopped_at = nil
+      end
     end    
     ticket_states.save
   end
@@ -517,12 +564,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     delimiter = delimiter.blank? ? '#' : delimiter
   end
   
-  def delimited_display_id
-    "#{ticket_id_delimiter}#{display_id}"
-  end
-
   def to_s
+    begin
     "#{subject} (##{display_id})"
+    rescue ActiveRecord::MissingAttributeError
+      "#{id}"
+    end
   end
   
   def self.search_display(ticket)
@@ -614,7 +661,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_custom_field   
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
-    self.ff_def = ff_def_id       
+    self.ff_def = ff_def_id
+    self.flexifield.account_id = account_id
     unless self.custom_field.nil?          
       self.assign_ff_values self.custom_field    
     end
@@ -623,6 +671,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
+
+    # Helpdesk::TicketDrop.new self
+
     { 
       "id"                                => display_id,
       "raw_id"                            => id,
@@ -633,7 +684,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "requester"                         => requester,
       "agent"                             => responder,
       "group"                             => group,
-      "status"                            => STATUS_NAMES_BY_KEY[status],
+      "status"                            => status_name,
+      "requester_status_name"             => Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name"),
       "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
       "source"                            => SOURCE_NAMES_BY_KEY[source],
       "ticket_type"                       => ticket_type,
@@ -641,8 +693,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
       "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host),
+      "url"                               => helpdesk_ticket_url(self, :host => account.host, :protocol=> url_protocol),
+      "portal_url"                        => support_ticket_url(self, :host => portal_host, :protocol=> url_protocol),
       "portal_name"                       => portal_name,
       #"attachments"                      => liquidize_attachments(attachments),
       #"latest_comment"                   => liquidize_comment(latest_comment),
@@ -650,6 +702,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
       #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
       #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+    
+  end
+
+  def url_protocol
+    account.ssl_enabled? ? 'https' : 'http'
   end
   
   def description_with_attachments
@@ -678,27 +735,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   #Liquid ends here
 
-  #When the requester responds to this ticket, need to know whether to reopen?
-  def active?
-    !([STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]].include?(status))
-  end
-  
-  def open?
-    (status == STATUS_KEYS_BY_TOKEN[:open])
-  end
-  
-  def closed?
-    (status == STATUS_KEYS_BY_TOKEN[:closed])
-  end
-  
-  def resolved?
-    (status == STATUS_KEYS_BY_TOKEN[:resolved])
-  end
-  
-   def pending?
-    (status == STATUS_KEYS_BY_TOKEN[:pending])
-  end
-  
   def method_missing(method, *args, &block)
     begin
       super
@@ -723,7 +759,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
       custom_field[method]
     end
   end
-  
+
+  def to_json(options = {}, deep=true)
+    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
+    if deep
+      self.load_flexifield
+      options[:include] = [:notes,:attachments]
+      options[:except] = [:account_id,:import_id]
+      options[:methods].push(:custom_field)
+    end
+    json_str = super options
+    json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
+  end
+
+
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -734,6 +783,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
           begin
            value = send(field.name) 
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+
+           if(field.field_type == "nested_field")
+              field.nested_ticket_fields.each do |nested_field|
+                nested_field_value = send(nested_field.name)
+                xml.tag!(nested_field.name.gsub(/[^0-9A-Za-z_]/, ''), nested_field_value) unless nested_field_value.blank?
+              end
+           end
+         
          rescue
            end 
         end
@@ -788,16 +845,43 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def stop_timesheet_timers
-    if status != @old_ticket.status && (status == STATUS_KEYS_BY_TOKEN[:resolved] or status == STATUS_KEYS_BY_TOKEN[:closed])
+    if status != @old_ticket.status && (status == RESOLVED or status == CLOSED)
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
    end
+
+   def selected_reply_email
+    ( !to_email.blank? &&  account.pass_through_enabled? ) ? to_email : friendly_reply_email
+   end
   
+  def cc_email_hash
+    if cc_email.is_a?(Array)     
+      {:cc_emails => cc_email, :fwd_emails => []}
+    else
+      cc_email
+    end
+  end
+
+  def to_emails
+    emails_hash = cc_email_hash
+    to_emails_array = (emails_hash[:to_emails] || []).clone unless emails_hash.nil?
+    to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
+    to_emails_array
+  end
+
+  def to_cc_emails
+    emails_hash = cc_email_hash
+    return [] if emails_hash.nil?
+    to_emails_array = []
+    cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
+    to_emails_array = (emails_hash[:to_emails] || []).clone
+    to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
+    (cc_emails_array + to_emails_array).uniq
+  end  
+
   private
   
-    
-    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')
@@ -831,7 +915,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
     def create_status_activity
       create_activity(User.current, 'activities.tickets.status_change.long',
-          {'status_name' => status_name}, 'activities.tickets.status_change.short')
+          {'status_name' => Helpdesk::TicketStatus.translate_status_name(ticket_status, "name")}, 'activities.tickets.status_change.short')
     end
   
     def create_priority_activity
@@ -863,22 +947,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
     
-    def support_score_on_create
-      add_support_score unless active?
-    end
+    # def support_score_on_create
+    #   add_support_score unless active?
+    # end
     
-    def support_score_on_update
-      if active? && !@old_ticket.active?
-        s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
-        s_score.destroy if s_score
-      elsif !active? && @old_ticket.active?
-        add_support_score
-      end
-    end
+    # def support_score_on_update
+    #   if active? && !@old_ticket.active?
+    #     s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
+    #     s_score.destroy if s_score
+    #   elsif !active? && @old_ticket.active?
+    #     add_support_score
+    #   end
+    # end
     
-    def add_support_score
-      SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-    end
+    # def add_support_score
+    #   SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
+    # end
 
     def parse_email(email)
       if email =~ /(.+) <(.+?)>/
@@ -890,7 +974,36 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       end
       email
-    end  
-    
+  end
+ 
+  def set_dueby_on_priority_change(sla_detail)
+    createdTime = created_at || Time.zone.now
+    if sla_detail.override_bhrs      
+      self.due_by = createdTime + sla_detail.resolution_time.seconds      
+      self.frDueBy = createdTime + sla_detail.response_time.seconds       
+    else      
+      self.due_by = get_business_time(sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
+      self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
+    end
+  end
+
+  def set_dueby_on_status_change(sla_detail)
+    unless (ticket_status.stop_sla_timer or ticket_states.sla_timer_stopped_at.nil?) 
+      if sla_detail.override_bhrs 
+        elapsed_time = Time.zone.now - ticket_states.sla_timer_stopped_at  
+        new_due_by = self.due_by + elapsed_time
+        new_frDueBy = self.frDueBy + elapsed_time
+      
+        self.due_by = new_due_by if self.due_by > ticket_states.sla_timer_stopped_at
+        self.frDueBy = new_frDueBy if self.frDueBy > ticket_states.sla_timer_stopped_at
+      else
+        bhrs_during_elapsed_time =  Time.parse(ticket_states.sla_timer_stopped_at.to_s).business_time_until(Time.zone.now)
+        
+        self.due_by = bhrs_during_elapsed_time.div(60).business_minute.after(self.due_by) if self.due_by > ticket_states.sla_timer_stopped_at      
+        self.frDueBy =  bhrs_during_elapsed_time.div(60).business_minute.after(self.frDueBy) if self.frDueBy > ticket_states.sla_timer_stopped_at
+      end
+    end
+  end
+  
 end
   

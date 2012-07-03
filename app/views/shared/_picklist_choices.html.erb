@@ -1,0 +1,6 @@
+<option value=''>...</option>
+<% if !@picklist_choices.blank? %>
+  <% @picklist_choices.each do |picklist_choice| %>
+	  <option value="<%=picklist_choice.id%>"><%=picklist_choice.value%></option>
+  <% end %>
+<% end %>

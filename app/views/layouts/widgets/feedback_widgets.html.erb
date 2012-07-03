@@ -16,7 +16,10 @@
 		<%= stylesheet_link_tag "widget", :media => "screen, projection" %>
 		<%= include_javascripts :fdwidget %>
 	  <%= yield :head %>
-	  <script type="text/javascript">document.domain = document.domain;</script>
+	  <script type="text/javascript">
+	  	document.domain = document.domain;
+	  	var $J = jQuery.noConflict();
+	  </script>
 	</head>
     <body>
     	<style> body{ background:transparent; }</style>

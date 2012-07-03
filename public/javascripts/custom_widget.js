@@ -56,7 +56,9 @@ Freshdesk.Widget.prototype={
 		if(this.options.login_content != null && !(this.options.username && this.options.password)){
 			this.content_anchor.innerHTML = this.options.login_content();
 		} else {
-			this.content_anchor.innerHTML = this.options.application_content();
+			if (this.options.application_content){
+				this.content_anchor.innerHTML = this.options.application_content();	
+			}
 			if(this.options.application_resources){
 			this.options.application_resources.each(
 				function(reqData){
@@ -77,7 +79,11 @@ Freshdesk.Widget.prototype={
 			reqData.username = this.options.username
 			reqData.use_server_password = this.options.use_server_password
 			reqData.app_name = this.options.app_name
-		} else {
+		}
+		else if(this.options.auth_type == 'OAuth'){
+			reqHeader = {Authorization:"OAuth " + this.options.oauth_token}
+		} 
+		else {
 			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
 		}
 		new Ajax.Request("/http_request_proxy/fetch",{
@@ -97,7 +103,7 @@ Freshdesk.Widget.prototype={
 	},
 
 	resource_failure:function(evt, reqData){
-		
+		resJ = evt.responseJSON;
 		if (evt.status == 401) {
 			this.options.username = null;
 			this.options.password = null;
@@ -106,9 +112,11 @@ Freshdesk.Widget.prototype={
 			if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 				reqData.on_failure(evt);
 			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
-		} else if (evt.status == 403) {
-			this.alert_failure(this.app_name+" forbidden the request.  Check if your "+this.app_name+" account is still valid.");
-		} else if (evt.status == 502) {
+		} 
+		else if (evt.status == 403) {
+			this.alert_failure(this.app_name+" declined the request. \n\n " + this.app_name + " returns the following error : " + resJ[0].message);
+		} 
+		else if (evt.status == 502) {
 			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
 			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
@@ -131,11 +139,30 @@ Freshdesk.Widget.prototype={
 	},
 
 	alert_failure:function(errorMsg) {
-		if (this.error_anchor == null || this.error_anchor !== "") {
+		if (this.error_anchor == null || this.error_anchor == "") {
 			alert(errorMsg);
 		} else {
+			jQuery(this.error_anchor).removeClass('hide').parent().removeClass('loading-fb');
 			this.error_anchor.innerHTML = errorMsg;
 		}
+	},
+
+	refresh_access_token:function(callback){
+		widgetMain = this;
+		this.options.oauth_token = null;
+		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name, {
+				asynchronous: true,
+				method: "get",
+				onSuccess: function(evt){
+					resJ = evt.responseJSON;
+					widgetMain.options.oauth_token = resJ.access_token;
+					if(callback) callback();
+				},
+				onFailure: function(evt){
+					widgetMain.options.oauth_token = null;
+					if(callback) callback();
+				}
+			});
 	},
 
 	create_integrated_resource:function(resultCallback) {
@@ -165,18 +192,21 @@ Freshdesk.Widget.prototype={
 	},
 
 	delete_integrated_resource:function(last_fetched_id, resultCallback) {
-		reqData = {
+		if(last_fetched_id != null && last_fetched_id != ""){
+			reqData = {
 			"integrated_resource[id]":last_fetched_id
-		};
-		new Ajax.Request("/integrations/integrated_resources/delete",{
-            asynchronous: true,
-			method: "delete",
-			parameters:reqData,
-			onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
-			},
-			onFailure:function(evt){ if(resultCallback) resultCallback(evt);
-			}
-		});
+			};
+			new Ajax.Request("/integrations/integrated_resources/delete",{
+	            asynchronous: true,
+				method: "delete",
+				parameters:reqData,
+				onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
+				},
+				onFailure:function(evt){ if(resultCallback) resultCallback(evt);
+				}
+			});	
+		}
+		
 	}
 };
 
@@ -188,21 +218,19 @@ var UIUtil = {
 		if (!keepOldEntries) dropDownBox.innerHTML = "";
 		if(type == "xml"){
 			parser = XmlUtil;
-			data = data.responseXML;
-		}
-		else{
+		} else if(type == "hash"){
+			parser = HashUtil;
+		} else {
 			parser = JsonUtil; 
-			data = data.responseJSON;
 		}
-		
+
 		var entitiesArray = parser.extractEntities(data, entityName);
-		for(i=0;i<entitiesArray.length;i++) {
+		for(var i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
 				matched = true;
 				for (var filterKey in filterBy) {
 					filterValue = filterBy[filterKey];
-					actualVal = parser.getNodeValueStr(entitiesArray[i], filterKey);
-					if(filterValue != actualVal) {
+					if(!this.isMatched(entitiesArray[i], filterKey, filterValue)) {
 						matched = false;
 						break;
 					}
@@ -223,7 +251,7 @@ var UIUtil = {
 				}
 			}
 			dispName = ""
-			for(d=0;d<dispNames.length;d++) {
+			for(var d=0;d<dispNames.length;d++) {
 				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
 					dispName += dispNames[d];
 				} else {
@@ -232,15 +260,32 @@ var UIUtil = {
 			}
 			if (dispName.length < 2) dispName = entityEmailValue;
 
-			newEntityOption.value = entityIdValue;
-			newEntityOption.innerHTML = dispName;
-			dropDownBox.appendChild(newEntityOption);
+			if (entityIdValue && dispName) {
+				newEntityOption.value = entityIdValue;
+				newEntityOption.innerHTML = dispName;
+				dropDownBox.appendChild(newEntityOption);
+			}
 			if (foundEntity == "") {
 				foundEntity = entitiesArray[i];
 				newEntityOption.selected = true;
 			}
 		}
 		return foundEntity;
+	},
+
+	isMatched: function(dataNode, filterKey, filterValue) {
+		keys = filterKey.split(',');
+		if(keys.length>1) {
+			first_level_nodes = parser.extractEntities(dataNode, keys[0]);
+			for(var i=0;i<first_level_nodes.length;i++) {
+				actualVal = parser.getNodeValueStr(first_level_nodes[i], keys[1]);
+				if(actualVal == filterValue) return true;
+			}
+			return false;
+		} else {
+			actualVal = parser.getNodeValueStr(dataNode, filterKey);
+			return actualVal == filterValue;
+		}
 	},
 
 	addDropdownEntry: function(dropDownBoxId, value, name, addItFirst) {
@@ -302,28 +347,30 @@ var XmlUtil = {
 
 	getNodeValue:function(dataNode, lookupTag){
 		if(dataNode == '') return;
+		if(lookupTag instanceof Array) {
+			var element = dataNode.getElementsByTagName(lookupTag[0]);
+			if(element == null || element.length == 0) return null;
+			dataNode = element[0]
+			lookupTag = lookupTag[1]
+		}
 		var element = dataNode.getElementsByTagName(lookupTag);
-		if(element==null || element.length==0){
-			return null;
-		}
+		if(element == null || element.length == 0) return null;
 		childNode = element[0].childNodes[0]
-		if(childNode == null){
-			return"";
-		}
+		if(childNode == null) return"";
 		return childNode.nodeValue;
 	},
 
 	getNodeValueStr:function(dataNode, nodeName){
 		return this.getNodeValue(dataNode, nodeName) || "";
 	},
-
+/*
 	getNodeAttrValue:function(dataNode, lookupTag, attrName){
 		var element = dataNode.getElementsByTagName(lookupTag);
 		if(element==null || element.length==0){
 			return null;
 		}
 		return element[0].getAttribute(attrName) || null;
-	}
+	}*/
 }
 
 var JsonUtil = {
@@ -365,6 +412,25 @@ var JsonUtil = {
 		return innerValue;
 	}
 
+}
+
+var HashUtil = {
+	extractEntities:function(hash, lookupKey){
+		return hash[lookupKey] || new Array();
+	},
+
+	getNodeValue:function(dataNode, lookupKey){
+		if(dataNode == '') return;
+		var element = dataNode[lookupKey];
+		if(element==null || element.length==0){
+			return null;
+		}
+		return element;
+	},
+
+	getNodeValueStr:function(dataNode, lookupKey){
+		return this.getNodeValue(dataNode, lookupKey) || "";
+	},
 }
 
 var Cookie=Class.create({});
