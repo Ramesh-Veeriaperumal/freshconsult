@@ -55,6 +55,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                     detailsContainer.showCoversations(true);
                     detailsContainer.items.items[0].setTitle('Ticket: '+id);
                     detailsContainer.ticket_id=id,
+                    detailsContainer.requester_id=resJSON.requester.id;
                     Ext.Viewport.animateActiveItem(detailsContainer, anim);
                     callBack ? callBack() : '' ;
                     delete Freshdesk.anim;

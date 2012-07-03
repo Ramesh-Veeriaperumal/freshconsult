@@ -3,7 +3,7 @@
 
 class ApplicationController < ActionController::Base
   
-  before_filter :reset_current_account
+  before_filter :reset_current_account, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
   
   include SslRequirement
   include SubscriptionSystem
+  include Mobile::MobileHelperMethods
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store

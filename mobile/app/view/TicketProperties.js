@@ -68,15 +68,15 @@ Ext.define("Freshdesk.view.TicketProperties", {
     },
     showCustomerDetails:function(preventActive){
         var me=this;
-        id=this.parent.parent.ticket_id;
+        id=this.parent.parent.requester_id;
         Ext.Ajax.request({
-            url: '/mobile/tickets/requester_info/'+id,
+            url: '/contacts/'+id,
             headers: {
                 "Accept": "application/json"
             },
             success: function(response) {
                 var resJSON = JSON.parse(response.responseText);
-                me.items.items[1].items.items[2].setData(resJSON);
+                me.items.items[1].items.items[2].setData(resJSON.user);
             },
             failure: function(response){
             }

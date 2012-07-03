@@ -19,7 +19,6 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
-  include Mobile::MobileHelperMethods
   
   layout :choose_layout 
   
@@ -76,11 +75,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def check_user
-    if mobile? and !"mob".eql?(params[:format]) and !current_user.nil?
-      return redirect_to mobile_ticket_url(params[:id])
-    end
     if !current_user.nil? and current_user.customer?
-      return redirect_to(support_ticket_url(@ticket))
+      return redirect_to support_ticket_url(@ticket,:format => params[:format])
     end
   end
   
@@ -272,18 +268,18 @@ class Helpdesk::TicketsController < ApplicationController
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_attributes(params[nscname])
-      flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
       #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
-      if mobile?
-        render :json => { :success => true, :item => @item }.to_json
-      else
-        redirect_to item_url
+      respond_to do |format|
+        format.mob { render :json => { :success => true, :item => @item }.to_json }
+        format.html { 
+          flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+          redirect_to item_url 
+        }
       end
     else
-      if mobile?
-        render :json => { :failure => true, :errors => edit_error }.to_json
-      else
-        edit_error
+      respond_to do |format|
+        format.mob { render :json => { :failure => true, :errors => edit_error }.to_json }
+        format.html { edit_error }
       end
     end
   end
@@ -343,16 +339,15 @@ class Helpdesk::TicketsController < ApplicationController
     @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
       { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
 
-    unless mobile?
-      flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
-                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
-    end
-
     respond_to do |format|
-      format.html { redirect_to :back }
+      format.html { 
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
+                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+        redirect_to :back 
+      }
       format.js
       format.mob { 
-        render :json => {:success => true,:id => @item.id}.to_json 
+        render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
       }
     end
   end 

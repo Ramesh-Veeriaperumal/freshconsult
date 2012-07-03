@@ -13,9 +13,22 @@ Ext.define("Freshdesk.view.Scenarioies", {
                 "Accept": "application/json"
             },
             callback: function(req,success,response){
+                console.log(response);
                 if(success){
                     Freshdesk.anim = {type:'cover',direction:'down'};
-                    location.href="#tickets/show/"+me.ticket_id;
+                    var flashMessageBox = Ext.ComponentQuery.query('#flashMessageBox')[0],
+                    resJson = JSON.parse(response.responseText),
+                    flashData = {
+                        title:'Executed scenario <b>'+resJson.rule_name+'</b>',
+                        messages:resJson.actions_executed
+                    };
+                    flashMessageBox.ticket_id = response.id;
+                    flashMessageBox.items.items[1].setData(flashData);
+                    flashMessageBox.hideHandler = function() {
+                        location.href="#tickets/show/"+me.ticket_id;
+                    }
+                    Ext.Viewport.animateActiveItem(flashMessageBox, Freshdesk.anim);
+                    //location.href="#tickets/show/"+me.ticket_id;
                 }
                 else{
                     Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   

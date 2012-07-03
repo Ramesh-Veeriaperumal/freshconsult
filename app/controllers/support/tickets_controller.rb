@@ -2,7 +2,6 @@ class Support::TicketsController < ApplicationController
 
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   include SupportTicketControllerMethods 
-  include Mobile::MobileHelperMethods
   before_filter { |c| c.requires_permission :portal_request }
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
@@ -24,11 +23,12 @@ class Support::TicketsController < ApplicationController
   
   def update
     if @item.update_attributes(params[:helpdesk_ticket])
-      flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
-      if mobile?
-        render :json => { :success => true, :item => @item }.to_json
-      else
-        redirect_to @item
+      respond_to do |format|
+        format.mob { render :json => { :success => true, :item => @item }.to_json }
+        format.html { 
+          flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+          redirect_to @item 
+        }
       end
     end
   end
@@ -36,21 +36,24 @@ class Support::TicketsController < ApplicationController
   def filter   
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
-    if mobile?
-      unless @response_errors.nil?
-        render :json => {:errors => @response_errors}.to_json
-      else
-        json = "["; sep=""
-        @tickets.each { |tic| 
-          #Removing the root node, so that it conforms to JSON REST API standards
-          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-          json << sep + tic.to_json({}, false)[19..-2]; sep=","
-        }
-        render :json => json + "]"
-      end
-    else
-      render :index
-    end  
+    respond_to do |format|
+      format.mob {
+        unless @response_errors.nil?
+          render :json => {:errors => @response_errors}.to_json
+        else
+          json = "["; sep=""
+          @tickets.each { |tic| 
+            #Removing the root node, so that it conforms to JSON REST API standards
+            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+          }
+          render :json => json + "]"
+        end
+      }
+      format.html {
+        render :index
+      }
+    end 
   end
   
   def close_ticket
@@ -74,12 +77,15 @@ class Support::TicketsController < ApplicationController
        flash[:notice] = "Closing the ticket failed"
        mob_json[:failure] = true
      end
-     if mobile?
-      mob_json[:item] = @item;
-      render :json => mob_json.to_json
-     else                                        
-      redirect_to :back
-    end
+     respond_to do |format|
+      format.mob {
+        mob_json[:item] = @item;
+        render :json => mob_json.to_json
+      }
+      format.html{
+        redirect_to :back
+      }
+     end
   end
     
   protected 

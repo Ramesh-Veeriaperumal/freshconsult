@@ -14,7 +14,9 @@ Ext.define("Freshdesk.view.Home", {
         hidden:true,
         listeners: {
             show:function(){
-                Ext.getCmp('branding').setData(FD.current_account.main_portal);
+                var portalData = FD.current_account.main_portal;
+                portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
+                Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
                 userData.avatar_url = userData.avatar_url || 'resources/images/profile_blank_thumb.gif';
                 Ext.getCmp('home-user-profile').setData(userData); 

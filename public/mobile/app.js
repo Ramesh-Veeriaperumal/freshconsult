@@ -27849,7 +27849,9 @@ Ext.define("Freshdesk.view.Home", {
         hidden:true,
         listeners: {
             show:function(){
-                Ext.getCmp('branding').setData(FD.current_account.main_portal);
+                var portalData = FD.current_account.main_portal;
+                portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
+                Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
                 userData.avatar_url = userData.avatar_url || 'resources/images/profile_blank_thumb.gif';
                 Ext.getCmp('home-user-profile').setData(userData); 
@@ -28223,10 +28225,11 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<div class="subject"><div class="title full">{subject}</div></div>',
                                 '<ul class="actions">',
                                         '<li class="half">Reply <a class="reply"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                        '<li class="half"><a class="close"       href="#tickets/close/{id}">&nbsp;</a> Close</li>',
+                                        '<tpl if="!is_closed"><li class="half"><a class="close"       href="#tickets/close/{id}">&nbsp;</a> Close</li></tpl>',
                                 '</ul>',
                         '</tpl>',
                       '</div>',
+                      '<tpl if="FD.current_user.is_customer"><div class="banner"><b>{status_name}</b></div></tpl>',
                       '<div class="conversation">',
                         '<div class="thumb">',
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
@@ -28397,15 +28400,15 @@ Ext.define("Freshdesk.view.TicketProperties", {
     },
     showCustomerDetails:function(preventActive){
         var me=this;
-        id=this.parent.parent.ticket_id;
+        id=this.parent.parent.requester_id;
         Ext.Ajax.request({
-            url: '/mobile/tickets/requester_info/'+id,
+            url: '/contacts/'+id,
             headers: {
                 "Accept": "application/json"
             },
             success: function(response) {
                 var resJSON = JSON.parse(response.responseText);
-                me.items.items[1].items.items[2].setData(resJSON);
+                me.items.items[1].items.items[2].setData(resJSON.user);
             },
             failure: function(response){
             }
@@ -28578,9 +28581,22 @@ Ext.define("Freshdesk.view.Scenarioies", {
                 "Accept": "application/json"
             },
             callback: function(req,success,response){
+                console.log(response);
                 if(success){
                     Freshdesk.anim = {type:'cover',direction:'down'};
-                    location.href="#tickets/show/"+me.ticket_id;
+                    var flashMessageBox = Ext.ComponentQuery.query('#flashMessageBox')[0],
+                    resJson = JSON.parse(response.responseText),
+                    flashData = {
+                        title:'Executed scenario <b>'+resJson.rule_name+'</b>',
+                        messages:resJson.actions_executed
+                    };
+                    flashMessageBox.ticket_id = response.id;
+                    flashMessageBox.items.items[1].setData(flashData);
+                    flashMessageBox.hideHandler = function() {
+                        location.href="#tickets/show/"+me.ticket_id;
+                    }
+                    Ext.Viewport.animateActiveItem(flashMessageBox, Freshdesk.anim);
+                    //location.href="#tickets/show/"+me.ticket_id;
                 }
                 else{
                     Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
@@ -28636,6 +28652,61 @@ Ext.define("Freshdesk.view.Scenarioies", {
         ]
     }
 });
+Ext.define('Freshdesk.view.FlashMessageBox', {
+    extend: 'Ext.Container',
+    alias: 'widget.flashMessageBox',
+    initialize: function () {
+        this.callParent(arguments);
+        var me =this;
+
+        var backButton = {
+            xtype:'button',
+            text:'Hide',
+			ui:'headerBtn back',
+            handler:this.goBack,
+			align:'left',
+            scope:this
+		};
+		var topToolbar = {
+			xtype: "titlebar",
+			docked: "top",
+            ui:'header',
+			items: [backButton]
+		};
+
+        var details = {
+            tpl : new Ext.XTemplate(['<div class="flash">',
+                        '<tpl if="title"><div>{title}</div></tpl>',
+                        '<tpl for="messages">',
+                            '<div class="message">{.}</div>',
+                        '</tpl>',
+                    '</div>'
+            ].join('')),
+            data : { 
+                title : 'Executed scenario <b>Assign to QA</b>',
+                messages : [
+                        'Changed the ticket type to <b>Problem</b>',
+                        'Set group as <b>QA</b>'
+                ]
+            }
+        };
+        this.add([topToolbar,details]);
+    },
+    goBack : function(){
+        if(this.hideHandler){
+            this.hideHandler();            
+        }else{
+            this.hide();
+        }
+    },
+    config: {
+        layout:'fit',
+        scrollable:true,
+        cls:'flashMessageBox',
+        id:'flashMessageBox'
+    }
+});
+
 Ext.define('Freshdesk.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     slideLeftTransition: { type: 'slide', direction: 'left' },
@@ -28658,7 +28729,8 @@ Ext.define('Freshdesk.controller.Dashboard', {
         switch (name) {
             case 'tickets'  :
                 me =this;
-                Ext.getStore('Filters').load();
+                if(!Ext.getStore('Filters').getData().all.length)
+                    Ext.getStore('Filters').load();
                 var filtersListContainer = this.getFiltersListContainer(),
                 anim = Freshdesk.backBtn ? this.slideRightTransition : this.slideLeftTransition;
                 Ext.Viewport.animateActiveItem(filtersListContainer, anim);
@@ -28672,7 +28744,8 @@ Ext.define('Freshdesk.controller.Dashboard', {
                 break;
             default :
                 me =this;
-                Ext.getStore('Filters').load();
+                if(!Ext.getStore('Filters').getData().all.length)
+                    Ext.getStore('Filters').load();
                 var filtersListContainer = this.getFiltersListContainer(),
                 anim = Freshdesk.anim || this.slideRightTransition;
                 Ext.Viewport.animateActiveItem(filtersListContainer, anim);
@@ -28787,6 +28860,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                     detailsContainer.showCoversations(true);
                     detailsContainer.items.items[0].setTitle('Ticket: '+id);
                     detailsContainer.ticket_id=id,
+                    detailsContainer.requester_id=resJSON.requester.id;
                     Ext.Viewport.animateActiveItem(detailsContainer, anim);
                     callBack ? callBack() : '' ;
                     delete Freshdesk.anim;
@@ -43955,13 +44029,14 @@ Ext.define("Freshdesk.view.TicketsList", {
         emptyText: '<div class="empty-list-text">You don\'t have any tickets in this view.</div>',
         onItemDisclosure: false,
         itemTpl: ['<tpl for="."><div class="ticket-item">',
-                        '<div class="{priority_name}">&nbsp;</div>',
+                        '<tpl if="FD.current_user.is_agent"><div class="{priority_name}">&nbsp;</div></tpl>',
                         '<div class="title">',
                                 '<div class="subject">{subject}<span class="info">&nbsp;#{display_id}</span></div>',
                                 '<div><span class="info">From: </span>{requester_name}',
-                                '<span class="info"> Assigned To: </span>{responder_name}</div>',
+                                '<span class="info"> Assigned To: </span>{responder_name}',
+                                '</div>',
                                 '<div><span class="info btn">{status_name}</span>',
-                                '<span class="info btn-light">{priority_name}</span>',
+                                '<tpl if="FD.current_user.is_agent"><span class="info btn-light">{priority_name}</span></tpl>',
                                 '<span class="info">updated: {updated_at:date("M")} {updated_at:date("d")} , {updated_at:date("h:m A")}</span></div>',
                         '</div>',
                         '<div class="disclose">&nbsp;</div>',
@@ -51991,7 +52066,7 @@ Ext.application({
                     'TicketsList', 'ContactsListContainer', 'ContactsList','ContactInfo', 'TicketDetailsContainer',
                     'TicketDetails', 'TicketReply', 'TicketForm', 'ContactDetails', 'ContactsFormContainer',
                     'ContactForm', 'TicketProperties', 'EmailForm','CannedResponses','Solutions','NoteForm',
-                    'TicketNote','Scenarioies','NewTicketContainer'],
+                    'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox'],
     stores      :['Init','Filters','Tickets','Contacts'],
     models      :['Portal','Filter','Ticket','Contact'],
 
@@ -52034,11 +52109,13 @@ Ext.application({
             xtype : "home"
         },newTicketContainer = {
             xtype:'newTicketContainer'
+        },flashMessageBox = {
+            xtype:'flashMessageBox'
         };
 
         Ext.Viewport.add([filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
-                        solutions,ticketNote,scenarioies,newTicketContainer]);
+                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_account = data[0].raw.account;
@@ -52046,6 +52123,7 @@ Ext.application({
             if(FD.current_user && FD.current_user.is_customer) {
                 FD.Util.initCustomer();
             }
+            document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
         }});
 
 

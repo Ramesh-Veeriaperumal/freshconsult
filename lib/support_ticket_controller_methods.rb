@@ -4,13 +4,22 @@ module SupportTicketControllerMethods
   
   def show
     @ticket = Helpdesk::Ticket.find_by_param(params[:id], current_account)
-    return if current_user && @ticket.requester_id == current_user.id
-    return if permission?(:manage_tickets)
-    return if current_user && current_user.client_manager?  &&@ticket.requester.customer == current_user.customer
-    if mobile?
-      render :json => @ticket.to_mob_json(true) and return
+    if !permission?(:manage_tickets) && !(current_user && @ticket.requester_id == current_user.id) && !(current_user && current_user.client_manager?  &&@ticket.requester.customer == current_user.customer)
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    else
+      respond_to do |format|
+        format.mob {
+          render :json => @ticket.to_mob_json(true)
+        }
+        format.html
+        # format.html {
+        #   return if current_user && @ticket.requester_id == current_user.id
+        #   return if permission?(:manage_tickets)
+        #   return if current_user && current_user.client_manager?  &&@ticket.requester.customer == current_user.customer
+        #   redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+        # }
+      end
     end
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
   end
 
   def new

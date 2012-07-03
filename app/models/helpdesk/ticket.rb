@@ -49,7 +49,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
    has_many :public_notes,
     :class_name => 'Helpdesk::Note',
-    :as => 'notable', :conditions => {:private =>  false}
+    :as => 'notable', :conditions => {:private =>  false, :deleted => false}
     
   has_many :sphinx_notes, 
     :class_name => 'Helpdesk::Note',
@@ -739,8 +739,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.name || requester_info
   end
 
+  def is_closed
+    closed?
+  end
+
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
+    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep
       self.load_flexifield
       options[:include] = [:notes,:attachments]
@@ -889,8 +893,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     options = {
-      :only => [:id,:display_id,:subject,:description,:description_html,:deleted,:spam,:cc_email,:due_by,:created_at],
-      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name],
+      :only => [:id,:display_id,:subject,:description,:description_html,:deleted,:spam,:cc_email,:due_by,:created_at,:updated_at],
+      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name,:is_closed],
       :include => json_inlcude
     }
     to_json(options,false) 

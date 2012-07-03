@@ -2,7 +2,6 @@ class Helpdesk::DashboardController < ApplicationController
   
   helper 'helpdesk/tickets' #by Shan temp
   include Reports::ScoreboardReport
-  include Mobile::MobileHelperMethods
 
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_mobile, :only => [:index]

@@ -6808,7 +6808,7 @@ a {
 .ticketDetails #details ul.actions li {
   display: inline-block;
   width: 20%;
-  border-right: 1px solid #ECEAE9;
+  border-left: 1px solid #ECEAE9;
   padding-bottom: 0.3em;
 }
 .ticketDetails #details ul.actions li.half {
@@ -6829,7 +6829,7 @@ a {
   margin: 0 0%;
   display: inline-block;
 }
-.ticketDetails #details ul.actions li:last-child {
+.ticketDetails #details ul.actions li:first-child {
   border: none;
 }
 .ticketDetails #details ul.actions li a {
@@ -6852,6 +6852,13 @@ a {
 }
 .ticketDetails #details ul.actions li a.trash {
   background: transparent url("../images/delete-icon.png") 50% 50% no-repeat;
+}
+.ticketDetails .banner {
+  height: 3em;
+  text-align: center;
+  padding: 0.8em 0em;
+  border-bottom: 1px solid #DFDFDF;
+  background: #fff8d4;
 }
 .ticketDetails .conversation {
   padding: 1em 0.5em;

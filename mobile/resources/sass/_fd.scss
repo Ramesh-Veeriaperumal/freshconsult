@@ -385,7 +385,7 @@ a {
 			li {
 				display:inline-block;
 				width:20%;
-				border-right:1px solid #ECEAE9;
+				border-left:1px solid #ECEAE9;
 				padding-bottom:0.3em;
 				&.half{
 					&:first-child{
@@ -407,7 +407,7 @@ a {
 						display:inline-block;
 					}
 				}
-				&:last-child{
+				&:first-child{
 					border:none;
 				}
 				a {
@@ -434,7 +434,13 @@ a {
 			}
 		}
 	}
-
+	.banner{
+		height: 3em;
+		text-align: center;
+		padding: 0.8em 0em;
+		border-bottom: 1px solid #DFDFDF;
+		background:#fff8d4;
+	}
 	.conversation{
 		padding:1em 0.5em;
 		.thumb {

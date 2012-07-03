@@ -20,7 +20,8 @@ Ext.define('Freshdesk.controller.Dashboard', {
         switch (name) {
             case 'tickets'  :
                 me =this;
-                Ext.getStore('Filters').load();
+                if(!Ext.getStore('Filters').getData().all.length)
+                    Ext.getStore('Filters').load();
                 var filtersListContainer = this.getFiltersListContainer(),
                 anim = Freshdesk.backBtn ? this.slideRightTransition : this.slideLeftTransition;
                 Ext.Viewport.animateActiveItem(filtersListContainer, anim);
@@ -34,7 +35,8 @@ Ext.define('Freshdesk.controller.Dashboard', {
                 break;
             default :
                 me =this;
-                Ext.getStore('Filters').load();
+                if(!Ext.getStore('Filters').getData().all.length)
+                    Ext.getStore('Filters').load();
                 var filtersListContainer = this.getFiltersListContainer(),
                 anim = Freshdesk.anim || this.slideRightTransition;
                 Ext.Viewport.animateActiveItem(filtersListContainer, anim);

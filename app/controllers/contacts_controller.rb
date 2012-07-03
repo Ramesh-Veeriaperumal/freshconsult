@@ -7,6 +7,7 @@ class ContactsController < ApplicationController
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
    skip_before_filter :build_object , :only => :new
+   before_filter :set_mobile , :only => :show
    
    
   
@@ -95,6 +96,7 @@ class ContactsController < ApplicationController
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json}
+      format.mob { render :json => @user.to_mob_json }
     end
   end
   

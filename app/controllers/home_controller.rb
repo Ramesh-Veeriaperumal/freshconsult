@@ -1,6 +1,5 @@
 class HomeController < ApplicationController
   
-  include Mobile::MobileHelperMethods
 
   before_filter :set_content_scope, :set_mobile
   
