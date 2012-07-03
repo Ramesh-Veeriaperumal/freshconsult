@@ -223,7 +223,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       all_sql_conditions
     end
   end
-  
   def serialize_to_params(merge_params = {})
     params = {}
     params[:wf_type]        = self.class.name

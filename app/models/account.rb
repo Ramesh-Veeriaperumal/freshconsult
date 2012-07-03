@@ -23,6 +23,10 @@ class Account < ActiveRecord::Base
   has_many :survey_remarks
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
   accepts_nested_attributes_for :main_portal
+
+  has_one :conversion_metric
+
+  accepts_nested_attributes_for :conversion_metric
  
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
@@ -30,7 +34,6 @@ class Account < ActiveRecord::Base
   has_one :data_export
   
   has_one :email_commands_setting
-  has_one :conversion_metric
   
   has_one :logo,
     :as => :attachable,
@@ -115,6 +118,8 @@ class Account < ActiveRecord::Base
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
+
+  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
@@ -225,7 +230,8 @@ class Account < ActiveRecord::Base
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false}
+    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, 
+    :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
     
   
   has_features do
@@ -382,7 +388,7 @@ class Account < ActiveRecord::Base
   end
   
   def ticket_status_values
-    ticket_fields.status_field.first.ticket_statuses.visible
+    ticket_statuses.visible
   end
   
   def has_multiple_products?
@@ -518,7 +524,6 @@ class Account < ActiveRecord::Base
 
     def populate_seed_data
       PopulateAccountSeed.populate_for(self)
-      #populate_ticket_types
     end
 
    def send_welcome_email
@@ -529,12 +534,5 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
-   def populate_ticket_types
-    if ticket_type_values.count < 5
-      ticket_type_field = ticket_fields.type_field.first
-      ticket_type_field.choices = [["Question"],["Incident"],["Problem"],["Feature Request"],["Lead"] ]
-      ticket_type_field.save
-    end
-   end 
 
 end

@@ -20,6 +20,10 @@ class SurveyHandle < ActiveRecord::Base
       note)
   end
   
+  def self.create_handle_for_place_holder(ticket)    
+    create_handle_internal(ticket, Survey::PLACE_HOLDER)
+  end
+
   def self.create_handle_for_notification(ticket, notification_type)
     send_while = NOTIFICATION_VS_SEND_WHILE[notification_type]
     create_handle_internal(ticket, send_while) if send_while

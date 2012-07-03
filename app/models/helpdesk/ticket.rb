@@ -671,6 +671,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
+
+    # Helpdesk::TicketDrop.new self
+
     { 
       "id"                                => display_id,
       "raw_id"                            => id,
@@ -699,6 +702,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
       #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+    
   end
 
   def url_protocol

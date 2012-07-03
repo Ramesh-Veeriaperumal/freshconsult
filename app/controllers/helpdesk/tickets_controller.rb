@@ -450,7 +450,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     @item.email_config = current_portal.product if current_portal
-        
+
     @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
