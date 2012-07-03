@@ -209,6 +209,15 @@ class Helpdesk::Note < ActiveRecord::Base
           "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
       end
     end
+
+    # The below 2 methods are used only for to_json 
+    def user_name
+      user.name || user_info
+    end
+    
+    def user_info
+      user.get_info if user
+    end
     
   private
     def human_note_for_ticket?
@@ -220,14 +229,6 @@ class Helpdesk::Note < ActiveRecord::Base
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 
-    # The below 2 methods are used only for to_json 
-    def user_name
-      user.name || user_info
-    end
-    
-    def user_info
-      user.get_info if user
-    end
 
     # Replied by third pary to the forwarded email
     # Use this method only after checking human_note_for_ticket? and user.customer?
