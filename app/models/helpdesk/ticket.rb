@@ -735,7 +735,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
     if deep
       self.load_flexifield
-      options[:include] = [:notes,:attachments]
+      self[:notes] = self.notes
+      options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
       options[:methods].push(:custom_field)
     end
