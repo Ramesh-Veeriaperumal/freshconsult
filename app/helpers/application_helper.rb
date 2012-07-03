@@ -273,7 +273,7 @@ module ApplicationHelper
   
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders #To do.. i18n
-    [
+    place_holders = [
       ['{{ticket.id}}',           'Ticket ID' ,       'Unique ticket ID.'],
       ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
       ['{{ticket.description}}',      'Description',        'Ticket description.'],
@@ -293,8 +293,10 @@ module ApplicationHelper
       ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
       ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
     ]
+    place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    place_holders
   end
   
   # Avatar helper for user profile image
@@ -514,7 +516,11 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless (element.blank? || field_value.nil? || field_value == "" || field_value == "...")     
+    content_tag :li, element unless display_tag? (element,field,field_value)
+  end
+
+  def display_tag? (element, field, field_value)
+    (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
    
   def pageless(total_pages, url, message=t("loading.items"), params = {})
