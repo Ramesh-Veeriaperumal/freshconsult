@@ -1,8 +1,3 @@
-<% content_for :onload_script do %>
-	$J("#customers-select-all").live("click", function(ev){
-		$J("#companies input[type=checkbox]").prop("checked", $J(this).prop("checked"));
-	});
-<% end %>
 <%content_for :sidebar do%>
 	<div class="sidepanel">
 	<h3 class="title"><%=t('company.quick_company')%></h3> 
@@ -28,7 +23,7 @@
 			    	<%= link_to t('delete'), {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  "#{t('company.info1')}?", :method => 'delete', :class => "button" %>
 				</div> 
 			    <div class="item_information">
-			    	<%= check_box_tag('ids[]', customer.to_param, false, :class => 'selector') %>
+			    	<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
 			    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			
 					<div><%= h customer.description %></div>
 				</div>		    

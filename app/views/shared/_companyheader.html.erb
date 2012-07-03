@@ -1,8 +1,7 @@
 <% javascript_tag do %>
 	validate_then_submit = function(url, method, params){
-		var checkbox_count = jQuery("input:checked").length;
 		var customer_type = '<%=type.eql?('user') ? t('flash.contacts.info_select') : t('flash.customers.info_select')%>';
-		if (checkbox_count === 0)
+		if (!jQuery('.customers_selector:checked').length)
 		{
 			jQuery("#noticeajax").text(customer_type);
 			jQuery("#noticeajax").show();
@@ -14,6 +13,16 @@
 		}
 	}
 <% end %>
+<% content_for :onload_script do %>
+	jQuery("#customers-select-all").live("change", function(ev){
+		jQuery("#users, #companies").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked"));
+		jQuery(".bulk-action").toggle( jQuery(this).prop("checked") );
+	});
+	jQuery('.customers_selector').change(function() {
+		jQuery(".bulk-action").toggle( jQuery('.customers_selector:checked').length > 0 );
+	});
+<% end %>
+
 <div>
 	<div class="floatr">				
 		<%= link_to(t('contacts.import_csv'), csv_contact_import_path) %>
@@ -22,12 +31,14 @@
 
 	<h3 class="title"><%= @page_title = t('customers') %></h3>	
 	<div class="customers-toolbar">
-		<input type="checkbox" id="customers-select-all"  />
-		<% if params[:state].eql?("deleted") %>
-			<%= link_to_function(t('contacts.restore'), "validate_then_submit('#{ path }/restore', 'restore')", :class => "uiButton") %>
-		<% else %>
-			<%= link_to_function(t('delete'), "validate_then_submit('#{ path }/destroy', 'delete')", :class => "uiButton") %>
-		<% end %>
+		<input type="checkbox" id="customers-select-all" />
+		<div class="bulk-action">
+			<% if params[:state].eql?("deleted") %>
+				<%= link_to_function(t('contacts.restore'), "validate_then_submit('#{ path }/restore', 'restore')", :class => "uiButton") %>
+			<% else %>
+				<%= link_to_function(t('delete'), "validate_then_submit('#{ path }/destroy', 'delete')", :class => "uiButton") %>
+			<% end %>
+		</div>
 		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
 		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
 	</div>
