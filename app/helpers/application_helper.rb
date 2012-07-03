@@ -514,7 +514,11 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless (element.blank? || field_value.nil? || field_value == "" || field_value == "...")     
+    content_tag :li, element unless display_tag? (element,field,field_value)
+  end
+
+  def display_tag? (element, field, field_value)
+    (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
    
   def pageless(total_pages, url, message=t("loading.items"), params = {})
