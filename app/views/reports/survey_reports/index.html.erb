@@ -1,5 +1,9 @@
 <%= include_stylesheets :satisfaction  %>
 
+<%
+date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime("%d %B %Y")} - #{Time.zone.now.strftime("%d %B %Y")}" :  h(params[:date_range])
+%>
+
 <div id="report-container" class="report-container">
 <div class="satisfaction-head">
 		<span id="back_to_con" class="floatr">	
@@ -19,3 +23,15 @@
 	<%= render :partial => "/reports/survey_reports/list" %>
 </div>
 </div>
+
+<% javascript_tag do %>		
+<%unless @reports_list.blank?%>
+		jQuery('#report_list').pageless({
+		    currentPage:1,
+		    totalPages : <%=@survey_reports.total_pages%>,
+      		    url : "<%=survey_list_url(:date_range => date_range)%>",
+      	                loaderMsg : "<%=t('.agent_list_loading')%>",
+      	                params:{category:"<%=params[:category]%>"}
+		});		
+ <%end%>		
+<%end%>
