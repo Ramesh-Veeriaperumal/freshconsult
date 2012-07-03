@@ -119,6 +119,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def to_json(options = {})
+    options[:include] = [:attachments]
     options[:methods] = [:user_name]
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
