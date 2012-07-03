@@ -175,7 +175,8 @@ class Helpdesk::Note < ActiveRecord::Base
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
-      
+      # syntax to move code from delayed jobs to resque.
+      #Resque::MyNotifier.deliver_reply( notable.id, self.id , notable.reply_email,{:include_cc => true})
       notable.updated_at = created_at
       notable.save
     end

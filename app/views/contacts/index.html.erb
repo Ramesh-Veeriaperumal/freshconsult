@@ -1,3 +1,8 @@
+<% content_for :onload_script do %>
+	$J("#customers-select-all").live("click", function(ev){
+		$J("#users input[type=checkbox]").prop("checked", $J(this).prop("checked"));
+	});
+<% end %>
 <% content_for :sidebar do %>
 	<div class="sidepanel">
 		<h3 class="title"><%=t('contacts.quick_contact')%></h3>	
@@ -26,39 +31,57 @@
 		<%= render :partial => "/helpdesk/tags/tag_cloud", :object => @tags %>
 	</div>
 <%end%>
-
-<%= render(:partial => '/shared/companyheader', :locals => {:type => "user"}) %>
-<ul id="users" class="content_list">	  
-  <% @contacts.each do |contact| %>
-    <li class="<%= cycle('stripe', '') %>">	   
-	  <div class="item_actions">
-	  	<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") %>
-      	<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") unless contact == current_user %>
-	  </div>	   
-	  <%= user_avatar( contact ) %>
-	  <div class="item_information">
-        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
-			<div class="info_data">
-				<% unless contact.job_title.blank? %>
-		  			<b><%= h contact.job_title %></b>
-				<% else %>
-					<% unless contact.customer.blank? %>
-				   		<%=t('contacts.working')%>
-					<% end %> 
-				<% end %>
-				<% unless contact.customer.blank? %>
-				   at <%= link_to(h(contact.customer.name), contact.customer)  %>
-				<% end %> 
+<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
+<% form_tag "", { :id => "tickets-expanded", :method => :put } do %>
+<% if @contacts.length > 0 %>
+	<ul id="users" class="content_list">	  
+	  <% @contacts.each do |contact| %>
+	    <li class="<%= cycle('stripe', '') %>">
+		  	<div class="item_actions">
+				<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact} , :method => 'put', :class => "button") if contact.deleted? %>
+				<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") if !contact.deleted? %>
+				<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") if contact != current_user and !contact.deleted? %>
+		  	</div>
+	      	<div class="checkbox">
+		      	<%= check_box_tag('ids[]', contact.to_param, false, :class => 'selector') %>
+			  	<%= user_avatar( contact ) %>
+			  	<div class="item_information">
+		        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
+					<div class="info_data">
+						<% unless contact.job_title.blank? %>
+				  			<b><%= h contact.job_title %></b>
+						<% else %>
+							<% unless contact.customer.blank? %>
+						   		<%=t('contacts.working')%>
+							<% end %> 
+						<% end %>
+						<% unless contact.customer.blank? %>
+						   at <%= link_to(h(contact.customer.name), contact.customer)  %>
+						<% end %> 
+					</div>
+					<div class="info_data">
+						<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
+						<%= content_tag (:span, "#{h(contact.phone)}") unless contact.phone.blank? %>
+					</div>
+			 	</div>
 			</div>
-			<div class="info_data">
-				<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
-				<%= content_tag (:span, "#{h(contact.phone)}") unless contact.phone.blank? %>
-			</div>
-	 </div>
-     	      
-    </li>	
-  <% end %>	 
-</ul> 
-<div class="negtiveMargin">  
-	<%= will_paginate @contacts %> 
-</div>
+	    </li>		
+	  <% end %>	 
+	</ul> 
+	<div class="negtiveMargin">  
+		<%= will_paginate @contacts %> 
+	</div>
+<% else %>
+	<div class="big-info">
+		<div class="no-info-text">
+			<% if params[:state].blank? or params[:state].eql?('active') %>
+				<%= t('contacts.active.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+				<%= t('contacts.active.no_contacts') if params[:letter].blank? %>
+			<% else %>
+			   <%= t('contacts.deleted.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+				<%= t('contacts.deleted.no_contacts') if params[:letter].blank? %>
+			<% end %>
+		</div>
+	</div>
+<% end %>
+<% end %>

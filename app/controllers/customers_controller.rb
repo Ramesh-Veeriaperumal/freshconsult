@@ -2,6 +2,9 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.xml
   
+  helper ContactsHelper
+  include HelpdeskControllerMethods
+
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_selected_tab
   
@@ -92,26 +95,23 @@ class CustomersController < ApplicationController
       end
     end
   end
-
-  # DELETE /customers/1
-  # DELETE /customers/1.xml
-  def destroy
-    @customer = current_account.customers.find(params[:id])
-    @customer.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(customers_url) }
-      format.xml  { head :ok }
-    end
-  end
   
   protected
-  
+
+    def scoper
+      current_account.customers
+    end
+
     def set_selected_tab
-      @selected_tab = :customers
-  end
-   def get_domain(s)
-      s.gsub(/^(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') unless s.blank?
-   end 
+        @selected_tab = :customers
+    end
+
+    def get_domain(s)
+        s.gsub(/^(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') unless s.blank?
+    end
+
+    def after_destroy_url
+      return customers_url
+    end
   
 end
