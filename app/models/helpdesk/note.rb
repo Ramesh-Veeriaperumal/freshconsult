@@ -163,7 +163,9 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer?
-        if (replied_by_third_party? and notable.onhold?) or (notable.onhold_and_closed? and !feedback? and !replied_by_third_party?) 
+        # Will re-open the ticket if it is not in open status and not feedback
+        # Will re-open when the system gets a reply from third party and the ticket is not in resolved/closed statuses.
+        unless notable.open? || feedback? || (replied_by_third_party? and !notable.active?)
           notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
