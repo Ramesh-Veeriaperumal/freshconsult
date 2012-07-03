@@ -671,34 +671,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
-    { 
-      "id"                                => display_id,
-      "raw_id"                            => id,
-      "encoded_id"                        => encode_display_id,
-      "subject"                           => subject,
-      "description"                       => description_with_attachments,
-      "description_text"                  => description,
-      "requester"                         => requester,
-      "agent"                             => responder,
-      "group"                             => group,
-      "status"                            => status_name,
-      "requester_status_name"             => Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name"),
-      "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
-      "source"                            => SOURCE_NAMES_BY_KEY[source],
-      "ticket_type"                       => ticket_type,
-      "tags"                              => tag_names.join(', '),
-      "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
-      "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host, :protocol=> url_protocol),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host, :protocol=> url_protocol),
-      "portal_name"                       => portal_name,
-      #"attachments"                      => liquidize_attachments(attachments),
-      #"latest_comment"                   => liquidize_comment(latest_comment),
-      "latest_public_comment"             => liquidize_comment(latest_public_comment)
-      #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
-      #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
-    }
+
+    Helpdesk::TicketDrop.new self
+    
   end
 
   def url_protocol
@@ -760,7 +735,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
     if deep
       self.load_flexifield
-      options[:include] = [:notes,:attachments]
+      self[:notes] = self.notes
+      options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
       options[:methods].push(:custom_field)
     end
@@ -870,7 +846,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     emails_hash = cc_email_hash
     return [] if emails_hash.nil?
     to_emails_array = []
-    cc_emails_array = (emails_hash[:cc_emails] || [])
+    cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
     to_emails_array = (emails_hash[:to_emails] || []).clone
     to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
     (cc_emails_array + to_emails_array).uniq

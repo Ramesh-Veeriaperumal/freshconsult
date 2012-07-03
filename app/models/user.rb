@@ -380,20 +380,9 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-    to_ret = { 
-      "id"   => id,
-      "name"  => to_s,
-      "email" => email,
-      "phone" => phone,
-      "mobile" => mobile,
-      "job_title" => job_title,
-      "user_role" => user_role,
-      "time_zone" => time_zone,
-    }
+
+    UserDrop.new self
     
-    to_ret["company_name"] = customer.name if customer
-    
-    to_ret
   end
   
   def has_manage_forums?
@@ -417,9 +406,9 @@ class User < ActiveRecord::Base
     day_pass_usages.on_the_day(start_time).first
   end
   
-  def self.filter(letter, page)
+  def self.filter(letter, page, state = "active")
   paginate :per_page => 10, :page => page,
-           :conditions => ['name like ?', "#{letter}%"],
+           :conditions => [ 'name like ? and deleted = ?', "#{letter}%", !state.eql?("active") ],
            :order => 'name'
   end
   

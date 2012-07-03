@@ -448,7 +448,9 @@ class Helpdesk::TicketsController < ApplicationController
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
-    
+
+    @item.email_config = current_portal.product if current_portal
+
     @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist

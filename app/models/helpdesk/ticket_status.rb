@@ -30,7 +30,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.translate_status_name(status, disp_col_name=nil)
     st_name = disp_col_name.nil? ? status.send(display_name) : status.send(disp_col_name)
-    I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}")
+    DEFAULT_STATUSES.keys.include?(status.status_id) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : st_name
   end
 
   def self.statuses_list(account)
@@ -71,6 +71,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   
   def self.onhold_and_closed_statuses(account)
     statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => {:stop_sla_timer => true})
+    statuses.collect { |status| status.status_id }
+  end
+
+  def self.unresolved_statuses(account)
+    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => ["status_id not in (?,?)", RESOLVED, CLOSED])
     statuses.collect { |status| status.status_id }
   end
   
