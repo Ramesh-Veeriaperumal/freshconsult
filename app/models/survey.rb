@@ -55,4 +55,14 @@ class Survey < ActiveRecord::Base
                                                                     :locals => {:ticket => ticket, :survey_handle => survey_handle})
   end
 
+  def title(rating)        
+        if rating==CUSTOMER_RATINGS[HAPPY]
+           self.happy_text.downcase
+        elsif rating==CUSTOMER_RATINGS[UNHAPPY]
+           self.unhappy_text.downcase
+        else
+           self.neutral_text.downcase
+        end
+  end
+
 end
