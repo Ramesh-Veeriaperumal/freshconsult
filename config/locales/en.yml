@@ -187,6 +187,9 @@ en:
         send_while_option3: Emails sent after a ticket is "Closed".
         send_while_option4: Allow agents to add survey links to specific emails.
         send_while_title: Choose which emails have the satisfaction survey link
+        enter_happy_text: Enter the happy text
+        enter_neutral_text: Enter the neutral text
+        enter_unhappy_text: Enter the unhappy text
         
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard

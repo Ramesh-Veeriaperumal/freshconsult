@@ -19,7 +19,19 @@
 		<!-- <%= f.text_field :link_text, :value => @survey[:link_text], :class => "time"  %> -->
 		<%= f.text_area(:link_text, :value => @survey[:link_text], :autocomplete => "off", :rel => "ghostwriter", :size => "16", :class=> "textfield required", :style=>"display:block;resize:none;width:70%;") %>				
 	</li>
-	
+	<li>
+		<strong><%=t('.enter_happy_text')%> </strong><br>
+		
+		<%= f.text_field :happy_text, :value => (@survey[:happy_text] || t('helpdesk.ticket_notifier.reply.happy')), :style => "width:70%" %>
+	</li>
+	<li>
+		<strong><%=t('.enter_neutral_text')%> </strong><br>
+		<%= f.text_field :neutral_text, :value => (@survey[:neutral_text] || t('helpdesk.ticket_notifier.reply.neutral')), :style => "width:70%" %>
+	</li>
+	<li>
+		<strong><%=t('.enter_unhappy_text')%> </strong><br>
+		<%= f.text_field :unhappy_text, :value => (@survey[:unhappy_text] || t('helpdesk.ticket_notifier.reply.unhappy')), :style => "width:70%" %>
+	</li>
 	<li>
 		<strong><%=t('.send_while_title')%></strong><br>
 		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::CLOSED_NOTIFICATION %> <%=t('.send_while_option3')%></label>
