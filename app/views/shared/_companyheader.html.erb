@@ -20,6 +20,7 @@
 	});
 	jQuery('.customers_selector').change(function() {
 		jQuery(".bulk-action").toggle( jQuery('.customers_selector:checked').length > 0 );
+		jQuery("#customers-select-all").prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
 	});
 <% end %>
 
@@ -60,14 +61,14 @@
 		</ul>
 		<% if type.eql?('user') %>
 			<div class="customer_status_tab">
-				<b><%=t('contacts.showing')%></b>
-				<span class="<%= 'active' if params[:state].blank? or params[:state].eql?('active') %>">
-					<%= link_to t('contacts.status.active'), :state => 'active' %>
-				</span>
-				|
-				<span class="<%= 'active' if params[:state].eql?('deleted') %>">
+				<b><%=t('contacts.showing')%></b>				
+				<% if params[:state].blank? or params[:state].eql?('active') %>					
+					<b><%=t('contacts.status.active') %></b> |
 					<%= link_to t('contacts.status.deleted'), :state => 'deleted' %>
-				</span>
+				<% else %>						
+					<%= link_to t('contacts.status.active'), :state => 'active' %> |
+					<b><%=t('contacts.status.deleted') %></b>
+				<% end %>	
 			</div>
 		<% end %>
 	</div>
