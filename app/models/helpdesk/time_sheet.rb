@@ -14,7 +14,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   named_scope :timer_active , :conditions =>["timer_running=?" , true]
 
   named_scope :created_at_inside, lambda { |start, stop|
-          { :conditions => [" helpdesk_time_sheets.start_time >= ? and helpdesk_time_sheets.start_time <= ?", start, stop] }
+          { :conditions => [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", start, stop] }
         }
   named_scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
         

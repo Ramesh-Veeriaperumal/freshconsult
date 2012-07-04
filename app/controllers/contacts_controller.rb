@@ -1,7 +1,13 @@
 class ContactsController < ApplicationController
    
-   before_filter { |c| c.requires_permission :manage_tickets }
-  
+    before_filter :except => [:make_agent] do |c| 
+      c.requires_permission :manage_tickets
+    end
+
+    before_filter :only => [:make_agent] do |c| 
+      c.requires_permission :manage_users
+    end
+
    include HelpdeskControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
