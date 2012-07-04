@@ -1467,32 +1467,50 @@ h4.list_title{
 	} 
 }
 
-.alpha_sort_list{ 
+.contacts_sub_header{
 	@include clearfix;
+	border-bottom:1px solid #dedede;	
+	padding: 8px 20px;
+	margin:0px -20px;
+}
+
+.customer_status_tab{
+	margin-left: 26px;
+	a{
+		color:#3E71A4;
+	}
+	span{
+		&.active{
+			a{
+				color:#000;
+				font-weight:bold;
+			}
+		}
+	}
+}
+
+.alpha_sort_list{ 
+	@include pie-clearfix;
 	display:block;
 	list-style:none;
-	display:block;
-	padding:4px 20px;
-	margin:0 -20px;	
-	border-bottom:1px solid #dedede;	
-	background: #efefef;
+	display:block;	
+	background: #fff;
+	float:right;	
 	li{
 		float:left;
-		margin:0px;
-		padding:2px 0px;
 		a{
 			font-weight:bold;
 			text-decoration:none;
 			color: #909090;
-			@include border-radius(4px);
-			padding: 4px 5px;
+			padding: 4px;
 		}
 	}
 	li.active a, li a:hover{
-			color:#333333;
-			border-color:#f5f5f5f;
-			background: #fff;
-			@include box-shadow(rgba(0, 0, 0, 0.25) 0px 0px 2px inset);
+		color:#333333;
+		border-color:#000;
+		background: #fff;
+		@include box-shadow(rgba(0, 0, 0, 0.4) 0 1px 3px inset);
+		@include border-radius(5px);		
 	}
 } 
 
@@ -3039,14 +3057,14 @@ div.addReminder{
 	b{
 		margin-right:10px;
 		padding:5px 0px 0px 0px;
-		float:left;
+		float:right;
 	}
 	display:block;
 	a{
 		background:#cfcfcf; 
 		position:relative;
 		top:1px;
-		float:left;
+		float:right;
 		text-decoration:none;
 		padding:6px 8px;
 		margin:0px 0px 0px 0px;
@@ -3438,6 +3456,11 @@ div.addReminder{
 		border-bottom:1px solid #efefef; 
 		color:#656565;
 		position:relative;
+		.customers_selector{
+		 	float:left;
+		 	margin-top:8px;
+		 	margin-right:8px;
+		 }
 		.preview_pic{
 			float:left;
 			margin-right:10px;
@@ -4387,6 +4410,24 @@ a.close{
 	padding:5px 8px 8px 0;
 	border-bottom:1px solid #dfdfdf;
 	border-top:1px solid #ffffff;
+}
+
+.customers-toolbar{
+	float:left;
+	input{
+		float:left;
+		margin-top: 10px;
+		margin-right: 8px;
+	}
+	.bulk-action{
+		float:left;
+		display:none;
+		a{
+			&.uiButton{
+				margin-right: 4px;
+			}
+		}
+	}
 }
 
 .sort-bar{
@@ -5388,6 +5429,10 @@ a.submit_link:hover{
 .survey_settings{
 padding:10px;
 margin:10px;
+}
+
+.survey_text{
+	width:70%;
 }
 
 /* SURVEY REPORT RELATED STYLES */

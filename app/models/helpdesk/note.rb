@@ -119,6 +119,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def to_json(options = {})
+    options[:include] = [:attachments]
     options[:methods] = [:user_name]
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
@@ -163,7 +164,9 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer?
-        if (replied_by_third_party? and notable.onhold?) or (notable.onhold_and_closed? and !feedback? and !replied_by_third_party?) 
+        # Will re-open the ticket if it is not in open status and not feedback
+        # Will re-open when the system gets a reply from third party and the ticket is not in resolved/closed statuses.
+        unless notable.open? || feedback? || (replied_by_third_party? and !notable.active?)
           notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
@@ -175,7 +178,8 @@ class Helpdesk::Note < ActiveRecord::Base
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
-      
+      # syntax to move code from delayed jobs to resque.
+      #Resque::MyNotifier.deliver_reply( notable.id, self.id , notable.reply_email,{:include_cc => true})
       notable.updated_at = created_at
       notable.save
     end
@@ -209,6 +213,15 @@ class Helpdesk::Note < ActiveRecord::Base
           "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
       end
     end
+
+    # The below 2 methods are used only for to_json 
+    def user_name
+      user.name || user_info
+    end
+    
+    def user_info
+      user.get_info if user
+    end
     
   private
     def human_note_for_ticket?
@@ -220,14 +233,6 @@ class Helpdesk::Note < ActiveRecord::Base
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 
-    # The below 2 methods are used only for to_json 
-    def user_name
-      user.name || user_info
-    end
-    
-    def user_info
-      user.get_info if user
-    end
 
     # Replied by third pary to the forwarded email
     # Use this method only after checking human_note_for_ticket? and user.customer?

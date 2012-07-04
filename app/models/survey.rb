@@ -38,11 +38,14 @@ class Survey < ActiveRecord::Base
            ticket.requester.customer? && ((send_while == s_while) || s_while == PLACE_HOLDER) )
   end
   
-  def store(survey)     
+  def store(survey)
     self.send_while = survey[:send_while]
     self.link_text = survey[:link_text]
+    self.happy_text = survey[:happy_text]
+    self.neutral_text = survey[:neutral_text]
+    self.unhappy_text = survey[:unhappy_text]
     save
-  end  
+  end
  
   def self.satisfaction_survey_html(ticket)
         
