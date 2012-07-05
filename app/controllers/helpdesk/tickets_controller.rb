@@ -11,7 +11,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
 
-  before_filter :set_mobile, :only => [:show,:update, :create,:get_ca_response_content,:execute_scenario]
+  before_filter :set_mobile, :only => [:index,:show,:update, :create,:get_ca_response_content,:execute_scenario]
   
   before_filter { |c| c.requires_permission :manage_tickets }
   
@@ -128,6 +128,20 @@ class Helpdesk::TicketsController < ApplicationController
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
             json << sep + tic.to_json({}, false)[19..-2]; sep=","
+          }
+          render :json => json + "]"
+        end
+      end
+      
+      format.mob do 
+        unless @response_errors.nil?
+          render :json => {:errors => @response_errors}.to_json
+        else
+          json = "["; sep=""
+          @items.each { |tic| 
+            #Removing the root node, so that it conforms to JSON REST API standards
+            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+            json << sep + tic.to_json({:methods => [:status_name,:priority_name, :source_name, :requester_name,:responder_name, :need_attention]}, false)[19..-2]; sep=","
           }
           render :json => json + "]"
         end

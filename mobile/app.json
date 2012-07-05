@@ -19,6 +19,9 @@
      */
     "js": [
         {
+            "path": "util/date.extensions.js"
+        },
+        {
             "path": "util/fd.js"
         },
         {
