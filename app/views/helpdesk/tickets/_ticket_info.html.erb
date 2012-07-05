@@ -15,6 +15,12 @@
         <%= content_tag :span, h(@ticket.priority_name), :class => "priority-pointer #{@ticket.priority_key}" %>
         <%= content_tag :span, "##{h(@ticket.display_id)}", :class => "ticket-id" %>
         <%= content_tag :span, h(@ticket.subject), :class => "subject" %>
+        <%
+                customer_opinion = ""                
+                customer_opinion = "<div class='customer-opinion "+@ticket.survey_result.last.get_small_img_class+"'></div>" unless @ticket.survey_result.nil?
+        %>
+        <%=customer_opinion%>
+
       </div>
 			<div class="description">         
         <div class="user_details">
