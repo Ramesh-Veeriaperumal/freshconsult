@@ -14,7 +14,6 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '<span class="info"> Assigned To: </span>{responder_name}',
                                 '</div>',
                                 '<div><span class="info btn">{status_name}</span>',
-                                '<tpl if="FD.current_user.is_agent"><span class="info btn-light">{priority_name}</span></tpl>',
                                 '<span class="info">updated: {updated_at:date("M")} {updated_at:date("d")} , {updated_at:date("h:m A")}</span></div>',
                         '</div>',
                         '<div class="disclose">&nbsp;</div>',

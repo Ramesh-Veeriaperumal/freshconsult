@@ -1,10 +1,34 @@
 var FD = FD || {};
 FD.Util = {
-    Ajax : function(){
-
+    onAjaxSucess : function(data,res,callBack,scope){
+        callBack.call(scope,res);
     },
-    getJSON : function(options){
-
+    onAjaxFailure: function(data,res,callBack){
+        if(res.status == 302) {
+                window.location = JSON.parse(res.responseText).Location;
+        }
+        else{
+            Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");
+        }
+    },
+    onAjaxCallback : function(data, operation, res, callBack, scope){
+        //Ext.Viewport.setMasked(false);
+        operation ? this.onAjaxSucess(data,res,callBack,scope) : this.onAjaxFailure(data,res,callBack,scope)
+    },
+    ajax : function(options,callBack,scope){
+        //Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'});
+        var me = this;
+        options.callback = function(data,operation,success){
+            me.onAjaxCallback(data,operation,success,callBack,scope)
+        }
+        Ext.Ajax.request(options);
+    },
+    getJSON : function(options,callBack,scope){
+        options.method = "GET";
+        options.headers = {
+            "Accept": "application/json"
+        };
+        this.ajax(options,callBack,scope);
     },
 	reBrand: function(data){
 		Ext.Viewport.getAt(1).setBranding(data);
@@ -102,7 +126,7 @@ FD.Util = {
         item.label = field.label;
         item.name = field.is_default_field ? 'helpdesk_ticket['+field_name+']' : 'helpdesk_ticket[custom_field]['+field_name+']';
         item.required = field.required;
-        item.value = field.nested_levels ? field.field_value.category_val : field.field_value;
+        item.value = field.nested_levels && field.field_value ? field.field_value.category_val : field.field_value;
 
         switch(field.domtype){
             case 'dropdown_blank':

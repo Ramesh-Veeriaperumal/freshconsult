@@ -1,25 +1,19 @@
 Ext.define("Freshdesk.view.CannedResponses", {
     extend: "Ext.Container",
     alias: "widget.cannedResponses",
+    populateMessage : function(res){
+        var content = res.responseText,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0],
+        messageElm  = msgFormContainer.getMessageItem();
+        messageElm.setValue(messageElm.getValue()+content);
+        this.hide();
+    },
     onCannedResDisclose : function(list, index, target, record, evt, options){
         var ca_resp_id = record.raw.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
-        ticket_id = msgFormContainer.ticket_id;
-        Ext.Ajax.request({
-            url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
-            callback: function(req,success,response){
-                if(success) {
-                        var content = response.responseText,
-                        messageElm  = msgFormContainer.getMessageItem();
-                        messageElm.setValue(messageElm.getValue()+content);
-                        this.hide();
-                }
-                else {
-                        this.hide();
-                        Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                }
-            },
-            scope:this
-        });
+        ticket_id = msgFormContainer.ticket_id,
+        opts  = {
+            url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
+        };
+        FD.Util.getJSON(opts,this.populateMessage,this);
     },
     config: {
         itemId : 'cannedResponsesPopup',

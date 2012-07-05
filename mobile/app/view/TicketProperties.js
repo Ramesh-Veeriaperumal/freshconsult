@@ -50,38 +50,21 @@ Ext.define("Freshdesk.view.TicketProperties", {
             //hack for disabling drag
             direction:'horiz',
             directionLock:true,
-            listeners : {
-                activeitemchange: function(me,activeItem,prevActiveItem,opts){
-                    switch (activeItem._itemId) {
-                        case 'ticketForm' :
-                            me.parent.showProperties(true);
-                            break;
-                        case 'customerInfo':
-                            me.parent.showCustomerDetails(true);
-                            break;
-                    }
-                }
-            },
             items: [propeties,customerInfo]
         });
         this.add([tabs,details]);
     },
+    populateCustomerData : function(res){
+        var resJSON = JSON.parse(res.responseText);
+        this.items.items[1].items.items[2].setData(resJSON.user);
+    },
     showCustomerDetails:function(preventActive){
         var me=this;
-        id=this.parent.parent.requester_id;
-        Ext.Ajax.request({
+        id=this.parent.parent.requester_id,
+        opts = {
             url: '/contacts/'+id,
-            headers: {
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                var resJSON = JSON.parse(response.responseText);
-                me.items.items[1].items.items[2].setData(resJSON.user);
-            },
-            failure: function(response){
-            }
-        });
-
+        };
+        FD.Util.getJSON(opts,this.populateCustomerData,this);
         this.addCls('customer');
         if(!preventActive)
             this.items.items[1].setActiveItem(1);

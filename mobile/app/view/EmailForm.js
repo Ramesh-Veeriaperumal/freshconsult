@@ -10,32 +10,25 @@ Ext.define('Freshdesk.view.EmailForm', {
         cannedResList.getStore() ? cannedResList.getStore().setData(responses) : cannedResList.setData(responses);
         cannedResPopup.show();
     },
+    populateSolutions : function(res){
+        var content = JSON.parse(res.responseText),
+        solutionsPopup = Ext.ComponentQuery.query('#solutionsPopup')[0],
+        solutionList = solutionsPopup.items.items[0];
+        if(content.length){
+            solutionList.hideEmptyText();
+            solutionList.getStore() ? solutionList.getStore().setData(content) : solutionList.setData(content);
+        }
+        else {
+            solutionList.showEmptyText();
+        }
+        solutionsPopup.show();
+    },
     showSolution: function(){
-        var ticket_id = this.parent.ticket_id,solutionsPopup = Ext.ComponentQuery.query('#solutionsPopup')[0];
-        Ext.Ajax.request({
-            url: 'tickets/get_suggested_solutions/'+ticket_id,
-            headers: {
-                "Accept": "application/json"
-            },
-            callback: function(req,success,response){
-                if(success){
-                        var content = JSON.parse(response.responseText),
-                        solutionList = solutionsPopup.items.items[0];
-                        if(content.length){
-                            solutionList.hideEmptyText();
-                            solutionList.getStore() ? solutionList.getStore().setData(content) : solutionList.setData(content);
-                        }
-                        else {
-                            solutionList.showEmptyText();
-                        }
-                        solutionsPopup.show();
-                }
-                else{
-                        Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                }
-            },
-            scope:this
-        });
+        var ticket_id = this.parent.ticket_id,solutionsPopup = Ext.ComponentQuery.query('#solutionsPopup')[0],
+        opts = {
+             url: 'tickets/get_suggested_solutions/'+ticket_id
+        };
+        FD.Util.getJSON(opts,this.populateSolutions,this);
     },
     config: {
         layout:'fit',
@@ -98,8 +91,25 @@ Ext.define('Freshdesk.view.EmailForm', {
                         showAnimation:'fadeIn'
                     },
                     {
+                        xtype: 'textareafield',
+                        name: 'helpdesk_note[body_html]',
+                        height: '20em',
+                        placeHolder:'Message'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'commet',
+                        value:'Send'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'email_type',
+                        value:'Reply'
+                    },
+                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
+                        docked:'bottom',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -123,22 +133,6 @@ Ext.define('Freshdesk.view.EmailForm', {
                             }
                         ]
 
-                    },
-                    {
-                        xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
-                        height: '17em',
-                        placeHolder:'Message'
-                    },
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'commet',
-                        value:'Send'
-                    },
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'email_type',
-                        value:'Reply'
                     }
                 ]
             }

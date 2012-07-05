@@ -29,6 +29,23 @@ Ext.define('Freshdesk.controller.Tickets', {
             newTicketContainer : 'newTicketContainer'
     	}
     },
+    renderDetails: function(ticketDetails,callBack){
+        var resJSON = JSON.parse(ticketDetails.responseText).helpdesk_ticket,
+        convContainer = this.getConversationContainer(),
+        detailsContainer = this.getTicketDetailsContainer(),
+        id = resJSON.id;
+        resJSON.notes = resJSON.notes || resJSON.public_notes ;
+        //saving in local variable ..
+        this.ticket = resJSON;
+        convContainer.setData(resJSON);
+        detailsContainer.showCoversations(true);
+        detailsContainer.items.items[0].setTitle('Ticket: '+id);
+        detailsContainer.ticket_id=id;
+        detailsContainer.requester_id=resJSON.requester.id;
+        Ext.Viewport.animateActiveItem(detailsContainer, anim);
+        callBack ? callBack() : '' ;
+        delete Freshdesk.anim;
+    },
     show: function(id,callBack){
         var detailsContainer = this.getTicketDetailsContainer();
         anim = Freshdesk.anim || { type: 'slide', direction: 'left' };
@@ -36,35 +53,17 @@ Ext.define('Freshdesk.controller.Tickets', {
             Ext.Viewport.animateActiveItem(detailsContainer, anim);
         }
         else{
-            Ext.Ajax.request({
+            var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
                     format:'mob'
                 },
-                method:'GET',
-                headers: {
-                    "Accept": "application/json"
-                },
-                success: function(response) {
-                    var resJSON = JSON.parse(response.responseText).helpdesk_ticket,
-                    convContainer = this.getConversationContainer();
-                    resJSON.notes = resJSON.notes || resJSON.public_notes ;
-                    //saving in local variable ..
-                    this.ticket = resJSON;
-                    convContainer.setData(resJSON);
-                    detailsContainer.showCoversations(true);
-                    detailsContainer.items.items[0].setTitle('Ticket: '+id);
-                    detailsContainer.ticket_id=id,
-                    detailsContainer.requester_id=resJSON.requester.id;
-                    Ext.Viewport.animateActiveItem(detailsContainer, anim);
-                    callBack ? callBack() : '' ;
-                    delete Freshdesk.anim;
-                },
-                failure: function(response){
-                    Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");
-                },
-                scope: this
-            });
+                scope:this
+            },
+            ajaxCallb = function(res){
+                this.renderDetails(res,callBack)
+            };
+            FD.Util.ajax(ajaxOpts,ajaxCallb,this);
         }
         Freshdesk.cancelBtn=false;
         Freshdesk.anim = undefined;
@@ -99,22 +98,11 @@ Ext.define('Freshdesk.controller.Tickets', {
                     location.href="#tickets/show/"+id;
                 }
                 else{
-                    Ext.Ajax.request({
-                        url: '/support/tickets/close_ticket/'+id,
-                        method:'GET',
-                        headers: {
-                            "Accept": "application/json"
-                        },
-                        callback: function(req,success,response){
-                            if(success){
-                                location.href="#tickets/show/"+id;
-                            }
-                            else{
-                                location.href="#tickets/show/"+id;
-                                Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                            }
-                        }
-                    });
+                    var opts = { url: '/support/tickets/close_ticket/'+id },
+                    callBack = function(res){
+                        location.href="#tickets/show/"+id;
+                    };
+                    FD.Util.getJSON(opts,callBack,this)
                 }
             }
         );
@@ -127,7 +115,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                     location.href="#tickets/show/"+id;
                 }
                 else{
-                    Ext.Ajax.request({
+                    var opts = {
                         url: '/helpdesk/tickets/update/'+id,
                         method:'POST',
                         params:{
@@ -135,17 +123,12 @@ Ext.define('Freshdesk.controller.Tickets', {
                         },
                         headers: {
                             "Accept": "application/json"
-                        },
-                        callback: function(req,success,response){
-                            if(success){
-                                location.href="#tickets/show/"+id;
-                            }
-                            else{
-                                location.href="#tickets/show/"+id;
-                                Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                            }
                         }
-                    });
+                    },
+                    callBack = function(res){
+                        location.href="#tickets/show/"+id;
+                    };
+                    FD.Util.ajax(opts,callBack,this);
                 }
             }
         );
@@ -158,25 +141,20 @@ Ext.define('Freshdesk.controller.Tickets', {
                     location.href="#tickets/show/"+id;
                 }
                 else{
-                    Ext.Ajax.request({
-                        url: '/helpdesk/tickets/'+id,
+                    var opts = {
+                       url: '/helpdesk/tickets/'+id,
                         params:{
                             '_method':'delete',
                             'action':'destroy'
                         },
                         headers: {
                             "Accept": "application/json"
-                        },
-                        callback: function(req,success,response){
-                            if(success){
-                                location.href="#tickets/show/"+id;
-                            }
-                            else{
-                                location.href="#tickets/show/"+id;
-                                Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                            }
-                        }
-                    });
+                        } 
+                    },
+                    callBack = function(){
+                        location.href="#tickets/show/"+id;
+                    };
+                    FD.Util.ajax(opts,callBack,this);
                 }
             }
         );

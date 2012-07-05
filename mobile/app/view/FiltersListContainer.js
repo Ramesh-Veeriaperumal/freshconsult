@@ -27,7 +27,8 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             iconMask:true,
             xtype:'button',
             handler:this.newTicket,
-            align:'right'
+            align:'right',
+            scope:this
         };
 
         var topToolbar = {
@@ -69,9 +70,9 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             location.href="#filters/"+record.data.type+'/'+record.data.id;
         }
     },
-    newTicket : function(){
-        var anim = {type:'cover',direction:'up'},
-            me=this,
+    populateTicketProperties : function(res) {
+        var resJson = JSON.parse(res.responseText),
+            anim = {type:'cover',direction:'up'},
             formContainer = Ext.getCmp('newTicketForm'),
             formListeners = {
                 change:function(select_field){
@@ -81,27 +82,23 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
                 check:function(){formContainer.enableAddBtn()},
                 uncheck:function(){formContainer.enableAddBtn()},
                 focus:function(){formContainer.enableAddBtn()}
-            };
-
-        formContainer.disableAddBtn();
-        Ext.Ajax.request({
-            url: '/mobile/tickets/ticket_properties',
-            headers: {
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                var resJson = JSON.parse(response.responseText),
-                formData = FD.Util.construct_ticket_form(resJson,false,formListeners),
-                formObj = formContainer.items.items[1];
-                formObj.items.items[0].setItems(formData);
-                formObj.setUrl('/helpdesk/tickets');
-                if(FD.current_user.is_customer) 
-                    formObj.setUrl('/support/tickets')
-                Ext.Viewport.animateActiveItem(formContainer, anim);
-            },
-            failure: function(response){
             }
-        });
+            formData = FD.Util.construct_ticket_form(resJson,false,formListeners),
+            formObj = formContainer.items.items[1];
+        formObj.items.items[0].setItems(formData);
+        formObj.setUrl('/helpdesk/tickets');
+        if(FD.current_user.is_customer) 
+            formObj.setUrl('/support/tickets')
+        Ext.Viewport.animateActiveItem(formContainer, anim);
+    },
+    newTicket : function(){
+        var me=this,
+            formContainer = Ext.getCmp('newTicketForm'),
+            opts = {
+                url: '/mobile/tickets/ticket_properties'
+            };
+        formContainer.disableAddBtn();
+        FD.Util.getJSON(opts,this.populateTicketProperties,this);
     },
     showContacts : function(){
         location.href ='#dashboard/contacts';

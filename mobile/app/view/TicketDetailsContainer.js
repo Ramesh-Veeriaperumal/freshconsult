@@ -72,18 +72,6 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             //hack for disabling drag
             direction:'horiz',
             directionLock:true,
-            listeners : {
-                activeitemchange: function(me,activeItem,prevActiveItem,opts){
-                    switch (activeItem._itemId) {
-                        case 'ticketDetails' :
-                            me.parent.showCoversations(false);
-                            break;
-                        case 'ticketProperties' :
-                            me.parent.showProperties(false);
-                            break;
-                    }
-                }
-            },
             items: [ticketDetails,ticketProperties]
         });
         this.add([topToolbar,details]);
@@ -100,14 +88,13 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         if(setActive)
             detailsPane.setActiveItem(0);
     },
-    showProperties: function(setActive){
-        var detailsPane = this.items.items[1],
+    populateProperties : function(res,setActive){
+        var resJson = JSON.parse(res.responseText),
+        me = this,
+        id = this.ticket_id,
+        detailsPane = this.items.items[1],
         activeIndex = detailsPane.getActiveIndex(),
-        toggledIndx = +!Boolean(activeIndex),id=this.ticket_id,me=this,
-        titleBarItems = this.getItems().items[0].getItems().items[0].getItems(),
-        iconBtn = this.getItems().items[0].getItems().items[2].getItems().items[0],
-        updateBtn = this.getItems().items[0].getItems().items[2].getItems().items[1],
-        me = this;
+        toggledIndx = +!Boolean(activeIndex),
         formListeners = {
                 change:function(select_field){
                     FD.Util.enable_nested_field(select_field);
@@ -116,6 +103,34 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
                 check:function(){me.enableUpdateBtn()},
                 uncheck:function(){me.enableUpdateBtn()},
                 focus:function(){me.enableUpdateBtn()}
+        },
+        formData = FD.Util.construct_ticket_form(resJson,true,formListeners),
+        formObj = this.items.items[1].items.items[2].items.items[1].items.items[1];
+        formObj.items.items[0].setItems(formData);
+        formObj.setUrl('/helpdesk/tickets/'+id);
+        if(FD.current_user.is_customer) 
+            formObj.setUrl('/support/tickets/'+id)
+
+        if(setActive){
+            detailsPane.setActiveItem(toggledIndx);
+            this.items.items[1].items.items[2].items.items[1].setActiveItem(0);
+            this.items.items[1].items.items[2].showProperties();
+        }
+            
+    },
+    showProperties: function(setActive){
+        var detailsPane = this.items.items[1],
+        activeIndex = detailsPane.getActiveIndex(),
+        toggledIndx = +!Boolean(activeIndex),id=this.ticket_id,me=this,
+        titleBarItems = this.getItems().items[0].getItems().items[0].getItems(),
+        iconBtn = this.getItems().items[0].getItems().items[2].getItems().items[0],
+        updateBtn = this.getItems().items[0].getItems().items[2].getItems().items[1],
+        me = this,
+        opts = {
+            url: '/mobile/tickets/ticket_properties/'+id,
+        },
+        callBack = function(res){
+            this.populateProperties(res,setActive);
         };
 
         iconBtn.hide(true);
@@ -124,28 +139,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         titleBarItems.items[0].setText('Back');
         titleBarItems.items[0].backToConversation=true;
 
-        Ext.Ajax.request({
-            url: '/mobile/tickets/ticket_properties/'+id,
-            headers: {
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                var resJson = JSON.parse(response.responseText),
-                formData = FD.Util.construct_ticket_form(resJson,true,formListeners),
-                formObj = me.items.items[1].items.items[2].items.items[1].items.items[1];
-                formObj.items.items[0].setItems(formData);
-                formObj.setUrl('/helpdesk/tickets/'+id);
-                if(FD.current_user.is_customer) 
-                    formObj.setUrl('/support/tickets/'+id)
-
-                if(setActive)
-                    detailsPane.setActiveItem(toggledIndx);
-                me.items.items[1].items.items[2].items.items[1].setActiveItem(0);
-                me.items.items[1].items.items[2].showProperties();
-            },
-            failure: function(response){
-            }
-        });
+        FD.Util.getJSON(opts,callBack,this);
     },
     toggleProperties: function(){
         var detailsPane = this.items.items[1],
@@ -157,62 +151,6 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         else{
             this.showCoversations(true);
         }
-    },
-    serializeFormData: function(baseData){
-        var formData = [{xtype:'hiddenfield',name:'_method',value:'put'}],key,ticket_field;
-        for(key in baseData){
-            ticket_field = baseData[key]['ticket_field'];
-            formData.push(this.getFormItem(ticket_field));
-        }
-        return formData;
-    },
-    getFormItem : function(field){
-        var item = {options:[]},choices,opt,key,
-        field_name = field.field_name;
-        item.label = field.label;
-        item.name = field.is_default_field ? 'helpdesk_ticket['+field_name+']' : 'helpdesk_ticket[custom_field]['+field_name+']';
-        item.required = field.required;
-        item.value = field.field_value,me=this;
-
-        switch(field.domtype){
-            case 'dropdown_blank':
-                item.options=[{text:'...',value:''}];
-            case 'dropdown' :
-                item.xtype = 'selectfield';
-                choices=field.choices;
-                for(key in choices){
-                    opt = choices[key];
-                    item.options.push({text:opt[0],value:opt[1]});
-                }
-                break;
-            case 'text' :
-                item.xtype = 'textfield';
-                break;
-            case 'hidden' : 
-                item.xtype = 'hiddenfield';
-                break;
-            case 'html_paragraph':
-            case 'text':
-            case 'paragraph':
-                item.xtype = 'textareafield';
-                break;
-            case 'checkbox':
-                item.xtype = 'checkboxfield';
-                break;
-            case 'number':
-                item.xtype = 'numberfield';
-                break;
-            default :
-                item.xtype = 'textfield';
-                break;
-        };
-        item.listeners = {
-            change:function(){me.enableUpdateBtn()},
-            check:function(){me.enableUpdateBtn()},
-            uncheck:function(){me.enableUpdateBtn()},
-            focus:function(){me.enableUpdateBtn()}
-        };
-        return item;
     },
     enableUpdateBtn : function(){
         this.getItems().items[0].getItems().items[2].getItems().items[1].enable();

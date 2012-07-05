@@ -25,24 +25,6 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
-                        xtype:'titlebar',
-                        ui:'formSubheader',
-                        itemId:'noteFormCannedResponse',
-                        items:[
-                            {
-                                itemId:'cannedResBtn',
-                                xtype:'button',
-                                text:'Canned Response',
-                                docked:'left',
-                                ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
-                            }
-                        ]
-
-                    },
-                    {
                         xtype: 'checkboxfield',
                         name: 'helpdesk_note[private]',
                         label:'Private',
@@ -58,6 +40,25 @@ Ext.define('Freshdesk.view.NoteForm', {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
+                    },
+                    {
+                        xtype:'titlebar',
+                        ui:'formSubheader',
+                        itemId:'noteFormCannedResponse',
+                        docked:'bottom',
+                        items:[
+                            {
+                                itemId:'cannedResBtn',
+                                xtype:'button',
+                                text:'Canned Response',
+                                docked:'left',
+                                ui:'plain',
+                                iconMask:true,
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
+                                iconCls:'add_black lightPlus'
+                            }
+                        ]
+
                     }
                 ]
             }

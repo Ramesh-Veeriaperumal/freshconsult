@@ -28080,7 +28080,8 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             iconMask:true,
             xtype:'button',
             handler:this.newTicket,
-            align:'right'
+            align:'right',
+            scope:this
         };
 
         var topToolbar = {
@@ -28122,9 +28123,9 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             location.href="#filters/"+record.data.type+'/'+record.data.id;
         }
     },
-    newTicket : function(){
-        var anim = {type:'cover',direction:'up'},
-            me=this,
+    populateTicketProperties : function(res) {
+        var resJson = JSON.parse(res.responseText),
+            anim = {type:'cover',direction:'up'},
             formContainer = Ext.getCmp('newTicketForm'),
             formListeners = {
                 change:function(select_field){
@@ -28134,27 +28135,23 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
                 check:function(){formContainer.enableAddBtn()},
                 uncheck:function(){formContainer.enableAddBtn()},
                 focus:function(){formContainer.enableAddBtn()}
-            };
-
-        formContainer.disableAddBtn();
-        Ext.Ajax.request({
-            url: '/mobile/tickets/ticket_properties',
-            headers: {
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                var resJson = JSON.parse(response.responseText),
-                formData = FD.Util.construct_ticket_form(resJson,false,formListeners),
-                formObj = formContainer.items.items[1];
-                formObj.items.items[0].setItems(formData);
-                formObj.setUrl('/helpdesk/tickets');
-                if(FD.current_user.is_customer) 
-                    formObj.setUrl('/support/tickets')
-                Ext.Viewport.animateActiveItem(formContainer, anim);
-            },
-            failure: function(response){
             }
-        });
+            formData = FD.Util.construct_ticket_form(resJson,false,formListeners),
+            formObj = formContainer.items.items[1];
+        formObj.items.items[0].setItems(formData);
+        formObj.setUrl('/helpdesk/tickets');
+        if(FD.current_user.is_customer) 
+            formObj.setUrl('/support/tickets')
+        Ext.Viewport.animateActiveItem(formContainer, anim);
+    },
+    newTicket : function(){
+        var me=this,
+            formContainer = Ext.getCmp('newTicketForm'),
+            opts = {
+                url: '/mobile/tickets/ticket_properties'
+            };
+        formContainer.disableAddBtn();
+        FD.Util.getJSON(opts,this.populateTicketProperties,this);
     },
     showContacts : function(){
         location.href ='#dashboard/contacts';
@@ -28214,8 +28211,8 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '<div class="title">{subject}</div>',
                                 '</div>',
                                 '<tpl if="!deleted && !spam && !FD.current_user.is_customer"><ul class="actions">',
-                                        '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
                                         '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
+                                        '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
                                         '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
                                         '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
                                         '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
@@ -28382,38 +28379,21 @@ Ext.define("Freshdesk.view.TicketProperties", {
             //hack for disabling drag
             direction:'horiz',
             directionLock:true,
-            listeners : {
-                activeitemchange: function(me,activeItem,prevActiveItem,opts){
-                    switch (activeItem._itemId) {
-                        case 'ticketForm' :
-                            me.parent.showProperties(true);
-                            break;
-                        case 'customerInfo':
-                            me.parent.showCustomerDetails(true);
-                            break;
-                    }
-                }
-            },
             items: [propeties,customerInfo]
         });
         this.add([tabs,details]);
     },
+    populateCustomerData : function(res){
+        var resJSON = JSON.parse(res.responseText);
+        this.items.items[1].items.items[2].setData(resJSON.user);
+    },
     showCustomerDetails:function(preventActive){
         var me=this;
-        id=this.parent.parent.requester_id;
-        Ext.Ajax.request({
+        id=this.parent.parent.requester_id,
+        opts = {
             url: '/contacts/'+id,
-            headers: {
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                var resJSON = JSON.parse(response.responseText);
-                me.items.items[1].items.items[2].setData(resJSON.user);
-            },
-            failure: function(response){
-            }
-        });
-
+        };
+        FD.Util.getJSON(opts,this.populateCustomerData,this);
         this.addCls('customer');
         if(!preventActive)
             this.items.items[1].setActiveItem(1);
@@ -28431,25 +28411,19 @@ Ext.define("Freshdesk.view.TicketProperties", {
 Ext.define("Freshdesk.view.CannedResponses", {
     extend: "Ext.Container",
     alias: "widget.cannedResponses",
+    populateMessage : function(res){
+        var content = res.responseText,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0],
+        messageElm  = msgFormContainer.getMessageItem();
+        messageElm.setValue(messageElm.getValue()+content);
+        this.hide();
+    },
     onCannedResDisclose : function(list, index, target, record, evt, options){
         var ca_resp_id = record.raw.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
-        ticket_id = msgFormContainer.ticket_id;
-        Ext.Ajax.request({
-            url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
-            callback: function(req,success,response){
-                if(success) {
-                        var content = response.responseText,
-                        messageElm  = msgFormContainer.getMessageItem();
-                        messageElm.setValue(messageElm.getValue()+content);
-                        this.hide();
-                }
-                else {
-                        this.hide();
-                        Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                }
-            },
-            scope:this
-        });
+        ticket_id = msgFormContainer.ticket_id,
+        opts  = {
+            url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
+        };
+        FD.Util.getJSON(opts,this.populateMessage,this);
     },
     config: {
         itemId : 'cannedResponsesPopup',
@@ -28569,40 +28543,31 @@ Ext.define("Freshdesk.view.Solutions", {
 Ext.define("Freshdesk.view.Scenarioies", {
     extend: "Ext.Container",
     alias: "widget.scenarioies",
+    showSuccessMessagePopup : function(res){
+        Freshdesk.anim = {type:'cover',direction:'down'};
+        var flashMessageBox = Ext.ComponentQuery.query('#flashMessageBox')[0],
+        resJson = JSON.parse(res.responseText),
+        flashData = {
+            title:'Executed scenario <b>'+resJson.rule_name+'</b>',
+            messages:resJson.actions_executed
+        },
+        me=this;
+        flashMessageBox.ticket_id = res.id;
+        flashMessageBox.items.items[1].setData(flashData);
+        flashMessageBox.hideHandler = function() {
+            location.href="#tickets/show/"+me.ticket_id;
+        }
+        Ext.Viewport.animateActiveItem(flashMessageBox, Freshdesk.anim);
+    },
     execute_scenario : function(data){
-        var me = this;
-        Ext.Ajax.request({
-            url: '/helpdesk/tickets/execute_scenario/'+this.ticket_id,
-            method:'GET',
-            params:{
-                'scenario_id':data.id
-            },
-            headers: {
-                "Accept": "application/json"
-            },
-            callback: function(req,success,response){
-                console.log(response);
-                if(success){
-                    Freshdesk.anim = {type:'cover',direction:'down'};
-                    var flashMessageBox = Ext.ComponentQuery.query('#flashMessageBox')[0],
-                    resJson = JSON.parse(response.responseText),
-                    flashData = {
-                        title:'Executed scenario <b>'+resJson.rule_name+'</b>',
-                        messages:resJson.actions_executed
-                    };
-                    flashMessageBox.ticket_id = response.id;
-                    flashMessageBox.items.items[1].setData(flashData);
-                    flashMessageBox.hideHandler = function() {
-                        location.href="#tickets/show/"+me.ticket_id;
-                    }
-                    Ext.Viewport.animateActiveItem(flashMessageBox, Freshdesk.anim);
-                    //location.href="#tickets/show/"+me.ticket_id;
+        var me = this,
+            opts = {
+                url: '/helpdesk/tickets/execute_scenario/'+this.ticket_id,
+                params:{
+                    'scenario_id':data.id
                 }
-                else{
-                    Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                }
-            }
-        });
+            };
+        FD.Util.getJSON(opts,this.showSuccessMessagePopup,this);
     },
     config: {
         itemId : 'scenarioies',
@@ -28834,6 +28799,23 @@ Ext.define('Freshdesk.controller.Tickets', {
             newTicketContainer : 'newTicketContainer'
     	}
     },
+    renderDetails: function(ticketDetails,callBack){
+        var resJSON = JSON.parse(ticketDetails.responseText).helpdesk_ticket,
+        convContainer = this.getConversationContainer(),
+        detailsContainer = this.getTicketDetailsContainer(),
+        id = resJSON.id;
+        resJSON.notes = resJSON.notes || resJSON.public_notes ;
+        //saving in local variable ..
+        this.ticket = resJSON;
+        convContainer.setData(resJSON);
+        detailsContainer.showCoversations(true);
+        detailsContainer.items.items[0].setTitle('Ticket: '+id);
+        detailsContainer.ticket_id=id;
+        detailsContainer.requester_id=resJSON.requester.id;
+        Ext.Viewport.animateActiveItem(detailsContainer, anim);
+        callBack ? callBack() : '' ;
+        delete Freshdesk.anim;
+    },
     show: function(id,callBack){
         var detailsContainer = this.getTicketDetailsContainer();
         anim = Freshdesk.anim || { type: 'slide', direction: 'left' };
@@ -28841,35 +28823,17 @@ Ext.define('Freshdesk.controller.Tickets', {
             Ext.Viewport.animateActiveItem(detailsContainer, anim);
         }
         else{
-            Ext.Ajax.request({
+            var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
                     format:'mob'
                 },
-                method:'GET',
-                headers: {
-                    "Accept": "application/json"
-                },
-                success: function(response) {
-                    var resJSON = JSON.parse(response.responseText).helpdesk_ticket,
-                    convContainer = this.getConversationContainer();
-                    resJSON.notes = resJSON.notes || resJSON.public_notes ;
-                    //saving in local variable ..
-                    this.ticket = resJSON;
-                    convContainer.setData(resJSON);
-                    detailsContainer.showCoversations(true);
-                    detailsContainer.items.items[0].setTitle('Ticket: '+id);
-                    detailsContainer.ticket_id=id,
-                    detailsContainer.requester_id=resJSON.requester.id;
-                    Ext.Viewport.animateActiveItem(detailsContainer, anim);
-                    callBack ? callBack() : '' ;
-                    delete Freshdesk.anim;
-                },
-                failure: function(response){
-                    Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");
-                },
-                scope: this
-            });
+                scope:this
+            },
+            ajaxCallb = function(res){
+                this.renderDetails(res,callBack)
+            };
+            FD.Util.ajax(ajaxOpts,ajaxCallb,this);
         }
         Freshdesk.cancelBtn=false;
         Freshdesk.anim = undefined;
@@ -28904,22 +28868,11 @@ Ext.define('Freshdesk.controller.Tickets', {
                     location.href="#tickets/show/"+id;
                 }
                 else{
-                    Ext.Ajax.request({
-                        url: '/support/tickets/close_ticket/'+id,
-                        method:'GET',
-                        headers: {
-                            "Accept": "application/json"
-                        },
-                        callback: function(req,success,response){
-                            if(success){
-                                location.href="#tickets/show/"+id;
-                            }
-                            else{
-                                location.href="#tickets/show/"+id;
-                                Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                            }
-                        }
-                    });
+                    var opts = { url: '/support/tickets/close_ticket/'+id },
+                    callBack = function(res){
+                        location.href="#tickets/show/"+id;
+                    };
+                    FD.Util.getJSON(opts,callBack,this)
                 }
             }
         );
@@ -28932,7 +28885,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                     location.href="#tickets/show/"+id;
                 }
                 else{
-                    Ext.Ajax.request({
+                    var opts = {
                         url: '/helpdesk/tickets/update/'+id,
                         method:'POST',
                         params:{
@@ -28940,17 +28893,12 @@ Ext.define('Freshdesk.controller.Tickets', {
                         },
                         headers: {
                             "Accept": "application/json"
-                        },
-                        callback: function(req,success,response){
-                            if(success){
-                                location.href="#tickets/show/"+id;
-                            }
-                            else{
-                                location.href="#tickets/show/"+id;
-                                Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                            }
                         }
-                    });
+                    },
+                    callBack = function(res){
+                        location.href="#tickets/show/"+id;
+                    };
+                    FD.Util.ajax(opts,callBack,this);
                 }
             }
         );
@@ -28963,25 +28911,20 @@ Ext.define('Freshdesk.controller.Tickets', {
                     location.href="#tickets/show/"+id;
                 }
                 else{
-                    Ext.Ajax.request({
-                        url: '/helpdesk/tickets/'+id,
+                    var opts = {
+                       url: '/helpdesk/tickets/'+id,
                         params:{
                             '_method':'delete',
                             'action':'destroy'
                         },
                         headers: {
                             "Accept": "application/json"
-                        },
-                        callback: function(req,success,response){
-                            if(success){
-                                location.href="#tickets/show/"+id;
-                            }
-                            else{
-                                location.href="#tickets/show/"+id;
-                                Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                            }
-                        }
-                    });
+                        } 
+                    },
+                    callBack = function(){
+                        location.href="#tickets/show/"+id;
+                    };
+                    FD.Util.ajax(opts,callBack,this);
                 }
             }
         );
@@ -37065,18 +37008,6 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             //hack for disabling drag
             direction:'horiz',
             directionLock:true,
-            listeners : {
-                activeitemchange: function(me,activeItem,prevActiveItem,opts){
-                    switch (activeItem._itemId) {
-                        case 'ticketDetails' :
-                            me.parent.showCoversations(false);
-                            break;
-                        case 'ticketProperties' :
-                            me.parent.showProperties(false);
-                            break;
-                    }
-                }
-            },
             items: [ticketDetails,ticketProperties]
         });
         this.add([topToolbar,details]);
@@ -37093,14 +37024,13 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         if(setActive)
             detailsPane.setActiveItem(0);
     },
-    showProperties: function(setActive){
-        var detailsPane = this.items.items[1],
+    populateProperties : function(res,setActive){
+        var resJson = JSON.parse(res.responseText),
+        me = this,
+        id = this.ticket_id,
+        detailsPane = this.items.items[1],
         activeIndex = detailsPane.getActiveIndex(),
-        toggledIndx = +!Boolean(activeIndex),id=this.ticket_id,me=this,
-        titleBarItems = this.getItems().items[0].getItems().items[0].getItems(),
-        iconBtn = this.getItems().items[0].getItems().items[2].getItems().items[0],
-        updateBtn = this.getItems().items[0].getItems().items[2].getItems().items[1],
-        me = this;
+        toggledIndx = +!Boolean(activeIndex),
         formListeners = {
                 change:function(select_field){
                     FD.Util.enable_nested_field(select_field);
@@ -37109,6 +37039,34 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
                 check:function(){me.enableUpdateBtn()},
                 uncheck:function(){me.enableUpdateBtn()},
                 focus:function(){me.enableUpdateBtn()}
+        },
+        formData = FD.Util.construct_ticket_form(resJson,true,formListeners),
+        formObj = this.items.items[1].items.items[2].items.items[1].items.items[1];
+        formObj.items.items[0].setItems(formData);
+        formObj.setUrl('/helpdesk/tickets/'+id);
+        if(FD.current_user.is_customer) 
+            formObj.setUrl('/support/tickets/'+id)
+
+        if(setActive){
+            detailsPane.setActiveItem(toggledIndx);
+            this.items.items[1].items.items[2].items.items[1].setActiveItem(0);
+            this.items.items[1].items.items[2].showProperties();
+        }
+            
+    },
+    showProperties: function(setActive){
+        var detailsPane = this.items.items[1],
+        activeIndex = detailsPane.getActiveIndex(),
+        toggledIndx = +!Boolean(activeIndex),id=this.ticket_id,me=this,
+        titleBarItems = this.getItems().items[0].getItems().items[0].getItems(),
+        iconBtn = this.getItems().items[0].getItems().items[2].getItems().items[0],
+        updateBtn = this.getItems().items[0].getItems().items[2].getItems().items[1],
+        me = this,
+        opts = {
+            url: '/mobile/tickets/ticket_properties/'+id,
+        },
+        callBack = function(res){
+            this.populateProperties(res,setActive);
         };
 
         iconBtn.hide(true);
@@ -37117,28 +37075,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         titleBarItems.items[0].setText('Back');
         titleBarItems.items[0].backToConversation=true;
 
-        Ext.Ajax.request({
-            url: '/mobile/tickets/ticket_properties/'+id,
-            headers: {
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                var resJson = JSON.parse(response.responseText),
-                formData = FD.Util.construct_ticket_form(resJson,true,formListeners),
-                formObj = me.items.items[1].items.items[2].items.items[1].items.items[1];
-                formObj.items.items[0].setItems(formData);
-                formObj.setUrl('/helpdesk/tickets/'+id);
-                if(FD.current_user.is_customer) 
-                    formObj.setUrl('/support/tickets/'+id)
-
-                if(setActive)
-                    detailsPane.setActiveItem(toggledIndx);
-                me.items.items[1].items.items[2].items.items[1].setActiveItem(0);
-                me.items.items[1].items.items[2].showProperties();
-            },
-            failure: function(response){
-            }
-        });
+        FD.Util.getJSON(opts,callBack,this);
     },
     toggleProperties: function(){
         var detailsPane = this.items.items[1],
@@ -37150,62 +37087,6 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         else{
             this.showCoversations(true);
         }
-    },
-    serializeFormData: function(baseData){
-        var formData = [{xtype:'hiddenfield',name:'_method',value:'put'}],key,ticket_field;
-        for(key in baseData){
-            ticket_field = baseData[key]['ticket_field'];
-            formData.push(this.getFormItem(ticket_field));
-        }
-        return formData;
-    },
-    getFormItem : function(field){
-        var item = {options:[]},choices,opt,key,
-        field_name = field.field_name;
-        item.label = field.label;
-        item.name = field.is_default_field ? 'helpdesk_ticket['+field_name+']' : 'helpdesk_ticket[custom_field]['+field_name+']';
-        item.required = field.required;
-        item.value = field.field_value,me=this;
-
-        switch(field.domtype){
-            case 'dropdown_blank':
-                item.options=[{text:'...',value:''}];
-            case 'dropdown' :
-                item.xtype = 'selectfield';
-                choices=field.choices;
-                for(key in choices){
-                    opt = choices[key];
-                    item.options.push({text:opt[0],value:opt[1]});
-                }
-                break;
-            case 'text' :
-                item.xtype = 'textfield';
-                break;
-            case 'hidden' : 
-                item.xtype = 'hiddenfield';
-                break;
-            case 'html_paragraph':
-            case 'text':
-            case 'paragraph':
-                item.xtype = 'textareafield';
-                break;
-            case 'checkbox':
-                item.xtype = 'checkboxfield';
-                break;
-            case 'number':
-                item.xtype = 'numberfield';
-                break;
-            default :
-                item.xtype = 'textfield';
-                break;
-        };
-        item.listeners = {
-            change:function(){me.enableUpdateBtn()},
-            check:function(){me.enableUpdateBtn()},
-            uncheck:function(){me.enableUpdateBtn()},
-            focus:function(){me.enableUpdateBtn()}
-        };
-        return item;
     },
     enableUpdateBtn : function(){
         this.getItems().items[0].getItems().items[2].getItems().items[1].enable();
@@ -39430,32 +39311,25 @@ Ext.define('Freshdesk.view.EmailForm', {
         cannedResList.getStore() ? cannedResList.getStore().setData(responses) : cannedResList.setData(responses);
         cannedResPopup.show();
     },
+    populateSolutions : function(res){
+        var content = JSON.parse(res.responseText),
+        solutionsPopup = Ext.ComponentQuery.query('#solutionsPopup')[0],
+        solutionList = solutionsPopup.items.items[0];
+        if(content.length){
+            solutionList.hideEmptyText();
+            solutionList.getStore() ? solutionList.getStore().setData(content) : solutionList.setData(content);
+        }
+        else {
+            solutionList.showEmptyText();
+        }
+        solutionsPopup.show();
+    },
     showSolution: function(){
-        var ticket_id = this.parent.ticket_id,solutionsPopup = Ext.ComponentQuery.query('#solutionsPopup')[0];
-        Ext.Ajax.request({
-            url: 'tickets/get_suggested_solutions/'+ticket_id,
-            headers: {
-                "Accept": "application/json"
-            },
-            callback: function(req,success,response){
-                if(success){
-                        var content = JSON.parse(response.responseText),
-                        solutionList = solutionsPopup.items.items[0];
-                        if(content.length){
-                            solutionList.hideEmptyText();
-                            solutionList.getStore() ? solutionList.getStore().setData(content) : solutionList.setData(content);
-                        }
-                        else {
-                            solutionList.showEmptyText();
-                        }
-                        solutionsPopup.show();
-                }
-                else{
-                        Ext.Msg.alert('Some thing went wrong!', "We are sorry . Some thing went wrong! Our technical team is looking into it.");   
-                }
-            },
-            scope:this
-        });
+        var ticket_id = this.parent.ticket_id,solutionsPopup = Ext.ComponentQuery.query('#solutionsPopup')[0],
+        opts = {
+             url: 'tickets/get_suggested_solutions/'+ticket_id
+        };
+        FD.Util.getJSON(opts,this.populateSolutions,this);
     },
     config: {
         layout:'fit',
@@ -39518,8 +39392,25 @@ Ext.define('Freshdesk.view.EmailForm', {
                         showAnimation:'fadeIn'
                     },
                     {
+                        xtype: 'textareafield',
+                        name: 'helpdesk_note[body_html]',
+                        height: '20em',
+                        placeHolder:'Message'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'commet',
+                        value:'Send'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'email_type',
+                        value:'Reply'
+                    },
+                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
+                        docked:'bottom',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -39543,22 +39434,6 @@ Ext.define('Freshdesk.view.EmailForm', {
                             }
                         ]
 
-                    },
-                    {
-                        xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
-                        height: '17em',
-                        placeHolder:'Message'
-                    },
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'commet',
-                        value:'Send'
-                    },
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'email_type',
-                        value:'Reply'
                     }
                 ]
             }
@@ -39592,24 +39467,6 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
-                        xtype:'titlebar',
-                        ui:'formSubheader',
-                        itemId:'noteFormCannedResponse',
-                        items:[
-                            {
-                                itemId:'cannedResBtn',
-                                xtype:'button',
-                                text:'Canned Response',
-                                docked:'left',
-                                ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
-                            }
-                        ]
-
-                    },
-                    {
                         xtype: 'checkboxfield',
                         name: 'helpdesk_note[private]',
                         label:'Private',
@@ -39625,6 +39482,25 @@ Ext.define('Freshdesk.view.NoteForm', {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
+                    },
+                    {
+                        xtype:'titlebar',
+                        ui:'formSubheader',
+                        itemId:'noteFormCannedResponse',
+                        docked:'bottom',
+                        items:[
+                            {
+                                itemId:'cannedResBtn',
+                                xtype:'button',
+                                text:'Canned Response',
+                                docked:'left',
+                                ui:'plain',
+                                iconMask:true,
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
+                                iconCls:'add_black lightPlus'
+                            }
+                        ]
+
                     }
                 ]
             }
@@ -44036,7 +43912,6 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '<span class="info"> Assigned To: </span>{responder_name}',
                                 '</div>',
                                 '<div><span class="info btn">{status_name}</span>',
-                                '<tpl if="FD.current_user.is_agent"><span class="info btn-light">{priority_name}</span></tpl>',
                                 '<span class="info">updated: {updated_at:date("M")} {updated_at:date("d")} , {updated_at:date("h:m A")}</span></div>',
                         '</div>',
                         '<div class="disclose">&nbsp;</div>',
@@ -52128,7 +52003,9 @@ Ext.application({
 
 
         //adding listners to ajax for showing the loading mask .. global.
-        Ext.Ajax.addListener('beforerequest',function(){Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'})})
+        Ext.Ajax.addListener('beforerequest',function(){
+            Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'})
+        })
         Ext.Ajax.addListener('requestcomplete',function(){
             Ext.Viewport.setMasked(false)
         })
