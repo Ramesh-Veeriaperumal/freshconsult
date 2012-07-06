@@ -2097,6 +2097,8 @@ en:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
       survey_reports:
+        index: 
+            agent_list_loading: Fetching agent list
         feedbacks:
             in_response_to: -- In response to  
         back_to: Back to List View
