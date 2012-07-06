@@ -335,6 +335,7 @@ active_dialog = null;
 
           menu_container = $('<div>');
           menu_container.attr('id',menuid);
+          menu_container.data('parent',$(node));
           menu_container.addClass('loading fd-ajaxmenu');
           // menu_container.width($(node).width());
           menu_container.insertAfter($(node));
@@ -344,8 +345,6 @@ active_dialog = null;
           $.ajax({
             url: $(node).data('options-url'),
             success: function (data, textStatus, jqXHR) {
-              console.log(data);
-              console.log('#' + menuid);
               $('#' + menuid).removeClass('loading').html(data);
               $(node).data('options-fetched',true);
             }
@@ -375,12 +374,10 @@ active_dialog = null;
           menuid = $(document).data('dynamic-menu-count') + 1;
           $(document).data('dynamic-menu-count',menuid);
           menu_container = $('<div>');
+          menu_container.data('parent',$(node));
           menu_container.attr('id',menuid);
           menu_container.addClass('loading fd-ajaxmenu');
-          console.log($(node).data('options'));
           menu_container.append($($(node).data('options')).html());
-          console.log($($(node).data('options')).html());
-          console.log(menu_container);
           menu_container.insertAfter($(node));
           $(node).data('menuid',menuid);
           $(node).data('options-fetched',true)

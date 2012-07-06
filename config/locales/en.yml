@@ -1354,6 +1354,7 @@ en:
       insert_url_tip: Insert this solution URL to your Reply or Note
       insert_content: Insert Content
     unassigned: Unassigned
+    assigned_none: None
     suggest_solutions: Suggest Solutions
     created_on: Created on %{time}
     restore_btn: Restore this ticket

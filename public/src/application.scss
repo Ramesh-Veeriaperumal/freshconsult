@@ -21,7 +21,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 
 /* Priority Color Codes */
 $COL_PRI_HIGH: #ffb613;		$COL_PRI_MEDIUM: #008ff9;		$COL_PRI_LOW: #7ebf00;		$COL_PRI_URGENT: #de0000;
-$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 4px;
+$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 6px;
 
 $priority-default-alpha: 1;
 $priority-hover-alpha: 1;
@@ -3165,6 +3165,17 @@ div.addReminder{
 .grey-source-chat{   background: sprite($symbol, grey-source-chat) no-repeat; }
 .grey-source-forum{   background: sprite($symbol, grey-source-forum) no-repeat; }
 
+.quick-action:hover:after, .quick-action.selected:after {
+		content:"";
+		width: 0;
+		height: 0;
+		border-left: 4px solid transparent;
+		border-right: 4px solid transparent;
+		border-top: 4px solid #888;
+		position: absolute;
+		margin: 5px 0 0 5px; 
+		background:url(../images/inline-dropdown.png) no-repeat;
+}
 #ticket_view_choices {
 	@include inline-block;
 	.icon {
@@ -3226,10 +3237,10 @@ div.addReminder{
 		vertical-align:top;
 	}
 	td{
-		padding: 6px 10px;
+		padding: 10px;
 		background-color:#ffffff;
 		border-top:1px solid #ffffff;
-		border-bottom:1px solid #ffffff;
+		border-bottom:1px solid #EFEFEF;
 		a{
 			text-decoration:none;
 			color:#5a8ec1; 
@@ -3237,11 +3248,11 @@ div.addReminder{
 
 		
 	}
-	tr.even td{ 
+	/*tr.even td{ 
 		background-color:#f9f9f9; 
 		border-top:1px solid #f9f9f9;
 		border-bottom:1px solid #f9f9f9;
-	}
+	}*/
 	tr:hover td, tr:hover.even td{
 		background: #fefef7;
 	}
@@ -4712,6 +4723,8 @@ a.close{
 	width: auto;
 	min-width:75px;
 	padding:3px;
+	margin-top: 8px;
+	@include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 1px, 8px );
 	a, li {
 		padding: 2px 15px;
 		cursor: pointer;
@@ -4727,6 +4740,37 @@ a.close{
 			display:none;
 		}
 	}
+
+	&:before {
+		content:"";
+		position:absolute;
+		border-style:solid;
+	    border-color:#AAA transparent;
+	    display:block; 
+	    width:0;
+	    top:-6px; 
+		bottom:auto;
+		right:auto;
+		left:44px;
+	    border-width:0 6px 6px;
+	    z-index:16000;
+	}
+	&:after {
+		content:"";
+		position:absolute;
+		border-style:solid;
+		border-color:#FFF transparent;
+
+	    display:block; 
+	    width:0;
+	    top:-5px;
+		bottom:auto;
+		right:auto;
+		left:45px;
+	    border-width:0 5px 5px;
+	    z-index:16001;
+	}
+
 }
 .setting_bottom{
    position:absolute;

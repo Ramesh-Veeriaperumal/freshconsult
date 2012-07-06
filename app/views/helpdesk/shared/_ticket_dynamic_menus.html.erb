@@ -1,0 +1,20 @@
+<div id="ticket_statuses" class="hide">
+	<% statuses = Helpdesk::TicketStatus.status_names(current_account)
+	statuses.each do |status|
+		%>
+		<a data-status-id="<%= status.first %>"><%=status.second%></a>
+		<%
+	end
+	%>
+</div>
+<div id="ticket_priorities" class="hide">
+	<% 
+	priorities = TicketConstants::PRIORITY_NAMES_BY_KEY
+	
+	priorities.each do |priority_value, priority_name|
+		%>
+		<a data-priority-id="<%= priority_value %>"><%=priority_name %></a>
+		<%
+	end
+	%>
+</div>

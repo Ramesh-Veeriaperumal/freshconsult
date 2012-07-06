@@ -1,4 +1,4 @@
-<tr class="<%= cycle('odd', 'even') %> <%= subject_style(ticket, "need-attention") %>">
+<tr class="<%= cycle('odd', 'even') %> <%= subject_style(ticket, "need-attention") %>" data-ticket="<%= ticket.display_id %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
   <td class="check">
 	<%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
@@ -25,33 +25,44 @@
   <td class="ticket_info hideForDetails"><%= t("helpdesk.tickets.tabular_view.time_ago", :time_in_words => time_ago_in_words(ticket.updated_at)) %></td>
   <td class="assign hideForList">
 	  	<ul>
-	  		<li class="quick-action ajax-menu" data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
+	  		<li class="quick-action ajax-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
+	  			<%=t('assigned_to')%>: 
+	  			<span class="result" >
 				<% if ticket.freshness == :new %>
-					<span><%=t('ticket.unassigned')%></span>
+					<%=t('ticket.assigned_none')%>
 				<% else %>
-				<%=t('assigned_to')%>: <span><%= h(ticket.responder.display_name) %></span> 	
+					<%= h(ticket.responder.display_name) %>
 				<% end %>
+				</span>
 			</li>
-			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-options="#ticket_statuses">
-				<%=t('ticket.status')%>: <span><%= h(ticket.status_name) %></span>
+			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+				<%=t('ticket.status')%>: <span class="result"><%= h(ticket.status_name) %></span>
 			</li>
-			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-options="false">
-				<%=t('ticket.priority')%>: <span><%= h(ticket.priority_name) %></span>
+			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
+				<%=t('ticket.priority')%>: <span class="result"><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
   </td>
   <td class="hideForDetails">
+  	<div  class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+  		<span class = "result">
   	<% if ticket.freshness == :new %>
-		<span><%=t('ticket.unassigned')%></span>
+		<%=t('ticket.assigned_none')%>
 	<% else %>
-	<%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'user_name' ) %>
+		<%= h(ticket.responder.display_name) %>
 	<% end %>
+		</span>
+	</div>
   </td>
   <td class="hideForDetails">
-  	<%= h(ticket.status_name) %>
+  	<div class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+  		<span class = "result"><%= h(ticket.status_name) %></span>
+  	</div>
   </td>
   <td class="hideForDetails">
-  	<span class="style_<%=ticket.priority%>"><%= h(ticket.priority_name) %></span>
+  	<div  class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
+  		<span class="result"><%= h(ticket.priority_name) %></span>
+  	</div>
   </td>
 
   <td class="sla hideForList">

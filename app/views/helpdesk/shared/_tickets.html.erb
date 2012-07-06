@@ -18,39 +18,6 @@
   <div class="toolbar">
     <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
   </div>
-  <% javascript_tag do %>
-      jQuery.each(jQuery(".ticket-description-tip"), function(i, item){
-        _self = jQuery(item);        
-        var tipUrl = jQuery(item).data("tipUrl");
-        jQuery(item).qtip({
-            position: { 
-              my: 'top left',
-              at: 'bottom left',
-              target: _self.parent(),
-              viewport: jQuery(window) 
-            }, 
-           style : {
-            classes: 'ui-tooltip-ticket ui-tooltip-rounded'
-           },             
-           content: {
-              text: '<%= t("index_tooltip_loading_msg")%>',
-              ajax: {
-                url: tipUrl,
-                once: true
-              }
-            },
-           show: {
-              solo: true,
-              delay: 200,
-              effect: function(offset) {
-                  jQuery(this).show("fade", 240); // "this" refers to the tooltip
-              }
-          }
-        }); 
-      });
-        
-     jQuery(".nav-trigger").showAsMenu();
-  <% end %>
 <% else %>
 	<div class="list-noinfo">
 	  <% view_name = t("helpdesk.tickets.views.this_view") %>

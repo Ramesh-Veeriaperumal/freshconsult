@@ -21,7 +21,7 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
+  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :get_ticket_agents, :quick_assign_agent] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
@@ -430,14 +430,46 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def get_ticket_agents
-    ticket = current_account.tickets.find_by_display_id(params[:id])
-    unless ticket.blank?
+    unless @item.blank?
       @agents = current_account.agents
-      @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>ticket.group.id ,:users =>{:account_id =>current_account.id} } ) unless ticket.group.blank?
+      @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id => @item.group.id ,:users =>{:account_id =>current_account.id} } ) unless @item.group.blank?
     end
-    render :partial => "get_ticket_agents", :locals => {:ticket_id => ticket.display_id}
+    render :partial => "get_ticket_agents", :locals => {:ticket_id => @item.display_id}
+  end
+
+  def quick_assign_agent
+    user = current_account.agents.find_by_user_id(params[:agent])
+    
+    old_item = item.clone
+    item.responder = user
+
+    item.save
+
+    render :json => {:success => true}.to_json
   end
   
+  def quick_assign_status
+    user = current_account.agents.find_by_user_id(params[:agent])
+    
+    old_item = item.clone
+    item.responder = user
+
+    item.save
+
+    render :json => {:success => true}.to_json
+  end
+
+  def quick_assign_priority
+    user = current_account.agents.find_by_user_id(params[:agent])
+    
+    old_item = item.clone
+    item.responder = user
+
+    item.save
+
+    render :json => {:success => true}.to_json
+  end
+
   def new
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
