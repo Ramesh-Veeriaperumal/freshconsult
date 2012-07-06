@@ -449,7 +449,7 @@ class Helpdesk::TicketsController < ApplicationController
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
 
-    @item.email_config = current_portal.product if current_portal
+    @item.email_config ||= current_portal.product if current_portal
 
     @item.status = CLOSED if save_and_close?
     if @item.save
