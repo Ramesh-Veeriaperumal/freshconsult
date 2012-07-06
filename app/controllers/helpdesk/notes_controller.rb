@@ -296,7 +296,7 @@ class Helpdesk::NotesController < ApplicationController
         flash[:error] = t('validate_fwd_to_email_msg')
         redirect_to item_url
       else
-        if (params[:to_emails].any? { |email| email.include?@parent.requester.email })
+        if (@parent.requester.email and params[:to_emails].any? { |email| email.include?@parent.requester.email })
           flash[:error] = t('use_reply_option')
           redirect_to item_url
         elsif((validate_emails(params[:to_emails])).blank?)
