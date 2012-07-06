@@ -280,5 +280,18 @@
 	background-color: white !important;
 }
 
+.survey-option-conf li{
+	display:inline;	
+	width:25%;
+	margin-right:10px;
+	padding:5px 2px;
+}
 
+.survey-option-conf input{
+	width:60%;
+}
+
+.survey-option-conf .happy-smily,.survey-option-conf .unhappy-smily,.survey-option-conf .neutral-smily{
+	margin-top:-10px;
+}
 
