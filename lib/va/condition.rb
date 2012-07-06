@@ -2,7 +2,7 @@ class Va::Condition
   
   attr_accessor :handler, :key, :operator
   
-  
+
   DISPATCHER_COLUMNS = {
     'to_email'                => 'to_emails'
   }
@@ -28,7 +28,7 @@ class Va::Condition
   def dispatcher_key
     return (DISPATCHER_COLUMNS.key?(key)) ? DISPATCHER_COLUMNS[key] : key
   end
-  
+
   def filter_query
     handler.filter_query
   end

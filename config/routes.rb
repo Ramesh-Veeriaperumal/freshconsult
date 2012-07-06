@@ -16,8 +16,10 @@
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
   map.resources :customers ,:member => {:quick => :post}
+  map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
   map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post ,:make_agent =>:put}
+  map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
   
   map.resources :groups
   

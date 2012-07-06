@@ -20,6 +20,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
   
+  def unresolved_filter
+    [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::unresolved_statuses(Account.current)).join(',')},
+      { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
+
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
                       "deleted" =>  [spam_condition(false),deleted_condition(true)],
@@ -99,6 +104,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
      self.name = filter_name.blank? ? "new_my_open" : filter_name
      if "on_hold".eql?filter_name
        on_hold_filter
+     elsif "unresolved".eql?filter_name
+       unresolved_filter
      else
        DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS["new_my_open"])
      end

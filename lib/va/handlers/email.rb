@@ -8,7 +8,7 @@ class Va::Handlers::Email < Va::RuleHandler
           matched = true if parse_email(email).casecmp(value) == 0
         end
       else
-        matched = (evaluate_on_value && parse_email(evaluate_on_value).casecmp(value) == 0)
+       matched = (evaluate_on_value && parse_email(evaluate_on_value).casecmp(value) == 0)
       end
       matched
     end

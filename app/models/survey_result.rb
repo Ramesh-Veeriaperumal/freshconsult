@@ -37,6 +37,16 @@ class SurveyResult < ActiveRecord::Base
     (rating == Survey::UNHAPPY)
   end
   
+  def get_small_img_class
+        if happy?
+           return "happy-smily-small"
+        elsif unhappy?
+           return "unhappy-smily-small"
+        else
+           return "neutral-smily-small"
+        end
+  end
+
   private
   
   def self.generate_reports_list(survey_reports,category)

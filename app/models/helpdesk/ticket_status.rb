@@ -73,6 +73,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => {:stop_sla_timer => true})
     statuses.collect { |status| status.status_id }
   end
+
+  def self.unresolved_statuses(account)
+    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => ["status_id not in (?,?)", RESOLVED, CLOSED])
+    statuses.collect { |status| status.status_id }
+  end
   
   def update_tickets_sla_on_status_change
     if deleted_changed?

@@ -187,6 +187,9 @@ en:
         send_while_option3: Emails sent after a ticket is "Closed".
         send_while_option4: Allow agents to add survey links to specific emails.
         send_while_title: Choose which emails have the satisfaction survey link
+        enter_happy_text: Enter the happy text
+        enter_neutral_text: Enter the neutral text
+        enter_unhappy_text: Enter the unhappy text
         
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
@@ -598,6 +601,9 @@ en:
     contacts: 
       create: 
         success: The contact has been created successfully.
+      info_select: Please select at least 1 user.
+    customers:
+      info_select: Please select at least 1 customer.
     to_dos: 
       complete: 
         success: The To-Do has been marked as completed.
@@ -1090,11 +1096,11 @@ en:
     deleted_message: This is a deleted contact
     title: Contacts
     emailnotverified: Email has not been verified for this contact!
-    showing: Showing
+    showing: "Showing:"
     info1: Are you sure you want to delete this contact?
     info2: Make this User an Agent
     send_activation: Send activation email
-    import_csv: Import users from CSV
+    import_csv: Import Customers from CSV
     import_google: Import from Google
     import_google_no: "No"
     import_google_yes: "Yes"
@@ -1111,6 +1117,15 @@ en:
     info6: Add specific notes regarding this contact
     role:
       info: Can see all tickets from this company 
+    status:
+      active: Active
+      deleted: Deleted
+    active:
+      no_contacts: You don't have any contact added to the list.
+      no_contacts_with_letter: You don't have any active contacts with the letter '%{alphabet}'
+    deleted:
+      no_contacts: You don't have any contacts to restore.
+      no_contacts_with_letter: You don't have any deleted contacts with the letter '%{alphabet}'
   between: Between
   portal_key: Portal
   add_new_forum: add a new forum
@@ -1216,6 +1231,10 @@ en:
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
+  companies:
+    active:
+      no_companies: You don't have any company added to the list.
+      no_companies_with_letter: You don't have any companies with the letter '%{alphabet}'
   feedbackwidget_embed_code: Widget embed code
   billing_info_update: Your billing information has been updated.
   wrong_portal: 
@@ -2098,6 +2117,8 @@ en:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
       survey_reports:
+        index: 
+            agent_list_loading: Fetching agent list
         feedbacks:
             in_response_to: -- In response to  
         back_to: Back to List View
