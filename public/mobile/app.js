@@ -29018,6 +29018,7 @@ Ext.define("Freshdesk.view.Home", {
     config: {
         id : 'home',
         cls:'home',
+        cls:'homepage',
         zIndex:2,
         showAnimation: {
                 type:'slide',
@@ -29040,7 +29041,7 @@ Ext.define("Freshdesk.view.Home", {
             {
                 xtype:'container',
                 centered:true,
-                minHeight:'300px',
+                minHeight:'400px',
                 ui:'plain',
                 width:'100%',
                 items : [
@@ -29065,6 +29066,8 @@ Ext.define("Freshdesk.view.Home", {
                                 xtype:'button',
                                 ui:'back headerBtn logout',
                                 text:'Sign out',
+                                minWidth:'80px',
+                                maxWidth:'80px',
                                 handler:function(){
                                     location.href="/logout";
                                 }
@@ -29076,7 +29079,9 @@ Ext.define("Freshdesk.view.Home", {
                                 cls:'profile_img',
                                 id:'home-user-profile',
                                 ui:'plain',
-                                tpl:'<div><div><img src="{avatar_url}"/></div></div>{name}',
+                                cls:'user_details',
+                                minHeight:'10em',
+                                tpl:'<div class="home_img"><img src="{avatar_url}"/></div><div class="user_name">{name}</div>',
                                 data:{
                                     avatar_url:'resources/images/profile_blank_thumb.gif',
                                     name:'Rachel'
@@ -29087,9 +29092,11 @@ Ext.define("Freshdesk.view.Home", {
                             },
                             {
                                 xtype:'button',
-                                ui:'forward headerBtn logout',
+                                ui:'forward headerBtn tickets',
                                 text:'Tickets',
                                 align:'left',
+                                minWidth:'80px',
+                                maxWidth:'80px',
                                 handler:function(){
                                     var filterList = Ext.Viewport.getAt(0)
                                     Ext.Viewport.animateActiveItem(filterList,{type:'slide',direction:'left',durection:'500'});
@@ -29559,7 +29566,8 @@ Ext.define("Freshdesk.view.TicketProperties", {
             directionLock:true,
             items: [propeties,customerInfo]
         });
-        this.add([tabs,details]);
+        // this.add([tabs,details]);
+        this.add([{xtype:'spacer',hidden:true},details]);
     },
     populateCustomerData : function(res){
         var resJSON = JSON.parse(res.responseText);
@@ -29593,6 +29601,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
         var content = res.responseText,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0],
         messageElm  = msgFormContainer.getMessageItem();
         messageElm.setValue(messageElm.getValue()+content);
+        console.log(messageElm)
         this.hide();
     },
     onCannedResDisclose : function(list, index, target, record, evt, options){
@@ -30017,6 +30026,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         Freshdesk.anim = undefined;
     },
     reply : function(id){
+        console.log('showing reply button');
         this.initReplyForm(id);
         var replyForm = this.getTicketReply();
         replyForm.ticket_id = id;
@@ -30123,12 +30133,12 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0];
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
-
-        formObj.reset();
+        //formObj.reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;
         }
+
         //setting from mails if the reply_emails are more else hide the from..
         FD.current_account.reply_emails.forEach(function(value,key){
             reply_emails.push({text:value,value:value});
@@ -36809,10 +36819,10 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                     },
                     {
                         xclass: 'Ext.plugin.ListPaging',
-                        autoPaging: true,
+                        autoPaging: false,
                         centered:true,
-                        loadMoreText: '',
-                        noMoreRecordsText: ''
+                        loadMoreText: 'Load more.',
+                        noMoreRecordsText: 'No more tickets.'
                     },
                     {
                         xclass: 'ux.SwipeOptions',
@@ -37191,7 +37201,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         });
     },
     getMessageItem: function(){
-        return this.items.items[1].items.items[0].items.items[9];
+        return this.items.items[1].items.items[0].items.items[8];
     },
     config: {
         layout:'fit',
@@ -37349,7 +37359,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         });
     },
     getMessageItem: function(){
-        return this.items.items[1].items.items[0].items.items[3];
+        return this.items.items[1].items.items[0].items.items[2];
     },
     config: {
         layout:'fit',
@@ -45303,7 +45313,7 @@ Ext.define("Freshdesk.view.TicketsList", {
         onItemDisclosure: false,
         itemTpl: Ext.create('Ext.XTemplate',
                 ['<tpl for="."><div class="ticket-item {status_name}">',
-                        '<tpl if="FD.current_user.is_agent"><div class="{priority_name}">&nbsp;</div></tpl>',
+                        '<tpl if="FD.current_user.is_agent"><div class="{priority_name}">&nbsp;</div><tpl else><div>&nbsp;</div></tpl>',
                         '<div class="title">',
                                 '<div><span class="info btn">{status_name}</span></div>',
                                 '<div class="subject">',
@@ -45312,8 +45322,8 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '</div>',
                                 '<div>',
                                         '<tpl if="responder_id">{responder_name}',
-                                        '<tpl else>-</tpl>',
-                                '{updated_at:this.time_in_words}</div>',
+                                        '<tpl else>Unassigned</tpl>',
+                                '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
                         '<div class="disclose">&nbsp;</div>',
         	'</div></tpl>'].join(''),

@@ -52,10 +52,10 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                     },
                     {
                         xclass: 'Ext.plugin.ListPaging',
-                        autoPaging: true,
+                        autoPaging: false,
                         centered:true,
-                        loadMoreText: '',
-                        noMoreRecordsText: ''
+                        loadMoreText: 'Load more.',
+                        noMoreRecordsText: 'No more tickets.'
                     },
                     {
                         xclass: 'ux.SwipeOptions',

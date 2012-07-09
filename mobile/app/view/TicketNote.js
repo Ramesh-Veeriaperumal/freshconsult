@@ -65,7 +65,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         });
     },
     getMessageItem: function(){
-        return this.items.items[1].items.items[0].items.items[3];
+        return this.items.items[1].items.items[0].items.items[2];
     },
     config: {
         layout:'fit',

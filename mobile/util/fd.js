@@ -35,7 +35,7 @@ FD.Util = {
 	},
 	initCustomer : function(){
 		//initializing customer login settings..
-		Ext.ComponentQuery.query('#ticketCustomerInfo')[0].hide();
+		//Ext.ComponentQuery.query('#ticketCustomerInfo')[0].hide();
         Ext.ComponentQuery.query('#noteFormCannedResponse')[0].hide();
         Ext.ComponentQuery.query('#noteFormPrivateField')[0].hide();
 	},
