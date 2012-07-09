@@ -17,7 +17,9 @@ Ext.define('Freshdesk.model.Ticket', {
             { name: 'description_html',type:'string'},
             { name: 'updated_at_in_words',type:'string'},
             { name: 'responder_id', type: 'int' },
-            { name : 'need_attention', type:'boolean'}
+            { name : 'need_attention', type:'boolean'},
+            { name : 'deleted', type:'boolean'},
+            { name : 'spam', type:'boolean'}
         ]
     }
 });

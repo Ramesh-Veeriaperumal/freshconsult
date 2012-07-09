@@ -11,7 +11,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
 
-  before_filter :set_mobile, :only => [:index,:show,:update, :create,:get_ca_response_content,:execute_scenario]
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam]
   
   before_filter { |c| c.requires_permission :manage_tickets }
   
@@ -397,6 +397,7 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
+      format.mob {  render :json => { :success => true }.to_json }
     end
   end
 

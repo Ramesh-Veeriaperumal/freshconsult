@@ -59,16 +59,15 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
                     }
             ]
         }
-
         this.add([topToolbar,filtersList]);
     },
     onFiltersListDisclose: function(list, index, target, record, evt, options){
-        setTimeout(function(){list.deselect(index);},500);
-        if(record.raw.count){
-            this.filter_title = record.raw.name;
-            Ext.getStore('Tickets').totalCount = record.raw.count;
-            location.href="#filters/"+record.data.type+'/'+record.data.id;
-        }
+            setTimeout(function(){list.deselect(index);},500);
+            if(record.raw.count){
+                this.filter_title = record.raw.name;
+                Ext.getStore('Tickets').totalCount = record.raw.count;
+                location.href="#filters/"+record.data.type+'/'+record.data.id;
+            }
     },
     populateTicketProperties : function(res) {
         var resJson = JSON.parse(res.responseText),

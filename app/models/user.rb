@@ -269,7 +269,8 @@ class User < ActiveRecord::Base
   def client_manager?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
-  
+  alias :is_client_manager :client_manager?
+
   def supervisor?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:supervisor]
   end
@@ -451,10 +452,14 @@ class User < ActiveRecord::Base
     customer?
   end
   
+  def company_name
+    customer.name unless customer.nil?
+  end
+
   def to_mob_json
     options = { 
-      :methods => [:avatar_url,:is_agent,:is_customer,:recent_tickets],
-      :only => [:id,:name]
+      :methods => [ :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
+      :only => [ :id, :name ]
     }
     to_json options
   end
