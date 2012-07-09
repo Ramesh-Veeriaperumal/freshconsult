@@ -2,6 +2,14 @@ class Subscription < ActiveRecord::Base
   
   PRO_RATA_MIN_CHARGE = 4.00
   
+  SUBSCRIPTION_TYPES = ["active","trial","free"]
+  
+  AGENTS_FOR_FREE_PLAN = 1
+  
+  ACTIVE = "active"
+  TRIAL = "trial"
+  FREE = "free"
+  
   belongs_to :account
   belongs_to :subscription_plan
   has_many :subscription_payments
@@ -24,6 +32,8 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :renewal_period, :only_integer => true, :greater_than => 0
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validate_on_create :card_storage
+  validates_inclusion_of :state, :in => SUBSCRIPTION_TYPES
+  validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
   
   def self.customer_count
    count(:conditions => {:state => 'active'})
@@ -67,9 +77,7 @@ class Subscription < ActiveRecord::Base
       # assign the discount to the subscription so it will stick
       # through future plan changes
       self.discount = plan.discount if plan.discount && plan.discount > discount
-    else
-      # Free account from the get-go?  No point in having a trial
-      self.state = 'active' #if new_record?
+    
     end
     
     self.renewal_period = billing_cycle unless billing_cycle.nil?
@@ -106,6 +114,9 @@ class Subscription < ActiveRecord::Base
   
   def store_card(creditcard, gw_options = {})
     # Clear out payment info if switching to CC from PayPal
+    puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    puts creditcard.to_json
+
     destroy_gateway_record(paypal) if paypal?
     @charge_now = gw_options[:charge_now]
     @response = if billing_id.blank?
@@ -113,7 +124,7 @@ class Subscription < ActiveRecord::Base
     else
       gateway.update(billing_id, creditcard, gw_options)
     end
-    
+    puts @response.message
     if @response.success?
       self.card_number = creditcard.display_number
       self.card_expiration = "%02d-%d" % [creditcard.expiry_date.month, creditcard.expiry_date.year]
@@ -261,6 +272,22 @@ class Subscription < ActiveRecord::Base
   def trial?
     state == 'trial'
   end
+
+  def free?
+    state == 'free'
+  end
+
+  def eligible_for_free_plan?
+    (account.agents.count == AGENTS_FOR_FREE_PLAN) and (!active?)
+  end
+
+  #Need to re visit
+  def convert_to_free
+    self.state = FREE
+    self.agent_limit = AGENTS_FOR_FREE_PLAN
+    self.renewal_period = 1
+    self.next_renewal_at = Time.now.advance(:months => 1)
+  end
   
   protected
   
@@ -382,6 +409,10 @@ class Subscription < ActiveRecord::Base
       end
     end
 
+    def finished_trial?
+      next_renewal_at < Time.zone.now
+    end
+
     def free_plan?
       self.subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:free]
     end
@@ -462,4 +493,5 @@ class Subscription < ActiveRecord::Base
     meta_info[:description] = fetch_pro_rata_description if misc
     meta_info
   end
+
  end

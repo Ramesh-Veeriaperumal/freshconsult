@@ -1,0 +1,33 @@
+<% content_for :sidebar do -%>
+<div class="sidepanel">
+<p class="intro"> 
+You can change your subscription details anytime.
+</p>   
+<br />
+<p class="intro">
+Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan.
+</p>
+</div>
+<%- end %>
+<% if @subscription && @subscription.errors.any? %>
+  <div class="errorExplanation">
+    <%= content_tag( :h2, t("errors_in_plan_change") ) %>
+    <ul>
+      <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
+    </ul>
+  </div>
+<% end %>
+
+<ul class="ui-form">
+<li class="inline-field">
+<% form_tag('/subscription/convert_subscription_to_free' , :method => :put) do %>
+<%= content_tag(:label,t('select_free_plan'), :class => "caption") %> 
+    <div class="fields"> 
+      <div class="action_buttons">        
+            <%= link_to_function "#{t('change')}", "jQuery(this).parents('form:first').trigger('submit')" %>
+        </div>
+        <%= select_tag :plan_id, options_from_collection_for_select(@plans, :id, :name,current_account.subscription_plan.id) %>
+    </div>
+<%end-%>
+</li>
+</ul>
