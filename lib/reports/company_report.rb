@@ -48,10 +48,10 @@ module Reports::CompanyReport
   def group_tkts_by_timeline(type)
     Account.current.tickets.visible.find(
      :all,
-     :select => "count(*) count,DATE(helpdesk_ticket_states.#{type}) date",
+     :select => "count(*) count,DATE(CONVERT_TZ(helpdesk_ticket_states.#{type},'+00:00','#{Time.zone.formatted_offset}')) date",
      :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
      :conditions => fetch_condition(type),
-     :group => "DATE(helpdesk_ticket_states.#{type})")
+     :group => "DATE(CONVERT_TZ(helpdesk_ticket_states.#{type},'+00:00','#{Time.zone.formatted_offset}'))")
   end
 
   def count_of_fcr
