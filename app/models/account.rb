@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   has_many :survey_results
   has_many :survey_remarks
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
+  has_one  :subscription_plan, :through => :subscription
   accepts_nested_attributes_for :main_portal
 
   has_one :conversion_metric

@@ -1,0 +1,16 @@
+<li class="inline-field">
+    <%= content_tag(:label, t('current_plan'), :class => "caption") %>  
+    <div class="fields">
+      <div class="action_buttons">
+        <%= link_to( "#{t('change_free_plan')} &rsaquo;", free_subscription_url, :class => "last" ) %>
+      </div> 
+      <div class="big-text">
+        <%= " #{ t('current_plan_details',
+            :plan_name  => @subscription.subscription_plan.name,
+            :agent_limit => @subscription.agent_limit) }" %>
+      </div> 
+      <br />
+      <div class="action_buttons">
+      <%=link_to "Upgrade to paid account", billing_subscription_url %>
+      </div>
+</li>

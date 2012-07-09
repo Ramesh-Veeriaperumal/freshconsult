@@ -83,7 +83,7 @@
     function calculateCost(){
       //$("#cost-per-agent").text("$"+plan_cost);
       //$("#total-cost-per-agent").text("$"+(agents * plan_cost));			
-      $.post( "/account/calculate_amount",
+      $.post( "/subscription/calculate_amount",
               { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id },              
               function(data){
 									$("#billing-template").removeClass("loading-amount");
