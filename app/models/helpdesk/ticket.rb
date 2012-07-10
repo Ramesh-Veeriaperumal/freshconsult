@@ -104,7 +104,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
-  delegate :active?, :open?, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
+  delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
@@ -737,10 +737,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_name
     requester.name || requester_info
-  end
-
-  def is_closed
-    closed?
   end
 
   def need_attention

@@ -93,6 +93,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   def closed?
    (status_id == CLOSED)
   end
+  alias :is_closed :closed?
   
   def resolved?
    (status_id == RESOLVED)
