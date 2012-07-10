@@ -69,7 +69,6 @@ Ext.define('Freshdesk.controller.Tickets', {
         Freshdesk.anim = undefined;
     },
     reply : function(id){
-        console.log('showing reply button');
         this.initReplyForm(id);
         var replyForm = this.getTicketReply();
         replyForm.ticket_id = id;
@@ -248,7 +247,10 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0];
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
-        //formObj.reset();
+
+        fieldSetObj.items.items[6].reset();
+        fieldSetObj.items.items[7].setHidden(true).reset();
+        fieldSetObj.items.items[8].reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;
