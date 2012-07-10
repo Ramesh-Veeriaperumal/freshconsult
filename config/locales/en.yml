@@ -1865,6 +1865,7 @@ en:
     home:
       remember: "Remember me"
       login: "Login"
+      sign_in_using: "...or Sign in using"
   integrations:
     capsule_crm:
       label: "Capsule CRM"

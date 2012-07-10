@@ -3,33 +3,44 @@
 	<head>
 		<title><%= page_title %></title>
 		<meta name="viewport" content="width=device-width,user-scalable=no" />
+		<link rel="stylesheet" href="mobile/resources/css/app.css">
+		<link rel="stylesheet" href="stylesheets/mobile.css">
 	</head>
-	<body>
-		<div>
-			<div>
-				<% form_for @user_session, :url => user_session_path do |f| %>
-				  <%= f.error_messages %>
-					<%= hidden_field_tag 'mobile', "true"  %>
-					<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
-					<div>	
-				  		<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox" id="user_session_email" name="user_session[email]" placeholder="Email address" size="30" type="email"><br/>
-					</div>
-					<div>	
-				  		<%= f.password_field :password, :class=>"textbox", :autocomplete=>"off", :autocorrect=>"off", :autocapitalize=>"off", :placeholder=>"Password" %><br/>
-					</div>
-			  		<%= f.submit t('mobile.home.login'), { :id=>"login_btn", :class => "slideleft loginbutton"} %>
 
-			  		<%if feature?(:google_signin) or feature?(:twitter_signin) %>
-						<div>
-							<b><%= t("user_sessions.new.sign_in_using") %>:</b>
-							<%= link_to(image_tag("google.png", :alt => t("user_sessions.new.sign_in_using_google")) + "Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") if feature?(:google_signin) %>
-							<%= link_to(image_tag("twitter.png", :alt => "Twitter") + "Twitter", "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
-							<%= link_to(image_tag("facebook.png", :alt => "Facebook") + "Facebook", "/auth/facebook", :class => "button") if feature?(:facebook_signin) %>
-						</div>
-					<%end%>
+	<body class="body-background">
+		<div class="app-wrapper login">
+			<div class="brand">
+		    	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)), :class => "app-logo" %>
+		    	<%= content_tag :h2, current_portal.name %>
+		  	</div>		
 
-				<% end %>
-			</div>
+			<% form_for @user_session, :url => user_session_path do |f| %>
+			  	<%= f.error_messages %>
+				<%= hidden_field_tag 'mob', "true"  %>
+				<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
+				<fieldset class="login-fieldset">
+					<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox email" id="user_session_email" name="user_session[email]" placeholder="Email" size="30" type="email">
+					<br />
+			  		<%= f.password_field :password, :class=>"textbox password", :autocomplete=>"off", :autocorrect=>"off", :autocapitalize=>"off", :placeholder=>"Password" %><br/>
+			  	</fieldset>
+		  		<%= f.submit t('mobile.home.login'), { :id=>"login_btn", :class => "sp-button login-button"} %>
+<br/><br/><br/>
+		  		<%if feature?(:google_signin) or feature?(:twitter_signin) %>
+					<div class="sp-button alt-signin">
+						<%= t("mobile.home.sign_in_using") %>
+						<span class="mobile-icon-twitter"></span>
+						<span class="mobile-icon-facebook"></span>
+						<span class="mobile-icon-google"></span>
+						<%#= link_to(image_tag("google.png", :alt => t("user_sessions.new.sign_in_using_google")), "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") if feature?(:google_signin) %>
+						<%#= link_to(image_tag("twitter.png", :alt => "Twitter"), "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
+						<%#= link_to(image_tag("facebook.png", :alt => "Facebook"), "/auth/facebook", :class => "button") if feature?(:facebook_signin) %>
+					</div>
+				<%end%>
+
+				<p>This mobile version of our helpdesk, currently supports tickets. to use any missing feature, please use our Web application</p>
+				<p>A Helpdesk Software by Freshdesk </p>
+
+			<% end %>
 		</div>
 	</body>
 </html>
