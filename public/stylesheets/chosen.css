@@ -2,7 +2,7 @@
 /* @group Base */
 .chzn-container { font-size: 13px; position: relative; display: inline-block; zoom: 1; *display: inline; }
 
-.chzn-container .chzn-drop { background: #fff; border: 1px solid #aaa; border-top: 0; position: absolute; top: 29px; left: 0; -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); -moz-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); -o-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); z-index: 999; }
+.chzn-container .chzn-drop { background: #fff; border: 1px solid #aaa; border-top: 0; position: absolute; top: 29px; left: 0; -moz-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); -o-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15); z-index: 999; }
 
 /* @end */
 /* @group Single Chosen */
@@ -30,7 +30,7 @@
 .chzn-container-single-nosearch .chzn-search input { position: absolute; left: -9000px; }
 
 /* @group Multi Chosen */
-.chzn-container-multi .chzn-choices { background-color: #fff; background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, white)); background-image: -webkit-linear-gradient(top, #eeeeee 1%, white 15%); background-image: -moz-linear-gradient(top, #eeeeee 1%, white 15%); background-image: -o-linear-gradient(top, #eeeeee 1%, white 15%); background-image: -ms-linear-gradient(top, #eeeeee 1%, white 15%); background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%); border: 1px solid #aaa; margin: 0; padding: 0; cursor: text; overflow: hidden; height: auto !important; height: 1%; position: relative; }
+.chzn-container-multi .chzn-choices { background-color: #fff; background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, white)); background-image: -webkit-linear-gradient(top, #eeeeee 1%, white 15%); background-image: -moz-linear-gradient(top, #eeeeee 1%, white 15%); background-image: -o-linear-gradient(top, #eeeeee 1%, white 15%); background-image: -ms-linear-gradient(top, #eeeeee 1%, white 15%); background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%); border: 1px solid #C6C6C6; margin: 0; padding: 0; cursor: text; overflow: hidden; height: auto !important; height: 1%; position: relative; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; -moz-box-shadow: #dfdfdf 1px 1px 2px inset; -webkit-box-shadow: #dfdfdf 1px 1px 2px inset; -o-box-shadow: #dfdfdf 1px 1px 2px inset; box-shadow: #dfdfdf 1px 1px 2px inset; }
 
 .chzn-container-multi .chzn-choices li { float: left; list-style: none; }
 
