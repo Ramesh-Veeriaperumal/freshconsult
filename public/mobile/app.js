@@ -29967,8 +29967,8 @@ Ext.define("Freshdesk.view.CannedResponses", {
         console.log(messageElm)
         this.hide();
     },
-    onCannedResDisclose : function(list, index, target, record, evt, options){
-        var ca_resp_id = record.raw.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
+    onCannedResDisclose : function(record){
+        var ca_resp_id = record.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
         ticket_id = msgFormContainer.ticket_id,
         opts  = {
             url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
@@ -29995,14 +29995,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                     xtype:'list',
                     emptyText: '<div class="empty-list-text">No canned responses available.</div>',
                     onItemDisclosure: false,
-                    itemTpl: '<span class="bullet"></span>&nbsp;{title}',
-                    listeners:{
-                            itemtap:{
-                                fn:function(){
-                                    this.parent.onCannedResDisclose.apply(this.parent,arguments);
-                                }
-                            }
-                    }
+                    itemTpl: '<span class="bullet"></span>&nbsp;{title}'
             },
             {
                 xtype:'titlebar',
@@ -30012,12 +30005,27 @@ Ext.define("Freshdesk.view.CannedResponses", {
                 items:[
                     {
                         xtype:'button',
-                        ui:'plain headerHtn',
-                        iconCls:'delete_black2',
+                        ui:'plain headerBtn',
                         iconMask:true,
-                        align:'right',
+                        align:'left',
+                        text:'hide',
                         handler:function(){
                             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].hide();
+                        },
+                        scope:this
+                    },
+                    {
+                        xtype:'button',
+                        ui:'plain headerBtn',
+                        iconMask:true,
+                        align:'right',
+                        text:'apply',
+                        handler:function(){
+                            var me = Ext.ComponentQuery.query('#cannedResponsesPopup')[0],
+                            selection = me.items.items[0].getSelection();
+                            if(selection.length) 
+                                me.onCannedResDisclose(selection[0].raw)
+
                         },
                         scope:this
                     }
@@ -30434,21 +30442,45 @@ Ext.define('Freshdesk.controller.Tickets', {
         Ext.Viewport.animateActiveItem(scenarios, this.coverUp);
     },
     close: function(id){
-        Ext.Msg.confirm('Close ticket : '+id,'Do you want to Close this ticket?',
-            function(btnId){
-                if(btnId == 'no' || btnId == 'cancel'){
-                    Freshdesk.cancelBtn=true;
-                    location.href="#tickets/show/"+id;
-                }
-                else{
-                    var opts = { url: '/support/tickets/close_ticket/'+id },
-                    callBack = function(res){
+
+        var self = this,
+            messageBox = new Ext.MessageBox({
+            showAnimation: {
+                type: 'slideIn',
+                duration:200,
+                easing:'ease-out'
+            },
+            hideAnimation: {
+                type: 'slideOut',
+                duration:150,
+                easing:'ease-in'
+            },
+            title:'Close ticket',
+            message: 'Do you want to update ticket status to "Close"?',
+            buttons: [
+                {
+                    text:'No',
+                    handler:function(){
+                        Freshdesk.cancelBtn=true;
                         location.href="#tickets/show/"+id;
-                    };
-                    FD.Util.getJSON(opts,callBack,this)
+                        messageBox.hide();
+                    },
+                    scope:self
+                },
+                {
+                    text:'Yes',
+                    handler:function(){
+                        var opts = { url: '/support/tickets/close_ticket/'+id },
+                        callBack = function(){
+                            messageBox.hide();
+                            location.href="#tickets/show/"+id;
+                        };
+                        FD.Util.ajax(opts,callBack,this);
+                    },
+                    scope:self
                 }
-            }
-        );
+            ]
+        }).show();
     },
     resolve : function(id){
 
@@ -30465,7 +30497,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                 easing:'ease-in'
             },
             title:'Resolve ticket',
-            message: 'Do you want to update ticket status to "Resolved"?',
+            message: 'Do you want to update ticket status to "Resolve"?',
             buttons: [
                 {
                     text:'No',
@@ -30499,31 +30531,6 @@ Ext.define('Freshdesk.controller.Tickets', {
                 }
             ]
         }).show();
-
-        // Ext.Msg.confirm('Resolve ticket','Do you want to update ticket status to "Resolved"?',
-        //     function(btnId){
-        //         if(btnId == 'no' || btnId == 'cancel'){
-        //             Freshdesk.cancelBtn=true;
-        //             location.href="#tickets/show/"+id;
-        //         }
-        //         else{
-        //             var opts = {
-        //                 url: '/helpdesk/tickets/update/'+id,
-        //                 method:'POST',
-        //                 params:{
-        //                     'helpdesk_ticket[status]' : 4
-        //                 },
-        //                 headers: {
-        //                     "Accept": "application/json"
-        //                 }
-        //             },
-        //             callBack = function(res){
-        //                 location.href="#tickets/show/"+id;
-        //             };
-        //             FD.Util.ajax(opts,callBack,this);
-        //         }
-        //     }
-        // );
     },
     'delete' : function(id){
 
@@ -30574,30 +30581,6 @@ Ext.define('Freshdesk.controller.Tickets', {
                 }
             ]
         }).show();
-        // Ext.Msg.confirm('Delete tickets','Do you want to delete this ticket (#'+id+')?',
-        //     function(btnId){
-        //         if(btnId == 'no' || btnId == 'cancel'){
-        //             Freshdesk.cancelBtn=true;
-        //             location.href="#tickets/show/"+id;
-        //         }
-        //         else{
-        //             var opts = {
-        //                url: '/helpdesk/tickets/'+id,
-        //                 params:{
-        //                     '_method':'delete',
-        //                     'action':'destroy'
-        //                 },
-        //                 headers: {
-        //                     "Accept": "application/json"
-        //                 } 
-        //             },
-        //             callBack = function(){
-        //                 location.href="#tickets/show/"+id;
-        //             };
-        //             FD.Util.ajax(opts,callBack,this);
-        //         }
-        //     }
-        // );
     },
     initNoteForm : function(id){
         FD.Util.check_user();

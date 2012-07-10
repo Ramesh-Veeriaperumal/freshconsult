@@ -8,8 +8,8 @@ Ext.define("Freshdesk.view.CannedResponses", {
         console.log(messageElm)
         this.hide();
     },
-    onCannedResDisclose : function(list, index, target, record, evt, options){
-        var ca_resp_id = record.raw.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
+    onCannedResDisclose : function(record){
+        var ca_resp_id = record.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
         ticket_id = msgFormContainer.ticket_id,
         opts  = {
             url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
@@ -36,14 +36,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                     xtype:'list',
                     emptyText: '<div class="empty-list-text">No canned responses available.</div>',
                     onItemDisclosure: false,
-                    itemTpl: '<span class="bullet"></span>&nbsp;{title}',
-                    listeners:{
-                            itemtap:{
-                                fn:function(){
-                                    this.parent.onCannedResDisclose.apply(this.parent,arguments);
-                                }
-                            }
-                    }
+                    itemTpl: '<span class="bullet"></span>&nbsp;{title}'
             },
             {
                 xtype:'titlebar',
@@ -53,12 +46,27 @@ Ext.define("Freshdesk.view.CannedResponses", {
                 items:[
                     {
                         xtype:'button',
-                        ui:'plain headerHtn',
-                        iconCls:'delete_black2',
+                        ui:'plain headerBtn',
                         iconMask:true,
-                        align:'right',
+                        align:'left',
+                        text:'hide',
                         handler:function(){
                             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].hide();
+                        },
+                        scope:this
+                    },
+                    {
+                        xtype:'button',
+                        ui:'plain headerBtn',
+                        iconMask:true,
+                        align:'right',
+                        text:'apply',
+                        handler:function(){
+                            var me = Ext.ComponentQuery.query('#cannedResponsesPopup')[0],
+                            selection = me.items.items[0].getSelection();
+                            if(selection.length) 
+                                me.onCannedResDisclose(selection[0].raw)
+
                         },
                         scope:this
                     }
