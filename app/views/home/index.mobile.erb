@@ -9,7 +9,7 @@
 			<div>
 				<% form_for @user_session, :url => user_session_path do |f| %>
 				  <%= f.error_messages %>
-					<%= hidden_field_tag 'mob', "true"  %>
+					<%= hidden_field_tag 'mobile', "true"  %>
 					<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
 					<div>	
 				  		<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox" id="user_session_email" name="user_session[email]" placeholder="Email address" size="30" type="email"><br/>

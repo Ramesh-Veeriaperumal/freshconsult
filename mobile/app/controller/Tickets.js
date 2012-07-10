@@ -56,7 +56,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
-                    format:'mob'
+                    format:'mobile'
                 },
                 scope:this
             },

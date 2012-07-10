@@ -96,7 +96,7 @@ class ContactsController < ApplicationController
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json}
-      format.mob { render :json => @user.to_mob_json }
+      format.mobile { render :json => @user.to_mob_json }
     end
   end
   

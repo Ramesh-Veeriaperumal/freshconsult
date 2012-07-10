@@ -27,7 +27,7 @@ class Support::NotesController < ApplicationController
       flash[:error] = t(:'flash.tickets.notes.create.failure')
     end
     respond_to do |format|
-      format.mob {
+      format.mobile {
         render :json => {:success => true,:item => @note}.to_json
       }
       format.html{

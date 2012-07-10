@@ -25,7 +25,7 @@ module HelpdeskControllerMethods
       format.xml  { render :xml => @item, :status => :created, :location => url_for(@item) }
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
-      format.mob {
+      format.mobile {
         render :json => {:success => true,:item => @item}.to_json
       }
     end
@@ -36,7 +36,7 @@ module HelpdeskControllerMethods
       format.html { render :action => :new }
       format.xml  { render :xml => @item.errors}
       format.widget { flash[:error] = "Error in creating the ticket. Try again later."
-        format.mob {
+        format.mobile {
         render :json => {:failure => true,:errors => @item.errors}.to_json
       }
       render :action=>:create_ticket_status, :layout => "widgets/contacts"}

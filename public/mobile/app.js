@@ -30013,7 +30013,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
-                    format:'mob'
+                    format:'mobile'
                 },
                 scope:this
             },
@@ -45291,6 +45291,7 @@ Ext.define("Freshdesk.view.FiltersList", {
     alias: "widget.filterslist",
     config: {
     	cls:'views',
+        grouped:true,
         disclosureProperty:'disclosure2',
         emptyText: '<div class="empty-list-text">You don\'t have any views.</div>',
         onItemDisclosure: false,
@@ -49380,7 +49381,8 @@ Ext.define('Freshdesk.model.Filter', {
             { name: 'id', type: 'int' },
             { name: 'type', type: 'string'},
             { name: 'name', type: 'string' },
-            { name: 'count', type: 'string' }
+            { name: 'count', type: 'string' },
+            { name: 'company', type:'string'}
         ]
     }
 });
@@ -51634,6 +51636,12 @@ Ext.define('Freshdesk.store.Filters', {
     extend: 'Ext.data.Store',
     config: {
         model: 'Freshdesk.model.Filter',
+        grouper: {
+            groupFn: function(record) {
+                var company = record.get('company');
+                return company || '';
+            }
+        },
         proxy: {
             type: 'ajax',
             url : '/mobile/tickets/view_list',

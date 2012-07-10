@@ -1,3 +1,3 @@
 Mime::Type.register_alias "text/html", :widget
 Mime::Type.register "application/vnd.ms-excel", :xls
-Mime::Type.register_alias "text/html", :mob
+Mime::Type.register_alias "text/html", :mobile

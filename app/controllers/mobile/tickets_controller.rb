@@ -74,6 +74,18 @@ class Mobile::TicketsController < ApplicationController
         :count =>  count
       )
     }
+
+    CUSTOMER_FILTER_NAMES.each { |view_name|
+      count = TicketsFilter.filter(view_name.to_sym, current_user, current_user.customer.tickets).length
+      view_list.push(
+        :company => current_user.customer.name, 
+        :id => view_name.to_s+current_user.customer.name, 
+        :name => t("helpdesk.tickets.views.#{view_name}"), 
+        :type => :filter, 
+        :count =>  count
+      )
+    } if current_user.is_client_manager
+
     render :json => view_list.to_json
   end
 
@@ -93,6 +105,7 @@ class Mobile::TicketsController < ApplicationController
         :type => :view, 
         :count=> ticket_count
       } 
+
     })
     
     #Fallback incase all custom views has 0 count..

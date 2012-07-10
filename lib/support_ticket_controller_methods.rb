@@ -8,7 +8,7 @@ module SupportTicketControllerMethods
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     else
       respond_to do |format|
-        format.mob {
+        format.mobile {
           render :json => @ticket.to_mob_json(true)
         }
         format.html

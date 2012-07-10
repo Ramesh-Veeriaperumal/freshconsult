@@ -24,7 +24,7 @@ class Support::TicketsController < ApplicationController
   def update
     if @item.update_attributes(params[:helpdesk_ticket])
       respond_to do |format|
-        format.mob { render :json => { :success => true, :item => @item }.to_json }
+        format.mobile { render :json => { :success => true, :item => @item }.to_json }
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
           redirect_to @item 
@@ -37,7 +37,7 @@ class Support::TicketsController < ApplicationController
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
     respond_to do |format|
-      format.mob {
+      format.mobile {
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
@@ -78,7 +78,7 @@ class Support::TicketsController < ApplicationController
        mob_json[:failure] = true
      end
      respond_to do |format|
-      format.mob {
+      format.mobile {
         mob_json[:item] = @item;
         render :json => mob_json.to_json
       }

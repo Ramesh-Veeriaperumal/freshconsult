@@ -6,7 +6,8 @@ Ext.define('Freshdesk.model.Filter', {
             { name: 'id', type: 'int' },
             { name: 'type', type: 'string'},
             { name: 'name', type: 'string' },
-            { name: 'count', type: 'string' }
+            { name: 'count', type: 'string' },
+            { name: 'company', type:'string'}
         ]
     }
 });
