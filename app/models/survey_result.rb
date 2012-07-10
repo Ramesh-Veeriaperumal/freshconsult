@@ -5,9 +5,8 @@ class SurveyResult < ActiveRecord::Base
   has_one :survey_remark, :dependent => :destroy
   belongs_to :surveyable, :polymorphic => true
   
-  has_one :user,:conditions => {:deleted => false}, :foreign_key => :customer_id
   belongs_to :agent,:conditions => {:deleted => false},:class_name => 'User', :foreign_key => :agent_id
-  belongs_to :customer,:conditions => {:deleted => false},:class_name => 'User', :foreign_key => :customer_id
+  belongs_to :customer,:class_name => 'User', :foreign_key => :customer_id
   belongs_to :group,:class_name => 'Group', :foreign_key => :group_id
   
   def add_feedback(feedback)
@@ -38,6 +37,16 @@ class SurveyResult < ActiveRecord::Base
     (rating == Survey::UNHAPPY)
   end
   
+  def get_small_img_class
+        if happy?
+           return "happy-smily-small"
+        elsif unhappy?
+           return "unhappy-smily-small"
+        else
+           return "neutral-smily-small"
+        end
+  end
+
   private
   
   def self.generate_reports_list(survey_reports,category)

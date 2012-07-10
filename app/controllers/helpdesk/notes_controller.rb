@@ -90,7 +90,7 @@ class Helpdesk::NotesController < ApplicationController
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[params[:ticket_status]]
+          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])
@@ -296,7 +296,7 @@ class Helpdesk::NotesController < ApplicationController
         flash[:error] = t('validate_fwd_to_email_msg')
         redirect_to item_url
       else
-        if (params[:to_emails].any? { |email| email.include?@parent.requester.email })
+        if (@parent.requester.email and params[:to_emails].any? { |email| email.include?@parent.requester.email })
           flash[:error] = t('use_reply_option')
           redirect_to item_url
         elsif((validate_emails(params[:to_emails])).blank?)

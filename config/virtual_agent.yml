@@ -8,7 +8,6 @@ default_fields:
         
     to_email:
         handler: email
-        
     subject:
         handler: text
 

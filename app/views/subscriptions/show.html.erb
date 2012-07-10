@@ -1,0 +1,15 @@
+<% content_for :sidebar do -%>
+  <div class="sidepanel">
+    <h3 class="title"><%= current_account.name %></h3> 
+    <p>     
+      <strong><%=t('account.active_since')%></strong> <%= formated_date(current_account.created_at) %>  
+      <br />
+      <strong>Current Plan</strong> <%=@subscription.subscription_plan.name%>    
+    </p>
+  </div>
+<%- end %>
+
+<h3 class= "title"><%= @page_title = "Subscription" %></h3>
+<ul class="ui-form">
+  <%= render :partial => "/subscriptions/state/#{@subscription.state}", :locals => { :subscription => @subscription, :plans => @plans } %>
+</ul>
