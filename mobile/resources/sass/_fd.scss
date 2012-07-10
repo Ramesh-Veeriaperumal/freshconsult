@@ -13,11 +13,13 @@
 
 .branding {
 	text-align:center;
-	img{
-		&.logo{
-			margin-left:1em;
-		}
-
+	.logo{
+			margin-left:0.36em;
+			display: inline-block;
+			background-color: white;
+			border: 1px solid #434343 !important;
+			margin-bottom: 0.36em;
+			@include border-radius(5px);
 	}
 }
 #home-user-profile {

@@ -9384,8 +9384,14 @@ input[type="search"]::-webkit-search-cancel-button {
 .branding {
   text-align: center;
 }
-.branding img.logo {
-  margin-left: 1em;
+.branding .logo {
+  margin-left: 0.36em;
+  display: inline-block;
+  background-color: white;
+  border: 1px solid #434343 !important;
+  margin-bottom: 0.36em;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 
 #home-user-profile {
