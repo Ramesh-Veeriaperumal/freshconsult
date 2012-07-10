@@ -4,8 +4,8 @@ class Mobile::TicketsController < ApplicationController
   before_filter :require_user_login, :set_mobile
   before_filter :check_permistions, :only => :get_suggested_solutions
   
-  FILTER_NAMES = [:all_tickets]
-  CUSTOMER_FILTER_NAMES = [:all_tickets,:open_or_pending,:resolved_or_closed]
+  FILTER_NAMES = [ :new_my_open, :all_tickets, :monitored_by, :spam, :deleted ]
+  CUSTOMER_FILTER_NAMES = [ :all_tickets, :open_or_pending, :resolved_or_closed ]
 
   
 
@@ -86,12 +86,15 @@ class Mobile::TicketsController < ApplicationController
       filter_id = view[:id]
       filter_name = view[:name]
       ticket_count =  current_account.tickets.permissible(current_user).count(:id, :conditions=> view.sql_conditions)
-      { :id => filter_id, 
+
+      { 
+        :id => filter_id, 
         :name => filter_name, 
         :type => :view, 
         :count=> ticket_count
       } 
     })
+    
     #Fallback incase all custom views has 0 count..
     FILTER_NAMES.each { |view_name|
       view_list.push( :id => view_name, :name => t("helpdesk.tickets.views.#{view_name}"), 

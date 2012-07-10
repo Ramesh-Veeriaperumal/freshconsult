@@ -2,7 +2,8 @@
 Ext.Loader.setConfig({enabled:true});
 Ext.Loader.setPath({
     'Ext'       : 'sdk/src',
-    'Freshdesk' : 'app'
+    'Freshdesk' : 'app',
+    'ux'        : 'plugin'
 });
 //</debug>
 
@@ -14,7 +15,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox'
+        'Ext.MessageBox','ux.SwipeOptions'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],

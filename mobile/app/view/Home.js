@@ -4,6 +4,7 @@ Ext.define("Freshdesk.view.Home", {
     config: {
         id : 'home',
         cls:'home',
+        cls:'homepage',
         zIndex:2,
         showAnimation: {
                 type:'slide',
@@ -26,7 +27,7 @@ Ext.define("Freshdesk.view.Home", {
             {
                 xtype:'container',
                 centered:true,
-                minHeight:'300px',
+                minHeight:'400px',
                 ui:'plain',
                 width:'100%',
                 items : [
@@ -51,6 +52,8 @@ Ext.define("Freshdesk.view.Home", {
                                 xtype:'button',
                                 ui:'back headerBtn logout',
                                 text:'Sign out',
+                                minWidth:'80px',
+                                maxWidth:'80px',
                                 handler:function(){
                                     location.href="/logout";
                                 }
@@ -62,7 +65,9 @@ Ext.define("Freshdesk.view.Home", {
                                 cls:'profile_img',
                                 id:'home-user-profile',
                                 ui:'plain',
-                                tpl:'<div><div><img src="{avatar_url}"/></div></div>{name}',
+                                cls:'user_details',
+                                minHeight:'10em',
+                                tpl:'<div class="home_img"><img src="{avatar_url}"/></div><div class="user_name">{name}</div>',
                                 data:{
                                     avatar_url:'resources/images/profile_blank_thumb.gif',
                                     name:'Rachel'
@@ -73,9 +78,11 @@ Ext.define("Freshdesk.view.Home", {
                             },
                             {
                                 xtype:'button',
-                                ui:'forward headerBtn logout',
+                                ui:'forward headerBtn tickets',
                                 text:'Tickets',
                                 align:'left',
+                                minWidth:'80px',
+                                maxWidth:'80px',
                                 handler:function(){
                                     var filterList = Ext.Viewport.getAt(0)
                                     Ext.Viewport.animateActiveItem(filterList,{type:'slide',direction:'left',durection:'500'});

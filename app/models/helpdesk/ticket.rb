@@ -743,6 +743,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     closed?
   end
 
+  def need_attention
+    active? and ticket_states.need_attention
+  end
+
   def to_json(options = {}, deep=true)
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep

@@ -52,7 +52,8 @@ Ext.define("Freshdesk.view.TicketProperties", {
             directionLock:true,
             items: [propeties,customerInfo]
         });
-        this.add([tabs,details]);
+        // this.add([tabs,details]);
+        this.add([{xtype:'spacer',hidden:true},details]);
     },
     populateCustomerData : function(res){
         var resJSON = JSON.parse(res.responseText);

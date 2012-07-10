@@ -68,6 +68,9 @@ input, textarea, select {
 		@include text-shadow( #000 -1px -1px 0);
 		font-size:0.8em;
 	}
+	#home-user-profile{
+		text-align:center;
+	}
 }
 /*hack for sencha styles starts*/
 
@@ -176,7 +179,9 @@ x-button-forward::before, .x-toolbar .x-button-forward::before {
 }
 
 .x-list-paging{
-	
+}
+.x-loading-spinner {
+	display:none;
 }
 /*hack for sencha styles ends*/
 
@@ -492,6 +497,7 @@ a {
 .x-panel.x-floating, .x-msgbox.x-floating, .x-form.x-floating {
 		padding-top:13px;
 		@include border-radius(0.7em);
+		border-radius: 0.7em;
 		background:-webkit-linear-gradient(top, rgba(97, 97, 97, 0.9) 15%,rgba(28, 28, 28, 0.85) 15%);
 		background:-moz-linear-gradient(top, rgba(97, 97, 97, 0.9) 15%,rgba(28, 28, 28, 0.85) 15%);
 }
@@ -841,6 +847,7 @@ a {
 				box-sizing: border-box;
 				height: 20px;
 				letter-spacing: -0.1em;
+				text-shadow: 1px 1px 0 white;
 				display: block;
 				width: 40px;
 				@include border-radius(3px);

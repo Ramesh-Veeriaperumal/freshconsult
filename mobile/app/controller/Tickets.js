@@ -69,6 +69,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         Freshdesk.anim = undefined;
     },
     reply : function(id){
+        console.log('showing reply button');
         this.initReplyForm(id);
         var replyForm = this.getTicketReply();
         replyForm.ticket_id = id;
@@ -175,12 +176,12 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0];
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
-
-        formObj.reset();
+        //formObj.reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;
         }
+
         //setting from mails if the reply_emails are more else hide the from..
         FD.current_account.reply_emails.forEach(function(value,key){
             reply_emails.push({text:value,value:value});

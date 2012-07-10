@@ -12,9 +12,11 @@ class HomeController < ApplicationController
     if allowed_in_portal?(:open_solutions)
       @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
     end
+
     if params[:format] == "mob"
       @user_session = current_account.user_sessions.new
     end
+    
     @topics = recent_topics if allowed_in_portal?(:open_forums)
   end
  

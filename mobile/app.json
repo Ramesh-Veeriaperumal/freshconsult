@@ -19,6 +19,9 @@
      */
     "js": [
         {
+            "path": "util/date.extensions.js"
+        },
+        {
             "path": "util/fd.js"
         },
         {
@@ -78,7 +81,8 @@
     "extras": [
         "resources/images",
         "resources/icons",
-        "resources/loading"
+        "resources/loading",
+        "sounds"
     ],
 
     /**
