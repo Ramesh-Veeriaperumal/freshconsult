@@ -31,10 +31,10 @@
 				<span class="seperator"></span>
 				<div class="button-container">
 					<% if @subscription.trial? %>
-						<%= link_to( "&larr; #{t('select_another_plan')}", account_url, :class => "uiButton floatl" ) %>
+						<%= link_to( "&larr; #{t('select_another_plan')}", subscription_url, :class => "uiButton floatl" ) %>
 						<%= submit_tag t('accounts.billing.begin_subscription'), :class => "uiButton special", :id => "begin_subscription" %>	
 					<% else %>
-						<%= link_to( "&larr; #{t("cancel_and_back")}", account_url, :class => "uiButton floatl" ) %>
+						<%= link_to( "&larr; #{t("cancel_and_back")}", subscription_url, :class => "uiButton floatl" ) %>
 						<%= submit_tag t('accounts.billing.update_billing_info'), :class => "uiButton" %>
 					<% end %>
 				</div>
