@@ -6474,23 +6474,41 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 /*hack for sencha styles starts*/
+.x-body {
+  background-image: url("../images/bg.png");
+  text-shadow: white 1px 1px 0;
+}
+
 .x-button-headerBtn span.info {
   -webkit-mask: none !important;
   background: transparent url("../images/ticket-details-icon.png") 50% 50% no-repeat !important;
 }
 
+x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after {
+  width: 0.7em;
+  -webkit-mask-size: 0.74em 1.8em;
+}
+
 .x-toolbar-header {
   margin-bottom: 1px;
-  border-bottom-color: #112D2E !important;
-  box-shadow: -1px 1px 1px #112d2e;
+  border-bottom-color: #3B68A8 !important;
+  box-shadow: 0px 2px 10px rgba(87, 87, 87, 0.5);
+  z-index: 100;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAG0lEQVQIW2Ncd/Tp/yBraUYGIAATMAEwByYAAOL9C1upVlJBAAAAAElFTkSuQmCC), -webkit-linear-gradient(#b9c6d9, #98abc7 50%, #879ebe 51%, #7691b5) !important;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAG0lEQVQIW2Ncd/Tp/yBraUYGIAATMAEwByYAAOL9C1upVlJBAAAAAElFTkSuQmCC), linear-gradient(#b9c6d9, #98abc7 50%, #879ebe 51%, #7691b5) !important;
+  border-color: #19212D;
 }
 .x-toolbar-header .x-title {
   color: white;
-  text-shadow: #666 0 0.08em 0;
+  text-shadow: #666666 -1px -1px 0;
 }
 
 .x-toolbar-subheader {
   border-bottom-color: white !important;
+}
+
+.x-tab .x-button-icon.add1, .x-button .x-button-icon.x-icon-mask.add1 {
+  -webkit-mask-image: url("../images/plus.png");
 }
 
 .x-form .x-scroll-container > .x-inner {
@@ -6512,8 +6530,13 @@ input[type="search"]::-webkit-search-cancel-button {
   right: auto !important;
 }
 
-.x-button .lightPlus {
+.x-button.lightPlus {
   background: #AAA !important;
+}
+.x-button .x-button-icon.x-icon-mask {
+  width: 1em;
+  height: 1em;
+  -webkit-mask-size: 1em;
 }
 
 .loading .x-mask-inner {
@@ -6525,10 +6548,6 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .x-list-paging {
   display: none;
-}
-
-.required label::after, .required .x-form-label::after {
-  color: #F00;
 }
 
 /*hack for sencha styles ends*/
@@ -6547,21 +6566,25 @@ a {
 
 .views .list-item-title div.disclose {
   display: inline-block;
-  background: url("../images/calender-pointer-right.png") 0px 0px no-repeat transparent;
-  width: 10px;
-  height: 18px;
-  margin-top: 2px;
+  overflow: hidden;
+  -webkit-mask: 0 0 url("../images/arrow.png") no-repeat;
+  background: #4b5768;
+  position: absolute;
+  width: 1em;
+  height: 1.2em;
+  bottom: 30%;
 }
 .views .list-item-title div.count {
   display: inline-block;
   width: 20%;
+  font-size: 0.9em;
   color: #9999;
   text-align: right;
   margin-right: 10px;
 }
 .views .list-item-title div.count > div {
-  padding: 3px 5px;
-  border-radius: 16px;
+  padding: 0px 5px;
+  border-radius: 14px;
   border: 2px solid #CADCEA;
   min-width: 1.8em;
   text-align: center;
@@ -6581,19 +6604,34 @@ a {
   text-overflow: ellipsis;
 }
 .views .list-item-title.disabled div.disclose {
-  background: url("../images/calender-pointer-right.png") 0px 0px no-repeat transparent;
+  overflow: hidden;
+  -webkit-mask: 0 0 url("../images/arrow.png") no-repeat;
+  background: #e0e1e3;
+  position: absolute;
+  width: 1em;
+  height: 1.2em;
+  bottom: 30%;
 }
 .views .list-item-title.disabled div.count {
   color: #FFF;
+  font-size: 0.9em;
+  text-shadow: #ccc 1px 1px 0;
 }
 .views .list-item-title.disabled div.name {
-  color: #AAA;
+  color: #aba9a9;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 2;
 }
 
 /*ticketList related code*/
+.x-list-normal .x-list-item .x-list-item-label {
+  border-top: 1px solid #D9D9D9;
+  -moz-box-shadow: 1px 2px #FFF;
+  -webkit-box-shadow: 1px 2px #FFF;
+  box-shadow: 1px 2px #FFF;
+}
+
 .ticketsList .x-list-item-label {
   padding: 0 0.65em 0 0 !important;
 }
@@ -6605,20 +6643,52 @@ a {
   display: inline-block;
 }
 .ticketsList .ticket-item > div:first-child {
-  width: 5px;
+  width: 12px;
   height: 5.1em;
 }
 .ticketsList .ticket-item > div:first-child.Low {
-  background-color: #0C8AAE;
+  background: #008ff9;
+  /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -moz-linear-gradient(left, #008ff9 0%, #007ad5 75%, #006ebf 95%, #007ad5 100%, #005290 100%);
+  /* FF3.6+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, left top, right top, color-stop(0%, #008ff9), color-stop(75%, #007ad5), color-stop(95%, #006ebf), color-stop(100%, #007ad5), color-stop(100%, #005290));
+  /* Chrome,Safari4+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #008ff9 0%, #007ad5 75%, #006ebf 95%, #007ad5 100%, #005290 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -o-linear-gradient(left, #008ff9 0%, #007ad5 75%, #006ebf 95%, #007ad5 100%, #005290 100%);
+  /* Opera 11.10+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -ms-linear-gradient(left, #008ff9 0%, #007ad5 75%, #006ebf 95%, #007ad5 100%, #005290 100%);
+  /* IE10+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(to right, #008ff9 0%, #007ad5 75%, #006ebf 95%, #007ad5 100%, #005290 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#de0000', endColorstr='#810000',GradientType=1 );
+  /* IE6-8 */
 }
 .ticketsList .ticket-item > div:first-child.Medium {
-  background-color: #0A9458;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==") repeat, -webkit-linear-gradient(left, #0083e4 65%, #383737);
 }
 .ticketsList .ticket-item > div:first-child.High {
-  background-color: #CC5600;
+  background: #de0000;
+  /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -moz-linear-gradient(left, #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%);
+  /* FF3.6+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, left top, right top, color-stop(0%, #de0000), color-stop(71%, #d50000), color-stop(84%, #bd0000), color-stop(100%, #810000));
+  /* Chrome,Safari4+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -o-linear-gradient(left, #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%);
+  /* Opera 11.10+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -ms-linear-gradient(left, #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%);
+  /* IE10+ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(to right, #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#de0000', endColorstr='#810000',GradientType=1 );
+  /* IE6-8 */
 }
 .ticketsList .ticket-item > div:first-child.Urgent {
-  background-color: #AC2200;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==") repeat, -webkit-linear-gradient(left, #0083e4 65%, #383737);
 }
 .ticketsList .ticket-item > div.title {
   width: 90%;
@@ -6808,7 +6878,7 @@ a {
 .ticketDetails #details ul.actions li {
   display: inline-block;
   width: 20%;
-  border-left: 1px solid #ECEAE9;
+  border-right: 1px solid #ECEAE9;
   padding-bottom: 0.3em;
 }
 .ticketDetails #details ul.actions li.half {
@@ -6829,7 +6899,7 @@ a {
   margin: 0 0%;
   display: inline-block;
 }
-.ticketDetails #details ul.actions li:first-child {
+.ticketDetails #details ul.actions li:last-child {
   border: none;
 }
 .ticketDetails #details ul.actions li a {
@@ -6852,13 +6922,6 @@ a {
 }
 .ticketDetails #details ul.actions li a.trash {
   background: transparent url("../images/delete-icon.png") 50% 50% no-repeat;
-}
-.ticketDetails .banner {
-  height: 3em;
-  text-align: center;
-  padding: 0.8em 0em;
-  border-bottom: 1px solid #DFDFDF;
-  background: #fff8d4;
 }
 .ticketDetails .conversation {
   padding: 1em 0.5em;
