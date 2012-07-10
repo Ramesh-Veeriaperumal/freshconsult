@@ -10,11 +10,14 @@ class Import::Zen::ZendeskImport
 
   def self.perform(zen_params)
   	trap("INT") do
-     raise   "Worker got Interrupted!"
+     raise "Worker got Interrupted!"
      #either raise an error here if using a tool like resque-retry or requeue the job
     end
     trap('TERM') do
-    	raise   "Worker got Terminated!"
+    	raise "Worker got Terminated!"
+    end
+    trap('QUIT') do
+    	raise "Worker getting QUIT!"
     end
     Import::Zen::Start.new(zen_params).perform
   end
