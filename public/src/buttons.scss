@@ -407,7 +407,7 @@ div.action_buttons:hover{
     @include clearfix;
     @include border-radius(12px);
     @include transition-property(left);
-    @include transition-duration(0.1s);    
+    /*@include transition-duration(0.1s);    */
   }  
   .toggle-handle{    
     left:50%;    
@@ -422,8 +422,8 @@ div.action_buttons:hover{
       @include background(linear-gradient(top, #d9d9d9, #ffffff));
       @include border-radius(12px);
       @include box-shadow(#f2f2f2 0 0 0 1px inset);
-      @include transition-property(margin);
-      @include transition-duration(0.2s);
+      /*@include transition-property(margin);
+      @include transition-duration(0.2s);*/
     }
   }   
   &:hover{

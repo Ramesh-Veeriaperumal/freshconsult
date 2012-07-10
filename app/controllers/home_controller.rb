@@ -15,6 +15,10 @@ class HomeController < Support::SupportController
     
     @topics = recent_topics if allowed_in_portal?(:open_forums)
   end
+
+  def liquid_list
+    
+  end
  
   protected
   

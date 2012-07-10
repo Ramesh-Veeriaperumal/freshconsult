@@ -1,25 +1,37 @@
-<h3 class="title"><%=t('solution.title')%></h3> 
-<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>
-<div id="categories_list">			
-	<% @categories.each do |category| %>
-		<div class="<%= cycle('odd', 'even') %>">
-			<h4 class="border_title">
-				<% unless category.folders.empty? %>
-					<%= link_to category.name + " &raquo;", support_solution_path(category) %>
-				<% else %>
-					<%= category.name %>
-				<% end %>
-			</h4>  
-			<ul>			
-	  		<% category.folders.visible(current_user).each do |folder| %>
-				<li><%= link_to h(folder.name), support_solutions_folder_path(folder)  %>
-				<span class="badge badge-info">
-					<%= folder.articles.visible.size %>
-			   </span> 
-			   </li>
-			<% end %> 
-			</ul>
-			<%= content_tag(:span, t('solution_category.info2'), :class => "no_info_text") if (category.folders.size == 0)  %>
+<h1 class="page-title"><%=t('solution.title')%></h1> 
+<h4 class="lead">Browse by Category</h4>		
+<div>
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>	
+</div>
+
+<hr />
+<div id="categories-list">	
+	{% for category in portal.solution_categories %}
+		<h2>
+			{{category.name}}
+		</h2>
+		<h4 class="help-text">{{category.description}}</h4>
+		<div class="solution-folders">
+			{% for folder in category.folders %}
+			<div class="folder">				
+				<h3 title="{{folder.name}}">
+					{{folder.name | truncate: 60}}					
+					{% if folder.solutions != empty %}
+						<span href="#" class="label label-info">
+							{{folder.solutions | size}} articles
+						</span>		
+					{% endif %}
+				</h3>
+				<p class="help-text">					
+					{{folder.description | truncate: 120}}
+				</p>				
+				<ul class="article-list-mini">
+					{% for solution in folder.solutions %}
+					<li><a href="#">{{solution.title}}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endfor %}
 		</div>
-	<%end%>
+	{% endfor %}
 </div>

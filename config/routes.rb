@@ -43,7 +43,9 @@
   map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
  
-  
+  # To be removed after Portal customisation developement is done
+  map.login '/liquid_list', :controller => 'home', :action => 'liquid_list'
+
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
   map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'

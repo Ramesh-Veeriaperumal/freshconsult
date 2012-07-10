@@ -2,7 +2,7 @@ class Solution::CategoryDrop < BaseDrop
   
   include ActionController::UrlWriter
   
-  liquid_attributes << :name
+  liquid_attributes << :name << :description
   
   def initialize(source)
     super source

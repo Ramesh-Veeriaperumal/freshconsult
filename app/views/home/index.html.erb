@@ -1,23 +1,25 @@
-<%= content_tag :h2, "Help center" %>
-<%= content_tag :p, t('start_typing_a_question'), :class => "lead" %> 
+<h2>Help center</h2>
+<p class="lead">
+	Start typing a question and see answers in real time
+</p>
 <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') } %>
 <hr />
-<% if allowed_in_portal? :open_solutions %>
-	<%= content_tag( :h3, t('solution.title'), :class => "title" ) %> 
-	<% @categories.each do |category| %>
-		<%= content_tag :h5, category.name %>
-		<%= content_tag(:p, truncate(category.description, :length => 80)) %> 
-		<div class="row-fluid">
-			<% category.folders.each do |folder| %>
-				<div class="span4"><%= content_tag :h6, folder.name %></div>
-			<% end %>
+<h3>Solutions</h3>
+{% for category in portal.solution_categories %}
+	<h4>{{category.name}}</h4>				
+	<p>{{category.description | truncate}}</p>
+	<div class="row-fluid">
+		{% for folder in category.folders %}
+		<div class="span4">
+			<h6>{{folder.name}}</h6>
 		</div>
-	<% end %>
-<% end %>
+		{% endfor %}
+	</div>
+{% endfor %}		
 <hr />
 <% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
 	<% unless @topics.empty? %> 
-		<%= content_tag( :h3, t('recent_forum_posts'), :class => "title" ) %>  
+		<%= content_tag( :h4, t('recent_forum_posts') ) %>  
 		<% @topics.each do |topic|  %>
 			<%= link_to topic.title, category_forum_topic_path(topic.forum.forum_category_id, topic.forum_id, topic.id) %> 
 			<p> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </p>

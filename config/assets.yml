@@ -121,6 +121,9 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
   custom_widget:
     - public/javascripts/custom_widget.js
+  portal:
+    - public/javascripts/jquery-1.7.2.js
+    - public/javascripts/utils.js
   getting_started:
     - public/javascripts/getting_started.js
   subscription:                    

@@ -2163,8 +2163,6 @@ en:
   swith_agent_msg: "Switch to Another Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
-<<<<<<< HEAD
-=======
   on_hold: "On Hold"
   status_name_validate_uniqueness_msg: " Status name has already been taken"
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
@@ -2186,4 +2184,3 @@ en:
   resolved_tickets: "Resolved Tickets"
   waiting_on_customer: "Waiting on Customer"
   waiting_on_third_party: "Waiting on Third Party"
->>>>>>> refs/heads/Master

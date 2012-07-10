@@ -35,6 +35,10 @@ class PortalDrop < BaseDrop
   def forum_categories
     @forum_categories ||= liquify(*@source.forum_categories)
   end
+
+  def logo
+    @portal_logo ||= !source.logo.blank? ? source.logo.content.url(:logo) : "/images/logo.png"
+  end
   
   private
     def load_tabs
@@ -42,7 +46,7 @@ class PortalDrop < BaseDrop
 					      [ support_solutions_path,   :solutions,	 true ],
 				        [ support_discussions_path, :forums, 	 true ],
 				        [ support_tickets_path,     :checkstatus, true ],
-				      	 company_tickets_tab ]
+				      	  company_tickets_tab ]
 
 			tabs.map do |s| 
 				next unless s[2]
