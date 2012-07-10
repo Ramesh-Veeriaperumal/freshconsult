@@ -1,4 +1,4 @@
-Ext.define('ux.SwipeOptions', {
+Ext.define('plugin.ux.SwipeOptions', {
     extend: 'Ext.Component',
     alias: 'swipeOptions',
     requires: ['Ext.Anim'],
@@ -207,7 +207,7 @@ Ext.define('ux.SwipeOptions', {
             openSoundEffectURL = this.getOpenSoundEffectURL();
 
         if(stopScrollOnShow){
-            this.list.scroller.disable();
+            this.list.getScrollable().getScroller().disable();
         }
         
         // ensure the animation is not reversed
@@ -242,7 +242,7 @@ Ext.define('ux.SwipeOptions', {
                 this.activeListOptions.show();
                 // re-enable the scroller
                 if (stopScrollOnShow) {
-                    this.list.scroller.enable();
+                    this.list.getScrollable().getScroller().enable();
                 }
             },
             scope: this

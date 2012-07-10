@@ -62,4 +62,5 @@ $form-separator-subheader-color:#F9F7F6;
 @include pictos-iconmask(user_list2);
 
 @include sencha-list-pullrefresh;
-@import '_fd.scss'
+@import '_fd.scss';
+@import 'swipeOptions.scss';

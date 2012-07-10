@@ -54,7 +54,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             },
             plugins: [
                     {
-                        xclass: 'Ext.plugin.PullRefresh',
+                        xclass: 'plugin.ux.PullRefresh2',
                         pullRefreshText: 'Pull down for more!'
                     }
             ]

@@ -165,9 +165,6 @@ x-button-forward::before, .x-toolbar .x-button-forward::before {
 	}
 }
 
-.x-loading-spinner {
-	display:none;
-}
 /*hack for sencha styles ends*/
 
 .empty-list-text{
@@ -510,25 +507,41 @@ a {
 		font-size:1em;
 	}
 }
-.x-list-paging-msg{
-	background: #DDD;
-	text-align: center;
-	width: 300px;
-	padding: 15px;
-	margin-bottom: 10px;
-	color: black;
-	text-decoration: none;
-	font-weight: bold;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-	text-shadow: -1px -1px 0 #BBB;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-	position: relative;
-	cursor: pointer;
-	margin: 0 auto;
-	margin: 10px auto;
+.x-list-paging {
+	&.x-completed{
+		display:none;
+	}
+	&.x-loading {
+		.x-loading-spinner {
+			display:block;
+		}
+		.x-list-paging-msg{
+			display:none;
+		}	
+	}
+	.x-loading-spinner{
+		display:none;
+	}
+	.x-list-paging-msg{
+		background: #DDD;
+		text-align: center;
+		width: 300px;
+		padding: 15px;
+		margin-bottom: 10px;
+		color: black;
+		text-decoration: none;
+		font-weight: bold;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+		-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+		text-shadow: -1px -1px 0 #BBB;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+		position: relative;
+		cursor: pointer;
+		margin: 0 auto;
+		margin: 10px auto;
+	}
 }
 .x-button.x-button-action, .x-button.x-button-action.x-button-back::after, .x-button.x-button-action.x-button-forward::after, .x-toolbar .x-button.x-button-action, .x-toolbar .x-button.x-button-action.x-button-back::after, .x-toolbar .x-button.x-button-action.x-button-forward::after, .x-button.x-button-action-round, .x-button.x-button-action-round.x-button-back::after, .x-button.x-button-action-round.x-button-forward::after, .x-toolbar .x-button.x-button-action-round, .x-toolbar .x-button.x-button-action-round.x-button-back::after, .x-toolbar .x-button.x-button-action-round.x-button-forward::after, .x-button.x-button-action-small, .x-button.x-button-action-small.x-button-back::after, .x-button.x-button-action-small.x-button-forward::after, .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-action-small.x-button-back::after, .x-toolbar .x-button.x-button-action-small.x-button-forward::after{
 	overflow: hidden;
@@ -644,6 +657,7 @@ a {
 					width:80%;
 					vertical-align:top;
 					min-height:2em;
+					-webkit-user-select: text;
 					&.full{
 						width:98%;
 						padding-left:10px;
@@ -778,6 +792,7 @@ a {
 			padding: 0.6em;
 			margin:0.5em 0;
 			@include triangle-before(up,#F5F5F5,0.5em);
+			-webkit-user-select: text;
 			&:before{
 				top:-0.5em;
 				left:0.85em;
