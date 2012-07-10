@@ -6,7 +6,7 @@ class Import::Zen::ZendeskImport
   @queue = 'zendeskImport'
 
   @retry_limit = 3
-  @retry_delay = 60*5
+  @sleep_after_requeue = 60*5
 
   def self.perform(zen_params)
   	trap("INT") do
