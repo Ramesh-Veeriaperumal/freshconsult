@@ -66,7 +66,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             if(record.raw.count){
                 this.filter_title = record.raw.name;
                 Ext.getStore('Tickets').totalCount = record.raw.count;
-                location.href="#filters/"+record.data.type+'/'+record.data.id;
+                if(record.data.company){
+                    location.href="#company_tickets/filters/"+record.data.type+'/'+record.data.id;
+                }
+                else{
+                    location.href="#filters/"+record.data.type+'/'+record.data.id;    
+                }
+                
             }
     },
     populateTicketProperties : function(res) {

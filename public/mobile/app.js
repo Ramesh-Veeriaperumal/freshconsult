@@ -29305,7 +29305,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             if(record.raw.count){
                 this.filter_title = record.raw.name;
                 Ext.getStore('Tickets').totalCount = record.raw.count;
-                location.href="#filters/"+record.data.type+'/'+record.data.id;
+                if(record.data.company){
+                    location.href="#company_tickets/filters/"+record.data.type+'/'+record.data.id;
+                }
+                else{
+                    location.href="#filters/"+record.data.type+'/'+record.data.id;    
+                }
+                
             }
     },
     populateTicketProperties : function(res) {
@@ -29917,8 +29923,9 @@ Ext.define('Freshdesk.controller.Filters', {
     slideRightTransition: { type: 'slide', direction: 'right'},
     config:{
         routes:{
+            'company_tickets/filters/:type/:id' : 'load_company_tickets',
             'filters'          : 'loadFilter',
-            'filters/:type/:id': 'loadFilter',
+            'filters/:type/:id': 'loadFilter'
         },
     	refs:{
     		// We're going to lookup our views by xtype.
@@ -29926,6 +29933,27 @@ Ext.define('Freshdesk.controller.Filters', {
             ticketsListContainer:"ticketsListContainer",
             contactsListContainer:"contactsListContainer"
     	}
+    },
+    load_company_tickets : function(type,id){
+        console.log(type,id);
+        FD.Util.check_user();
+        type = type || 'filter';
+        id  = id || 'all_tickets';
+        Ext.getStore("Tickets").currentPage=1;
+        Ext.getStore("Tickets").removeAll();
+        url = '/support/company_tickets/'+type+'/'+id ;
+        Ext.getStore("Tickets").getProxy()._url=url;
+        Ext.getStore("Tickets").load();
+        var ticketsListContainer = this.getTicketsListContainer(),
+        anim = Freshdesk.backBtn ? this.slideRightTransition : Freshdesk.cancelBtn ? {type:'cover',direction:'down'} : this.slideLeftTransition;
+        Ext.Viewport.animateActiveItem(ticketsListContainer, anim);
+        //setting header for tickets
+        ticketsListContainer.setHeaderTitle(this.getFiltersListContainer().filter_title);
+        //clearing the previous animations if any
+        Freshdesk.backBtn=false;
+        Freshdesk.cancelBtn = false;
+        ticketsListContainer.filter_type=type;
+        ticketsListContainer.filter_id=id;
     },
     loadFilter:function(type,id){
         FD.Util.check_user();

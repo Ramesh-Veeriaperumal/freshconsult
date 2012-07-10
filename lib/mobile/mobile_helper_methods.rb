@@ -34,7 +34,7 @@ module Mobile::MobileHelperMethods
     end
 
     def redirect_to_mobile_url
-      if !current_user.nil? and mobile? and !"mob".eql?(params[:format]) and mobile_view?
+      if !current_user.nil? and mobile? and !"mobile".eql?(params[:format]) and mobile_view?
          redirect_to mobile_url
       end
     end
