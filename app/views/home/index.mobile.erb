@@ -54,7 +54,7 @@
 			document.observe("dom:loaded", function() {						
 				window.scrollTo(0,1);
 				<%= yield :javascript %>
-			}
+			})
 		<% end %>
 	</body>
 </html>
