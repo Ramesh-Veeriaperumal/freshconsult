@@ -33,6 +33,8 @@ Ext.define('Freshdesk.view.ContactDetails', {
         this.add([TopTitlebar,contactInfo]);
     },
     goBack: function(){
+        Freshdesk.anim = {type:'slide',direction:'right'};
+        Freshdesk.cancelBtn=true;
         history.back();
     },
     config: {

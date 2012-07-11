@@ -4,7 +4,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
     config: {
         itemId:'customerInfo',
         cls:'customerDetails',
-        tpl:['<div class="customer-info">',
+        tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
                 '<div class="profile_pic">',
                     '<tpl if="avatar_url"><img src="{avatar_url}"></tpl>',
                     '<tpl if="!avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
@@ -21,11 +21,32 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '</div>',
             '<div style="clear:both"></div>',
             '<tpl if="recent_tickets"><h3 class="title">Recent 5 tickets</h3>',
-            '<ul class="ui-list_with_icon">',
+            '<ul class="ticketsList">',
                 '<tpl for="recent_tickets">',
-                    '<li><a href="#tickets/show/{helpdesk_ticket.id}"># {helpdesk_ticket.display_id} {helpdesk_ticket.subject}</a></li>',
+                    '<li>',
+                        '<a href="#tickets/show/{helpdesk_ticket.id}"><div class="ticket-item {helpdesk_ticket.status_name}">',
+                                    '<tpl if="FD.current_user.is_agent"><div class="{helpdesk_ticket.priority_name}">&nbsp;</div><tpl else><div>&nbsp;</div></tpl>',
+                                    '<div class="title">',
+                                            '<div><span class="info btn">{helpdesk_ticket.status_name}</span></div>',
+                                            '<div class="subject">',
+                                                    '<tpl if="helpdesk_ticket.need_attention"><span class="need_attention"></span></tpl>',
+                                                    '{helpdesk_ticket.subject}<span class="info">&nbsp;#{helpdesk_ticket.display_id}</span>',
+                                            '</div>',
+                                            '<div>',
+                                                    '<tpl if="responder_id">{helpdesk_ticket.responder_name}',
+                                                    '<tpl else>Unassigned</tpl>',
+                                            '&nbsp;{helpdesk_ticket.updated_at:this.time_in_words}</div>',
+                                    '</div>',
+                                    '<div class="disclose">&nbsp;</div>',
+                        '</div></a>',
+                    '</li>',
                 '</tpl>',
             '</ul></tpl>'].join(''),
+            {
+                        time_in_words : function(item){
+                                return new Date(item).toRelativeTime();
+                        }
+                }),
         padding:0
     }
 });
