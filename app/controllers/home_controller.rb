@@ -1,6 +1,4 @@
 class HomeController < ApplicationController
-  
-
   before_filter :set_content_scope, :set_mobile
   
   def index
