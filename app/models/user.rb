@@ -453,7 +453,7 @@ class User < ActiveRecord::Base
   def to_mob_json
     options = { 
       :methods => [ :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
-      :only => [ :id, :name ]
+      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
     }
     to_json options
   end

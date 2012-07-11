@@ -9814,6 +9814,11 @@ a {
   color: #999;
 }
 
+.ticketsList .ticket-item.Resolved .title .info.btn {
+  background: rgba(0, 0, 0, 0.2) !important;
+  text-shadow: #666666 0 0 0;
+}
+
 .dashboardButton > div > div {
   -webkit-border-radius: 6px;
   border-radius: 6px;
@@ -9854,28 +9859,89 @@ a {
   word-wrap: break-word;
 }
 
-.customer-info {
-  padding-bottom: 25px;
+.customerDetails h3.title {
+  background: black;
+  color: white;
+  text-shadow: -1px -1px 0 #333333;
+  padding: 5px;
 }
-.customer-info .profile_pic {
+.customerDetails .customer-info {
+  -webkit-box-shadow: #aaaaaa 0 0 100px inset;
+  box-shadow: #aaaaaa 0 0 100px inset;
+  border-bottom: 1px solid #CCC;
+  width: 100%;
   float: left;
+  padding-bottom: 10px;
 }
-.customer-info .profile_pic > img {
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-  width: 50px;
-  height: 50px;
+.customerDetails .customer-info .profile_pic {
+  float: left;
+  padding: 10px;
+  width: 25%;
 }
-.customer-info span {
-  padding: 5px 0px 0px 5px;
+.customerDetails .customer-info .profile_pic > img {
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: white 1px 1px 0;
+  box-shadow: white 1px 1px 0;
+  width: 100%;
+  border: 1px solid #858585;
+}
+.customerDetails .customer-info .customer-info-list {
+  float: right;
+  width: 75%;
+}
+.customerDetails .customer-info .customer-info-list div {
+  font-size: 14px;
+  line-height: 22px;
+  word-wrap: break-word;
+}
+.customerDetails .customer-info .customer-info-list .phone, .customerDetails .customer-info .customer-info-list .email, .customerDetails .customer-info .customer-info-list .twitter, .customerDetails .customer-info .customer-info-list .facebook {
+  border-radius: 15px;
+  background: #f3f3f3;
+  padding: 1px;
+  margin-right: 2%;
+  margin-bottom: 5px;
+  float: left;
+  width: 98%;
+}
+.customerDetails .customer-info .customer-info-list .phone span, .customerDetails .customer-info .customer-info-list .email span, .customerDetails .customer-info .customer-info-list .twitter span, .customerDetails .customer-info .customer-info-list .facebook span {
+  width: 25px;
+  height: 25px;
+  background: #CCC;
+  border-radius: 20px;
+  float: left;
+  font-size: 14px;
+  padding: 2px 3px;
+  color: #898989;
+  margin-right: 3px;
+  font-family: 'fontello';
+}
+.customerDetails .customer-info .customer-info-list .phone span:before {
+  content: '\1F4DE';
+}
+.customerDetails .customer-info .customer-info-list .email span:before {
+  padding: 2px 4px;
+  content: '\270E';
+}
+.customerDetails .customer-info .customer-info-list .twitter span:before {
+  content: '\F303';
+}
+.customerDetails .customer-info .customer-info-list .facebook span:before {
+  content: '\F308';
+}
+.customerDetails .customer-info div {
   vertical-align: top;
   font-size: 0.8em;
+  word-wrap: break-word;
 }
-.customer-info span.title {
+.customerDetails .customer-info div.title {
   text-transform: capitalize;
   font-weight: normal;
-  display: inline-block;
   font-weight: bold;
+  font-size: 20px;
+  line-height: 20px;
+  color: #333;
+  margin-top: 4px;
 }
 
 #details #ext-element-116 {
@@ -9927,24 +9993,26 @@ a {
   display: none;
 }
 .x-list-paging .x-list-paging-msg {
-  background: #DDD;
-  text-align: center;
-  width: 300px;
+  color: #666;
+  font-size: 16px;
   padding: 15px;
-  margin-bottom: 10px;
+  margin: 1px auto;
   color: black;
   text-decoration: none;
   font-weight: bold;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 1px 3px;
-  box-shadow: rgba(0, 0, 0, 0.5) 0 1px 3px;
-  text-shadow: -1px -1px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  text-align: center;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.3) 0 3px 16px;
+  box-shadow: inset rgba(0, 0, 0, 0.3) 0 3px 16px;
+  border: 1px solid #AAA;
   position: relative;
   cursor: pointer;
-  margin: 0 auto;
-  margin-bottom: 10px;
+  margin: 1px auto;
+}
+.x-list-paging .x-list-paging-msg:active {
+  color: #1d60bd;
+  text-shadow: #86afe6 0 0 20px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
+  box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
 }
 
 .x-button.x-button-action, .x-button.x-button-action.x-button-back::after, .x-button.x-button-action.x-button-forward::after, .x-toolbar .x-button.x-button-action, .x-toolbar .x-button.x-button-action.x-button-back::after, .x-toolbar .x-button.x-button-action.x-button-forward::after, .x-button.x-button-action-round, .x-button.x-button-action-round.x-button-back::after, .x-button.x-button-action-round.x-button-forward::after, .x-toolbar .x-button.x-button-action-round, .x-toolbar .x-button.x-button-action-round.x-button-back::after, .x-toolbar .x-button.x-button-action-round.x-button-forward::after, .x-button.x-button-action-small, .x-button.x-button-action-small.x-button-back::after, .x-button.x-button-action-small.x-button-forward::after, .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-action-small.x-button-back::after, .x-toolbar .x-button.x-button-action-small.x-button-forward::after {
