@@ -1,5 +1,5 @@
 Ext.define("Freshdesk.view.ContactInfo", {
-    extend: "Ext.Panel",
+    extend: "Ext.Container",
     alias: "widget.contactInfo",
     config: {
         itemId:'customerInfo',
@@ -21,6 +21,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '</div>',
             '<div style="clear:both"></div>',
             '<tpl if="recent_tickets"><h3 class="title">Recent 5 tickets</h3>',
+            '<div class="ticketsListContainer">',
             '<ul class="ticketsList">',
                 '<tpl for="recent_tickets">',
                     '<li>',
@@ -41,7 +42,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                         '</div></a>',
                     '</li>',
                 '</tpl>',
-            '</ul></tpl>'].join(''),
+            '</ul></div></tpl>'].join(''),
             {
                         time_in_words : function(item){
                                 return new Date(item).toRelativeTime();

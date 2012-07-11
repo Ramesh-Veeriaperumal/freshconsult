@@ -9474,7 +9474,9 @@ input, textarea, select {
   speak: none;
 }
 .x-button-headerBtn span.info:before {
-  content: '\26a1';
+  content: '\2630';
+  font-size: 1.1em;
+  padding: 0 4px;
 }
 
 x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after {
@@ -9859,11 +9861,45 @@ a {
   word-wrap: break-word;
 }
 
+.customerDetails {
+  /* Hack to give a proxy height for the contacts info page to fix the absolute position */
+}
 .customerDetails h3.title {
   background: black;
   color: white;
   text-shadow: -1px -1px 0 #333333;
   padding: 5px;
+}
+.customerDetails .ticketsListContainer {
+  height: 500px;
+}
+.customerDetails .ticketsList {
+  position: absolute;
+  width: 100%;
+}
+.customerDetails .ticketsList li {
+  position: relative;
+  min-height: 2.6em;
+  border-top: 1px solid #CCC;
+  -webkit-box-shadow: white 1px 2px;
+  box-shadow: white 1px 2px;
+}
+.customerDetails .ticketsList li:first-child {
+  border: 0;
+}
+.customerDetails .ticketsList li a:active .ticket-item {
+  background: url("../images/activebg.png");
+  color: #fff;
+  text-shadow: #393939 -1px -1px 0;
+}
+.customerDetails .ticketsList li a:active .ticket-item .info {
+  background: #757575;
+  -webkit-box-shadow: 0;
+  box-shadow: 0;
+}
+.customerDetails .ticketsList li a:active .ticket-item .subject {
+  color: #fff;
+  text-shadow: #333333 1px 1px 0;
 }
 .customerDetails .customer-info {
   -webkit-box-shadow: #aaaaaa 0 0 100px inset;
@@ -9900,7 +9936,7 @@ a {
   background: #f3f3f3;
   padding: 1px;
   margin-right: 2%;
-  margin-bottom: 5px;
+  margin-top: 5px;
   float: left;
   width: 98%;
 }
@@ -9917,11 +9953,12 @@ a {
   font-family: 'fontello';
 }
 .customerDetails .customer-info .customer-info-list .phone span:before {
-  content: '\1F4DE';
+  padding: 3px;
+  content: '📞';
 }
 .customerDetails .customer-info .customer-info-list .email span:before {
-  padding: 2px 4px;
-  content: '\270E';
+  padding: 2px 1px;
+  content: '✉';
 }
 .customerDetails .customer-info .customer-info-list .twitter span:before {
   content: '\F303';
@@ -9941,7 +9978,7 @@ a {
   font-size: 20px;
   line-height: 20px;
   color: #333;
-  margin-top: 4px;
+  margin-top: 10px;
 }
 
 #details #ext-element-116 {
@@ -10239,6 +10276,9 @@ a {
   font-weight: bold;
   text-decoration: none;
   color: #1272de;
+}
+.ticketDetails .conversation .Info > a:active {
+  color: #ccc;
 }
 .ticketDetails .conversation .Info .date {
   font-size: 0.9em;
