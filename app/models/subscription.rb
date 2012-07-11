@@ -239,7 +239,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def self.find_due(renew_at = Time.now)
-    find(:all, :include => :account, :conditions => { :state => 'active', :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
+    find(:all, :include => :account, :conditions => { :state => ['active','free'], :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
   end
   
   def paypal?
