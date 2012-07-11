@@ -9385,7 +9385,6 @@ input[type="search"]::-webkit-search-cancel-button {
   text-align: center;
 }
 .branding .logo {
-  margin-left: 0.36em;
   display: inline-block;
   background-color: white;
   border: 1px solid #434343 !important;
@@ -10480,18 +10479,28 @@ a {
 }
 .ticketDetails .conversation .msg .clip {
   position: absolute;
-  top: 0px;
-  background: red;
-  right: -3px;
+  top: -3px;
+  right: -13px;
+  font-size: 18px;
+  display: block;
+  text-decoration: none;
+  font-family: 'fontello';
+  color: #666;
+  text-align: center;
+  text-shadow: white 1px 1px 0;
+  speak: none;
+}
+.ticketDetails .conversation .msg .clip:before {
+  content: '📎';
 }
 .ticketDetails .conversation .msg .attachments {
   padding-top: 10px;
 }
 .ticketDetails .conversation .msg .attachments a {
   display: block;
-  border: 1px solid #E9E2CD;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-bottom-width: 0px;
-  background-color: #fffdf8;
+  background-color: rgba(255, 255, 255, 0.5);
   color: #333;
   text-decoration: none;
   height: 30px;
@@ -10505,12 +10514,29 @@ a {
   -webkit-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
 }
+.ticketDetails .conversation .msg .attachments a:active {
+  background: #888;
+  text-shadow: #888888 1px 1px 0;
+  color: #fff;
+}
 .ticketDetails .conversation .msg .attachments a:last-child {
   -webkit-border-bottom-right-radius: 5px;
   border-bottom-right-radius: 5px;
   -webkit-border-bottom-left-radius: 5px;
   border-bottom-left-radius: 5px;
   border-bottom-width: 1px;
+}
+.ticketDetails .conversation .msg .attachments a span:first-child {
+  font-size: 14px;
+  text-decoration: none;
+  font-family: 'fontello';
+  color: #666;
+  text-align: center;
+  text-shadow: white 1px 1px 0;
+  speak: none;
+}
+.ticketDetails .conversation .msg .attachments a span:first-child:before {
+  content: '📄';
 }
 .ticketDetails .conversation .msg .attachments a span.disclose {
   font-size: 13px !important;
