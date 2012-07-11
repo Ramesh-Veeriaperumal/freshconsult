@@ -29717,7 +29717,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
 });
 
 Ext.define("Freshdesk.view.ContactInfo", {
-    extend: "Ext.Panel",
+    extend: "Ext.Container",
     alias: "widget.contactInfo",
     config: {
         itemId:'customerInfo',
@@ -29730,8 +29730,8 @@ Ext.define("Freshdesk.view.ContactInfo", {
                 '</div>',
                 '<div class="customer-info-list">',
                     '<div class="title">{name}</div>',
-                    '<tpl if="job_title"><div>{job_title}</div></tpl>',
-                    '<tpl if="company_name">at {company_name}</tpl>',
+                    '<div><tpl if="job_title">{job_title} at <tpl else><div>Working at </tpl>',
+                    '<tpl if="company_name">{company_name}</tpl></div>',
                     '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
                     '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
                     '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
@@ -29969,10 +29969,9 @@ Ext.define('Freshdesk.view.ContactDetails', {
         history.back();
     },
     config: {
-        fullscreen: true,
         scrollable:{
-            direction: 'vertical',
-            directionLock: true
+            direction:'vertical',
+            directionLock:true
         },
         layout: { type: 'vbox', align: 'justify', pack: 'justify'  }
     }
