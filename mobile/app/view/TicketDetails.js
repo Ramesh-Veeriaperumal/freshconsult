@@ -45,7 +45,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</div>',
                                 '<div class="attachments">',
                                         '<tpl for="attachments">',
-                                                '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                         '</tpl>',
                                 '</div>',
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
@@ -67,7 +67,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
@@ -79,7 +79,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
@@ -95,6 +95,36 @@ Ext.define("Freshdesk.view.TicketDetails", {
                 ].join(''),{
                         truncate: function(value,length) {
                             return values.substr(0, length);
+                        },
+                        /**
+                         * Convert number of bytes into human readable format
+                         *
+                         * @param integer bytes     Number of bytes to convert
+                         * @param integer precision Number of digits after the decimal separator
+                         * @return string
+                         */
+                        bytesToSize : function(bytes, precision) {
+                            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                            var posttxt = 0;
+                            if (bytes == 0) return '0 Bytes';
+                            while( bytes >= 1024 ) {
+                                posttxt++;
+                                bytes = bytes / 1024;
+                            }
+                            return Number(bytes).toFixed(precision) + " " + sizes[posttxt];
+                        },
+                        fileName : function(filename){
+                            var filename = filename;
+                            if(filename && filename.lastIndexOf('.')>0){
+                                filename = filename.substr(0,filename.lastIndexOf('.'))
+                            }
+                            return filename || '';
+                        },
+                        fileType : function(filename){
+                            if(filename && filename.lastIndexOf('.')>0){
+                               return filename.substr(filename.lastIndexOf('.'));
+                            }
+                            return '';
                         }
                 })
         };
@@ -117,7 +147,6 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         fn: function(container,item,eOpts){
                                 var elms = container.element.select('.msg').elements,self=this;
                                 for(var index in elms) {
-                                        console.log(Ext.get(elms[index]))
                                        Ext.get(elms[index]).on({
                                                 tap: this.onMessageTap,
                                                 scope:this

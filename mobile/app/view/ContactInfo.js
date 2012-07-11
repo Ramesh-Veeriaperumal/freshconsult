@@ -4,6 +4,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
     config: {
         itemId:'customerInfo',
         cls:'customerDetails',
+        padding:0,
         tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
                 '<div class="profile_pic">',
                     '<tpl if="avatar_url"><img src="{avatar_url}"></tpl>',
@@ -12,6 +13,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                 '<div class="customer-info-list">',
                     '<div class="title">{name}</div>',
                     '<tpl if="job_title"><div>{job_title}</div></tpl>',
+                    '<tpl if="company_name">at {company_name}</tpl>',
                     '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
                     '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
                     '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
@@ -46,7 +48,6 @@ Ext.define("Freshdesk.view.ContactInfo", {
                         time_in_words : function(item){
                                 return new Date(item).toRelativeTime();
                         }
-                }),
-        padding:0
+                })
     }
 });

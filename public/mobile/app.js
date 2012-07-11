@@ -29722,6 +29722,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
     config: {
         itemId:'customerInfo',
         cls:'customerDetails',
+        padding:0,
         tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
                 '<div class="profile_pic">',
                     '<tpl if="avatar_url"><img src="{avatar_url}"></tpl>',
@@ -29730,6 +29731,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                 '<div class="customer-info-list">',
                     '<div class="title">{name}</div>',
                     '<tpl if="job_title"><div>{job_title}</div></tpl>',
+                    '<tpl if="company_name">at {company_name}</tpl>',
                     '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
                     '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
                     '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
@@ -29764,8 +29766,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                         time_in_words : function(item){
                                 return new Date(item).toRelativeTime();
                         }
-                }),
-        padding:0
+                })
     }
 });
 Ext.define("Freshdesk.view.TicketDetails", {
@@ -29815,7 +29816,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</div>',
                                 '<div class="attachments">',
                                         '<tpl for="attachments">',
-                                                '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                         '</tpl>',
                                 '</div>',
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
@@ -29837,7 +29838,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
@@ -29849,7 +29850,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
@@ -29865,6 +29866,36 @@ Ext.define("Freshdesk.view.TicketDetails", {
                 ].join(''),{
                         truncate: function(value,length) {
                             return values.substr(0, length);
+                        },
+                        /**
+                         * Convert number of bytes into human readable format
+                         *
+                         * @param integer bytes     Number of bytes to convert
+                         * @param integer precision Number of digits after the decimal separator
+                         * @return string
+                         */
+                        bytesToSize : function(bytes, precision) {
+                            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                            var posttxt = 0;
+                            if (bytes == 0) return '0 Bytes';
+                            while( bytes >= 1024 ) {
+                                posttxt++;
+                                bytes = bytes / 1024;
+                            }
+                            return Number(bytes).toFixed(precision) + " " + sizes[posttxt];
+                        },
+                        fileName : function(filename){
+                            var filename = filename;
+                            if(filename && filename.lastIndexOf('.')>0){
+                                filename = filename.substr(0,filename.lastIndexOf('.'))
+                            }
+                            return filename || '';
+                        },
+                        fileType : function(filename){
+                            if(filename && filename.lastIndexOf('.')>0){
+                               return filename.substr(filename.lastIndexOf('.'));
+                            }
+                            return '';
                         }
                 })
         };
@@ -29887,7 +29918,6 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         fn: function(container,item,eOpts){
                                 var elms = container.element.select('.msg').elements,self=this;
                                 for(var index in elms) {
-                                        console.log(Ext.get(elms[index]))
                                        Ext.get(elms[index]).on({
                                                 tap: this.onMessageTap,
                                                 scope:this
@@ -29940,6 +29970,10 @@ Ext.define('Freshdesk.view.ContactDetails', {
     },
     config: {
         fullscreen: true,
+        scrollable:{
+            direction: 'vertical',
+            directionLock: true
+        },
         layout: { type: 'vbox', align: 'justify', pack: 'justify'  }
     }
 });
@@ -36984,7 +37018,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         this.callParent(arguments);
 
         var backButton = {
-        	text:'Back',
+        	text:'Views',
 			ui:'headerBtn back',
 			xtype:'button',
 			handler:this.backToFilters,
@@ -45526,8 +45560,8 @@ Ext.define("Freshdesk.view.TicketsList", {
                                         '{subject}<span class="info">&nbsp;#{display_id}</span>',
                                 '</div>',
                                 '<div>',
-                                        '<tpl if="responder_id">{responder_name}',
-                                        '<tpl else>Unassigned</tpl>',
+                                        '<tpl if="responder_id">{responder_name},',
+                                        '<tpl else>Not assigned to agent,</tpl>',
                                 '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
                         '<div class="disclose">&nbsp;</div>',

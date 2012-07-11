@@ -39,6 +39,10 @@ Ext.define('Freshdesk.view.ContactDetails', {
     },
     config: {
         fullscreen: true,
+        scrollable:{
+            direction: 'vertical',
+            directionLock: true
+        },
         layout: { type: 'vbox', align: 'justify', pack: 'justify'  }
     }
 });
