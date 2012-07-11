@@ -38,8 +38,8 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
-                                '<tpl if="description_html.length &gt; 200"><div class="ellipsis" id="{id}"><tpl else>',
-                                        '<div id="{id}">',
+                                '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
+                                        '<div class="conv" id="{id}">',
                                 '</tpl>',
                                         '{description_html}',
                                 '</div>',
@@ -62,7 +62,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                                 '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
-                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
                                         '<div class="attachments">',
@@ -74,7 +74,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</div></tpl>',
                                 '<tpl if="parent.requester.id != user_id"><div class="msg">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
-                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
                                         '<div class="attachments">',
@@ -100,10 +100,32 @@ Ext.define("Freshdesk.view.TicketDetails", {
         };
         this.add([tktHeader]);
     },
+    onMessageTap : function(e,item){
+      var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
+      if(toggleId){
+        Ext.get(toggleId).toggleCls('ellipsis');
+        Ext.get('loadmore_'+toggleId).toggleCls('hide');
+      }
+    },
     config: {
         cls:'ticketDetails',
         scrollable: {
             direction: 'vertical'
+        },
+        listeners : {
+                painted : {
+                        fn: function(container,item,eOpts){
+                                var elms = container.element.select('.msg').elements,self=this;
+                                for(var index in elms) {
+                                        console.log(Ext.get(elms[index]))
+                                       Ext.get(elms[index]).on({
+                                                tap: this.onMessageTap,
+                                                scope:this
+                                       });
+                                }
+                        },
+                },
+                scope:this
         }
     }
 });
