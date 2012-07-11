@@ -40,8 +40,8 @@ input, textarea, select {
 	diplay:block;
 }
 .homepage{
-		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAKElEQVQImWMwNjb+jw0zGBsb/3dxccEuoaKigl0Cp1HIGGYshgTMWACx8jltBi6orwAAAABJRU5ErkJggg==), #333;
-		.home_img{
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAKElEQVQImWMwNjb+jw0zGBsb/3dxccEuoaKigl0Cp1HIGGYshgTMWACx8jltBi6orwAAAABJRU5ErkJggg==), #333;
+	.home_img{
 		width:90px;
 		height:90px;
 		background: white;
@@ -50,13 +50,13 @@ input, textarea, select {
 		display: inline-block;
 		border: 2px solid #111;
 		@include border-radius(90px);
-			img{
-				@include border-radius(90px);
-				width:80px;
-				height:80px;
-				margin-top:3px;
-			}
+		img{
+			@include border-radius(90px);
+			width:80px;
+			height:80px;
+			margin-top:3px;
 		}
+	}
 	.title{
 		font-size:1.2em;
 		color:#fff;

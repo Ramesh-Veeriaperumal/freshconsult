@@ -4,10 +4,10 @@
 		<title><%= page_title %></title>
 		<meta name="viewport" content="width=device-width,user-scalable=no" />
 		<link rel="stylesheet" href="mobile/resources/css/app.css">
-		<link rel="stylesheet" href="stylesheets/mobile.css">
+		<link rel="stylesheet" href="stylesheets/mobile.css">		
 	</head>
 
-	<body class="body-background">
+	<body class="body-background" id="mobile-app">
 		<div class="app-wrapper login">
 			<div class="brand">
 		    	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)), :class => "app-logo" %>
@@ -15,16 +15,19 @@
 		  	</div>		
 
 			<% form_for @user_session, :url => user_session_path do |f| %>
-			  	<%= f.error_messages %>
+			<%# form_remote_tag :url => user_session_path, :update => "mobile-app" do %>
+			  	<%= f.error_messages %>			  	
 				<%= hidden_field_tag 'mob', "true"  %>
 				<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
 				<fieldset class="login-fieldset">
 					<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox email" id="user_session_email" name="user_session[email]" placeholder="Email" size="30" type="email">
 					<br />
-			  		<%= f.password_field :password, :class=>"textbox password", :autocomplete=>"off", :autocorrect=>"off", :autocapitalize=>"off", :placeholder=>"Password" %><br/>
+					<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox password" id="user_session_password" name="user_session[password]" placeholder="Password" size="30" type="password">
+					<br/>
 			  	</fieldset>
-		  		<%= f.submit t('mobile.home.login'), { :id=>"login_btn", :class => "sp-button login-button"} %>
-<br/><br/><br/>
+			  	<%= show_flash %>
+		  		<%= submit_tag t('mobile.home.login'), { :id => "login_btn", :class => "sp-button login-button"} %>
+				<a href="#" class="forgot-password">Forgot password</a>
 		  		<%if feature?(:google_signin) or feature?(:twitter_signin) %>
 					<div class="sp-button alt-signin">
 						<%= t("mobile.home.sign_in_using") %>
@@ -42,5 +45,6 @@
 
 			<% end %>
 		</div>
+		<%= javascript_include_tag "prototype" %>
 	</body>
 </html>
