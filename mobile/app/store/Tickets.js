@@ -3,6 +3,11 @@ Ext.define('Freshdesk.store.Tickets', {
     getTotalCount: function(){
         return this.totalCount;
     },
+    setTotalCount: function(count){
+        if(count){
+            this.totalCount = count;
+        }
+    },
     config: {
         model: 'Freshdesk.model.Ticket',
         proxy: {

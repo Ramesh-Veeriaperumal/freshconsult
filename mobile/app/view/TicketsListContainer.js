@@ -6,7 +6,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         this.callParent(arguments);
 
         var backButton = {
-        	text:'Back',
+        	text:'Views',
 			ui:'headerBtn back',
 			xtype:'button',
 			handler:this.backToFilters,
