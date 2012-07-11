@@ -10330,6 +10330,9 @@ a {
   -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
 }
+.ticketDetails .conversation .msg > div.ellipsis + .attachments {
+  display: none;
+}
 .ticketDetails .conversation .msg p {
   margin: 0;
   font-size: 1.1em;
@@ -10366,6 +10369,45 @@ a {
   background: -webkit-linear-gradient(top, #fafafa, #eaeaea);
   background: linear-gradient(to bottom, #fafafa, #eaeaea);
   background: -moz-linear-gradient(top, #fafafa, #eaeaea);
+}
+.ticketDetails .conversation .msg .clip {
+  position: absolute;
+  top: 0px;
+  background: red;
+  right: -3px;
+}
+.ticketDetails .conversation .msg .attachments {
+  padding-top: 10px;
+}
+.ticketDetails .conversation .msg .attachments a {
+  display: block;
+  border: 1px solid #E9E2CD;
+  border-bottom-width: 0px;
+  background-color: #fffdf8;
+  color: #333;
+  text-decoration: none;
+  height: 30px;
+  vertical-align: middle;
+  position: relative;
+  padding: 5px;
+}
+.ticketDetails .conversation .msg .attachments a:first-child {
+  -webkit-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+  -webkit-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
+.ticketDetails .conversation .msg .attachments a:last-child {
+  -webkit-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-width: 1px;
+}
+.ticketDetails .conversation .msg .attachments a span.disclose {
+  font-size: 13px !important;
+  right: 4px !important;
+  bottom: 13% !important;
 }
 .ticketDetails .ticketProperties.customer .x-toolbar-subheader .customer {
   background-color: #cecece;

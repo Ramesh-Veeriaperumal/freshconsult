@@ -879,6 +879,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :user => {
           :only => [:name,:email,:id],
           :methods => [:avatar_url]
+        },
+        :attachments => {
+          :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
         }
       },
       :methods => [:body_mobile]
@@ -892,6 +895,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :requester => {
         :only => [:name,:email,:id],
         :methods => [:avatar_url]
+      },
+      :attachments => {
+        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
       }
     }
 

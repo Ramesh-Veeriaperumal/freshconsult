@@ -29782,8 +29782,16 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '</div>',
                         '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                         '<div class="msg fromReq">',
-                                '<div class="ellipsis" id="{id}">',
+                                '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                '<tpl if="description_html.length &gt; 200"><div class="ellipsis" id="{id}"><tpl else>',
+                                        '<div id="{id}">',
+                                '</tpl>',
                                         '{description_html}',
+                                '</div>',
+                                '<div class="attachments">',
+                                        '<tpl for="attachments">',
+                                                '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                        '</tpl>',
                                 '</div>',
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
                         '</div>',
@@ -29798,14 +29806,26 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
                                 '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                                 '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
-                                        '<div class="ellipsis" id="note_{id}">',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
                                                 '{body_mobile}',
+                                        '</div>',
+                                        '<div class="attachments">',
+                                                '<tpl for="attachments">',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                                 '<tpl if="parent.requester.id != user_id"><div class="msg">',
-                                        '<div class="ellipsis" id="note_{id}">',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
                                                 '{body_mobile}',
+                                        '</div>',
+                                        '<div class="attachments">',
+                                                '<tpl for="attachments">',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
@@ -30598,11 +30618,9 @@ Ext.define('Freshdesk.controller.Tickets', {
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
 
-        //fieldSetObj.items.items[0].reset();
         fieldSetObj.items.items[6].reset();
         fieldSetObj.items.items[7].setHidden(true).reset();
         fieldSetObj.items.items[8].reset();
-        //formObj.reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;
