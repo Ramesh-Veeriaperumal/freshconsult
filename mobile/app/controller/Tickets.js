@@ -56,7 +56,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
-                    format:'mob'
+                    format:'mobile'
                 },
                 scope:this
             },
@@ -69,7 +69,6 @@ Ext.define('Freshdesk.controller.Tickets', {
         Freshdesk.anim = undefined;
     },
     reply : function(id){
-        console.log('showing reply button');
         this.initReplyForm(id);
         var replyForm = this.getTicketReply();
         replyForm.ticket_id = id;
@@ -92,73 +91,145 @@ Ext.define('Freshdesk.controller.Tickets', {
         Ext.Viewport.animateActiveItem(scenarios, this.coverUp);
     },
     close: function(id){
-        Ext.Msg.confirm('Close ticket : '+id,'Do you want to Close this ticket?',
-            function(btnId){
-                if(btnId == 'no' || btnId == 'cancel'){
-                    Freshdesk.cancelBtn=true;
-                    location.href="#tickets/show/"+id;
-                }
-                else{
-                    var opts = { url: '/support/tickets/close_ticket/'+id },
-                    callBack = function(res){
+
+        var self = this,
+            messageBox = new Ext.MessageBox({
+            showAnimation: {
+                type: 'slideIn',
+                duration:200,
+                easing:'ease-out'
+            },
+            hideAnimation: {
+                type: 'slideOut',
+                duration:150,
+                easing:'ease-in'
+            },
+            title:'Close ticket',
+            message: 'Do you want to update ticket status to "Close"?',
+            buttons: [
+                {
+                    text:'No',
+                    handler:function(){
+                        Freshdesk.cancelBtn=true;
                         location.href="#tickets/show/"+id;
-                    };
-                    FD.Util.getJSON(opts,callBack,this)
+                        messageBox.hide();
+                    },
+                    scope:self
+                },
+                {
+                    text:'Yes',
+                    handler:function(){
+                        var opts = { url: '/support/tickets/close_ticket/'+id },
+                        callBack = function(){
+                            messageBox.hide();
+                            location.href="#tickets/show/"+id;
+                        };
+                        FD.Util.ajax(opts,callBack,this);
+                    },
+                    scope:self
                 }
-            }
-        );
+            ]
+        }).show();
     },
     resolve : function(id){
-        Ext.Msg.confirm('Mark as Resolve ticket : '+id,'Do you want to mark this ticket as Resolve?',
-            function(btnId){
-                if(btnId == 'no' || btnId == 'cancel'){
-                    Freshdesk.cancelBtn=true;
-                    location.href="#tickets/show/"+id;
-                }
-                else{
-                    var opts = {
-                        url: '/helpdesk/tickets/update/'+id,
-                        method:'POST',
-                        params:{
-                            'helpdesk_ticket[status]' : 4
-                        },
-                        headers: {
-                            "Accept": "application/json"
-                        }
-                    },
-                    callBack = function(res){
+
+        var self = this,
+            messageBox = new Ext.MessageBox({
+            showAnimation: {
+                type: 'slideIn',
+                duration:200,
+                easing:'ease-out'
+            },
+            hideAnimation: {
+                type: 'slideOut',
+                duration:150,
+                easing:'ease-in'
+            },
+            title:'Resolve ticket',
+            message: 'Do you want to update ticket status to "Resolve"?',
+            buttons: [
+                {
+                    text:'No',
+                    handler:function(){
+                        Freshdesk.cancelBtn=true;
                         location.href="#tickets/show/"+id;
-                    };
-                    FD.Util.ajax(opts,callBack,this);
+                        messageBox.hide();
+                    },
+                    scope:self
+                },
+                {
+                    text:'Yes',
+                    handler:function(){
+                        var opts = {
+                            url: '/helpdesk/tickets/update/'+id,
+                            method:'POST',
+                            params:{
+                                'helpdesk_ticket[status]' : 4
+                            },
+                            headers: {
+                                "Accept": "application/json"
+                            }
+                        },
+                        callBack = function(){
+                            messageBox.hide();
+                            location.href="#tickets/show/"+id;
+                        };
+                        FD.Util.ajax(opts,callBack,this);
+                    },
+                    scope:self
                 }
-            }
-        );
+            ]
+        }).show();
     },
     'delete' : function(id){
-        Ext.Msg.confirm('Move to trash ticket : '+id,'Do you want to move this ticket to Trash?',
-            function(btnId){
-                if(btnId == 'no' || btnId == 'cancel'){
-                    Freshdesk.cancelBtn=true;
-                    location.href="#tickets/show/"+id;
-                }
-                else{
-                    var opts = {
-                       url: '/helpdesk/tickets/'+id,
-                        params:{
-                            '_method':'delete',
-                            'action':'destroy'
-                        },
-                        headers: {
-                            "Accept": "application/json"
-                        } 
-                    },
-                    callBack = function(){
+
+        var self = this,
+            messageBox = new Ext.MessageBox({
+            showAnimation: {
+                type: 'slideIn',
+                duration:200,
+                easing:'ease-out'
+            },
+            hideAnimation: {
+                type: 'slideOut',
+                duration:150,
+                easing:'ease-in'
+            },
+            title: 'Delete Ticket',
+            message: 'Do you want to delete this ticket (#'+id+')?',
+            buttons: [
+                {
+                    text:'No',
+                    handler:function(){
+                        Freshdesk.cancelBtn=true;
                         location.href="#tickets/show/"+id;
-                    };
-                    FD.Util.ajax(opts,callBack,this);
+                        messageBox.hide();
+                    },
+                    scope:self
+                },
+                {
+                    text:'Yes',
+                    handler:function(){
+                        var opts = {
+                           url: '/helpdesk/tickets/'+id,
+                            params:{
+                                '_method':'delete',
+                                'action':'destroy'
+                            },
+                            headers: {
+                                "Accept": "application/json"
+                            } 
+                        },
+                        callBack = function(){
+                            messageBox.hide();
+                            location.href="#tickets/show/"+id;
+                        };
+                        FD.Util.ajax(opts,callBack,this);
+                    },
+                    scope:self
                 }
-            }
-        );
+            ]
+        }).show();
     },
     initNoteForm : function(id){
         FD.Util.check_user();
@@ -176,7 +247,10 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0];
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
-        //formObj.reset();
+
+        fieldSetObj.items.items[6].reset();
+        fieldSetObj.items.items[7].setHidden(true).reset();
+        fieldSetObj.items.items[8].reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;

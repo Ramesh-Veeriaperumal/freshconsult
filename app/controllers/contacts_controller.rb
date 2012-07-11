@@ -1,15 +1,20 @@
 class ContactsController < ApplicationController
    
-   before_filter { |c| c.requires_permission :manage_tickets }
-  
-   include ModelControllerMethods
+    before_filter :except => [:make_agent] do |c| 
+      c.requires_permission :manage_tickets
+    end
+
+    before_filter :only => [:make_agent] do |c| 
+      c.requires_permission :manage_users
+    end
+
+   include HelpdeskControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
-   skip_before_filter :build_object , :only => :new
+   before_filter :load_item, :only => [:show, :edit, :update, :make_agent]
+   skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
-   
-   
   
    
    def check_demo_site
@@ -21,7 +26,7 @@ class ContactsController < ApplicationController
   
   def index
     begin
-      @contacts = scoper.filter(params[:letter],params[:page])
+      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "active"))
     rescue Exception => e
       @contacts = {:error => get_formatted_message(e)}
     end
@@ -47,7 +52,6 @@ class ContactsController < ApplicationController
   end
   
   def quick_customer
-    build_object
     params[:user][:customer_id] = params[:customer_id]
     if build_and_save
         flash[:notice] = t(:'flash.contacts.create.success')
@@ -96,12 +100,12 @@ class ContactsController < ApplicationController
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json}
-      format.mob { render :json => @user.to_mob_json }
+      format.mobile { render :json => @user.to_mob_json }
     end
   end
   
   def delete_avatar
-    load_object
+    load_item
     @user.avatar.destroy
     render :text => "success"
   end
@@ -109,12 +113,12 @@ class ContactsController < ApplicationController
   def update    
     company_name = params[:user][:customer]
     unless company_name.blank?     
-      @obj.customer_id = current_account.customers.find_or_create_by_name(company_name).id 
+      @item.customer_id = current_account.customers.find_or_create_by_name(company_name).id 
     else
-      @obj.customer_id = nil
+      @item.customer_id = nil
     end
-    @obj.update_tag_names(params[:user][:tags]) # update tags in the user object
-    if @obj.update_attributes(params[cname])
+    @item.update_tag_names(params[:user][:tags]) # update tags in the user object
+    if @item.update_attributes(params[cname])
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { head 200}
@@ -124,54 +128,18 @@ class ContactsController < ApplicationController
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
-        format.xml  { render :xml => @obj.errors, :status => :unprocessable_entity} #Bad request
+        format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
       end
     end
-  end    
-  
-   def destroy   
-      if @obj.respond_to?(:deleted)
-        if @obj.update_attribute(:deleted, true)
-           @restorable = true
-          
-           respond_to do |format|
-              format.html {  
-                  flash[:notice] = render_to_string(:partial => '/contacts/flash/delete_notice') 
-                  redirect_to redirect_url }
-              format.xml  { head 200} 
-           end
-         else
-           respond_to do |format|
-              format.html { render :action => 'show' }
-              format.xml  { head 400} #Bad request
-           end
-         end
-         
-      else
-        if item.destroy
-          flash[:notice] = "The #{cname.humanize.downcase} has been deleted."
-          redirect_back_or_default redirect_url
-        else
-          render :action => 'show'
-        end
-      end   
-  end
-
-  def restore
-   
-    @obj.update_attribute(:deleted, false)    
-    flash[:notice] = render_to_string(
-      :partial => '/contacts/flash/restore_notice')
-    redirect_to :back
   end
   
   def make_agent    
-    @obj.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
+    @item.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
     @agent = current_account.agents.new
-    @agent.user = @obj 
+    @agent.user = @item 
     @agent.occasional = false
      if @agent.save        
-      redirect_to @obj
+      redirect_to @item
     else
       redirect_to :back
     end    
@@ -221,7 +189,7 @@ protected
       query = params[:query]
       current_account.contacts.with_conditions(convert_query_to_conditions(query))
     else
-      current_account.contacts
+      current_account.all_contacts
     end
   end
 
@@ -231,14 +199,6 @@ protected
     
   def set_selected_tab
       @selected_tab = :customers
-  end
- 
-  def load_object
-      @obj = self.instance_variable_set('@user',  current_account.all_users.find(params[:id]))      
-  end
-  
-  def build_object  
-    @obj = self.instance_variable_set('@' + cname, current_account.all_users.new(params[cname]) )
   end
   
   def check_email_exist

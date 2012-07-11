@@ -47,20 +47,15 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             },
             plugins: [
                     {
-                        xclass: 'Ext.plugin.PullRefresh',
+                        xclass: 'plugin.ux.PullRefresh2',
                         pullRefreshText: 'Pull down for more!'
                     },
                     {
-                        xclass: 'Ext.plugin.ListPaging',
+                        xclass: 'plugin.ux.ListPaging2',
                         autoPaging: false,
                         centered:true,
                         loadMoreText: 'Load more.',
                         noMoreRecordsText: 'No more tickets.'
-                    },
-                    {
-                        xclass: 'ux.SwipeOptions',
-                        menuOptions : [ ],
-                        enableSoundEffects:true
                     }
             ]
         };

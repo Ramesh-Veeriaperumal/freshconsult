@@ -3,6 +3,7 @@ Ext.define("Freshdesk.view.FiltersList", {
     alias: "widget.filterslist",
     config: {
     	cls:'views',
+        grouped:true,
         disclosureProperty:'disclosure2',
         emptyText: '<div class="empty-list-text">You don\'t have any views.</div>',
         onItemDisclosure: false,

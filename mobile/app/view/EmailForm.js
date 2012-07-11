@@ -109,7 +109,6 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype:'titlebar',
                         ui:'formSubheader',
-                        docked:'bottom',
                         items:[
                             {
                                 itemId:'cannedResBtn',

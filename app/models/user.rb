@@ -257,10 +257,12 @@ class User < ActiveRecord::Base
   def customer?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
+  alias :is_customer :customer?
   
   def agent?
     !customer?
   end
+  alias :is_agent :agent?
   
   def account_admin?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
@@ -407,9 +409,9 @@ class User < ActiveRecord::Base
     day_pass_usages.on_the_day(start_time).first
   end
   
-  def self.filter(letter, page)
+  def self.filter(letter, page, state = "active")
   paginate :per_page => 10, :page => page,
-           :conditions => ['name like ?', "#{letter}%"],
+           :conditions => [ 'name like ? and deleted = ?', "#{letter}%", !state.eql?("active") ],
            :order => 'name'
   end
   
@@ -444,14 +446,6 @@ class User < ActiveRecord::Base
     avatar.content.url unless avatar.nil?
   end
  
-  def is_agent
-    agent?
-  end
-
-  def is_customer
-    customer?
-  end
-  
   def company_name
     customer.name unless customer.nil?
   end

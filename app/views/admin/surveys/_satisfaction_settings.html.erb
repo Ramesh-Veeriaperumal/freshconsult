@@ -1,7 +1,7 @@
 <ul class="ui-form">
 	
 	<li>
-		<strong style="font-size:12px;margin-left:15px;"><%= t('.enable_label') %></strong>
+		<div style="margin:5px 5px 0;font-weight:bold;font-size:14px;color:#555;" class="floatl"><%= t('.enable_label') %></div>		
 		<div id="survey_link_con" class="floatr">				
 		<%if @account.features?(:survey_links)%>
 		   <%= link_to_function "<strong> #{t('application.enabled')} </strong><span></span>", "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-active" %>
@@ -10,14 +10,33 @@
 		<%end%>
 		</div>		
 	</li>
-	<li id="survey_elements" <%unless @account.features?(:survey_links)%>style="display:none"<%end%>>	
-	<hr/>
+	<li style="border-top:1px solid #ccc;" id="survey_elements" <%unless @account.features?(:survey_links)%>style="display:none"<%end%>>	
+	
 <% remote_form_for :survey, @survey, :url => { :action => "update" },  :html => { :method => :put } do |f| %>
 <ul>
 	<li><strong><%=t('.link_text_label')%></strong><br/> <span class="link_text_info"><%=t('.link_text_info')%></span></li>
 	<li>
 		<!-- <%= f.text_field :link_text, :value => @survey[:link_text], :class => "time"  %> -->
-		<%= f.text_area(:link_text, :value => @survey[:link_text], :autocomplete => "off", :rel => "ghostwriter", :size => "16", :class=> "textfield required", :style=>"display:block;resize:none;width:70%;") %>				
+		<%= f.text_area(:link_text, :value => @survey[:link_text], :autocomplete => "off", :rel => "ghostwriter", :size => "16", :class=> "textfield required", :style=>"display:block;resize:none;width:78%;height:60px;") %>				
+	</li>
+	<li>
+	   <ul class="survey-option-conf">
+	      <li>	
+	        
+		<div class="happy-smily"></div>
+	        
+		<%= f.text_field :happy_text, :value => (@survey[:happy_text] || t('helpdesk.ticket_notifier.reply.happy')) %>
+	        
+	     </li>
+	     <li>	
+	     	<div class="neutral-smily"></div>
+		<%= f.text_field :neutral_text, :value => (@survey[:neutral_text] || t('helpdesk.ticket_notifier.reply.neutral')) %>
+	     </li>
+	     <li>	
+	     	<div class="unhappy-smily"></div>
+		<%= f.text_field :unhappy_text, :value => (@survey[:unhappy_text] || t('helpdesk.ticket_notifier.reply.unhappy')) %>
+	     </li>
+	   </ul>  	
 	</li>
 	
 	<li>

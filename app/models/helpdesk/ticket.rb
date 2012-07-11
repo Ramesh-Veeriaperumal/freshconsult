@@ -104,12 +104,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
-  delegate :active?, :open?, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
+  delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
+  has_many :survey_result, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
@@ -213,20 +214,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Sphinx configuration starts
   define_index do
    
-     indexes :display_id, :sortable => true
+    define_source do
+      indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
      indexes sphinx_notes.body, :as => :note
     
      has account_id, deleted
 
-    #set_property :delta => :delayed
-    set_property :field_weights => {
+     where "helpdesk_tickets.id > 0 and  0"
+
+     #set_property :delta => :delayed
+     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
       :description  => 5,
       :note         => 3
-    }
+     }
+      
+    end
+
+     
   end
   #Sphinx configuration ends here..
 
@@ -739,10 +747,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.name || requester_info
   end
 
-  def is_closed
-    closed?
-  end
-
   def need_attention
     active? and ticket_states.need_attention
   end
@@ -751,7 +755,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep
       self.load_flexifield
-      options[:include] = [:notes,:attachments]
+      self[:notes] = self.notes
+      options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
       options[:methods].push(:custom_field)
     end
@@ -874,6 +879,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :user => {
           :only => [:name,:email,:id],
           :methods => [:avatar_url]
+        },
+        :attachments => {
+          :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
         }
       },
       :methods => [:body_mobile]
@@ -887,6 +895,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :requester => {
         :only => [:name,:email,:id],
         :methods => [:avatar_url]
+      },
+      :attachments => {
+        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
       }
     }
 

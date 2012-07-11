@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120627171748) do
+ActiveRecord::Schema.define(:version => 20120704062845) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -1130,6 +1130,9 @@ ActiveRecord::Schema.define(:version => 20120627171748) do
     t.integer  "send_while"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "happy_text",                :default => "Awesome"
+    t.string   "neutral_text",              :default => "Just Okay"
+    t.string   "unhappy_text",              :default => "Not Good"
   end
 
   create_table "ticket_topics", :force => true do |t|

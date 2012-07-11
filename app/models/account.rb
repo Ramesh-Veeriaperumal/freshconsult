@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   has_many :survey_results
   has_many :survey_remarks
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
+  has_one  :subscription_plan, :through => :subscription
   accepts_nested_attributes_for :main_portal
 
   has_one :conversion_metric
@@ -80,6 +81,7 @@ class Account < ActiveRecord::Base
   has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
+  has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VARule'
@@ -230,7 +232,8 @@ class Account < ActiveRecord::Base
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false}
+    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, 
+    :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
     
   
   has_features do

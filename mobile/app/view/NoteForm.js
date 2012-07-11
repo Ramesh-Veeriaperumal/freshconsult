@@ -45,7 +45,6 @@ Ext.define('Freshdesk.view.NoteForm', {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
-                        docked:'bottom',
                         items:[
                             {
                                 itemId:'cannedResBtn',

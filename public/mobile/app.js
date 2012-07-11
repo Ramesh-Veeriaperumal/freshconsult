@@ -23867,6 +23867,331 @@ Ext.define('Ext.app.Application', {
 });
 
 /**
+ * Adds a Load More button at the bottom of the list. When the user presses this button,
+ * the next page of data will be loaded into the store and appended to the List.
+ *
+ * By specifying `{@link #autoPaging}: true`, an 'infinite scroll' effect can be achieved,
+ * i.e., the next page of content will load automatically when the user scrolls to the
+ * bottom of the list.
+ *
+ * ## Example
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *
+ *         store: Ext.create('TweetStore'),
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.ListPaging',
+ *                 autoPaging: true
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{profile_image_url}" />',
+ *             '<div class="tweet">{text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('Ext.plugin.ListPaging', {
+    extend: 'Ext.Component',
+    alias: 'plugin.listpaging',
+
+    config: {
+        /**
+         * @cfg {Boolean} autoPaging
+         * True to automatically load the next page when you scroll to the bottom of the list.
+         */
+        autoPaging: false,
+
+        /**
+         * @cfg {String} loadMoreText The text used as the label of the Load More button.
+         */
+        loadMoreText: 'Load More...',
+
+        /**
+         * @cfg {String} noMoreRecordsText The text used as the label of the Load More button when the Store's
+         * {@link Ext.data.Store#totalCount totalCount} indicates that all of the records available on the server are
+         * already loaded
+         */
+        noMoreRecordsText: 'No More Records',
+
+        /**
+         * @private
+         * @cfg {String} loadTpl The template used to render the load more text
+         */
+        loadTpl: [
+            '<div class="{cssPrefix}loading-spinner" style="font-size: 180%; margin: 10px auto;">',
+                 '<span class="{cssPrefix}loading-top"></span>',
+                 '<span class="{cssPrefix}loading-right"></span>',
+                 '<span class="{cssPrefix}loading-bottom"></span>',
+                 '<span class="{cssPrefix}loading-left"></span>',
+            '</div>',
+            '<div class="{cssPrefix}list-paging-msg">{message}</div>'
+        ].join(''),
+
+        /**
+         * @cfg
+         * @private
+         */
+        loadMoreCmp: {
+            xtype: 'component',
+            baseCls: Ext.baseCSSPrefix + 'list-paging'
+        },
+
+        /**
+         * @private
+         * @cfg {Boolean} loadMoreCmpAdded Indicates whether or not the load more component has been added to the List
+         * yet.
+         */
+        loadMoreCmpAdded: false,
+
+        /**
+         * @private
+         * @cfg {String} loadingCls The CSS class that is added to the {@link #loadMoreCmp} while the Store is loading
+         */
+        loadingCls: Ext.baseCSSPrefix + 'loading',
+
+        /**
+         * @private
+         * @cfg {Ext.List} list Local reference to the List this plugin is bound to
+         */
+        list: null,
+
+        /**
+         * @private
+         * @cfg {Ext.scroll.Scroller} scroller Local reference to the List's Scroller
+         */
+        scroller: null,
+
+        /**
+         * @private
+         * @cfg {Boolean} loading True if the plugin has initiated a Store load that has not yet completed
+         */
+        loading: false
+    },
+
+    /**
+     * @private
+     * Sets up all of the references the plugin needs
+     */
+    init: function(list) {
+        var scroller = list.getScrollable().getScroller(),
+            store    = list.getStore();
+
+        this.setList(list);
+        this.setScroller(scroller);
+        this.bindStore(list.getStore());
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            this.disableDataViewMask(store);
+        }
+
+        // The List's Store could change at any time so make sure we are informed when that happens
+        list.updateStore = Ext.Function.createInterceptor(list.updateStore, this.bindStore, this);
+
+        if (this.getAutoPaging()) {
+            scroller.on({
+                scrollend: this.onScrollEnd,
+                scope: this
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    bindStore: function(newStore, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+        }
+
+        if (newStore) {
+            newStore.on({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+
+//            this.disableDataViewMask(newStore);
+        }
+    },
+
+    /**
+     * @private
+     * Removes the List/DataView's loading mask because we show our own in the plugin. The logic here disables the
+     * loading mask immediately if the store is autoloading. If it's not autoloading, allow the mask to show the first
+     * time the Store loads, then disable it and use the plugin's loading spinner.
+     * @param {Ext.data.Store} store The store that is bound to the DataView
+     */
+    disableDataViewMask: function(store) {
+        var list = this.getList();
+
+        if (store.isAutoLoading()) {
+            list.setLoadingText(null);
+        } else {
+            store.on({
+                load: {
+                    single: true,
+                    fn: function() {
+                        list.setLoadingText(null);
+                    }
+                }
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyLoadTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    /**
+     * @private
+     */
+    applyLoadMoreCmp: function(config) {
+        config = Ext.merge(config, {
+            html: this.getLoadTpl().apply({
+                cssPrefix: Ext.baseCSSPrefix,
+                message: this.getLoadMoreText()
+            }),
+            listeners: {
+                tap: {
+                    fn: this.loadNextPage,
+                    scope: this,
+                    element: 'element'
+                }
+            }
+        });
+
+        return Ext.factory(config, Ext.Component, this.getLoadMoreCmp());
+    },
+
+    /**
+     * @private
+     * If we're using autoPaging and detect that the user has scrolled to the bottom, kick off loading of the next page
+     */
+    onScrollEnd: function(scroller, x, y) {
+        if (!this.getLoading() && y >= scroller.maxPosition.y) {
+            if (!this.storeFullyLoaded()) {
+                this.loadNextPage();
+            }
+        }
+    },
+
+    /**
+     * @private
+     * Makes sure we add/remove the loading CSS class while the Store is loading
+     */
+    updateLoading: function(isLoading) {
+        var loadMoreCmp = this.getLoadMoreCmp(),
+            loadMoreCls = this.getLoadingCls();
+
+        if (isLoading) {
+            loadMoreCmp.addCls(loadMoreCls);
+        } else {
+            loadMoreCmp.removeCls(loadMoreCls);
+        }
+    },
+
+    /**
+     * @private
+     * If the Store is just about to load but it's currently empty, we hide the load more button because this is
+     * usually an outcome of setting a new Store on the List so we don't want the load more button to flash while
+     * the new Store loads
+     */
+    onStoreBeforeLoad: function(store) {
+        if (store.getCount() === 0) {
+            this.getLoadMoreCmp().hide();
+        }
+    },
+
+    /**
+     * @private
+     */
+    onStoreLoad: function(store) {
+        var loadCmp  = this.addLoadMoreCmp(),
+            template = this.getLoadTpl(),
+            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText();
+
+        this.getLoadMoreCmp().show();
+        this.setLoading(false);
+
+        //restores scroll position after a Store load
+        if (this.scrollY) {
+            this.getScroller().scrollTo(null, this.scrollY);
+            delete this.scrollY;
+        }
+
+        //if we've reached the end of the data set, switch to the noMoreRecordsText
+        loadCmp.setHtml(template.apply({
+            cssPrefix: Ext.baseCSSPrefix,
+            message: message
+        }));
+    },
+
+    /**
+     * @private
+     * Because the attached List's inner list element is rendered after our init function is called,
+     * we need to dynamically add the loadMoreCmp later. This does this once and caches the result.
+     */
+    addLoadMoreCmp: function() {
+        var list = this.getList(),
+            cmp  = this.getLoadMoreCmp();
+
+        if (!this.getLoadMoreCmpAdded()) {
+            list.add(cmp);
+
+            /**
+             * @event loadmorecmpadded  Fired when the Load More component is added to the list. Fires on the List.
+             * @param {Ext.plugin.ListPaging} this The list paging plugin
+             * @param {Ext.List} list The list
+             */
+            list.fireEvent('loadmorecmpadded', this, list);
+            this.setLoadMoreCmpAdded(true);
+        }
+
+        return cmp;
+    },
+
+    /**
+     * @private
+     * Returns true if the Store is detected as being fully loaded, or the server did not return a total count, which
+     * means we're in 'infinite' mode
+     * @return {Boolean}
+     */
+    storeFullyLoaded: function() {
+        var store = this.getList().getStore(),
+            total = store.getTotalCount();
+
+        return total !== null ? store.getTotalCount() <= (store.currentPage * store.getPageSize()) : false;
+    },
+
+    /**
+     * @private
+     */
+    loadNextPage: function() {
+        var store = this.getList().getStore();
+
+        this.setLoading(true);
+
+        //keep a cache of the current scroll position as we'll need to reset it after the List is
+        //updated with new data
+        this.scrollY = this.getScroller().position.y;
+
+        store.nextPage({ addRecords: true });
+    }
+});
+
+/**
  * {@link Ext.Button} is a simple class to display a button in Sencha Touch. There are various
  * different styles of {@link Ext.Button} you can create by using the {@link #icon},
  * {@link #iconCls}, {@link #iconAlign}, {@link #iconMask}, {@link #ui}, and {@link #text}
@@ -26327,7 +26652,7 @@ Ext.anims = {
     })
 };
 
-Ext.define('ux.SwipeOptions', {
+Ext.define('plugin.ux.SwipeOptions', {
     extend: 'Ext.Component',
     alias: 'swipeOptions',
     requires: ['Ext.Anim'],
@@ -26536,7 +26861,7 @@ Ext.define('ux.SwipeOptions', {
             openSoundEffectURL = this.getOpenSoundEffectURL();
 
         if(stopScrollOnShow){
-            this.list.scroller.disable();
+            this.list.getScrollable().getScroller().disable();
         }
         
         // ensure the animation is not reversed
@@ -26571,7 +26896,7 @@ Ext.define('ux.SwipeOptions', {
                 this.activeListOptions.show();
                 // re-enable the scroller
                 if (stopScrollOnShow) {
-                    this.list.scroller.enable();
+                    this.list.getScrollable().getScroller().enable();
                 }
             },
             scope: this
@@ -26737,6 +27062,35 @@ Ext.define('ux.SwipeOptions', {
             }
         }
         return -1;
+    }
+});
+
+Ext.define('plugin.ux.ListPaging2', {
+    extend: 'Ext.plugin.ListPaging',
+    alias: 'ListPaging2',
+    config: {
+        /*fullyloadedCls used to set when no more records are there to paginate*/
+        fullyloadedCls : Ext.baseCSSPrefix + 'completed'
+    },
+
+    initialize: function() {
+        this.callParent();
+    },
+
+    /**
+    * Overridding onStoreLoad
+    *
+    */
+    onStoreLoad : function(store){
+
+        var loadCmp  = this.addLoadMoreCmp(),
+            storeFullyLoaded = this.storeFullyLoaded(),
+            fullyloadedCls = this.getFullyloadedCls();
+        this.callParent(store);
+
+        if(storeFullyLoaded){
+            loadCmp.addCls(fullyloadedCls);
+        }
     }
 });
 
@@ -29035,6 +29389,9 @@ Ext.define("Freshdesk.view.Home", {
                 var userData = FD.current_user;
                 userData.avatar_url = userData.avatar_url || 'resources/images/profile_blank_thumb.gif';
                 Ext.getCmp('home-user-profile').setData(userData); 
+
+                portalData.preferences.header_color && Ext.select('.logo').setStyle('background-color',portalData.preferences.header_color);
+
             }
         },
         items :[
@@ -29293,7 +29650,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             },
             plugins: [
                     {
-                        xclass: 'Ext.plugin.PullRefresh',
+                        xclass: 'plugin.ux.PullRefresh2',
                         pullRefreshText: 'Pull down for more!'
                     }
             ]
@@ -29305,7 +29662,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             if(record.raw.count){
                 this.filter_title = record.raw.name;
                 Ext.getStore('Tickets').totalCount = record.raw.count;
-                location.href="#filters/"+record.data.type+'/'+record.data.id;
+                if(record.data.company){
+                    location.href="#company_tickets/filters/"+record.data.type+'/'+record.data.id;
+                }
+                else{
+                    location.href="#filters/"+record.data.type+'/'+record.data.id;    
+                }
+                
             }
     },
     populateTicketProperties : function(res) {
@@ -29419,8 +29782,16 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '</div>',
                         '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                         '<div class="msg fromReq">',
-                                '<div class="ellipsis" id="{id}">',
+                                '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                '<tpl if="description_html.length &gt; 200"><div class="ellipsis" id="{id}"><tpl else>',
+                                        '<div id="{id}">',
+                                '</tpl>',
                                         '{description_html}',
+                                '</div>',
+                                '<div class="attachments">',
+                                        '<tpl for="attachments">',
+                                                '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                        '</tpl>',
                                 '</div>',
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
                         '</div>',
@@ -29435,21 +29806,33 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
                                 '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                                 '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
-                                        '<div class="ellipsis" id="note_{id}">',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
                                                 '{body_mobile}',
+                                        '</div>',
+                                        '<div class="attachments">',
+                                                '<tpl for="attachments">',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                                 '<tpl if="parent.requester.id != user_id"><div class="msg">',
-                                        '<div class="ellipsis" id="note_{id}">',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
                                                 '{body_mobile}',
+                                        '</div>',
+                                        '<div class="attachments">',
+                                                '<tpl for="attachments">',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                         '</div></tpl>',
                         '<tpl if="!deleted && !spam && !FD.current_user.is_customer && notes.length &gt; 4"><div class="HDR bottom"><ul class="actions">',
-                                '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
                                 '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
+                                '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
                                 '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
                                 '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
                                 '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
@@ -29604,8 +29987,8 @@ Ext.define("Freshdesk.view.CannedResponses", {
         console.log(messageElm)
         this.hide();
     },
-    onCannedResDisclose : function(list, index, target, record, evt, options){
-        var ca_resp_id = record.raw.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
+    onCannedResDisclose : function(record){
+        var ca_resp_id = record.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
         ticket_id = msgFormContainer.ticket_id,
         opts  = {
             url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
@@ -29632,14 +30015,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                     xtype:'list',
                     emptyText: '<div class="empty-list-text">No canned responses available.</div>',
                     onItemDisclosure: false,
-                    itemTpl: '<span class="bullet"></span>&nbsp;{title}',
-                    listeners:{
-                            itemtap:{
-                                fn:function(){
-                                    this.parent.onCannedResDisclose.apply(this.parent,arguments);
-                                }
-                            }
-                    }
+                    itemTpl: '<span class="bullet"></span>&nbsp;{title}'
             },
             {
                 xtype:'titlebar',
@@ -29649,12 +30025,27 @@ Ext.define("Freshdesk.view.CannedResponses", {
                 items:[
                     {
                         xtype:'button',
-                        ui:'plain headerHtn',
-                        iconCls:'delete_black2',
+                        ui:'plain headerBtn',
                         iconMask:true,
-                        align:'right',
+                        align:'left',
+                        text:'hide',
                         handler:function(){
                             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].hide();
+                        },
+                        scope:this
+                    },
+                    {
+                        xtype:'button',
+                        ui:'plain headerBtn',
+                        iconMask:true,
+                        align:'right',
+                        text:'apply',
+                        handler:function(){
+                            var me = Ext.ComponentQuery.query('#cannedResponsesPopup')[0],
+                            selection = me.items.items[0].getSelection();
+                            if(selection.length) 
+                                me.onCannedResDisclose(selection[0].raw)
+
                         },
                         scope:this
                     }
@@ -29917,8 +30308,9 @@ Ext.define('Freshdesk.controller.Filters', {
     slideRightTransition: { type: 'slide', direction: 'right'},
     config:{
         routes:{
+            'company_tickets/filters/:type/:id' : 'load_company_tickets',
             'filters'          : 'loadFilter',
-            'filters/:type/:id': 'loadFilter',
+            'filters/:type/:id': 'loadFilter'
         },
     	refs:{
     		// We're going to lookup our views by xtype.
@@ -29926,6 +30318,27 @@ Ext.define('Freshdesk.controller.Filters', {
             ticketsListContainer:"ticketsListContainer",
             contactsListContainer:"contactsListContainer"
     	}
+    },
+    load_company_tickets : function(type,id){
+        console.log(type,id);
+        FD.Util.check_user();
+        type = type || 'filter';
+        id  = id || 'all_tickets';
+        Ext.getStore("Tickets").currentPage=1;
+        Ext.getStore("Tickets").removeAll();
+        url = '/support/company_tickets/'+type+'/'+id ;
+        Ext.getStore("Tickets").getProxy()._url=url;
+        Ext.getStore("Tickets").load();
+        var ticketsListContainer = this.getTicketsListContainer(),
+        anim = Freshdesk.backBtn ? this.slideRightTransition : Freshdesk.cancelBtn ? {type:'cover',direction:'down'} : this.slideLeftTransition;
+        Ext.Viewport.animateActiveItem(ticketsListContainer, anim);
+        //setting header for tickets
+        ticketsListContainer.setHeaderTitle(this.getFiltersListContainer().filter_title);
+        //clearing the previous animations if any
+        Freshdesk.backBtn=false;
+        Freshdesk.cancelBtn = false;
+        ticketsListContainer.filter_type=type;
+        ticketsListContainer.filter_id=id;
     },
     loadFilter:function(type,id){
         FD.Util.check_user();
@@ -30013,7 +30426,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
-                    format:'mob'
+                    format:'mobile'
                 },
                 scope:this
             },
@@ -30026,7 +30439,6 @@ Ext.define('Freshdesk.controller.Tickets', {
         Freshdesk.anim = undefined;
     },
     reply : function(id){
-        console.log('showing reply button');
         this.initReplyForm(id);
         var replyForm = this.getTicketReply();
         replyForm.ticket_id = id;
@@ -30049,73 +30461,145 @@ Ext.define('Freshdesk.controller.Tickets', {
         Ext.Viewport.animateActiveItem(scenarios, this.coverUp);
     },
     close: function(id){
-        Ext.Msg.confirm('Close ticket : '+id,'Do you want to Close this ticket?',
-            function(btnId){
-                if(btnId == 'no' || btnId == 'cancel'){
-                    Freshdesk.cancelBtn=true;
-                    location.href="#tickets/show/"+id;
-                }
-                else{
-                    var opts = { url: '/support/tickets/close_ticket/'+id },
-                    callBack = function(res){
+
+        var self = this,
+            messageBox = new Ext.MessageBox({
+            showAnimation: {
+                type: 'slideIn',
+                duration:200,
+                easing:'ease-out'
+            },
+            hideAnimation: {
+                type: 'slideOut',
+                duration:150,
+                easing:'ease-in'
+            },
+            title:'Close ticket',
+            message: 'Do you want to update ticket status to "Close"?',
+            buttons: [
+                {
+                    text:'No',
+                    handler:function(){
+                        Freshdesk.cancelBtn=true;
                         location.href="#tickets/show/"+id;
-                    };
-                    FD.Util.getJSON(opts,callBack,this)
+                        messageBox.hide();
+                    },
+                    scope:self
+                },
+                {
+                    text:'Yes',
+                    handler:function(){
+                        var opts = { url: '/support/tickets/close_ticket/'+id },
+                        callBack = function(){
+                            messageBox.hide();
+                            location.href="#tickets/show/"+id;
+                        };
+                        FD.Util.ajax(opts,callBack,this);
+                    },
+                    scope:self
                 }
-            }
-        );
+            ]
+        }).show();
     },
     resolve : function(id){
-        Ext.Msg.confirm('Mark as Resolve ticket : '+id,'Do you want to mark this ticket as Resolve?',
-            function(btnId){
-                if(btnId == 'no' || btnId == 'cancel'){
-                    Freshdesk.cancelBtn=true;
-                    location.href="#tickets/show/"+id;
-                }
-                else{
-                    var opts = {
-                        url: '/helpdesk/tickets/update/'+id,
-                        method:'POST',
-                        params:{
-                            'helpdesk_ticket[status]' : 4
-                        },
-                        headers: {
-                            "Accept": "application/json"
-                        }
-                    },
-                    callBack = function(res){
+
+        var self = this,
+            messageBox = new Ext.MessageBox({
+            showAnimation: {
+                type: 'slideIn',
+                duration:200,
+                easing:'ease-out'
+            },
+            hideAnimation: {
+                type: 'slideOut',
+                duration:150,
+                easing:'ease-in'
+            },
+            title:'Resolve ticket',
+            message: 'Do you want to update ticket status to "Resolve"?',
+            buttons: [
+                {
+                    text:'No',
+                    handler:function(){
+                        Freshdesk.cancelBtn=true;
                         location.href="#tickets/show/"+id;
-                    };
-                    FD.Util.ajax(opts,callBack,this);
+                        messageBox.hide();
+                    },
+                    scope:self
+                },
+                {
+                    text:'Yes',
+                    handler:function(){
+                        var opts = {
+                            url: '/helpdesk/tickets/update/'+id,
+                            method:'POST',
+                            params:{
+                                'helpdesk_ticket[status]' : 4
+                            },
+                            headers: {
+                                "Accept": "application/json"
+                            }
+                        },
+                        callBack = function(){
+                            messageBox.hide();
+                            location.href="#tickets/show/"+id;
+                        };
+                        FD.Util.ajax(opts,callBack,this);
+                    },
+                    scope:self
                 }
-            }
-        );
+            ]
+        }).show();
     },
     'delete' : function(id){
-        Ext.Msg.confirm('Move to trash ticket : '+id,'Do you want to move this ticket to Trash?',
-            function(btnId){
-                if(btnId == 'no' || btnId == 'cancel'){
-                    Freshdesk.cancelBtn=true;
-                    location.href="#tickets/show/"+id;
-                }
-                else{
-                    var opts = {
-                       url: '/helpdesk/tickets/'+id,
-                        params:{
-                            '_method':'delete',
-                            'action':'destroy'
-                        },
-                        headers: {
-                            "Accept": "application/json"
-                        } 
-                    },
-                    callBack = function(){
+
+        var self = this,
+            messageBox = new Ext.MessageBox({
+            showAnimation: {
+                type: 'slideIn',
+                duration:200,
+                easing:'ease-out'
+            },
+            hideAnimation: {
+                type: 'slideOut',
+                duration:150,
+                easing:'ease-in'
+            },
+            title: 'Delete Ticket',
+            message: 'Do you want to delete this ticket (#'+id+')?',
+            buttons: [
+                {
+                    text:'No',
+                    handler:function(){
+                        Freshdesk.cancelBtn=true;
                         location.href="#tickets/show/"+id;
-                    };
-                    FD.Util.ajax(opts,callBack,this);
+                        messageBox.hide();
+                    },
+                    scope:self
+                },
+                {
+                    text:'Yes',
+                    handler:function(){
+                        var opts = {
+                           url: '/helpdesk/tickets/'+id,
+                            params:{
+                                '_method':'delete',
+                                'action':'destroy'
+                            },
+                            headers: {
+                                "Accept": "application/json"
+                            } 
+                        },
+                        callBack = function(){
+                            messageBox.hide();
+                            location.href="#tickets/show/"+id;
+                        };
+                        FD.Util.ajax(opts,callBack,this);
+                    },
+                    scope:self
                 }
-            }
-        );
+            ]
+        }).show();
     },
     initNoteForm : function(id){
         FD.Util.check_user();
@@ -30133,7 +30617,10 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0];
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
-        //formObj.reset();
+
+        fieldSetObj.items.items[6].reset();
+        fieldSetObj.items.items[7].setHidden(true).reset();
+        fieldSetObj.items.items[8].reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;
@@ -30973,331 +31460,6 @@ Ext.define('Ext.plugin.PullRefresh', {
 
         me.setViewState('pull');
         me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));
-    }
-});
-
-/**
- * Adds a Load More button at the bottom of the list. When the user presses this button,
- * the next page of data will be loaded into the store and appended to the List.
- *
- * By specifying `{@link #autoPaging}: true`, an 'infinite scroll' effect can be achieved,
- * i.e., the next page of content will load automatically when the user scrolls to the
- * bottom of the list.
- *
- * ## Example
- *
- *     Ext.create('Ext.dataview.List', {
- *
- *         store: Ext.create('TweetStore'),
- *
- *         plugins: [
- *             {
- *                 xclass: 'Ext.plugin.ListPaging',
- *                 autoPaging: true
- *             }
- *         ],
- *
- *         itemTpl: [
- *             '<img src="{profile_image_url}" />',
- *             '<div class="tweet">{text}</div>'
- *         ]
- *     });
- */
-Ext.define('Ext.plugin.ListPaging', {
-    extend: 'Ext.Component',
-    alias: 'plugin.listpaging',
-
-    config: {
-        /**
-         * @cfg {Boolean} autoPaging
-         * True to automatically load the next page when you scroll to the bottom of the list.
-         */
-        autoPaging: false,
-
-        /**
-         * @cfg {String} loadMoreText The text used as the label of the Load More button.
-         */
-        loadMoreText: 'Load More...',
-
-        /**
-         * @cfg {String} noMoreRecordsText The text used as the label of the Load More button when the Store's
-         * {@link Ext.data.Store#totalCount totalCount} indicates that all of the records available on the server are
-         * already loaded
-         */
-        noMoreRecordsText: 'No More Records',
-
-        /**
-         * @private
-         * @cfg {String} loadTpl The template used to render the load more text
-         */
-        loadTpl: [
-            '<div class="{cssPrefix}loading-spinner" style="font-size: 180%; margin: 10px auto;">',
-                 '<span class="{cssPrefix}loading-top"></span>',
-                 '<span class="{cssPrefix}loading-right"></span>',
-                 '<span class="{cssPrefix}loading-bottom"></span>',
-                 '<span class="{cssPrefix}loading-left"></span>',
-            '</div>',
-            '<div class="{cssPrefix}list-paging-msg">{message}</div>'
-        ].join(''),
-
-        /**
-         * @cfg
-         * @private
-         */
-        loadMoreCmp: {
-            xtype: 'component',
-            baseCls: Ext.baseCSSPrefix + 'list-paging'
-        },
-
-        /**
-         * @private
-         * @cfg {Boolean} loadMoreCmpAdded Indicates whether or not the load more component has been added to the List
-         * yet.
-         */
-        loadMoreCmpAdded: false,
-
-        /**
-         * @private
-         * @cfg {String} loadingCls The CSS class that is added to the {@link #loadMoreCmp} while the Store is loading
-         */
-        loadingCls: Ext.baseCSSPrefix + 'loading',
-
-        /**
-         * @private
-         * @cfg {Ext.List} list Local reference to the List this plugin is bound to
-         */
-        list: null,
-
-        /**
-         * @private
-         * @cfg {Ext.scroll.Scroller} scroller Local reference to the List's Scroller
-         */
-        scroller: null,
-
-        /**
-         * @private
-         * @cfg {Boolean} loading True if the plugin has initiated a Store load that has not yet completed
-         */
-        loading: false
-    },
-
-    /**
-     * @private
-     * Sets up all of the references the plugin needs
-     */
-    init: function(list) {
-        var scroller = list.getScrollable().getScroller(),
-            store    = list.getStore();
-
-        this.setList(list);
-        this.setScroller(scroller);
-        this.bindStore(list.getStore());
-
-        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
-        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
-        if (store) {
-            this.disableDataViewMask(store);
-        }
-
-        // The List's Store could change at any time so make sure we are informed when that happens
-        list.updateStore = Ext.Function.createInterceptor(list.updateStore, this.bindStore, this);
-
-        if (this.getAutoPaging()) {
-            scroller.on({
-                scrollend: this.onScrollEnd,
-                scope: this
-            });
-        }
-    },
-
-    /**
-     * @private
-     */
-    bindStore: function(newStore, oldStore) {
-        if (oldStore) {
-            oldStore.un({
-                load: this.onStoreLoad,
-                beforeload: this.onStoreBeforeLoad,
-                scope: this
-            });
-        }
-
-        if (newStore) {
-            newStore.on({
-                load: this.onStoreLoad,
-                beforeload: this.onStoreBeforeLoad,
-                scope: this
-            });
-
-//            this.disableDataViewMask(newStore);
-        }
-    },
-
-    /**
-     * @private
-     * Removes the List/DataView's loading mask because we show our own in the plugin. The logic here disables the
-     * loading mask immediately if the store is autoloading. If it's not autoloading, allow the mask to show the first
-     * time the Store loads, then disable it and use the plugin's loading spinner.
-     * @param {Ext.data.Store} store The store that is bound to the DataView
-     */
-    disableDataViewMask: function(store) {
-        var list = this.getList();
-
-        if (store.isAutoLoading()) {
-            list.setLoadingText(null);
-        } else {
-            store.on({
-                load: {
-                    single: true,
-                    fn: function() {
-                        list.setLoadingText(null);
-                    }
-                }
-            });
-        }
-    },
-
-    /**
-     * @private
-     */
-    applyLoadTpl: function(config) {
-        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
-    },
-
-    /**
-     * @private
-     */
-    applyLoadMoreCmp: function(config) {
-        config = Ext.merge(config, {
-            html: this.getLoadTpl().apply({
-                cssPrefix: Ext.baseCSSPrefix,
-                message: this.getLoadMoreText()
-            }),
-            listeners: {
-                tap: {
-                    fn: this.loadNextPage,
-                    scope: this,
-                    element: 'element'
-                }
-            }
-        });
-
-        return Ext.factory(config, Ext.Component, this.getLoadMoreCmp());
-    },
-
-    /**
-     * @private
-     * If we're using autoPaging and detect that the user has scrolled to the bottom, kick off loading of the next page
-     */
-    onScrollEnd: function(scroller, x, y) {
-        if (!this.getLoading() && y >= scroller.maxPosition.y) {
-            if (!this.storeFullyLoaded()) {
-                this.loadNextPage();
-            }
-        }
-    },
-
-    /**
-     * @private
-     * Makes sure we add/remove the loading CSS class while the Store is loading
-     */
-    updateLoading: function(isLoading) {
-        var loadMoreCmp = this.getLoadMoreCmp(),
-            loadMoreCls = this.getLoadingCls();
-
-        if (isLoading) {
-            loadMoreCmp.addCls(loadMoreCls);
-        } else {
-            loadMoreCmp.removeCls(loadMoreCls);
-        }
-    },
-
-    /**
-     * @private
-     * If the Store is just about to load but it's currently empty, we hide the load more button because this is
-     * usually an outcome of setting a new Store on the List so we don't want the load more button to flash while
-     * the new Store loads
-     */
-    onStoreBeforeLoad: function(store) {
-        if (store.getCount() === 0) {
-            this.getLoadMoreCmp().hide();
-        }
-    },
-
-    /**
-     * @private
-     */
-    onStoreLoad: function(store) {
-        var loadCmp  = this.addLoadMoreCmp(),
-            template = this.getLoadTpl(),
-            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText();
-
-        this.getLoadMoreCmp().show();
-        this.setLoading(false);
-
-        //restores scroll position after a Store load
-        if (this.scrollY) {
-            this.getScroller().scrollTo(null, this.scrollY);
-            delete this.scrollY;
-        }
-
-        //if we've reached the end of the data set, switch to the noMoreRecordsText
-        loadCmp.setHtml(template.apply({
-            cssPrefix: Ext.baseCSSPrefix,
-            message: message
-        }));
-    },
-
-    /**
-     * @private
-     * Because the attached List's inner list element is rendered after our init function is called,
-     * we need to dynamically add the loadMoreCmp later. This does this once and caches the result.
-     */
-    addLoadMoreCmp: function() {
-        var list = this.getList(),
-            cmp  = this.getLoadMoreCmp();
-
-        if (!this.getLoadMoreCmpAdded()) {
-            list.add(cmp);
-
-            /**
-             * @event loadmorecmpadded  Fired when the Load More component is added to the list. Fires on the List.
-             * @param {Ext.plugin.ListPaging} this The list paging plugin
-             * @param {Ext.List} list The list
-             */
-            list.fireEvent('loadmorecmpadded', this, list);
-            this.setLoadMoreCmpAdded(true);
-        }
-
-        return cmp;
-    },
-
-    /**
-     * @private
-     * Returns true if the Store is detected as being fully loaded, or the server did not return a total count, which
-     * means we're in 'infinite' mode
-     * @return {Boolean}
-     */
-    storeFullyLoaded: function() {
-        var store = this.getList().getStore(),
-            total = store.getTotalCount();
-
-        return total !== null ? store.getTotalCount() <= (store.currentPage * store.getPageSize()) : false;
-    },
-
-    /**
-     * @private
-     */
-    loadNextPage: function() {
-        var store = this.getList().getStore();
-
-        this.setLoading(true);
-
-        //keep a cache of the current scroll position as we'll need to reset it after the List is
-        //updated with new data
-        this.scrollY = this.getScroller().position.y;
-
-        store.nextPage({ addRecords: true });
     }
 });
 
@@ -36814,20 +36976,15 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             },
             plugins: [
                     {
-                        xclass: 'Ext.plugin.PullRefresh',
+                        xclass: 'plugin.ux.PullRefresh2',
                         pullRefreshText: 'Pull down for more!'
                     },
                     {
-                        xclass: 'Ext.plugin.ListPaging',
+                        xclass: 'plugin.ux.ListPaging2',
                         autoPaging: false,
                         centered:true,
                         loadMoreText: 'Load more.',
                         noMoreRecordsText: 'No more tickets.'
-                    },
-                    {
-                        xclass: 'ux.SwipeOptions',
-                        menuOptions : [ ],
-                        enableSoundEffects:true
                     }
             ]
         };
@@ -40796,7 +40953,6 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype:'titlebar',
                         ui:'formSubheader',
-                        docked:'bottom',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -40873,7 +41029,6 @@ Ext.define('Freshdesk.view.NoteForm', {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
-                        docked:'bottom',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -45291,6 +45446,7 @@ Ext.define("Freshdesk.view.FiltersList", {
     alias: "widget.filterslist",
     config: {
     	cls:'views',
+        grouped:true,
         disclosureProperty:'disclosure2',
         emptyText: '<div class="empty-list-text">You don\'t have any views.</div>',
         onItemDisclosure: false,
@@ -49380,7 +49536,8 @@ Ext.define('Freshdesk.model.Filter', {
             { name: 'id', type: 'int' },
             { name: 'type', type: 'string'},
             { name: 'name', type: 'string' },
-            { name: 'count', type: 'string' }
+            { name: 'count', type: 'string' },
+            { name: 'company', type:'string'}
         ]
     }
 });
@@ -51634,6 +51791,12 @@ Ext.define('Freshdesk.store.Filters', {
     extend: 'Ext.data.Store',
     config: {
         model: 'Freshdesk.model.Filter',
+        grouper: {
+            groupFn: function(record) {
+                var company = record.get('company');
+                return company || '';
+            }
+        },
         proxy: {
             type: 'ajax',
             url : '/mobile/tickets/view_list',
@@ -53213,6 +53376,375 @@ Ext.define("Freshdesk.view.TicketForm", {
     }
 });
 /**
+ * This plugin adds pull to refresh functionality to the List.
+ *
+ * ## Example
+ *
+ *     @example
+ *     var store = Ext.create('Ext.data.Store', {
+ *         fields: ['name', 'img', 'text'],
+ *         data: [
+ *             {
+ *                 name: 'edpsencer',
+ *                 img: 'http://a2.twimg.com/profile_images/1175591906/Ed-presenting-cropped_reasonably_small.jpg',
+ *                 text: 'Read about Sencha Touch'
+ *             },{
+ *                 name: 'rdougan',
+ *                 img: 'http://a0.twimg.com/profile_images/1261180556/171265_10150129602722922_727937921_7778997_8387690_o_reasonably_small.jpg',
+ *                 text: 'Javascript development'
+ *             },{
+ *                 name: 'philogb',
+ *                 img: 'https://si0.twimg.com/profile_images/1249073521/ng_normal.png',
+ *                 text: '@ikarienator nice burritos!'
+ *             }
+ *         ]
+ *     });
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *         fullscreen: true,
+ *
+ *         store: store,
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.PullRefresh',
+ *                 pullRefreshText: 'Pull down for more new Tweets!'
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{img}" alt="{name} photo" />',
+ *             '<div class="tweet"><b>{name}:</b> {text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('plugin.ux.PullRefresh2', {
+    extend: 'Ext.Component',
+    alias: 'PullRefresh2',
+    requires: ['Ext.DateExtras'],
+
+    config: {
+        /*
+         * @accessor
+         */
+        list: null,
+
+        /*
+         * @cfg {String} pullRefreshText The text that will be shown while you are pulling down.
+         * @accessor
+         */
+        pullRefreshText: 'Pull down to refresh...',
+
+        /*
+         * @cfg {String} releaseRefreshText The text that will be shown after you have pulled down enough to show the release message.
+         * @accessor
+         */
+        releaseRefreshText: 'Release to refresh...',
+
+        /*
+         * @cfg {String} loadingText The text that will be shown while the list is refreshing.
+         * @accessor
+         */
+        loadingText: 'Loading...',
+
+        /*
+         * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
+         * @accessor
+         */
+        snappingAnimationDuration: 150,
+
+        /*
+         * @cfg {Function} refreshFn The function that will be called to refresh the list.
+         * If this is not defined, the store's load function will be called.
+         * The refresh function gets called with a reference to this plugin instance.
+         * @accessor
+         */
+        refreshFn: null,
+
+        /*
+         * @cfg {XTemplate/String/Array} pullTpl The template being used for the pull to refresh markup.
+         * @accessor
+         */
+        pullTpl: [
+            '<div class="x-list-pullrefresh">',
+                '<div class="x-list-pullrefresh-arrow"></div>',
+                '<div class="x-loading-spinner">',
+                    '<span class="x-loading-top"></span>',
+                    '<span class="x-loading-right"></span>',
+                    '<span class="x-loading-bottom"></span>',
+                    '<span class="x-loading-left"></span>',
+                '</div>',
+                '<div class="x-list-pullrefresh-wrap">',
+                    '<h3 class="x-list-pullrefresh-message">{message}</h3>',
+                    '<div class="x-list-pullrefresh-updated">Last Updated: <span>{lastUpdated:date("m/d/Y h:iA")}</span></div>',
+                '</div>',
+            '</div>'
+        ].join('')
+    },
+
+    isRefreshing: false,
+    currentViewState: '',
+
+    initialize: function() {
+        this.callParent();
+
+        this.on({
+            painted: 'onPainted',
+            scope: this
+        });
+    },
+
+    init: function(list) {
+        var me = this,
+            store = list.getStore(),
+            pullTpl = me.getPullTpl(),
+            element = me.element,
+            scroller = list.getScrollable().getScroller();
+
+        me.setList(list);
+        me.lastUpdated = new Date();
+
+        list.insert(0, me);
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            if (store.isAutoLoading()) {
+                list.setLoadingText(null);
+            } else {
+                store.on({
+                    load: {
+                        single: true,
+                        fn: function() {
+                            list.setLoadingText(null);
+                        }
+                    }
+                });
+            }
+        }
+
+        pullTpl.overwrite(element, {
+            message: me.getPullRefreshText(),
+            lastUpdated: me.lastUpdated
+        }, true);
+
+        me.loadingElement = element.getFirstChild();
+        me.messageEl = element.down('.x-list-pullrefresh-message');
+        me.updatedEl = element.down('.x-list-pullrefresh-updated > span');
+
+        me.maxScroller = scroller.getMaxPosition();
+
+        scroller.on({
+            maxpositionchange: me.setMaxScroller,
+            scroll: me.onScrollChange,
+            scope: me
+        });
+    },
+
+    /**
+     * @private
+     * Attempts to load the newest posts via the attached List's Store's Proxy
+     */
+    fetchLatest: function() {
+        var store = this.getList().getStore(),
+            proxy = store.getProxy(),
+            operation;
+
+        operation = Ext.create('Ext.data.Operation', {
+            page: 1,
+            start: 0,
+            model: store.getModel(),
+            limit: store.getPageSize(),
+            action: 'read',
+            filters: store.getRemoteFilter() ? store.getFilters() : []
+        });
+
+        proxy.read(operation, this.onLatestFetched, this);
+    },
+
+    /**
+     * @private
+     * Called after fetchLatest has finished grabbing data. Matches any returned records against what is already in the
+     * Store. If there is an overlap, updates the existing records with the new data and inserts the new items at the
+     * front of the Store. If there is no overlap, insert the new records anyway and record that there's a break in the
+     * timeline between the new and the old records.
+     */
+    onLatestFetched: function(operation) {
+        var store      = this.getList().getStore(),
+            oldRecords = store.getData(),
+            newRecords = operation.getRecords(),
+            length     = newRecords.length,
+            toInsert   = [],
+            newRecord, oldRecord, i;
+
+        for (i = 0; i < length; i++) {
+            newRecord = newRecords[i];
+            oldRecord = oldRecords.getByKey(newRecord.getId());
+
+            if (oldRecord) {
+                oldRecord.set(newRecord.getData());
+            } else {
+                toInsert.push(newRecord);
+            }
+
+            oldRecord = undefined;
+        }
+
+        store.insert(0, toInsert);
+
+        this.resetRefreshState();
+
+        this.getList().getScrollable().getScroller().scrollTo(null, 0, true);
+    },
+
+    onPainted: function() {
+        this.pullHeight = this.loadingElement.getHeight();
+    },
+
+    setMaxScroller: function(scroller, position) {
+        this.maxScroller = position;
+    },
+
+    onScrollChange: function(scroller, x, y) {
+        if (y < 0) {
+            this.onBounceTop(y);
+        }
+        if (y > this.maxScroller.y) {
+            this.onBounceBottom(y);
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyPullTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    onBounceTop: function(y) {
+        var me = this,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller();
+
+        if (!me.isReleased) {
+            if (!me.isRefreshing && -y >= me.pullHeight + 10) {
+                me.isRefreshing = true;
+
+                me.setViewState('release');
+
+                scroller.getContainer().onBefore({
+                    dragend: 'onScrollerDragEnd',
+                    single: true,
+                    scope: me
+                });
+            }
+            else if (me.isRefreshing && -y < me.pullHeight + 10) {
+                me.isRefreshing = false;
+                me.setViewState('pull');
+            }
+        }
+    },
+
+    onScrollerDragEnd: function() {
+        var me = this;
+
+        if (me.isRefreshing) {
+            var list = me.getList(),
+                scroller = list.getScrollable().getScroller();
+
+            scroller.minPosition.y = -me.pullHeight;
+            scroller.on({
+                scrollend: 'loadStore',
+                single: true,
+                scope: me
+            });
+
+            me.isReleased = true;
+        }
+    },
+
+    loadStore: function() {
+        var me = this,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller();
+
+        me.setViewState('loading');
+        me.isReleased = false;
+
+        Ext.defer(function() {
+
+            if (me.getRefreshFn()) {
+                me.getRefreshFn().call(me, me);
+            } else {
+                me.fetchLatest();
+            }
+            //me.resetRefreshState();
+
+            // scroller.on({
+            //     scrollend: function() {
+            //         if (me.getRefreshFn()) {
+            //             me.getRefreshFn().call(me, me);
+            //         } else {
+            //             me.fetchLatest();
+            //         }
+            //         me.resetRefreshState();
+            //     },
+            //     delay: 100,
+            //     single: true,
+            //     scope: me
+            // });
+            scroller.minPosition.y = 0;
+            //scroller.scrollTo(null, 0, true);
+        }, 500, me);
+    },
+
+    onBounceBottom: Ext.emptyFn,
+
+    setViewState: function(state) {
+        var me = this,
+            prefix = Ext.baseCSSPrefix,
+            messageEl = me.messageEl,
+            loadingElement = me.loadingElement;
+
+        if (state === me.currentViewState) {
+            return me;
+        }
+        me.currentViewState = state;
+
+        if (messageEl && loadingElement) {
+            switch (state) {
+                case 'pull':
+                    messageEl.setHtml(me.getPullRefreshText());
+                    loadingElement.removeCls([prefix + 'list-pullrefresh-release', prefix + 'list-pullrefresh-loading']);
+                break;
+
+                case 'release':
+                    messageEl.setHtml(me.getReleaseRefreshText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-release');
+                break;
+
+                case 'loading':
+                    messageEl.setHtml(me.getLoadingText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-loading');
+                break;
+            }
+        }
+
+        return me;
+    },
+
+    resetRefreshState: function() {
+        var me = this;
+
+        me.isRefreshing = false;
+        me.lastUpdated = new Date();
+
+        me.setViewState('pull');
+        me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));
+    }
+});
+
+/**
  * @author Ed Spencer
  * @aside guide stores
  *
@@ -53365,7 +53897,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','ux.SwipeOptions'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],

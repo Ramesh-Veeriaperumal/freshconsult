@@ -1,10 +1,15 @@
 class Helpdesk::DashboardController < ApplicationController
-  
+
   helper 'helpdesk/tickets' #by Shan temp
   include Reports::ScoreboardReport
 
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_mobile, :only => [:index]
+  
+  prepend_before_filter :silence_logging, :only => :latest_activities
+  after_filter   :revoke_logging, :only => :latest_activities
+  
+  
 
   def index
     @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10)
@@ -16,9 +21,13 @@ class Helpdesk::DashboardController < ApplicationController
   end
   
   def latest_activities
-    previous_id = params[:previous_id]
-    activities = Helpdesk::Activity.freshest(current_account).activity_since(previous_id).permissible(current_user)
-    render :partial => "ticket_note", :collection => activities
+    begin
+      previous_id = params[:previous_id]
+      activities = Helpdesk::Activity.freshest(current_account).activity_since(previous_id).permissible(current_user)
+      render :partial => "ticket_note", :collection => activities
+    rescue Exception => e
+        NewRelic::Agent.notice_error(e,{:description => "Error occoured in la"})
+    end
   end
   
   def latest_summary
@@ -32,6 +41,15 @@ class Helpdesk::DashboardController < ApplicationController
       else
         Helpdesk::Activity.freshest(current_account).permissible(current_user)
       end
+    end
+
+    def silence_logging
+      @bak_log_level = logger.level 
+      logger.level = Logger::ERROR
+    end
+
+    def revoke_logging
+      logger.level = @bak_log_level 
     end
 
 end
