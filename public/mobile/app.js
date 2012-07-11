@@ -29945,7 +29945,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         };  
         var TopTitlebar = {
             xtype: 'titlebar',
-            title: 'Info',
+            title: 'Contact Info',
             docked: 'top',
             ui:'header',
             items: [
