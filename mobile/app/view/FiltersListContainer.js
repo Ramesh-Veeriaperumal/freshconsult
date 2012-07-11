@@ -66,6 +66,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             if(record.raw.count){
                 this.filter_title = record.raw.name;
                 Ext.getStore('Tickets').totalCount = record.raw.count;
+                Ext.getStore('Tickets').setTotalCount(record.raw.count);
                 if(record.data.company){
                     location.href="#company_tickets/filters/"+record.data.type+'/'+record.data.id;
                 }

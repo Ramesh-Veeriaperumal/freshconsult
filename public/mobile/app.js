@@ -27086,6 +27086,7 @@ Ext.define('plugin.ux.ListPaging2', {
         var loadCmp  = this.addLoadMoreCmp(),
             storeFullyLoaded = this.storeFullyLoaded(),
             fullyloadedCls = this.getFullyloadedCls();
+        loadCmp.removeCls(fullyloadedCls);
         this.callParent(store);
 
         if(storeFullyLoaded){
@@ -29662,6 +29663,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             if(record.raw.count){
                 this.filter_title = record.raw.name;
                 Ext.getStore('Tickets').totalCount = record.raw.count;
+                Ext.getStore('Tickets').setTotalCount(record.raw.count);
                 if(record.data.company){
                     location.href="#company_tickets/filters/"+record.data.type+'/'+record.data.id;
                 }
@@ -29720,6 +29722,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
     config: {
         itemId:'customerInfo',
         cls:'customerDetails',
+        padding:0,
         tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
                 '<div class="profile_pic">',
                     '<tpl if="avatar_url"><img src="{avatar_url}"></tpl>',
@@ -29727,7 +29730,8 @@ Ext.define("Freshdesk.view.ContactInfo", {
                 '</div>',
                 '<div class="customer-info-list">',
                     '<div class="title">{name}</div>',
-                    '<tpl if="job_title"><div>{job_title}</div></tpl>',
+                    '<div><tpl if="job_title">{job_title} at <tpl else><div>Working at </tpl>',
+                    '<tpl if="company_name">{company_name}</tpl></div>',
                     '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
                     '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
                     '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
@@ -29763,8 +29767,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                         time_in_words : function(item){
                                 return new Date(item).toRelativeTime();
                         }
-                }),
-        padding:0
+                })
     }
 });
 Ext.define("Freshdesk.view.TicketDetails", {
@@ -29807,14 +29810,14 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
-                                '<tpl if="description_html.length &gt; 200"><div class="ellipsis" id="{id}"><tpl else>',
-                                        '<div id="{id}">',
+                                '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
+                                        '<div class="conv" id="{id}">',
                                 '</tpl>',
                                         '{description_html}',
                                 '</div>',
                                 '<div class="attachments">',
                                         '<tpl for="attachments">',
-                                                '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                         '</tpl>',
                                 '</div>',
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
@@ -29831,24 +29834,24 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
                                 '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
-                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                                 '<tpl if="parent.requester.id != user_id"><div class="msg">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
-                                        '<tpl if="body_mobile.length &gt; 200"><div class="ellipsis" id="note_{id}"><tpl else><div id="note_{id}"></tpl>',
+                                        '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}">{content_file_name}<span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
@@ -29864,15 +29867,66 @@ Ext.define("Freshdesk.view.TicketDetails", {
                 ].join(''),{
                         truncate: function(value,length) {
                             return values.substr(0, length);
+                        },
+                        /**
+                         * Convert number of bytes into human readable format
+                         *
+                         * @param integer bytes     Number of bytes to convert
+                         * @param integer precision Number of digits after the decimal separator
+                         * @return string
+                         */
+                        bytesToSize : function(bytes, precision) {
+                            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                            var posttxt = 0;
+                            if (bytes == 0) return '0 Bytes';
+                            while( bytes >= 1024 ) {
+                                posttxt++;
+                                bytes = bytes / 1024;
+                            }
+                            return Number(bytes).toFixed(precision) + " " + sizes[posttxt];
+                        },
+                        fileName : function(filename){
+                            var filename = filename;
+                            if(filename && filename.lastIndexOf('.')>0){
+                                filename = filename.substr(0,filename.lastIndexOf('.'))
+                            }
+                            return filename || '';
+                        },
+                        fileType : function(filename){
+                            if(filename && filename.lastIndexOf('.')>0){
+                               return filename.substr(filename.lastIndexOf('.'));
+                            }
+                            return '';
                         }
                 })
         };
         this.add([tktHeader]);
     },
+    onMessageTap : function(e,item){
+      var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
+      if(toggleId){
+        Ext.get(toggleId).toggleCls('ellipsis');
+        Ext.get('loadmore_'+toggleId).toggleCls('hide');
+      }
+    },
     config: {
         cls:'ticketDetails',
         scrollable: {
             direction: 'vertical'
+        },
+        listeners : {
+                painted : {
+                        fn: function(container,item,eOpts){
+                                var elms = container.element.select('.msg').elements,self=this;
+                                for(var index in elms) {
+                                       Ext.get(elms[index]).on({
+                                                tap: this.onMessageTap,
+                                                scope:this
+                                       });
+                                }
+                        },
+                },
+                scope:this
         }
     }
 });
@@ -29892,7 +29946,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         };      
         var TopTitlebar = {
             xtype: 'titlebar',
-            title: 'Info',
+            title: 'Contact Info',
             docked: 'top',
             ui:'header',
             items: [
@@ -36964,7 +37018,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         this.callParent(arguments);
 
         var backButton = {
-        	text:'Back',
+        	text:'Views',
 			ui:'headerBtn back',
 			xtype:'button',
 			handler:this.backToFilters,
@@ -45506,8 +45560,8 @@ Ext.define("Freshdesk.view.TicketsList", {
                                         '{subject}<span class="info">&nbsp;#{display_id}</span>',
                                 '</div>',
                                 '<div>',
-                                        '<tpl if="responder_id">{responder_name}',
-                                        '<tpl else>Unassigned</tpl>',
+                                        '<tpl if="responder_id">{responder_name},',
+                                        '<tpl else>Not assigned to agent,</tpl>',
                                 '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
                         '<div class="disclose">&nbsp;</div>',
@@ -51844,6 +51898,11 @@ Ext.define('Freshdesk.store.Tickets', {
     extend: 'Ext.data.Store',
     getTotalCount: function(){
         return this.totalCount;
+    },
+    setTotalCount: function(count){
+        if(count){
+            this.totalCount = count;
+        }
     },
     config: {
         model: 'Freshdesk.model.Ticket',

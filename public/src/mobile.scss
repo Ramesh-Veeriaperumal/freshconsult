@@ -16,7 +16,7 @@
 .app-wrapper{
 	text-align: center;
 	margin:0 auto;
-	width:90%;
+	width:80%;
 }
 
 .brand{
@@ -24,36 +24,46 @@
 }
 
 .app-logo{
-	background-color:#fff;
-	@include border-radius(6px);
-	@include box-shadow( rgba(0, 0, 0, 0.75) 0 0 30px );
 	border:1px solid #434343;
+	@include border-radius(5px);
 	margin-bottom: 0.36em;
+	margin-top:3px;
 }
 
 .forgot-password{
 	color:#646465;	
-	line-height: 3em;
+	line-height: 2.6em;
 	font-weight: 200;
 	@include opacity(0.6);
 }
 
 .flash_info{
-	color: #fff;
-	line-height: 2em;
-	font-weight: 200;
+	color: rgba(255, 255, 255, 0.8);
+	padding: 8px 15px;
+	font-size: 12px;
+	line-height: 16px;
+	@include border-radius(8px);	
+	@include box-shadow( rgba(255, 255, 255, 0.3) 0 1px 0 );
+	margin-top:8px;
+	font-weight:bold;
+}
+
+.flash_info.error{
+	background: #663333;
+	border:1px solid darken(#663333, 6%);
 }
 
 .brand h2{
-	color:#fff;
-	font-size: 1.46em;
+	font-size: 1.2em;
+	color: white;
+	@include text-shadow( #000 -1px -1px 0);
 }
 
 .login-fieldset{
 	border: 1px solid black; 
 	background: #fff;
 	@include border-radius(8px);
-	@include box-shadow(rgba(0, 0, 0, 0.75) 1px 1px 4px inset);
+	@include box-shadow(rgba(0, 0, 0, 0.75) 1px 1px 4px inset, rgba(255, 255, 255, 0.3) 0 1px 0 );
 }
 
 .login-fieldset .textbox{
@@ -73,6 +83,7 @@
 	border:2px solid #333;
 	color:white;
 	width: 100%;
+	font-size: 16px;
 	@include text-shadow( rgba(0, 0, 0, 0.8) -1px 0 1px );
 	@include border-radius(8px);
 	@include box-shadow( rgba(255, 255, 255, 0.6) 0 1px 1px );
@@ -86,14 +97,13 @@
 	border-width: 3px;
 	font-size: 18px;
 	@include text-shadow( rgba(255, 255, 255, 0.8) 0 1px 1px );
-	@include border-radius(16px);
 	@include box-shadow( rgba(255, 255, 255, 0.2) 0 1px 1px );
 	@include background( linear-gradient( #acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100% ) );
 }
 
 .alt-signin{
 	text-align: left;
-	padding: 8px 12px;
+	padding: 4px 12px;
 	line-height: 1.46em;
 	@include clearfix; 
 	font-weight: 200;
@@ -107,7 +117,7 @@
 
 .login p{
 	color:darken(#a9a9a9, 20%) ;
-	font-size: 13px;
+	font-size: 10px;
 	line-height: 1.46em;
 	padding:8px 10px;
 	@include text-shadow( rgba(0, 0, 0, 0.5) -1px 0 1px );

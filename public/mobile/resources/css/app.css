@@ -10517,6 +10517,20 @@ a {
   right: 4px !important;
   bottom: 13% !important;
 }
+.ticketDetails .conversation .msg .attachments a span.name {
+  max-width: 70%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ticketDetails .conversation .msg .attachments a span.size {
+  text-align: left;
+  position: absolute;
+  right: 30px;
+  padding: 1px;
+  color: #666;
+}
 .ticketDetails .ticketProperties.customer .x-toolbar-subheader .customer {
   background-color: #cecece;
 }

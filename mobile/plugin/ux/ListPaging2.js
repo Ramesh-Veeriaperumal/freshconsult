@@ -19,6 +19,7 @@ Ext.define('plugin.ux.ListPaging2', {
         var loadCmp  = this.addLoadMoreCmp(),
             storeFullyLoaded = this.storeFullyLoaded(),
             fullyloadedCls = this.getFullyloadedCls();
+        loadCmp.removeCls(fullyloadedCls);
         this.callParent(store);
 
         if(storeFullyLoaded){

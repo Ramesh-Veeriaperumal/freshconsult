@@ -1886,7 +1886,7 @@ en:
       remember: "Remember me"
       login: "Sign In"
       sign_in_using: "...or Sign in using"
-      sign_in_error: "Username or password is not valid"
+      sign_in_error: "Incorrect email or password."
   integrations:
     capsule_crm:
       label: "Capsule CRM"
