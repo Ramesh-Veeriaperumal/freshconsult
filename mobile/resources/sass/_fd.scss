@@ -988,17 +988,27 @@ a {
 			}
 			.clip{
 				position: absolute;
-				top: 0px;
-				background: red;
-				right: -3px;
+				top: -3px;
+				right: -13px;
+				font-size: 18px;
+				display:block;
+				text-decoration:none;
+				font-family: 'fontello';
+				color:#666;
+				text-align:center;
+				@include text-shadow( #fff 1px 1px 0);
+				speak: none;
+				&:before{
+					content: '📎'; 
+				}
 			}
 			.attachments{
 				padding-top:10px;
 				a{
 					display:block;
-					border:1px solid #E9E2CD;
+					border:1px solid rgba(0,0,0, 0.1);
 					border-bottom-width:0px;
-					background-color:#fffdf8;
+					background-color:rgba(255,255,255, 0.5);
 					color:#333;
 					text-decoration:none;
 					height:30px;
@@ -1009,10 +1019,27 @@ a {
 						@include border-top-right-radius(5px);
 						@include border-top-left-radius(5px);
 					}
+					&:active{
+						background:#888;
+						@include text-shadow( #888 1px 1px 0);
+						color:#fff;
+					}
 					&:last-child{
 						@include border-bottom-right-radius(5px);
 						@include border-bottom-left-radius(5px);
 						border-bottom-width:1px;
+					}
+					span:first-child{
+						font-size: 14px;
+						text-decoration:none;
+						font-family: 'fontello';
+						color:#666;
+						text-align:center;
+						@include text-shadow( #fff 1px 1px 0);
+						speak: none;
+						&:before{
+							content: '📄';  
+						}
 					}
 					span.disclose{
 						font-size: 13px !important;
