@@ -6,6 +6,7 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
   
   before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
+  before_filter :set_mobile , :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 

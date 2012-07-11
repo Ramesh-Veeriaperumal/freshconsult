@@ -1884,7 +1884,9 @@ en:
   mobile:
     home:
       remember: "Remember me"
-      login: "Login"
+      login: "Sign In"
+      sign_in_using: "...or Sign in using"
+      sign_in_error: "Incorrect email or password."
   integrations:
     capsule_crm:
       label: "Capsule CRM"

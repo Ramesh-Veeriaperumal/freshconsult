@@ -4,12 +4,12 @@ class Helpdesk::DashboardController < ApplicationController
   include Reports::ScoreboardReport
 
   before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :set_mobile, :only => [:index]
   
   prepend_before_filter :silence_logging, :only => :latest_activities
   after_filter   :revoke_logging, :only => :latest_activities
   
   
-
 
   def index
     @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10)

@@ -46,6 +46,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
     :dependent => :destroy
+
+   has_many :public_notes,
+    :class_name => 'Helpdesk::Note',
+    :as => 'notable', :conditions => {:private =>  false, :deleted => false}
     
   has_many :sphinx_notes, 
     :class_name => 'Helpdesk::Note',
@@ -100,7 +104,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
-  delegate :active?, :open?, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
+  delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
@@ -739,8 +743,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def requester_name
+    requester.name || requester_info
+  end
+
+  def need_attention
+    active? and ticket_states.need_attention
+  end
+
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
+    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep
       self.load_flexifield
       self[:notes] = self.notes
@@ -860,6 +872,49 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (cc_emails_array + to_emails_array).uniq
   end  
 
+  def to_mob_json(only_public_notes=false)
+    notes_option = {
+      :only => [:created_at,:user_id,:id],
+      :include => {
+        :user => {
+          :only => [:name,:email,:id],
+          :methods => [:avatar_url]
+        },
+        :attachments => {
+          :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+        }
+      },
+      :methods => [:body_mobile]
+    }
+
+    json_inlcude = {
+      :responder => {
+        :only => [:name,:email,:id],
+        :methods => [:avatar_url]
+      },
+      :requester => {
+        :only => [:name,:email,:id],
+        :methods => [:avatar_url]
+      },
+      :attachments => {
+        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+      }
+    }
+
+    if only_public_notes
+     json_inlcude[:public_notes] = notes_option 
+    else 
+     json_inlcude[:notes] = notes_option
+    end
+
+    options = {
+      :only => [:id,:display_id,:subject,:description,:description_html,:deleted,:spam,:cc_email,:due_by,:created_at,:updated_at],
+      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name,:is_closed],
+      :include => json_inlcude
+    }
+    to_json(options,false) 
+  end
+  
   private
   
     def create_source_activity
