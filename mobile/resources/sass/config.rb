@@ -7,6 +7,7 @@ load File.join(dir, '..', '..', 'sdk', 'resources', 'themes')
 # Compass configurations
 sass_path = dir
 css_path = File.join(dir, "..", "css")
+# css_path = File.join(dir, "..", "..", "..", "public", "mobile", "resources", "css")
 
 # Require any additional compass plugins here.
 images_dir = File.join(dir, "..",  "images")

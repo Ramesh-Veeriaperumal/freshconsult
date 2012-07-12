@@ -38581,7 +38581,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         var toggleBtn = Ext.create('Ext.Button',{
             xtype:'button',
             iconMask:true,
-            iconCls:'info',
+            iconCls:'info icon-list-3',
             ui:'headerBtn',
             handler:this.toggleProperties,
             align:'right',
@@ -45561,7 +45561,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '</div>',
                                 '<div>',
                                         '<tpl if="responder_id">{responder_name},',
-                                        '<tpl else>Not assigned to agent,</tpl>',
+                                        '<tpl else>No agent assigned,</tpl>',
                                 '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
                         '<div class="disclose">&nbsp;</div>',
