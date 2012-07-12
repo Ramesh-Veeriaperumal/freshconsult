@@ -1,4 +1,4 @@
-class Import::Zen::ZendeskAttachmentImport 
+class Import::Zen::ZendeskAttachmentImport 	
   @queue = 'ImportAttachmentWorker'
 
   def self.perform(note_id,url,model)

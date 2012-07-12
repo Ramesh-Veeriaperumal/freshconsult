@@ -2176,6 +2176,8 @@ en:
   search:
     no_results_msg: "No results found"  
   assumed_identity_msg: "You've assumed your identity as %{user_name}."
+  unauthorized_msg: "Authorization failed"
+  assuming_identity_user_does_not_exist_msg: "User you've tried to assume does not exist."
   assuming_identity_not_allowed_msg: "You are not allowed to assume this user."
   identity_reverted_msg: "You have reverted your identify back to you."
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
