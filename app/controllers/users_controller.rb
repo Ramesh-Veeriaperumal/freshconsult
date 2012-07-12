@@ -90,11 +90,7 @@ class UsersController < ApplicationController
   def assume_identity
     user = current_account.users.find params[:id]
 
-    if is_allowed_to_assume?(user)
-      
-      session[:original_user] = current_user.id
-      session[:assumed_user] = user.id
-      
+    if assume_identity_for_user(user)
       flash[:notice] = I18n.t("assumed_identity_msg", :user_name => user.name)
     else
       flash[:notice] = I18n.t("assuming_identity_not_allowed_msg")
