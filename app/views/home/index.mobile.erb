@@ -28,8 +28,8 @@
 			  	</fieldset>			  	
 			  	<% if flash[:error] %>
 			  		<% content_for :javascript do %>			  					  			
-				  		$('login-form').addClassName("shake");
-				  		//
+			  			window.setTimeout( function(){	$('login-form').addClassName("swing"); }, 300 );				  		
+				  		window.setTimeout( function(){	$('login-form').removeClassName("swing") }, 1300 );
 			  		<% end %>
 			  	<% end %>
 			  	<%= show_flash %>			  	
