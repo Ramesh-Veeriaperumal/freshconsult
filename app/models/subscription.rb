@@ -114,9 +114,6 @@ class Subscription < ActiveRecord::Base
   
   def store_card(creditcard, gw_options = {})
     # Clear out payment info if switching to CC from PayPal
-    puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    puts creditcard.to_json
-
     destroy_gateway_record(paypal) if paypal?
     @charge_now = gw_options[:charge_now]
     @response = if billing_id.blank?
@@ -124,7 +121,6 @@ class Subscription < ActiveRecord::Base
     else
       gateway.update(billing_id, creditcard, gw_options)
     end
-    puts @response.message
     if @response.success?
       self.card_number = creditcard.display_number
       self.card_expiration = "%02d-%d" % [creditcard.expiry_date.month, creditcard.expiry_date.year]
@@ -243,7 +239,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def self.find_due(renew_at = Time.now)
-    find(:all, :include => :account, :conditions => { :state => 'active', :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
+    find(:all, :include => :account, :conditions => { :state => ['active','free'], :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
   end
   
   def paypal?
