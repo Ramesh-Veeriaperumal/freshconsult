@@ -2,6 +2,7 @@
 
 @import '_mixins.scss';
 @import '_icons.scss';
+@import '_fonticons.scss';
 
 @font-face {
   font-family: 'fontello';
@@ -84,23 +85,18 @@ input, textarea, select {
 		&.info{
 			display:block;
 			text-decoration:none;
-			font-size: 125%;
-			font-family: 'fontello';
+			font-size: 140%;
 			color: #fff;
 			text-align: center;
 			background: none !important;
 			speak: none;
 			-webkit-mask-image: none !important;
 			margin: -5px 0 0 -5px;
-			speak: none;
-			&:before {
-				content: '\2630';
-				font-size: 1.1em;
-				padding: 0 4px;
-			}
+			padding: 1px 2px;
 		}
 	}
 }
+
 x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after{
 			width: 0.7em;
 			-webkit-mask-size: 0.74em 1.8em;
