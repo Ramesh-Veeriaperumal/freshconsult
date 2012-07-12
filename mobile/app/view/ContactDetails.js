@@ -11,7 +11,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
             handler: this.goBack,
             scope: this,
             align:'left'
-        };  
+        };      
         var TopTitlebar = {
             xtype: 'titlebar',
             title: 'Contact Info',

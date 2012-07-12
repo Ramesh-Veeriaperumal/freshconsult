@@ -2,6 +2,7 @@
 
 @import '_mixins.scss';
 @import '_icons.scss';
+@import '_fonticons.scss';
 
 @font-face {
   font-family: 'fontello';
@@ -84,21 +85,18 @@ input, textarea, select {
 		&.info{
 			display:block;
 			text-decoration:none;
-			font-size: 125%;
-			font-family: 'fontello';
+			font-size: 140%;
 			color: #fff;
 			text-align: center;
 			background: none !important;
 			speak: none;
 			-webkit-mask-image: none !important;
 			margin: -5px 0 0 -5px;
-			speak: none;
-			&:before {
-				content: '\26a1';
-			}
+			padding: 1px 2px;
 		}
 	}
 }
+
 x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after{
 			width: 0.7em;
 			-webkit-mask-size: 0.74em 1.8em;
@@ -480,6 +478,36 @@ a {
 			padding: 5px;
 		}
 	}
+	/* Hack to give a proxy height for the contacts info page to fix the absolute position */
+	.ticketsListContainer{ height:500px;  }
+	.ticketsList{
+		position: absolute;
+		width:100%;
+		li{
+			position: relative;
+			min-height: 2.6em;
+			border-top: 1px solid #CCC;
+			@include box-shadow(#fff 1px 2px);
+			&:first-child{
+				border:0;
+			}
+			a:active{
+				.ticket-item{
+					background:url('../images/activebg.png');
+					color:#fff;
+					@include text-shadow( #393939 -1px -1px 0);
+					.info{
+						background:#757575;
+						@include box-shadow(0);
+					}
+					.subject{
+						color:#fff;
+						@include text-shadow( #333 1px 1px 0);
+					}
+				}
+			}
+		}
+	}
 	.customer-info {
 		@include box-shadow(#aaa 0 0 100px inset);
 		border-bottom: 1px solid #CCC;
@@ -510,7 +538,7 @@ a {
 				background: #f3f3f3;
 				padding: 1px;
 				margin-right: 2%;
-				margin-bottom:5px;
+				margin-top:5px;
 				float: left;
 				width: 98%;
 				span{
@@ -528,13 +556,14 @@ a {
 			}
 			.phone{
 				span:before {
-					content: '\1F4DE';
+					padding:3px;
+					content: '📞';
 				}
 			}
 			.email{
 				span:before {
-					padding: 2px 4px;
-					content: '\270E';
+					padding: 2px 1px;
+					content: '✉';
 				}
 			}
 			.twitter{
@@ -559,12 +588,11 @@ a {
 				font-size: 20px;
 				line-height:20px;
 				color: #333;
-				margin-top: 4px;
+				margin-top: 10px;
 			}
 		}
 	}
 }
-
 
 #details #ext-element-116{
 	width:1px;
@@ -876,6 +904,9 @@ a {
 				font-weight:bold;
 				text-decoration:none;
 				color:#1272de;
+				&:active{
+					color:#ccc;
+				}
 			}
 			.date{
 				font-size:0.9em;
@@ -953,17 +984,27 @@ a {
 			}
 			.clip{
 				position: absolute;
-				top: 0px;
-				background: red;
-				right: -3px;
+				top: -3px;
+				right: -13px;
+				font-size: 18px;
+				display:block;
+				text-decoration:none;
+				font-family: 'fontello';
+				color:#666;
+				text-align:center;
+				@include text-shadow( #fff 1px 1px 0);
+				speak: none;
+				&:before{
+					content: '📎'; 
+				}
 			}
 			.attachments{
 				padding-top:10px;
 				a{
 					display:block;
-					border:1px solid #E9E2CD;
+					border:1px solid rgba(0,0,0, 0.1);
 					border-bottom-width:0px;
-					background-color:#fffdf8;
+					background-color:rgba(255,255,255, 0.5);
 					color:#333;
 					text-decoration:none;
 					height:30px;
@@ -974,10 +1015,27 @@ a {
 						@include border-top-right-radius(5px);
 						@include border-top-left-radius(5px);
 					}
+					&:active{
+						background:#888;
+						@include text-shadow( #888 1px 1px 0);
+						color:#fff;
+					}
 					&:last-child{
 						@include border-bottom-right-radius(5px);
 						@include border-bottom-left-radius(5px);
 						border-bottom-width:1px;
+					}
+					span:first-child{
+						font-size: 14px;
+						text-decoration:none;
+						font-family: 'fontello';
+						color:#666;
+						text-align:center;
+						@include text-shadow( #fff 1px 1px 0);
+						speak: none;
+						&:before{
+							content: '📄';  
+						}
 					}
 					span.disclose{
 						font-size: 13px !important;

@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@import url(../font/style.css);
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3,
 h4, h5, h6, pre, code, form, fieldset, legend,
 input, textarea, p, blockquote, th, td {
@@ -9385,7 +9386,6 @@ input[type="search"]::-webkit-search-cancel-button {
   text-align: center;
 }
 .branding .logo {
-  margin-left: 0.36em;
   display: inline-block;
   background-color: white;
   border: 1px solid #434343 !important;
@@ -9460,21 +9460,23 @@ input, textarea, select {
   text-shadow: white 1px 1px 0;
 }
 
+.icon-facebook-3 {
+  background-color: red !important;
+}
+
 .x-button-headerBtn span.info {
   display: block;
   text-decoration: none;
   font-size: 125%;
-  font-family: 'fontello';
+  font-family: 'Freshdesk';
   color: #fff;
   text-align: center;
-  background: none !important;
   speak: none;
   -webkit-mask-image: none !important;
   margin: -5px 0 0 -5px;
   speak: none;
-}
-.x-button-headerBtn span.info:before {
-  content: '\26a1';
+@extends .icon-facebook-3;
+  background: red !important;
 }
 
 x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after {
@@ -9859,11 +9861,45 @@ a {
   word-wrap: break-word;
 }
 
+.customerDetails {
+  /* Hack to give a proxy height for the contacts info page to fix the absolute position */
+}
 .customerDetails h3.title {
   background: black;
   color: white;
   text-shadow: -1px -1px 0 #333333;
   padding: 5px;
+}
+.customerDetails .ticketsListContainer {
+  height: 500px;
+}
+.customerDetails .ticketsList {
+  position: absolute;
+  width: 100%;
+}
+.customerDetails .ticketsList li {
+  position: relative;
+  min-height: 2.6em;
+  border-top: 1px solid #CCC;
+  -webkit-box-shadow: white 1px 2px;
+  box-shadow: white 1px 2px;
+}
+.customerDetails .ticketsList li:first-child {
+  border: 0;
+}
+.customerDetails .ticketsList li a:active .ticket-item {
+  background: url("../images/activebg.png");
+  color: #fff;
+  text-shadow: #393939 -1px -1px 0;
+}
+.customerDetails .ticketsList li a:active .ticket-item .info {
+  background: #757575;
+  -webkit-box-shadow: 0;
+  box-shadow: 0;
+}
+.customerDetails .ticketsList li a:active .ticket-item .subject {
+  color: #fff;
+  text-shadow: #333333 1px 1px 0;
 }
 .customerDetails .customer-info {
   -webkit-box-shadow: #aaaaaa 0 0 100px inset;
@@ -9900,7 +9936,7 @@ a {
   background: #f3f3f3;
   padding: 1px;
   margin-right: 2%;
-  margin-bottom: 5px;
+  margin-top: 5px;
   float: left;
   width: 98%;
 }
@@ -9917,11 +9953,12 @@ a {
   font-family: 'fontello';
 }
 .customerDetails .customer-info .customer-info-list .phone span:before {
-  content: '\1F4DE';
+  padding: 3px;
+  content: '📞';
 }
 .customerDetails .customer-info .customer-info-list .email span:before {
-  padding: 2px 4px;
-  content: '\270E';
+  padding: 2px 1px;
+  content: '✉';
 }
 .customerDetails .customer-info .customer-info-list .twitter span:before {
   content: '\F303';
@@ -9941,7 +9978,7 @@ a {
   font-size: 20px;
   line-height: 20px;
   color: #333;
-  margin-top: 4px;
+  margin-top: 10px;
 }
 
 #details #ext-element-116 {
@@ -10240,6 +10277,9 @@ a {
   text-decoration: none;
   color: #1272de;
 }
+.ticketDetails .conversation .Info > a:active {
+  color: #ccc;
+}
 .ticketDetails .conversation .Info .date {
   font-size: 0.9em;
 }
@@ -10440,18 +10480,28 @@ a {
 }
 .ticketDetails .conversation .msg .clip {
   position: absolute;
-  top: 0px;
-  background: red;
-  right: -3px;
+  top: -3px;
+  right: -13px;
+  font-size: 18px;
+  display: block;
+  text-decoration: none;
+  font-family: 'fontello';
+  color: #666;
+  text-align: center;
+  text-shadow: white 1px 1px 0;
+  speak: none;
+}
+.ticketDetails .conversation .msg .clip:before {
+  content: '📎';
 }
 .ticketDetails .conversation .msg .attachments {
   padding-top: 10px;
 }
 .ticketDetails .conversation .msg .attachments a {
   display: block;
-  border: 1px solid #E9E2CD;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-bottom-width: 0px;
-  background-color: #fffdf8;
+  background-color: rgba(255, 255, 255, 0.5);
   color: #333;
   text-decoration: none;
   height: 30px;
@@ -10465,12 +10515,29 @@ a {
   -webkit-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
 }
+.ticketDetails .conversation .msg .attachments a:active {
+  background: #888;
+  text-shadow: #888888 1px 1px 0;
+  color: #fff;
+}
 .ticketDetails .conversation .msg .attachments a:last-child {
   -webkit-border-bottom-right-radius: 5px;
   border-bottom-right-radius: 5px;
   -webkit-border-bottom-left-radius: 5px;
   border-bottom-left-radius: 5px;
   border-bottom-width: 1px;
+}
+.ticketDetails .conversation .msg .attachments a span:first-child {
+  font-size: 14px;
+  text-decoration: none;
+  font-family: 'fontello';
+  color: #666;
+  text-align: center;
+  text-shadow: white 1px 1px 0;
+  speak: none;
+}
+.ticketDetails .conversation .msg .attachments a span:first-child:before {
+  content: '📄';
 }
 .ticketDetails .conversation .msg .attachments a span.disclose {
   font-size: 13px !important;
