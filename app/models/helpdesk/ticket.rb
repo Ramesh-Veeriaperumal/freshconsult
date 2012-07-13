@@ -364,7 +364,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def encode_display_id
     "[#{ticket_id_delimiter}#{display_id}]"
   end
-  
+
   def conversation(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
   end
@@ -909,7 +909,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     options = {
       :only => [:id,:display_id,:subject,:description,:description_html,:deleted,:spam,:cc_email,:due_by,:created_at,:updated_at],
-      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name,:is_closed],
+      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name,:is_closed,:to_cc_emails],
       :include => json_inlcude
     }
     to_json(options,false) 

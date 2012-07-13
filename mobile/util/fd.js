@@ -12,11 +12,13 @@ FD.Util = {
         }
     },
     onAjaxCallback : function(data, operation, res, callBack, scope){
-        //Ext.Viewport.setMasked(false);
+        Ext.Viewport.setMasked(false);
         operation ? this.onAjaxSucess(data,res,callBack,scope) : this.onAjaxFailure(data,res,callBack,scope)
     },
-    ajax : function(options,callBack,scope){
-        //Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'});
+    ajax : function(options,callBack,scope,showMask){
+        if(showMask !== false) {
+            Ext.Viewport.setMasked(true);
+        }
         var me = this;
         options.callback = function(data,operation,success){
             me.onAjaxCallback(data,operation,success,callBack,scope)
@@ -41,7 +43,7 @@ FD.Util = {
 	},
 	showAll : function(id){
 		//To show full content in conversation section..
-		document.getElementById(id).removeAttribute('class');
+		document.getElementById(id).setAttribute('class','conv');
         document.getElementById('loadmore_'+id).setAttribute('class','hide');
 	},
 	check_user : function(){
@@ -63,7 +65,7 @@ FD.Util = {
 		document.head.appendChild(link);
 	},
 	construct_ticket_form : function(ticket_fields,isEdit,listeners){
-		var formData = isEdit ? [{xtype:'hiddenfield',name:'_method',value:'put'}] : [],
+		var formData = isEdit ? [{xtype:'hiddenfield',name:'_method',value:'put'}] : [{xtype:'hiddenfield',name:'commit',value:'Save'}],
 		key,ticket_field,form_field,_field,
         me=this;
         ticket_fields.forEach(function(ticket_field){

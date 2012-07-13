@@ -7,7 +7,12 @@ Ext.define("Freshdesk.view.TicketDetails", {
                 id:"details",
                 padding:0,
                 minWidth:'100%',
-                tpl:new Ext.XTemplate(['<div class="HDR">',
+                tpl:new Ext.XTemplate(['<tpl if="loading">',
+                        '<div class="x-mask x-floating" style="background: transparent;min-height:400px"><div class="x-innerhtml">',
+                            '<div class="x-loading-spinner" style="font-size: 235%; margin: 100px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',
+                        '</div></div>',
+                        '<tpl else>',
+                        '<div class="HDR">',
                         '<tpl if="!FD.current_user.is_customer">',
                                 '<div class="subject">',
                                         '<div class="icon {priority_name} {source_name}"></div>',
@@ -29,6 +34,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</ul>',
                         '</tpl>',
                       '</div>',
+                      '<div class="banner hide" id="notification_msg"></div>',
                       '<tpl if="FD.current_user.is_customer"><div class="banner"><b>{status_name}</b></div></tpl>',
                       '<div class="conversation">',
                         '<div class="thumb">',
@@ -91,7 +97,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
                                 '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
                                 '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
-                        '</ul></tpl></div>',
+                        '</ul></tpl></div></tpl>',
                 ].join(''),{
                         truncate: function(value,length) {
                             return values.substr(0, length);
@@ -131,30 +137,30 @@ Ext.define("Freshdesk.view.TicketDetails", {
         this.add([tktHeader]);
     },
     onMessageTap : function(e,item){
-      var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
-      if(toggleId){
-        Ext.get(toggleId).toggleCls('ellipsis');
-        Ext.get('loadmore_'+toggleId).toggleCls('hide');
+      if(item.nodeName === "A"){
+        e.stopPropagation();
       }
+      else {
+        var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
+        if(toggleId){
+            Ext.get(toggleId).toggleCls('ellipsis');
+            Ext.get('loadmore_'+toggleId).toggleCls('hide');
+        }
+      }
+    },
+    addActionListeners : function(container){
+        var elms = container.element.select('.msg').elements,self=this;
+        for(var index in elms) {
+               Ext.get(elms[index]).on({
+                        tap: this.onMessageTap,
+                        scope:this
+               });
+        }
     },
     config: {
         cls:'ticketDetails',
         scrollable: {
             direction: 'vertical'
-        },
-        listeners : {
-                painted : {
-                        fn: function(container,item,eOpts){
-                                var elms = container.element.select('.msg').elements,self=this;
-                                for(var index in elms) {
-                                       Ext.get(elms[index]).on({
-                                                tap: this.onMessageTap,
-                                                scope:this
-                                       });
-                                }
-                        },
-                },
-                scope:this
         }
     }
 });
