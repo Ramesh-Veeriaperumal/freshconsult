@@ -29388,7 +29388,7 @@ Ext.define("Freshdesk.view.Home", {
                 portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
-                userData.avatar_url = userData.avatar_url || 'resources/images/profile_blank_thumb.gif';
+                userData.avatar_url = userData.medium_avatar || 'resources/images/profile_blank_thumb.gif';
                 Ext.getCmp('home-user-profile').setData(userData); 
 
                 portalData.preferences.header_color && Ext.select('.logo').setStyle('background-color',portalData.preferences.header_color);
@@ -29725,7 +29725,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
         padding:0,
         tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
                 '<div class="profile_pic">',
-                    '<tpl if="avatar_url"><img src="{avatar_url}"></tpl>',
+                    '<tpl if="avatar_url"><img src="{original_avatar}"></tpl>',
                     '<tpl if="!avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                 '</div>',
                 '<div class="customer-info-list">',

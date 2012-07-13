@@ -7,7 +7,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
         padding:0,
         tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
                 '<div class="profile_pic">',
-                    '<tpl if="avatar_url"><img src="{avatar_url}"></tpl>',
+                    '<tpl if="avatar_url"><img src="{original_avatar}"></tpl>',
                     '<tpl if="!avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                 '</div>',
                 '<div class="customer-info-list">',
