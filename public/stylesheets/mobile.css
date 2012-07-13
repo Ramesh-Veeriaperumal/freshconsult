@@ -10,17 +10,19 @@
 /* additional application code for login and home screens */
 .body-background { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAKElEQVQImWMwNjb+jw0zGBsb/3dxccEuoaKigl0Cp1HIGGYshgTMWACx8jltBi6orwAAAABJRU5ErkJggg==), #333333; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
 
-.app-wrapper { text-align: center; margin: 0 auto; width: 80%; }
+.app-wrapper { text-align: center; margin: 0 auto; width: 90%; }
 
 .brand { margin: 10px 0; }
 
 .app-logo { border: 1px solid #434343; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; margin-bottom: 0.36em; margin-top: 3px; }
 
-.forgot-password { color: #646465; line-height: 2.6em; font-weight: 200; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60); opacity: 0.6; }
+.forgot-password { color: #646465; line-height: 2.6em; font-weight: 300; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60); opacity: 0.6; }
 
-.flash_info { color: rgba(255, 255, 255, 0.8); padding: 8px 15px; font-size: 12px; line-height: 16px; -moz-border-radius: 8px; -webkit-border-radius: 8px; -o-border-radius: 8px; -ms-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; -moz-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; -webkit-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; -o-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; margin-top: 8px; font-weight: bold; }
+.flash_info { color: rgba(255, 255, 255, 0.8); padding: 8px 15px; font-size: 12px; line-height: 16px; -moz-border-radius: 8px; -webkit-border-radius: 8px; -o-border-radius: 8px; -ms-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; -moz-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; -webkit-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; -o-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0; margin-top: 10px; font-weight: bold; }
 
-.flash_info.error { background: #663333; border: 1px solid #522929; }
+.flash_info.error, .flash_info.warning { background: #663333; border: 1px solid #522929; }
+
+.flash_info.notice { background: #636c43; border: 1px solid #525937; margin-bottom: 12px; }
 
 .brand h2 { font-size: 1.2em; color: white; text-shadow: black -1px -1px 0; }
 
@@ -30,11 +32,22 @@
 
 .login-fieldset .email { border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
 
-.sp-button { font-weight: normal; padding: 0.36em 0; border: 2px solid #333; color: white; width: 100%; font-size: 16px; text-shadow: rgba(0, 0, 0, 0.8) -1px 0 1px; -moz-border-radius: 8px; -webkit-border-radius: 8px; -o-border-radius: 8px; -ms-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; -moz-box-shadow: rgba(255, 255, 255, 0.6) 0 1px 1px; -webkit-box-shadow: rgba(255, 255, 255, 0.6) 0 1px 1px; -o-box-shadow: rgba(255, 255, 255, 0.6) 0 1px 1px; box-shadow: rgba(255, 255, 255, 0.6) 0 1px 1px; background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8c8c8c), color-stop(50%, #6d6d6d), color-stop(51%, #5f5f5f), color-stop(100%, #6e6e6e)); background: -webkit-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: -moz-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: -o-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: -ms-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); }
+.sp-button { font-weight: 300; padding: 0.36em 0; border: 2px solid #333; color: white; width: 100%; font-size: 16px; text-shadow: rgba(0, 0, 0, 0.8) -1px 0 1px; -moz-border-radius: 8px; -webkit-border-radius: 8px; -o-border-radius: 8px; -ms-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; -moz-box-shadow: rgba(255, 255, 255, 0.4) 0 1px 0; -webkit-box-shadow: rgba(255, 255, 255, 0.4) 0 1px 0; -o-box-shadow: rgba(255, 255, 255, 0.4) 0 1px 0; box-shadow: rgba(255, 255, 255, 0.4) 0 1px 0; background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8c8c8c), color-stop(50%, #6d6d6d), color-stop(51%, #5f5f5f), color-stop(100%, #6e6e6e)); background: -webkit-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: -moz-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: -o-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: -ms-linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); background: linear-gradient(#8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100%); }
+.sp-button:active, .sp-button:hover { background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(50%, #7a7a7a), color-stop(51%, #6c6c6c), color-stop(100%, #7b7b7b)); background: -webkit-linear-gradient(#999999 0%, #7a7a7a 50%, #6c6c6c 51%, #7b7b7b 100%); background: -moz-linear-gradient(#999999 0%, #7a7a7a 50%, #6c6c6c 51%, #7b7b7b 100%); background: -o-linear-gradient(#999999 0%, #7a7a7a 50%, #6c6c6c 51%, #7b7b7b 100%); background: -ms-linear-gradient(#999999 0%, #7a7a7a 50%, #6c6c6c 51%, #7b7b7b 100%); background: linear-gradient(#999999 0%, #7a7a7a 50%, #6c6c6c 51%, #7b7b7b 100%); }
 
-.login-button { margin-top: 8px; color: black; font-weight: bold; border-width: 3px; font-size: 18px; text-shadow: rgba(255, 255, 255, 0.8) 0 1px 1px; -moz-box-shadow: rgba(255, 255, 255, 0.2) 0 1px 1px; -webkit-box-shadow: rgba(255, 255, 255, 0.2) 0 1px 1px; -o-box-shadow: rgba(255, 255, 255, 0.2) 0 1px 1px; box-shadow: rgba(255, 255, 255, 0.2) 0 1px 1px; background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #acdaff), color-stop(50%, #a6d8ff), color-stop(51%, #89cbff), color-stop(100%, #a6d7fc)); background: -webkit-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: -moz-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: -o-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: -ms-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); }
+.login-button { margin-top: 8px; color: black; font-weight: bold; border-width: 3px; font-size: 18px; text-shadow: rgba(255, 255, 255, 0.8) 0 1px 1px; background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #acdaff), color-stop(50%, #a6d8ff), color-stop(51%, #89cbff), color-stop(100%, #a6d7fc)); background: -webkit-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: -moz-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: -o-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: -ms-linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); background: linear-gradient(#acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100%); }
+.login-button:active, .login-button:hover { background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c6e5ff), color-stop(50%, #c0e3ff), color-stop(51%, #a3d6ff), color-stop(100%, #bfe2fd)); background: -webkit-linear-gradient(#c6e5ff 0%, #c0e3ff 50%, #a3d6ff 51%, #bfe2fd 100%); background: -moz-linear-gradient(#c6e5ff 0%, #c0e3ff 50%, #a3d6ff 51%, #bfe2fd 100%); background: -o-linear-gradient(#c6e5ff 0%, #c0e3ff 50%, #a3d6ff 51%, #bfe2fd 100%); background: -ms-linear-gradient(#c6e5ff 0%, #c0e3ff 50%, #a3d6ff 51%, #bfe2fd 100%); background: linear-gradient(#c6e5ff 0%, #c0e3ff 50%, #a3d6ff 51%, #bfe2fd 100%); }
 
-.alt-signin { text-align: left; padding: 4px 12px; line-height: 1.46em; overflow: hidden; *zoom: 1; font-weight: 200; }
-.alt-signin span { float: right; width: 28px; height: 26px; margin: 1px 3px; }
+.alt-signin { text-align: left; line-height: 1.46em; padding-left: 14px; padding-right: 8px; font-weight: 200; }
+.alt-signin span { float: right; font-size: 22px; margin: 1px 4px; }
 
 .login p { color: #767676; font-size: 10px; line-height: 1.46em; padding: 8px 10px; text-shadow: rgba(0, 0, 0, 0.5) -1px 0 1px; text-align: center; }
+
+.iphone-menu { position: fixed; width: 100%; height: 100%; background: rgba(105, 105, 105, 0.95); -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 0 100px inset; -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 0 100px inset; -o-box-shadow: rgba(0, 0, 0, 0.3) 0 0 100px inset; box-shadow: rgba(0, 0, 0, 0.3) 0 0 100px inset; left: 0; top: 0; z-index: 999; }
+.iphone-menu ul { background: #fff; -moz-border-radius: 8px; -webkit-border-radius: 8px; -o-border-radius: 8px; -ms-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; border: 3px solid #333; width: 70%; margin: 50px auto 0; padding: 4px 0; position: relative; }
+.iphone-menu ul .close:before { position: absolute; top: -18px; left: -10px; font-weight: 300; font-size: 15px; background: #fff; border: 3px solid #fff; -moz-border-radius: 50px; -webkit-border-radius: 50px; -o-border-radius: 50px; -ms-border-radius: 50px; -khtml-border-radius: 50px; border-radius: 50px; -moz-box-shadow: rgba(0, 0, 0, 0.8) 0 1px 3px; -webkit-box-shadow: rgba(0, 0, 0, 0.8) 0 1px 3px; -o-box-shadow: rgba(0, 0, 0, 0.8) 0 1px 3px; box-shadow: rgba(0, 0, 0, 0.8) 0 1px 3px; color: #fff; background: #333; padding: 4px 5px; }
+.iphone-menu ul li { border-top: 1px solid #dedede; }
+.iphone-menu ul a { font-size: 15px; color: #333; }
+.iphone-menu ul a:before { font-size: 22px; line-height: 26px; padding-right: 10px; position: relative; top: 5px; }
+.iphone-menu ul h5 { color: #999999; font-weight: 300; }
+.iphone-menu ul li, .iphone-menu ul h5 { line-height: 2.6em; padding: 0 25px; text-align: left; }

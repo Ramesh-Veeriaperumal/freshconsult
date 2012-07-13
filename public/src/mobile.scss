@@ -16,7 +16,7 @@
 .app-wrapper{
 	text-align: center;
 	margin:0 auto;
-	width:80%;
+	width:90%;
 }
 
 .brand{
@@ -33,7 +33,7 @@
 .forgot-password{
 	color:#646465;	
 	line-height: 2.6em;
-	font-weight: 200;
+	font-weight: 300;
 	@include opacity(0.6);
 }
 
@@ -43,14 +43,20 @@
 	font-size: 12px;
 	line-height: 16px;
 	@include border-radius(8px);	
-	@include box-shadow( rgba(255, 255, 255, 0.3) 0 1px 0 );
-	margin-top:8px;
+	@include box-shadow( rgba(255, 255, 255, 0.3) 0 1px 0 );	
+	margin-top:10px;
 	font-weight:bold;
 }
 
-.flash_info.error{
+.flash_info.error, .flash_info.warning{
 	background: #663333;
 	border:1px solid darken(#663333, 6%);
+}
+
+.flash_info.notice{
+	background: #636c43;
+	border:1px solid darken(#636c43, 6%);
+	margin-bottom:12px;
 }
 
 .brand h2{
@@ -78,7 +84,7 @@
 }
 
 .sp-button{
-	font-weight: normal;
+	font-weight: 300;
 	padding:0.36em 0;
 	border:2px solid #333;
 	color:white;
@@ -86,8 +92,11 @@
 	font-size: 16px;
 	@include text-shadow( rgba(0, 0, 0, 0.8) -1px 0 1px );
 	@include border-radius(8px);
-	@include box-shadow( rgba(255, 255, 255, 0.6) 0 1px 1px );
+	@include box-shadow( rgba(255, 255, 255, 0.4) 0 1px 0 );
 	@include background( linear-gradient( #8c8c8c 0%, #6d6d6d 50%, #5f5f5f 51%, #6e6e6e 100% ) );
+	&:active, &:hover{
+		@include background( linear-gradient( lighten(#8c8c8c, 5%) 0%, lighten(#6d6d6d, 5%) 50%, lighten(#5f5f5f, 5%) 51%, lighten(#6e6e6e, 5%) 100% ) );
+	}
 }
 
 .login-button{
@@ -97,21 +106,22 @@
 	border-width: 3px;
 	font-size: 18px;
 	@include text-shadow( rgba(255, 255, 255, 0.8) 0 1px 1px );
-	@include box-shadow( rgba(255, 255, 255, 0.2) 0 1px 1px );
 	@include background( linear-gradient( #acdaff 0%, #a6d8ff 50%, #89cbff 51%, #a6d7fc 100% ) );
+	&:active, &:hover{
+		@include background( linear-gradient( lighten(#acdaff, 5%) 0%, lighten(#a6d8ff, 5%) 50%, lighten(#89cbff, 5%) 51%, lighten(#a6d7fc, 5%) 100% ) );
+	}
 }
 
 .alt-signin{
 	text-align: left;
-	padding: 4px 12px;
 	line-height: 1.46em;
-	@include clearfix; 
+	padding-left: 14px;
+	padding-right: 8px;
 	font-weight: 200;
 	span{
-		float: right;
-		width: 28px;
-		height: 26px;
-		margin:1px 3px;
+		float: right;		
+		font-size: 22px;
+		margin:1px 4px;
 	}
 }
 
@@ -122,4 +132,60 @@
 	padding:8px 10px;
 	@include text-shadow( rgba(0, 0, 0, 0.5) -1px 0 1px );
 	text-align: center;
+}
+
+.iphone-menu{
+	position: fixed;
+	width:100%;
+	height: 100%;
+	background: rgba(#696969, 0.95);
+	@include box-shadow( rgba(0,0,0, 0.3) 0 0 100px inset );
+	left: 0; top: 0;
+	z-index: 999;
+	ul{
+		background: #fff;
+		@include border-radius(8px);
+		border:3px solid #333;
+		width:70%;
+		margin: 50px auto 0;
+		padding: 4px 0;
+		position: relative;
+		.close:before{
+			position: absolute;
+			top:-18px; left: -10px;
+			font-weight: 300;
+			font-size: 15px;
+			background: #fff;
+			border: 3px solid #fff;
+			@include border-radius(50px);
+			@include box-shadow( rgba(0,0,0,0.8) 0 1px 3px );
+			color: #fff;
+			background: #333;
+			padding: 4px 5px;
+		}
+		li{
+			border-top: 1px solid #dedede;
+		}
+		a{
+			font-size: 15px;
+			color: #333;
+			&:before{
+				font-size: 22px;
+				line-height: 26px;
+				padding-right: 10px;
+				position: relative;
+				top:5px;
+			}
+		}
+		h5{
+			color: #999999;
+			font-weight: 300;
+		}
+		li, h5{			
+			line-height: 2.6em;
+			padding: 0 25px;
+			text-align: left;
+		}
+		
+	}
 }
