@@ -13,8 +13,12 @@ class PasswordResetsController < ApplicationController
       flash[:notice] = t(:'flash.password_resets.email.success')
       redirect_to root_url
     else
-      flash[:notice] = t(:'flash.password_resets.email.user_not_found')
-      render :action => :new
+      flash[:warning] = t(:'flash.password_resets.email.user_not_found')      
+      if mobile?
+        redirect_to root_url
+      else
+        render :action => :new
+      end
     end
   end
   

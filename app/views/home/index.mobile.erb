@@ -3,8 +3,7 @@
 	<head>
 		<title><%= page_title %></title>
 		<meta name="viewport" content="width=device-width,user-scalable=no" />
-		<link rel="stylesheet" href="mobile/resources/css/app.css">
-		
+		<link rel="stylesheet" href="mobile/resources/css/app.css">		
 		<link rel="stylesheet" href="stylesheets/mobile.css">		
 		<link rel="stylesheet" href="stylesheets/animate-custom.css">		
 	</head>
@@ -12,45 +11,108 @@
 	<body class="body-background" id="mobile-app">
 		<div class="app-wrapper login">
 			<div class="brand">
-		    	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)), :class => "app-logo" %>
+		    	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)), :class => "app-logo", :style => "background: #{current_portal.preferences[:header_color]}" %>
 		    	<%= content_tag :h2, current_portal.name %>
-		  	</div>		
-
-			<% form_for @user_session, :url => user_session_path do |f| %>
-			  	<%= f.error_messages %>			  	
-				<%= hidden_field_tag 'mob', "true"  %>
-				<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
-				<fieldset class="login-fieldset animated" id="login-form">
-					<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox email" id="user_session_email" name="user_session[email]" placeholder="Email" size="30" type="email">
-					<br />
-					<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox password" id="user_session_password" name="user_session[password]" placeholder="Password" size="30" type="password">
-					<br/>
-			  	</fieldset>			  	
-			  	<% if flash[:error] %>
-			  		<% content_for :javascript do %>			  					  			
-			  			window.setTimeout( function(){	$('login-form').addClassName("swing"); }, 300 );				  		
-				  		window.setTimeout( function(){	$('login-form').removeClassName("swing") }, 1300 );
-			  		<% end %>
-			  	<% end %>
-			  	<%= show_flash %>			  	
-		  		<%= submit_tag t('mobile.home.login'), { :id => "login_btn", :class => "sp-button login-button"} %>
-				<a href="#" class="forgot-password">Forgot password</a>
-		  		<%if feature?(:google_signin) or feature?(:twitter_signin) %>
-					<div class="sp-button alt-signin">
-						<%= t("mobile.home.sign_in_using") %>
-						<!-- <span class="mobile-icon-twitter"></span>
-						<span class="mobile-icon-facebook"></span>
-						<span class="mobile-icon-google"></span> -->
-						<%#= link_to(image_tag("google.png", :alt => t("user_sessions.new.sign_in_using_google")), "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") if feature?(:google_signin) %>
-						<%#= link_to(image_tag("twitter.png", :alt => "Twitter"), "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
-						<%#= link_to(image_tag("facebook.png", :alt => "Facebook"), "/auth/facebook", :class => "button") if feature?(:facebook_signin) %>
-					</div>
-				<%end%>
-
-				<p>This mobile version of our helpdesk, currently supports tickets. to use any missing feature, please use our Web application</p>
-				<p>A Helpdesk Software by Freshdesk </p>
-
+		  	</div>	
+		  	<% if flash[:notice] %>
+				<%= show_flash %>
 			<% end %>
+		  	<div id="login-form-container" class="animated" style="<%= flash[:warning] ? 'display:none;' : '' %>">			  	
+				<% form_for @user_session, :url => user_session_path do |f| %>
+				  	<%= f.error_messages %>			  	
+					<%= hidden_field_tag 'mob', "true"  %>
+					<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
+					<fieldset class="login-fieldset animated" id="login-form">
+						<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox email" id="user_session_email" name="user_session[email]" placeholder="Email" size="30" type="email">
+						<br />
+						<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox password" id="user_session_password" name="user_session[password]" placeholder="Password" size="30" type="password">
+						<br/>
+				  	</fieldset>			  	
+				  	<% if flash[:error] %>
+				  		<% content_for :javascript do %>			  					  			
+				  			window.setTimeout( function(){	$('login-form').addClassName("shake"); }, 300 );
+					  		window.setTimeout( function(){	$('login-form').removeClassName("shake") }, 1300 );
+				  		<% end %>
+				  		<%= show_flash %>
+				  	<% end %>
+			  		<%= submit_tag t('mobile.home.login'), { :id => "login_btn", :class => "sp-button login-button"} %>
+			  	<% end %>
+			  	<a href="javascript:void(0);" class="forgot-password" id="forgot-password">Forgot password</a>
+	  			<% if feature?(:google_signin) or feature?(:twitter_signin) or feature?(:facebook_signin) %>
+					<div id="alt-signin-button" class="sp-button alt-signin">
+						<%= t("mobile.home.sign_in_using") %>						
+						<span class="icon-twitter"></span>
+						<span class="icon-facebook"></span>
+						<span class="icon-google-plus"></span>						
+					</div>				
+					<% content_for :javascript do %>
+						$('alt-signin-button').observe('click', function(event) {
+						    $('alt-signin-dialog').show();
+						    $('alt-signin-container').addClassName("bounceInUp");
+						    window.setTimeout( function(){	$('alt-signin-container').removeClassName("bounceInUp") }, 1300 );
+						});
+
+						$('alt-signin-close').observe('click', function(event) {					    
+						    $('alt-signin-container').addClassName("hinge");
+						    window.setTimeout( function(){	
+						    	$('alt-signin-container').removeClassName("hinge"); 
+						    	$('alt-signin-dialog').hide(); 
+						   	}, 1200 );
+						});
+			  		<% end %>			  		
+				<%end%>
+			</div>		  
+			<div id="forgot-form-container" class="animated" style="<%= !flash[:warning] ? 'display:none;' : '' %>">				
+			  	<% form_tag password_resets_path do %>
+			  		<fieldset class="login-fieldset animated" id="forgot-form">
+			  			<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox email" id="email" name="email" placeholder="Email" size="30" type="email">
+				  	</fieldset>
+				  	<% if flash[:warning] %>
+				  		<% content_for :javascript do %>			  					  			
+				  			window.setTimeout( function(){	$('forgot-form').addClassName("shake"); }, 300 );
+					  		window.setTimeout( function(){	$('forgot-form').removeClassName("shake") }, 1300 );
+				  		<% end %>
+						<%= show_flash %>
+					<% end %>
+				  	<%= submit_tag "Reset my password", { :id => "login_btn", :class => "sp-button login-button"} %>
+				  	<a href="javascript:void(0);" class="forgot-password" id="backto-signin">Back to Sign in...</a>
+				<% end %>			
+			</div>			
+			<% content_for :javascript do %>
+				$('forgot-password').observe('click', function(event) {				    
+				    $('login-form-container').addClassName("bounceOutLeft");
+				    window.setTimeout( function(){ 
+				    	$('login-form-container').style.display = "none"; 
+				    	$('forgot-form-container').removeClassName("bounceOutRight");
+				    	$('forgot-form-container').style.display = "block";
+				    	$('forgot-form-container').addClassName("bounceInRight");
+				    }, 300 );
+				});
+
+				$('backto-signin').observe('click', function(event) {				    
+				    $('forgot-form-container').addClassName("bounceOutRight");
+				    window.setTimeout( function(){ 
+				    	$('forgot-form-container').style.display = "none"; 
+				    	$('login-form-container').removeClassName("bounceOutLeft");
+				    	$('login-form-container').style.display = "block";
+				    	$('login-form-container').addClassName("bounceInLeft");
+				    }, 300 );
+				});
+				
+			<% end %>
+			<p>This mobile version of our helpdesk, currently supports tickets. to use any missing feature, please use our Web application</p>
+			<p>A Helpdesk Software by Freshdesk </p>
+
+			<div id="alt-signin-dialog" class="iphone-menu" style="display:none;">
+						<ul id="alt-signin-container" class="animated">
+							<span id="alt-signin-close" class="close icon-close"></span>
+							<h5>Sign in using...</h5>
+							<%= content_tag(:li, link_to("Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "icon-google-plus")) if feature?(:google_signin) %>
+							<%= content_tag(:li, link_to("Twitter", "/auth/twitter", :class => "icon-facebook")) if feature?(:twitter_signin) %>
+							<%= content_tag(:li, link_to("Facebook", "/auth/facebook", :class => "icon-twitter")) if feature?(:facebook_signin) %>
+						</ul>
+					</div>
+			
 		</div>
 		<%= javascript_include_tag "prototype" %>
 		<% javascript_tag do -%>
