@@ -88,7 +88,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def forward(ticket, note , reply_email, options={})
     subject       fwd_formatted_subject(ticket)
     recipients    options[:to_emails]
-    cc            options[:fwd_cc_emails] unless options[:include_cc].blank?
+    cc            options[:fwd_cc_emails]
     bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html

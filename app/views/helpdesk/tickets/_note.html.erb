@@ -10,7 +10,7 @@
 			<% elsif note.inbound_email? %>
 				<span class="image email-receive tooltip" title='<%= t(".inbound_email") %>'></span>
 			<% elsif note.fwd_email? %>
-				<span class="image email-forward tooltip" title='Forwarded email'></span>
+				<span class="image email-forward tooltip" title='<%= t("forwarded_email") %>'></span>
 			<% elsif note.outbound_email? %>
 				<span class="image email-reply tooltip" title='<%= t(".outbound_email") %>'></span>
 			<% elsif note.tweet? %>
@@ -25,7 +25,14 @@
 											:complete => "jQuery('##{notedetails}').removeClass('details')",
 	                                        :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
 	                                        :method => :GET },
-	                                      { :class => "slim-button" }) if(note.note? && note.user && note.user.agent?) %> 
+	                                      { :class => "slim-button" }) if(note.note? && note.user && note.user.agent?) %>
+	        <!-- <%= link_to_remote( t("fwd_to"), { :loading => "$('loading_#{notedetails}').show();",
+	        								:loaded  => "$('loading_#{notedetails}').hide();", 	
+	        								:update  => notedetails,
+	        								:complete => "jQuery('##{notedetails}').removeClass('details')",
+	                                        :url => { :controller => "helpdesk/tickets", :id => note.notable.display_id, :action => :forward_conv , :note_id => note.id }, 
+	                                        :method => :GET },
+	                                      { :class => "slim-button" }) unless note.private %> -->
 	      <% if note.incoming %>
 	        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id }, :method => :post, :class => "slim-button tooltip", :title => t(".split_this_as_new_ticket"), :confirm => t(".split_ticket_confirm") if @item && !@item.fb_post %>
 	      <% end %>

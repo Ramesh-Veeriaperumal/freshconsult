@@ -1631,6 +1631,13 @@ en:
         bcc: Bcc
         addbcc: Add Bcc
         removebcc: Remove Bcc
+      forward_form:
+        cc: Cc
+        addcc: Add Cc
+        removecc: Remove Cc
+        bcc: Bcc
+        addbcc: Add Bcc
+        removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
       facebook_form:  	
@@ -2214,3 +2221,4 @@ en:
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
+  forwarded_email: "Forwarded email"
