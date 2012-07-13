@@ -169,6 +169,12 @@
   			jQuery(".toEmailMoreLink").text('');
   		}
   	}
+
+  	function validateMCEData(){
+		if(jQuery.browser.opera){
+			jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
+		}
+	}
 	
   <% end %>
 

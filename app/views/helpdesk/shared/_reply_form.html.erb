@@ -37,7 +37,7 @@
 
 
 <div class="request_panel hide" id="<%=cntid%>">
-    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
+    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply",:onsubmit =>"validateMCEData();" } do |f| %>
     <%= f.error_messages %>
     <% capsule_config = get_app_config('capsule_crm') 
     
