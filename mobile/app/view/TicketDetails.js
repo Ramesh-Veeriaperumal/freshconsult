@@ -41,7 +41,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
+                        '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -57,7 +57,15 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
                         '</div>',
                       '</div>',
-                      '<tpl for="notes"><div class="conversation">',
+                      '<tpl if="conversation_count &gt; 1">',
+                      '<div class="oldconvMsg">',
+                      '<div></div>',
+                      '<div><span class="msg">{[values.conversation_count-1]} old conversation(s)</span></span></div>',
+                      '<div></div>',
+                      '</div>',
+                      '</tpl>',
+                      '<tpl for="notes">',
+                        '<div class="{[xindex  == xcount ? \"conversation\" : \"conversation hide\"]}">',
                                 '<div class="thumb">',
                                         '<tpl if="user.avatar_url"><img src="{user.avatar_url}"/></tpl>',
                                         '<tpl if="!user.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
@@ -65,7 +73,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<div class="Info">',
                                 '<tpl if="!FD.current_user.is_customer"><a href="#contacts/show/{user.id}">{user.name}</a></tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
-                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
+                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
                                 '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
@@ -148,6 +156,19 @@ Ext.define("Freshdesk.view.TicketDetails", {
         }
       }
     },
+    showAllConversation : function(e,target,container){
+        Ext.defer(function(){
+            Ext.get(container).toggleCls('hide');
+            var hiddenConvs = Ext.select('.conversation.hide');
+            hiddenConvs.toggleCls('hide').hide();
+            hiddenConvs.show({
+                type:'slide',
+                direction:'down',
+                easing:'ease-in-out',
+                duration:300
+            });
+        },50);
+    },
     addActionListeners : function(container){
         var elms = container.element.select('.msg').elements,self=this;
         for(var index in elms) {
@@ -155,6 +176,16 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         tap: this.onMessageTap,
                         scope:this
                });
+        }
+
+        var oldconvMsg = Ext.select('.oldconvMsg').elements[0];
+        if(oldconvMsg){
+            Ext.get(oldconvMsg).on({
+                tap:function(e,target){
+                    this.showAllConversation.apply(this,[e,target,oldconvMsg])
+                },
+                scope:this
+            })    
         }
     },
     config: {

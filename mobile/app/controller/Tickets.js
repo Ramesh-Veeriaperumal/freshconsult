@@ -35,6 +35,8 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer = this.getTicketDetailsContainer(),
         id = resJSON.id;
         resJSON.notes = resJSON.notes || resJSON.public_notes ;
+        //removing meta source notes..
+        resJSON.notes = Ext.Array.filter(resJSON.notes,function(t){return t.source_name !== 'meta'})
         //saving in local variable ..
         this.ticket = resJSON;
         convContainer.setData(resJSON);
@@ -294,8 +296,8 @@ Ext.define('Freshdesk.controller.Tickets', {
 
 
         ticket_details = this.getConversationContainer().getData();
-        if(ticket_details.notes.length > 0){
-            cc_emails = ticket_details.cc_email.cc_emails
+        if(ticket_details.notes.length > 0) {
+            cc_emails = ticket_details.cc_email ? ticket_details.cc_email.cc_emails : [];
         }
         else {
             cc_emails = ticket_details.to_cc_emails; 

@@ -10657,6 +10657,23 @@ a {
 .ticketDetails #details ul.actions li a.trash:before {
   content: '\e729';
 }
+.ticketDetails #details .oldconvMsg {
+  padding: 10px 0px;
+}
+.ticketDetails #details .oldconvMsg > div {
+  border-top: 1px solid #AAA;
+  height: 10px;
+  text-align: center;
+}
+.ticketDetails #details .oldconvMsg > div:last-child {
+  border-bottom: 1px solid #AAA;
+}
+.ticketDetails #details .oldconvMsg > div span.msg {
+  position: relative;
+  top: -8px;
+  background: #ECECEC;
+  padding: 0px 9px;
+}
 .ticketDetails .conversation {
   padding: 0.3em 0.5em;
 }

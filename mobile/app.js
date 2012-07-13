@@ -38,6 +38,7 @@ Ext.application({
     tabletStartupScreen: 'resources/loading/Homescreen~ipad.jpg',
 
     launch: function() {
+        Ext.fly('appLoadingIndicator').destroy();
         var dashboardContainer = {
             xtype: "dashboardContainer"
         },filtersListContainer = {
