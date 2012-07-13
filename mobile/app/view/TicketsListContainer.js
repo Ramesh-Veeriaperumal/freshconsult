@@ -43,6 +43,11 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                 menuoptiontap: {
                     fn:this.onMenuOptionTap,
                     scope:this
+                },
+                updatedata: {
+                    fn:function(){
+                        console.log(arguments)
+                    }
                 }
             },
             plugins: [
@@ -61,8 +66,11 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         };
 		this.add([topToolbar,ticketsList]);
     },
+    showListLoading : function(){
+        this.items.items[1].setMasked({xtype:'mask',html:'<div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',style:'background:rgba(255,255,255,0.1)'});
+    },
     refreshListView : function(){
-        Ext.getStore("Tickets").removeAll();
+        Ext.getStore("Tickets").setData(undefined);
         Ext.getStore("Tickets").load();
     },
     moveToTrash : function(data){

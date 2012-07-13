@@ -442,8 +442,16 @@ class User < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
   
-  def avatar_url 
-    avatar.content.url unless avatar.nil?
+  def original_avatar
+    avatar_url(:original)
+  end
+
+  def medium_avatar
+    avatar_url(:medium)
+  end
+
+  def avatar_url(profile_size = :thumb)
+    avatar.content.url(profile_size) unless avatar.nil?
   end
  
   def company_name
@@ -452,7 +460,7 @@ class User < ActiveRecord::Base
 
   def to_mob_json
     options = { 
-      :methods => [ :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
+      :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
     }
     to_json options
