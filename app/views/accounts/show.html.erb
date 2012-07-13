@@ -37,12 +37,10 @@
     </div>
 	<%end-%>
 	
-  </li>	
-  <li class="inline-field">
- 	  <%= link_to t('billing_info'), subscription_url%>
-   </li>
+  </li>	  
 </ul>
 
 <div class="button-container">
 	<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+	<%= link_to t("home.index.billing"), subscription_url, :class => "uiButton special" %>
 </div>

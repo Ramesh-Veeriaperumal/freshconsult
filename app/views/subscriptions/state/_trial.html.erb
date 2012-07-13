@@ -1,10 +1,6 @@
 <li class="inline-field">
     <div class="info-highlight">
-      <%= content_tag(:h3, t('upgrade_trial'), :class => "title") %> 
-      <% if subscription.eligible_for_free_plan? %>
-        <%=t('choose_free_plan',:plan => link_to ("plan", free_subscription_url))%>
-        <br />
-      <% end %>
+      <%= content_tag(:h3, t('upgrade_trial'), :class => "title") %>       
       <% unless subscription.finished_trial? %>
         <%= t('your_trial_account') %> 
         <%= "#{t('will_expire_in')} #{pluralize(subscription.trial_days, t('day'), t('days'))}" %>.
@@ -12,8 +8,15 @@
         <%= "#{t('trial_expired_on')} #{subscription.next_renewal_at.to_s(:long_day)} " %>.
       <% end %>
       <br />
-      <%= t('select_a_plan_gain_access') %>
-    </div>
+      <%= t('select_a_plan_gain_access') %> 
+      ~ or ~
+      <% if subscription.eligible_for_free_plan? %>
+        <span class="free-plan-info">
+          <%= t('continue_using_free') %>
+          <%= link_to t('free_account'), free_subscription_url %>
+        </span>
+      <% end %>
+    </div>    
     <%= content_tag(:h3, t('select_a_plan'), :class => "title") %>
     <%= render :partial => "select_plans", :locals => { :plans => plans } %>
     <br />
