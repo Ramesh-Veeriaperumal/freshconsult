@@ -35,6 +35,8 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer = this.getTicketDetailsContainer(),
         id = resJSON.id;
         resJSON.notes = resJSON.notes || resJSON.public_notes ;
+        //removing meta source notes..
+        resJSON.notes = Ext.Array.filter(resJSON.notes,function(t){return t.source_name !== 'meta'})
         //saving in local variable ..
         this.ticket = resJSON;
         convContainer.setData(resJSON);
@@ -42,17 +44,30 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer.items.items[0].setTitle('Ticket: '+id);
         detailsContainer.ticket_id=id;
         detailsContainer.requester_id=resJSON.requester.id;
-        Ext.Viewport.animateActiveItem(detailsContainer, anim);
+        //Ext.Viewport.animateActiveItem(detailsContainer, anim);
+        detailsContainer.items.items[1].items.items[1].addActionListeners(detailsContainer);
         callBack ? callBack() : '' ;
+        if(Freshdesk.notification) {
+            var msgContainer = Ext.get("notification_msg");
+            msgContainer.setHtml('<b>'+Freshdesk.notification.success+'</b>');
+            msgContainer.toggleCls('hide');
+            Ext.defer(function(){
+                Ext.get("notification_msg").toggleCls('hide')
+            },3500);
+        }
+        Freshdesk.notification=undefined;
         delete Freshdesk.anim;
     },
     show: function(id,callBack){
         var detailsContainer = this.getTicketDetailsContainer();
         anim = Freshdesk.anim || { type: 'slide', direction: 'left' };
+        detailsContainer.items.items[0].setTitle('Ticket: '+id);
         if(Freshdesk.cancelBtn){
             Ext.Viewport.animateActiveItem(detailsContainer, anim);
         }
         else{
+            this.getConversationContainer().setData({loading:true});
+            Ext.Viewport.animateActiveItem(detailsContainer, anim);
             var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
@@ -63,7 +78,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             ajaxCallb = function(res){
                 this.renderDetails(res,callBack)
             };
-            FD.Util.ajax(ajaxOpts,ajaxCallb,this);
+            FD.Util.ajax(ajaxOpts,ajaxCallb,this,false);
         }
         Freshdesk.cancelBtn=false;
         Freshdesk.anim = undefined;
@@ -96,16 +111,15 @@ Ext.define('Freshdesk.controller.Tickets', {
             messageBox = new Ext.MessageBox({
             showAnimation: {
                 type: 'slideIn',
-                duration:200,
-                easing:'ease-out'
+                easing:'ease-in-out'
             },
             hideAnimation: {
                 type: 'slideOut',
-                duration:150,
-                easing:'ease-in'
+                easing:'ease-in-out'
             },
             title:'Close ticket',
             message: 'Do you want to update ticket status to "Close"?',
+            modal:false,
             buttons: [
                 {
                     text:'No',
@@ -119,9 +133,12 @@ Ext.define('Freshdesk.controller.Tickets', {
                 {
                     text:'Yes',
                     handler:function(){
+                        messageBox.hide();
                         var opts = { url: '/support/tickets/close_ticket/'+id },
                         callBack = function(){
-                            messageBox.hide();
+                            Freshdesk.notification={
+                                success : "The ticket has been closed."
+                            };
                             location.href="#tickets/show/"+id;
                         };
                         FD.Util.ajax(opts,callBack,this);
@@ -137,16 +154,15 @@ Ext.define('Freshdesk.controller.Tickets', {
             messageBox = new Ext.MessageBox({
             showAnimation: {
                 type: 'slideIn',
-                duration:200,
-                easing:'ease-out'
+                easing:'ease-in-out'
             },
             hideAnimation: {
                 type: 'slideOut',
-                duration:150,
-                easing:'ease-in'
+                easing:'ease-in-out'
             },
             title:'Resolve ticket',
             message: 'Do you want to update ticket status to "Resolve"?',
+            modal:false,
             buttons: [
                 {
                     text:'No',
@@ -160,6 +176,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                 {
                     text:'Yes',
                     handler:function(){
+                        messageBox.hide();
                         var opts = {
                             url: '/helpdesk/tickets/update/'+id,
                             method:'POST',
@@ -171,7 +188,9 @@ Ext.define('Freshdesk.controller.Tickets', {
                             }
                         },
                         callBack = function(){
-                            messageBox.hide();
+                            Freshdesk.notification={
+                                success : "The ticket has been resolved."
+                            };
                             location.href="#tickets/show/"+id;
                         };
                         FD.Util.ajax(opts,callBack,this);
@@ -187,16 +206,15 @@ Ext.define('Freshdesk.controller.Tickets', {
             messageBox = new Ext.MessageBox({
             showAnimation: {
                 type: 'slideIn',
-                duration:200,
-                easing:'ease-out'
+                easing:'ease-in-out'
             },
             hideAnimation: {
                 type: 'slideOut',
-                duration:150,
-                easing:'ease-in'
+                easing:'ease-in-out'
             },
             title: 'Delete Ticket',
             message: 'Do you want to delete this ticket (#'+id+')?',
+            modal:false,
             buttons: [
                 {
                     text:'No',
@@ -210,6 +228,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                 {
                     text:'Yes',
                     handler:function(){
+                        messageBox.hide();
                         var opts = {
                            url: '/helpdesk/tickets/'+id,
                             params:{
@@ -221,7 +240,9 @@ Ext.define('Freshdesk.controller.Tickets', {
                             } 
                         },
                         callBack = function(){
-                            messageBox.hide();
+                            Freshdesk.notification={
+                                success : "The ticket has been deleted."
+                            };
                             location.href="#tickets/show/"+id;
                         };
                         FD.Util.ajax(opts,callBack,this);
@@ -244,10 +265,14 @@ Ext.define('Freshdesk.controller.Tickets', {
     initReplyForm : function(id){
         var replyForm = this.getTicketReply(),reply_emails = [],
         formObj = replyForm.items.items[1],
-        fieldSetObj = formObj.items.items[0];
+        fieldSetObj = formObj.items.items[0],
+        cc_emails,bcc_emails;
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
 
+
+        
+        fieldSetObj.items.items[6].setLabel('Cc/Bcc :');
         fieldSetObj.items.items[6].reset();
         fieldSetObj.items.items[7].setHidden(true).reset();
         fieldSetObj.items.items[8].reset();
@@ -268,6 +293,22 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj.items.items[1].setValue(this.ticket.requester.email).show();
         //setting canned response and solution href
         fieldSetObj.items.items[8].setData({id:id});
+
+
+        ticket_details = this.getConversationContainer().getData();
+        if(ticket_details.notes.length > 0) {
+            cc_emails = ticket_details.cc_email ? ticket_details.cc_email.cc_emails : [];
+        }
+        else {
+            cc_emails = ticket_details.to_cc_emails; 
+        } 
+        cc_emails = cc_emails && cc_emails.join(',')
+
+        if(cc_emails){
+            fieldSetObj.items.items[6].setLabel('Cc :');
+            fieldSetObj.items.items[7].setHidden(false);
+        }
+        fieldSetObj.items.items[6].setValue(cc_emails)
 
         //setting the url 
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');

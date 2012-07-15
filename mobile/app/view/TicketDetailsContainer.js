@@ -159,10 +159,12 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         this.getItems().items[0].getItems().items[2].getItems().items[1].disable();
     },
     backToListView: function(){
-        Freshdesk.backBtn=true;
         var ticketListContainer = Ext.ComponentQuery.query('#ticketListContainer')[0],
         type = ticketListContainer.filter_type || 'filter',
         id = ticketListContainer.filter_id || 'all_tickets';
+        if(ticketListContainer.filter_type){
+            Freshdesk.backBtn=true;
+        }
         location.href="#filters/"+type+"/"+id;
     },
     updateProperties : function(){

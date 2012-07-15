@@ -15,18 +15,15 @@ Ext.define('Freshdesk.controller.Filters', {
             contactsListContainer:"contactsListContainer"
     	}
     },
-    load_company_tickets : function(type,id){
-        console.log(type,id);
-        FD.Util.check_user();
-        type = type || 'filter';
-        id  = id || 'all_tickets';
-        Ext.getStore("Tickets").currentPage=1;
-        Ext.getStore("Tickets").removeAll();
-        url = '/support/company_tickets/'+type+'/'+id ;
-        Ext.getStore("Tickets").getProxy()._url=url;
-        Ext.getStore("Tickets").load();
+    load_tickets : function(type,id){
         var ticketsListContainer = this.getTicketsListContainer(),
         anim = Freshdesk.backBtn ? this.slideRightTransition : Freshdesk.cancelBtn ? {type:'cover',direction:'down'} : this.slideLeftTransition;
+        if(!Freshdesk.backBtn) {
+            Ext.getStore("Tickets").currentPage=1;
+            Ext.getStore("Tickets").setData(undefined);
+            ticketsListContainer.showListLoading();
+            Ext.getStore("Tickets").load();
+        }
         Ext.Viewport.animateActiveItem(ticketsListContainer, anim);
         //setting header for tickets
         ticketsListContainer.setHeaderTitle(this.getFiltersListContainer().filter_title);
@@ -35,26 +32,24 @@ Ext.define('Freshdesk.controller.Filters', {
         Freshdesk.cancelBtn = false;
         ticketsListContainer.filter_type=type;
         ticketsListContainer.filter_id=id;
+
+    },
+    load_company_tickets : function(type,id){
+        console.log(type,id);
+        FD.Util.check_user();
+        type = type || 'filter';
+        id  = id || 'all_tickets';
+        url = '/support/company_tickets/'+type+'/'+id ;
+        Ext.getStore("Tickets").getProxy()._url=url;
+        this.load_tickets(type,id);
     },
     loadFilter:function(type,id){
         FD.Util.check_user();
         type = type || 'filter';
         id  = id || 'all_tickets';
-        Ext.getStore("Tickets").currentPage=1;
-        Ext.getStore("Tickets").removeAll();
         url = FD.current_user.is_customer ? '/support/tickets/'+type+'/'+id : '/helpdesk/tickets/'+type+'/'+id ;
         Ext.getStore("Tickets").getProxy()._url=url;
-    	Ext.getStore("Tickets").load();
-    	var ticketsListContainer = this.getTicketsListContainer(),
-        anim = Freshdesk.backBtn ? this.slideRightTransition : Freshdesk.cancelBtn ? {type:'cover',direction:'down'} : this.slideLeftTransition;
-		Ext.Viewport.animateActiveItem(ticketsListContainer, anim);
-        //setting header for tickets
-        ticketsListContainer.setHeaderTitle(this.getFiltersListContainer().filter_title);
-        //clearing the previous animations if any
-        Freshdesk.backBtn=false;
-        Freshdesk.cancelBtn = false;
-        ticketsListContainer.filter_type=type;
-        ticketsListContainer.filter_id=id;
+    	this.load_tickets(type,id);
     },
     launch: function () {
         this.callParent();

@@ -8852,40 +8852,40 @@ input[type="search"]::-webkit-search-cancel-button {
   content: " ";
 }
 .x-loading-spinner > span.x-loading-top {
-  background-color: rgba(240, 240, 240, 0.99);
+  background-color: rgba(170, 170, 170, 0.99);
 }
 .x-loading-spinner > span.x-loading-top::after {
-  background-color: rgba(240, 240, 240, 0.9);
+  background-color: rgba(170, 170, 170, 0.9);
 }
 .x-loading-spinner > span.x-loading-left::before {
-  background-color: rgba(240, 240, 240, 0.8);
+  background-color: rgba(170, 170, 170, 0.8);
 }
 .x-loading-spinner > span.x-loading-left {
-  background-color: rgba(240, 240, 240, 0.7);
+  background-color: rgba(170, 170, 170, 0.7);
 }
 .x-loading-spinner > span.x-loading-left::after {
-  background-color: rgba(240, 240, 240, 0.6);
+  background-color: rgba(170, 170, 170, 0.6);
 }
 .x-loading-spinner > span.x-loading-bottom::before {
-  background-color: rgba(240, 240, 240, 0.5);
+  background-color: rgba(170, 170, 170, 0.5);
 }
 .x-loading-spinner > span.x-loading-bottom {
-  background-color: rgba(240, 240, 240, 0.4);
+  background-color: rgba(170, 170, 170, 0.4);
 }
 .x-loading-spinner > span.x-loading-bottom::after {
-  background-color: rgba(240, 240, 240, 0.35);
+  background-color: rgba(170, 170, 170, 0.35);
 }
 .x-loading-spinner > span.x-loading-right::before {
-  background-color: rgba(240, 240, 240, 0.3);
+  background-color: rgba(170, 170, 170, 0.3);
 }
 .x-loading-spinner > span.x-loading-right {
-  background-color: rgba(240, 240, 240, 0.25);
+  background-color: rgba(170, 170, 170, 0.25);
 }
 .x-loading-spinner > span.x-loading-right::after {
-  background-color: rgba(240, 240, 240, 0.2);
+  background-color: rgba(170, 170, 170, 0.2);
 }
 .x-loading-spinner > span.x-loading-top::before {
-  background-color: rgba(240, 240, 240, 0.15);
+  background-color: rgba(170, 170, 170, 0.15);
 }
 
 .x-loading-spinner > span {
@@ -10126,10 +10126,6 @@ x-button-forward::before, .x-toolbar .x-button-forward::before {
   display: none;
 }
 
-.x-loading-spinner {
-  display: none;
-}
-
 /*hack for sencha styles ends*/
 .empty-list-text {
   padding: 60px 0;
@@ -10896,6 +10892,23 @@ a {
 }
 .ticketDetails #details ul.actions li a.trash:before {
   content: '\e729';
+}
+.ticketDetails #details .oldconvMsg {
+  padding: 10px 0px;
+}
+.ticketDetails #details .oldconvMsg > div {
+  border-top: 1px solid #AAA;
+  height: 10px;
+  text-align: center;
+}
+.ticketDetails #details .oldconvMsg > div:last-child {
+  border-bottom: 1px solid #AAA;
+}
+.ticketDetails #details .oldconvMsg > div span.msg {
+  position: relative;
+  top: -8px;
+  background: #ECECEC;
+  padding: 0px 9px;
 }
 .ticketDetails .conversation {
   padding: 0.3em 0.5em;

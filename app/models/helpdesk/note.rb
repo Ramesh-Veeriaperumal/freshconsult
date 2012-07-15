@@ -125,6 +125,10 @@ class Helpdesk::Note < ActiveRecord::Base
     super options
   end
 
+  def source_name
+    SOURCES[source]
+  end
+
   def body_mobile
     body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
       body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))

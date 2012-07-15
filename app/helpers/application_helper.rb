@@ -516,7 +516,7 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless display_tag? (element,field,field_value)
+    content_tag :li, element unless display_tag?(element,field,field_value)
   end
 
   def display_tag? (element, field, field_value)
