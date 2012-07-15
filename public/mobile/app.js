@@ -29758,7 +29758,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                                                     '<tpl else>Unassigned</tpl>',
                                             '&nbsp;{helpdesk_ticket.updated_at:this.time_in_words}</div>',
                                     '</div>',
-                                    '<div class="disclose">&nbsp;</div>',
+                                    '<div class="disclose icon-arrow-right">&nbsp;</div>',
                         '</div></a>',
                     '</li>',
                 '</tpl>',
@@ -29817,7 +29817,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</div>',
                                 '<div class="attachments">',
                                         '<tpl for="attachments">',
-                                                '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
+                                                '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose icon-arrow-right">&nbsp;</span></a>',
                                         '</tpl>',
                                 '</div>',
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
@@ -29839,7 +29839,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose icon-arrow-right">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
@@ -29851,7 +29851,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div class="attachments">',
                                                 '<tpl for="attachments">',
-                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
+                                                        '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose icon-arrow-right">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
@@ -29906,6 +29906,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
       var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
       if(toggleId){
         Ext.get(toggleId).toggleCls('ellipsis');
+        Ext.get(toggleId).toggleCls('expand');
         Ext.get('loadmore_'+toggleId).toggleCls('hide');
       }
     },
@@ -45536,7 +45537,7 @@ Ext.define("Freshdesk.view.FiltersList", {
         itemTpl: ['<tpl if="count &gt; 0"><div class="list-item-title"></tpl><tpl if="count == 0"><div class="list-item-title disabled"></tpl>',
                     '<div class="name">{name}</div>',
         			'<div class="count"><div>{count}</div></div>',
-                    '<div class="disclose"></div>',
+                    '<div class="disclose icon-arrow-right"></div>',
         		   '</div>'].join(''),
         loadingText: false
     }
@@ -45564,7 +45565,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                         '<tpl else>No agent assigned,</tpl>',
                                 '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
-                        '<div class="disclose">&nbsp;</div>',
+                        '<div class="disclose icon-arrow-right">&nbsp;</div>',
         	'</div></tpl>'].join(''),
                 {
                         time_in_words : function(item){

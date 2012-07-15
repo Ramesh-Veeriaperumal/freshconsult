@@ -9799,6 +9799,162 @@ input[type="search"]::-webkit-search-cancel-button {
   content: "\e006";
 }
 
+.icon-untitled:before {
+  content: "\f003";
+}
+
+.icon-untitled-2:before {
+  content: "\f00c";
+}
+
+.icon-untitled-3:before {
+  content: "\f039";
+}
+
+.icon-untitled-4:before {
+  content: "\f053";
+}
+
+.icon-untitled-5:before {
+  content: "\f054";
+}
+
+.icon-untitled-6:before {
+  content: "\f064";
+}
+
+.icon-untitled-7:before {
+  content: "\f095";
+}
+
+.icon-untitled-8:before {
+  content: "\f098";
+}
+
+.icon-untitled-9:before {
+  content: "\f099";
+}
+
+.icon-untitled-10:before {
+  content: "\f09a";
+}
+
+.icon-untitled-11:before {
+  content: "\e007";
+}
+
+.icon-untitled-12:before {
+  content: "\e008";
+}
+
+.icon-untitled-13:before {
+  content: "\e009";
+}
+
+.icon-untitled-14:before {
+  content: "\e00a";
+}
+
+.icon-untitled-15:before {
+  content: "\e00b";
+}
+
+.icon-untitled-16:before {
+  content: "\e00c";
+}
+
+.icon-untitled-17:before {
+  content: "\e00d";
+}
+
+.icon-untitled-18:before {
+  content: "\e00e";
+}
+
+.icon-search-2:before {
+  content: "\e00f";
+}
+
+.icon-close-2:before {
+  content: "\e010";
+}
+
+.icon-home-2:before {
+  content: "\e011";
+}
+
+.icon-home-3:before {
+  content: "\e012";
+}
+
+.icon-home-4:before {
+  content: "\e013";
+}
+
+.icon-copy:before {
+  content: "\e014";
+}
+
+.icon-new:before {
+  content: "\e015";
+}
+
+.icon-comments-3:before {
+  content: "\e016";
+}
+
+.icon-reply-2:before {
+  content: "\e017";
+}
+
+.icon-clipboard:before {
+  content: "\e018";
+}
+
+.icon-clipboard-2:before {
+  content: "\e019";
+}
+
+.icon-bookmark-2:before {
+  content: "\e01a";
+}
+
+.icon-bookmark-3:before {
+  content: "\e01b";
+}
+
+.icon-plus-2:before {
+  content: "\e01c";
+}
+
+.icon-camera:before {
+  content: "\e01d";
+}
+
+.icon-creative-commons:before {
+  content: "\e01e";
+}
+
+.icon-libreoffice:before {
+  content: "\e01f";
+}
+
+.icon-envelope:before {
+  content: "\e020";
+}
+
+.icon-locked-3:before {
+  content: "\e021";
+}
+
+.icon-pencil-2:before {
+  content: "\e022";
+}
+
+.icon-untitled-19:before {
+  content: "\f011";
+}
+
 @font-face {
   font-family: 'fontello';
   src: url("../icons/fontello.eot");
@@ -9881,8 +10037,12 @@ input, textarea, select {
 
 /*hack for sencha styles starts*/
 .x-body {
-  background-image: url("../images/bg.png");
   text-shadow: white 1px 1px 0;
+}
+
+.x-layout-card-item, .x-scroll-bar-grid-wrapper {
+  background-image: url("../images/bg.png");
+  border-radius: 9px;
 }
 
 .x-button-headerBtn span.info {
@@ -9986,18 +10146,12 @@ a {
 
 .disclose {
   overflow: hidden;
-  /* -webkit-mask: 0 0 url('../images/arrow.png') no-repeat; 
-  background: #4b5768	;*/
   position: absolute;
   width: 15px;
   height: 20px;
   right: 10px;
-  font-family: fontello;
-  font-size: 16px;
-  bottom: 20%;
-}
-.disclose:before {
-  content: '\e816';
+  font-size: 14px;
+  bottom: 22%;
 }
 
 .views .list-item-title div.count {
@@ -10038,6 +10192,9 @@ a {
   font-size: 0.9em;
   text-shadow: #cccccc 1px 1px 0;
 }
+.views .list-item-title.disabled div.count > div {
+  background: rgba(196, 196, 196, 0.3);
+}
 .views .list-item-title.disabled div.name {
   color: #aba9a9;
   font-size: 16px;
@@ -10077,6 +10234,23 @@ a {
   box-shadow: white 1px 2px;
 }
 
+.x-list .x-list-item .x-list-item-label .bullet {
+  margin: 9px;
+}
+
+.x-list .x-list-item.x-item-selected .x-list-item-label {
+  background: url("../images/activebg.png");
+  text-shadow: -1px -1px 0 #393939;
+  color: white;
+}
+.x-list .x-list-item.x-item-selected .x-list-item-label .bullet {
+  margin: 0;
+}
+.x-list .x-list-item.x-item-selected .x-list-item-label .bullet:before {
+  font-family: 'Freshdesk';
+  content: "\5f";
+}
+
 .ticketsList .x-list-item-label {
   padding: 0 0 0 0 !important;
 }
@@ -10098,7 +10272,7 @@ a {
   display: inline-block;
 }
 .ticketsList .ticket-item > div.disclose {
-  bottom: 35%;
+  bottom: 30%;
 }
 .ticketsList .ticket-item > div:first-child {
   z-index: 100;
@@ -10469,6 +10643,68 @@ a {
   text-shadow: #86afe6 0 0 20px;
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
   box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
+}
+
+.x-docking-vertical {
+  box-shadow: 0 0 20px #666;
+}
+.x-docking-vertical .x-picker-mask {
+  box-shadow: inset 0 0px 30px #666;
+  border-radius: 7px;
+}
+.x-docking-vertical .x-toolbar .x-button.x-button-action {
+  background-color: #484848;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #6e6e6e), color-stop(50%, #555555), color-stop(51%, #484848), color-stop(100%, #3b3b3b));
+  background-image: -webkit-linear-gradient(top, #6e6e6e, #555555 50%, #484848 51%, #3b3b3b);
+  background-image: linear-gradient(top, #6e6e6e, #555555 50%, #484848 51%, #3b3b3b);
+  border: 1px solid #151515;
+  border-top-color: #222;
+  box-shadow: 1px 1px 0 #B8C9E0;
+}
+.x-docking-vertical .x-toolbar .x-button.x-button-action.x-button-pressing {
+  background-image: none;
+  background-color: #404040;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #272727), color-stop(10%, #343434), color-stop(65%, #404040), color-stop(100%, #424242));
+  background-image: -webkit-linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
+  background-image: linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
+}
+.x-docking-vertical .x-toolbar .x-button.x-button-normal {
+  background: #9bbff1;
+  /* Old browsers */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #9bbff1), color-stop(51%, #4977b4), color-stop(52%, #436ba7), color-stop(100%, #375075));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #9bbff1 0%, #4977b4 51%, #436ba7 52%, #375075 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #9bbff1 0%, #4977b4 51%, #436ba7 52%, #375075 100%);
+  /* Opera 11.10+ */
+  background: linear-gradient(to bottom, #9bbff1 0%, #4977b4 51%, #436ba7 52%, #375075 100%);
+  /* W3C */
+  box-shadow: 1px 1px 0 #B8C9E0;
+  border: 1px solid #151515;
+  border-top-color: #222;
+}
+.x-docking-vertical .x-toolbar .x-button.x-button-normal.x-button-pressing {
+  background-image: none;
+  background-color: #404040;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #272727), color-stop(10%, #343434), color-stop(65%, #404040), color-stop(100%, #424242));
+  background-image: -webkit-linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
+  background-image: linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
+}
+
+.x-button.x-button-headerBtn, .x-button.x-button-headerBtn.x-button-back::after, .x-button.x-button-headerBtn.x-button-forward::after, .x-toolbar .x-button.x-button-headerBtn, .x-toolbar .x-button.x-button-headerBtn.x-button-back::after, .x-toolbar .x-button.x-button-headerBtn.x-button-forward::after, .x-button.x-button-headerBtn-round, .x-button.x-button-headerBtn-round.x-button-back::after, .x-button.x-button-headerBtn-round.x-button-forward::after, .x-toolbar .x-button.x-button-headerBtn-round, .x-toolbar .x-button.x-button-headerBtn-round.x-button-back::after, .x-toolbar .x-button.x-button-headerBtn-round.x-button-forward::after, .x-button.x-button-headerBtn-small, .x-button.x-button-headerBtn-small.x-button-back::after, .x-button.x-button-headerBtn-small.x-button-forward::after, .x-toolbar .x-button.x-button-headerBtn-small, .x-toolbar .x-button.x-button-headerBtn-small.x-button-back::after, .x-toolbar .x-button.x-button-headerBtn-small.x-button-forward::after {
+  background: #9bbff1;
+  /* Old browsers */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #9bbff1), color-stop(51%, #4977b4), color-stop(52%, #436ba7), color-stop(100%, #375075));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #9bbff1 0%, #4977b4 51%, #436ba7 52%, #375075 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #9bbff1 0%, #4977b4 51%, #436ba7 52%, #375075 100%);
+  /* Opera 11.10+ */
+  background: linear-gradient(to bottom, #9bbff1 0%, #4977b4 51%, #436ba7 52%, #375075 100%);
+  /* W3C */
+  border: 1px solid #151515;
+  border-top-color: #222;
+  box-shadow: 1px 1px 0 #B8C9E0;
 }
 
 .x-button.x-button-action, .x-button.x-button-action.x-button-back::after, .x-button.x-button-action.x-button-forward::after, .x-toolbar .x-button.x-button-action, .x-toolbar .x-button.x-button-action.x-button-back::after, .x-toolbar .x-button.x-button-action.x-button-forward::after, .x-button.x-button-action-round, .x-button.x-button-action-round.x-button-back::after, .x-button.x-button-action-round.x-button-forward::after, .x-toolbar .x-button.x-button-action-round, .x-toolbar .x-button.x-button-action-round.x-button-back::after, .x-toolbar .x-button.x-button-action-round.x-button-forward::after, .x-button.x-button-action-small, .x-button.x-button-action-small.x-button-back::after, .x-button.x-button-action-small.x-button-forward::after, .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-action-small.x-button-back::after, .x-toolbar .x-button.x-button-action-small.x-button-forward::after {
@@ -10905,7 +11141,7 @@ a {
   display: block;
   text-decoration: none;
   font-family: 'fontello';
-  color: #666;
+  color: #1272DE;
   text-align: center;
   text-shadow: white 1px 1px 0;
   speak: none;
