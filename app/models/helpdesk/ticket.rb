@@ -909,7 +909,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     options = {
       :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
-      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails, :conversation_count ],
+      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails, :conversation_count, :selected_reply_email ],
       :include => json_inlcude
     }
     to_json(options,false) 
