@@ -874,27 +874,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def to_mob_json(only_public_notes=false)
     notes_option = {
-      :only => [:created_at,:user_id,:id ],
+      :only => [:created_at, :user_id, :id ],
       :include => {
         :user => {
-          :only => [:name,:email,:id],
-          :methods => [:avatar_url]
+          :only => [:name, :email, :id],
+          :methods => [:avatar_url, :is_agent, :is_customer]
         },
         :attachments => {
           :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
         }
       },
-      :methods => [:body_mobile, :source_name]
+      :methods => [ :body_mobile, :source_name ]
     }
 
     json_inlcude = {
       :responder => {
-        :only => [:name,:email,:id],
-        :methods => [:avatar_url]
+        :only => [ :name, :email, :id ],
+        :methods => [ :avatar_url ]
       },
       :requester => {
-        :only => [:name,:email,:id],
-        :methods => [:avatar_url]
+        :only => [ :name, :email, :id, :is_agent, :is_customer ],
+        :methods => [ :avatar_url ]
       },
       :attachments => {
         :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
@@ -908,8 +908,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     options = {
-      :only => [:id,:display_id,:subject,:description,:description_html,:deleted,:spam,:cc_email,:due_by,:created_at,:updated_at],
-      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name,:is_closed,:to_cc_emails, :conversation_count ],
+      :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
+      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails, :conversation_count ],
       :include => json_inlcude
     }
     to_json(options,false) 

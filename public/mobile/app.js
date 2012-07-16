@@ -25102,6 +25102,361 @@ Ext.define('Ext.Spacer', {
 });
 
 /**
+ * Provides a base class for audio/visual controls. Should not be used directly.
+ *
+ * Please see the {@link Ext.Audio} and {@link Ext.Video} classes for more information.
+ * @private
+ */
+Ext.define('Ext.Media', {
+    extend: 'Ext.Component',
+    xtype: 'media',
+
+    /**
+     * @event play
+     * Fires whenever the media is played
+     * @param {Ext.Media} this
+     */
+
+    /**
+     * @event pause
+     * Fires whenever the media is paused
+     * @param {Ext.Media} this
+     * @param {Number} time The time at which the media was paused at in seconds
+     */
+
+    /**
+     * @event ended
+     * Fires whenever the media playback has ended
+     * @param {Ext.Media} this
+     * @param {Number} time The time at which the media ended at in seconds
+     */
+
+    /**
+     * @event stop
+     * Fires whenever the media is stopped.
+     * The pause event will also fire after the stop event if the media is currently playing.
+     * The timeupdate event will also fire after the stop event regardless of playing status.
+     * @param {Ext.Media} this
+     */
+
+    /**
+     * @event volumechange
+     * Fires whenever the volume is changed
+     * @param {Ext.Media} this
+     * @param {Number} volume The volume level from 0 to 1
+     */
+
+    /**
+     * @event mutedchange
+     * Fires whenever the muted status is changed.
+     * The volumechange event will also fire after the mutedchange event fires.
+     * @param {Ext.Media} this
+     * @param {Boolean} muted The muted status
+     */
+
+    /**
+     * @event timeupdate
+     * Fires when the media is playing every 15 to 250ms.
+     * @param {Ext.Media} this
+     * @param {Number} time The current time in seconds
+     */
+
+    config: {
+        /**
+         * @cfg {String} url
+         * Location of the media to play.
+         * @accessor
+         */
+        url: '',
+
+        /**
+         * @cfg {Boolean} enableControls
+         * Set this to false to turn off the native media controls.
+         * Defaults to false when you are on Android, as it doesnt support controls.
+         * @accessor
+         */
+        enableControls: Ext.os.is.Android ? false : true,
+
+        /**
+         * @cfg {Boolean} autoResume
+         * Will automatically start playing the media when the container is activated.
+         * @accessor
+         */
+        autoResume: false,
+
+        /**
+         * @cfg {Boolean} autoPause
+         * Will automatically pause the media when the container is deactivated.
+         * @accessor
+         */
+        autoPause: true,
+
+        /**
+         * @cfg {Boolean} preload
+         * Will begin preloading the media immediately.
+         * @accessor
+         */
+        preload: true,
+
+        /**
+         * @cfg {Boolean} loop
+         * Will loop the media forever.
+         * @accessor
+         */
+        loop: false,
+
+        /**
+         * @cfg {Ext.Element} media
+         * A reference to the underlying audio/video element.
+         * @accessor
+         */
+        media: null,
+
+        /**
+         * @cfg {Number} volume
+         * The volume of the media from 0.0 to 1.0. Default is 1.
+         * @accessor
+         */
+        volume: 1,
+
+        /**
+         * @cfg {Boolean} muted
+         * Whether or not the media is muted. This will also set the volume to zero. Default is false.
+         * @accessor
+         */
+        muted: false
+    },
+
+    initialize: function() {
+        var me = this;
+        me.callParent();
+
+        me.on({
+            scope: me,
+
+            activate  : me.onActivate,
+            deactivate: me.onDeactivate
+        });
+
+        me.addMediaListener({
+            canplay      : 'onCanPlay',
+            play         : 'onPlay',
+            pause        : 'onPause',
+            ended        : 'onEnd',
+            volumechange : 'onVolumeChange',
+            timeupdate   : 'onTimeUpdate'
+        });
+    },
+
+    addMediaListener: function(event, fn) {
+        var me   = this,
+            dom  = me.media.dom,
+            bind = Ext.Function.bind;
+
+        if (!Ext.isObject(event)) {
+            var oldEvent = event;
+            event = {};
+            event[oldEvent] = fn;
+        }
+
+        Ext.Object.each(event, function(e, fn) {
+            if (typeof fn !== 'function') {
+                fn = me[fn];
+            }
+
+            if (typeof fn == 'function') {
+                fn = bind(fn, me);
+
+                dom.addEventListener(e, fn);
+            }
+        });
+    },
+
+    onPlay: function() {
+        this.fireEvent('play', this);
+    },
+
+    onCanPlay: function() {
+        this.fireEvent('canplay', this);
+    },
+
+    onPause: function() {
+        this.fireEvent('pause', this, this.getCurrentTime());
+    },
+
+    onEnd: function() {
+        this.fireEvent('ended', this, this.getCurrentTime());
+    },
+
+    onVolumeChange: function() {
+        this.fireEvent('volumechange', this, this.media.dom.volume);
+    },
+
+    onTimeUpdate: function() {
+        this.fireEvent('timeupdate', this, this.getCurrentTime());
+    },
+
+    /**
+     * Returns if the media is currently playing
+     * @return {Boolean} playing True if the media is playing
+     */
+    isPlaying: function() {
+        return !Boolean(this.media.dom.paused);
+    },
+
+    // @private
+    onActivate: function() {
+        var me = this;
+
+        if (me.getAutoResume() && !me.isPlaying()) {
+            me.play();
+        }
+    },
+
+    // @private
+    onDeactivate: function() {
+        var me = this;
+
+        if (me.getAutoResume() && me.isPlaying()) {
+            me.pause();
+        }
+    },
+
+    /**
+     * Sets the URL of the media element. If the media element already exists, it is update the src attribute of the
+     * element. If it is currently playing, it will start the new video.
+     */
+    updateUrl: function(newUrl) {
+        var dom = this.media.dom;
+
+        //when changing the src, we must call load:
+        //http://developer.apple.com/library/safari/#documentation/AudioVideo/Conceptual/Using_HTML5_Audio_Video/ControllingMediaWithJavaScript/ControllingMediaWithJavaScript.html
+
+        dom.src = newUrl;
+
+        if ('load' in dom) {
+            dom.load();
+        }
+
+        if (this.isPlaying()) {
+            this.play();
+        }
+    },
+
+    /**
+     * Updates the controls of the video element.
+     */
+    updateEnableControls: function(enableControls) {
+        this.media.dom.controls = enableControls ? 'controls' : false;
+    },
+
+    /**
+     * Updates the loop setting of the media element.
+     */
+    updateLoop: function(loop) {
+        this.media.dom.loop = loop ? 'loop' : false;
+    },
+
+    /**
+     * Starts or resumes media playback
+     */
+    play: function() {
+        var dom = this.media.dom;
+
+        if ('play' in dom) {
+            dom.play();
+            setTimeout(function() {
+                dom.play();
+            }, 10);
+        }
+    },
+
+    /**
+     * Pauses media playback
+     */
+    pause: function() {
+        var dom = this.media.dom;
+
+        if ('pause' in dom) {
+            dom.pause();
+        }
+    },
+
+    /**
+     * Toggles the media playback state
+     */
+    toggle: function() {
+        if (this.isPlaying()) {
+            this.pause();
+        } else {
+            this.play();
+        }
+    },
+
+    /**
+     * Stops media playback and returns to the beginning
+     */
+    stop: function() {
+        var me = this;
+
+        me.setCurrentTime(0);
+        me.fireEvent('stop', me);
+        me.pause();
+    },
+
+    //@private
+    updateVolume: function(volume) {
+        this.media.dom.volume = volume;
+    },
+
+    //@private
+    updateMuted: function(muted) {
+        this.fireEvent('mutedchange', this, muted);
+
+        this.media.dom.muted = muted;
+    },
+
+    /**
+     * Returns the current time of the media in seconds;
+     */
+    getCurrentTime: function() {
+        return this.media.dom.currentTime;
+    },
+
+    /*
+     * Set the current time of the media.
+     * @param {Number} time The time in seconds
+     */
+    setCurrentTime: function(time) {
+        this.media.dom.currentTime = time;
+
+        return time;
+    },
+
+    /**
+     * Returns the duration of the media in seconds;
+     */
+    getDuration: function() {
+        return this.media.dom.duration;
+    },
+
+    destroy: function() {
+        var me = this;
+        Ext.Object.each(event, function(e, fn) {
+            if (typeof fn !== 'function') {
+                fn = me[fn];
+            }
+
+            if (typeof fn == 'function') {
+                fn = bind(fn, me);
+
+                dom.removeEventListener(e, fn);
+            }
+        });
+    }
+});
+
+/**
  * @class Ext.util.LineSegment
  *
  * Utility class that represents a line segment, constructed by two {@link Ext.util.Point}
@@ -26652,419 +27007,6 @@ Ext.anims = {
     })
 };
 
-Ext.define('plugin.ux.SwipeOptions', {
-    extend: 'Ext.Component',
-    alias: 'swipeOptions',
-    requires: ['Ext.Anim'],
-    config: {
-
-        /**
-         * Selector to use to get the dynamically created List Options Ext.Element (where the menu options are held)
-         * Once created the List Options element will be used again and again.
-         */
-        optionsSelector: 'x-list-options',
-
-        /**
-         * An array of objects to be applied to the 'listOptionsTpl' to create the 
-         * menu
-         */
-        menuOptions: [],
-        
-        /**
-         * Selector to use to get individual List Options within the created Ext.Element
-         * This is used when attaching event handlers to the menu options
-         */
-        menuOptionSelector: 'x-menu-option',
-        
-        /**
-         * XTemplate to use to create the List Options view
-         */
-        menuOptionsTpl: new Ext.XTemplate(  '<ul>',
-                                                '<tpl for=".">',                                            
-                                                    '<li class="x-menu-option {cls}">',
-                                                    '</li>',
-                                                '</tpl>',
-                                            '</ul>').compile(),
-                                    
-        /**
-         * CSS Class that is applied to the tapped Menu Option while it is being touched
-         */     
-        menuOptionPressedClass: 'x-menu-option-pressed',
-        
-        /**
-         * Set to a function that takes in 2 arguments - your initial 'menuOptions' config option and the current 
-         * item's Model instance
-         * The function must return either the original 'menuOptions' variable or a revised one
-         */
-        menuOptionDataFilter: null,
-        
-        /**
-         * Animation used to reveal the List Options
-         */
-        revealAnimation: {
-            reverse: false,
-            type: 'slide',
-            duration: 500
-        },
-        
-        /**
-         * The direction the List Item will slide to reveal the List Options
-         * Possible values: 'left', 'right' and 'both'
-         * setting to 'both' means it will be decided by the direction of the User's swipe if 'triggerEvent' is set to 'itemswipe'
-         */
-        revealDirection: 'both',
-        
-        /**
-         * Distance (in pixels) a User must swipe before triggering the List Options to be displayed.
-         * Set to -1 to disable threshold checks
-         */
-        swipeThreshold: 30,
-        
-        /**
-         * The direction the user must swipe to reveal the menu
-         * Only applicable when 'triggerEvent' is set to 'itemswipe'
-         */
-        swipeDirection: 'both',
-        
-        /**
-         * Decides whether multiple List Options can be visible at once
-         */
-        allowMultiple: false,
-        
-        /**
-         * Decides whether sound effects are played as List Options open
-         * Defaults to false.
-         */
-        enableSoundEffects: false,
-        
-        openSoundEffectURL: 'sounds/open.wav',
-        
-        closeSoundEffectURL: 'sounds/close.wav',
-
-        /**
-        * Decides whether to stop scroll for list on list options visible
-        * Defaults to false
-        */
-        stopScrollOnShow : false
-    
-    },
-
-    initialize: function() {
-        this.callParent();
-    },
-
-    init: function(list) {
-        var self = this;
-        self.list = list;
-        list.on('itemswipe',self.onItemSwipe,self);
-    },
-
-    onItemSwipe : function(list, index, target, record, evt, options , eOpts){
-        // check we're over the 'swipethreshold'
-        if(this.revealAllowed(evt)){
-            // set the direction of the reveal
-            this.setRevealDir(evt.direction);
-
-            // cache the current List Item's elements for easy use later
-            this.activeListItemRecord = list.getStore().getAt(index);
-            
-            var activeEl = Ext.get(target);
-
-            this.activeListElement = activeEl;        
-            
-            activeEl.setVisibilityMode(Ext.Element.VISIBILITY);
-
-            this.activeItemRecord = record;
-            // Show the item's List Options
-            this.doShowOptionsMenu(activeEl);
-        }
-    },
-
-    /**
-     * Decide whether the List Options are allowed to be revealed based on the config options
-     * Only relevant for 'itemswipe' event because this event has all the config options
-     * @param {Object} event
-     */
-    revealAllowed: function(evt){
-        var direction = evt.direction,
-            distance = evt.distance,
-            allowed = false,
-            swipeThreshold = this.getSwipeThreshold(),
-            swipeDirection = this.getSwipeDirection();
-        allowed =  (distance >= swipeThreshold && (direction === swipeDirection || swipeDirection === 'both')) || swipeThreshold < 0 ;
-        return allowed;
-    },
-
-    /**
-     * Decide the direction the reveal animation will go
-     * this.revealDirection config can only be 'both' when triggerEvent is 'itemswipe' in which case
-     * the direction of the swipe is used
-     * @param {Object} direction
-     */
-    setRevealDir: function(direction){
-        var dir = this.getRevealDirection(),
-        revealAnimation = this.getRevealAnimation();
-        if(dir === 'both'){
-            dir = direction;
-        }
-
-        Ext.apply(revealAnimation, {
-            direction: dir
-        });
-    },
-
-    doHideOptionsMenu : function(hiddenEl, activeListOptions, playSoundEffect){
-        playSoundEffect = Ext.isEmpty(playSoundEffect) ? true : playSoundEffect;
-        
-        var revealAnimation = this.getRevealAnimation(),
-        enableSoundEffects = this.getEnableSoundEffects(),
-        closeSoundEffectURL = this.getCloseSoundEffectURL();        
-        
-        activeListOptions.setVisibilityMode(Ext.Element.DISPLAY).hide();
-        hiddenEl.show();
-        // Run the animation on the List Item's 'body' Ext.Element
-        Ext.Anim.run(hiddenEl, revealAnimation, {
-            out: false,
-            before: function(el, options){
-                // force the List Options to the back
-                activeListOptions.setStyle('z-index', '0');
-                
-                //Audio effect for close if configured
-                if (enableSoundEffects && !Ext.isEmpty(closeSoundEffectURL) && playSoundEffect) {
-                    var audio = document.createElement('audio');
-                    audio.setAttribute('src', closeSoundEffectURL);
-                    audio.play();
-                }
-            },
-            after: function(el, options){
-                hiddenEl.setVisibilityMode(Ext.Element.DISPLAY);
-                
-                // remove the ListOptions DIV completely to save some resources
-                // activeListOptions.remove();
-                Ext.removeNode(Ext.getDom(activeListOptions));
-                
-                this.list.fireEvent('listoptionsclose');
-            },
-            scope: this
-        });
-    },
-
-    /**
-     * Perform the List Option animation and show
-     * @param {Object} listItemEl - the List Item's element to show a menu for
-     */
-    doShowOptionsMenu: function(listItemEl){
-
-        var stopScrollOnShow = this.getStopScrollOnShow(),
-            revealAnimation = this.getRevealAnimation(),
-            enableSoundEffects = this.getEnableSoundEffects(),
-            openSoundEffectURL = this.getOpenSoundEffectURL();
-
-        if(stopScrollOnShow){
-            this.list.getScrollable().getScroller().disable();
-        }
-        
-        // ensure the animation is not reversed
-        Ext.apply(revealAnimation, {
-            reverse: false
-        });
-       
-        // Do the animation on the current 
-        Ext.Anim.run(listItemEl, revealAnimation, {
-            out: true,
-            before: function(el, options){
-                // Firing beforeOptionsrender
-                this.list.fireEvent('beforeOptionsrender',this,this.activeItemRecord);
-                // Create the List Options Ext.Element
-                this.createOptionsMenu(listItemEl);
-
-                // Firing afterOptionsrender
-                this.list.fireEvent('afterOptionsrender',this,this.activeItemRecord);
-            },
-            after: function(el, options){
-                listItemEl.hide(); // hide the List Item
-
-                //Audio effect if configured for show
-                if (enableSoundEffects && !Ext.isEmpty(openSoundEffectURL)) {
-                    var audio = document.createElement('audio');
-                    audio.setAttribute('src', openSoundEffectURL);
-                    audio.play();
-                }
-
-                this.list.fireEvent('listoptionsopen',this,this.activeItemRecord);
-                
-                this.activeListOptions.show();
-                // re-enable the scroller
-                if (stopScrollOnShow) {
-                    this.list.getScrollable().getScroller().enable();
-                }
-            },
-            scope: this
-        });
-    },
-    
-    /**
-     * Used to process the menuOptions data prior to applying it to the menuOptions template
-     */
-    processMenuOptionsData: function(){
-        return (Ext.isFunction(this.getMenuOptionDataFilter())) ? this.getMenuOptionDataFilter(this.getMenuOptions(), this.activeListItemRecord) : this.getMenuOptions();
-    },
-    
-    /**
-     * Get the existing or create a new List Options Ext.Element and return and cache it
-     * @param {Object} listItem
-     */
-    createOptionsMenu: function(listItemEl){
-        var listItemElHeight = listItemEl.getHeight(),
-        menuOptionsTpl = this.getMenuOptionsTpl(),
-        optionsSelector = this.getOptionsSelector(),
-        processMenuOptionsData = this.processMenuOptionsData(),
-        menuOptionSelector = this.getMenuOptionSelector(),
-        self=this;
-        
-        // Create the List Options element
-        this.activeListOptions = Ext.DomHelper.insertAfter(listItemEl, {
-            cls: optionsSelector,
-            html: menuOptionsTpl.apply(processMenuOptionsData),
-        }, true).setHeight(listItemElHeight);
-        
-        this.activeListOptions.setVisibilityMode(Ext.Element.VISIBILITY).hide();
-
-        var optionListArr = this.activeListOptions.select('.' + menuOptionSelector).elements;
-        for(var index in optionListArr) {
-            Ext.get(optionListArr[index]).on({
-                 touchstart: self.onListOptionTabStart,
-                 touchend: self.onListOptionTapEnd,
-                 tapcancel: self.onListOptionTabCancel,
-                 scope:self
-            });
-        }
-
-        // attach event handler to options element to close it when tapped
-        (function(_activeListOptions,_activeListElement,self) {
-            _activeListOptions.on({
-                tap: function(evt){
-                    // ensure the animation is  reversed
-                    Ext.apply(self.getRevealAnimation(), {
-                        reverse: true
-                    });
-                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
-                    evt.stopPropagation();
-                    return false;
-                },
-                swipe : function(evt){
-                    self.setRevealDir(evt.direction);
-                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
-                    evt.stopPropagation();
-                    return false;
-                },
-                scope: self
-            });
-        })(this.activeListOptions,this.activeListElement,this)
-
-        return this.activeListOptions;
-    },
-    
-    /**
-     * Handler for 'touchstart' event to add the Pressed class
-     * @param {Object} e
-     * @param {Object} el
-     */
-    onListOptionTabStart: function(e, el){
-        var menuOptionSelector = this.getMenuOptionSelector(),
-            optionsSelector = this.getOptionsSelector(),
-            menuOption = e.getTarget('.' + menuOptionSelector),
-            listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item');
-        
-        // get the menu item's data
-        var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
-        
-        if (this.list.fireEvent('beforelistoptionstap', menuItemData, this.list.getRecord(listOptionsEl.dom)) === true) {
-            this.addPressedClass(e);
-        } else {
-            this.TapCancelled = true;
-        }
-    },
-    
-    /**
-     * Handler for 'tapcancel' event
-     * Sets TapCancelled value to stop TapEnd function from executing and removes Pressed class
-     * @param {Object} e
-     * @param {Object} el
-     */
-    onListOptionTabCancel: function(e, el){
-        this.TapCancelled = true;
-        this.removePressedClass(e);
-    },
-    
-    /**
-     * Handler for the 'tap' event of the individual List Option menu items
-     * @param {Object} e
-     */
-    onListOptionTapEnd: function(e, el){
-        if (!this.TapCancelled) {
-            // Remove the Pressed class
-            this.removePressedClass(e);
-            
-            var menuOptionSelector = this.getMenuOptionSelector(),
-                optionsSelector = this.getOptionsSelector(),
-                menuOption = e.getTarget('.' + menuOptionSelector);
-                // listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item',true);
-
-            // get the menu item's data
-            var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
-            this.list.fireEvent('menuoptiontap', menuItemData);
-        }
-        this.TapCancelled = false;
-        
-        // stop menu from hiding
-        e.stopPropagation();
-    },
-    
-    /**
-     * Adds the Pressed class on the Menu Option
-     * @param {Object} e
-     */
-    addPressedClass: function(e){
-        var menuOptionSelector = this.getMenuOptionSelector(),
-            menuOptionPressedClass = this.getMenuOptionPressedClass(),
-            elm = e.getTarget('.' + menuOptionSelector);
-        if (Ext.fly(elm)) {
-            Ext.fly(elm).addCls(menuOptionPressedClass);
-        }       
-    },
-    
-    /**
-     * Removes the Pressed class on the Menu Option
-     * @param {Object} e
-     */
-    removePressedClass: function(e){
-        var menuOptionSelector = this.getMenuOptionSelector(),
-            menuOptionPressedClass = this.getMenuOptionPressedClass(),
-            elm = e.getTarget('.' + menuOptionSelector);
-        if (Ext.fly(elm)) {
-            Ext.fly(elm).removeCls(menuOptionPressedClass);
-        }       
-    },
-    
-    /**
-     * Helper method to get the index of the List Option that was tapped
-     * @param {Object} el - the tapped node
-     */
-    getIndex: function(el){
-        var optionsSelector = this.getOptionsSelector(),
-            menuOptionSelector = this.getMenuOptionSelector(),
-            listOptions = Ext.get(Ext.get(el).findParent('.' + optionsSelector)).select('.' + menuOptionSelector);
-        
-        for(var i = 0; i < listOptions.elements.length; i++){
-            if(listOptions.elements[i].id === el.id){
-                return i;
-            }
-        }
-        return -1;
-    }
-});
-
 Ext.define('plugin.ux.ListPaging2', {
     extend: 'Ext.plugin.ListPaging',
     alias: 'ListPaging2',
@@ -27339,6 +27281,591 @@ Ext.define('Ext.Toolbar', {
 }, function() {
 });
 
+
+/**
+ * {@link Ext.Audio} is a simple class which provides a container for the [HTML5 Audio element](http://www.w3schools.com/html5/tag_audio.asp).
+ *
+ * ## Recommended File Types/Compression:
+ * * Uncompressed WAV and AIF audio
+ * * MP3 audio
+ * * AAC-LC
+ * * HE-AAC audio
+ *
+ * ## Notes
+ * On Android devices, the audio tags controls do not show. You must use the {@link #method-play}, {@link #method-pause} and
+ * {@link #toggle} methods to control the audio (example below).
+ *
+ * ## Examples
+ *
+ * Here is an example of the {@link Ext.Audio} component in a fullscreen container:
+ *
+ *     @example preview
+ *     Ext.create('Ext.Container', {
+ *         fullscreen: true,
+ *         layout: {
+ *             type : 'vbox',
+ *             pack : 'center',
+ *             align: 'stretch'
+ *         },
+ *         items: [
+ *             {
+ *                 xtype : 'toolbar',
+ *                 docked: 'top',
+ *                 title : 'Ext.Audio'
+ *             },
+ *             {
+ *                 xtype: 'audio',
+ *                 url  : 'touch/examples/audio/crash.mp3'
+ *             }
+ *         ]
+ *     });
+ *
+ * You can also set the {@link #hidden} configuration of the {@link Ext.Audio} component to true by default,
+ * and then control the audio by using the {@link #method-play}, {@link #method-pause} and {@link #toggle} methods:
+ *
+ *     @example preview
+ *     Ext.create('Ext.Container', {
+ *         fullscreen: true,
+ *         layout: {
+ *             type: 'vbox',
+ *             pack: 'center'
+ *         },
+ *         items: [
+ *             {
+ *                 xtype : 'toolbar',
+ *                 docked: 'top',
+ *                 title : 'Ext.Audio'
+ *             },
+ *             {
+ *                 xtype: 'toolbar',
+ *                 docked: 'bottom',
+ *                 defaults: {
+ *                     xtype: 'button',
+ *                     handler: function() {
+ *                         var container = this.getParent().getParent(),
+ *                             // use ComponentQuery to get the audio component (using its xtype)
+ *                             audio = container.down('audio');
+ *
+ *                         audio.toggle();
+ *                         this.setText(audio.isPlaying() ? 'Pause' : 'Play');
+ *                     }
+ *                 },
+ *                 items: [
+ *                     { text: 'Play', flex: 1 }
+ *                 ]
+ *             },
+ *             {
+ *                 html: 'Hidden audio!',
+ *                 styleHtmlContent: true
+ *             },
+ *             {
+ *                 xtype : 'audio',
+ *                 hidden: true,
+ *                 url   : 'touch/examples/audio/crash.mp3'
+ *             }
+ *         ]
+ *     });
+ *
+ */
+Ext.define('Ext.Audio', {
+    extend: 'Ext.Media',
+    xtype : 'audio',
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        cls: Ext.baseCSSPrefix + 'audio'
+
+        /**
+         * @cfg {String} url
+         * The location of the audio to play.
+         *
+         * ### Recommended file types are:
+         * * Uncompressed WAV and AIF audio
+         * * MP3 audio
+         * * AAC-LC
+         * * HE-AAC audio
+         * @accessor
+         * @markdown
+         */
+    },
+
+    // @private
+    onActivate: function() {
+        var me = this;
+
+        me.callParent();
+
+        if (Ext.os.is.Phone) {
+            me.element.show();
+        }
+    },
+
+    // @private
+    onDeactivate: function() {
+        var me = this;
+
+        me.callParent();
+
+        if (Ext.os.is.Phone) {
+            me.element.hide();
+        }
+    },
+
+    template: [{
+        reference: 'media',
+        preload: 'auto',
+        tag: 'audio',
+        cls: Ext.baseCSSPrefix + 'component'
+    }]
+});
+
+Ext.define('plugin.ux.SwipeOptions', {
+    extend: 'Ext.Component',
+    alias: 'swipeOptions',
+    requires: ['Ext.Anim','Ext.Audio'],
+    config: {
+
+        /**
+         * Selector to use to get the dynamically created List Options Ext.Element (where the menu options are held)
+         * Once created the List Options element will be used again and again.
+         */
+        optionsSelector: 'x-list-options',
+
+        /**
+         * An array of objects to be applied to the 'listOptionsTpl' to create the 
+         * menu
+         */
+        menuOptions: [],
+        
+        /**
+         * Selector to use to get individual List Options within the created Ext.Element
+         * This is used when attaching event handlers to the menu options
+         */
+        menuOptionSelector: 'x-menu-option',
+        
+        /**
+         * XTemplate to use to create the List Options view
+         */
+        menuOptionsTpl: new Ext.XTemplate(  '<ul>',
+                                                '<tpl for=".">',                                            
+                                                    '<li class="x-menu-option {cls}">',
+                                                    '</li>',
+                                                '</tpl>',
+                                            '</ul>').compile(),
+                                    
+        /**
+         * CSS Class that is applied to the tapped Menu Option while it is being touched
+         */     
+        menuOptionPressedClass: 'x-menu-option-pressed',
+        
+        /**
+         * Set to a function that takes in 2 arguments - your initial 'menuOptions' config option and the current 
+         * item's Model instance
+         * The function must return either the original 'menuOptions' variable or a revised one
+         */
+        menuOptionDataFilter: null,
+        
+        /**
+         * Animation used to reveal the List Options
+         */
+        revealAnimation: {
+            reverse: false,
+            type: 'slide',
+            duration: 500
+        },
+        
+        /**
+         * The direction the List Item will slide to reveal the List Options
+         * Possible values: 'left', 'right' and 'both'
+         * setting to 'both' means it will be decided by the direction of the User's swipe if 'triggerEvent' is set to 'itemswipe'
+         */
+        revealDirection: 'both',
+        
+        /**
+         * Distance (in pixels) a User must swipe before triggering the List Options to be displayed.
+         * Set to -1 to disable threshold checks
+         */
+        swipeThreshold: 30,
+        
+        /**
+         * The direction the user must swipe to reveal the menu
+         * Only applicable when 'triggerEvent' is set to 'itemswipe'
+         */
+        swipeDirection: 'both',
+        
+        /**
+         * Decides whether multiple List Options can be visible at once
+         */
+        allowMultiple: false,
+        
+        /**
+         * Decides whether sound effects are played as List Options open
+         * Defaults to false.
+         */
+        enableSoundEffects: false,
+        
+        openSoundEffectURL: 'sounds/open.wav',
+        
+        closeSoundEffectURL: 'sounds/close.wav',
+
+        /**
+        * Decides whether to stop scroll for list on list options visible
+        * Defaults to false
+        */
+        stopScrollOnShow : false
+    
+    },
+
+    initialize: function() {
+        this.callParent();
+    },
+
+    init: function(list) {
+        var self = this;
+        self.list = list;
+        list.on('itemswipe',self.onItemSwipe,self);
+    },
+
+    onItemSwipe : function(list, index, target, record, evt, options , eOpts){
+        // check we're over the 'swipethreshold'
+        if(this.revealAllowed(evt)){
+
+            // set the direction of the reveal
+            this.setRevealDir(evt.direction);
+
+            // cache the current List Item's elements for easy use later
+            this.activeListItemRecord = list.getStore().getAt(index);
+            
+            var activeEl = Ext.get(target);
+
+            this.activeListElement = activeEl;        
+            
+            activeEl.setVisibilityMode(Ext.Element.VISIBILITY);
+
+            this.activeItemRecord = record;
+            // Show the item's List Options
+            this.doShowOptionsMenu(activeEl);
+        }
+    },
+
+    /**
+     * Decide whether the List Options are allowed to be revealed based on the config options
+     * Only relevant for 'itemswipe' event because this event has all the config options
+     * @param {Object} event
+     */
+    revealAllowed: function(evt){
+        var direction = evt.direction,
+            distance = evt.distance,
+            allowed = false,
+            swipeThreshold = this.getSwipeThreshold(),
+            swipeDirection = this.getSwipeDirection();
+        allowed =  (distance >= swipeThreshold && (direction === swipeDirection || swipeDirection === 'both')) || swipeThreshold < 0 ;
+        return allowed;
+    },
+
+    /**
+     * Decide the direction the reveal animation will go
+     * this.revealDirection config can only be 'both' when triggerEvent is 'itemswipe' in which case
+     * the direction of the swipe is used
+     * @param {Object} direction
+     */
+    setRevealDir: function(direction){
+        var dir = this.getRevealDirection(),
+        revealAnimation = this.getRevealAnimation();
+        if(dir === 'both'){
+            dir = direction;
+        }
+
+        Ext.apply(revealAnimation, {
+            direction: dir
+        });
+    },
+
+    doHideOptionsMenu : function(hiddenEl, activeListOptions, playSoundEffect){
+        playSoundEffect = Ext.isEmpty(playSoundEffect) ? true : playSoundEffect;
+        
+        var revealAnimation = this.getRevealAnimation(),
+        enableSoundEffects = this.getEnableSoundEffects(),
+        closeSoundEffectURL = this.getCloseSoundEffectURL();        
+        
+        activeListOptions.setVisibilityMode(Ext.Element.DISPLAY).hide();
+        hiddenEl.show();
+        // Run the animation on the List Item's 'body' Ext.Element
+        Ext.Anim.run(hiddenEl, revealAnimation, {
+            out: false,
+            before: function(el, options){
+                // force the List Options to the back
+                activeListOptions.setStyle('z-index', '0');
+                
+                //Audio effect for close if configured
+                if (enableSoundEffects && !Ext.isEmpty(closeSoundEffectURL) && playSoundEffect) {
+                    var audioBase = {
+                        url: closeSoundEffectURL,
+                        loop: false,
+                        preload:true
+                    },
+
+                    player = new Ext.Audio(Ext.apply({}, audioBase, {
+                        id:'player',
+                        title: 'Hidden',
+                        enableControls: false,
+                        hidden:false,
+                        preload:true,
+                        layout: {
+                            type: 'vbox',
+                            pack: 'center'
+                        }
+                    }));
+                    player.play();
+                }
+            },
+            after: function(el, options){
+                hiddenEl.setVisibilityMode(Ext.Element.DISPLAY);
+                
+                // remove the ListOptions DIV completely to save some resources
+                // activeListOptions.remove();
+                Ext.removeNode(Ext.getDom(activeListOptions));
+                
+                this.list.fireEvent('listoptionsclose');
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Perform the List Option animation and show
+     * @param {Object} listItemEl - the List Item's element to show a menu for
+     */
+    doShowOptionsMenu: function(listItemEl){
+
+        var stopScrollOnShow = this.getStopScrollOnShow(),
+            revealAnimation = this.getRevealAnimation(),
+            enableSoundEffects = this.getEnableSoundEffects(),
+            openSoundEffectURL = this.getOpenSoundEffectURL();
+
+        if(stopScrollOnShow){
+            this.list.getScrollable().getScroller().disable();
+        }
+        
+        // ensure the animation is not reversed
+        Ext.apply(revealAnimation, {
+            reverse: false
+        });
+       
+        // Do the animation on the current 
+        Ext.Anim.run(listItemEl, revealAnimation, {
+            out: true,
+            before: function(el, options){
+                // Firing beforeOptionsrender
+                this.list.fireEvent('beforeOptionsrender',this,this.activeItemRecord);
+                // Create the List Options Ext.Element
+                this.createOptionsMenu(listItemEl);
+
+                // Firing afterOptionsrender
+                this.list.fireEvent('afterOptionsrender',this,this.activeItemRecord);
+            },
+            after: function(el, options){
+                listItemEl.hide(); // hide the List Item
+
+                //Audio effect if configured for show
+                if (enableSoundEffects && !Ext.isEmpty(openSoundEffectURL)) {
+                    
+                    var audioBase = {
+                        url: openSoundEffectURL,
+                        loop: false,
+                        preload:true
+                    },
+
+                    player = new Ext.Audio(Ext.apply({}, audioBase, {
+                        id:'player',
+                        title: 'Hidden',
+                        enableControls: false,
+                        hidden:false,
+                        preload:true,
+                        layout: {
+                            type: 'vbox',
+                            pack: 'center'
+                        }
+                    }));
+                    player.play();
+                }
+
+                this.list.fireEvent('listoptionsopen',this,this.activeItemRecord);
+                
+                this.activeListOptions.show();
+                // re-enable the scroller
+                if (stopScrollOnShow) {
+                    this.list.getScrollable().getScroller().enable();
+                }
+            },
+            scope: this
+        });
+    },
+    
+    /**
+     * Used to process the menuOptions data prior to applying it to the menuOptions template
+     */
+    processMenuOptionsData: function(){
+        return (Ext.isFunction(this.getMenuOptionDataFilter())) ? this.getMenuOptionDataFilter(this.getMenuOptions(), this.activeListItemRecord) : this.getMenuOptions();
+    },
+    
+    /**
+     * Get the existing or create a new List Options Ext.Element and return and cache it
+     * @param {Object} listItem
+     */
+    createOptionsMenu: function(listItemEl){
+        var listItemElHeight = listItemEl.getHeight(),
+        menuOptionsTpl = this.getMenuOptionsTpl(),
+        optionsSelector = this.getOptionsSelector(),
+        processMenuOptionsData = this.processMenuOptionsData(),
+        menuOptionSelector = this.getMenuOptionSelector(),
+        self=this;
+        
+        // Create the List Options element
+        this.activeListOptions = Ext.DomHelper.insertAfter(listItemEl, {
+            cls: optionsSelector,
+            html: menuOptionsTpl.apply(processMenuOptionsData),
+        }, true).setHeight(listItemElHeight);
+        
+        this.activeListOptions.setVisibilityMode(Ext.Element.VISIBILITY).hide();
+
+        var optionListArr = this.activeListOptions.select('.' + menuOptionSelector).elements;
+        for(var index in optionListArr) {
+            Ext.get(optionListArr[index]).on({
+                 touchstart: self.onListOptionTabStart,
+                 touchend: self.onListOptionTapEnd,
+                 tapcancel: self.onListOptionTabCancel,
+                 scope:self
+            });
+        }
+
+        // attach event handler to options element to close it when tapped
+        (function(_activeListOptions,_activeListElement,self) {
+            _activeListOptions.on({
+                tap: function(evt){
+                    // ensure the animation is  reversed
+                    Ext.apply(self.getRevealAnimation(), {
+                        reverse: true
+                    });
+                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
+                    evt.stopPropagation();
+                    return false;
+                },
+                swipe : function(evt){
+                    self.setRevealDir(evt.direction);
+                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
+                    evt.stopPropagation();
+                    return false;
+                },
+                scope: self
+            });
+        })(this.activeListOptions,this.activeListElement,this)
+
+        return this.activeListOptions;
+    },
+    
+    /**
+     * Handler for 'touchstart' event to add the Pressed class
+     * @param {Object} e
+     * @param {Object} el
+     */
+    onListOptionTabStart: function(e, el){
+        var menuOptionSelector = this.getMenuOptionSelector(),
+            optionsSelector = this.getOptionsSelector(),
+            menuOption = e.getTarget('.' + menuOptionSelector),
+            listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item');
+        
+        // get the menu item's data
+        var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
+        
+        if (this.list.fireEvent('beforelistoptionstap', menuItemData, this.list.getRecord(listOptionsEl.dom)) === true) {
+            this.addPressedClass(e);
+        } else {
+            this.TapCancelled = true;
+        }
+    },
+    
+    /**
+     * Handler for 'tapcancel' event
+     * Sets TapCancelled value to stop TapEnd function from executing and removes Pressed class
+     * @param {Object} e
+     * @param {Object} el
+     */
+    onListOptionTabCancel: function(e, el){
+        this.TapCancelled = true;
+        this.removePressedClass(e);
+    },
+    
+    /**
+     * Handler for the 'tap' event of the individual List Option menu items
+     * @param {Object} e
+     */
+    onListOptionTapEnd: function(e, el){
+        if (!this.TapCancelled) {
+            // Remove the Pressed class
+            this.removePressedClass(e);
+            
+            var menuOptionSelector = this.getMenuOptionSelector(),
+                optionsSelector = this.getOptionsSelector(),
+                menuOption = e.getTarget('.' + menuOptionSelector);
+                // listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item',true);
+
+            // get the menu item's data
+            var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
+            this.list.fireEvent('menuoptiontap', menuItemData);
+        }
+        this.TapCancelled = false;
+        
+        // stop menu from hiding
+        e.stopPropagation();
+    },
+    
+    /**
+     * Adds the Pressed class on the Menu Option
+     * @param {Object} e
+     */
+    addPressedClass: function(e){
+        var menuOptionSelector = this.getMenuOptionSelector(),
+            menuOptionPressedClass = this.getMenuOptionPressedClass(),
+            elm = e.getTarget('.' + menuOptionSelector);
+        if (Ext.fly(elm)) {
+            Ext.fly(elm).addCls(menuOptionPressedClass);
+        }       
+    },
+    
+    /**
+     * Removes the Pressed class on the Menu Option
+     * @param {Object} e
+     */
+    removePressedClass: function(e){
+        var menuOptionSelector = this.getMenuOptionSelector(),
+            menuOptionPressedClass = this.getMenuOptionPressedClass(),
+            elm = e.getTarget('.' + menuOptionSelector);
+        if (Ext.fly(elm)) {
+            Ext.fly(elm).removeCls(menuOptionPressedClass);
+        }       
+    },
+    
+    /**
+     * Helper method to get the index of the List Option that was tapped
+     * @param {Object} el - the tapped node
+     */
+    getIndex: function(el){
+        var optionsSelector = this.getOptionsSelector(),
+            menuOptionSelector = this.getMenuOptionSelector(),
+            listOptions = Ext.get(Ext.get(el).findParent('.' + optionsSelector)).select('.' + menuOptionSelector);
+        
+        for(var i = 0; i < listOptions.elements.length; i++){
+            if(listOptions.elements[i].id === el.id){
+                return i;
+            }
+        }
+        return -1;
+    }
+});
 
 /**
  * @aside guide floating_components
@@ -29723,7 +30250,12 @@ Ext.define("Freshdesk.view.ContactInfo", {
         itemId:'customerInfo',
         cls:'customerDetails',
         padding:0,
-        tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
+        tpl: Ext.create('Ext.XTemplate',['<tpl if="loading">',
+                '<div class="x-mask x-floating" style="background: transparent;min-height:400px"><div class="x-innerhtml">',
+                            '<div class="x-loading-spinner" style="font-size: 235%; margin: 100px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',
+                '</div></div>',
+            '<tpl else>',
+            '<div class="customer-info">',
                 '<div class="profile_pic">',
                     '<tpl if="avatar_url"><img src="{original_avatar}"></tpl>',
                     '<tpl if="!avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
@@ -29755,14 +30287,17 @@ Ext.define("Freshdesk.view.ContactInfo", {
                                             '</div>',
                                             '<div>',
                                                     '<tpl if="responder_id">{helpdesk_ticket.responder_name}',
-                                                    '<tpl else>Unassigned</tpl>',
+                                                    '<tpl else>No agent assigned, </tpl>',
                                             '&nbsp;{helpdesk_ticket.updated_at:this.time_in_words}</div>',
                                     '</div>',
                                     '<div class="disclose">&nbsp;</div>',
                         '</div></a>',
                     '</li>',
                 '</tpl>',
-            '</ul></div></tpl>'].join(''),
+            '</ul>',
+            '</div>',
+            '</tpl>',
+            '</tpl>'].join(''),
             {
                         time_in_words : function(item){
                                 return new Date(item).toRelativeTime();
@@ -29813,7 +30348,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -29843,10 +30378,16 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '<tpl if="!user.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                                 '</div>',
                                 '<div class="Info">',
-                                '<tpl if="!FD.current_user.is_customer"><a href="#contacts/show/{user.id}">{user.name}</a></tpl>',
+                                '<tpl if="!FD.current_user.is_customer">',
+                                    '<tpl if="user.is_customer">',
+                                        '<a href="#contacts/show/{user.id}">{user.name}</a>',
+                                    '<tpl else>',
+                                        '<a href="#">{user.name}</a>',
+                                    '</tpl>',
+                                '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
                                 '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
-                                '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
+                                '<tpl if="user.is_customer"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
@@ -29858,7 +30399,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
-                                '<tpl if="parent.requester.id != user_id"><div class="msg">',
+                                '<tpl if="user.is_agent"><div class="msg">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
@@ -30842,6 +31383,9 @@ Ext.define('Freshdesk.controller.Contacts', {
     show: function(id){
         var contactDetails = this.getContactDetails();
 
+        contactDetails.items.items[1].setData({loading:true});
+        Ext.Viewport.animateActiveItem(contactDetails, { type: 'slide', direction: 'left'});
+
         Ext.Ajax.request({
             url: '/contacts/'+id,
             headers: {
@@ -30851,7 +31395,6 @@ Ext.define('Freshdesk.controller.Contacts', {
                 var resJson = JSON.parse(response.responseText),
                 user = resJson.user;
                 contactDetails.items.items[1].setData(user);
-                Ext.Viewport.animateActiveItem(contactDetails, { type: 'slide', direction: 'left'});
             },
             failure: function(response){
                 
