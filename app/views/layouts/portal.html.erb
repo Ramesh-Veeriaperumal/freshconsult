@@ -20,7 +20,6 @@
 </head>
 <body> 	
 	<% @base_liquid = Liquid::Template %>
-	<% @base_liquid.register_tag('translate', Translate) %>
 	<%= render :partial => "portal/layout", 
 			   :locals => { :header_content => render(:partial => "portal/header", :locals => { :portal => current_portal } ),
 							:footer_content => render(:partial => "portal/footer"),
