@@ -31,6 +31,7 @@
 </ul>
 
 <div class="button-container">
+<%= link_to(t('remove'), admin_email_config_path(@email_config), :method => 'delete', :confirm => t('email_configs.remove_msg'), :class => "uiButton floatl" ) %>	
 	<%= f.submit t('save'), :class => "uiButton"  %>
 	<%= link_to(t('cancel'), admin_email_configs_path, :class => "uiButton", :id => "email-form-cancel" )  %>
 </div> 

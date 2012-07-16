@@ -36,7 +36,7 @@
 
         <li style="padding-top: 25px;">
           <input type="checkbox" class="checkbox" rel="email_config_checkbox" name="product[email_configs_attributes][${index_id}][primary_role]" {{if primary_role == true}} checked="checked" {{/if}} value=${primary_role} style="float: left;margin-top: 4px;"/>
-          <label style="float: left; padding: 0px;">Primary Product Support Email</label>
+          <label style="float: left; padding: 0px;"><%= t('products.primary_product_support_email')%></label>
           <input type="hidden" rel="delete" name="product[email_configs_attributes][${index_id}][_destroy]" value="${destroy}"/>
         </li>
       </ul>
@@ -74,7 +74,7 @@
   <li class="inline-field">
     <div class="fields" style="margin-left: 163px;">
       <span class="addchoice">&nbsp;</span>
-      <a class="email_config" id="addchoice" href="javascript:void(0)" style="margin-left: 30px;">Add another email</a>
+      <a class="email_config" id="addchoice" href="javascript:void(0)" style="margin-left: 30px;"><%= t('products.add_another_email')%></a>
     </div>
   </li>
 

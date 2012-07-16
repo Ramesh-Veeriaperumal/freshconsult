@@ -13,8 +13,8 @@
     <h4 class="product-title floatl"><%=t('email_configs.global_support_emails')%></h4> 
     <div class="floatr" style="padding-top: 35px;">
       <div>
-      <%= content_tag :label, "Bcc: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl', :style => "padding: 0px; font-size: 1.2em;" unless current_account.bcc_email.blank?%>
-      <%= link_to( (current_account.bcc_email.blank? ? 'Add Bcc' : 'Edit') , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2 float2", :style => "padding-left: 5px; padding-top: 15px;", :title => 'Set Bcc Email', "data-width" => "400" ) %>
+      <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl', :style => "padding: 0px; font-size: 1.2em;" unless current_account.bcc_email.blank?%>
+      <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2 float2", :style => "padding-left: 5px; padding-top: 15px;", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
       <%= content_tag :span, "[?]", :class => "tool-tip", :title=> t('email_configs.info17')%>
     </div>
     </div>

@@ -7,7 +7,7 @@
     <% if email_config.primary_role? %>
       <%= content_tag :span, "", :title => t('email_configs.primary_supp_email_tool_tip', :portal_name => portal_name), :class => "tooltip primary" %>
     <% else %>
-      <%= link_to "", "/admin/email_configs/make_primary/#{email_config.id}", :confirm => "Are you sure you want to make this as the primary support email?", :title => t('email_configs.secondary_supp_email_tool_tip', :portal_name => portal_name), :class => "tooltip secondary" %>      
+      <%= link_to "", "/admin/email_configs/make_primary/#{email_config.id}", :confirm => t('email_configs.mark_as_primary_msg'), :title => t('email_configs.secondary_supp_email_tool_tip', :portal_name => portal_name), :class => "tooltip secondary" %>      
     <% end %>
   </td>
   <td class="supportMail">

@@ -370,6 +370,8 @@ en:
       index: 
         title: Products        
         add_product: Add Product
+      primary_product_support_email: Primary Product Support Email
+      add_another_email: Add another email
     canned_responses:
       ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
@@ -1335,7 +1337,7 @@ en:
     make_primary: Make primary
     info8: Forward your emails to
     help_link_info: Read our Email Settings article for more information...
-    bcc_email: BCC address (optional)
+    bcc_email: BCC address
     info17: This email address will be included automatically in the BCC field for all ticket communications
     info18: Automatic bcc address included in ticket replies 
     email_added_succ_msg: The email has been added
@@ -1349,6 +1351,11 @@ en:
     support_email_exists: Support email already exists
     primary_supp_email_tool_tip: Primary support email for %{portal_name} 
     secondary_supp_email_tool_tip: Click here to make this support email as primary for %{portal_name}
+    remove_msg: Are you sure you want to remove this email?
+    mark_as_primary_msg: Are you sure you want to make this as the primary support email?
+    bcc_text: BCC
+    add_bcc_text: Add BCC
+    set_bcc_email_text: Set BCC email
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
