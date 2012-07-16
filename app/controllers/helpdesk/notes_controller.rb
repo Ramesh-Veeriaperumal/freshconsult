@@ -4,6 +4,7 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods
+  include ParserUtil
   
   before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
   before_filter :set_mobile , :only => [:create]
@@ -17,7 +18,7 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
   
-  def create      
+  def create   
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -44,7 +45,7 @@ class Helpdesk::NotesController < ApplicationController
   def edit
     render :partial => "edit_note"
   end
-  
+
   protected
     def scoper
       @parent.notes
@@ -123,17 +124,12 @@ class Helpdesk::NotesController < ApplicationController
         cc_email_hash_value = {:cc_emails => [], :fwd_emails => []}
       end
       if @item.fwd_email?
-        old_fwd_email_list =  cc_email_hash_value[:fwd_emails]
-        fwd_to_array = validate_emails params[:to_emails]
-        unless fwd_to_array.nil?
-          fwd_cc_array = validate_emails params[:fwd_cc_emails]
-          fwd_bcc_array = validate_emails params[:bcc_emails]  
-          fwd_cc_array.try(:concat,fwd_bcc_array) unless fwd_bcc_array.nil?
-          fwd_to_array.concat(fwd_cc_array) unless fwd_cc_array.nil?
-          fwd_to_array.concat(old_fwd_email_list)
-        end
-        fwd_to_array ||= []
-        cc_email_hash_value[:fwd_emails] = fwd_to_array.uniq
+        params[:to_emails] = fetch_valid_emails params[:to_emails]
+        params[:fwd_cc_emails] = fetch_valid_emails params[:fwd_cc_emails]
+        params[:bcc_emails] = fetch_valid_emails params[:bcc_emails]
+        fwd_emails = params[:to_emails] | params[:fwd_cc_emails] | params[:bcc_emails] | cc_email_hash_value[:fwd_emails]
+        fwd_emails.delete_if {|email| (email == @parent.requester.email)}
+        cc_email_hash_value[:fwd_emails]  = fwd_emails
       else
         cc_array = validate_emails params[:cc_emails]
         cc_array = cc_array.compact unless cc_array.nil?
@@ -162,6 +158,15 @@ class Helpdesk::NotesController < ApplicationController
     
   end
    
+  def fetch_valid_emails email_array
+    unless email_array.blank?
+      email_array = email_array.collect {|email| email.scan(VALID_EMAIL_REGEX).uniq[0]}.compact
+      email_array = email_array.uniq
+    else
+      email_array = []
+    end
+  end
+
    def validate_emails email_array
      unless email_array.blank?
       if email_array.is_a? String
@@ -180,7 +185,7 @@ class Helpdesk::NotesController < ApplicationController
     
     def valid_email?(email)
       email = extract_email(email)
-      (email =~ /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/) ? true : false
+      (email =~ VALID_EMAIL_REGEX) ? true : false
     end
 
     def send_reply_email      
@@ -188,9 +193,8 @@ class Helpdesk::NotesController < ApplicationController
       reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
       if @item.fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
-                :bcc_emails =>validate_emails(params[:bcc_emails]),
-                :to_emails => validate_emails(params[:to_emails]), :fwd_cc_emails => validate_emails(params[:fwd_cc_emails])})
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item , reply_email,{:bcc_emails => params[:bcc_emails],
+                :to_emails => params[:to_emails], :fwd_cc_emails => params[:fwd_cc_emails]})
         flash[:notice] = t(:'fwd_success_msg')
       else        
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
@@ -278,11 +282,12 @@ class Helpdesk::NotesController < ApplicationController
   end
   
    def validate_attachment_size
-     total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
-     if total_size > Helpdesk::Note::Max_Attachment_Size    
-        flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
-        redirect_to :back  
-     end
+    fetch_item_attachments if @item.fwd_email?
+    total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
+    if total_size > Helpdesk::Note::Max_Attachment_Size    
+      flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
+      redirect_to :back  
+    end
  end
  
  
@@ -295,19 +300,9 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def validate_fwd_to_email
-    if(@item.fwd_email?)
-      if(params[:to_emails].blank?)
-        flash[:error] = t('validate_fwd_to_email_msg')
-        redirect_to item_url
-      else
-        if (@parent.requester.email and params[:to_emails].any? { |email| email.include?@parent.requester.email })
-          flash[:error] = t('use_reply_option')
-          redirect_to item_url
-        elsif((validate_emails(params[:to_emails])).blank?)
+    if(@item.fwd_email? and fetch_valid_emails(params[:to_emails]).blank?)
           flash[:error] = t('validate_fwd_to_email_msg')
           redirect_to item_url
-        end
-      end
     end
   end
   

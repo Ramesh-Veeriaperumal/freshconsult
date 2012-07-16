@@ -97,6 +97,7 @@
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
+    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
   end
   
   map.resources :reports
@@ -134,13 +135,19 @@
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
+      admin.resources :subscription_affiliates, :as => 'affiliates'
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
       end
   end
   
+  map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
+    subdom.with_options(:namespace => 'partner_admin/', :name_prefix => 'partner_', :path_prefix => nil) do |partner|
+      partner.resources :affiliates, :collection => {:add_affiliate_transaction => :post}
+    end
+  end
+
   map.namespace :widgets do |widgets|
     widgets.resource :feedback_widget, :member => { :loading => :get } 
   end 

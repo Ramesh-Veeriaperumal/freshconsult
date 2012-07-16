@@ -1,4 +1,6 @@
-class EmailCommandsSetting < ActiveRecord::Base
+class AccountAdditionalSettings < ActiveRecord::Base
+
+  set_table_name "account_additional_settings" 
 
   belongs_to :account
   

@@ -2017,7 +2017,7 @@
   email_command_settings_info: "Configurar o delímetro usado para identificar e extrair comandos de email da caixa de correio"
   email_command_delimeter_label: "Delímetro de comandos de email"
   email_command_preview_to_email: "Para"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Assunto"
   email_command_preview_subject_value: "Ticket de suporte"
   unable_to_charge: "Não foi possível debitar no cartãodo agente adicionado!"

@@ -31,11 +31,11 @@
       Unassigned
     <% end %>  
   </span> 
-  <% if feature?(:multi_product) && @ticket.email_config %>
-  <span>
-    <b>Product</b>
-    <%= h(@ticket.email_config.name) %>
-  </span>
+  <% if feature?(:multi_product) && @ticket.product %>
+    <span>
+      <b>Product</b>
+      <%= h(@ticket.product.name) %>
+    </span>
   <% end %>
 <% current_portal.ticket_fields.each do |field| %>
   <% if field.visible_in_view_form? && field.flexifield_def_entry %>

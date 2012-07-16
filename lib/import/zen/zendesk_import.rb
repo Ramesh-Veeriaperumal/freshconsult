@@ -6,8 +6,7 @@ class Import::Zen::ZendeskImport
   @queue = 'zendeskImport'
 
   @retry_limit = 3
-  @sleep_after_requeue = 60*5
-
+  
   def self.perform(zen_params)
   	trap("INT") do
      raise "Worker got Interrupted!"
@@ -16,9 +15,7 @@ class Import::Zen::ZendeskImport
     trap('TERM') do
     	raise "Worker got Terminated!"
     end
-    trap('QUIT') do
-    	raise "Worker getting QUIT!"
-    end
+    
     Import::Zen::Start.new(zen_params).perform
   end
 end

@@ -38,7 +38,7 @@ module Helpdesk::TicketActions
     @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0
     @ticket.email ||= current_user && current_user.email
-    @ticket.email_config_id ||= current_portal.product.id
+    @ticket.product ||= current_portal.product
   end
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
@@ -139,6 +139,7 @@ module Helpdesk::TicketActions
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
                                 :email_config_id => @source_ticket.email_config_id,
+                                :product_id => @source_ticket.product_id,
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             

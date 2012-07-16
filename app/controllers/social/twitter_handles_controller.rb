@@ -68,7 +68,8 @@ class Social::TwitterHandlesController < ApplicationController
     returned_value = sandbox(0) {      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
       if twitter_handle.save
-        flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)        
+        portal_name = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
+        flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => portal_name)        
         redirect_to edit_social_twitter_url(twitter_handle)
       else
         flash[:notice] = t('twitter.user_exists')
@@ -225,13 +226,13 @@ class Social::TwitterHandlesController < ApplicationController
   
   protected
     def twitter_wrapper
-      @wrapper = TwitterWrapper.new @item ,{ :product => scoper, 
+      @wrapper = TwitterWrapper.new @item ,{ :product => @current_product, 
                                              :current_account => current_account,
                                              :callback_url => url_for(:action => 'authdone')}
     end
 
     def scoper
-      @current_product ||= current_account.primary_email_config
+      @current_product ? @current_product.twitter_handles : current_account.twitter_handles
     end
 
     def all_twitters
@@ -239,11 +240,11 @@ class Social::TwitterHandlesController < ApplicationController
     end
 
     def load_product
-      @current_product = current_account.all_email_configs.find(params[:product_id])
+      @current_product = current_account.products.find(params[:product_id]) if params[:product_id]
     end
 
     def build_item
-      @item = scoper.twitter_handles.build
+      @item = scoper.build
     end
 
     def load_item

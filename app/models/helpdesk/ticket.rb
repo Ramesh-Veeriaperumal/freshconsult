@@ -25,14 +25,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values
-  before_create :set_dueby, :save_ticket_states
+  before_create :assign_email_config_and_product, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity
-  before_update :load_ticket_status, :cache_old_model, :update_dueby
+  before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
        :stop_timesheet_timers
   
   belongs_to :email_config
+  belongs_to :product
   belongs_to :group
  
   belongs_to :responder,
@@ -441,7 +442,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
-    portal =  email_config.portal if email_config
+    portal =  product.portal if product
     unless email.blank?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
@@ -575,7 +576,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_id_delimiter
-    delimiter = account.email_commands_setting.ticket_id_delimiter
+    delimiter = account.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
   end
   
@@ -794,17 +795,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-    twt_handles = email_config.nil? ? account.primary_email_config.twitter_handles : email_config.twitter_handles
+    twt_handles = product ? product.twitter_handles : account.twitter_handles
     twt_handles.first.id unless twt_handles.blank?
   end
   
   def portal_host
-    (email_config && email_config.portal && !email_config.portal.portal_url.blank?) ? 
-      email_config.portal.portal_url : account.host
+    (product && !product.portal_url.blank?) ? product.portal_url : account.host
   end
   
   def portal_name
-    (email_config && email_config.portal) ? email_config.portal.name : account.portal_name
+    (product && product.portal_name) ? product.portal_name : account.portal_name
   end
   
   def update_activity
@@ -819,7 +819,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def product_name
-      email_config.nil? ? "No Product" : email_config.name
+      product ? product.name : "No Product"
    end
    
    def responder_name
@@ -846,10 +846,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
    end
 
-   def selected_reply_email
-    ( !to_email.blank? &&  account.pass_through_enabled? ) ? to_email : friendly_reply_email
-   end
-  
   def cc_email_hash
     if cc_email.is_a?(Array)     
       {:cc_emails => cc_email, :fwd_emails => []}
@@ -865,15 +861,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
     to_emails_array
   end
 
-  def to_cc_emails
+  def reply_to_all_emails
     emails_hash = cc_email_hash
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
     to_emails_array = (emails_hash[:to_emails] || []).clone
-    to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
-    (cc_emails_array + to_emails_array).uniq
+
+    reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
+
+    account.support_emails.each do |support_email|
+      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email)[:email] == parse_email_text(support_email)[:email]}
+    end
+
+    reply_to_all_emails
   end  
+
+  def selected_reply_email
+    account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
+  end
 
   def to_mob_json(only_public_notes=false)
     notes_option = {
@@ -934,12 +940,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   
     def create_product_activity
-      unless email_config
+      unless product
         create_activity(User.current, 'activities.tickets.product_change_none.long', {}, 
                                    'activities.tickets.product_change_none.short')
       else
         create_activity(User.current, 'activities.tickets.product_change.long',
-          {'product_name' => email_config.name}, 'activities.tickets.product_change.short')
+          {'product_name' => product.name}, 'activities.tickets.product_change.short')
       end
     
     end
@@ -1051,5 +1057,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def assign_email_config_and_product
+    if email_config
+      self.product = email_config.product
+    elsif product
+      self.email_config = product.primary_email_config
+    end
+  end
+
+  def assign_email_config
+    if self.changed.include?("product_id")
+      if product
+        self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      
+      else
+        self.email_config = nil
+      end
+    end
+  end
+
 end
   
