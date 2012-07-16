@@ -213,26 +213,19 @@ class Helpdesk::TicketsController < ApplicationController
     RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
   end
   
-  def add_original_to_email
-      original_to = parse_email_text(@item.to_email)[:email]
-      friendly_original_to = @item.to_email 
-      @reply_email.each do |email|
-        temp_email = parse_email_text(email)[:email]
-        if temp_email ==  original_to
-          friendly_original_to = email
-          @reply_email.delete(email)
-        end
-      end
-      @reply_email.unshift(friendly_original_to) 
+  def reply_to_all_emails
+    if @ticket_notes.blank?
+      @to_cc_emails = @ticket.reply_to_all_emails
+    else
+      cc_email_hash = @ticket.cc_email_hash
+      @to_cc_emails = cc_email_hash && cc_email_hash[:cc_emails] ? cc_email_hash[:cc_emails] : []
+    end
   end
 
   def show
     @reply_email = current_account.reply_emails
 
-    add_original_to_email if ( !@item.to_email.blank? && current_account.pass_through_enabled?)
-
     @to_emails = @ticket.to_emails
-    @to_cc_emails = @ticket.to_cc_emails
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -245,6 +238,8 @@ class Helpdesk::TicketsController < ApplicationController
     @ticket_notes = @ticket.conversation
     
     @email_config = current_account.primary_email_config
+
+    reply_to_all_emails
     
     respond_to do |format|
       format.html  
@@ -449,7 +444,7 @@ class Helpdesk::TicketsController < ApplicationController
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
 
-    @item.email_config = current_portal.product if current_portal
+    @item.product ||= current_portal.product
 
     @item.status = CLOSED if save_and_close?
     if @item.save

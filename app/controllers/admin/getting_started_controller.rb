@@ -26,17 +26,12 @@ class Admin::GettingStartedController < Admin::AdminController
   protected
   
     def twitter_wrapper
-      @wrapper = TwitterWrapper.new @twitter_item, { :product => product, 
-                                             :current_account => current_account,
+      @wrapper = TwitterWrapper.new @twitter_item, {:current_account => current_account,
                                              :callback_url => authdone_social_twitters_url }
-    end
-
-    def product
-      current_account.primary_email_config
     end
   
     def build_twitter_item
-      @twitter_item = product.twitter_handles.build
+      @twitter_item = current_account.twitter_handles.build
     end
     
     

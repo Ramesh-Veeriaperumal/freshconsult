@@ -97,6 +97,7 @@
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
+    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
   end
   
   map.resources :reports

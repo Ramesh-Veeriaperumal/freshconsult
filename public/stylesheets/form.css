@@ -602,3 +602,9 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 #cc_emails_sec .chzn-container, #cc_emails_sec .search-field input { width: 91% !important; }
 
 #cc_emails_sec .chzn-drop { width: 100% !important; }
+
+.inline-field .deleteChoice { margin: 5px 12px 0 5px; position: relative; cursor: pointer; background: url(/images/email_config_delete.png) no-repeat 0px 0px; width: 30px; height: 30px; position: absolute; z-index: 2; display: block; right: -15px; }
+.inline-field .deleteChoice.disabled { background: url(/images/email_config_delete_disabled.png) no-repeat 0px 0px; }
+.inline-field span.addchoice { padding-left: 20px; padding-bottom: 7px; margin-left: 5px; background: url(/images/email_config_add.png) no-repeat 0px 0px; position: absolute; float: left; }
+
+a.email_config { height: 24px; width: 80%; border: 0px; background-color: #F8F8F8; }

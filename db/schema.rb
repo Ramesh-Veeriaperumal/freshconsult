@@ -9,7 +9,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120627171748) do
+ActiveRecord::Schema.define(:version => 20120713135909) do
+
+  create_table "account_additional_settings", :force => true do |t|
+    t.string   "email_cmds_delimeter"
+    t.integer  "account_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "ticket_id_delimiter",               :default => "#"
+    t.boolean  "pass_through_enabled",              :default => true
+    t.string   "bcc_email"
+  end
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -229,15 +239,6 @@ ActiveRecord::Schema.define(:version => 20120627171748) do
     t.datetime "updated_at"
   end
 
-  create_table "email_commands_settings", :force => true do |t|
-    t.string   "email_cmds_delimeter"
-    t.integer  "account_id",           :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "ticket_id_delimiter",               :default => "#"
-    t.boolean  "pass_through_enabled",              :default => true
-  end
-
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"
@@ -249,10 +250,11 @@ ActiveRecord::Schema.define(:version => 20120627171748) do
     t.boolean  "active",                       :default => false
     t.string   "activator_token"
     t.string   "name"
-    t.string   "bcc_email"
+    t.integer  "product_id",      :limit => 8
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
+  add_index "email_configs", ["account_id"], :name => "index_email_configs_on_account_id_and_product_id"
 
   create_table "email_notification_agents", :force => true do |t|
     t.integer  "email_notification_id", :limit => 8
@@ -503,7 +505,7 @@ ActiveRecord::Schema.define(:version => 20120627171748) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "account_id"=>nil, "attachable_type"=>"14"}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -750,6 +752,7 @@ ActiveRecord::Schema.define(:version => 20120627171748) do
     t.integer  "import_id",        :limit => 8
     t.string   "ticket_type"
     t.text     "description_html", :limit => 2147483647
+    t.integer  "product_id",       :limit => 8
   end
 
   add_index "helpdesk_tickets", ["account_id", "created_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_created_at_and_id"
@@ -837,6 +840,7 @@ ActiveRecord::Schema.define(:version => 20120627171748) do
     t.integer  "solution_category_id", :limit => 8
     t.integer  "forum_category_id",    :limit => 8
     t.string   "language",                          :default => "en"
+    t.boolean  "main_portal",                       :default => false
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"
@@ -860,6 +864,16 @@ ActiveRecord::Schema.define(:version => 20120627171748) do
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+
+  create_table "products", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "products", ["account_id", "name"], :name => "index_products_on_account_id_and_name"
 
   create_table "scoreboard_ratings", :force => true do |t|
     t.integer  "account_id",       :limit => 8

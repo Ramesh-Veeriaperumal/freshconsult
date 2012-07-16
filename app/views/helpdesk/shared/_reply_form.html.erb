@@ -42,7 +42,7 @@
     <% capsule_config = get_app_config('capsule_crm') 
     
       bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
-      fixed_bcc = (@email_config.bcc_email.blank?) ? [] : @email_config.bcc_email.split( /,* /).map{|item|[item, item]}
+      fixed_bcc = (current_account.bcc_email.blank?) ? [] : current_account.bcc_email.split( /,* /).map{|item|[item, item]}
       bcc_drop_box_email += fixed_bcc  
 
 		  reply_cc_emails_blank = @ticket.cc_email_hash.nil? ? true : @to_cc_emails.blank?

@@ -5547,3 +5547,121 @@ margin:10px;
 			color:#888888;
 }
 /* SURVEY REPORT RELATED STYLES ENDS */
+
+
+.email-config-styled-table{
+  width:100%;
+  border:1px solid #ECECEC;
+  padding:0px;
+  thead {
+		tr {
+		  td {
+			color:#222;
+			background: url('../images/overlay-button.png') repeat-x 0px 0px;
+			height: 22px;
+			vertical-align: middle;
+			font-weight: 600;
+			font-size: 13px;
+		  }
+		}
+  }
+  tr {
+    border-bottom:1px solid #ECECEC;
+		&.even {
+		  >td{
+			background-color: #F9F9F9
+		  }
+		}
+		td {
+		  height: 40px;
+		  vertical-align: top;
+		  padding: 5px;
+		  color: #666;
+
+		  &.edit{
+		    width:5%;
+		    text-align: center;
+		    font-size: 13px;
+			  height: 15px;
+			  padding-left: 5px;
+			  padding-top: 12px;
+	    }
+	    &.primaryRole{
+	    	padding: 0px;
+			  padding-top: 15px;
+	    	width: 3%;
+	    }
+
+	    .primary, .secondary{
+          padding: 0px;
+          display: block;
+	    }
+	    .primary{
+	      content: url('../images/star_on.png') no-repeat 0px 0px transperent;
+      }
+        
+      .secondary {
+        content: url('../images/star_off.png') no-repeat 0px 0px transperent;
+      }
+
+      .not-verified {
+      	padding-top: 5px;
+      	content: url('../images/img_icon_warning.png') no-repeat 0px 0px transperent;
+      }
+
+	    &.supportMail{
+				width: 25%;
+				vertical-align: top;
+				span{
+					&.bold{
+						color: #333;
+						font-weight: bold;
+						font-size: 13px;
+					}
+				}
+				ul{
+					padding-right: 10px;
+					float: left;
+				}
+				.reply_email{
+					span {text-decoration: line-through;}
+					padding-bottom: 4px;
+				}
+			}
+			&.to-email{
+				width: 45%;
+			}
+		}
+	}
+}
+
+.product-title {
+	font-size: 1.1em;
+	font-weight: bold;
+	padding-top: 30px;
+	padding-bottom: 10px;
+}
+
+#support_emails {
+	margin-left: 170px;
+	.ui-form {
+		margin: 0px;
+		margin-bottom: 10px;
+		padding-top: 0px;
+		padding-bottom: 0px;
+
+		li{
+			padding: 0px;
+
+			ul {
+				padding-bottom: 10px;
+				li {
+					padding-top: 0px;
+					padding-bottom: 0px;
+					padding-left: 10px;
+				}
+			}
+		}
+	}
+}
+

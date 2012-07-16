@@ -456,8 +456,8 @@ class AccountsController < ApplicationController
       rescue
         locale =  I18n.default_locale
       end    
-      @account.primary_email_config.build_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
-                               :language => locale.to_s() , :account => @account)
+      @account.build_main_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
+                               :language => locale.to_s() , :account => @account, :main_portal => true)
      
     end
  

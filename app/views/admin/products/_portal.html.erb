@@ -1,8 +1,8 @@
 <% content_for :onload_script do %>
-	jQuery("#PortalUrl")
+	/* jQuery("#PortalUrl")
 		.rules("add", {
 	  			required: function(element) { return ((!!jQuery("input[@id=EnablePortal]:checked").length)); }
-	   });
+	   }); */
 <% end %>
 <span class="seperator"></span>
 <%= content_tag(:label, t('.portal_settings'), :class => "tabbed caption") %>

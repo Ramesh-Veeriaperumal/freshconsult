@@ -1,0 +1,30 @@
+<tr class="<%= cycle('odd', 'even') %>">
+  <td class="edit">
+    <%= link_to t('email_configs.edit'), edit_admin_email_config_path(email_config) %>
+  </td>
+  <td class="primaryRole">
+    <% portal_name = email_config.product ? email_config.product.name : current_account.portal_name%>
+    <% if email_config.primary_role? %>
+      <%= content_tag :span, "", :title => t('email_configs.primary_supp_email_tool_tip', :portal_name => portal_name), :class => "tooltip primary" %>
+    <% else %>
+      <%= link_to "", "/admin/email_configs/make_primary/#{email_config.id}", :confirm => "Are you sure you want to make this as the primary support email?", :title => t('email_configs.secondary_supp_email_tool_tip', :portal_name => portal_name), :class => "tooltip secondary" %>      
+    <% end %>
+  </td>
+  <td class="supportMail">
+    <% if email_config.active? %>
+      <ul>
+        <li><%= content_tag(:span, h("#{email_config.name}"), :class => "bold")%></li>
+        <li><%= content_tag(:span, h("#{email_config.reply_email}")) %></li>
+      </ul>
+    <% else %>  
+      <ul><li><%= content_tag :span, "", :title => t('email_configs.unverified_info1'), :class => "tooltip not-verified"%></li></ul>
+      <ul>
+        <li><%= content_tag(:span, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%></li>
+        <li class="reply_email"><%= content_tag :span, h("#{email_config.reply_email}")%></li>
+        <li><%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config), :class => "slim-button", :style=> "margin: 0px;")  unless email_config.active?  %></li>
+      </ul> 
+    <% end %>
+  </td>
+  <td><%= content_tag :span, h(email_config.to_email), :class => "large to-email" %> </td>
+  <td><%= content_tag :span, h(email_config.group ? email_config.group.name : "-"), :class => "large" %> </td>
+</tr>

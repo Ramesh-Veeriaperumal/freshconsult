@@ -2017,7 +2017,7 @@
   email_command_settings_info: "Configura il delimitatore utilizzato per identificare ed estrarre i comandi e-mail dall'e-mail"
   email_command_delimeter_label: "Delimitatore comandi e-mail"
   email_command_preview_to_email: "A"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Oggetto"
   email_command_preview_subject_value: "Ticket di supporto"
   unable_to_charge: "Impossibile addebitare la carta per l'agente aggiunto."

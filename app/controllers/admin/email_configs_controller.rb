@@ -3,22 +3,20 @@ require "httparty"
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
   
-  before_filter :only => [:new, :create] do |c|
-    c.requires_feature :multi_product
-  end
-   
   def index
     @email_config = current_account.primary_email_config
-    @groups = current_account.groups    
+    @global_email_configs = current_account.global_email_configs
+    @products = current_account.products
+    @account_additional_settings = current_account.account_additional_settings
   end
   
   def new
-    @email_configs = scoper.all
+    @products = current_account.products
     @groups = current_account.groups 
   end
 
   def edit
-    @email_configs = scoper.all
+    @products = current_account.products
     @groups = current_account.groups
   end
   
@@ -32,14 +30,10 @@ class Admin::EmailConfigsController < Admin::AdminController
   
   def make_primary 
     @email_config = scoper.find(params[:id])
-    if @email_config
-      current_account.primary_email_config.update_attributes(:primary_role => false)
-      if @email_config.update_attributes(:primary_role => true)
-        flash[:notice] = t(:'flash.email_settings.make_primary.success', 
-            :reply_email => @email_config.reply_email)
-        redirect_back_or_default redirect_url
-      end
+    if @email_config && @email_config.update_attributes(:primary_role => true)
+        flash[:notice] = t(:'flash.email_settings.make_primary.success', :reply_email => @email_config.reply_email)
     end
+    redirect_back_or_default redirect_url
   end
   
   def register_email
@@ -62,10 +56,15 @@ class Admin::EmailConfigsController < Admin::AdminController
   
   def deliver_verification
     @email_config = scoper.find(params[:id])
-    @email_config.deliver_verification_email
+
     remove_bounced_email(@email_config.reply_email) # remove the email from bounced email list so that 'resend verification' will send mail again.
+
+    @email_config.set_activator_token
+    @email_config.save
+
     flash[:notice] = t(:'flash.email_settings.send_activation.success', 
         :reply_email => @email_config.reply_email)
+
     redirect_to :back
   end
   
@@ -92,20 +91,20 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
  
     def human_name
-      "email"
+      I18n.t('email_configs.email')
     end
   
     def create_flash
-      "The #{human_name} has been added."
+      I18n.t('email_configs.email_added_succ_msg')
     end
     
     def create_error #Need to refactor this code, after changing helpcard a bit.
-      @email_configs = scoper.all
-      @groups = current_account.groups
+      @products = current_account.products
+      @groups = current_account.groups 
     end
     
     def update_error
-      @email_configs = scoper.all
+      @products = current_account.products
       @groups = current_account.groups
     end    
 end

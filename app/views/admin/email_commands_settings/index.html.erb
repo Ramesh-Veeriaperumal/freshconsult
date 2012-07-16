@@ -32,7 +32,7 @@
 <%= content_tag( :h3, t('email_command_settings_heading'), :class => "title") %>
 <%= content_tag( :div, t('email_command_settings_info'), :class => "intro") %>
 
-<% form_for :email_commands_setting, @email_commands_setting, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
+<% form_for :account_additional_settings, @email_commands_setting, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
 	<%= f.error_messages %>
 	<ul class="ui-form">
 		<li>

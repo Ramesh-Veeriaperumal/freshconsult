@@ -4,7 +4,6 @@ class User < ActiveRecord::Base
   include ActionController::UrlWriter
   include SavageBeast::UserInit
   include SentientUser
-  #include ParserUtil
   include Helpdesk::Ticketfields::TicketStatus
 
   USER_ROLES = [
@@ -311,6 +310,7 @@ class User < ActiveRecord::Base
 
   def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
     portal ||= account.main_portal
+    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
     reset_perishable_token!
     
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
@@ -331,6 +331,7 @@ class User < ActiveRecord::Base
   
   def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
     portal ||= account.main_portal
+    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
@@ -347,11 +348,12 @@ class User < ActiveRecord::Base
     UserNotifier.send_later(:deliver_user_activation, self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
           'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-        :subject => Liquid::Template.parse(subj_template).render , :reply_email => portal.product.friendly_email)
+        :subject => Liquid::Template.parse(subj_template).render , :reply_email => reply_email)
   end
   
   def deliver_contact_activation(portal)
     portal ||= account.main_portal
+    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
     unless active?
       reset_perishable_token!
   
@@ -359,7 +361,7 @@ class User < ActiveRecord::Base
       UserNotifier.send_later(:deliver_user_activation, self, 
           :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
             'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-          :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => portal.product.friendly_email)
+          :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => reply_email)
     end
   end
   

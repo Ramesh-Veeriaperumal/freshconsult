@@ -1,36 +1,87 @@
+<script id="emailConfigTemplate" type="text/x-jquery-tmpl">  
+  <ul class="ui-form">
+    <li>
+      <ul style="float:left; width:60%">
+        <li>
+          <span class="deleteChoice {{if (primary_role == true) }} disabled {{/if}}">&nbsp;</span>
+          <input type="hidden" name="product[email_configs_attributes][${index_id}][id]" value="${email_config_id}"/>
+          <label><%=t('admin.products.form.enter_support_email_id')%></label>
+        </li>
+        
+        <li><input type="text" class="required text email" name="product[email_configs_attributes][${index_id}][reply_email]" rel="reply_to_id" {{if reply_email }} value="${reply_email}" {{/if}}/>
+        </li>
+
+        <li>
+          <label><%= t('email_configs.info8')%>:</label>
+        </li>
+        <li>
+          <span rel="div_reply_email" stlye="padding-bottom: 10px;" disabled="disabled">{{if to_email }} value="${to_email}" {{/if}}</span>
+          <input type="hidden" rel="hidden_reply_to" name="product[email_configs_attributes][${index_id}][to_email]" {{if to_email }} value="${to_email}" {{/if}}/>
+        </li>
+      </ul>
+
+      <ul style="float:left; width:40%">
+        <li>
+          <label><%=t('email_configs.info9')%></label>
+        </li>
+        
+        <li>
+          <select name="product[email_configs_attributes][${index_id}][group_id]">
+            <option value>...</option>
+            <% @groups.each do |group| %>
+              <option value=<%=group.id%> {{if group_id == <%=group.id%>}} selected {{/if}}><%=group.name%></option>
+            <% end %>
+          </select>  
+        </li>
+
+        <li style="padding-top: 25px;">
+          <input type="checkbox" class="checkbox" rel="email_config_checkbox" name="product[email_configs_attributes][${index_id}][primary_role]" {{if primary_role == true}} checked="checked" {{/if}} value=${primary_role} style="float: left;margin-top: 4px;"/>
+          <label style="float: left; padding: 0px;">Primary Product Support Email</label>
+          <input type="hidden" rel="delete" name="product[email_configs_attributes][${index_id}][_destroy]" value="${destroy}"/>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</script>
+
 <% content_for :sidebar do -%><%- end %>
 <%= render :partial => "shared/colorpicker" %>
 <%= form.error_messages %>
+
 <ul class="ui-form">
   <li class="inline-field">
-    <%= content_tag(:label, t('.product_name') + " *", :class => "caption") %>
-    <div class="fields">
+    <%= content_tag(:label, t('admin.products.form.product_name') + " *", :class => "caption") %>
+    <div class="fields" style="margin-left: 170px;">
       <%= form.text_field :name, :class => "required text" %>
     </div>
   </li>
+
   <li class="inline-field">
-    <%= content_tag(:label, t('.configure_email'), :class => "caption") %>
-    <div class="fields">
-      <%= content_tag(:label, t('.enter_support_email_id')) %>
-      <%= form.text_field :reply_email, :class => "required text email", :id => "reply_to_id" %>      
-      <%= content_tag(:div, t('email_configs.info7'), :class => "info-data") %>      
-      <span class="seperator"></span>      
-      <%= content_tag(:label, t('email_configs.info8')) %>
-      <%= form.hidden_field :to_email, :id => "hidden_reply_to" %>
-      <%= content_tag(:div, @product.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>      
-      <span class="seperator"></span>      
-      <label>
-        <%= t('email_configs.info9') %> 
-        <%= collection_select(:product, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
-      </label>
-      <%= content_tag(:div, t('email_configs.info10'), :class => "info-data") %>
+    <%= content_tag(:label, t('admin.products.form.configure_email'), :class => "caption", :style => "width:30%;") %>
+    <div class="fields" id="support_emails">
+      <% @product.email_configs.each_with_index do |email_config, index| %>
+        <% javascript_tag do %>
+          _template = jQuery("#emailConfigTemplate").template();
+          
+          _data = {index_id : <%= index %>, email_config_id : <%= (email_config.id || 'null') %>, reply_email : "<%= email_config.reply_email || '' %>", group_id : <%= (email_config.group_id || 'null') %>, to_email : "<%= email_config.to_email || '' %>", primary_role : <%= email_config.primary_role %>, destroy : false};
+
+          jQuery.tmpl( _template, _data ).appendTo( "#support_emails");
+        <% end %>
+      <% end %>
+    </div>   
+  </li>
+
+  <li class="inline-field">
+    <div class="fields" style="margin-left: 163px;">
+      <span class="addchoice">&nbsp;</span>
+      <a class="email_config" id="addchoice" href="javascript:void(0)" style="margin-left: 30px;">Add another email</a>
     </div>
   </li>
+
   <li class="inline-field">
-    <label>
-      <%= form.check_box :enable_portal, {:class => "checkbox", :id => "EnablePortal" } %>
-      <%= t('.enable_product_portal') %>
-      <%= content_tag(:div, t(".configure_seperate_portal"), :class => "info-data tabbed") %>
+    <label class="aligncenter"  style="background-color: #EFEFEF; border-bottom: 1px solid grey; border-top: 1px solid grey;">      
+      <%= t("admin.products.form.configure_seperate_portal") %>
+      <%= form.check_box :enable_portal, {:class => "checkbox", :rel => "toggle", :id => "EnablePortal" } %>
     </label>
     <div id="PortalSettings" style="display:block;">
 			<% form.fields_for :portal do |portal| %>
@@ -41,33 +92,88 @@
 </ul>
 <% content_for :pagefixed do -%>
   <% javascript_tag do %>
+    var email_config_index = <%= @product.email_configs.size %>;
+
     jQuery(document).ready(function(){
-      jQuery("#reply_to_id")
-        .bind("change keyup", 
+      jQuery("input[rel=reply_to_id]").live("change keyup", 
           function(ev){
             if(this.value != ''){
               reply_email = construct_reply_url(this.value, "<%= current_account.full_domain %>");
-              jQuery("#div_reply_email").text(reply_email);
-              jQuery("#hidden_reply_to").val(reply_email);
+              jQuery(this).parent().parent().find("span[rel=div_reply_email]").text(reply_email);
+              jQuery(this).parent().parent().find("input[rel=hidden_reply_to]").val(reply_email);
             }
-        })
-        .trigger("change");
+          }
+      ).trigger("change");
 
-      jQuery("#EnablePortal")
-        .bind("change", function(ev){
+      jQuery("#EnablePortal").bind("change", 
+        function(ev){
           if(this.checked){
             jQuery("#PortalSettings").slideDown(400);
           }else{
             jQuery("#PortalSettings").slideUp(200);
           }
-        })
-        .trigger("change");
-        
-        jQuery("#product_name").change(function(e){
+        }
+      ).trigger("change");
+
+      jQuery("#product_name").change(function(e){
           jQuery("#domain_info_name")
               .html(this.value.toLowerCase().replace(/\W/g, ''));
-        })
-        .trigger("change");        
+      }).trigger("change"); 
+
+      jQuery("#addchoice").bind('click', 
+        function(ev){
+          _data = { index_id : email_config_index , 
+                    email_config_id : null, 
+                    reply_email : "", 
+                    group_id : null, 
+                    to_email : "", 
+                    primary_role : false,
+                    destroy : false
+                  };
+
+          _template = jQuery("#emailConfigTemplate").template();
+          
+          jQuery.tmpl( _template, _data ).appendTo( "#support_emails");
+          
+          email_config_index = email_config_index + 1;
+        }
+      );
+
+      //If the email config is old mark it for deletion or if its new mark it so that it wont be stored
+      jQuery(".deleteChoice").live('click',
+        function(ev){
+          if(!jQuery(this).hasClass('disabled')){
+            jQuery(this).parent().parent().parent().parent().hide().find("input[rel=delete]").val(true);
+          } 
+        }
+      );
+
+      jQuery("input[rel=email_config_checkbox]").live('change',
+        function(ev){
+          if(jQuery(this).is(':checked')) {
+            jQuery('#support_emails input:checkbox:checked').each(
+              function(index){
+                
+                spanElement = jQuery(this).parent().parent().parent().find("span.disabled");                
+                if(spanElement.hasClass('deleteChoice')){
+                  spanElement.removeClass('disabled');
+                  this.checked = false;
+                  jQuery(this).val(false).removeAttr('checked');
+                }
+              }
+            );
+            jQuery(this).attr('checked',true).val(true);
+            jQuery(this).parent().parent().parent().find("span.deleteChoice").addClass('disabled');
+          } else if(!jQuery(this).is(':checked')) {
+            if(jQuery('#support_emails input:checkbox:checked').length < 1){
+              alert('Atlest one primary email has to be present');
+              ev.preventDefault();
+              this.checked = true;
+            }
+          }
+        }
+      );
+
     });
   <%- end %>
 <%- end %>
