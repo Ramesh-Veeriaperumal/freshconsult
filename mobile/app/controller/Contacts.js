@@ -17,6 +17,9 @@ Ext.define('Freshdesk.controller.Contacts', {
     show: function(id){
         var contactDetails = this.getContactDetails();
 
+        contactDetails.items.items[1].setData({loading:true});
+        Ext.Viewport.animateActiveItem(contactDetails, { type: 'slide', direction: 'left'});
+
         Ext.Ajax.request({
             url: '/contacts/'+id,
             headers: {
@@ -26,7 +29,6 @@ Ext.define('Freshdesk.controller.Contacts', {
                 var resJson = JSON.parse(response.responseText),
                 user = resJson.user;
                 contactDetails.items.items[1].setData(user);
-                Ext.Viewport.animateActiveItem(contactDetails, { type: 'slide', direction: 'left'});
             },
             failure: function(response){
                 
