@@ -21,7 +21,7 @@
 			<div class="info-data"><%=t('email_configs.info10')%> </div>
 			<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
 	</li> 
-	<% if feature?(:multi_product) %> 
+	<% if feature?(:multi_product) && !@products.empty? %> 
 		<li>
 			<label><%=t('email_configs.assign_to_product_msg')%></label>
 			<div class="info-data"><p><%=t('email_configs.assign_to_product_info', :products_path => admin_products_path)%></p></div> 
