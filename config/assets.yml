@@ -24,6 +24,7 @@ stylesheets:
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/ie.css
+    - public/stylesheets/satisfaction.css
 
   widget:
     - public/stylesheets/reset.css   
@@ -58,7 +59,6 @@ stylesheets:
 
   satisfaction:
     - public/stylesheets/reports.css
-    - public/stylesheets/satisfaction.css
 
   redactor:
     - public/javascripts/redactor/css/redactor.css 
