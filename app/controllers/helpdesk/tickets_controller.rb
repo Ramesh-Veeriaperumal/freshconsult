@@ -21,7 +21,7 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :get_ticket_agents, :quick_assign_agent] 
+  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :get_ticket_agents, :quick_assign] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
@@ -437,36 +437,14 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "get_ticket_agents", :locals => {:ticket_id => @item.display_id}
   end
 
-  def quick_assign_agent
-    user = current_account.agents.find_by_user_id(params[:agent])
-    
-    old_item = item.clone
-    item.responder = user
-
-    item.save
-
-    render :json => {:success => true}.to_json
-  end
-  
-  def quick_assign_status
-    user = current_account.agents.find_by_user_id(params[:agent])
-    
-    old_item = item.clone
-    item.responder = user
-
-    item.save
-
-    render :json => {:success => true}.to_json
-  end
-
-  def quick_assign_priority
-    user = current_account.agents.find_by_user_id(params[:agent])
-    
-    old_item = item.clone
-    item.responder = user
-
-    item.save
-
+  def quick_assign
+    unless params[:assign] == 'agent'
+      @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+    else
+      agent = current_account.agents.find_by_user_id(params[:value])
+      @item.responder = agent.user
+    end
+    @item.save
     render :json => {:success => true}.to_json
   end
 

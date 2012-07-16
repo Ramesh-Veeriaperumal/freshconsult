@@ -204,23 +204,6 @@ var $J = jQuery.noConflict();
           $(this).parent().parent().removeClass('active');
         }
     })
-
-
-  $('.action_assign_agent').live("click",function(ev) {
-    console.log('Assigning Agent');
-    // ev.preventDefault();
-    ticket_id = $(this).data('ticket-id');
-    agent_user_id = $(this).data('agent-id');
-    new_text = $(this).text();
-
-    $.ajax( {
-      url: '/helpdesk/tickets/quick_assign_agent/' + ticket_id,
-      data: {agent : agent_user_id},
-      success: function (data) {
-        $('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').text(new_text);
-      }
-    });
-  })
 		
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())

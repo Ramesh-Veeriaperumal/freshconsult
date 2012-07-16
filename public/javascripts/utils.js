@@ -291,13 +291,14 @@ active_dialog = null;
 
  $(document).bind('mousedown', function(e) {       
 	if($(e.target).hasClass("chzn-results")) return;
+  if ($(e.target).parent().hasClass("fd-ajaxmenu")) {console.log('quick-action'); return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
     } 
  });
  
- function hideActiveMenu(){
+ hideActiveMenu = function (){
     $($(document).data("active-menu-element")).hide().removeClass("active-nav-menu");
     $($(document).data("active-menu-parent")).removeClass("selected");
     $(document).data("active-menu", false);
@@ -326,6 +327,7 @@ active_dialog = null;
         ev.preventDefault();
         ev.stopPropagation();
 
+        //Dynamic Menu count is just used to give an ID to the menus, so that they can be hidden properly.
         if ($(node).data('options-fetched') != true) {
           if (typeof($(document).data('dynamic-menu-count')) == "undefined") {
             $(document).data('dynamic-menu-count',0);
@@ -334,18 +336,18 @@ active_dialog = null;
           $(document).data('dynamic-menu-count',menuid);
 
           menu_container = $('<div>');
-          menu_container.attr('id',menuid);
+          menu_container.attr('id',"menu_" + menuid);
           menu_container.data('parent',$(node));
           menu_container.addClass('loading fd-ajaxmenu');
           // menu_container.width($(node).width());
           menu_container.insertAfter($(node));
 
-          $(node).data('menuid',menuid);
+          $(node).data('menuid',"menu_" + menuid);
 
           $.ajax({
             url: $(node).data('options-url'),
             success: function (data, textStatus, jqXHR) {
-              $('#' + menuid).removeClass('loading').html(data);
+              $('#menu_' + menuid).removeClass('loading').html(data);
               $(node).data('options-fetched',true);
             }
           });
@@ -375,12 +377,13 @@ active_dialog = null;
           $(document).data('dynamic-menu-count',menuid);
           menu_container = $('<div>');
           menu_container.data('parent',$(node));
-          menu_container.attr('id',menuid);
+          menu_container.attr('id',"menu_" + menuid);
           menu_container.addClass('loading fd-ajaxmenu');
           menu_container.append($($(node).data('options')).html());
           menu_container.insertAfter($(node));
-          $(node).data('menuid',menuid);
+          $(node).data('menuid',"menu_" + menuid);
           $(node).data('options-fetched',true)
+          menuid = "menu_" + menuid;
         } else {
           menuid = $(node).data('menuid');
         }

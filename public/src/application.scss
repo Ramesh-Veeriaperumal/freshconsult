@@ -15,6 +15,9 @@
 /*Ticket View icons */
 @import "ticket-view/*.png";
 
+/*@include font-face('Silkscreen', font-files('slkscr.svg#slkscr') 'slkscr.eot', normal, normal);*/
+@include font-face('Silkscreen', font-files( 'slkscr.ttf', truetype));
+
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
 body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
@@ -3166,15 +3169,16 @@ div.addReminder{
 .grey-source-forum{   background: sprite($symbol, grey-source-forum) no-repeat; }
 
 .quick-action:hover:after, .quick-action.selected:after {
-		content:"";
-		width: 0;
-		height: 0;
-		border-left: 4px solid transparent;
-		border-right: 4px solid transparent;
-		border-top: 4px solid #888;
-		position: absolute;
-		margin: 5px 0 0 5px; 
-		background:url(../images/inline-dropdown.png) no-repeat;
+	content:"";
+	width: 0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #888;
+	margin: 5px 0 0 5px; 
+	position: absolute;
+	display: inline-block;
+	background:url(../images/inline-dropdown.png) no-repeat;
 }
 #ticket_view_choices {
 	@include inline-block;
@@ -3237,8 +3241,10 @@ div.addReminder{
 		vertical-align:top;
 	}
 	td{
-		padding: 10px;
-		background-color:#ffffff;
+		padding: 6px 10px;
+		font-size:12px;
+		line-height: 16px;
+		background:inline-image('ticket_list_bg.png') repeat #FFF;
 		border-top:1px solid #ffffff;
 		border-bottom:1px solid #EFEFEF;
 		a{
@@ -3254,11 +3260,11 @@ div.addReminder{
 		border-bottom:1px solid #f9f9f9;
 	}*/
 	tr:hover td, tr:hover.even td{
-		background: #fefef7;
+		background:inline-image('ticket_list_bg_hover.png') repeat #FFF;
 	}
 
 	tr.active td, tr.active:hover td, tr.active.even td{
-		background-color:#f2f0e3;
+		background:inline-image('ticket_list_bg_active.png') repeat #FFF;
 		border-top:1px solid #f2f0e3;
 		border-bottom:1px solid #f2f0e3;
 	}
@@ -3308,6 +3314,44 @@ div.addReminder{
 				width: $TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
 				background:#ffffff;
 			}
+
+			.status-source {
+				text-align: right;
+				background-position:top right;
+		   		min-width: 30px;
+		   		min-height: 36px;
+				padding: 20px 24px 0 0;
+		   		font-family: "Silkscreen";
+		   		&.source-detailed-portal {
+		   			background-image: inline-image('sources/detailed_web.png');
+		   			background-repeat: no-repeat;
+		   		}
+		   		&.source-detailed-email {
+		   			background-image: inline-image('sources/detailed_email.png');
+		   			background-repeat: no-repeat;
+		   		}
+		   		&.source-detailed-facebook {
+		   			background-image: inline-image('sources/detailed_web.png');
+		   			background-repeat: no-repeat;
+		   		}
+		   		&.source-detailed-twitter {
+		   			background-image: inline-image('sources/detailed_email.png');
+		   			background-repeat: no-repeat;
+		   		}
+		   		&.source-detailed-phone {
+		   			background-image: inline-image('sources/detailed_web.png');
+		   			background-repeat: no-repeat;
+		   		}
+		   		&.source-detailed-forum {
+		   			background-image: inline-image('sources/detailed_email.png');
+		   			background-repeat: no-repeat;
+		   		}
+		   }
+		}
+
+		&.ticket-status-5 .name h3 a {
+			color:#888;
+			text-decoration: line-through;
 		}
 	}
 	th.toolbar_right{
@@ -3317,25 +3361,63 @@ div.addReminder{
       padding-right:0px;
    }
 	
+	.subject_style {
+		@include border-radius(3px);
+		font-size:8px;
+		padding:2px 5px 1px;
+		letter-spacing:-0.16em;
+		font-smooth:never;
+		-webkit-font-smoothing: none;
+
+		@include text-shadow(1px, 0, 0, rgba(255,255,255,0.7));
+
+		&.customer_responded {
+			background: #698ee4;
+			color:#FFF;
+			@include text-shadow(1px, 0, 0, rgba(113,113,113,0.53));
+		}
+		&.overdue {
+			background: #d26260;
+			color:#FFF;
+			@include text-shadow(1px, 0, 0, rgba(113,113,113,0.53));
+		}
+		&.new {
+			background: #ffd16d;
+		}
+		&.elapsed {
+			background: #f4d8d7;
+		}
+	}
+
+	
 	.name, .name-user{
       width:65%;
-      padding-left:40px;
+      padding-left:58px;
+      line-height:  16px;
       .preview_pic{
          margin:0px; 
          margin-top:3px;
-         margin-left:-38px;         
+         margin-left:-55px;         
          @include corners(5px);
          border:1px solid #9a9a9a;
-         height:30px;
+         height:45px;
          img{ 
-            width:30px; height:30px;
+            width:45px; height:45px;
          }
       }
+      .new_ticket {
+      	font-weight: bold;
+      }
 
-      span.info-data {
-      	font-size: 14px;
-      	font-weight:normal;
-      	margin-left:0;
+      .info-data {
+      	color:#888;
+      	a {
+      		color:#888;
+      	}
+      }
+
+      .sla_status {
+      	font-weight: bold;
       }
 
       .emphasize {
@@ -3344,15 +3426,13 @@ div.addReminder{
       }
 
       h3{
-		margin-bottom:4px;
 		width: 100%;
 		overflow: hidden;
 		word-break: break-all;
 
 		a{
 			font-size: 14px;
-			line-height: 20px;
-			padding: 0px 0 4px 2px;
+			padding: 0;
 			color:#06C;
 		}
 		a:hover{
@@ -3388,30 +3468,28 @@ div.addReminder{
 	.assign{
 		ul{
 			li{
-				padding:4px 7px 0px 0px; 
-				color:#999999;
-				font-size:11px;
-				span{
-					color:#444444;
+				color:#888;
+				font-size:12px;
+				line-height: 16px;
+				padding-right:10px;
+				.result {
+					color:#666;
+					font-weight: bold;
 					text-transform:capitalize;
-				}					
-			}
-			.priority{
-					span.style_1{		/* Low priority style */
-						color:#666666
-					}
-					span.style_2{		/* Medium priority style */
-						color:#cc6633
-					}
-					span.style_3{		/* High priority style */
-						color:#cc6633
-					}
-					span.style_4{		/* Urgent priority style */
-						color:#cc6633
-					}					
 				}
+
+				label {
+					font-size:12px;
+					font-weight: normal;
+					display: inline-block;
+					width: 50px;
+					padding:0 2px 0 0;
+				}				
+			}
 		}
+
 	}
+
 }	  
 
 .detailed_view {
@@ -4667,10 +4745,9 @@ a.close{
 	}
 }
 .toolbar{
-   background:#f4f4f4;
+   background:inline-image('ticket_list_head_bg.png');
 	padding:5px 8px 8px 0;
 	border-bottom:1px solid #dfdfdf;
-	border-top:1px solid #ffffff;
 }
 
 .sort-bar{

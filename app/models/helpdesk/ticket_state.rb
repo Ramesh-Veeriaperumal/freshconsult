@@ -23,4 +23,12 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     first_response_time.blank? or (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
   end
   
+  def is_new?
+    first_response_time.blank?
+  end
+
+  def customer_responded?
+    (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
+  end
+  
 end

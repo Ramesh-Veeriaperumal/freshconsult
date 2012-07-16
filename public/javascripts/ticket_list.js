@@ -15,7 +15,7 @@
             classes: 'ui-tooltip-ticket ui-tooltip-rounded'
            },             
            content: {
-              text: '<%= t("index_tooltip_loading_msg")%>',
+              text: TICKET_STRINGS['tooltip_loading'],
               ajax: {
                 url: tipUrl,
                 once: true
@@ -92,26 +92,90 @@
 
 // ---- END OF extract from /helpdesk/shared/_ticket_view.html.erb ----
 
-
+priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 // Quick Actions
-// Assign Agent
-console.log('asdas');
 jQuery(document).ready(function() {
+	
+	// Assign Agent
 	jQuery('.action_assign_agent').live("click",function(ev) {
-		console.log('Assigning Agent');
-		// ev.preventDefault();
+		
+		ev.preventDefault();
 		ticket_id = jQuery(this).data('ticket-id');
 		agent_user_id = jQuery(this).data('agent-id');
 		new_text = jQuery(this).text();
 
+		full_menu = jQuery(this).parent();
+		full_menu.addClass('loading');
 		jQuery.ajax( {
-			url: '/helpdesk/tickets/quick_assign_agent/' + ticket_id,
-			data: {agent : agent_user_id},
+			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
+			data: {assign: 'agent', value : agent_user_id},
 			success: function (data) {
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').text(new_text);
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').animateHighlight(jQuery('body').css('backgroundColor'));
+				full_menu.removeClass('loading');
+				hideActiveMenu();
+			}
+		});
+	});
+
+	// Assign Status
+	jQuery('.action_assign_status').live("click",function(ev) {
+		
+		ev.preventDefault();
+		new_text = jQuery(this).text();
+
+		full_menu = jQuery(this).parent();
+		full_menu.addClass('loading');
+
+		parent = full_menu.data('parent');
+
+		ticket_id = parent.data('object-id');
+		new_status = jQuery(this).data('status-id');
+
+		jQuery.ajax( {
+			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
+			data: {assign:'status', value : new_status},
+			success: function (data) {
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').text(new_text);
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').animateHighlight(jQuery('body').css('backgroundColor'));
+				full_menu.removeClass('loading');
+				hideActiveMenu();
+			}
+		});
+	});
+
+	// Assign Priority
+	jQuery('.action_assign_priority').live("click",function(ev) {
+		
+		ev.preventDefault();
+		new_text = jQuery(this).text();
+
+		full_menu = jQuery(this).parent();
+		full_menu.addClass('loading');
+
+		parent = full_menu.data('parent');
+
+		ticket_id = parent.data('object-id');
+		new_priority = jQuery(this).data('priority-id');
+
+
+		jQuery.ajax( {
+			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
+			data: {assign:'priority', value : new_priority},
+			success: function (data) {
+				priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
+				priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_priority]);
+
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').text(new_text);
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').animateHighlight(jQuery('body').css('backgroundColor'));
+				full_menu.removeClass('loading');
+				hideActiveMenu();
 			}
 		});
 	});
 });
+
+				// priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
+				// priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids.new_priority);
 
 // Assign Status

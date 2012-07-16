@@ -198,9 +198,28 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket, class_name = "need-attention")
-    if ticket.active? && ticket.ticket_states.need_attention 
-      class_name
+  def subject_style(ticket) #, class_name = "need-attention")
+    type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
+    type = "new" if ticket.ticket_states.is_new? && ticket.active?
+    type = "elapsed" if ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
+    type = "overdue" if ticket.due_by < Time.now && ticket.active?
+    type = "resolved"  if ticket.status == RESOLVED
+    type
+  end
+
+  def sla_status(ticket)
+    if( ticket.active? )
+      if(Time.now > ticket.due_by )
+        t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+      else
+        t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+      end
+    else
+      if( ticket.ticket_states.resolved_at < ticket.due_by )
+        t('resolved_on_time')
+      else
+        t('resolved_late')
+      end
     end
   end
   

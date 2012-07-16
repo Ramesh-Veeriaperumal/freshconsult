@@ -1,4 +1,5 @@
-<tr class="<%= cycle('odd', 'even') %> <%= subject_style(ticket, "need-attention") %>" data-ticket="<%= ticket.display_id %>">
+<% ticket_style = subject_style(ticket) %>
+<tr class="<%= cycle('odd', 'even') %> ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
   <td class="check">
 	<%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
@@ -7,25 +8,62 @@
   <td class="name">
 	<span class="hideForList"><%= user_avatar(ticket.requester) %></span>
 	<div class="ticket_subject">
-		<h3 class="ticket-description-tip" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
-			<span class="need-attention-icon"></span>
+		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
 			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}) ) %> 
 		</h3>
 		<% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data hideForList" do %>
-			  <%= content_tag :span, "", :class => "tooltip icon-image grey-source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase), "data-placement" => "left" %>
-				<%= t("ticket.reported_on_ticket_list", :username => link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ), :time_words => time_ago_in_words(ticket.updated_at), :date => formated_date(ticket.updated_at)) %>
+				<%= t("ticket.reported_on_ticket_list", 
+						:username => link_to("<strong>" + h(ticket.requester.display_name) + "</strong>", ticket.requester, :class => 'user_name' ), 
+						:time_words => time_ago_in_words(ticket.updated_at), 
+						:date => formated_date(ticket.updated_at)) %>
+				<div class="sla_status"><%= sla_status(ticket) %></div>
 			<% end %>
 		<% end %>
+	</div>
+
+	<div class="sla hideForList">
 	</div>
   </td>
   <td class="requester_info hideForDetails">
   	<%= h(ticket.requester.display_name) %>
   </td>
   <td class="ticket_info hideForDetails"><%= t("helpdesk.tickets.tabular_view.time_ago", :time_in_words => time_ago_in_words(ticket.updated_at)) %></td>
+  <td><div class="tooltip status-source source-detailed-<%= ticket.source_name.to_s.downcase %> hideForList" 
+  		title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"
+  		>
+  	<%= "<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>" unless ticket_style.blank? %>
+  </div></td>
   <td class="assign hideForList">
 	  	<ul>
-	  		<li class="quick-action ajax-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
+	  		<li class="quick-action ajax-menu" 
+	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
+	  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
+
+	  			<label><%=t('ticket.assigned_agent')%>: </label>
+	  			<span class="result" >
+				<% if ticket.freshness == :new %>
+					<%=t('ticket.assigned_none')%>
+				<% else %>
+					<%= h(ticket.responder.display_name) %>
+				<% end %>
+				</span>
+			</li>
+
+	  		<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+				<label><%=t('ticket.status')%>: </label>
+				<span class="result"><%= h(ticket.status_name) %></span>
+			</li>
+			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
+				<label><%=t('ticket.priority')%>: </label>
+				<span class="result"><%= h(ticket.priority_name) %></span>
+			</li>
+		</ul>
+		<!-- 
+	  	<ul>
+	  		<li class="quick-action ajax-menu" 
+	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
+	  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
 	  			<%=t('assigned_to')%>: 
 	  			<span class="result" >
 				<% if ticket.freshness == :new %>
@@ -41,10 +79,12 @@
 			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
 				<%=t('ticket.priority')%>: <span class="result"><%= h(ticket.priority_name) %></span>
 			</li>
-		</ul>
+		</ul> -->
   </td>
   <td class="hideForDetails">
-  	<div  class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+  	<div class="quick-action ajax-menu" 
+  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
+  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
   		<span class = "result">
   	<% if ticket.freshness == :new %>
 		<%=t('ticket.assigned_none')%>
@@ -63,21 +103,5 @@
   	<div  class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
   		<span class="result"><%= h(ticket.priority_name) %></span>
   	</div>
-  </td>
-
-  <td class="sla hideForList">
-    <% if( ticket.active? ) %>
-  	  <% if(Time.now > ticket.due_by ) %>
-			  <%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
-		  <% else %>
-		    <%= t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
-	    <% end %>  
-	  <% else %>
-	    <% if( ticket.ticket_states.resolved_at < ticket.due_by ) %>
-	      <%= t('resolved_on_time') %>	      
-	    <% else %>
-	      <%= t('resolved_late') %>	    
-	    <% end %>
-	  <% end %>
   </td>
 </tr>
