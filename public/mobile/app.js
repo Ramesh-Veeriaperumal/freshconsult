@@ -31524,17 +31524,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                easing:'ease-in-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                easing:'ease-in-out'
-            },
             title:'Close ticket',
             message: 'Do you want to update ticket status to "Close"?',
-            modal:false,
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -31567,17 +31559,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                easing:'ease-in-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                easing:'ease-in-out'
-            },
             title:'Resolve ticket',
             message: 'Do you want to update ticket status to "Resolve"?',
-            modal:false,
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -31619,17 +31603,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                easing:'ease-in-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                easing:'ease-in-out'
-            },
             title: 'Delete Ticket',
             message: 'Do you want to delete this ticket (#'+id+')?',
-            modal:false,
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -31802,7 +31778,10 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj.items.items[1].setValue(this.ticket.requester.name).show();
         
         if(this.ticket.is_fb_message) {
-            fieldSetObj.items.items[5].setLabel('Reply');
+            fieldSetObj.items.items[5].setPlaceHolder('Reply *');
+        }
+        else {
+            fieldSetObj.items.items[5].setPlaceHolder('Comment *');   
         }
             
         fieldSetObj.items.items[5].setValue('');
@@ -38497,20 +38476,27 @@ Ext.define('Freshdesk.view.TicketReply', {
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
-        var id = this.ticket_id;
-        this.items.items[1].submit({
-            success:function(){
-                location.href="#tickets/show/"+id;
-            },
-            failure:function(){
-                var errorHtml='Please correct the bellow errors.<br/>';
-                for(var index in response.errors){
-                    var error = response.errors[index],eNo= +index+1;
-                    errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+        var id = this.ticket_id,
+            formObj = this.items.items[1],
+            values = formObj.getValues();
+        if(values["helpdesk_note[body_html]"].trim() != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
                 }
-                Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
-        });
+            });
+        }
     },
     getMessageItem: function(){
         return this.items.items[1].items.items[0].items.items[8];
@@ -38655,20 +38641,27 @@ Ext.define('Freshdesk.view.TicketNote', {
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
-        var id = this.ticket_id;
-        this.items.items[1].submit({
-            success:function(){
-                location.href="#tickets/show/"+id;
-            },
-            failure:function(){
-                var errorHtml='Please correct the bellow errors.<br/>';
-                for(var index in response.errors){
-                    var error = response.errors[index],eNo= +index+1;
-                    errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+        var id = this.ticket_id,
+        formObj = this.items.items[1],
+        values = formObj.getValues();
+        if(values["helpdesk_note[body_html]"].trim() != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
                 }
-                Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
-        });
+            });
+        }
     },
     getMessageItem: function(){
         return this.items.items[1].items.items[0].items.items[2];
@@ -38814,20 +38807,27 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
-        var id = this.ticket_id;
-        this.items.items[1].submit({
-            success:function(){
-                location.href="#tickets/show/"+id;
-            },
-            failure:function(){
-                var errorHtml='Please correct the bellow errors.<br/>';
-                for(var index in response.errors){
-                    var error = response.errors[index],eNo= +index+1;
-                    errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+        var id = this.ticket_id,
+            formObj = this.items.items[1],
+            values = formObj.getValues();
+        if(values["helpdesk_note[body]"] != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
                 }
-                Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
-        });
+            });
+        }
     },
     config: {
         layout:'fit',
@@ -38886,20 +38886,28 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
-        var id = this.ticket_id;
-        this.items.items[1].submit({
-            success:function(){
-                location.href="#tickets/show/"+id;
-            },
-            failure:function(){
-                var errorHtml='Please correct the bellow errors.<br/>';
-                for(var index in response.errors){
-                    var error = response.errors[index],eNo= +index+1;
-                    errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+        var id = this.ticket_id,
+            formObj = this.items.items[1],
+            values = formObj.getValues();
+        if(values["helpdesk_note[body]"] != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
                 }
-                Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
-        });
+            });
+        }
+            
     },
     config: {
         layout:'fit',
@@ -42238,7 +42246,9 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message'
+                        placeHolder:'Message *',
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',
@@ -42317,8 +42327,9 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        height: '17em',
-                        placeHolder:'Message'
+                        placeHolder:'Message *',
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',
@@ -42392,8 +42403,10 @@ Ext.define('Freshdesk.view.TweetForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Message',
-                        maxLength:120
+                        placeHolder:'Message *',
+                        maxLength:120,
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',
@@ -42455,7 +42468,9 @@ Ext.define('Freshdesk.view.FacebookForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Comment'
+                        placeHolder:'Comment *',
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',

@@ -129,17 +129,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                easing:'ease-in-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                easing:'ease-in-out'
-            },
             title:'Close ticket',
             message: 'Do you want to update ticket status to "Close"?',
-            modal:false,
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -172,17 +164,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                easing:'ease-in-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                easing:'ease-in-out'
-            },
             title:'Resolve ticket',
             message: 'Do you want to update ticket status to "Resolve"?',
-            modal:false,
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -224,17 +208,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                easing:'ease-in-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                easing:'ease-in-out'
-            },
             title: 'Delete Ticket',
             message: 'Do you want to delete this ticket (#'+id+')?',
-            modal:false,
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -407,7 +383,10 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj.items.items[1].setValue(this.ticket.requester.name).show();
         
         if(this.ticket.is_fb_message) {
-            fieldSetObj.items.items[5].setLabel('Reply');
+            fieldSetObj.items.items[5].setPlaceHolder('Reply *');
+        }
+        else {
+            fieldSetObj.items.items[5].setPlaceHolder('Comment *');   
         }
             
         fieldSetObj.items.items[5].setValue('');
