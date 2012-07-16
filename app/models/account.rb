@@ -412,8 +412,8 @@ class Account < ActiveRecord::Base
   def to_mob_json(deep=false)
     json_include = {
       :main_portal => {
-        :only => [:name, :preferences],
-        :methods => [:logo_url,:fav_icon_url]
+        :only => [ :name, :preferences ],
+        :methods => [ :logo_url, :fav_icon_url ]
       }
     }
     options = {
@@ -422,15 +422,18 @@ class Account < ActiveRecord::Base
     if deep
       json_include.merge!({
         :canned_responses => {
-          :methods => [:my_canned_responses],
-          :only => [:title,:id]
+          :methods => [ :my_canned_responses ],
+          :only => [ :title, :id ]
         },
         :scn_automations =>{
-          :only => [:id,:name]
+          :only => [ :id, :name ]
+        },
+        :twitter_handles => {
+          :only => [ :id, :screen_name ]
         }
       })
       options.merge!({
-        :methods => [:reply_emails],
+        :methods => [ :reply_emails ],
       })
     end
     options[:include] = json_include;

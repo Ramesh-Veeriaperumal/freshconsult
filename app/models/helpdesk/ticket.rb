@@ -299,14 +299,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+  alias :is_twitter :is_twitter?
   
   def is_facebook?
      (fb_post) and (fb_post.facebook_page) 
   end
+  alias :is_facebook :is_facebook?
  
  def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
  end
+ alias :is_fb_message :is_fb_message?
 
   def is_fb_wall_post?
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
@@ -893,11 +896,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :methods => [ :avatar_url ]
       },
       :requester => {
-        :only => [ :name, :email, :id, :is_agent, :is_customer ],
+        :only => [ :name, :email, :id, :is_agent, :is_customer, :twitter_id ],
         :methods => [ :avatar_url ]
       },
       :attachments => {
         :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+      },
+      :fb_post => {
+        :include => {
+          :facebook_page => {
+            :only => [ :id, :page_name ]
+          }
+        }
       }
     }
 
@@ -909,7 +919,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     options = {
       :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
-      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails, :conversation_count, :selected_reply_email ],
+      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails, 
+                    :conversation_count, :selected_reply_email, :from_email, :is_twitter, :is_facebook, :fetch_twitter_handle, :is_fb_message ],
       :include => json_inlcude
     }
     to_json(options,false) 
