@@ -1,5 +1,6 @@
 class Support::SupportController < ApplicationController
   layout 'portal'
+  
   protected
   	def set_layout
   		render "/portal/layout"

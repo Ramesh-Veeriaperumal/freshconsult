@@ -4726,6 +4726,18 @@ a.thumbnail:hover {
   font-weight: 300;
 }
 
+/* Layout management styles */
+.row {
+  overflow: hidden;
+  *zoom: 1;
+}
+
+.column {
+  float: left;
+  width: 48%;
+  margin-right: 2%;
+}
+
 .preview_pic {
   display: inline;
   float: left;

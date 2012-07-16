@@ -125,6 +125,10 @@ class Topic < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
 
+  def to_liquid
+    Forum::TopicDrop.new self
+  end
+
   protected
     def set_default_replied_at_and_sticky
       self.replied_at = Time.now.utc
