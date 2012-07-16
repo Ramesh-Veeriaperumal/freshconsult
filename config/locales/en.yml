@@ -14,6 +14,7 @@ en:
   status: "Status"
   preview: "Preview"
   proceed_now: "\n\nProceed now?"
+  apply: "Apply"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
@@ -2208,9 +2209,13 @@ en:
   waiting_on_customer: "Waiting on Customer"
   waiting_on_third_party: "Waiting on Third Party"
   choose_free_plan: "Choose your Free %{plan}"
+  continue_using_free: "Continue to use Freshdesk as a"
+  free_account: "Free account"
   not_eligible_for_free_plan: "Not eligible to select a Free plan"
   select_free_plan: "Select your Free plan"
-  plan_is_selected: "%{plan} is selected"
+  change_details_anytime: "Subscription details or plans can be changed at anytime."
+  enter_payment_details_to_add: "Enter payment details to add more agents"
+  plan_is_selected: "Your Free account is now active with the %{plan} plan"
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
