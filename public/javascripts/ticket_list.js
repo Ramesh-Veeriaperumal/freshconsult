@@ -5,29 +5,31 @@
         _self = jQuery(item);        
         var tipUrl = jQuery(item).data("tipUrl");
         jQuery(item).qtip({
-            position: { 
-              my: 'top left',
-              at: 'bottom left',
-              target: _self.parent(),
-              viewport: jQuery(window) 
-            }, 
-           style : {
-            classes: 'ui-tooltip-ticket ui-tooltip-rounded'
-           },             
-           content: {
-              text: TICKET_STRINGS['tooltip_loading'],
-              ajax: {
-                url: tipUrl,
-                once: true
-              }
-            },
-           show: {
-              solo: true,
-              delay: 200,
-              effect: function(offset) {
-                  jQuery(this).show("fade", 240); // "this" refers to the tooltip
-              }
-          }
+			position: { 
+				my: 'top left',
+				at: 'bottom  left',
+				viewport: jQuery(window) 
+			}, 
+			style : {
+				classes: 'ui-tooltip-ticket ui-tooltip-rounded',
+				tip: {
+					mimic: 'center'
+				}
+			},             
+			content: {
+				text: TICKET_STRINGS['tooltip_loading'],
+				ajax: {
+					url: tipUrl,
+					once: true
+				}
+			},
+			show: {
+				solo: true,
+				delay: 200,
+				effect: function(offset) {
+					jQuery(this).show("fade", 240); // "this" refers to the tooltip
+				}
+          	}
         }); 
       });
         
