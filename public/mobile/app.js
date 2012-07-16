@@ -30290,7 +30290,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                                                     '<tpl else>No agent assigned, </tpl>',
                                             '&nbsp;{helpdesk_ticket.updated_at:this.time_in_words}</div>',
                                     '</div>',
-                                    '<div class="disclose">&nbsp;</div>',
+                                    '<div class="disclose icon-arrow-right">&nbsp;</div>',
                         '</div></a>',
                     '</li>',
                 '</tpl>',
@@ -46161,7 +46161,7 @@ Ext.define("Freshdesk.view.FiltersList", {
         itemTpl: ['<tpl if="count &gt; 0"><div class="list-item-title"></tpl><tpl if="count == 0"><div class="list-item-title disabled"></tpl>',
                     '<div class="name">{name}</div>',
         			'<div class="count"><div>{count}</div></div>',
-                    '<div class="disclose"></div>',
+                    '<div class="disclose icon-arrow-right"></div>',
         		   '</div>'].join(''),
         loadingText: false
     }
@@ -46189,7 +46189,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                         '<tpl else>No agent assigned,</tpl>',
                                 '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
-                        '<div class="disclose">&nbsp;</div>',
+                        '<div class="disclose icon-arrow-right">&nbsp;</div>',
         	'</div></tpl>'].join(''),
                 {
                         time_in_words : function(item){
