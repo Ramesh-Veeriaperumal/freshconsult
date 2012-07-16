@@ -1,7 +1,7 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-s7ff03d5a26.png') no-repeat; }
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-billing, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-day_pass, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-email_commands_setting, .admin-icon-facebook-setting, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-integrations, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-security, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-survey-settings, .admin-icon-ticket-fields, .admin-icon-twitter-setting { background: url('/images/admin-icon-sbabe2f444a.png') no-repeat; }
 
 .application-logo-sprite, .application-logo-capsule_crm-small, .application-logo-capsule_crm, .application-logo-freshbooks-small, .application-logo-freshbooks, .application-logo-google_analytics, .application-logo-google_contacts, .application-logo-harvest-small, .application-logo-harvest, .application-logo-jira, .application-logo-salesforce, .application-logo-sugarcrm, .application-logo-workflow_max-small, .application-logo-workflow_max { background: url('/images/application-logo-sdaf6991474.png') no-repeat; }
 
@@ -345,49 +345,51 @@ ul.admin_icons li a:hover { color: #000000; background: #f2f2f2; -moz-box-shadow
 
 .admin-icon-agent { background-position: 0 -32px; }
 
-.admin-icon-business-hours { background-position: 0 -64px; }
+.admin-icon-billing { background-position: 0 -64px; }
 
-.admin-icon-canned-response { background-position: 0 -96px; }
+.admin-icon-business-hours { background-position: 0 -96px; }
 
-.admin-icon-customer-portal { background-position: 0 -128px; }
+.admin-icon-canned-response { background-position: 0 -128px; }
 
-.admin-icon-day_pass { background-position: 0 -160px; }
+.admin-icon-customer-portal { background-position: 0 -160px; }
 
-.admin-icon-dispatcher { background-position: 0 -192px; }
+.admin-icon-day_pass { background-position: 0 -192px; }
 
-.admin-icon-email-notifications { background-position: 0 -224px; }
+.admin-icon-dispatcher { background-position: 0 -224px; }
 
-.admin-icon-email-settings { background-position: 0 -256px; }
+.admin-icon-email-notifications { background-position: 0 -256px; }
 
-.admin-icon-email_commands_setting { background-position: 0 -288px; }
+.admin-icon-email-settings { background-position: 0 -288px; }
 
-.admin-icon-facebook-setting { background-position: 0 -320px; }
+.admin-icon-email_commands_setting { background-position: 0 -320px; }
 
-.admin-icon-feedback { background-position: 0 -352px; }
+.admin-icon-facebook-setting { background-position: 0 -352px; }
 
-.admin-icon-group { background-position: 0 -384px; }
+.admin-icon-feedback { background-position: 0 -384px; }
 
-.admin-icon-import { background-position: 0 -416px; }
+.admin-icon-group { background-position: 0 -416px; }
 
-.admin-icon-integrations { background-position: 0 -448px; }
+.admin-icon-import { background-position: 0 -448px; }
 
-.admin-icon-multi-product { background-position: 0 -480px; }
+.admin-icon-integrations { background-position: 0 -480px; }
 
-.admin-icon-rebranding { background-position: 0 -512px; }
+.admin-icon-multi-product { background-position: 0 -512px; }
 
-.admin-icon-scenario { background-position: 0 -544px; }
+.admin-icon-rebranding { background-position: 0 -544px; }
 
-.admin-icon-security { background-position: 0 -576px; }
+.admin-icon-scenario { background-position: 0 -576px; }
 
-.admin-icon-sla { background-position: 0 -608px; }
+.admin-icon-security { background-position: 0 -608px; }
 
-.admin-icon-supervisor { background-position: 0 -640px; }
+.admin-icon-sla { background-position: 0 -640px; }
 
-.admin-icon-survey-settings { background-position: 0 -672px; }
+.admin-icon-supervisor { background-position: 0 -672px; }
 
-.admin-icon-ticket-fields { background-position: 0 -704px; }
+.admin-icon-survey-settings { background-position: 0 -704px; }
 
-.admin-icon-twitter-setting { background-position: 0 -736px; }
+.admin-icon-ticket-fields { background-position: 0 -736px; }
+
+.admin-icon-twitter-setting { background-position: 0 -768px; }
 
 .mark_action a, .mark_action .stamp { padding: 2px 6px; margin: 0px 0px 6px 0px; -moz-border-radius: 4px 4px 4px 4px; -webkit-border-radius: 4px 4px 4px 4px; border-radius: 4px 4px 4px 4px; color: white; text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25); font-size: 12px; text-decoration: none; font-weight: bold; }
 .mark_action a:visited, .mark_action .stamp:visited { color: white; }
@@ -524,7 +526,6 @@ h4.list_title { margin: 3px 8px; padding: 0px; }
 
 .customer_status_tab { margin-left: 26px; }
 .customer_status_tab a { color: #3E71A4; }
-.customer_status_tab span.active a { color: #000; font-weight: bold; }
 
 .alpha_sort_list { *zoom: 1; display: block; list-style: none; display: block; background: #fff; float: right; }
 .alpha_sort_list:after { content: ""; display: table; clear: both; }
@@ -1698,6 +1699,8 @@ a.submit_link:hover { text-decoration: none; }
 .hovercard div { font-size: 12px; margin-bottom: 2px; }
 
 .survey_settings { padding: 10px; margin: 10px; }
+
+.survey_text { width: 70%; }
 
 /* SURVEY REPORT RELATED STYLES */
 .agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 10px 0; padding: 15px 0; }

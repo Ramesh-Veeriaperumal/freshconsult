@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title><%= page_title %></title>
+		<meta name="viewport" content="width=device-width,user-scalable=no" />
+		<link rel="stylesheet" href="mobile/resources/css/app.css">
+		<link rel="stylesheet" href="stylesheets/mobile.css">		
+	</head>
+
+	<body class="body-background" id="mobile-app">
+		<div class="app-wrapper login">
+			<div class="brand">
+		    	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)), :class => "app-logo" %>
+		    	<%= content_tag :h2, current_portal.name %>
+		  	</div>		
+
+			<% form_for @user_session, :url => user_session_path do |f| %>
+			  	<%= f.error_messages %>			  	
+				<%= hidden_field_tag 'mob', "true"  %>
+				<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
+				<fieldset class="login-fieldset" id="login-form">
+					<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox email" id="user_session_email" name="user_session[email]" placeholder="Email" size="30" type="email">
+					<br />
+					<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox password" id="user_session_password" name="user_session[password]" placeholder="Password" size="30" type="password">
+					<br/>
+			  	</fieldset>			  	
+			  	<%= show_flash %>
+			  	<% if flash[:error] %>
+			  		<% content_for :javascript do %>
+				  		//alert("TEST");
+			  		<% end %>
+			  	<% end %>
+		  		<%= submit_tag t('mobile.home.login'), { :id => "login_btn", :class => "sp-button login-button"} %>
+				<a href="#" class="forgot-password">Forgot password</a>
+		  		<%if feature?(:google_signin) or feature?(:twitter_signin) %>
+					<div class="sp-button alt-signin">
+						<%= t("mobile.home.sign_in_using") %>
+						<!-- <span class="mobile-icon-twitter"></span>
+						<span class="mobile-icon-facebook"></span>
+						<span class="mobile-icon-google"></span> -->
+						<%#= link_to(image_tag("google.png", :alt => t("user_sessions.new.sign_in_using_google")), "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") if feature?(:google_signin) %>
+						<%#= link_to(image_tag("twitter.png", :alt => "Twitter"), "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
+						<%#= link_to(image_tag("facebook.png", :alt => "Facebook"), "/auth/facebook", :class => "button") if feature?(:facebook_signin) %>
+					</div>
+				<%end%>
+
+				<p>This mobile version of our helpdesk, currently supports tickets. to use any missing feature, please use our Web application</p>
+				<p>A Helpdesk Software by Freshdesk </p>
+
+			<% end %>
+		</div>
+		<%= javascript_include_tag "prototype" %>
+		<% javascript_tag do -%>
+			document.observe("dom:loaded", function() {						
+				window.scrollTo(0,1);
+				<%= yield :javascript %>
+			})
+		<% end %>
+	</body>
+</html>
+

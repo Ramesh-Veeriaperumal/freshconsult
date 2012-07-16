@@ -256,10 +256,12 @@ class User < ActiveRecord::Base
   def customer?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
+  alias :is_customer :customer?
   
   def agent?
     !customer?
   end
+  alias :is_agent :agent?
   
   def account_admin?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
@@ -268,7 +270,8 @@ class User < ActiveRecord::Base
   def client_manager?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
-  
+  alias :is_client_manager :client_manager?
+
   def supervisor?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:supervisor]
   end
@@ -441,8 +444,26 @@ class User < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
   
-  
+  def avatar_url 
+    avatar.content.url unless avatar.nil?
+  end
  
+  def company_name
+    customer.name unless customer.nil?
+  end
+
+  def to_mob_json
+    options = { 
+      :methods => [ :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
+      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
+    }
+    to_json options
+  end
+
+  def recent_tickets(limit = 5)
+    tickets.newest(limit)
+  end
+
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?

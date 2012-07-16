@@ -9,7 +9,7 @@
 				</a>
 			</div>		
 			<div style="float:right;margin:15px 0 0 5px;font-size:16px;">
-				<%= link_to t("helpdesk.ticket_notifier.reply.happy"), survey_handle.survey_url(ticket, Survey::HAPPY) %>
+				<%= link_to survey_handle.survey.happy_text, survey_handle.survey_url(ticket, Survey::HAPPY) %>
 			</div>
 		</div>
 		<div style="display:table-cell;padding:3px 3px 3px 6px;">
@@ -19,7 +19,7 @@
 				</a>	
 			 </div>
 			<div style="float:right;margin:15px 0 0 5px;font-size:16px;">
-				<%= link_to t("helpdesk.ticket_notifier.reply.neutral"), survey_handle.survey_url(ticket, Survey::NEUTRAL) %>
+				<%= link_to survey_handle.survey.neutral_text, survey_handle.survey_url(ticket, Survey::NEUTRAL) %>
 			</div>
 		</div>
 		<div style="display:table-cell;padding:3px 3px 3px 6px;">
@@ -29,7 +29,7 @@
 				</a>
 			</div>
 			<div style="float:right;margin:15px 0 0 5px;font-size:16px;">
-				<%= link_to t("helpdesk.ticket_notifier.reply.unhappy"), survey_handle.survey_url(ticket, Survey::UNHAPPY) %>
+				<%= link_to survey_handle.survey.unhappy_text, survey_handle.survey_url(ticket, Survey::UNHAPPY) %>
 			</div>
 	  </div>
    </div>

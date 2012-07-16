@@ -1144,6 +1144,9 @@ ActiveRecord::Schema.define(:version => 20120713135909) do
     t.integer  "send_while"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "happy_text",                :default => "Awesome"
+    t.string   "neutral_text",              :default => "Just Okay"
+    t.string   "unhappy_text",              :default => "Not Good"
   end
 
   create_table "ticket_topics", :force => true do |t|

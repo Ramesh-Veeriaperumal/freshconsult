@@ -1478,15 +1478,7 @@ h4.list_title{
 	margin-left: 26px;
 	a{
 		color:#3E71A4;
-	}
-	span{
-		&.active{
-			a{
-				color:#000;
-				font-weight:bold;
-			}
-		}
-	}
+	}	
 }
 
 .alpha_sort_list{ 
@@ -5431,6 +5423,10 @@ padding:10px;
 margin:10px;
 }
 
+.survey_text{
+	width:70%;
+}
+
 /* SURVEY REPORT RELATED STYLES */
 .agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 10px 0; padding: 15px 0; }
  
@@ -5664,4 +5660,3 @@ margin:10px;
 		}
 	}
 }
-

@@ -135,13 +135,19 @@
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
+      admin.resources :subscription_affiliates, :as => 'affiliates'
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
       end
   end
   
+  map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
+    subdom.with_options(:namespace => 'partner_admin/', :name_prefix => 'partner_', :path_prefix => nil) do |partner|
+      partner.resources :affiliates, :collection => {:add_affiliate_transaction => :post}
+    end
+  end
+
   map.namespace :widgets do |widgets|
     widgets.resource :feedback_widget, :member => { :loading => :get } 
   end 
@@ -150,7 +156,9 @@
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
-  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get, :plans => :get, :billing => :any, :paypal => :any, :plan => :any, :plan_paypal => :any, :cancel => :any, :canceled => :get , :signup_google => :any, :calculate_amount => :any }
+  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get,   :cancel => :any, :canceled => :get , :signup_google => :any }
+  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :free => :get, :convert_subscription_to_free => :put }
+
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
   
   map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'
@@ -292,6 +300,10 @@
     anonymous.resources :requests
   end
 
+  map.namespace :mobile do |mobile|
+    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get}
+  end
+  
   map.root :controller => "home"
   #map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'
   

@@ -6,7 +6,6 @@ class Import::Zen::ZendeskAttachmentImport
   @queue = 'ImportAttachmentWorker'
 
   @retry_limit = 3
-  @retry_delay = 60*5
 
   def self.perform(note_id,url,model)
   	model = model.to_sym

@@ -28,6 +28,7 @@ class Account < ActiveRecord::Base
 
   has_many :survey_results
   has_many :survey_remarks
+  has_one  :subscription_plan, :through => :subscription
 
   has_one :conversion_metric
 
@@ -85,6 +86,7 @@ class Account < ActiveRecord::Base
   has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
+  has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VARule'
@@ -420,6 +422,34 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
+  def to_mob_json(deep=false)
+    json_include = {
+      :main_portal => {
+        :only => [:name, :preferences],
+        :methods => [:logo_url,:fav_icon_url]
+      }
+    }
+    options = {
+      :only => [:name],
+    }
+    if deep
+      json_include.merge!({
+        :canned_responses => {
+          :methods => [:my_canned_responses],
+          :only => [:title,:id]
+        },
+        :scn_automations =>{
+          :only => [:id,:name]
+        }
+      })
+      options.merge!({
+        :methods => [:reply_emails],
+      })
+    end
+    options[:include] = json_include;
+    to_json options
+  end
+  
   protected
   
     def valid_domain?

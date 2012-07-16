@@ -187,6 +187,9 @@ en:
         send_while_option3: Emails sent after a ticket is "Closed".
         send_while_option4: Allow agents to add survey links to specific emails.
         send_while_title: Choose which emails have the satisfaction survey link
+        enter_happy_text: Enter the happy text
+        enter_neutral_text: Enter the neutral text
+        enter_unhappy_text: Enter the unhappy text
         
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
@@ -436,6 +439,7 @@ en:
         facebook-setting: Facebook Settings
         security: Security
         email_commands_setting: "Email Command Settings"
+        billing: "Plans & Billing"
       
     canned_responses:
       index:
@@ -1641,6 +1645,13 @@ en:
         bcc: Bcc
         addbcc: Add Bcc
         removebcc: Remove Bcc
+      forward_form:
+        cc: Cc
+        addcc: Add Cc
+        removecc: Remove Cc
+        bcc: Bcc
+        addbcc: Add Bcc
+        removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
       facebook_form:  	
@@ -1907,7 +1918,9 @@ en:
   mobile:
     home:
       remember: "Remember me"
-      login: "Login"
+      login: "Sign In"
+      sign_in_using: "...or Sign in using"
+      sign_in_error: "Incorrect email or password."
   integrations:
     capsule_crm:
       label: "Capsule CRM"
@@ -2189,7 +2202,7 @@ en:
   folder_edit_not_allowed: "This folder can't be modified" 
   never: Never
   always: Always
-  maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/account/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
+  maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
@@ -2230,3 +2243,12 @@ en:
   waiting_on_third_party: "Waiting on Third Party"
   bcc_email_updated_success_msg: "Successfully updated BCC email"
   bcc_email_updated_failure_msg: "Failed to update BCC email"
+  choose_free_plan: "Choose your Free %{plan}"
+  not_eligible_for_free_plan: "Not eligible to select a Free plan"
+  select_free_plan: "Select your Free plan"
+  plan_is_selected: "%{plan} is selected"
+  error_in_plan: "Error changing the plan"
+  change_free_plan: "Change your Free plan"
+  billing_info: "Subscription information"
+  forwarded_email: "Forwarded email"
+  

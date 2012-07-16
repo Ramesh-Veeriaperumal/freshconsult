@@ -58,6 +58,14 @@ class Portal < ActiveRecord::Base
     (name.blank? && product) ? product.name : name
   end
   
+  def logo_url
+    logo.content.url unless logo.nil?
+  end
+
+  def fav_icon_url
+    fav_icon.content.url unless fav_icon.nil?
+  end
+  
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)
