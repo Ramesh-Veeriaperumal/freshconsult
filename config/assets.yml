@@ -23,6 +23,7 @@ stylesheets:
     - public/stylesheets/autocomplete.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/hacks.css
     - public/stylesheets/ie.css
 
   widget:
