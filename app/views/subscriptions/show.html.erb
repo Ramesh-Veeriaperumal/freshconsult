@@ -9,7 +9,7 @@
   </div>
 <%- end %>
 
-<h3 class= "title"><%= @page_title = t("home.index.billing") %></h3>
+<h3 class= "title"><%= @page_title = t("admin.home.index.billing") %></h3>
 <ul class="ui-form">
   <%= render :partial => "/subscriptions/state/#{@subscription.state}", :locals => { :subscription => @subscription, :plans => @plans } %>
 </ul>

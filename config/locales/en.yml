@@ -2214,7 +2214,7 @@ en:
   waiting_on_third_party: "Waiting on Third Party"
   choose_free_plan: "Choose your Free %{plan}"
   continue_using_free: "Continue to use Freshdesk as a"
-  free_account: "Free account (1 agent)"
+  free_account: "Free account"
   not_eligible_for_free_plan: "Not eligible to select a Free plan"
   select_free_plan: "Select your Free plan"
   change_details_anytime: "Subscription details or plans can be changed at anytime."

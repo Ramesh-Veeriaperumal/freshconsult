@@ -39,8 +39,12 @@ class Subscription < ActiveRecord::Base
    count(:conditions => {:state => 'active'})
  end
  
-  def self.free_customers
+  def self.zero_amount_customers
    count(:conditions => {:state => 'active',:amount => 0.00})
+  end
+
+  def self.free_customers
+   count(:conditions => {:state => 'free'})
   end
   
   def self.customers_agent_count

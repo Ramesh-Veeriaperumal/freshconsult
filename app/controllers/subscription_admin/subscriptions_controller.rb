@@ -11,8 +11,10 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
+    @day_pass_stats = SubscriptionPayment.day_pass_stats if params[:page].blank?
     @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
     @free_customers = Subscription.free_customers
+    @zero_paying_customers = Subscription.zero_amount_customers
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = Subscription.customers_agent_count - (Subscription.customers_free_agent_count + DUMMY_AGENTS)
@@ -56,12 +58,25 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @deleted_customers = DeletedCustomers.all
     @deleted_customers = @deleted_customers.paginate( :page => params[:page], :per_page => 30)
   end
+
+  def fetch_deleted_customers
+    @deleted_paid_customers = DeletedCustomers.count(:id,:distinct => true,
+                           :group => "DATE_FORMAT(deleted_customers.created_at, '%b, %Y')", 
+                           :order => "deleted_customers.created_at desc", 
+                           :joins => " INNER JOIN subscription_payments ON deleted_customers.account_id = subscription_payments.account_id")
+   
+    @deleted_total_customers = DeletedCustomers.count(:id,:distinct => true,
+                           :group => "DATE_FORMAT(created_at, '%b, %Y')", 
+                           :order => "created_at desc")
+
+  end
   
   def customers
     fetch_customers_per_month
     fetch_signups_per_month
     fetch_signups_per_day
     converted_customers_per_month
+    fetch_deleted_customers
   end
    
    def fetch_signups_per_day

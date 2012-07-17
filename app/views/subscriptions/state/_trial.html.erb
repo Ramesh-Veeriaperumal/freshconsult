@@ -9,9 +9,9 @@
       <% end %>
       <br />
       <%= t('select_a_plan_gain_access') %> 
-      ~ or ~
       <% if subscription.eligible_for_free_plan? %>
         <span class="free-plan-info">
+      ~ or ~
           <%= t('continue_using_free') %>
           <%= link_to t('free_account'), free_subscription_url %>
         </span>
