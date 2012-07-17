@@ -23867,6 +23867,375 @@ Ext.define('Ext.app.Application', {
 });
 
 /**
+ * This plugin adds pull to refresh functionality to the List.
+ *
+ * ## Example
+ *
+ *     @example
+ *     var store = Ext.create('Ext.data.Store', {
+ *         fields: ['name', 'img', 'text'],
+ *         data: [
+ *             {
+ *                 name: 'edpsencer',
+ *                 img: 'http://a2.twimg.com/profile_images/1175591906/Ed-presenting-cropped_reasonably_small.jpg',
+ *                 text: 'Read about Sencha Touch'
+ *             },{
+ *                 name: 'rdougan',
+ *                 img: 'http://a0.twimg.com/profile_images/1261180556/171265_10150129602722922_727937921_7778997_8387690_o_reasonably_small.jpg',
+ *                 text: 'Javascript development'
+ *             },{
+ *                 name: 'philogb',
+ *                 img: 'https://si0.twimg.com/profile_images/1249073521/ng_normal.png',
+ *                 text: '@ikarienator nice burritos!'
+ *             }
+ *         ]
+ *     });
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *         fullscreen: true,
+ *
+ *         store: store,
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.PullRefresh',
+ *                 pullRefreshText: 'Pull down for more new Tweets!'
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{img}" alt="{name} photo" />',
+ *             '<div class="tweet"><b>{name}:</b> {text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('plugin.ux.PullRefresh2', {
+    extend: 'Ext.Component',
+    alias: 'PullRefresh2',
+    requires: ['Ext.DateExtras'],
+
+    config: {
+        /*
+         * @accessor
+         */
+        list: null,
+
+        /*
+         * @cfg {String} pullRefreshText The text that will be shown while you are pulling down.
+         * @accessor
+         */
+        pullRefreshText: 'Pull down to refresh...',
+
+        /*
+         * @cfg {String} releaseRefreshText The text that will be shown after you have pulled down enough to show the release message.
+         * @accessor
+         */
+        releaseRefreshText: 'Release to refresh...',
+
+        /*
+         * @cfg {String} loadingText The text that will be shown while the list is refreshing.
+         * @accessor
+         */
+        loadingText: 'Loading...',
+
+        /*
+         * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
+         * @accessor
+         */
+        snappingAnimationDuration: 150,
+
+        /*
+         * @cfg {Function} refreshFn The function that will be called to refresh the list.
+         * If this is not defined, the store's load function will be called.
+         * The refresh function gets called with a reference to this plugin instance.
+         * @accessor
+         */
+        refreshFn: null,
+
+        /*
+         * @cfg {XTemplate/String/Array} pullTpl The template being used for the pull to refresh markup.
+         * @accessor
+         */
+        pullTpl: [
+            '<div class="x-list-pullrefresh">',
+                '<div class="x-list-pullrefresh-arrow"></div>',
+                '<div class="x-loading-spinner">',
+                    '<span class="x-loading-top"></span>',
+                    '<span class="x-loading-right"></span>',
+                    '<span class="x-loading-bottom"></span>',
+                    '<span class="x-loading-left"></span>',
+                '</div>',
+                '<div class="x-list-pullrefresh-wrap">',
+                    '<h3 class="x-list-pullrefresh-message">{message}</h3>',
+                    '<div class="x-list-pullrefresh-updated">Last Updated: <span>{lastUpdated:date("m/d/Y h:iA")}</span></div>',
+                '</div>',
+            '</div>'
+        ].join('')
+    },
+
+    isRefreshing: false,
+    currentViewState: '',
+
+    initialize: function() {
+        this.callParent();
+
+        this.on({
+            painted: 'onPainted',
+            scope: this
+        });
+    },
+
+    init: function(list) {
+        var me = this,
+            store = list.getStore(),
+            pullTpl = me.getPullTpl(),
+            element = me.element,
+            scroller = list.getScrollable().getScroller();
+
+        me.setList(list);
+        me.lastUpdated = new Date();
+
+        list.insert(0, me);
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            if (store.isAutoLoading()) {
+                list.setLoadingText(null);
+            } else {
+                store.on({
+                    load: {
+                        single: true,
+                        fn: function() {
+                            list.setLoadingText(null);
+                        }
+                    }
+                });
+            }
+        }
+
+        pullTpl.overwrite(element, {
+            message: me.getPullRefreshText(),
+            lastUpdated: me.lastUpdated
+        }, true);
+
+        me.loadingElement = element.getFirstChild();
+        me.messageEl = element.down('.x-list-pullrefresh-message');
+        me.updatedEl = element.down('.x-list-pullrefresh-updated > span');
+
+        me.maxScroller = scroller.getMaxPosition();
+
+        scroller.on({
+            maxpositionchange: me.setMaxScroller,
+            scroll: me.onScrollChange,
+            scope: me
+        });
+    },
+
+    /**
+     * @private
+     * Attempts to load the newest posts via the attached List's Store's Proxy
+     */
+    fetchLatest: function() {
+        var store = this.getList().getStore(),
+            proxy = store.getProxy(),
+            operation;
+
+        operation = Ext.create('Ext.data.Operation', {
+            page: 1,
+            start: 0,
+            model: store.getModel(),
+            limit: store.getPageSize(),
+            action: 'read',
+            filters: store.getRemoteFilter() ? store.getFilters() : []
+        });
+
+        proxy.read(operation, this.onLatestFetched, this);
+    },
+
+    /**
+     * @private
+     * Called after fetchLatest has finished grabbing data. Matches any returned records against what is already in the
+     * Store. If there is an overlap, updates the existing records with the new data and inserts the new items at the
+     * front of the Store. If there is no overlap, insert the new records anyway and record that there's a break in the
+     * timeline between the new and the old records.
+     */
+    onLatestFetched: function(operation) {
+        var store      = this.getList().getStore(),
+            oldRecords = store.getData(),
+            newRecords = operation.getRecords(),
+            length     = newRecords.length,
+            toInsert   = [],
+            newRecord, oldRecord, i;
+
+        for (i = 0; i < length; i++) {
+            newRecord = newRecords[i];
+            oldRecord = oldRecords.getByKey(newRecord.getId());
+
+            if (oldRecord) {
+                oldRecord.set(newRecord.getData());
+            } else {
+                toInsert.push(newRecord);
+            }
+
+            oldRecord = undefined;
+        }
+
+        store.insert(0, toInsert);
+
+        this.resetRefreshState();
+
+        this.getList().getScrollable().getScroller().scrollTo(null, 0, true);
+    },
+
+    onPainted: function() {
+        this.pullHeight = this.loadingElement.getHeight();
+    },
+
+    setMaxScroller: function(scroller, position) {
+        this.maxScroller = position;
+    },
+
+    onScrollChange: function(scroller, x, y) {
+        if (y < 0) {
+            this.onBounceTop(y);
+        }
+        if (y > this.maxScroller.y) {
+            this.onBounceBottom(y);
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyPullTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    onBounceTop: function(y) {
+        var me = this,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller();
+
+        if (!me.isReleased) {
+            if (!me.isRefreshing && -y >= me.pullHeight + 10) {
+                me.isRefreshing = true;
+
+                me.setViewState('release');
+
+                scroller.getContainer().onBefore({
+                    dragend: 'onScrollerDragEnd',
+                    single: true,
+                    scope: me
+                });
+            }
+            else if (me.isRefreshing && -y < me.pullHeight + 10) {
+                me.isRefreshing = false;
+                me.setViewState('pull');
+            }
+        }
+    },
+
+    onScrollerDragEnd: function() {
+        var me = this;
+
+        if (me.isRefreshing) {
+            var list = me.getList(),
+                scroller = list.getScrollable().getScroller();
+
+            scroller.minPosition.y = -me.pullHeight;
+            scroller.on({
+                scrollend: 'loadStore',
+                single: true,
+                scope: me
+            });
+
+            me.isReleased = true;
+        }
+    },
+
+    loadStore: function() {
+        var me = this,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller();
+
+        me.setViewState('loading');
+        me.isReleased = false;
+
+        Ext.defer(function() {
+
+            if (me.getRefreshFn()) {
+                me.getRefreshFn().call(me, me);
+            } else {
+                me.fetchLatest();
+            }
+            //me.resetRefreshState();
+
+            // scroller.on({
+            //     scrollend: function() {
+            //         if (me.getRefreshFn()) {
+            //             me.getRefreshFn().call(me, me);
+            //         } else {
+            //             me.fetchLatest();
+            //         }
+            //         me.resetRefreshState();
+            //     },
+            //     delay: 100,
+            //     single: true,
+            //     scope: me
+            // });
+            scroller.minPosition.y = 0;
+            //scroller.scrollTo(null, 0, true);
+        }, 500, me);
+    },
+
+    onBounceBottom: Ext.emptyFn,
+
+    setViewState: function(state) {
+        var me = this,
+            prefix = Ext.baseCSSPrefix,
+            messageEl = me.messageEl,
+            loadingElement = me.loadingElement;
+
+        if (state === me.currentViewState) {
+            return me;
+        }
+        me.currentViewState = state;
+
+        if (messageEl && loadingElement) {
+            switch (state) {
+                case 'pull':
+                    messageEl.setHtml(me.getPullRefreshText());
+                    loadingElement.removeCls([prefix + 'list-pullrefresh-release', prefix + 'list-pullrefresh-loading']);
+                break;
+
+                case 'release':
+                    messageEl.setHtml(me.getReleaseRefreshText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-release');
+                break;
+
+                case 'loading':
+                    messageEl.setHtml(me.getLoadingText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-loading');
+                break;
+            }
+        }
+
+        return me;
+    },
+
+    resetRefreshState: function() {
+        var me = this;
+
+        me.isRefreshing = false;
+        me.lastUpdated = new Date();
+
+        me.setViewState('pull');
+        me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));
+    }
+});
+
+/**
  * Adds a Load More button at the bottom of the list. When the user presses this button,
  * the next page of data will be loaded into the store and appended to the List.
  *
@@ -25098,6 +25467,361 @@ Ext.define('Ext.Spacer', {
         }
 
         this.callParent([config]);
+    }
+});
+
+/**
+ * Provides a base class for audio/visual controls. Should not be used directly.
+ *
+ * Please see the {@link Ext.Audio} and {@link Ext.Video} classes for more information.
+ * @private
+ */
+Ext.define('Ext.Media', {
+    extend: 'Ext.Component',
+    xtype: 'media',
+
+    /**
+     * @event play
+     * Fires whenever the media is played
+     * @param {Ext.Media} this
+     */
+
+    /**
+     * @event pause
+     * Fires whenever the media is paused
+     * @param {Ext.Media} this
+     * @param {Number} time The time at which the media was paused at in seconds
+     */
+
+    /**
+     * @event ended
+     * Fires whenever the media playback has ended
+     * @param {Ext.Media} this
+     * @param {Number} time The time at which the media ended at in seconds
+     */
+
+    /**
+     * @event stop
+     * Fires whenever the media is stopped.
+     * The pause event will also fire after the stop event if the media is currently playing.
+     * The timeupdate event will also fire after the stop event regardless of playing status.
+     * @param {Ext.Media} this
+     */
+
+    /**
+     * @event volumechange
+     * Fires whenever the volume is changed
+     * @param {Ext.Media} this
+     * @param {Number} volume The volume level from 0 to 1
+     */
+
+    /**
+     * @event mutedchange
+     * Fires whenever the muted status is changed.
+     * The volumechange event will also fire after the mutedchange event fires.
+     * @param {Ext.Media} this
+     * @param {Boolean} muted The muted status
+     */
+
+    /**
+     * @event timeupdate
+     * Fires when the media is playing every 15 to 250ms.
+     * @param {Ext.Media} this
+     * @param {Number} time The current time in seconds
+     */
+
+    config: {
+        /**
+         * @cfg {String} url
+         * Location of the media to play.
+         * @accessor
+         */
+        url: '',
+
+        /**
+         * @cfg {Boolean} enableControls
+         * Set this to false to turn off the native media controls.
+         * Defaults to false when you are on Android, as it doesnt support controls.
+         * @accessor
+         */
+        enableControls: Ext.os.is.Android ? false : true,
+
+        /**
+         * @cfg {Boolean} autoResume
+         * Will automatically start playing the media when the container is activated.
+         * @accessor
+         */
+        autoResume: false,
+
+        /**
+         * @cfg {Boolean} autoPause
+         * Will automatically pause the media when the container is deactivated.
+         * @accessor
+         */
+        autoPause: true,
+
+        /**
+         * @cfg {Boolean} preload
+         * Will begin preloading the media immediately.
+         * @accessor
+         */
+        preload: true,
+
+        /**
+         * @cfg {Boolean} loop
+         * Will loop the media forever.
+         * @accessor
+         */
+        loop: false,
+
+        /**
+         * @cfg {Ext.Element} media
+         * A reference to the underlying audio/video element.
+         * @accessor
+         */
+        media: null,
+
+        /**
+         * @cfg {Number} volume
+         * The volume of the media from 0.0 to 1.0. Default is 1.
+         * @accessor
+         */
+        volume: 1,
+
+        /**
+         * @cfg {Boolean} muted
+         * Whether or not the media is muted. This will also set the volume to zero. Default is false.
+         * @accessor
+         */
+        muted: false
+    },
+
+    initialize: function() {
+        var me = this;
+        me.callParent();
+
+        me.on({
+            scope: me,
+
+            activate  : me.onActivate,
+            deactivate: me.onDeactivate
+        });
+
+        me.addMediaListener({
+            canplay      : 'onCanPlay',
+            play         : 'onPlay',
+            pause        : 'onPause',
+            ended        : 'onEnd',
+            volumechange : 'onVolumeChange',
+            timeupdate   : 'onTimeUpdate'
+        });
+    },
+
+    addMediaListener: function(event, fn) {
+        var me   = this,
+            dom  = me.media.dom,
+            bind = Ext.Function.bind;
+
+        if (!Ext.isObject(event)) {
+            var oldEvent = event;
+            event = {};
+            event[oldEvent] = fn;
+        }
+
+        Ext.Object.each(event, function(e, fn) {
+            if (typeof fn !== 'function') {
+                fn = me[fn];
+            }
+
+            if (typeof fn == 'function') {
+                fn = bind(fn, me);
+
+                dom.addEventListener(e, fn);
+            }
+        });
+    },
+
+    onPlay: function() {
+        this.fireEvent('play', this);
+    },
+
+    onCanPlay: function() {
+        this.fireEvent('canplay', this);
+    },
+
+    onPause: function() {
+        this.fireEvent('pause', this, this.getCurrentTime());
+    },
+
+    onEnd: function() {
+        this.fireEvent('ended', this, this.getCurrentTime());
+    },
+
+    onVolumeChange: function() {
+        this.fireEvent('volumechange', this, this.media.dom.volume);
+    },
+
+    onTimeUpdate: function() {
+        this.fireEvent('timeupdate', this, this.getCurrentTime());
+    },
+
+    /**
+     * Returns if the media is currently playing
+     * @return {Boolean} playing True if the media is playing
+     */
+    isPlaying: function() {
+        return !Boolean(this.media.dom.paused);
+    },
+
+    // @private
+    onActivate: function() {
+        var me = this;
+
+        if (me.getAutoResume() && !me.isPlaying()) {
+            me.play();
+        }
+    },
+
+    // @private
+    onDeactivate: function() {
+        var me = this;
+
+        if (me.getAutoResume() && me.isPlaying()) {
+            me.pause();
+        }
+    },
+
+    /**
+     * Sets the URL of the media element. If the media element already exists, it is update the src attribute of the
+     * element. If it is currently playing, it will start the new video.
+     */
+    updateUrl: function(newUrl) {
+        var dom = this.media.dom;
+
+        //when changing the src, we must call load:
+        //http://developer.apple.com/library/safari/#documentation/AudioVideo/Conceptual/Using_HTML5_Audio_Video/ControllingMediaWithJavaScript/ControllingMediaWithJavaScript.html
+
+        dom.src = newUrl;
+
+        if ('load' in dom) {
+            dom.load();
+        }
+
+        if (this.isPlaying()) {
+            this.play();
+        }
+    },
+
+    /**
+     * Updates the controls of the video element.
+     */
+    updateEnableControls: function(enableControls) {
+        this.media.dom.controls = enableControls ? 'controls' : false;
+    },
+
+    /**
+     * Updates the loop setting of the media element.
+     */
+    updateLoop: function(loop) {
+        this.media.dom.loop = loop ? 'loop' : false;
+    },
+
+    /**
+     * Starts or resumes media playback
+     */
+    play: function() {
+        var dom = this.media.dom;
+
+        if ('play' in dom) {
+            dom.play();
+            setTimeout(function() {
+                dom.play();
+            }, 10);
+        }
+    },
+
+    /**
+     * Pauses media playback
+     */
+    pause: function() {
+        var dom = this.media.dom;
+
+        if ('pause' in dom) {
+            dom.pause();
+        }
+    },
+
+    /**
+     * Toggles the media playback state
+     */
+    toggle: function() {
+        if (this.isPlaying()) {
+            this.pause();
+        } else {
+            this.play();
+        }
+    },
+
+    /**
+     * Stops media playback and returns to the beginning
+     */
+    stop: function() {
+        var me = this;
+
+        me.setCurrentTime(0);
+        me.fireEvent('stop', me);
+        me.pause();
+    },
+
+    //@private
+    updateVolume: function(volume) {
+        this.media.dom.volume = volume;
+    },
+
+    //@private
+    updateMuted: function(muted) {
+        this.fireEvent('mutedchange', this, muted);
+
+        this.media.dom.muted = muted;
+    },
+
+    /**
+     * Returns the current time of the media in seconds;
+     */
+    getCurrentTime: function() {
+        return this.media.dom.currentTime;
+    },
+
+    /*
+     * Set the current time of the media.
+     * @param {Number} time The time in seconds
+     */
+    setCurrentTime: function(time) {
+        this.media.dom.currentTime = time;
+
+        return time;
+    },
+
+    /**
+     * Returns the duration of the media in seconds;
+     */
+    getDuration: function() {
+        return this.media.dom.duration;
+    },
+
+    destroy: function() {
+        var me = this;
+        Ext.Object.each(event, function(e, fn) {
+            if (typeof fn !== 'function') {
+                fn = me[fn];
+            }
+
+            if (typeof fn == 'function') {
+                fn = bind(fn, me);
+
+                dom.removeEventListener(e, fn);
+            }
+        });
     }
 });
 
@@ -26652,419 +27376,6 @@ Ext.anims = {
     })
 };
 
-Ext.define('plugin.ux.SwipeOptions', {
-    extend: 'Ext.Component',
-    alias: 'swipeOptions',
-    requires: ['Ext.Anim'],
-    config: {
-
-        /**
-         * Selector to use to get the dynamically created List Options Ext.Element (where the menu options are held)
-         * Once created the List Options element will be used again and again.
-         */
-        optionsSelector: 'x-list-options',
-
-        /**
-         * An array of objects to be applied to the 'listOptionsTpl' to create the 
-         * menu
-         */
-        menuOptions: [],
-        
-        /**
-         * Selector to use to get individual List Options within the created Ext.Element
-         * This is used when attaching event handlers to the menu options
-         */
-        menuOptionSelector: 'x-menu-option',
-        
-        /**
-         * XTemplate to use to create the List Options view
-         */
-        menuOptionsTpl: new Ext.XTemplate(  '<ul>',
-                                                '<tpl for=".">',                                            
-                                                    '<li class="x-menu-option {cls}">',
-                                                    '</li>',
-                                                '</tpl>',
-                                            '</ul>').compile(),
-                                    
-        /**
-         * CSS Class that is applied to the tapped Menu Option while it is being touched
-         */     
-        menuOptionPressedClass: 'x-menu-option-pressed',
-        
-        /**
-         * Set to a function that takes in 2 arguments - your initial 'menuOptions' config option and the current 
-         * item's Model instance
-         * The function must return either the original 'menuOptions' variable or a revised one
-         */
-        menuOptionDataFilter: null,
-        
-        /**
-         * Animation used to reveal the List Options
-         */
-        revealAnimation: {
-            reverse: false,
-            type: 'slide',
-            duration: 500
-        },
-        
-        /**
-         * The direction the List Item will slide to reveal the List Options
-         * Possible values: 'left', 'right' and 'both'
-         * setting to 'both' means it will be decided by the direction of the User's swipe if 'triggerEvent' is set to 'itemswipe'
-         */
-        revealDirection: 'both',
-        
-        /**
-         * Distance (in pixels) a User must swipe before triggering the List Options to be displayed.
-         * Set to -1 to disable threshold checks
-         */
-        swipeThreshold: 30,
-        
-        /**
-         * The direction the user must swipe to reveal the menu
-         * Only applicable when 'triggerEvent' is set to 'itemswipe'
-         */
-        swipeDirection: 'both',
-        
-        /**
-         * Decides whether multiple List Options can be visible at once
-         */
-        allowMultiple: false,
-        
-        /**
-         * Decides whether sound effects are played as List Options open
-         * Defaults to false.
-         */
-        enableSoundEffects: false,
-        
-        openSoundEffectURL: 'sounds/open.wav',
-        
-        closeSoundEffectURL: 'sounds/close.wav',
-
-        /**
-        * Decides whether to stop scroll for list on list options visible
-        * Defaults to false
-        */
-        stopScrollOnShow : false
-    
-    },
-
-    initialize: function() {
-        this.callParent();
-    },
-
-    init: function(list) {
-        var self = this;
-        self.list = list;
-        list.on('itemswipe',self.onItemSwipe,self);
-    },
-
-    onItemSwipe : function(list, index, target, record, evt, options , eOpts){
-        // check we're over the 'swipethreshold'
-        if(this.revealAllowed(evt)){
-            // set the direction of the reveal
-            this.setRevealDir(evt.direction);
-
-            // cache the current List Item's elements for easy use later
-            this.activeListItemRecord = list.getStore().getAt(index);
-            
-            var activeEl = Ext.get(target);
-
-            this.activeListElement = activeEl;        
-            
-            activeEl.setVisibilityMode(Ext.Element.VISIBILITY);
-
-            this.activeItemRecord = record;
-            // Show the item's List Options
-            this.doShowOptionsMenu(activeEl);
-        }
-    },
-
-    /**
-     * Decide whether the List Options are allowed to be revealed based on the config options
-     * Only relevant for 'itemswipe' event because this event has all the config options
-     * @param {Object} event
-     */
-    revealAllowed: function(evt){
-        var direction = evt.direction,
-            distance = evt.distance,
-            allowed = false,
-            swipeThreshold = this.getSwipeThreshold(),
-            swipeDirection = this.getSwipeDirection();
-        allowed =  (distance >= swipeThreshold && (direction === swipeDirection || swipeDirection === 'both')) || swipeThreshold < 0 ;
-        return allowed;
-    },
-
-    /**
-     * Decide the direction the reveal animation will go
-     * this.revealDirection config can only be 'both' when triggerEvent is 'itemswipe' in which case
-     * the direction of the swipe is used
-     * @param {Object} direction
-     */
-    setRevealDir: function(direction){
-        var dir = this.getRevealDirection(),
-        revealAnimation = this.getRevealAnimation();
-        if(dir === 'both'){
-            dir = direction;
-        }
-
-        Ext.apply(revealAnimation, {
-            direction: dir
-        });
-    },
-
-    doHideOptionsMenu : function(hiddenEl, activeListOptions, playSoundEffect){
-        playSoundEffect = Ext.isEmpty(playSoundEffect) ? true : playSoundEffect;
-        
-        var revealAnimation = this.getRevealAnimation(),
-        enableSoundEffects = this.getEnableSoundEffects(),
-        closeSoundEffectURL = this.getCloseSoundEffectURL();        
-        
-        activeListOptions.setVisibilityMode(Ext.Element.DISPLAY).hide();
-        hiddenEl.show();
-        // Run the animation on the List Item's 'body' Ext.Element
-        Ext.Anim.run(hiddenEl, revealAnimation, {
-            out: false,
-            before: function(el, options){
-                // force the List Options to the back
-                activeListOptions.setStyle('z-index', '0');
-                
-                //Audio effect for close if configured
-                if (enableSoundEffects && !Ext.isEmpty(closeSoundEffectURL) && playSoundEffect) {
-                    var audio = document.createElement('audio');
-                    audio.setAttribute('src', closeSoundEffectURL);
-                    audio.play();
-                }
-            },
-            after: function(el, options){
-                hiddenEl.setVisibilityMode(Ext.Element.DISPLAY);
-                
-                // remove the ListOptions DIV completely to save some resources
-                // activeListOptions.remove();
-                Ext.removeNode(Ext.getDom(activeListOptions));
-                
-                this.list.fireEvent('listoptionsclose');
-            },
-            scope: this
-        });
-    },
-
-    /**
-     * Perform the List Option animation and show
-     * @param {Object} listItemEl - the List Item's element to show a menu for
-     */
-    doShowOptionsMenu: function(listItemEl){
-
-        var stopScrollOnShow = this.getStopScrollOnShow(),
-            revealAnimation = this.getRevealAnimation(),
-            enableSoundEffects = this.getEnableSoundEffects(),
-            openSoundEffectURL = this.getOpenSoundEffectURL();
-
-        if(stopScrollOnShow){
-            this.list.getScrollable().getScroller().disable();
-        }
-        
-        // ensure the animation is not reversed
-        Ext.apply(revealAnimation, {
-            reverse: false
-        });
-       
-        // Do the animation on the current 
-        Ext.Anim.run(listItemEl, revealAnimation, {
-            out: true,
-            before: function(el, options){
-                // Firing beforeOptionsrender
-                this.list.fireEvent('beforeOptionsrender',this,this.activeItemRecord);
-                // Create the List Options Ext.Element
-                this.createOptionsMenu(listItemEl);
-
-                // Firing afterOptionsrender
-                this.list.fireEvent('afterOptionsrender',this,this.activeItemRecord);
-            },
-            after: function(el, options){
-                listItemEl.hide(); // hide the List Item
-
-                //Audio effect if configured for show
-                if (enableSoundEffects && !Ext.isEmpty(openSoundEffectURL)) {
-                    var audio = document.createElement('audio');
-                    audio.setAttribute('src', openSoundEffectURL);
-                    audio.play();
-                }
-
-                this.list.fireEvent('listoptionsopen',this,this.activeItemRecord);
-                
-                this.activeListOptions.show();
-                // re-enable the scroller
-                if (stopScrollOnShow) {
-                    this.list.getScrollable().getScroller().enable();
-                }
-            },
-            scope: this
-        });
-    },
-    
-    /**
-     * Used to process the menuOptions data prior to applying it to the menuOptions template
-     */
-    processMenuOptionsData: function(){
-        return (Ext.isFunction(this.getMenuOptionDataFilter())) ? this.getMenuOptionDataFilter(this.getMenuOptions(), this.activeListItemRecord) : this.getMenuOptions();
-    },
-    
-    /**
-     * Get the existing or create a new List Options Ext.Element and return and cache it
-     * @param {Object} listItem
-     */
-    createOptionsMenu: function(listItemEl){
-        var listItemElHeight = listItemEl.getHeight(),
-        menuOptionsTpl = this.getMenuOptionsTpl(),
-        optionsSelector = this.getOptionsSelector(),
-        processMenuOptionsData = this.processMenuOptionsData(),
-        menuOptionSelector = this.getMenuOptionSelector(),
-        self=this;
-        
-        // Create the List Options element
-        this.activeListOptions = Ext.DomHelper.insertAfter(listItemEl, {
-            cls: optionsSelector,
-            html: menuOptionsTpl.apply(processMenuOptionsData),
-        }, true).setHeight(listItemElHeight);
-        
-        this.activeListOptions.setVisibilityMode(Ext.Element.VISIBILITY).hide();
-
-        var optionListArr = this.activeListOptions.select('.' + menuOptionSelector).elements;
-        for(var index in optionListArr) {
-            Ext.get(optionListArr[index]).on({
-                 touchstart: self.onListOptionTabStart,
-                 touchend: self.onListOptionTapEnd,
-                 tapcancel: self.onListOptionTabCancel,
-                 scope:self
-            });
-        }
-
-        // attach event handler to options element to close it when tapped
-        (function(_activeListOptions,_activeListElement,self) {
-            _activeListOptions.on({
-                tap: function(evt){
-                    // ensure the animation is  reversed
-                    Ext.apply(self.getRevealAnimation(), {
-                        reverse: true
-                    });
-                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
-                    evt.stopPropagation();
-                    return false;
-                },
-                swipe : function(evt){
-                    self.setRevealDir(evt.direction);
-                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
-                    evt.stopPropagation();
-                    return false;
-                },
-                scope: self
-            });
-        })(this.activeListOptions,this.activeListElement,this)
-
-        return this.activeListOptions;
-    },
-    
-    /**
-     * Handler for 'touchstart' event to add the Pressed class
-     * @param {Object} e
-     * @param {Object} el
-     */
-    onListOptionTabStart: function(e, el){
-        var menuOptionSelector = this.getMenuOptionSelector(),
-            optionsSelector = this.getOptionsSelector(),
-            menuOption = e.getTarget('.' + menuOptionSelector),
-            listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item');
-        
-        // get the menu item's data
-        var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
-        
-        if (this.list.fireEvent('beforelistoptionstap', menuItemData, this.list.getRecord(listOptionsEl.dom)) === true) {
-            this.addPressedClass(e);
-        } else {
-            this.TapCancelled = true;
-        }
-    },
-    
-    /**
-     * Handler for 'tapcancel' event
-     * Sets TapCancelled value to stop TapEnd function from executing and removes Pressed class
-     * @param {Object} e
-     * @param {Object} el
-     */
-    onListOptionTabCancel: function(e, el){
-        this.TapCancelled = true;
-        this.removePressedClass(e);
-    },
-    
-    /**
-     * Handler for the 'tap' event of the individual List Option menu items
-     * @param {Object} e
-     */
-    onListOptionTapEnd: function(e, el){
-        if (!this.TapCancelled) {
-            // Remove the Pressed class
-            this.removePressedClass(e);
-            
-            var menuOptionSelector = this.getMenuOptionSelector(),
-                optionsSelector = this.getOptionsSelector(),
-                menuOption = e.getTarget('.' + menuOptionSelector);
-                // listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item',true);
-
-            // get the menu item's data
-            var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
-            this.list.fireEvent('menuoptiontap', menuItemData);
-        }
-        this.TapCancelled = false;
-        
-        // stop menu from hiding
-        e.stopPropagation();
-    },
-    
-    /**
-     * Adds the Pressed class on the Menu Option
-     * @param {Object} e
-     */
-    addPressedClass: function(e){
-        var menuOptionSelector = this.getMenuOptionSelector(),
-            menuOptionPressedClass = this.getMenuOptionPressedClass(),
-            elm = e.getTarget('.' + menuOptionSelector);
-        if (Ext.fly(elm)) {
-            Ext.fly(elm).addCls(menuOptionPressedClass);
-        }       
-    },
-    
-    /**
-     * Removes the Pressed class on the Menu Option
-     * @param {Object} e
-     */
-    removePressedClass: function(e){
-        var menuOptionSelector = this.getMenuOptionSelector(),
-            menuOptionPressedClass = this.getMenuOptionPressedClass(),
-            elm = e.getTarget('.' + menuOptionSelector);
-        if (Ext.fly(elm)) {
-            Ext.fly(elm).removeCls(menuOptionPressedClass);
-        }       
-    },
-    
-    /**
-     * Helper method to get the index of the List Option that was tapped
-     * @param {Object} el - the tapped node
-     */
-    getIndex: function(el){
-        var optionsSelector = this.getOptionsSelector(),
-            menuOptionSelector = this.getMenuOptionSelector(),
-            listOptions = Ext.get(Ext.get(el).findParent('.' + optionsSelector)).select('.' + menuOptionSelector);
-        
-        for(var i = 0; i < listOptions.elements.length; i++){
-            if(listOptions.elements[i].id === el.id){
-                return i;
-            }
-        }
-        return -1;
-    }
-});
-
 Ext.define('plugin.ux.ListPaging2', {
     extend: 'Ext.plugin.ListPaging',
     alias: 'ListPaging2',
@@ -27339,6 +27650,591 @@ Ext.define('Ext.Toolbar', {
 }, function() {
 });
 
+
+/**
+ * {@link Ext.Audio} is a simple class which provides a container for the [HTML5 Audio element](http://www.w3schools.com/html5/tag_audio.asp).
+ *
+ * ## Recommended File Types/Compression:
+ * * Uncompressed WAV and AIF audio
+ * * MP3 audio
+ * * AAC-LC
+ * * HE-AAC audio
+ *
+ * ## Notes
+ * On Android devices, the audio tags controls do not show. You must use the {@link #method-play}, {@link #method-pause} and
+ * {@link #toggle} methods to control the audio (example below).
+ *
+ * ## Examples
+ *
+ * Here is an example of the {@link Ext.Audio} component in a fullscreen container:
+ *
+ *     @example preview
+ *     Ext.create('Ext.Container', {
+ *         fullscreen: true,
+ *         layout: {
+ *             type : 'vbox',
+ *             pack : 'center',
+ *             align: 'stretch'
+ *         },
+ *         items: [
+ *             {
+ *                 xtype : 'toolbar',
+ *                 docked: 'top',
+ *                 title : 'Ext.Audio'
+ *             },
+ *             {
+ *                 xtype: 'audio',
+ *                 url  : 'touch/examples/audio/crash.mp3'
+ *             }
+ *         ]
+ *     });
+ *
+ * You can also set the {@link #hidden} configuration of the {@link Ext.Audio} component to true by default,
+ * and then control the audio by using the {@link #method-play}, {@link #method-pause} and {@link #toggle} methods:
+ *
+ *     @example preview
+ *     Ext.create('Ext.Container', {
+ *         fullscreen: true,
+ *         layout: {
+ *             type: 'vbox',
+ *             pack: 'center'
+ *         },
+ *         items: [
+ *             {
+ *                 xtype : 'toolbar',
+ *                 docked: 'top',
+ *                 title : 'Ext.Audio'
+ *             },
+ *             {
+ *                 xtype: 'toolbar',
+ *                 docked: 'bottom',
+ *                 defaults: {
+ *                     xtype: 'button',
+ *                     handler: function() {
+ *                         var container = this.getParent().getParent(),
+ *                             // use ComponentQuery to get the audio component (using its xtype)
+ *                             audio = container.down('audio');
+ *
+ *                         audio.toggle();
+ *                         this.setText(audio.isPlaying() ? 'Pause' : 'Play');
+ *                     }
+ *                 },
+ *                 items: [
+ *                     { text: 'Play', flex: 1 }
+ *                 ]
+ *             },
+ *             {
+ *                 html: 'Hidden audio!',
+ *                 styleHtmlContent: true
+ *             },
+ *             {
+ *                 xtype : 'audio',
+ *                 hidden: true,
+ *                 url   : 'touch/examples/audio/crash.mp3'
+ *             }
+ *         ]
+ *     });
+ *
+ */
+Ext.define('Ext.Audio', {
+    extend: 'Ext.Media',
+    xtype : 'audio',
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        cls: Ext.baseCSSPrefix + 'audio'
+
+        /**
+         * @cfg {String} url
+         * The location of the audio to play.
+         *
+         * ### Recommended file types are:
+         * * Uncompressed WAV and AIF audio
+         * * MP3 audio
+         * * AAC-LC
+         * * HE-AAC audio
+         * @accessor
+         * @markdown
+         */
+    },
+
+    // @private
+    onActivate: function() {
+        var me = this;
+
+        me.callParent();
+
+        if (Ext.os.is.Phone) {
+            me.element.show();
+        }
+    },
+
+    // @private
+    onDeactivate: function() {
+        var me = this;
+
+        me.callParent();
+
+        if (Ext.os.is.Phone) {
+            me.element.hide();
+        }
+    },
+
+    template: [{
+        reference: 'media',
+        preload: 'auto',
+        tag: 'audio',
+        cls: Ext.baseCSSPrefix + 'component'
+    }]
+});
+
+Ext.define('plugin.ux.SwipeOptions', {
+    extend: 'Ext.Component',
+    alias: 'swipeOptions',
+    requires: ['Ext.Anim','Ext.Audio'],
+    config: {
+
+        /**
+         * Selector to use to get the dynamically created List Options Ext.Element (where the menu options are held)
+         * Once created the List Options element will be used again and again.
+         */
+        optionsSelector: 'x-list-options',
+
+        /**
+         * An array of objects to be applied to the 'listOptionsTpl' to create the 
+         * menu
+         */
+        menuOptions: [],
+        
+        /**
+         * Selector to use to get individual List Options within the created Ext.Element
+         * This is used when attaching event handlers to the menu options
+         */
+        menuOptionSelector: 'x-menu-option',
+        
+        /**
+         * XTemplate to use to create the List Options view
+         */
+        menuOptionsTpl: new Ext.XTemplate(  '<ul>',
+                                                '<tpl for=".">',                                            
+                                                    '<li class="x-menu-option {cls}">',
+                                                    '</li>',
+                                                '</tpl>',
+                                            '</ul>').compile(),
+                                    
+        /**
+         * CSS Class that is applied to the tapped Menu Option while it is being touched
+         */     
+        menuOptionPressedClass: 'x-menu-option-pressed',
+        
+        /**
+         * Set to a function that takes in 2 arguments - your initial 'menuOptions' config option and the current 
+         * item's Model instance
+         * The function must return either the original 'menuOptions' variable or a revised one
+         */
+        menuOptionDataFilter: null,
+        
+        /**
+         * Animation used to reveal the List Options
+         */
+        revealAnimation: {
+            reverse: false,
+            type: 'slide',
+            duration: 500
+        },
+        
+        /**
+         * The direction the List Item will slide to reveal the List Options
+         * Possible values: 'left', 'right' and 'both'
+         * setting to 'both' means it will be decided by the direction of the User's swipe if 'triggerEvent' is set to 'itemswipe'
+         */
+        revealDirection: 'both',
+        
+        /**
+         * Distance (in pixels) a User must swipe before triggering the List Options to be displayed.
+         * Set to -1 to disable threshold checks
+         */
+        swipeThreshold: 30,
+        
+        /**
+         * The direction the user must swipe to reveal the menu
+         * Only applicable when 'triggerEvent' is set to 'itemswipe'
+         */
+        swipeDirection: 'both',
+        
+        /**
+         * Decides whether multiple List Options can be visible at once
+         */
+        allowMultiple: false,
+        
+        /**
+         * Decides whether sound effects are played as List Options open
+         * Defaults to false.
+         */
+        enableSoundEffects: false,
+        
+        openSoundEffectURL: 'sounds/open.wav',
+        
+        closeSoundEffectURL: 'sounds/close.wav',
+
+        /**
+        * Decides whether to stop scroll for list on list options visible
+        * Defaults to false
+        */
+        stopScrollOnShow : false
+    
+    },
+
+    initialize: function() {
+        this.callParent();
+    },
+
+    init: function(list) {
+        var self = this;
+        self.list = list;
+        list.on('itemswipe',self.onItemSwipe,self);
+    },
+
+    onItemSwipe : function(list, index, target, record, evt, options , eOpts){
+        // check we're over the 'swipethreshold'
+        if(this.revealAllowed(evt)){
+
+            // set the direction of the reveal
+            this.setRevealDir(evt.direction);
+
+            // cache the current List Item's elements for easy use later
+            this.activeListItemRecord = list.getStore().getAt(index);
+            
+            var activeEl = Ext.get(target);
+
+            this.activeListElement = activeEl;        
+            
+            activeEl.setVisibilityMode(Ext.Element.VISIBILITY);
+
+            this.activeItemRecord = record;
+            // Show the item's List Options
+            this.doShowOptionsMenu(activeEl);
+        }
+    },
+
+    /**
+     * Decide whether the List Options are allowed to be revealed based on the config options
+     * Only relevant for 'itemswipe' event because this event has all the config options
+     * @param {Object} event
+     */
+    revealAllowed: function(evt){
+        var direction = evt.direction,
+            distance = evt.distance,
+            allowed = false,
+            swipeThreshold = this.getSwipeThreshold(),
+            swipeDirection = this.getSwipeDirection();
+        allowed =  (distance >= swipeThreshold && (direction === swipeDirection || swipeDirection === 'both')) || swipeThreshold < 0 ;
+        return allowed;
+    },
+
+    /**
+     * Decide the direction the reveal animation will go
+     * this.revealDirection config can only be 'both' when triggerEvent is 'itemswipe' in which case
+     * the direction of the swipe is used
+     * @param {Object} direction
+     */
+    setRevealDir: function(direction){
+        var dir = this.getRevealDirection(),
+        revealAnimation = this.getRevealAnimation();
+        if(dir === 'both'){
+            dir = direction;
+        }
+
+        Ext.apply(revealAnimation, {
+            direction: dir
+        });
+    },
+
+    doHideOptionsMenu : function(hiddenEl, activeListOptions, playSoundEffect){
+        playSoundEffect = Ext.isEmpty(playSoundEffect) ? true : playSoundEffect;
+        
+        var revealAnimation = this.getRevealAnimation(),
+        enableSoundEffects = this.getEnableSoundEffects(),
+        closeSoundEffectURL = this.getCloseSoundEffectURL();        
+        
+        activeListOptions.setVisibilityMode(Ext.Element.DISPLAY).hide();
+        hiddenEl.show();
+        // Run the animation on the List Item's 'body' Ext.Element
+        Ext.Anim.run(hiddenEl, revealAnimation, {
+            out: false,
+            before: function(el, options){
+                // force the List Options to the back
+                activeListOptions.setStyle('z-index', '0');
+                
+                //Audio effect for close if configured
+                if (enableSoundEffects && !Ext.isEmpty(closeSoundEffectURL) && playSoundEffect) {
+                    var audioBase = {
+                        url: closeSoundEffectURL,
+                        loop: false,
+                        preload:true
+                    },
+
+                    player = new Ext.Audio(Ext.apply({}, audioBase, {
+                        id:'player',
+                        title: 'Hidden',
+                        enableControls: false,
+                        hidden:false,
+                        preload:true,
+                        layout: {
+                            type: 'vbox',
+                            pack: 'center'
+                        }
+                    }));
+                    player.play();
+                }
+            },
+            after: function(el, options){
+                hiddenEl.setVisibilityMode(Ext.Element.DISPLAY);
+                
+                // remove the ListOptions DIV completely to save some resources
+                // activeListOptions.remove();
+                Ext.removeNode(Ext.getDom(activeListOptions));
+                
+                this.list.fireEvent('listoptionsclose');
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Perform the List Option animation and show
+     * @param {Object} listItemEl - the List Item's element to show a menu for
+     */
+    doShowOptionsMenu: function(listItemEl){
+
+        var stopScrollOnShow = this.getStopScrollOnShow(),
+            revealAnimation = this.getRevealAnimation(),
+            enableSoundEffects = this.getEnableSoundEffects(),
+            openSoundEffectURL = this.getOpenSoundEffectURL();
+
+        if(stopScrollOnShow){
+            this.list.getScrollable().getScroller().disable();
+        }
+        
+        // ensure the animation is not reversed
+        Ext.apply(revealAnimation, {
+            reverse: false
+        });
+       
+        // Do the animation on the current 
+        Ext.Anim.run(listItemEl, revealAnimation, {
+            out: true,
+            before: function(el, options){
+                // Firing beforeOptionsrender
+                this.list.fireEvent('beforeOptionsrender',this,this.activeItemRecord);
+                // Create the List Options Ext.Element
+                this.createOptionsMenu(listItemEl);
+
+                // Firing afterOptionsrender
+                this.list.fireEvent('afterOptionsrender',this,this.activeItemRecord);
+            },
+            after: function(el, options){
+                listItemEl.hide(); // hide the List Item
+
+                //Audio effect if configured for show
+                if (enableSoundEffects && !Ext.isEmpty(openSoundEffectURL)) {
+                    
+                    var audioBase = {
+                        url: openSoundEffectURL,
+                        loop: false,
+                        preload:true
+                    },
+
+                    player = new Ext.Audio(Ext.apply({}, audioBase, {
+                        id:'player',
+                        title: 'Hidden',
+                        enableControls: false,
+                        hidden:false,
+                        preload:true,
+                        layout: {
+                            type: 'vbox',
+                            pack: 'center'
+                        }
+                    }));
+                    player.play();
+                }
+
+                this.list.fireEvent('listoptionsopen',this,this.activeItemRecord);
+                
+                this.activeListOptions.show();
+                // re-enable the scroller
+                if (stopScrollOnShow) {
+                    this.list.getScrollable().getScroller().enable();
+                }
+            },
+            scope: this
+        });
+    },
+    
+    /**
+     * Used to process the menuOptions data prior to applying it to the menuOptions template
+     */
+    processMenuOptionsData: function(){
+        return (Ext.isFunction(this.getMenuOptionDataFilter())) ? this.getMenuOptionDataFilter(this.getMenuOptions(), this.activeListItemRecord) : this.getMenuOptions();
+    },
+    
+    /**
+     * Get the existing or create a new List Options Ext.Element and return and cache it
+     * @param {Object} listItem
+     */
+    createOptionsMenu: function(listItemEl){
+        var listItemElHeight = listItemEl.getHeight(),
+        menuOptionsTpl = this.getMenuOptionsTpl(),
+        optionsSelector = this.getOptionsSelector(),
+        processMenuOptionsData = this.processMenuOptionsData(),
+        menuOptionSelector = this.getMenuOptionSelector(),
+        self=this;
+        
+        // Create the List Options element
+        this.activeListOptions = Ext.DomHelper.insertAfter(listItemEl, {
+            cls: optionsSelector,
+            html: menuOptionsTpl.apply(processMenuOptionsData),
+        }, true).setHeight(listItemElHeight);
+        
+        this.activeListOptions.setVisibilityMode(Ext.Element.VISIBILITY).hide();
+
+        var optionListArr = this.activeListOptions.select('.' + menuOptionSelector).elements;
+        for(var index in optionListArr) {
+            Ext.get(optionListArr[index]).on({
+                 touchstart: self.onListOptionTabStart,
+                 touchend: self.onListOptionTapEnd,
+                 tapcancel: self.onListOptionTabCancel,
+                 scope:self
+            });
+        }
+
+        // attach event handler to options element to close it when tapped
+        (function(_activeListOptions,_activeListElement,self) {
+            _activeListOptions.on({
+                tap: function(evt){
+                    // ensure the animation is  reversed
+                    Ext.apply(self.getRevealAnimation(), {
+                        reverse: true
+                    });
+                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
+                    evt.stopPropagation();
+                    return false;
+                },
+                swipe : function(evt){
+                    self.setRevealDir(evt.direction);
+                    self.doHideOptionsMenu.apply(self, [_activeListElement, _activeListOptions]);
+                    evt.stopPropagation();
+                    return false;
+                },
+                scope: self
+            });
+        })(this.activeListOptions,this.activeListElement,this)
+
+        return this.activeListOptions;
+    },
+    
+    /**
+     * Handler for 'touchstart' event to add the Pressed class
+     * @param {Object} e
+     * @param {Object} el
+     */
+    onListOptionTabStart: function(e, el){
+        var menuOptionSelector = this.getMenuOptionSelector(),
+            optionsSelector = this.getOptionsSelector(),
+            menuOption = e.getTarget('.' + menuOptionSelector),
+            listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item');
+        
+        // get the menu item's data
+        var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
+        
+        if (this.list.fireEvent('beforelistoptionstap', menuItemData, this.list.getRecord(listOptionsEl.dom)) === true) {
+            this.addPressedClass(e);
+        } else {
+            this.TapCancelled = true;
+        }
+    },
+    
+    /**
+     * Handler for 'tapcancel' event
+     * Sets TapCancelled value to stop TapEnd function from executing and removes Pressed class
+     * @param {Object} e
+     * @param {Object} el
+     */
+    onListOptionTabCancel: function(e, el){
+        this.TapCancelled = true;
+        this.removePressedClass(e);
+    },
+    
+    /**
+     * Handler for the 'tap' event of the individual List Option menu items
+     * @param {Object} e
+     */
+    onListOptionTapEnd: function(e, el){
+        if (!this.TapCancelled) {
+            // Remove the Pressed class
+            this.removePressedClass(e);
+            
+            var menuOptionSelector = this.getMenuOptionSelector(),
+                optionsSelector = this.getOptionsSelector(),
+                menuOption = e.getTarget('.' + menuOptionSelector);
+                // listOptionsEl = Ext.get(Ext.get(menuOption).findParent('.' + optionsSelector)).prev('.x-list-item',true);
+
+            // get the menu item's data
+            var menuItemData = this.processMenuOptionsData()[this.getIndex(menuOption)];
+            this.list.fireEvent('menuoptiontap', menuItemData);
+        }
+        this.TapCancelled = false;
+        
+        // stop menu from hiding
+        e.stopPropagation();
+    },
+    
+    /**
+     * Adds the Pressed class on the Menu Option
+     * @param {Object} e
+     */
+    addPressedClass: function(e){
+        var menuOptionSelector = this.getMenuOptionSelector(),
+            menuOptionPressedClass = this.getMenuOptionPressedClass(),
+            elm = e.getTarget('.' + menuOptionSelector);
+        if (Ext.fly(elm)) {
+            Ext.fly(elm).addCls(menuOptionPressedClass);
+        }       
+    },
+    
+    /**
+     * Removes the Pressed class on the Menu Option
+     * @param {Object} e
+     */
+    removePressedClass: function(e){
+        var menuOptionSelector = this.getMenuOptionSelector(),
+            menuOptionPressedClass = this.getMenuOptionPressedClass(),
+            elm = e.getTarget('.' + menuOptionSelector);
+        if (Ext.fly(elm)) {
+            Ext.fly(elm).removeCls(menuOptionPressedClass);
+        }       
+    },
+    
+    /**
+     * Helper method to get the index of the List Option that was tapped
+     * @param {Object} el - the tapped node
+     */
+    getIndex: function(el){
+        var optionsSelector = this.getOptionsSelector(),
+            menuOptionSelector = this.getMenuOptionSelector(),
+            listOptions = Ext.get(Ext.get(el).findParent('.' + optionsSelector)).select('.' + menuOptionSelector);
+        
+        for(var i = 0; i < listOptions.elements.length; i++){
+            if(listOptions.elements[i].id === el.id){
+                return i;
+            }
+        }
+        return -1;
+    }
+});
 
 /**
  * @aside guide floating_components
@@ -29388,10 +30284,11 @@ Ext.define("Freshdesk.view.Home", {
                 portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
-                userData.avatar_url = userData.avatar_url || 'resources/images/profile_blank_thumb.gif';
+                userData.avatar_url = userData.medium_avatar || 'resources/images/profile_blank_thumb.gif';
                 Ext.getCmp('home-user-profile').setData(userData); 
 
-                portalData.preferences.header_color && Ext.select('.logo').setStyle('background-color',portalData.preferences.header_color);
+                portalData.preferences.header_color && Ext.select('.branding').setStyle('background-color',portalData.preferences.header_color);
+                portalData.preferences.tab_color && Ext.select('.branding').setStyle('border-bottom-color',portalData.preferences.tab_color);
 
             }
         },
@@ -29399,7 +30296,7 @@ Ext.define("Freshdesk.view.Home", {
             {
                 xtype:'container',
                 centered:true,
-                minHeight:'400px',
+                docked:'top',
                 ui:'plain',
                 width:'100%',
                 items : [
@@ -29412,13 +30309,15 @@ Ext.define("Freshdesk.view.Home", {
                         data:{
                             logo_url: 'resources/images/admin-logo.png',
                             name:'Freshdesk'
-                        }
+                        },
+                        height:'120px'
                     },
                     {
                         xtype:'titlebar',
                         ui:'plain',
-                        minHeight:'10em',
                         centered:true,
+                        minHeight:'10em',
+                        style:{margin:'120px 0px 0px 0px'},
                         items : [
                             {
                                 xtype:'button',
@@ -29461,6 +30360,18 @@ Ext.define("Freshdesk.view.Home", {
                                 }
                             }
                         ]
+                    },
+                    {
+
+                        id:'home-footer',
+                        cls:'footer',
+                        docked:'bottom',
+                        centered:true,
+                        tpl:['<a class="switch_version">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
+                             '<p>A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                        data:{
+                            
+                        }
                     }
                 ]
             }
@@ -29659,19 +30570,19 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
         this.add([topToolbar,filtersList]);
     },
     onFiltersListDisclose: function(list, index, target, record, evt, options){
-            setTimeout(function(){list.deselect(index);},500);
-            if(record.raw.count){
-                this.filter_title = record.raw.name;
-                Ext.getStore('Tickets').totalCount = record.raw.count;
-                Ext.getStore('Tickets').setTotalCount(record.raw.count);
-                if(record.data.company){
-                    location.href="#company_tickets/filters/"+record.data.type+'/'+record.data.id;
-                }
-                else{
-                    location.href="#filters/"+record.data.type+'/'+record.data.id;    
-                }
-                
+        setTimeout(function(){list.deselect(index);},500);
+        if(record.raw.count){
+            this.filter_title = record.raw.name;
+            Ext.getStore('Tickets').totalCount = record.raw.count;
+            Ext.getStore('Tickets').setTotalCount(record.raw.count);
+            if(record.data.company){
+                location.href="#company_tickets/filters/"+record.data.type+'/'+record.data.id;
             }
+            else{
+                location.href="#filters/"+record.data.type+'/'+record.data.id;    
+            }
+            
+        }
     },
     populateTicketProperties : function(res) {
         var resJson = JSON.parse(res.responseText),
@@ -29723,9 +30634,14 @@ Ext.define("Freshdesk.view.ContactInfo", {
         itemId:'customerInfo',
         cls:'customerDetails',
         padding:0,
-        tpl: Ext.create('Ext.XTemplate',['<div class="customer-info">',
+        tpl: Ext.create('Ext.XTemplate',['<tpl if="loading">',
+                '<div class="x-mask x-floating" style="background: transparent;min-height:400px"><div class="x-innerhtml">',
+                            '<div class="x-loading-spinner" style="font-size: 235%; margin: 100px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',
+                '</div></div>',
+            '<tpl else>',
+            '<div class="customer-info">',
                 '<div class="profile_pic">',
-                    '<tpl if="avatar_url"><img src="{avatar_url}"></tpl>',
+                    '<tpl if="avatar_url"><img src="{original_avatar}"></tpl>',
                     '<tpl if="!avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                 '</div>',
                 '<div class="customer-info-list">',
@@ -29745,7 +30661,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '<ul class="ticketsList">',
                 '<tpl for="recent_tickets">',
                     '<li>',
-                        '<a href="#tickets/show/{helpdesk_ticket.id}"><div class="ticket-item {helpdesk_ticket.status_name}">',
+                        '<a href="#tickets/show/{helpdesk_ticket.display_id}"><div class="ticket-item {helpdesk_ticket.status_name}">',
                                     '<tpl if="FD.current_user.is_agent"><div class="{helpdesk_ticket.priority_name}">&nbsp;</div><tpl else><div>&nbsp;</div></tpl>',
                                     '<div class="title">',
                                             '<div><span class="info btn">{helpdesk_ticket.status_name}</span></div>',
@@ -29755,14 +30671,17 @@ Ext.define("Freshdesk.view.ContactInfo", {
                                             '</div>',
                                             '<div>',
                                                     '<tpl if="responder_id">{helpdesk_ticket.responder_name}',
-                                                    '<tpl else>Unassigned</tpl>',
+                                                    '<tpl else>No agent assigned, </tpl>',
                                             '&nbsp;{helpdesk_ticket.updated_at:this.time_in_words}</div>',
                                     '</div>',
-                                    '<div class="disclose">&nbsp;</div>',
+                                    '<div class="disclose icon-arrow-right">&nbsp;</div>',
                         '</div></a>',
                     '</li>',
                 '</tpl>',
-            '</ul></div></tpl>'].join(''),
+            '</ul>',
+            '</div>',
+            '</tpl>',
+            '</tpl>'].join(''),
             {
                         time_in_words : function(item){
                                 return new Date(item).toRelativeTime();
@@ -29779,35 +30698,41 @@ Ext.define("Freshdesk.view.TicketDetails", {
                 id:"details",
                 padding:0,
                 minWidth:'100%',
-                tpl:new Ext.XTemplate(['<div class="HDR">',
+                tpl:new Ext.XTemplate(['<tpl if="loading">',
+                        '<div class="x-mask x-floating" style="background: transparent;min-height:400px"><div class="x-innerhtml">',
+                            '<div class="x-loading-spinner" style="font-size: 235%; margin: 100px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',
+                        '</div></div>',
+                        '<tpl else>',
+                        '<div class="HDR">',
                         '<tpl if="!FD.current_user.is_customer">',
                                 '<div class="subject">',
                                         '<div class="icon {priority_name} {source_name}"></div>',
                                         '<div class="title">{subject}</div>',
                                 '</div>',
                                 '<tpl if="!deleted && !spam && !FD.current_user.is_customer"><ul class="actions">',
-                                        '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
-                                        '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                        '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
-                                        '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
-                                        '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
+                                        '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
                                 '</ul></tpl>',
                         '</tpl>',
                         '<tpl if="FD.current_user.is_customer">',
                                 '<div class="subject"><div class="title full">{subject}</div></div>',
                                 '<ul class="actions">',
-                                        '<li class="half">Reply <a class="reply"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                        '<tpl if="!is_closed"><li class="half"><a class="close"       href="#tickets/close/{id}">&nbsp;</a> Close</li></tpl>',
+                                        '<li class="half">Reply <a class="reply"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                        '<tpl if="!is_closed"><li class="half"><a class="close"       href="#tickets/close/{display_id}">&nbsp;</a> Close</li></tpl>',
                                 '</ul>',
                         '</tpl>',
                       '</div>',
+                      '<div class="banner hide" id="notification_msg"></div>',
                       '<tpl if="FD.current_user.is_customer"><div class="banner"><b>{status_name}</b></div></tpl>',
                       '<div class="conversation">',
                         '<div class="thumb">',
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -29823,16 +30748,30 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
                         '</div>',
                       '</div>',
-                      '<tpl for="notes"><div class="conversation">',
+                      '<tpl if="conversation_count &gt; 1">',
+                      '<div class="oldconvMsg">',
+                      '<div></div>',
+                      '<div><span class="msg">{[values.conversation_count-1]} old conversation(s)</span></span></div>',
+                      '<div></div>',
+                      '</div>',
+                      '</tpl>',
+                      '<tpl for="notes">',
+                        '<div class="{[xindex  == xcount ? \"conversation\" : \"conversation hide\"]}">',
                                 '<div class="thumb">',
                                         '<tpl if="user.avatar_url"><img src="{user.avatar_url}"/></tpl>',
                                         '<tpl if="!user.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                                 '</div>',
                                 '<div class="Info">',
-                                '<tpl if="!FD.current_user.is_customer"><a href="#contacts/show/{user.id}">{user.name}</a></tpl>',
+                                '<tpl if="!FD.current_user.is_customer">',
+                                    '<tpl if="user.is_customer">',
+                                        '<a href="#contacts/show/{user.id}">{user.name}</a>',
+                                    '<tpl else>',
+                                        '<a href="#">{user.name}</a>',
+                                    '</tpl>',
+                                '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
-                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
-                                '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
+                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
+                                '<tpl if="user.is_customer"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
@@ -29844,7 +30783,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
-                                '<tpl if="parent.requester.id != user_id"><div class="msg">',
+                                '<tpl if="user.is_agent"><div class="msg">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
@@ -29858,12 +30797,12 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</div></tpl>',
                         '</div></tpl>',
                         '<tpl if="!deleted && !spam && !FD.current_user.is_customer && notes.length &gt; 4"><div class="HDR bottom"><ul class="actions">',
-                                '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
-                                '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
-                                '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
-                                '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
-                        '</ul></tpl></div>',
+                                '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
+                        '</ul></tpl></div></tpl>',
                 ].join(''),{
                         truncate: function(value,length) {
                             return values.substr(0, length);
@@ -29903,30 +30842,53 @@ Ext.define("Freshdesk.view.TicketDetails", {
         this.add([tktHeader]);
     },
     onMessageTap : function(e,item){
-      var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
-      if(toggleId){
-        Ext.get(toggleId).toggleCls('ellipsis');
-        Ext.get('loadmore_'+toggleId).toggleCls('hide');
+      if(item.nodeName === "A"){
+        e.stopPropagation();
       }
+      else {
+        var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
+        if(toggleId){
+            Ext.get(toggleId).toggleCls('ellipsis');
+            Ext.get('loadmore_'+toggleId).toggleCls('hide');
+        }
+      }
+    },
+    showAllConversation : function(e,target,container){
+        Ext.defer(function(){
+            Ext.get(container).toggleCls('hide');
+            var hiddenConvs = Ext.select('.conversation.hide');
+            hiddenConvs.toggleCls('hide').hide();
+            hiddenConvs.show({
+                type:'slide',
+                direction:'down',
+                easing:'ease-in-out',
+                duration:300
+            });
+        },50);
+    },
+    addActionListeners : function(container){
+        var elms = container.element.select('.msg').elements,self=this;
+        for(var index in elms) {
+               Ext.get(elms[index]).on({
+                        tap: this.onMessageTap,
+                        scope:this
+               });
+        }
+
+        var oldconvMsg = Ext.select('.oldconvMsg').elements[0];
+        if(oldconvMsg){
+            Ext.get(oldconvMsg).on({
+                tap:function(e,target){
+                    this.showAllConversation.apply(this,[e,target,oldconvMsg])
+                },
+                scope:this
+            })    
+        }
     },
     config: {
         cls:'ticketDetails',
         scrollable: {
             direction: 'vertical'
-        },
-        listeners : {
-                painted : {
-                        fn: function(container,item,eOpts){
-                                var elms = container.element.select('.msg').elements,self=this;
-                                for(var index in elms) {
-                                       Ext.get(elms[index]).on({
-                                                tap: this.onMessageTap,
-                                                scope:this
-                                       });
-                                }
-                        },
-                },
-                scope:this
         }
     }
 });
@@ -30213,7 +31175,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
             messages:resJson.actions_executed
         },
         me=this;
-        flashMessageBox.ticket_id = res.id;
+        flashMessageBox.ticket_id = res.display_id;
         flashMessageBox.items.items[1].setData(flashData);
         flashMessageBox.hideHandler = function() {
             location.href="#tickets/show/"+me.ticket_id;
@@ -30402,18 +31364,15 @@ Ext.define('Freshdesk.controller.Filters', {
             contactsListContainer:"contactsListContainer"
     	}
     },
-    load_company_tickets : function(type,id){
-        console.log(type,id);
-        FD.Util.check_user();
-        type = type || 'filter';
-        id  = id || 'all_tickets';
-        Ext.getStore("Tickets").currentPage=1;
-        Ext.getStore("Tickets").removeAll();
-        url = '/support/company_tickets/'+type+'/'+id ;
-        Ext.getStore("Tickets").getProxy()._url=url;
-        Ext.getStore("Tickets").load();
+    load_tickets : function(type,id){
         var ticketsListContainer = this.getTicketsListContainer(),
         anim = Freshdesk.backBtn ? this.slideRightTransition : Freshdesk.cancelBtn ? {type:'cover',direction:'down'} : this.slideLeftTransition;
+        if(!Freshdesk.backBtn) {
+            Ext.getStore("Tickets").currentPage=1;
+            Ext.getStore("Tickets").setData(undefined);
+            ticketsListContainer.showListLoading();
+            Ext.getStore("Tickets").load();
+        }
         Ext.Viewport.animateActiveItem(ticketsListContainer, anim);
         //setting header for tickets
         ticketsListContainer.setHeaderTitle(this.getFiltersListContainer().filter_title);
@@ -30422,26 +31381,24 @@ Ext.define('Freshdesk.controller.Filters', {
         Freshdesk.cancelBtn = false;
         ticketsListContainer.filter_type=type;
         ticketsListContainer.filter_id=id;
+
+    },
+    load_company_tickets : function(type,id){
+        console.log(type,id);
+        FD.Util.check_user();
+        type = type || 'filter';
+        id  = id || 'all_tickets';
+        url = '/support/company_tickets/'+type+'/'+id ;
+        Ext.getStore("Tickets").getProxy()._url=url;
+        this.load_tickets(type,id);
     },
     loadFilter:function(type,id){
         FD.Util.check_user();
         type = type || 'filter';
         id  = id || 'all_tickets';
-        Ext.getStore("Tickets").currentPage=1;
-        Ext.getStore("Tickets").removeAll();
         url = FD.current_user.is_customer ? '/support/tickets/'+type+'/'+id : '/helpdesk/tickets/'+type+'/'+id ;
         Ext.getStore("Tickets").getProxy()._url=url;
-    	Ext.getStore("Tickets").load();
-    	var ticketsListContainer = this.getTicketsListContainer(),
-        anim = Freshdesk.backBtn ? this.slideRightTransition : Freshdesk.cancelBtn ? {type:'cover',direction:'down'} : this.slideLeftTransition;
-		Ext.Viewport.animateActiveItem(ticketsListContainer, anim);
-        //setting header for tickets
-        ticketsListContainer.setHeaderTitle(this.getFiltersListContainer().filter_title);
-        //clearing the previous animations if any
-        Freshdesk.backBtn=false;
-        Freshdesk.cancelBtn = false;
-        ticketsListContainer.filter_type=type;
-        ticketsListContainer.filter_id=id;
+    	this.load_tickets(type,id);
     },
     launch: function () {
         this.callParent();
@@ -30479,15 +31436,19 @@ Ext.define('Freshdesk.controller.Tickets', {
             ticketsListContainer:"ticketsListContainer",
             ticketReply:"ticketReply",
             ticketNote : 'ticketNote',
-            newTicketContainer : 'newTicketContainer'
+            newTicketContainer : 'newTicketContainer',
+            ticketTweetForm   : 'ticketTweetForm',
+            ticketFacebookForm : 'ticketFacebookForm'
     	}
     },
     renderDetails: function(ticketDetails,callBack){
         var resJSON = JSON.parse(ticketDetails.responseText).helpdesk_ticket,
         convContainer = this.getConversationContainer(),
         detailsContainer = this.getTicketDetailsContainer(),
-        id = resJSON.id;
+        id = resJSON.display_id;
         resJSON.notes = resJSON.notes || resJSON.public_notes ;
+        //removing meta source notes..
+        resJSON.notes = Ext.Array.filter(resJSON.notes,function(t){return t.source_name !== 'meta'})
         //saving in local variable ..
         this.ticket = resJSON;
         convContainer.setData(resJSON);
@@ -30495,17 +31456,30 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer.items.items[0].setTitle('Ticket: '+id);
         detailsContainer.ticket_id=id;
         detailsContainer.requester_id=resJSON.requester.id;
-        Ext.Viewport.animateActiveItem(detailsContainer, anim);
+        //Ext.Viewport.animateActiveItem(detailsContainer, anim);
+        detailsContainer.items.items[1].items.items[1].addActionListeners(detailsContainer);
         callBack ? callBack() : '' ;
+        if(Freshdesk.notification) {
+            var msgContainer = Ext.get("notification_msg");
+            msgContainer.setHtml('<b>'+Freshdesk.notification.success+'</b>');
+            msgContainer.toggleCls('hide');
+            Ext.defer(function(){
+                Ext.get("notification_msg").toggleCls('hide')
+            },3500);
+        }
+        Freshdesk.notification=undefined;
         delete Freshdesk.anim;
     },
     show: function(id,callBack){
         var detailsContainer = this.getTicketDetailsContainer();
         anim = Freshdesk.anim || { type: 'slide', direction: 'left' };
+        detailsContainer.items.items[0].setTitle('Ticket: '+id);
         if(Freshdesk.cancelBtn){
             Ext.Viewport.animateActiveItem(detailsContainer, anim);
         }
         else{
+            this.getConversationContainer().setData({loading:true});
+            Ext.Viewport.animateActiveItem(detailsContainer, anim);
             var ajaxOpts = {
                 url: '/helpdesk/tickets/show/'+id,
                 params:{
@@ -30516,17 +31490,35 @@ Ext.define('Freshdesk.controller.Tickets', {
             ajaxCallb = function(res){
                 this.renderDetails(res,callBack)
             };
-            FD.Util.ajax(ajaxOpts,ajaxCallb,this);
+            FD.Util.ajax(ajaxOpts,ajaxCallb,this,false);
         }
         Freshdesk.cancelBtn=false;
         Freshdesk.anim = undefined;
     },
     reply : function(id){
-        this.initReplyForm(id);
-        var replyForm = this.getTicketReply();
-        replyForm.ticket_id = id;
-        Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
-        Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
+        //console.log(this.ticket.from_email, this.ticket.is_facebook, this.ticket.is_twitter)
+        if(this.ticket.from_email){
+            this.initReplyForm(id);
+            var replyForm = this.getTicketReply();
+            replyForm.ticket_id = id;
+            Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
+            Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
+        }
+
+        if(this.ticket.is_twitter){
+            var tweetForm = this.getTicketTweetForm();
+            this.initTweetForm(id);
+            tweetForm.ticket_id = id;
+            Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
+        }
+
+        if(this.ticket.is_facebook){
+            var facebookForm = this.getTicketFacebookForm();
+            this.initFacebookForm(id);
+            facebookForm.ticket_id = id;
+            Ext.Viewport.animateActiveItem(facebookForm, this.coverUp);   
+        }
+        
     },
     addNote : function(id){
         this.initNoteForm(id);
@@ -30547,18 +31539,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                duration:200,
-                easing:'ease-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                duration:150,
-                easing:'ease-in'
-            },
             title:'Close ticket',
             message: 'Do you want to update ticket status to "Close"?',
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -30572,9 +31555,12 @@ Ext.define('Freshdesk.controller.Tickets', {
                 {
                     text:'Yes',
                     handler:function(){
+                        messageBox.hide();
                         var opts = { url: '/support/tickets/close_ticket/'+id },
                         callBack = function(){
-                            messageBox.hide();
+                            Freshdesk.notification={
+                                success : "The ticket has been closed."
+                            };
                             location.href="#tickets/show/"+id;
                         };
                         FD.Util.ajax(opts,callBack,this);
@@ -30588,18 +31574,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                duration:200,
-                easing:'ease-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                duration:150,
-                easing:'ease-in'
-            },
             title:'Resolve ticket',
             message: 'Do you want to update ticket status to "Resolve"?',
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -30613,6 +31590,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                 {
                     text:'Yes',
                     handler:function(){
+                        messageBox.hide();
                         var opts = {
                             url: '/helpdesk/tickets/update/'+id,
                             method:'POST',
@@ -30624,7 +31602,9 @@ Ext.define('Freshdesk.controller.Tickets', {
                             }
                         },
                         callBack = function(){
-                            messageBox.hide();
+                            Freshdesk.notification={
+                                success : "The ticket has been resolved."
+                            };
                             location.href="#tickets/show/"+id;
                         };
                         FD.Util.ajax(opts,callBack,this);
@@ -30638,18 +31618,9 @@ Ext.define('Freshdesk.controller.Tickets', {
 
         var self = this,
             messageBox = new Ext.MessageBox({
-            showAnimation: {
-                type: 'slideIn',
-                duration:200,
-                easing:'ease-out'
-            },
-            hideAnimation: {
-                type: 'slideOut',
-                duration:150,
-                easing:'ease-in'
-            },
             title: 'Delete Ticket',
             message: 'Do you want to delete this ticket (#'+id+')?',
+            modal:true,
             buttons: [
                 {
                     text:'No',
@@ -30663,6 +31634,7 @@ Ext.define('Freshdesk.controller.Tickets', {
                 {
                     text:'Yes',
                     handler:function(){
+                        messageBox.hide();
                         var opts = {
                            url: '/helpdesk/tickets/'+id,
                             params:{
@@ -30674,7 +31646,9 @@ Ext.define('Freshdesk.controller.Tickets', {
                             } 
                         },
                         callBack = function(){
-                            messageBox.hide();
+                            Freshdesk.notification={
+                                success : "The ticket has been deleted."
+                            };
                             location.href="#tickets/show/"+id;
                         };
                         FD.Util.ajax(opts,callBack,this);
@@ -30697,10 +31671,14 @@ Ext.define('Freshdesk.controller.Tickets', {
     initReplyForm : function(id){
         var replyForm = this.getTicketReply(),reply_emails = [],
         formObj = replyForm.items.items[1],
-        fieldSetObj = formObj.items.items[0];
+        fieldSetObj = formObj.items.items[0],
+        cc_emails,bcc_emails;
         replyForm.ticket_id = id;
         replyForm.items.items[0].setTitle('Ticket : '+id);
 
+
+        
+        fieldSetObj.items.items[6].setLabel('Cc/Bcc :');
         fieldSetObj.items.items[6].reset();
         fieldSetObj.items.items[7].setHidden(true).reset();
         fieldSetObj.items.items[8].reset();
@@ -30714,6 +31692,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             reply_emails.push({text:value,value:value});
         })
         fieldSetObj.items.items[0].setOptions(reply_emails).show();
+        fieldSetObj.items.items[0].setValue(this.ticket.selected_reply_email);
         if(reply_emails.length === 1) 
             fieldSetObj.items.items[0].setHidden(true);
 
@@ -30721,6 +31700,22 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj.items.items[1].setValue(this.ticket.requester.email).show();
         //setting canned response and solution href
         fieldSetObj.items.items[8].setData({id:id});
+
+
+        ticket_details = this.getConversationContainer().getData();
+        if(ticket_details.notes.length > 0) {
+            cc_emails = ticket_details.cc_email ? ticket_details.cc_email.cc_emails : [];
+        }
+        else {
+            cc_emails = ticket_details.to_cc_emails; 
+        } 
+        cc_emails = cc_emails && cc_emails.join(',')
+
+        if(cc_emails){
+            fieldSetObj.items.items[6].setLabel('Cc :');
+            fieldSetObj.items.items[7].setHidden(false);
+        }
+        fieldSetObj.items.items[6].setValue(cc_emails)
 
         //setting the url 
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
@@ -30746,6 +31741,67 @@ Ext.define('Freshdesk.controller.Tickets', {
         else{
             action.resume();
         }
+    },
+    initTweetForm : function(id){
+        var tweetForm = this.getTicketTweetForm(),tweet_handles = [],
+        formObj = tweetForm.items.items[1],
+        fieldSetObj = formObj.items.items[0];
+        tweetForm.ticket_id = id;
+        tweetForm.items.items[0].setTitle('Ticket : '+id);
+
+        if(!FD.current_account){
+            location.href="#tickets/show/"+id;
+            return;
+        }
+
+        //setting from mails if the reply_emails are more else hide the from..
+        FD.current_account.twitter_handles.forEach(function(value,key){
+            tweet_handles.push({text:value.screen_name,value:value.id});
+        })
+        fieldSetObj.items.items[0].setOptions(tweet_handles).show();
+        fieldSetObj.items.items[0].setValue(this.ticket.fetch_twitter_handle);
+        if(tweet_handles.length === 1) 
+            fieldSetObj.items.items[0].setHidden(true);
+
+        //setting to tweet
+        fieldSetObj.items.items[1].setValue(this.ticket.requester.twitter_id).show();
+        
+        if(this.ticket.requester.twitter_id)
+            fieldSetObj.items.items[5].setValue('@'+this.ticket.requester.twitter_id).show();
+
+        //setting the url 
+        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+    },
+    initFacebookForm : function(id){
+        var facebookForm = this.getTicketFacebookForm(),
+        formObj = facebookForm.items.items[1],
+        fieldSetObj = formObj.items.items[0];
+        facebookForm.ticket_id = id;
+        facebookForm.items.items[0].setTitle('Ticket : '+id);
+
+        if(!FD.current_account){
+            location.href="#tickets/show/"+id;
+            return;
+        }
+
+        
+        if(this.ticket.fb_post && this.ticket.fb_post.facebook_page) {
+            fieldSetObj.items.items[0].setValue(this.ticket.fb_post.facebook_page.page_name);
+        }
+
+        //setting to facebook
+        fieldSetObj.items.items[1].setValue(this.ticket.requester.name).show();
+        
+        if(this.ticket.is_fb_message) {
+            fieldSetObj.items.items[5].setPlaceHolder('Reply *');
+        }
+        else {
+            fieldSetObj.items.items[5].setPlaceHolder('Comment *');   
+        }
+            
+        fieldSetObj.items.items[5].setValue('');
+        //setting the url 
+        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
     }
 
 });
@@ -30769,6 +31825,9 @@ Ext.define('Freshdesk.controller.Contacts', {
     show: function(id){
         var contactDetails = this.getContactDetails();
 
+        contactDetails.items.items[1].setData({loading:true});
+        Ext.Viewport.animateActiveItem(contactDetails, { type: 'slide', direction: 'left'});
+
         Ext.Ajax.request({
             url: '/contacts/'+id,
             headers: {
@@ -30778,7 +31837,6 @@ Ext.define('Freshdesk.controller.Contacts', {
                 var resJson = JSON.parse(response.responseText),
                 user = resJson.user;
                 contactDetails.items.items[1].setData(user);
-                Ext.Viewport.animateActiveItem(contactDetails, { type: 'slide', direction: 'left'});
             },
             failure: function(response){
                 
@@ -37055,6 +38113,11 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                 menuoptiontap: {
                     fn:this.onMenuOptionTap,
                     scope:this
+                },
+                updatedata: {
+                    fn:function(){
+                        console.log(arguments)
+                    }
                 }
             },
             plugins: [
@@ -37073,12 +38136,15 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         };
 		this.add([topToolbar,ticketsList]);
     },
+    showListLoading : function(){
+        this.items.items[1].setMasked({xtype:'mask',html:'<div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',style:'background:rgba(255,255,255,0.1)'});
+    },
     refreshListView : function(){
-        Ext.getStore("Tickets").removeAll();
+        Ext.getStore("Tickets").setData(undefined);
         Ext.getStore("Tickets").load();
     },
     moveToTrash : function(data){
-        var id = data.id;
+        var id = data.display_id;
         Ext.Msg.confirm('Move to trash ticket : '+id,'Do you want to move this ticket to Trash?',
             function(btnId){
                 if(btnId == 'no' || btnId == 'cancel'){
@@ -37105,7 +38171,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     restore : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking restore for ticket #',id);
         Ext.Msg.confirm('Restore ticket : '+id,'Do you want to restore this ticket?',
             function(btnId){
@@ -37133,7 +38199,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     falgAsSpam : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking falgAsSpam for ticket #',id);
         Ext.Msg.confirm('Mark as spam ticket : '+id,'Do you want to mark this ticket as spam?',
             function(btnId){
@@ -37161,7 +38227,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     unflagAsSpam : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking unflagAsSpam for ticket #',id);
         Ext.Msg.confirm('ticket : '+id+' is not spam','Do you want to mark this ticket as unspam?',
             function(btnId){
@@ -37189,7 +38255,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     close : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking close for ticket #',id);
         Ext.Msg.confirm('Close ticket : '+id,'Do you want to close this ticket?',
             function(btnId){
@@ -37217,7 +38283,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     pickUp : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking pickup for ticket #',id);
 
         Ext.Msg.confirm('Pickup ticket : '+id,'Do you want to pickup this ticket?',
@@ -37285,7 +38351,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
     },
     onTicketDisclose: function(list, index, target, record, evt, options){
     	setTimeout(function(){list.deselect(index);},500);
-        location.href="#tickets/show/"+record.data.id;
+        location.href="#tickets/show/"+record.data.display_id;
     },
     backToFilters: function(){
         Freshdesk.backBtn=true;
@@ -37425,20 +38491,27 @@ Ext.define('Freshdesk.view.TicketReply', {
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
-        var id = this.ticket_id;
-        this.items.items[1].submit({
-            success:function(){
-                location.href="#tickets/show/"+id;
-            },
-            failure:function(){
-                var errorHtml='Please correct the bellow errors.<br/>';
-                for(var index in response.errors){
-                    var error = response.errors[index],eNo= +index+1;
-                    errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+        var id = this.ticket_id,
+            formObj = this.items.items[1],
+            values = formObj.getValues();
+        if(values["helpdesk_note[body_html]"].trim() != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
                 }
-                Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
-        });
+            });
+        }
     },
     getMessageItem: function(){
         return this.items.items[1].items.items[0].items.items[8];
@@ -37583,20 +38656,27 @@ Ext.define('Freshdesk.view.TicketNote', {
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
-        var id = this.ticket_id;
-        this.items.items[1].submit({
-            success:function(){
-                location.href="#tickets/show/"+id;
-            },
-            failure:function(){
-                var errorHtml='Please correct the bellow errors.<br/>';
-                for(var index in response.errors){
-                    var error = response.errors[index],eNo= +index+1;
-                    errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+        var id = this.ticket_id,
+        formObj = this.items.items[1],
+        values = formObj.getValues();
+        if(values["helpdesk_note[body_html]"].trim() != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
                 }
-                Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
-        });
+            });
+        }
     },
     getMessageItem: function(){
         return this.items.items[1].items.items[0].items.items[2];
@@ -37656,7 +38736,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         if(FD.Util.validate_form(formObj)){
             formObj.submit({
                 success:function(form,response){
-                    location.href="#tickets/show/"+response.item.helpdesk_ticket.id;
+                    location.href="#tickets/show/"+response.item.helpdesk_ticket.display_id;
                 },
                 failure:function(form,response){
                     var errorHtml='Please correct the bellow errors.<br/>';
@@ -37690,6 +38770,165 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
     }
 });
 
+Ext.define('Freshdesk.view.TicketTweetForm', {
+    extend: 'Ext.Container',
+    requires:['Ext.TitleBar'],
+    alias: 'widget.ticketTweetForm',
+    initialize: function () {
+        this.callParent(arguments);
+        var me = this;
+        var backButton = {
+            text:'Cancel',
+            xtype:'button',
+            ui:'headerBtn',
+            align:'left',
+            handler:this.backToDetails,
+            scope:this
+        };
+
+        var submitButton = {
+            xtype:'button',
+            align:'right',
+            text:'Add',
+            ui:'headerBtn',
+            handler:this.send,
+            scope:this
+        }
+
+        var topToolbar = {
+            xtype: "titlebar",
+            docked: "top",
+            title:'Ticket :',
+            ui:'header',
+            items: [
+                backButton,
+                submitButton
+            ]
+        };
+
+        var tweetForm = {
+            xtype : 'tweetForm',
+            padding:0,
+            border:0,
+            style:'font-size:1em',
+            layout:'fit'
+        };
+
+        this.add([topToolbar,tweetForm]);
+    },
+    backToDetails : function(){
+        Freshdesk.cancelBtn=true;
+        Freshdesk.anim = {type:'cover',direction:'down'};
+        location.href="#tickets/show/"+this.ticket_id;
+    },
+    send : function(){
+        var id = this.ticket_id,
+            formObj = this.items.items[1],
+            values = formObj.getValues();
+        if(values["helpdesk_note[body]"] != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
+                }
+            });
+        }
+    },
+    config: {
+        layout:'fit',
+        id: 'ticketTweetForm'
+    }
+});
+Ext.define('Freshdesk.view.TicketFacebookForm', {
+    extend: 'Ext.Container',
+    requires:['Ext.TitleBar'],
+    alias: 'widget.ticketFacebookForm',
+    initialize: function () {
+        this.callParent(arguments);
+        var me = this;
+        var backButton = {
+            text:'Cancel',
+            xtype:'button',
+            ui:'headerBtn',
+            align:'left',
+            handler:this.backToDetails,
+            scope:this
+        };
+
+        var submitButton = {
+            xtype:'button',
+            align:'right',
+            text:'Add',
+            ui:'headerBtn',
+            handler:this.send,
+            scope:this
+        }
+
+        var topToolbar = {
+            xtype: "titlebar",
+            docked: "top",
+            title:'Ticket :',
+            ui:'header',
+            items: [
+                backButton,
+                submitButton
+            ]
+        };
+
+        var facebookForm = {
+            xtype : 'facebookForm',
+            padding:0,
+            border:0,
+            style:'font-size:1em',
+            layout:'fit'
+        };
+
+        this.add([topToolbar,facebookForm]);
+    },
+    backToDetails : function(){
+        Freshdesk.cancelBtn=true;
+        Freshdesk.anim = {type:'cover',direction:'down'};
+        location.href="#tickets/show/"+this.ticket_id;
+    },
+    send : function(){
+        var id = this.ticket_id,
+            formObj = this.items.items[1],
+            values = formObj.getValues();
+        if(values["helpdesk_note[body]"] != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
+                }
+            });
+        }
+            
+    },
+    config: {
+        layout:'fit',
+        id: 'ticketFacebookForm'
+    }
+});
 /**
  * @class Ext.carousel.Carousel
  * @author Jacky Nguyen <jacky@sencha.com>
@@ -38581,7 +39820,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         var toggleBtn = Ext.create('Ext.Button',{
             xtype:'button',
             iconMask:true,
-            iconCls:'info',
+            iconCls:'info icon-list-3',
             ui:'headerBtn',
             handler:this.toggleProperties,
             align:'right',
@@ -38703,10 +39942,12 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         this.getItems().items[0].getItems().items[2].getItems().items[1].disable();
     },
     backToListView: function(){
-        Freshdesk.backBtn=true;
         var ticketListContainer = Ext.ComponentQuery.query('#ticketListContainer')[0],
         type = ticketListContainer.filter_type || 'filter',
         id = ticketListContainer.filter_id || 'all_tickets';
+        if(ticketListContainer.filter_type){
+            Freshdesk.backBtn=true;
+        }
         location.href="#filters/"+type+"/"+id;
     },
     updateProperties : function(){
@@ -41020,8 +42261,9 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        height: '20em',
-                        placeHolder:'Message'
+                        placeHolder:'Message *',
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',
@@ -41100,8 +42342,9 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        height: '17em',
-                        placeHolder:'Message'
+                        placeHolder:'Message *',
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',
@@ -41125,6 +42368,129 @@ Ext.define('Freshdesk.view.NoteForm', {
                             }
                         ]
 
+                    }
+                ]
+            }
+        ]
+    }
+});
+Ext.define('Freshdesk.view.TweetForm', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.tweetForm',
+    requires: ['Ext.field.Hidden'],
+    config: {
+        layout:'fit',
+        method:'POST',
+        url:'/helpdesk/tickets/',
+        items : [
+            {
+                xtype: 'fieldset',
+                defaults:{
+                        labelWidth:'20%'
+                },
+                items :[
+                    {
+                        xtype: 'selectfield',
+                        name: 'twitter_handle',
+                        label: 'From :'
+                    },
+                    {
+                        xtype: 'textfield',
+                        name: 'to_email',
+                        label: 'Reply To :',
+                        readOnly:true
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'tweet',
+                        value:'true'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'helpdesk_note[private]',
+                        value:'false'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'helpdesk_note[source]',
+                        value:'5'
+                    },
+                    {
+                        xtype: 'textareafield',
+                        name: 'helpdesk_note[body]',
+                        placeHolder:'Message *',
+                        maxLength:120,
+                        required:true,
+                        clearIcon:false
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'commet',
+                        value:'Send'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'tweet_type',
+                        value:'mention'
+                    }
+                ]
+            }
+        ]
+    }
+});
+Ext.define('Freshdesk.view.FacebookForm', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.facebookForm',
+    requires: ['Ext.field.Hidden'],
+    config: {
+        layout:'fit',
+        method:'POST',
+        url:'/helpdesk/tickets/',
+        items : [
+            {
+                xtype: 'fieldset',
+                defaults:{
+                        labelWidth:'20%'
+                },
+                items :[
+                    {
+                        xtype: 'textfield',
+                        name: 'facebook_handle',
+                        label: 'From :',
+                        readOnly:true
+                    },
+                    {
+                        xtype: 'textfield',
+                        name: 'to_email',
+                        label: 'Reply To :',
+                        readOnly:true
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'fb_post',
+                        value:'true'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'helpdesk_note[private]',
+                        value:'false'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'helpdesk_note[source]',
+                        value:'7'
+                    },
+                    {
+                        xtype: 'textareafield',
+                        name: 'helpdesk_note[body]',
+                        placeHolder:'Comment *',
+                        required:true,
+                        clearIcon:false
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'commet',
+                        value:'Send'
                     }
                 ]
             }
@@ -45536,7 +46902,7 @@ Ext.define("Freshdesk.view.FiltersList", {
         itemTpl: ['<tpl if="count &gt; 0"><div class="list-item-title"></tpl><tpl if="count == 0"><div class="list-item-title disabled"></tpl>',
                     '<div class="name">{name}</div>',
         			'<div class="count"><div>{count}</div></div>',
-                    '<div class="disclose"></div>',
+                    '<div class="disclose icon-arrow-right"></div>',
         		   '</div>'].join(''),
         loadingText: false
     }
@@ -45564,7 +46930,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                         '<tpl else>No agent assigned,</tpl>',
                                 '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
-                        '<div class="disclose">&nbsp;</div>',
+                        '<div class="disclose icon-arrow-right">&nbsp;</div>',
         	'</div></tpl>'].join(''),
                 {
                         time_in_words : function(item){
@@ -49646,7 +51012,8 @@ Ext.define('Freshdesk.model.Ticket', {
             { name: 'responder_id', type: 'int' },
             { name : 'need_attention', type:'boolean'},
             { name : 'deleted', type:'boolean'},
-            { name : 'spam', type:'boolean'}
+            { name : 'spam', type:'boolean'},
+            { name : 'conversation_count', type:'int'}
         ]
     }
 });
@@ -53464,375 +54831,6 @@ Ext.define("Freshdesk.view.TicketForm", {
     }
 });
 /**
- * This plugin adds pull to refresh functionality to the List.
- *
- * ## Example
- *
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['name', 'img', 'text'],
- *         data: [
- *             {
- *                 name: 'edpsencer',
- *                 img: 'http://a2.twimg.com/profile_images/1175591906/Ed-presenting-cropped_reasonably_small.jpg',
- *                 text: 'Read about Sencha Touch'
- *             },{
- *                 name: 'rdougan',
- *                 img: 'http://a0.twimg.com/profile_images/1261180556/171265_10150129602722922_727937921_7778997_8387690_o_reasonably_small.jpg',
- *                 text: 'Javascript development'
- *             },{
- *                 name: 'philogb',
- *                 img: 'https://si0.twimg.com/profile_images/1249073521/ng_normal.png',
- *                 text: '@ikarienator nice burritos!'
- *             }
- *         ]
- *     });
- *
- *     Ext.create('Ext.dataview.List', {
- *         fullscreen: true,
- *
- *         store: store,
- *
- *         plugins: [
- *             {
- *                 xclass: 'Ext.plugin.PullRefresh',
- *                 pullRefreshText: 'Pull down for more new Tweets!'
- *             }
- *         ],
- *
- *         itemTpl: [
- *             '<img src="{img}" alt="{name} photo" />',
- *             '<div class="tweet"><b>{name}:</b> {text}</div>'
- *         ]
- *     });
- */
-Ext.define('plugin.ux.PullRefresh2', {
-    extend: 'Ext.Component',
-    alias: 'PullRefresh2',
-    requires: ['Ext.DateExtras'],
-
-    config: {
-        /*
-         * @accessor
-         */
-        list: null,
-
-        /*
-         * @cfg {String} pullRefreshText The text that will be shown while you are pulling down.
-         * @accessor
-         */
-        pullRefreshText: 'Pull down to refresh...',
-
-        /*
-         * @cfg {String} releaseRefreshText The text that will be shown after you have pulled down enough to show the release message.
-         * @accessor
-         */
-        releaseRefreshText: 'Release to refresh...',
-
-        /*
-         * @cfg {String} loadingText The text that will be shown while the list is refreshing.
-         * @accessor
-         */
-        loadingText: 'Loading...',
-
-        /*
-         * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
-         * @accessor
-         */
-        snappingAnimationDuration: 150,
-
-        /*
-         * @cfg {Function} refreshFn The function that will be called to refresh the list.
-         * If this is not defined, the store's load function will be called.
-         * The refresh function gets called with a reference to this plugin instance.
-         * @accessor
-         */
-        refreshFn: null,
-
-        /*
-         * @cfg {XTemplate/String/Array} pullTpl The template being used for the pull to refresh markup.
-         * @accessor
-         */
-        pullTpl: [
-            '<div class="x-list-pullrefresh">',
-                '<div class="x-list-pullrefresh-arrow"></div>',
-                '<div class="x-loading-spinner">',
-                    '<span class="x-loading-top"></span>',
-                    '<span class="x-loading-right"></span>',
-                    '<span class="x-loading-bottom"></span>',
-                    '<span class="x-loading-left"></span>',
-                '</div>',
-                '<div class="x-list-pullrefresh-wrap">',
-                    '<h3 class="x-list-pullrefresh-message">{message}</h3>',
-                    '<div class="x-list-pullrefresh-updated">Last Updated: <span>{lastUpdated:date("m/d/Y h:iA")}</span></div>',
-                '</div>',
-            '</div>'
-        ].join('')
-    },
-
-    isRefreshing: false,
-    currentViewState: '',
-
-    initialize: function() {
-        this.callParent();
-
-        this.on({
-            painted: 'onPainted',
-            scope: this
-        });
-    },
-
-    init: function(list) {
-        var me = this,
-            store = list.getStore(),
-            pullTpl = me.getPullTpl(),
-            element = me.element,
-            scroller = list.getScrollable().getScroller();
-
-        me.setList(list);
-        me.lastUpdated = new Date();
-
-        list.insert(0, me);
-
-        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
-        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
-        if (store) {
-            if (store.isAutoLoading()) {
-                list.setLoadingText(null);
-            } else {
-                store.on({
-                    load: {
-                        single: true,
-                        fn: function() {
-                            list.setLoadingText(null);
-                        }
-                    }
-                });
-            }
-        }
-
-        pullTpl.overwrite(element, {
-            message: me.getPullRefreshText(),
-            lastUpdated: me.lastUpdated
-        }, true);
-
-        me.loadingElement = element.getFirstChild();
-        me.messageEl = element.down('.x-list-pullrefresh-message');
-        me.updatedEl = element.down('.x-list-pullrefresh-updated > span');
-
-        me.maxScroller = scroller.getMaxPosition();
-
-        scroller.on({
-            maxpositionchange: me.setMaxScroller,
-            scroll: me.onScrollChange,
-            scope: me
-        });
-    },
-
-    /**
-     * @private
-     * Attempts to load the newest posts via the attached List's Store's Proxy
-     */
-    fetchLatest: function() {
-        var store = this.getList().getStore(),
-            proxy = store.getProxy(),
-            operation;
-
-        operation = Ext.create('Ext.data.Operation', {
-            page: 1,
-            start: 0,
-            model: store.getModel(),
-            limit: store.getPageSize(),
-            action: 'read',
-            filters: store.getRemoteFilter() ? store.getFilters() : []
-        });
-
-        proxy.read(operation, this.onLatestFetched, this);
-    },
-
-    /**
-     * @private
-     * Called after fetchLatest has finished grabbing data. Matches any returned records against what is already in the
-     * Store. If there is an overlap, updates the existing records with the new data and inserts the new items at the
-     * front of the Store. If there is no overlap, insert the new records anyway and record that there's a break in the
-     * timeline between the new and the old records.
-     */
-    onLatestFetched: function(operation) {
-        var store      = this.getList().getStore(),
-            oldRecords = store.getData(),
-            newRecords = operation.getRecords(),
-            length     = newRecords.length,
-            toInsert   = [],
-            newRecord, oldRecord, i;
-
-        for (i = 0; i < length; i++) {
-            newRecord = newRecords[i];
-            oldRecord = oldRecords.getByKey(newRecord.getId());
-
-            if (oldRecord) {
-                oldRecord.set(newRecord.getData());
-            } else {
-                toInsert.push(newRecord);
-            }
-
-            oldRecord = undefined;
-        }
-
-        store.insert(0, toInsert);
-
-        this.resetRefreshState();
-
-        this.getList().getScrollable().getScroller().scrollTo(null, 0, true);
-    },
-
-    onPainted: function() {
-        this.pullHeight = this.loadingElement.getHeight();
-    },
-
-    setMaxScroller: function(scroller, position) {
-        this.maxScroller = position;
-    },
-
-    onScrollChange: function(scroller, x, y) {
-        if (y < 0) {
-            this.onBounceTop(y);
-        }
-        if (y > this.maxScroller.y) {
-            this.onBounceBottom(y);
-        }
-    },
-
-    /**
-     * @private
-     */
-    applyPullTpl: function(config) {
-        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
-    },
-
-    onBounceTop: function(y) {
-        var me = this,
-            list = me.getList(),
-            scroller = list.getScrollable().getScroller();
-
-        if (!me.isReleased) {
-            if (!me.isRefreshing && -y >= me.pullHeight + 10) {
-                me.isRefreshing = true;
-
-                me.setViewState('release');
-
-                scroller.getContainer().onBefore({
-                    dragend: 'onScrollerDragEnd',
-                    single: true,
-                    scope: me
-                });
-            }
-            else if (me.isRefreshing && -y < me.pullHeight + 10) {
-                me.isRefreshing = false;
-                me.setViewState('pull');
-            }
-        }
-    },
-
-    onScrollerDragEnd: function() {
-        var me = this;
-
-        if (me.isRefreshing) {
-            var list = me.getList(),
-                scroller = list.getScrollable().getScroller();
-
-            scroller.minPosition.y = -me.pullHeight;
-            scroller.on({
-                scrollend: 'loadStore',
-                single: true,
-                scope: me
-            });
-
-            me.isReleased = true;
-        }
-    },
-
-    loadStore: function() {
-        var me = this,
-            list = me.getList(),
-            scroller = list.getScrollable().getScroller();
-
-        me.setViewState('loading');
-        me.isReleased = false;
-
-        Ext.defer(function() {
-
-            if (me.getRefreshFn()) {
-                me.getRefreshFn().call(me, me);
-            } else {
-                me.fetchLatest();
-            }
-            //me.resetRefreshState();
-
-            // scroller.on({
-            //     scrollend: function() {
-            //         if (me.getRefreshFn()) {
-            //             me.getRefreshFn().call(me, me);
-            //         } else {
-            //             me.fetchLatest();
-            //         }
-            //         me.resetRefreshState();
-            //     },
-            //     delay: 100,
-            //     single: true,
-            //     scope: me
-            // });
-            scroller.minPosition.y = 0;
-            //scroller.scrollTo(null, 0, true);
-        }, 500, me);
-    },
-
-    onBounceBottom: Ext.emptyFn,
-
-    setViewState: function(state) {
-        var me = this,
-            prefix = Ext.baseCSSPrefix,
-            messageEl = me.messageEl,
-            loadingElement = me.loadingElement;
-
-        if (state === me.currentViewState) {
-            return me;
-        }
-        me.currentViewState = state;
-
-        if (messageEl && loadingElement) {
-            switch (state) {
-                case 'pull':
-                    messageEl.setHtml(me.getPullRefreshText());
-                    loadingElement.removeCls([prefix + 'list-pullrefresh-release', prefix + 'list-pullrefresh-loading']);
-                break;
-
-                case 'release':
-                    messageEl.setHtml(me.getReleaseRefreshText());
-                    loadingElement.addCls(prefix + 'list-pullrefresh-release');
-                break;
-
-                case 'loading':
-                    messageEl.setHtml(me.getLoadingText());
-                    loadingElement.addCls(prefix + 'list-pullrefresh-loading');
-                break;
-            }
-        }
-
-        return me;
-    },
-
-    resetRefreshState: function() {
-        var me = this;
-
-        me.isRefreshing = false;
-        me.lastUpdated = new Date();
-
-        me.setViewState('pull');
-        me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));
-    }
-});
-
-/**
  * @author Ed Spencer
  * @aside guide stores
  *
@@ -53985,7 +54983,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
@@ -53993,7 +54991,8 @@ Ext.application({
                     'TicketsList', 'ContactsListContainer', 'ContactsList','ContactInfo', 'TicketDetailsContainer',
                     'TicketDetails', 'TicketReply', 'TicketForm', 'ContactDetails', 'ContactsFormContainer',
                     'ContactForm', 'TicketProperties', 'EmailForm','CannedResponses','Solutions','NoteForm',
-                    'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox'],
+                    'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox','TicketTweetForm','TweetForm',
+                    'FacebookForm','TicketFacebookForm'],
     stores      :['Init','Filters','Tickets','Contacts'],
     models      :['Portal','Filter','Ticket','Contact'],
 
@@ -54008,6 +55007,7 @@ Ext.application({
     tabletStartupScreen: 'resources/loading/Homescreen~ipad.jpg',
 
     launch: function() {
+        Ext.fly('appLoadingIndicator').destroy();
         var dashboardContainer = {
             xtype: "dashboardContainer"
         },filtersListContainer = {
@@ -54038,11 +55038,15 @@ Ext.application({
             xtype:'newTicketContainer'
         },flashMessageBox = {
             xtype:'flashMessageBox'
+        },ticketTweetForm = {
+            xtype:'ticketTweetForm'
+        },ticketFacebookForm = {
+            xtype:'ticketFacebookForm'
         };
 
         Ext.Viewport.add([filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
-                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox]);
+                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_account = data[0].raw.account;
@@ -54056,10 +55060,10 @@ Ext.application({
 
         //adding listners to ajax for showing the loading mask .. global.
         Ext.Ajax.addListener('beforerequest',function(){
-            Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'})
+            //Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'})
         })
         Ext.Ajax.addListener('requestcomplete',function(){
-            Ext.Viewport.setMasked(false)
+            //Ext.Viewport.setMasked(false)
         })
         Ext.Ajax.addListener('requestexception',function(me,response){
             if(response.status == 302){

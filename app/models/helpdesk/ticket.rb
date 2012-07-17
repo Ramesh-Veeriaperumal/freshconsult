@@ -48,7 +48,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => 'notable',
     :dependent => :destroy
 
-   has_many :public_notes,
+  has_many :public_notes,
     :class_name => 'Helpdesk::Note',
     :as => 'notable', :conditions => {:private =>  false, :deleted => false}
     
@@ -300,14 +300,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+  alias :is_twitter :is_twitter?
   
   def is_facebook?
      (fb_post) and (fb_post.facebook_page) 
   end
+  alias :is_facebook :is_facebook?
  
  def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
  end
+ alias :is_fb_message :is_fb_message?
 
   def is_fb_wall_post?
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
@@ -365,7 +368,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def encode_display_id
     "[#{ticket_id_delimiter}#{display_id}]"
   end
-  
+
   def conversation(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
   end
@@ -880,30 +883,37 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def to_mob_json(only_public_notes=false)
     notes_option = {
-      :only => [:created_at,:user_id,:id],
+      :only => [:created_at, :user_id, :id ],
       :include => {
         :user => {
-          :only => [:name,:email,:id],
-          :methods => [:avatar_url]
+          :only => [:name, :email, :id],
+          :methods => [:avatar_url, :is_agent, :is_customer]
         },
         :attachments => {
           :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
         }
       },
-      :methods => [:body_mobile]
+      :methods => [ :body_mobile, :source_name ]
     }
 
     json_inlcude = {
       :responder => {
-        :only => [:name,:email,:id],
-        :methods => [:avatar_url]
+        :only => [ :name, :email, :id ],
+        :methods => [ :avatar_url ]
       },
       :requester => {
-        :only => [:name,:email,:id],
-        :methods => [:avatar_url]
+        :only => [ :name, :email, :id, :is_agent, :is_customer, :twitter_id ],
+        :methods => [ :avatar_url ]
       },
       :attachments => {
         :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+      },
+      :fb_post => {
+        :include => {
+          :facebook_page => {
+            :only => [ :id, :page_name ]
+          }
+        }
       }
     }
 
@@ -914,8 +924,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     options = {
-      :only => [:id,:display_id,:subject,:description,:description_html,:deleted,:spam,:cc_email,:due_by,:created_at,:updated_at],
-      :methods => [:status_name,:priority_name,:requester_name,:responder_name,:source_name,:is_closed],
+      :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
+      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails, 
+                    :conversation_count, :selected_reply_email, :from_email, :is_twitter, :is_facebook, :fetch_twitter_handle, :is_fb_message ],
       :include => json_inlcude
     }
     to_json(options,false) 

@@ -141,7 +141,10 @@ class Helpdesk::TicketsController < ApplicationController
           @items.each { |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep + tic.to_json({:methods => [:status_name,:priority_name, :source_name, :requester_name,:responder_name, :need_attention]}, false)[19..-2]; sep=","
+            json << sep + tic.to_json({ 
+              :except => [ :description_html, :description ], 
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,:responder_name, :need_attention]
+              }, false)[19..-2]; sep=","
           }
           render :json => json + "]"
         end

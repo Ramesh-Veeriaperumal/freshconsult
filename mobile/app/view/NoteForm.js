@@ -33,8 +33,9 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        height: '17em',
-                        placeHolder:'Message'
+                        placeHolder:'Message *',
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',

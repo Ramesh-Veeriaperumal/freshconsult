@@ -7,35 +7,41 @@ Ext.define("Freshdesk.view.TicketDetails", {
                 id:"details",
                 padding:0,
                 minWidth:'100%',
-                tpl:new Ext.XTemplate(['<div class="HDR">',
+                tpl:new Ext.XTemplate(['<tpl if="loading">',
+                        '<div class="x-mask x-floating" style="background: transparent;min-height:400px"><div class="x-innerhtml">',
+                            '<div class="x-loading-spinner" style="font-size: 235%; margin: 100px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',
+                        '</div></div>',
+                        '<tpl else>',
+                        '<div class="HDR">',
                         '<tpl if="!FD.current_user.is_customer">',
                                 '<div class="subject">',
                                         '<div class="icon {priority_name} {source_name}"></div>',
                                         '<div class="title">{subject}</div>',
                                 '</div>',
                                 '<tpl if="!deleted && !spam && !FD.current_user.is_customer"><ul class="actions">',
-                                        '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
-                                        '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                        '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
-                                        '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
-                                        '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
+                                        '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
                                 '</ul></tpl>',
                         '</tpl>',
                         '<tpl if="FD.current_user.is_customer">',
                                 '<div class="subject"><div class="title full">{subject}</div></div>',
                                 '<ul class="actions">',
-                                        '<li class="half">Reply <a class="reply"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                        '<tpl if="!is_closed"><li class="half"><a class="close"       href="#tickets/close/{id}">&nbsp;</a> Close</li></tpl>',
+                                        '<li class="half">Reply <a class="reply"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                        '<tpl if="!is_closed"><li class="half"><a class="close"       href="#tickets/close/{display_id}">&nbsp;</a> Close</li></tpl>',
                                 '</ul>',
                         '</tpl>',
                       '</div>',
+                      '<div class="banner hide" id="notification_msg"></div>',
                       '<tpl if="FD.current_user.is_customer"><div class="banner"><b>{status_name}</b></div></tpl>',
                       '<div class="conversation">',
                         '<div class="thumb">',
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="#contacts/show/{requester.id}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -51,16 +57,30 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
                         '</div>',
                       '</div>',
-                      '<tpl for="notes"><div class="conversation">',
+                      '<tpl if="conversation_count &gt; 1">',
+                      '<div class="oldconvMsg">',
+                      '<div></div>',
+                      '<div><span class="msg">{[values.conversation_count-1]} old conversation(s)</span></span></div>',
+                      '<div></div>',
+                      '</div>',
+                      '</tpl>',
+                      '<tpl for="notes">',
+                        '<div class="{[xindex  == xcount ? \"conversation\" : \"conversation hide\"]}">',
                                 '<div class="thumb">',
                                         '<tpl if="user.avatar_url"><img src="{user.avatar_url}"/></tpl>',
                                         '<tpl if="!user.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                                 '</div>',
                                 '<div class="Info">',
-                                '<tpl if="!FD.current_user.is_customer"><a href="#contacts/show/{user.id}">{user.name}</a></tpl>',
+                                '<tpl if="!FD.current_user.is_customer">',
+                                    '<tpl if="user.is_customer">',
+                                        '<a href="#contacts/show/{user.id}">{user.name}</a>',
+                                    '<tpl else>',
+                                        '<a href="#">{user.name}</a>',
+                                    '</tpl>',
+                                '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
-                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")}</div>',
-                                '<tpl if="parent.requester.id == user_id"><div class="msg fromReq">',
+                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
+                                '<tpl if="user.is_customer"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
@@ -72,7 +92,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '</div>',
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
-                                '<tpl if="parent.requester.id != user_id"><div class="msg">',
+                                '<tpl if="user.is_agent"><div class="msg">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
@@ -86,12 +106,12 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</div></tpl>',
                         '</div></tpl>',
                         '<tpl if="!deleted && !spam && !FD.current_user.is_customer && notes.length &gt; 4"><div class="HDR bottom"><ul class="actions">',
-                                '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
-                                '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
-                                '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
-                                '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
-                        '</ul></tpl></div>',
+                                '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
+                        '</ul></tpl></div></tpl>',
                 ].join(''),{
                         truncate: function(value,length) {
                             return values.substr(0, length);
@@ -131,30 +151,53 @@ Ext.define("Freshdesk.view.TicketDetails", {
         this.add([tktHeader]);
     },
     onMessageTap : function(e,item){
-      var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
-      if(toggleId){
-        Ext.get(toggleId).toggleCls('ellipsis');
-        Ext.get('loadmore_'+toggleId).toggleCls('hide');
+      if(item.nodeName === "A"){
+        e.stopPropagation();
       }
+      else {
+        var toggleId = Ext.get(item).hasCls('conv') ? Ext.get(item).id : Ext.get(item).parent('.conv') && Ext.get(item).parent('.conv').id;
+        if(toggleId){
+            Ext.get(toggleId).toggleCls('ellipsis');
+            Ext.get('loadmore_'+toggleId).toggleCls('hide');
+        }
+      }
+    },
+    showAllConversation : function(e,target,container){
+        Ext.defer(function(){
+            Ext.get(container).toggleCls('hide');
+            var hiddenConvs = Ext.select('.conversation.hide');
+            hiddenConvs.toggleCls('hide').hide();
+            hiddenConvs.show({
+                type:'slide',
+                direction:'down',
+                easing:'ease-in-out',
+                duration:300
+            });
+        },50);
+    },
+    addActionListeners : function(container){
+        var elms = container.element.select('.msg').elements,self=this;
+        for(var index in elms) {
+               Ext.get(elms[index]).on({
+                        tap: this.onMessageTap,
+                        scope:this
+               });
+        }
+
+        var oldconvMsg = Ext.select('.oldconvMsg').elements[0];
+        if(oldconvMsg){
+            Ext.get(oldconvMsg).on({
+                tap:function(e,target){
+                    this.showAllConversation.apply(this,[e,target,oldconvMsg])
+                },
+                scope:this
+            })    
+        }
     },
     config: {
         cls:'ticketDetails',
         scrollable: {
             direction: 'vertical'
-        },
-        listeners : {
-                painted : {
-                        fn: function(container,item,eOpts){
-                                var elms = container.element.select('.msg').elements,self=this;
-                                for(var index in elms) {
-                                       Ext.get(elms[index]).on({
-                                                tap: this.onMessageTap,
-                                                scope:this
-                                       });
-                                }
-                        },
-                },
-                scope:this
         }
     }
 });

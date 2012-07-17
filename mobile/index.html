@@ -1,12 +1,9 @@
 <!DOCTYPE HTML>
-<html>
-	<head>
-		<title>Freshdesk</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"> 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-touch-fullscreen" content="yes">
-        <link rel="shortcut icon" href="resources/images/favicon.ico" />
-		<style type="text/css">
+<html manifest="" lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Freshdesk</title>
+    <style type="text/css">
         /**
          * Example of an initial loading indicator.
          * It is recommended to keep this as minimal as possible to provide instant feedback
@@ -67,13 +64,15 @@
             }
         }
     </style>
+    <script type="text/javascript" src="util/fd.js"></script>
+    <script type="text/javascript" src="util/date.extensions.js"></script>
     <script id="microloader" type="text/javascript" src="sdk/microloader/development.js"></script>
-	</head>
-	<body>
-		<div id="appLoadingIndicator">
-        	<div></div>
-        	<div></div>
-        	<div></div>
-    	</div>
-	</body>
+</head>
+<body>
+    <div id="appLoadingIndicator">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</body>
 </html>

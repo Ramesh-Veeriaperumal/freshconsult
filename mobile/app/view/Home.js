@@ -19,10 +19,11 @@ Ext.define("Freshdesk.view.Home", {
                 portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
-                userData.avatar_url = userData.avatar_url || 'resources/images/profile_blank_thumb.gif';
+                userData.avatar_url = userData.medium_avatar || 'resources/images/profile_blank_thumb.gif';
                 Ext.getCmp('home-user-profile').setData(userData); 
 
-                portalData.preferences.header_color && Ext.select('.logo').setStyle('background-color',portalData.preferences.header_color);
+                portalData.preferences.header_color && Ext.select('.branding').setStyle('background-color',portalData.preferences.header_color);
+                portalData.preferences.tab_color && Ext.select('.branding').setStyle('border-bottom-color',portalData.preferences.tab_color);
 
             }
         },
@@ -30,7 +31,7 @@ Ext.define("Freshdesk.view.Home", {
             {
                 xtype:'container',
                 centered:true,
-                minHeight:'400px',
+                docked:'top',
                 ui:'plain',
                 width:'100%',
                 items : [
@@ -43,13 +44,15 @@ Ext.define("Freshdesk.view.Home", {
                         data:{
                             logo_url: 'resources/images/admin-logo.png',
                             name:'Freshdesk'
-                        }
+                        },
+                        height:'120px'
                     },
                     {
                         xtype:'titlebar',
                         ui:'plain',
-                        minHeight:'10em',
                         centered:true,
+                        minHeight:'10em',
+                        style:{margin:'120px 0px 0px 0px'},
                         items : [
                             {
                                 xtype:'button',
@@ -92,6 +95,18 @@ Ext.define("Freshdesk.view.Home", {
                                 }
                             }
                         ]
+                    },
+                    {
+
+                        id:'home-footer',
+                        cls:'footer',
+                        docked:'bottom',
+                        centered:true,
+                        tpl:['<a class="switch_version">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
+                             '<p>A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                        data:{
+                            
+                        }
                     }
                 ]
             }

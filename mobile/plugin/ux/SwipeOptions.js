@@ -1,7 +1,7 @@
 Ext.define('plugin.ux.SwipeOptions', {
     extend: 'Ext.Component',
     alias: 'swipeOptions',
-    requires: ['Ext.Anim'],
+    requires: ['Ext.Anim','Ext.Audio'],
     config: {
 
         /**
@@ -108,6 +108,7 @@ Ext.define('plugin.ux.SwipeOptions', {
     onItemSwipe : function(list, index, target, record, evt, options , eOpts){
         // check we're over the 'swipethreshold'
         if(this.revealAllowed(evt)){
+
             // set the direction of the reveal
             this.setRevealDir(evt.direction);
 
@@ -177,9 +178,24 @@ Ext.define('plugin.ux.SwipeOptions', {
                 
                 //Audio effect for close if configured
                 if (enableSoundEffects && !Ext.isEmpty(closeSoundEffectURL) && playSoundEffect) {
-                    var audio = document.createElement('audio');
-                    audio.setAttribute('src', closeSoundEffectURL);
-                    audio.play();
+                    var audioBase = {
+                        url: closeSoundEffectURL,
+                        loop: false,
+                        preload:true
+                    },
+
+                    player = new Ext.Audio(Ext.apply({}, audioBase, {
+                        id:'player',
+                        title: 'Hidden',
+                        enableControls: false,
+                        hidden:false,
+                        preload:true,
+                        layout: {
+                            type: 'vbox',
+                            pack: 'center'
+                        }
+                    }));
+                    player.play();
                 }
             },
             after: function(el, options){
@@ -232,9 +248,25 @@ Ext.define('plugin.ux.SwipeOptions', {
 
                 //Audio effect if configured for show
                 if (enableSoundEffects && !Ext.isEmpty(openSoundEffectURL)) {
-                    var audio = document.createElement('audio');
-                    audio.setAttribute('src', openSoundEffectURL);
-                    audio.play();
+                    
+                    var audioBase = {
+                        url: openSoundEffectURL,
+                        loop: false,
+                        preload:true
+                    },
+
+                    player = new Ext.Audio(Ext.apply({}, audioBase, {
+                        id:'player',
+                        title: 'Hidden',
+                        enableControls: false,
+                        hidden:false,
+                        preload:true,
+                        layout: {
+                            type: 'vbox',
+                            pack: 'center'
+                        }
+                    }));
+                    player.play();
                 }
 
                 this.list.fireEvent('listoptionsopen',this,this.activeItemRecord);

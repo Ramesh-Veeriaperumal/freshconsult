@@ -8,6 +8,7 @@ class AccountsController < ApplicationController
   skip_before_filter :set_locale, :except => [:cancel,:show]
   skip_before_filter :set_time_zone, :except => [:cancel]
   skip_before_filter :check_account_state
+  skip_before_filter :redirect_to_mobile_url
   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
