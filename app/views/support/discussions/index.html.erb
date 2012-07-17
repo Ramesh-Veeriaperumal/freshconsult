@@ -3,9 +3,14 @@
 	<p class="help-block">{{category.description}}</p>
 	{% for forum in category.forums %}
 		{% cycle '<div class="forum-category row-fluid">', '' %}
-			<div class="forum-group span6">
-				<h4>{{ forum.name }} <span class="label label-info">{{ forum.topics.size }} topics</span> </h4>
-				<p class="help-block">{{ forum.description }}</p>				
+			<div class="span6">
+				<div class="forum-group">
+					<h4>{{ forum.name }}</h4>
+					<p class="help-block">
+						{{ forum.description }}<br />
+						<span class="label label-info">{{ forum.topics.size }} topics</span>
+					</p>
+				</div>
 			</div>			
 		{% cycle '', '</div>' %}
 	{% endfor %}
