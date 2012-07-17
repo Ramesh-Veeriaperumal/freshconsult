@@ -39,7 +39,12 @@
   </div> 
 	<div class="details" id='<%= notedetails %>'>
 		<div class="request_mail">
-			<%= note.body_html %>
+			<% 
+		       		notes = note.body_html
+		       
+		       		notes = "<span class='"+note.survey_remark.survey_result.get_small_img_class+"' style='float:left;margin-top:-11px;'></span>"+notes unless note.survey_remark.nil?
+			%>			
+			<%=notes%>
 		</div>
 	</div>
 	<% unless note.attachments.empty? %>

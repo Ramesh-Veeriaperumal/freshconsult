@@ -33,7 +33,8 @@ before_filter :check_data_import_status, :only => :index
                               }
                   }
    
-    Delayed::Job.enqueue Import::Zen::Start.new(zen_params)
+    #Delayed::Job.enqueue Import::Zen::Start.new(zen_params)
+    Resque.enqueue( Import::Zen::ZendeskImport,zen_params)
   end
   
   protected

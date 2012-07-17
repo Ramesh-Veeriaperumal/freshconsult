@@ -106,6 +106,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :topic, :through => :ticket_topic
   
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
+  has_many :survey_result, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
@@ -209,20 +210,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Sphinx configuration starts
   define_index do
    
-     indexes :display_id, :sortable => true
+    define_source do
+      indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
      indexes sphinx_notes.body, :as => :note
     
      has account_id, deleted
 
-    #set_property :delta => :delayed
-    set_property :field_weights => {
+     where "helpdesk_tickets.id > 0 and  0"
+
+     #set_property :delta => :delayed
+     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
       :description  => 5,
       :note         => 3
-    }
+     }
+      
+    end
+
+     
   end
   #Sphinx configuration ends here..
 
@@ -672,36 +680,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
 
-    # Helpdesk::TicketDrop.new self
-
-    { 
-      "id"                                => display_id,
-      "raw_id"                            => id,
-      "encoded_id"                        => encode_display_id,
-      "subject"                           => subject,
-      "description"                       => description_with_attachments,
-      "description_text"                  => description,
-      "requester"                         => requester,
-      "agent"                             => responder,
-      "group"                             => group,
-      "status"                            => status_name,
-      "requester_status_name"             => Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name"),
-      "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
-      "source"                            => SOURCE_NAMES_BY_KEY[source],
-      "ticket_type"                       => ticket_type,
-      "tags"                              => tag_names.join(', '),
-      "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
-      "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host, :protocol=> url_protocol),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host, :protocol=> url_protocol),
-      "portal_name"                       => portal_name,
-      #"attachments"                      => liquidize_attachments(attachments),
-      #"latest_comment"                   => liquidize_comment(latest_comment),
-      "latest_public_comment"             => liquidize_comment(latest_public_comment)
-      #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
-      #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
-    }
+    Helpdesk::TicketDrop.new self
     
   end
 
@@ -764,7 +743,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
     if deep
       self.load_flexifield
-      options[:include] = [:notes,:attachments]
+      self[:notes] = self.notes
+      options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
       options[:methods].push(:custom_field)
     end
