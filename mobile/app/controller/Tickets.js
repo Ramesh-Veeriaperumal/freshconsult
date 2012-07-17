@@ -35,7 +35,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var resJSON = JSON.parse(ticketDetails.responseText).helpdesk_ticket,
         convContainer = this.getConversationContainer(),
         detailsContainer = this.getTicketDetailsContainer(),
-        id = resJSON.id;
+        id = resJSON.display_id;
         resJSON.notes = resJSON.notes || resJSON.public_notes ;
         //removing meta source notes..
         resJSON.notes = Ext.Array.filter(resJSON.notes,function(t){return t.source_name !== 'meta'})

@@ -30695,18 +30695,18 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '<div class="title">{subject}</div>',
                                 '</div>',
                                 '<tpl if="!deleted && !spam && !FD.current_user.is_customer"><ul class="actions">',
-                                        '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
-                                        '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                        '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
-                                        '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
-                                        '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
+                                        '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                        '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
                                 '</ul></tpl>',
                         '</tpl>',
                         '<tpl if="FD.current_user.is_customer">',
                                 '<div class="subject"><div class="title full">{subject}</div></div>',
                                 '<ul class="actions">',
-                                        '<li class="half">Reply <a class="reply"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                        '<tpl if="!is_closed"><li class="half"><a class="close"       href="#tickets/close/{id}">&nbsp;</a> Close</li></tpl>',
+                                        '<li class="half">Reply <a class="reply"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                        '<tpl if="!is_closed"><li class="half"><a class="close"       href="#tickets/close/{display_id}">&nbsp;</a> Close</li></tpl>',
                                 '</ul>',
                         '</tpl>',
                       '</div>',
@@ -30782,11 +30782,11 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</div></tpl>',
                         '</div></tpl>',
                         '<tpl if="!deleted && !spam && !FD.current_user.is_customer && notes.length &gt; 4"><div class="HDR bottom"><ul class="actions">',
-                                '<li><a class="automation" href="#tickets/scenarios/{id}">&nbsp;</a></li>',
-                                '<li><a class="chat"       href="#tickets/addNote/{id}">&nbsp;</a></li>',
-                                '<li><a class="reply"      href="#tickets/reply/{id}">&nbsp;</a></li>',
-                                '<li><a class="close"      href="#tickets/resolve/{id}">&nbsp;</a></li>',
-                                '<li><a class="trash"      href="#tickets/delete/{id}">&nbsp;</a></li>',
+                                '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
                         '</ul></tpl></div></tpl>',
                 ].join(''),{
                         truncate: function(value,length) {
@@ -31160,7 +31160,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
             messages:resJson.actions_executed
         },
         me=this;
-        flashMessageBox.ticket_id = res.id;
+        flashMessageBox.ticket_id = res.display_id;
         flashMessageBox.items.items[1].setData(flashData);
         flashMessageBox.hideHandler = function() {
             location.href="#tickets/show/"+me.ticket_id;
@@ -31430,7 +31430,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var resJSON = JSON.parse(ticketDetails.responseText).helpdesk_ticket,
         convContainer = this.getConversationContainer(),
         detailsContainer = this.getTicketDetailsContainer(),
-        id = resJSON.id;
+        id = resJSON.display_id;
         resJSON.notes = resJSON.notes || resJSON.public_notes ;
         //removing meta source notes..
         resJSON.notes = Ext.Array.filter(resJSON.notes,function(t){return t.source_name !== 'meta'})
@@ -38129,7 +38129,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         Ext.getStore("Tickets").load();
     },
     moveToTrash : function(data){
-        var id = data.id;
+        var id = data.display_id;
         Ext.Msg.confirm('Move to trash ticket : '+id,'Do you want to move this ticket to Trash?',
             function(btnId){
                 if(btnId == 'no' || btnId == 'cancel'){
@@ -38156,7 +38156,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     restore : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking restore for ticket #',id);
         Ext.Msg.confirm('Restore ticket : '+id,'Do you want to restore this ticket?',
             function(btnId){
@@ -38184,7 +38184,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     falgAsSpam : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking falgAsSpam for ticket #',id);
         Ext.Msg.confirm('Mark as spam ticket : '+id,'Do you want to mark this ticket as spam?',
             function(btnId){
@@ -38212,7 +38212,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     unflagAsSpam : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking unflagAsSpam for ticket #',id);
         Ext.Msg.confirm('ticket : '+id+' is not spam','Do you want to mark this ticket as unspam?',
             function(btnId){
@@ -38240,7 +38240,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     close : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking close for ticket #',id);
         Ext.Msg.confirm('Close ticket : '+id,'Do you want to close this ticket?',
             function(btnId){
@@ -38268,7 +38268,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     pickUp : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking pickup for ticket #',id);
 
         Ext.Msg.confirm('Pickup ticket : '+id,'Do you want to pickup this ticket?',
@@ -38336,7 +38336,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
     },
     onTicketDisclose: function(list, index, target, record, evt, options){
     	setTimeout(function(){list.deselect(index);},500);
-        location.href="#tickets/show/"+record.data.id;
+        location.href="#tickets/show/"+record.data.display_id;
     },
     backToFilters: function(){
         Freshdesk.backBtn=true;

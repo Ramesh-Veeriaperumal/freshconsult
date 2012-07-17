@@ -44,7 +44,7 @@ Ext.define('Freshdesk.view.TicketsFormContainer', {
         this.add([topToolbar,ticketForm]);
     },
     onSaveSuccess : function(data){
-        location.href="#tickets/"+data.record.helpdesk_ticket.id
+        location.href="#tickets/"+data.record.helpdesk_ticket.display_id
     },
     backToListView: function(){
         Freshdesk.cancelBtn=true;

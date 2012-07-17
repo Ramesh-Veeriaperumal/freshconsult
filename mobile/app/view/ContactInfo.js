@@ -32,7 +32,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '<ul class="ticketsList">',
                 '<tpl for="recent_tickets">',
                     '<li>',
-                        '<a href="#tickets/show/{helpdesk_ticket.id}"><div class="ticket-item {helpdesk_ticket.status_name}">',
+                        '<a href="#tickets/show/{helpdesk_ticket.display_id}"><div class="ticket-item {helpdesk_ticket.status_name}">',
                                     '<tpl if="FD.current_user.is_agent"><div class="{helpdesk_ticket.priority_name}">&nbsp;</div><tpl else><div>&nbsp;</div></tpl>',
                                     '<div class="title">',
                                             '<div><span class="info btn">{helpdesk_ticket.status_name}</span></div>',

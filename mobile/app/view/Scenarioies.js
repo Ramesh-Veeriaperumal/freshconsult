@@ -10,7 +10,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
             messages:resJson.actions_executed
         },
         me=this;
-        flashMessageBox.ticket_id = res.id;
+        flashMessageBox.ticket_id = res.display_id;
         flashMessageBox.items.items[1].setData(flashData);
         flashMessageBox.hideHandler = function() {
             location.href="#tickets/show/"+me.ticket_id;
