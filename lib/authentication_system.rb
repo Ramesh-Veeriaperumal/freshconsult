@@ -40,6 +40,7 @@ module AuthenticationSystem
       assume_agent_email = handle_api_key(request, params)
       @current_user_session = current_account.user_sessions.find
       handle_assume_identity_for_api(assume_agent_email) unless assume_agent_email.blank?
+      
       @current_user_session
     end
 
