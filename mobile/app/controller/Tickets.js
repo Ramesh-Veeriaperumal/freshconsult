@@ -26,7 +26,9 @@ Ext.define('Freshdesk.controller.Tickets', {
             ticketsListContainer:"ticketsListContainer",
             ticketReply:"ticketReply",
             ticketNote : 'ticketNote',
-            newTicketContainer : 'newTicketContainer'
+            newTicketContainer : 'newTicketContainer',
+            ticketTweetForm   : 'ticketTweetForm',
+            ticketFacebookForm : 'ticketFacebookForm'
     	}
     },
     renderDetails: function(ticketDetails,callBack){
@@ -84,11 +86,29 @@ Ext.define('Freshdesk.controller.Tickets', {
         Freshdesk.anim = undefined;
     },
     reply : function(id){
-        this.initReplyForm(id);
-        var replyForm = this.getTicketReply();
-        replyForm.ticket_id = id;
-        Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
-        Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
+        //console.log(this.ticket.from_email, this.ticket.is_facebook, this.ticket.is_twitter)
+        if(this.ticket.from_email){
+            this.initReplyForm(id);
+            var replyForm = this.getTicketReply();
+            replyForm.ticket_id = id;
+            Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
+            Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
+        }
+
+        if(this.ticket.is_twitter){
+            var tweetForm = this.getTicketTweetForm();
+            this.initTweetForm(id);
+            tweetForm.ticket_id = id;
+            Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
+        }
+
+        if(this.ticket.is_facebook){
+            var facebookForm = this.getTicketFacebookForm();
+            this.initFacebookForm(id);
+            facebookForm.ticket_id = id;
+            Ext.Viewport.animateActiveItem(facebookForm, this.coverUp);   
+        }
+        
     },
     addNote : function(id){
         this.initNoteForm(id);
@@ -286,6 +306,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             reply_emails.push({text:value,value:value});
         })
         fieldSetObj.items.items[0].setOptions(reply_emails).show();
+        fieldSetObj.items.items[0].setValue(this.ticket.selected_reply_email);
         if(reply_emails.length === 1) 
             fieldSetObj.items.items[0].setHidden(true);
 
@@ -334,6 +355,64 @@ Ext.define('Freshdesk.controller.Tickets', {
         else{
             action.resume();
         }
+    },
+    initTweetForm : function(id){
+        var tweetForm = this.getTicketTweetForm(),tweet_handles = [],
+        formObj = tweetForm.items.items[1],
+        fieldSetObj = formObj.items.items[0];
+        tweetForm.ticket_id = id;
+        tweetForm.items.items[0].setTitle('Ticket : '+id);
+
+        if(!FD.current_account){
+            location.href="#tickets/show/"+id;
+            return;
+        }
+
+        //setting from mails if the reply_emails are more else hide the from..
+        FD.current_account.twitter_handles.forEach(function(value,key){
+            tweet_handles.push({text:value.screen_name,value:value.id});
+        })
+        fieldSetObj.items.items[0].setOptions(tweet_handles).show();
+        fieldSetObj.items.items[0].setValue(this.ticket.fetch_twitter_handle);
+        if(tweet_handles.length === 1) 
+            fieldSetObj.items.items[0].setHidden(true);
+
+        //setting to tweet
+        fieldSetObj.items.items[1].setValue(this.ticket.requester.twitter_id).show();
+        
+        if(this.ticket.requester.twitter_id)
+            fieldSetObj.items.items[5].setValue('@'+this.ticket.requester.twitter_id).show();
+
+        //setting the url 
+        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+    },
+    initFacebookForm : function(id){
+        var facebookForm = this.getTicketFacebookForm(),
+        formObj = facebookForm.items.items[1],
+        fieldSetObj = formObj.items.items[0];
+        facebookForm.ticket_id = id;
+        facebookForm.items.items[0].setTitle('Ticket : '+id);
+
+        if(!FD.current_account){
+            location.href="#tickets/show/"+id;
+            return;
+        }
+
+        
+        if(this.ticket.fb_post && this.ticket.fb_post.facebook_page) {
+            fieldSetObj.items.items[0].setValue(this.ticket.fb_post.facebook_page.page_name);
+        }
+
+        //setting to facebook
+        fieldSetObj.items.items[1].setValue(this.ticket.requester.name).show();
+        
+        if(this.ticket.is_fb_message) {
+            fieldSetObj.items.items[5].setLabel('Reply');
+        }
+            
+        fieldSetObj.items.items[5].setValue('');
+        //setting the url 
+        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
     }
 
 });

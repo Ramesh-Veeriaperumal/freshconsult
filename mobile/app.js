@@ -15,7 +15,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
@@ -23,7 +23,8 @@ Ext.application({
                     'TicketsList', 'ContactsListContainer', 'ContactsList','ContactInfo', 'TicketDetailsContainer',
                     'TicketDetails', 'TicketReply', 'TicketForm', 'ContactDetails', 'ContactsFormContainer',
                     'ContactForm', 'TicketProperties', 'EmailForm','CannedResponses','Solutions','NoteForm',
-                    'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox'],
+                    'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox','TicketTweetForm','TweetForm',
+                    'FacebookForm','TicketFacebookForm'],
     stores      :['Init','Filters','Tickets','Contacts'],
     models      :['Portal','Filter','Ticket','Contact'],
 
@@ -69,11 +70,15 @@ Ext.application({
             xtype:'newTicketContainer'
         },flashMessageBox = {
             xtype:'flashMessageBox'
+        },ticketTweetForm = {
+            xtype:'ticketTweetForm'
+        },ticketFacebookForm = {
+            xtype:'ticketFacebookForm'
         };
 
         Ext.Viewport.add([filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
-                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox]);
+                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_account = data[0].raw.account;

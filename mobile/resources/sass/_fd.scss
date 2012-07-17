@@ -360,13 +360,7 @@ a {
 				$img:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==);
 				&.Low{
 					background: #008ff9; 
-					background:$img, -moz-linear-gradient(left, #008ff9 0%,#007ad4 80%,#005391 100%,#005290 100%);
-					background:$img, -webkit-gradient(linear, left top, right top, color-stop(0%,#008ff9), color-stop(80%,#007ad4), color-stop(100%,#005391), color-stop(100%,#005290)); 
-					background:$img, -webkit-linear-gradient(left, #008ff9 0%,#007ad4 80%,#005391 100%,#005290 100%); 
-					background:$img, -o-linear-gradient(left, #008ff9 0%,#007ad4 80%,#005391 100%,#005290 100%); 
-					background:$img, -ms-linear-gradient(left, #008ff9 0%,#007ad4 80%,#005391 100%,#005290 100%); 
-					background:$img, linear-gradient(to right, #008ff9 0%,#007ad4 80%,#005391 100%,#005290 100%); 
-					filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#008ff9', endColorstr='#005290',GradientType=1 ); /* IE6-8 */
+					@include background-image($img, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 				}
 				&.Medium{
 					background: #89ce00; /* Old browsers */
@@ -703,33 +697,32 @@ a {
 .x-docking-vertical{
 	box-shadow: 0 0 20px #666;
 	.x-picker-mask{
-		box-shadow: inset 0 0px 30px #666;
+	// needs latest Compass, add '@import "compass"' to your scss
+	@include filter-gradient(#333333, #333333, vertical); // IE6-8
+	// IE9 SVG, needs conditional override of 'filter' to 'none'
+	$experimental-support-for-svg: true;
+	@include background-image(linear-gradient(top,  rgba(51,51,51,0.5) 0%,rgba(51,51,51,0) 25%,rgba(51,51,51,0) 75%,rgba(51,51,51,0.5) 100%));
+
 		border-radius: 7px;
 	}
 	.x-toolbar{
 		.x-button {
 			&.x-button-action{
 				background-color: #484848;
-				background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #6E6E6E), color-stop(50%, #555), color-stop(51%, #484848), color-stop(100%, #3B3B3B));
-				background-image: -webkit-linear-gradient(top, #6E6E6E, #555 50%, #484848 51%, #3B3B3B);
-				background-image: linear-gradient(top, #6E6E6E, #555 50%, #484848 51%, #3B3B3B);
+				@include background-image(linear-gradient(top, #6E6E6E, #555 50%, #484848 51%, #3B3B3B));
 				border: 1px solid #151515;
 				border-top-color: #222;
 				box-shadow: 1px 1px 0 #B8C9E0;
 				&.x-button-pressing{
 					background-image: none;
 				  	background-color: #404040;
-				  	background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #272727), color-stop(10%, #343434), color-stop(65%, #404040), color-stop(100%, #424242));
-				  	background-image: -webkit-linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
-				  	background-image: linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);	
+					@include background-image(linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242));
 				}
 			}
 			&.x-button-normal{
-				background: #9bbff1; /* Old browsers */
-				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9bbff1), color-stop(51%,#4977b4), color-stop(52%,#436ba7), color-stop(100%,#375075)); /* Chrome,Safari4+ */
-				background: -webkit-linear-gradient(top, #9bbff1 0%,#4977b4 51%,#436ba7 52%,#375075 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-linear-gradient(top, #9bbff1 0%,#4977b4 51%,#436ba7 52%,#375075 100%); /* Opera 11.10+ */
-				background: linear-gradient(to bottom, #9bbff1 0%,#4977b4 51%,#436ba7 52%,#375075 100%); /* W3C */
+				background-color: #9bbff1;
+				@include filter-gradient(#9bbff1, #375075, vertical);
+				@include background-image(linear-gradient(top, #9bbff1 0%,#4977b4 51%,#436ba7 52%,#375075 100%));
 				box-shadow: 1px 1px 0 #B8C9E0;
 				border: 1px solid #151515;
 				border-top-color: #222;
