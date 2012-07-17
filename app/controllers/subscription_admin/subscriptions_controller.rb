@@ -109,18 +109,18 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
    #subscriptions = Subscription.find(:all,:include => :account, :order => 'accounts.created_at desc',:conditions => {:state => 'active'} )
     csv_string = FasterCSV.generate do |csv| 
       # header row 
-      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Twitter","Facebook","Multi Product","Free agents","Full Time","Ocassional","Last Login","Login Count"] 
+      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Free agents","Full Time","Ocassional"] 
  
       # data rows 
-    Subscription.find(:all,:include => :account,:batch_size => 300, :order => 'accounts.created_at desc',
+    Subscription.find_in_batches(:include => :account,
                                            :conditions => {:state => 'active'} ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account
         user = account.account_admin
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
         csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
-                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',!sub.account.twitter_handles.blank?,!sub.account.facebook_pages.blank?,sub.account.portals.count > 1,
-                sub.free_agents,sub.account.full_time_agents.count,sub.account.agents.count - (sub.account.full_time_agents.count ||= 0),sub.account.account_admin.last_login_at,sub.account.account_admin.login_count] 
+                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',
+                sub.free_agents,account.full_time_agents.count,account.agents.count - (account.full_time_agents.count ||= 0)] 
       end 
     end 
   end
