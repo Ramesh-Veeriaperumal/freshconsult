@@ -30287,7 +30287,8 @@ Ext.define("Freshdesk.view.Home", {
                 userData.avatar_url = userData.medium_avatar || 'resources/images/profile_blank_thumb.gif';
                 Ext.getCmp('home-user-profile').setData(userData); 
 
-                portalData.preferences.header_color && Ext.select('.logo').setStyle('background-color',portalData.preferences.header_color);
+                portalData.preferences.header_color && Ext.select('.branding').setStyle('background-color',portalData.preferences.header_color);
+                portalData.preferences.tab_color && Ext.select('.branding').setStyle('border-bottom-color',portalData.preferences.tab_color);
 
             }
         },
@@ -30295,7 +30296,7 @@ Ext.define("Freshdesk.view.Home", {
             {
                 xtype:'container',
                 centered:true,
-                minHeight:'400px',
+                docked:'top',
                 ui:'plain',
                 width:'100%',
                 items : [
@@ -30308,13 +30309,15 @@ Ext.define("Freshdesk.view.Home", {
                         data:{
                             logo_url: 'resources/images/admin-logo.png',
                             name:'Freshdesk'
-                        }
+                        },
+                        height:'120px'
                     },
                     {
                         xtype:'titlebar',
                         ui:'plain',
-                        minHeight:'10em',
                         centered:true,
+                        minHeight:'10em',
+                        style:{margin:'120px 0px 0px 0px'},
                         items : [
                             {
                                 xtype:'button',
@@ -30357,6 +30360,18 @@ Ext.define("Freshdesk.view.Home", {
                                 }
                             }
                         ]
+                    },
+                    {
+
+                        id:'home-footer',
+                        cls:'footer',
+                        docked:'bottom',
+                        centered:true,
+                        tpl:['<a class="switch_version">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
+                             '<p>A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                        data:{
+                            
+                        }
                     }
                 ]
             }
@@ -30646,7 +30661,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '<ul class="ticketsList">',
                 '<tpl for="recent_tickets">',
                     '<li>',
-                        '<a href="#tickets/show/{helpdesk_ticket.id}"><div class="ticket-item {helpdesk_ticket.status_name}">',
+                        '<a href="#tickets/show/{helpdesk_ticket.display_id}"><div class="ticket-item {helpdesk_ticket.status_name}">',
                                     '<tpl if="FD.current_user.is_agent"><div class="{helpdesk_ticket.priority_name}">&nbsp;</div><tpl else><div>&nbsp;</div></tpl>',
                                     '<div class="title">',
                                             '<div><span class="info btn">{helpdesk_ticket.status_name}</span></div>',
@@ -38721,7 +38736,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         if(FD.Util.validate_form(formObj)){
             formObj.submit({
                 success:function(form,response){
-                    location.href="#tickets/show/"+response.item.helpdesk_ticket.id;
+                    location.href="#tickets/show/"+response.item.helpdesk_ticket.display_id;
                 },
                 failure:function(form,response){
                     var errorHtml='Please correct the bellow errors.<br/>';
