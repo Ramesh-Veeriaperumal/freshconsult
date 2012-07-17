@@ -16,7 +16,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @free_customers = Subscription.free_customers
     @zero_paying_customers = Subscription.zero_amount_customers
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
-    @cmrr = @monthly_revenue/(@customer_count - @free_customers)
+    @cmrr = @monthly_revenue/(@customer_count - @zero_paying_customers)
     @customer_agent_count = Subscription.customers_agent_count - (Subscription.customers_free_agent_count + DUMMY_AGENTS)
     @subscriptions = search(params[:search])
     @subscriptions = @subscriptions.paginate( :page => params[:page], :per_page => 30)
@@ -112,7 +112,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
       csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Twitter","Facebook","Multi Product","Free agents","Full Time","Ocassional","Last Login","Login Count"] 
  
       # data rows 
-    Subscription.find(:all,:include => :account,:batch_size => 300, :order => 'accounts.created_at desc',
+    Subscription.find_in_batches(:include => :account,:batch_size => 300,
                                            :conditions => {:state => 'active'} ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account

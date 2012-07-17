@@ -52,7 +52,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def self.customers_free_agent_count
-    sum(:free_agents, :conditions => { :state => 'active'})
+    sum(:free_agents, :conditions => { :state => ['active','free']})
   end
  
   def self.monthly_revenue
