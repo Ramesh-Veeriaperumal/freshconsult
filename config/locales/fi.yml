@@ -2017,7 +2017,7 @@
   email_command_settings_info: "Määritä erotin, jolla sähköpostikomennot tunnistetaan ja noudetaan sähköposteista"
   email_command_delimeter_label: "Sähköpostikomentojen erotin"
   email_command_preview_to_email: "Vastaanottaja"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Aihe"
   email_command_preview_subject_value: "Tukicase"
   unable_to_charge: "Lisätyn asiakaspalvelin korttia ei voida veloittaa!"

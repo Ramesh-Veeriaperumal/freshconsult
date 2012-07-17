@@ -44,7 +44,7 @@ class Social::FacebookPosts
           :description => feed[:message],
           :description_html => get_html_content(feed[:post_id]),
           :requester => requester,
-          :email_config_id => @fb_page.product_id,
+          :product_id => @fb_page.product_id,
           :group_id => group_id,
           :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
           :created_at => Time.zone.at(feed[:created_time]).to_s(:db),

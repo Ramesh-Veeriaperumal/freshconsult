@@ -19,7 +19,9 @@
               .bind("click", function(ev){
                 ev.preventDefault();
                 $(this).toggleClass('active');
-                _checkbox.prop("checked", opts.inverted ? !$(this).hasClass('active') : $(this).hasClass('active'));
+                _checkbox
+                  .prop("checked", opts.inverted ? !$(this).hasClass('active') : $(this).hasClass('active'))
+                  .trigger("change");
               });
 
         _container.append(_onLabel).append(_handle).append(_offLabel);

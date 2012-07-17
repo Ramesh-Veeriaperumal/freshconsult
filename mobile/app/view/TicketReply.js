@@ -49,20 +49,27 @@ Ext.define('Freshdesk.view.TicketReply', {
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
-        var id = this.ticket_id;
-        this.items.items[1].submit({
-            success:function(){
-                location.href="#tickets/show/"+id;
-            },
-            failure:function(){
-                var errorHtml='Please correct the bellow errors.<br/>';
-                for(var index in response.errors){
-                    var error = response.errors[index],eNo= +index+1;
-                    errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+        var id = this.ticket_id,
+            formObj = this.items.items[1],
+            values = formObj.getValues();
+        if(values["helpdesk_note[body_html]"].trim() != '') {
+            Ext.Viewport.setMasked(true);
+            formObj.submit({
+                success:function(){
+                    Ext.Viewport.setMasked(false);
+                    location.href="#tickets/show/"+id;
+                },
+                failure:function(){
+                    Ext.Viewport.setMasked(false);
+                    var errorHtml='Please correct the bellow errors.<br/>';
+                    for(var index in response.errors){
+                        var error = response.errors[index],eNo= +index+1;
+                        errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
+                    }
+                    Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
                 }
-                Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
-        });
+            });
+        }
     },
     getMessageItem: function(){
         return this.items.items[1].items.items[0].items.items[8];

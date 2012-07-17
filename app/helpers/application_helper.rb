@@ -62,7 +62,7 @@ module ApplicationHelper
   end         
 
   def page_title
-    portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
+    portal_name = h(current_portal.portal_name) + " : "
     portal_name += @page_title || t('helpdesk_title')
   end 
   
@@ -519,7 +519,7 @@ module ApplicationHelper
     content_tag :li, element unless display_tag?(element,field,field_value)
   end
 
-  def display_tag? (element, field, field_value)
+  def display_tag?(element, field, field_value)
     (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
    

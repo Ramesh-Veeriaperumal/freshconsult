@@ -2017,7 +2017,7 @@
   email_command_settings_info: "Configure el delimitador utilizado para identificar y extraer los comandos de correo electrónico desde el correo"
   email_command_delimeter_label: "Delimitador de comandos de correo electrónico"
   email_command_preview_to_email: "Para"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Asunto"
   email_command_preview_subject_value: "Tique de asistencia"
   unable_to_charge: "No es posible realizar el cargo a la tarjeta para el agente añadido."

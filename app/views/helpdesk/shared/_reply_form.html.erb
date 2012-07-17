@@ -15,7 +15,9 @@
 		jQuery(jQuery(this).data("input")).prop("checked", _condition);
 	});
 	
+  <%- end %>
   
+  <% javascript_tag do %>
                   function lookup(searchString, callback) { 
                     new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
                                                               { parameters: {name: searchString, rand: (new Date()).getTime()},
@@ -33,8 +35,7 @@
                                                             }
                   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
                   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
-<%- end %>
-
+<% end %>
 
 <div class="request_panel hide" id="<%=cntid%>">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" ,:onsubmit =>"validateMCEData();"} do |f| %>
@@ -42,7 +43,7 @@
     <% capsule_config = get_app_config('capsule_crm') 
     
       bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
-      fixed_bcc = (@email_config.bcc_email.blank?) ? [] : @email_config.bcc_email.split( /,* /).map{|item|[item, item]}
+      fixed_bcc = (current_account.bcc_email.blank?) ? [] : current_account.bcc_email.split( /,* /).map{|item|[item, item]}
       bcc_drop_box_email += fixed_bcc  
 
 		  reply_cc_emails_blank = @ticket.cc_email_hash.nil? ? true : @to_cc_emails.blank?
@@ -59,7 +60,6 @@
 					<%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
         </div>
         <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title", :id => "reply_email_id" ) %>
-		<%= content_tag( :h4, t("fwd_to"), :class => "title", :id => "fwd_title" ) %>
         <li class="inline-field field" >
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
@@ -67,15 +67,6 @@
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!reply_cc_emails_blank)? "checked" : "" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
 					</div>
-        </li>
-        <li class="inline-field field" id="fwd_to_mail">
-            <%= f.label(:reply_email, "To:", :class => "caption" ) %>
-            <div class="fields">
-                <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("to_emails", "", $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
-                <%- end %>
-                <input type="text" id="to_emails" name="to_emails" />
-            </div>
         </li>
         <li class="inline-field field hide" id="cc-form-container">
             <label class="caption">
@@ -86,12 +77,6 @@
                   new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json unless reply_cc_emails_blank %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 				<%- end %>
                 <input type="text" id="cc_emails" name="cc_emails" />
-            </div>
-            <div class="fields" id="fwd_cc_emails_id" rel="cc_div" data-button="#add_cc_btn"  data-parent="#cc-form-container"> 
-                <% content_for :onload_script do -%>
-                  new Autocompleter.MultiValue("fwd_cc_emails", "", $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
-				<%- end %>
-                <input type="text" id="fwd_cc_emails" name="fwd_cc_emails" />
             </div>
         </li>
         

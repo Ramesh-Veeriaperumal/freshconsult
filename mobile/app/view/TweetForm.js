@@ -42,8 +42,10 @@ Ext.define('Freshdesk.view.TweetForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Message',
-                        maxLength:120
+                        placeHolder:'Message *',
+                        maxLength:120,
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',
