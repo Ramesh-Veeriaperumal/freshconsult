@@ -32,7 +32,7 @@ class EmailConfigObserver < ActiveRecord::Observer
   def mark_as_primary(email_config)
     if email_config.changed.include?("primary_role") && email_config.primary_role?
       old_primary_email_config = email_config.product ? email_config.product.primary_email_config : email_config.account.primary_email_config
-      old_primary_email_config.update_attributes(:primary_role => false) if old_primary_email_config
+      old_primary_email_config.update_attributes(:primary_role => false) if old_primary_email_config && !old_primary_email_config.new_record?
     end
   end
 
