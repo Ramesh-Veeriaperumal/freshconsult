@@ -41,6 +41,7 @@ FD.Util = {
 		//Ext.ComponentQuery.query('#ticketCustomerInfo')[0].hide();
         Ext.ComponentQuery.query('#noteFormCannedResponse')[0].hide();
         Ext.ComponentQuery.query('#noteFormPrivateField')[0].hide();
+        Ext.ComponentQuery.query('#noteFormNotifyField')[0].hide();
 	},
 	showAll : function(id){
 		//To show full content in conversation section..

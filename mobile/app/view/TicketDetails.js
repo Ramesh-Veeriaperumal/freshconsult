@@ -42,7 +42,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
                         '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
-                        '<br/> on {created_at:this.formatedDate} via {source_name}</div>',
+                        '<br/> on {created_at:this.formatedDate}  {source_name:this.formatedSource}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -58,15 +58,15 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
                         '</div>',
                       '</div>',
-                      '<tpl if="conversation_count &gt; 1">',
+                      '<tpl if="conversation_count &gt; 3">',
                       '<div class="oldconvMsg">',
                       '<div></div>',
-                      '<div><span class="msg">{[values.conversation_count-1]} old conversation(s)</span></span></div>',
+                      '<div><span class="msg">{[values.conversation_count-3]} activities </span></span></div>',
                       '<div></div>',
                       '</div>',
                       '</tpl>',
                       '<tpl for="notes">',
-                        '<div class="{[xindex  == xcount ? \"conversation\" : \"conversation hide\"]}">',
+                        '<div class="{[xindex  <= xcount-3 ? \"conversation hide\" : \"conversation\"]}">',
                                 '<div class="thumb">',
                                         '<tpl if="user.avatar_url"><img src="{user.avatar_url}"/></tpl>',
                                         '<tpl if="!user.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
@@ -80,7 +80,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                     '</tpl>',
                                 '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
-                                '<br/> on {created_at:this.formatedDate} via {source_name}</div>',
+                                '<br/> on {created_at:this.formatedDate} {source_name:this.formatedSource}</div>',
                                 '<tpl if="user.is_customer"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
@@ -149,6 +149,9 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         },
                         formatedDate : function(item){
                             return FD.Util.formatedDate(item);
+                        },
+                        formatedSource : function(item){
+                            return (item || '') === 'note' ? 'added a Note' : 'via '+item ;
                         }
                 })
         };

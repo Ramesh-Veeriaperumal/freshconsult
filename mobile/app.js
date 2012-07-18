@@ -24,9 +24,9 @@ Ext.application({
                     'TicketDetails', 'TicketReply', 'TicketForm', 'ContactDetails', 'ContactsFormContainer',
                     'ContactForm', 'TicketProperties', 'EmailForm','CannedResponses','Solutions','NoteForm',
                     'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox','TicketTweetForm','TweetForm',
-                    'FacebookForm','TicketFacebookForm'],
-    stores      :['Init','Filters','Tickets','Contacts'],
-    models      :['Portal','Filter','Ticket','Contact'],
+                    'FacebookForm','TicketFacebookForm','MultiSelect'],
+    stores      :['Init','Filters','Tickets','Contacts','AutoTechnician'],
+    models      :['Portal','Filter','Ticket','Contact','AutoSuggestion'],
 
     icon: {
         57: 'resources/icons/Icon.png',
@@ -78,7 +78,8 @@ Ext.application({
 
         Ext.Viewport.add([filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
-                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm]);
+                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm
+                        ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_account = data[0].raw.account;
