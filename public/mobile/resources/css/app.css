@@ -10276,6 +10276,38 @@ input[type="search"]::-webkit-search-cancel-button {
   content: "\e06e";
 }
 
+.icon-arrow-down-alt1:before {
+  content: "\e06f";
+}
+
+.icon-arrow-5:before {
+  content: "\e070";
+}
+
+.icon-arrow-6:before {
+  content: "\e071";
+}
+
+.icon-arrow-right-alt1:before {
+  content: "\e072";
+}
+
+.icon-arrow-left-alt1:before {
+  content: "\e073";
+}
+
+.icon-arrow-up-alt1:before {
+  content: "\e074";
+}
+
+.icon-arrow-7:before {
+  content: "\e075";
+}
+
+.icon-arrow-8:before {
+  content: "\e076";
+}
+
 @font-face {
   font-family: 'fontello';
   src: url("../icons/fontello.eot");
@@ -10849,8 +10881,14 @@ a {
 }
 .customerDetails .customer-info .profile_pic {
   float: left;
-  padding: 10px;
-  width: 25%;
+  margin: 10px 0 5px 10px;
+  width: 75px;
+  height: 75px;
+  overflow: hidden;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  text-shadow: 1px 1px 0 white;
+  border: 1px solid #858585;
 }
 .customerDetails .customer-info .profile_pic > img {
   -webkit-border-radius: 8px;
@@ -10858,51 +10896,62 @@ a {
   -webkit-box-shadow: white 1px 1px 0;
   box-shadow: white 1px 1px 0;
   width: 100%;
-  border: 1px solid #858585;
 }
 .customerDetails .customer-info .customer-info-list {
-  float: right;
+  float: left;
   width: 75%;
+  padding-left: 10px;
 }
 .customerDetails .customer-info .customer-info-list div {
   font-size: 14px;
   line-height: 22px;
   word-wrap: break-word;
 }
-.customerDetails .customer-info .customer-info-list .phone, .customerDetails .customer-info .customer-info-list .email, .customerDetails .customer-info .customer-info-list .twitter, .customerDetails .customer-info .customer-info-list .facebook {
+.customerDetails .customer-info .customer-contact-list {
+  float: right;
+  width: 100%;
+  padding-left: 10px;
+}
+.customerDetails .customer-info .customer-contact-list .phone, .customerDetails .customer-info .customer-contact-list .email, .customerDetails .customer-info .customer-contact-list .twitter, .customerDetails .customer-info .customer-contact-list .facebook {
   border-radius: 15px;
   background: #f3f3f3;
   padding: 1px;
   margin-right: 2%;
   margin-top: 5px;
   float: left;
-  width: 98%;
+  width: 99%;
 }
-.customerDetails .customer-info .customer-info-list .phone span, .customerDetails .customer-info .customer-info-list .email span, .customerDetails .customer-info .customer-info-list .twitter span, .customerDetails .customer-info .customer-info-list .facebook span {
+.customerDetails .customer-info .customer-contact-list .phone span, .customerDetails .customer-info .customer-contact-list .email span, .customerDetails .customer-info .customer-contact-list .twitter span, .customerDetails .customer-info .customer-contact-list .facebook span {
   width: 25px;
   height: 25px;
   background: #CCC;
   border-radius: 20px;
   float: left;
-  font-size: 14px;
-  padding: 2px 3px;
+  font-size: 16px;
   color: #898989;
   margin-right: 3px;
-  font-family: 'fontello';
+  font-family: 'Freshdesk';
 }
-.customerDetails .customer-info .customer-info-list .phone span:before {
+.customerDetails .customer-info .customer-contact-list .phone p, .customerDetails .customer-info .customer-contact-list .email p, .customerDetails .customer-info .customer-contact-list .twitter p, .customerDetails .customer-info .customer-contact-list .facebook p {
+  margin-top: 5px;
+}
+.customerDetails .customer-info .customer-contact-list .phone span:before {
+  font-size: 13px;
   padding: 3px;
-  content: '📞';
+  content: '\e002';
 }
-.customerDetails .customer-info .customer-info-list .email span:before {
-  padding: 2px 1px;
-  content: '✉';
+.customerDetails .customer-info .customer-contact-list .email span:before {
+  font-size: 18px;
+  padding: 8px 0px 0px 3px;
+  content: '\e023';
 }
-.customerDetails .customer-info .customer-info-list .twitter span:before {
-  content: '\F303';
+.customerDetails .customer-info .customer-contact-list .twitter span:before {
+  padding: 2px 4px;
+  content: '\4d';
 }
-.customerDetails .customer-info .customer-info-list .facebook span:before {
-  content: '\F308';
+.customerDetails .customer-info .customer-contact-list .facebook span:before {
+  padding: 3px 9px;
+  content: '\F09a';
 }
 .customerDetails .customer-info div {
   vertical-align: top;
@@ -11106,7 +11155,7 @@ a {
 }
 .ticketDetails #details .HDR .subject div.icon {
   display: inline-block;
-  margin: 0.4em;
+  margin: 5px 0.4em;
   -webkit-border-radius: 50%;
   border-radius: 50%;
   vertical-align: top;
@@ -11167,7 +11216,7 @@ a {
   padding-left: 10px;
 }
 .ticketDetails #details ul.actions {
-  padding: 1em 0em 0em 0em;
+  padding: 0.5em 0em 0em 0em;
   margin: 0;
   list-style: none;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(241, 247, 246, 0.1)), color-stop(100%, #f1f7f6));
@@ -11294,18 +11343,40 @@ a {
   line-height: 1.2em;
   font-size: 1em;
   margin-top: 3px;
+  width: 80%;
   color: #999999;
 }
 .ticketDetails .conversation .Info > a {
   font-weight: bold;
   text-decoration: none;
   color: #1272de;
+  word-wrap: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ticketDetails .conversation .Info > a:active {
   color: #ccc;
 }
 .ticketDetails .conversation .Info .date {
-  font-size: 0.9em;
+  font-size: 12px;
+  line-height: 20px;
+  display: inline-block;
+  width: 100%;
+}
+.ticketDetails .conversation .Info .note {
+  font-family: 'Freshdesk';
+  float: right;
+  display: inline-block;
+  position: absolute;
+  right: 0px;
+  font-size: 22px;
+  color: #ccc;
+  margin-top: -6px;
+  margin-right: -16px;
+}
+.ticketDetails .conversation .Info .note:before {
+  content: "\e021";
 }
 .ticketDetails .conversation .msg {
   border: 1px solid #B0B0B0;
@@ -11486,7 +11557,7 @@ a {
   font-weight: bolder;
   text-shadow: white 1px 1px 0;
   white-space: nowrap;
-  padding: 0 10px;
+  padding: 3px 10px;
   border: 1px solid #D4D4D4;
   border-bottom-color: #BCBCBC;
   line-height: 0.6em;
@@ -11510,7 +11581,7 @@ a {
   display: block;
   text-decoration: none;
   font-family: 'fontello';
-  color: #666;
+  color: #1272DE;
   text-align: center;
   text-shadow: white 1px 1px 0;
   speak: none;
@@ -11544,6 +11615,9 @@ a {
   text-shadow: #888888 1px 1px 0;
   color: #fff;
 }
+.ticketDetails .conversation .msg .attachments a:active span.size {
+  color: #fff;
+}
 .ticketDetails .conversation .msg .attachments a:last-child {
   -webkit-border-bottom-right-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -11554,19 +11628,23 @@ a {
 .ticketDetails .conversation .msg .attachments a span:first-child {
   font-size: 14px;
   text-decoration: none;
-  font-family: 'fontello';
+  font-family: 'Freshdesk';
   color: #666;
   text-align: center;
   text-shadow: white 1px 1px 0;
   speak: none;
 }
 .ticketDetails .conversation .msg .attachments a span:first-child:before {
-  content: '📄';
+  content: '\e01f';
 }
 .ticketDetails .conversation .msg .attachments a span.disclose {
   font-size: 13px !important;
   right: 4px !important;
-  bottom: 13% !important;
+  bottom: 2px !important;
+  font-family: 'Freshdesk';
+}
+.ticketDetails .conversation .msg .attachments a span.disclose:before {
+  content: '\2b';
 }
 .ticketDetails .conversation .msg .attachments a span.name {
   max-width: 70%;
@@ -11624,6 +11702,73 @@ a {
   margin-top: -7px;
   padding: 4px 0;
   border-bottom: 1px solid #DDD;
+}
+
+/* Pull refresh CSS */
+.x-list-pullrefresh {
+  -webkit-box-shadow: inset 0 -5px 5px 0 rgba(0, 0, 0, 0.2);
+  color: #888;
+  text-align: left;
+  -webkit-box-pack: start;
+  box-pack: start;
+  padding-left: 10px;
+}
+.x-list-pullrefresh .x-loading-spinner {
+  display: none;
+}
+
+.x-list-pullrefresh-arrow {
+  width: auto;
+  height: auto;
+  background: none;
+  /*background: center center url('../images/pullarrow.png') no-repeat;
+  -webkit-transition-property: -webkit-transform;*/
+  /*-webkit-transition-duration: 200ms;*/
+  -webkit-transition: -webkit-transform 0.2s ease-in;
+  -webkit-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+.x-list-pullrefresh-arrow:before {
+  font-family: 'Freshdesk';
+  font-size: 45px;
+  content: '\e070';
+}
+
+.x-list-pullrefresh-release .x-list-pullrefresh-arrow {
+  -webkit-transition: -webkit-transform 0.2s ease-in;
+  -webkit-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+}
+
+.x-list-pullrefresh-wrap {
+  width: 20em;
+  font-size: 0.7em;
+}
+
+.x-list-pullrefresh-message {
+  font-weight: normal;
+  font-size: 1.5em;
+  margin-bottom: 0.1em;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.x-list-pullrefresh-updated {
+  text-align: left;
+  padding-left: 5px;
+  color: #aaa;
+}
+
+.x-list-pullrefresh-loading {
+  /*position: relative;*/
+  /*top: 0;*/
+    /*.x-loading-spinner {
+      display: block;
+    }
+
+    .x-list-pullrefresh-arrow {
+      display: none;
+    }*/
 }
 
 .x-list-options {
