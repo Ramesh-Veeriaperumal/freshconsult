@@ -97,7 +97,8 @@ class Mobile::TicketsController < ApplicationController
       view.deserialize_from_params(view.data)
       filter_id = view[:id]
       filter_name = view[:name]
-      ticket_count =  current_account.tickets.permissible(current_user).count(:id, :conditions=> view.sql_conditions)
+      joins = view.get_joins(view.sql_conditions)
+      ticket_count =  current_account.tickets.permissible(current_user).count(:id, :joins => joins, :conditions=> view.sql_conditions)
 
       { 
         :id => filter_id, 

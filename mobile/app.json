@@ -5,6 +5,20 @@
     "name": "Freshdesk",
 
     /**
+     * The file path to this application's front HTML document, relative to this app.json file
+     */
+    "indexHtmlPath": "index.html",
+
+    /**
+     * The absolute URL to this application in development environment, i.e: the URL to run this application
+     * on your web browser during development, e.g: "http://localhost/myapp/index.html".
+     *
+     * This value is needed when build to resolve your application's dependencies if it requires server-side resources
+     * that are not accessible via file system protocol.
+     */
+    "url": null,
+
+    /**
      * List of all JavaScript assets in the right execution order.
      * Each item is an object with the following format:
      *      {
@@ -19,13 +33,19 @@
      */
     "js": [
         {
-            "path": "util/date.extensions.js"
-        },
-        {
-            "path": "util/fd.js"
+            "path": "util/date.extensions.js",
+            "update":"full"
         },
         {
             "path": "sdk/sencha-touch.js"
+        },
+        {
+            "path": "util/fd.js",
+            "update" : "full"
+        },
+        {
+            "path": "util/date.format.js",
+            "update" : "full"
         },
         {
             "path": "app.js",
@@ -78,7 +98,7 @@
     /**
      * Extra resources to be copied along when build
      */
-    "extras": [
+    "resources": [
         "resources/images",
         "resources/icons",
         "resources/loading",
@@ -86,8 +106,15 @@
     ],
 
     /**
+     * File / directory name matchers to ignore when copying to the builds, must be valid regular expressions
+     */
+    "ignore": [
+        "\.svn$"
+    ],
+
+    /**
      * Directory path to store all previous production builds. Note that the content generated inside this directory
-     * must be kept intact for proper generation of delta between updates
+     * must be kept intact for proper generation of deltas between updates
      */
     "archivePath": "archive",
 
@@ -115,5 +142,5 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "bdf77770-a95d-11e1-babf-19b66bd5d617"
+    "id": "423d0e30-cf26-11e1-8bb1-69e36e43e33e"
 }

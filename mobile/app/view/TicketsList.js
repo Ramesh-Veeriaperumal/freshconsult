@@ -20,11 +20,11 @@ Ext.define("Freshdesk.view.TicketsList", {
                                         '<tpl else>No agent assigned,</tpl>',
                                 '&nbsp;{updated_at:this.time_in_words}</div>',
                         '</div>',
-                        '<div class="disclose">&nbsp;</div>',
+                        '<div class="disclose icon-arrow-right">&nbsp;</div>',
         	'</div></tpl>'].join(''),
                 {
                         time_in_words : function(item){
-                                return new Date(item).toRelativeTime();
+                            return FD.Util.humaneDate(item);
                         }
                 })
     }

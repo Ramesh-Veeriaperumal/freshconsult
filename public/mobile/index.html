@@ -1,12 +1,9 @@
 <!DOCTYPE HTML>
-<html>
-	<head>
-		<title>Freshdesk</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"> 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-touch-fullscreen" content="yes">
-        <link rel="shortcut icon" href="resources/images/favicon.ico" />
-		<style type="text/css">
+<html manifest="" lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Freshdesk</title>
+    <style type="text/css">
         /**
          * Example of an initial loading indicator.
          * It is recommended to keep this as minimal as possible to provide instant feedback
@@ -15,237 +12,70 @@
         html, body {
             height: 100%;
         }
-        .x-floating {
-            position: absolute !important;
-        }
-        .x-mask {
+
+        #appLoadingIndicator {
             position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            height: 100%;
-            z-index: 10;
-            display: -webkit-box;
-            display: box;
-            -webkit-box-align: center;
-            box-align: center;
-            -webkit-box-pack: center;
-            box-pack: center;
-            background: rgba(0, 0, 0, 0.1) center center no-repeat;
-        }
-        .x-loading-spinner {
-          font-size: 250%;
-          height: 1em;
-          width: 1em;
-          position: relative;
-          -webkit-transform-origin: 0.5em 0.5em;
-          /* Shared Properties for all the bars */
-        }
-        .x-loading-spinner > span, .x-loading-spinner > span:before, .x-loading-spinner > span:after {
-          display: block;
-          position: absolute;
-          width: 0.1em;
-          height: 0.25em;
-          top: 0;
-          -webkit-transform-origin: 0.05em 0.5em;
-          -webkit-border-radius: 0.05em;
-          border-radius: 0.05em;
-          content: " ";
-        }
-        .x-loading-spinner > span.x-loading-top {
-          background-color: rgba(170, 170, 170, 0.99);
-        }
-        .x-loading-spinner > span.x-loading-top::after {
-          background-color: rgba(170, 170, 170, 0.9);
-        }
-        .x-loading-spinner > span.x-loading-left::before {
-          background-color: rgba(170, 170, 170, 0.8);
-        }
-        .x-loading-spinner > span.x-loading-left {
-          background-color: rgba(170, 170, 170, 0.7);
-        }
-        .x-loading-spinner > span.x-loading-left::after {
-          background-color: rgba(170, 170, 170, 0.6);
-        }
-        .x-loading-spinner > span.x-loading-bottom::before {
-          background-color: rgba(170, 170, 170, 0.5);
-        }
-        .x-loading-spinner > span.x-loading-bottom {
-          background-color: rgba(170, 170, 170, 0.4);
-        }
-        .x-loading-spinner > span.x-loading-bottom::after {
-          background-color: rgba(170, 170, 170, 0.35);
-        }
-        .x-loading-spinner > span.x-loading-right::before {
-          background-color: rgba(170, 170, 170, 0.3);
-        }
-        .x-loading-spinner > span.x-loading-right {
-          background-color: rgba(170, 170, 170, 0.25);
-        }
-        .x-loading-spinner > span.x-loading-right::after {
-          background-color: rgba(170, 170, 170, 0.2);
-        }
-        .x-loading-spinner > span.x-loading-top::before {
-          background-color: rgba(170, 170, 170, 0.15);
+            top: 50%;
+            left: 50%;
+            margin-top: -10px;
+            margin-left: -50px;
+            width: 100px;
+            height: 20px;
         }
 
-        .x-loading-spinner > span {
-          left: 50%;
-          margin-left: -0.05em;
+        #appLoadingIndicator > * {
+            background-color: #FFFFFF;
+            float: left;
+            height: 20px;
+            margin-left: 11px;
+            width: 20px;
+            -webkit-animation-name: appLoadingIndicator;
+            -webkit-border-radius: 13px;
+            -webkit-animation-duration: 0.8s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-direction: linear;
+            opacity: 0.3
         }
 
-        /* Rotate each of the 4 Spans */
-        .x-loading-spinner > span.x-loading-top {
-          -webkit-transform: rotate(0deg);
-          -moz-transform: rotate(0deg);
+        #appLoadingIndicator > :nth-child(1) {
+            -webkit-animation-delay: 0.18s;
         }
 
-        .x-loading-spinner > span.x-loading-right {
-          -webkit-transform: rotate(90deg);
-          -moz-transform: rotate(90deg);
+        #appLoadingIndicator > :nth-child(2) {
+            -webkit-animation-delay: 0.42s;
         }
 
-        .x-loading-spinner > span.x-loading-bottom {
-          -webkit-transform: rotate(180deg);
-          -moz-transform: rotate(180deg);
+        #appLoadingIndicator > :nth-child(3) {
+            -webkit-animation-delay: 0.54s;
         }
 
-        .x-loading-spinner > span.x-loading-left {
-          -webkit-transform: rotate(270deg);
-          -moz-transform: rotate(270deg);
+        @-webkit-keyframes appLoadingIndicator{
+            0% {
+                opacity: 0.3
+            }
+
+            50% {
+                opacity: 1;
+                background-color:#1985D0
+            }
+
+            100% {
+                opacity:0.3
+            }
         }
-
-        /* These are the two lines that surround each of the 4 Span lines */
-        .x-loading-spinner > span::before {
-          -webkit-transform: rotate(30deg);
-          -moz-transform: rotate(30deg);
-        }
-
-        .x-loading-spinner > span::after {
-          -webkit-transform: rotate(-30deg);
-          -moz-transform: rotate(-30deg);
-        }
-
-        /* Set Animation */
-        .x-loading-spinner {
-          -webkit-animation-name: x-loading-spinner-rotate;
-          -webkit-animation-duration: .5s;
-          -webkit-animation-iteration-count: infinite;
-          -webkit-animation-timing-function: linear;
-        }
-
-        @-webkit-keyframes x-loading-spinner-rotate {
-          0% {
-            -webkit-transform: rotate(0deg);
-          }
-
-          8.32% {
-            -webkit-transform: rotate(0deg);
-          }
-
-          8.33% {
-            -webkit-transform: rotate(30deg);
-          }
-
-          16.65% {
-            -webkit-transform: rotate(30deg);
-          }
-
-          16.66% {
-            -webkit-transform: rotate(60deg);
-          }
-
-          24.99% {
-            -webkit-transform: rotate(60deg);
-          }
-
-          25% {
-            -webkit-transform: rotate(90deg);
-          }
-
-          33.32% {
-            -webkit-transform: rotate(90deg);
-          }
-
-          33.33% {
-            -webkit-transform: rotate(120deg);
-          }
-
-          41.65% {
-            -webkit-transform: rotate(120deg);
-          }
-
-          41.66% {
-            -webkit-transform: rotate(150deg);
-          }
-
-          49.99% {
-            -webkit-transform: rotate(150deg);
-          }
-
-          50% {
-            -webkit-transform: rotate(180deg);
-          }
-
-          58.32% {
-            -webkit-transform: rotate(180deg);
-          }
-
-          58.33% {
-            -webkit-transform: rotate(210deg);
-          }
-
-          66.65% {
-            -webkit-transform: rotate(210deg);
-          }
-
-          66.66% {
-            -webkit-transform: rotate(240deg);
-          }
-
-          74.99% {
-            -webkit-transform: rotate(240deg);
-          }
-
-          75% {
-            -webkit-transform: rotate(270deg);
-          }
-
-          83.32% {
-            -webkit-transform: rotate(270deg);
-          }
-
-          83.33% {
-            -webkit-transform: rotate(300deg);
-          }
-
-          91.65% {
-            -webkit-transform: rotate(300deg);
-          }
-
-          91.66% {
-            -webkit-transform: rotate(330deg);
-          }
-
-          100% {
-            -webkit-transform: rotate(330deg);
-          }
-        }
-
     </style>
+    <script type="text/javascript" src="util/fd.js"></script>
+    <script type="text/javascript" src="util/date.extensions.js"></script>
+    <script type="text/javascript" src="util/date.format.js"></script>
     <script type="text/javascript">(function(h){function f(c,d){document.write('<meta name="'+c+'" content="'+d+'">')}if("undefined"===typeof g)var g=h.Ext={};g.blink=function(c){var d=c.js||[],c=c.css||[],b,e,a;f("viewport","width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no");f("apple-mobile-web-app-capable","yes");f("apple-touch-fullscreen","yes");for(b=0,e=c.length;b<e;b++)a=c[b],"string"!=typeof a&&(a=a.path),document.write('<link rel="stylesheet" href="'+a+'">');for(b=0,e=d.length;b<
 e;b++)a=d[b],"string"!=typeof a&&(a=a.path),document.write('<script src="'+a+'"><\/script>')}})(this);
-;Ext.blink({"id":"bdf77770-a95d-11e1-babf-19b66bd5d617","js":[{"path":"util/date.extensions.js","type":"js"},{"path":"util/fd.js","type":"js"},{"path":"sdk/sencha-touch.js","type":"js"},{"path":"app.js","update":"delta","type":"js"}],"css":[{"path":"resources/css/app.css","update":"delta","type":"css"}]})</script>
-	</head>
-	<body>
-        <div class="x-mask x-floating" id="appLoadingIndicator" style="top: 0px !important; left: 0px !important; right: 0px !important; bottom: 0px !important; z-index: 30 !important; background-color:rgba(0,0,0,0.1)">
-            <div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;">
-                <span class="x-loading-top"></span>
-                <span class="x-loading-right"></span>
-                <span class="x-loading-bottom"></span>
-                <span class="x-loading-left"></span>
-            </div>
-        </div>
-	</body>
+;Ext.blink({"id":"423d0e30-cf26-11e1-8bb1-69e36e43e33e","js":[{"path":"util/date.extensions.js","update":"full","type":"js"},{"path":"sdk/sencha-touch.js","type":"js"},{"path":"util/fd.js","update":"full","type":"js"},{"path":"util/date.format.js","update":"full","type":"js"},{"path":"app.js","update":"delta","type":"js"}],"css":[{"path":"resources/css/app.css","update":"delta","type":"css"}]})</script>
+</head>
+<body>
+    <div id="appLoadingIndicator">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</body>
 </html>

@@ -48,7 +48,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         if(FD.Util.validate_form(formObj)){
             formObj.submit({
                 success:function(form,response){
-                    location.href="#tickets/show/"+response.item.helpdesk_ticket.id;
+                    location.href="#tickets/show/"+response.item.helpdesk_ticket.display_id;
                 },
                 failure:function(form,response){
                     var errorHtml='Please correct the bellow errors.<br/>';

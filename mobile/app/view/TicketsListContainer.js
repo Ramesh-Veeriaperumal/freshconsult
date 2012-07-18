@@ -74,7 +74,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         Ext.getStore("Tickets").load();
     },
     moveToTrash : function(data){
-        var id = data.id;
+        var id = data.display_id;
         Ext.Msg.confirm('Move to trash ticket : '+id,'Do you want to move this ticket to Trash?',
             function(btnId){
                 if(btnId == 'no' || btnId == 'cancel'){
@@ -101,7 +101,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     restore : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking restore for ticket #',id);
         Ext.Msg.confirm('Restore ticket : '+id,'Do you want to restore this ticket?',
             function(btnId){
@@ -129,7 +129,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     falgAsSpam : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking falgAsSpam for ticket #',id);
         Ext.Msg.confirm('Mark as spam ticket : '+id,'Do you want to mark this ticket as spam?',
             function(btnId){
@@ -157,7 +157,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     unflagAsSpam : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking unflagAsSpam for ticket #',id);
         Ext.Msg.confirm('ticket : '+id+' is not spam','Do you want to mark this ticket as unspam?',
             function(btnId){
@@ -185,7 +185,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     close : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking close for ticket #',id);
         Ext.Msg.confirm('Close ticket : '+id,'Do you want to close this ticket?',
             function(btnId){
@@ -213,7 +213,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         );
     },
     pickUp : function(data){
-        var id = data.id;
+        var id = data.display_id;
         console.log('invoking pickup for ticket #',id);
 
         Ext.Msg.confirm('Pickup ticket : '+id,'Do you want to pickup this ticket?',
@@ -281,7 +281,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
     },
     onTicketDisclose: function(list, index, target, record, evt, options){
     	setTimeout(function(){list.deselect(index);},500);
-        location.href="#tickets/show/"+record.data.id;
+        location.href="#tickets/show/"+record.data.display_id;
     },
     backToFilters: function(){
         Freshdesk.backBtn=true;

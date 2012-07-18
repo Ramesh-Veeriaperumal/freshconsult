@@ -427,6 +427,9 @@ class Account < ActiveRecord::Base
         },
         :scn_automations =>{
           :only => [:id,:name]
+        },
+        :twitter_handles => {
+          :only => [ :id, :screen_name ]
         }
       })
       options.merge!({

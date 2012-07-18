@@ -33,13 +33,24 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        height: '17em',
-                        placeHolder:'Message'
+                        placeHolder:'Message *',
+                        required:true,
+                        clearIcon:false
                     },
                     {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
+                    },
+                    {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField'
                     },
                     {
                         xtype:'titlebar',
