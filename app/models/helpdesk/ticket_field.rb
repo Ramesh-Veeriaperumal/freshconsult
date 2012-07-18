@@ -198,7 +198,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
         end
       else
         xml.choices do
-          choices.each do |k,v,i|  
+          choices.each do |k,v,p|  
             if v != "0"
               xml.option do
                 xml.tag!("id",k)
