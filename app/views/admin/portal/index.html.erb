@@ -15,6 +15,12 @@
 		    </label>
 			<%= content_tag( :div, t('portal_customizer_open_sol_i'), :class => "info-data tabbed" ) %>
 	 	</li>
+	 	<li>
+			<label>
+		      <%= f.feature_check_box :auto_suggest_solutions %> <%=t('portal_customizer_option_auto_suggest_solutions')%>
+		    </label>
+			<%= content_tag( :div, t('portal_customizer_auto_suggest_solutions'), :class => "info-data tabbed" ) %>
+	 	</li>
 		<li>
 			<label>
 		      <%= f.feature_check_box :open_forums %> <%=t('portal_customizer_option_forums')%>

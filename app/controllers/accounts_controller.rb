@@ -259,7 +259,7 @@ class AccountsController < ApplicationController
   
   def cancel
     if request.post? and !params[:confirm].blank?
-      SubscriptionNotifier.deliver_account_deleted(current_account)
+      SubscriptionNotifier.deliver_account_deleted(current_account) if Rails.env.production?
       create_deleted_customers_info
       perform_destroy(current_account)
       redirect_to "http://www.freshdesk.com"
