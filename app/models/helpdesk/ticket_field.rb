@@ -203,7 +203,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
               xml.option do
                 xml.tag!("id",k)
                 xml.tag!("value",v)
-                xml.tag!("input",i)
+                xml.tag!("params",p) unless p.blank?
               end
             end
           end
