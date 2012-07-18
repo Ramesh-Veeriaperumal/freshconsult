@@ -1,5 +1,6 @@
 var FD = FD || {};
 FD.Util = {
+    DEFAULT_DATE_FORMAT : 'mmm d @ h:MM TT',
     onAjaxSucess : function(data,res,callBack,scope){
         callBack.call(scope,res);
     },
@@ -211,5 +212,18 @@ FD.Util = {
                 Ext.getCmp('nested_'+_levelObj.name).setHidden(true).setValue('');
             });*/
         }
+    },
+    formatedDate : function(timeStr){
+        var date = this.convertoJSDate(timeStr);
+        return dateFormat(date, this.DEFAULT_DATE_FORMAT);
+    },
+    humaneDate : function(timeStr){
+        return this.convertoJSDate(timeStr).toRelativeTime();
+    },
+    convertoJSDate : function(timeStr){
+        var limit;
+        timeStr = ( timeStr || '' ).replace(/-/g,"/").replace(/[TZ]/g," ");
+        limit = timeStr.lastIndexOf('+') > 0 ? timeStr.lastIndexOf('+') : timeStr.length;
+        return new Date(timeStr.substr(0,limit));
     }
 }

@@ -54,9 +54,9 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '</tpl>',
             '</tpl>'].join(''),
             {
-                        time_in_words : function(item){
-                                return new Date(item).toRelativeTime();
-                        }
-                })
+                time_in_words : function(item){
+                    return FD.Util.humaneDate(item);
+                }
+            })
     }
 });

@@ -41,7 +41,8 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
+                        '<br/> on {created_at:this.formatedDate} via {source_name}</div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -79,7 +80,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                     '</tpl>',
                                 '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
-                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
+                                '<br/> on {created_at:this.formatedDate} via {source_name}</div>',
                                 '<tpl if="user.is_customer"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
@@ -145,6 +146,9 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                return filename.substr(filename.lastIndexOf('.'));
                             }
                             return '';
+                        },
+                        formatedDate : function(item){
+                            return FD.Util.formatedDate(item);
                         }
                 })
         };
