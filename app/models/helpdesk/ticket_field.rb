@@ -117,7 +117,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_ticket_type" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
-         account.agents(:include => :user).collect { |c| [c.user.name, c.user.id, {:email => c.user.email}] }
+         account.agents(:include => :user).collect { |c| [c.user.name, c.user.id] }
        when "default_group" then
          account.groups.collect { |c| [c.name, c.id] }
        when "default_product" then
@@ -198,12 +198,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
         end
       else
         xml.choices do
-          choices.each do |k,v,p|  
+          choices.each do |k,v|  
             if v != "0"
               xml.option do
                 xml.tag!("id",k)
                 xml.tag!("value",v)
-                xml.tag!("params",p) unless p.blank?
               end
             end
           end
