@@ -608,3 +608,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .inline-field span.addchoice { padding-left: 20px; padding-bottom: 7px; margin-left: 5px; background: url(/images/email_config_add.png) no-repeat 0px 0px; position: absolute; float: left; }
 
 a.email_config { height: 24px; width: 80%; border: 0px; background-color: #F8F8F8; }
+
+#cc_emails_sec .multi_value_field { width: 91%; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; box-shadow: 1px 1px 2px #DFDFDF inset; }
+
+.radio-set-right { padding: 0px 0px 0px 10px; }
