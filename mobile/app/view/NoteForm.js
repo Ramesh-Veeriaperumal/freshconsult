@@ -1,7 +1,7 @@
 Ext.define('Freshdesk.view.NoteForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.noteForm',
-    requires: ['Ext.field.Email','Ext.field.Hidden','Ext.field.Checkbox'],
+    requires: ['Ext.field.Email','Ext.field.Hidden','Ext.field.Toggle'],
     showCannedResponse : function(){
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
@@ -25,10 +25,11 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
-                        xtype: 'checkboxfield',
+                        xtype: 'togglefield',
                         name: 'helpdesk_note[private]',
-                        label:'Private',
-                        itemId:'noteFormPrivateField'
+                        label: 'Private , Don\'t Show to requester',
+                        itemId:'noteFormPrivateField',
+                        labelWidth: '70%'
                     },
                     {
                         xtype: 'textareafield',
