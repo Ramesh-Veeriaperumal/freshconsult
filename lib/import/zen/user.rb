@@ -18,6 +18,7 @@ module Import::Zen::User
   customer_id = customer.id if customer
   user_params = {:user =>user_prop.to_hash.merge({:customer_id =>customer_id, :user_role => ZENDESK_ROLE_MAP[user_prop.user_role.to_i]})}
   user = @current_account.all_users.find(:first, :conditions =>['email=? or import_id=?',user_prop.email,user_prop.import_id])
+  puts "users email-- #{user_prop.email}"
   unless user
     user = @current_account.users.new
     user.deleted = true unless user_prop.email
