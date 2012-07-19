@@ -816,6 +816,7 @@ en:
   import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
   portal_customizer_open_solutions: Anybody can view public solutions
   portal_customizer_option_solutions: Users can view public solutions without logging in
+  portal_customizer_option_auto_suggest_solutions: Auto suggest solutions when the user creates a new ticket.
   portal_customizer_google_signin: Allow users to Sign in using Google
   portal_customizer_twitter_signin: Allow users to Sign in using Twitter
   portal_customizer_facebook_signin: Allow users to Sign in using Facebook
@@ -908,11 +909,14 @@ en:
       placeholder: Search All Solutions
     search: 
       placeholder: Search %{name}
+  auto_suggest_solutions:
+    info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
   reset: Reset
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
+  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
   topic:
     ideas_stamps:
       planned: Planned
