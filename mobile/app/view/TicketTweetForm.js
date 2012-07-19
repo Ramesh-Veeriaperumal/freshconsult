@@ -26,7 +26,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,

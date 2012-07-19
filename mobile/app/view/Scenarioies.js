@@ -42,7 +42,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
             },
             {
                 xtype:'titlebar',
-                title:'Execute Scenario',
+                title:'Scenario',
                 ui:'header',
                 docked:'top',
                 items:[

@@ -10416,11 +10416,10 @@ input, textarea, select {
   text-align: center;
 }
 .homepage .footer {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC"), white;
   bottom: 0;
   display: block;
-  border-top: 1px solid #999;
-  box-shadow: 0 0 10px rgba(118, 118, 118, 0.3);
+  border-top: 1px solid #ccc;
+  box-shadow: 0 -10px 10px rgba(118, 118, 118, 0.1);
   text-align: center;
   font-size: 12px;
   padding: 15px 0 20px 0;
@@ -10439,6 +10438,14 @@ input, textarea, select {
   display: inline-block;
   vertical-align: bottom;
   margin: -3px 8px;
+}
+.homepage .footer .switch_version:active, .homepage .footer .switch_version:hover {
+  background: #444444;
+  color: #fff;
+  text-shadow: -1px -1px 0 black;
+}
+.homepage .footer .switch_version:active span, .homepage .footer .switch_version:hover span {
+  color: #fff;
 }
 .homepage .footer p {
   margin: 15px 0 0 0;
@@ -11712,6 +11719,7 @@ a {
   -webkit-box-pack: start;
   box-pack: start;
   padding-left: 10px;
+  top: -4.5em;
 }
 .x-list-pullrefresh .x-loading-spinner {
   display: none;
@@ -11721,9 +11729,6 @@ a {
   width: auto;
   height: auto;
   background: none;
-  /*background: center center url('../images/pullarrow.png') no-repeat;
-  -webkit-transition-property: -webkit-transform;*/
-  /*-webkit-transition-duration: 200ms;*/
   -webkit-transition: -webkit-transform 0.2s ease-in;
   -webkit-transform: rotate(0deg);
   transform: rotate(0deg);
@@ -11760,15 +11765,52 @@ a {
 }
 
 .x-list-pullrefresh-loading {
-  /*position: relative;*/
-  /*top: 0;*/
-    /*.x-loading-spinner {
-      display: block;
-    }
+  /* Set the background size so the stripes work correctly */
+  -webkit-background-size: 44px 44px;
+  -moz-background-size: 36px 36px;
+  /* Webkit */
+  /* For browser that don't support gradients, we'll set a base background colour */
+  background-color: #f3f3f3;
+  background: -webkit-gradient(linear, 0 0, 44 44, color-stop(0, rgba(190, 190, 190, 0.17)), color-stop(0.25, rgba(190, 190, 190, 0.17)), color-stop(0.26, rgba(190, 190, 190, 0)), color-stop(0.5, rgba(190, 190, 190, 0)), color-stop(0.51, rgba(190, 190, 190, 0.17)), color-stop(0.75, rgba(190, 190, 190, 0.17)), color-stop(0.76, rgba(190, 190, 190, 0)), color-stop(1, rgba(190, 190, 190, 0))) #f3f3f3;
+  /* Note: Mozilla's support for gradients is more true to the original design, allowing gradients at 30 degrees, as apposed to 45 degress in webkit. */
+  background: -moz-repeating-linear-gradient(top left -30deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.17) 15px, rgba(255, 255, 255, 0) 15px, rgba(255, 255, 255, 0) 30px) #f3f3f3;
+  /* Give it a higher contrast outline */
+  -webkit-animation: animate-stripes 1s linear infinite;
+  animation: animate-stripes 1s linear infinite;
+  /*.x-loading-spinner {
+    display: block;
+  }*/
+}
+.x-list-pullrefresh-loading .x-list-pullrefresh-arrow {
+  display: none;
+}
+.x-list-pullrefresh-loading .x-list-pullrefresh-message {
+  font-size: 1.6em !important;
+  color: #888;
+}
+.x-list-pullrefresh-loading .x-list-pullrefresh-updated {
+  display: none;
+}
 
-    .x-list-pullrefresh-arrow {
-      display: none;
-    }*/
+/* Webkit animation keyframes */
+@-webkit-keyframes animate-stripes {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 44px 0;
+  }
+}
+
+@-moz-keyframes animate-stripes {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 36px 0;
+  }
 }
 
 .x-list-options {
