@@ -4,7 +4,7 @@ module Mobile::MobileHelperMethods
 
   MOBILE_VIEWS = { :tickets => { :show => "#{MOBILE_URL}#tickets/show/{{params.id}}" } }
 
-  DOMAINS =  [ :localhost ]
+  DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com" ]
   
   def self.included(base)
     base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?
@@ -27,6 +27,7 @@ module Mobile::MobileHelperMethods
     end
 
     def mobile?
+      Rails.logger.debug "request host #{request.host}"
       mobile_agent? && allowed_domain? &&  !classic_view? 
     end
 
