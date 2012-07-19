@@ -23970,7 +23970,13 @@ Ext.define('plugin.ux.PullRefresh2', {
                     '<div class="x-list-pullrefresh-updated">Last Updated: <span>{lastUpdated:date("m/d/Y h:iA")}</span></div>',
                 '</div>',
             '</div>'
-        ].join('')
+        ].join(''),
+
+        /*
+         * @cfg {Boolean} showing pretty date on last update time
+         * @accessor
+         */
+        prettyUpdatedDate : false
     },
 
     isRefreshing: false,
@@ -24115,9 +24121,14 @@ Ext.define('plugin.ux.PullRefresh2', {
     onBounceTop: function(y) {
         var me = this,
             list = me.getList(),
-            scroller = list.getScrollable().getScroller();
+            scroller = list.getScrollable().getScroller(),
+            prettyUpdatedDate = me.getPrettyUpdatedDate();
 
         if (!me.isReleased) {
+            if(!me.isRefreshing && -y > 20  && -y < 25 && prettyUpdatedDate ){
+                console.log(new Date(me.lastUpdated).toRelativeTime())
+                me.updatedEl.setHtml(new Date(me.lastUpdated).toRelativeTime());
+            }
             if (!me.isRefreshing && -y >= me.pullHeight + 10) {
                 me.isRefreshing = true;
 
@@ -24231,7 +24242,9 @@ Ext.define('plugin.ux.PullRefresh2', {
         me.lastUpdated = new Date();
 
         me.setViewState('pull');
-        me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));
+        me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));    
+        
+        
     }
 });
 
@@ -30563,7 +30576,8 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!'
+                        pullRefreshText: 'Pull down for more!',
+                        prettyUpdatedDate:true
                     }
             ]
         }
@@ -38218,7 +38232,8 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!'
+                        pullRefreshText: 'Pull down for more!',
+                        prettyUpdatedDate:true
                     },
                     {
                         xclass: 'plugin.ux.ListPaging2',
