@@ -90,7 +90,6 @@ Ext.application({
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
         }});
 
-
         //adding listners to ajax for showing the loading mask .. global.
         Ext.Ajax.addListener('beforerequest',function(){
             //Ext.Viewport.setMasked({xtype:'loadmask',cls:'loading'})

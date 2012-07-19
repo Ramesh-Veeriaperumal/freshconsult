@@ -101,7 +101,7 @@
 				
 			<% end %>
 			<div class="footer">
-				Switch to: <a href="#">Web version</a>
+				Switch to: <%= link_to_function("Web version", "switchToClassic()") %>
 				<p>A Helpdesk Software by Freshdesk </p>
 			</div>
 			<div id="alt-signin-dialog" class="iphone-menu" style="display:none;">
@@ -115,12 +115,17 @@
 					</div>
 			
 		</div>
-		<%= javascript_include_tag "prototype" %>
+		<%= javascript_include_tag "prototype"%>
 		<% javascript_tag do -%>
 			document.observe("dom:loaded", function() {						
 				window.scrollTo(0,1);
 				<%= yield :javascript %>
 			});
+
+			function switchToClassic(){
+				document.cookie = "classic_view=true";
+				document.location.href="/";
+			}
 		<% end %>
 	</body>
 </html>

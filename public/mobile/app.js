@@ -30367,7 +30367,7 @@ Ext.define("Freshdesk.view.Home", {
                         cls:'footer',
                         docked:'bottom',
                         centered:true,
-                        tpl:['<a class="switch_version">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
+                        tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
                              '<p>A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
@@ -55313,7 +55313,6 @@ Ext.application({
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
         }});
-
 
         //adding listners to ajax for showing the loading mask .. global.
         Ext.Ajax.addListener('beforerequest',function(){
