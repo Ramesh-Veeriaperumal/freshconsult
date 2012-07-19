@@ -1933,7 +1933,9 @@ ul.ui-form .inputs-list{
 	}
 }
 
-#cc_emails_sec .chzn-container,#cc_emails_sec .search-field input{
+
+
+#cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{
 	width:91% !important;
 }
 
@@ -1973,3 +1975,16 @@ a.email_config {
 		border: 0px; 
 		background-color: #F8F8F8;
 }
+
+#cc_emails_sec .multi_value_field {
+	width:91%;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	box-shadow: 1px 1px 2px #DFDFDF inset;	
+}
+
+.radio-set-right{
+	padding: 0px 0px 0px 10px ;
+}
+

@@ -480,10 +480,12 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     @item.product ||= current_portal.product
-
+    cc_emails = validate_emails(params[:cc_emails])
+    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
+      notify_cc_people cc_emails unless cc_emails.blank? 
     else
       create_error
     end
