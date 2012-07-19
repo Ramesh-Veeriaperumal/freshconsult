@@ -100,11 +100,10 @@ input, textarea, select {
 		text-align:center;
 	}
 	.footer{
-			background:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC'), #fff;
 			bottom:0;
 			display:block;
-			border-top:1px solid #999;
-			box-shadow:0 0 10px rgba(118,118,118, 0.3);
+			border-top:1px solid #ccc;
+			box-shadow:0 -10px 10px rgba(118,118,118, 0.1);
 			text-align:center;
 			font-size:12px;
 			padding: 15px 0 20px 0;
@@ -119,6 +118,14 @@ input, textarea, select {
 					display: inline-block;
 					vertical-align: bottom;
 					margin: -3px 8px;
+				}
+				&:active, &:hover{
+					@include background(#444);
+					color:#fff;
+					text-shadow: -1px -1px 0 black;
+					span{
+						color:#fff;
+					}
 				}
 			}
 			p{
@@ -1278,6 +1285,7 @@ a {
 	-webkit-box-pack: start;
 	box-pack: start;
 	padding-left:10px;
+	top: -4.5em;
     .x-loading-spinner {
       display: none;
     }
@@ -1292,9 +1300,6 @@ a {
 		font-size:45px;
 		content:'\e070';
 	}
-   /*background: center center url('../images/pullarrow.png') no-repeat;
-   -webkit-transition-property: -webkit-transform;*/
-    /*-webkit-transition-duration: 200ms;*/
 	-webkit-transition: -webkit-transform 0.2s ease-in;
     @include rotate(0deg);
   }
@@ -1322,16 +1327,53 @@ a {
     padding-left:5px;
     color:#aaa;
   }
-
+	$bar-color: #f3f3f3;
+	$border-width: 1px;
   .x-list-pullrefresh-loading {
-    /*position: relative;*/
-    /*top: 0;*/
-
+    /* Set the background size so the stripes work correctly */
+    -webkit-background-size: 44px 44px;
+    -moz-background-size: 36px 36px;
+    
+    /* Webkit */
+    /* For browser that don't support gradients, we'll set a base background colour */
+    background-color: $bar-color;
+    
+    background: -webkit-gradient(linear, 0 0, 44 44, color-stop(0.00, rgba(190,190,190,0.17)), color-stop(0.25, rgba(190,190,190,0.17)), color-stop(0.26, rgba(190,190,190,0)), color-stop(0.50, rgba(190,190,190,0)), color-stop(0.51, rgba(190,190,190,0.17)), color-stop(0.75, rgba(190,190,190,0.17)), color-stop(0.76, rgba(190,190,190,0)), color-stop(1.00, rgba(190,190,190,0)) ) $bar-color;
+    /* Note: Mozilla's support for gradients is more true to the original design, allowing gradients at 30 degrees, as apposed to 45 degress in webkit. */
+    background: -moz-repeating-linear-gradient(top left -30deg, rgba(255,255,255,0.17), rgba(255,255,255,0.17) 15px, rgba(255,255,255,0) 15px, rgba(255,255,255,0) 30px) $bar-color;
+    /* Give it a higher contrast outline */
+    @include experimental(animation, animate-stripes 1s linear infinite);
+   
     /*.x-loading-spinner {
       display: block;
-    }
+    }*/
 
     .x-list-pullrefresh-arrow {
       display: none;
-    }*/
+    }
+    .x-list-pullrefresh-message {
+    	font-size:1.6em !important;
+    	color:#888;
+    }
+    .x-list-pullrefresh-updated {
+    	display: none;
+    }
   }
+/* Webkit animation keyframes */
+@-webkit-keyframes animate-stripes {
+  from {
+    background-position: 0 0; 
+  }
+  to {
+    background-position: 44px 0; 
+  }
+}
+
+@-moz-keyframes animate-stripes {
+  from {
+    background-position: 0 0; 
+  }
+  to {
+    background-position: 36px 0;
+  }
+}

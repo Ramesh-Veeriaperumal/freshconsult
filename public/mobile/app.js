@@ -31222,7 +31222,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
             },
             {
                 xtype:'titlebar',
-                title:'Execute Scenario',
+                title:'Scenario',
                 ui:'header',
                 docked:'top',
                 items:[
@@ -31555,7 +31555,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title:'Close ticket',
-            message: 'Do you want to update ticket status to "Close"?',
+            message: 'Do you want to update ticket status to Closed?',
             modal:true,
             buttons: [
                 {
@@ -31590,7 +31590,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title:'Resolve ticket',
-            message: 'Do you want to update ticket status to "Resolve"?',
+            message: 'Do you want to update ticket status to Resolved?',
             modal:true,
             buttons: [
                 {
@@ -31634,7 +31634,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title: 'Delete Ticket',
-            message: 'Do you want to delete this ticket (#'+id+')?',
+            message: 'Do you want to delete this ticket ?',
             modal:true,
             buttons: [
                 {
@@ -31678,7 +31678,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var notForm = this.getTicketNote(),
         formObj = notForm.items.items[1],
         autoTechStore = Ext.getStore('AutoTechnician');
-        notForm.items.items[0].setTitle('Ticket : '+id);
+        //notForm.items.items[0].setTitle('Ticket : '+id);
         formObj.reset();
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
         if(FD.current_user.is_customer){
@@ -31697,7 +31697,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0],
         cc_emails,bcc_emails;
         replyForm.ticket_id = id;
-        replyForm.items.items[0].setTitle('Ticket : '+id);
+        //replyForm.items.items[0].setTitle('Ticket : '+id);
 
 
         
@@ -31770,7 +31770,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         formObj = tweetForm.items.items[1],
         fieldSetObj = formObj.items.items[0];
         tweetForm.ticket_id = id;
-        tweetForm.items.items[0].setTitle('Ticket : '+id);
+        //tweetForm.items.items[0].setTitle('Ticket : '+id);
 
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
@@ -31800,7 +31800,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         formObj = facebookForm.items.items[1],
         fieldSetObj = formObj.items.items[0];
         facebookForm.ticket_id = id;
-        facebookForm.items.items[0].setTitle('Ticket : '+id);
+        //facebookForm.items.items[0].setTitle('Ticket : '+id);
 
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
@@ -38563,7 +38563,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,
@@ -38728,7 +38728,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'New note',
             ui:'header',
             items: [
                 backButton,
@@ -38893,7 +38893,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,
@@ -38972,7 +38972,7 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,
