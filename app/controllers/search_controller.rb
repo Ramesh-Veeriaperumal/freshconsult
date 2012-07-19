@@ -34,6 +34,11 @@ class SearchController < ApplicationController
     @skip_title = true
     search_content [Topic]
   end
+
+  def widget_solutions
+    @widget_solutions = true
+    solutions
+  end
   
   protected
     
@@ -75,6 +80,7 @@ class SearchController < ApplicationController
           @items = ThinkingSphinx.search params[:search_key], 
                                         :with => s_options,#, :star => true,
                                         :match_mode => :any,
+                                        :max_matches => (4 if @widget_solutions),
                                         :classes => f_classes, :per_page => 10
         else
           search_portal_content(f_classes, s_options)
@@ -103,7 +109,8 @@ class SearchController < ApplicationController
       @items = []
       if f_classes.include?(Solution::Article) && current_portal.solution_category_id
         s_options[:category_id] = current_portal.solution_category_id
-        @items.concat(Solution::Article.search params[:search_key], :with => s_options, 
+        @items.concat(Solution::Article.search params[:search_key], :with => s_options,
+                                  :max_matches => (4 if @widget_solutions),
                                   :per_page => 10)
       end
       
