@@ -38,7 +38,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
                     xtype:'list',
                     emptyText: '<div class="empty-list-text">You don\'t have any Scenarioies!.</div>',
                     onItemDisclosure: false,
-                    itemTpl: '<span class="bullet"></span>&nbsp;{name}'
+                    itemTpl: '<div class="bullet"></div>&nbsp;<div class="scenario_text">{name}</div>'
             },
             {
                 xtype:'titlebar',
@@ -60,8 +60,8 @@ Ext.define("Freshdesk.view.Scenarioies", {
                     },
                     {
                         xtype:'button',
-                        text:'Back',
-                        ui:'headerBtn back',
+                        text:'Cancel',
+                        ui:'headerBtn',
                         align:'left',
                         handler:function(){
                             Freshdesk.cancelBtn=true;

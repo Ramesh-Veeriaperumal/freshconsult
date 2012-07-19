@@ -291,6 +291,7 @@ a {
 	}
 }
 /*ticketList related code*/
+
 .ticketsList .ticket-item.Resolved .title .info.btn{
 					background: rgba(0,0,0,0.2);
 					@include text-shadow(#666 0 0 0);
@@ -310,10 +311,10 @@ a {
 				@include text-shadow( #333 1px 1px 0);
 				.info{
 					&.btn{
-						background: rgba(255, 255, 255, 0.5);
-						color: #fff;
+						background: #fff;
+						color: #333;
 						@include box-shadow(0 0 0 #ccc);
-						@include text-shadow(-1px -1px 0 #888);
+						@include text-shadow(-1px -1px 0 #fff);
 					}
 				}
 				.subject{
@@ -323,10 +324,10 @@ a {
 			}
 			&.Resolved{
 				.title .info.btn {
-					background: rgba(255, 255, 255, 0.5) !important;
-					color: #fff;
+					background: #fff !important;
+					color: #333;
 					@include box-shadow(0 0 0 #ccc);
-					@include text-shadow(-1px -1px 0 #888);
+					@include text-shadow(-1px -1px 0 #fff);
 				}
 			}
 		}
@@ -336,16 +337,25 @@ a {
 }
 .bullet{
 	font-family:'Freshdesk';
+	float:left;
+	display:inline-block;
 	&:before{
 			color:#ABA9A9;
 			content: "\e050";
 		}
+}
+
+.scenario_text{
+	font-size:16px;
+	width:90%;
+	display: inline-block;
 }
 .x-list .x-list-item.x-item-selected .x-list-item-label {
 	background: url('../images/activebg.png');
 	text-shadow: -1px -1px 0 #393939;
 	color: white;
 	.bullet{
+		font-size:18px;
 		&:before{
 			color:#fff;
 			content: "\e053";
