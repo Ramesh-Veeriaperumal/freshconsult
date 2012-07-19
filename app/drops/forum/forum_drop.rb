@@ -20,8 +20,12 @@ class Forum::ForumDrop < BaseDrop
     source.forum_visibility
   end
   
+  def type_name
+    source.type_name.downcase
+  end
+
   def url
-    category_forum_path(source.forum_category, source)
+    support_discussions_forum_path(source)
   end
   
   def topics

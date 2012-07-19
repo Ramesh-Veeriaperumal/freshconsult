@@ -6,7 +6,8 @@ class Support::Discussions::ForumsController < Support::SupportController
 		@topics = @forum.topics.paginate(
           							:page => params[:page], 
           							:per_page => 10)
-		@forum_category = @forum.forum_category
+		@category = @forum.forum_category
+		@topics_filters = render_to_string :partial => "/support/discussions/forums/filters"
 	end
 
 private

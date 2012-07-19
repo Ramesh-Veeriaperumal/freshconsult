@@ -135,6 +135,24 @@
 .forum-group{
 	margin-bottom: 20px;
 	padding-left:60px;
+	position: relative;
+	border: 1px solid red;
+	display: block;
+	.font-icon{
+		position: absolute;
+		font-size: 36px;
+		width: 50px;
+		height: 50px;
+		left:0;
+		top:0;
+		text-align: center;
+		line-height: 50px;
+		letter-spacing: -2px;
+		color: #fff;
+		@include border-radius(50px);
+		background-color:#666666;
+		border: 1px solid #333;
+	}
 }
 
 /* Solution page styles */
@@ -155,6 +173,10 @@
 	font-weight: 300;
 }
 
+.content-list li{
+	@include clearfix;
+}
+
 /* Layout management styles */
 .row{
 	@include clearfix;
@@ -164,4 +186,41 @@
 	float:left;
 	width:48%;
 	margin-right: 2%;
+}
+
+@font-face {
+	font-family: 'IcoMoon';
+	src: url('/fonts/IcoMoon.eot');
+	src: url('/fonts/IcoMoon.eot?#iefix') format('embedded-opentype'),
+		url('/fonts/IcoMoon.svg#IcoMoon') format('svg'),
+		url('/fonts/IcoMoon.woff') format('woff'),
+		url('/fonts/IcoMoon.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'IcoMoon';
+	content: attr(data-icon);
+	speak: none;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+[class^="icon-"]:before, [class*=" icon-"]:before {
+	font-family: 'IcoMoon';
+	font-style: normal;
+	speak: none;
+}
+.icon-questions:before {
+	content: "\21";
+}
+.icon-announcement:before {
+	content: "\22";
+}
+.icon-ideas:before {
+	content: "\23";
+}
+.icon-problems:before {
+	content: "\24";
 }

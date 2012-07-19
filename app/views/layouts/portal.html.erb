@@ -13,18 +13,12 @@
 	<meta name="keywords" content="<%= page_keywords %>">
 
 	<meta name="viewport" content="width=device-width">  
-
-	<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />
 	<%= include_stylesheets :portal %>
+	<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />
 	<script src="/javascripts/modernizr-2.5.3-respond-1.1.0.min.js"></script>
 </head>
-<body> 	
-	<% @base_liquid = Liquid::Template %>
-	<%= render :partial => "portal/layout", 
-			   :locals => { :header_content => render(:partial => "portal/header", :locals => { :portal => current_portal } ),
-							:footer_content => render(:partial => "portal/footer"),
-							:body_content => @base_liquid.parse(yield).render( 'portal' => current_portal ),
-							:portal => current_portal } %>    
+<body>
+	<%= render :partial => "portal/layout" %>    
 
 	<%= include_javascripts :portal %>
 	<script type="text/javascript">

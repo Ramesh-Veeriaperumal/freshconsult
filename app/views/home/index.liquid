@@ -2,7 +2,7 @@
 <p class="lead">
 	Start typing a question and see answers in real time
 </p>
-<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') } %>
+{{ search_portal }}
 <hr />
 <h3>Solutions</h3>
 {% for category in portal.solution_categories %}
@@ -10,13 +10,14 @@
 	<p>{{category.description | truncate}}</p>
 	<div class="row-fluid">
 		{% for folder in category.folders %}
-		<div class="span4">
-			<h6>{{folder.name}}</h6>
-		</div>
+			<div class="span6">
+				<h4>{{folder.name}}</h4>
+			</div>
 		{% endfor %}
 	</div>
 {% endfor %}		
 <hr />
+{% comment %}
 <% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
 	<% unless @topics.empty? %> 
 		<%= content_tag( :h4, t('recent_forum_posts') ) %>  
@@ -26,3 +27,4 @@
 		<% end %> 				
 	<% end %>
 <% end %>
+{% endcomment %}

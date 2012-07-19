@@ -1,0 +1,71 @@
+{% comment %}
+<% content_for :sidebar do %>
+	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
+<% end %>
+{% endcomment %}
+<div class="row-fluid">	
+	<div class="span3">
+		Category list
+	</div>
+	<div class="span9">
+	 	{% comment %}
+	 	<div class="crumbs">
+		 	<%= link_to "Solutions", solution_categories_path %> &rarr; 
+			<%= link_to @article.folder.category.name, solution_category_path(@article.folder.category) %> &rarr;
+			<%= link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder)%>
+	 	</div>
+	 	{% endcomment %}	
+		<h2 class="page-title">{{ article.title }}</h2>
+		<p class="help-text">
+			Modified on: {{ article.modified_on }}
+		</p>
+		<div>
+			{% for tag in article.tags %}
+				<span class="label label-info">{{tag.name}}</span>
+			{% endfor %}
+		</div>
+		<hr />
+		{{ article.body }}
+
+		<div>
+			<img src='/images/thumb_up.png' style="position:relative;top:2px;" /> {{ article.thumbs_up }} <b>likes</b>, 
+			<img src='/images/thumb_down.png'  style="position:relative;top:6px;" /> {{ article.thumbs_down }} <b>dislikes</b>
+			For this article
+		</div>	
+		{% comment %}
+		<li>  
+		  <div class="preview_img">
+		  	<% if attachment.image? %>
+		  		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
+			<% else %>
+				<% 
+					extname = attachment.content_file_name.split('.')[-1] 
+					extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
+				%>
+					
+				<%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
+			<% end %>
+		  </div>	
+		  <div class="name">
+		    <%= link_to truncate(attachment.content_file_name, 23), attachment, :popup => true %>
+		  </div>
+
+		  <div class="size">
+		    (<%= number_to_human_size attachment.content_file_size %>)
+			  <% if local_assigns[:show_delete] %>
+			    <span class="delete">
+			      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
+			    </span>
+			  <% end %>
+		  </div>  
+		</li>
+		 <ul class="attachment_list">
+		    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
+	     </ul>
+		 <hr />
+		 <div id="article_voting">
+			<%= render :partial => "/solution/articles/voting", :object => @article %>
+		 </div>
+		 {% endcomment %}
+	</div> 
+</div>

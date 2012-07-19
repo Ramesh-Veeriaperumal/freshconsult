@@ -1,3 +1,5 @@
+
+{% comment %}
 <h3 class="title"><%=t('solution.title')%></h3> 
 <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>
 <div id="categories_list">			
@@ -27,3 +29,4 @@
 		</div>
 	<%end%>
 </div>
+{% endcomment %}

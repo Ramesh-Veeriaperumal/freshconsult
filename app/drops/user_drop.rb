@@ -6,6 +6,10 @@ class UserDrop < BaseDrop
 		super source
 	end
 
+	def profile_url
+		source.avatar.nil? ? "/images/fillers/profile_blank_thumb.gif" : source.avatar.content.url(:thumb)
+	end
+
 	def id
 		@source.id
 	end

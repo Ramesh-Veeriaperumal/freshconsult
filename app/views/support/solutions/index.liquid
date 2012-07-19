@@ -1,7 +1,10 @@
-<h1 class="page-title"><%=t('solution.title')%></h1> 
+<h1 class="page-title">Solutions</h1> 
 <h4 class="lead">Browse by Category</h4>		
 <div>
+	{% comment %}
 	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>	
+	{% endcomment %}
+	{{ search_portal }}
 </div>
 
 <hr />
@@ -27,7 +30,9 @@
 				</p>				
 				<ul class="article-list-mini">
 					{% for solution in folder.solutions %}
-					<li><a href="#">{{solution.title}}</a></li>
+					<li>
+						<a href="{{solution.url}}">{{solution.title}}</a>
+					</li>
 					{% endfor %}
 				</ul>
 			</div>

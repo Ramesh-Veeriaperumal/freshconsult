@@ -1,27 +1,36 @@
-<%= content_tag :h2, @forum.name %>
-<%= content_tag :p, @forum.description, :class => "lead" %>
+<h2 class="page-title"> {{ forum.name }} </h2>
+<p class="help-block"> {{ forum.description }} </p>
 
-<%# render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => @forum_category.name), :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 <div class="subnav">
-<ul class="nav nav-pills">
-  <li class="<%= (params[:stamp_type].blank? && params[:order].blank?) ? 'active' : '' %>">
-    <%= link_to(t("forums_order.popular"), support_discussions_forum_path( @forum_category, @forum) ) if @forum.ideas? %>    
-  </li>  
-  <li class="<%= (!params[:order].blank? && params[:order] == 'created_at desc' )? 'active' : '' %>">
-  	<%= link_to(t("forums_order.overview"), support_discussions_forum_path( @forum_category, @forum) ) unless @forum.ideas? %>
-  </li>
-  <li class="<%= (!params[:order].blank? && params[:order] == 'replied_at desc' )? 'active' : '' %>">
-  	<%= link_to t("forums_order.recent"), support_discussions_forum_path( @forum_category, @forum, :order => "replied_at") %>
-  </li>	
-  	<% if @forum.ideas? %>
-		<% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %> 
-		<li class="<%=((params[:stamp_type] == v.to_s)? "active":"")%>">
-			<%= link_to k, support_discussions_forum_path( @forum_category, @forum, :stamp_type  => v ) %>
-		</li>	
-		<% end %>
-	<% end %>
-</ul>
+	<ul class="nav nav-pills">
+	  {{ topics_filters }}
+	</ul>
 </div>
+
+<ul class="content-list">	
+	{% for topic in forum.topics %}
+	<li>
+		<div class="preview_pic">
+			{% if topic.has_comments %}
+				<img src="{{ topic.last_post.user.profile_url }}" />
+			{% else %}
+				<img src="{{ topic.user.profile_url }}" />
+			{% endif %}
+		</div>
+		<span class="pull-right badge badge-success">
+			<span class="stamp stamp_type_{{topic.stamp_type}}"> 
+				{{ topic.stamp_name }}
+			</span>
+		</span>
+		<h4>
+			<a href="{{topic.url}}">{{ topic.title }}</a>
+		</h4>
+	</li>
+	{% endfor %}	
+</ul>
+
+{% comment %}
+
 <% unless @topics.empty? %> 
 	<ul class="content-list">
 		<% @topics.each do |topic| %>
@@ -83,5 +92,7 @@
 <% end %>	
 
 <%= will_paginate @topics %>	
+
+{% endcomment %}
 	 
 	
