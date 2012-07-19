@@ -44,5 +44,6 @@ end
    self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:all_tickets] if self.ticket_permission.blank?
  end
 
+named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
 
 end
