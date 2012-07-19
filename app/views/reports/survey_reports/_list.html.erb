@@ -21,8 +21,11 @@
 <% javascript_tag do %>
 	jQuery("#date_range_title").html("<%=params['date_range']%>")
 
-	<%if @reports_list.blank?%>
+	<%if @reports_list.blank? || !@reports_list.blank? && @reports_list.size <= 1 %>			
 			jQuery("#back_to_con").hide();
+			jQuery("#sort_by_option").hide();
+	<%else%>
+			jQuery("#sort_by_option").show();
 	<%end%>	
 
 	

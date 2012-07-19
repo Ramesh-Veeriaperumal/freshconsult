@@ -31,6 +31,7 @@ GEM
       open4
     Platform (0.4.0)
     RedCloth (4.2.3)
+    SystemTimer (1.2.3)
     actionmailer (2.3.8)
       actionpack (= 2.3.8)
     actionpack (2.3.8)
@@ -119,7 +120,7 @@ GEM
     mysql (2.8.1)
     mysql (2.8.1-x86-mingw32)
     net-dns (0.6.1)
-    newrelic_rpm (2.14.1)
+    newrelic_rpm (3.0.0)
     nokogiri (1.4.4)
     nokogiri (1.4.4-x86-mingw32)
     oauth (0.4.5)
@@ -255,6 +256,7 @@ PLATFORMS
 
 DEPENDENCIES
   RedCloth (= 4.2.3)
+  SystemTimer (~> 1.2.3)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   aws-s3 (= 0.6.2)
@@ -275,7 +277,7 @@ DEPENDENCIES
   mongrel
   mysql
   net-dns (= 0.6.1)
-  newrelic_rpm
+  newrelic_rpm (= 3.0.0)
   omniauth (= 1.0)
   omniauth-facebook
   omniauth-google

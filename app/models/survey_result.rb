@@ -49,7 +49,7 @@ class SurveyResult < ActiveRecord::Base
 
   private
   
-  def self.generate_reports_list(survey_reports,category)
+  def self.generate_reports_list(survey_reports,category,sort_by)
     
   agents_report = Hash.new
 
@@ -79,7 +79,17 @@ class SurveyResult < ActiveRecord::Base
 
   end
 
-  agents_report
+  if sort_by == "happy"
+    agents_report.sort_by{|key,value| value[:happy]}.reverse 
+  elsif  sort_by == "unhappy"
+    agents_report.sort_by{|key,value| value[:unhappy]}.reverse
+  elsif  sort_by == "neutral"
+    agents_report.sort_by{|key,value| value[:neutral]}.reverse
+   elsif  sort_by == "total"
+     agents_report.sort_by{|key,value| value[:total]}.reverse
+    else
+      agents_report.sort_by{|key,value| value[:name]}
+    end  
 
   end
   

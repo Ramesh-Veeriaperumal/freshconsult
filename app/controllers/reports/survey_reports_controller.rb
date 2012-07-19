@@ -7,7 +7,7 @@ class Reports::SurveyReportsController < ApplicationController
 
 	include Reports::SurveyReport
 
-	LIST_LIMIT = 25
+	LIST_LIMIT = 90
 
 	def index
 
@@ -129,10 +129,10 @@ class Reports::SurveyReportsController < ApplicationController
 							 :joins => :agent, 
 							 :group => "survey_results.agent_id,survey_results.rating",
 							 :conditions => conditional_params,
-							 :order => "survey_results.created_at DESC"	
+							 :order => "name"	
 							 ).paginate(:page => params[:page], :per_page => LIST_LIMIT)
       
-      @reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::AGENT)
+      @reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::AGENT,sort_by)      
 
     end
 
@@ -143,10 +143,10 @@ class Reports::SurveyReportsController < ApplicationController
 								:joins => :group, 
 								:group => "survey_results.group_id,survey_results.rating",
 								:conditions => conditional_params,
-								:order => "survey_results.created_at DESC"
+								:order => "name"
 								).paginate(:page => params[:page], :per_page => LIST_LIMIT)
       
-      @reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::GROUP)
+      @reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::GROUP,sort_by)
 
     end
 
@@ -155,11 +155,10 @@ class Reports::SurveyReportsController < ApplicationController
     								:joins => [:account],    								
 								:select => "account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total",								
 								:group => "survey_results.account_id,survey_results.rating",
-								:conditions => conditional_params,
-								:order => "survey_results.created_at DESC"
+								:conditions => conditional_params								
 								).paginate(:page => params[:page], :per_page => LIST_LIMIT)
 
-    	@reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::OVERALL)
+    	@reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::OVERALL,sort_by)
     end
 
     def agent_remarks
@@ -211,4 +210,8 @@ class Reports::SurveyReportsController < ApplicationController
 	return custom_params
     end
 
+    def sort_by
+    	return :name if params[:sort].blank?
+    	params[:sort]
+    end
 end

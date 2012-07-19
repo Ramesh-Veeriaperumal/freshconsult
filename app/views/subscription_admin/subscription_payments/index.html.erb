@@ -15,7 +15,7 @@
 	<h1>Payments</h1>                         
 </div>	
 <div class="row">
-	<div class="span8">
+	<div class="span6">
 		<table id="accounts" class="table">
 		  <tr>
 		    <th>Name</th>
@@ -41,7 +41,7 @@
 	</div>
   
 	<div class="span4">
-		 <table class="table table-bordered">
+		 <table id="total_revenue" class="table table-bordered">
 			<tr>
 		  	<th>Total Revenue</th>
 			<th>$<%=@total_revenue%></th>
@@ -51,5 +51,15 @@
 			<th>$<%=@revenue%></th>
 		  </tr>
  		 </table>
+ 		 <h3>Daypass summary</h3>
+         <table id="day_pass_revenue" class="table table-bordered">
+			<%@day_pass_payments.each do |date,amount|%>
+			  <tr>
+		       <td><%=date%></td>
+		       <td><%=amount%></td>
+		     </tr>
+			<%end%>
+ 		 </table>
+
 	</div>
 </div>

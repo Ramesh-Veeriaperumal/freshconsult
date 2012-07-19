@@ -39,8 +39,12 @@ class Subscription < ActiveRecord::Base
    count(:conditions => {:state => 'active'})
  end
  
-  def self.free_customers
+  def self.zero_amount_customers
    count(:conditions => {:state => 'active',:amount => 0.00})
+  end
+
+  def self.free_customers
+   count(:conditions => {:state => 'free'})
   end
   
   def self.customers_agent_count
@@ -239,7 +243,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def self.find_due(renew_at = Time.now)
-    find(:all, :include => :account, :conditions => { :state => 'active', :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
+    find(:all, :include => :account, :conditions => { :state => ['active','free'], :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
   end
   
   def paypal?

@@ -30,8 +30,6 @@ gem "arel", "2.0.7"
 gem "searchlogic", "2.4.27"
 gem "map-fields", "1.0.0", :require => "map_fields"
 
-#gem "win32-open3",:require => "win32/open3"
-
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 
 gem "http_accept_language", "1.0.1"
@@ -53,12 +51,11 @@ gem "zendesk-features", :require => "features"
 gem "sass", "3.1.1"
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
-gem "newrelic_rpm"
+gem "newrelic_rpm","3.0.0"
 
 #gem "win32-open3", "0.3.2"
 
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
-gem "newrelic_rpm"
 gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
 gem "spreadsheet", "0.6.8"
@@ -67,6 +64,7 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
+gem "SystemTimer", "~>1.2.3"
 gem "redis","2.2.2"
 gem "resque"
 gem 'resque-scheduler', :require => 'resque_scheduler'
