@@ -291,6 +291,10 @@ a {
 	}
 }
 /*ticketList related code*/
+.ticketsList .ticket-item.Resolved .title .info.btn{
+					background: rgba(0,0,0,0.2);
+					@include text-shadow(#666 0 0 0);
+		}
 .x-list-normal .x-list-item.x-item-pressed .x-list-item-label{
 			color:#fff;
 			background:url('../images/activebg.png');
@@ -305,12 +309,24 @@ a {
 				color:#fff;
 				@include text-shadow( #333 1px 1px 0);
 				.info{
-					background:#757575;
-					@include box-shadow(0);
+					&.btn{
+						background: rgba(255, 255, 255, 0.5);
+						color: #fff;
+						@include box-shadow(0 0 0 #ccc);
+						@include text-shadow(-1px -1px 0 #888);
+					}
 				}
 				.subject{
 					color:#fff;
 					@include text-shadow( #333 1px 1px 0);
+				}
+			}
+			&.Resolved{
+				.title .info.btn {
+					background: rgba(255, 255, 255, 0.5) !important;
+					color: #fff;
+					@include box-shadow(0 0 0 #ccc);
+					@include text-shadow(-1px -1px 0 #888);
 				}
 			}
 		}
@@ -463,10 +479,7 @@ a {
 		}
 	}
 }
-.ticketsList .ticket-item.Resolved .title .info.btn{
-					background: rgba(0,0,0,0.2) !important;
-					@include text-shadow(#666 0 0 0);
-		}
+
 .dashboardButton{
     >div{
     	>div{
