@@ -43,6 +43,16 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'Add Note'
                     },
                     {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField'
+                    },
+                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',

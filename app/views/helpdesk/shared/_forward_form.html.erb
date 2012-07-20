@@ -32,6 +32,12 @@
   });
   <% end %>
   		<%= content_tag( :h4, t("fwd_to"), :class => "title", :id => "fwd_title" ) %>
+      <li class="inline-field field" >
+            <%= f.label(:reply_email, "From:", :class => "caption" ) %>
+            <div class="fields">
+              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email) %>
+          </div>
+        </li>
         <li class="inline-field field" id="fwd_to_mail">
             <%= f.label(:forward_email, "To:", :class => "caption" ) %>
             <div class="fields">

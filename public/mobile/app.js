@@ -30641,13 +30641,17 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '<tpl else>',
             '<div class="customer-info">',
                 '<div class="profile_pic">',
-                    '<tpl if="avatar_url"><img src="{original_avatar}"></tpl>',
+                    '<tpl if="avatar_url"><img src="{medium_avatar}"></tpl>',
                     '<tpl if="!avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                 '</div>',
                 '<div class="customer-info-list">',
                     '<div class="title">{name}</div>',
-                    '<div><tpl if="job_title">{job_title} at <tpl else><div>Working at </tpl>',
-                    '<tpl if="company_name">{company_name}</tpl></div>',
+                    '<div><tpl if="job_title"> {job_title}</tpl>',
+                        '<tpl if="company_name"> <br/> at {company_name}</tpl>',
+                    '</div>',
+                '</div>',
+                '<div style="clear:both; display:block"></div>',
+                '<div class="customer-contact-list">',
                     '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
                     '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
                     '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
@@ -30683,10 +30687,10 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '</tpl>',
             '</tpl>'].join(''),
             {
-                        time_in_words : function(item){
-                                return new Date(item).toRelativeTime();
-                        }
-                })
+                time_in_words : function(item){
+                    return FD.Util.humaneDate(item);
+                }
+            })
     }
 });
 Ext.define("Freshdesk.view.TicketDetails", {
@@ -30732,7 +30736,8 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a><br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
+                        '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} <span class="{source_name}">&nbsp;</span></div></div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -30748,15 +30753,15 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<div id="loadmore_{id}"><tpl if="description_html.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll({id})"> &middot; &middot; &middot; </a></tpl></div>',
                         '</div>',
                       '</div>',
-                      '<tpl if="conversation_count &gt; 1">',
+                      '<tpl if="conversation_count &gt; 3">',
                       '<div class="oldconvMsg">',
                       '<div></div>',
-                      '<div><span class="msg">{[values.conversation_count-1]} old conversation(s)</span></span></div>',
+                      '<div><span class="msg">{[values.conversation_count-3]} activities </span></span></div>',
                       '<div></div>',
                       '</div>',
                       '</tpl>',
                       '<tpl for="notes">',
-                        '<div class="{[xindex  == xcount ? \"conversation\" : \"conversation hide\"]}">',
+                        '<div class="{[xindex  <= xcount-3 ? \"conversation hide\" : \"conversation\"]}">',
                                 '<div class="thumb">',
                                         '<tpl if="user.avatar_url"><img src="{user.avatar_url}"/></tpl>',
                                         '<tpl if="!user.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
@@ -30770,7 +30775,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                     '</tpl>',
                                 '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
-                                '<br/> on {created_at:date("M")}&nbsp;{created_at:date("d")} @ {created_at:date("h:m A")} via {source_name}</div>',
+                                '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} <span class="{source_name}">&nbsp;</span></div></div>',
                                 '<tpl if="user.is_customer"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
@@ -30781,7 +30786,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                                         '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
-                                        '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
+                                        '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200"><a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                                 '<tpl if="user.is_agent"><div class="msg">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
@@ -30793,7 +30798,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                                         '<a target="_blank" href="/helpdesk/attachments/{id}"><span>&nbsp;</span><span class="name">{content_file_name:this.fileName}</span>{content_file_name:this.fileType}<span class="size">{content_file_size:this.bytesToSize}</span><span class="disclose">&nbsp;</span></a>',
                                                 '</tpl>',
                                         '</div>',
-                                        '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200">...<a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
+                                        '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200"><a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                         '</div></tpl>',
                         '<tpl if="!deleted && !spam && !FD.current_user.is_customer && notes.length &gt; 4"><div class="HDR bottom"><ul class="actions">',
@@ -30836,6 +30841,12 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                return filename.substr(filename.lastIndexOf('.'));
                             }
                             return '';
+                        },
+                        formatedDate : function(item){
+                            return FD.Util.formatedDate(item);
+                        },
+                        formatedSource : function(item){
+                            return (item || '') === 'note' ? 'added a Note' : 'via '+item ;
                         }
                 })
         };
@@ -31661,12 +31672,18 @@ Ext.define('Freshdesk.controller.Tickets', {
     initNoteForm : function(id){
         FD.Util.check_user();
         var notForm = this.getTicketNote(),
-        formObj = notForm.items.items[1];
+        formObj = notForm.items.items[1],
+        autoTechStore = Ext.getStore('AutoTechnician');
         notForm.items.items[0].setTitle('Ticket : '+id);
         formObj.reset();
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
-        if(FD.current_user.is_customer)
-            formObj.setUrl('/support/tickets/'+id+'/notes');    
+        if(FD.current_user.is_customer){
+            formObj.setUrl('/support/tickets/'+id+'/notes');  
+        }
+        if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
+            autoTechStore.load();
+        }
+        formObj.items.items[0].items.items[4].setValue('');
     },
     initReplyForm : function(id){
         var replyForm = this.getTicketReply(),reply_emails = [],
@@ -42352,6 +42369,16 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'Add Note'
                     },
                     {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField'
+                    },
+                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
@@ -46934,7 +46961,7 @@ Ext.define("Freshdesk.view.TicketsList", {
         	'</div></tpl>'].join(''),
                 {
                         time_in_words : function(item){
-                                return new Date(item).toRelativeTime();
+                            return FD.Util.humaneDate(item);
                         }
                 })
     }
@@ -51026,6 +51053,16 @@ Ext.define('Freshdesk.model.Contact', {
         ]
     }
 });
+Ext.define('Freshdesk.model.AutoSuggestion', {
+    extend: 'Ext.data.Model',
+    config: {
+        idProperty: 'id',
+        fields: [
+            { name: 'id', type: 'int' },
+            { name: 'value', type: 'string'}
+        ]
+    }
+});
 /**
  * @author Ed Spencer
  *
@@ -53310,6 +53347,26 @@ Ext.define('Freshdesk.store.Contacts', {
         pageSize:50
     }
 });
+Ext.define('Freshdesk.store.AutoTechnician', {
+    extend: 'Ext.data.Store',
+    getTotalCount: function(){
+        return this.totalCount;
+    },
+    config: {
+        model: 'Freshdesk.model.AutoSuggestion',
+        proxy: {
+            type: 'ajax',
+            url : '/helpdesk/authorizations/agent_autocomplete',
+            headers: {
+                'Accept': 'application/json'
+            },
+            reader: {
+                type: 'json',
+                rootProperty:'results'
+            }
+        }
+    }
+});
 /**
  * @private
  *
@@ -54830,6 +54887,201 @@ Ext.define("Freshdesk.view.TicketForm", {
         ]
     }
 });
+Ext.define('Freshdesk.view.MultiSelect', {
+    extend: 'Ext.field.Select',
+    alias : 'widget.multiselectfield',
+    xtype : 'multiselectfield',
+    usePicker : false,  //force list panel, not picker
+
+    getTabletPicker: function() {  //override with modified function
+        var config = this.getDefaultTabletPickerConfig();
+        if (!this.listPanel) {
+            this.listPanel = Ext.create('Ext.Container', Ext.apply({
+                cls: Ext.baseCSSPrefix + 'select-overlay',
+                layout: 'fit',
+                fullScreen:true,
+                zIndex:2,
+                width:'100%',
+                height:'100%',
+                showAnimation: {
+                        type:'slide',
+                        direction:'up',
+                        easing:'ease-out'
+                },
+                hideAnimation: {
+                        type:'slide',
+                        direction:'down',
+                        easing:'ease-out'
+                },
+                items: [
+                    {
+                        xtype: 'list',
+                        mode: 'MULTI', //set list to multi-select mode
+                        store: this.getStore(),
+                        itemTpl: '<span class="bullet"></span>&nbsp;{' + this.getDisplayField() + '}',
+                        listeners: {
+                            select : this.onListSelect,
+                            itemtap  : this.onListTap,
+                            hide : this.onListHide, //new listener
+                            scope  : this
+                        }
+                    },
+                    {
+                        xtype:'titlebar',
+                        title:'Notify Agents',
+                        ui:'header',
+                        docked:'top',
+                        items:[
+                            {
+                                xtype:'button',
+                                ui:'plain headerBtn',
+                                iconMask:true,
+                                align:'left',
+                                text:'Cancel',
+                                handler:function(){
+                                    this.listPanel.hide();
+                                },
+                                scope:this
+                            },
+                            {
+                                xtype:'button',
+                                ui:'plain headerBtn',
+                                iconMask:true,
+                                align:'right',
+                                text:'Apply',
+                                handler:this.onButtonTap,
+                                scope:this
+                            }
+                        ]
+                    }
+                    ]
+            }, config));
+            Ext.Viewport.add([this.listPanel])
+        }
+        return this.listPanel;
+    },
+    
+    applyValue: function(value) {  //override with modified function
+        var record = value,
+            index;
+        this.getOptions();
+        if (!(value instanceof Ext.data.Model)) {
+            index = this.getStore().find(this.getValueField(), value, null, null, null, true);
+
+            if (index == -1) {
+                index = this.getStore().find(this.getDisplayField(), value, null, null, null, true);
+            }
+            //We do not want to get record from store //record = this.getStore().getAt(index);
+             this.element.dom.lastChild.firstChild.firstChild.value = value; //display csv string in field when value applied
+        }
+        return record;
+    },
+
+    updateValue: function(newValue, oldValue) {  //override with modified function
+        this.previousRecord = oldValue;
+        this.record = newValue;
+        // String does not have methods //this.callParent([newValue ? newValue.get(this.getDisplayField()) : '']);
+        this.fireEvent('change', this, newValue, oldValue);
+    },
+
+    getValue: function() {  //override with modified function
+        var record = this.record;
+        return (record) // Use literal string value of field // ? record.get(this.getValueField()) : null;
+    },
+
+    showPicker: function() {  //override with modified function
+        //check if the store is empty, if it is, return
+        if (this.getStore().getCount() === 0) {
+            return;
+        }
+        if (this.getReadOnly()) {
+            return;
+        }
+        this.isFocused = true;
+        //hide the keyboard
+        //the causes https://sencha.jira.com/browse/TOUCH-1679
+        // Ext.Viewport.hideKeyboard();
+        if (this.getUsePicker()) {
+            var picker = this.getPhonePicker(),
+                name   = this.getName(),
+                value  = {};
+
+            value[name] = this.record.get(this.getValueField());
+            picker.setValue(value);
+            if (!picker.getParent()) {
+                Ext.Viewport.add(picker);
+            }
+            picker.show();
+        } else { //reworked code to split csv string into array and select correct list items
+            var listPanel = this.getTabletPicker(),
+                list = listPanel.down('list'),
+                store = list.getStore(),
+                itemStringArray = new Array(),
+                values = this.getSelectedValue().split(','),
+                v = 0,
+                vNum = values.length;
+            if (!listPanel.getParent()) {
+                Ext.Viewport.add(listPanel);
+            }
+            for (; v < vNum; v++) {
+                itemStringArray.push(values[v]);
+            }
+            v = 0;
+            for (; v < vNum; v++) {
+                var record = store.findRecord(this.getDisplayField(), itemStringArray[v], 0, true, false, false );
+                list.select(record, true, false);
+            }
+            listPanel.show();
+            if(!itemStringArray[0]) {
+                listPanel.down('list').deselectAll();
+            }
+            listPanel.down('list').show();
+        }
+    },
+    getSelectedValue : function(){
+        if(typeof this.getValue() === 'string'){
+            return this.getValue();
+        }
+        return '';
+    },
+
+    onListSelect: function(item, record) {  //override with empty function
+    },
+
+    onListTap: function() {  //override with empty function
+    },
+
+    onButtonTap: function() {
+        this.setValue('');
+        this.listPanel.down('list').hide(); //force list hide event
+        this.listPanel.hide();
+    },
+
+    onListHide: function(cmp, opts) {
+
+        var me = this,
+            recordArray = this.listPanel.down('list').selected.items,
+            itemStringArray = new Array(),
+            v = 0,
+            vNum = recordArray.length;
+        for (; v < vNum; v++) {
+            var value = this.getDisplayField(),
+                valArr = value.split('.'),
+                j=0,
+                val = recordArray[v].data;
+            for(; j< valArr.length; j++) {
+                val = val[valArr[j]] ;
+            }
+            itemStringArray.push(val);
+        }
+        if (itemStringArray.length > 0) {
+            me.setValue(itemStringArray.join(','));
+            this.listPanel.down('list').deselectAll();
+        } else {
+            me.setValue('');
+        }
+    }
+});
 /**
  * @author Ed Spencer
  * @aside guide stores
@@ -54992,9 +55244,9 @@ Ext.application({
                     'TicketDetails', 'TicketReply', 'TicketForm', 'ContactDetails', 'ContactsFormContainer',
                     'ContactForm', 'TicketProperties', 'EmailForm','CannedResponses','Solutions','NoteForm',
                     'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox','TicketTweetForm','TweetForm',
-                    'FacebookForm','TicketFacebookForm'],
-    stores      :['Init','Filters','Tickets','Contacts'],
-    models      :['Portal','Filter','Ticket','Contact'],
+                    'FacebookForm','TicketFacebookForm','MultiSelect'],
+    stores      :['Init','Filters','Tickets','Contacts','AutoTechnician'],
+    models      :['Portal','Filter','Ticket','Contact','AutoSuggestion'],
 
     icon: {
         57: 'resources/icons/Icon.png',
@@ -55046,7 +55298,8 @@ Ext.application({
 
         Ext.Viewport.add([filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
-                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm]);
+                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm
+                        ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_account = data[0].raw.account;

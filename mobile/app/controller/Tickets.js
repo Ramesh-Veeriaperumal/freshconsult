@@ -251,12 +251,18 @@ Ext.define('Freshdesk.controller.Tickets', {
     initNoteForm : function(id){
         FD.Util.check_user();
         var notForm = this.getTicketNote(),
-        formObj = notForm.items.items[1];
+        formObj = notForm.items.items[1],
+        autoTechStore = Ext.getStore('AutoTechnician');
         notForm.items.items[0].setTitle('Ticket : '+id);
         formObj.reset();
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
-        if(FD.current_user.is_customer)
-            formObj.setUrl('/support/tickets/'+id+'/notes');    
+        if(FD.current_user.is_customer){
+            formObj.setUrl('/support/tickets/'+id+'/notes');  
+        }
+        if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
+            autoTechStore.load();
+        }
+        formObj.items.items[0].items.items[4].setValue('');
     },
     initReplyForm : function(id){
         var replyForm = this.getTicketReply(),reply_emails = [],

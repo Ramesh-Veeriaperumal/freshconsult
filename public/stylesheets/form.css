@@ -630,3 +630,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 
 .ui-form .portal-settings div.fields { padding-top: 4px; }
 .ui-form .portal-settings div.fields label { font-size: 14px; }
+
+#cc_emails_sec .multi_value_field { width: 91%; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; box-shadow: 1px 1px 2px #DFDFDF inset; }
+
+.radio-set-right { padding: 0px 0px 0px 10px; }

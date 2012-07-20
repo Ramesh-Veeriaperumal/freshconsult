@@ -24,7 +24,7 @@ Ext.define("Freshdesk.view.TicketsList", {
         	'</div></tpl>'].join(''),
                 {
                         time_in_words : function(item){
-                                return new Date(item).toRelativeTime();
+                            return FD.Util.humaneDate(item);
                         }
                 })
     }

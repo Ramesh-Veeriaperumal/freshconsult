@@ -12,13 +12,17 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '<tpl else>',
             '<div class="customer-info">',
                 '<div class="profile_pic">',
-                    '<tpl if="avatar_url"><img src="{original_avatar}"></tpl>',
+                    '<tpl if="avatar_url"><img src="{medium_avatar}"></tpl>',
                     '<tpl if="!avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                 '</div>',
                 '<div class="customer-info-list">',
                     '<div class="title">{name}</div>',
-                    '<div><tpl if="job_title">{job_title} at <tpl else><div>Working at </tpl>',
-                    '<tpl if="company_name">{company_name}</tpl></div>',
+                    '<div><tpl if="job_title"> {job_title}</tpl>',
+                        '<tpl if="company_name"> <br/> at {company_name}</tpl>',
+                    '</div>',
+                '</div>',
+                '<div style="clear:both; display:block"></div>',
+                '<div class="customer-contact-list">',
                     '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
                     '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
                     '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
@@ -54,9 +58,9 @@ Ext.define("Freshdesk.view.ContactInfo", {
             '</tpl>',
             '</tpl>'].join(''),
             {
-                        time_in_words : function(item){
-                                return new Date(item).toRelativeTime();
-                        }
-                })
+                time_in_words : function(item){
+                    return FD.Util.humaneDate(item);
+                }
+            })
     }
 });
