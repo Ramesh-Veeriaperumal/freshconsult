@@ -12,7 +12,8 @@ namespace :supervisor do
           next if conditions.empty?
         
           tickets = account.tickets.updated_in(1.month.ago).visible.find( :all, 
-            :joins => %(inner join helpdesk_ticket_states on helpdesk_tickets.id = 
+            :joins => %(inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id
+              inner join helpdesk_ticket_states on helpdesk_tickets.id = 
               helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = 
               helpdesk_ticket_states.account_id inner join users on 
               helpdesk_tickets.requester_id = users.id  and users.account_id = 
@@ -21,7 +22,8 @@ namespace :supervisor do
               flexifields.flexifield_set_id  and helpdesk_tickets.account_id = 
               flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'), 
             :conditions => conditions )
-          
+          puts "conditions :#{conditions.inspect}"
+          puts "ticket : #{tickets.inspect}"
           tickets.each do |ticket| 
             rule.trigger_actions ticket
             ticket.save!

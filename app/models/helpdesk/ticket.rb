@@ -13,6 +13,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product"]
+
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
@@ -25,15 +27,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values
-  before_create :assign_email_config_and_product, :set_dueby, :save_ticket_states
+
+  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity
+
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
        :stop_timesheet_timers
   
+  has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+  
+  delegate :product_id, :product, :to_emails, :to => :schema_less_ticket, :allow_nil => true
+
   belongs_to :email_config
-  belongs_to :product
   belongs_to :group
  
   belongs_to :responder,
@@ -721,12 +728,32 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   #Liquid ends here
+  
+  def respond_to?(attribute)
+    SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=")) || super(attribute)
+  end
+
+  def update_schema_less_attributes(attribute, args)
+
+    if (attribute.to_s.include? '=') && SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("="))      
+      logger.debug "method_missing :: args is #{args} and attribute :: #{attribute}"
+      build_schema_less_ticket unless schema_less_ticket
+      args = args.first if args && args.is_a?(Array) 
+      schema_less_ticket.send(attribute,args)
+      return true  
+    end
+
+    return false
+  end
 
   def method_missing(method, *args, &block)
     begin
       super
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+
+      return if update_schema_less_attributes(method, args)
+
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!
       
@@ -854,13 +881,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def to_emails
-    emails_hash = cc_email_hash
-    to_emails_array = (emails_hash[:to_emails] || []).clone unless emails_hash.nil?
-    to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
-    to_emails_array
-  end
-
   def reply_to_all_emails
     emails_hash = cc_email_hash
     return [] if emails_hash.nil?
@@ -931,7 +951,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
     to_json(options,false) 
   end
-  
+ 
   private
   
     def create_source_activity
@@ -1056,24 +1076,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
   end
-  
-  def assign_email_config_and_product
-    if email_config
-      self.product = email_config.product
-    elsif product
-      self.email_config = product.primary_email_config
-    end
-  end
 
-  def assign_email_config
-    if self.changed.include?("product_id")
-      if product
-        self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      
-      else
-        self.email_config = nil
+    def assign_schema_less_attributes
+      build_schema_less_ticket unless schema_less_ticket
+      schema_less_ticket.account_id ||= account_id
+    end
+
+    def assign_email_config_and_product
+      if email_config
+        self.product = email_config.product
+      elsif product
+        self.email_config = product.primary_email_config
       end
     end
-  end
+
+    def assign_email_config
+      if schema_less_ticket.changed.include?("product_id")
+        if product
+          self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      
+        else
+          self.email_config = nil
+        end
+      end
+      schema_less_ticket.save unless schema_less_ticket.changed.empty?
+    end
 
 end
   
