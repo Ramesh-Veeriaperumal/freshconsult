@@ -67,7 +67,7 @@ ul.activityfeed li div.preview_pic img { width: 40px; height: 40px; }
 .left_connected { position: relative; left: 3px; border-right: 0px; margin: 12px 0px; }
 
 .ui-list_with_icon { margin-left: 0; padding-top: 5px; list-style: none; margin: 0px; padding: 0px; }
-.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1340907509') no-repeat 3px 9px; list-style-type: none; }
+.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1342527737') no-repeat 3px 9px; list-style-type: none; }
 .ui-list_with_icon li { padding: 4px 0px 4px 18px; color: #41658a; position: relative; }
 .ui-list_with_icon li img { position: absolute; left: 0px; top: 4px; }
 .ui-list_with_icon li a { color: #527eaa; font-size: 1.0em; line-height: 1.5; text-decoration: none; }
@@ -674,7 +674,7 @@ h4.border_title { font-size: 16px; border-bottom: 1px solid #ebebeb; padding-bot
 .solution-list .odd a:hover, .solution-list .even a:hover { color: #3399cc; }
 .solution-list .odd a:active, .solution-list .even a:active { color: #4d769f; }
 .solution-list .odd ul, .solution-list .even ul { margin-left: 0; }
-.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1340907509') no-repeat -0.5px 5px; list-style-type: none; }
+.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1342527737') no-repeat -0.5px 5px; list-style-type: none; }
 .solution-list .odd li, .solution-list .even li { line-height: 22px; padding: 0px 0px 4px 18px; color: black; }
 .solution-list .odd li a, .solution-list .even li a { font-size: 13px; color: #21759b; }
 .solution-list .odd li a:visited, .solution-list .even li a:visited { color: #21759b; }
@@ -1776,28 +1776,38 @@ a.submit_link:hover { text-decoration: none; }
 .link_text_info { font-size: 11px; color: #888888; }
 
 /* SURVEY REPORT RELATED STYLES ENDS */
-.email-config-styled-table { width: 100%; border: 1px solid #ECECEC; padding: 0px; }
-.email-config-styled-table thead tr td { color: #222; background: url("../images/overlay-button.png") repeat-x 0px 0px; height: 22px; vertical-align: middle; font-weight: 600; font-size: 13px; }
+.email-settings-header { padding-bottom: 30px; }
+.email-settings-header .action_buttons { margin-top: 6px; padding: 5px; }
+
+.email-settings-bcc { position: relative; }
+.email-settings-bcc label { font-size: 14px; padding: 0 5px 0 0; }
+.email-settings-bcc a { font-size: 14px; color: #0c74d7; font-weight: 500; padding-right: 25px; }
+.email-settings-bcc .tool-tip { position: absolute; background: url(../images/email_config_bcc_tooltip.png) no-repeat; width: 18px; height: 18px; top: 0px; right: -5px; }
+
+.email-config-styled-table { width: 100%; border: 1px solid #ECECEC; margin-bottom: 20px; }
+.email-config-styled-table thead tr { height: 34px; }
+.email-config-styled-table thead tr td { color: #222; background: url("../images/overlay-button.png") repeat-x 0px 0px; font-weight: 600; font-size: 13px; }
 .email-config-styled-table tr { border-bottom: 1px solid #ECECEC; }
-.email-config-styled-table tr.even > td { background-color: #F9F9F9; }
-.email-config-styled-table tr td { height: 40px; vertical-align: top; padding: 5px; color: #666; }
-.email-config-styled-table tr td.edit { width: 5%; text-align: center; font-size: 13px; height: 15px; padding-left: 5px; padding-top: 12px; }
-.email-config-styled-table tr td.primaryRole { padding: 0px; padding-top: 15px; width: 3%; }
-.email-config-styled-table tr td .primary, .email-config-styled-table tr td .secondary { padding: 0px; display: block; }
-.email-config-styled-table tr td .primary { content: url("../images/star_on.png") no-repeat 0px 0px transperent; }
-.email-config-styled-table tr td .secondary { content: url("../images/star_off.png") no-repeat 0px 0px transperent; }
-.email-config-styled-table tr td .not-verified { padding-top: 5px; content: url("../images/img_icon_warning.png") no-repeat 0px 0px transperent; }
-.email-config-styled-table tr td.supportMail { width: 25%; vertical-align: top; }
-.email-config-styled-table tr td.supportMail span.bold { color: #333; font-weight: bold; font-size: 13px; }
-.email-config-styled-table tr td.supportMail ul { padding-right: 10px; float: left; }
-.email-config-styled-table tr td.supportMail .reply_email { padding-bottom: 4px; }
-.email-config-styled-table tr td.supportMail .reply_email span { text-decoration: line-through; }
-.email-config-styled-table tr td.to-email { width: 45%; }
+.email-config-styled-table tr td { vertical-align: middle; padding: 10px 4px; }
+.email-config-styled-table tbody tr.even > td { background-color: #F9F9F9; }
+.email-config-styled-table tbody tr td { height: auto; color: #666; }
+.email-config-styled-table tbody tr td.edit { width: 5%; text-align: center; font-size: 13px; }
+.email-config-styled-table tbody tr td.primaryRole { width: 3%; }
+.email-config-styled-table tbody tr td.primaryRole .primary, .email-config-styled-table tbody tr td.primaryRole .secondary { display: block; }
+.email-config-styled-table tbody tr td.primaryRole .primary:before { content: url(../images/star_on.png) ""; }
+.email-config-styled-table tbody tr td.primaryRole .secondary:before { content: url(../images/star_off.png) ""; }
+.email-config-styled-table tbody tr td.supportMail { width: 28%; }
+.email-config-styled-table tbody tr td.supportMail span.bold { color: #333; font-weight: bold; font-size: 13px; }
+.email-config-styled-table tbody tr td.supportMail ul { padding-right: 10px; float: left; }
+.email-config-styled-table tbody tr td.supportMail .not-verified { padding-top: 12px; }
+.email-config-styled-table tbody tr td.supportMail .not-verified-icon { display: block; }
+.email-config-styled-table tbody tr td.supportMail .not-verified-icon:before { content: url(../images/img_icon_warning.png) ""; }
+.email-config-styled-table tbody tr td.supportMail .reply_email span { text-decoration: line-through; }
+.email-config-styled-table tbody tr td.supportMail .verify-button { padding-top: 8px; }
+.email-config-styled-table tbody tr td.supportMail .verify-button a { padding: 3px 6px; font-size: 11px; text-align: center; text-decoration: none; background-color: #f8f8f8; border: 1px solid #919191; color: #3f3f3f; -moz-border-radius: 8px 8px 8px 8px; -webkit-border-radius: 8px 8px 8px 8px; border-radius: 8px 8px 8px 8px; cursor: pointer; }
+.email-config-styled-table tbody tr td.supportMail .verify-button a:visited { color: #3f3f3f; }
+.email-config-styled-table tbody tr td.supportMail .verify-button a:hover { color: #666666; }
+.email-config-styled-table tbody tr td.supportMail .verify-button a:active { color: #3f3f3f; }
+.email-config-styled-table tbody tr td.to-email { width: 42%; }
 
-.product-title { font-size: 1.1em; font-weight: bold; padding-top: 30px; padding-bottom: 10px; }
-
-#support_emails { margin-left: 170px; }
-#support_emails .ui-form { margin: 0px; margin-bottom: 10px; padding-top: 0px; padding-bottom: 0px; }
-#support_emails .ui-form li { padding: 0px; }
-#support_emails .ui-form li ul { padding-bottom: 10px; }
-#support_emails .ui-form li ul li { padding-top: 0px; padding-bottom: 0px; padding-left: 10px; }
+.product-title { font-size: 1.1em; font-weight: bold; padding-bottom: 10px; }

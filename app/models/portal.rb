@@ -59,7 +59,7 @@ class Portal < ActiveRecord::Base
   end
   
   def logo_url
-    logo.content.url unless logo.nil?
+    logo.content.url(:logo) unless logo.nil?
   end
 
   def fav_icon_url

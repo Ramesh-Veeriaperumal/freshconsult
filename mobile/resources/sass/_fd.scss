@@ -549,23 +549,33 @@ a {
 		padding-bottom: 10px;
 		.profile_pic{
 			float:left;
-			padding:10px;
-			width: 25%;
+			margin: 10px 0 5px 10px;
+			width: 75px;
+			height:75px;
+			overflow:hidden;
+			@include border-radius(8px);
+			@include text-shadow(1px 1px 0 #fff);
+			border: 1px solid #858585;
 			>img{
 				@include border-radius(8px);
 				@include box-shadow(#fff 1px 1px 0);
 				width: 100%;
-				border: 1px solid #858585;
 			}
 		}
 		.customer-info-list{
-			float: right;
+			float: left;
 			width: 75%;
+			padding-left:10px;
 			div{
 				font-size: 14px;
 				line-height: 22px;
 				word-wrap:break-word;
 			}
+		}
+		.customer-contact-list{
+			float: right;
+			width: 100%;
+			padding-left: 10px;
 			.phone, .email, .twitter,.facebook{
 				border-radius: 15px;
 				background: #f3f3f3;
@@ -573,40 +583,46 @@ a {
 				margin-right: 2%;
 				margin-top:5px;
 				float: left;
-				width: 98%;
+				width: 99%;
 				span{
 					width: 25px;
 					height: 25px;
 					background: #CCC;
 					border-radius: 20px;
 					float: left;
-					font-size: 14px;
-					padding: 2px 3px;
+					font-size: 16px;
 					color:#898989;
 					margin-right: 3px;
-					font-family: 'fontello';
+					font-family: 'Freshdesk';
+				}
+				p{
+					margin-top:5px;
 				}
 			}
 			.phone{
 				span:before {
+					font-size: 13px;
 					padding:3px;
-					content: '📞';
+					content: '\e002';
 				}
 			}
 			.email{
 				span:before {
-					padding: 2px 1px;
-					content: '✉';
+					font-size:18px;
+					padding: 8px 0px 0px 3px;
+					content: '\e023';
 				}
 			}
 			.twitter{
 				span:before {
-					content: '\F303';
+					padding: 2px 4px;
+					content: '\4d';
 				}
 			}
 			.facebook{
 				span:before {
-					content: '\F308';
+					padding: 3px 9px;
+					content: '\F09a';
 				}
 			}
 		}
@@ -702,7 +718,6 @@ a {
 	// IE9 SVG, needs conditional override of 'filter' to 'none'
 	$experimental-support-for-svg: true;
 	@include background-image(linear-gradient(top,  rgba(51,51,51,0.5) 0%,rgba(51,51,51,0) 25%,rgba(51,51,51,0) 75%,rgba(51,51,51,0.5) 100%));
-
 		border-radius: 7px;
 	}
 	.x-toolbar{
@@ -803,7 +818,7 @@ a {
 				line-height: 1.2;
 				div.icon {
 						display:inline-block;
-						margin: 0.4em;
+						margin: 5px 0.4em;
 						@include border-radius(50%);
 						vertical-align:top;
 						@include box-shadow(inset 0 0 7px #333);
@@ -878,7 +893,7 @@ a {
 			}
 		}
 		ul.actions {
-			padding:1em 0em 0em 0em;
+			padding:0.5em 0em 0em 0em;
 			margin:0;
 			list-style:none;
 			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(241,247,246,0.1)), color-stop(100%,rgba(241,247,246,1))); /* Chrome,Safari4+ */
@@ -1013,16 +1028,36 @@ a {
 			line-height:1.2em;
 			font-size:1em;
 			margin-top: 3px;
+			width:80%;
 			>a{
 				font-weight:bold;
 				text-decoration:none;
 				color:#1272de;
+				word-wrap:break-word;
+				@include ellipsis;
 				&:active{
 					color:#ccc;
 				}
 			}
 			.date{
-				font-size:0.9em;
+				font-size: 12px;
+				line-height: 20px;
+				display: inline-block;
+				width: 100%;
+			}
+			.note{
+				font-family: 'Freshdesk';
+				float: right;
+				display: inline-block;
+				position: absolute;
+				right: 0px;
+				font-size: 22px;
+				color: #ccc;
+				margin-top: -6px;
+				margin-right:-16px;
+				&:before{
+					content:"\e021";
+				}
 			}
 			color:#999999;
 		}
@@ -1080,7 +1115,7 @@ a {
 				font-weight: bolder;
 				@include text-shadow( #fff 1px 1px 0);
 				white-space: nowrap;
-				padding: 0 10px;
+				padding: 3px 10px;
 				border: 1px solid #D4D4D4;
 				border-bottom-color: #BCBCBC;
 				line-height: 0.6em;
@@ -1103,7 +1138,7 @@ a {
 				display:block;
 				text-decoration:none;
 				font-family: 'fontello';
-				color:#666;
+				color:#1272DE;
 				text-align:center;
 				@include text-shadow( #fff 1px 1px 0);
 				speak: none;
@@ -1132,6 +1167,9 @@ a {
 						background:#888;
 						@include text-shadow( #888 1px 1px 0);
 						color:#fff;
+						span.size{
+							color:#fff;
+						}
 					}
 					&:last-child{
 						@include border-bottom-right-radius(5px);
@@ -1141,19 +1179,23 @@ a {
 					span:first-child{
 						font-size: 14px;
 						text-decoration:none;
-						font-family: 'fontello';
+						font-family: 'Freshdesk';
 						color:#666;
 						text-align:center;
 						@include text-shadow( #fff 1px 1px 0);
 						speak: none;
 						&:before{
-							content: '📄';  
+							content: '\e01f';  
 						}
 					}
 					span.disclose{
 						font-size: 13px !important;
 						right: 4px !important;
-						bottom: 13% !important;
+						bottom: 2px !important;
+						font-family:'Freshdesk';
+						&:before{
+							content:'\2b';
+						}
 					}
 					span.name{
 						max-width: 70%;
@@ -1227,3 +1269,69 @@ a {
 	border-bottom: 1px solid #DDD;
 }
 
+
+/* Pull refresh CSS */
+  .x-list-pullrefresh {
+	-webkit-box-shadow: inset 0 -5px 5px 0 rgba(0, 0, 0, 0.2);
+	color:#888;
+	text-align:left;
+	-webkit-box-pack: start;
+	box-pack: start;
+	padding-left:10px;
+    .x-loading-spinner {
+      display: none;
+    }
+  }
+
+  .x-list-pullrefresh-arrow {
+  	width: auto;
+	height: auto;
+	background:none;
+	&:before{
+		font-family:'Freshdesk';
+		font-size:45px;
+		content:'\e070';
+	}
+   /*background: center center url('../images/pullarrow.png') no-repeat;
+   -webkit-transition-property: -webkit-transform;*/
+    /*-webkit-transition-duration: 200ms;*/
+	-webkit-transition: -webkit-transform 0.2s ease-in;
+    @include rotate(0deg);
+  }
+
+  .x-list-pullrefresh-release .x-list-pullrefresh-arrow {
+  	-webkit-transition: -webkit-transform 0.2s ease-in;
+    @include rotate(-180deg);
+  }
+
+  .x-list-pullrefresh-wrap {
+    width: 20em;
+    font-size: 0.7em;
+  }
+
+  .x-list-pullrefresh-message {
+    font-weight: normal;
+    font-size: 1.5em;
+    margin-bottom: 0.1em;
+    text-align: left;
+    padding-left:5px;
+  }
+
+  .x-list-pullrefresh-updated {
+    text-align: left;
+    padding-left:5px;
+    color:#aaa;
+  }
+
+  .x-list-pullrefresh-loading {
+    /*position: relative;*/
+    /*top: 0;*/
+
+    /*.x-loading-spinner {
+      display: block;
+    }
+
+    .x-list-pullrefresh-arrow {
+      display: none;
+    }*/
+  }

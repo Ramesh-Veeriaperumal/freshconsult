@@ -120,6 +120,9 @@ en:
       agent_mandatory_closure: Required when closing the ticket
       choices: Choices
       label_in_portal_info: The label that is displayed in your self service portal
+      display_cc_field: Display CC Field
+      cc_company_contacts: Can CC only company contacts
+      cc_any_email: Can CC any email address
   folder: 
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
@@ -338,7 +341,10 @@ en:
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
-    products: 
+    products:
+      helpnote:
+        heading: Multiple Products
+        content: Multiple products helps you to provide product or brand specific support.
       new: 
         title: New Product
       portal: 
@@ -363,7 +369,9 @@ en:
         enable_product_portal: Enable Product Portal
         enter_support_email_id: Your support email
         configure_email: Configure Email
+        product_support_emails: Product Support Emails
         product_name: Product name
+        forwarding_email_info: "Your forwarding email address:"
       product:
         email_not_verified: Email not verified  
         delete: Are you sure you want to delete this Product?
@@ -371,7 +379,8 @@ en:
         title: Products        
         add_product: Add Product
       primary_product_support_email: Primary Product Support Email
-      add_another_email: Add another email
+      add_another_email: Add Another Email
+      primary_email_required: Atleast one primary email has to be present
     canned_responses:
       ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
@@ -1355,7 +1364,7 @@ en:
     mark_as_primary_msg: Are you sure you want to make this as the primary support email?
     bcc_text: BCC
     add_bcc_text: Add BCC
-    set_bcc_email_text: Set BCC email
+    set_bcc_email_text: Set automatic BCC email
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo

@@ -44,6 +44,10 @@
             "update" : "full"
         },
         {
+            "path": "util/date.format.js",
+            "update" : "full"
+        },
+        {
             "path": "app.js",
             "update": "delta"
         }
