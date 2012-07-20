@@ -3,7 +3,7 @@ require 'sinatra/base'
     require 'resque/server'
     use Rack::ShowExceptions
     def call(env)
-      if env["PATH_INFO"] =~ /^\/resque/ && "admin.#{AppConfig['base_domain'][RAILS_ENV]}".eql?(env['SERVER_NAME'])
+      if env["PATH_INFO"] =~ /^\/resque/
         env["PATH_INFO"].sub!(/^\/resque/, '')
         env['SCRIPT_NAME'] = '/resque'
         app = Resque::Server.new
