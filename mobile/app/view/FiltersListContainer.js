@@ -6,7 +6,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
         
         var backButton = {
             text:'Home',
-            ui:'headerBtn back',
+            ui:'lightBtn back',
             xtype:'button',
             handler:this.showHome,
             align:'left'

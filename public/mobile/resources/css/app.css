@@ -6229,7 +6229,7 @@ audio {
   opacity: .5;
 }
 
-.x-button-round, .x-button.x-button-action-round, .x-button.x-button-confirm-round, .x-button.x-button-decline-round, .x-button.x-button-headerBtn-round {
+.x-button-round, .x-button.x-button-action-round, .x-button.x-button-confirm-round, .x-button.x-button-decline-round, .x-button.x-button-headerBtn-round, .x-button.x-button-lightBtn-round {
   -webkit-border-radius: 0.9em;
   border-radius: 0.9em;
   padding: 0.1em 0.9em;
@@ -6293,16 +6293,16 @@ audio {
   font-size: .7em;
 }
 
-.x-button-small, .x-button.x-button-action-small, .x-button.x-button-confirm-small, .x-button.x-button-decline-small, .x-button.x-button-headerBtn-small, .x-toolbar .x-button-small, .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-confirm-small, .x-toolbar .x-button.x-button-decline-small, .x-toolbar .x-button.x-button-headerBtn-small {
+.x-button-small, .x-button.x-button-action-small, .x-button.x-button-confirm-small, .x-button.x-button-decline-small, .x-button.x-button-headerBtn-small, .x-button.x-button-lightBtn-small, .x-toolbar .x-button-small, .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-confirm-small, .x-toolbar .x-button.x-button-decline-small, .x-toolbar .x-button.x-button-headerBtn-small, .x-toolbar .x-button.x-button-lightBtn-small {
   -webkit-border-radius: 0.3em;
   border-radius: 0.3em;
   padding: .2em .4em;
   min-height: 0;
 }
-.x-button-small .x-button-label, .x-button.x-button-action-small .x-button-label, .x-button.x-button-confirm-small .x-button-label, .x-button.x-button-decline-small .x-button-label, .x-button.x-button-headerBtn-small .x-button-label, .x-button-small .x-hasbadge .x-badge, .x-hasbadge .x-button-small .x-badge, .x-button.x-button-action-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-action-small .x-badge, .x-button.x-button-confirm-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-confirm-small .x-badge, .x-button.x-button-decline-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-decline-small .x-badge, .x-button.x-button-headerBtn-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-headerBtn-small .x-badge, .x-toolbar .x-button-small .x-button-label, .x-toolbar .x-button.x-button-action-small .x-button-label, .x-toolbar .x-button.x-button-confirm-small .x-button-label, .x-toolbar .x-button.x-button-decline-small .x-button-label, .x-toolbar .x-button.x-button-headerBtn-small .x-button-label, .x-toolbar .x-button-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button-small .x-badge, .x-toolbar .x-button.x-button-action-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-action-small .x-badge, .x-toolbar .x-button.x-button-confirm-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-confirm-small .x-badge, .x-toolbar .x-button.x-button-decline-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-decline-small .x-badge, .x-toolbar .x-button.x-button-headerBtn-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-headerBtn-small .x-badge {
+.x-button-small .x-button-label, .x-button.x-button-action-small .x-button-label, .x-button.x-button-confirm-small .x-button-label, .x-button.x-button-decline-small .x-button-label, .x-button.x-button-headerBtn-small .x-button-label, .x-button.x-button-lightBtn-small .x-button-label, .x-button-small .x-hasbadge .x-badge, .x-hasbadge .x-button-small .x-badge, .x-button.x-button-action-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-action-small .x-badge, .x-button.x-button-confirm-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-confirm-small .x-badge, .x-button.x-button-decline-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-decline-small .x-badge, .x-button.x-button-headerBtn-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-headerBtn-small .x-badge, .x-button.x-button-lightBtn-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-lightBtn-small .x-badge, .x-toolbar .x-button-small .x-button-label, .x-toolbar .x-button.x-button-action-small .x-button-label, .x-toolbar .x-button.x-button-confirm-small .x-button-label, .x-toolbar .x-button.x-button-decline-small .x-button-label, .x-toolbar .x-button.x-button-headerBtn-small .x-button-label, .x-toolbar .x-button.x-button-lightBtn-small .x-button-label, .x-toolbar .x-button-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button-small .x-badge, .x-toolbar .x-button.x-button-action-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-action-small .x-badge, .x-toolbar .x-button.x-button-confirm-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-confirm-small .x-badge, .x-toolbar .x-button.x-button-decline-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-decline-small .x-badge, .x-toolbar .x-button.x-button-headerBtn-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-headerBtn-small .x-badge, .x-toolbar .x-button.x-button-lightBtn-small .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button.x-button-lightBtn-small .x-badge {
   font-size: .6em;
 }
-.x-button-small .x-button-icon, .x-button.x-button-action-small .x-button-icon, .x-button.x-button-confirm-small .x-button-icon, .x-button.x-button-decline-small .x-button-icon, .x-button.x-button-headerBtn-small .x-button-icon, .x-toolbar .x-button-small .x-button-icon, .x-toolbar .x-button.x-button-action-small .x-button-icon, .x-toolbar .x-button.x-button-confirm-small .x-button-icon, .x-toolbar .x-button.x-button-decline-small .x-button-icon, .x-toolbar .x-button.x-button-headerBtn-small .x-button-icon {
+.x-button-small .x-button-icon, .x-button.x-button-action-small .x-button-icon, .x-button.x-button-confirm-small .x-button-icon, .x-button.x-button-decline-small .x-button-icon, .x-button.x-button-headerBtn-small .x-button-icon, .x-button.x-button-lightBtn-small .x-button-icon, .x-toolbar .x-button-small .x-button-icon, .x-toolbar .x-button.x-button-action-small .x-button-icon, .x-toolbar .x-button.x-button-confirm-small .x-button-icon, .x-toolbar .x-button.x-button-decline-small .x-button-icon, .x-toolbar .x-button.x-button-headerBtn-small .x-button-icon, .x-toolbar .x-button.x-button-lightBtn-small .x-button-icon {
   width: .75em;
   height: .75em;
 }
@@ -9223,6 +9223,36 @@ input[type="search"]::-webkit-search-cancel-button {
   background-image: linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
 }
 
+.x-button.x-button-lightBtn, .x-toolbar .x-button.x-button-lightBtn, .x-button.x-button-lightBtn-round, .x-toolbar .x-button.x-button-lightBtn-round, .x-button.x-button-lightBtn-small, .x-toolbar .x-button.x-button-lightBtn-small {
+  border: 1px solid #2c476b;
+  border-top-color: #33537e;
+  color: white;
+}
+.x-button.x-button-lightBtn.x-button-back:before, .x-button.x-button-lightBtn.x-button-forward:before, .x-toolbar .x-button.x-button-lightBtn.x-button-back:before, .x-toolbar .x-button.x-button-lightBtn.x-button-forward:before, .x-button.x-button-lightBtn-round.x-button-back:before, .x-button.x-button-lightBtn-round.x-button-forward:before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-back:before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-forward:before, .x-button.x-button-lightBtn-small.x-button-back:before, .x-button.x-button-lightBtn-small.x-button-forward:before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-back:before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-forward:before {
+  background: #2c476b;
+}
+.x-button.x-button-lightBtn, .x-button.x-button-lightBtn.x-button-back:after, .x-button.x-button-lightBtn.x-button-forward:after, .x-toolbar .x-button.x-button-lightBtn, .x-toolbar .x-button.x-button-lightBtn.x-button-back:after, .x-toolbar .x-button.x-button-lightBtn.x-button-forward:after, .x-button.x-button-lightBtn-round, .x-button.x-button-lightBtn-round.x-button-back:after, .x-button.x-button-lightBtn-round.x-button-forward:after, .x-toolbar .x-button.x-button-lightBtn-round, .x-toolbar .x-button.x-button-lightBtn-round.x-button-back:after, .x-toolbar .x-button.x-button-lightBtn-round.x-button-forward:after, .x-button.x-button-lightBtn-small, .x-button.x-button-lightBtn-small.x-button-back:after, .x-button.x-button-lightBtn-small.x-button-forward:after, .x-toolbar .x-button.x-button-lightBtn-small, .x-toolbar .x-button.x-button-lightBtn-small.x-button-back:after, .x-toolbar .x-button.x-button-lightBtn-small.x-button-forward:after {
+  background-image: none;
+  background-color: #4977b4;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7f9fcb), color-stop(50%, #5a84bc), color-stop(51%, #4977b4), color-stop(100%, #426ba2));
+  background-image: -webkit-linear-gradient(top, #7f9fcb, #5a84bc 50%, #4977b4 51%, #426ba2);
+  background-image: linear-gradient(top, #7f9fcb, #5a84bc 50%, #4977b4 51%, #426ba2);
+}
+.x-button.x-button-lightBtn .x-button-icon.x-icon-mask, .x-toolbar .x-button.x-button-lightBtn .x-button-icon.x-icon-mask, .x-button.x-button-lightBtn-round .x-button-icon.x-icon-mask, .x-toolbar .x-button.x-button-lightBtn-round .x-button-icon.x-icon-mask, .x-button.x-button-lightBtn-small .x-button-icon.x-icon-mask, .x-toolbar .x-button.x-button-lightBtn-small .x-button-icon.x-icon-mask {
+  background-image: none;
+  background-color: white;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(3%, #ffffff), color-stop(100%, #edf1f8));
+  background-image: -webkit-linear-gradient(top, #ffffff, #ffffff 3%, #edf1f8);
+  background-image: linear-gradient(top, #ffffff, #ffffff 3%, #edf1f8);
+}
+.x-button.x-button-lightBtn.x-button-pressing, .x-button.x-button-lightBtn.x-button-pressing:after, .x-button.x-button-lightBtn.x-button-pressed, .x-button.x-button-lightBtn.x-button-pressed:after, .x-button.x-button-lightBtn.x-button-active, .x-button.x-button-lightBtn.x-button-active:after, .x-toolbar .x-button.x-button-lightBtn.x-button-pressing, .x-toolbar .x-button.x-button-lightBtn.x-button-pressing:after, .x-toolbar .x-button.x-button-lightBtn.x-button-pressed, .x-toolbar .x-button.x-button-lightBtn.x-button-pressed:after, .x-toolbar .x-button.x-button-lightBtn.x-button-active, .x-toolbar .x-button.x-button-lightBtn.x-button-active:after, .x-button.x-button-lightBtn-round.x-button-pressing, .x-button.x-button-lightBtn-round.x-button-pressing:after, .x-button.x-button-lightBtn-round.x-button-pressed, .x-button.x-button-lightBtn-round.x-button-pressed:after, .x-button.x-button-lightBtn-round.x-button-active, .x-button.x-button-lightBtn-round.x-button-active:after, .x-toolbar .x-button.x-button-lightBtn-round.x-button-pressing, .x-toolbar .x-button.x-button-lightBtn-round.x-button-pressing:after, .x-toolbar .x-button.x-button-lightBtn-round.x-button-pressed, .x-toolbar .x-button.x-button-lightBtn-round.x-button-pressed:after, .x-toolbar .x-button.x-button-lightBtn-round.x-button-active, .x-toolbar .x-button.x-button-lightBtn-round.x-button-active:after, .x-button.x-button-lightBtn-small.x-button-pressing, .x-button.x-button-lightBtn-small.x-button-pressing:after, .x-button.x-button-lightBtn-small.x-button-pressed, .x-button.x-button-lightBtn-small.x-button-pressed:after, .x-button.x-button-lightBtn-small.x-button-active, .x-button.x-button-lightBtn-small.x-button-active:after, .x-toolbar .x-button.x-button-lightBtn-small.x-button-pressing, .x-toolbar .x-button.x-button-lightBtn-small.x-button-pressing:after, .x-toolbar .x-button.x-button-lightBtn-small.x-button-pressed, .x-toolbar .x-button.x-button-lightBtn-small.x-button-pressed:after, .x-toolbar .x-button.x-button-lightBtn-small.x-button-active, .x-toolbar .x-button.x-button-lightBtn-small.x-button-active:after {
+  background-image: none;
+  background-color: #4570a9;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #365885), color-stop(10%, #3d6497), color-stop(65%, #4570a9), color-stop(100%, #4571ab));
+  background-image: -webkit-linear-gradient(top, #365885, #3d6497 10%, #4570a9 65%, #4571ab);
+  background-image: linear-gradient(top, #365885, #3d6497 10%, #4570a9 65%, #4571ab);
+}
+
 .x-tab .x-button-icon.add1,
 .x-button .x-button-icon.x-icon-mask.add1 {
   -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAADNklEQVRoBe2au2sUURTGHV9ojKAIovgkCIpir6CVEFDSi6VdtNDaP8Au/4BgYyeIWlhqZWEpSCQ+UAQf+EALUXygZv194w4kQ3Z3zp05M7PrPfCx2cw9j++ce2fuPTtJp9NZ5i1JkmzCxwGwGczn/C3n+wcwRywfc9eq/yrCniDiQ+ABUGb7YZbrU56xyLY32T2QeDyA6MIkvGDsEU/Smk6ecgHjEwYH2xl71jDePNSNMOt2nGhE1uIjYfzWrq6ZTBEFSzBF7C0cI9uarlaRjltcboatLOsaHwnXlemm/MQKN5X5uvzGCteV6ab8xAo3lfm6/MYK15XppvzECleY+ZCDQ4XulzblWWHZXrG0257/1fFwLRjrOaLkBU/COsxvAxYfGrsDSNdFLMEUDoAD/BoGnwIKXFWziBp909jYaFEqPDbfP0JRAYZCCdwCLoJPQOs4BN/QuwSUMNkMjSfJ80v/QTa11tRwmwSZE+tNR+3X3eAw0FS2rl9UFonsvQX3wRywzkYlSTZeg9vgGeR/85kaOsnnQ/AHhFSkzTri9AicBqtA2jdWBtscdBWxPYfjpKbJMbATjLqIY0pY623dqLOF30owZr0RDH1eIuGhL+EAArHCAxI09JdV4R9AD+f/QkT4HtAWbtRFe/tZ7XdfgfVgHxjV5/FXuN0CM9nhYQNfpsAZsBfoIR0imjE6GqZ71hADOR1t9r8DHQJCRHoq6GVwjcPDu5RwZql7aipz59bLKyfAOXAQhNpSoNrf64h4HZR52UW25iGr/TgnBoeXWjA7Ae4AVci68ZfOXbDfJTYPo91kHiXoNwGE36Nz3Cuu0ClHTAPlKSNeAsv601i9s/UEuIgnYd1shH9rp1j4Gqv1qkeIi3gSDg04W/Oh+n312ki4b8BlL0bCZTPYdv1Y4bZXqGx8scJlM9h2/VjhtleobHyxwmUz2Hb9WOEKK6RDgH6jtYqKEKJXyI9nhdX+/QIsx0MF/RP80h8e4kaYjoWCvgI+GwJXd/EmunrlwUe8Wimyi6wG54Ea/dk5t9enuh0zYNwzpkVdS5xVLnRC1fJVf2sa7AL5Xzk0y9TluApuQFZdEjf5C5GA7nAwFwxUAAAAAElFTkSuQmCC');
@@ -10346,7 +10376,7 @@ input, textarea, select {
   font-size: 14px !important;
 }
 
-.x-toolbar .x-button .x-button-label, .x-toolbar .x-button .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button .x-badge, .x-toolbar .x-button .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button .x-badge {
+.x-button-headerBtn .x-button-label, .x-button-headerBtn .x-hasbadge .x-badge, .x-hasbadge .x-button-headerBtn .x-badge, .x-button-back .x-button-label, .x-button-back .x-hasbadge .x-badge, .x-hasbadge .x-button-back .x-badge {
   text-shadow: -1px -1px 0 black;
 }
 
@@ -10591,6 +10621,11 @@ a {
 }
 
 /*ticketList related code*/
+.ticketsList .ticket-item.Resolved .title .info.btn {
+  background: rgba(0, 0, 0, 0.2);
+  text-shadow: #666666 0 0 0;
+}
+
 .x-list-normal .x-list-item.x-item-pressed .x-list-item-label {
   color: #fff;
   background: url("../images/activebg.png");
@@ -10606,14 +10641,23 @@ a {
   color: #fff;
   text-shadow: #333333 1px 1px 0;
 }
-.x-list-normal .x-list-item.x-item-pressed .x-list-item-label .ticket-item .info {
-  background: #757575;
-  -webkit-box-shadow: 0;
-  box-shadow: 0;
+.x-list-normal .x-list-item.x-item-pressed .x-list-item-label .ticket-item .info.btn {
+  background: #fff;
+  color: #333;
+  -webkit-box-shadow: 0 0 0 #cccccc;
+  box-shadow: 0 0 0 #cccccc;
+  text-shadow: -1px -1px 0 white;
 }
 .x-list-normal .x-list-item.x-item-pressed .x-list-item-label .ticket-item .subject {
   color: #fff;
   text-shadow: #333333 1px 1px 0;
+}
+.x-list-normal .x-list-item.x-item-pressed .x-list-item-label.Resolved .title .info.btn {
+  background: #fff !important;
+  color: #333;
+  -webkit-box-shadow: 0 0 0 #cccccc;
+  box-shadow: 0 0 0 #cccccc;
+  text-shadow: -1px -1px 0 white;
 }
 
 .x-list-normal .x-list-item .x-list-item-label {
@@ -10624,16 +10668,27 @@ a {
 
 .bullet {
   font-family: 'Freshdesk';
+  float: left;
+  display: inline-block;
 }
 .bullet:before {
   color: #ABA9A9;
   content: "\e050";
 }
 
+.scenario_text {
+  font-size: 16px;
+  width: 90%;
+  display: inline-block;
+}
+
 .x-list .x-list-item.x-item-selected .x-list-item-label {
   background: url("../images/activebg.png");
   text-shadow: -1px -1px 0 #393939;
   color: white;
+}
+.x-list .x-list-item.x-item-selected .x-list-item-label .bullet {
+  font-size: 18px;
 }
 .x-list .x-list-item.x-item-selected .x-list-item-label .bullet:before {
   color: #fff;
@@ -10791,11 +10846,6 @@ a {
 .ticketsList .ticket-item .display_id {
   font-weight: normal;
   color: #999;
-}
-
-.ticketsList .ticket-item.Resolved .title .info.btn {
-  background: rgba(0, 0, 0, 0.2) !important;
-  text-shadow: #666666 0 0 0;
 }
 
 .dashboardButton > div > div {
@@ -11046,6 +11096,17 @@ a {
   box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
 }
 
+.x-toolbar .x-button.x-button-lightBtn {
+  box-shadow: 1px 1px 0 #B8C9E0;
+  border: 1px solid #151515;
+  border-top-color: #222;
+  color: #fff;
+}
+
+.x-button.x-button-lightBtn.x-button-back::before, .x-button.x-button-lightBtn.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn.x-button-forward::before, .x-button.x-button-lightBtn-round.x-button-back::before, .x-button.x-button-lightBtn-round.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-forward::before, .x-button.x-button-lightBtn-small.x-button-back::before, .x-button.x-button-lightBtn-small.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-forward::before {
+  background: black;
+}
+
 .x-docking-vertical {
   box-shadow: 0 0 20px #666;
 }
@@ -11094,10 +11155,7 @@ a {
 }
 .x-docking-vertical .x-toolbar .x-button.x-button-normal.x-button-pressing {
   background-image: none;
-  background-color: #404040;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #272727), color-stop(10%, #343434), color-stop(65%, #404040), color-stop(100%, #424242));
-  background-image: -webkit-linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
-  background-image: linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
+  background-color: #89b3ee;
 }
 
 .x-button.x-button-action, .x-button.x-button-action.x-button-back::after, .x-button.x-button-action.x-button-forward::after, .x-toolbar .x-button.x-button-action, .x-toolbar .x-button.x-button-action.x-button-back::after, .x-toolbar .x-button.x-button-action.x-button-forward::after, .x-button.x-button-action-round, .x-button.x-button-action-round.x-button-back::after, .x-button.x-button-action-round.x-button-forward::after, .x-toolbar .x-button.x-button-action-round, .x-toolbar .x-button.x-button-action-round.x-button-back::after, .x-toolbar .x-button.x-button-action-round.x-button-forward::after, .x-button.x-button-action-small, .x-button.x-button-action-small.x-button-back::after, .x-button.x-button-action-small.x-button-forward::after, .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-action-small.x-button-back::after, .x-toolbar .x-button.x-button-action-small.x-button-forward::after {

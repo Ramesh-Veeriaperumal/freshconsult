@@ -30514,7 +30514,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
         
         var backButton = {
             text:'Home',
-            ui:'headerBtn back',
+            ui:'lightBtn back',
             xtype:'button',
             handler:this.showHome,
             align:'left'
@@ -31218,7 +31218,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
                     xtype:'list',
                     emptyText: '<div class="empty-list-text">You don\'t have any Scenarioies!.</div>',
                     onItemDisclosure: false,
-                    itemTpl: '<span class="bullet"></span>&nbsp;{name}'
+                    itemTpl: '<div class="bullet"></div>&nbsp;<div class="scenario_text">{name}</div>'
             },
             {
                 xtype:'titlebar',
@@ -31240,8 +31240,8 @@ Ext.define("Freshdesk.view.Scenarioies", {
                     },
                     {
                         xtype:'button',
-                        text:'Back',
-                        ui:'headerBtn back',
+                        text:'Cancel',
+                        ui:'lightBtn',
                         align:'left',
                         handler:function(){
                             Freshdesk.cancelBtn=true;
@@ -31265,7 +31265,7 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
         var backButton = {
             xtype:'button',
             text:'Hide',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
             handler:this.goBack,
 			align:'left',
             scope:this
@@ -38172,7 +38172,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
 
         var backButton = {
         	text:'Views',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
 			xtype:'button',
 			handler:this.backToFilters,
 			align:'left'
@@ -38546,7 +38546,7 @@ Ext.define('Freshdesk.view.TicketReply', {
             text:'Cancel',
             xtype:'button',
             align:'left',
-            ui:'headerBtn',
+            ui:'lightBtn',
             handler:this.backToDetails,
             scope:this
         };
@@ -38710,7 +38710,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -38792,7 +38792,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         var backButton = {
             xtype:'button',
             text:'List',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
             handler:this.backToViews,
 			align:'left'
 		};
@@ -39887,7 +39887,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         var backButton = {
             xtype:'button',
             text:'List',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
 			handler:function(){ this.backToConversation ? me.toggleProperties() : me.backToListView()},
 			align:'left'
 		};

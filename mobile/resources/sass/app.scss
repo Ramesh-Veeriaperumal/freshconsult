@@ -38,6 +38,7 @@ $loading-spinner-color:#AAA;
 $header-button-color:#484848;
 $header-color:#879EBE;
 $header-gradient:'glossy';
+$header-lightBtn-color:#4977B4;
 
 $subheader-color:#e4e4e4;
 $form-separator-subheader-color:#F9F7F6;
@@ -45,7 +46,7 @@ $form-separator-subheader-color:#F9F7F6;
 @include sencha-toolbar-ui('subheader', $subheader-color,'none');
 @include sencha-toolbar-ui('formSubheader',$form-separator-subheader-color,'none');
 @include sencha-button-ui('headerBtn', $header-button-color, $header-gradient);
-
+@include sencha-button-ui('lightBtn', $header-lightBtn-color, $header-gradient);
 
 //add icon
 @include pictos-iconmask(add1);

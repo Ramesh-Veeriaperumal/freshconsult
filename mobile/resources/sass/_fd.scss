@@ -40,8 +40,10 @@ input, textarea, select {
 .x-field .x-field-input, .x-field .x-input-el, .x-form-label span{
 	font-size:14px !important;
 }
-.x-toolbar .x-button .x-button-label, .x-toolbar .x-button .x-hasbadge .x-badge, .x-hasbadge .x-toolbar .x-button .x-badge {
-	text-shadow: -1px -1px 0 black;
+.x-button-headerBtn, .x-button-back{
+	.x-button-label{
+		text-shadow: -1px -1px 0 black;
+	}
 }
 .hide{
 	display:none;
@@ -740,6 +742,15 @@ a {
 		}
 	}
 }
+.x-toolbar .x-button.x-button-lightBtn{
+  box-shadow: 1px 1px 0 #B8C9E0;
+  border: 1px solid #151515;
+  border-top-color: #222;
+  color:#fff;
+}
+.x-button.x-button-lightBtn.x-button-back::before, .x-button.x-button-lightBtn.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn.x-button-forward::before, .x-button.x-button-lightBtn-round.x-button-back::before, .x-button.x-button-lightBtn-round.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-forward::before, .x-button.x-button-lightBtn-small.x-button-back::before, .x-button.x-button-lightBtn-small.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-forward::before {
+	background: black;
+}
 .x-docking-vertical{
 	box-shadow: 0 0 20px #666;
 	.x-picker-mask{
@@ -773,10 +784,7 @@ a {
 				border-top-color: #222;
 				&.x-button-pressing{
 					  background-image: none;
-					  background-color: #404040;
-					  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #272727), color-stop(10%, #343434), color-stop(65%, #404040), color-stop(100%, #424242));
-					  background-image: -webkit-linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
-					  background-image: linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242);
+					  background-color: #89b3ee;
 				}
 			}
 		}

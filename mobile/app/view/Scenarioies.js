@@ -61,7 +61,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
                     {
                         xtype:'button',
                         text:'Cancel',
-                        ui:'headerBtn',
+                        ui:'lightBtn',
                         align:'left',
                         handler:function(){
                             Freshdesk.cancelBtn=true;

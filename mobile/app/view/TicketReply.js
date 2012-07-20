@@ -9,7 +9,7 @@ Ext.define('Freshdesk.view.TicketReply', {
             text:'Cancel',
             xtype:'button',
             align:'left',
-            ui:'headerBtn',
+            ui:'lightBtn',
             handler:this.backToDetails,
             scope:this
         };
