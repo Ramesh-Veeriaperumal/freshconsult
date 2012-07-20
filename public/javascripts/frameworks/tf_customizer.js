@@ -50,9 +50,7 @@
          visible_in_portal:      jQuery(dialogContainer+' input[name|="customervisible"]'), 
          editable_in_portal:     jQuery(dialogContainer+' input[name|="customereditable"]'), 
          required_in_portal:     jQuery(dialogContainer+' input[name|="customerrequired"]'),
-         choices:                jQuery(dialogContainer+' div[name|="customchoices"]'),
-         portalcc:       jQuery(dialogContainer+' input[name|="portalcc"]'),
-         portalcc_to:            jQuery(dialogContainer+' input[name|="portalcc_to"]'),
+         choices:                jQuery(dialogContainer+' div[name|="customchoices"]')
       };
 
       var fieldTemplate =
@@ -73,10 +71,7 @@
                  id:                     null, 
                  choices:                [],
                  levels:                 [],     
-                 portalcc:       false,
-                 portalcc_to:            "all",
                  action:                 "create" // delete || edit || create
-
              });
 
       // Map any document related actions here
@@ -134,12 +129,6 @@
         }
       }
 
-      //For cc option to show
-
-       $("#portalcc_id").click(function(ev){ 
-            $("#cc_to_option").toggle();
-          });
-
       function constFieldDOM(dataItem, container){
          var fieldContainer = container || jQuery("<li />");
          fieldContainer.empty();
@@ -163,18 +152,14 @@
                dataItem.type = dataItem.dom_type;
          }
          
-         switch(dataItem.dom_type) {           
+         switch(dataItem.dom_type) {
             case 'text':
+            case 'requester':
             case 'number':
                field.append('<input type="text" '+fieldAttr+' disabled="true" />');
                fieldContainer.append(label);
             break;
-            case 'requester':
-               field.append('<input type="text" '+fieldAttr+' disabled="true" />');
-               field.append('<span>&nbsp;<a href="#" class="underline">Add cc</a></span>');
-               fieldContainer.append(label);
-            break;
-
+         
             case 'checkbox':               
                field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + dataItem.label );
             break;
@@ -220,7 +205,7 @@
 
          fieldContainer.addClass((dataItem.field_type == "nested_field")?"nestedfield":dataItem.dom_type).append(field);
          $(field).prepend("<span class='overlay-field' />");         
-         if (dataItem.action) ticket_fields_modified = true;  
+         if (dataItem.action) ticket_fields_modified = true;
          fieldContainer.data("raw", dataItem);
 
          return fieldContainer;
@@ -392,8 +377,6 @@
         });
         return allstatus;
       }
-
-
       
       function getAllChoices(dom){      
          var choices = $A();         
@@ -461,7 +444,6 @@
 
       function DialogOnLoad(sourceField){ 
         // Dialog Population Method
-
         try {
             $("#TicketProperties").find(':input').each(function() {
                 switch(this.type) {
@@ -493,11 +475,6 @@
             $("#nestedEdit").hide();
             $("#StatusFieldChoices").hide();
             $("#statuschoices").empty();
-
-            if(sourceData.field_type == 'default_requester'){
-                manageFieldOptions(sourceField);
-             }
-   
             
             if(sourceData.field_type == "nested_field"){ 
               $("#nestedContainer").show();         
@@ -540,14 +517,10 @@
             $("#DropFieldChoices").hide();
             $("#AgentMandatory").hide();
             $("#CustomerConditions").hide();
-            $("#req_field_options").show();
-            $("#agent_cc_field").show();
             
             if(sourceData.field_type != "default_requester"){
                $("#AgentMandatory").show();
                $("#CustomerConditions").show();
-               $("#req_field_options").hide();
-               $("#agent_cc_field").hide();
             }
 
             if (/^default/.test(sourceData.field_type)){
@@ -570,25 +543,6 @@
         }catch(e){}
       }
 
-      function manageFieldOptions(sourceField){
-        sourceData = $(sourceField).data("raw");
-        $.each(sourceData.field_options ,(function(item ,value){
-
-               switch(item) 
-               {
-                  
-                  case 'portalcc':
-                      dialogDOMMap.portalcc.attr("checked", value);
-                      if (value){$("#cc_to_option").show();}
-                  break;
-                  case 'portalcc_to':
-                      dialogDOMMap.portalcc_to.filter('[value='+value+']').attr('checked', true);
-                  break;
-                }
-
-              }));
-      }
-
       function saveDataObj(){
          if(SourceField !== null){            
             var sourceData = $H($(SourceField).data("raw")),
@@ -604,20 +558,6 @@
             sourceData.set("visible_in_portal"     , dialogDOMMap.visible_in_portal.prop("checked"));
             sourceData.set("editable_in_portal"    , dialogDOMMap.editable_in_portal.prop("checked"));
             sourceData.set("required_in_portal"    , dialogDOMMap.required_in_portal.prop("checked"));
-
-             if(_field_type == 'default_requester'){
-                console.log("saveDataObj");
-                console.log(dialogDOMMap.portalcc_to);
-
-                var field_options =  { 
-                                       portalcc:   dialogDOMMap.portalcc.prop("checked"),
-                                       portalcc_to:       dialogDOMMap.portalcc_to.filter(':checked').val(),
-                                      };
-
-                 console.log(field_options);
-                 
-                sourceData.set("field_options" , field_options);
-             }
    
             if(_field_type == 'nested_field'){
               setNestedFields(sourceData);              
@@ -638,14 +578,6 @@
             $(SourceField).data("fresh", false);
          }
       }     
-
-      function saveFieldOptions(sourceData){
-
-
-
-
-      }
-
       
       function setNestedFields(sourceData){                  
           levels = sourceData.get("levels");
@@ -764,8 +696,6 @@
 
          
       $("#CustomFieldsDialog input").live("change", function(){
-         console.log("field dialogue change");
-         console.log(this.name);
          var sourceData = $H($(SourceField).data("raw"));
          switch(this.name){
             case 'choice':
@@ -813,11 +743,7 @@
 
             case 'customerrequired':
                sourceData.set("required_in_portal", $(this).attr("checked"));
-
             break;
-            //For CC fields
-
-          
          }
          setAction(sourceData, "edit");
          //constFieldDOM(sourceData.toObject(), $(SourceField));
@@ -875,8 +801,6 @@
       $("#SaveForm").click(function(ev){
          ev.preventDefault();
          var jsonData = getCustomFieldJson();
-         console.log (jsonData);
-         //return false;
          $("#field_values").val(jsonData.toJSON());
          this.value = $(this).data("commit")
          $(this).prop("disabled", true);

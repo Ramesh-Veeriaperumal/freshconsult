@@ -121,9 +121,6 @@ en:
       agent_mandatory_closure: Required when closing the ticket
       choices: Choices
       label_in_portal_info: The label that is displayed in your self service portal
-      display_cc_field: Display CC Field
-      cc_company_contacts: Can CC only company contacts
-      cc_any_email: Can CC any email address
   folder: 
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?

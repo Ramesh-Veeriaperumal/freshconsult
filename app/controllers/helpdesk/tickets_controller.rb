@@ -449,13 +449,11 @@ class Helpdesk::TicketsController < ApplicationController
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
 
-    cc_emails = validate_emails(params[:cc_emails])
-    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.email_config = current_portal.product if current_portal
+
     @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
-      notify_cc_people cc_emails unless cc_emails.blank? 
     else
       create_error
     end

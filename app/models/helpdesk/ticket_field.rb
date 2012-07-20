@@ -1,7 +1,5 @@
 class Helpdesk::TicketField < ActiveRecord::Base
   
-  serialize :field_options
-
   include Helpdesk::Ticketfields::TicketStatus
   
   set_table_name "helpdesk_ticket_fields"
@@ -229,18 +227,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def choices=(c_attr)
     @choices = c_attr
-  end
-
-  def company_cc_in_portal?
-    field_options.fetch("portalcc") && field_options.fetch("portalcc_to").eql?("company")
-  end
-
-  def all_cc_in_portal?
-    field_options.fetch("portalcc") && field_options.fetch("portalcc_to").eql?("all")
-  end
-
-  def portal_cc_field?
-    field_options.fetch("portalcc")
   end
   
   protected
