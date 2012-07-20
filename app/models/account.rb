@@ -8,11 +8,11 @@ class Account < ActiveRecord::Base
   serialize :sso_options, Hash
   
   
-  has_many :tickets, :class_name => 'Helpdesk::Ticket'
-  has_many :notes, :class_name => 'Helpdesk::Note'
-  has_many :activities, :class_name => 'Helpdesk::Activity'
-  has_many :flexifields
-  has_many :ticket_states, :class_name =>'Helpdesk::TicketState'
+  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
+  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
+  has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
+  has_many :flexifields, :dependent => :delete_all
+  has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
@@ -231,9 +231,9 @@ class Account < ActiveRecord::Base
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
-  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, 
-    :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
+    :anonymous_tickets =>true, :survey_links => true, :scoreboard_enable => true, :google_signin => true,
+    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
     
   
   has_features do
