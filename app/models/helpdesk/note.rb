@@ -192,8 +192,8 @@ class Helpdesk::Note < ActiveRecord::Base
     end
     
     def add_activity
-      return unless human_note_for_ticket?
-      
+      return if (!human_note_for_ticket? or zendesk_import?)
+          
       if outbound_email?
         unless private?
           notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
@@ -226,6 +226,10 @@ class Helpdesk::Note < ActiveRecord::Base
   private
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
+    end
+
+    def zendesk_import?
+      Thread.current["zenimport_#{account_id}"]
     end
     
     def liquidize_body
