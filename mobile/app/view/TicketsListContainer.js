@@ -53,7 +53,8 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!'
+                        pullRefreshText: 'Pull down for more!',
+                        prettyUpdatedDate:true
                     },
                     {
                         xclass: 'plugin.ux.ListPaging2',
