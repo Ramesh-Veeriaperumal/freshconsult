@@ -3,10 +3,10 @@
 		<div class="sidepanel">
 			<h3 class="title"><%= t(".billing") %></h3>
 			<p>
-			  <strong><%= t('.begin_subscription') %></strong> <%= t(".begin_subscription_info") %>
+			  <strong><%= t('accounts.billing.begin_subscription') %></strong> <%= t(".begin_subscription_info") %>
 			</p>
 			<p>
-			  <strong><%= t('.save_billing_information') %></strong> <%= t(".save_billing_information_info") %>
+			  <strong><%= t('accounts.billing.save_billing_information') %></strong> <%= t(".save_billing_information_info") %>
 			</p>
 		</div>
 	<% end %>
@@ -31,11 +31,11 @@
 				<span class="seperator"></span>
 				<div class="button-container">
 					<% if @subscription.trial? %>
-						<%= link_to( "&larr; #{t('select_another_plan')}", account_url, :class => "uiButton floatl" ) %>
-						<%= submit_tag t('.begin_subscription'), :class => "uiButton special", :id => "begin_subscription" %>	
+						<%= link_to( "&larr; #{t('select_another_plan')}", subscription_url, :class => "uiButton floatl" ) %>
+						<%= submit_tag t('accounts.billing.begin_subscription'), :class => "uiButton special", :id => "begin_subscription" %>	
 					<% else %>
-						<%= link_to( "&larr; #{t("cancel_and_back")}", account_url, :class => "uiButton floatl" ) %>
-						<%= submit_tag t('.update_billing_info'), :class => "uiButton" %>
+						<%= link_to( "&larr; #{t("cancel_and_back")}", subscription_url, :class => "uiButton floatl" ) %>
+						<%= submit_tag t('accounts.billing.update_billing_info'), :class => "uiButton" %>
 					<% end %>
 				</div>
 		</li>

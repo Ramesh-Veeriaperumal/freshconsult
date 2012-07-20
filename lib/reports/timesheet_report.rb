@@ -1,5 +1,6 @@
 module Reports::TimesheetReport
   
+  include Reports::ActivityReport
       
   def valid_month?(time)
     time.is_a?(Numeric) && (1..12).include?(time)
@@ -27,8 +28,8 @@ module Reports::TimesheetReport
   end
   
   def build_item
-    @start_date = params[:start_date] ?  Date.parse(params[:start_date]).beginning_of_day : start_of_month(Time.zone.now.month.to_i)
-    @end_date = params[:end_date] ? Date.parse(params[:end_date]).end_of_day : Time.zone.now.end_of_day
+    @start_date = start_date
+    @end_date = end_date
     @customer_id = params[:customer_id] || []
     @user_id = params[:user_id] || []
     @headers = list_view_items.delete_if{|item| item == group_by_caluse }

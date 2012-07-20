@@ -25,10 +25,21 @@ module AuthenticationSystem
       !is_assumed_user? && !user.account_admin? && (current_user.account_admin? || current_user.admin? || ((current_user.supervisor?) && !user.admin? && !user.account_admin?))
     end
 
+    def assume_identity_for_user(user)
+      if is_allowed_to_assume?(user)
+        session[:original_user] = current_user.id
+        session[:assumed_user] = user.id
+        true
+      else
+        false
+      end
+    end
+
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
-      handle_api_key(request, params)
+      assume_agent_email = handle_api_key(request, params)
       @current_user_session = current_account.user_sessions.find
+      handle_assume_identity_for_api(assume_agent_email) unless assume_agent_email.blank?
     end
 
     def handle_api_key(request, params)
@@ -39,13 +50,44 @@ module AuthenticationSystem
           basic_auth_match = /Basic (.*)/.match(http_auth_header)
           if !basic_auth_match.blank? && basic_auth_match.length > 1
             api_key_with_x = Base64.decode64(basic_auth_match[1])
-            api_key = api_key_with_x.split(":")[0]
-            params['k'] = api_key
+            api_key_split = api_key_with_x.split(":")
+            params['k'] = api_key_split[0]
+            # Assume identity
+            if api_key_split.size > 1
+              matched = /assume=(.*)/.match(api_key_split[1])
+              if !matched.blank? and matched.size > 1
+                return matched[1]
+              end
+            end
           end
         end
       elsif params['format'] != "widget"
         params['k'] = nil
         Rails.logger.error "Single access token based auth requested for non widget based page.  Removing single access token."
+      end
+    end
+
+    def handle_assume_identity_for_api(assume_agent_email)
+      if SUPPORTED_API_KEY_FORMATS.include?(params['format'])
+        error_code = "unauthorized"
+        unless @current_user_session.blank?
+          assume_agent = current_account.users.find_by_email(assume_agent_email)
+          puts "assume_agent : #{assume_agent.inspect}"
+          if assume_agent.blank?
+            error_code = "assuming_identity_user_does_not_exist"
+          elsif assume_identity_for_user(assume_agent)
+            return true
+          else
+            error_code = "assuming_identity_not_allowed"
+          end
+        end
+        @current_user_session = nil
+        error_msg = {:status=>:error, :error_code=>error_code, :message=>I18n.t("#{error_code}_msg")}
+        respond_to do |format|
+          format.xml { render :xml => error_msg.to_xml(:root=>"result"), :status => :unauthorized }
+          format.json { render :json => error_msg.to_json, :status => :unauthorized }
+        end
+        return false
       end
     end
 
@@ -104,8 +146,8 @@ module AuthenticationSystem
 
     def authenticate_admin
       authenticate_or_request_with_http_basic do |user, password|
-       	user == 'super' && password == 'SPIDEYd00per'
-     	end
+        user == 'super' && password == 'SPIDEYd00per'
+      end
     end
 
     def logged_in?
