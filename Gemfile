@@ -64,7 +64,7 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
-gem "SystemTimer", "~> 1.2.3" 
+gem "SystemTimer", "1.2.3" 
 gem "redis","2.2.2"
 gem "resque"
 gem 'resque-scheduler', :require => 'resque_scheduler'
