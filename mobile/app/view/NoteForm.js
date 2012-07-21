@@ -6,6 +6,10 @@ Ext.define('Freshdesk.view.NoteForm', {
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
         cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
+        if(!FD.current_account.canned_responses.length){
+            cannedResPopup.items.items[0].emptyTextCmp.show()
+        }
+        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     config: {
@@ -29,7 +33,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                         name: 'helpdesk_note[private]',
                         label: 'Private , Don\'t Show to requester',
                         itemId:'noteFormPrivateField',
-                        labelWidth: '70%'
+                        labelWidth: '60%'
                     },
                     {
                         xtype: 'textareafield',

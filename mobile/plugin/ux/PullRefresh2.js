@@ -258,7 +258,7 @@ Ext.define('plugin.ux.PullRefresh2', {
 
         if (!me.isReleased) {
             if(!me.isRefreshing && -y > 20  && -y < 25 && prettyUpdatedDate ){
-                me.updatedEl.setHtml(new Date(me.lastUpdated).toRelativeTime());
+                me.updatedEl.setHtml(new Date(me.lastUpdated).toRelativeTime(5000));
             }
             if (!me.isRefreshing && -y >= me.pullHeight + 10) {
                 me.isRefreshing = true;

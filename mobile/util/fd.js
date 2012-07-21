@@ -156,6 +156,7 @@ FD.Util = {
                 break;
             case 'checkbox':
                 item.xtype = 'checkboxfield';
+                item.checked=field.field_value;
                 break;
             case 'number':
                 item.xtype = 'numberfield';

@@ -1702,6 +1702,8 @@ en:
         new_my_open: New & My Open Tickets
         this_view: this view
         all_tickets: All Tickets
+        all: All Tickets
+        new_and_my_open: New & My Open Tickets
         open: Open tickets
         closed: Closed Tickets
         deleted: Trash

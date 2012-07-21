@@ -4,8 +4,8 @@ class Mobile::TicketsController < ApplicationController
   before_filter :require_user_login, :set_mobile
   before_filter :check_permistions, :only => :get_suggested_solutions
   
-  FILTER_NAMES = [ :new_my_open, :all_tickets, :monitored_by, :spam, :deleted ]
-  CUSTOMER_FILTER_NAMES = [ :all_tickets, :open_or_pending, :resolved_or_closed ]
+  FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
+  CUSTOMER_FILTER_NAMES = [ :all, :open_or_pending, :resolved_or_closed ]
 
   
 
