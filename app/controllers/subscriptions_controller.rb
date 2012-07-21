@@ -17,6 +17,8 @@ class SubscriptionsController < ApplicationController
   
   filter_parameter_logging :creditcard,:password
 
+  ssl_required :billing
+  
   def convert_subscription_to_free
     @subscription.subscription_plan = @subscription_plan 
     @subscription.convert_to_free
