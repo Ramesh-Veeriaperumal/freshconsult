@@ -41,7 +41,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer && values.requester.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
                         '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
                             '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
                         '</div></div>',
