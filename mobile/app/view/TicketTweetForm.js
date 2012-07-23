@@ -17,7 +17,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Tweet',
             ui:'headerBtn',
             handler:this.send,
             scope:this

@@ -24126,7 +24126,6 @@ Ext.define('plugin.ux.PullRefresh2', {
 
         if (!me.isReleased) {
             if(!me.isRefreshing && -y > 20  && -y < 25 && prettyUpdatedDate ){
-                console.log(new Date(me.lastUpdated).toRelativeTime())
                 me.updatedEl.setHtml(new Date(me.lastUpdated).toRelativeTime());
             }
             if (!me.isRefreshing && -y >= me.pullHeight + 10) {
@@ -38734,7 +38733,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Save',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -38899,7 +38898,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Tweet',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -47967,38 +47966,23 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
-                        xtype: 'togglefield',
-                        name: 'helpdesk_note[private]',
-                        label: 'Private , Don\'t Show to requester',
-                        itemId:'noteFormPrivateField',
-                        labelWidth: '70%'
-                    },
-                    {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your note.. *',
+                        height:180,
                         required:true,
                         clearIcon:false
-                    },
+                    },                    
                     {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
                     },
                     {
-                        xtype: 'multiselectfield',
-                        name: 'notify_emails',
-                        label:'Notify',
-                        displayField : 'id', //don't change this property
-                        valueField   : 'value', //don't change this property,
-                        usePicker : false,
-                        store : 'AutoTechnician',
-                        itemId: 'noteFormNotifyField'
-                    },
-                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
+                        cls:'green-icon',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -48006,13 +47990,29 @@ Ext.define('Freshdesk.view.NoteForm', {
                                 text:'Canned Response',
                                 docked:'left',
                                 ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
                             }
                         ]
 
-                    }
+                    },
+                    {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify Agents',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField',
+                        cls:'multiselect'
+                    },
+                    {
+                        xtype: 'togglefield',
+                        name: 'helpdesk_note[private]',
+                        label: 'Show this note to requester? ',
+                        itemId:'noteFormPrivateField',
+                        labelWidth: '71%'
+                    },
                 ]
             }
         ]
