@@ -14,9 +14,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @day_pass_stats = SubscriptionPayment.day_pass_stats if params[:page].blank?
     @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
     @free_customers = Subscription.free_customers
-    @zero_paying_customers = Subscription.zero_amount_customers
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
-    @cmrr = @monthly_revenue/(@customer_count - @zero_paying_customers)
+    @cmrr = @monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = Subscription.customers_agent_count - (Subscription.customers_free_agent_count + DUMMY_AGENTS)
     @subscriptions = search(params[:search])
     @subscriptions = @subscriptions.paginate( :page => params[:page], :per_page => 30)
