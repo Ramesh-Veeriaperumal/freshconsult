@@ -94,15 +94,12 @@ Ext.define('Freshdesk.controller.Tickets', {
             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
             Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
         }
-
-        if(this.ticket.is_twitter){
+        else if(this.ticket.is_twitter){
             var tweetForm = this.getTicketTweetForm();
             this.initTweetForm(id);
             tweetForm.ticket_id = id;
             Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
-        }
-
-        if(this.ticket.is_facebook){
+        }else if(this.ticket.is_facebook){
             var facebookForm = this.getTicketFacebookForm();
             this.initFacebookForm(id);
             facebookForm.ticket_id = id;
