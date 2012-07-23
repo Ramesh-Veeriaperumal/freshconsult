@@ -15,7 +15,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2','plugin.ux.Iscroll'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
