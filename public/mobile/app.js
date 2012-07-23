@@ -54617,7 +54617,15 @@ Ext.define('Freshdesk.store.Init', {
                 type: 'json'
             }
         },
-        autoLoad:false
+        autoLoad:false,
+        listeners : {
+            beforeload : {
+                fn: function(){
+                    Ext.Viewport.setMasked({xtype:'mask',html:'<div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',style:'background:rgba(255,255,255,0.1)'});
+                },
+                scope:this
+            }
+        }
     }
 });
 Ext.define('Freshdesk.store.Filters', {
@@ -56654,6 +56662,7 @@ Ext.application({
                 FD.Util.initCustomer();
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            Ext.Viewport.setMasked(false);
         }});
 
         //adding listners to ajax for showing the loading mask .. global.

@@ -88,6 +88,7 @@ Ext.application({
                 FD.Util.initCustomer();
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            Ext.Viewport.setMasked(false);
         }});
 
         //adding listners to ajax for showing the loading mask .. global.
