@@ -128,7 +128,7 @@ module ApplicationHelper
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
-      ['/contacts',           :customers,    permission?(:manage_tickets)],
+      ['/contacts',           :customers,    permission?(:manage_customers)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/reports',            :reports,      permission?(:manage_reports) ],
       ['/admin/home',         :admin,        permission?(:manage_users)],
