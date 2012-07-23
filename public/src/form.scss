@@ -1936,7 +1936,7 @@ ul.ui-form .inputs-list{
 
 
 #cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{
-	width:91% !important;
+	width:94% !important;
 }
 
 #cc_emails_sec .chzn-drop{
@@ -1944,14 +1944,11 @@ ul.ui-form .inputs-list{
 }
 
 #cc_emails_sec .multi_value_field {
-	width:91%;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	box-shadow: 1px 1px 2px #DFDFDF inset;	
-}
-
-.radio-set-right{
-	padding: 0px 0px 0px 10px ;
+	width:93%;
+	padding-left:5px;
+	padding-right:5px;
+	border-color:#C6C6C6;
+	@include box-shadow(#DFDFDF 1px 1px 2px inset);
+	@include border-radius(5px);
 }
 

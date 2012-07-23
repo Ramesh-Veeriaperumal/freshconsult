@@ -759,13 +759,11 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .new_ticket_cc_button a { text-decoration: underline; }
 .new_ticket_cc_button a:hover { text-decoration: none; }
 
-#cc_emails_sec .chzn-container, #cc_emails_sec .search-field input { width: 91% !important; }
+#cc_emails_sec .chzn-container, #cc_emails_sec .search-field input { width: 94% !important; }
 
 #cc_emails_sec .chzn-drop { width: 100% !important; }
 
-#cc_emails_sec .multi_value_field { width: 91%; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; box-shadow: 1px 1px 2px #DFDFDF inset; }
-
-.radio-set-right { padding: 0px 0px 0px 10px; }
+#cc_emails_sec .multi_value_field { width: 93%; padding-left: 5px; padding-right: 5px; border-color: #C6C6C6; -moz-box-shadow: #dfdfdf 1px 1px 2px inset; -webkit-box-shadow: #dfdfdf 1px 1px 2px inset; -o-box-shadow: #dfdfdf 1px 1px 2px inset; box-shadow: #dfdfdf 1px 1px 2px inset; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; }
 
 /* Theme Colors and layout Defaults */
 .ui-datepicker { background: #ffffff; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=95); opacity: 0.95; -moz-border-radius: 5px 5px 5px 5px; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }
