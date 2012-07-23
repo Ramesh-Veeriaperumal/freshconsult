@@ -1346,8 +1346,8 @@ en:
     make_primary: Make primary
     info8: Forward your emails to
     help_link_info: Read our Email Settings article for more information...
-    bcc_email: BCC address
-    info17: This email address will be included automatically in the BCC field for all ticket communications
+    bcc_email: Bcc address
+    info17: This email address will be included automatically in the Bcc field for all ticket communications
     info18: Automatic bcc address included in ticket replies 
     email_added_succ_msg: The email has been added
     assign_to_product_msg: Link this support email with a product
@@ -1358,13 +1358,13 @@ en:
     forwarding_email: Forwarding Email
     group: Group
     support_email_exists: Support email already exists
-    primary_supp_email_tool_tip: Primary support email for %{portal_name} 
-    secondary_supp_email_tool_tip: Click here to make this support email as primary for %{portal_name}
+    primary_supp_email_tool_tip: Primary support email
+    secondary_supp_email_tool_tip: Make this email primary
     remove_msg: Are you sure you want to remove this email?
     mark_as_primary_msg: Are you sure you want to make this as the primary support email?
-    bcc_text: BCC
-    add_bcc_text: Add BCC
-    set_bcc_email_text: Set automatic BCC email
+    bcc_text: Bcc
+    add_bcc_text: Add Bcc
+    set_bcc_email_text: Set automatic Bcc email
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -2257,8 +2257,8 @@ en:
   resolved_tickets: "Resolved Tickets"
   waiting_on_customer: "Waiting on Customer"
   waiting_on_third_party: "Waiting on Third Party"
-  bcc_email_updated_success_msg: "Successfully updated BCC email"
-  bcc_email_updated_failure_msg: "Failed to update BCC email"
+  bcc_email_updated_success_msg: "Successfully updated Bcc email"
+  bcc_email_updated_failure_msg: "Failed to update Bcc email"
   choose_free_plan: "Choose your Free %{plan}"
   not_eligible_for_free_plan: "Not eligible to select a Free plan"
   select_free_plan: "Select your Free plan"

@@ -1782,7 +1782,7 @@ a.submit_link:hover { text-decoration: none; }
 .email-settings-bcc { position: relative; }
 .email-settings-bcc label { font-size: 14px; padding: 0 5px 0 0; }
 .email-settings-bcc a { font-size: 14px; color: #0c74d7; font-weight: 500; padding-right: 25px; }
-.email-settings-bcc .tool-tip { position: absolute; background: url(../images/email_config_bcc_tooltip.png) no-repeat; width: 18px; height: 18px; top: 0px; right: -5px; }
+.email-settings-bcc .tool-tip { position: absolute; background: url(../images/email_config_bcc_tooltip.png) no-repeat; width: 18px; height: 18px; top: 1px; right: 0px; }
 
 .email-config-styled-table { width: 100%; border: 1px solid #ECECEC; margin-bottom: 20px; }
 .email-config-styled-table thead tr { height: 34px; }
@@ -1796,6 +1796,8 @@ a.submit_link:hover { text-decoration: none; }
 .email-config-styled-table tbody tr td.primaryRole .primary, .email-config-styled-table tbody tr td.primaryRole .secondary { display: block; }
 .email-config-styled-table tbody tr td.primaryRole .primary:before { content: url(../images/star_on.png) ""; }
 .email-config-styled-table tbody tr td.primaryRole .secondary:before { content: url(../images/star_off.png) ""; }
+.email-config-styled-table tbody tr td.primaryRole .secondary:hover { display: block; }
+.email-config-styled-table tbody tr td.primaryRole .secondary:hover::before { content: url(../images/star_hover.png) ""; }
 .email-config-styled-table tbody tr td.supportMail { width: 28%; }
 .email-config-styled-table tbody tr td.supportMail span.bold { color: #333; font-weight: bold; font-size: 13px; }
 .email-config-styled-table tbody tr td.supportMail ul { padding-right: 10px; float: left; }

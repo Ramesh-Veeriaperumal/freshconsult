@@ -3,9 +3,7 @@
 <% end %>
 
 <div id="emailconfig-list" class="email-settings-header">
-  <div class="action_buttons">
-    <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "last" %>
-  </div>
+  <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "floatr uiButton" %>
   <h3 class="title"><%=t('email_configs.title')%></h3>
   <div class="intro"><%=t('email_configs.info11')%></div>
 </div>
@@ -32,9 +30,6 @@
       <% end %>
     </tbody>
   </table>
-  <div class="email-config-add-email">
-      <%= link_to( "<span></span> #{t('admin.products.add_another_email')}", new_admin_email_config_path , :class => "add-email-icon", :id => "addchoice" ) %>
-  </div>
 
   <% if feature?(:multi_product) %>
     <% @products.each do |product| %>
@@ -55,9 +50,6 @@
           <% end %>
         </tbody>
       </table>
-       <div class="email-config-add-email">
-          <%= link_to( "<span></span> #{t('admin.products.add_another_email')}", new_admin_email_config_path(:selected_product => product.id), :class => "add-email-icon", :id => "addchoice" ) %>
-      </div>
    <% end %>
   <% end %>
 </div>

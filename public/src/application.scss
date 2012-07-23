@@ -5569,8 +5569,8 @@ margin:10px;
 		background: url(../images/email_config_bcc_tooltip.png) no-repeat;
 		width: 18px;
 		height: 18px;
-		top: 0px;
-		right: -5px;
+		top: 1px;
+		right: 0px;
 	}
 }
 
@@ -5622,6 +5622,12 @@ margin:10px;
 			    	}
 			    	.secondary:before{
 			    		content: url(../images/star_off.png) "";
+			    	}
+			    	.secondary:hover{
+			    		display: block;
+				    	&::before{
+					    	content: url(../images/star_hover.png) "";
+				    	}
 			    	}
 			    }
 

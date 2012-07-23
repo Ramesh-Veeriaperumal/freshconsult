@@ -2077,26 +2077,3 @@ ul.ui-form .inputs-list{
 .radio-set-right{
 	padding: 0px 0px 0px 10px ;
 }
-
-.email-config-add-email{
-	margin-top: -15px;
-	padding-bottom: 25px;
-	a.add-email-icon{
-		padding: 8px 8px 4px 35px;
-		font-size: 14px;
-		font-family: "Helvetica Neue", sans-serif;
-		font-weight: 300;
-		text-decoration: none;
-		color: #404040;
-		position: relative;
-		@include inline-block;
-		span{
-			position: absolute;
-			left: 0px;
-			top: 4px;
-			background: url("../images/email_config_add.png") no-repeat;
-			width: 25px;
-			height: 25px;
-		}
-	}
-}

@@ -13,7 +13,6 @@ class Admin::EmailConfigsController < Admin::AdminController
   def new
     @products = current_account.products
     @groups = current_account.groups
-    @email_config.product_id = params[:selected_product]
   end
 
   def edit
