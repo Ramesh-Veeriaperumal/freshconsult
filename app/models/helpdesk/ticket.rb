@@ -886,7 +886,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
-    to_emails_array = (emails_hash[:to_emails] || []).clone
+    to_emails_array = (to_emails || []).clone
 
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 

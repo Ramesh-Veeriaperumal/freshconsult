@@ -32,6 +32,9 @@
       <% end %>
     </tbody>
   </table>
+  <div class="email-config-add-email">
+      <%= link_to( "<span></span> #{t('admin.products.add_another_email')}", new_admin_email_config_path , :class => "add-email-icon", :id => "addchoice" ) %>
+  </div>
 
   <% if feature?(:multi_product) %>
     <% @products.each do |product| %>
@@ -52,7 +55,10 @@
           <% end %>
         </tbody>
       </table>
-    <% end %>
+       <div class="email-config-add-email">
+          <%= link_to( "<span></span> #{t('admin.products.add_another_email')}", new_admin_email_config_path(:selected_product => product.id), :class => "add-email-icon", :id => "addchoice" ) %>
+      </div>
+   <% end %>
   <% end %>
 </div>
    

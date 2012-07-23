@@ -7,5 +7,7 @@ class AddMainPortalToPortals < ActiveRecord::Migration
 
   def self.down
   	remove_column :portals, :main_portal
+
+  	execute("update portals p inner join email_configs e on p.account_id = e.account_id set p.product_id = e.id where e.primary_role = 1")
   end
 end

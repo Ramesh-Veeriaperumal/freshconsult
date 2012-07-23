@@ -3,7 +3,7 @@
       <div class="column left-column">
           <span class="deleteChoice {{if (primary_role == true) }} disabled {{/if}}">&nbsp;</span>
           <input type="hidden" name="product[email_configs_attributes][${index_id}][id]" value="${email_config_id}"/>
-          <label><%=t('admin.products.form.enter_support_email_id')%></label>
+          <label><%=t('admin.products.form.enter_support_email_id')%>*</label>
           <input type="text" class="required text email" name="product[email_configs_attributes][${index_id}][reply_email]" rel="reply_to_id" {{if reply_email }} value="${reply_email}" {{/if}}/>
 
           <label><%= t('admin.products.form.forwarding_email_info')%></label>
