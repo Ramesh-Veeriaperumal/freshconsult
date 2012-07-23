@@ -477,7 +477,7 @@ module ApplicationHelper
     elsif current_user && current_user.customer? && field.all_cc_in_portal?
       element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
     else
-       element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal?) 
+       element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
     end
   end
 
