@@ -41,7 +41,8 @@ module EmailCommands
   end
   
   def status(ticket, value, user, note)
-    ticket.status = TicketConstants::STATUS_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::STATUS_KEYS_BY_TOKEN[value.to_sym].blank? 
+    status = Helpdesk::TicketStatus.status_keys_by_name(ticket.account)[value]  
+    ticket.status = status unless status.blank?
   end
   
   def priority(ticket, value, user, note)

@@ -17,15 +17,17 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
   include Search::TicketSearch
+  include Helpdesk::Ticketfields::TicketStatus
   
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
+  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :get_ticket_agents, :quick_assign] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
-  before_filter :serialize_params_for_tags , :only => [:index, :custom_search]
+  before_filter :check_ticket_status, :only => [:update]
+  before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -40,7 +42,6 @@ class Helpdesk::TicketsController < ApplicationController
         @response_errors = {:no_email => true}
       end
     end
-
     company_name = params[:company_name]
     unless company_name.blank?
       company = current_account.customers.find_by_name(company_name)
@@ -50,7 +51,6 @@ class Helpdesk::TicketsController < ApplicationController
         @response_errors = {:no_company => true}
       end
     end
-
   end
 
   def load_cached_ticket_filters
@@ -169,10 +169,6 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => @items.to_json
       end
 
-      format.xml do
-        render :xml => @items.to_xml
-      end
-
       format.widget do
         render :layout => "widgets/contacts"    
       end
@@ -262,6 +258,9 @@ class Helpdesk::TicketsController < ApplicationController
 
     add_original_to_email if ( !@item.to_email.blank? && current_account.pass_through_enabled?)
 
+    @to_emails = @ticket.to_emails
+    @to_cc_emails = @ticket.to_cc_emails
+
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
@@ -328,7 +327,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def close_multiple
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]       
+    status_id = CLOSED       
     @items.each do |item|
       item.update_attribute(:status , status_id)
     end
@@ -458,14 +457,24 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def get_ticket_agents
-    ticket = current_account.tickets.find_by_display_id(params[:id])
-    unless ticket.blank?
+    unless @item.blank?
       @agents = current_account.agents
-      @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>ticket.group.id ,:users =>{:account_id =>current_account.id} } ) unless ticket.group.blank?
+      @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id => @item.group.id ,:users =>{:account_id =>current_account.id} } ) unless @item.group.blank?
     end
-    render :partial => "get_ticket_agents", :locals => {:ticket_id => ticket.display_id}
+    render :partial => "get_ticket_agents", :locals => {:ticket_id => @item.display_id}
   end
-  
+
+  def quick_assign
+    unless params[:assign] == 'agent'
+      @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+    else
+      agent = current_account.agents.find_by_user_id(params[:value])
+      @item.responder = agent.user
+    end
+    @item.save
+    render :json => {:success => true}.to_json
+  end
+
   def new
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
@@ -485,7 +494,7 @@ class Helpdesk::TicketsController < ApplicationController
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
     
-    @item.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed] if save_and_close?
+    @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
     else
@@ -494,7 +503,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def close 
-    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+    status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attribute(:status , status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
@@ -618,6 +627,13 @@ class Helpdesk::TicketsController < ApplicationController
   
   def save_and_close?
     !params[:save_and_close].blank?
+  end
+
+  def check_ticket_status
+    if params["helpdesk_ticket"]["status"].blank?
+      flash[:error] = t("change_deleted_status_msg")
+      redirect_to item_url
+    end
   end
 
 end

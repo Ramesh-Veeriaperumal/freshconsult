@@ -1,3 +1,8 @@
+
+
+
+
+<%if @fb_pages.size > 0%>
 <% form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
 <p class="intro">
 	<%=t('.associate')%>
@@ -21,4 +26,11 @@
 <div class="button-container">
 	<%= submit_tag t("save"), :class => "uiButton" %>	
 </div>
+<% end %>
+<%else%>
+<div class="list-noinfo">
+	<p>
+		<%=t('.no_page_info')%>
+	</p>
+ </div>
 <% end %>

@@ -1,6 +1,7 @@
 class AccountsController < ApplicationController
   
   include ModelControllerMethods
+  include FreshdeskCore::Model
   
   layout :choose_layout 
   
@@ -385,7 +386,7 @@ class AccountsController < ApplicationController
     if request.post? and !params[:confirm].blank?
       SubscriptionNotifier.deliver_account_deleted(current_account)
       create_deleted_customers_info
-      current_account.destroy
+      perform_destroy(current_account)
       redirect_to "http://www.freshdesk.com"
     end
   end

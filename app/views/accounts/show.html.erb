@@ -73,6 +73,9 @@
   	 		<%= link_to( "#{t('change')} &rsaquo;", billing_account_url, :class => "last" ) %>
   	 	 </div>
   		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number}" %></label>
+		 <% if @subscription.billing_address%>
+		 <%=@subscription.billing_address.humanize.gsub("\n","<br>")%>
+		 <%end%>
   	  </div>
   	</li>
   <% end %>

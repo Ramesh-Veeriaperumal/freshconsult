@@ -28,6 +28,18 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     render :action => 'show'
   end
   
+  def add_day_passes
+    @subscription = Subscription.find(params[:id])
+    if request.post? and !params[:passes_count].blank?
+      day_pass_config = @subscription.account.day_pass_config
+      passes_count = params[:passes_count].to_i
+      raise "Maximum 30 Day passes can be extended at a time." if passes_count > 30
+      day_pass_config.update_attributes(:available_passes => (day_pass_config.available_passes +  passes_count))
+      Rails.logger.info "ADDED #{passes_count} DAY PASSES FOR ACCOUNT ##{@subscription.account_id}-#{@subscription.account}"
+    end
+    render :action => 'show'
+  end
+  
   def charge
     if request.post? && !params[:amount].blank?
       load_object
@@ -92,7 +104,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
         csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
                 sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',!sub.account.twitter_handles.blank?,!sub.account.facebook_pages.blank?,sub.account.tickets.count,sub.account.portals.count > 1,
-                sub.free_agents,sub.account.full_time_agents.count,sub.account.all_agents.count - (sub.account.full_time_agents.count ||= 0),sub.account.account_admin.last_login_at,sub.account.account_admin.login_count] 
+                sub.free_agents,sub.account.full_time_agents.count,sub.account.agents.count - (sub.account.full_time_agents.count ||= 0),sub.account.account_admin.last_login_at,sub.account.account_admin.login_count] 
       end 
     end 
  
@@ -106,9 +118,14 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
    def search(search)
     if search
-      Subscription.find(:all,:include => :account,
+      subscriptions = Subscription.find(:all,:include => :account,
                    :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
                    :conditions => ['full_domain LIKE ?', "%#{search}%"]) 
+      user_subscriptions = Subscription.find(:all,
+                   :joins => "INNER JOIN users on users.account_id = subscriptions.account_id and users.user_role = 4 ",
+                   :conditions => ['users.email LIKE ?', "%#{search}%"]) 
+      subscriptions =  subscriptions.concat(user_subscriptions) unless user_subscriptions.nil?
+      subscriptions.uniq
     else
       Subscription.find(:all,:include => :account, :order => 'created_at desc')
     end

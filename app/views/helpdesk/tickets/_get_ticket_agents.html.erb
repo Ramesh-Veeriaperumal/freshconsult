@@ -2,6 +2,6 @@
   <a class="disabled">No agents in selected group</a>
 <% else %>
   <% @agents.each do |agent| %>
-	  <a data-agent-id="<%=agent.user.id%>" data-ticket-id="<%= ticket_id %>" class="action_assign_agent"><%=agent.user.name%></a>
+	  <a data-agent-id="<%=agent.user.id%>" data-ticket-id="<%= ticket_id %>" class="action_assign_agent" href=""><%=agent.user.name%></a>
   <% end %>
 <% end %>

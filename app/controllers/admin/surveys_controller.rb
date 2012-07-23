@@ -7,14 +7,14 @@ class Admin::SurveysController < Admin::AdminController
     @survey = current_account.survey
   end
   
-  def enable
-    if(params[:account][:features][:survey_links] == "1")
-       current_account.features.survey_links.create
-       @enable = true
-    else
-       @enable = false
-       current_account.features.survey_links.destroy
-    end    
+  def enable    
+       current_account.features.survey_links.create     
+       current_account.reload  
+  end
+  
+  def disable
+  	   current_account.features.survey_links.destroy
+  	   current_account.reload  	
   end
   
   def update

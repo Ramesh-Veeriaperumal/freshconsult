@@ -54,7 +54,7 @@
 	padding: 5px 35px 5px 10px;
 	overflow: hidden;
 	
-	border-width: 0;
+	border-width: 1px 1px 0;
 	border-style: solid;
 
 	font-weight: bold;
@@ -130,51 +130,21 @@
 /*! Ticket tooltip style */
 
 .ui-tooltip-ticket{
-	max-width: 600px !important;
-	min-width:500px;
-	margin-left:20px;
-	margin-top:-30px;
-/*	&:before {
-		content:"";
-		position:absolute;
-		border-style:solid;
-	    border-color:#afac71 transparent;
-	    display:block; 
-	    width:0;
-	    top:-8px; 
-		bottom:auto;
-		right:auto;
-		left:15px;
-	    border-width:0 9px 9px;
-	    z-index:16000;
-	}
-	&:after {
-		content:"";
-		position:absolute;
-		border-style:solid;
-		border-color:#fffeeb transparent;
-	    display:block; 
-	    width:0;
-	    top:-7px;
-		bottom:auto;
-		right:auto;
-		left:16px;
-	    border-width:0 8px 8px;
-	    z-index:16001;
-	}
-*/
+	max-width: 650px !important;
+	margin-left:18px;
 }
 
 .ui-tooltip-ticket .ui-tooltip-content{
-	padding:10px;
+	padding:0.8em 1em;
+
 	color:#000000;
-	text-align:justify;
+	text-align:left;
 	font-size:1.0em;
 	background-color:#FFFDE1;
 	border-color:#d0cdaa;
+	line-height: 22px;
 	margin-left:-14px; 
 }
-
 
 
 /*! Light tooltip style */
@@ -315,7 +285,6 @@
 
 .ui-tooltip .ui-tooltip-tip,
 .ui-tooltip .ui-tooltip-tip *{
-	display:none;
 	position: absolute;
 	
 	line-height: 0.1px !important;
@@ -339,9 +308,9 @@
 
 /*! Add shadows to your tooltips in: FF3+, Chrome 2+, Opera 10.6+, IE6+, Safari 2+ */
 .ui-tooltip-shadow{
-	-webkit-box-shadow: 0 3px 10px 0px  rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 3px 10px 0px  rgba(0, 0, 0, 0.2);
-	box-shadow: 0 3px 10px 0px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15);
+	-moz-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15);
+	box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15);
 }
 
 .ui-tooltip-shadow .ui-tooltip-titlebar,
@@ -562,3 +531,4 @@
 	background-color: #FBFBFB;
 	color: #555;
 }
+

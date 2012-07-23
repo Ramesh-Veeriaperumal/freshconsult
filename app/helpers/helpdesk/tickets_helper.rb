@@ -2,6 +2,7 @@ module Helpdesk::TicketsHelper
   
   include Wf::HelperMethods
   include TicketsFilter
+  include Helpdesk::Ticketfields::TicketStatus
   
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -202,9 +203,28 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket, class_name = "need-attention")
-    if ticket.active? && ticket.ticket_states.need_attention 
-      class_name
+  def subject_style(ticket) #, class_name = "need-attention")
+    type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
+    type = "new" if ticket.ticket_states.is_new? && ticket.active?
+    type = "elapsed" if ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
+    type = "overdue" if ticket.due_by < Time.now && ticket.active?
+    type = "resolved"  if ticket.status == RESOLVED
+    type
+  end
+
+  def sla_status(ticket)
+    if( ticket.active? )
+      if(Time.now > ticket.due_by )
+        t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+      else
+        t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+      end
+    else
+      if( ticket.ticket_states.resolved_at < ticket.due_by )
+        t('resolved_on_time')
+      else
+        t('resolved_late')
+      end
     end
   end
   
@@ -234,14 +254,18 @@ module Helpdesk::TicketsHelper
     
   end
   
-  def status_changed_time_value_hash (status)
+  def status_changed_time_value_hash (ticket)
+    status_name = ticket.status_name
+    status = ticket.status
     case status
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]
-        return {:title => t('ticket_resolved_at_time'), :method => "resolved_at"}
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]
-        return {:title =>  t('ticket_pending_since_time'), :method => "pending_since"}
-      when TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]
-        return {:title => t('ticket_closed_at_time'), :method => "closed_at"}
+      when RESOLVED
+        return {:title => "#{status_name}", :method => "resolved_at"}
+      when PENDING
+        return {:title =>  "#{status_name}", :method => "pending_since"}
+      when CLOSED
+        return {:title => "#{status_name}", :method => "closed_at"}
+      else
+        return {:title => "#{status_name}", :method => "status_updated_at"}
     end
   end
   
@@ -266,5 +290,5 @@ module Helpdesk::TicketsHelper
     end
     show_params
   end
-
+  
 end

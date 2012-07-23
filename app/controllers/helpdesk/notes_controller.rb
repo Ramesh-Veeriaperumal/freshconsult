@@ -76,9 +76,9 @@ class Helpdesk::NotesController < ApplicationController
     def process_item
       Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket
-        if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+        if @item.email_conversation?
           send_reply_email
-          @item.create_fwd_note_activity(params[:to_emails]) if("fwd".eql?(params[:email_type]))
+          @item.create_fwd_note_activity(params[:to_emails]) if @item.fwd_email?
         end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
@@ -90,7 +90,7 @@ class Helpdesk::NotesController < ApplicationController
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[params[:ticket_status].to_sym()]
+          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[params[:ticket_status]]
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])
@@ -117,31 +117,31 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-      old_cc_list = @parent.cc_email_hash.nil? ? [] : @parent.cc_email_hash[:cc_emails]
-      old_fwd_email_list =  @parent.cc_email_hash.nil? ? [] : @parent.cc_email_hash[:fwd_emails]
-      if("reply".eql?(params[:email_type]))
-        cc_array = validate_emails params[:cc_emails]
-        cc_array = cc_array.compact unless cc_array.nil?
-        cc_array ||= []
-        cc_hash = {:cc_emails => cc_array , :fwd_emails => old_fwd_email_list}
-      elsif ("fwd".eql?(params[:email_type]))
+      cc_email_hash_value = @parent.cc_email_hash # cc_email_hash value can be either nil or hash
+      if cc_email_hash_value.nil?
+        cc_email_hash_value = {:cc_emails => [], :fwd_emails => []}
+      end
+      if @item.fwd_email?
+        old_fwd_email_list =  cc_email_hash_value[:fwd_emails]
         fwd_to_array = validate_emails params[:to_emails]
         unless fwd_to_array.nil?
-          fwd_to_array.compact
           fwd_cc_array = validate_emails params[:fwd_cc_emails]
-          fwd_cc_array = fwd_cc_array.try(:compact)
           fwd_bcc_array = validate_emails params[:bcc_emails]  
-          fwd_bcc_array = fwd_bcc_array.try(:compact) 
           fwd_cc_array.try(:concat,fwd_bcc_array) unless fwd_bcc_array.nil?
           fwd_to_array.concat(fwd_cc_array) unless fwd_cc_array.nil?
           fwd_to_array.concat(old_fwd_email_list)
         end
         fwd_to_array ||= []
-        cc_hash = {:cc_emails => old_cc_list , :fwd_emails => fwd_to_array.uniq}
+        cc_email_hash_value[:fwd_emails] = fwd_to_array.uniq
+      else
+        cc_array = validate_emails params[:cc_emails]
+        cc_array = cc_array.compact unless cc_array.nil?
+        cc_array ||= []
+        cc_email_hash_value[:cc_emails] = cc_array.uniq
       end
-      @parent.update_attribute(:cc_email, cc_hash)  
+      @parent.update_attribute(:cc_email, cc_email_hash_value)      
    end
-   
+
   def send_facebook_reply
     
     if @parent.is_fb_message?
@@ -179,18 +179,20 @@ class Helpdesk::NotesController < ApplicationController
       (email =~ /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/) ? true : false
     end
 
-    def send_reply_email
-      puts "<<<< THIS IS FROM REPLY METHOD >>>> #{request.host}"
+    def send_reply_email      
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
-                :bcc_emails =>validate_emails(params[:bcc_emails]), :req_host => request.host , :req_port => request.port, :email_type => params[:email_type], 
+      if @item.fwd_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
+                :bcc_emails =>validate_emails(params[:bcc_emails]),
                 :to_emails => validate_emails(params[:to_emails]), :fwd_cc_emails => validate_emails(params[:fwd_cc_emails])})
-      if "reply".eql?params[:email_type]              
-        flash[:notice] = t(:'flash.tickets.reply.success')
-      else
         flash[:notice] = t(:'fwd_success_msg')
+      else        
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
+                :bcc_emails =>validate_emails(params[:bcc_emails]),
+                :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
+        flash[:notice] = t(:'flash.tickets.reply.success')
       end
     end
 
@@ -289,7 +291,7 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def validate_fwd_to_email
-    if("fwd".eql?(params[:email_type]))
+    if(@item.fwd_email?)
       if(params[:to_emails].blank?)
         flash[:error] = t('validate_fwd_to_email_msg')
         redirect_to item_url

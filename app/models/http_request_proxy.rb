@@ -1,12 +1,22 @@
 class HttpRequestProxy
 
   def fetch(params, request)
+    method = request.env["REQUEST_METHOD"].downcase
+    auth_header = request.headers['HTTP_AUTHORIZATION']
+    user_agent = request.headers['HTTP_USER_AGENT']
+    requestParams = {:method => method, :auth_header => auth_header, :user_agent => user_agent}
+    fetch_using_req_params(params, requestParams)
+  end
+
+  def fetch_using_req_params(params, requestParams)
     response_code = 200
     content_type = params[:content_type] || "application/json"
     accept_type = params[:accept_type] || "application/json"
     response_type = "application/json"
     begin
-      method = request.env["REQUEST_METHOD"].downcase
+      method = requestParams[:method]
+      auth_header = requestParams[:auth_header]
+      user_agent = requestParams[:user_agent] + " Freshdesk"
       domain = params[:domain]
       method = params[:method] || method
       ssl_enabled = params[:ssl_enabled]
@@ -14,9 +24,6 @@ class HttpRequestProxy
       user = params[:username]
       pass = params[:password]
       entity_name = params[:entity_name]
-      auth_header = request.headers['HTTP_AUTHORIZATION']
-      user_agent = request.headers['HTTP_USER_AGENT'] + " Freshdesk"
-
       if entity_name.blank?
         post_request_body = params[:body] unless params[:body].blank?
       else
@@ -28,12 +35,15 @@ class HttpRequestProxy
       end
 
       unless /http.*/.match(domain)
-        http_s = ssl_enabled == "true"?"https":"http";
+        http_s = ssl_enabled == "true"? "https":"http";
         domain = http_s+"://"+ domain
       end
       resource = resource ? "/" + resource : ""
       remote_url = domain + resource
-      auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
+
+      if auth_header.blank?
+        auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
+      end
       options = Hash.new
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
