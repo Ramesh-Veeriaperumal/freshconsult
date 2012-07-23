@@ -4,9 +4,11 @@ module SupportTicketControllerMethods
   
   def show
     @ticket = Helpdesk::Ticket.find_by_param(params[:id], current_account)
-    return if current_user && @ticket.requester_id == current_user.id
-    return if permission?(:manage_tickets)
-    return if current_user && current_user.client_manager?  &&@ticket.requester.customer == current_user.customer
+    unless @ticket.blank?
+      return if current_user && @ticket.requester_id == current_user.id
+      return if permission?(:manage_tickets)
+      return if current_user && current_user.client_manager?  && @ticket.requester.customer == current_user.customer
+    end
     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
   end
 

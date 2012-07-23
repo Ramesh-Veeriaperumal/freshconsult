@@ -443,9 +443,10 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+        element = add_cc_field_tag element ,field 
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
-        element = add_cc_field_tag element if (feature?(:portal_cc) && current_user && current_user.customer? && current_user.customer)
+        element = add_cc_field_tag element ,field if field.portal_cc_field?
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -470,8 +471,14 @@ module ApplicationHelper
     content_tag :li, element, :class => dom_type
   end
 
-  def add_cc_field_tag element     
-    element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) 
+  def add_cc_field_tag element , field    
+    if current_user && current_user.agent? 
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html")) 
+    elsif current_user && current_user.customer? && field.all_cc_in_portal?
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
+    else
+       element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal?) 
+    end
   end
 
   # The field_value(init value) for the nested field should be in the the following format
