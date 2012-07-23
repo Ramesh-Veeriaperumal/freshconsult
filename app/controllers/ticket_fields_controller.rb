@@ -24,7 +24,9 @@ class TicketFieldsController < Admin::AdminController
             :required_in_portal     => field.required_in_portal,
             :choices                => get_choices(field),
             :levels                 => field.levels,
-            :level_three_present    => field.level_three_present
+            :level_three_present    => field.level_three_present,
+            :field_options          => field.field_options
+           
           }
           
     end 
