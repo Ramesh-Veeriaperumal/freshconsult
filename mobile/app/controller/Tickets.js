@@ -50,11 +50,11 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer.items.items[1].items.items[1].addActionListeners(detailsContainer);
         callBack ? callBack() : '' ;
         if(Freshdesk.notification) {
-            var msgContainer = Ext.get("notification_msg");
+            var msgContainer = Ext.select("#notification_msg");
             msgContainer.setHtml('<b>'+Freshdesk.notification.success+'</b>');
-            msgContainer.toggleCls('hide');
+            Ext.select("#notification_msg").removeCls('hide').setStyle('display','block');
             Ext.defer(function(){
-                Ext.get("notification_msg").toggleCls('hide')
+                Ext.select("#notification_msg").setStyle('display','none');
             },3500);
         }
         Freshdesk.notification=undefined;
@@ -94,15 +94,12 @@ Ext.define('Freshdesk.controller.Tickets', {
             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
             Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
         }
-
-        if(this.ticket.is_twitter){
+        else if(this.ticket.is_twitter){
             var tweetForm = this.getTicketTweetForm();
             this.initTweetForm(id);
             tweetForm.ticket_id = id;
             Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
-        }
-
-        if(this.ticket.is_facebook){
+        }else if(this.ticket.is_facebook){
             var facebookForm = this.getTicketFacebookForm();
             this.initFacebookForm(id);
             facebookForm.ticket_id = id;

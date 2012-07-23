@@ -23866,6 +23866,342 @@ Ext.define('Ext.app.Application', {
 }, function() {
 });
 
+
+/**
+ * Adds a Load More button at the bottom of the list. When the user presses this button,
+ * the next page of data will be loaded into the store and appended to the List.
+ *
+ * By specifying `{@link #autoPaging}: true`, an 'infinite scroll' effect can be achieved,
+ * i.e., the next page of content will load automatically when the user scrolls to the
+ * bottom of the list.
+ *
+ * ## Example
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *
+ *         store: Ext.create('TweetStore'),
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.ListPaging',
+ *                 autoPaging: true
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{profile_image_url}" />',
+ *             '<div class="tweet">{text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('plugin.ux.ListPaging2', {
+    extend: 'Ext.Component',
+    alias: 'plugin.listpaging',
+
+    config: {
+        /**
+         * @cfg {Boolean} autoPaging
+         * True to automatically load the next page when you scroll to the bottom of the list.
+         */
+        autoPaging: false,
+
+        /**
+         * @cfg {String} loadMoreText The text used as the label of the Load More button.
+         */
+        loadMoreText: 'Load More...',
+
+        /**
+         * @cfg {String} noMoreRecordsText The text used as the label of the Load More button when the Store's
+         * {@link Ext.data.Store#totalCount totalCount} indicates that all of the records available on the server are
+         * already loaded
+         */
+        noMoreRecordsText: 'No More Records',
+
+        /**
+         * @private
+         * @cfg {String} loadTpl The template used to render the load more text
+         */
+        loadTpl: [
+            '<div class="{cssPrefix}loading-spinner" style="font-size: 180%; margin: 10px auto;">',
+                 '<span class="{cssPrefix}loading-top"></span>',
+                 '<span class="{cssPrefix}loading-right"></span>',
+                 '<span class="{cssPrefix}loading-bottom"></span>',
+                 '<span class="{cssPrefix}loading-left"></span>',
+            '</div>',
+            '<div class="{cssPrefix}list-paging-msg">{message}</div>'
+        ].join(''),
+
+        /**
+         * @cfg
+         * @private
+         */
+        loadMoreCmp: {
+            xtype: 'component',
+            baseCls: Ext.baseCSSPrefix + 'list-paging'
+        },
+
+        /**
+         * @private
+         * @cfg {Boolean} loadMoreCmpAdded Indicates whether or not the load more component has been added to the List
+         * yet.
+         */
+        loadMoreCmpAdded: false,
+
+        /**
+         * @private
+         * @cfg {String} loadingCls The CSS class that is added to the {@link #loadMoreCmp} while the Store is loading
+         */
+        loadingCls: Ext.baseCSSPrefix + 'loading',
+
+        /**
+         * @private
+         * @cfg {Ext.List} list Local reference to the List this plugin is bound to
+         */
+        list: null,
+
+        /**
+         * @private
+         * @cfg {Ext.scroll.Scroller} scroller Local reference to the List's Scroller
+         */
+        scroller: null,
+
+        /**
+         * @private
+         * @cfg {Boolean} loading True if the plugin has initiated a Store load that has not yet completed
+         */
+        loading: false,
+
+        /*fullyloadedCls used to set when no more records are there to paginate*/
+        fullyloadedCls : Ext.baseCSSPrefix + 'completed'
+    },
+
+    /**
+     * @private
+     * Sets up all of the references the plugin needs
+     */
+    init: function(list) {
+        var scroller = list.getScrollable().getScroller(),
+            store    = list.getStore();
+
+        this.setList(list);
+        this.setScroller(scroller);
+        this.bindStore(list.getStore());
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            this.disableDataViewMask(store);
+        }
+
+        // The List's Store could change at any time so make sure we are informed when that happens
+        list.updateStore = Ext.Function.createInterceptor(list.updateStore, this.bindStore, this);
+
+        if (this.getAutoPaging()) {
+            scroller.on({
+                scrollend: this.onScrollEnd,
+                scope: this
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    bindStore: function(newStore, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+        }
+
+        if (newStore) {
+            newStore.on({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+
+//            this.disableDataViewMask(newStore);
+        }
+    },
+
+    /**
+     * @private
+     * Removes the List/DataView's loading mask because we show our own in the plugin. The logic here disables the
+     * loading mask immediately if the store is autoloading. If it's not autoloading, allow the mask to show the first
+     * time the Store loads, then disable it and use the plugin's loading spinner.
+     * @param {Ext.data.Store} store The store that is bound to the DataView
+     */
+    disableDataViewMask: function(store) {
+        var list = this.getList();
+
+        if (store.isAutoLoading()) {
+            list.setLoadingText(null);
+        } else {
+            store.on({
+                load: {
+                    single: true,
+                    fn: function() {
+                        list.setLoadingText(null);
+                    }
+                }
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyLoadTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    /**
+     * @private
+     */
+    applyLoadMoreCmp: function(config) {
+        config = Ext.merge(config, {
+            html: this.getLoadTpl().apply({
+                cssPrefix: Ext.baseCSSPrefix,
+                message: this.getLoadMoreText()
+            }),
+            listeners: {
+                tap: {
+                    fn: this.loadNextPage,
+                    scope: this,
+                    element: 'element'
+                }
+            }
+        });
+
+        return Ext.factory(config, Ext.Component, this.getLoadMoreCmp());
+    },
+
+    /**
+     * @private
+     * If we're using autoPaging and detect that the user has scrolled to the bottom, kick off loading of the next page
+     */
+    onScrollEnd: function(scroller, x, y) {
+        if (!this.getLoading() && y >= scroller.maxPosition.y) {
+            if (!this.storeFullyLoaded()) {
+                this.loadNextPage();
+            }
+        }
+    },
+
+    /**
+     * @private
+     * Makes sure we add/remove the loading CSS class while the Store is loading
+     */
+    updateLoading: function(isLoading) {
+        var loadMoreCmp = this.getLoadMoreCmp(),
+            loadMoreCls = this.getLoadingCls();
+
+        if (isLoading) {
+            loadMoreCmp.addCls(loadMoreCls);
+        } else {
+            loadMoreCmp.removeCls(loadMoreCls);
+        }
+    },
+
+    /**
+     * @private
+     * If the Store is just about to load but it's currently empty, we hide the load more button because this is
+     * usually an outcome of setting a new Store on the List so we don't want the load more button to flash while
+     * the new Store loads
+     */
+    onStoreBeforeLoad: function(store) {
+        if (store.getCount() === 0) {
+            this.getLoadMoreCmp().hide();
+        }
+    },
+
+    /**
+     * @private
+     */
+    onStoreLoad: function(store) {
+        var loadCmp  = this.addLoadMoreCmp(),
+            template = this.getLoadTpl(),
+            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText(),
+            fullyloadedCls = this.getFullyloadedCls(),
+            storeFullyLoaded = this.storeFullyLoaded();
+
+        this.getLoadMoreCmp().show();
+        this.setLoading(false);
+
+        loadCmp.removeCls(fullyloadedCls);
+
+        if(storeFullyLoaded){
+            loadCmp.addCls(fullyloadedCls);
+        }
+
+        //restores scroll position after a Store load
+        if (this.scrollY) {
+            this.getScroller().scrollTo(null, this.scrollY);
+            delete this.scrollY;
+        }
+
+        //if we've reached the end of the data set, switch to the noMoreRecordsText
+        loadCmp.setHtml(template.apply({
+            cssPrefix: Ext.baseCSSPrefix,
+            message: message
+        }));
+    },
+
+    /**
+     * @private
+     * Because the attached List's inner list element is rendered after our init function is called,
+     * we need to dynamically add the loadMoreCmp later. This does this once and caches the result.
+     */
+    addLoadMoreCmp: function() {
+        var list = this.getList(),
+            cmp  = this.getLoadMoreCmp();
+
+        if (!this.getLoadMoreCmpAdded()) {
+            list.add(cmp);
+
+            /**
+             * @event loadmorecmpadded  Fired when the Load More component is added to the list. Fires on the List.
+             * @param {Ext.plugin.ListPaging} this The list paging plugin
+             * @param {Ext.List} list The list
+             */
+            list.fireEvent('loadmorecmpadded', this, list);
+            this.setLoadMoreCmpAdded(true);
+        }
+
+        return cmp;
+    },
+
+    /**
+     * @private
+     * Returns true if the Store is detected as being fully loaded, or the server did not return a total count, which
+     * means we're in 'infinite' mode
+     * @return {Boolean}
+     */
+    storeFullyLoaded: function() {
+        var store = this.getList().getStore(),
+            total = store.getTotalCount();
+
+        return total !== null ? store.getTotalCount() <= (store.currentPage * store.getPageSize()) : false;
+    },
+
+    /**
+     * @private
+     */
+    loadNextPage: function() {
+        var store = this.getList().getStore();
+
+        this.setLoading(true);
+
+        //keep a cache of the current scroll position as we'll need to reset it after the List is
+        //updated with new data
+        this.scrollY = this.getScroller().position.y;
+
+        store.nextPage({ addRecords: true });
+    }
+});
 /**
  * This plugin adds pull to refresh functionality to the List.
  *
@@ -24126,7 +24462,7 @@ Ext.define('plugin.ux.PullRefresh2', {
 
         if (!me.isReleased) {
             if(!me.isRefreshing && -y > 20  && -y < 25 && prettyUpdatedDate ){
-                me.updatedEl.setHtml(new Date(me.lastUpdated).toRelativeTime());
+                me.updatedEl.setHtml(new Date(me.lastUpdated).toRelativeTime(5000));
             }
             if (!me.isRefreshing && -y >= me.pullHeight + 10) {
                 me.isRefreshing = true;
@@ -24248,327 +24584,142 @@ Ext.define('plugin.ux.PullRefresh2', {
 });
 
 /**
- * Adds a Load More button at the bottom of the list. When the user presses this button,
- * the next page of data will be loaded into the store and appended to the List.
+ * The DelayedTask class provides a convenient way to "buffer" the execution of a method,
+ * performing setTimeout where a new timeout cancels the old timeout. When called, the
+ * task will wait the specified time period before executing. If durng that time period,
+ * the task is called again, the original call will be cancelled. This continues so that
+ * the function is only called a single time for each iteration.
  *
- * By specifying `{@link #autoPaging}: true`, an 'infinite scroll' effect can be achieved,
- * i.e., the next page of content will load automatically when the user scrolls to the
- * bottom of the list.
+ * This method is especially useful for things like detecting whether a user has finished
+ * typing in a text field. An example would be performing validation on a keypress. You can
+ * use this class to buffer the keypress events for a certain number of milliseconds, and
+ * perform only if they stop for that amount of time.
+ *
+ * Using {@link Ext.util.DelayedTask} is very simple:
+ *
+ *     //create the delayed task instance with our callback
+ *     var task = Ext.create('Ext.util.DelayedTask', function() {
+ *         console.log('callback!');
+ *     });
+ *
+ *     task.delay(1500); //the callback function will now be called after 1500ms
+ *
+ *     task.cancel(); //the callback function will never be called now, unless we call delay() again
  *
  * ## Example
  *
- *     Ext.create('Ext.dataview.List', {
- *
- *         store: Ext.create('TweetStore'),
- *
- *         plugins: [
- *             {
- *                 xclass: 'Ext.plugin.ListPaging',
- *                 autoPaging: true
- *             }
- *         ],
- *
- *         itemTpl: [
- *             '<img src="{profile_image_url}" />',
- *             '<div class="tweet">{text}</div>'
- *         ]
+ *     @example
+ *     //create a textfield where we can listen to text
+ *     var field = Ext.create('Ext.field.Text', {
+ *         xtype: 'textfield',
+ *         label: 'Length: 0'
  *     });
+ *
+ *     //add the textfield into a fieldset
+ *     Ext.Viewport.add({
+ *         xtype: 'formpanel',
+ *         items: [{
+ *             xtype: 'fieldset',
+ *             items: [field],
+ *             instructions: 'Type into the field and watch the count go up after 500ms.'
+ *         }]
+ *     });
+ *
+ *     //create our delayed task with a function that returns the fields length as the fields label
+ *     var task = Ext.create('Ext.util.DelayedTask', function() {
+ *         field.setLabel('Length: ' + field.getValue().length);
+ *     });
+ *
+ *     // Wait 500ms before calling our function. If the user presses another key
+ *     // during that 500ms, it will be cancelled and we'll wait another 500ms.
+ *     field.on('keyup', function() {
+ *         task.delay(500);
+ *     });
+ *
+ * @constructor
+ * The parameters to this constructor serve as defaults and are not required.
+ * @param {Function} fn The default function to call.
+ * @param {Object} scope The default scope (The `this` reference) in which the function is called. If
+ * not specified, `this` will refer to the browser window.
+ * @param {Array} args The default Array of arguments.
  */
-Ext.define('Ext.plugin.ListPaging', {
-    extend: 'Ext.Component',
-    alias: 'plugin.listpaging',
-
+Ext.define('Ext.util.DelayedTask', {
     config: {
-        /**
-         * @cfg {Boolean} autoPaging
-         * True to automatically load the next page when you scroll to the bottom of the list.
-         */
-        autoPaging: false,
+        interval: null,
+        delay: null,
+        fn: null,
+        scope: null,
+        args: null
+    },
 
-        /**
-         * @cfg {String} loadMoreText The text used as the label of the Load More button.
-         */
-        loadMoreText: 'Load More...',
+    constructor: function(fn, scope, args) {
+        var config = {
+            fn: fn,
+            scope: scope,
+            args: args
+        };
 
-        /**
-         * @cfg {String} noMoreRecordsText The text used as the label of the Load More button when the Store's
-         * {@link Ext.data.Store#totalCount totalCount} indicates that all of the records available on the server are
-         * already loaded
-         */
-        noMoreRecordsText: 'No More Records',
-
-        /**
-         * @private
-         * @cfg {String} loadTpl The template used to render the load more text
-         */
-        loadTpl: [
-            '<div class="{cssPrefix}loading-spinner" style="font-size: 180%; margin: 10px auto;">',
-                 '<span class="{cssPrefix}loading-top"></span>',
-                 '<span class="{cssPrefix}loading-right"></span>',
-                 '<span class="{cssPrefix}loading-bottom"></span>',
-                 '<span class="{cssPrefix}loading-left"></span>',
-            '</div>',
-            '<div class="{cssPrefix}list-paging-msg">{message}</div>'
-        ].join(''),
-
-        /**
-         * @cfg
-         * @private
-         */
-        loadMoreCmp: {
-            xtype: 'component',
-            baseCls: Ext.baseCSSPrefix + 'list-paging'
-        },
-
-        /**
-         * @private
-         * @cfg {Boolean} loadMoreCmpAdded Indicates whether or not the load more component has been added to the List
-         * yet.
-         */
-        loadMoreCmpAdded: false,
-
-        /**
-         * @private
-         * @cfg {String} loadingCls The CSS class that is added to the {@link #loadMoreCmp} while the Store is loading
-         */
-        loadingCls: Ext.baseCSSPrefix + 'loading',
-
-        /**
-         * @private
-         * @cfg {Ext.List} list Local reference to the List this plugin is bound to
-         */
-        list: null,
-
-        /**
-         * @private
-         * @cfg {Ext.scroll.Scroller} scroller Local reference to the List's Scroller
-         */
-        scroller: null,
-
-        /**
-         * @private
-         * @cfg {Boolean} loading True if the plugin has initiated a Store load that has not yet completed
-         */
-        loading: false
+        this.initConfig(config);
     },
 
     /**
-     * @private
-     * Sets up all of the references the plugin needs
+     * Cancels any pending timeout and queues a new one.
+     * @param {Number} delay The milliseconds to delay
+     * @param {Function} newFn Overrides the original function passed when instantiated.
+     * @param {Object} newScope Overrides the original `scope` passed when instantiated. Remember that if no scope
+     * is specified, `this` will refer to the browser window.
+     * @param {Array} newArgs Overrides the original `args` passed when instantiated.
      */
-    init: function(list) {
-        var scroller = list.getScrollable().getScroller(),
-            store    = list.getStore();
+    delay: function(delay, newFn, newScope, newArgs) {
+        var me = this;
 
-        this.setList(list);
-        this.setScroller(scroller);
-        this.bindStore(list.getStore());
-
-        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
-        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
-        if (store) {
-            this.disableDataViewMask(store);
-        }
-
-        // The List's Store could change at any time so make sure we are informed when that happens
-        list.updateStore = Ext.Function.createInterceptor(list.updateStore, this.bindStore, this);
-
-        if (this.getAutoPaging()) {
-            scroller.on({
-                scrollend: this.onScrollEnd,
-                scope: this
-            });
-        }
-    },
-
-    /**
-     * @private
-     */
-    bindStore: function(newStore, oldStore) {
-        if (oldStore) {
-            oldStore.un({
-                load: this.onStoreLoad,
-                beforeload: this.onStoreBeforeLoad,
-                scope: this
-            });
-        }
-
-        if (newStore) {
-            newStore.on({
-                load: this.onStoreLoad,
-                beforeload: this.onStoreBeforeLoad,
-                scope: this
-            });
-
-//            this.disableDataViewMask(newStore);
-        }
-    },
-
-    /**
-     * @private
-     * Removes the List/DataView's loading mask because we show our own in the plugin. The logic here disables the
-     * loading mask immediately if the store is autoloading. If it's not autoloading, allow the mask to show the first
-     * time the Store loads, then disable it and use the plugin's loading spinner.
-     * @param {Ext.data.Store} store The store that is bound to the DataView
-     */
-    disableDataViewMask: function(store) {
-        var list = this.getList();
-
-        if (store.isAutoLoading()) {
-            list.setLoadingText(null);
-        } else {
-            store.on({
-                load: {
-                    single: true,
-                    fn: function() {
-                        list.setLoadingText(null);
-                    }
-                }
-            });
-        }
-    },
-
-    /**
-     * @private
-     */
-    applyLoadTpl: function(config) {
-        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
-    },
-
-    /**
-     * @private
-     */
-    applyLoadMoreCmp: function(config) {
-        config = Ext.merge(config, {
-            html: this.getLoadTpl().apply({
-                cssPrefix: Ext.baseCSSPrefix,
-                message: this.getLoadMoreText()
-            }),
-            listeners: {
-                tap: {
-                    fn: this.loadNextPage,
-                    scope: this,
-                    element: 'element'
-                }
-            }
+        //cancel any existing queued functions
+        me.cancel();
+            
+        //set all the new configurations
+        me.setConfig({
+            delay: delay,
+            fn: newFn,
+            scope: newScope,
+            args: newArgs
         });
 
-        return Ext.factory(config, Ext.Component, this.getLoadMoreCmp());
+        //create the callback method for this delayed task
+        var call = function() {
+            me.getFn().apply(me.getScope(), me.getArgs() || []);
+            me.cancel();
+        };
+
+        me.setInterval(setInterval(call, me.getDelay()));
+    },
+
+    /**
+     * Cancel the last queued timeout
+     */
+    cancel: function() {
+        this.setInterval(null);
     },
 
     /**
      * @private
-     * If we're using autoPaging and detect that the user has scrolled to the bottom, kick off loading of the next page
+     * Clears the old interval
      */
-    onScrollEnd: function(scroller, x, y) {
-        if (!this.getLoading() && y >= scroller.maxPosition.y) {
-            if (!this.storeFullyLoaded()) {
-                this.loadNextPage();
-            }
+    updateInterval: function(newInterval, oldInterval) {
+        if (oldInterval) {
+            clearInterval(oldInterval);
         }
     },
 
     /**
      * @private
-     * Makes sure we add/remove the loading CSS class while the Store is loading
+     * Changes the value into an array if it isn't one.
      */
-    updateLoading: function(isLoading) {
-        var loadMoreCmp = this.getLoadMoreCmp(),
-            loadMoreCls = this.getLoadingCls();
-
-        if (isLoading) {
-            loadMoreCmp.addCls(loadMoreCls);
-        } else {
-            loadMoreCmp.removeCls(loadMoreCls);
-        }
-    },
-
-    /**
-     * @private
-     * If the Store is just about to load but it's currently empty, we hide the load more button because this is
-     * usually an outcome of setting a new Store on the List so we don't want the load more button to flash while
-     * the new Store loads
-     */
-    onStoreBeforeLoad: function(store) {
-        if (store.getCount() === 0) {
-            this.getLoadMoreCmp().hide();
-        }
-    },
-
-    /**
-     * @private
-     */
-    onStoreLoad: function(store) {
-        var loadCmp  = this.addLoadMoreCmp(),
-            template = this.getLoadTpl(),
-            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText();
-
-        this.getLoadMoreCmp().show();
-        this.setLoading(false);
-
-        //restores scroll position after a Store load
-        if (this.scrollY) {
-            this.getScroller().scrollTo(null, this.scrollY);
-            delete this.scrollY;
+    applyArgs: function(config) {
+        if (!Ext.isArray(config)) {
+            config = [config];
         }
 
-        //if we've reached the end of the data set, switch to the noMoreRecordsText
-        loadCmp.setHtml(template.apply({
-            cssPrefix: Ext.baseCSSPrefix,
-            message: message
-        }));
-    },
-
-    /**
-     * @private
-     * Because the attached List's inner list element is rendered after our init function is called,
-     * we need to dynamically add the loadMoreCmp later. This does this once and caches the result.
-     */
-    addLoadMoreCmp: function() {
-        var list = this.getList(),
-            cmp  = this.getLoadMoreCmp();
-
-        if (!this.getLoadMoreCmpAdded()) {
-            list.add(cmp);
-
-            /**
-             * @event loadmorecmpadded  Fired when the Load More component is added to the list. Fires on the List.
-             * @param {Ext.plugin.ListPaging} this The list paging plugin
-             * @param {Ext.List} list The list
-             */
-            list.fireEvent('loadmorecmpadded', this, list);
-            this.setLoadMoreCmpAdded(true);
-        }
-
-        return cmp;
-    },
-
-    /**
-     * @private
-     * Returns true if the Store is detected as being fully loaded, or the server did not return a total count, which
-     * means we're in 'infinite' mode
-     * @return {Boolean}
-     */
-    storeFullyLoaded: function() {
-        var store = this.getList().getStore(),
-            total = store.getTotalCount();
-
-        return total !== null ? store.getTotalCount() <= (store.currentPage * store.getPageSize()) : false;
-    },
-
-    /**
-     * @private
-     */
-    loadNextPage: function() {
-        var store = this.getList().getStore();
-
-        this.setLoading(true);
-
-        //keep a cache of the current scroll position as we'll need to reset it after the List is
-        //updated with new data
-        this.scrollY = this.getScroller().position.y;
-
-        store.nextPage({ addRecords: true });
+        return config;
     }
 });
 
@@ -27388,36 +27539,108 @@ Ext.anims = {
     })
 };
 
-Ext.define('plugin.ux.ListPaging2', {
-    extend: 'Ext.plugin.ListPaging',
-    alias: 'ListPaging2',
+Ext.define('plugin.ux.Iscroll', {
+    extend: 'Ext.Component',
+    alias: 'plugin.iscroll',
+    requires:'Ext.util.DelayedTask',
     config: {
-        /*fullyloadedCls used to set when no more records are there to paginate*/
-        fullyloadedCls : Ext.baseCSSPrefix + 'completed'
+    	list : null,
     },
-
     initialize: function() {
         this.callParent();
     },
-
-    /**
-    * Overridding onStoreLoad
-    *
-    */
-    onStoreLoad : function(store){
-
-        var loadCmp  = this.addLoadMoreCmp(),
-            storeFullyLoaded = this.storeFullyLoaded(),
-            fullyloadedCls = this.getFullyloadedCls();
-        loadCmp.removeCls(fullyloadedCls);
-        this.callParent(store);
-
-        if(storeFullyLoaded){
-            loadCmp.addCls(fullyloadedCls);
-        }
-    }
+	init : function(list){
+		var me = this;
+		me.list = list;
+		this.list.on({
+			painted:function(){
+				this.registerIscroll();
+			},
+			scope:this
+		})
+	},
+	registerIscroll : function(){
+		this._updateIScroll();
+	},
+	getIScrollElementId : function() {
+		return this.list.bodyElement.getId();
+	},
+	_ensureIScroll: function() {
+		if (!this.iScroll) {
+			var el = this.getIScrollElementId();
+			this.iScroll = new iScroll(el);
+			this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
+		}
+	},
+	_updateIScroll: function() {
+		this._ensureIScroll();
+		if (this.iScroll) {
+			this.iScrollTask.delay(1000);
+		}
+	},
+	_refreshIScroll: function() {
+		this.iScroll.refresh();
+		//Refresh one more time.
+		this.iScrollTask.delay(1000);
+	}
 });
+// Ext.override(Ext.Panel, {
+// 	afterRender: Ext.Panel.prototype.afterRender.createSequence(function() {
+// 		if (this.getXType() == 'panel') {
+// 			this._getIScrollElement = function() {
+// 				return (this.el.child('.x-panel-body', true));
+// 			}
+// 		}
 
+// 		//Uncomment below to use iScroll only on mobile devices but use regular scrolling on PCs.
+// 		if (this.autoScroll /*&& Ext.isMobileDevice*/) {
+// 			if (this._getIScrollElement) {
+// 				this._updateIScroll();
+// 				this.on('afterlayout', this._updateIScroll);
+// 			}
+// 		}
+// 	}),
+
+// 	_ensureIScroll: function() {
+// 		if (!this.iScroll) {
+// 			var el = this._getIScrollElement();
+// 			if (el.children.length > 0) {
+// 				this.iScroll = new iScroll(el);
+// 				this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
+// 			}
+// 		}
+// 	},
+
+// 	_updateIScroll: function() {
+// 		this._ensureIScroll();
+// 		if (this.iScroll) {
+// 			this.iScrollTask.delay(1000);
+// 		}
+// 	},
+
+// 	_refreshIScroll: function() {
+// 		this.iScroll.refresh();
+// 		//Refresh one more time.
+// 		this.iScrollTask.delay(1000);
+// 	}
+// });
+
+// Ext.override(Ext.tree.TreePanel, {
+// 	_getIScrollElement: function() {
+// 		return (this.el.child('.x-panel-body', true));
+// 	}
+// });
+
+// Ext.override(Ext.grid.GridPanel, {
+// 	_getIScrollElement: function() {
+// 		return (this.el.child('.x-grid3-scroller', true));
+// 	},
+
+// 	afterRender: Ext.grid.GridPanel.prototype.afterRender.createSequence(function() {
+// 		//TODO: need to hook into more events and to update iScroll.
+// 		this.view.on('refresh', this._updateIScroll, this);
+// 	})
+// });
 /**
  * @aside video tabs-toolbars
  *
@@ -30749,7 +30972,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer && values.requester.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
                         '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
                             '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
                         '</div></div>',
@@ -31057,7 +31280,6 @@ Ext.define("Freshdesk.view.CannedResponses", {
         var content = res.responseText,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0],
         messageElm  = msgFormContainer.getMessageItem();
         messageElm.setValue(messageElm.getValue()+content);
-        console.log(messageElm)
         this.hide();
     },
     onCannedResDisclose : function(record){
@@ -31098,7 +31320,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                 items:[
                     {
                         xtype:'button',
-                        ui:'plain headerBtn',
+                        ui:'plain lightBtn',
                         iconMask:true,
                         align:'left',
                         text:'hide',
@@ -31488,11 +31710,11 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer.items.items[1].items.items[1].addActionListeners(detailsContainer);
         callBack ? callBack() : '' ;
         if(Freshdesk.notification) {
-            var msgContainer = Ext.get("notification_msg");
+            var msgContainer = Ext.select("#notification_msg");
             msgContainer.setHtml('<b>'+Freshdesk.notification.success+'</b>');
-            msgContainer.toggleCls('hide');
+            Ext.select("#notification_msg").removeCls('hide').setStyle('display','block');
             Ext.defer(function(){
-                Ext.get("notification_msg").toggleCls('hide')
+                Ext.select("#notification_msg").setStyle('display','none');
             },3500);
         }
         Freshdesk.notification=undefined;
@@ -31532,15 +31754,12 @@ Ext.define('Freshdesk.controller.Tickets', {
             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
             Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
         }
-
-        if(this.ticket.is_twitter){
+        else if(this.ticket.is_twitter){
             var tweetForm = this.getTicketTweetForm();
             this.initTweetForm(id);
             tweetForm.ticket_id = id;
             Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
-        }
-
-        if(this.ticket.is_facebook){
+        }else if(this.ticket.is_facebook){
             var facebookForm = this.getTicketFacebookForm();
             this.initFacebookForm(id);
             facebookForm.ticket_id = id;
@@ -32637,6 +32856,331 @@ Ext.define('Ext.plugin.PullRefresh', {
 
         me.setViewState('pull');
         me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));
+    }
+});
+
+/**
+ * Adds a Load More button at the bottom of the list. When the user presses this button,
+ * the next page of data will be loaded into the store and appended to the List.
+ *
+ * By specifying `{@link #autoPaging}: true`, an 'infinite scroll' effect can be achieved,
+ * i.e., the next page of content will load automatically when the user scrolls to the
+ * bottom of the list.
+ *
+ * ## Example
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *
+ *         store: Ext.create('TweetStore'),
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.ListPaging',
+ *                 autoPaging: true
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{profile_image_url}" />',
+ *             '<div class="tweet">{text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('Ext.plugin.ListPaging', {
+    extend: 'Ext.Component',
+    alias: 'plugin.listpaging',
+
+    config: {
+        /**
+         * @cfg {Boolean} autoPaging
+         * True to automatically load the next page when you scroll to the bottom of the list.
+         */
+        autoPaging: false,
+
+        /**
+         * @cfg {String} loadMoreText The text used as the label of the Load More button.
+         */
+        loadMoreText: 'Load More...',
+
+        /**
+         * @cfg {String} noMoreRecordsText The text used as the label of the Load More button when the Store's
+         * {@link Ext.data.Store#totalCount totalCount} indicates that all of the records available on the server are
+         * already loaded
+         */
+        noMoreRecordsText: 'No More Records',
+
+        /**
+         * @private
+         * @cfg {String} loadTpl The template used to render the load more text
+         */
+        loadTpl: [
+            '<div class="{cssPrefix}loading-spinner" style="font-size: 180%; margin: 10px auto;">',
+                 '<span class="{cssPrefix}loading-top"></span>',
+                 '<span class="{cssPrefix}loading-right"></span>',
+                 '<span class="{cssPrefix}loading-bottom"></span>',
+                 '<span class="{cssPrefix}loading-left"></span>',
+            '</div>',
+            '<div class="{cssPrefix}list-paging-msg">{message}</div>'
+        ].join(''),
+
+        /**
+         * @cfg
+         * @private
+         */
+        loadMoreCmp: {
+            xtype: 'component',
+            baseCls: Ext.baseCSSPrefix + 'list-paging'
+        },
+
+        /**
+         * @private
+         * @cfg {Boolean} loadMoreCmpAdded Indicates whether or not the load more component has been added to the List
+         * yet.
+         */
+        loadMoreCmpAdded: false,
+
+        /**
+         * @private
+         * @cfg {String} loadingCls The CSS class that is added to the {@link #loadMoreCmp} while the Store is loading
+         */
+        loadingCls: Ext.baseCSSPrefix + 'loading',
+
+        /**
+         * @private
+         * @cfg {Ext.List} list Local reference to the List this plugin is bound to
+         */
+        list: null,
+
+        /**
+         * @private
+         * @cfg {Ext.scroll.Scroller} scroller Local reference to the List's Scroller
+         */
+        scroller: null,
+
+        /**
+         * @private
+         * @cfg {Boolean} loading True if the plugin has initiated a Store load that has not yet completed
+         */
+        loading: false
+    },
+
+    /**
+     * @private
+     * Sets up all of the references the plugin needs
+     */
+    init: function(list) {
+        var scroller = list.getScrollable().getScroller(),
+            store    = list.getStore();
+
+        this.setList(list);
+        this.setScroller(scroller);
+        this.bindStore(list.getStore());
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            this.disableDataViewMask(store);
+        }
+
+        // The List's Store could change at any time so make sure we are informed when that happens
+        list.updateStore = Ext.Function.createInterceptor(list.updateStore, this.bindStore, this);
+
+        if (this.getAutoPaging()) {
+            scroller.on({
+                scrollend: this.onScrollEnd,
+                scope: this
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    bindStore: function(newStore, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+        }
+
+        if (newStore) {
+            newStore.on({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+
+//            this.disableDataViewMask(newStore);
+        }
+    },
+
+    /**
+     * @private
+     * Removes the List/DataView's loading mask because we show our own in the plugin. The logic here disables the
+     * loading mask immediately if the store is autoloading. If it's not autoloading, allow the mask to show the first
+     * time the Store loads, then disable it and use the plugin's loading spinner.
+     * @param {Ext.data.Store} store The store that is bound to the DataView
+     */
+    disableDataViewMask: function(store) {
+        var list = this.getList();
+
+        if (store.isAutoLoading()) {
+            list.setLoadingText(null);
+        } else {
+            store.on({
+                load: {
+                    single: true,
+                    fn: function() {
+                        list.setLoadingText(null);
+                    }
+                }
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyLoadTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    /**
+     * @private
+     */
+    applyLoadMoreCmp: function(config) {
+        config = Ext.merge(config, {
+            html: this.getLoadTpl().apply({
+                cssPrefix: Ext.baseCSSPrefix,
+                message: this.getLoadMoreText()
+            }),
+            listeners: {
+                tap: {
+                    fn: this.loadNextPage,
+                    scope: this,
+                    element: 'element'
+                }
+            }
+        });
+
+        return Ext.factory(config, Ext.Component, this.getLoadMoreCmp());
+    },
+
+    /**
+     * @private
+     * If we're using autoPaging and detect that the user has scrolled to the bottom, kick off loading of the next page
+     */
+    onScrollEnd: function(scroller, x, y) {
+        if (!this.getLoading() && y >= scroller.maxPosition.y) {
+            if (!this.storeFullyLoaded()) {
+                this.loadNextPage();
+            }
+        }
+    },
+
+    /**
+     * @private
+     * Makes sure we add/remove the loading CSS class while the Store is loading
+     */
+    updateLoading: function(isLoading) {
+        var loadMoreCmp = this.getLoadMoreCmp(),
+            loadMoreCls = this.getLoadingCls();
+
+        if (isLoading) {
+            loadMoreCmp.addCls(loadMoreCls);
+        } else {
+            loadMoreCmp.removeCls(loadMoreCls);
+        }
+    },
+
+    /**
+     * @private
+     * If the Store is just about to load but it's currently empty, we hide the load more button because this is
+     * usually an outcome of setting a new Store on the List so we don't want the load more button to flash while
+     * the new Store loads
+     */
+    onStoreBeforeLoad: function(store) {
+        if (store.getCount() === 0) {
+            this.getLoadMoreCmp().hide();
+        }
+    },
+
+    /**
+     * @private
+     */
+    onStoreLoad: function(store) {
+        var loadCmp  = this.addLoadMoreCmp(),
+            template = this.getLoadTpl(),
+            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText();
+
+        this.getLoadMoreCmp().show();
+        this.setLoading(false);
+
+        //restores scroll position after a Store load
+        if (this.scrollY) {
+            this.getScroller().scrollTo(null, this.scrollY);
+            delete this.scrollY;
+        }
+
+        //if we've reached the end of the data set, switch to the noMoreRecordsText
+        loadCmp.setHtml(template.apply({
+            cssPrefix: Ext.baseCSSPrefix,
+            message: message
+        }));
+    },
+
+    /**
+     * @private
+     * Because the attached List's inner list element is rendered after our init function is called,
+     * we need to dynamically add the loadMoreCmp later. This does this once and caches the result.
+     */
+    addLoadMoreCmp: function() {
+        var list = this.getList(),
+            cmp  = this.getLoadMoreCmp();
+
+        if (!this.getLoadMoreCmpAdded()) {
+            list.add(cmp);
+
+            /**
+             * @event loadmorecmpadded  Fired when the Load More component is added to the list. Fires on the List.
+             * @param {Ext.plugin.ListPaging} this The list paging plugin
+             * @param {Ext.List} list The list
+             */
+            list.fireEvent('loadmorecmpadded', this, list);
+            this.setLoadMoreCmpAdded(true);
+        }
+
+        return cmp;
+    },
+
+    /**
+     * @private
+     * Returns true if the Store is detected as being fully loaded, or the server did not return a total count, which
+     * means we're in 'infinite' mode
+     * @return {Boolean}
+     */
+    storeFullyLoaded: function() {
+        var store = this.getList().getStore(),
+            total = store.getTotalCount();
+
+        return total !== null ? store.getTotalCount() <= (store.currentPage * store.getPageSize()) : false;
+    },
+
+    /**
+     * @private
+     */
+    loadNextPage: function() {
+        var store = this.getList().getStore();
+
+        this.setLoading(true);
+
+        //keep a cache of the current scroll position as we'll need to reset it after the List is
+        //updated with new data
+        this.scrollY = this.getScroller().position.y;
+
+        store.nextPage({ addRecords: true });
     }
 });
 
@@ -38240,6 +38784,9 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                         centered:true,
                         loadMoreText: 'Load more.',
                         noMoreRecordsText: 'No more tickets.'
+                    },
+                    {
+                        xclass: 'plugin.ux.Iscroll'
                     }
             ]
         };
@@ -38608,6 +39155,9 @@ Ext.define('Freshdesk.view.TicketReply', {
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The Reply has been sent."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){
@@ -38733,7 +39283,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Save',
+            text:'Add',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -38773,6 +39323,9 @@ Ext.define('Freshdesk.view.TicketNote', {
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The note has been added."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){
@@ -38889,7 +39442,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -38898,7 +39451,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Tweet',
+            text:'Add',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -38968,7 +39521,7 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -42285,6 +42838,10 @@ Ext.define('Freshdesk.view.EmailForm', {
         responses = FD.current_account.canned_responses;
         //setting the data to canned response popup list
         cannedResList.getStore() ? cannedResList.getStore().setData(responses) : cannedResList.setData(responses);
+        if(!FD.current_account.canned_responses.length){
+            cannedResPopup.items.items[0].emptyTextCmp.show()
+        }
+        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     populateSolutions : function(res){
@@ -47947,6 +48504,10 @@ Ext.define('Freshdesk.view.NoteForm', {
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
         cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
+        if(!FD.current_account.canned_responses.length){
+            cannedResPopup.items.items[0].emptyTextCmp.show()
+        }
+        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     config: {
@@ -47966,23 +48527,38 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
+                        xtype: 'togglefield',
+                        name: 'helpdesk_note[private]',
+                        label: 'Private , Don\'t Show to requester',
+                        itemId:'noteFormPrivateField',
+                        labelWidth: '60%'
+                    },
+                    {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Enter your note.. *',
-                        height:180,
+                        placeHolder:'Message *',
                         required:true,
                         clearIcon:false
-                    },                    
+                    },
                     {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
                     },
                     {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField'
+                    },
+                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
-                        cls:'green-icon',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -47990,29 +48566,13 @@ Ext.define('Freshdesk.view.NoteForm', {
                                 text:'Canned Response',
                                 docked:'left',
                                 ui:'plain',
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
+                                iconMask:true,
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
+                                iconCls:'add_black lightPlus'
                             }
                         ]
 
-                    },
-                    {
-                        xtype: 'multiselectfield',
-                        name: 'notify_emails',
-                        label:'Notify Agents',
-                        displayField : 'id', //don't change this property
-                        valueField   : 'value', //don't change this property,
-                        usePicker : false,
-                        store : 'AutoTechnician',
-                        itemId: 'noteFormNotifyField',
-                        cls:'multiselect'
-                    },
-                    {
-                        xtype: 'togglefield',
-                        name: 'helpdesk_note[private]',
-                        label: 'Show this note to requester? ',
-                        itemId:'noteFormPrivateField',
-                        labelWidth: '71%'
-                    },
+                    }
                 ]
             }
         ]
@@ -54302,7 +54862,15 @@ Ext.define('Freshdesk.store.Init', {
                 type: 'json'
             }
         },
-        autoLoad:false
+        autoLoad:false,
+        listeners : {
+            beforeload : {
+                fn: function(){
+                    Ext.Viewport.setMasked({xtype:'mask',html:'<div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',style:'background:rgba(255,255,255,0.1)'});
+                },
+                scope:this
+            }
+        }
     }
 });
 Ext.define('Freshdesk.store.Filters', {
@@ -56266,7 +56834,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2','plugin.ux.Iscroll'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
@@ -56339,6 +56907,7 @@ Ext.application({
                 FD.Util.initCustomer();
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            Ext.Viewport.setMasked(false);
         }});
 
         //adding listners to ajax for showing the loading mask .. global.

@@ -897,7 +897,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       },
       :requester => {
         :only => [ :name, :email, :id, :is_agent, :is_customer, :twitter_id  ],
-        :methods => [ :avatar_url ]
+        :methods => [ :avatar_url, :is_customer ]
       },
       :attachments => {
         :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]

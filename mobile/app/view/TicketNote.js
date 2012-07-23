@@ -57,6 +57,9 @@ Ext.define('Freshdesk.view.TicketNote', {
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The note has been added."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){

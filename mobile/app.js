@@ -15,7 +15,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2','plugin.ux.Iscroll'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
@@ -88,6 +88,7 @@ Ext.application({
                 FD.Util.initCustomer();
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            Ext.Viewport.setMasked(false);
         }});
 
         //adding listners to ajax for showing the loading mask .. global.

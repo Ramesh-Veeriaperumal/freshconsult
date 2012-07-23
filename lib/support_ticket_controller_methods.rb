@@ -31,10 +31,12 @@ module SupportTicketControllerMethods
     puts "Create method in support controller methods"
     if create_the_ticket(feature?(:captcha))
       flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
-      redirect_to redirect_url and return
+      redirect_to redirect_url and return unless mobile?
+      render :json => { :item => @ticket, :success => true }.to_json if mobile?
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
-      render :action => :new
+      render :action => :new unless mobile?
+      render :json => { :errors => @response_errors, :failure => true }.to_json
     end
   end 
 end

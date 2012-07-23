@@ -5,7 +5,6 @@ Ext.define("Freshdesk.view.CannedResponses", {
         var content = res.responseText,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0],
         messageElm  = msgFormContainer.getMessageItem();
         messageElm.setValue(messageElm.getValue()+content);
-        console.log(messageElm)
         this.hide();
     },
     onCannedResDisclose : function(record){
@@ -46,7 +45,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                 items:[
                     {
                         xtype:'button',
-                        ui:'plain headerBtn',
+                        ui:'plain lightBtn',
                         iconMask:true,
                         align:'left',
                         text:'hide',

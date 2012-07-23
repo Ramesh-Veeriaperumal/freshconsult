@@ -57,6 +57,9 @@ Ext.define('Freshdesk.view.TicketReply', {
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The Reply has been sent."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){

@@ -8,7 +8,7 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
