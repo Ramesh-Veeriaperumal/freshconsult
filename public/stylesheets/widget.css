@@ -780,7 +780,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .multi-product-add.ui-form .configure-email-form .column { float: left; }
 .multi-product-add.ui-form .configure-email-form .column.left-column { width: 50%; }
 .multi-product-add.ui-form .configure-email-form .column.left-column .text { font-weight: bold; }
-.multi-product-add.ui-form .configure-email-form .column.left-column span.text { word-wrap: break-word; }
+.multi-product-add.ui-form .configure-email-form .column.left-column span.text { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
 .multi-product-add.ui-form .configure-email-form .column.right-column { width: 50%; }
 .multi-product-add.ui-form .configure-email-form .column.right-column input.checkbox { margin: 5px; float: left; }
 .multi-product-add.ui-form .configure-email-form .column.right-column .set_primary { padding-top: 27px; }

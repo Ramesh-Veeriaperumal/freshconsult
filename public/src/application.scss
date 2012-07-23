@@ -5632,7 +5632,7 @@ margin:10px;
 			    }
 
 			    &.supportMail{
-			    	width: 28%;
+			    	width: 200px;
 					span{
 						&.bold{
 							color: #333;
@@ -5640,23 +5640,26 @@ margin:10px;
 							font-size: 13px;
 						}
 					}
-					ul{
-						padding-right: 10px;
-						float: left;
+					span{
+						&.warning_icon{
+							display: inline-block;
+							float: left;
+							padding-top: 12px;
+							&:before{
+			    				content: url(../images/img_icon_warning.png) "";
+				    		}
+						}
 					}
-					.not-verified{
-						padding-top: 12px;
-					}
-					.not-verified-icon{
-						display: block;
-						&:before{
-		    				content: url(../images/img_icon_warning.png) "";
-			    		}
-					}
-					.reply_email{
-						span {
+					div{
+						&.reply_email{
 							text-decoration: line-through;
 						}
+						&.wrap{
+							width: 180px;
+						}
+					}
+					.not-verified{
+						margin-left: 30px;
 					}
 					.verify-button{
 						padding-top: 8px;
@@ -5674,7 +5677,12 @@ margin:10px;
 					}
 				}
 				&.to-email{
-					width: 42%;
+					width: 285px;
+					div{
+						&.wrap{
+							width: 250px;
+						}
+					}
 				}
 			}
 		}

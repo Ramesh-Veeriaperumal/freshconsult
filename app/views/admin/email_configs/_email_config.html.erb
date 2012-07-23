@@ -12,23 +12,19 @@
   </td>
   <td class="supportMail">
     <% if email_config.active? %>
-      <ul>
-        <li><%= content_tag(:span, h("#{email_config.name}"), :class => "bold")%></li>
-        <li><%= content_tag(:span, h("#{email_config.reply_email}")) %></li>
-      </ul>
+      <%= content_tag(:span, h("#{email_config.name}"), :class => "bold")%><br>
+      <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "wrap" ) %>
     <% else %>
-      <ul>
-        <li class="not-verified">
-          <%= content_tag :span, "", :title => t('email_configs.unverified_info1'), :class => "tooltip not-verified-icon"%>
-        </li>
-      </ul>
-      <ul>
-        <li><%= content_tag(:span, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%></li>
-        <li class="reply_email"><%= content_tag :span, h("#{email_config.reply_email}")%></li>
-        <li class="verify-button"><%= link_to( t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config) )  unless email_config.active?  %></li>
-      </ul> 
+      <%= content_tag :span, "", :title => t('email_configs.unverified_info1'), :class => "tooltip warning_icon"%>
+      <div class="not-verified">
+        <%= content_tag(:span, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%><br>
+        <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "reply_email wrap") %>
+        <div class="verify-button">
+          <%= link_to( t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config) )  unless email_config.active?  %>
+        </div>
+      <div>
     <% end %>
   </td>
-  <td class="to-email"><%= content_tag :span, h(email_config.to_email)  %> </td>
+  <td class="to-email"><%= content_tag :div, h(email_config.to_email), :class => "wrap" %> </td>
   <td><%= content_tag :span, h(email_config.group ? email_config.group.name : "-") %> </td>
 </tr>

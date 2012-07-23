@@ -2023,7 +2023,7 @@ ul.ui-form .inputs-list{
 						font-weight: bold;
 					}
 					span.text{
-						word-wrap: break-word;
+						@include wrap;
 					}
 				}
 				&.right-column{
