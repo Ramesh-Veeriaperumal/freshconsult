@@ -167,7 +167,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
         :requester => user,
         :to_email => to_email[:email],
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :to_emails => parse_to_emails},
+        :to_emails => parse_to_emails,
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => []},
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]

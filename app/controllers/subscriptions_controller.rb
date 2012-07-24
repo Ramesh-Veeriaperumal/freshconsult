@@ -10,7 +10,7 @@ class SubscriptionsController < ApplicationController
   before_filter :load_subscription, :only => [ :show, :billing, :plan, :plans, :calculate_amount, :free, :convert_subscription_to_free ]
   before_filter :load_discount, :only => [ :plans, :plan, :show, :calculate_amount ]
   before_filter :load_plans, :only => [:show, :plans, :free]
-  before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
+  before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel, :free ]
   before_filter :load_subscription_plan, :only => [:plan, :calculate_amount,:convert_subscription_to_free] 
   before_filter :check_free_agent_limit, :only => [:free,:convert_subscription_to_free]
   before_filter :check_credit_card_for_free, :only => [:plan,:plans] 

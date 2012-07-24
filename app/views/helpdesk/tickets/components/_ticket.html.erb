@@ -54,7 +54,7 @@
 		   <% current_portal.ticket_fields.each do |field| %>
 		     <% if field.visible_in_view_form? %>
 		      <% 
-		          field_value = (field.is_default_field?) ? ticket[field.field_name] : @item.get_ff_value(field.name)
+		          field_value = (field.is_default_field?) ? ticket.send(field.field_name) : @item.get_ff_value(field.name)
 		          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 
 		          if(field.field_type == "nested_field")

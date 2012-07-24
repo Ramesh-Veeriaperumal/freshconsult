@@ -239,9 +239,9 @@ class Account < ActiveRecord::Base
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
-  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, 
-    :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
+    :anonymous_tickets =>true, :survey_links => true, :scoreboard_enable => true, :google_signin => true,
+    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
     
   
   has_features do
@@ -427,6 +427,9 @@ class Account < ActiveRecord::Base
       :main_portal => {
         :only => [ :name, :preferences ],
         :methods => [ :logo_url, :fav_icon_url ]
+      },
+      :subscription => {
+        :methods => [:is_paid_account]
       }
     }
     options = {
@@ -446,7 +449,7 @@ class Account < ActiveRecord::Base
         }
       })
       options.merge!({
-        :methods => [ :reply_emails ],
+        :methods => [ :reply_emails, :bcc_email ],
       })
     end
     options[:include] = json_include;

@@ -24,7 +24,9 @@ Ext.define("Freshdesk.view.Home", {
 
                 portalData.preferences.header_color && Ext.select('.branding').setStyle('background-color',portalData.preferences.header_color);
                 portalData.preferences.tab_color && Ext.select('.branding').setStyle('border-bottom-color',portalData.preferences.tab_color);
-
+                if(!FD.current_account.subscription.is_paid_account){
+                    Ext.get('helpdesk_FD_brand').removeCls('hide');
+                }
             }
         },
         items :[
@@ -102,8 +104,8 @@ Ext.define("Freshdesk.view.Home", {
                         cls:'footer',
                         docked:'bottom',
                         centered:true,
-                        tpl:['<a class="switch_version">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
-                             '<p>A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                        tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
+                             '<p id="helpdesk_FD_brand" class="hide">A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
                         }

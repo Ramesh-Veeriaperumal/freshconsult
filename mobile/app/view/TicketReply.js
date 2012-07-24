@@ -9,7 +9,7 @@ Ext.define('Freshdesk.view.TicketReply', {
             text:'Cancel',
             xtype:'button',
             align:'left',
-            ui:'headerBtn',
+            ui:'lightBtn',
             handler:this.backToDetails,
             scope:this
         };
@@ -26,7 +26,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,
@@ -57,6 +57,9 @@ Ext.define('Freshdesk.view.TicketReply', {
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The Reply has been sent."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){

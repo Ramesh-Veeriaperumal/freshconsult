@@ -1,61 +1,56 @@
 <% content_for :sidebar do %> 
 	<%= render :partial => "helpnote" %>	
 <% end %>
- 
-<div id="emailconfig-list">
-  <div class="action_buttons" style="margin-top: 10px; padding:5px;">
-    <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "last" %>
-  </div>
-  <h3 class="title"><%=t('email_configs.title')%></h3>  
-  <div class="intro"><%=t('email_configs.info11')%></div>
 
-  <div>
-    <h4 class="product-title floatl"><%=t('email_configs.global_support_emails')%></h4> 
-    <div class="floatr" style="padding-top: 35px;">
-      <div>
-      <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl', :style => "padding: 0px; font-size: 1.2em;" unless current_account.bcc_email.blank?%>
-      <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2 float2", :style => "padding-left: 5px; padding-top: 15px;", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
-      <%= content_tag :span, "[?]", :class => "tool-tip", :title=> t('email_configs.info17')%>
-    </div>
-    </div>
-    <table class="email-config-styled-table">
-      <thead>
-        <tr>
-          <td class="edit">&nbsp;</td>
-          <td class="primaryRole">&nbsp;</td>
-          <td class="supportMail"><%=t('email_configs.support_email')%></td>
-          <td class="to-email"><%=t('email_configs.forwarding_email')%></td>
-          <td><%=t('email_configs.group')%></td>
-        </tr>
-      </thead>
-      <tbody>
-        <% @global_email_configs.each do |email_config| %>
-          <%= render (:partial => "email_config", :object =>  email_config) %>      
-        <% end %>
-      </tbody>
-    </table>
-  </div>      
-  <div>      
-    <% if feature?(:multi_product) %>
-      <% @products.each do |product| %>
-        <h4 class="product-title"><%= product.name %></h4> 
-        <table class="email-config-styled-table">
-          <thead>
-            <tr>
-              <td class="edit">&nbsp;</td>
-              <td class="primaryRole">&nbsp;</td>
-              <td class="supportMail"><%=t('email_configs.support_email')%></td>
-              <td class="to-email"><%=t('email_configs.forwarding_email')%></td>
-              <td><%=t('email_configs.group')%></td>
-            </tr>
-          </thead>
-          <tbody>
-            <% product.email_configs.each do |email_config| %>
-              <%= render (:partial => "email_config", :object =>  email_config) %>      
-            <% end %>
-          </tbody>
-        </table>
-      <% end %>
-    <% end %>   
-  </div>      
+<div id="emailconfig-list" class="email-settings-header">
+  <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "floatr uiButton" %>
+  <h3 class="title"><%=t('email_configs.title')%></h3>
+  <div class="intro"><%=t('email_configs.info11')%></div>
 </div>
+<div class="floatr email-settings-bcc">
+  <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl' unless current_account.bcc_email.blank?%>
+  <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2 float2", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
+  <%= content_tag :span, "", :class => "tool-tip", :title=> t('email_configs.info17')%>
+</div>
+<div>
+  <h4 class="product-title"><%=t('email_configs.global_support_emails')%></h4>
+  <table class="email-config-styled-table">
+    <thead>
+      <tr>
+        <td class="edit">&nbsp;</td>
+        <td class="primaryRole">&nbsp;</td>
+        <td class="supportMail"><%=t('email_configs.support_email')%></td>
+        <td class="to-email"><%=t('email_configs.forwarding_email')%></td>
+        <td><%=t('email_configs.group')%></td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @global_email_configs.each do |email_config| %>
+        <%= render (:partial => "email_config", :object =>  email_config) %>      
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if feature?(:multi_product) %>
+    <% @products.each do |product| %>
+      <h4 class="product-title"><%= product.name %></h4> 
+      <table class="email-config-styled-table">
+        <thead>
+          <tr>
+            <td class="edit">&nbsp;</td>
+            <td class="primaryRole">&nbsp;</td>
+            <td class="supportMail"><%=t('email_configs.support_email')%></td>
+            <td class="to-email"><%=t('email_configs.forwarding_email')%></td>
+            <td><%=t('email_configs.group')%></td>
+          </tr>
+        </thead>
+        <tbody>
+          <% product.email_configs.each do |email_config| %>
+            <%= render (:partial => "email_config", :object =>  email_config) %>      
+          <% end %>
+        </tbody>
+      </table>
+   <% end %>
+  <% end %>
+</div>
+   

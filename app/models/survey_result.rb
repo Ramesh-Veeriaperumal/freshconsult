@@ -49,7 +49,7 @@ class SurveyResult < ActiveRecord::Base
 
   private
   
-  def self.generate_reports_list(survey_reports,category)
+  def self.generate_reports_list(survey_reports,category,sort_by)
     
   agents_report = Hash.new
 
@@ -79,10 +79,46 @@ class SurveyResult < ActiveRecord::Base
 
   end
 
-  agents_report
+  if sort_by == "happy"
+    agents_report.sort_by{|key,value| value[:happy]}.reverse 
+  elsif  sort_by == "unhappy"
+    agents_report.sort_by{|key,value| value[:unhappy]}.reverse
+  elsif  sort_by == "neutral"
+    agents_report.sort_by{|key,value| value[:neutral]}.reverse
+   elsif  sort_by == "total"
+     agents_report.sort_by{|key,value| value[:total]}.reverse
+    else
+      agents_report.sort_by{|key,value| value[:name]}
+    end  
 
   end
+
+  named_scope :agent , lambda { |conditional_params| { :joins => :agent,
+                                                     :select => "users.id as id,users.name as name,survey_results.rating as rating,users.job_title as title,count(*) as total",
+                                                     :group => "survey_results.agent_id,survey_results.rating", 
+                                                     :conditions => conditional_params,
+                                                     :order => :name
+                                                   }}
   
+  named_scope :group , lambda { |conditional_params| { :joins => :group,
+                                                     :select => "group_id as id,groups.name as name,survey_results.rating as rating,groups.description as title,count(*) as total",
+                                                     :group => "survey_results.group_id,survey_results.rating",
+                                                     :conditions => conditional_params,                                                     
+                                                     :order => :name
+                                                   }}
+
+named_scope :portal , lambda { |conditional_params| { :joins => :account,                    
+                                                      :select => "account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total",                
+                                                      :group => "survey_results.account_id,survey_results.rating",
+                                                      :conditions => conditional_params,                                                     
+                                                      :order => :name
+                                                   }}
+
+named_scope :remarks , lambda { |conditional_params| { 
+                                                      :include => :survey_remark,
+                                                      :conditions => conditional_params,
+                                                      :order => "survey_results.created_at DESC"
+                                                   }}                                                   
     def add_support_score
       SupportScore.happy_customer(surveyable) if happy?
       SupportScore.unhappy_customer(surveyable) if unhappy?

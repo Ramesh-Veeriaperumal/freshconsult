@@ -139,6 +139,7 @@
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
+      admin.resources :analytics
       end
   end
   

@@ -1,63 +1,47 @@
 <script id="emailConfigTemplate" type="text/x-jquery-tmpl">  
-  <ul class="ui-form">
-    <li>
-      <ul style="float:left; width:60%">
-        <li>
+  <div class="configure-email-form">
+      <div class="column left-column">
           <span class="deleteChoice {{if (primary_role == true) }} disabled {{/if}}">&nbsp;</span>
           <input type="hidden" name="product[email_configs_attributes][${index_id}][id]" value="${email_config_id}"/>
-          <label><%=t('admin.products.form.enter_support_email_id')%></label>
-        </li>
-        
-        <li><input type="text" class="required text email" name="product[email_configs_attributes][${index_id}][reply_email]" rel="reply_to_id" {{if reply_email }} value="${reply_email}" {{/if}}/>
-        </li>
+          <label><%=t('admin.products.form.enter_support_email_id')%>*</label>
+          <input type="text" class="required text email" name="product[email_configs_attributes][${index_id}][reply_email]" rel="reply_to_id" {{if reply_email }} value="${reply_email}" {{/if}}/>
 
-        <li>
-          <label><%= t('email_configs.info8')%>:</label>
-        </li>
-        <li>
-          <span rel="div_reply_email" stlye="padding-bottom: 10px;" disabled="disabled">{{if to_email }} value="${to_email}" {{/if}}</span>
+          <label><%= t('admin.products.form.forwarding_email_info')%></label>
+          <span class="text" rel="div_reply_email" disabled="disabled">{{if to_email }} value="${to_email}" {{/if}}</span>
           <input type="hidden" rel="hidden_reply_to" name="product[email_configs_attributes][${index_id}][to_email]" {{if to_email }} value="${to_email}" {{/if}}/>
-        </li>
-      </ul>
+      </div>
 
-      <ul style="float:left; width:40%">
-        <li>
+      <div class="column right-column">
           <label><%=t('email_configs.info9')%></label>
-        </li>
-        
-        <li>
           <select name="product[email_configs_attributes][${index_id}][group_id]">
             <option value>...</option>
             <% @groups.each do |group| %>
               <option value=<%=group.id%> {{if group_id == <%=group.id%>}} selected {{/if}}><%=group.name%></option>
             <% end %>
           </select>  
-        </li>
 
-        <li style="padding-top: 25px;">
-          <input type="checkbox" class="checkbox" rel="email_config_checkbox" name="product[email_configs_attributes][${index_id}][primary_role]" {{if primary_role == true}} checked="checked" {{/if}} value=${primary_role} style="float: left;margin-top: 4px;"/>
-          <label style="float: left; padding: 0px;"><%= t('products.primary_product_support_email')%></label>
-          <input type="hidden" rel="delete" name="product[email_configs_attributes][${index_id}][_destroy]" value="${destroy}"/>
-        </li>
-      </ul>
-    </li>
-  </ul>
+          <div class="set_primary">
+            <input type="checkbox" class="checkbox" rel="email_config_checkbox" name="product[email_configs_attributes][${index_id}][primary_role]" {{if primary_role == true}} checked="checked" {{/if}} value=${primary_role} />
+            <label><%= t('admin.products.primary_product_support_email') %></label>
+            <input type="hidden" rel="delete" name="product[email_configs_attributes][${index_id}][_destroy]" value="${destroy}"/>
+          </div>
+      </div>
+  </div>
 </script>
 
 <% content_for :sidebar do -%><%- end %>
 <%= render :partial => "shared/colorpicker" %>
 <%= form.error_messages %>
 
-<ul class="ui-form">
-  <li class="inline-field">
-    <%= content_tag(:label, t('admin.products.form.product_name') + " *", :class => "caption") %>
-    <div class="fields" style="margin-left: 170px;">
+<div class="multi-product-add ui-form">
+  <div class="inline-field">
+
+    <%= content_tag(:label, t('admin.products.form.product_name') + " *", :class => "tabbed caption") %>
+    <div class="fields">
       <%= form.text_field :name, :class => "required text" %>
     </div>
-  </li>
 
-  <li class="inline-field">
-    <%= content_tag(:label, t('admin.products.form.configure_email'), :class => "caption", :style => "width:30%;") %>
+    <%= content_tag(:label, t('admin.products.form.product_support_emails'), :class => "tabbed caption") %>
     <div class="fields" id="support_emails">
       <% @product.email_configs.each_with_index do |email_config, index| %>
         <% javascript_tag do %>
@@ -68,28 +52,28 @@
           jQuery.tmpl( _template, _data ).appendTo( "#support_emails");
         <% end %>
       <% end %>
-    </div>   
-  </li>
-
-  <li class="inline-field">
-    <div class="fields" style="margin-left: 163px;">
-      <span class="addchoice">&nbsp;</span>
-      <a class="email_config" id="addchoice" href="javascript:void(0)" style="margin-left: 30px;"><%= t('products.add_another_email')%></a>
     </div>
-  </li>
 
-  <li class="inline-field">
-    <label class="aligncenter"  style="background-color: #EFEFEF; border-bottom: 1px solid grey; border-top: 1px solid grey;">      
-      <%= t("admin.products.form.configure_seperate_portal") %>
+    <div class="add-email">
+        <%= link_to( "<span></span> #{t('admin.products.add_another_email')}", "javascript:void(0)", :class => "add-email-icon", :id => "addchoice" ) %>
+    </div>
+
+    <div class="configure-portal">
+      <label class="aligncenter">
+        <%= t("admin.products.form.configure_seperate_portal") %> 
+      </label>
       <%= form.check_box :enable_portal, {:class => "checkbox", :rel => "toggle", :id => "EnablePortal" } %>
-    </label>
-    <div id="PortalSettings" style="display:block;">
-			<% form.fields_for :portal do |portal| %>
-	      <%= render :partial => "portal", :object => portal %>
+    </div>
+
+    <div id="PortalSettings">
+      <% form.fields_for :portal do |portal| %>
+        <%= render :partial => "portal", :object => portal %>
       <% end %>
     </div>
-  </li>  
-</ul>
+
+  </div>
+</div>
+
 <% content_for :pagefixed do -%>
   <% javascript_tag do %>
     var email_config_index = <%= @product.email_configs.size %>;
@@ -97,11 +81,12 @@
     jQuery(document).ready(function(){
       jQuery("input[rel=reply_to_id]").live("change keyup", 
           function(ev){
+            reply_email = this.value;
             if(this.value != ''){
               reply_email = construct_reply_url(this.value, "<%= current_account.full_domain %>");
-              jQuery(this).parent().parent().find("span[rel=div_reply_email]").text(reply_email);
-              jQuery(this).parent().parent().find("input[rel=hidden_reply_to]").val(reply_email);
             }
+            jQuery(this).parent().parent().find("span[rel=div_reply_email]").text(reply_email);
+            jQuery(this).parent().parent().find("input[rel=hidden_reply_to]").val(reply_email);
           }
       ).trigger("change");
 
@@ -143,7 +128,7 @@
       jQuery(".deleteChoice").live('click',
         function(ev){
           if(!jQuery(this).hasClass('disabled')){
-            jQuery(this).parent().parent().parent().parent().hide().find("input[rel=delete]").val(true);
+            jQuery(this).parent().parent().hide().find("input[rel=delete]").val(true);
           } 
         }
       );
@@ -158,7 +143,7 @@
                 if(spanElement.hasClass('deleteChoice')){
                   spanElement.removeClass('disabled');
                   this.checked = false;
-                  jQuery(this).val(false).removeAttr('checked');
+                  jQuery(this).val(this.checked);
                 }
               }
             );
@@ -166,7 +151,7 @@
             jQuery(this).parent().parent().parent().find("span.deleteChoice").addClass('disabled');
           } else if(!jQuery(this).is(':checked')) {
             if(jQuery('#support_emails input:checkbox:checked').length < 1){
-              alert('Atlest one primary email has to be present');
+              alert('<%=t('admin.products.primary_email_required')%>');
               ev.preventDefault();
               this.checked = true;
             }

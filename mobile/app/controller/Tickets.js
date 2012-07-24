@@ -50,11 +50,11 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer.items.items[1].items.items[1].addActionListeners(detailsContainer);
         callBack ? callBack() : '' ;
         if(Freshdesk.notification) {
-            var msgContainer = Ext.get("notification_msg");
+            var msgContainer = Ext.select("#notification_msg");
             msgContainer.setHtml('<b>'+Freshdesk.notification.success+'</b>');
-            msgContainer.toggleCls('hide');
+            Ext.select("#notification_msg").removeCls('hide').setStyle('display','block');
             Ext.defer(function(){
-                Ext.get("notification_msg").toggleCls('hide')
+                Ext.select("#notification_msg").setStyle('display','none');
             },3500);
         }
         Freshdesk.notification=undefined;
@@ -94,15 +94,12 @@ Ext.define('Freshdesk.controller.Tickets', {
             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
             Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
         }
-
-        if(this.ticket.is_twitter){
+        else if(this.ticket.is_twitter){
             var tweetForm = this.getTicketTweetForm();
             this.initTweetForm(id);
             tweetForm.ticket_id = id;
             Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
-        }
-
-        if(this.ticket.is_facebook){
+        }else if(this.ticket.is_facebook){
             var facebookForm = this.getTicketFacebookForm();
             this.initFacebookForm(id);
             facebookForm.ticket_id = id;
@@ -130,7 +127,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title:'Close ticket',
-            message: 'Do you want to update ticket status to "Close"?',
+            message: 'Do you want to update ticket status to Closed?',
             modal:true,
             buttons: [
                 {
@@ -165,7 +162,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title:'Resolve ticket',
-            message: 'Do you want to update ticket status to "Resolve"?',
+            message: 'Do you want to update ticket status to Resolved?',
             modal:true,
             buttons: [
                 {
@@ -209,7 +206,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title: 'Delete Ticket',
-            message: 'Do you want to delete this ticket (#'+id+')?',
+            message: 'Do you want to delete this ticket ?',
             modal:true,
             buttons: [
                 {
@@ -253,11 +250,13 @@ Ext.define('Freshdesk.controller.Tickets', {
         var notForm = this.getTicketNote(),
         formObj = notForm.items.items[1],
         autoTechStore = Ext.getStore('AutoTechnician');
-        notForm.items.items[0].setTitle('Ticket : '+id);
+        //notForm.items.items[0].setTitle('Ticket : '+id);
         formObj.reset();
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
         if(FD.current_user.is_customer){
             formObj.setUrl('/support/tickets/'+id+'/notes');  
+        }else{
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(false);
         }
         if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
             autoTechStore.load();
@@ -270,9 +269,11 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0],
         cc_emails,bcc_emails;
         replyForm.ticket_id = id;
-        replyForm.items.items[0].setTitle('Ticket : '+id);
+        //replyForm.items.items[0].setTitle('Ticket : '+id);
 
-
+        if(FD.current_account.bcc_email){
+            bcc_emails = FD.current_account.bcc_email;
+        }
         
         fieldSetObj.items.items[6].setLabel('Cc/Bcc :');
         fieldSetObj.items.items[6].reset();
@@ -311,7 +312,13 @@ Ext.define('Freshdesk.controller.Tickets', {
             fieldSetObj.items.items[6].setLabel('Cc :');
             fieldSetObj.items.items[7].setHidden(false);
         }
+        if(bcc_emails){
+            fieldSetObj.items.items[6].setLabel('Cc :');
+            fieldSetObj.items.items[7].setHidden(false);
+            fieldSetObj.items.items[7].setValue(bcc_emails)
+        }
         fieldSetObj.items.items[6].setValue(cc_emails)
+
 
         //setting the url 
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
@@ -343,7 +350,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         formObj = tweetForm.items.items[1],
         fieldSetObj = formObj.items.items[0];
         tweetForm.ticket_id = id;
-        tweetForm.items.items[0].setTitle('Ticket : '+id);
+        //tweetForm.items.items[0].setTitle('Ticket : '+id);
 
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
@@ -373,7 +380,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         formObj = facebookForm.items.items[1],
         fieldSetObj = formObj.items.items[0];
         facebookForm.ticket_id = id;
-        facebookForm.items.items[0].setTitle('Ticket : '+id);
+        //facebookForm.items.items[0].setTitle('Ticket : '+id);
 
         if(!FD.current_account){
             location.href="#tickets/show/"+id;

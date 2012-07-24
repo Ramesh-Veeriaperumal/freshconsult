@@ -14,6 +14,7 @@ en:
   status: "Status"
   preview: "Preview"
   proceed_now: "\n\nProceed now?"
+  apply: "Apply"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
@@ -341,7 +342,10 @@ en:
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
-    products: 
+    products:
+      helpnote:
+        heading: Multiple Products
+        content: Multiple products helps you to provide product or brand specific support.
       new: 
         title: New Product
       portal: 
@@ -366,7 +370,9 @@ en:
         enable_product_portal: Enable Product Portal
         enter_support_email_id: Your support email
         configure_email: Configure Email
+        product_support_emails: Product Support Emails
         product_name: Product name
+        forwarding_email_info: "Your forwarding email address:"
       product:
         email_not_verified: Email not verified  
         delete: Are you sure you want to delete this Product?
@@ -374,7 +380,8 @@ en:
         title: Products        
         add_product: Add Product
       primary_product_support_email: Primary Product Support Email
-      add_another_email: Add another email
+      add_another_email: Add Another Email
+      primary_email_required: Atleast one primary email has to be present
     canned_responses:
       ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
@@ -820,6 +827,7 @@ en:
   import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
   portal_customizer_open_solutions: Anybody can view public solutions
   portal_customizer_option_solutions: Users can view public solutions without logging in
+  portal_customizer_option_auto_suggest_solutions: Auto suggest solutions when the user creates a new ticket.
   portal_customizer_google_signin: Allow users to Sign in using Google
   portal_customizer_twitter_signin: Allow users to Sign in using Twitter
   portal_customizer_facebook_signin: Allow users to Sign in using Facebook
@@ -912,11 +920,14 @@ en:
       placeholder: Search All Solutions
     search: 
       placeholder: Search %{name}
+  auto_suggest_solutions:
+    info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
   reset: Reset
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
+  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
   topic:
     ideas_stamps:
       planned: Planned
@@ -1340,8 +1351,8 @@ en:
     make_primary: Make primary
     info8: Forward your emails to
     help_link_info: Read our Email Settings article for more information...
-    bcc_email: BCC address
-    info17: This email address will be included automatically in the BCC field for all ticket communications
+    bcc_email: Bcc address
+    info17: This email address will be included automatically in the Bcc field for all ticket communications
     info18: Automatic bcc address included in ticket replies 
     email_added_succ_msg: The email has been added
     assign_to_product_msg: Link this support email with a product
@@ -1352,13 +1363,13 @@ en:
     forwarding_email: Forwarding Email
     group: Group
     support_email_exists: Support email already exists
-    primary_supp_email_tool_tip: Primary support email for %{portal_name} 
-    secondary_supp_email_tool_tip: Click here to make this support email as primary for %{portal_name}
+    primary_supp_email_tool_tip: Primary support email
+    secondary_supp_email_tool_tip: Make this email primary
     remove_msg: Are you sure you want to remove this email?
     mark_as_primary_msg: Are you sure you want to make this as the primary support email?
-    bcc_text: BCC
-    add_bcc_text: Add BCC
-    set_bcc_email_text: Set BCC email
+    bcc_text: Bcc
+    add_bcc_text: Add Bcc
+    set_bcc_email_text: Set automatic Bcc email
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -1728,6 +1739,8 @@ en:
         new_my_open: New & My Open Tickets
         this_view: this view
         all_tickets: All Tickets
+        all: All Tickets
+        new_and_my_open: New & My Open Tickets
         open: Open tickets
         closed: Closed Tickets
         deleted: Trash
@@ -2222,6 +2235,8 @@ en:
   search:
     no_results_msg: "No results found"  
   assumed_identity_msg: "You've assumed your identity as %{user_name}."
+  unauthorized_msg: "Authorization failed"
+  assuming_identity_user_does_not_exist_msg: "User you've tried to assume does not exist."
   assuming_identity_not_allowed_msg: "You are not allowed to assume this user."
   identity_reverted_msg: "You have reverted your identify back to you."
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
@@ -2251,12 +2266,16 @@ en:
   resolved_tickets: "Resolved Tickets"
   waiting_on_customer: "Waiting on Customer"
   waiting_on_third_party: "Waiting on Third Party"
-  bcc_email_updated_success_msg: "Successfully updated BCC email"
-  bcc_email_updated_failure_msg: "Failed to update BCC email"
+  bcc_email_updated_success_msg: "Successfully updated Bcc email"
+  bcc_email_updated_failure_msg: "Failed to update Bcc email"
   choose_free_plan: "Choose your Free %{plan}"
+  continue_using_free: "Continue to use Freshdesk as a"
+  free_account: "Free account"
   not_eligible_for_free_plan: "Not eligible to select a Free plan"
   select_free_plan: "Select your Free plan"
-  plan_is_selected: "%{plan} is selected"
+  change_details_anytime: "Subscription details or plans can be changed at anytime."
+  enter_payment_details_to_add: "Enter payment details to add more agents"
+  plan_is_selected: "Your Free account is now active with the %{plan} plan"
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"

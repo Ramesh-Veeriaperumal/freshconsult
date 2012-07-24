@@ -24,8 +24,8 @@
 	<% if feature?(:multi_product) && !@products.empty? %> 
 		<li>
 			<label><%=t('email_configs.assign_to_product_msg')%></label>
-			<div class="info-data"><p><%=t('email_configs.assign_to_product_info', :products_path => admin_products_path)%></p></div> 
-			<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..."}) %>
+			<div class="info-data"><p><%=t('email_configs.assign_to_product_info', :products_path => new_admin_product_path)%></p></div> 
+			<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..." }) %>
 		</li> 
 	<% end %>	
 </ul>

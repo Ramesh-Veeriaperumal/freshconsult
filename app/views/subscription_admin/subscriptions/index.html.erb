@@ -39,6 +39,10 @@
 					<th>This Month</th>
 	      	<td><h3><%= number_to_currency(@stats[:this_month]) %></h3></td>
  				</tr>	
+ 				<tr>
+					<th>Day Pass amount</th>
+	      			<td><h3><%= number_to_currency(@day_pass_stats[:this_month]) %></h3></td>
+ 				</tr>
 			</table>
 	 	 <% end %>     
 	 <h3>Accounts summary</h3>		
@@ -51,6 +55,10 @@
 		      <th>Paid Customers</th>
 		      <td><%= @customer_count - @free_customers %></td>
 		    </tr>
+		    <tr>
+			  <th>Zero paying Customers</th>
+		      <td><%= @zero_paying_customers %> </td>
+			</tr>
 			<tr>
 			  <th>Free Customers</th>
 		      <td><%= @free_customers %> </td>

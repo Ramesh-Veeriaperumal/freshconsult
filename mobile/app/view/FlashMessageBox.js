@@ -8,7 +8,7 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
         var backButton = {
             xtype:'button',
             text:'Hide',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
             handler:this.goBack,
 			align:'left',
             scope:this

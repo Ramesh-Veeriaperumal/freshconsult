@@ -42,7 +42,7 @@ require 'openssl'
       @user_session = @current_user.account.user_sessions.new(@current_user)
       if @user_session.save
         flash[:notice] = t(:'flash.login.success')
-        redirect_back_or_default('/')  if grant_day_pass  
+        redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
         flash[:notice] = "Login was unscucessfull!"
         redirect_to login_normal_url
@@ -135,6 +135,8 @@ require 'openssl'
   def destroy
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
+
+    flash.clear if mobile?
 
     current_user_session.destroy unless current_user_session.nil? 
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?

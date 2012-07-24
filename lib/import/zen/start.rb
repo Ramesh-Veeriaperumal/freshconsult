@@ -52,7 +52,11 @@ def read_data(obj_node)
     while reader.read
      begin
        if reader.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT and reader.name == obj_node
-          send("save_#{obj_node}" , reader.outer_xml)
+          if obj_node.eql?("ticket")
+              Resque.enqueue( Import::Zen::ZendeskTicketImport , reader.outer_xml , params[:domain])
+          else
+            send("save_#{obj_node}" , reader.outer_xml)
+          end
        end
      rescue => err
        puts "Error while reading ::#{err.message}\n#{err.backtrace.join("\n")}"

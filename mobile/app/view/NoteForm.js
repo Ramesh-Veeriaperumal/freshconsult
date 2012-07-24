@@ -1,7 +1,7 @@
 Ext.define('Freshdesk.view.NoteForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.noteForm',
-    requires: ['Ext.field.Email','Ext.field.Hidden','Ext.field.Checkbox'],
+    requires: ['Ext.field.Email','Ext.field.Hidden','Ext.field.Toggle'],
     showCannedResponse : function(){
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
@@ -25,37 +25,24 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
-                        xtype: 'checkboxfield',
-                        name: 'helpdesk_note[private]',
-                        label:'Private',
-                        itemId:'noteFormPrivateField'
-                    },
-                    {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your note.. *',
+                        height:180,
                         required:true,
                         clearIcon:false
-                    },
+                    },                    
                     {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
                     },
                     {
-                        xtype: 'multiselectfield',
-                        name: 'notify_emails',
-                        label:'Notify',
-                        displayField : 'id', //don't change this property
-                        valueField   : 'value', //don't change this property,
-                        usePicker : false,
-                        store : 'AutoTechnician',
-                        itemId: 'noteFormNotifyField'
-                    },
-                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
+                        cls:'green-icon',
+                        id:'noteFormCannedResponse',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -63,13 +50,39 @@ Ext.define('Freshdesk.view.NoteForm', {
                                 text:'Canned Response',
                                 docked:'left',
                                 ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
                             }
-                        ]
+                        ],
+                        listeners:{
+                            initialize: {
+                                fn:function(component){
+                                    Ext.get('noteFormCannedResponse').on('tap',function(){
+                                        this.parent.parent.showCannedResponse();
+                                    },component);
+                                },
+                                scope:this
+                            }
+                        }
 
-                    }
+                    },
+                    {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify Agents',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField',
+                        cls:'multiselect'
+                    },
+                    {
+                        xtype: 'togglefield',
+                        name: 'helpdesk_note[private]',
+                        label: 'Show this note to requester? ',
+                        itemId:'noteFormPrivateField',
+                        labelWidth: '71%'
+                    },
                 ]
             }
         ]

@@ -12,7 +12,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   
   def new
     @products = current_account.products
-    @groups = current_account.groups 
+    @groups = current_account.groups
   end
 
   def edit

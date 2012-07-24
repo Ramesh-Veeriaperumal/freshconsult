@@ -9,7 +9,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         var backButton = {
             xtype:'button',
             text:'List',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
             handler:this.backToViews,
 			align:'left'
 		};

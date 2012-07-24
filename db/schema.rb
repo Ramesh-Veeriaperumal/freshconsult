@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120719052657) do
+ActiveRecord::Schema.define(:version => 20120724102704) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -253,8 +253,8 @@ ActiveRecord::Schema.define(:version => 20120719052657) do
     t.integer  "product_id",      :limit => 8
   end
 
+  add_index "email_configs", ["account_id", "product_id"], :name => "index_email_configs_on_account_id_and_product_id"
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
-  add_index "email_configs", ["account_id"], :name => "index_email_configs_on_account_id_and_product_id"
 
   create_table "email_notification_agents", :force => true do |t|
     t.integer  "email_notification_id", :limit => 8
@@ -603,6 +603,71 @@ ActiveRecord::Schema.define(:version => 20120719052657) do
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
 
+  create_table "helpdesk_schema_less_tickets", :id => false, :force => true do |t|
+    t.integer  "id",            :limit => 8,                    :null => false
+    t.integer  "account_id",    :limit => 8
+    t.integer  "ticket_id",     :limit => 8
+    t.integer  "product_id",    :limit => 8
+    t.text     "to_emails"
+    t.integer  "long_tc01",     :limit => 8
+    t.integer  "long_tc02",     :limit => 8
+    t.integer  "long_tc03",     :limit => 8
+    t.integer  "long_tc04",     :limit => 8
+    t.integer  "long_tc05",     :limit => 8
+    t.integer  "long_tc06",     :limit => 8
+    t.integer  "long_tc07",     :limit => 8
+    t.integer  "long_tc08",     :limit => 8
+    t.integer  "long_tc09",     :limit => 8
+    t.integer  "long_tc10",     :limit => 8
+    t.integer  "int_tc01"
+    t.integer  "int_tc02"
+    t.integer  "int_tc03"
+    t.integer  "int_tc04"
+    t.integer  "int_tc05"
+    t.string   "string_tc01"
+    t.string   "string_tc02"
+    t.string   "string_tc03"
+    t.string   "string_tc04"
+    t.string   "string_tc05"
+    t.string   "string_tc06"
+    t.string   "string_tc07"
+    t.string   "string_tc08"
+    t.string   "string_tc09"
+    t.string   "string_tc10"
+    t.string   "string_tc11"
+    t.string   "string_tc12"
+    t.string   "string_tc13"
+    t.string   "string_tc14"
+    t.string   "string_tc15"
+    t.datetime "datetime_tc01"
+    t.datetime "datetime_tc02"
+    t.datetime "datetime_tc03"
+    t.datetime "datetime_tc04"
+    t.datetime "datetime_tc05"
+    t.boolean  "boolean_tc01",               :default => false
+    t.boolean  "boolean_tc02",               :default => false
+    t.boolean  "boolean_tc03",               :default => false
+    t.boolean  "boolean_tc04",               :default => false
+    t.boolean  "boolean_tc05",               :default => false
+    t.text     "text_tc01"
+    t.text     "text_tc02"
+    t.text     "text_tc03"
+    t.text     "text_tc04"
+    t.text     "text_tc05"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_schema_less_tickets", ["account_id", "product_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_product_id"
+  add_index "helpdesk_schema_less_tickets", ["id"], :name => "helpdesk_schema_less_tickets_id"
+  add_index "helpdesk_schema_less_tickets", ["int_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_01"
+  add_index "helpdesk_schema_less_tickets", ["int_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_02"
+  add_index "helpdesk_schema_less_tickets", ["long_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_01"
+  add_index "helpdesk_schema_less_tickets", ["long_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_02"
+  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"account_id"=>nil, "string_tc01"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
+
   create_table "helpdesk_sla_details", :force => true do |t|
     t.string   "name"
     t.integer  "priority",        :limit => 8
@@ -753,7 +818,6 @@ ActiveRecord::Schema.define(:version => 20120719052657) do
     t.integer  "import_id",        :limit => 8
     t.string   "ticket_type"
     t.text     "description_html", :limit => 2147483647
-    t.integer  "product_id",       :limit => 8
   end
 
   add_index "helpdesk_tickets", ["account_id", "created_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_created_at_and_id"
