@@ -31916,7 +31916,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         if(FD.current_user.is_customer){
             formObj.setUrl('/support/tickets/'+id+'/notes');  
         }else{
-            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(true);
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(false);
         }
         if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
             autoTechStore.load();
@@ -39283,7 +39283,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Save',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -39317,7 +39317,11 @@ Ext.define('Freshdesk.view.TicketNote', {
     send : function(){
         var id = this.ticket_id,
         formObj = this.items.items[1],
-        values = formObj.getValues();
+        values = formObj.getValues(),
+        privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
+        if(FD.current_user.is_agent){
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+        }
         if(values["helpdesk_note[body_html]"].trim() != '') {
             Ext.Viewport.setMasked(true);
             formObj.submit({
@@ -39451,7 +39455,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Tweet',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -48504,10 +48508,6 @@ Ext.define('Freshdesk.view.NoteForm', {
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
         cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
-        if(!FD.current_account.canned_responses.length){
-            cannedResPopup.items.items[0].emptyTextCmp.show()
-        }
-        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     config: {
@@ -48527,38 +48527,24 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
-                        xtype: 'togglefield',
-                        name: 'helpdesk_note[private]',
-                        label: 'Private , Don\'t Show to requester',
-                        itemId:'noteFormPrivateField',
-                        labelWidth: '60%'
-                    },
-                    {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your note.. *',
+                        height:180,
                         required:true,
                         clearIcon:false
-                    },
+                    },                    
                     {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
                     },
                     {
-                        xtype: 'multiselectfield',
-                        name: 'notify_emails',
-                        label:'Notify',
-                        displayField : 'id', //don't change this property
-                        valueField   : 'value', //don't change this property,
-                        usePicker : false,
-                        store : 'AutoTechnician',
-                        itemId: 'noteFormNotifyField'
-                    },
-                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
+                        cls:'green-icon',
+                        id:'noteFormCannedResponse',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -48566,13 +48552,39 @@ Ext.define('Freshdesk.view.NoteForm', {
                                 text:'Canned Response',
                                 docked:'left',
                                 ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
                             }
-                        ]
+                        ],
+                        listeners:{
+                            initialize: {
+                                fn:function(component){
+                                    Ext.get('noteFormCannedResponse').on('tap',function(){
+                                        this.parent.parent.showCannedResponse();
+                                    },component);
+                                },
+                                scope:this
+                            }
+                        }
 
-                    }
+                    },
+                    {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify Agents',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField',
+                        cls:'multiselect'
+                    },
+                    {
+                        xtype: 'togglefield',
+                        name: 'helpdesk_note[private]',
+                        label: 'Show this note to requester? ',
+                        itemId:'noteFormPrivateField',
+                        labelWidth: '71%'
+                    },
                 ]
             }
         ]

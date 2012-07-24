@@ -24,6 +24,7 @@
 					  	<%= f.error_messages %>			  	
 						<%= hidden_field_tag 'mob', "true"  %>
 						<%= hidden_field_tag 'user_session[remember_me]', "1"  %>
+						<input type="submit" value="signin" style="visibility:hidden;height:1px;"/>
 						<fieldset class="login-fieldset animated" id="login-form">
 							<input autocapitalize="off" autocomplete="off" autocorrect="off" class="textbox email" id="user_session_email" name="user_session[email]" placeholder="Email" size="30" type="email">
 							<br />
@@ -37,6 +38,7 @@
 					  		<% end %>
 					  		<%= show_flash %>
 					  	<% end %>
+					  	<input type="submit" value="Sign In" class="uiButton hide" />
 				  		<%= link_to_function t('mobile.home.login'), "document.getElementById('new_user_session').submit()", { :id => "login_btn", :class => "login-button"} %>
 				  	<% end %>
 				  	<a href="javascript:void(0);" class="forgot-password" id="forgot-password">Forgot password</a>
