@@ -256,6 +256,8 @@
          var allfields = $A();
          jQuery("#custom_form li").each(function(index, domLi){
             var data = $(domLi).data("raw");
+            delete data.portalcc;
+            delete data.portalcc_to;
             delete data.dom_type;
             delete data.level_three_present;
             allfields.push(data);
@@ -875,8 +877,6 @@
       $("#SaveForm").click(function(ev){
          ev.preventDefault();
          var jsonData = getCustomFieldJson();
-         console.log (jsonData);
-         //return false;
          $("#field_values").val(jsonData.toJSON());
          this.value = $(this).data("commit")
          $(this).prop("disabled", true);
