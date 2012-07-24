@@ -1370,6 +1370,7 @@ en:
     bcc_text: Bcc
     add_bcc_text: Add Bcc
     set_bcc_email_text: Set automatic Bcc email
+    name_info_msg: Name of the email that will be used in the ticket replies
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
