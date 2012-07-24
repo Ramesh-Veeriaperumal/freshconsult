@@ -24272,7 +24272,7 @@ Ext.define('plugin.ux.PullRefresh2', {
          * @cfg {String} loadingText The text that will be shown while the list is refreshing.
          * @accessor
          */
-        loadingText: 'Loading...',
+        loadingText: 'Please Wait...',
 
         /*
          * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
@@ -30798,7 +30798,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!',
+                        pullRefreshText: 'Pull down to refresh...',
                         prettyUpdatedDate:true
                     }
             ]
@@ -30888,11 +30888,11 @@ Ext.define("Freshdesk.view.ContactInfo", {
                 '</div>',
                 '<div style="clear:both; display:block"></div>',
                 '<div class="customer-contact-list">',
-                    '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
-                    '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
-                    '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
-                    '<tpl if="twitter_id"><div class="twitter"><span>&nbsp;</span>{twitter_id}</div></tpl>',
-                    '<tpl if="fb_profile_id"><div class="facebook"><span>&nbsp;</span>{fb_profile_id}</div></tpl>',
+                    '<tpl if="email"><div class="email"><span>&nbsp;</span><p>{email}</p></div></tpl>',
+                    '<tpl if="mobile"><div class="phone"><span>&nbsp;</span><p>{mobile}</p></div></tpl>',
+                    '<tpl if="phone"><div class="phone"><span>&nbsp;</span><p>{phone}</p></div></tpl>',
+                    '<tpl if="twitter_id"><div class="twitter"><span>&nbsp;</span><p>{twitter_id}</p></div></tpl>',
+                    '<tpl if="fb_profile_id"><div class="facebook"><span>&nbsp;</span><p>{fb_profile_id}</p></div></tpl>',
                 '</div>',
             '</div>',
             '<div style="clear:both"></div>',
@@ -31152,7 +31152,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         var back = {
             xtype: 'button',
             text: 'Back',
-            ui:'back headerBtn',
+            ui:'back lightBtn',
             handler: this.goBack,
             scope: this,
             align:'left'
@@ -38775,14 +38775,14 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!',
+                        pullRefreshText: 'Pull down to refresh...',
                         prettyUpdatedDate:true
                     },
                     {
                         xclass: 'plugin.ux.ListPaging2',
                         autoPaging: false,
                         centered:true,
-                        loadMoreText: 'Load more.',
+                        loadMoreText: 'Please Wait...',
                         noMoreRecordsText: 'No more tickets.'
                     },
                     {
@@ -39031,7 +39031,7 @@ Ext.define('Freshdesk.view.ContactsListContainer', {
 
         var backButton = {
             text:'Home',
-            ui:'headerBtn back',
+            ui:'lightBtn back',
             xtype:'button',
             handler:this.backToDashboard,
             align:'left',
@@ -39193,7 +39193,7 @@ Ext.define('Freshdesk.view.ContactsFormContainer', {
             xtype:'button',
             handler:this.backToListView,
             align:'left',
-            ui:'headerBtn',
+            ui:'lightBtn',
             scope:this
         };
 
@@ -39283,7 +39283,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Save',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -39451,7 +39451,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Tweet',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -42927,7 +42927,8 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your Message... *',
+                        height:180,
                         required:true,
                         clearIcon:false
                     },
@@ -48504,10 +48505,6 @@ Ext.define('Freshdesk.view.NoteForm', {
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
         cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
-        if(!FD.current_account.canned_responses.length){
-            cannedResPopup.items.items[0].emptyTextCmp.show()
-        }
-        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     config: {
@@ -48527,38 +48524,23 @@ Ext.define('Freshdesk.view.NoteForm', {
                         value:'2'
                     },
                     {
-                        xtype: 'togglefield',
-                        name: 'helpdesk_note[private]',
-                        label: 'Private , Don\'t Show to requester',
-                        itemId:'noteFormPrivateField',
-                        labelWidth: '60%'
-                    },
-                    {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your note.. *',
+                        height:180,
                         required:true,
                         clearIcon:false
-                    },
+                    },                    
                     {
                         xtype: 'hiddenfield',
                         name: 'commet',
                         value:'Add Note'
                     },
                     {
-                        xtype: 'multiselectfield',
-                        name: 'notify_emails',
-                        label:'Notify',
-                        displayField : 'id', //don't change this property
-                        valueField   : 'value', //don't change this property,
-                        usePicker : false,
-                        store : 'AutoTechnician',
-                        itemId: 'noteFormNotifyField'
-                    },
-                    {
                         xtype:'titlebar',
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
+                        cls:'green-icon',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -48566,13 +48548,29 @@ Ext.define('Freshdesk.view.NoteForm', {
                                 text:'Canned Response',
                                 docked:'left',
                                 ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
                             }
                         ]
 
-                    }
+                    },
+                    {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify Agents',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField',
+                        cls:'multiselect'
+                    },
+                    {
+                        xtype: 'togglefield',
+                        name: 'helpdesk_note[private]',
+                        label: 'Show this note to requester? ',
+                        itemId:'noteFormPrivateField',
+                        labelWidth: '71%'
+                    },
                 ]
             }
         ]

@@ -68,7 +68,7 @@ Ext.define('plugin.ux.PullRefresh2', {
          * @cfg {String} loadingText The text that will be shown while the list is refreshing.
          * @accessor
          */
-        loadingText: 'Loading...',
+        loadingText: 'Please Wait...',
 
         /*
          * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
