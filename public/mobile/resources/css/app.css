@@ -10371,6 +10371,15 @@ input[type="search"]::-webkit-search-cancel-button {
   margin: -5px 0 0 -5px;
   padding: 1px 2px;
 }
+.x-button-headerBtn .x-button-label, .x-button-headerBtn .x-hasbadge .x-badge, .x-hasbadge .x-button-headerBtn .x-badge {
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+  /* Also Change in .x-button-back*/
+}
+
+.x-button-back .x-button-label, .x-button-back .x-hasbadge .x-badge, .x-hasbadge .x-button-back .x-badge {
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+  /* Also Change in .x-button-headerBtn*/
+}
 
 input, textarea, select {
   font-size: 0.9em;
@@ -10378,10 +10387,6 @@ input, textarea, select {
 
 .x-field .x-field-input, .x-field .x-input-el, .x-form-label span {
   font-size: 14px !important;
-}
-
-.x-button-headerBtn .x-button-label, .x-button-headerBtn .x-hasbadge .x-badge, .x-hasbadge .x-button-headerBtn .x-badge, .x-button-back .x-button-label, .x-button-back .x-hasbadge .x-badge, .x-hasbadge .x-button-back .x-badge {
-  text-shadow: -1px -1px 0 black;
 }
 
 .hide {
@@ -10436,9 +10441,10 @@ input, textarea, select {
   display: block;
 }
 .homepage .title {
-  font-size: 1.2em;
+  /* It will be same as mobile.scss class '.brand h2 ' */
+  font-size: 1.1em;
   color: #fff;
-  text-shadow: #333333 -1px -1px 0;
+  text-shadow: rgba(0, 0, 0, 0.5) -1px -1px 0;
 }
 .homepage .user_name {
   text-align: center;
@@ -10505,6 +10511,10 @@ x-button-forward::before, .x-toolbar .x-button-forward::before {
   /*background: $img, -webkit-linear-gradient(#B9C6D9, #98ABC7 50%, #6587B2 51%, #6587B2)!important;
   background: $img, linear-gradient(#B9C6D9, #98ABC7 50%, #6587B2 51%, #6587B2) !important;*/
   border-color: #19212D;
+  background-color: #6E84A3;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC), -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #9dacc1), color-stop(50%, #7e91ad), color-stop(51%, #6e84a3), color-stop(100%, #607797));
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC), -webkit-linear-gradient(top, #9dacc1, #7e91ad 50%, #6e84a3 51%, #607797);
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC), linear-gradient(top, #9dacc1, #7e91ad 50%, #6e84a3 51%, #607797);
 }
 .x-toolbar-header .x-title {
   color: white;
@@ -10681,15 +10691,6 @@ a {
   	}
   }*/
 }
-.ticketsList .ticket-item.Resolved, .ticketsList .ticket-item.Closed {
-  font-weight: normal;
-  text-shadow: 0px 0px 0px;
-  color: #777;
-}
-.ticketsList .ticket-item.Resolved .subject, .ticketsList .ticket-item.Closed .subject {
-  text-decoration: line-through;
-  font-weight: normal !important;
-}
 .ticketsList .ticket-item > div {
   display: inline-block;
 }
@@ -10763,6 +10764,19 @@ a {
 .ticketsList .ticket-item > div div span:first-child {
   margin: 0;
 }
+.ticketsList .ticket-item.Resolved, .ticketsList .ticket-item.Closed {
+  font-weight: normal;
+  text-shadow: 0px 0px 0px;
+  color: #777;
+}
+.ticketsList .ticket-item.Resolved > div.title .subject, .ticketsList .ticket-item.Closed > div.title .subject {
+  text-decoration: line-through;
+  font-weight: normal;
+}
+.ticketsList .ticket-item.Resolved > div.title .info.btn, .ticketsList .ticket-item.Closed > div.title .info.btn {
+  background: rgba(0, 0, 0, 0.2);
+  text-shadow: #666666 0 0 0;
+}
 .ticketsList .ticket-item.Resolved > div:first-child.High, .ticketsList .ticket-item.Resolved > div:first-child.Low, .ticketsList .ticket-item.Resolved > div:first-child.Medium, .ticketsList .ticket-item.Resolved > div:first-child.Urgent, .ticketsList .ticket-item.Closed > div:first-child.High, .ticketsList .ticket-item.Closed > div:first-child.Low, .ticketsList .ticket-item.Closed > div:first-child.Medium, .ticketsList .ticket-item.Closed > div:first-child.Urgent {
   background-color: #e5e5e5;
   *zoom: 1;
@@ -10773,6 +10787,7 @@ a {
 }
 .ticketsList .ticket-item .info {
   color: #999999;
+  font-weight: normal;
 }
 .ticketsList .ticket-item .info.btn, .ticketsList .ticket-item .info.state-btn {
   font-size: 0.9em;
@@ -10806,9 +10821,9 @@ a {
   color: #999;
 }
 
-.ticketsList .ticket-item.Resolved .title .info.btn, .ticketsList .ticket-item.Closed .title .info.btn {
-  background: rgba(0, 0, 0, 0.2);
-  text-shadow: #666666 0 0 0;
+.x-item-pressed .Resolved .subject, .x-item-pressed .Closed .subject {
+  text-decoration: none !important;
+  font-weight: bold !important;
 }
 
 .x-list-normal .x-list-item.x-item-pressed .x-list-item-label {
@@ -10985,7 +11000,7 @@ a {
 }
 .customerDetails .customer-info .customer-contact-list .phone span:before {
   font-size: 13px;
-  padding: 3px;
+  padding-left: 6px;
   content: '\e002';
 }
 .customerDetails .customer-info .customer-contact-list .email span:before {
@@ -11087,8 +11102,8 @@ a {
   box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
 }
 
-.x-toolbar .x-button.x-button-lightBtn {
-  box-shadow: 1px 1px 0 #B8C9E0;
+.x-toolbar .x-button.x-button-lightBtn, .x-toolbar .x-button.x-button-headerBtn {
+  box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.3) inset;
   border: 1px solid #151515;
   border-top-color: #222;
   color: #fff;
@@ -11925,6 +11940,14 @@ a {
   background-color: transparent !important;
 }
 
+.x-empty .x-field-input textarea {
+  font-weight: bold;
+}
+
+.x-field-input textarea {
+  font-weight: normal;
+}
+
 /* Pull refresh CSS */
 .x-list-pullrefresh {
   -webkit-box-shadow: inset 0 -5px 5px 0 rgba(0, 0, 0, 0.2);
@@ -11982,18 +12005,17 @@ a {
   /* Set the background size so the stripes work correctly */
   -webkit-background-size: 44px 44px;
   -moz-background-size: 36px 36px;
-  /* Webkit */
-  /* For browser that don't support gradients, we'll set a base background colour */
+  /* Webkit For browser that don't support gradients, we'll set a base background colour */
   background-color: #f3f3f3;
   background: -webkit-gradient(linear, 0 0, 44 44, color-stop(0, rgba(190, 190, 190, 0.17)), color-stop(0.25, rgba(190, 190, 190, 0.17)), color-stop(0.26, rgba(190, 190, 190, 0)), color-stop(0.5, rgba(190, 190, 190, 0)), color-stop(0.51, rgba(190, 190, 190, 0.17)), color-stop(0.75, rgba(190, 190, 190, 0.17)), color-stop(0.76, rgba(190, 190, 190, 0)), color-stop(1, rgba(190, 190, 190, 0))) #f3f3f3;
   /* Note: Mozilla's support for gradients is more true to the original design, allowing gradients at 30 degrees, as apposed to 45 degress in webkit. */
   background: -moz-repeating-linear-gradient(top left -30deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.17) 15px, rgba(255, 255, 255, 0) 15px, rgba(255, 255, 255, 0) 30px) #f3f3f3;
-  /* Give it a higher contrast outline */
-  -webkit-animation: animate-stripes 1s linear infinite;
-  animation: animate-stripes 1s linear infinite;
-  /*.x-loading-spinner {
-    display: block;
-  }*/
+ /* Give it a higher contrast outline
+ @include experimental(animation, animate-stripes 1s linear infinite);
+
+ /*.x-loading-spinner {
+   display: block;
+ }*/
 }
 .x-list-pullrefresh-loading .x-list-pullrefresh-arrow {
   display: none;
@@ -12006,27 +12028,24 @@ a {
   display: none;
 }
 
-/* Webkit animation keyframes */
+/* Webkit animation keyframes 
 @-webkit-keyframes animate-stripes {
   from {
-    background-position: 0 0;
+    background-position: 0 0; 
   }
-
   to {
-    background-position: 44px 0;
+    background-position: 44px 0; 
   }
 }
 
 @-moz-keyframes animate-stripes {
   from {
-    background-position: 0 0;
+    background-position: 0 0; 
   }
-
   to {
     background-position: 36px 0;
   }
-}
-
+}*/
 .x-list-options {
   position: relative;
   left: 0px;
