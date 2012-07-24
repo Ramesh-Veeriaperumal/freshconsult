@@ -1,4 +1,11 @@
 
+bulkActionButtonsDisabled = function () {
+	if (jQuery('#ticket-list .check .selector:checked').length > 0 ) {
+		jQuery('#ticket-toolbar .button').removeAttr('disabled');
+	} else {
+		jQuery('#ticket-toolbar .button').attr('disabled','disabled');
+	}
+}
 
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
       jQuery.each(jQuery(".ticket-description-tip"), function(i, item){
@@ -98,6 +105,8 @@ priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 // Quick Actions
 jQuery(document).ready(function() {
 	
+	bulkActionButtonsDisabled();
+	
 	// Assign Agent
 	jQuery('.action_assign_agent').live("click",function(ev) {
 		
@@ -120,6 +129,23 @@ jQuery(document).ready(function() {
 		});
 	});
 
+		//Clicking on the row (for ticket list only), the check box is toggled.
+	jQuery('.tickets tbody tr').live('click',function(ev) {
+		if (! jQuery(ev.target).is('input[type=checkbox]') && ! jQuery(ev.target).is('a') && ! jQuery(ev.target).is('.quick-action')) {
+			var checkbox = jQuery(this).find('input[type=checkbox]').first();
+			checkbox.prop('checked',!checkbox.prop('checked'));
+			checkbox.trigger('change');
+		}
+	});
+
+    jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
+        if (jQuery(this).prop('checked')) {
+          jQuery(this).parent().parent().addClass('active');
+        } else {
+          jQuery(this).parent().parent().removeClass('active');
+        }
+        bulkActionButtonsDisabled();
+    });
 	// Assign Status
 	jQuery('.action_assign_status').live("click",function(ev) {
 		
@@ -175,9 +201,5 @@ jQuery(document).ready(function() {
 			}
 		});
 	});
+
 });
-
-				// priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
-				// priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids.new_priority);
-
-// Assign Status

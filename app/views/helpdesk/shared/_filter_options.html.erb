@@ -64,7 +64,7 @@
     jQuery("#save_filter").show();
     jQuery("#delete_filter").hide();
     if (!jQuery("#active_filter").hasClass('unsaved')) {
-      jQuery("#active_filter").text("* <%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
+      jQuery("#active_filter").text("<%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
     }
     jQuery("#leftViewMenu a.active").removeClass('active').children('span').remove();
     jQuery("#FilterOptions input[name=filter_name]").val("");
@@ -79,6 +79,10 @@
       refresh_tickets();
     });	 
 
+    if (jQuery("#active_filter").hasClass('unsaved')) {
+      jQuery("#save_filter").show();
+      jQuery("#delete_filter").hide();
+    }
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");

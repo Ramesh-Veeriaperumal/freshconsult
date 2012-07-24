@@ -6,16 +6,18 @@ module Helpdesk::TicketsHelper
   
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])), :class => ( selected ? "active #{cls}": "#{cls}" ))
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) + "?force=true", :class => ( selected ? "active #{cls}": "#{cls}" ))
     else
       content_tag(:span, "", :class => "seperator")
     end  
   end
   
-  def drop_down_views(viewlist, selected_item, menuid = "leftViewMenu")
+  def drop_down_views(viewlist, selected_item, menuid = "leftViewMenu", unsaved_view=false)
+    extra_class = ""
+    extra_class = "unsaved" if unsaved_view
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, (link_to strip_tags(selected_item), "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
+        content_tag(:div, (link_to strip_tags(selected_item), "", { :class => "drop-right nav-trigger #{extra_class}", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
         content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }, :class => "fd-menu", :id => menuid)
     end
   end
@@ -81,11 +83,12 @@ module Helpdesk::TicketsHelper
     unless selected_item.blank?
       selected_item_name = selected_item[:name]
     else
-      selected_item_name = ((SELECTORS.select { |v| v.first == selected.to_sym }.first)[1] || top_views_array.first[:name]).to_s
+      selected_item_name = ((SELECTORS.select { |v| v.first == selected.to_sym }.first)[1] || top_views_array.first[:name]).to_s unless selected.blank?
+      selected_item_name = t("tickets_filter.unsaved_view") if selected.blank?
       cannot_delete = true
     end
 
-    top_view_html = drop_down_views(top_views_array, selected_item_name ).to_s +
+    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", selected.blank? ).to_s +
       (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
   end
   

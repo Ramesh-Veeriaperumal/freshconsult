@@ -186,24 +186,6 @@ var $J = jQuery.noConflict();
           $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
         }
       });
-
-		//Clicking on the row (for ticket list only), the check box is toggled.
-		$('.tickets tbody tr').live('click',function(ev) {
-      if (! $(ev.target).is('input[type=checkbox]') && ! $(ev.target).is('a') && ! $(ev.target).is('.quick-action')) {
-				var checkbox = $(this).find('input[type=checkbox]').first();
-				checkbox.prop('checked',!checkbox.prop('checked'));
-        checkbox.trigger('change');
-			}
-		});
-
-    $('.tickets tbody tr .check :checkbox').live('change', function() {
-        console.log('checkbox');
-        if ($(this).prop('checked')) {
-          $(this).parent().parent().addClass('active');
-        } else {
-          $(this).parent().parent().removeClass('active');
-        }
-    })
 		
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())

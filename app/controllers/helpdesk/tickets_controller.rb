@@ -54,15 +54,19 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_cached_ticket_filters
-    filters_str = $redis.get("filters:#{current_user.id}:#{session.session_id}")
-    @cached_filter_data = JSON.parse(filters_str) if filters_str
-    
-    if @cached_filter_data
-      @cached_filter_data.symbolize_keys!
-      @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-      @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
-      @ticket_filter.query_hash = @cached_filter_data[:data_hash]
-      params.merge!(@cached_filter_data)
+    unless params[:force]
+      filters_str = $redis.get("filters:#{current_user.id}:#{session.session_id}")
+      @cached_filter_data = JSON.parse(filters_str) if filters_str
+      
+      if @cached_filter_data
+        @cached_filter_data.symbolize_keys!
+        @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+        @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
+        @ticket_filter.query_hash = @cached_filter_data[:data_hash]
+        params.merge!(@cached_filter_data)
+      end
+    else 
+      $redis.del("filters:#{current_user.id}:#{session.session_id}")
     end
   end
 

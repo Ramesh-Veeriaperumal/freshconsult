@@ -1748,7 +1748,7 @@ en:
   or: or
   tickets_filter:
     title: "Filter Tickets"
-    unsaved_view: "Unsaved View"
+    unsaved_view: "* Unsaved View"
     sort_fields:
       due_by: Due by time
       date_created: Date Created

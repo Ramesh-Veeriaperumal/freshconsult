@@ -3287,6 +3287,8 @@ div.addReminder{
 
 	}
 	
+	/*Priority Border */
+	$priority_gradient:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==);
 
 	tr, tr.even, tr.active, tr:hover {
 		td {
@@ -3295,21 +3297,29 @@ div.addReminder{
 				width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
 			}
 			&.priority-high {
-				background-color: rgba($COL_PRI_HIGH, $priority-default-alpha);
+				background: #008ff9;
+				@include background-image($priority_gradient, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 			}
 			&.priority-medium {
-				background-color: rgba($COL_PRI_MEDIUM, $priority-default-alpha);
+				background: #89ce00;
+				@include filter-gradient(#89ce00, #005290, horizontal); 
+				@include background-image( $priority_gradient, linear-gradient(left, #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%));
 			}
 			&.priority-low {
-				background-color: rgba($COL_PRI_LOW, $priority-default-alpha);
+				background: #de0000;
+				@include filter-gradient(#de0000, #810000, horizontal); 
+				@include background-image( $priority_gradient, linear-gradient(to right, #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%));
+
 			}
 			&.priority-urgent {
-				background-color: rgba($COL_PRI_URGENT, $priority-default-alpha);
+				background-color: #ffb613; 
+				@include filter-gradient(#ffb613, #005290, horizontal); 
+				@include background-image( $priority_gradient, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
 			}
 
-			&.priority-high, &.priority-medium, &.priority-low, &.priority-urgent {
-				background-image: url(../images/priority-bg-pattern.png);
-			}
+			// &.priority-high, &.priority-medium, &.priority-low, &.priority-urgent {
+			// 	background-image: url(../images/priority-bg-pattern.png);
+			// }
 
 			.border-sep {
 				height:1px;
@@ -5817,6 +5827,7 @@ margin:10px;
 }
 #ticket-toolbar [disabled] {
 	opacity: 0.6;
+	cursor: not-allowed;
 }
 
 /* SURVEY REPORT RELATED STYLES */

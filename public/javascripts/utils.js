@@ -227,19 +227,21 @@ active_dialog = null;
           return this.each(function(i, item){
             curItem = $(item);
             var dialog = null;
-            
+
             curItem.modal();
             curItem.click(function(e){
                e.preventDefault();
                width = $(this).data("width") || '750px';
-               
+             
+                href = jQuery(this).data('url') || this.href;
+            
                if(dialog == null){
                   dialog = $("<div class='loading-center' />")
                               .html("<br />")
                               .dialog({  modal:true, width: width, height:'auto', position:'top',
                                          title: this.title, resizable: false });
 
-                   active_dialog = dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
+                   active_dialog = dialog.load(href,{}, function(responseText, textStatus, XMLHttpRequest) {
                                                    dialog.removeClass("loading-center");
                                                    dialog.css({"height": "auto"});
                                                 });
