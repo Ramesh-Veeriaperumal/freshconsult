@@ -256,7 +256,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         if(FD.current_user.is_customer){
             formObj.setUrl('/support/tickets/'+id+'/notes');  
         }else{
-            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(true);
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(false);
         }
         if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
             autoTechStore.load();

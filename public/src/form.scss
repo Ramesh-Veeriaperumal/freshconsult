@@ -1924,7 +1924,7 @@ ul.ui-form .inputs-list{
 .new_ticket_cc_button{
 	float:right;
 	margin-top:-25px;
-	width:7.8%;
+	width:5.5%;
 	a{
 		text-decoration:underline;
 		&:hover{
@@ -1933,10 +1933,22 @@ ul.ui-form .inputs-list{
 	}
 }
 
-#cc_emails_sec .chzn-container,#cc_emails_sec .search-field input{
-	width:91% !important;
+
+
+#cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{
+	width:94% !important;
 }
 
 #cc_emails_sec .chzn-drop{
 	width:100% !important;
 }
+
+#cc_emails_sec .multi_value_field {
+	width:93%;
+	padding-left:5px;
+	padding-right:5px;
+	border-color:#C6C6C6;
+	@include box-shadow(#DFDFDF 1px 1px 2px inset);
+	@include border-radius(5px);
+}
+

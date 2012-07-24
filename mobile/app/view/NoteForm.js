@@ -42,6 +42,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
                         cls:'green-icon',
+                        id:'noteFormCannedResponse',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -51,7 +52,17 @@ Ext.define('Freshdesk.view.NoteForm', {
                                 ui:'plain',
                                 handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
                             }
-                        ]
+                        ],
+                        listeners:{
+                            initialize: {
+                                fn:function(component){
+                                    Ext.get('noteFormCannedResponse').on('tap',function(){
+                                        this.parent.parent.showCannedResponse();
+                                    },component);
+                                },
+                                scope:this
+                            }
+                        }
 
                     },
                     {
