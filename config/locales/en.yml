@@ -1337,7 +1337,7 @@ en:
   back: Back
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
-    reported_on_ticket_list: "From: %{username}, Last updated: <strong><span class='tooltip' data-placement='right' title='%{date}'>%{time_words} ago</span></strong> "
+    reported_on_ticket_list: "From: %{username}, Last updated: <strong>%{time_words} ago</strong> "
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
@@ -1638,11 +1638,12 @@ en:
       no_email_found: "User with email %{email} is not available in the system."
       overlay_reply_time: " replied, %{time_in_words} ago"
       overlay_fwd_time: " forwarded, %{time_in_words} ago"
+      overlay_note_time: " added a note, %{time_in_words} ago"
       friendly_status:
         customer_responded: "Customer Responded"
         overdue: "Overdue"
         new: "New"
-        elapsed: "Elapsed"
+        elapsed: "Response Due"
         resolved: "Resolved"
       tabular_view:
         title: "Title"

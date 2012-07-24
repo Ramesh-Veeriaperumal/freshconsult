@@ -335,6 +335,7 @@ module ApplicationHelper
   # Date and time format that is mostly used in our product
   def formated_date(date_time, format = "%b %e %Y, %l:%M %p")
     format = format.gsub(/.\b[%Yy]/, "") if (date_time.year == Time.now.year)
+    format = format.gsub(" ,",",")
     date_time.strftime(format)
   end
   

@@ -9,7 +9,7 @@
 	<span class="hideForList"><%= user_avatar(ticket.requester) %></span>
 	<div class="ticket_subject">
 		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
-			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "info-data"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}) ) %> 
+			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), helpdesk_ticket_path({:id => ticket.display_id, :page => params[:page]}) ) %> 
 		</h3>
 		<% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data hideForList" do %>
