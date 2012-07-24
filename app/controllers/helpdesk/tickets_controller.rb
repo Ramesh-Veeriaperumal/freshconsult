@@ -6,6 +6,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ParserUtil
 
   before_filter :check_user , :only => [:show]
+  before_filter :load_cached_ticket_filters, :only => [:index, :user_tickets]
   before_filter :load_ticket_filter , :only => [:index, :show, :custom_view_save, :latest_ticket_count]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :disable_notification, :if => :save_and_close?
@@ -52,7 +53,22 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def load_cached_ticket_filters
+    filters_str = $redis.get("filters:#{current_user.id}:#{session.session_id}")
+    @cached_filter_data = JSON.parse(filters_str) if filters_str
+    
+    if @cached_filter_data
+      @cached_filter_data.symbolize_keys!
+      @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+      @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
+      @ticket_filter.query_hash = @cached_filter_data[:data_hash]
+      params.merge!(@cached_filter_data)
+    end
+  end
+
   def load_ticket_filter
+    return if @ticket_filter
+
    filter_name = @template.current_filter
    if !is_num?(filter_name)
     load_default_filter(filter_name)
@@ -60,6 +76,7 @@ class Helpdesk::TicketsController < ApplicationController
     @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
     return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
     @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+
     params.merge!(@ticket_filter.attributes["data"])
    end
   end
@@ -183,6 +200,16 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    
+    filter_params = params.clone
+    filter_params.delete(:action)
+    filter_params.delete(:controller)
+    
+    $redis.set("filters:#{current_user.id}:#{session.session_id}", filter_params.to_json)
+
+    filters_str = $redis.get("filters:#{current_user.id}:#{session.session_id}")
+    @cached_filter_data = JSON.parse(filters_str) if filters_str
+
     render :partial => "custom_search"
   end
   
@@ -520,7 +547,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
   
     def redirect_url
-      helpdesk_tickets_path(:page => params[:page])
+      helpdesk_tickets_path
     end
     
     def scoper_user_filters
