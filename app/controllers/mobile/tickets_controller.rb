@@ -36,7 +36,7 @@ class Mobile::TicketsController < ApplicationController
       if field.visible_in_view_form? || is_new
         field_value = (field.is_default_field?) ? @item[field.field_name] : @item.get_ff_value(field.name) unless @item.nil?
         dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-        field_value =  (field.field_type.eql?("default_requester") && current_user.customer?) ? current_user.email : ""
+        field_value =  current_user.email if (field.field_type.eql?("default_requester") && current_user.customer?)
         puts "#{field.field_type == 'default_source'}, #{dom_type}"
         if(field.field_type == "nested_field" && !@item.nil?)
           field_value = {}
