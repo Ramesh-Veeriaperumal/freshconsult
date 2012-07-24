@@ -42,7 +42,7 @@ require 'openssl'
       @user_session = @current_user.account.user_sessions.new(@current_user)
       if @user_session.save
         flash[:notice] = t(:'flash.login.success')
-        redirect_back_or_default('/')  if grant_day_pass  
+        redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
         flash[:notice] = "Login was unscucessfull!"
         redirect_to login_normal_url

@@ -1,11 +1,5 @@
-require 'resque-retry'
-
-class Import::Zen::ZendeskAttachmentImport 
-	extend Resque::Plugins::Retry
-	
+class Import::Zen::ZendeskAttachmentImport 	
   @queue = 'ImportAttachmentWorker'
-
-  @retry_limit = 3
 
   def self.perform(note_id,url,model)
   	model = model.to_sym

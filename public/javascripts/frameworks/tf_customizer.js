@@ -606,16 +606,12 @@
             sourceData.set("required_in_portal"    , dialogDOMMap.required_in_portal.prop("checked"));
 
              if(_field_type == 'default_requester'){
-                console.log("saveDataObj");
-                console.log(dialogDOMMap.portalcc_to);
-
+                
                 var field_options =  { 
                                        portalcc:   dialogDOMMap.portalcc.prop("checked"),
                                        portalcc_to:       dialogDOMMap.portalcc_to.filter(':checked').val(),
                                       };
 
-                 console.log(field_options);
-                 
                 sourceData.set("field_options" , field_options);
              }
    
@@ -638,13 +634,6 @@
             $(SourceField).data("fresh", false);
          }
       }     
-
-      function saveFieldOptions(sourceData){
-
-
-
-
-      }
 
       
       function setNestedFields(sourceData){                  
@@ -764,8 +753,6 @@
 
          
       $("#CustomFieldsDialog input").live("change", function(){
-         console.log("field dialogue change");
-         console.log(this.name);
          var sourceData = $H($(SourceField).data("raw"));
          switch(this.name){
             case 'choice':
@@ -875,8 +862,6 @@
       $("#SaveForm").click(function(ev){
          ev.preventDefault();
          var jsonData = getCustomFieldJson();
-         console.log (jsonData);
-         //return false;
          $("#field_values").val(jsonData.toJSON());
          this.value = $(this).data("commit")
          $(this).prop("disabled", true);
