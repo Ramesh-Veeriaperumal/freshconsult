@@ -14,7 +14,7 @@
 		  <%end%>
 	  </ul>
   
-<%if @reports_list.blank?%>
+<%if @reports_list.blank? && @survey_reports.total_pages==0 %>
 	 <h1 style="font-size:18px;text-align:center;margin-top:50px;"> <%=t('.no_feedback')%> </h1>
 <%end%>
 
