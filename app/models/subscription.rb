@@ -353,6 +353,7 @@ class Subscription < ActiveRecord::Base
     def paid_account?
       (state == 'active') and (subscription_payments.count > 0)
     end
+    alias :is_paid_account :paid_account?
     
     def cal_plan_change_amount
      ((trial_days ) * (amount - @old_subscription.amount)) / no_of_days_in_term
