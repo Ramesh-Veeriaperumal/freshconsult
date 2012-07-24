@@ -9,7 +9,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         var backButton = {
             xtype:'button',
             text:'List',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
 			handler:function(){ this.backToConversation ? me.toggleProperties() : me.backToListView()},
 			align:'left'
 		};

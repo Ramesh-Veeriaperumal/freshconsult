@@ -6,7 +6,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
         
         var backButton = {
             text:'Home',
-            ui:'headerBtn back',
+            ui:'lightBtn back',
             xtype:'button',
             handler:this.showHome,
             align:'left'
@@ -55,7 +55,8 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!'
+                        pullRefreshText: 'Pull down for more!',
+                        prettyUpdatedDate:true
                     }
             ]
         }

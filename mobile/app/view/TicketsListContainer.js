@@ -7,7 +7,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
 
         var backButton = {
         	text:'Views',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
 			xtype:'button',
 			handler:this.backToFilters,
 			align:'left'
@@ -53,7 +53,8 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!'
+                        pullRefreshText: 'Pull down for more!',
+                        prettyUpdatedDate:true
                     },
                     {
                         xclass: 'plugin.ux.ListPaging2',
@@ -61,6 +62,9 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                         centered:true,
                         loadMoreText: 'Load more.',
                         noMoreRecordsText: 'No more tickets.'
+                    },
+                    {
+                        xclass: 'plugin.ux.Iscroll'
                     }
             ]
         };

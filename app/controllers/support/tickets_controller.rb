@@ -107,9 +107,10 @@ class Support::TicketsController < ApplicationController
     end
   
     def build_tickets
-       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, current_user.tickets)
-       @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) 
-       @tickets ||= []    
+    @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, current_user.tickets)
+    @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) unless mobile?
+    @tickets = @tickets.paginate(:page => params[:page]) if mobile?
+    @tickets ||= []    
    end
    
    def require_user_login

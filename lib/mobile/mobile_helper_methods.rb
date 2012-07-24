@@ -3,17 +3,32 @@ module Mobile::MobileHelperMethods
   MOBILE_URL = "/mobile/"
 
   MOBILE_VIEWS = { :tickets => { :show => "#{MOBILE_URL}#tickets/show/{{params.id}}" } }
+
+  DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
   
   def self.included(base)
-    base.send :helper_method, :set_mobile, :mobile?
+    base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?
   end
 
   private
 
-    def mobile?
+    def allowed_domain?
+      DOMAINS.include? request.host.to_sym
+    end
+
+    def mobile_agent?
       user_agent = request.env["HTTP_USER_AGENT"]
       Rails.logger.debug "user_agent #{user_agent}"
       @mobile_user_agent ||= (user_agent  && user_agent[/(Mobile\/.+Safari)|(Android)/])
+    end
+
+    def classic_view?
+      !cookies[:classic_view].nil? && cookies[:classic_view].eql?("true")
+    end
+
+    def mobile?
+      Rails.logger.debug "request host #{request.host}"
+      mobile_agent? && allowed_domain? &&  !classic_view? 
     end
 
     def set_mobile

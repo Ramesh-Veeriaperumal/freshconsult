@@ -48,6 +48,10 @@
             "update" : "full"
         },
         {
+            "path": "util/iscroll.js",
+            "update" : "full"
+        },
+        {
             "path": "app.js",
             "update": "delta"
         }

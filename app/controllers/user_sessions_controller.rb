@@ -136,6 +136,8 @@ require 'openssl'
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
 
+    flash.clear if mobile?
+
     current_user_session.destroy unless current_user_session.nil? 
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
       return redirect_to current_account.sso_options[:logout_url]

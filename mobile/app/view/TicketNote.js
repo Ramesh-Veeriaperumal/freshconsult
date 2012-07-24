@@ -8,7 +8,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -17,7 +17,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Save',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -26,7 +26,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'New note',
             ui:'header',
             items: [
                 backButton,
@@ -51,12 +51,19 @@ Ext.define('Freshdesk.view.TicketNote', {
     send : function(){
         var id = this.ticket_id,
         formObj = this.items.items[1],
-        values = formObj.getValues();
+        values = formObj.getValues(),
+        privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
+        if(FD.current_user.is_agent){
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+        }
         if(values["helpdesk_note[body_html]"].trim() != '') {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The note has been added."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){

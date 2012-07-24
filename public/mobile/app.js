@@ -23866,374 +23866,6 @@ Ext.define('Ext.app.Application', {
 }, function() {
 });
 
-/**
- * This plugin adds pull to refresh functionality to the List.
- *
- * ## Example
- *
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['name', 'img', 'text'],
- *         data: [
- *             {
- *                 name: 'edpsencer',
- *                 img: 'http://a2.twimg.com/profile_images/1175591906/Ed-presenting-cropped_reasonably_small.jpg',
- *                 text: 'Read about Sencha Touch'
- *             },{
- *                 name: 'rdougan',
- *                 img: 'http://a0.twimg.com/profile_images/1261180556/171265_10150129602722922_727937921_7778997_8387690_o_reasonably_small.jpg',
- *                 text: 'Javascript development'
- *             },{
- *                 name: 'philogb',
- *                 img: 'https://si0.twimg.com/profile_images/1249073521/ng_normal.png',
- *                 text: '@ikarienator nice burritos!'
- *             }
- *         ]
- *     });
- *
- *     Ext.create('Ext.dataview.List', {
- *         fullscreen: true,
- *
- *         store: store,
- *
- *         plugins: [
- *             {
- *                 xclass: 'Ext.plugin.PullRefresh',
- *                 pullRefreshText: 'Pull down for more new Tweets!'
- *             }
- *         ],
- *
- *         itemTpl: [
- *             '<img src="{img}" alt="{name} photo" />',
- *             '<div class="tweet"><b>{name}:</b> {text}</div>'
- *         ]
- *     });
- */
-Ext.define('plugin.ux.PullRefresh2', {
-    extend: 'Ext.Component',
-    alias: 'PullRefresh2',
-    requires: ['Ext.DateExtras'],
-
-    config: {
-        /*
-         * @accessor
-         */
-        list: null,
-
-        /*
-         * @cfg {String} pullRefreshText The text that will be shown while you are pulling down.
-         * @accessor
-         */
-        pullRefreshText: 'Pull down to refresh...',
-
-        /*
-         * @cfg {String} releaseRefreshText The text that will be shown after you have pulled down enough to show the release message.
-         * @accessor
-         */
-        releaseRefreshText: 'Release to refresh...',
-
-        /*
-         * @cfg {String} loadingText The text that will be shown while the list is refreshing.
-         * @accessor
-         */
-        loadingText: 'Loading...',
-
-        /*
-         * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
-         * @accessor
-         */
-        snappingAnimationDuration: 150,
-
-        /*
-         * @cfg {Function} refreshFn The function that will be called to refresh the list.
-         * If this is not defined, the store's load function will be called.
-         * The refresh function gets called with a reference to this plugin instance.
-         * @accessor
-         */
-        refreshFn: null,
-
-        /*
-         * @cfg {XTemplate/String/Array} pullTpl The template being used for the pull to refresh markup.
-         * @accessor
-         */
-        pullTpl: [
-            '<div class="x-list-pullrefresh">',
-                '<div class="x-list-pullrefresh-arrow"></div>',
-                '<div class="x-loading-spinner">',
-                    '<span class="x-loading-top"></span>',
-                    '<span class="x-loading-right"></span>',
-                    '<span class="x-loading-bottom"></span>',
-                    '<span class="x-loading-left"></span>',
-                '</div>',
-                '<div class="x-list-pullrefresh-wrap">',
-                    '<h3 class="x-list-pullrefresh-message">{message}</h3>',
-                    '<div class="x-list-pullrefresh-updated">Last Updated: <span>{lastUpdated:date("m/d/Y h:iA")}</span></div>',
-                '</div>',
-            '</div>'
-        ].join('')
-    },
-
-    isRefreshing: false,
-    currentViewState: '',
-
-    initialize: function() {
-        this.callParent();
-
-        this.on({
-            painted: 'onPainted',
-            scope: this
-        });
-    },
-
-    init: function(list) {
-        var me = this,
-            store = list.getStore(),
-            pullTpl = me.getPullTpl(),
-            element = me.element,
-            scroller = list.getScrollable().getScroller();
-
-        me.setList(list);
-        me.lastUpdated = new Date();
-
-        list.insert(0, me);
-
-        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
-        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
-        if (store) {
-            if (store.isAutoLoading()) {
-                list.setLoadingText(null);
-            } else {
-                store.on({
-                    load: {
-                        single: true,
-                        fn: function() {
-                            list.setLoadingText(null);
-                        }
-                    }
-                });
-            }
-        }
-
-        pullTpl.overwrite(element, {
-            message: me.getPullRefreshText(),
-            lastUpdated: me.lastUpdated
-        }, true);
-
-        me.loadingElement = element.getFirstChild();
-        me.messageEl = element.down('.x-list-pullrefresh-message');
-        me.updatedEl = element.down('.x-list-pullrefresh-updated > span');
-
-        me.maxScroller = scroller.getMaxPosition();
-
-        scroller.on({
-            maxpositionchange: me.setMaxScroller,
-            scroll: me.onScrollChange,
-            scope: me
-        });
-    },
-
-    /**
-     * @private
-     * Attempts to load the newest posts via the attached List's Store's Proxy
-     */
-    fetchLatest: function() {
-        var store = this.getList().getStore(),
-            proxy = store.getProxy(),
-            operation;
-
-        operation = Ext.create('Ext.data.Operation', {
-            page: 1,
-            start: 0,
-            model: store.getModel(),
-            limit: store.getPageSize(),
-            action: 'read',
-            filters: store.getRemoteFilter() ? store.getFilters() : []
-        });
-
-        proxy.read(operation, this.onLatestFetched, this);
-    },
-
-    /**
-     * @private
-     * Called after fetchLatest has finished grabbing data. Matches any returned records against what is already in the
-     * Store. If there is an overlap, updates the existing records with the new data and inserts the new items at the
-     * front of the Store. If there is no overlap, insert the new records anyway and record that there's a break in the
-     * timeline between the new and the old records.
-     */
-    onLatestFetched: function(operation) {
-        var store      = this.getList().getStore(),
-            oldRecords = store.getData(),
-            newRecords = operation.getRecords(),
-            length     = newRecords.length,
-            toInsert   = [],
-            newRecord, oldRecord, i;
-
-        for (i = 0; i < length; i++) {
-            newRecord = newRecords[i];
-            oldRecord = oldRecords.getByKey(newRecord.getId());
-
-            if (oldRecord) {
-                oldRecord.set(newRecord.getData());
-            } else {
-                toInsert.push(newRecord);
-            }
-
-            oldRecord = undefined;
-        }
-
-        store.insert(0, toInsert);
-
-        this.resetRefreshState();
-
-        this.getList().getScrollable().getScroller().scrollTo(null, 0, true);
-    },
-
-    onPainted: function() {
-        this.pullHeight = this.loadingElement.getHeight();
-    },
-
-    setMaxScroller: function(scroller, position) {
-        this.maxScroller = position;
-    },
-
-    onScrollChange: function(scroller, x, y) {
-        if (y < 0) {
-            this.onBounceTop(y);
-        }
-        if (y > this.maxScroller.y) {
-            this.onBounceBottom(y);
-        }
-    },
-
-    /**
-     * @private
-     */
-    applyPullTpl: function(config) {
-        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
-    },
-
-    onBounceTop: function(y) {
-        var me = this,
-            list = me.getList(),
-            scroller = list.getScrollable().getScroller();
-
-        if (!me.isReleased) {
-            if (!me.isRefreshing && -y >= me.pullHeight + 10) {
-                me.isRefreshing = true;
-
-                me.setViewState('release');
-
-                scroller.getContainer().onBefore({
-                    dragend: 'onScrollerDragEnd',
-                    single: true,
-                    scope: me
-                });
-            }
-            else if (me.isRefreshing && -y < me.pullHeight + 10) {
-                me.isRefreshing = false;
-                me.setViewState('pull');
-            }
-        }
-    },
-
-    onScrollerDragEnd: function() {
-        var me = this;
-
-        if (me.isRefreshing) {
-            var list = me.getList(),
-                scroller = list.getScrollable().getScroller();
-
-            scroller.minPosition.y = -me.pullHeight;
-            scroller.on({
-                scrollend: 'loadStore',
-                single: true,
-                scope: me
-            });
-
-            me.isReleased = true;
-        }
-    },
-
-    loadStore: function() {
-        var me = this,
-            list = me.getList(),
-            scroller = list.getScrollable().getScroller();
-
-        me.setViewState('loading');
-        me.isReleased = false;
-
-        Ext.defer(function() {
-
-            if (me.getRefreshFn()) {
-                me.getRefreshFn().call(me, me);
-            } else {
-                me.fetchLatest();
-            }
-            //me.resetRefreshState();
-
-            // scroller.on({
-            //     scrollend: function() {
-            //         if (me.getRefreshFn()) {
-            //             me.getRefreshFn().call(me, me);
-            //         } else {
-            //             me.fetchLatest();
-            //         }
-            //         me.resetRefreshState();
-            //     },
-            //     delay: 100,
-            //     single: true,
-            //     scope: me
-            // });
-            scroller.minPosition.y = 0;
-            //scroller.scrollTo(null, 0, true);
-        }, 500, me);
-    },
-
-    onBounceBottom: Ext.emptyFn,
-
-    setViewState: function(state) {
-        var me = this,
-            prefix = Ext.baseCSSPrefix,
-            messageEl = me.messageEl,
-            loadingElement = me.loadingElement;
-
-        if (state === me.currentViewState) {
-            return me;
-        }
-        me.currentViewState = state;
-
-        if (messageEl && loadingElement) {
-            switch (state) {
-                case 'pull':
-                    messageEl.setHtml(me.getPullRefreshText());
-                    loadingElement.removeCls([prefix + 'list-pullrefresh-release', prefix + 'list-pullrefresh-loading']);
-                break;
-
-                case 'release':
-                    messageEl.setHtml(me.getReleaseRefreshText());
-                    loadingElement.addCls(prefix + 'list-pullrefresh-release');
-                break;
-
-                case 'loading':
-                    messageEl.setHtml(me.getLoadingText());
-                    loadingElement.addCls(prefix + 'list-pullrefresh-loading');
-                break;
-            }
-        }
-
-        return me;
-    },
-
-    resetRefreshState: function() {
-        var me = this;
-
-        me.isRefreshing = false;
-        me.lastUpdated = new Date();
-
-        me.setViewState('pull');
-        me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));
-    }
-});
 
 /**
  * Adds a Load More button at the bottom of the list. When the user presses this button,
@@ -24262,7 +23894,7 @@ Ext.define('plugin.ux.PullRefresh2', {
  *         ]
  *     });
  */
-Ext.define('Ext.plugin.ListPaging', {
+Ext.define('plugin.ux.ListPaging2', {
     extend: 'Ext.Component',
     alias: 'plugin.listpaging',
 
@@ -24337,7 +23969,10 @@ Ext.define('Ext.plugin.ListPaging', {
          * @private
          * @cfg {Boolean} loading True if the plugin has initiated a Store load that has not yet completed
          */
-        loading: false
+        loading: false,
+
+        /*fullyloadedCls used to set when no more records are there to paginate*/
+        fullyloadedCls : Ext.baseCSSPrefix + 'completed'
     },
 
     /**
@@ -24489,10 +24124,18 @@ Ext.define('Ext.plugin.ListPaging', {
     onStoreLoad: function(store) {
         var loadCmp  = this.addLoadMoreCmp(),
             template = this.getLoadTpl(),
-            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText();
+            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText(),
+            fullyloadedCls = this.getFullyloadedCls(),
+            storeFullyLoaded = this.storeFullyLoaded();
 
         this.getLoadMoreCmp().show();
         this.setLoading(false);
+
+        loadCmp.removeCls(fullyloadedCls);
+
+        if(storeFullyLoaded){
+            loadCmp.addCls(fullyloadedCls);
+        }
 
         //restores scroll position after a Store load
         if (this.scrollY) {
@@ -24557,6 +24200,526 @@ Ext.define('Ext.plugin.ListPaging', {
         this.scrollY = this.getScroller().position.y;
 
         store.nextPage({ addRecords: true });
+    }
+});
+/**
+ * This plugin adds pull to refresh functionality to the List.
+ *
+ * ## Example
+ *
+ *     @example
+ *     var store = Ext.create('Ext.data.Store', {
+ *         fields: ['name', 'img', 'text'],
+ *         data: [
+ *             {
+ *                 name: 'edpsencer',
+ *                 img: 'http://a2.twimg.com/profile_images/1175591906/Ed-presenting-cropped_reasonably_small.jpg',
+ *                 text: 'Read about Sencha Touch'
+ *             },{
+ *                 name: 'rdougan',
+ *                 img: 'http://a0.twimg.com/profile_images/1261180556/171265_10150129602722922_727937921_7778997_8387690_o_reasonably_small.jpg',
+ *                 text: 'Javascript development'
+ *             },{
+ *                 name: 'philogb',
+ *                 img: 'https://si0.twimg.com/profile_images/1249073521/ng_normal.png',
+ *                 text: '@ikarienator nice burritos!'
+ *             }
+ *         ]
+ *     });
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *         fullscreen: true,
+ *
+ *         store: store,
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.PullRefresh',
+ *                 pullRefreshText: 'Pull down for more new Tweets!'
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{img}" alt="{name} photo" />',
+ *             '<div class="tweet"><b>{name}:</b> {text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('plugin.ux.PullRefresh2', {
+    extend: 'Ext.Component',
+    alias: 'PullRefresh2',
+    requires: ['Ext.DateExtras'],
+
+    config: {
+        /*
+         * @accessor
+         */
+        list: null,
+
+        /*
+         * @cfg {String} pullRefreshText The text that will be shown while you are pulling down.
+         * @accessor
+         */
+        pullRefreshText: 'Pull down to refresh...',
+
+        /*
+         * @cfg {String} releaseRefreshText The text that will be shown after you have pulled down enough to show the release message.
+         * @accessor
+         */
+        releaseRefreshText: 'Release to refresh...',
+
+        /*
+         * @cfg {String} loadingText The text that will be shown while the list is refreshing.
+         * @accessor
+         */
+        loadingText: 'Loading...',
+
+        /*
+         * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
+         * @accessor
+         */
+        snappingAnimationDuration: 150,
+
+        /*
+         * @cfg {Function} refreshFn The function that will be called to refresh the list.
+         * If this is not defined, the store's load function will be called.
+         * The refresh function gets called with a reference to this plugin instance.
+         * @accessor
+         */
+        refreshFn: null,
+
+        /*
+         * @cfg {XTemplate/String/Array} pullTpl The template being used for the pull to refresh markup.
+         * @accessor
+         */
+        pullTpl: [
+            '<div class="x-list-pullrefresh">',
+                '<div class="x-list-pullrefresh-arrow"></div>',
+                '<div class="x-loading-spinner">',
+                    '<span class="x-loading-top"></span>',
+                    '<span class="x-loading-right"></span>',
+                    '<span class="x-loading-bottom"></span>',
+                    '<span class="x-loading-left"></span>',
+                '</div>',
+                '<div class="x-list-pullrefresh-wrap">',
+                    '<h3 class="x-list-pullrefresh-message">{message}</h3>',
+                    '<div class="x-list-pullrefresh-updated">Last Updated: <span>{lastUpdated:date("m/d/Y h:iA")}</span></div>',
+                '</div>',
+            '</div>'
+        ].join(''),
+
+        /*
+         * @cfg {Boolean} showing pretty date on last update time
+         * @accessor
+         */
+        prettyUpdatedDate : false
+    },
+
+    isRefreshing: false,
+    currentViewState: '',
+
+    initialize: function() {
+        this.callParent();
+
+        this.on({
+            painted: 'onPainted',
+            scope: this
+        });
+    },
+
+    init: function(list) {
+        var me = this,
+            store = list.getStore(),
+            pullTpl = me.getPullTpl(),
+            element = me.element,
+            scroller = list.getScrollable().getScroller();
+
+        me.setList(list);
+        me.lastUpdated = new Date();
+
+        list.insert(0, me);
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            if (store.isAutoLoading()) {
+                list.setLoadingText(null);
+            } else {
+                store.on({
+                    load: {
+                        single: true,
+                        fn: function() {
+                            list.setLoadingText(null);
+                        }
+                    }
+                });
+            }
+        }
+
+        pullTpl.overwrite(element, {
+            message: me.getPullRefreshText(),
+            lastUpdated: me.lastUpdated
+        }, true);
+
+        me.loadingElement = element.getFirstChild();
+        me.messageEl = element.down('.x-list-pullrefresh-message');
+        me.updatedEl = element.down('.x-list-pullrefresh-updated > span');
+
+        me.maxScroller = scroller.getMaxPosition();
+
+        scroller.on({
+            maxpositionchange: me.setMaxScroller,
+            scroll: me.onScrollChange,
+            scope: me
+        });
+    },
+
+    /**
+     * @private
+     * Attempts to load the newest posts via the attached List's Store's Proxy
+     */
+    fetchLatest: function() {
+        var store = this.getList().getStore(),
+            proxy = store.getProxy(),
+            operation;
+
+        operation = Ext.create('Ext.data.Operation', {
+            page: 1,
+            start: 0,
+            model: store.getModel(),
+            limit: store.getPageSize(),
+            action: 'read',
+            filters: store.getRemoteFilter() ? store.getFilters() : []
+        });
+
+        proxy.read(operation, this.onLatestFetched, this);
+    },
+
+    /**
+     * @private
+     * Called after fetchLatest has finished grabbing data. Matches any returned records against what is already in the
+     * Store. If there is an overlap, updates the existing records with the new data and inserts the new items at the
+     * front of the Store. If there is no overlap, insert the new records anyway and record that there's a break in the
+     * timeline between the new and the old records.
+     */
+    onLatestFetched: function(operation) {
+        var store      = this.getList().getStore(),
+            oldRecords = store.getData(),
+            newRecords = operation.getRecords(),
+            length     = newRecords.length,
+            toInsert   = [],
+            newRecord, oldRecord, i;
+
+        for (i = 0; i < length; i++) {
+            newRecord = newRecords[i];
+            oldRecord = oldRecords.getByKey(newRecord.getId());
+
+            if (oldRecord) {
+                oldRecord.set(newRecord.getData());
+            } else {
+                toInsert.push(newRecord);
+            }
+
+            oldRecord = undefined;
+        }
+
+        store.insert(0, toInsert);
+
+        this.resetRefreshState();
+
+        this.getList().getScrollable().getScroller().scrollTo(null, 0, true);
+    },
+
+    onPainted: function() {
+        this.pullHeight = this.loadingElement.getHeight();
+    },
+
+    setMaxScroller: function(scroller, position) {
+        this.maxScroller = position;
+    },
+
+    onScrollChange: function(scroller, x, y) {
+        if (y < 0) {
+            this.onBounceTop(y);
+        }
+        if (y > this.maxScroller.y) {
+            this.onBounceBottom(y);
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyPullTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    onBounceTop: function(y) {
+        var me = this,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller(),
+            prettyUpdatedDate = me.getPrettyUpdatedDate();
+
+        if (!me.isReleased) {
+            if(!me.isRefreshing && -y > 20  && -y < 25 && prettyUpdatedDate ){
+                me.updatedEl.setHtml(new Date(me.lastUpdated).toRelativeTime(5000));
+            }
+            if (!me.isRefreshing && -y >= me.pullHeight + 10) {
+                me.isRefreshing = true;
+
+                me.setViewState('release');
+
+                scroller.getContainer().onBefore({
+                    dragend: 'onScrollerDragEnd',
+                    single: true,
+                    scope: me
+                });
+            }
+            else if (me.isRefreshing && -y < me.pullHeight + 10) {
+                me.isRefreshing = false;
+                me.setViewState('pull');
+            }
+        }
+    },
+
+    onScrollerDragEnd: function() {
+        var me = this;
+
+        if (me.isRefreshing) {
+            var list = me.getList(),
+                scroller = list.getScrollable().getScroller();
+
+            scroller.minPosition.y = -me.pullHeight;
+            scroller.on({
+                scrollend: 'loadStore',
+                single: true,
+                scope: me
+            });
+
+            me.isReleased = true;
+        }
+    },
+
+    loadStore: function() {
+        var me = this,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller();
+
+        me.setViewState('loading');
+        me.isReleased = false;
+
+        Ext.defer(function() {
+
+            if (me.getRefreshFn()) {
+                me.getRefreshFn().call(me, me);
+            } else {
+                me.fetchLatest();
+            }
+            //me.resetRefreshState();
+
+            // scroller.on({
+            //     scrollend: function() {
+            //         if (me.getRefreshFn()) {
+            //             me.getRefreshFn().call(me, me);
+            //         } else {
+            //             me.fetchLatest();
+            //         }
+            //         me.resetRefreshState();
+            //     },
+            //     delay: 100,
+            //     single: true,
+            //     scope: me
+            // });
+            scroller.minPosition.y = 0;
+            //scroller.scrollTo(null, 0, true);
+        }, 500, me);
+    },
+
+    onBounceBottom: Ext.emptyFn,
+
+    setViewState: function(state) {
+        var me = this,
+            prefix = Ext.baseCSSPrefix,
+            messageEl = me.messageEl,
+            loadingElement = me.loadingElement;
+
+        if (state === me.currentViewState) {
+            return me;
+        }
+        me.currentViewState = state;
+
+        if (messageEl && loadingElement) {
+            switch (state) {
+                case 'pull':
+                    messageEl.setHtml(me.getPullRefreshText());
+                    loadingElement.removeCls([prefix + 'list-pullrefresh-release', prefix + 'list-pullrefresh-loading']);
+                break;
+
+                case 'release':
+                    messageEl.setHtml(me.getReleaseRefreshText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-release');
+                break;
+
+                case 'loading':
+                    messageEl.setHtml(me.getLoadingText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-loading');
+                break;
+            }
+        }
+
+        return me;
+    },
+
+    resetRefreshState: function() {
+        var me = this;
+
+        me.isRefreshing = false;
+        me.lastUpdated = new Date();
+
+        me.setViewState('pull');
+        me.updatedEl.setHtml(Ext.util.Format.date(me.lastUpdated, "m/d/Y h:iA"));    
+        
+        
+    }
+});
+
+/**
+ * The DelayedTask class provides a convenient way to "buffer" the execution of a method,
+ * performing setTimeout where a new timeout cancels the old timeout. When called, the
+ * task will wait the specified time period before executing. If durng that time period,
+ * the task is called again, the original call will be cancelled. This continues so that
+ * the function is only called a single time for each iteration.
+ *
+ * This method is especially useful for things like detecting whether a user has finished
+ * typing in a text field. An example would be performing validation on a keypress. You can
+ * use this class to buffer the keypress events for a certain number of milliseconds, and
+ * perform only if they stop for that amount of time.
+ *
+ * Using {@link Ext.util.DelayedTask} is very simple:
+ *
+ *     //create the delayed task instance with our callback
+ *     var task = Ext.create('Ext.util.DelayedTask', function() {
+ *         console.log('callback!');
+ *     });
+ *
+ *     task.delay(1500); //the callback function will now be called after 1500ms
+ *
+ *     task.cancel(); //the callback function will never be called now, unless we call delay() again
+ *
+ * ## Example
+ *
+ *     @example
+ *     //create a textfield where we can listen to text
+ *     var field = Ext.create('Ext.field.Text', {
+ *         xtype: 'textfield',
+ *         label: 'Length: 0'
+ *     });
+ *
+ *     //add the textfield into a fieldset
+ *     Ext.Viewport.add({
+ *         xtype: 'formpanel',
+ *         items: [{
+ *             xtype: 'fieldset',
+ *             items: [field],
+ *             instructions: 'Type into the field and watch the count go up after 500ms.'
+ *         }]
+ *     });
+ *
+ *     //create our delayed task with a function that returns the fields length as the fields label
+ *     var task = Ext.create('Ext.util.DelayedTask', function() {
+ *         field.setLabel('Length: ' + field.getValue().length);
+ *     });
+ *
+ *     // Wait 500ms before calling our function. If the user presses another key
+ *     // during that 500ms, it will be cancelled and we'll wait another 500ms.
+ *     field.on('keyup', function() {
+ *         task.delay(500);
+ *     });
+ *
+ * @constructor
+ * The parameters to this constructor serve as defaults and are not required.
+ * @param {Function} fn The default function to call.
+ * @param {Object} scope The default scope (The `this` reference) in which the function is called. If
+ * not specified, `this` will refer to the browser window.
+ * @param {Array} args The default Array of arguments.
+ */
+Ext.define('Ext.util.DelayedTask', {
+    config: {
+        interval: null,
+        delay: null,
+        fn: null,
+        scope: null,
+        args: null
+    },
+
+    constructor: function(fn, scope, args) {
+        var config = {
+            fn: fn,
+            scope: scope,
+            args: args
+        };
+
+        this.initConfig(config);
+    },
+
+    /**
+     * Cancels any pending timeout and queues a new one.
+     * @param {Number} delay The milliseconds to delay
+     * @param {Function} newFn Overrides the original function passed when instantiated.
+     * @param {Object} newScope Overrides the original `scope` passed when instantiated. Remember that if no scope
+     * is specified, `this` will refer to the browser window.
+     * @param {Array} newArgs Overrides the original `args` passed when instantiated.
+     */
+    delay: function(delay, newFn, newScope, newArgs) {
+        var me = this;
+
+        //cancel any existing queued functions
+        me.cancel();
+            
+        //set all the new configurations
+        me.setConfig({
+            delay: delay,
+            fn: newFn,
+            scope: newScope,
+            args: newArgs
+        });
+
+        //create the callback method for this delayed task
+        var call = function() {
+            me.getFn().apply(me.getScope(), me.getArgs() || []);
+            me.cancel();
+        };
+
+        me.setInterval(setInterval(call, me.getDelay()));
+    },
+
+    /**
+     * Cancel the last queued timeout
+     */
+    cancel: function() {
+        this.setInterval(null);
+    },
+
+    /**
+     * @private
+     * Clears the old interval
+     */
+    updateInterval: function(newInterval, oldInterval) {
+        if (oldInterval) {
+            clearInterval(oldInterval);
+        }
+    },
+
+    /**
+     * @private
+     * Changes the value into an array if it isn't one.
+     */
+    applyArgs: function(config) {
+        if (!Ext.isArray(config)) {
+            config = [config];
+        }
+
+        return config;
     }
 });
 
@@ -27376,36 +27539,108 @@ Ext.anims = {
     })
 };
 
-Ext.define('plugin.ux.ListPaging2', {
-    extend: 'Ext.plugin.ListPaging',
-    alias: 'ListPaging2',
+Ext.define('plugin.ux.Iscroll', {
+    extend: 'Ext.Component',
+    alias: 'plugin.iscroll',
+    requires:'Ext.util.DelayedTask',
     config: {
-        /*fullyloadedCls used to set when no more records are there to paginate*/
-        fullyloadedCls : Ext.baseCSSPrefix + 'completed'
+    	list : null,
     },
-
     initialize: function() {
         this.callParent();
     },
-
-    /**
-    * Overridding onStoreLoad
-    *
-    */
-    onStoreLoad : function(store){
-
-        var loadCmp  = this.addLoadMoreCmp(),
-            storeFullyLoaded = this.storeFullyLoaded(),
-            fullyloadedCls = this.getFullyloadedCls();
-        loadCmp.removeCls(fullyloadedCls);
-        this.callParent(store);
-
-        if(storeFullyLoaded){
-            loadCmp.addCls(fullyloadedCls);
-        }
-    }
+	init : function(list){
+		var me = this;
+		me.list = list;
+		this.list.on({
+			painted:function(){
+				this.registerIscroll();
+			},
+			scope:this
+		})
+	},
+	registerIscroll : function(){
+		this._updateIScroll();
+	},
+	getIScrollElementId : function() {
+		return this.list.bodyElement.getId();
+	},
+	_ensureIScroll: function() {
+		if (!this.iScroll) {
+			var el = this.getIScrollElementId();
+			this.iScroll = new iScroll(el);
+			this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
+		}
+	},
+	_updateIScroll: function() {
+		this._ensureIScroll();
+		if (this.iScroll) {
+			this.iScrollTask.delay(1000);
+		}
+	},
+	_refreshIScroll: function() {
+		this.iScroll.refresh();
+		//Refresh one more time.
+		this.iScrollTask.delay(1000);
+	}
 });
+// Ext.override(Ext.Panel, {
+// 	afterRender: Ext.Panel.prototype.afterRender.createSequence(function() {
+// 		if (this.getXType() == 'panel') {
+// 			this._getIScrollElement = function() {
+// 				return (this.el.child('.x-panel-body', true));
+// 			}
+// 		}
 
+// 		//Uncomment below to use iScroll only on mobile devices but use regular scrolling on PCs.
+// 		if (this.autoScroll /*&& Ext.isMobileDevice*/) {
+// 			if (this._getIScrollElement) {
+// 				this._updateIScroll();
+// 				this.on('afterlayout', this._updateIScroll);
+// 			}
+// 		}
+// 	}),
+
+// 	_ensureIScroll: function() {
+// 		if (!this.iScroll) {
+// 			var el = this._getIScrollElement();
+// 			if (el.children.length > 0) {
+// 				this.iScroll = new iScroll(el);
+// 				this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
+// 			}
+// 		}
+// 	},
+
+// 	_updateIScroll: function() {
+// 		this._ensureIScroll();
+// 		if (this.iScroll) {
+// 			this.iScrollTask.delay(1000);
+// 		}
+// 	},
+
+// 	_refreshIScroll: function() {
+// 		this.iScroll.refresh();
+// 		//Refresh one more time.
+// 		this.iScrollTask.delay(1000);
+// 	}
+// });
+
+// Ext.override(Ext.tree.TreePanel, {
+// 	_getIScrollElement: function() {
+// 		return (this.el.child('.x-panel-body', true));
+// 	}
+// });
+
+// Ext.override(Ext.grid.GridPanel, {
+// 	_getIScrollElement: function() {
+// 		return (this.el.child('.x-grid3-scroller', true));
+// 	},
+
+// 	afterRender: Ext.grid.GridPanel.prototype.afterRender.createSequence(function() {
+// 		//TODO: need to hook into more events and to update iScroll.
+// 		this.view.on('refresh', this._updateIScroll, this);
+// 	})
+// });
 /**
  * @aside video tabs-toolbars
  *
@@ -30289,7 +30524,9 @@ Ext.define("Freshdesk.view.Home", {
 
                 portalData.preferences.header_color && Ext.select('.branding').setStyle('background-color',portalData.preferences.header_color);
                 portalData.preferences.tab_color && Ext.select('.branding').setStyle('border-bottom-color',portalData.preferences.tab_color);
-
+                if(!FD.current_account.subscription.is_paid_account){
+                    Ext.get('helpdesk_FD_brand').removeCls('hide');
+                }
             }
         },
         items :[
@@ -30367,8 +30604,8 @@ Ext.define("Freshdesk.view.Home", {
                         cls:'footer',
                         docked:'bottom',
                         centered:true,
-                        tpl:['<a class="switch_version">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
-                             '<p>A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                        tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
+                             '<p id="helpdesk_FD_brand" class="hide">A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
                         }
@@ -30514,7 +30751,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
         
         var backButton = {
             text:'Home',
-            ui:'headerBtn back',
+            ui:'lightBtn back',
             xtype:'button',
             handler:this.showHome,
             align:'left'
@@ -30563,7 +30800,8 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!'
+                        pullRefreshText: 'Pull down for more!',
+                        prettyUpdatedDate:true
                     }
             ]
         }
@@ -30736,8 +30974,10 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="requester.avatar_url"><img src="{requester.avatar_url}"/></tpl>',
                                 '<tpl if="!requester.avatar_url"><img src="resources/images/profile_blank_thumb.gif"/></tpl>',
                         '</div>',
-                        '<div class="Info"><a href="{[!FD.current_user.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
-                        '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} <span class="{source_name}">&nbsp;</span></div></div>',
+                        '<div class="Info"><a href="{[!FD.current_user.is_customer && values.requester.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
+                        '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
+                            '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                        '</div></div>',
                         '<div class="msg fromReq">',
                                 '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
@@ -30775,7 +31015,9 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                     '</tpl>',
                                 '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
-                                '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} <span class="{source_name}">&nbsp;</span></div></div>',
+                                '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
+                                '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                                '</div></div>',
                                 '<tpl if="user.is_customer"><div class="msg fromReq">',
                                         '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
@@ -31040,7 +31282,6 @@ Ext.define("Freshdesk.view.CannedResponses", {
         var content = res.responseText,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0],
         messageElm  = msgFormContainer.getMessageItem();
         messageElm.setValue(messageElm.getValue()+content);
-        console.log(messageElm)
         this.hide();
     },
     onCannedResDisclose : function(record){
@@ -31081,7 +31322,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                 items:[
                     {
                         xtype:'button',
-                        ui:'plain headerBtn',
+                        ui:'plain lightBtn',
                         iconMask:true,
                         align:'left',
                         text:'hide',
@@ -31214,11 +31455,11 @@ Ext.define("Freshdesk.view.Scenarioies", {
                     xtype:'list',
                     emptyText: '<div class="empty-list-text">You don\'t have any Scenarioies!.</div>',
                     onItemDisclosure: false,
-                    itemTpl: '<span class="bullet"></span>&nbsp;{name}'
+                    itemTpl: '<div class="bullet"></div>&nbsp;<div class="scenario_text">{name}</div>'
             },
             {
                 xtype:'titlebar',
-                title:'Execute Scenario',
+                title:'Scenario',
                 ui:'header',
                 docked:'top',
                 items:[
@@ -31236,8 +31477,8 @@ Ext.define("Freshdesk.view.Scenarioies", {
                     },
                     {
                         xtype:'button',
-                        text:'Back',
-                        ui:'headerBtn back',
+                        text:'Cancel',
+                        ui:'lightBtn',
                         align:'left',
                         handler:function(){
                             Freshdesk.cancelBtn=true;
@@ -31261,7 +31502,7 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
         var backButton = {
             xtype:'button',
             text:'Hide',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
             handler:this.goBack,
 			align:'left',
             scope:this
@@ -31471,11 +31712,11 @@ Ext.define('Freshdesk.controller.Tickets', {
         detailsContainer.items.items[1].items.items[1].addActionListeners(detailsContainer);
         callBack ? callBack() : '' ;
         if(Freshdesk.notification) {
-            var msgContainer = Ext.get("notification_msg");
+            var msgContainer = Ext.select("#notification_msg");
             msgContainer.setHtml('<b>'+Freshdesk.notification.success+'</b>');
-            msgContainer.toggleCls('hide');
+            Ext.select("#notification_msg").removeCls('hide').setStyle('display','block');
             Ext.defer(function(){
-                Ext.get("notification_msg").toggleCls('hide')
+                Ext.select("#notification_msg").setStyle('display','none');
             },3500);
         }
         Freshdesk.notification=undefined;
@@ -31515,15 +31756,12 @@ Ext.define('Freshdesk.controller.Tickets', {
             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
             Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
         }
-
-        if(this.ticket.is_twitter){
+        else if(this.ticket.is_twitter){
             var tweetForm = this.getTicketTweetForm();
             this.initTweetForm(id);
             tweetForm.ticket_id = id;
             Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
-        }
-
-        if(this.ticket.is_facebook){
+        }else if(this.ticket.is_facebook){
             var facebookForm = this.getTicketFacebookForm();
             this.initFacebookForm(id);
             facebookForm.ticket_id = id;
@@ -31551,7 +31789,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title:'Close ticket',
-            message: 'Do you want to update ticket status to "Close"?',
+            message: 'Do you want to update ticket status to Closed?',
             modal:true,
             buttons: [
                 {
@@ -31586,7 +31824,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title:'Resolve ticket',
-            message: 'Do you want to update ticket status to "Resolve"?',
+            message: 'Do you want to update ticket status to Resolved?',
             modal:true,
             buttons: [
                 {
@@ -31630,7 +31868,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         var self = this,
             messageBox = new Ext.MessageBox({
             title: 'Delete Ticket',
-            message: 'Do you want to delete this ticket (#'+id+')?',
+            message: 'Do you want to delete this ticket ?',
             modal:true,
             buttons: [
                 {
@@ -31674,11 +31912,13 @@ Ext.define('Freshdesk.controller.Tickets', {
         var notForm = this.getTicketNote(),
         formObj = notForm.items.items[1],
         autoTechStore = Ext.getStore('AutoTechnician');
-        notForm.items.items[0].setTitle('Ticket : '+id);
+        //notForm.items.items[0].setTitle('Ticket : '+id);
         formObj.reset();
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
         if(FD.current_user.is_customer){
             formObj.setUrl('/support/tickets/'+id+'/notes');  
+        }else{
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(false);
         }
         if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
             autoTechStore.load();
@@ -31691,7 +31931,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj = formObj.items.items[0],
         cc_emails,bcc_emails;
         replyForm.ticket_id = id;
-        replyForm.items.items[0].setTitle('Ticket : '+id);
+        //replyForm.items.items[0].setTitle('Ticket : '+id);
 
 
         
@@ -31764,7 +32004,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         formObj = tweetForm.items.items[1],
         fieldSetObj = formObj.items.items[0];
         tweetForm.ticket_id = id;
-        tweetForm.items.items[0].setTitle('Ticket : '+id);
+        //tweetForm.items.items[0].setTitle('Ticket : '+id);
 
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
@@ -31794,7 +32034,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         formObj = facebookForm.items.items[1],
         fieldSetObj = formObj.items.items[0];
         facebookForm.ticket_id = id;
-        facebookForm.items.items[0].setTitle('Ticket : '+id);
+        //facebookForm.items.items[0].setTitle('Ticket : '+id);
 
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
@@ -32622,6 +32862,331 @@ Ext.define('Ext.plugin.PullRefresh', {
 });
 
 /**
+ * Adds a Load More button at the bottom of the list. When the user presses this button,
+ * the next page of data will be loaded into the store and appended to the List.
+ *
+ * By specifying `{@link #autoPaging}: true`, an 'infinite scroll' effect can be achieved,
+ * i.e., the next page of content will load automatically when the user scrolls to the
+ * bottom of the list.
+ *
+ * ## Example
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *
+ *         store: Ext.create('TweetStore'),
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.ListPaging',
+ *                 autoPaging: true
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{profile_image_url}" />',
+ *             '<div class="tweet">{text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('Ext.plugin.ListPaging', {
+    extend: 'Ext.Component',
+    alias: 'plugin.listpaging',
+
+    config: {
+        /**
+         * @cfg {Boolean} autoPaging
+         * True to automatically load the next page when you scroll to the bottom of the list.
+         */
+        autoPaging: false,
+
+        /**
+         * @cfg {String} loadMoreText The text used as the label of the Load More button.
+         */
+        loadMoreText: 'Load More...',
+
+        /**
+         * @cfg {String} noMoreRecordsText The text used as the label of the Load More button when the Store's
+         * {@link Ext.data.Store#totalCount totalCount} indicates that all of the records available on the server are
+         * already loaded
+         */
+        noMoreRecordsText: 'No More Records',
+
+        /**
+         * @private
+         * @cfg {String} loadTpl The template used to render the load more text
+         */
+        loadTpl: [
+            '<div class="{cssPrefix}loading-spinner" style="font-size: 180%; margin: 10px auto;">',
+                 '<span class="{cssPrefix}loading-top"></span>',
+                 '<span class="{cssPrefix}loading-right"></span>',
+                 '<span class="{cssPrefix}loading-bottom"></span>',
+                 '<span class="{cssPrefix}loading-left"></span>',
+            '</div>',
+            '<div class="{cssPrefix}list-paging-msg">{message}</div>'
+        ].join(''),
+
+        /**
+         * @cfg
+         * @private
+         */
+        loadMoreCmp: {
+            xtype: 'component',
+            baseCls: Ext.baseCSSPrefix + 'list-paging'
+        },
+
+        /**
+         * @private
+         * @cfg {Boolean} loadMoreCmpAdded Indicates whether or not the load more component has been added to the List
+         * yet.
+         */
+        loadMoreCmpAdded: false,
+
+        /**
+         * @private
+         * @cfg {String} loadingCls The CSS class that is added to the {@link #loadMoreCmp} while the Store is loading
+         */
+        loadingCls: Ext.baseCSSPrefix + 'loading',
+
+        /**
+         * @private
+         * @cfg {Ext.List} list Local reference to the List this plugin is bound to
+         */
+        list: null,
+
+        /**
+         * @private
+         * @cfg {Ext.scroll.Scroller} scroller Local reference to the List's Scroller
+         */
+        scroller: null,
+
+        /**
+         * @private
+         * @cfg {Boolean} loading True if the plugin has initiated a Store load that has not yet completed
+         */
+        loading: false
+    },
+
+    /**
+     * @private
+     * Sets up all of the references the plugin needs
+     */
+    init: function(list) {
+        var scroller = list.getScrollable().getScroller(),
+            store    = list.getStore();
+
+        this.setList(list);
+        this.setScroller(scroller);
+        this.bindStore(list.getStore());
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            this.disableDataViewMask(store);
+        }
+
+        // The List's Store could change at any time so make sure we are informed when that happens
+        list.updateStore = Ext.Function.createInterceptor(list.updateStore, this.bindStore, this);
+
+        if (this.getAutoPaging()) {
+            scroller.on({
+                scrollend: this.onScrollEnd,
+                scope: this
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    bindStore: function(newStore, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+        }
+
+        if (newStore) {
+            newStore.on({
+                load: this.onStoreLoad,
+                beforeload: this.onStoreBeforeLoad,
+                scope: this
+            });
+
+//            this.disableDataViewMask(newStore);
+        }
+    },
+
+    /**
+     * @private
+     * Removes the List/DataView's loading mask because we show our own in the plugin. The logic here disables the
+     * loading mask immediately if the store is autoloading. If it's not autoloading, allow the mask to show the first
+     * time the Store loads, then disable it and use the plugin's loading spinner.
+     * @param {Ext.data.Store} store The store that is bound to the DataView
+     */
+    disableDataViewMask: function(store) {
+        var list = this.getList();
+
+        if (store.isAutoLoading()) {
+            list.setLoadingText(null);
+        } else {
+            store.on({
+                load: {
+                    single: true,
+                    fn: function() {
+                        list.setLoadingText(null);
+                    }
+                }
+            });
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyLoadTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    /**
+     * @private
+     */
+    applyLoadMoreCmp: function(config) {
+        config = Ext.merge(config, {
+            html: this.getLoadTpl().apply({
+                cssPrefix: Ext.baseCSSPrefix,
+                message: this.getLoadMoreText()
+            }),
+            listeners: {
+                tap: {
+                    fn: this.loadNextPage,
+                    scope: this,
+                    element: 'element'
+                }
+            }
+        });
+
+        return Ext.factory(config, Ext.Component, this.getLoadMoreCmp());
+    },
+
+    /**
+     * @private
+     * If we're using autoPaging and detect that the user has scrolled to the bottom, kick off loading of the next page
+     */
+    onScrollEnd: function(scroller, x, y) {
+        if (!this.getLoading() && y >= scroller.maxPosition.y) {
+            if (!this.storeFullyLoaded()) {
+                this.loadNextPage();
+            }
+        }
+    },
+
+    /**
+     * @private
+     * Makes sure we add/remove the loading CSS class while the Store is loading
+     */
+    updateLoading: function(isLoading) {
+        var loadMoreCmp = this.getLoadMoreCmp(),
+            loadMoreCls = this.getLoadingCls();
+
+        if (isLoading) {
+            loadMoreCmp.addCls(loadMoreCls);
+        } else {
+            loadMoreCmp.removeCls(loadMoreCls);
+        }
+    },
+
+    /**
+     * @private
+     * If the Store is just about to load but it's currently empty, we hide the load more button because this is
+     * usually an outcome of setting a new Store on the List so we don't want the load more button to flash while
+     * the new Store loads
+     */
+    onStoreBeforeLoad: function(store) {
+        if (store.getCount() === 0) {
+            this.getLoadMoreCmp().hide();
+        }
+    },
+
+    /**
+     * @private
+     */
+    onStoreLoad: function(store) {
+        var loadCmp  = this.addLoadMoreCmp(),
+            template = this.getLoadTpl(),
+            message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText();
+
+        this.getLoadMoreCmp().show();
+        this.setLoading(false);
+
+        //restores scroll position after a Store load
+        if (this.scrollY) {
+            this.getScroller().scrollTo(null, this.scrollY);
+            delete this.scrollY;
+        }
+
+        //if we've reached the end of the data set, switch to the noMoreRecordsText
+        loadCmp.setHtml(template.apply({
+            cssPrefix: Ext.baseCSSPrefix,
+            message: message
+        }));
+    },
+
+    /**
+     * @private
+     * Because the attached List's inner list element is rendered after our init function is called,
+     * we need to dynamically add the loadMoreCmp later. This does this once and caches the result.
+     */
+    addLoadMoreCmp: function() {
+        var list = this.getList(),
+            cmp  = this.getLoadMoreCmp();
+
+        if (!this.getLoadMoreCmpAdded()) {
+            list.add(cmp);
+
+            /**
+             * @event loadmorecmpadded  Fired when the Load More component is added to the list. Fires on the List.
+             * @param {Ext.plugin.ListPaging} this The list paging plugin
+             * @param {Ext.List} list The list
+             */
+            list.fireEvent('loadmorecmpadded', this, list);
+            this.setLoadMoreCmpAdded(true);
+        }
+
+        return cmp;
+    },
+
+    /**
+     * @private
+     * Returns true if the Store is detected as being fully loaded, or the server did not return a total count, which
+     * means we're in 'infinite' mode
+     * @return {Boolean}
+     */
+    storeFullyLoaded: function() {
+        var store = this.getList().getStore(),
+            total = store.getTotalCount();
+
+        return total !== null ? store.getTotalCount() <= (store.currentPage * store.getPageSize()) : false;
+    },
+
+    /**
+     * @private
+     */
+    loadNextPage: function() {
+        var store = this.getList().getStore();
+
+        this.setLoading(true);
+
+        //keep a cache of the current scroll position as we'll need to reset it after the List is
+        //updated with new data
+        this.scrollY = this.getScroller().position.y;
+
+        store.nextPage({ addRecords: true });
+    }
+});
+
+/**
  * @aside guide forms
  *
  * A FieldSet is a great way to visually separate elements of a form. It's normally used when you have a form with
@@ -33021,352 +33586,6 @@ Ext.define('Ext.field.Hidden', {
 });
 
 /**
- * @aside guide forms
- *
- * The checkbox field is an enhanced version of the native browser checkbox and is great for enabling your user to
- * choose one or more items from a set (for example choosing toppings for a pizza order). It works like any other
- * {@link Ext.field.Field field} and is usually found in the context of a form:
- *
- * ## Example
- *
- *     @example miniphone preview
- *     var form = Ext.create('Ext.form.Panel', {
- *         fullscreen: true,
- *         items: [
- *             {
- *                 xtype: 'checkboxfield',
- *                 name : 'tomato',
- *                 label: 'Tomato',
- *                 value: 'tomato',
- *                 checked: true
- *             },
- *             {
- *                 xtype: 'checkboxfield',
- *                 name : 'salami',
- *                 label: 'Salami'
- *             },
- *             {
- *                 xtype: 'toolbar',
- *                 docked: 'bottom',
- *                 items: [
- *                     { xtype: 'spacer' },
- *                     {
- *                         text: 'getValues',
- *                         handler: function() {
- *                             var form = Ext.ComponentQuery.query('formpanel')[0],
- *                                 values = form.getValues();
- *
- *                             Ext.Msg.alert(null,
- *                                 "Tomato: " + ((values.tomato) ? "yes" : "no")
- *                                 + "<br />Salami: " + ((values.salami) ? "yes" : "no")
- *                             );
- *                         }
- *                     },
- *                     { xtype: 'spacer' }
- *                 ]
- *             }
- *         ]
- *     });
- *
- *
- * The form above contains two check boxes - one for Tomato, one for Salami. We configured the Tomato checkbox to be
- * checked immediately on load, and the Salami checkbox to be unchecked. We also specified an optional text
- * {@link #value} that will be sent when we submit the form. We can get this value using the Form's
- * {@link Ext.form.Panel#getValues getValues} function, or have it sent as part of the data that is sent when the
- * form is submitted:
- *
- *     form.getValues(); //contains a key called 'tomato' if the Tomato field is still checked
- *     form.submit(); //will send 'tomato' in the form submission data
- *
- */
-Ext.define('Ext.field.Checkbox', {
-    extend: 'Ext.field.Field',
-    alternateClassName: 'Ext.form.Checkbox',
-
-    xtype: 'checkboxfield',
-    qsaLeftRe: /[\[]/g,
-    qsaRightRe: /[\]]/g,
-
-    isCheckbox: true,
-
-    /**
-     * @event check
-     * Fires when the checkbox is checked.
-     * @param {Ext.field.Checkbox} this This checkbox
-     * @param {Ext.EventObject} e This event object
-     */
-
-    /**
-     * @event uncheck
-     * Fires when the checkbox is unchecked.
-     * @param {Ext.field.Checkbox} this This checkbox
-     * @param {Ext.EventObject} e This event object
-     */
-
-    config: {
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        ui: 'checkbox',
-
-        /**
-         * @cfg {String} value The string value to submit if the item is in a checked state.
-         * @accessor
-         */
-        value: '',
-
-        /**
-         * @cfg {Boolean} checked <tt>true</tt> if the checkbox should render initially checked
-         * @accessor
-         */
-        checked: false,
-
-        /**
-         * @cfg {Number} tabIndex
-         * @hide
-         */
-        tabIndex: -1,
-
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        component: {
-            xtype   : 'input',
-            type    : 'checkbox',
-            useMask : true,
-            cls     : Ext.baseCSSPrefix + 'input-checkbox'
-        }
-    },
-
-    // @private
-    initialize: function() {
-        var me = this;
-
-        me.callParent();
-
-        me.getComponent().on({
-            scope: me,
-            order: 'before',
-            masktap: 'onMaskTap'
-        });
-    },
-
-    // @private
-    doInitValue: function() {
-        var me = this,
-            initialConfig = me.getInitialConfig();
-
-        // you can have a value or checked config, but checked get priority
-        if (initialConfig.hasOwnProperty('value')) {
-            me.originalState = initialConfig.value;
-        }
-
-        if (initialConfig.hasOwnProperty('checked')) {
-            me.originalState = initialConfig.checked;
-        }
-
-        me.callParent(arguments);
-    },
-
-    // @private
-    updateInputType: function(newInputType) {
-        var component = this.getComponent();
-        if (component) {
-            component.setType(newInputType);
-        }
-    },
-
-    // @private
-    updateName: function(newName) {
-        var component = this.getComponent();
-        if (component) {
-            component.setName(newName);
-        }
-    },
-
-    /**
-     * Returns the field checked value
-     * @return {Mixed} The field value
-     */
-    getChecked: function() {
-        // we need to get the latest value from the {@link #input} and then update the value
-        this._checked = this.getComponent().getChecked();
-        return this._checked;
-    },
-
-    /**
-     * Returns the submit value for the checkbox which can be used when submitting forms.
-     * @return {Boolean/String} value The value of {@link #value} or true, if {@link #checked}.
-     */
-    getSubmitValue: function() {
-        return (this.getChecked()) ? this._value || true : null;
-    },
-
-    setChecked: function(newChecked) {
-        this.updateChecked(newChecked);
-        this._checked = newChecked;
-    },
-
-    updateChecked: function(newChecked) {
-        this.getComponent().setChecked(newChecked);
-
-        // only call onChange (which fires events) if the component has been initialized
-        if (this.initialized) {
-            this.onChange();
-        }
-    },
-
-    // @private
-    onMaskTap: function(component, e) {
-        var me = this,
-            dom = component.input.dom;
-
-        if (me.getDisabled()) {
-            return false;
-        }
-
-        //we must manually update the input dom with the new checked value
-        dom.checked = !dom.checked;
-
-        me.onChange(e);
-
-        //return false so the mask does not disappear
-        return false;
-    },
-
-    /**
-     * Fires the `check` or `uncheck` event when the checked value of this component changes.
-     * @private
-     */
-    onChange: function(e) {
-        var me = this,
-            oldChecked = me._checked,
-            newChecked = me.getChecked();
-
-        // only fire the event when the value changes
-        if (oldChecked != newChecked) {
-            if (newChecked) {
-                me.fireEvent('check', me, e);
-            } else {
-                me.fireEvent('uncheck', me, e);
-            }
-        }
-    },
-
-    /**
-     * @method
-     * Method called when this {@link Ext.field.Checkbox} has been checked
-     */
-    doChecked: Ext.emptyFn,
-
-    /**
-     * @method
-     * Method called when this {@link Ext.field.Checkbox} has been unchecked
-     */
-    doUnChecked: Ext.emptyFn,
-
-    /**
-     * Returns the checked state of the checkbox.
-     * @return {Boolean} True if checked, else otherwise
-     */
-    isChecked: function() {
-        return this.getChecked();
-    },
-
-    /**
-     * Set the checked state of the checkbox to true
-     * @return {Ext.field.Checkbox} This checkbox
-     */
-    check: function() {
-        return this.setChecked(true);
-    },
-
-    /**
-     * Set the checked state of the checkbox to false
-     * @return {Ext.field.Checkbox} This checkbox
-     */
-    uncheck: function() {
-        return this.setChecked(false);
-    },
-
-    getSameGroupFields: function() {
-        var component = this.up('formpanel') || this.up('fieldset'),
-            name = this.getName(),
-            replaceLeft = this.qsaLeftRe,
-            replaceRight = this.qsaRightRe,
-            components = [],
-            elements, element, i, ln;
-
-        if (!component) {
-            component = Ext.Viewport;
-        }
-
-        // This is to handle ComponentQuery's lack of handling [name=foo[bar]] properly
-        name = name.replace(replaceLeft, '\\[');
-        name = name.replace(replaceRight, '\\]');
-
-        elements = Ext.query('[name=' + name + ']', component.element.dom);
-        ln = elements.length;
-        for (i = 0; i < ln; i++) {
-            element = elements[i];
-            element = Ext.fly(element).up('.x-field-' + element.getAttribute('type'));
-            if (element && element.id) {
-                components.push(Ext.getCmp(element.id));
-            }
-        }
-        return components;
-    },
-
-    /**
-     * Returns an array of values from the checkboxes in the group that are checked,
-     * @return {Array}
-     */
-    getGroupValues: function() {
-        var values = [];
-
-        this.getSameGroupFields().forEach(function(field) {
-            if (field.getChecked()) {
-                values.push(field.getValue());
-            }
-        });
-
-        return values;
-    },
-
-    /**
-     * Set the status of all matched checkboxes in the same group to checked
-     * @param {Array} values An array of values
-     * @return {Ext.field.Checkbox} This checkbox
-     */
-    setGroupValues: function(values) {
-        this.getSameGroupFields().forEach(function(field) {
-            field.setChecked((values.indexOf(field.getValue()) !== -1));
-        });
-
-        return this;
-    },
-
-    /**
-     * Resets the status of all matched checkboxes in the same group to checked
-     * @return {Ext.field.Checkbox} This checkbox
-     */
-    resetGroupValues: function() {
-        this.getSameGroupFields().forEach(function(field) {
-            field.setChecked(field.originalState);
-        });
-
-        return this;
-    },
-
-    reset: function() {
-        this.setChecked(this.originalState);
-        return this;
-    }
-});
-
-/**
  * @author Tommy Maintz
  *
  * This class is the simple default id generator for Model instances.
@@ -33757,6 +33976,352 @@ Ext.define('Ext.carousel.Indicator', {
         indicators.length = 0;
 
         this.callParent();
+    }
+});
+
+/**
+ * @aside guide forms
+ *
+ * The checkbox field is an enhanced version of the native browser checkbox and is great for enabling your user to
+ * choose one or more items from a set (for example choosing toppings for a pizza order). It works like any other
+ * {@link Ext.field.Field field} and is usually found in the context of a form:
+ *
+ * ## Example
+ *
+ *     @example miniphone preview
+ *     var form = Ext.create('Ext.form.Panel', {
+ *         fullscreen: true,
+ *         items: [
+ *             {
+ *                 xtype: 'checkboxfield',
+ *                 name : 'tomato',
+ *                 label: 'Tomato',
+ *                 value: 'tomato',
+ *                 checked: true
+ *             },
+ *             {
+ *                 xtype: 'checkboxfield',
+ *                 name : 'salami',
+ *                 label: 'Salami'
+ *             },
+ *             {
+ *                 xtype: 'toolbar',
+ *                 docked: 'bottom',
+ *                 items: [
+ *                     { xtype: 'spacer' },
+ *                     {
+ *                         text: 'getValues',
+ *                         handler: function() {
+ *                             var form = Ext.ComponentQuery.query('formpanel')[0],
+ *                                 values = form.getValues();
+ *
+ *                             Ext.Msg.alert(null,
+ *                                 "Tomato: " + ((values.tomato) ? "yes" : "no")
+ *                                 + "<br />Salami: " + ((values.salami) ? "yes" : "no")
+ *                             );
+ *                         }
+ *                     },
+ *                     { xtype: 'spacer' }
+ *                 ]
+ *             }
+ *         ]
+ *     });
+ *
+ *
+ * The form above contains two check boxes - one for Tomato, one for Salami. We configured the Tomato checkbox to be
+ * checked immediately on load, and the Salami checkbox to be unchecked. We also specified an optional text
+ * {@link #value} that will be sent when we submit the form. We can get this value using the Form's
+ * {@link Ext.form.Panel#getValues getValues} function, or have it sent as part of the data that is sent when the
+ * form is submitted:
+ *
+ *     form.getValues(); //contains a key called 'tomato' if the Tomato field is still checked
+ *     form.submit(); //will send 'tomato' in the form submission data
+ *
+ */
+Ext.define('Ext.field.Checkbox', {
+    extend: 'Ext.field.Field',
+    alternateClassName: 'Ext.form.Checkbox',
+
+    xtype: 'checkboxfield',
+    qsaLeftRe: /[\[]/g,
+    qsaRightRe: /[\]]/g,
+
+    isCheckbox: true,
+
+    /**
+     * @event check
+     * Fires when the checkbox is checked.
+     * @param {Ext.field.Checkbox} this This checkbox
+     * @param {Ext.EventObject} e This event object
+     */
+
+    /**
+     * @event uncheck
+     * Fires when the checkbox is unchecked.
+     * @param {Ext.field.Checkbox} this This checkbox
+     * @param {Ext.EventObject} e This event object
+     */
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        ui: 'checkbox',
+
+        /**
+         * @cfg {String} value The string value to submit if the item is in a checked state.
+         * @accessor
+         */
+        value: '',
+
+        /**
+         * @cfg {Boolean} checked <tt>true</tt> if the checkbox should render initially checked
+         * @accessor
+         */
+        checked: false,
+
+        /**
+         * @cfg {Number} tabIndex
+         * @hide
+         */
+        tabIndex: -1,
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        component: {
+            xtype   : 'input',
+            type    : 'checkbox',
+            useMask : true,
+            cls     : Ext.baseCSSPrefix + 'input-checkbox'
+        }
+    },
+
+    // @private
+    initialize: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.getComponent().on({
+            scope: me,
+            order: 'before',
+            masktap: 'onMaskTap'
+        });
+    },
+
+    // @private
+    doInitValue: function() {
+        var me = this,
+            initialConfig = me.getInitialConfig();
+
+        // you can have a value or checked config, but checked get priority
+        if (initialConfig.hasOwnProperty('value')) {
+            me.originalState = initialConfig.value;
+        }
+
+        if (initialConfig.hasOwnProperty('checked')) {
+            me.originalState = initialConfig.checked;
+        }
+
+        me.callParent(arguments);
+    },
+
+    // @private
+    updateInputType: function(newInputType) {
+        var component = this.getComponent();
+        if (component) {
+            component.setType(newInputType);
+        }
+    },
+
+    // @private
+    updateName: function(newName) {
+        var component = this.getComponent();
+        if (component) {
+            component.setName(newName);
+        }
+    },
+
+    /**
+     * Returns the field checked value
+     * @return {Mixed} The field value
+     */
+    getChecked: function() {
+        // we need to get the latest value from the {@link #input} and then update the value
+        this._checked = this.getComponent().getChecked();
+        return this._checked;
+    },
+
+    /**
+     * Returns the submit value for the checkbox which can be used when submitting forms.
+     * @return {Boolean/String} value The value of {@link #value} or true, if {@link #checked}.
+     */
+    getSubmitValue: function() {
+        return (this.getChecked()) ? this._value || true : null;
+    },
+
+    setChecked: function(newChecked) {
+        this.updateChecked(newChecked);
+        this._checked = newChecked;
+    },
+
+    updateChecked: function(newChecked) {
+        this.getComponent().setChecked(newChecked);
+
+        // only call onChange (which fires events) if the component has been initialized
+        if (this.initialized) {
+            this.onChange();
+        }
+    },
+
+    // @private
+    onMaskTap: function(component, e) {
+        var me = this,
+            dom = component.input.dom;
+
+        if (me.getDisabled()) {
+            return false;
+        }
+
+        //we must manually update the input dom with the new checked value
+        dom.checked = !dom.checked;
+
+        me.onChange(e);
+
+        //return false so the mask does not disappear
+        return false;
+    },
+
+    /**
+     * Fires the `check` or `uncheck` event when the checked value of this component changes.
+     * @private
+     */
+    onChange: function(e) {
+        var me = this,
+            oldChecked = me._checked,
+            newChecked = me.getChecked();
+
+        // only fire the event when the value changes
+        if (oldChecked != newChecked) {
+            if (newChecked) {
+                me.fireEvent('check', me, e);
+            } else {
+                me.fireEvent('uncheck', me, e);
+            }
+        }
+    },
+
+    /**
+     * @method
+     * Method called when this {@link Ext.field.Checkbox} has been checked
+     */
+    doChecked: Ext.emptyFn,
+
+    /**
+     * @method
+     * Method called when this {@link Ext.field.Checkbox} has been unchecked
+     */
+    doUnChecked: Ext.emptyFn,
+
+    /**
+     * Returns the checked state of the checkbox.
+     * @return {Boolean} True if checked, else otherwise
+     */
+    isChecked: function() {
+        return this.getChecked();
+    },
+
+    /**
+     * Set the checked state of the checkbox to true
+     * @return {Ext.field.Checkbox} This checkbox
+     */
+    check: function() {
+        return this.setChecked(true);
+    },
+
+    /**
+     * Set the checked state of the checkbox to false
+     * @return {Ext.field.Checkbox} This checkbox
+     */
+    uncheck: function() {
+        return this.setChecked(false);
+    },
+
+    getSameGroupFields: function() {
+        var component = this.up('formpanel') || this.up('fieldset'),
+            name = this.getName(),
+            replaceLeft = this.qsaLeftRe,
+            replaceRight = this.qsaRightRe,
+            components = [],
+            elements, element, i, ln;
+
+        if (!component) {
+            component = Ext.Viewport;
+        }
+
+        // This is to handle ComponentQuery's lack of handling [name=foo[bar]] properly
+        name = name.replace(replaceLeft, '\\[');
+        name = name.replace(replaceRight, '\\]');
+
+        elements = Ext.query('[name=' + name + ']', component.element.dom);
+        ln = elements.length;
+        for (i = 0; i < ln; i++) {
+            element = elements[i];
+            element = Ext.fly(element).up('.x-field-' + element.getAttribute('type'));
+            if (element && element.id) {
+                components.push(Ext.getCmp(element.id));
+            }
+        }
+        return components;
+    },
+
+    /**
+     * Returns an array of values from the checkboxes in the group that are checked,
+     * @return {Array}
+     */
+    getGroupValues: function() {
+        var values = [];
+
+        this.getSameGroupFields().forEach(function(field) {
+            if (field.getChecked()) {
+                values.push(field.getValue());
+            }
+        });
+
+        return values;
+    },
+
+    /**
+     * Set the status of all matched checkboxes in the same group to checked
+     * @param {Array} values An array of values
+     * @return {Ext.field.Checkbox} This checkbox
+     */
+    setGroupValues: function(values) {
+        this.getSameGroupFields().forEach(function(field) {
+            field.setChecked((values.indexOf(field.getValue()) !== -1));
+        });
+
+        return this;
+    },
+
+    /**
+     * Resets the status of all matched checkboxes in the same group to checked
+     * @return {Ext.field.Checkbox} This checkbox
+     */
+    resetGroupValues: function() {
+        this.getSameGroupFields().forEach(function(field) {
+            field.setChecked(field.originalState);
+        });
+
+        return this;
+    },
+
+    reset: function() {
+        this.setChecked(this.originalState);
+        return this;
     }
 });
 
@@ -37680,6 +38245,78 @@ Ext.define('Ext.dataview.component.DataItem', {
 });
 
 /**
+ * @private
+ * Utility class used by Ext.slider.Slider - should never need to be used directly.
+ */
+Ext.define('Ext.slider.Thumb', {
+    extend: 'Ext.Component',
+    xtype : 'thumb',
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        baseCls: Ext.baseCSSPrefix + 'thumb',
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        draggable: {
+            direction: 'horizontal'
+        }
+    },
+
+    elementWidth: 0,
+
+    initialize: function() {
+        this.callParent();
+
+        this.getDraggable().onBefore({
+            dragstart: 'onDragStart',
+            drag: 'onDrag',
+            dragend: 'onDragEnd',
+            scope: this
+        });
+
+        this.on('painted', 'onPainted');
+    },
+
+    onDragStart: function() {
+        if (this.isDisabled()) {
+            return false;
+        }
+
+        this.relayEvent(arguments);
+    },
+
+    onDrag: function() {
+        if (this.isDisabled()) {
+            return false;
+        }
+
+        this.relayEvent(arguments);
+    },
+
+    onDragEnd: function() {
+        if (this.isDisabled()) {
+            return false;
+        }
+
+        this.relayEvent(arguments);
+    },
+
+    onPainted: function() {
+        this.elementWidth = this.element.dom.offsetWidth;
+    },
+
+    getElementWidth: function() {
+        return this.elementWidth;
+    }
+});
+
+/**
  * @author Ed Spencer
  * @class Ext.data.Batch
  *
@@ -38094,7 +38731,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
 
         var backButton = {
         	text:'Views',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
 			xtype:'button',
 			handler:this.backToFilters,
 			align:'left'
@@ -38140,7 +38777,8 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!'
+                        pullRefreshText: 'Pull down for more!',
+                        prettyUpdatedDate:true
                     },
                     {
                         xclass: 'plugin.ux.ListPaging2',
@@ -38148,6 +38786,9 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                         centered:true,
                         loadMoreText: 'Load more.',
                         noMoreRecordsText: 'No more tickets.'
+                    },
+                    {
+                        xclass: 'plugin.ux.Iscroll'
                     }
             ]
         };
@@ -38468,7 +39109,7 @@ Ext.define('Freshdesk.view.TicketReply', {
             text:'Cancel',
             xtype:'button',
             align:'left',
-            ui:'headerBtn',
+            ui:'lightBtn',
             handler:this.backToDetails,
             scope:this
         };
@@ -38485,7 +39126,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,
@@ -38516,6 +39157,9 @@ Ext.define('Freshdesk.view.TicketReply', {
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The Reply has been sent."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){
@@ -38632,7 +39276,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -38641,7 +39285,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Save',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -38650,7 +39294,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'New note',
             ui:'header',
             items: [
                 backButton,
@@ -38675,12 +39319,19 @@ Ext.define('Freshdesk.view.TicketNote', {
     send : function(){
         var id = this.ticket_id,
         formObj = this.items.items[1],
-        values = formObj.getValues();
+        values = formObj.getValues(),
+        privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
+        if(FD.current_user.is_agent){
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+        }
         if(values["helpdesk_note[body_html]"].trim() != '') {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
                     Ext.Viewport.setMasked(false);
+                    Freshdesk.notification={
+                        success : "The note has been added."
+                    };
                     location.href="#tickets/show/"+id;
                 },
                 failure:function(){
@@ -38714,7 +39365,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         var backButton = {
             xtype:'button',
             text:'List',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
             handler:this.backToViews,
 			align:'left'
 		};
@@ -38797,7 +39448,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -38806,7 +39457,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Tweet',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -38815,7 +39466,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,
@@ -38876,7 +39527,7 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -38894,7 +39545,7 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,
@@ -39809,7 +40460,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         var backButton = {
             xtype:'button',
             text:'List',
-			ui:'headerBtn back',
+			ui:'lightBtn back',
 			handler:function(){ this.backToConversation ? me.toggleProperties() : me.backToListView()},
 			align:'left'
 		};
@@ -42193,6 +42844,10 @@ Ext.define('Freshdesk.view.EmailForm', {
         responses = FD.current_account.canned_responses;
         //setting the data to canned response popup list
         cannedResList.getStore() ? cannedResList.getStore().setData(responses) : cannedResList.setData(responses);
+        if(!FD.current_account.canned_responses.length){
+            cannedResPopup.items.items[0].emptyTextCmp.show()
+        }
+        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     populateSolutions : function(res){
@@ -42315,83 +42970,6 @@ Ext.define('Freshdesk.view.EmailForm', {
                                 iconMask:true,
                                 iconCls:'add_black lightPlus',
                                 handler: function(){this.parent.parent.parent.parent.showSolution()}
-                            }
-                        ]
-
-                    }
-                ]
-            }
-        ]
-    }
-});
-Ext.define('Freshdesk.view.NoteForm', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.noteForm',
-    requires: ['Ext.field.Email','Ext.field.Hidden','Ext.field.Checkbox'],
-    showCannedResponse : function(){
-        var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
-        //setting the data to canned response popup list
-        cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
-        cannedResPopup.show();
-    },
-    config: {
-        layout:'fit',
-        method:'POST',
-        url:'/helpdesk/tickets/',
-        items : [
-            {
-                xtype: 'fieldset',
-                defaults:{
-                        labelWidth:'auto'
-                },
-                items :[
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'helpdesk_note[source]',
-                        value:'2'
-                    },
-                    {
-                        xtype: 'checkboxfield',
-                        name: 'helpdesk_note[private]',
-                        label:'Private',
-                        itemId:'noteFormPrivateField'
-                    },
-                    {
-                        xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
-                        required:true,
-                        clearIcon:false
-                    },
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'commet',
-                        value:'Add Note'
-                    },
-                    {
-                        xtype: 'multiselectfield',
-                        name: 'notify_emails',
-                        label:'Notify',
-                        displayField : 'id', //don't change this property
-                        valueField   : 'value', //don't change this property,
-                        usePicker : false,
-                        store : 'AutoTechnician',
-                        itemId: 'noteFormNotifyField'
-                    },
-                    {
-                        xtype:'titlebar',
-                        ui:'formSubheader',
-                        itemId:'noteFormCannedResponse',
-                        items:[
-                            {
-                                itemId:'cannedResBtn',
-                                xtype:'button',
-                                text:'Canned Response',
-                                docked:'left',
-                                ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
                             }
                         ]
 
@@ -46985,6 +47563,1033 @@ Ext.define("Freshdesk.view.ContactsList", {
         	  	'</div>'
                         ].join('')
 
+    }
+});
+/**
+ * Utility class used by Ext.field.Slider.
+ * @private
+ */
+Ext.define('Ext.slider.Slider', {
+    extend: 'Ext.Container',
+    xtype: 'slider',
+
+    requires: [
+        'Ext.slider.Thumb',
+        'Ext.fx.easing.EaseOut'
+    ],
+
+    /**
+    * @event change
+    * Fires when the value changes
+    * @param {Ext.slider.Slider} this
+    * @param {Ext.slider.Thumb} thumb The thumb being changed
+    * @param {Number} newValue The new value
+    * @param {Number} oldValue The old value
+    */
+
+    /**
+    * @event dragstart
+    * Fires when the slider thumb starts a drag
+    * @param {Ext.slider.Slider} this
+    * @param {Ext.slider.Thumb} thumb The thumb being dragged
+    * @param {Array} value The start value
+    * @param {Ext.EventObject} e
+    */
+
+    /**
+    * @event drag
+    * Fires when the slider thumb starts a drag
+    * @param {Ext.slider.Slider} this
+    * @param {Ext.slider.Thumb} thumb The thumb being dragged
+    * @param {Ext.EventObject} e
+    */
+
+    /**
+    * @event dragend
+    * Fires when the slider thumb starts a drag
+    * @param {Ext.slider.Slider} this
+    * @param {Ext.slider.Thumb} thumb The thumb being dragged
+    * @param {Array} value The end value
+    * @param {Ext.EventObject} e
+    */
+    config: {
+        baseCls: 'x-slider',
+
+        /**
+         * @cfg {Object} thumbConfig The config object to factory {@link Ext.slider.Thumb} instances
+         * @accessor
+         */
+        thumbConfig: {
+            draggable: {
+                translatable: {
+                    easingX: {
+                        duration: 300,
+                        type: 'ease-out'
+                    }
+                }
+            }
+        },
+
+        /**
+         * @cfg {Number/Number[]} value The value(s) of this slider's thumbs. If you pass
+         * a number, it will assume you have just 1 thumb.
+         * @accessor
+         */
+        value: 0,
+
+        /**
+         * @cfg {Number} minValue The lowest value any thumb on this slider can be set to.
+         * @accessor
+         */
+        minValue: 0,
+
+        /**
+         * @cfg {Number} maxValue The highest value any thumb on this slider can be set to.
+         * @accessor
+         */
+        maxValue: 100,
+
+        /**
+         * @cfg {Number} increment The increment by which to snap each thumb when its value changes. Defaults to 1. Any thumb movement
+         * will be snapped to the nearest value that is a multiple of the increment (e.g. if increment is 10 and the user
+         * tries to move the thumb to 67, it will be snapped to 70 instead)
+         * @accessor
+         */
+        increment: 1,
+
+        /**
+         * @cfg {Boolean} allowThumbsOverlapping Whether or not to allow multiple thumbs to overlap each other.
+         * Setting this to true guarantees the ability to select every possible value in between {@link #minValue}
+         * and {@link #maxValue} that satisfies {@link #increment}
+         * @accessor
+         */
+        allowThumbsOverlapping: false,
+
+        /**
+         * @cfg {Boolean/Object} animation
+         * The animation to use when moving the slider. Possible properties are:
+         *
+         * - duration
+         * - easingX
+         * - easingY
+         *
+         * @accessor
+         */
+        animation: true
+    },
+
+    /**
+     * @cfg {Number/Number[]} values Alias to {@link #value}
+     */
+
+    elementWidth: 0,
+
+    offsetValueRatio: 0,
+
+    activeThumb: null,
+
+    constructor: function(config) {
+        config = config || {};
+
+        if (config.hasOwnProperty('values')) {
+            config.value = config.values;
+        }
+
+        this.callParent([config]);
+    },
+
+    // @private
+    initialize: function() {
+        var element = this.element;
+
+        this.callParent();
+
+        element.on({
+            scope: this,
+            tap: 'onTap'
+        });
+
+        this.on({
+            scope: this,
+            delegate: '> thumb',
+            dragstart: 'onThumbDragStart',
+            drag: 'onThumbDrag',
+            dragend: 'onThumbDragEnd'
+        });
+
+        this.on({
+            painted: 'refresh',
+            resize: 'refresh'
+        });
+    },
+
+    /**
+     * @private
+     */
+    factoryThumb: function() {
+        return Ext.factory(this.getThumbConfig(), Ext.slider.Thumb);
+    },
+
+    /**
+     * Returns the Thumb instances bound to this Slider
+     * @return {Ext.slider.Thumb[]} The thumb instances
+     */
+    getThumbs: function() {
+        return this.innerItems;
+    },
+
+    /**
+     * Returns the Thumb instance bound to this Slider
+     * @param {Number} [index=0] The index of Thumb to return.
+     * @return {Ext.slider.Thumb} The thumb instance
+     */
+    getThumb: function(index) {
+        if (typeof index != 'number') {
+            index = 0;
+        }
+
+        return this.innerItems[index];
+    },
+
+    refreshOffsetValueRatio: function() {
+        var valueRange = this.getMaxValue() - this.getMinValue(),
+            trackWidth = this.elementWidth - this.thumbWidth;
+
+        this.offsetValueRatio = trackWidth / valueRange;
+    },
+
+    refreshElementWidth: function() {
+        this.elementWidth = this.element.dom.offsetWidth;
+        var thumb = this.getThumb(0);
+        if (thumb) {
+            this.thumbWidth = thumb.getElementWidth();
+        }
+    },
+
+    refresh: function() {
+        this.refreshElementWidth();
+        this.refreshValue();
+    },
+
+    setActiveThumb: function(thumb) {
+        var oldActiveThumb = this.activeThumb;
+
+        if (oldActiveThumb && oldActiveThumb !== thumb) {
+            oldActiveThumb.setZIndex(null);
+        }
+
+        this.activeThumb = thumb;
+        thumb.setZIndex(2);
+
+        return this;
+    },
+
+    onThumbDragStart: function(thumb, e) {
+        if (e.absDeltaX <= e.absDeltaY) {
+            return false;
+        }
+        else {
+            e.stopPropagation();
+        }
+
+        if (this.getAllowThumbsOverlapping()) {
+            this.setActiveThumb(thumb);
+        }
+
+        this.dragStartValue = this.getValue()[this.getThumbIndex(thumb)];
+        this.fireEvent('dragstart', this, thumb, this.dragStartValue, e);
+    },
+
+    onThumbDrag: function(thumb, e, offsetX) {
+        var index = this.getThumbIndex(thumb),
+            offsetValueRatio = this.offsetValueRatio,
+            constrainedValue = this.constrainValue(offsetX / offsetValueRatio);
+
+        e.stopPropagation();
+
+        this.setIndexValue(index, constrainedValue);
+
+        this.fireEvent('drag', this, thumb, this.getValue(), e);
+
+        return false;
+    },
+
+    setIndexValue: function(index, value, animation) {
+        var thumb = this.getThumb(index),
+            values = this.getValue(),
+            offsetValueRatio = this.offsetValueRatio,
+            draggable = thumb.getDraggable();
+
+        draggable.setOffset(value * offsetValueRatio, null, animation);
+
+        values[index] = value;
+    },
+
+    onThumbDragEnd: function(thumb, e) {
+        this.refreshThumbConstraints(thumb);
+        var index = this.getThumbIndex(thumb),
+            newValue = this.getValue()[index],
+            oldValue = this.dragStartValue;
+
+        this.fireEvent('dragend', this, thumb, this.getValue(), e);
+        if (oldValue !== newValue) {
+            this.fireEvent('change', this, thumb, newValue, oldValue);
+        }
+    },
+
+    getThumbIndex: function(thumb) {
+        return this.getThumbs().indexOf(thumb);
+    },
+
+    refreshThumbConstraints: function(thumb) {
+        var allowThumbsOverlapping = this.getAllowThumbsOverlapping(),
+            offsetX = thumb.getDraggable().getOffset().x,
+            thumbs = this.getThumbs(),
+            index = this.getThumbIndex(thumb),
+            previousThumb = thumbs[index - 1],
+            nextThumb = thumbs[index + 1],
+            thumbWidth = this.thumbWidth;
+
+        if (previousThumb) {
+            previousThumb.getDraggable().addExtraConstraint({
+                max: {
+                    x: offsetX - ((allowThumbsOverlapping) ? 0 : thumbWidth)
+                }
+            });
+        }
+
+        if (nextThumb) {
+            nextThumb.getDraggable().addExtraConstraint({
+                min: {
+                    x: offsetX + ((allowThumbsOverlapping) ? 0 : thumbWidth)
+                }
+            });
+        }
+    },
+
+    // @private
+    onTap: function(e) {
+        if (this.isDisabled()) {
+            return;
+        }
+
+        var targetElement = Ext.get(e.target);
+
+        if (!targetElement || targetElement.hasCls('x-thumb')) {
+            return;
+        }
+
+        var touchPointX = e.touch.point.x,
+            element = this.element,
+            elementX = element.getX(),
+            offset = touchPointX - elementX - (this.thumbWidth / 2),
+            value = this.constrainValue(offset / this.offsetValueRatio),
+            values = this.getValue(),
+            minDistance = Infinity,
+            ln = values.length,
+            i, absDistance, testValue, closestIndex, oldValue, thumb;
+
+        if (ln === 1) {
+            closestIndex = 0;
+        }
+        else {
+            for (i = 0; i < ln; i++) {
+                testValue = values[i];
+                absDistance = Math.abs(testValue - value);
+
+                if (absDistance < minDistance) {
+                    minDistance = absDistance;
+                    closestIndex = i;
+                }
+            }
+        }
+
+        oldValue = values[closestIndex];
+        thumb = this.getThumb(closestIndex);
+
+        this.setIndexValue(closestIndex, value, this.getAnimation());
+        this.refreshThumbConstraints(thumb);
+
+        if (oldValue !== value) {
+            this.fireEvent('change', this, thumb, value, oldValue);
+        }
+    },
+
+    // @private
+    updateThumbs: function(newThumbs) {
+        this.add(newThumbs);
+    },
+
+    applyValue: function(value) {
+        var values = Ext.Array.from(value || 0),
+            filteredValues = [],
+            previousFilteredValue = this.getMinValue(),
+            filteredValue, i, ln;
+
+        for (i = 0,ln = values.length; i < ln; i++) {
+            filteredValue = this.constrainValue(values[i]);
+
+            if (filteredValue < previousFilteredValue) {
+                filteredValue = previousFilteredValue;
+            }
+
+            filteredValues.push(filteredValue);
+
+            previousFilteredValue = filteredValue;
+        }
+
+        return filteredValues;
+    },
+
+    /**
+     * Updates the sliders thumbs with their new value(s)
+     */
+    updateValue: function(newValue, oldValue) {
+        var thumbs = this.getThumbs(),
+            ln = newValue.length,
+            i;
+
+        this.setThumbsCount(ln);
+
+        for (i = 0; i < ln; i++) {
+            thumbs[i].getDraggable().setExtraConstraint(null)
+                                    .setOffset(newValue[i] * this.offsetValueRatio);
+        }
+
+        for (i = 0; i < ln; i++) {
+            this.refreshThumbConstraints(thumbs[i]);
+        }
+    },
+
+    /**
+     * @private
+     */
+    refreshValue: function() {
+        this.refreshOffsetValueRatio();
+
+        this.setValue(this.getValue());
+    },
+
+    /**
+     * @private
+     * Takes a desired value of a thumb and returns the nearest snap value. e.g if minValue = 0, maxValue = 100, increment = 10 and we
+     * pass a value of 67 here, the returned value will be 70. The returned number is constrained within {@link #minValue} and {@link #maxValue},
+     * so in the above example 68 would be returned if {@link #maxValue} was set to 68.
+     * @param {Number} value The value to snap
+     * @return {Number} The snapped value
+     */
+    constrainValue: function(value) {
+        var me = this,
+            minValue  = me.getMinValue(),
+            maxValue  = me.getMaxValue(),
+            increment = me.getIncrement(),
+            remainder;
+
+        value = parseFloat(value);
+
+        if (isNaN(value)) {
+            value = minValue;
+        }
+
+        remainder = value % increment;
+        value -= remainder;
+
+        if (Math.abs(remainder) >= (increment / 2)) {
+            value += (remainder > 0) ? increment : -increment;
+        }
+
+        value = Math.max(minValue, value);
+        value = Math.min(maxValue, value);
+
+        return value;
+    },
+
+    setThumbsCount: function(count) {
+        var thumbs = this.getThumbs(),
+            thumbsCount = thumbs.length,
+            i, ln, thumb;
+
+        if (thumbsCount > count) {
+            for (i = 0,ln = thumbsCount - count; i < ln; i++) {
+                thumb = thumbs[thumbs.length - 1];
+                thumb.destroy();
+            }
+        }
+        else if (thumbsCount < count) {
+            for (i = 0,ln = count - thumbsCount; i < ln; i++) {
+                this.add(this.factoryThumb());
+            }
+        }
+
+        return this;
+    },
+
+    /**
+     * Convience method. Calls {@link #setValue}
+     */
+    setValues: function(value) {
+        this.setValue(value);
+    },
+
+    /**
+     * Convience method. Calls {@link #getValue}
+     */
+    getValues: function() {
+        return this.getValue();
+    },
+
+    // Sets the {@link #increment} configuration
+    applyIncrement: function(increment) {
+        if (increment === 0) {
+            increment = 1;
+        }
+
+        return Math.abs(increment);
+    },
+
+    // @private
+    updateAllowThumbsOverlapping: function(newValue, oldValue) {
+        if (typeof oldValue != 'undefined') {
+            this.refreshValue();
+        }
+    },
+
+    // @private
+    updateMinValue: function(newValue, oldValue) {
+        if (typeof oldValue != 'undefined') {
+            this.refreshValue();
+        }
+    },
+
+    // @private
+    updateMaxValue: function(newValue, oldValue) {
+        if (typeof oldValue != 'undefined') {
+            this.refreshValue();
+        }
+    },
+
+    // @private
+    updateIncrement: function(newValue, oldValue) {
+        if (typeof oldValue != 'undefined') {
+            this.refreshValue();
+        }
+    },
+
+    doSetDisabled: function(disabled) {
+        this.callParent(arguments);
+
+        var items = this.getItems().items,
+            ln = items.length,
+            i;
+
+        for (i = 0; i < ln; i++) {
+            items[i].setDisabled(disabled);
+        }
+    }
+
+}, function() {
+});
+
+/**
+ * @aside guide forms
+ *
+ * The slider is a way to allow the user to select a value from a given numerical range. You might use it for choosing
+ * a percentage, combine two of them to get min and max values, or use three of them to specify the hex values for a
+ * color. Each slider contains a single 'thumb' that can be dragged along the slider's length to change the value.
+ * Sliders are equally useful inside {@link Ext.form.Panel forms} and standalone. Here's how to quickly create a
+ * slider in form, in this case enabling a user to choose a percentage:
+ *
+ *     @example
+ *     Ext.create('Ext.form.Panel', {
+ *         fullscreen: true,
+ *         items: [
+ *             {
+ *                 xtype: 'sliderfield',
+ *                 label: 'Percentage',
+ *                 value: 50,
+ *                 minValue: 0,
+ *                 maxValue: 100
+ *             }
+ *         ]
+ *     });
+ *
+ * In this case we set a starting value of 50%, and defined the min and max values to be 0 and 100 respectively, giving
+ * us a percentage slider. Because this is such a common use case, the defaults for {@link #minValue} and
+ * {@link #maxValue} are already set to 0 and 100 so in the example above they could be removed.
+ *
+ * It's often useful to render sliders outside the context of a form panel too. In this example we create a slider that
+ * allows a user to choose the waist measurement of a pair of jeans. Let's say the online store we're making this for
+ * sells jeans with waist sizes from 24 inches to 60 inches in 2 inch increments - here's how we might achieve that:
+ *
+ *     @example
+ *     Ext.create('Ext.form.Panel', {
+ *         fullscreen: true,
+ *         items: [
+ *             {
+ *                 xtype: 'sliderfield',
+ *                 label: 'Waist Measurement',
+ *                 minValue: 24,
+ *                 maxValue: 60,
+ *                 increment: 2,
+ *                 value: 32
+ *             }
+ *         ]
+ *     });
+ *
+ * Now that we've got our slider, we can ask it what value it currently has and listen to events that it fires. For
+ * example, if we wanted our app to show different images for different sizes, we can listen to the {@link #change}
+ * event to be informed whenever the slider is moved:
+ *
+ *     slider.on('change', function(field, newValue) {
+ *         if (newValue[0] > 40) {
+ *             imgComponent.setSrc('large.png')
+ *         } else {
+ *             imgComponent.setSrc('small.png');
+ *         }
+ *     }, this);
+ *
+ * Here we listened to the {@link #change} event on the slider and updated the background image of an
+ * {@link Ext.Img image component} based on what size the user selected. Of course, you can use any logic inside your
+ * event listener.
+ */
+Ext.define('Ext.field.Slider', {
+    extend  : 'Ext.field.Field',
+    xtype   : 'sliderfield',
+    requires: ['Ext.slider.Slider'],
+    alternateClassName: 'Ext.form.Slider',
+
+    /**
+     * @event change
+     * Fires when an option selection has changed.
+     * @param {Ext.field.Slider} me
+     * @param {Ext.slider.Slider} Slider Component
+     * @param {Ext.slider.Thumb} thumb
+     * @param {Number} newValue the new value of this thumb
+     * @param {Number} oldValue the old value of this thumb
+     */
+
+    /**
+    * @event dragstart
+    * Fires when the slider thumb starts a drag
+    * @param {Ext.field.Slider} this
+    * @param {Ext.slider.Slider} Slider Component
+    * @param {Ext.slider.Thumb} thumb The thumb being dragged
+    * @param {Array} value The start value
+    * @param {Ext.EventObject} e
+    */
+
+    /**
+    * @event drag
+    * Fires when the slider thumb starts a drag
+    * @param {Ext.field.Slider} this
+    * @param {Ext.slider.Slider} Slider Component
+    * @param {Ext.slider.Thumb} thumb The thumb being dragged
+    * @param {Ext.EventObject} e
+    */
+
+    /**
+    * @event dragend
+    * Fires when the slider thumb starts a drag
+    * @param {Ext.field.Slider} this
+    * @param {Ext.slider.Slider} Slider Component
+    * @param {Ext.slider.Thumb} thumb The thumb being dragged
+    * @param {Array} value The end value
+    * @param {Ext.EventObject} e
+    */
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        cls: Ext.baseCSSPrefix + 'slider-field',
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        tabIndex: -1
+    },
+
+    proxyConfig: {
+        /**
+         * @cfg {Number/Number[]} value See {@link Ext.slider.Slider#value}
+         * @accessor
+         */
+        value: 0,
+
+        /**
+         * @cfg {Number} minValue See {@link Ext.slider.Slider#minValue}
+         * @accessor
+         */
+        minValue: 0,
+
+        /**
+         * @cfg {Number} maxValue See {@link Ext.slider.Slider#maxValue}
+         * @accessor
+         */
+        maxValue: 100,
+
+        /**
+         * @cfg {Number} increment See {@link Ext.slider.Slider#increment}
+         * @accessor
+         */
+        increment: 1
+    },
+
+    /**
+     * @cfg {Number/Number[]} values See {@link Ext.slider.Slider#values}
+     */
+
+    constructor: function(config) {
+        config = config || {};
+
+        if (config.hasOwnProperty('values')) {
+            config.value = config.values;
+        }
+
+        this.callParent([config]);
+    },
+
+    // @private
+    initialize: function() {
+        this.callParent();
+
+        this.getComponent().on({
+            scope: this,
+            change: 'onSliderChange',
+            dragstart: 'onSliderDragStart',
+            drag: 'onSliderDrag',
+            dragend: 'onSliderDragEnd'
+        });
+    },
+
+    // @private
+    applyComponent: function(config) {
+        return Ext.factory(config, Ext.slider.Slider);
+    },
+
+    onSliderChange: function() {
+        this.fireEvent('change', [this, Array.prototype.slice.call(arguments)]);
+    },
+
+    onSliderDragStart: function() {
+        this.fireEvent('dragstart', [this, Array.prototype.slice.call(arguments)]);
+    },
+
+    onSliderDrag: function() {
+        this.fireEvent('drag', [this, Array.prototype.slice.call(arguments)]);
+    },
+
+    onSliderDragEnd: function() {
+        this.fireEvent('dragend', [this, Array.prototype.slice.call(arguments)]);
+    },
+
+    /**
+     * Convience method. Calls {@link #setValue}
+     */
+    setValues: function(value) {
+        this.setValue(value);
+    },
+
+    /**
+     * Convience method. Calls {@link #getValue}
+     */
+    getValues: function() {
+        return this.getValue();
+    },
+
+    reset: function() {
+        var config = this.config,
+            initialValue = (this.config.hasOwnProperty('values')) ? config.values : config.value;
+
+        this.setValue(initialValue);
+    },
+
+    doSetDisabled: function(disabled) {
+        this.callParent(arguments);
+
+        this.getComponent().setDisabled(disabled);
+    }
+});
+
+/**
+ * @private
+ */
+Ext.define('Ext.slider.Toggle', {
+    extend: 'Ext.slider.Slider',
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        baseCls: 'x-toggle',
+
+        /**
+         * @cfg {String} minValueCls CSS class added to the field when toggled to its minValue
+         * @accessor
+         */
+        minValueCls: 'x-toggle-off',
+
+        /**
+         * @cfg {String} maxValueCls CSS class added to the field when toggled to its maxValue
+         * @accessor
+         */
+        maxValueCls: 'x-toggle-on'
+    },
+
+    initialize: function() {
+        this.callParent();
+
+        this.on({
+            change: 'onChange'
+        });
+    },
+
+    applyMinValue: function() {
+        return 0;
+    },
+
+    applyMaxValue: function() {
+        return 1;
+    },
+
+    applyIncrement: function() {
+        return 1;
+    },
+
+    setValue: function(newValue, oldValue) {
+        this.callParent(arguments);
+        this.onChange(this, this.getThumbs()[0], newValue, oldValue);
+    },
+
+    onChange: function(me, thumb, newValue, oldValue) {
+        var isOn = newValue > 0,
+            onCls = me.getMaxValueCls(),
+            offCls = me.getMinValueCls();
+
+        this.element.addCls(isOn ? onCls : offCls);
+        this.element.removeCls(isOn ? offCls : onCls);
+    }
+});
+
+/**
+ * @aside guide forms
+ *
+ * Specialized {@link Ext.field.Slider} with a single thumb which only supports two {@link #value values}.
+ *
+ * ## Examples
+ *
+ *     @example miniphone preview
+ *     Ext.Viewport.add({
+ *         xtype: 'togglefield',
+ *         name: 'awesome',
+ *         label: 'Are you awesome?',
+ *         labelWidth: '40%'
+ *     });
+ *
+ * Having a default value of 'toggled':
+ *
+ *     @example miniphone preview
+ *     Ext.Viewport.add({
+ *         xtype: 'togglefield',
+ *         name: 'awesome',
+ *         value: 1,
+ *         label: 'Are you awesome?',
+ *         labelWidth: '40%'
+ *     });
+ *
+ * And using the {@link #value} {@link #toggle} method:
+ *
+ *     @example miniphone preview
+ *     Ext.Viewport.add([
+ *         {
+ *             xtype: 'togglefield',
+ *             name: 'awesome',
+ *             value: 1,
+ *             label: 'Are you awesome?',
+ *             labelWidth: '40%'
+ *         },
+ *         {
+ *             xtype: 'toolbar',
+ *             docked: 'top',
+ *             items: [
+ *                 {
+ *                     xtype: 'button',
+ *                     text: 'Toggle',
+ *                     flex: 1,
+ *                     handler: function() {
+ *                         Ext.ComponentQuery.query('togglefield')[0].toggle();
+ *                     }
+ *                 }
+ *             ]
+ *         }
+ *     ]);
+ */
+Ext.define('Ext.field.Toggle', {
+    extend: 'Ext.field.Slider',
+    xtype : 'togglefield',
+    alternateClassName: 'Ext.form.Toggle',
+    requires: ['Ext.slider.Toggle'],
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        cls: 'x-toggle-field'
+    },
+
+    proxyConfig: {
+        /**
+         * @cfg {String} minValueCls See {@link Ext.slider.Toggle#minValueCls}
+         * @accessor
+         */
+        minValueCls: 'x-toggle-off',
+
+        /**
+         * @cfg {String} maxValueCls  See {@link Ext.slider.Toggle#maxValueCls}
+         * @accessor
+         */
+        maxValueCls: 'x-toggle-on'
+    },
+
+    initialize: function() {
+        this.callParent();
+
+        this.getComponent().element.onBefore({
+            scope: this,
+            tap: 'onComponentTap'
+        });
+    },
+
+    // @private
+    applyComponent: function(config) {
+        return Ext.factory(config, Ext.slider.Toggle);
+    },
+
+    /**
+     * Sets the value of the toggle.
+     * @param {Number} value **1** for toggled, **0** for untoggled.
+     */
+    setValue: function(newValue) {
+        if (newValue === true) {
+            newValue = 1;
+        }
+
+        this.getComponent().setValue(newValue);
+
+        return this;
+    },
+
+    /**
+     * Toggles the value of this toggle field.
+     * @return this
+     */
+    toggle: function() {
+        var value = this.getValue();
+        this.setValue((value == 1) ? 0 : 1);
+
+        return this;
+    },
+
+    onComponentTap: function() {
+        // Toggle the value, and return false so the normal slider functionality doesn't happen
+        this.toggle();
+
+        return false;
+    }
+});
+
+Ext.define('Freshdesk.view.NoteForm', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.noteForm',
+    requires: ['Ext.field.Email','Ext.field.Hidden','Ext.field.Toggle'],
+    showCannedResponse : function(){
+        var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
+        //setting the data to canned response popup list
+        cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
+        cannedResPopup.show();
+    },
+    config: {
+        layout:'fit',
+        method:'POST',
+        url:'/helpdesk/tickets/',
+        items : [
+            {
+                xtype: 'fieldset',
+                defaults:{
+                        labelWidth:'auto'
+                },
+                items :[
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'helpdesk_note[source]',
+                        value:'2'
+                    },
+                    {
+                        xtype: 'textareafield',
+                        name: 'helpdesk_note[body_html]',
+                        placeHolder:'Enter your note.. *',
+                        height:180,
+                        required:true,
+                        clearIcon:false
+                    },                    
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'commet',
+                        value:'Add Note'
+                    },
+                    {
+                        xtype:'titlebar',
+                        ui:'formSubheader',
+                        itemId:'noteFormCannedResponse',
+                        cls:'green-icon',
+                        id:'noteFormCannedResponse',
+                        items:[
+                            {
+                                itemId:'cannedResBtn',
+                                xtype:'button',
+                                text:'Canned Response',
+                                docked:'left',
+                                ui:'plain',
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
+                            }
+                        ],
+                        listeners:{
+                            initialize: {
+                                fn:function(component){
+                                    Ext.get('noteFormCannedResponse').on('tap',function(){
+                                        this.parent.parent.showCannedResponse();
+                                    },component);
+                                },
+                                scope:this
+                            }
+                        }
+
+                    },
+                    {
+                        xtype: 'multiselectfield',
+                        name: 'notify_emails',
+                        label:'Notify Agents',
+                        displayField : 'id', //don't change this property
+                        valueField   : 'value', //don't change this property,
+                        usePicker : false,
+                        store : 'AutoTechnician',
+                        itemId: 'noteFormNotifyField',
+                        cls:'multiselect'
+                    },
+                    {
+                        xtype: 'togglefield',
+                        name: 'helpdesk_note[private]',
+                        label: 'Show this note to requester? ',
+                        itemId:'noteFormPrivateField',
+                        labelWidth: '71%'
+                    },
+                ]
+            }
+        ]
     }
 });
 /**
@@ -53271,7 +54876,15 @@ Ext.define('Freshdesk.store.Init', {
                 type: 'json'
             }
         },
-        autoLoad:false
+        autoLoad:false,
+        listeners : {
+            beforeload : {
+                fn: function(){
+                    Ext.Viewport.setMasked({xtype:'mask',html:'<div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',style:'background:rgba(255,255,255,0.1)'});
+                },
+                scope:this
+            }
+        }
     }
 });
 Ext.define('Freshdesk.store.Filters', {
@@ -55235,7 +56848,7 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2','plugin.ux.Iscroll'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
@@ -55308,8 +56921,8 @@ Ext.application({
                 FD.Util.initCustomer();
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            Ext.Viewport.setMasked(false);
         }});
-
 
         //adding listners to ajax for showing the loading mask .. global.
         Ext.Ajax.addListener('beforerequest',function(){
