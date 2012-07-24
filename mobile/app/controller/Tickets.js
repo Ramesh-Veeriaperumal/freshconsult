@@ -271,7 +271,9 @@ Ext.define('Freshdesk.controller.Tickets', {
         replyForm.ticket_id = id;
         //replyForm.items.items[0].setTitle('Ticket : '+id);
 
-
+        if(FD.current_account.bcc_email){
+            bcc_emails = FD.current_account.bcc_email;
+        }
         
         fieldSetObj.items.items[6].setLabel('Cc/Bcc :');
         fieldSetObj.items.items[6].reset();
@@ -310,7 +312,13 @@ Ext.define('Freshdesk.controller.Tickets', {
             fieldSetObj.items.items[6].setLabel('Cc :');
             fieldSetObj.items.items[7].setHidden(false);
         }
+        if(bcc_emails){
+            fieldSetObj.items.items[6].setLabel('Cc :');
+            fieldSetObj.items.items[7].setHidden(false);
+            fieldSetObj.items.items[7].setValue(bcc_emails)
+        }
         fieldSetObj.items.items[6].setValue(cc_emails)
+
 
         //setting the url 
         formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
