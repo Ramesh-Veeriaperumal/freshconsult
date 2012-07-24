@@ -4,13 +4,6 @@
 @import '_icons.scss';
 @import '_fonticons.scss';
 
-@font-face {
-  font-family: 'fontello';
-  src: url("../icons/fontello.eot");
-  src: url("../icons/fontello.eot?#iefix") format('embedded-opentype'), url("../icons/fontello.woff") format('woff'), url("../icons/fontello.ttf") format('truetype'), url("../icons/fontello.svg#fontello") format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
 $img:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==);
 
 .x-body{
@@ -996,11 +989,11 @@ a {
 						color:#1d60bd;
 						@include text-shadow( #86afe6 0 0 20px );
 					}
-					margin:0 20%;
+					margin:0 35%;
 					display:block;
 					text-decoration:none;
 					font-size:175%;
-					font-family: 'fontello';
+					font-family: 'Freshdesk';
 					color:#666;
 					text-align:center;
 					@include text-shadow( #fff 1px 1px 0);
@@ -1008,19 +1001,19 @@ a {
 					&.automation
 					{
 						&:before {
-							content: '\26a1';
+							content: '\59';
 						}
 					}
 					&.chat {
 						&:before {
 							font-size:0.9em;
-							content: '\e720';
+							content: '\63';
 						}
 					}
 					&.reply {
 						color:#333;
 						&:before {
-							content: '\e825';
+							content: '\3d';
 						}
 						&:active{
 							color:#1d60bd;
@@ -1028,12 +1021,12 @@ a {
 					}
 					&.close {
 						&:before {
-							content: '\2713';
+							content: '\e047';
 						}
 					}
 					&.trash {
 						&:before {
-							content: '\e729';
+							content: '\f014';
 						}
 					}
 				}
@@ -1102,15 +1095,12 @@ a {
 				width: 100%;
 			}
 			.note{
-				font-family: 'Freshdesk';
-				float: right;
-				display: inline-block;
+				font-family: 'Freshdesk';	
 				position: absolute;
-				right: 0px;
+				right: 8px;
 				font-size: 22px;
 				color: #ccc;
 				margin-top: -6px;
-				margin-right:-16px;
 				&:before{
 					content:"\e021";
 				}
@@ -1188,18 +1178,18 @@ a {
 			}
 			.clip{
 				position: absolute;
-				top: -3px;
-				right: -13px;
-				font-size: 18px;
+				top: -16px;
+				right: -6px;
+				font-size: 24px;
 				display:block;
 				text-decoration:none;
-				font-family: 'fontello';
+				font-family: 'Freshdesk';
 				color:#1272DE;
 				text-align:center;
 				@include text-shadow( #fff 1px 1px 0);
 				speak: none;
 				&:before{
-					content: '📎'; 
+					content: '\3b'; 
 				}
 			}
 			.attachments{
@@ -1392,6 +1382,7 @@ a {
 		}
 		.x-thumb:before{
 			left:0.87em;
+			@include transition-property(left);
 		}
 	}
 	&.x-toggle-off{
@@ -1401,8 +1392,12 @@ a {
 			font-weight:bold;
 			@include text-shadow(1px 1px 0 #fff);
 			margin:7px 0px;
-			margin-right:17px;
 			content:'NO';
+			position: absolute;
+			width: 77%;
+			right: 0;
+			top: -4px;
+			text-align: center;
 		}
 		.x-thumb:before{
 			left:0em;

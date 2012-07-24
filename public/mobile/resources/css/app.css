@@ -10338,14 +10338,6 @@ input[type="search"]::-webkit-search-cancel-button {
   content: "\e076";
 }
 
-@font-face {
-  font-family: 'fontello';
-  src: url("../icons/fontello.eot");
-  src: url("../icons/fontello.eot?#iefix") format("embedded-opentype"), url("../icons/fontello.woff") format("woff"), url("../icons/fontello.ttf") format("truetype"), url("../icons/fontello.svg#fontello") format("svg");
-  font-weight: normal;
-  font-style: normal;
-}
-
 .x-body {
   text-shadow: white 1px 1px 0;
 }
@@ -11333,11 +11325,11 @@ a {
   border: none;
 }
 .ticketDetails #details ul.actions li a {
-  margin: 0 20%;
+  margin: 0 35%;
   display: block;
   text-decoration: none;
   font-size: 175%;
-  font-family: 'fontello';
+  font-family: 'Freshdesk';
   color: #666;
   text-align: center;
   text-shadow: white 1px 1px 0;
@@ -11348,26 +11340,26 @@ a {
   text-shadow: #86afe6 0 0 20px;
 }
 .ticketDetails #details ul.actions li a.automation:before {
-  content: '\26a1';
+  content: '\59';
 }
 .ticketDetails #details ul.actions li a.chat:before {
   font-size: 0.9em;
-  content: '\e720';
+  content: '\63';
 }
 .ticketDetails #details ul.actions li a.reply {
   color: #333;
 }
 .ticketDetails #details ul.actions li a.reply:before {
-  content: '\e825';
+  content: '\3d';
 }
 .ticketDetails #details ul.actions li a.reply:active {
   color: #1d60bd;
 }
 .ticketDetails #details ul.actions li a.close:before {
-  content: '\2713';
+  content: '\e047';
 }
 .ticketDetails #details ul.actions li a.trash:before {
-  content: '\e729';
+  content: '\f014';
 }
 .ticketDetails #details .oldconvMsg {
   padding: 10px 0px;
@@ -11437,14 +11429,11 @@ a {
 }
 .ticketDetails .conversation .Info .note {
   font-family: 'Freshdesk';
-  float: right;
-  display: inline-block;
   position: absolute;
-  right: 0px;
+  right: 8px;
   font-size: 22px;
   color: #ccc;
   margin-top: -6px;
-  margin-right: -16px;
 }
 .ticketDetails .conversation .Info .note:before {
   content: "\e021";
@@ -11646,19 +11635,19 @@ a {
 }
 .ticketDetails .conversation .msg .clip {
   position: absolute;
-  top: -3px;
-  right: -13px;
-  font-size: 18px;
+  top: -16px;
+  right: -6px;
+  font-size: 24px;
   display: block;
   text-decoration: none;
-  font-family: 'fontello';
+  font-family: 'Freshdesk';
   color: #1272DE;
   text-align: center;
   text-shadow: white 1px 1px 0;
   speak: none;
 }
 .ticketDetails .conversation .msg .clip:before {
-  content: '📎';
+  content: '\3b';
 }
 .ticketDetails .conversation .msg .attachments {
   padding-top: 10px;
@@ -11858,6 +11847,8 @@ a {
 }
 .x-toggle.x-toggle-on .x-thumb:before {
   left: 0.87em;
+  -webkit-transition-property: left;
+  transition-property: left;
 }
 .x-toggle.x-toggle-off:after {
   color: #333;
@@ -11865,8 +11856,12 @@ a {
   font-weight: bold;
   text-shadow: 1px 1px 0 white;
   margin: 7px 0px;
-  margin-right: 17px;
   content: 'NO';
+  position: absolute;
+  width: 77%;
+  right: 0;
+  top: -4px;
+  text-align: center;
 }
 .x-toggle.x-toggle-off .x-thumb:before {
   left: 0em;
