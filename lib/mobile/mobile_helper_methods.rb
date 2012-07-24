@@ -13,7 +13,8 @@ module Mobile::MobileHelperMethods
   private
 
     def allowed_domain?
-      DOMAINS.include? request.host.to_sym
+      #DOMAINS.include? request.host.to_sym
+      true
     end
 
     def mobile_agent?
