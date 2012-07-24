@@ -8,7 +8,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var backButton = {
             text:'Cancel',
             xtype:'button',
-            ui:'headerBtn',
+            ui:'lightBtn',
             align:'left',
             handler:this.backToDetails,
             scope:this
@@ -17,7 +17,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var submitButton = {
             xtype:'button',
             align:'right',
-            text:'Add',
+            text:'Tweet',
             ui:'headerBtn',
             handler:this.send,
             scope:this
@@ -26,7 +26,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'Ticket :',
+            title:'Reply',
             ui:'header',
             items: [
                 backButton,

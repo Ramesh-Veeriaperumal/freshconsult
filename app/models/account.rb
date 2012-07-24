@@ -427,6 +427,9 @@ class Account < ActiveRecord::Base
       :main_portal => {
         :only => [ :name, :preferences ],
         :methods => [ :logo_url, :fav_icon_url ]
+      },
+      :subscription => {
+        :methods => [:is_paid_account]
       }
     }
     options = {
@@ -446,7 +449,7 @@ class Account < ActiveRecord::Base
         }
       })
       options.merge!({
-        :methods => [ :reply_emails ],
+        :methods => [ :reply_emails, :bcc_email ],
       })
     end
     options[:include] = json_include;

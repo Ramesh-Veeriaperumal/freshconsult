@@ -8,6 +8,10 @@ Ext.define('Freshdesk.view.EmailForm', {
         responses = FD.current_account.canned_responses;
         //setting the data to canned response popup list
         cannedResList.getStore() ? cannedResList.getStore().setData(responses) : cannedResList.setData(responses);
+        if(!FD.current_account.canned_responses.length){
+            cannedResPopup.items.items[0].emptyTextCmp.show()
+        }
+        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     populateSolutions : function(res){
