@@ -6,7 +6,12 @@
 		<div class="info-data"><%= t('email_configs.info17') %> </div>
   </div>			
 	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/email_configs", :class => "uiButton floatl" %>
+		<%= link_to_function "&larr; #{t('account.cancel')}", "closeDialog()", :class => "uiButton floatl" %>
 		<%= f.submit t('save'), :class => "uiButton" %>
 	</div>  
+<% end %>
+<% javascript_tag do %>
+	closeDialog = function(){
+		active_dialog.dialog('close');
+ 	}
 <% end %>
