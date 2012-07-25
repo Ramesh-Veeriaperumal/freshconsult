@@ -67,7 +67,8 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
       :editable_in_portal => f[:editable_in_portal] || false,
       :required_in_portal => f[:required_in_portal] || false,
       :required_for_closure => f[:required_for_closure] || false,
-      :choices => f[:choices] || []
+      :choices => f[:choices] || [],
+      :field_options => f[:field_options] 
     }
   end
 )
