@@ -1,12 +1,16 @@
 
 bulkActionButtonsDisabled = function () {
 	if (jQuery('#ticket-list .check .selector:checked').length > 0 ) {
-		jQuery('#ticket-toolbar .button').removeAttr('disabled');
+		jQuery('#ticket-toolbar .bulk_action_buttons .button').removeAttr('disabled');
 	} else {
-		jQuery('#ticket-toolbar .button').attr('disabled','disabled');
+		jQuery('#ticket-toolbar .bulk_action_buttons .button').attr('disabled','disabled');
 	}
 }
 
+priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
+
+jQuery(document).ready(function() {
+	
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
       jQuery.each(jQuery(".ticket-description-tip"), function(i, item){
         _self = jQuery(item);        
@@ -45,24 +49,6 @@ bulkActionButtonsDisabled = function () {
 // ---- END OF extract from /helpdesk/shared/_tickets.html.erb ----
 
 // ---- EXTRACTED FROM /helpdesk/shared/_ticket_view.html.erb ----
-	/* new PeriodicalExecuter(function(pe) {
-		params = jQuery("#FilterOptions").serializeArray(); 
-		params.push({name:"latest_updated_at",value:jQuery('#latest_updated_at').prop('value')})
-	
-		jQuery.ajax({
-		  url:"/helpdesk/tickets/latest_ticket_count",
-		  type: "POST",
-	      dataType: "script",
-		  data: params,
-		  success: function(data) {
-		  	if(data > 0) {
-	  			jQuery('#recent_ticket_count')
-	  			  .html(plural(data, "<%= t('latest_ticket') %>", "<%= t('latest_tickets') %>"));
-	  			jQuery('#recent_ticket_count').slideDown();
-			}
-		  }
-		});
-	}, 30); */
   
 	jQuery('#recent_ticket_count').click(function(){
 	    jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
@@ -89,24 +75,18 @@ bulkActionButtonsDisabled = function () {
 		jQuery(this).parent().addClass('active').siblings().removeClass('active');
 	});
 
-	jQuery(function() {
-		var choice = getCookie('ticket_view_choice');
-		if (choice == 'list') {
-			jQuery('.ticket-view-choice.ticket-view-list').click();
-		} else {
-			jQuery('.ticket-view-choice.ticket-view-detail').click();
-		}
-
-	})
-
+	var choice = getCookie('ticket_view_choice');
+	if (choice == 'list') {
+		jQuery('.ticket-view-choice.ticket-view-list').click();
+	} else {
+		jQuery('.ticket-view-choice.ticket-view-detail').click();
+	}
+	
 // ---- END OF extract from /helpdesk/shared/_ticket_view.html.erb ----
 
-priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
-// Quick Actions
-jQuery(document).ready(function() {
-	
 	bulkActionButtonsDisabled();
 	
+	// Quick Actions	
 	// Assign Agent
 	jQuery('.action_assign_agent').live("click",function(ev) {
 		
@@ -186,7 +166,6 @@ jQuery(document).ready(function() {
 		ticket_id = parent.data('object-id');
 		new_priority = jQuery(this).data('priority-id');
 
-
 		jQuery.ajax( {
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
 			data: {assign:'priority', value : new_priority},
@@ -201,5 +180,9 @@ jQuery(document).ready(function() {
 			}
 		});
 	});
+
+    jQuery("#leftViewMenu a").click(function(ev) {
+		setCookie('force_predefined_view',true);
+    });
 
 });
