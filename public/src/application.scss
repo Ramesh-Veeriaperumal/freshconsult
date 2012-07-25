@@ -195,6 +195,53 @@ ul.activityfeed li{
 
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
+.popover.topRight { margin-left: -3px;}
+div.contact_hover{
+	.user_name{ font-weight:bold; font-size:1.25em; color:#527eaa; display: inline-block; }
+	.user_desig, .user_email { margin-top:3px;}
+	.user_phone, .user_mobile, .user_fb, .user_twitter{
+		padding: 1px 20px;
+		margin:5px 5px 0 0;
+		height: 14px;
+		display: inline-block;
+	}
+	 .user_fb, .user_twitter{
+		padding: 0 20px;
+	}
+	
+	.user_phone{
+		background:sprite($symbol, phone) no-repeat #ffffff;
+	}
+	.user_mobile{
+		background:sprite($symbol, mobile) no-repeat #ffffff;	
+		margin-left:10px;
+	}
+	.user_fb{
+		height:11px;
+		background:sprite($symbol, reply-fb) no-repeat #ffffff;
+	}
+	.user_twitter{
+		height:11px;
+		background:sprite($symbol, reply-tweet) no-repeat #ffffff;
+	}
+}
+
+.popover .arrow.dbl_left {
+	&:after {
+		content:" ";
+		display:block;
+		position: absolute;
+		width:0; height:0;
+		top: 0px;
+		left: 3px;
+		margin-top: -14px;
+		border-top: 14px solid transparent;
+		border-bottom: 14px solid transparent;
+		border-right: 14px solid white;
+		z-index: 2000;
+
+	}
+}
 
 .pageSeperator{
 	border-top:1px solid #fefefe;
