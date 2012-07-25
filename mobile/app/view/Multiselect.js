@@ -45,7 +45,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                         items:[
                             {
                                 xtype:'button',
-                                ui:'plain headerBtn',
+                                ui:'plain lightBtn',
                                 iconMask:true,
                                 align:'left',
                                 text:'Cancel',
