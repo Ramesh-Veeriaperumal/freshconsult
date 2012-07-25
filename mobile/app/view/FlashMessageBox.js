@@ -22,9 +22,9 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 
         var details = {
             tpl : new Ext.XTemplate(['<div class="flash">',
-                        '<tpl if="title"><div>{title}</div></tpl>',
+                        '<tpl if="title"><div></div><div class="scenario_text">{title}</div></tpl>',
                         '<tpl for="messages">',
-                            '<div class="message">{.}</div>',
+                            '<div class="message"></div><div class="scenario_text">{.}</div>',
                         '</tpl>',
                     '</div>'
             ].join('')),

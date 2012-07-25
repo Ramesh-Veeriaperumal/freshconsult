@@ -1586,6 +1586,8 @@ a {
 	.message{
 		margin-bottom: 12px;
 		margin-top: 6px;
+		float: left;
+		clear: both;
 		&:before{
 			color:#fff;
 	 		font-size: 14px;
@@ -1603,6 +1605,11 @@ a {
 			@include box-shadow(-2px -2px 1px #CCC);
 		}
 	}
+	.scenario_text{
+		width: 90%;
+		line-height: 2.3em;
+		display:inline-block;
+	}
 	div:first-child{
 		&:before{
 			font-family:'Freshdesk';
@@ -1610,6 +1617,7 @@ a {
 	 		color:#168c19;
 			content:'\7e';
 			text-shadow: -2px -2px 1px #CCC;
+			float:left;
 		}
 		b{
 			position: relative;
