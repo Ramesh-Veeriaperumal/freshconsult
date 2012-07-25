@@ -115,6 +115,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
   
+  has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+  
   attr_protected :attachments #by Shan - need to check..
   
   accepts_nested_attributes_for :tweet, :fb_post
