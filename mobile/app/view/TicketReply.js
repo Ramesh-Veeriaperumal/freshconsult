@@ -46,6 +46,7 @@ Ext.define('Freshdesk.view.TicketReply', {
     backToDetails : function(){
         Freshdesk.cancelBtn=true;
         Freshdesk.anim = {type:'cover',direction:'down'};
+        this.hide();
         location.href="#tickets/show/"+this.ticket_id;
     },
     send : function(){
@@ -56,6 +57,7 @@ Ext.define('Freshdesk.view.TicketReply', {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
+                    this.parent.hide();
                     Ext.Viewport.setMasked(false);
                     Freshdesk.notification={
                         success : "The Reply has been sent."
@@ -79,6 +81,17 @@ Ext.define('Freshdesk.view.TicketReply', {
     },
     config: {
         layout:'fit',
-        id: 'ticketReplyForm'
+        id: 'ticketReplyForm',
+        showAnimation : {
+            type:'slideIn',
+            direction:'up',
+            easing:'ease-in-out'
+        },
+        hideAnimation: {
+                type:'slideOut',
+                direction:'down',
+                easing:'ease-in-out'
+        },
+        zIndex:9
     }
 });

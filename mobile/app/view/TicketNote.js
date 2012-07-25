@@ -44,6 +44,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         this.add([topToolbar,emailForm]);
     },
     backToDetails : function(){
+        this.hide();
         Freshdesk.cancelBtn=true;
         Freshdesk.anim = {type:'cover',direction:'down'};
         location.href="#tickets/show/"+this.ticket_id;
@@ -60,6 +61,7 @@ Ext.define('Freshdesk.view.TicketNote', {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
+                    this.parent.hide();
                     Ext.Viewport.setMasked(false);
                     Freshdesk.notification={
                         success : "The note has been added."
@@ -79,10 +81,21 @@ Ext.define('Freshdesk.view.TicketNote', {
         }
     },
     getMessageItem: function(){
-        return this.items.items[1].items.items[0].items.items[2];
+        return this.items.items[1].items.items[0].items.items[1];
     },
     config: {
         layout:'fit',
-        id: 'ticketNoteForm'
+        id: 'ticketNoteForm',
+        showAnimation : {
+            type:'slideIn',
+            direction:'up',
+            easing:'ease-in-out'
+        },
+        hideAnimation: {
+                type:'slideOut',
+                direction:'down',
+                easing:'ease-in-out'
+        },
+        zIndex:9
     }
 });

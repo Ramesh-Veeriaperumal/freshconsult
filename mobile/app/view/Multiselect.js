@@ -11,18 +11,18 @@ Ext.define('Freshdesk.view.MultiSelect', {
                 cls: Ext.baseCSSPrefix + 'select-overlay',
                 layout: 'fit',
                 fullScreen:true,
-                zIndex:2,
+                zIndex:10,
                 width:'100%',
                 height:'100%',
                 showAnimation: {
-                        type:'slide',
+                        type:'slideIn',
                         direction:'up',
-                        easing:'ease-out'
+                        easing:'ease-in-out'
                 },
                 hideAnimation: {
-                        type:'slide',
+                        type:'slideOut',
                         direction:'down',
-                        easing:'ease-out'
+                        easing:'ease-in-out'
                 },
                 items: [
                     {
@@ -45,7 +45,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                         items:[
                             {
                                 xtype:'button',
-                                ui:'plain headerBtn',
+                                ui:'plain lightBtn',
                                 iconMask:true,
                                 align:'left',
                                 text:'Cancel',

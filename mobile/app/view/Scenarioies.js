@@ -13,9 +13,11 @@ Ext.define("Freshdesk.view.Scenarioies", {
         flashMessageBox.ticket_id = res.display_id;
         flashMessageBox.items.items[1].setData(flashData);
         flashMessageBox.hideHandler = function() {
+            me.hide();
             location.href="#tickets/show/"+me.ticket_id;
         }
-        Ext.Viewport.animateActiveItem(flashMessageBox, Freshdesk.anim);
+        flashMessageBox.show();
+        //Ext.Viewport.animateActiveItem(flashMessageBox, Freshdesk.anim);
     },
     execute_scenario : function(data){
         var me = this,
@@ -29,10 +31,22 @@ Ext.define("Freshdesk.view.Scenarioies", {
     },
     config: {
         itemId : 'scenarioies',
+        id:'scenarioies',
         cls:'scenarioies',
         layout:'fit',
         hidden:true,
         fullscreen:true,
+        showAnimation : {
+            type:'slideIn',
+            direction:'up',
+            easing:'ease-in-out'
+        },
+        hideAnimation: {
+                type:'slideOut',
+                direction:'down',
+                easing:'ease-in-out'
+        },
+        zIndex:9,
         items :[
             {
                     xtype:'list',
@@ -63,10 +77,11 @@ Ext.define("Freshdesk.view.Scenarioies", {
                         text:'Cancel',
                         ui:'lightBtn',
                         align:'left',
-                        handler:function(){
-                            Freshdesk.cancelBtn=true;
-                            Freshdesk.anim = {type:'cover',direction:'down'};
-                            location.href="#tickets/show/"+Ext.ComponentQuery.query('#scenarioies')[0].ticket_id;
+                        handler: function(){
+                                Ext.getCmp('scenarioies').hide();
+                                Freshdesk.cancelBtn=true;
+                                Freshdesk.anim = {type:'cover',direction:'down'};
+                                location.href="#tickets/show/"+Ext.ComponentQuery.query('#scenarioies')[0].ticket_id;
                         },
                         scope:this
                     }

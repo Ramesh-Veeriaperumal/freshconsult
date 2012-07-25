@@ -19,14 +19,14 @@ Ext.define("Freshdesk.view.CannedResponses", {
         itemId : 'cannedResponsesPopup',
         cls:'cannedResponses',
         showAnimation: {
-                type:'slide',
+                type:'slideIn',
                 direction:'up',
-                easing:'ease-out'
+                easing:'ease-in-out'
         },
         hideAnimation: {
-                type:'slide',
+                type:'slideOut',
                 direction:'down',
-                easing:'ease-out'
+                easing:'ease-in-out'
         },
         layout:'fit',
         hidden:true,
@@ -72,6 +72,6 @@ Ext.define("Freshdesk.view.CannedResponses", {
                 ]
             }
         ],
-        zIndex:2
+        zIndex:10
     }
 });
