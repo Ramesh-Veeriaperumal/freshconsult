@@ -11,7 +11,7 @@ Ext.define('Freshdesk.view.ContactsFormContainer', {
             xtype:'button',
             handler:this.backToListView,
             align:'left',
-            ui:'headerBtn',
+            ui:'lightBtn',
             scope:this
         };
 

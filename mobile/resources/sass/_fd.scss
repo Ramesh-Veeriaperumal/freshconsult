@@ -4,13 +4,8 @@
 @import '_icons.scss';
 @import '_fonticons.scss';
 
-@font-face {
-  font-family: 'fontello';
-  src: url("../icons/fontello.eot");
-  src: url("../icons/fontello.eot?#iefix") format('embedded-opentype'), url("../icons/fontello.woff") format('woff'), url("../icons/fontello.ttf") format('truetype'), url("../icons/fontello.svg#fontello") format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
+$img:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==);
+
 .x-body{
 	@include text-shadow( #fff 1px 1px 0);
 }
@@ -36,17 +31,21 @@
 			padding: 1px 2px;
 		}
 	}
+	.x-button-label{
+		text-shadow: -1px -1px 0 rgba(0,0,0, 0.5); /* Also Change in .x-button-back*/
+	}
+}
+
+.x-button-back{
+	.x-button-label{
+		text-shadow: -1px -1px 0 rgba(0,0,0, 0.5); /* Also Change in .x-button-headerBtn*/
+	}
 }
 input, textarea, select {
 	font-size: 0.9em;
 }
 .x-field .x-field-input, .x-field .x-input-el, .x-form-label span{
 	font-size:14px !important;
-}
-.x-button-headerBtn, .x-button-back{
-	.x-button-label{
-		text-shadow: -1px -1px 0 black;
-	}
 }
 .hide{
 	display:none;
@@ -90,10 +89,10 @@ input, textarea, select {
 				display: block;
 		}
 	}
-	.title{
-		font-size:1.2em;
+	.title{ 	/* It will be same as mobile.scss class '.brand h2 ' */
+		font-size:1.1em; 
 		color:#fff;
-		@include text-shadow( #333 -1px -1px 0);
+		@include text-shadow(rgba(0, 0, 0, 0.5) -1px -1px 0);
 	}
 	.user_name{
 		text-align:center;
@@ -155,11 +154,12 @@ x-button-forward::before, .x-toolbar .x-button-forward::before {
 	border-bottom-color: #3B68A8 !important;
 	@include box-shadow( rgba(87, 87, 87, 0.5) 0 2px 10px );
 	z-index:8;
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAG0lEQVQIW2Ncd/Tp/yBraUYGIAATMAEwByYAAOL9C1upVlJBAAAAAElFTkSuQmCC), 
-		-webkit-linear-gradient(#B9C6D9, #98ABC7 50%, #879EBE 51%, #7691B5)!important;
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAG0lEQVQIW2Ncd/Tp/yBraUYGIAATMAEwByYAAOL9C1upVlJBAAAAAElFTkSuQmCC),
-		linear-gradient(#B9C6D9, #98ABC7 50%, #879EBE 51%, #7691B5) !important;
+	/*background: $img, -webkit-linear-gradient(#B9C6D9, #98ABC7 50%, #6587B2 51%, #6587B2)!important;
+	background: $img, linear-gradient(#B9C6D9, #98ABC7 50%, #6587B2 51%, #6587B2) !important;*/
 	border-color: #19212D;
+	background-color: #6E84A3;
+	@include background(url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC),linear-gradient(top, #9DACC1, #7E91AD 50%, #6E84A3 51%, #607797));
+
 	.x-title {
 		color: white;
 		@include text-shadow( #666 -1px -1px 0 );
@@ -296,45 +296,7 @@ a {
 }
 /*ticketList related code*/
 
-.ticketsList .ticket-item.Resolved .title .info.btn{
-					background: rgba(0,0,0,0.2);
-					@include text-shadow(#666 0 0 0);
-		}
-.x-list-normal .x-list-item.x-item-pressed .x-list-item-label{
-			color:#fff;
-			background:url('../images/activebg.png');
-			@include text-shadow( #393939 -1px -1px 0);
-			.name{
-				color:#fff;
-			}
-			.count div{
-				background:#757575;
-			}
-			.ticket-item{
-				color:#fff;
-				@include text-shadow( #333 1px 1px 0);
-				.info{
-					&.btn{
-						background: #fff;
-						color: #333;
-						@include box-shadow(0 0 0 #ccc);
-						@include text-shadow(-1px -1px 0 #fff);
-					}
-				}
-				.subject{
-					color:#fff;
-					@include text-shadow( #333 1px 1px 0);
-				}
-			}
-			&.Resolved{
-				.title .info.btn {
-					background: #fff !important;
-					color: #333;
-					@include box-shadow(0 0 0 #ccc);
-					@include text-shadow(-1px -1px 0 #fff);
-				}
-			}
-		}
+
 .x-list-normal .x-list-item .x-list-item-label {
 	border-top: 1px solid #CCC;
 	@include box-shadow( #fff 1px 2px );
@@ -342,7 +304,6 @@ a {
 .bullet{
 	font-family:'Freshdesk';
 	float:left;
-	display:inline-block;
 	&:before{
 			color:#ABA9A9;
 			content: "\e050";
@@ -362,7 +323,7 @@ a {
 		font-size:18px;
 		&:before{
 			color:#fff;
-			content: "\e053";
+			content: "\e04f";
 		}
 	}
 }
@@ -394,43 +355,25 @@ a {
 				height: 99%;
 				position: absolute;
 				margin-top:1px;
-				$img:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==);
 				&.Low{
 					background: #008ff9; 
 					@include background-image($img, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 				}
 				&.Medium{
 					background: #89ce00; /* Old browsers */
-					background:$img, -moz-linear-gradient(left,  #89ce00 0%, #75af00 80%, #4e7600 100%, #005290 100%); /* FF3.6+ */
-					background: $img, -webkit-gradient(linear, left top, right top, color-stop(0%,#89ce00), color-stop(80%,#75af00), color-stop(100%,#4e7600), color-stop(100%,#005290)); /* Chrome,Safari4+ */
-					background: $img, -webkit-linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%); /* Chrome10+,Safari5.1+ */
-					background: $img, -o-linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%); /* Opera 11.10+ */
-					background: $img, -ms-linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%); /* IE10+ */
-					background: $img, linear-gradient(to right,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%); /* W3C */
-					filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#89ce00', endColorstr='#005290',GradientType=1 ); /* IE6-8 */
+					@include filter-gradient(#89ce00, #005290, horizontal); // IE6-9
+					@include background-image( $img, linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%)); 
 				}
 				&.Urgent{
 					background: #de0000; /* Old browsers */
 					/* IE9 SVG, needs conditional override of 'filter' to 'none' */
-					background:$img, -moz-linear-gradient(left,  #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%); /* FF3.6+ */
-					background:$img, -webkit-gradient(linear, left top, right top, color-stop(0%,#de0000), color-stop(71%,#d50000), color-stop(84%,#bd0000), color-stop(100%,#810000)); /* Chrome,Safari4+ */
-					background:$img, -webkit-linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%); /* Chrome10+,Safari5.1+ */
-					background:$img, -o-linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%); /* Opera 11.10+ */
-					background:$img, -ms-linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%); /* IE10+ */
-					background:$img, linear-gradient(to right,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%); /* W3C */
-					filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#de0000', endColorstr='#810000',GradientType=1 ); /* IE6-8 */
-
+					@include filter-gradient(#de0000, #810000, horizontal); // IE6-9
+					@include background-image( $img, linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%)); 
 				}
 				&.High{
-					background: #ffb613; /* Old browsers */
-					background: $img, -moz-linear-gradient(left,  #ffb613 0%, #d99b10 80%, #946a0b 100%, #005290 100%); /* FF3.6+ */
-					background: $img, -webkit-gradient(linear, left top, right top, color-stop(0%,#ffb613), color-stop(80%,#d99b10), color-stop(100%,#946a0b), color-stop(100%,#005290)); /* Chrome,Safari4+ */
-					background:$img,  -webkit-linear-gradient(left,  #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%); /* Chrome10+,Safari5.1+ */
-					background:$img,  -o-linear-gradient(left,  #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%); /* Opera 11.10+ */
-					background: $img, -ms-linear-gradient(left,  #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%); /* IE10+ */
-					background: $img, linear-gradient(to right,  #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%); /* W3C */
-					filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffb613', endColorstr='#005290',GradientType=1 ); /* IE6-8 */
-
+					background-color: #ffb613; // Old browsers
+					@include filter-gradient(#ffb613, #005290, horizontal); // IE6-9
+					@include background-image( $img, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
 				}
 			};
 			&.title{
@@ -463,8 +406,33 @@ a {
 				
 			}
 		}
+		&.Resolved, &.Closed{
+			font-weight: normal;
+			text-shadow: 0px 0px 0px;
+			color: #777;
+			>div{
+				&.title{
+					.subject{
+						text-decoration: line-through;
+						font-weight: normal;
+					}
+					.info.btn{
+						background: rgba(0,0,0,0.2);
+						@include text-shadow(#666 0 0 0);
+					}
+				}
+				&:first-child{
+					&.High, &.Low, &.Medium, &.Urgent{
+						background-color: #e5e5e5; // Old browsers
+						@include filter-gradient(#e5e5e5, #afafaf, horizontal); // IE6-9
+						@include background-image( $img, linear-gradient(left, #e5e5e5 0%,#d8d8d8 74%,#d3d3d3 86%,#afafaf 100%));
+					}
+				}
+			}
+		}
 		.info{
 				color: #999999;
+				font-weight:normal;
 				&.btn, &.state-btn{
 					font-size:0.9em;
 					background: rgba(0,0,0,0.5);
@@ -493,7 +461,42 @@ a {
 		}
 	}
 }
+.x-item-pressed{
+	.Resolved, .Closed{
+			.subject{
+				text-decoration: none !important;
+				font-weight: bold !important;
+			}
+		}
+}
 
+.x-list-normal .x-list-item.x-item-pressed .x-list-item-label{
+	color:#fff;
+	background:url('../images/activebg.png');
+	@include text-shadow( #393939 -1px -1px 0);
+	.name{
+		color:#fff;
+	}
+	.count div{
+		background:#757575;
+	}
+	.ticket-item{
+		color:#fff;
+		@include text-shadow( #333 1px 1px 0);
+		.info{
+			&.btn{
+				background: #fff;
+				color: #333;
+				@include box-shadow(0 0 0 #ccc);
+				@include text-shadow(-1px -1px 0 #fff);
+			}
+		}
+		.subject{
+			color:#fff;
+			@include text-shadow( #333 1px 1px 0);
+		}
+	}
+}
 .dashboardButton{
     >div{
     	>div{
@@ -598,7 +601,7 @@ a {
 		}
 		.customer-info-list{
 			float: left;
-			width: 75%;
+			width: 70%;
 			padding-left:10px;
 			div{
 				font-size: 14px;
@@ -628,6 +631,7 @@ a {
 					color:#898989;
 					margin-right: 3px;
 					font-family: 'Freshdesk';
+					padding-top:2px;
 				}
 				p{
 					margin-top:5px;
@@ -636,7 +640,7 @@ a {
 			.phone{
 				span:before {
 					font-size: 13px;
-					padding:3px;
+					padding-left: 6px;
 					content: '\e002';
 				}
 			}
@@ -744,49 +748,61 @@ a {
 		}
 	}
 }
-.x-toolbar .x-button.x-button-lightBtn{
-  box-shadow: 1px 1px 0 #B8C9E0;
-  border: 1px solid #151515;
-  border-top-color: #222;
-  color:#fff;
-}
-.x-button.x-button-lightBtn.x-button-back::before, .x-button.x-button-lightBtn.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn.x-button-forward::before, .x-button.x-button-lightBtn-round.x-button-back::before, .x-button.x-button-lightBtn-round.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn-round.x-button-forward::before, .x-button.x-button-lightBtn-small.x-button-back::before, .x-button.x-button-lightBtn-small.x-button-forward::before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-back::before, .x-toolbar .x-button.x-button-lightBtn-small.x-button-forward::before {
-	background: black;
-}
-.x-docking-vertical{
-	box-shadow: 0 0 20px #666;
-	.x-picker-mask{
-	// needs latest Compass, add '@import "compass"' to your scss
-	@include filter-gradient(#333333, #333333, vertical); // IE6-8
-	// IE9 SVG, needs conditional override of 'filter' to 'none'
-	$experimental-support-for-svg: true;
-	@include background-image(linear-gradient(top,  rgba(51,51,51,0.5) 0%,rgba(51,51,51,0) 25%,rgba(51,51,51,0) 75%,rgba(51,51,51,0.5) 100%));
-		border-radius: 7px;
+.x-toolbar{
+	.x-button.x-button-lightBtn, .x-button.x-button-headerBtn {
+		box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.3) inset;
+		color:#fff;
 	}
-	.x-toolbar{
-		.x-button {
-			&.x-button-action{
-				background-color: #484848;
-				@include background-image(linear-gradient(top, #6E6E6E, #555 50%, #484848 51%, #3B3B3B));
-				border: 1px solid #151515;
-				border-top-color: #222;
-				box-shadow: 1px 1px 0 #B8C9E0;
-				&.x-button-pressing{
-					background-image: none;
-				  	background-color: #404040;
-					@include background-image(linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242));
+	.x-button.x-button-headerBtn{
+		border: 1px solid #151515;
+		border-top-color: #222;
+		&.x-button-back::before, &.x-button-forward::before {
+			background:#151515;
+		}
+	}
+	.x-button.x-button-lightBtn{
+		border: 1px solid #3E577B;
+		&.x-button-back::before,&.x-button-forward::before {
+			background:#3e577b;
+		}
+	}
+}
+.x-sheet{
+	.x-docking-vertical{
+		box-shadow: 0 0 20px #666;
+		.x-picker-mask{
+		// needs latest Compass, add '@import "compass"' to your scss
+		@include filter-gradient(#333333, #333333, vertical); // IE6-8
+		// IE9 SVG, needs conditional override of 'filter' to 'none'
+		$experimental-support-for-svg: true;
+		@include background-image(linear-gradient(top,  rgba(51,51,51,0.5) 0%,rgba(51,51,51,0) 25%,rgba(51,51,51,0) 75%,rgba(51,51,51,0.5) 100%));
+			border-radius: 7px;
+		}
+		.x-toolbar{
+			.x-button {
+				&.x-button-action{
+					background-color: #484848;
+					@include background-image(linear-gradient(top, #6E6E6E, #555 50%, #484848 51%, #3B3B3B));
+					border: 1px solid #151515;
+					border-top-color: #222;
+					box-shadow: 1px 1px 0 #B8C9E0;
+					&.x-button-pressing{
+						background-image: none;
+					  	background-color: #404040;
+						@include background-image(linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242));
+					}
 				}
-			}
-			&.x-button-normal{
-				background-color: #9bbff1;
-				@include filter-gradient(#9bbff1, #375075, vertical);
-				@include background-image(linear-gradient(top, #9bbff1 0%,#4977b4 51%,#436ba7 52%,#375075 100%));
-				box-shadow: 1px 1px 0 #B8C9E0;
-				border: 1px solid #151515;
-				border-top-color: #222;
-				&.x-button-pressing{
-					  background-image: none;
-					  background-color: #89b3ee;
+				&.x-button-normal{
+					background-color: #9bbff1;
+					@include filter-gradient(#9bbff1, #375075, vertical);
+					@include background-image(linear-gradient(top, #9bbff1 0%,#4977b4 51%,#436ba7 52%,#375075 100%));
+					box-shadow: 1px 1px 0 #B8C9E0;
+					border: 1px solid #151515;
+					border-top-color: #222;
+					&.x-button-pressing{
+						  background-image: none;
+						  background-color: #89b3ee;
+					}
 				}
 			}
 		}
@@ -980,11 +996,11 @@ a {
 						color:#1d60bd;
 						@include text-shadow( #86afe6 0 0 20px );
 					}
-					margin:0 20%;
+					margin:0 35%;
 					display:block;
 					text-decoration:none;
 					font-size:175%;
-					font-family: 'fontello';
+					font-family: 'Freshdesk';
 					color:#666;
 					text-align:center;
 					@include text-shadow( #fff 1px 1px 0);
@@ -992,19 +1008,19 @@ a {
 					&.automation
 					{
 						&:before {
-							content: '\26a1';
+							content: '\59';
 						}
 					}
 					&.chat {
 						&:before {
 							font-size:0.9em;
-							content: '\e720';
+							content: '\63';
 						}
 					}
 					&.reply {
 						color:#333;
 						&:before {
-							content: '\e825';
+							content: '\65';
 						}
 						&:active{
 							color:#1d60bd;
@@ -1012,12 +1028,12 @@ a {
 					}
 					&.close {
 						&:before {
-							content: '\2713';
+							content: '\e047';
 						}
 					}
 					&.trash {
 						&:before {
-							content: '\e729';
+							content: '\f014';
 						}
 					}
 				}
@@ -1086,15 +1102,12 @@ a {
 				width: 100%;
 			}
 			.note{
-				font-family: 'Freshdesk';
-				float: right;
-				display: inline-block;
+				font-family: 'Freshdesk';	
 				position: absolute;
-				right: 0px;
+				right: 8px;
 				font-size: 22px;
 				color: #ccc;
 				margin-top: -6px;
-				margin-right:-16px;
 				&:before{
 					content:"\e021";
 				}
@@ -1172,18 +1185,18 @@ a {
 			}
 			.clip{
 				position: absolute;
-				top: -3px;
-				right: -13px;
-				font-size: 18px;
+				top: -14px;
+				right: -4px;
+				font-size: 22px;
 				display:block;
 				text-decoration:none;
-				font-family: 'fontello';
+				font-family: 'Freshdesk';
 				color:#1272DE;
 				text-align:center;
 				@include text-shadow( #fff 1px 1px 0);
 				speak: none;
 				&:before{
-					content: '📎'; 
+					content: '\3b'; 
 				}
 			}
 			.attachments{
@@ -1314,7 +1327,6 @@ a {
 		background:transparent;
 		margin-right:5px;
 		&:before{
-			display: block;
 			color:#fff;
 	 		font-size: 14px;
 			padding: 5px 5px;
@@ -1376,6 +1388,7 @@ a {
 		}
 		.x-thumb:before{
 			left:0.87em;
+			@include transition-property(left);
 		}
 	}
 	&.x-toggle-off{
@@ -1385,8 +1398,12 @@ a {
 			font-weight:bold;
 			@include text-shadow(1px 1px 0 #fff);
 			margin:7px 0px;
-			margin-right:17px;
 			content:'NO';
+			position: absolute;
+			width: 77%;
+			right: 0;
+			top: -4px;
+			text-align: center;
 		}
 		.x-thumb:before{
 			left:0em;
@@ -1454,9 +1471,18 @@ a {
 	}
 }
 
+.x-empty{
+		.x-field-input textarea{
+			font-weight:bold;
+		}
+	}
+	.x-field-input textarea{
+		font-weight:normal;
+
+	}
 /* Pull refresh CSS */
   .x-list-pullrefresh {
-	-webkit-box-shadow: inset 0 -5px 5px 0 rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: inset 0 -3px 5px 0 rgba(0, 0, 0, 0.1);
 	color:#888;
 	text-align:left;
 	-webkit-box-pack: start;
@@ -1511,14 +1537,13 @@ a {
     -webkit-background-size: 44px 44px;
     -moz-background-size: 36px 36px;
     
-    /* Webkit */
-    /* For browser that don't support gradients, we'll set a base background colour */
+    /* Webkit For browser that don't support gradients, we'll set a base background colour */
     background-color: $bar-color;
     
     background: -webkit-gradient(linear, 0 0, 44 44, color-stop(0.00, rgba(190,190,190,0.17)), color-stop(0.25, rgba(190,190,190,0.17)), color-stop(0.26, rgba(190,190,190,0)), color-stop(0.50, rgba(190,190,190,0)), color-stop(0.51, rgba(190,190,190,0.17)), color-stop(0.75, rgba(190,190,190,0.17)), color-stop(0.76, rgba(190,190,190,0)), color-stop(1.00, rgba(190,190,190,0)) ) $bar-color;
     /* Note: Mozilla's support for gradients is more true to the original design, allowing gradients at 30 degrees, as apposed to 45 degress in webkit. */
     background: -moz-repeating-linear-gradient(top left -30deg, rgba(255,255,255,0.17), rgba(255,255,255,0.17) 15px, rgba(255,255,255,0) 15px, rgba(255,255,255,0) 30px) $bar-color;
-    /* Give it a higher contrast outline */
+    /* Give it a higher contrast outline
     @include experimental(animation, animate-stripes 1s linear infinite);
    
     /*.x-loading-spinner {
@@ -1536,7 +1561,7 @@ a {
     	display: none;
     }
   }
-/* Webkit animation keyframes */
+/* Webkit animation keyframes 
 @-webkit-keyframes animate-stripes {
   from {
     background-position: 0 0; 
@@ -1553,4 +1578,82 @@ a {
   to {
     background-position: 36px 0;
   }
+}*/
+
+/*Excute scenario style sheet*/
+.flash{
+	padding:10px;
+	.message{
+		margin-bottom: 12px;
+		margin-top: 6px;
+		&:before{
+			color:#fff;
+	 		font-size: 14px;
+			content:'\e047';
+			padding: 5px 5px;
+			font-family:'Freshdesk';
+			width:28px;
+			height:28px;
+			border:2px solid #fff;
+			background-color:#168c19 !important;;
+			@include background-image(linear-gradient(top, #58ab4e 0%,#168c19 44%));
+			@include border-radius(50px);
+			@include text-shadow(-1px -1px 0 #888);
+			margin-right:10px;
+			@include box-shadow(-2px -2px 1px #CCC);
+		}
+	}
+	div:first-child{
+		&:before{
+			font-family:'Freshdesk';
+	 		font-size: 34px;
+	 		color:#168c19;
+			content:'\7e';
+			text-shadow: -2px -2px 1px #CCC;
+		}
+		b{
+			position: relative;
+			top: -7px;
+			left: 5px;
+		}
+	}
+}	
+
+/* Notify Agent style sheet */
+
+.x-select-overlay{
+	.bullet::before {
+		color: #fff !important;
+		content: '\e047' !important;
+		font-size: 16px;
+		padding: 4px 3px 3px 3px;
+		text-shadow: 0px 0px 0px white;
+		background: white;
+		margin-right: 5px;
+		box-shadow: 0px 0px 2px #CCC;
+	}
+	.x-item-selected{
+		.bullet{
+			&:before{
+				content:'\e047' !important;
+				color: #73AB04 !important;
+				font-size: 16px;
+				padding: 4px 3px 3px 3px;
+				text-shadow: -1px -1px 0px #666;
+				background: white;
+				margin-right: 5px;
+				box-shadow: 0 0 2px #000;
+			}
+		}
+		.x-list-item-label{
+			&:before{
+				-webkit-mask-image:none;
+				background-color:transparent;
+			}
+			&:after{
+				-webkit-mask-image:none;
+				background-color:transparent;
+			}
+		}
+	}
 }

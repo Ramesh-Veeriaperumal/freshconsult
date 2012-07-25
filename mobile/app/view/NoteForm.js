@@ -80,7 +80,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'togglefield',
                         name: 'helpdesk_note[private]',
-                        label: 'Show this note to requester? ',
+                        label: 'Visible to requester ',
                         itemId:'noteFormPrivateField',
                         labelWidth: '71%'
                     },

@@ -7,7 +7,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         var back = {
             xtype: 'button',
             text: 'Back',
-            ui:'back headerBtn',
+            ui:'back lightBtn',
             handler: this.goBack,
             scope: this,
             align:'left'

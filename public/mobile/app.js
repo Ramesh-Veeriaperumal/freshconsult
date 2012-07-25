@@ -24272,7 +24272,7 @@ Ext.define('plugin.ux.PullRefresh2', {
          * @cfg {String} loadingText The text that will be shown while the list is refreshing.
          * @accessor
          */
-        loadingText: 'Loading...',
+        loadingText: 'Please Wait...',
 
         /*
          * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
@@ -30800,7 +30800,7 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!',
+                        pullRefreshText: 'Pull down to refresh...',
                         prettyUpdatedDate:true
                     }
             ]
@@ -30895,11 +30895,11 @@ Ext.define("Freshdesk.view.ContactInfo", {
                 '</div>',
                 '<div style="clear:both; display:block"></div>',
                 '<div class="customer-contact-list">',
-                    '<tpl if="email"><div class="email"><span>&nbsp;</span>{email}</div></tpl>',
-                    '<tpl if="mobile"><div class="phone"><span>&nbsp;</span>{mobile}</div></tpl>',
-                    '<tpl if="phone"><div class="phone"><span>&nbsp;</span>{phone}</div></tpl>',
-                    '<tpl if="twitter_id"><div class="twitter"><span>&nbsp;</span>{twitter_id}</div></tpl>',
-                    '<tpl if="fb_profile_id"><div class="facebook"><span>&nbsp;</span>{fb_profile_id}</div></tpl>',
+                    '<tpl if="email"><div class="email"><span>&nbsp;</span><p>{email}</p></div></tpl>',
+                    '<tpl if="mobile"><div class="phone"><span>&nbsp;</span><p>{mobile}</p></div></tpl>',
+                    '<tpl if="phone"><div class="phone"><span>&nbsp;</span><p>{phone}</p></div></tpl>',
+                    '<tpl if="twitter_id"><div class="twitter"><span>&nbsp;</span><p>{twitter_id}</p></div></tpl>',
+                    '<tpl if="fb_profile_id"><div class="facebook"><span>&nbsp;</span><p>{fb_profile_id}</p></div></tpl>',
                 '</div>',
             '</div>',
             '<div style="clear:both"></div>',
@@ -30981,10 +30981,10 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '</div>',
                         '<div class="Info"><a href="{[!FD.current_user.is_customer && values.requester.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
                         '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
-                            '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                            '<tpl if="private"><span class="{source_name}"></span></tpl>',
                         '</div></div>',
                         '<div class="msg fromReq">',
-                                '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
                                         '<div class="conv" id="{id}">',
                                 '</tpl>',
@@ -31021,10 +31021,10 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
                                 '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
-                                '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                                '<tpl if="private"><span class="{source_name}"></span></tpl>',
                                 '</div></div>',
                                 '<tpl if="user.is_customer"><div class="msg fromReq">',
-                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
@@ -31036,7 +31036,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200"><a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                                 '<tpl if="user.is_agent"><div class="msg">',
-                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
@@ -31159,7 +31159,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         var back = {
             xtype: 'button',
             text: 'Back',
-            ui:'back headerBtn',
+            ui:'back lightBtn',
             handler: this.goBack,
             scope: this,
             align:'left'
@@ -31429,7 +31429,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
         var flashMessageBox = Ext.ComponentQuery.query('#flashMessageBox')[0],
         resJson = JSON.parse(res.responseText),
         flashData = {
-            title:'Executed scenario <b>'+resJson.rule_name+'</b>',
+            title:'<b>'+resJson.rule_name+'</b>',
             messages:resJson.actions_executed
         },
         me=this;
@@ -38824,14 +38824,14 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             plugins: [
                     {
                         xclass: 'plugin.ux.PullRefresh2',
-                        pullRefreshText: 'Pull down for more!',
+                        pullRefreshText: 'Pull down to refresh...',
                         prettyUpdatedDate:true
                     },
                     {
                         xclass: 'plugin.ux.ListPaging2',
                         autoPaging: false,
                         centered:true,
-                        loadMoreText: 'Load more.',
+                        loadMoreText: 'Please Wait...',
                         noMoreRecordsText: 'No more tickets.'
                     },
                     {
@@ -39080,7 +39080,7 @@ Ext.define('Freshdesk.view.ContactsListContainer', {
 
         var backButton = {
             text:'Home',
-            ui:'headerBtn back',
+            ui:'lightBtn back',
             xtype:'button',
             handler:this.backToDashboard,
             align:'left',
@@ -39255,7 +39255,7 @@ Ext.define('Freshdesk.view.ContactsFormContainer', {
             xtype:'button',
             handler:this.backToListView,
             align:'left',
-            ui:'headerBtn',
+            ui:'lightBtn',
             scope:this
         };
 
@@ -43038,7 +43038,8 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your Message... *',
+                        height:180,
                         required:true,
                         clearIcon:false
                     },
@@ -48689,7 +48690,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'togglefield',
                         name: 'helpdesk_note[private]',
-                        label: 'Show this note to requester? ',
+                        label: 'Visible to requester ',
                         itemId:'noteFormPrivateField',
                         labelWidth: '71%'
                     },
