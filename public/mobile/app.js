@@ -30524,7 +30524,9 @@ Ext.define("Freshdesk.view.Home", {
 
                 portalData.preferences.header_color && Ext.select('.branding').setStyle('background-color',portalData.preferences.header_color);
                 portalData.preferences.tab_color && Ext.select('.branding').setStyle('border-bottom-color',portalData.preferences.tab_color);
-
+                if(!FD.current_account.subscription.is_paid_account){
+                    Ext.get('helpdesk_FD_brand').removeCls('hide');
+                }
             }
         },
         items :[
@@ -30603,7 +30605,7 @@ Ext.define("Freshdesk.view.Home", {
                         docked:'bottom',
                         centered:true,
                         tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
-                             '<p>A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                             '<p id="helpdesk_FD_brand" class="hide">A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
                         }
@@ -30974,10 +30976,10 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '</div>',
                         '<div class="Info"><a href="{[!FD.current_user.is_customer && values.requester.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
                         '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
-                            '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                            '<tpl if="private"><span class="{source_name}"></span></tpl>',
                         '</div></div>',
                         '<div class="msg fromReq">',
-                                '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
                                         '<div class="conv" id="{id}">',
                                 '</tpl>',
@@ -31014,10 +31016,10 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
                                 '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
-                                '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                                '<tpl if="private"><span class="{source_name}"></span></tpl>',
                                 '</div></div>',
                                 '<tpl if="user.is_customer"><div class="msg fromReq">',
-                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
@@ -31029,7 +31031,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200"><a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                                 '<tpl if="user.is_agent"><div class="msg">',
-                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
@@ -31421,7 +31423,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
         var flashMessageBox = Ext.ComponentQuery.query('#flashMessageBox')[0],
         resJson = JSON.parse(res.responseText),
         flashData = {
-            title:'Executed scenario <b>'+resJson.rule_name+'</b>',
+            title:'<b>'+resJson.rule_name+'</b>',
             messages:resJson.actions_executed
         },
         me=this;
@@ -31514,9 +31516,9 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 
         var details = {
             tpl : new Ext.XTemplate(['<div class="flash">',
-                        '<tpl if="title"><div>{title}</div></tpl>',
+                        '<tpl if="title"><div></div><div class="scenario_text">{title}</div></tpl>',
                         '<tpl for="messages">',
-                            '<div class="message">{.}</div>',
+                            '<div class="message"></div><div class="scenario_text">{.}</div>',
                         '</tpl>',
                     '</div>'
             ].join('')),
@@ -31916,7 +31918,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         if(FD.current_user.is_customer){
             formObj.setUrl('/support/tickets/'+id+'/notes');  
         }else{
-            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(true);
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(false);
         }
         if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
             autoTechStore.load();
@@ -39317,7 +39319,11 @@ Ext.define('Freshdesk.view.TicketNote', {
     send : function(){
         var id = this.ticket_id,
         formObj = this.items.items[1],
-        values = formObj.getValues();
+        values = formObj.getValues(),
+        privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
+        if(FD.current_user.is_agent){
+            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+        }
         if(values["helpdesk_note[body_html]"].trim() != '') {
             Ext.Viewport.setMasked(true);
             formObj.submit({
@@ -48541,6 +48547,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                         ui:'formSubheader',
                         itemId:'noteFormCannedResponse',
                         cls:'green-icon',
+                        id:'noteFormCannedResponse',
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -48550,7 +48557,17 @@ Ext.define('Freshdesk.view.NoteForm', {
                                 ui:'plain',
                                 handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
                             }
-                        ]
+                        ],
+                        listeners:{
+                            initialize: {
+                                fn:function(component){
+                                    Ext.get('noteFormCannedResponse').on('tap',function(){
+                                        this.parent.parent.showCannedResponse();
+                                    },component);
+                                },
+                                scope:this
+                            }
+                        }
 
                     },
                     {
@@ -48567,7 +48584,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'togglefield',
                         name: 'helpdesk_note[private]',
-                        label: 'Show this note to requester? ',
+                        label: 'Visible to requester ',
                         itemId:'noteFormPrivateField',
                         labelWidth: '71%'
                     },
@@ -56531,7 +56548,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                         items:[
                             {
                                 xtype:'button',
-                                ui:'plain headerBtn',
+                                ui:'plain lightBtn',
                                 iconMask:true,
                                 align:'left',
                                 text:'Cancel',
