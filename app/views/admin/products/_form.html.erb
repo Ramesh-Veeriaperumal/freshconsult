@@ -88,7 +88,7 @@
             jQuery(this).parent().parent().find("span[rel=div_reply_email]").text(reply_email);
             jQuery(this).parent().parent().find("input[rel=hidden_reply_to]").val(reply_email);
           }
-      ).trigger("change");
+      );
 
       jQuery("#EnablePortal").bind("change", 
         function(ev){
