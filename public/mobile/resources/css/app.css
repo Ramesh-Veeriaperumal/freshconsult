@@ -12053,6 +12053,8 @@ a {
 .flash .message {
   margin-bottom: 12px;
   margin-top: 6px;
+  float: left;
+  clear: both;
 }
 .flash .message:before {
   color: #fff;
@@ -12076,12 +12078,18 @@ a {
   -webkit-box-shadow: -2px -2px 1px #cccccc;
   box-shadow: -2px -2px 1px #cccccc;
 }
+.flash .scenario_text {
+  width: 90%;
+  line-height: 2.3em;
+  display: inline-block;
+}
 .flash div:first-child:before {
   font-family: 'Freshdesk';
   font-size: 34px;
   color: #168c19;
   content: '\7e';
   text-shadow: -2px -2px 1px #cccccc;
+  float: left;
 }
 .flash div:first-child b {
   position: relative;
