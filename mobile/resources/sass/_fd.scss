@@ -1618,4 +1618,42 @@ a {
 		}
 	}
 }	
-	
+
+/* Notify Agent style sheet */
+
+.x-select-overlay{
+	.bullet::before {
+		color: #fff !important;
+		content: '\e047' !important;
+		font-size: 16px;
+		padding: 4px 3px 3px 3px;
+		text-shadow: 0px 0px 0px white;
+		background: white;
+		margin-right: 5px;
+		box-shadow: 0px 0px 2px #CCC;
+	}
+	.x-item-selected{
+		.bullet{
+			&:before{
+				content:'\e047' !important;
+				color: #73AB04 !important;
+				font-size: 16px;
+				padding: 4px 3px 3px 3px;
+				text-shadow: -1px -1px 0px #666;
+				background: white;
+				margin-right: 5px;
+				box-shadow: 0 0 2px #000;
+			}
+		}
+		.x-list-item-label{
+			&:before{
+				-webkit-mask-image:none;
+				background-color:transparent;
+			}
+			&:after{
+				-webkit-mask-image:none;
+				background-color:transparent;
+			}
+		}
+	}
+}
