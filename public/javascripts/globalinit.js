@@ -108,7 +108,7 @@ var $J = jQuery.noConflict();
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
- 
+      $(".nav-trigger").livequery(function(){ $(this).showAsMenu(); });
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
 
@@ -225,7 +225,7 @@ var $J = jQuery.noConflict();
              }
         });
          
-        $(".nav-trigger").showAsMenu();
+        
          
         menu_box_count = 0;
         fd_active_drop_box = null;
