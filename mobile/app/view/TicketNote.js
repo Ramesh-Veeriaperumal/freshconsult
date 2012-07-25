@@ -54,10 +54,10 @@ Ext.define('Freshdesk.view.TicketNote', {
         formObj = this.items.items[1],
         values = formObj.getValues(),
         privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
-        if(FD.current_user.is_agent){
-            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
-        }
         if(values["helpdesk_note[body_html]"].trim() != '') {
+            if(FD.current_user.is_agent){
+                Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+            }
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){

@@ -30839,8 +30839,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             formObj = formContainer.items.items[1];
         formObj.items.items[0].setItems(formData);
         formObj.setUrl('/helpdesk/tickets');
-        if(FD.current_user.is_customer) 
+        if(FD.current_user.is_customer)  {
             formObj.setUrl('/support/tickets')
+        }
+
+        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        
         Ext.Viewport.animateActiveItem(formContainer, anim);
     },
     newTicket : function(){
@@ -39377,10 +39382,10 @@ Ext.define('Freshdesk.view.TicketNote', {
         formObj = this.items.items[1],
         values = formObj.getValues(),
         privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
-        if(FD.current_user.is_agent){
-            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
-        }
         if(values["helpdesk_note[body_html]"].trim() != '') {
+            if(FD.current_user.is_agent){
+                Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+            }
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
@@ -40664,7 +40669,10 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             this.items.items[1].items.items[2].items.items[1].setActiveItem(0);
             this.items.items[1].items.items[2].showProperties();
         }
-            
+        
+        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+ 
     },
     showProperties: function(setActive){
         var detailsPane = this.items.items[1],
@@ -48607,6 +48615,7 @@ Ext.define('Freshdesk.view.NoteForm', {
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
         cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
+        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     config: {
@@ -54973,15 +54982,7 @@ Ext.define('Freshdesk.store.Init', {
                 type: 'json'
             }
         },
-        autoLoad:false,
-        listeners : {
-            beforeload : {
-                fn: function(){
-                    Ext.Viewport.setMasked({xtype:'mask',html:'<div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',style:'background:rgba(255,255,255,0.1)'});
-                },
-                scope:this
-            }
-        }
+        autoLoad:false
     }
 });
 Ext.define('Freshdesk.store.Filters', {
@@ -56969,7 +56970,7 @@ Ext.application({
     tabletStartupScreen: 'resources/loading/Homescreen~ipad.jpg',
 
     launch: function() {
-        Ext.fly('appLoadingIndicator').destroy();
+        
         var dashboardContainer = {
             xtype: "dashboardContainer"
         },filtersListContainer = {
@@ -57006,10 +57007,11 @@ Ext.application({
             xtype:'ticketFacebookForm'
         };
 
-        Ext.Viewport.add([filtersListContainer,home,ticketsListContainer,contactsListContainer,
+        Ext.Viewport.add([
+                        filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
                         solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm
-                        ]);
+        ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_account = data[0].raw.account;
@@ -57018,7 +57020,7 @@ Ext.application({
                 FD.Util.initCustomer();
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
-            Ext.Viewport.setMasked(false);
+            Ext.fly('appLoadingIndicator').destroy();
         }});
 
         //adding listners to ajax for showing the loading mask .. global.
@@ -57034,6 +57036,7 @@ Ext.application({
             }
             Ext.Viewport.setMasked(false)
         })
+
     },
 
     onUpdated: function() {
