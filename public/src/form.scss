@@ -329,6 +329,12 @@ a.addchoice:hover{
 			font-size:1.4em; 
 		}
 	}	 
+	.largelabel{
+		label{
+			font-size:1.8em;
+			font-weight: 300;
+		}
+	}
 	.check_box{
 		@include clearfix;
 		label{
@@ -1943,6 +1949,123 @@ ul.ui-form .inputs-list{
 	width:100% !important;
 }
 
+.multi-product-add{
+	&.ui-form{
+		background-color: #fafafa;
+		div.inline-field{
+			margin: 0 5px;
+		}
+		div.fields{
+			padding-bottom: 15px;
+			label{
+				font: 13px "Helvetica Neue", sans-serif;
+			}
+		}
+		.add-email{
+			margin-left: 210px;
+			margin-top: -25px;
+			padding-bottom: 34px;
+			a.add-email-icon{
+				padding: 8px 8px 4px 35px;
+				font-size: 14px;
+				font-family: "Helvetica Neue", sans-serif;
+				font-weight: 300;
+				text-decoration: none;
+				color: #404040;
+				position: relative;
+				@include inline-block;
+				span{
+					position: absolute;
+					left: 0px;
+					top: 4px;
+					background: url("../images/email_config_add.png") no-repeat;
+					width: 25px;
+					height: 25px;
+				}
+			}
+		}
+		.configure-portal{
+			position: relative;
+			label{
+				background-color: #efefef;
+				border-bottom: 1px solid #d1d1d1;
+				border-top: 1px solid #d1d1d1;
+				padding: 10px 0;
+				font-family: "Helvetica Neue", sans-serif;
+				font-weight: 300;
+			}
+			.toggle-button{
+				position: absolute;
+				left: 75%;
+				top: 9px;
+				margin-left: -50px;
+			}
+		}
+		.big-seperator{
+			border-bottom: 2px solid #bfbfbf;
+			display:block;
+			height:2px;
+			margin:5px 0px;
+		}
+		.configure-email-form{
+			padding: 0 10px 12px 10px;
+			margin-bottom: 11px;
+			border: 1px solid #dfdfdf;
+			background-color: #fbfbfb;
+			@include clearfix;
+			@include corners(4px);
+			width: 90%;
+			.column{
+				float: left;
+				&.left-column{
+					width: 50%;
+					.text{
+						font-weight: bold;
+					}
+					span.text{
+						@include wrap;
+					}
+				}
+				&.right-column{
+					width: 50%;
+					input.checkbox{
+						margin: 5px;
+						float: left;
+					}
+					.set_primary{
+						padding-top: 27px;
+					}
+					select{
+						margin-top: 4px;
+					}
+				}
+			}
+			.deleteChoice{
+				cursor: pointer;
+				background: url(/images/email_config_delete.png) no-repeat;	
+				width: 25px; 
+				height: 25px;
+				position: absolute;
+				right: 1%;
+				&.disabled{
+					background: url(/images/email_config_delete_disabled.png) no-repeat;
+				}
+			}
+		}
+	}
+}
+
+.ui-form{
+	.portal-settings{
+		div.fields{
+			padding-top: 4px;
+			label{
+				font-size: 14px;
+			}
+		}
+	}
+}
+
 #cc_emails_sec .multi_value_field {
 	width:93%;
 	padding-left:5px;
@@ -1951,4 +2074,3 @@ ul.ui-form .inputs-list{
 	@include box-shadow(#DFDFDF 1px 1px 2px inset);
 	@include border-radius(5px);
 }
-

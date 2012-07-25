@@ -2017,7 +2017,7 @@
   email_command_settings_info: "Skonfiguruj ogranicznik używany do określenia i uzyskania analizy poczty elektronicznej"
   email_command_delimeter_label: "Ogranicznik analizatora poczty elektronicznej"
   email_command_preview_to_email: "Do"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Temat"
   email_command_preview_subject_value: "Zgłoszenie"
   unable_to_charge: "Nie można obciążyć karty za dodanie agenta!"

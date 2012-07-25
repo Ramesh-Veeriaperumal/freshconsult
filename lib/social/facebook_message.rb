@@ -63,7 +63,7 @@ def add_message_as_ticket thread
           :description => message[:message],
           :description_html => message[:message],
           :requester => requester,
-          :email_config_id => @fb_page.product_id,
+          :product_id => @fb_page.product_id,
           :group_id => group_id,
           :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
           :created_at => Time.zone.parse(message[:created_time]),

@@ -1,0 +1,67 @@
+
+//customizing sencha theams
+//global page background color.
+$active-color:#324969;
+$base-color:#879ebe;
+$page-bg-color:#F9F7F6;
+$form-bg-color:$page-bg-color;
+
+$list-bg-color:#F9F7F6;
+$list-active-color:#F7F7F7;
+$list-active-gradient:'linear';
+
+$index-bar-bg-color:#F7F7F7;
+$index-bar-color:#333;
+
+$loading-spinner-color:#AAA;
+
+@import 'sencha-touch/default/all';
+
+// You may remove any of the following modules that you
+// do not use in order to create a smaller css file.
+@include sencha-panel;
+@include sencha-buttons;
+@include sencha-sheet;
+@include sencha-picker;
+@include sencha-tabs;
+@include sencha-toolbar;
+@include sencha-toolbar-forms;
+@include sencha-indexbar;
+@include sencha-list;
+@include sencha-layout;
+@include sencha-carousel;
+@include sencha-form;
+@include sencha-msgbox;
+@include sencha-loading-spinner;
+
+// our custom code goes here...
+$header-button-color:#484848;
+$header-color:#879EBE;
+$header-gradient:'glossy';
+$header-lightBtn-color:#4977B4;
+
+$subheader-color:#e4e4e4;
+$form-separator-subheader-color:#F9F7F6;
+@include sencha-toolbar-ui('header', $header-color, $header-gradient);
+@include sencha-toolbar-ui('subheader', $subheader-color,'none');
+@include sencha-toolbar-ui('formSubheader',$form-separator-subheader-color,'none');
+@include sencha-button-ui('headerBtn', $header-button-color, $header-gradient);
+@include sencha-button-ui('lightBtn', $header-lightBtn-color, $header-gradient);
+
+//add icon
+@include pictos-iconmask(add1);
+@include pictos-iconmask(info);
+@include pictos-iconmask(user3);
+@include pictos-iconmask(doc2);
+@include pictos-iconmask(trash);
+@include pictos-iconmask(check2);
+@include pictos-iconmask(action);
+@include pictos-iconmask(chat2);
+@include pictos-iconmask(magic);
+@include pictos-iconmask(add_black);
+@include pictos-iconmask(delete_black2);
+@include pictos-iconmask(user_list2);
+
+@include sencha-list-pullrefresh;
+@import '_fd.scss';
+@import 'swipeOptions.scss';

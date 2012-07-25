@@ -31,17 +31,17 @@
       Unassigned
     <% end %>  
   </span> 
-  <% if feature?(:multi_product) && @ticket.email_config %>
-  <span>
-    <b>Product</b>
-    <%= h(@ticket.email_config.name) %>
-  </span>
+  <% if feature?(:multi_product) && @ticket.product %>
+    <span>
+      <b>Product</b>
+      <%= h(@ticket.product.name) %>
+    </span>
   <% end %>
 <% current_portal.ticket_fields.each do |field| %>
   <% if field.visible_in_view_form? && field.flexifield_def_entry %>
     <span>
       <b><%= field.label %></b>
-      <%= (field.is_default_field?) ? @ticket[field.field_name] : @item.get_ff_value(field.name) %>      
+      <%= (field.is_default_field?) ? @ticket.send(field.field_name) : @item.get_ff_value(field.name) %>      
     </span>
     <% if field.field_type == "nested_field" %>
       <% field.nested_ticket_fields.each do |nested_field| %>

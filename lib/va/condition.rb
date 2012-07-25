@@ -12,7 +12,6 @@ class Va::Condition
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
     'company_name'            => 'customers.name',
-    'to_email'                =>  'helpdesk_tickets.cc_email'
   }
   
   def initialize(rule, account)
@@ -35,8 +34,9 @@ class Va::Condition
   
   def db_column
     return QUERY_COLUMNS[key] if QUERY_COLUMNS.key? key
-    
+
     #method_defined? doesn't work..
+    return "helpdesk_schema_less_tickets.#{dispatcher_key}" if Helpdesk::SchemaLessTicket.column_names.include? dispatcher_key
     return "helpdesk_tickets.#{key}" if Helpdesk::Ticket.column_names.include? key
     return "helpdesk_ticket_states.#{key}" if Helpdesk::TicketState.column_names.include? key
     

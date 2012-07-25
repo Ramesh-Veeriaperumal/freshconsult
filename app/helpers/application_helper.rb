@@ -62,7 +62,7 @@ module ApplicationHelper
   end         
 
   def page_title
-    portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
+    portal_name = h(current_portal.portal_name) + " : "
     portal_name += @page_title || t('helpdesk_title')
   end 
   
@@ -491,11 +491,11 @@ module ApplicationHelper
     }.merge!(_opt)
 
     _field.nested_levels.each do |l|       
-      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = sanitize_to_id(_name +"_"+ l[:name])
+      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
       _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
     end
     
-    _category + javascript_tag("jQuery('##{sanitize_to_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")        
+    _category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")
 
   end
   
@@ -523,10 +523,10 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless display_tag? (element,field,field_value)
+    content_tag :li, element unless display_tag?(element,field,field_value)
   end
 
-  def display_tag? (element, field, field_value)
+  def display_tag?(element, field, field_value)
     (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
    

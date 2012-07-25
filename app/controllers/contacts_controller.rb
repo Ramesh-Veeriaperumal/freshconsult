@@ -16,7 +16,7 @@ class ContactsController < ApplicationController
    before_filter :check_agent_limit, :only =>  :make_agent
    before_filter :load_item, :only => [:show, :edit, :update, :make_agent]
    skip_before_filter :build_item , :only => [:new, :create]
-   
+   before_filter :set_mobile , :only => :show
   
    
    def check_demo_site
@@ -102,6 +102,7 @@ class ContactsController < ApplicationController
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json}
+      format.mobile { render :json => @user.to_mob_json }
     end
   end
   

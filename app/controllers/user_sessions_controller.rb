@@ -9,7 +9,9 @@ require 'oauth/consumer'
 require 'oauth/request_proxy/action_controller_request'
 require 'oauth/signature/rsa/sha1'
 require 'openssl'
+
   
+  before_filter :set_mobile, :only => [:create, :destroy, :new]
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
@@ -17,10 +19,13 @@ require 'openssl'
   
   def new
     if current_account.sso_enabled? and (request.request_uri != "/login/normal")
-      redirect_to  current_account.sso_options[:login_url]
+      redirect_to current_account.sso_options[:login_url]
     end
     
     @user_session = current_account.user_sessions.new
+    if mobile?
+      redirect_to root_url
+    end
   end
  
   def sso_login
@@ -118,13 +123,20 @@ require 'openssl'
       #Unable to put 'grant_day_pass' in after_filter due to double render
     else
       note_failed_login
-      render :action => :new
+      if mobile?
+        flash[:error] = I18n.t("mobile.home.sign_in_error")
+        redirect_to root_url
+      else 
+        render :action => :new
+      end
     end
   end
   
   def destroy
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
+
+    flash.clear if mobile?
 
     current_user_session.destroy unless current_user_session.nil? 
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?

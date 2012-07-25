@@ -105,6 +105,7 @@ a.addchoice:hover { background-color: #e8e8e8; }
 .ui-form li.checkbox label { position: relative; font-size: 0.9em; top: -6px; left: 1px; }
 .ui-form .largefield label { font-size: 1.4em; }
 .ui-form .largefield input { font-size: 1.4em; }
+.ui-form .largelabel label { font-size: 1.8em; font-weight: 300; }
 .ui-form .check_box { overflow: hidden; *zoom: 1; }
 .ui-form .check_box label { float: left; font-size: 1.4em; }
 .ui-form .check_box input { float: left; margin: 5px; }
@@ -602,5 +603,32 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 #cc_emails_sec .chzn-container, #cc_emails_sec .search-field input { width: 94% !important; }
 
 #cc_emails_sec .chzn-drop { width: 100% !important; }
+
+.multi-product-add.ui-form { background-color: #fafafa; }
+.multi-product-add.ui-form div.inline-field { margin: 0 5px; }
+.multi-product-add.ui-form div.fields { padding-bottom: 15px; }
+.multi-product-add.ui-form div.fields label { font: 13px "Helvetica Neue", sans-serif; }
+.multi-product-add.ui-form .add-email { margin-left: 210px; margin-top: -25px; padding-bottom: 34px; }
+.multi-product-add.ui-form .add-email a.add-email-icon { padding: 8px 8px 4px 35px; font-size: 14px; font-family: "Helvetica Neue", sans-serif; font-weight: 300; text-decoration: none; color: #404040; position: relative; display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; }
+.multi-product-add.ui-form .add-email a.add-email-icon { *display: inline; }
+.multi-product-add.ui-form .add-email a.add-email-icon span { position: absolute; left: 0px; top: 4px; background: url("../images/email_config_add.png") no-repeat; width: 25px; height: 25px; }
+.multi-product-add.ui-form .configure-portal { position: relative; }
+.multi-product-add.ui-form .configure-portal label { background-color: #efefef; border-bottom: 1px solid #d1d1d1; border-top: 1px solid #d1d1d1; padding: 10px 0; font-family: "Helvetica Neue", sans-serif; font-weight: 300; }
+.multi-product-add.ui-form .configure-portal .toggle-button { position: absolute; left: 75%; top: 9px; margin-left: -50px; }
+.multi-product-add.ui-form .big-seperator { border-bottom: 2px solid #bfbfbf; display: block; height: 2px; margin: 5px 0px; }
+.multi-product-add.ui-form .configure-email-form { padding: 0 10px 12px 10px; margin-bottom: 11px; border: 1px solid #dfdfdf; background-color: #fbfbfb; overflow: hidden; *zoom: 1; -moz-border-radius: 4px 4px 4px 4px; -webkit-border-radius: 4px 4px 4px 4px; border-radius: 4px 4px 4px 4px; width: 90%; }
+.multi-product-add.ui-form .configure-email-form .column { float: left; }
+.multi-product-add.ui-form .configure-email-form .column.left-column { width: 50%; }
+.multi-product-add.ui-form .configure-email-form .column.left-column .text { font-weight: bold; }
+.multi-product-add.ui-form .configure-email-form .column.left-column span.text { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
+.multi-product-add.ui-form .configure-email-form .column.right-column { width: 50%; }
+.multi-product-add.ui-form .configure-email-form .column.right-column input.checkbox { margin: 5px; float: left; }
+.multi-product-add.ui-form .configure-email-form .column.right-column .set_primary { padding-top: 27px; }
+.multi-product-add.ui-form .configure-email-form .column.right-column select { margin-top: 4px; }
+.multi-product-add.ui-form .configure-email-form .deleteChoice { cursor: pointer; background: url(/images/email_config_delete.png) no-repeat; width: 25px; height: 25px; position: absolute; right: 1%; }
+.multi-product-add.ui-form .configure-email-form .deleteChoice.disabled { background: url(/images/email_config_delete_disabled.png) no-repeat; }
+
+.ui-form .portal-settings div.fields { padding-top: 4px; }
+.ui-form .portal-settings div.fields label { font-size: 14px; }
 
 #cc_emails_sec .multi_value_field { width: 93%; padding-left: 5px; padding-right: 5px; border-color: #C6C6C6; -moz-box-shadow: #dfdfdf 1px 1px 2px inset; -webkit-box-shadow: #dfdfdf 1px 1px 2px inset; -o-box-shadow: #dfdfdf 1px 1px 2px inset; box-shadow: #dfdfdf 1px 1px 2px inset; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; }
