@@ -7,7 +7,7 @@
           <input type="text" class="required text email" name="product[email_configs_attributes][${index_id}][reply_email]" rel="reply_to_id" {{if reply_email }} value="${reply_email}" {{/if}}/>
 
           <label><%= t('admin.products.form.forwarding_email_info')%></label>
-          <span class="text" rel="div_reply_email" disabled="disabled">{{if to_email }} value="${to_email}" {{/if}}</span>
+          <span class="text" rel="div_reply_email" disabled="disabled">{{if to_email }} ${to_email} {{/if}}</span>
           <input type="hidden" rel="hidden_reply_to" name="product[email_configs_attributes][${index_id}][to_email]" {{if to_email }} value="${to_email}" {{/if}}/>
       </div>
 
