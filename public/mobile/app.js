@@ -31117,20 +31117,30 @@ Ext.define("Freshdesk.view.TicketDetails", {
             var hiddenConvs = Ext.select('.conversation.hide');
             hiddenConvs.toggleCls('hide').hide();
             hiddenConvs.show({
-                type:'slide',
+                type:'slideIn',
                 direction:'down',
                 easing:'ease-in-out',
                 duration:300
             });
         },50);
     },
-    addActionListeners : function(container){
+    addStyleForMsg : function(container){
         var elms = container.element.select('.msg').elements,self=this;
         for(var index in elms) {
-               Ext.get(elms[index]).on({
-                        tap: this.onMessageTap,
-                        scope:this
-               });
+            Ext.get(elms[index]).setStyle('width',(Ext.Viewport.getWindowWidth()*0.97)+'px');
+        }
+    },
+    addActionListeners : function(container){
+        Ext.Viewport.on('orientationchange',function(){
+            this.addStyleForMsg(container)
+        },this);
+        var elms = container.element.select('.msg').elements,self=this;
+        for(var index in elms) {
+            Ext.get(elms[index]).setStyle('width',(Ext.Viewport.getWindowWidth()*0.97)+'px');
+            Ext.get(elms[index]).on({
+                tap: this.onMessageTap,
+                scope:this
+            });
         }
 
         var oldconvMsg = Ext.select('.oldconvMsg').elements[0];
