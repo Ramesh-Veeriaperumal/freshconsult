@@ -97,7 +97,8 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your Message... *',
+                        height:180,
                         required:true,
                         clearIcon:false
                     },

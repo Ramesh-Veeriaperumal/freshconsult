@@ -7,7 +7,7 @@ Ext.define('Freshdesk.view.ContactsListContainer', {
 
         var backButton = {
             text:'Home',
-            ui:'headerBtn back',
+            ui:'lightBtn back',
             xtype:'button',
             handler:this.backToDashboard,
             align:'left',
