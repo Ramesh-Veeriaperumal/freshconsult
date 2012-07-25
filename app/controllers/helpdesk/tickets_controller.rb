@@ -4,20 +4,18 @@ class Helpdesk::TicketsController < ApplicationController
   
   include ActionView::Helpers::TextHelper
   include ParserUtil
-
-  before_filter :check_user , :only => [:show]
-  before_filter :load_cached_ticket_filters, :only => [:index, :user_tickets]
-  before_filter :load_ticket_filter , :only => [:index, :show, :custom_view_save, :latest_ticket_count]
-  before_filter :add_requester_filter , :only => [:index, :user_tickets]
-  before_filter :disable_notification, :if => :save_and_close?
-  after_filter  :enable_notification, :if => :save_and_close?
-  
-  before_filter { |c| c.requires_permission :manage_tickets }
-  
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
+  
+  before_filter { |c| c.requires_permission :manage_tickets }
+
+  before_filter :check_user , :only => [:show]
+  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
+  before_filter :add_requester_filter , :only => [:index, :user_tickets]
+  before_filter :disable_notification, :if => :save_and_close?
+  after_filter  :enable_notification, :if => :save_and_close?  
   
   layout :choose_layout 
   
@@ -25,7 +23,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :get_ticket_agents, :quick_assign] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
-  #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
 
@@ -71,18 +68,18 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_ticket_filter
-    return if @ticket_filter
+    return if @cached_filter_data
 
-   filter_name = @template.current_filter
-   if !is_num?(filter_name)
-    load_default_filter(filter_name)
-   else
-    @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
-    return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
-    @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+    filter_name = @template.current_filter
+    if !is_num?(filter_name)
+      load_default_filter(filter_name)
+    else
+      @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
+      return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
+      @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
 
-    params.merge!(@ticket_filter.attributes["data"])
-   end
+      params.merge!(@ticket_filter.attributes["data"])
+    end
   end
 
   def load_default_filter(filter_name)
@@ -113,10 +110,6 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def set_latest_updated_at
-     @latest_updated_at = current_account.tickets.maximum(:updated_at).to_formatted_s(:db)   
-  end
- 
   def index
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
 
@@ -216,34 +209,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     render :partial => "custom_search"
   end
-  
-  def set_prev_next_tickets
-    if params[:filters].nil?
-      @filters = {}
-      
-      if @item.deleted?
-        @filters = {:filter_name => "deleted"}
-      elsif @item.spam?
-        @filters = {:filter_name => "spam"}
-      else
-        @filters = {:filter_name => "all_tickets"}
-      end
-      conditions = @item.get_default_filter_permissible_conditions(current_user)     
-      @filters.merge!(:data_hash => conditions) unless conditions.blank?
-      index_filter = @ticket_filter.deserialize_from_params(@filters)
-    else  
-      @filters = params[:filters]
-      index_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(@filters)
-    end
-
-    ticket_ids = index_filter.adjacent_tickets(@ticket, current_account, current_user)
-        
-    ticket_ids.each do |t|
-       (t[2] == "previous") ? @previous_ticket_id = t[1] : @next_ticket_id = t[1]        
-    end
-    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
-  end
-  
+    
   def add_original_to_email
       original_to = parse_email_text(@item.to_email)[:email]
       friendly_original_to = @item.to_email 
