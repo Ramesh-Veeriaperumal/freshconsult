@@ -1327,7 +1327,6 @@ a {
 		background:transparent;
 		margin-right:5px;
 		&:before{
-			display: block;
 			color:#fff;
 	 		font-size: 14px;
 			padding: 5px 5px;
@@ -1580,3 +1579,43 @@ a {
     background-position: 36px 0;
   }
 }*/
+
+/*Excute scenario style sheet*/
+.flash{
+	padding:10px;
+	.message{
+		margin-bottom: 12px;
+		margin-top: 6px;
+		&:before{
+			color:#fff;
+	 		font-size: 14px;
+			content:'\e047';
+			padding: 5px 5px;
+			font-family:'Freshdesk';
+			width:28px;
+			height:28px;
+			border:2px solid #fff;
+			background-color:#168c19 !important;;
+			@include background-image(linear-gradient(top, #58ab4e 0%,#168c19 44%));
+			@include border-radius(50px);
+			@include text-shadow(-1px -1px 0 #888);
+			margin-right:10px;
+			@include box-shadow(-2px -2px 1px #CCC);
+		}
+	}
+	div:first-child{
+		&:before{
+			font-family:'Freshdesk';
+	 		font-size: 34px;
+	 		color:#168c19;
+			content:'\7e';
+			text-shadow: -2px -2px 1px #CCC;
+		}
+		b{
+			position: relative;
+			top: -7px;
+			left: 5px;
+		}
+	}
+}	
+	
