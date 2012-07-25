@@ -39470,11 +39470,14 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         var formContainer = Ext.getCmp('newTicketForm'),
         formObj = formContainer.items.items[1];
         if(FD.Util.validate_form(formObj)){
+            Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(form,response){
+                    Ext.Viewport.setMasked(false);
                     location.href="#tickets/show/"+response.item.helpdesk_ticket.display_id;
                 },
                 failure:function(form,response){
+                    Ext.Viewport.setMasked(false);
                     var errorHtml='Please correct the bellow errors.<br/>';
                     for(var index in response.errors){
                         var error = response.errors[index],eNo= +index+1;
