@@ -1,7 +1,5 @@
 class ContactsController < ApplicationController
    
-    before_filter { |c| c.requires_permission :manage_customers }
-
     before_filter :except => [:make_agent] do |c| 
       c.requires_permission :manage_tickets
     end
