@@ -138,7 +138,6 @@ ROLES:
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
             manage_reports:          false    # Can see and run reports
-            manage_customers:     false     # Can create / edit / delete customers
     customer:
         permissions:
             portal_request:         true    # Can sumit request for support?
@@ -150,7 +149,6 @@ ROLES:
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
             manage_reports:          false    # Can see and run reports
-            manage_customers:     false     # Can create / edit / delete customers
   
     techsupport:
         title:                      Tech Support
@@ -165,7 +163,6 @@ ROLES:
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
             manage_reports:          false    # Can see and run reports
-            manage_customers:     true     # Can create / edit / delete customers
     writer:
         title:                      Writer
         description:                Allowed to edit the knowledgebase, but not manage tickets
@@ -179,7 +176,6 @@ ROLES:
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
             manage_reports:          false    # Can see and run reports
-            manage_customers:     false     # Can create / edit / delete customers
     poweruser:
         title:                      Power User
         description:                Can do everything except user administration
@@ -194,7 +190,6 @@ ROLES:
             manage_account:         false   # Account administration
             manage_reports:          false    # Can see and run reports
             view_users_info:        true    # Can see users info
-            manage_customers:     false     # Can create / edit / delete customers
     admin:
         title:                      Administrator
         description:                Has total access
@@ -209,7 +204,6 @@ ROLES:
             manage_account:         false   # Account administration
             manage_reports:          true    # Can see and run reports
             view_users_info:        true    # Can see users info
-            manage_customers:     true     # Can create / edit / delete customers
     account_admin:
             title:                      Account Admin
             description:                Can manage account
@@ -224,7 +218,6 @@ ROLES:
                manage_account:         true   # Account administration
                manage_reports:          true    # Can see and run reports
                view_users_info:        true    # Can see users info
-               manage_customers:     true     # Can create / edit / delete customers
     supervisor:
         title:                      Supervisor
         description:                Can do everything except administrator including reports
@@ -239,7 +232,6 @@ ROLES:
             manage_account:         false   # Account administration
             manage_reports:          true    # Can see and run reports
             view_users_info:        true    # Can see users info
-            manage_customers:     true     # Can create / edit / delete customers
 
 
 
