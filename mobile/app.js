@@ -39,7 +39,7 @@ Ext.application({
     tabletStartupScreen: 'resources/loading/Homescreen~ipad.jpg',
 
     launch: function() {
-        Ext.fly('appLoadingIndicator').destroy();
+        
         var dashboardContainer = {
             xtype: "dashboardContainer"
         },filtersListContainer = {
@@ -76,10 +76,11 @@ Ext.application({
             xtype:'ticketFacebookForm'
         };
 
-        Ext.Viewport.add([filtersListContainer,home,ticketsListContainer,contactsListContainer,
+        Ext.Viewport.add([
+                        filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
                         solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm
-                        ]);
+        ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
             FD.current_account = data[0].raw.account;
@@ -88,7 +89,7 @@ Ext.application({
                 FD.Util.initCustomer();
             }
             document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
-            Ext.Viewport.setMasked(false);
+            Ext.fly('appLoadingIndicator').destroy();
         }});
 
         //adding listners to ajax for showing the loading mask .. global.
@@ -104,6 +105,7 @@ Ext.application({
             }
             Ext.Viewport.setMasked(false)
         })
+
     },
 
     onUpdated: function() {

@@ -34,7 +34,7 @@ class Mobile::TicketsController < ApplicationController
     all_fields = current_account.main_portal.ticket_fields if current_user.agent?
     all_fields.each do |field|
       if field.visible_in_view_form? || is_new
-        field_value = (field.is_default_field?) ? @item[field.field_name] : @item.get_ff_value(field.name) unless @item.nil?
+        field_value = (field.is_default_field?) ? @item.send(field.field_name) : @item.get_ff_value(field.name) unless @item.nil?
         dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
         field_value =  current_user.email if (field.field_type.eql?("default_requester") && current_user.customer?)
         puts "#{field.field_type == 'default_source'}, #{dom_type}"

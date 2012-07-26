@@ -131,7 +131,7 @@ FD.Util = {
         item.name = field.is_default_field ? 'helpdesk_ticket['+field_name+']' : 'helpdesk_ticket[custom_field]['+field_name+']';
         item.required = field.required;
         item.value = field.nested_levels && field.field_value ? field.field_value.category_val : field.field_value;
-
+        item.id = "helpdesk_ticket_"+field_name;
         switch(field.domtype){
             case 'dropdown_blank':
                 item.options=[{text:'...',value:''}];
@@ -270,6 +270,32 @@ FD.Util = {
         },
         hasItem: function (sKey) { 
             return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie); 
+        }
+    },
+    setAgentOptions : function(options){
+        var responderObj = Ext.getCmp('helpdesk_ticket_responder_id');
+        responderObj.setOptions(options);
+    },
+    populateAgents : function(comp){
+        var group_id = comp.getValue(),
+            callBack = function(res){
+            var data = JSON.parse(res.responseText),
+            options = [{text:'...',value:''}];
+            data.forEach(function(agent){
+                options.push({text:agent.name,value:agent.id})
+            });
+            if(options.length === 1 ){
+                options = [{text:'No agents in selected group',value:''}];
+            }
+            FD.Util.setAgentOptions(options)
+        };
+        if(group_id){
+            FD.Util.getJSON({
+                url:'/helpdesk/tickets/get_agents/'+group_id
+            },callBack,this,false);
+        }
+        else {
+            FD.Util.setAgentOptions(FD.all_responders)
         }
     }
 }

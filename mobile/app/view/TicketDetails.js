@@ -43,10 +43,10 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '</div>',
                         '<div class="Info"><a href="{[!FD.current_user.is_customer && values.requester.is_customer ? \"#contacts/show/\"+values.requester.id : \"#\"]}">{requester.name}</a>',
                         '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
-                            '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                            '<tpl if="private"><span class="{source_name}"></span></tpl>',
                         '</div></div>',
                         '<div class="msg fromReq">',
-                                '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                 '<tpl if="description_html.length &gt; 200"><div class="conv ellipsis" id="{id}"><tpl else>',
                                         '<div class="conv" id="{id}">',
                                 '</tpl>',
@@ -83,10 +83,10 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '</tpl>',
                                 '<tpl if="FD.current_user.is_customer"><a href="#">{user.name}</a></tpl>',
                                 '<div class="date"> on {created_at:this.formatedDate}  {source_name:this.formatedSource} ',
-                                '<tpl if="private"><span class="{source_name}">&nbsp;</span></tpl>',
+                                '<tpl if="private"><span class="{source_name}"></span></tpl>',
                                 '</div></div>',
                                 '<tpl if="user.is_customer"><div class="msg fromReq">',
-                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
@@ -98,7 +98,7 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                         '<div id="loadmore_note_{id}"><tpl if="body_mobile.length &gt; 200"><a class="loadMore" href="javascript:FD.Util.showAll(\'note_{id}\')">&middot; &middot; &middot;</a></tpl></div>',
                                 '</div></tpl>',
                                 '<tpl if="user.is_agent"><div class="msg">',
-                                        '<tpl if="attachments.length &gt; 0"><span class="clip">&nbsp;</span></tpl>',
+                                        '<tpl if="attachments.length &gt; 0"><span class="clip"></span></tpl>',
                                         '<tpl if="body_mobile.length &gt; 200"><div class="conv ellipsis" id="note_{id}"><tpl else><div class="conv" id="note_{id}"></tpl>',
                                                 '{body_mobile}',
                                         '</div>',
@@ -179,20 +179,30 @@ Ext.define("Freshdesk.view.TicketDetails", {
             var hiddenConvs = Ext.select('.conversation.hide');
             hiddenConvs.toggleCls('hide').hide();
             hiddenConvs.show({
-                type:'slide',
+                type:'slideIn',
                 direction:'down',
                 easing:'ease-in-out',
                 duration:300
             });
         },50);
     },
-    addActionListeners : function(container){
+    addStyleForMsg : function(container){
         var elms = container.element.select('.msg').elements,self=this;
         for(var index in elms) {
-               Ext.get(elms[index]).on({
-                        tap: this.onMessageTap,
-                        scope:this
-               });
+            Ext.get(elms[index]).setStyle('width',(Ext.Viewport.getWindowWidth()*0.97)+'px');
+        }
+    },
+    addActionListeners : function(container){
+        Ext.Viewport.on('orientationchange',function(){
+            this.addStyleForMsg(container)
+        },this);
+        var elms = container.element.select('.msg').elements,self=this;
+        for(var index in elms) {
+            Ext.get(elms[index]).setStyle('width',(Ext.Viewport.getWindowWidth()*0.97)+'px');
+            Ext.get(elms[index]).on({
+                tap: this.onMessageTap,
+                scope:this
+            });
         }
 
         var oldconvMsg = Ext.select('.oldconvMsg').elements[0];

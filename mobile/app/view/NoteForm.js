@@ -6,6 +6,7 @@ Ext.define('Freshdesk.view.NoteForm', {
         var cannedResPopup = Ext.ComponentQuery.query('#cannedResponsesPopup')[0];
         //setting the data to canned response popup list
         cannedResPopup.items.items[0].setData(FD.current_account.canned_responses);
+        cannedResPopup.items.items[0].deselectAll();
         cannedResPopup.show();
     },
     config: {
@@ -79,7 +80,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                     {
                         xtype: 'togglefield',
                         name: 'helpdesk_note[private]',
-                        label: 'Show this note to requester? ',
+                        label: 'Visible to requester ',
                         itemId:'noteFormPrivateField',
                         labelWidth: '71%'
                     },

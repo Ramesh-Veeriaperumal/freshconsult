@@ -6,7 +6,7 @@ Ext.define("Freshdesk.view.Scenarioies", {
         var flashMessageBox = Ext.ComponentQuery.query('#flashMessageBox')[0],
         resJson = JSON.parse(res.responseText),
         flashData = {
-            title:'Executed scenario <b>'+resJson.rule_name+'</b>',
+            title:'<b>'+resJson.rule_name+'</b>',
             messages:resJson.actions_executed
         },
         me=this;
