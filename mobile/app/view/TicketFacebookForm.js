@@ -45,6 +45,7 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
         this.add([topToolbar,facebookForm]);
     },
     backToDetails : function(){
+        this.hide();
         Freshdesk.cancelBtn=true;
         Freshdesk.anim = {type:'cover',direction:'down'};
         location.href="#tickets/show/"+this.ticket_id;
@@ -57,6 +58,7 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
+                    this.parent.hide();
                     Ext.Viewport.setMasked(false);
                     location.href="#tickets/show/"+id;
                 },
@@ -75,6 +77,17 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
     },
     config: {
         layout:'fit',
-        id: 'ticketFacebookForm'
+        id: 'ticketFacebookForm',
+        showAnimation : {
+            type:'slideIn',
+            direction:'up',
+            easing:'ease-out'
+        },
+        hideAnimation: {
+                type:'slideOut',
+                direction:'down',
+                easing:'ease-out'
+        },
+        zIndex:9
     }
 });

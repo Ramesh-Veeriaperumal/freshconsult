@@ -4,6 +4,7 @@
 <ul class="ui-form">
 	<li>
 			<label><%=t('email_configs.name')%></label>
+			<div class="info-data"><%= t('email_configs.name_info_msg') %> </div>
 			<%= f.text_field :name, :class => "text" %>
 	</li>
 	<li>	
@@ -21,7 +22,7 @@
 			<div class="info-data"><%=t('email_configs.info10')%> </div>
 			<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
 	</li> 
-	<% if feature?(:multi_product)  && !@products.empty? %> 
+	<% if feature?(:multi_product)  && !@products.empty?  && !@email_config.primary_role %> 
 		<li>
 			<label><%=t('email_configs.assign_to_product_msg')%></label>
 			<div class="info-data"><p><%=t('email_configs.assign_to_product_info', :products_path => admin_products_path)%></p></div> 
@@ -48,8 +49,7 @@
               jQuery("#div_reply_email").text(reply_email);
               jQuery("#hidden_reply_to").val(reply_email);
             }
-        })
-        .trigger("change");        
+        });
     });
   <%- end %>
 <%- end %>

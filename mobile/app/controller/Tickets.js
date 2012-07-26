@@ -92,18 +92,21 @@ Ext.define('Freshdesk.controller.Tickets', {
             var replyForm = this.getTicketReply();
             replyForm.ticket_id = id;
             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketReplyForm";
-            Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
+            //Ext.Viewport.animateActiveItem(replyForm, this.coverUp);
+            replyForm.show();
         }
         else if(this.ticket.is_twitter){
             var tweetForm = this.getTicketTweetForm();
             this.initTweetForm(id);
             tweetForm.ticket_id = id;
-            Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
+            //Ext.Viewport.animateActiveItem(tweetForm, this.coverUp);
+            tweetForm.show();
         }else if(this.ticket.is_facebook){
             var facebookForm = this.getTicketFacebookForm();
             this.initFacebookForm(id);
             facebookForm.ticket_id = id;
-            Ext.Viewport.animateActiveItem(facebookForm, this.coverUp);   
+            //Ext.Viewport.animateActiveItem(facebookForm, this.coverUp);   
+            facebookForm.show();
         }
         
     },
@@ -112,7 +115,8 @@ Ext.define('Freshdesk.controller.Tickets', {
         var noteForm = this.getTicketNote();
         noteForm.ticket_id = id;
         Ext.ComponentQuery.query('#cannedResponsesPopup')[0].formContainerId="ticketNoteForm";
-        Ext.Viewport.animateActiveItem(noteForm, this.coverUp);
+        noteForm.show();
+        //Ext.Viewport.animateActiveItem(noteForm, this.coverUp);
     },
     scenarios : function(id){
         FD.Util.check_user();
@@ -120,7 +124,9 @@ Ext.define('Freshdesk.controller.Tickets', {
         //setting the data to canned response popup list
         scenarios.items.items[0].setData(FD.current_account.scn_automations);
         scenarios.ticket_id = id;
-        Ext.Viewport.animateActiveItem(scenarios, this.coverUp);
+        scenarios.items.items[0].deselectAll();
+        //Ext.Viewport.animateActiveItem(scenarios, this.coverUp);
+        scenarios.show();
     },
     close: function(id){
 

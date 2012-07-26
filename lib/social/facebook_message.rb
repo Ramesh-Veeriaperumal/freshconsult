@@ -51,7 +51,7 @@ def add_message_as_note thread, ticket
 end
 
 def add_message_as_ticket thread
-  group_id = @fb_page.product.group_id unless @fb_page.product.blank?
+  group_id = @fb_page.product.primary_email_config.group_id unless @fb_page.product.blank?
   messages = thread[:messages].symbolize_keys!
   messages = get_new_data_set messages
   message = messages.last #Need to check last is giving the first message/or we need to find the least created date

@@ -11,7 +11,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam]
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
   
   before_filter { |c| c.requires_permission :manage_tickets }
   
@@ -458,7 +458,22 @@ class Helpdesk::TicketsController < ApplicationController
     blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
     @agents = current_account.agents.all(:include =>:user)
     @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
-    render :partial => "agent_groups", :locals =>{ :blank_value => blank_value}
+    respond_to do |format|
+      format.html {
+        render :partial => "agent_groups", :locals =>{ :blank_value => blank_value }
+      }
+      format.mobile {
+        json = "["; sep=""
+          @agents.each { |agent_group|
+            user = agent_group.user
+            #Removing the root node, so that it conforms to JSON REST API standards
+            # 8..-2 will remove "{user:" and the last "}"
+            json << sep + user.to_mob_json()[8..-2]; sep=","
+          }
+        render :json => json + "]"
+      }
+    end
+    
   end
   
   def new

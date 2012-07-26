@@ -45,6 +45,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
         this.add([topToolbar,tweetForm]);
     },
     backToDetails : function(){
+        this.hide();
         Freshdesk.cancelBtn=true;
         Freshdesk.anim = {type:'cover',direction:'down'};
         location.href="#tickets/show/"+this.ticket_id;
@@ -57,6 +58,7 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
+                    this.parent.hide();
                     Ext.Viewport.setMasked(false);
                     location.href="#tickets/show/"+id;
                 },
@@ -74,6 +76,17 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
     },
     config: {
         layout:'fit',
-        id: 'ticketTweetForm'
+        id: 'ticketTweetForm',
+        showAnimation : {
+            type:'slideIn',
+            direction:'up',
+            easing:'ease-out'
+        },
+        hideAnimation: {
+                type:'slideOut',
+                direction:'down',
+                easing:'ease-out'
+        },
+        zIndex:9
     }
 });

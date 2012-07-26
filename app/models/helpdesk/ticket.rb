@@ -123,6 +123,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
   
+  has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+  
   attr_protected :attachments #by Shan - need to check..
   
   accepts_nested_attributes_for :tweet, :fb_post
@@ -222,15 +224,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Sphinx configuration starts
   define_index do
    
-    define_source do
+    
       indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
      indexes sphinx_notes.body, :as => :note
     
      has account_id, deleted
-
-     where "helpdesk_tickets.id > 0 and  0"
 
      #set_property :delta => :delayed
      set_property :field_weights => {
@@ -240,8 +240,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :note         => 3
      }
       
-    end
-
+   
      
   end
   #Sphinx configuration ends here..

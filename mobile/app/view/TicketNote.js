@@ -44,6 +44,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         this.add([topToolbar,emailForm]);
     },
     backToDetails : function(){
+        this.hide();
         Freshdesk.cancelBtn=true;
         Freshdesk.anim = {type:'cover',direction:'down'};
         location.href="#tickets/show/"+this.ticket_id;
@@ -53,13 +54,14 @@ Ext.define('Freshdesk.view.TicketNote', {
         formObj = this.items.items[1],
         values = formObj.getValues(),
         privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
-        if(FD.current_user.is_agent){
-            Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
-        }
         if(values["helpdesk_note[body_html]"].trim() != '') {
+            if(FD.current_user.is_agent){
+                Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+            }
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
+                    this.parent.hide();
                     Ext.Viewport.setMasked(false);
                     Freshdesk.notification={
                         success : "The note has been added."
@@ -79,10 +81,21 @@ Ext.define('Freshdesk.view.TicketNote', {
         }
     },
     getMessageItem: function(){
-        return this.items.items[1].items.items[0].items.items[2];
+        return this.items.items[1].items.items[0].items.items[1];
     },
     config: {
         layout:'fit',
-        id: 'ticketNoteForm'
+        id: 'ticketNoteForm',
+        showAnimation : {
+            type:'slideIn',
+            direction:'up',
+            easing:'ease-in-out'
+        },
+        hideAnimation: {
+                type:'slideOut',
+                direction:'down',
+                easing:'ease-in-out'
+        },
+        zIndex:9
     }
 });

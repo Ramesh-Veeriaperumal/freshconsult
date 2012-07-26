@@ -128,7 +128,7 @@ module ApplicationHelper
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
-      ['/contacts',           :customers,    permission?(:manage_customers)],
+      ['/contacts',           :customers,    permission?(:manage_tickets)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/reports',            :reports,      permission?(:manage_reports) ],
       ['/admin/home',         :admin,        permission?(:manage_users)],
@@ -491,11 +491,11 @@ module ApplicationHelper
     }.merge!(_opt)
 
     _field.nested_levels.each do |l|       
-      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = sanitize_to_id(_name +"_"+ l[:name])
+      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
       _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
     end
     
-    _category + javascript_tag("jQuery('##{sanitize_to_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")        
+    _category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")
 
   end
   

@@ -12,15 +12,16 @@ Ext.define("Freshdesk.view.Solutions", {
     config: {
         itemId : 'solutionsPopup',
         cls:'solution',
+        zIndex:10,
         showAnimation: {
-                type:'slide',
+                type:'slideIn',
                 direction:'up',
-                easing:'ease-out'
+                easing:'ease-in-out'
         },
         hideAnimation: {
-                type:'slide',
+                type:'slideOut',
                 direction:'down',
-                easing:'ease-out'
+                easing:'ease-in-out'
         },
         layout:'fit',
         hidden:true,
