@@ -952,6 +952,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     to_json(options,false) 
   end
  
+  def can_access?(user)
+      return true if user.agent.all_ticket_permission || self.responder_id==user.id
+      if user.agent.group_ticket_permission          
+         user.agent_groups.each do |ag|                   
+                 return true if self.group_id == ag.group_id
+          end                           
+      end
+    return false
+  end
+
   private
   
     def create_source_activity

@@ -111,7 +111,7 @@ class SearchController < ApplicationController
         s_options[:category_id] = current_portal.solution_category_id
         @items.concat(Solution::Article.search params[:search_key], :with => s_options,
                                   :max_matches => (4 if @widget_solutions),
-                                  :per_page => 10)
+                                  :per_page => page_limit)
       end
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
@@ -140,17 +140,28 @@ class SearchController < ApplicationController
         results[i.class.name] ||= []
         results[i.class.name] << i
       end
-      
+
+      @total_results = 0
       @searched_tickets   = results['Helpdesk::Ticket']
+      @searched_tickets = @searched_tickets.select {|ticket| ticket.can_access?(current_user)} unless current_user.agent.all_ticket_permission
+      @total_results += @searched_tickets.size unless @searched_tickets.nil?
       @searched_articles  = results['Solution::Article']
-      @searched_users     = results['User']
-      @searched_companies = results['Customer']
+      @total_results += @searched_articles.size unless @searched_articles.nil?
+      @searched_users     = results['User'] unless current_user.can_view_all_tickets?
+      @total_results += @searched_users.size unless @searched_users.nil?
+      @searched_companies = results['Customer'] unless current_user.can_view_all_tickets?
+      @total_results += @searched_companies.size unless @searched_companies.nil?
       @searched_topics    = results['Topic']
+      @total_results += @searched_topics.size unless @searched_topics.nil?
       
-      @total_results = @items.size
       @search_key = params[:search_key]
     end
-  
+    
+    def page_limit
+      return 20 if current_user.can_view_all_tickets?
+      return 10
+    end
+
     def forums_allowed_in_portal?
       render :nothing => true and return unless (feature?(:forums) && allowed_in_portal?(:open_forums))
     end
