@@ -8,11 +8,11 @@ class Account < ActiveRecord::Base
   serialize :sso_options, Hash
   
   
-  has_many :tickets, :class_name => 'Helpdesk::Ticket'
-  has_many :notes, :class_name => 'Helpdesk::Note'
-  has_many :activities, :class_name => 'Helpdesk::Activity'
-  has_many :flexifields
-  has_many :ticket_states, :class_name =>'Helpdesk::TicketState'
+  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
+  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
+  has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
+  has_many :flexifields, :dependent => :delete_all
+  has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }

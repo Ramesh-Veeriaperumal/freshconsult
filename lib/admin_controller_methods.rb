@@ -12,6 +12,7 @@ module AdminControllerMethods
     base.send :skip_before_filter, :check_day_pass_usage
     base.send :layout, "subscription_admin"
     base.send :prepend_before_filter,:login_from_basic_auth
+    base.send :prepend_before_filter,:set_time_zone
   end
   
   protected
@@ -55,6 +56,10 @@ module AdminControllerMethods
         end
        end
      end
+
+    def set_time_zone
+      Time.zone = 'Pacific Time (US & Canada)'
+    end
     
     # Since the default, catch-all routes at the bottom of routes.rb
     # allow the admin controllers to be accessed via any subdomain,
