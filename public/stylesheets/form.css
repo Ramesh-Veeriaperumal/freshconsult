@@ -614,11 +614,11 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .multi-product-add.ui-form .add-email a.add-email-icon { padding: 8px 8px 4px 35px; font-size: 14px; font-family: "Helvetica Neue", sans-serif; font-weight: 300; text-decoration: none; color: #404040; position: relative; display: -moz-inline-box; -moz-box-orient: vertical; display: inline-block; vertical-align: middle; *vertical-align: auto; }
 .multi-product-add.ui-form .add-email a.add-email-icon { *display: inline; }
 .multi-product-add.ui-form .add-email a.add-email-icon span { position: absolute; left: 0px; top: 4px; background: url("../images/email_config_add.png") no-repeat; width: 25px; height: 25px; }
-.multi-product-add.ui-form .configure-portal { position: relative; }
-.multi-product-add.ui-form .configure-portal label { background-color: #efefef; border-bottom: 1px solid #d1d1d1; border-top: 1px solid #d1d1d1; padding: 10px 0; font-weight: 300; font-size: 1.3em; }
-.multi-product-add.ui-form .configure-portal .toggle-button { position: absolute; left: 75%; top: 9px; margin-left: -50px; }
+.multi-product-add.ui-form .configure-portal { text-align: center; background-color: #efefef; border-bottom: 1px solid #d1d1d1; border-top: 1px solid #d1d1d1; padding: 10px 0; }
+.multi-product-add.ui-form .configure-portal label { font-weight: 300; font-size: 1.3em; display: inline; }
 .multi-product-add.ui-form .big-seperator { border-bottom: 1px solid #dfdfdf; display: block; height: 1px; margin: 5px 0px 12px; }
-.multi-product-add.ui-form .configure-email-form { padding: 0 10px 12px 10px; margin-bottom: 11px; border: 1px solid #dfdfdf; background-color: #fbfbfb; overflow: hidden; *zoom: 1; -moz-border-radius: 4px 4px 4px 4px; -webkit-border-radius: 4px 4px 4px 4px; border-radius: 4px 4px 4px 4px; width: 90%; }
+.multi-product-add.ui-form .configure-email-form { padding: 0 10px 12px 10px; margin-bottom: 11px; border: 1px solid #dfdfdf; background-color: #fbfbfb; *zoom: 1; -moz-border-radius: 4px 4px 4px 4px; -webkit-border-radius: 4px 4px 4px 4px; border-radius: 4px 4px 4px 4px; width: 90%; position: relative; }
+.multi-product-add.ui-form .configure-email-form:after { content: ""; display: table; clear: both; }
 .multi-product-add.ui-form .configure-email-form .column { float: left; }
 .multi-product-add.ui-form .configure-email-form .column.left-column { width: 50%; }
 .multi-product-add.ui-form .configure-email-form .column.left-column .text { font-weight: bold; }
@@ -627,7 +627,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .multi-product-add.ui-form .configure-email-form .column.right-column input.checkbox { margin: 5px; float: left; }
 .multi-product-add.ui-form .configure-email-form .column.right-column .set_primary { padding-top: 27px; }
 .multi-product-add.ui-form .configure-email-form .column.right-column select { margin-top: 4px; }
-.multi-product-add.ui-form .configure-email-form .deleteChoice { cursor: pointer; background: url(/images/email_config_delete.png) no-repeat; width: 25px; height: 25px; position: absolute; right: 1%; }
+.multi-product-add.ui-form .configure-email-form .deleteChoice { cursor: pointer; background: url(/images/email_config_delete.png) no-repeat; width: 25px; height: 25px; position: absolute; right: -28px; }
 .multi-product-add.ui-form .configure-email-form .deleteChoice.disabled { background: url(/images/email_config_delete_disabled.png) no-repeat; }
 
 .ui-form .portal-settings div.fields { padding-top: 4px; }

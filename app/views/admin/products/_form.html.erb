@@ -1,7 +1,7 @@
 <script id="emailConfigTemplate" type="text/x-jquery-tmpl">  
   <div class="configure-email-form">
-      <div class="column left-column">
-          <span class="deleteChoice {{if (primary_role == true) }} disabled {{/if}}">&nbsp;</span>
+      <span class="deleteChoice {{if (primary_role == true) }} disabled {{/if}}">&nbsp;</span>
+      <div class="column left-column">          
           <input type="hidden" name="product[email_configs_attributes][${index_id}][id]" value="${email_config_id}"/>
           <label><%=t('admin.products.form.enter_support_email_id')%>*</label>
           <input type="text" class="required text email" name="product[email_configs_attributes][${index_id}][reply_email]" rel="reply_to_id" {{if reply_email }} value="${reply_email}" {{/if}}/>
@@ -59,10 +59,10 @@
     </div>
 
     <div class="configure-portal">
-      <label class="aligncenter">
+      <label>
         <%= t("admin.products.form.configure_seperate_portal") %> 
+        <%= form.check_box :enable_portal, {:class => "checkbox", :rel => "toggle", :id => "EnablePortal" } %>
       </label>
-      <%= form.check_box :enable_portal, {:class => "checkbox", :rel => "toggle", :id => "EnablePortal" } %>
     </div>
 
     <div id="PortalSettings">
@@ -128,7 +128,7 @@
       jQuery(".deleteChoice").live('click',
         function(ev){
           if(!jQuery(this).hasClass('disabled')){
-            jQuery(this).parent().parent().hide().find("input[rel=delete]").val(true);
+            jQuery(this).parent().hide().find("input[rel=delete]").val(true);
           } 
         }
       );
