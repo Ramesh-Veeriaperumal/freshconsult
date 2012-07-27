@@ -7,7 +7,7 @@ class EmailConfig < ActiveRecord::Base
   attr_protected :account_id, :active
   
   validates_presence_of :to_email, :reply_email
-  validates_uniqueness_of :reply_email, :scope => :account_id, :message => I18n.t('email_configs.support_email_exists')
+  validates_uniqueness_of :reply_email, :scope => :account_id
   validates_uniqueness_of :activator_token, :allow_nil => true
   
   def active?
