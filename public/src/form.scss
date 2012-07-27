@@ -1988,20 +1988,15 @@ ul.ui-form .inputs-list{
 			}
 		}
 		.configure-portal{
-			position: relative;
-			label{
-				background-color: #efefef;
-				border-bottom: 1px solid #d1d1d1;
-				border-top: 1px solid #d1d1d1;
-				padding: 10px 0; 
+			text-align: center;
+			background-color: #efefef;
+			border-bottom: 1px solid #d1d1d1;
+			border-top: 1px solid #d1d1d1;
+			padding: 10px 0; 
+			label{				
 				font-weight: 300;
 				font-size: 1.3em;
-			}
-			.toggle-button{
-				position: absolute;
-				left: 75%;
-				top: 9px;
-				margin-left: -50px;
+				display: inline;
 			}
 		}
 		.big-seperator{
@@ -2015,9 +2010,10 @@ ul.ui-form .inputs-list{
 			margin-bottom: 11px;
 			border: 1px solid #dfdfdf;
 			background-color: #fbfbfb;
-			@include clearfix;
+			@include pie-clearfix;
 			@include corners(4px);
 			width: 90%;
+			position:relative;
 			.column{
 				float: left;
 				&.left-column{
@@ -2049,7 +2045,7 @@ ul.ui-form .inputs-list{
 				width: 25px; 
 				height: 25px;
 				position: absolute;
-				right: 1%;
+				right: -28px;
 				&.disabled{
 					background: url(/images/email_config_delete_disabled.png) no-repeat;
 				}
