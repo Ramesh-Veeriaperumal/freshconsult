@@ -105,7 +105,7 @@ Ext.define("Freshdesk.view.Home", {
                         docked:'bottom',
                         centered:true,
                         tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
-                             '<p id="helpdesk_FD_brand" class="hide">A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                             '<p id="helpdesk_FD_brand" class="hide"><a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
                         }
