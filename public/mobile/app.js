@@ -30515,7 +30515,7 @@ Ext.define("Freshdesk.view.Home", {
         hidden:true,
         listeners: {
             show:function(){
-                var portalData = FD.current_account.main_portal;
+                var portalData = FD.current_portal;
                 portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
@@ -30605,7 +30605,7 @@ Ext.define("Freshdesk.view.Home", {
                         docked:'bottom',
                         centered:true,
                         tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
-                             '<p id="helpdesk_FD_brand" class="hide">A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                             '<p id="helpdesk_FD_brand" class="hide"><a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
                         }
@@ -30843,8 +30843,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             formObj.setUrl('/support/tickets')
         }
 
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);    
+        }
+        catch(e){
+
+        }
         
         Ext.Viewport.animateActiveItem(formContainer, anim);
     },
@@ -31532,7 +31537,7 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 
         var backButton = {
             xtype:'button',
-            text:'Hide',
+            text:'Close',
 			ui:'lightBtn back',
             handler:this.goBack,
 			align:'left',
@@ -31541,15 +31546,16 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 		var topToolbar = {
 			xtype: "titlebar",
 			docked: "top",
+            title:'Results',
             ui:'header',
 			items: [backButton]
 		};
 
         var details = {
             tpl : new Ext.XTemplate(['<div class="flash">',
-                        '<tpl if="title"><div></div><div class="scenario_text">{title}</div></tpl>',
+                        '<tpl if="title"><div><div class="icon-scenario"></div><div class="scenario-text">{title}</div></div></tpl>',
                         '<tpl for="messages">',
-                            '<div class="message"></div><div class="scenario_text">{.}</div>',
+                            '<div><div class="icon-message"></div><div class="scenario-text">{.}</div></div>',
                         '</tpl>',
                     '</div>'
             ].join('')),
@@ -31564,11 +31570,9 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
         this.add([topToolbar,details]);
     },
     goBack : function(){
+        this.hide();
         if(this.hideHandler){
-            this.hide();
             this.hideHandler();            
-        }else{
-            this.hide();
         }
     },
     config: {
@@ -40680,8 +40684,14 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             this.items.items[1].items.items[2].showProperties();
         }
         
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        }
+        catch(e){
+
+        }
+        
  
     },
     showProperties: function(setActive){
@@ -57025,12 +57035,13 @@ Ext.application({
         ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
+            FD.current_portal = data[0].raw.portal;
             FD.current_account = data[0].raw.account;
             FD.current_user = data[0].raw.user;
             if(FD.current_user && FD.current_user.is_customer) {
                 FD.Util.initCustomer();
             }
-            document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            document.title = FD.current_portal && FD.current_portal.name+' : Helpdesk';
             Ext.fly('appLoadingIndicator').destroy();
         }});
 

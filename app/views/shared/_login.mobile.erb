@@ -110,7 +110,7 @@
 								<h5>Sign in using...</h5>
 								<%= content_tag(:li, link_to("Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "icon-google-plus")) if feature?(:google_signin) %>
 								<%= content_tag(:li, link_to("Twitter", "/auth/twitter", :class => "icon-twitter")) if feature?(:twitter_signin) %>
-								<%= content_tag(:li, link_to("Facebook", "/auth/facebook", :class => "icon-facebook")) if feature?(:facebook_signin) %>
+								<%= content_tag(:li, link_to("Facebook", "/sso/facebook", :class => "icon-facebook")) if feature?(:facebook_signin) %>
 							</ul>
 						</div>
 

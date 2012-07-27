@@ -17,7 +17,7 @@ class Mobile::TicketsController < ApplicationController
   def get_portal
     #do it in better way..
     # mob_json = current_account.to_mob_json(current_user.agent?)[0..-2]+","+current_user.to_mob_json[1..-1]
-    mob_json = "#{current_account.to_mob_json(current_user.agent?)[0..-2]},#{current_user.to_mob_json[1..-1]}"
+    mob_json = "#{current_account.to_mob_json(current_user.agent?)[0..-2]},#{current_user.to_mob_json[1..-2]},#{current_portal.to_mob_json[1..-1]}"
     render :json => mob_json
   end
 
@@ -31,7 +31,7 @@ class Mobile::TicketsController < ApplicationController
     @item = current_account.tickets.find_by_display_id(params[:id]) unless params[:id].nil?
     @fields = []
     all_fields = current_portal.customer_editable_ticket_fields if current_user.customer?
-    all_fields = current_account.main_portal.ticket_fields if current_user.agent?
+    all_fields = current_portal.ticket_fields if current_user.agent?
     all_fields.each do |field|
       if field.visible_in_view_form? || is_new
         field_value = (field.is_default_field?) ? @item.send(field.field_name) : @item.get_ff_value(field.name) unless @item.nil?
