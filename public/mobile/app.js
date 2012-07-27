@@ -30843,8 +30843,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             formObj.setUrl('/support/tickets')
         }
 
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);    
+        }
+        catch(e){
+
+        }
         
         Ext.Viewport.animateActiveItem(formContainer, anim);
     },
@@ -38840,7 +38845,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                         xclass: 'plugin.ux.ListPaging2',
                         autoPaging: false,
                         centered:true,
-                        loadMoreText: 'Please Wait...',
+                        loadMoreText: 'Load more...',
                         noMoreRecordsText: 'No more tickets.'
                     },
                     {
@@ -40679,8 +40684,14 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             this.items.items[1].items.items[2].showProperties();
         }
         
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        }
+        catch(e){
+
+        }
+        
  
     },
     showProperties: function(setActive){
