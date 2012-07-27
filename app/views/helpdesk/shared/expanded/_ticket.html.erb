@@ -14,10 +14,10 @@
 		<% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data hideForList" do %>
 				<%= t("ticket.reported_on_ticket_list", 
-						:username => link_to("<strong>" + h(ticket.requester.display_name) + "</strong>", ticket.requester, :class => 'user_name' ), 
+						:username => link_to("<span class='emphasize'>" + h(ticket.requester.display_name) + "</span>", ticket.requester, :class => 'user_name' ), 
 						:time_words => time_ago_in_words(ticket.updated_at), 
 						:date => formated_date(ticket.updated_at)) %>
-				<div class="sla_status"><%= sla_status(ticket) %></div>
+				<div class="emphasize"><%= sla_status(ticket) %></div>
 			<% end %>
 		<% end %>
 	</div>
@@ -41,13 +41,11 @@
 	  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
 
 	  			<label><%=t('ticket.assigned_agent')%>: </label>
-	  			<span class="result" >
 				<% if ticket.freshness == :new %>
-					<%=t('ticket.assigned_none')%>
+					<%=content_tag :span, t('ticket.assigned_none'), :class => "result" %>
 				<% else %>
-					<%= h(ticket.responder.display_name) %>
+					<%=content_tag :span, h(ticket.responder.display_name) , :class => "result" %>
 				<% end %>
-				</span>
 			</li>
 
 	  		<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
