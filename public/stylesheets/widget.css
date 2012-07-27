@@ -416,6 +416,8 @@ span.sort_handle { position: relative; left: 0; top: 1px; width: 25px; height: 2
 .ui-custom-form li { *zoom: 1; position: relative; cursor: move; border-bottom: 1px solid #efefef; }
 .ui-custom-form li:after { content: ""; display: table; clear: both; }
 .ui-custom-form li div { position: relative; }
+.ui-custom-form li input { width: 90%; }
+.ui-custom-form .requester span { margin-left: 3px; }
 .ui-custom-form li:hover, .ui-custom-form li.hover, .ui-custom-form li.active { background: #ffffff; border-color: #dfdfdf; }
 .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel { display: block; }
 .ui-custom-form li:hover .action_panel, .ui-custom-form li.hover .action_panel, .ui-custom-form li.active .action_panel { visibility: visible; }

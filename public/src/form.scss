@@ -849,7 +849,7 @@ span.sort_handle{
 	@include pie-clearfix;
 	li{
 		float:left;
-		position:relative;
+		position:relative;		
 		a{
 			margin:6px 6px 0 0;
 			font-size:13px;
@@ -879,8 +879,11 @@ span.sort_handle{
 		div{ position:relative; }
 		cursor:move;
 		border-bottom:1px solid #efefef;
+		input{	width:90%; }
 	} 
-	
+	.requester span{
+		margin-left: 3px;
+	}
 	li:hover, li.hover, li.active{
 		background:#ffffff;
 		border-color:#dfdfdf;
