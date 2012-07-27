@@ -479,6 +479,7 @@ module ApplicationHelper
     else
        element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
     end
+    return element
   end
 
   # The field_value(init value) for the nested field should be in the the following format
