@@ -40,12 +40,7 @@ class Portal < ActiveRecord::Base
   def fav_icon_url
     fav_icon.nil? ? '/images/favicon.ico' : fav_icon.content.url
   end
-  
-  #Helpers for views
-  def main_portal?
-    product.primary_role
-  end
-  
+    
   def solution_categories
     main_portal ? account.solution_categories : (solution_category ? [solution_category] : [])
   end
