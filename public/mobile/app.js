@@ -30515,7 +30515,7 @@ Ext.define("Freshdesk.view.Home", {
         hidden:true,
         listeners: {
             show:function(){
-                var portalData = FD.current_account.main_portal;
+                var portalData = FD.current_portal;
                 portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
@@ -57024,12 +57024,13 @@ Ext.application({
         ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
+            FD.current_portal = data[0].raw.portal;
             FD.current_account = data[0].raw.account;
             FD.current_user = data[0].raw.user;
             if(FD.current_user && FD.current_user.is_customer) {
                 FD.Util.initCustomer();
             }
-            document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            document.title = FD.current_portal && FD.current_portal.name+' : Helpdesk';
             Ext.fly('appLoadingIndicator').destroy();
         }});
 
