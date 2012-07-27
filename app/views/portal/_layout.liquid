@@ -1,4 +1,20 @@
 {{ header_content }}  
+<header class="portal-nav">
+	<div class="wrapper">
+		<div class="pull-right">
+			<div class="well top-submit-btn">
+				<button class="btn btn-ticket" type="button"><i class='icon-file'></i> Submit a ticket </button>
+			</div>
+		</div>
+		<ul class="portal-tabs">
+			{% for tab in portal.tabs %}
+			<li>
+				<a href="{{ tab.url }}">{{ tab.label }}</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+</header>
 <section id="support-portal" class="container">
 	<div class="page-container">
 		<div class="row-fluid">			

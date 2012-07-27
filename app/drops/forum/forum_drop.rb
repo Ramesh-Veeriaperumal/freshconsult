@@ -27,6 +27,10 @@ class Forum::ForumDrop < BaseDrop
   def url
     support_discussions_forum_path(source)
   end
+
+  def create_topic_url
+    new_support_discussions_forum_topic_path(source)
+  end
   
   def topics
     @topics ||= liquify(*@source.topics)

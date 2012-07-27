@@ -80,7 +80,7 @@ class Portal < ActiveRecord::Base
   
   def new_ticket_path
     new_support_ticket_path(:host => portal_url)
-  end 
+  end
 
   def host
     portal_url.blank? ? account.full_domain : portal_url

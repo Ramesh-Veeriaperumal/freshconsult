@@ -1,0 +1,47 @@
+<div class="row-fluid">
+	<div class="span6">
+		<% form_for @user_session, :url => user_session_path, :html => { :class => "well" } do |f| %>
+		  	<%= f.error_messages %>  	
+			<fieldset>
+			  	<div class="control-group">
+			  		<%= f.label t('.email'), "", :class => "control-label"  %>
+			  		<div class="controls">
+			  			<%= f.text_field :email, :class => "required text" %>
+			  		</div>
+				</div>
+				<div class="control-group">
+			  		<%= f.label t('.password'), "", :class => "control-label" %>
+			  		<div class="controls">
+			  			<%= f.password_field :password, :class => "text" %>
+			  		</div>
+			  	</div>
+			  	<div class="control-group">
+			  		<div class="controls">
+			  			<label class="checkbox">
+							<%= f.check_box :remember_me %>
+							<%= t('.remember') %>
+						</label>
+					</div>
+			  	</div>
+			  	<div>
+			  		<%= f.submit t('.login'), { :class => "btn btn-primary" } %>
+					<% if feature?(:signup_link)%>
+					 or <%= link_to( t('signup') , new_support_registration_path)%>
+					<% end %>
+				</div>	
+			</fieldset>
+		<% end %>		
+	</div>
+</div>
+<hr />
+<p class="help_text"><b><Help><%= t('.help') %>:</b> <%= link_to(t('.forgot'), new_password_reset_path ) %> </p>
+<%if feature?(:google_signin) or feature?(:twitter_signin) or feature?(:facebook_signin) %>
+<div>
+	<b><%= t(".sign_in_using") %>:</b>
+	<%= link_to(image_tag("google.png", :alt => t(".sign_in_using_google")) + "Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") if feature?(:google_signin) %>
+	<%= link_to(image_tag("twitter.png", :alt => "Twitter") + "Twitter", "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
+	<%= link_to(image_tag("facebook.png", :alt => "Facebook") + "Facebook", "/sso/facebook", :class => "button") if feature?(:facebook_signin) %>
+</div>
+
+<%end%>
+	

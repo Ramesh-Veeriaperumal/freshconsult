@@ -16,7 +16,7 @@
 	}
 }
 
-.header_links{
+.header-links{
 	float:right;
 	text-align:right;
 	height:46px;
@@ -26,9 +26,8 @@
 		color:#ffffff;
 		text-decoration:none;
 	}
-	a:hover{              
-		@include opacity(0.9);
-		color:#ffffff;
+	a:hover{
+		color:#efefef;
 		text-decoration:none;
 	}
 	a.nav-trigger{
@@ -101,14 +100,14 @@
 
 .page-container{
 	background:rgba(255, 255, 255, 0.4);
-	padding:12px 14px;
+	padding:24px 20px;
 }
 .page-body, .footer-content{	
-	padding:12px 24px;
+	padding:22px 24px;
 }
 
 .page-body{	
-	background:#fff;
+	background:rgba(255, 255, 255, 0.9);
 	border:1px solid #ccc;
 	@include border-radius(6px);
 	@include min-height(500px);	
@@ -132,12 +131,36 @@
 	font-weight: 200;
 }
 
+.forum-category{
+	@include clearfix;
+}
+
 .forum-group{
-	margin-bottom: 20px;
-	padding-left:60px;
+	width:47.6%;
+	float:left;
+	padding:12px 0;
+	margin-right:2.4%;
+}
+
+.forum-group.odd{
+	clear:left;
+}
+
+.forum-group a{
+	padding-left:62px;
 	position: relative;
-	border: 1px solid red;
-	display: block;
+	color:#333;
+	display: block;	
+	h4{ 
+		font-size: 16px; 
+		line-height: 22px;
+	}
+	&:hover{ 
+		text-decoration:none; 
+		.font-icon{
+			background-color: lighten($tabColor, 5%);
+		}
+	}
 	.font-icon{
 		position: absolute;
 		font-size: 36px;
@@ -146,13 +169,21 @@
 		left:0;
 		top:0;
 		text-align: center;
-		line-height: 50px;
-		letter-spacing: -2px;
+		line-height: 50px;		
 		color: #fff;
 		@include border-radius(50px);
-		background-color:#666666;
-		border: 1px solid #333;
+		@include opacity(0.9);
+		background-color: $tabColor;
+		@include text-shadow(rgba(0,0,0,0.6) 1px 1px 1px);
+		@include box-shadow(rgba(0,0,0,0.5) 0 1px 5px inset);
 	}
+
+}
+
+.more-items{
+	text-transform: uppercase;
+	color:#6f6f6f;
+	font-size:12px;
 }
 
 /* Solution page styles */
@@ -169,8 +200,11 @@
 }
 
 .help-text{
-	color: #777;
+	color: #666666;
 	font-weight: 300;
+	font-size: 14px;
+	line-height: 20px;
+	padding-bottom: 3px;
 }
 
 .content-list li{
@@ -212,15 +246,15 @@
 	font-style: normal;
 	speak: none;
 }
-.icon-questions:before {
+.icon-forum-announcement:before {
 	content: "\21";
 }
-.icon-announcement:before {
-	content: "\22";
+.icon-forum-questions:before {
+	content: "\24";
 }
-.icon-ideas:before {
+.icon-forum-problems:before {
 	content: "\23";
 }
-.icon-problems:before {
-	content: "\24";
+.icon-forum-ideas:before {
+	content: "\22";
 }

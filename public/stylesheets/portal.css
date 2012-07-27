@@ -4070,27 +4070,25 @@ a.thumbnail:hover {
   padding-left: 6px;
 }
 
-.header_links {
+.header-links {
   float: right;
   text-align: right;
   height: 46px;
   margin: 2px 12px;
 }
-.header_links a {
+.header-links a {
   padding: 0px 6px;
   color: #ffffff;
   text-decoration: none;
 }
-.header_links a:hover {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
-  opacity: 0.9;
-  color: #ffffff;
+.header-links a:hover {
+  color: #efefef;
   text-decoration: none;
 }
-.header_links a.nav-trigger {
+.header-links a.nav-trigger {
   padding: 0px 12px 0px 6px;
 }
-.header_links a.nav-trigger:before {
+.header-links a.nav-trigger:before {
   content: "";
   position: absolute;
   border: 4px solid transparent;
@@ -4178,15 +4176,15 @@ a.thumbnail:hover {
 /* Footer styles */
 .page-container {
   background: rgba(255, 255, 255, 0.4);
-  padding: 12px 14px;
+  padding: 24px 20px;
 }
 
 .page-body, .footer-content {
-  padding: 12px 24px;
+  padding: 22px 24px;
 }
 
 .page-body {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid #ccc;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -4216,14 +4214,39 @@ a.thumbnail:hover {
   font-weight: 200;
 }
 
+.forum-category {
+  overflow: hidden;
+  *zoom: 1;
+}
+
 .forum-group {
-  margin-bottom: 20px;
-  padding-left: 60px;
+  width: 47.6%;
+  float: left;
+  padding: 12px 0;
+  margin-right: 2.4%;
+}
+
+.forum-group.odd {
+  clear: left;
+}
+
+.forum-group a {
+  padding-left: 62px;
   position: relative;
-  border: 1px solid red;
+  color: #333;
   display: block;
 }
-.forum-group .font-icon {
+.forum-group a h4 {
+  font-size: 16px;
+  line-height: 22px;
+}
+.forum-group a:hover {
+  text-decoration: none;
+}
+.forum-group a:hover .font-icon {
+  background-color: #00797d;
+}
+.forum-group a .font-icon {
   position: absolute;
   font-size: 36px;
   width: 50px;
@@ -4232,15 +4255,25 @@ a.thumbnail:hover {
   top: 0;
   text-align: center;
   line-height: 50px;
-  letter-spacing: -2px;
   color: #fff;
   -webkit-border-radius: 50px;
   -moz-border-radius: 50px;
   -ms-border-radius: 50px;
   -o-border-radius: 50px;
   border-radius: 50px;
-  background-color: #666666;
-  border: 1px solid #333;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
+  opacity: 0.9;
+  background-color: #006063;
+  text-shadow: rgba(0, 0, 0, 0.6) 1px 1px 1px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 1px 5px inset;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 1px 5px inset;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 1px 5px inset;
+}
+
+.more-items {
+  text-transform: uppercase;
+  color: #6f6f6f;
+  font-size: 12px;
 }
 
 /* Solution page styles */
@@ -4257,8 +4290,11 @@ a.thumbnail:hover {
 }
 
 .help-text {
-  color: #777;
+  color: #666666;
   font-weight: 300;
+  font-size: 14px;
+  line-height: 20px;
+  padding-bottom: 3px;
 }
 
 .content-list li {
@@ -4300,20 +4336,20 @@ a.thumbnail:hover {
   speak: none;
 }
 
-.icon-questions:before {
+.icon-forum-announcement:before {
   content: "\21";
 }
 
-.icon-announcement:before {
-  content: "\22";
+.icon-forum-questions:before {
+  content: "\24";
 }
 
-.icon-ideas:before {
+.icon-forum-problems:before {
   content: "\23";
 }
 
-.icon-problems:before {
-  content: "\24";
+.icon-forum-ideas:before {
+  content: "\22";
 }
 
 .preview_pic {

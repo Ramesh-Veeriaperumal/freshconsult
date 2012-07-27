@@ -146,20 +146,29 @@ en:
     popular: Popular
   payment_info: Payment information
   support:
-      surveys:
-          thanks_for_feedback: "We have received your feedback. Thank you very much."
-          feedback_already_done: "You have already given feedback for this response."
-          new:
-              thanks_info: Thanks for taking time to rate our support experience.
-              feedback_info: Your feedback is very much appreciated.
-              feedback_optional: Feedback is optional
-              send: Send
-              thanks: Thank you very much for rating us!
-              sorry: But, really sorry for the inconvenience.
-              happy_info: It has been our pleasure to serve you, glad you were happy with our service
-              neutral_info: Wish you were a little more happy.
-              unhappy_info: We will ensure that we will take extra care the next time around.
-              additional_info: Additionally, you could also share your experience working with us.
+    surveys:
+        thanks_for_feedback: "We have received your feedback. Thank you very much."
+        feedback_already_done: "You have already given feedback for this response."
+        new:
+          thanks_info: Thanks for taking time to rate our support experience.
+          feedback_info: Your feedback is very much appreciated.
+          feedback_optional: Feedback is optional
+          send: Send
+          thanks: Thank you very much for rating us!
+          sorry: But, really sorry for the inconvenience.
+          happy_info: It has been our pleasure to serve you, glad you were happy with our service
+          neutral_info: Wish you were a little more happy.
+          unhappy_info: We will ensure that we will take extra care the next time around.
+          additional_info: Additionally, you could also share your experience working with us.
+    login:      
+      email: Email
+      password: Password
+      remember: Remember me on this computer
+      login: Login
+      forgot: I forgot my password?
+      sign_in_using: Sign In
+      sign_in_using_google: Sign in using your Google account
+      help: Help
   admin:
     surveys:
      successfully_updated: Customer Satisfaction settings has been successfully updated.

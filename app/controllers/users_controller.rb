@@ -16,7 +16,7 @@ class UsersController < ApplicationController
   end
   before_filter :load_multiple_items, :only => :block
 
-   ##redirect to contacts
+  ##redirect to contacts
   def index
     redirect_to contacts_url
   end

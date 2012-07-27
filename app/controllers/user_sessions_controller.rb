@@ -22,10 +22,12 @@ require 'openssl'
       redirect_to current_account.sso_options[:login_url]
     end
     
-    @user_session = current_account.user_sessions.new
+    # @user_session = current_account.user_sessions.new
     if mobile?
       render :partial => "shared/login"
     end
+    
+    redirect_to support_login_path
   end
  
   def sso_login

@@ -1,18 +1,19 @@
-{% for category in portal.forum_categories %}
+{% for category in portal.forum_categories %}	
 	<h1 class="page-title">{{category.name}}</h1>	
-	<p class="help-block">{{category.description}}</p>
+	<p class="help-text">{{category.description}}</p>
+	<div class="forum-category">
 	{% for forum in category.forums %}
-		{% cycle '<div class="forum-category row-fluid">', '' %}
-			<div class="span6">
-				<a href="{{ forum.url }}" class="forum-group">
-					<span class="font-icon icon-{{forum.type_name}}"></span>
-					<h4>{{ forum.name }}</h4>
-					<p class="help-block">
-						{{ forum.description }}<br />
-						<span class="label label-info">{{ forum.topics.size }} topics</span>
-					</p>
-				</a>
-			</div>			
-		{% cycle '', '</div>' %}
+		<div class="forum-group {% cycle 'odd', 'even' %}">
+			<a href="{{ forum.url }}">
+				<span class="font-icon icon-forum-{{forum.type_name}}"></span>
+				<h4>{{ forum.name }}</h4>
+				<div class="help-text">
+					{{ forum.description }}
+				</div>
+				<div class="more-items">{{ forum.topics.size }} topics</div>
+			</a>
+		</div>
 	{% endfor %}
+	</div>
+	<hr />
 {% endfor %}

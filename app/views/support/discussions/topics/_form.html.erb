@@ -1,3 +1,5 @@
+
+<% form_for @topic, { :action => "create", :controller => "support/discussions/topics" } , :html => {:multipart => true, :id => "post-form"} do |form| -%>
 <%= include_tiny_mce_if_needed %>
 <ul class="ui-form">
 	<li>
@@ -71,3 +73,9 @@
     </td>
     </tr>
 </script>
+<div class="button-container">
+		<input type="submit" class="btn btn-primary" value="Submit" />		
+	</div>
+	<%= javascript_tag "$('topic_title').focus();" %>
+
+<% end %>

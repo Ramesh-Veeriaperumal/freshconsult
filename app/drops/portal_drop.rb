@@ -23,6 +23,10 @@ class PortalDrop < BaseDrop
   def new_ticket_path
     @new_ticket_path ||= source.new_ticket_path
   end
+
+  def new_topic_path
+    @new_topic_path ||= source.new_topic_path
+  end
   
   def tabs
     @tabs ||= load_tabs
@@ -42,9 +46,9 @@ class PortalDrop < BaseDrop
   
   private
     def load_tabs
-      tabs = [  [ '/home',                  :home,		 true ],
-					      [ support_solutions_path,   :solutions,	 true ],
-				        [ support_discussions_path, :forums, 	 true ],
+      tabs = [  [ '/home',                  :home,		    true ],
+					      [ support_solutions_path,   :solutions,	  true ],
+				        [ support_discussions_path, :forums, 	    true ],
 				        [ support_tickets_path,     :checkstatus, true ],
 				      	  company_tickets_tab ]
 

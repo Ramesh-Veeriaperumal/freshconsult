@@ -3,7 +3,11 @@ class Support::Discussions::TopicsController < Support::SupportController
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
   end
-    
+  
+  before_filter :only => [:update_stamp,:remove_stamp,:destroy] do |c| 
+    c.requires_permission :manage_forums
+  end
+  
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission,:only => [:edit,:update] 
@@ -12,15 +16,15 @@ class Support::Discussions::TopicsController < Support::SupportController
   
   uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
 
-	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
-	# sure what analogous place to put it in this plugin.  It don't work in the init.rb  
+  # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
+  # sure what analogous place to put it in this plugin.  It don't work in the init.rb  
   #caches_formatted_page :rss, :show
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
   def check_user_permission
-    if (current_user.id != @topic.user_id and !current_user.has_manage_forums?)
-        flash[:notice] =  t(:'flash.general.access_denied')
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
+          flash[:notice] =  t(:'flash.general.access_denied')
+          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
     
@@ -65,7 +69,7 @@ class Support::Discussions::TopicsController < Support::SupportController
   
   def create
     topic_saved, post_saved = false, false
-		# this is icky - move the topic/first post workings into the topic model?
+    # this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
       @topic  = @forum.topics.build(topic_param)
       assign_protected
@@ -78,20 +82,20 @@ class Support::Discussions::TopicsController < Support::SupportController
       topic_saved = @topic.save if @post.valid?
       post_saved = @post.save 
     end
-		
-		if topic_saved && post_saved
+    
+    if topic_saved && post_saved
       @topic.monitorships.create(:user_id => current_user.id,:active => true) if params[:monitor] 
       create_attachments  
-			respond_to do |format| 
-				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
-				format.xml  { render  :xml => @topic }
-			end
-	else
+      respond_to do |format| 
+        format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+        format.xml  { render  :xml => @topic }
+      end
+  else
    respond_to do |format|  
-			format.html { render :action => "new" }
+      format.html { render :action => "new" }
       format.xml  { render  :xml => @topic.errors }
    end
-		end
+    end
   end
   
   def update
@@ -199,18 +203,17 @@ end
     end
     
     def find_forum_and_topic
-      @topic = current_account.portal_topics.find_by_id(params[:id])
-      @forum = @topic.forum
-      @forum_category = @forum.forum_category
+      @forum = scoper.find(params[:forum_id])
+      @forum_category = @forum.category
 
-      wrong_portal unless(main_portal? || 
-            (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
-
-      raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+      wrong_portal unless(main_portal? || (params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
+        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
+      @topic = @forum.topics.find(params[:id]) if params[:id]
     end
+
     def scoper
-      current_account.forum_categories
+      current_account.forums
     end
     
     def set_selected_tab
@@ -228,9 +231,5 @@ end
       param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
       return param
     end
-    
-#    def authorized?
-#      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
-#    end
 	
 end
