@@ -1990,9 +1990,9 @@ ul.ui-form .inputs-list{
 				background-color: #efefef;
 				border-bottom: 1px solid #d1d1d1;
 				border-top: 1px solid #d1d1d1;
-				padding: 10px 0;
-				font-family: "Helvetica Neue", sans-serif;
+				padding: 10px 0; 
 				font-weight: 300;
+				font-size: 1.3em;
 			}
 			.toggle-button{
 				position: absolute;
@@ -2002,10 +2002,10 @@ ul.ui-form .inputs-list{
 			}
 		}
 		.big-seperator{
-			border-bottom: 2px solid #bfbfbf;
+			border-bottom: 1px solid #dfdfdf;
 			display:block;
-			height:2px;
-			margin:5px 0px;
+			height:1px;
+			margin:5px 0px 12px;
 		}
 		.configure-email-form{
 			padding: 0 10px 12px 10px;
