@@ -39,7 +39,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
             },
             {
                 xtype:'titlebar',
-                title:'Canned Responses',
+                title:'Canned Response',
                 ui:'header',
                 docked:'top',
                 items:[
@@ -48,7 +48,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                         ui:'plain lightBtn',
                         iconMask:true,
                         align:'left',
-                        text:'hide',
+                        text:'Cancel',
                         handler:function(){
                             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].hide();
                         },
@@ -59,7 +59,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                         ui:'plain headerBtn',
                         iconMask:true,
                         align:'right',
-                        text:'apply',
+                        text:'Insert',
                         handler:function(){
                             var me = Ext.ComponentQuery.query('#cannedResponsesPopup')[0],
                             selection = me.items.items[0].getSelection();

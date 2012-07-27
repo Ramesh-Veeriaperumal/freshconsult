@@ -63,8 +63,8 @@ input, textarea, select {
 	background:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC'), #f2f2f2 !important;
 	@include border-radius(0);
 	.home_img{
-		width:90px;
-		height:90px;
+		width:80px;
+		height:80px;
 		background: #fff;
 		text-align: center;
 		overflow: hidden;
@@ -73,8 +73,8 @@ input, textarea, select {
 		@include box-shadow(0 0 10px #ccc);
 		img{
 			@include border-radius(90px);
-			width:82px;
-			height:82px;
+			width:72px;
+			height:72px;
 			margin-top:4px;
 		}
 	}
@@ -98,7 +98,8 @@ input, textarea, select {
 		text-align:center;
 		color:#333;
 		@include text-shadow( #fff -1px -1px 0);
-		font-size:0.8em;
+		font-size:0.7em;
+		width:90px;
 	}
 	#home-user-profile{
 		text-align:center;
@@ -141,14 +142,14 @@ input, textarea, select {
 /*hack for sencha styles starts*/
 
 
+.x-field .x-field-input, .x-field .x-input-el {
+	padding-top: 6px;
+}
+.x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after{
+	width: 0.7em;
+	-webkit-mask-size: 0.74em 1.8em;
+}
 
-x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after{
-			width: 0.7em;
-			-webkit-mask-size: 0.74em 1.8em;
-		}
-x-button-forward::before, .x-toolbar .x-button-forward::before {
-		right:-0.72em;
-	}
 .x-toolbar-header,.x-toolbar-dark{
 	margin-bottom: 1px;
 	border-bottom-color: #3B68A8 !important;
@@ -660,9 +661,11 @@ a {
 				}
 			}
 			.facebook{
-				span:before {
-					padding: 3px 9px;
-					content: '\F09a';
+				span{
+					padding:5px 9px;
+					&:before {
+						content: '\F09a';
+					}
 				}
 			}
 		}
@@ -1123,6 +1126,11 @@ a {
 			padding: 0.6em;
 			margin:0.5em 0;
 			@include triangle-before(up,#F5F5F5,0.5em);
+			table{
+				th.td{
+					padding: 2px;
+				}
+			}
 			&:before{
 				top:-0.5em;
 				left:0.85em;
@@ -1667,6 +1675,18 @@ a {
 				-webkit-mask-image:none;
 				background-color:transparent;
 			}
+		}
+	}
+}
+
+
+.x-toolbar{
+	.x-button-forward{
+		&:before{
+			right: -0.6em !important;
+		}
+		&:after{
+			right: -0.62em !important;
 		}
 	}
 }

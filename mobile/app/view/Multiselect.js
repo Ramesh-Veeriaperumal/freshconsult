@@ -39,7 +39,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                     },
                     {
                         xtype:'titlebar',
-                        title:'Notify Agents',
+                        title:'Pick Agents',
                         ui:'header',
                         docked:'top',
                         items:[
@@ -59,7 +59,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                                 ui:'plain headerBtn',
                                 iconMask:true,
                                 align:'right',
-                                text:'Apply',
+                                text:'Add',
                                 handler:this.onButtonTap,
                                 scope:this
                             }
