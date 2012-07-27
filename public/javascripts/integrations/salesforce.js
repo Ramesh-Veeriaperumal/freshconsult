@@ -73,8 +73,10 @@ SalesforceWidget.prototype= {
 	},	
 
 	get_contact:function(){
-		if(salesforceBundle.contactFields == "" || salesforceBundle.leadFields == "")
+		if(salesforceBundle.contactFields == "" || salesforceBundle.leadFields == ""){
+			salesforceWidget.freshdeskWidget.refresh_access_token();
 			this.fetch_field_metadata();
+		}
 		else{
 			var sosl = encodeURIComponent("FIND {" + salesforceWidget.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(" + salesforceBundle.contactFields + "), Lead(" + salesforceBundle.leadFields + ")");
 			init_reqs = [{

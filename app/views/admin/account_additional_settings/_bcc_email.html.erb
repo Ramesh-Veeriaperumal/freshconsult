@@ -1,0 +1,17 @@
+<% form_for :account_additional_settings, @account_additional_settings, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
+	<%= f.error_messages %>
+	<div class="ui-form">
+		<label><%= t('email_configs.bcc_email')%></label>
+		<%= f.text_field :bcc_email, :class => "required text email" , :id => "bcc_email"%>
+		<div class="info-data"><%= t('email_configs.info17') %> </div>
+  </div>			
+	<div class="button-container">
+		<%= link_to_function "&larr; #{t('account.cancel')}", "closeDialog()", :class => "uiButton floatl" %>
+		<%= f.submit t('save'), :class => "uiButton" %>
+	</div>  
+<% end %>
+<% javascript_tag do %>
+	closeDialog = function(){
+		active_dialog.dialog('close');
+ 	}
+<% end %>

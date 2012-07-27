@@ -23,11 +23,13 @@ stylesheets:
     - public/stylesheets/autocomplete.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/ie.css    
-    
+    - public/stylesheets/hacks.css
+    - public/stylesheets/ie.css
+    - public/stylesheets/satisfaction.css
+
   portal:                
     - public/stylesheets/portal.css
-    - public/stylesheets/responsive.css    
+    - public/stylesheets/responsive.css 
 
   widget:
     - public/stylesheets/reset.css   
@@ -62,7 +64,6 @@ stylesheets:
 
   satisfaction:
     - public/stylesheets/reports.css
-    - public/stylesheets/satisfaction.css
 
   redactor:
     - public/javascripts/redactor/css/redactor.css 
@@ -93,6 +94,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
+    - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
   aceeditor:
     - public/javascripts/aceeditor/ace.js

@@ -1,26 +1,77 @@
+<% javascript_tag do %>
+	validate_then_submit = function(url, method, params){
+		var customer_type = '<%=type.eql?('user') ? t('flash.contacts.info_select') : t('flash.customers.info_select')%>';
+		if (!jQuery('.customers_selector:checked').length)
+		{
+			jQuery("#noticeajax").text(customer_type);
+			jQuery("#noticeajax").show();
+			closeableFlash('#noticeajax');
+		}
+		else
+		{
+			helpdesk_submit(url, method, params);
+		}
+	}
+<% end %>
+<% content_for :onload_script do %>
+	jQuery("#customers-select-all").live("change", function(ev){
+		jQuery("#users, #companies").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked"));
+		jQuery(".bulk-action").toggle( jQuery(this).prop("checked") );
+	});
+	jQuery('.customers_selector').change(function() {
+		jQuery(".bulk-action").toggle( jQuery('.customers_selector:checked').length > 0 );
+		jQuery("#customers-select-all").prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
+	});
+<% end %>
+
 <div>
 	<div class="floatr">				
-		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
-		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
-		<%= link_to(t('contacts.import_csv'), csv_contact_import_path, :class => "uiButton grey") %>
+		<%= link_to(t('contacts.import_csv'), csv_contact_import_path) %>
 		<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
 	</div>
 
 	<h3 class="title"><%= @page_title = t('customers') %></h3>	
-	<div class="tab_panel">		
-		<b><%=t('contacts.showing')%></b>
-		<%= link_to(t('contacts.title'),'/contacts',   :class => (type == 'user') 	? "active" : "" ) %>
-		<%= link_to(t('company.title'),'/customers', :class => (type == 'company') ? "active" : "" ) %>
-	</div>		
-		
-	<ul class="alpha_sort_list">
-	  <%= hidden_field_tag :letter, '' %>
-	  <li class="first <%= 'active' if params[:letter].blank? %>"><%= link_to 'All', :letter => '' %></li>
-	  <% "A".upto("Y") do |l| -%>	    
-	     <li class="<%= 'active' if params[:letter] == l %>"><%= link_to l, :letter => l %></li>	
-	  <% end %>
-	  <li class="last <%= 'active' if params[:letter] == 'Z' %>"><%= link_to 'Z', :letter => 'Z' %></li>
-	</ul>
+	<div class="customers-toolbar">
+		<input type="checkbox" id="customers-select-all" />
+		<div class="bulk-action">
+			<% if params[:state].eql?("deleted") %>
+				<%= link_to_function(t('contacts.restore'), "validate_then_submit('#{ path }/restore', 'restore')", :class => "uiButton") %>
+			<% else %>
+				<%= link_to_function(t('delete'), "validate_then_submit('#{ path }/destroy', 'delete')", :class => "uiButton") %>
+			<% end %>
+		</div>
+		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
+		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
+	</div>
+	<%= contact_tabs type %>	
+	<div class="contacts_sub_header">
+		<ul class="alpha_sort_list">		
+			<%= hidden_field_tag :letter, '' %>
+			<li class="first <%= 'active' if params[:letter].blank? %>">
+				<%= link_to 'All', :letter => '', :state => params[:state].blank? ? 'active' : params[:state] %>
+			</li>
+			<% "A".upto("Y") do |l| -%>	    
+			 <li class="<%= 'active' if params[:letter] == [l] %>">
+			 	<%= link_to l, :letter => l, :state => params[:state].blank? ? 'active' : params[:state] %>
+			 </li>	
+			<% end %>
+			<li class="last <%= 'active' if params[:letter] == ['Z'] %>">
+				<%= link_to 'Z', :letter => 'Z', :state => params[:state].blank? ? 'active' : params[:state] %>
+			</li>
+		</ul>
+		<% if type.eql?('user') %>
+			<div class="customer_status_tab">
+				<b><%=t('contacts.showing')%></b>				
+				<% if params[:state].blank? or params[:state].eql?('active') %>					
+					<b><%=t('contacts.status.active') %></b> |
+					<%= link_to t('contacts.status.deleted'), :state => 'deleted' %>
+				<% else %>						
+					<%= link_to t('contacts.status.active'), :state => 'active' %> |
+					<b><%=t('contacts.status.deleted') %></b>
+				<% end %>	
+			</div>
+		<% end %>
+	</div>
 
 	<!-- %= render(:partial => '/shared/listsearch') % -->	
 </div>

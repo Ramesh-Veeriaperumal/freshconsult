@@ -5,12 +5,16 @@ class TwitterWrapper
   attr_reader :tokens
 
   def initialize(twitter_handle , options = {} )
-    @product = options[:product] || twitter_handle.product
+    if options[:product]
+      @product = options[:product]
+    elsif twitter_handle
+      @product = twitter_handle.product
+    end
     @account = options[:current_account]  || twitter_handle.account
     @config = File.join(Rails.root, 'config', 'twitter.yml')
     @tokens = YAML::load_file @config
     @callback_url = "#{options[:callback_url]}"
-    @callback_url = "#{@callback_url}?product_id=#{@product.id}"
+    @callback_url = "#{@callback_url}?product_id=#{@product.id}" if @product
     @consumer ||= OAuth::Consumer.new @tokens['consumer_token'][Rails.env], @tokens['consumer_secret'][Rails.env], {:site => "http://api.twitter.com"}
     @twitter_handle = twitter_handle
     Twitter.configure do |config|

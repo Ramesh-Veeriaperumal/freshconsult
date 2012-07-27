@@ -195,6 +195,53 @@ ul.activityfeed li{
 
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
+.popover.topRight { margin-left: -3px;}
+div.contact_hover{
+	.user_name{ font-weight:bold; font-size:1.25em; color:#527eaa; display: inline-block; }
+	.user_desig, .user_email { margin-top:3px;}
+	.user_phone, .user_mobile, .user_fb, .user_twitter{
+		padding: 1px 20px;
+		margin:5px 5px 0 0;
+		height: 14px;
+		display: inline-block;
+	}
+	 .user_fb, .user_twitter{
+		padding: 0 20px;
+	}
+	
+	.user_phone{
+		background:sprite($symbol, phone) no-repeat #ffffff;
+	}
+	.user_mobile{
+		background:sprite($symbol, mobile) no-repeat #ffffff;	
+		margin-left:10px;
+	}
+	.user_fb{
+		height:11px;
+		background:sprite($symbol, reply-fb) no-repeat #ffffff;
+	}
+	.user_twitter{
+		height:11px;
+		background:sprite($symbol, reply-tweet) no-repeat #ffffff;
+	}
+}
+
+.popover .arrow.dbl_left {
+	&:after {
+		content:" ";
+		display:block;
+		position: absolute;
+		width:0; height:0;
+		top: 0px;
+		left: 3px;
+		margin-top: -14px;
+		border-top: 14px solid transparent;
+		border-bottom: 14px solid transparent;
+		border-right: 14px solid white;
+		z-index: 2000;
+
+	}
+}
 
 .pageSeperator{
 	border-top:1px solid #fefefe;
@@ -1467,32 +1514,42 @@ h4.list_title{
 	} 
 }
 
-.alpha_sort_list{ 
+.contacts_sub_header{
 	@include clearfix;
+	border-bottom:1px solid #dedede;	
+	padding: 8px 20px;
+	margin:0px -20px;
+}
+
+.customer_status_tab{
+	margin-left: 26px;
+	a{
+		color:#3E71A4;
+	}	
+}
+
+.alpha_sort_list{ 
+	@include pie-clearfix;
 	display:block;
 	list-style:none;
-	display:block;
-	padding:4px 20px;
-	margin:0 -20px;	
-	border-bottom:1px solid #dedede;	
-	background: #efefef;
+	display:block;	
+	background: #fff;
+	float:right;	
 	li{
 		float:left;
-		margin:0px;
-		padding:2px 0px;
 		a{
 			font-weight:bold;
 			text-decoration:none;
 			color: #909090;
-			@include border-radius(4px);
-			padding: 4px 5px;
+			padding: 4px;
 		}
 	}
 	li.active a, li a:hover{
-			color:#333333;
-			border-color:#f5f5f5f;
-			background: #fff;
-			@include box-shadow(rgba(0, 0, 0, 0.25) 0px 0px 2px inset);
+		color:#333333;
+		border-color:#000;
+		background: #fff;
+		@include box-shadow(rgba(0, 0, 0, 0.4) 0 1px 3px inset);
+		@include border-radius(5px);		
 	}
 } 
 
@@ -3039,14 +3096,14 @@ div.addReminder{
 	b{
 		margin-right:10px;
 		padding:5px 0px 0px 0px;
-		float:left;
+		float:right;
 	}
 	display:block;
 	a{
 		background:#cfcfcf; 
 		position:relative;
 		top:1px;
-		float:left;
+		float:right;
 		text-decoration:none;
 		padding:6px 8px;
 		margin:0px 0px 0px 0px;
@@ -3438,6 +3495,11 @@ div.addReminder{
 		border-bottom:1px solid #efefef; 
 		color:#656565;
 		position:relative;
+		.customers_selector{
+		 	float:left;
+		 	margin-top:8px;
+		 	margin-right:8px;
+		 }
 		.preview_pic{
 			float:left;
 			margin-right:10px;
@@ -4387,6 +4449,24 @@ a.close{
 	padding:5px 8px 8px 0;
 	border-bottom:1px solid #dfdfdf;
 	border-top:1px solid #ffffff;
+}
+
+.customers-toolbar{
+	float:left;
+	input{
+		float:left;
+		margin-top: 10px;
+		margin-right: 8px;
+	}
+	.bulk-action{
+		float:left;
+		display:none;
+		a{
+			&.uiButton{
+				margin-right: 4px;
+			}
+		}
+	}
 }
 
 .sort-bar{
@@ -5390,6 +5470,10 @@ padding:10px;
 margin:10px;
 }
 
+.survey_text{
+	width:70%;
+}
+
 /* SURVEY REPORT RELATED STYLES */
 .agentreport, .usercomment { box-sizing: border-box; width: 100%; overflow: hidden; margin: 10px 0; padding: 15px 0; }
  
@@ -5506,3 +5590,154 @@ margin:10px;
 			color:#888888;
 }
 /* SURVEY REPORT RELATED STYLES ENDS */
+
+.email-settings-header{
+	padding-bottom: 30px;
+	.action_buttons{
+		margin-top: 6px;
+		padding: 5px;
+	}
+}
+
+.email-settings-bcc{
+	position: relative;
+	label{
+		font-size: 14px;
+		padding: 0 5px 0 0;
+	}
+	a{
+		font-size: 14px;
+		color: #0c74d7;
+		font-weight: 500;
+		padding-right: 25px;
+	}
+	.tool-tip{
+		position: absolute;
+		background: url(../images/email_config_bcc_tooltip.png) no-repeat;
+		width: 18px;
+		height: 18px;
+		top: 1px;
+		right: 0px;
+	}
+}
+
+.email-config-styled-table{
+	width:100%;
+	border:1px solid #ECECEC;
+	margin-bottom: 20px;
+	thead{
+		tr{
+			height: 34px;
+			td{
+				color:#222;
+				background: url('../images/overlay-button.png') repeat-x 0px 0px;
+				font-weight: 600;
+				font-size: 13px;
+			}
+		}
+	}
+	tr{
+		border-bottom:1px solid #ECECEC;
+		td{
+			vertical-align: middle;
+			padding: 10px 4px;
+		}
+	}
+	tbody{
+		tr{
+			&.even{
+				>td{
+					background-color: #F9F9F9
+				}
+			}
+			td{
+				height: auto;
+				color: #666;
+
+				&.edit{
+					width: 5%;
+					text-align: center;
+					font-size: 13px;
+		    	}
+			    &.primaryRole{
+			    	width: 3%;
+			    	.primary, .secondary{
+			    		display: block;
+			    	}
+			    	.primary:before{
+			    		content: url(../images/star_on.png) "";
+			    	}
+			    	.secondary:before{
+			    		content: url(../images/star_off.png) "";
+			    	}
+			    	.secondary:hover{
+			    		display: block;
+				    	&::before{
+					    	content: url(../images/star_hover.png) "";
+				    	}
+			    	}
+			    }
+
+			    &.supportMail{
+			    	width: 200px;
+					span{
+						&.bold{
+							color: #333;
+							font-weight: bold;
+							font-size: 13px;
+						}
+					}
+					span{
+						&.warning_icon{
+							display: inline-block;
+							float: left;
+							padding-top: 12px;
+							&:before{
+			    				content: url(../images/img_icon_warning.png) "";
+				    		}
+						}
+					}
+					div{
+						&.reply_email{
+							text-decoration: line-through;
+						}
+						&.wrap{
+							width: 180px;
+						}
+					}
+					.not-verified{
+						margin-left: 30px;
+					}
+					.verify-button{
+						padding-top: 8px;
+						a{
+							padding: 3px 6px;
+							font-size:11px;
+							text-align: center;
+							text-decoration: none;
+							background-color:#f8f8f8;
+							border: 1px solid #919191;
+							@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
+							@include corners(8px);
+							cursor: pointer;
+						}
+					}
+				}
+				&.to-email{
+					width: 285px;
+					div{
+						&.wrap{
+							width: 250px;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+.product-title {
+	font-size: 1.1em;
+	font-weight: bold;
+	padding-bottom: 10px;
+}

@@ -15,6 +15,14 @@
         <%= content_tag :span, h(@ticket.priority_name), :class => "priority-pointer #{@ticket.priority_key}" %>
         <%= content_tag :span, "##{h(@ticket.display_id)}", :class => "ticket-id" %>
         <%= content_tag :span, h(@ticket.subject), :class => "subject" %>
+        <%
+                customer_opinion = ""                                
+                unless @ticket.survey_result.nil? || @ticket.survey_result.last.nil?
+                  customer_opinion = ["<div class='customer-opinion ", @ticket.survey_result.last.get_small_img_class ,"'></div>"].join
+                end  
+        %>
+        <%=customer_opinion%>
+
       </div>
 			<div class="description">         
         <div class="user_details">
@@ -30,8 +38,40 @@
 					    </a>
 				    </div> 
 	        <% end %>
+          
+          <textarea id="contact-hovercard" style="display:none;">
+            <div class="contact_hover">
+              <%= user_avatar(@ticket.requester) %>
+              <%= content_tag :div, link_to(h(@ticket.requester.display_name), @ticket.requester), :class => "user_name" %>
 
-          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name") %>
+              <div class="user_desig">
+                <% unless @ticket.requester.job_title.blank? %>
+                   <b><%= h @ticket.requester.job_title %></b>
+                <% end %>
+                <% if @ticket.requester.job_title.blank? && !@ticket.requester.customer.blank? %>
+                   <%= t("working") %>
+                <% end %>
+                <% unless @ticket.requester.customer.blank? %>
+                   <%= t("at") %> <%= link_to(h(@ticket.requester.customer.name), @ticket.requester.customer)  %>
+                <% end %>
+              </div>
+
+              <%= content_tag :div, h(@ticket.requester.email), :class => "user_email" unless @ticket.requester.email.blank?  %>
+              <%= content_tag :div,"", :class => "clearfix" unless @ticket.requester.email.blank? and @ticket.requester.customer.blank?  %>
+              <% is_desig_and_email_available = @ticket.requester.email.blank? and @ticket.requester.customer.blank? %>
+              <%=  '<div>' if is_desig_and_email_available %>
+                  <%= content_tag :div, h(@ticket.requester.fb_profile_id), :class => "user_fb" unless @ticket.requester.fb_profile_id.blank?  %>
+                  <%= content_tag :div, h(@ticket.requester.twitter_id), :class => "user_twitter" unless @ticket.requester.twitter_id.blank?  %>
+              <%= '</div>' if is_desig_and_email_available %>
+              
+              <div class="clearfix"></div>
+                <%= content_tag :div, h(@ticket.requester.phone), :class => "user_phone" unless @ticket.requester.phone.blank?  %>
+                <%= content_tag :div, h(@ticket.requester.mobile), :class => "user_mobile" unless @ticket.requester.mobile.blank?  %>
+            </div>
+          </textarea>
+
+          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "contact-hovercard" )%>
+          
           <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
           on <%= formated_date(@ticket.created_at) %>
           <div class="info"> 
@@ -54,7 +94,7 @@
                 	<%if @cc_email_count < 3 %>
                   		<%= content_tag :span, "Cc: " + cc_email_hash_value[:cc_emails].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" %>  
                 	<% else %>
-                  		<%= content_tag :span, "Cc: " + cc_email_hash_value[:cc_emails][0,2].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ cc_email_hash_value[:cc_emails][2,@cc_email_count].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@cc_email_count-2} "+t('ticket_cc_email_more')+"</a>", :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                  		<%= content_tag :span, "Cc: " + cc_email_hash_value[:cc_emails][0,2].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ cc_email_hash_value[:cc_emails][2,@cc_email_count].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@cc_email_count-2} "+t('ticket_cc_email_more')+"</a>", :class => "" %>  
                 	<% end %>
 				<% end %>             
             </div>

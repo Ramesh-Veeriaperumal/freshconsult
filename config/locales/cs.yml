@@ -2017,7 +2017,7 @@
   email_command_settings_info: "Nastavení oddělovače používaného k rozpoznání a vyjmutí příkazů e-mailu z mailu"
   email_command_delimeter_label: "Oddělovač příkazů e-mailu"
   email_command_preview_to_email: "Komu"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Předmět"
   email_command_preview_subject_value: "Lístek podpory"
   unable_to_charge: "Není možné změnit kartu pro přidaného agenta!"

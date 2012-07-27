@@ -1,9 +1,9 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class="title">Twitter settings for <%= @item.product.name %></h3>
+<h3 class="title"><%= t('.twitter_settings_for_msg') %> <%= (@item.product ? @item.product.name : current_account.portal_name) %></h3>
 <% form_for :twitter_handle, :url => social_twitter_path(@item), :html => { :method => :put } do |f| %>
 	<%= render :partial => 'form', :locals => { :twitter_handle => @item } %>
 	<div class="button-container">
-    <%= link_to(t('remove'), social_twitter_path(@item), :method => 'delete', :confirm => "Are you sure you want to remove this twitter account's association with #{@item.product.name}?", :class => "uiButton floatl" ) %>
+    <%= link_to(t('remove'), social_twitter_path(@item), :method => 'delete', :confirm => t('social.twitter_handles.index.remove_handle_msg'), :class => "uiButton floatl" ) %>
     <%= submit_tag "Update", :class => "uiButton"  %>
   </div>
 <% end %>

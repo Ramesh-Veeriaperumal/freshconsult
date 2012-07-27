@@ -16,14 +16,22 @@ class Account < ActiveRecord::Base
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
-  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
-  has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }, :order => "name"
+  has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
+  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
+  has_many :products, :order => "name"
   has_many :portals
+  has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
+
+  accepts_nested_attributes_for :primary_email_config
+  accepts_nested_attributes_for :main_portal
+
+
   has_many :survey_results
   has_many :survey_remarks
 
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
   accepts_nested_attributes_for :main_portal
+  has_one  :subscription_plan, :through => :subscription
 
   has_one :conversion_metric
 
@@ -34,7 +42,7 @@ class Account < ActiveRecord::Base
   
   has_one :data_export
   
-  has_one :email_commands_setting
+  has_one :account_additional_settings
   
   has_one :logo,
     :as => :attachable,
@@ -81,6 +89,7 @@ class Account < ActiveRecord::Base
   has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
+  has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VARule'
@@ -150,6 +159,9 @@ class Account < ActiveRecord::Base
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
   has_many :support_scores, :class_name => 'SupportScore'
+
+  delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
+
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -230,9 +242,9 @@ class Account < ActiveRecord::Base
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
-  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, 
-    :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
+    :anonymous_tickets =>true, :survey_links => true, :scoreboard_enable => true, :google_signin => true,
+    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
     
   
   has_features do
@@ -341,6 +353,11 @@ class Account < ActiveRecord::Base
   end
   #HD hack ends..
   
+  def support_emails
+    to_ret = email_configs.collect { |ec| ec.reply_email }
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+  end
+
   def portal_name #by Shan temp.
     main_portal.name
   end
@@ -405,9 +422,43 @@ class Account < ActiveRecord::Base
   end
 
   def pass_through_enabled?
-    email_commands_setting.pass_through_enabled
+    pass_through_enabled
   end
 
+  def to_mob_json(deep=false)
+    json_include = {
+      :main_portal => {
+        :only => [ :name, :preferences ],
+        :methods => [ :logo_url, :fav_icon_url ]
+      },
+      :subscription => {
+        :methods => [:is_paid_account]
+      }
+    }
+    options = {
+      :only => [:name],
+    }
+    if deep
+      json_include.merge!({
+        :canned_responses => {
+          :methods => [ :my_canned_responses ],
+          :only => [ :title, :id ]
+        },
+        :scn_automations =>{
+          :only => [ :id, :name ]
+        },
+        :twitter_handles => {
+          :only => [ :id, :screen_name ]
+        }
+      })
+      options.merge!({
+        :methods => [ :reply_emails, :bcc_email ],
+      })
+    end
+    options[:include] = json_include;
+    to_json options
+  end
+  
   protected
   
     def valid_domain?
@@ -521,6 +572,8 @@ class Account < ActiveRecord::Base
     def create_portal
       self.primary_email_config.account = self
       self.primary_email_config.save
+      self.main_portal.account = self
+      self.main_portal.save
     end
 
     def populate_seed_data

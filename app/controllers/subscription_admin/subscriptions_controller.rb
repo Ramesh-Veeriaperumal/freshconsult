@@ -11,8 +11,10 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
+    @day_pass_stats = SubscriptionPayment.day_pass_stats if params[:page].blank?
     @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
     @free_customers = Subscription.free_customers
+    @zero_paying_customers = Subscription.zero_amount_customers
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = Subscription.customers_agent_count - (Subscription.customers_free_agent_count + DUMMY_AGENTS)
@@ -56,16 +58,29 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @deleted_customers = DeletedCustomers.all
     @deleted_customers = @deleted_customers.paginate( :page => params[:page], :per_page => 30)
   end
+
+  def fetch_deleted_customers
+    @deleted_paid_customers = DeletedCustomers.count(:id,:distinct => true,
+                           :group => "DATE_FORMAT(deleted_customers.created_at, '%b, %Y')", 
+                           :order => "deleted_customers.created_at desc", 
+                           :joins => " INNER JOIN subscription_payments ON deleted_customers.account_id = subscription_payments.account_id")
+   
+    @deleted_total_customers = DeletedCustomers.count(:id,:distinct => true,
+                           :group => "DATE_FORMAT(created_at, '%b, %Y')", 
+                           :order => "created_at desc")
+
+  end
   
   def customers
     fetch_customers_per_month
     fetch_signups_per_month
     fetch_signups_per_day
     converted_customers_per_month
+    fetch_deleted_customers
   end
    
    def fetch_signups_per_day
-     @signups_per_day = Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc")
+     @signups_per_day = Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",:conditions => {:created_at => (30.days.ago..Time.now.end_of_day)}, :order => "created_at desc")
    end
    
    def fetch_signups_per_month
@@ -91,22 +106,24 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   #"name","full_domain","name","email","created_at","next_renewal_at","amount","agent_limit","subscription_plan_id","renewal_period","subscription_discount_id"
   def customers_csv
-   subscriptions = Subscription.find(:all,:include => :account, :order => 'accounts.created_at desc',
-                                           :conditions => {:state => 'active'} )
+   #subscriptions = Subscription.find(:all,:include => :account, :order => 'accounts.created_at desc',:conditions => {:state => 'active'} )
     csv_string = FasterCSV.generate do |csv| 
       # header row 
-      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Twitter","Facebook","Ticket Count","Multi Product","Free agents","Full Time","Ocassional","Last Login","Login Count"] 
+      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Free agents","Full Time","Ocassional"] 
  
       # data rows 
+    Subscription.find_in_batches(:include => :account,
+                                           :conditions => {:state => 'active'} ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account
         user = account.account_admin
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
         csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
-                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',!sub.account.twitter_handles.blank?,!sub.account.facebook_pages.blank?,sub.account.tickets.count,sub.account.portals.count > 1,
-                sub.free_agents,sub.account.full_time_agents.count,sub.account.agents.count - (sub.account.full_time_agents.count ||= 0),sub.account.account_admin.last_login_at,sub.account.account_admin.login_count] 
+                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',
+                sub.free_agents,account.full_time_agents.count,account.agents.count - (account.full_time_agents.count ||= 0)] 
       end 
     end 
+  end
  
     # send it to the browsah
     send_data csv_string, 

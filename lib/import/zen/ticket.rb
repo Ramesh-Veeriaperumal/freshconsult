@@ -54,18 +54,29 @@ def save_ticket ticket_xml
                     :ticket_type => ZENDESK_TICKET_TYPES[ticket_prop.ticket_type.to_i] , :created_at =>ticket_prop.created_at.to_datetime(),
                     :updated_at => ticket_prop.updated_at.to_datetime() , :import_id => ticket_prop.display_id , :priority => priority_id  }  
   
+  
+  
   ticket_exist = @current_account.tickets.find_by_import_id(ticket_prop.display_id.to_i())
   puts "Read ticket  with id: #{ticket_prop.display_id} and created time: #{ticket_prop.created_at} and exist:#{ticket_exist}"
   return if ticket_exist
-  display_id_exist = @current_account.tickets.find_by_display_id(ticket_prop.display_id.to_i())         
   responder = @current_account.all_users.find_by_import_id(ticket_prop.responder_id) unless ticket_prop.responder_id.blank? 
   group = @current_account.groups.find_by_import_id(ticket_prop.group_id.to_i()) unless ticket_prop.group_id.blank?
-  props.store(:display_id, ticket_prop.display_id) unless display_id_exist
   props.store(:responder_id , responder.id) if responder
   props.store(:group_id , group.id) if group
   
-  @ticket = @current_account.tickets.new(props)            
-  if @ticket.save
+  @ticket = @current_account.tickets.new(props)  
+  @nice_display_id =  ticket_prop.display_id.to_i()
+
+  begin
+   display_id_exist = @current_account.tickets.find_by_display_id(@nice_display_id)   
+   @ticket.display_id = @nice_display_id   unless display_id_exist
+   @ticket.save!
+  rescue ActiveRecord::StatementInvalid => error
+    @save_retry_count =  (@save_retry_count || 5)
+    retry if( (@save_retry_count -= 1) > 0 )
+    raise error
+  end   
+
     ticket_state = {:assigned_at => ticket_prop.assigned_at , :created_at =>ticket_prop.created_at.to_datetime(), 
                           :updated_at => ticket_prop.updated_at.to_datetime() ,:first_assigned_at => ticket_prop.first_assigned_at }
     ticket_state.store(:resolved_at ,ticket_prop.status_upated_at.to_datetime() ) if ticket_prop.status.to_i >2
@@ -74,7 +85,7 @@ def save_ticket ticket_xml
     ticket_state.store(:pending_since ,ticket_prop.status_upated_at.to_datetime() ) if ticket_prop.status.to_i == 2
     @ticket.ticket_states.update_attributes(ticket_state)   
     ticket_post_process ticket_prop , @ticket  
-  end
+  
 end
 
 def ticket_post_process ticket_prop , ticket
@@ -90,7 +101,8 @@ def ticket_post_process ticket_prop , ticket
   end
   #Attachment
   ticket_prop.attachments.each do |attachment|   
-    Delayed::Job.enqueue Import::Attachment.new(ticket.id ,attachment.url, :ticket )
+    #Delayed::Job.enqueue Import::Attachment.new(ticket.id , URI.encode(attachment.url), :ticket )
+    Resque.enqueue( Import::Zen::ZendeskAttachmentImport,ticket.id ,URI.encode(attachment.url), :ticket)
   end 
   ticket_prop.comments.each do |comment| 
     user = @current_account.all_users.find_by_import_id(comment.user_id)
@@ -100,7 +112,8 @@ def ticket_post_process ticket_prop , ticket
     @note = ticket.notes.build(note_props)
     @note.save
     comment.attachments.each do |attachment| 
-      Delayed::Job.enqueue Import::Attachment.new(@note.id ,attachment.url, :note)
+      #Delayed::Job.enqueue Import::Attachment.new(@note.id ,URI.encode(attachment.url), :note)
+      Resque.enqueue( Import::Zen::ZendeskAttachmentImport ,@note.id , URI.encode(attachment.url), :note)
     end
   end
 end

@@ -80,6 +80,7 @@ end
  
 def send_success_email (email,domain)
     puts "sending success email"
+    email = "shihab@freshdesk.com" # Right now we are sending the mail to shihab to monitor
     email_params = {:email => email, :domain => domain}
     Admin::DataImportMailer.deliver_import_email(email_params)
 end

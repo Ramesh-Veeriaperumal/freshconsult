@@ -30,7 +30,7 @@ module EmailCommands
   end
   
   def get_email_cmd_regex(account)
-    delimeter = account.email_commands_setting.email_cmds_delimeter
+    delimeter = account.email_cmds_delimeter
     escaped_delimeter = Regexp.escape(delimeter)
     email_cmds_regex = Regexp.new("#{escaped_delimeter}(.+)#{escaped_delimeter}",Regexp::IGNORECASE | Regexp::MULTILINE) unless escaped_delimeter.blank?
     email_cmds_regex
@@ -73,7 +73,7 @@ module EmailCommands
   end
   
   def product(ticket, value, user, note)
-    email_config = ticket.account.email_configs.find_by_name(value)
-    ticket.email_config = email_config unless email_config.blank? 
+    product = ticket.account.products.find_by_name(value)
+    ticket.product = product unless product
   end
 end

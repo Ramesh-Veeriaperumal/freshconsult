@@ -14,6 +14,7 @@ en:
   status: "Status"
   preview: "Preview"
   proceed_now: "\n\nProceed now?"
+  apply: "Apply"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
@@ -120,6 +121,9 @@ en:
       agent_mandatory_closure: Required when closing the ticket
       choices: Choices
       label_in_portal_info: The label that is displayed in your self service portal
+      display_cc_field: Display CC Field
+      cc_company_contacts: Can CC only company contacts
+      cc_any_email: Can CC any email address
   folder: 
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
@@ -187,6 +191,9 @@ en:
         send_while_option3: Emails sent after a ticket is "Closed".
         send_while_option4: Allow agents to add survey links to specific emails.
         send_while_title: Choose which emails have the satisfaction survey link
+        enter_happy_text: Enter the happy text
+        enter_neutral_text: Enter the neutral text
+        enter_unhappy_text: Enter the unhappy text
         
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
@@ -335,7 +342,10 @@ en:
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
-    products: 
+    products:
+      helpnote:
+        heading: Multiple Products
+        content: Multiple products helps you to provide product or brand specific support.
       new: 
         title: New Product
       portal: 
@@ -360,13 +370,18 @@ en:
         enable_product_portal: Enable Product Portal
         enter_support_email_id: Your support email
         configure_email: Configure Email
+        product_support_emails: Product Support Emails
         product_name: Product name
+        forwarding_email_info: "Your forwarding email address:"
       product:
         email_not_verified: Email not verified  
         delete: Are you sure you want to delete this Product?
       index: 
         title: Products        
         add_product: Add Product
+      primary_product_support_email: Primary Product Support Email
+      add_another_email: Add Another Email
+      primary_email_required: Atleast one primary email has to be present
     canned_responses:
       ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
@@ -436,6 +451,7 @@ en:
         facebook-setting: Facebook Settings
         security: Security
         email_commands_setting: "Email Command Settings"
+        billing: "Plans & Billing"
       
     canned_responses:
       index:
@@ -597,6 +613,9 @@ en:
     contacts: 
       create: 
         success: The contact has been created successfully.
+      info_select: Please select at least 1 user.
+    customers:
+      info_select: Please select at least 1 customer.
     to_dos: 
       complete: 
         success: The To-Do has been marked as completed.
@@ -808,6 +827,7 @@ en:
   import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
   portal_customizer_open_solutions: Anybody can view public solutions
   portal_customizer_option_solutions: Users can view public solutions without logging in
+  portal_customizer_option_auto_suggest_solutions: Auto suggest solutions when the user creates a new ticket.
   portal_customizer_google_signin: Allow users to Sign in using Google
   portal_customizer_twitter_signin: Allow users to Sign in using Twitter
   portal_customizer_facebook_signin: Allow users to Sign in using Facebook
@@ -900,11 +920,14 @@ en:
       placeholder: Search All Solutions
     search: 
       placeholder: Search %{name}
+  auto_suggest_solutions:
+    info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
   reset: Reset
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
+  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
   topic:
     ideas_stamps:
       planned: Planned
@@ -1089,11 +1112,11 @@ en:
     deleted_message: This is a deleted contact
     title: Contacts
     emailnotverified: Email has not been verified for this contact!
-    showing: Showing
+    showing: "Showing:"
     info1: Are you sure you want to delete this contact?
     info2: Make this User an Agent
     send_activation: Send activation email
-    import_csv: Import users from CSV
+    import_csv: Import Customers from CSV
     import_google: Import from Google
     import_google_no: "No"
     import_google_yes: "Yes"
@@ -1110,6 +1133,15 @@ en:
     info6: Add specific notes regarding this contact
     role:
       info: Can see all tickets from this company 
+    status:
+      active: Active
+      deleted: Deleted
+    active:
+      no_contacts: You don't have any contact added to the list.
+      no_contacts_with_letter: You don't have any active contacts with the letter '%{alphabet}'
+    deleted:
+      no_contacts: You don't have any contacts to restore.
+      no_contacts_with_letter: You don't have any deleted contacts with the letter '%{alphabet}'
   between: Between
   portal_key: Portal
   add_new_forum: add a new forum
@@ -1215,6 +1247,10 @@ en:
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
+  companies:
+    active:
+      no_companies: You don't have any company added to the list.
+      no_companies_with_letter: You don't have any companies with the letter '%{alphabet}'
   feedbackwidget_embed_code: Widget embed code
   billing_info_update: Your billing information has been updated.
   wrong_portal: 
@@ -1279,8 +1315,11 @@ en:
   update_and_login: Update and login
   enter_payment: Enter Payment details...
   errors_in_payment: "Errors encountered with your payment:"
-  email_configs: 
+  email_configs:
+    title: Email Settings
+    email: email 
     name: Name
+    edit: Edit
     info9: Assign to Group
     reply_emails: Reply Emails from Freshdesk
     delete: Are you sure you want to delete this email?
@@ -1288,13 +1327,13 @@ en:
     info10: New tickets to this support email will get automatically assigned to a group
     title: Email Settings
     supp_email_add: Support email address
-    info11: Configure primary incoming and outgoing support email address
+    info11: List of all support email addresses
     info1: Your users send support emails to
     add_supp_emails: Additional support email(s)
     info12: Add Another Email address
     info2: You must forward your support emails to your unique email address
-    send_verification_email: Send verification email again
-    unverified: Unverified
+    send_verification_email: Verify again
+    unverified: Email not verified
     info13: Your support email address is
     info3: Freshdesk will fetch those emails and convert them as tickets
     inactive_info1: All your support emails are still unverified, you must verify at least one support email
@@ -1312,9 +1351,26 @@ en:
     make_primary: Make primary
     info8: Forward your emails to
     help_link_info: Read our Email Settings article for more information...
-    bcc_email: BCC address (optional)
-    info17: This email address will be included automatically in the BCC field for all ticket communications
+    bcc_email: Bcc address
+    info17: This email address will be included automatically in the Bcc field for all ticket communications
     info18: Automatic bcc address included in ticket replies 
+    email_added_succ_msg: The email has been added
+    assign_to_product_msg: Link this support email with a product
+    assign_to_product_info: If you want to link the email to a new product first <a href='{{products_path}}'> add product </a>
+    new_support_email: New Support Email
+    global_support_emails: Global Support Emails
+    support_email: Support Email
+    forwarding_email: Forwarding Email
+    group: Group
+    support_email_exists: Support email already exists
+    primary_supp_email_tool_tip: Primary support email
+    secondary_supp_email_tool_tip: Make this email primary
+    remove_msg: Are you sure you want to remove this email?
+    mark_as_primary_msg: Are you sure you want to make this as the primary support email?
+    bcc_text: Bcc
+    add_bcc_text: Add Bcc
+    set_bcc_email_text: Set automatic Bcc email
+    name_info_msg: Name of the email that will be used in the ticket replies
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -1612,6 +1668,13 @@ en:
         bcc: Bcc
         addbcc: Add Bcc
         removebcc: Remove Bcc
+      forward_form:
+        cc: Cc
+        addcc: Add Cc
+        removecc: Remove Cc
+        bcc: Bcc
+        addbcc: Add Bcc
+        removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
       facebook_form:  	
@@ -1678,6 +1741,8 @@ en:
         new_my_open: New & My Open Tickets
         this_view: this view
         all_tickets: All Tickets
+        all: All Tickets
+        new_and_my_open: New & My Open Tickets
         open: Open tickets
         closed: Closed Tickets
         deleted: Trash
@@ -1809,11 +1874,24 @@ en:
     twitter_handles:
       index:
         title: "Twitter Accounts"
+        remove_handle_msg: Are you sure you want to remove this twitter account?
       signin_info:
         title: Sign in using twitter
         engage_customers: Engage your customers, directly on twitter
         associate_account: Associate a twitter account to <b>  %{product_name} </b> and respond to your customers with a tweet or message from within Freshdesk.
         add_twitter: Add twitter account
+      form:
+        search_keywords: Search Keywords
+        info_data: Helps you to quickly monitor twitter search relating to your product/brand/service.<br /> <strong>Note:</strong> You can add multiple search keywords separated by comma.
+        capture_mentions_msg: Capture <strong>"@Mentions"</strong> as tickets
+        capture_mentions_info: Freshdesk will automatically convert any @mentions of this Twitter account into tickets.
+        capture_dm_msg: Capture <strong>"Direct messages"</strong> as ticket        
+        capture_dm_info: Freshdesk will automatically convert any Direct messages to this Twitter account into tickets.
+        dm_time_msg: DM Thread Time
+        dm_time_info: Maximum time to consider direct messages from same user as threaded.
+        product: Product
+      edit:
+        twitter_settings_for_msg: Twitter settings for
   all_due: All 
   due_today: Today
   due_tomo: Tomorrow
@@ -1865,7 +1943,9 @@ en:
   mobile:
     home:
       remember: "Remember me"
-      login: "Login"
+      login: "Sign In"
+      sign_in_using: "...or Sign in using"
+      sign_in_error: "Incorrect email or password."
   integrations:
     capsule_crm:
       label: "Capsule CRM"
@@ -2098,6 +2178,8 @@ en:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
       survey_reports:
+        index: 
+            agent_list_loading: Fetching agent list
         feedbacks:
             in_response_to: -- In response to  
         back_to: Back to List View
@@ -2127,13 +2209,13 @@ en:
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"
-  email_commands_update_success: "Email Command Settingss were successfully updated."
+  email_commands_update_success: "Email Command Settings were successfully updated."
   email_commands_update_failed:  "Failed to update Email Command Settings."
   email_command_settings_heading: "Email Command Settings"
   email_command_settings_info: "Configure the delimeter used to identify and extract email commands from the mail"
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: "To"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Subject"
   email_command_preview_subject_value: "Support Ticket"
   unable_to_charge: "Unable to charge the card for the added agent!"
@@ -2145,7 +2227,7 @@ en:
   folder_edit_not_allowed: "This folder can't be modified" 
   never: Never
   always: Always
-  maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/account/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
+  maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
@@ -2155,6 +2237,8 @@ en:
   search:
     no_results_msg: "No results found"  
   assumed_identity_msg: "You've assumed your identity as %{user_name}."
+  unauthorized_msg: "Authorization failed"
+  assuming_identity_user_does_not_exist_msg: "User you've tried to assume does not exist."
   assuming_identity_not_allowed_msg: "You are not allowed to assume this user."
   identity_reverted_msg: "You have reverted your identify back to you."
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
@@ -2184,3 +2268,18 @@ en:
   resolved_tickets: "Resolved Tickets"
   waiting_on_customer: "Waiting on Customer"
   waiting_on_third_party: "Waiting on Third Party"
+  bcc_email_updated_success_msg: "Successfully updated Bcc email"
+  bcc_email_updated_failure_msg: "Failed to update Bcc email"
+  choose_free_plan: "Choose your Free %{plan}"
+  continue_using_free: "Continue to use Freshdesk as a"
+  free_account: "Free account"
+  not_eligible_for_free_plan: "Not eligible to select a Free plan"
+  select_free_plan: "Select your Free plan"
+  change_details_anytime: "Subscription details or plans can be changed at anytime."
+  enter_payment_details_to_add: "Enter payment details to add more agents"
+  plan_is_selected: "Your Free account is now active with the %{plan} plan"
+  error_in_plan: "Error changing the plan"
+  change_free_plan: "Change your Free plan"
+  billing_info: "Subscription information"
+  forwarded_email: "Forwarded email"
+  

@@ -4,7 +4,8 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
   
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
-  #validates_presence_of :product_id
+
+  delegate :friendly_email, :to => :product, :allow_nil => true
   
   has_one :logo,
     :as => :attachable,
@@ -21,15 +22,13 @@ class Portal < ActiveRecord::Base
   has_one :template, :class_name => 'Portal::Template'
 
   belongs_to :account
-  belongs_to :product, :class_name => 'EmailConfig'
+  belongs_to :product
   
   #Again, the below two are not in literal 'ER belongs_to', just a one-to-one mapping.
   belongs_to :solution_category, :class_name => 'Solution::Category',
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
-  
-  #accepts_nested_attributes_for :logo, :fav_icon
-  
+    
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
   end
@@ -48,11 +47,11 @@ class Portal < ActiveRecord::Base
   end
   
   def solution_categories
-    main_portal? ? account.solution_categories : (solution_category ? [solution_category] : [])
+    main_portal ? account.solution_categories : (solution_category ? [solution_category] : [])
   end
   
   def forum_categories
-    main_portal? ? account.forum_categories : (forum_category ? [forum_category] : [])
+    main_portal ? account.forum_categories : (forum_category ? [forum_category] : [])
   end
   
   #Yeah.. It is ugly.
@@ -91,7 +90,27 @@ class Portal < ActiveRecord::Base
   def host
     portal_url.blank? ? account.full_domain : portal_url
   end
+
+  def portal_name
+    (name.blank? && product) ? product.name : name
+  end
   
+  def logo_url
+    logo.content.url(:logo) unless logo.nil?
+  end
+
+  def fav_icon_url
+    fav_icon.content.url unless fav_icon.nil?
+  end
+  
+  def to_mob_json
+    options = {
+      :only => [ :name, :preferences ],
+      :methods => [ :logo_url, :fav_icon_url ]
+    }
+    to_json options
+  end
+
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)
@@ -106,7 +125,7 @@ class Portal < ActiveRecord::Base
     
     def filter_fields(f_list)
       to_ret = []
-      checks = { 'product' => (main_portal? && !account.products.empty?) }
+      checks = { 'product' => (main_portal && !account.products.empty?) }
 
       f_list.each { |field| to_ret.push(field) if checks.fetch(field.name, true) }
       to_ret

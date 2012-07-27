@@ -3,13 +3,8 @@ module Helpdesk::TicketActions
   include Helpdesk::Ticketfields::TicketStatus
   
   def create_the_ticket(need_captcha = nil)
-    ticket_params = params[:helpdesk_ticket]
-    cc_emails = params[:cc_emails]
-    unless cc_emails.blank?
-      cc_emails.reject!(&:empty?) 
-      cc_emails = cc_emails.uniq
-      ticket_params = ticket_params.merge(:cc_email => {:cc_emails => cc_emails, :fwd_emails => []})
-    end
+    cc_emails = validate_emails(params[:cc_emails])
+    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => []})
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
@@ -38,7 +33,7 @@ module Helpdesk::TicketActions
     @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0
     @ticket.email ||= current_user && current_user.email
-    @ticket.email_config_id ||= current_portal.product.id
+    @ticket.product ||= current_portal.product
   end
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
@@ -139,6 +134,7 @@ module Helpdesk::TicketActions
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
                                 :email_config_id => @source_ticket.email_config_id,
+                                :product_id => @source_ticket.product_id,
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
@@ -278,5 +274,25 @@ module Helpdesk::TicketActions
     
     params[:data_hash] = action_hash;
   end
+
+   def validate_emails email_array
+     parent = @item
+     unless email_array.blank?
+     email_array.delete_if {|x| (extract_email(x) == !(valid_email?(x))) }
+     email_array = email_array.collect{|e| e.gsub(/\,/,"")}
+     email_array = email_array.uniq
+     end
+   end
+    
+    def extract_email(email)
+      email = $1 if email =~ /<(.+?)>/
+      email
+    end
+    
+    def valid_email?(email)
+      email = extract_email(email)
+      (email =~ /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/) ? true : false
+    end
+
   
 end

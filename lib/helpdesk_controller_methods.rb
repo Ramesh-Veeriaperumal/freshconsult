@@ -1,3 +1,5 @@
+require "open-uri"
+
 module HelpdeskControllerMethods
   
   def self.included(base)
@@ -25,6 +27,9 @@ module HelpdeskControllerMethods
       format.xml  { render :xml => @item, :status => :created, :location => url_for(@item) }
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
+      format.mobile {
+        render :json => {:success => true,:item => @item}.to_json
+      }
     end
   end
 
@@ -33,6 +38,9 @@ module HelpdeskControllerMethods
       format.html { render :action => :new }
       format.xml  { render :xml => @item.errors}
       format.widget { flash[:error] = "Error in creating the ticket. Try again later."
+        format.mobile {
+        render :json => {:failure => true,:errors => @item.errors}.to_json
+      }
       render :action=>:create_ticket_status, :layout => "widgets/contacts"}
     end
   end
@@ -65,6 +73,7 @@ module HelpdeskControllerMethods
         process_destroy_message  
         redirect_to after_destroy_url
       end
+      expects.json  { render :json => :deleted}
       expects.js { after_destory_js }
     end
 
@@ -185,6 +194,25 @@ protected
       @item.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @item.account_id)
     end
     
+  end
+
+  def fetch_item_attachments
+    (params[nscname][:attachments] || []).each do |a|
+      begin
+        if a[:resource].is_a?(String) and Integer(a[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
+          attachment_obj = current_account.attachments.find_by_id(a[:resource])
+          url = attachment_obj.authenticated_s3_get_url
+          io = open(url)
+          if io
+            def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+          end
+          a[:resource] = io
+        end
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        Rails.logger.error("Error while fetching item attachments using ID")
+      end
+    end
   end
 
   def item_url 

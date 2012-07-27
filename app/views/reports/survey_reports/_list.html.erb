@@ -14,15 +14,18 @@
 		  <%end%>
 	  </ul>
   
-<%if @reports_list.blank?%>
+<%if @reports_list.blank? && @survey_reports.total_pages==0 %>
 	 <h1 style="font-size:18px;text-align:center;margin-top:50px;"> <%=t('.no_feedback')%> </h1>
 <%end%>
 
 <% javascript_tag do %>
 	jQuery("#date_range_title").html("<%=params['date_range']%>")
 
-	<%if @reports_list.blank?%>
+	<%if @reports_list.blank? || !@reports_list.blank? && @reports_list.size <= 1 %>			
 			jQuery("#back_to_con").hide();
+			jQuery("#sort_by_option").hide();
+	<%else%>
+			jQuery("#sort_by_option").show();
 	<%end%>	
 
 	
