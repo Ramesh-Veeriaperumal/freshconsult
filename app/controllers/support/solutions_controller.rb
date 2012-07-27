@@ -1,4 +1,4 @@
-class Support::SolutionsController < Support::SupportController
+class Support::SolutionsController < SupportController
 	before_filter :scoper
 
 	def show

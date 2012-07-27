@@ -1,4 +1,4 @@
-class Support::LoginController < Support::SupportController
+class Support::LoginController < SupportController
   
   
   

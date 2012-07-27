@@ -1,4 +1,4 @@
-class Support::Discussions::TopicsController < Support::SupportController
+class Support::Discussions::TopicsController < SupportController
   before_filter :find_forum_and_topic, :except => :index 
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums

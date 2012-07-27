@@ -1,4 +1,4 @@
-class Support::Discussions::ForumsController < Support::SupportController
+class Support::Discussions::ForumsController < SupportController
 	before_filter :scoper
 
 	def show

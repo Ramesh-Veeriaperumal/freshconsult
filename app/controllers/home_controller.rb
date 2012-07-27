@@ -1,4 +1,4 @@
-class HomeController < Support::SupportController
+class HomeController < SupportController
 	
  	before_filter { @hash_of_additional_params = { :format => "html" } }  
  	before_filter :set_portal_variables

@@ -1,4 +1,4 @@
-class Support::TicketsController < Support::SupportController
+class Support::TicketsController < SupportController
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   include SupportTicketControllerMethods 
   before_filter { |c| c.requires_permission :portal_request }

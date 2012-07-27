@@ -1,12 +1,12 @@
-<h2>Help center</h2>
+<h1 class="page-title">Help center</h2>
 <p class="lead">
 	Start typing a question and see answers in real time
 </p>
 {{ search_portal }}
 <hr />
-<h3>Solutions</h3>
+<h2>Solutions</h2>
 {% for category in portal.solution_categories %}
-	<h4>{{category.name}}</h4>				
+	<h3>{{category.name}}</h4>				
 	<p>{{category.description | truncate}}</p>
 	<div class="row-fluid">
 		{% for folder in category.folders %}

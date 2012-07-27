@@ -1,4 +1,4 @@
-class Support::Solutions::ArticlesController < Support::SupportController 
+class Support::Solutions::ArticlesController < SupportController 
   
   include Helpdesk::TicketActions
   

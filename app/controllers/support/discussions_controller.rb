@@ -1,4 +1,4 @@
-class Support::DiscussionsController < Support::SupportController
+class Support::DiscussionsController < SupportController
 	before_filter :scoper
 	before_filter :set_selected_tab
 

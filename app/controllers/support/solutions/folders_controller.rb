@@ -1,4 +1,4 @@
-class Support::Solutions::FoldersController < Support::SupportController
+class Support::Solutions::FoldersController < SupportController
 	before_filter :scoper
  
 	private
