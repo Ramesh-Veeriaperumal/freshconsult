@@ -2,7 +2,7 @@ class SubscriptionsController < ApplicationController
 
   skip_before_filter :check_account_state
   
-  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans, :calculate_amount ] do |c| 
+  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans, :calculate_amount,:free,:convert_subscription_to_free ] do |c| 
     c.requires_permission :manage_account
   end
   
