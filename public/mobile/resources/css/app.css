@@ -10403,8 +10403,8 @@ input, textarea, select {
   border-radius: 0;
 }
 .homepage .home_img {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background: #fff;
   text-align: center;
   overflow: hidden;
@@ -10417,8 +10417,8 @@ input, textarea, select {
 .homepage .home_img img {
   -webkit-border-radius: 90px;
   border-radius: 90px;
-  width: 82px;
-  height: 82px;
+  width: 72px;
+  height: 72px;
   margin-top: 4px;
 }
 .homepage .branding {
@@ -10442,7 +10442,8 @@ input, textarea, select {
   text-align: center;
   color: #333;
   text-shadow: white -1px -1px 0;
-  font-size: 0.8em;
+  font-size: 0.7em;
+  width: 90px;
 }
 .homepage #home-user-profile {
   text-align: center;
@@ -10485,12 +10486,16 @@ input, textarea, select {
 }
 
 /*hack for sencha styles starts*/
-x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after {
+.x-field .x-field-input, .x-field .x-input-el {
+  padding-top: 6px;
+}
+
+.x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after {
   width: 0.7em;
   -webkit-mask-size: 0.74em 1.8em;
 }
 
-x-button-forward::before, .x-toolbar .x-button-forward::before {
+.x-button-forward::before, .x-toolbar .x-button-forward::before {
   right: -0.72em;
 }
 
@@ -11007,8 +11012,10 @@ a {
   padding: 2px 4px;
   content: '\4d';
 }
+.customerDetails .customer-info .customer-contact-list .facebook span {
+  padding: 5px 9px;
+}
 .customerDetails .customer-info .customer-contact-list .facebook span:before {
-  padding: 3px 9px;
   content: '\F09a';
 }
 .customerDetails .customer-info div {
@@ -11553,6 +11560,9 @@ a {
   margin: 0;
   padding: 0;
   position: absolute;
+}
+.ticketDetails .conversation .msg table th.td {
+  padding: 2px;
 }
 .ticketDetails .conversation .msg:before {
   top: -0.5em;

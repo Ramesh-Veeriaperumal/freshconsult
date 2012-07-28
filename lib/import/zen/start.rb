@@ -29,9 +29,9 @@ class Import::Zen::Start < Struct.new(:params)
       send_success_email(params[:email] , params[:domain])
       delete_import_files @base_dir
     rescue => e
-      handle_error
       NewRelic::Agent.notice_error(e)
       puts "Error while importing data ::#{e.message}\n#{e.backtrace.join("\n")}"
+      handle_error
       return true   
     end
   end

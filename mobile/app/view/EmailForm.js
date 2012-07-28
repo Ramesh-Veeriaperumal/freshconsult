@@ -79,10 +79,10 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textfield',
                         name: 'cc_emails',
-                        label:'Cc/Bcc :',
+                        label:'Cc/Bcc:',
                         listeners: {
                             focus: function(){
-                                this.setLabel('Cc : ');
+                                this.setLabel('Cc:');
                                 this.parent.items.items[7].setHidden(false);
                             }
                         }
@@ -90,14 +90,14 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textfield',
                         name: 'bcc_emails',
-                        label:'Bcc :',
+                        label:'Bcc:',
                         hidden:true,
                         showAnimation:'fadeIn'
                     },
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Enter your Message... *',
+                        placeHolder:'Enter your message... *',
                         height:180,
                         required:true,
                         clearIcon:false

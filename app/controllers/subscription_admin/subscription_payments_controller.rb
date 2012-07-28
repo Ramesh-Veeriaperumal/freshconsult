@@ -15,7 +15,7 @@ class SubscriptionAdmin::SubscriptionPaymentsController < ApplicationController
   def fetch_day_pass_payments
    @day_pass_payments = SubscriptionPayment.sum(:amount, 
                 :joins => "INNER JOIN  day_pass_purchases on day_pass_purchases.payment_id = subscription_payments.id",
-                :group => "DATE_FORMAT(subscription_payments.created_at, '%d %M, %Y')",
+                :group => "DATE_FORMAT(subscription_payments.created_at, '%M, %Y')",
                 :order => "subscription_payments.created_at desc")
   end
   

@@ -8,15 +8,15 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
 
         var backButton = {
             xtype:'button',
-            text:'List',
-			ui:'lightBtn back',
+            text:'Cancel',
+			ui:'lightBtn',
             handler:this.backToViews,
 			align:'left'
 		};
 
         var addBtn = Ext.create('Ext.Button',{
             xtype:'button',
-            text:'Done',
+            text:'Create',
             align:'right',
             ui:'headerBtn',
             disabled:true,
