@@ -31194,7 +31194,17 @@ Ext.define('Freshdesk.view.ContactDetails', {
             xtype:'contactform',
         };
         var contactInfo = {
-            xtype:'contactInfo'
+            xtype:'contactInfo',
+            listeners : {
+                element : 'element',
+                delegate : 'a',
+                tap : function(e, item) {
+                    var hrefParent = Ext.get(item).findParent('a');
+                    if(hrefParent && hrefParent.getAttribute('href')){
+                        location.href=hrefParent.getAttribute('href');
+                    }
+                }
+            }
         };     
 
         this.add([TopTitlebar,contactInfo]);
@@ -31205,6 +31215,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         history.back();
     },
     config: {
+        id:'contactDetails',
         scrollable:{
             direction:'vertical',
             directionLock:true
@@ -39500,6 +39511,9 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                     var errorHtml='Please correct the bellow errors.<br/>';
                     for(var index in response.errors){
                         var error = response.errors[index],eNo= +index+1;
+                        if(error[0] === "requester_id") {
+                            error[0] = "Requester"
+                        }
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);    

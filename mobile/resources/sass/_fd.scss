@@ -564,18 +564,22 @@ a {
 			&:first-child{
 				border:0;
 			}
-			a:active{
-				.ticket-item{
-					background:url('../images/activebg.png');
-					color:#fff;
-					@include text-shadow( #393939 -1px -1px 0);
-					.info{
-						background:#757575;
-						@include box-shadow(0);
-					}
-					.subject{
+			a{
+				display:block;
+				min-height:72px !important;
+				&:active{
+					.ticket-item{
+						background:url('../images/activebg.png');
 						color:#fff;
-						@include text-shadow( #333 1px 1px 0);
+						@include text-shadow( #393939 -1px -1px 0);
+						.info{
+							background:#757575;
+							@include box-shadow(0);
+						}
+						.subject{
+							color:#fff;
+							@include text-shadow( #333 1px 1px 0);
+						}
 					}
 				}
 			}

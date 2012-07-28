@@ -10495,10 +10495,6 @@ input, textarea, select {
   -webkit-mask-size: 0.74em 1.8em;
 }
 
-.x-button-forward::before, .x-toolbar .x-button-forward::before {
-  right: -0.72em;
-}
-
 .x-toolbar-header, .x-toolbar-dark {
   margin-bottom: 1px;
   border-bottom-color: #3B68A8 !important;
@@ -10918,6 +10914,10 @@ a {
 }
 .customerDetails .ticketsList li:first-child {
   border: 0;
+}
+.customerDetails .ticketsList li a {
+  display: block;
+  min-height: 72px !important;
 }
 .customerDetails .ticketsList li a:active .ticket-item {
   background: url("../images/activebg.png");
@@ -12140,6 +12140,13 @@ a {
 .x-select-overlay .x-item-selected .x-list-item-label:after {
   -webkit-mask-image: none;
   background-color: transparent;
+}
+
+.x-toolbar .x-button-forward:before {
+  right: -0.6em !important;
+}
+.x-toolbar .x-button-forward:after {
+  right: -0.62em !important;
 }
 
 .x-list-options {

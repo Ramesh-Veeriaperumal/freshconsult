@@ -10915,6 +10915,10 @@ a {
 .customerDetails .ticketsList li:first-child {
   border: 0;
 }
+.customerDetails .ticketsList li a {
+  display: block;
+  min-height: 72px !important;
+}
 .customerDetails .ticketsList li a:active .ticket-item {
   background: url("../images/activebg.png");
   color: #fff;
