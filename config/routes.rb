@@ -97,6 +97,7 @@
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
+    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
   end
   
   map.resources :reports
@@ -300,6 +301,10 @@
     anonymous.resources :requests
   end
 
+  map.namespace :mobile do |mobile|
+    mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get}
+  end
+  
   map.root :controller => "home"
   #map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'
   

@@ -47,7 +47,6 @@ class Import::Zen::Start < Struct.new(:params)
  end
  
 def read_data(obj_node)
-    puts "reading #{obj_node}"
     file_path = File.join(@base_dir , OBJECT_FILE_MAP[obj_node.to_sym])
     reader = Nokogiri::XML::Reader(File.open(file_path))
     while reader.read

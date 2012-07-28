@@ -61,14 +61,32 @@ var $J = jQuery.noConflict();
        
 	// App initialisation  
 	$(document).ready(function() {
-		var widgetPopup = null;   
+		var widgetPopup = null;
+    var hoverPopup =  false;
+    var hidePopoverTimer;
 
 		$("body").click(function(ev){
-			if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
-				widgetPopup.popover('hide');
-				widgetPopup = null;
-			}
+			hideWidgetPopup(ev);
 		});
+
+    hideWidgetPopup = function(ev) {
+      if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
+        widgetPopup.popover('hide');
+        widgetPopup = null;
+      }
+    }
+
+    hidePopover = function (ev) {  
+      if(!$.contains(this, ev.relatedTarget) ) { 
+        if(hoverPopup && !$(ev.relatedTarget).is('[rel=hover-popover]')) {
+          hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
+        }
+      }
+    };
+
+    $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
+      clearTimeout(hidePopoverTimer);
+    });
 		
 		$("a[rel=popover]")
 			.popover({ 
@@ -83,23 +101,47 @@ var $J = jQuery.noConflict();
 				}
 			});
 		
-		$("a[rel=widget-popover]")
-			.popover({ 
-				delayOut: 300,
-				trigger: 'manual',
-				offset: 5,
-				html: true,
-				reloadContent: false,
-				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-				content: function(){
-					return $("#" + $(this).attr("data-widget-container")).val();
-				}
-			})
+    $("a[rel=widget-popover]")
+      .popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).val();
+        }
+      });
+    $("a[rel=hover-popover]")
+      .popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).val();
+        }
+      });
+
+
+      $("a[rel=hover-popover]").live('mouseenter',function(ev) {
+        ev.preventDefault();
+        hideWidgetPopup(ev);
+        widgetPopup = $(this).popover('show');
+        hoverPopup = true;
+      }).live('mouseleave',function(ev) {
+          hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
+      });
 			
-		$("a[rel=popover], a[rel=widget-popover]").live("click", function(e){
+		$("a[rel=widget-popover]").live("click", function(e){
 				e.preventDefault();
 				e.stopPropagation(); 
-				$('[rel=widget-popover]').each(function(){
+        clearTimeout(hidePopoverTimer);
+        hoverPopup = false;
+				$('[rel=widget-popover],[rel=hover-popover]').each(function(){
 					$(this).popover('hide');
 				});
  				widgetPopup = $(this).popover('show');

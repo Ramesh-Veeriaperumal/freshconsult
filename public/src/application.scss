@@ -195,6 +195,63 @@ ul.activityfeed li{
 
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
+.popover.topRight { margin-left: -3px;}
+div.contact_hover{
+	.user_name{ font-weight:bold; font-size:1.25em; color:#527eaa; display: inline-block; }
+	.user_desig, .user_email { margin-top:3px;}
+	.user_phone, .user_mobile, .user_fb, .user_twitter{
+		padding: 1px 20px;
+		margin:5px 5px 0 0;
+		height: 14px;
+		display: inline-block;
+	}
+	 .user_fb, .user_twitter{
+		padding: 0 20px;
+	}
+	
+	.user_phone{
+		background:sprite($symbol, phone) no-repeat #ffffff;
+	}
+	.user_mobile{
+		background:sprite($symbol, mobile) no-repeat #ffffff;	
+		margin-left:10px;
+	}
+	.user_fb{
+		height:11px;
+		background:sprite($symbol, reply-fb) no-repeat #ffffff;
+	}
+	.user_twitter{
+		height:11px;
+		background:sprite($symbol, reply-tweet) no-repeat #ffffff;
+	}
+}
+
+.popover.topRight{
+	.inner.hover_card {
+		background: #AAA;
+		padding:1px;
+	}
+	.arrow.dbl_left {
+		border-top: 8px solid transparent;
+		border-bottom: 8px solid transparent;
+		border-right: 8px solid #AAA;
+		left:-2px;
+		&:after {
+			content:" ";
+			display:block;
+			position: absolute;
+			width:0; height:0;
+			top: 0px;
+			left: 2px;
+			margin-top: -14px;
+			border-top: 14px solid transparent;
+			border-bottom: 14px solid transparent;
+			border-right: 14px solid white;
+			z-index: 2000;
+
+		}
+	}
+}
 
 .pageSeperator{
 	border-top:1px solid #fefefe;
@@ -5543,3 +5600,154 @@ margin:10px;
 			color:#888888;
 }
 /* SURVEY REPORT RELATED STYLES ENDS */
+
+.email-settings-header{
+	padding-bottom: 30px;
+	.action_buttons{
+		margin-top: 6px;
+		padding: 5px;
+	}
+}
+
+.email-settings-bcc{
+	position: relative;
+	label{
+		font-size: 14px;
+		padding: 0 5px 0 0;
+	}
+	a{
+		font-size: 14px;
+		color: #0c74d7;
+		font-weight: 500;
+		padding-right: 25px;
+	}
+	.tool-tip{
+		position: absolute;
+		background: url(../images/email_config_bcc_tooltip.png) no-repeat;
+		width: 18px;
+		height: 18px;
+		top: 1px;
+		right: 0px;
+	}
+}
+
+.email-config-styled-table{
+	width:100%;
+	border:1px solid #ECECEC;
+	margin-bottom: 20px;
+	thead{
+		tr{
+			height: 34px;
+			td{
+				color:#222;
+				background: url('../images/overlay-button.png') repeat-x 0px 0px;
+				font-weight: 600;
+				font-size: 13px;
+			}
+		}
+	}
+	tr{
+		border-bottom:1px solid #ECECEC;
+		td{
+			vertical-align: middle;
+			padding: 10px 4px;
+		}
+	}
+	tbody{
+		tr{
+			&.even{
+				>td{
+					background-color: #F9F9F9
+				}
+			}
+			td{
+				height: auto;
+				color: #666;
+
+				&.edit{
+					width: 5%;
+					text-align: center;
+					font-size: 13px;
+		    	}
+			    &.primaryRole{
+			    	width: 3%;
+			    	.primary, .secondary{
+			    		display: block;
+			    	}
+			    	.primary:before{
+			    		content: url(../images/star_on.png) "";
+			    	}
+			    	.secondary:before{
+			    		content: url(../images/star_off.png) "";
+			    	}
+			    	.secondary:hover{
+			    		display: block;
+				    	&::before{
+					    	content: url(../images/star_hover.png) "";
+				    	}
+			    	}
+			    }
+
+			    &.supportMail{
+			    	width: 200px;
+					span{
+						&.bold{
+							color: #333;
+							font-weight: bold;
+							font-size: 13px;
+						}
+					}
+					span{
+						&.warning_icon{
+							display: inline-block;
+							float: left;
+							padding-top: 12px;
+							&:before{
+			    				content: url(../images/img_icon_warning.png) "";
+				    		}
+						}
+					}
+					div{
+						&.reply_email{
+							text-decoration: line-through;
+						}
+						&.wrap{
+							width: 180px;
+						}
+					}
+					.not-verified{
+						margin-left: 30px;
+					}
+					.verify-button{
+						padding-top: 8px;
+						a{
+							padding: 3px 6px;
+							font-size:11px;
+							text-align: center;
+							text-decoration: none;
+							background-color:#f8f8f8;
+							border: 1px solid #919191;
+							@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
+							@include corners(8px);
+							cursor: pointer;
+						}
+					}
+				}
+				&.to-email{
+					width: 285px;
+					div{
+						&.wrap{
+							width: 250px;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+.product-title {
+	font-size: 1.1em;
+	font-weight: bold;
+	padding-bottom: 10px;
+}

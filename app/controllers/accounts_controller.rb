@@ -8,6 +8,7 @@ class AccountsController < ApplicationController
   skip_before_filter :set_locale, :except => [:cancel,:show]
   skip_before_filter :set_time_zone, :except => [:cancel]
   skip_before_filter :check_account_state
+  skip_before_filter :redirect_to_mobile_url
   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
@@ -334,8 +335,8 @@ class AccountsController < ApplicationController
       rescue
         locale =  I18n.default_locale
       end    
-      @account.primary_email_config.build_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
-                               :language => locale.to_s() , :account => @account)
+      @account.build_main_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
+                               :language => locale.to_s() , :account => @account, :main_portal => true)
      
     end
  

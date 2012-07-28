@@ -23,6 +23,7 @@ stylesheets:
     - public/stylesheets/autocomplete.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/hacks.css
     - public/stylesheets/ie.css
     - public/stylesheets/satisfaction.css
 
@@ -89,6 +90,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
+    - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
   visitor:
     - public/javascripts/frameworks/session.js            
