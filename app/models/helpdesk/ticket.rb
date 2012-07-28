@@ -25,10 +25,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values
-  before_create :set_dueby, :save_ticket_states
+  before_create :create_schemaless_record, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity
-  before_update :load_ticket_status, :cache_old_model, :update_dueby
+  before_update :update_schemaless_record, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
        :stop_timesheet_timers
   
@@ -111,6 +111,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
   
+  has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+
   attr_protected :attachments #by Shan - need to check..
   
   accepts_nested_attributes_for :tweet, :fb_post
@@ -978,6 +980,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
         self.frDueBy =  bhrs_during_elapsed_time.div(60).business_minute.after(self.frDueBy) if self.frDueBy > ticket_states.sla_timer_stopped_at
       end
     end
+  end
+
+  def create_schemaless_record
+    build_schema_less_ticket
+    schema_less_ticket.account_id = account.id
+    schema_less_ticket.product_id = email_config_id unless account.primary_email_config.id == email_config_id
+    schema_less_ticket.to_emails = to_emails
+  end
+
+  def update_schemaless_record
+    unless schema_less_ticket
+      build_schema_less_ticket
+      schema_less_ticket.account = account
+    end
+
+    schema_less_ticket.product_id = email_config_id unless account.primary_email_config.id == email_config_id
+    schema_less_ticket.save
   end
   
 end
