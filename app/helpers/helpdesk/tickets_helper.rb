@@ -217,7 +217,8 @@ module Helpdesk::TicketsHelper
       last_reply_content = last_conv.body_html
       unless last_reply_content.blank?
         doc = Nokogiri::HTML(last_reply_content)
-        doc.at_css("div.freshdesk_quote").remove unless doc.at_css("div.freshdesk_quote").blank?
+        remove_prev_quote = doc.css("div.freshdesk_quote")[3] # will show last 3 conversation apart from the last reply
+        remove_prev_quote.remove unless remove_prev_quote.blank?
         last_reply_content = doc.at_css("body").inner_html 
       end
     end

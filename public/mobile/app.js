@@ -31532,7 +31532,7 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 
         var backButton = {
             xtype:'button',
-            text:'Hide',
+            text:'Close',
 			ui:'lightBtn back',
             handler:this.goBack,
 			align:'left',
@@ -31541,15 +31541,16 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 		var topToolbar = {
 			xtype: "titlebar",
 			docked: "top",
+            title:'Results',
             ui:'header',
 			items: [backButton]
 		};
 
         var details = {
             tpl : new Ext.XTemplate(['<div class="flash">',
-                        '<tpl if="title"><div></div><div class="scenario_text">{title}</div></tpl>',
+                        '<tpl if="title"><div><div class="icon-scenario"></div><div class="scenario-text">{title}</div></div></tpl>',
                         '<tpl for="messages">',
-                            '<div class="message"></div><div class="scenario_text">{.}</div>',
+                            '<div><div class="icon-message"></div><div class="scenario-text">{.}</div></div>',
                         '</tpl>',
                     '</div>'
             ].join('')),
@@ -31564,11 +31565,9 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
         this.add([topToolbar,details]);
     },
     goBack : function(){
+        this.hide();
         if(this.hideHandler){
-            this.hide();
             this.hideHandler();            
-        }else{
-            this.hide();
         }
     },
     config: {
