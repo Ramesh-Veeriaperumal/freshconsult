@@ -1081,7 +1081,6 @@ ActiveRecord::Schema.define(:version => 20120724102704) do
     t.integer  "visibility",  :limit => 8
     t.integer  "position"
     t.boolean  "is_default",               :default => false
-    t.integer  "account_id",  :limit => 8
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
