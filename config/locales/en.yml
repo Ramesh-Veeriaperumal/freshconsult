@@ -1337,7 +1337,7 @@ en:
   back: Back
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
-    reported_on_ticket_list: "From: %{username}, Last updated: <strong>%{time_words} ago</strong> "
+    reported_on_ticket_list: "From: %{username}, Updated: <span class='emphasize'>%{time_words} ago</span> "
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam

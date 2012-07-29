@@ -124,6 +124,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
+    cookies.delete(:ticket_list_updated)
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
 
     if @items.empty? && !params[:page].nil? && params[:page] != '1'
