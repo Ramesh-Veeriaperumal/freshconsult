@@ -9,7 +9,7 @@
       <li>
   		  <div class="item_actions">
   		    <%= link_to t("edit"),  edit_social_twitter_url(twitter_handle), :class => "button" %>
-  		    <%= link_to(t('remove'), social_twitter_path(twitter_handle), :method => 'delete', :confirm => "Are you sure you want to remove this twitter account?", :class => "button" ) %>    
+  		    <%= link_to(t('remove'), social_twitter_path(twitter_handle), :method => 'delete', :confirm => t('.remove_handle_msg'), :class => "button" ) %>    
   		  </div>
   		  <div class="preview_pic">
   		    <span class="tweet_pic"></span>
@@ -18,7 +18,7 @@
   		    <h2 class="title">
             <%= link_to "@#{twitter_handle.screen_name}", edit_social_twitter_url(twitter_handle) %> 
           </h2>
-          <div class="intro"> <%= twitter_handle.product.name %> </div> 
+          <div class="intro"> <%= twitter_handle.product.name if twitter_handle.product%> </div> 
       </li>
     <% end %>
   </ul>

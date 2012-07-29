@@ -2017,7 +2017,7 @@
   email_command_settings_info: "Configureer het onderscheidingsteken dat wordt gebruikt om e-mailcommando's van de e-mail te identificeren en te extraheren"
   email_command_delimeter_label: "Onderscheidingsteken e-mailcommando's"
   email_command_preview_to_email: "Naar"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Onderwerp"
   email_command_preview_subject_value: "Ticket voor ondersteuning"
   unable_to_charge: "Kan de kaart voor de toegevoegde agent niet opladen!"

@@ -8,11 +8,10 @@
 
 .tab-text { font-size: 12px; color: #333; font-weight: normal; display: block; padding-top: 13px; white-space: nowrap; }
 
-.agent-img { width: 39px; height: 39px; display: block; margin: 10px 0 0 -25px; float: left; }
+.agent-img { width: 39px; height: 39px; display: block; margin: 10px 5px 0 15px; float: left; }
 
-.tabs .active > a, .tabs .active > a:hover { height: 60px; line-height: 30px; font-weight: bold; }
-
-.tabs > li > a { height: 60px; line-height: 30px; }
+#report_list .tabs .active > a, #report_list .tabs .active > a:hover { height: 60px; line-height: 30px; font-weight: bold; }
+#report_list .tabs > li > a { height: 60px; line-height: 30px; }
 
 .happy-smily { background: url("../images/happy-smily-tab.png") no-repeat; float: left; padding-left: 10px; position: relative; width: 42px; height: 42px; margin-left: -8px; margin-top: 10px; }
 
@@ -20,7 +19,7 @@
 
 .unhappy-smily { background: url("../images/unhappy-smily-tab.png") no-repeat; float: left; padding-left: 10px; position: relative; width: 42px; height: 42px; margin-left: -8px; margin-top: 10px; }
 
-.tabs, .pills { margin: 0 0 0px; padding: 0; list-style: none; zoom: 1; }
+#report_list .tabs, .pills { margin: 0 0 0px; padding: 0; list-style: none; zoom: 1; }
 
 .content-area { margin: 30px 0; }
 
@@ -65,3 +64,15 @@
 .top-p { padding-top: 18px; position: absolute; left: 12px; }
 
 .min-width { min-width: 184px; }
+
+.bottom-ticket-title { color: #999; }
+
+.customer-opinion { margin: -12px -15px 0 0; border: 1px solid #e5e5e5; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; padding: 2px; }
+
+.request-title .customer-opinion { background-position: 50% 50% !important; background-color: white !important; }
+
+.survey-option-conf li { display: inline; width: 25%; margin-right: 10px; padding: 6px; }
+
+.survey-option-conf input { width: 60%; }
+
+.survey-option-conf .happy-smily, .survey-option-conf .unhappy-smily, .survey-option-conf .neutral-smily { margin-top: -10px; }

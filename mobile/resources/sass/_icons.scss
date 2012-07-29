@@ -1,0 +1,26 @@
+.iconSmall {
+	width: 18px;
+	height: 18px;
+	float:left;
+	&.email{
+		background:url('../images/symbols-s3e131fbe04.png') 0px -340px no-repeat;
+	}
+	&.phone{
+		background:url('../images/symbols-s3e131fbe04.png') 0px -394px no-repeat;
+	}
+	&.portal{
+		background:url('../images/symbols-s3e131fbe04.png') 0px -413px no-repeat;
+	}
+	&.forum{
+		background:url('../images/symbols-s3e131fbe04.png') 0px -645px no-repeat;
+	}
+	&.twitter{
+		background:url('../images/symbols-s3e131fbe04.png') 0px -432px no-repeat;
+	}
+	&.facebook{
+		background:url('../images/symbols-s3e131fbe04.png') 0px -360px no-repat;
+	}
+	&.chat{
+		background:url('../images/symbols-s3e131fbe04.png') 0px -322px no-repeat;
+	}
+}

@@ -40,6 +40,7 @@ module Admin::HomeHelper
         
       [ t(".everything_else"), [
           ['/account',                    'account-settings', current_user.account_admin? ],
+          ['/subscription',               'billing', current_user.account_admin? ],
           ['/admin/products',             'multi-product',    feature?(:multi_product)  ],
           ['/admin/portal',               'customer-portal'         ],
           ['/admin/security',             'security'   ],

@@ -2,6 +2,14 @@ class Subscription < ActiveRecord::Base
   
   PRO_RATA_MIN_CHARGE = 4.00
   
+  SUBSCRIPTION_TYPES = ["active","trial","free"]
+  
+  AGENTS_FOR_FREE_PLAN = 1
+  
+  ACTIVE = "active"
+  TRIAL = "trial"
+  FREE = "free"
+  
   belongs_to :account
   belongs_to :subscription_plan
   has_many :subscription_payments
@@ -24,21 +32,23 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :renewal_period, :only_integer => true, :greater_than => 0
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validate_on_create :card_storage
+  validates_inclusion_of :state, :in => SUBSCRIPTION_TYPES
+  validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
   
   def self.customer_count
-   count(:conditions => {:state => 'active'})
+   count(:conditions => {:state => ['active','free']})
  end
  
   def self.free_customers
-   count(:conditions => {:state => 'active',:amount => 0.00})
+   count(:conditions => {:state => ['active','free'],:amount => 0.00})
   end
-  
+
   def self.customers_agent_count
     sum(:agent_limit, :conditions => { :state => 'active'})
   end
   
   def self.customers_free_agent_count
-    sum(:free_agents, :conditions => { :state => 'active'})
+    sum(:free_agents, :conditions => { :state => ['active']})
   end
  
   def self.monthly_revenue
@@ -67,9 +77,7 @@ class Subscription < ActiveRecord::Base
       # assign the discount to the subscription so it will stick
       # through future plan changes
       self.discount = plan.discount if plan.discount && plan.discount > discount
-    else
-      # Free account from the get-go?  No point in having a trial
-      self.state = 'active' #if new_record?
+    
     end
     
     self.renewal_period = billing_cycle unless billing_cycle.nil?
@@ -113,7 +121,6 @@ class Subscription < ActiveRecord::Base
     else
       gateway.update(billing_id, creditcard, gw_options)
     end
-    
     if @response.success?
       self.card_number = creditcard.display_number
       self.card_expiration = "%02d-%d" % [creditcard.expiry_date.month, creditcard.expiry_date.year]
@@ -232,7 +239,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def self.find_due(renew_at = Time.now)
-    find(:all, :include => :account, :conditions => { :state => 'active', :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
+    find(:all, :include => :account, :conditions => { :state => ['active','free'], :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
   end
   
   def paypal?
@@ -260,6 +267,22 @@ class Subscription < ActiveRecord::Base
   
   def trial?
     state == 'trial'
+  end
+
+  def free?
+    state == 'free'
+  end
+
+  def eligible_for_free_plan?
+    (account.agents.count == AGENTS_FOR_FREE_PLAN) and (!active?)
+  end
+
+  #Need to re visit
+  def convert_to_free
+    self.state = FREE
+    self.agent_limit = AGENTS_FOR_FREE_PLAN
+    self.renewal_period = 1
+    self.next_renewal_at = Time.now.advance(:months => 1)
   end
   
   protected
@@ -326,6 +349,7 @@ class Subscription < ActiveRecord::Base
     def paid_account?
       (state == 'active') and (subscription_payments.count > 0)
     end
+    alias :is_paid_account :paid_account?
     
     def cal_plan_change_amount
      ((trial_days ) * (amount - @old_subscription.amount)) / no_of_days_in_term
@@ -380,6 +404,10 @@ class Subscription < ActiveRecord::Base
       unless @trans_id.blank?
         subscription_payments.create(:account => account, :amount => amount, :transaction_id => @trans_id) 
       end
+    end
+
+    def finished_trial?
+      next_renewal_at < Time.zone.now
     end
 
     def free_plan?
@@ -462,4 +490,5 @@ class Subscription < ActiveRecord::Base
     meta_info[:description] = fetch_pro_rata_description if misc
     meta_info
   end
+
  end

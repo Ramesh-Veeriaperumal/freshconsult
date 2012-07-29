@@ -3,7 +3,7 @@
 
 class ApplicationController < ActionController::Base
   
-  before_filter :reset_current_account
+  before_filter :reset_current_account, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
   
   include SslRequirement
   include SubscriptionSystem
+  include Mobile::MobileHelperMethods
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -37,7 +38,7 @@ class ApplicationController < ActionController::Base
     if !current_account.active? 
       if permission?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
-        return redirect_to(plan_account_url)
+        return redirect_to(plan_subscription_url)
       else
         flash[:notice] = t('suspended_plan_admin_info',:email => current_account.account_admin.email) 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)

@@ -110,23 +110,25 @@ module Reports::ActivityReport
   def scoper(starting_time = start_date, ending_time = end_date)
     Account.current.tickets.visible.created_at_inside(starting_time,ending_time)
   end
-  
-  def start_date
-    parse_from_date.nil? ? (Time.zone.now.ago 30.day).beginning_of_day.to_s(:db) : 
-        Time.zone.parse(parse_from_date).beginning_of_day.to_s(:db) 
+
+  def start_date(zone = true)
+    t = zone ? Time.zone : Time
+    parse_from_date.nil? ? (t.now.ago 30.day).beginning_of_day.to_s(:db) : 
+        t.parse(parse_from_date).beginning_of_day.to_s(:db) 
   end
   
-  def end_date
-    parse_to_date.nil? ? Time.zone.now.end_of_day.to_s(:db) : 
-        Time.zone.parse(parse_to_date).end_of_day.to_s(:db)
+  def end_date(zone = true)
+    t = zone ? Time.zone : Time
+    parse_to_date.nil? ? t.now.end_of_day.to_s(:db) : 
+        t.parse(parse_to_date).end_of_day.to_s(:db)
   end
   
   def parse_from_date
-    (params[:date_range].split(" - ")[0]) || params[:date_range]
+    (params[:date_range].split(" - ")[0]) || params[:date_range] unless params[:date_range].blank?
   end
   
   def parse_to_date
-    (params[:date_range].split(" - ")[1]) || params[:date_range]
+    (params[:date_range].split(" - ")[1]) || params[:date_range] unless params[:date_range].blank?
   end
   
   def previous_start

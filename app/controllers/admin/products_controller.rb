@@ -46,7 +46,7 @@ class Admin::ProductsController < Admin::AdminController
     end
 
     def build_object
-      @obj = @product = current_account.all_email_configs.build(params[:product])
+      @obj = @product = current_account.products.build(params[:product])
     end
 
     def create_error
@@ -62,6 +62,7 @@ class Admin::ProductsController < Admin::AdminController
       @solution_categories = current_account.solution_categories
       @forums_categories = current_account.forum_categories
       @product.build_portal unless @product.portal
+      @product.email_configs.build(:primary_role => true) if @product.email_configs.empty?
     end
     
     def post_process_on_update(portal_params)

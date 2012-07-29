@@ -12,7 +12,7 @@
 			</table>
 		</div>
 
-	 <div class="span3">
+	 <div class="span2">
 		<h3>Signup's Per Month</h3>
 		<table id="customers" class="table">
 			<%@signups_by_month.each do |date,count|%>
@@ -24,8 +24,8 @@
 		</table>
 	</div>
   
-	 <div class="span3">
-		<h3>Customers Per Month</h3>
+	 <div class="span2">
+		<h3>Customers </h3>
 		<table id="customers" class="table">
 			<%@customers_by_month.each do |arr|%>
 			  <tr>
@@ -43,6 +43,23 @@
 			  <tr>
 		       <td><%=arr[0]%></td>
 		       <td><%= arr[1] %></td>
+		     </tr>
+			<%end%>
+		</table>
+		</div>     
+	 <div class="span2">
+		<h3>Deleted Customers</h3>
+		<table id="customers_deleted" class="table">
+			<tr>
+		       <td>Date</td>
+		       <td>Total</td>
+		       <td>Paid</td>
+		     </tr>
+			<%@deleted_total_customers.each do |date,count|%>
+			  <tr>
+		       <td><%=date%></td>
+		       <td><%= count %></td>
+		       <td><%= @deleted_paid_customers.fetch(date,0) %></td>
 		     </tr>
 			<%end%>
 		</table>
