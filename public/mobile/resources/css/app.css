@@ -10403,8 +10403,8 @@ input, textarea, select {
   border-radius: 0;
 }
 .homepage .home_img {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background: #fff;
   text-align: center;
   overflow: hidden;
@@ -10417,8 +10417,8 @@ input, textarea, select {
 .homepage .home_img img {
   -webkit-border-radius: 90px;
   border-radius: 90px;
-  width: 82px;
-  height: 82px;
+  width: 72px;
+  height: 72px;
   margin-top: 4px;
 }
 .homepage .branding {
@@ -10442,7 +10442,8 @@ input, textarea, select {
   text-align: center;
   color: #333;
   text-shadow: white -1px -1px 0;
-  font-size: 0.8em;
+  font-size: 0.7em;
+  width: 90px;
 }
 .homepage #home-user-profile {
   text-align: center;
@@ -10485,13 +10486,13 @@ input, textarea, select {
 }
 
 /*hack for sencha styles starts*/
-x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after {
-  width: 0.7em;
-  -webkit-mask-size: 0.74em 1.8em;
+.x-field .x-field-input, .x-field .x-input-el {
+  padding-top: 6px;
 }
 
-x-button-forward::before, .x-toolbar .x-button-forward::before {
-  right: -0.72em;
+.x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after {
+  width: 0.7em;
+  -webkit-mask-size: 0.74em 1.8em;
 }
 
 .x-toolbar-header, .x-toolbar-dark {
@@ -10695,47 +10696,29 @@ a {
 }
 .ticketsList .ticket-item > div:first-child {
   z-index: 100;
-  width: 12px;
+  width: 7px;
   height: 99%;
   position: absolute;
   margin-top: 1px;
 }
 .ticketsList .ticket-item > div:first-child.Low {
-  background: #008ff9;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #008ff9), color-stop(80%, #007ad4), color-stop(100%, #005391), color-stop(100%, #005290));
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #008ff9 0%, #007ad4 80%, #005391 100%, #005290 100%);
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(left, #008ff9 0%, #007ad4 80%, #005391 100%, #005290 100%);
+  background: #0C8AAE;
 }
 .ticketsList .ticket-item > div:first-child.Medium {
-  background: #89ce00;
+  background: #0A9458;
   /* Old browsers */
-  *zoom: 1;
-  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=1, startColorstr='#FF89CE00', endColorstr='#FF005290');
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #89ce00), color-stop(80%, #75af00), color-stop(100%, #4e7600), color-stop(100%, #005290));
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #89ce00 0%, #75af00 80%, #4e7600 100%, #005290 100%);
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(left, #89ce00 0%, #75af00 80%, #4e7600 100%, #005290 100%);
 }
 .ticketsList .ticket-item > div:first-child.Urgent {
-  background: #de0000;
+  background: #C00;
   /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-  *zoom: 1;
-  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=1, startColorstr='#FFDE0000', endColorstr='#FF810000');
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #de0000), color-stop(71%, #d50000), color-stop(84%, #bd0000), color-stop(100%, #810000));
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%);
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(left, #de0000 0%, #d50000 71%, #bd0000 84%, #810000 100%);
 }
 .ticketsList .ticket-item > div:first-child.High {
-  background-color: #ffb613;
-  *zoom: 1;
-  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=1, startColorstr='#FFFFB613', endColorstr='#FF005290');
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #ffb613), color-stop(80%, #d99b10), color-stop(100%, #946a0b), color-stop(100%, #005290));
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #ffb613 0%, #d99b10 80%, #946a0b 100%, #005290 100%);
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(left, #ffb613 0%, #d99b10 80%, #946a0b 100%, #005290 100%);
+  background-color: #CC5600;
 }
 .ticketsList .ticket-item > div.title {
   width: 90%;
-  padding: 9px 0px 6px 22px;
+  padding: 9px 0px 6px 16px;
   vertical-align: top;
   line-height: 1.4em;
 }
@@ -10914,6 +10897,10 @@ a {
 .customerDetails .ticketsList li:first-child {
   border: 0;
 }
+.customerDetails .ticketsList li a {
+  display: block;
+  min-height: 72px !important;
+}
 .customerDetails .ticketsList li a:active .ticket-item {
   background: url("../images/activebg.png");
   color: #fff;
@@ -11007,8 +10994,10 @@ a {
   padding: 2px 4px;
   content: '\4d';
 }
+.customerDetails .customer-info .customer-contact-list .facebook span {
+  padding: 5px 9px;
+}
 .customerDetails .customer-info .customer-contact-list .facebook span:before {
-  padding: 3px 9px;
   content: '\F09a';
 }
 .customerDetails .customer-info div {
@@ -11254,7 +11243,7 @@ a {
   background-color: #CC5600;
 }
 .ticketDetails #details .HDR .subject div.icon.Urgent {
-  background-color: #AC2200;
+  background-color: #C00;
 }
 .ticketDetails #details .HDR .subject div.icon.Email:before {
   content: "\e023";
@@ -11553,6 +11542,9 @@ a {
   margin: 0;
   padding: 0;
   position: absolute;
+}
+.ticketDetails .conversation .msg table th.td {
+  padding: 2px;
 }
 .ticketDetails .conversation .msg:before {
   top: -0.5em;
@@ -12130,6 +12122,13 @@ a {
 .x-select-overlay .x-item-selected .x-list-item-label:after {
   -webkit-mask-image: none;
   background-color: transparent;
+}
+
+.x-toolbar .x-button-forward:before {
+  right: -0.6em !important;
+}
+.x-toolbar .x-button-forward:after {
+  right: -0.62em !important;
 }
 
 .x-list-options {

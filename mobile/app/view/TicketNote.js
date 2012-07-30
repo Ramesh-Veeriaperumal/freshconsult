@@ -26,7 +26,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'New note',
+            title:'Add Note',
             ui:'header',
             items: [
                 backButton,

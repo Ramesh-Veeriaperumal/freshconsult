@@ -31194,7 +31194,17 @@ Ext.define('Freshdesk.view.ContactDetails', {
             xtype:'contactform',
         };
         var contactInfo = {
-            xtype:'contactInfo'
+            xtype:'contactInfo',
+            listeners : {
+                element : 'element',
+                delegate : 'a',
+                tap : function(e, item) {
+                    var hrefParent = Ext.get(item).findParent('a');
+                    if(hrefParent && hrefParent.getAttribute('href')){
+                        location.href=hrefParent.getAttribute('href');
+                    }
+                }
+            }
         };     
 
         this.add([TopTitlebar,contactInfo]);
@@ -31205,6 +31215,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         history.back();
     },
     config: {
+        id:'contactDetails',
         scrollable:{
             direction:'vertical',
             directionLock:true
@@ -31336,7 +31347,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
             },
             {
                 xtype:'titlebar',
-                title:'Canned Responses',
+                title:'Canned Response',
                 ui:'header',
                 docked:'top',
                 items:[
@@ -31345,7 +31356,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                         ui:'plain lightBtn',
                         iconMask:true,
                         align:'left',
-                        text:'hide',
+                        text:'Cancel',
                         handler:function(){
                             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].hide();
                         },
@@ -31356,7 +31367,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                         ui:'plain headerBtn',
                         iconMask:true,
                         align:'right',
-                        text:'apply',
+                        text:'Insert',
                         handler:function(){
                             var me = Ext.ComponentQuery.query('#cannedResponsesPopup')[0],
                             selection = me.items.items[0].getSelection();
@@ -31402,7 +31413,7 @@ Ext.define("Freshdesk.view.Solutions", {
         items :[
         {
                 xtype:'list',
-                emptyText: '<div class="empty-list-text">You don\'t have any suggested solutions!.</div>',
+                emptyText: '<div class="empty-list-text">We couldn\'t find any related solutions.</div>',
                 onItemDisclosure: false,
                 deferEmptyText:false,
                 itemTpl: '<span class="bullet"></span>&nbsp;{article.title}',
@@ -31416,7 +31427,7 @@ Ext.define("Freshdesk.view.Solutions", {
         },
         {
             xtype:'titlebar',
-            title:'Solution',
+            title:'Pick Solution',
             ui:'header',
             docked:'top',
             items:[
@@ -39368,7 +39379,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'New note',
+            title:'Add Note',
             ui:'header',
             items: [
                 backButton,
@@ -39451,15 +39462,15 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
 
         var backButton = {
             xtype:'button',
-            text:'List',
-			ui:'lightBtn back',
+            text:'Cancel',
+			ui:'lightBtn',
             handler:this.backToViews,
 			align:'left'
 		};
 
         var addBtn = Ext.create('Ext.Button',{
             xtype:'button',
-            text:'Done',
+            text:'Create',
             align:'right',
             ui:'headerBtn',
             disabled:true,
@@ -39500,6 +39511,9 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                     var errorHtml='Please correct the bellow errors.<br/>';
                     for(var index in response.errors){
                         var error = response.errors[index],eNo= +index+1;
+                        if(error[0] === "requester_id") {
+                            error[0] = "Requester"
+                        }
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);    
@@ -43040,10 +43054,10 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textfield',
                         name: 'cc_emails',
-                        label:'Cc/Bcc :',
+                        label:'Cc/Bcc:',
                         listeners: {
                             focus: function(){
-                                this.setLabel('Cc : ');
+                                this.setLabel('Cc:');
                                 this.parent.items.items[7].setHidden(false);
                             }
                         }
@@ -43051,14 +43065,14 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textfield',
                         name: 'bcc_emails',
-                        label:'Bcc :',
+                        label:'Bcc:',
                         hidden:true,
                         showAnimation:'fadeIn'
                     },
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Enter your Message... *',
+                        placeHolder:'Enter your message... *',
                         height:180,
                         required:true,
                         clearIcon:false
@@ -43117,18 +43131,18 @@ Ext.define('Freshdesk.view.TweetForm', {
             {
                 xtype: 'fieldset',
                 defaults:{
-                        labelWidth:'20%'
+                        labelWidth:'25%'
                 },
                 items :[
                     {
                         xtype: 'selectfield',
                         name: 'twitter_handle',
-                        label: 'From :'
+                        label: 'From:'
                     },
                     {
                         xtype: 'textfield',
                         name: 'to_email',
-                        label: 'Reply To :',
+                        label: 'Reply To:',
                         readOnly:true
                     },
                     {
@@ -43149,7 +43163,7 @@ Ext.define('Freshdesk.view.TweetForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your message *',
                         maxLength:120,
                         required:true,
                         clearIcon:false
@@ -43181,19 +43195,19 @@ Ext.define('Freshdesk.view.FacebookForm', {
             {
                 xtype: 'fieldset',
                 defaults:{
-                        labelWidth:'20%'
+                        labelWidth:'25%'
                 },
                 items :[
                     {
                         xtype: 'textfield',
                         name: 'facebook_handle',
-                        label: 'From :',
+                        label: 'From:',
                         readOnly:true
                     },
                     {
                         xtype: 'textfield',
                         name: 'to_email',
-                        label: 'Reply To :',
+                        label: 'Reply To:',
                         readOnly:true
                     },
                     {
@@ -43214,7 +43228,7 @@ Ext.define('Freshdesk.view.FacebookForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Comment *',
+                        placeHolder:'Enter your comment *',
                         required:true,
                         clearIcon:false
                     },
@@ -56660,7 +56674,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                     },
                     {
                         xtype:'titlebar',
-                        title:'Notify Agents',
+                        title:'Pick Agents',
                         ui:'header',
                         docked:'top',
                         items:[
@@ -56680,7 +56694,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                                 ui:'plain headerBtn',
                                 iconMask:true,
                                 align:'right',
-                                text:'Apply',
+                                text:'Add',
                                 handler:this.onButtonTap,
                                 scope:this
                             }

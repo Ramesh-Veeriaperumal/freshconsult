@@ -63,8 +63,8 @@ input, textarea, select {
 	background:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQABJRihbEkg/B3HADJAgABbgAh22kZygAAAAAElFTkSuQmCC'), #f2f2f2 !important;
 	@include border-radius(0);
 	.home_img{
-		width:90px;
-		height:90px;
+		width:80px;
+		height:80px;
 		background: #fff;
 		text-align: center;
 		overflow: hidden;
@@ -73,8 +73,8 @@ input, textarea, select {
 		@include box-shadow(0 0 10px #ccc);
 		img{
 			@include border-radius(90px);
-			width:82px;
-			height:82px;
+			width:72px;
+			height:72px;
 			margin-top:4px;
 		}
 	}
@@ -98,7 +98,8 @@ input, textarea, select {
 		text-align:center;
 		color:#333;
 		@include text-shadow( #fff -1px -1px 0);
-		font-size:0.8em;
+		font-size:0.7em;
+		width:90px;
 	}
 	#home-user-profile{
 		text-align:center;
@@ -141,14 +142,14 @@ input, textarea, select {
 /*hack for sencha styles starts*/
 
 
+.x-field .x-field-input, .x-field .x-input-el {
+	padding-top: 6px;
+}
+.x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after{
+	width: 0.7em;
+	-webkit-mask-size: 0.74em 1.8em;
+}
 
-x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after{
-			width: 0.7em;
-			-webkit-mask-size: 0.74em 1.8em;
-		}
-x-button-forward::before, .x-toolbar .x-button-forward::before {
-		right:-0.72em;
-	}
 .x-toolbar-header,.x-toolbar-dark{
 	margin-bottom: 1px;
 	border-bottom-color: #3B68A8 !important;
@@ -354,34 +355,34 @@ a {
 			display:inline-block;
 			&:first-child{
 				z-index:100;
-				width:12px;
+				width:7px;
 				height: 99%;
 				position: absolute;
 				margin-top:1px;
 				&.Low{
-					background: #008ff9; 
-					@include background-image($img, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
+					background: #0C8AAE; 
+					// @include background-image($img, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 				}
 				&.Medium{
-					background: #89ce00; /* Old browsers */
-					@include filter-gradient(#89ce00, #005290, horizontal); // IE6-9
-					@include background-image( $img, linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%)); 
+					background: #0A9458; /* Old browsers */
+					// @include filter-gradient(#89ce00, #005290, horizontal); // IE6-9
+					// @include background-image( $img, linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%)); 
 				}
 				&.Urgent{
-					background: #de0000; /* Old browsers */
+					background: #C00; /* Old browsers */
 					/* IE9 SVG, needs conditional override of 'filter' to 'none' */
-					@include filter-gradient(#de0000, #810000, horizontal); // IE6-9
-					@include background-image( $img, linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%)); 
+					// @include filter-gradient(#de0000, #810000, horizontal); // IE6-9
+					// @include background-image( $img, linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%)); 
 				}
 				&.High{
-					background-color: #ffb613; // Old browsers
-					@include filter-gradient(#ffb613, #005290, horizontal); // IE6-9
-					@include background-image( $img, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
+					background-color: #CC5600; // Old browsers
+					// @include filter-gradient(#ffb613, #005290, horizontal); // IE6-9
+					// @include background-image( $img, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
 				}
 			};
 			&.title{
 				width:90%;
-				padding: 9px 0px 6px 22px;
+				padding: 9px 0px 6px 16px;
 				vertical-align: top;
 				line-height:1.4em;
 				>div{
@@ -563,18 +564,22 @@ a {
 			&:first-child{
 				border:0;
 			}
-			a:active{
-				.ticket-item{
-					background:url('../images/activebg.png');
-					color:#fff;
-					@include text-shadow( #393939 -1px -1px 0);
-					.info{
-						background:#757575;
-						@include box-shadow(0);
-					}
-					.subject{
+			a{
+				display:block;
+				min-height:72px !important;
+				&:active{
+					.ticket-item{
+						background:url('../images/activebg.png');
 						color:#fff;
-						@include text-shadow( #333 1px 1px 0);
+						@include text-shadow( #393939 -1px -1px 0);
+						.info{
+							background:#757575;
+							@include box-shadow(0);
+						}
+						.subject{
+							color:#fff;
+							@include text-shadow( #333 1px 1px 0);
+						}
 					}
 				}
 			}
@@ -660,9 +665,11 @@ a {
 				}
 			}
 			.facebook{
-				span:before {
-					padding: 3px 9px;
-					content: '\F09a';
+				span{
+					padding:5px 9px;
+					&:before {
+						content: '\F09a';
+					}
 				}
 			}
 		}
@@ -898,7 +905,7 @@ a {
 							background-color:#CC5600;
 						}
 						&.Urgent{
-							background-color:#AC2200;
+							background-color:#C00;
 						}
 						&.Email {
 							&:before{
@@ -1123,6 +1130,11 @@ a {
 			padding: 0.6em;
 			margin:0.5em 0;
 			@include triangle-before(up,#F5F5F5,0.5em);
+			table{
+				th.td{
+					padding: 2px;
+				}
+			}
 			&:before{
 				top:-0.5em;
 				left:0.85em;
@@ -1667,6 +1679,18 @@ a {
 				-webkit-mask-image:none;
 				background-color:transparent;
 			}
+		}
+	}
+}
+
+
+.x-toolbar{
+	.x-button-forward{
+		&:before{
+			right: -0.6em !important;
+		}
+		&:after{
+			right: -0.62em !important;
 		}
 	}
 }

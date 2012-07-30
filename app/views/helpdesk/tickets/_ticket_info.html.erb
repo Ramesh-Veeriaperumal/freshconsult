@@ -45,22 +45,13 @@
               <%= content_tag :div, link_to(h(@ticket.requester.display_name), @ticket.requester), :class => "user_name" %>
 
               <div class="user_desig">
-                <% unless @ticket.requester.job_title.blank? %>
-                   <b><%= h @ticket.requester.job_title %></b>
-                <% end %>
-                <% if @ticket.requester.job_title.blank? && !@ticket.requester.customer.blank? %>
-                   <%= t("working") %>
-                <% end %>
-                <% unless @ticket.requester.customer.blank? %>
-                   <%= t("at") %> <%= link_to(h(@ticket.requester.customer.name), @ticket.requester.customer)  %>
-                <% end %>
+                <%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @ticket.requester } %>
               </div>
 
               <%= content_tag :div, h(@ticket.requester.email), :class => "user_email" unless @ticket.requester.email.blank?  %>
               <%= content_tag :div,"", :class => "clearfix" unless @ticket.requester.email.blank? and @ticket.requester.customer.blank?  %>
               <% is_desig_and_email_available = @ticket.requester.email.blank? and @ticket.requester.customer.blank? %>
               <%=  '<div>' if is_desig_and_email_available %>
-                  <%= content_tag :div, h(@ticket.requester.fb_profile_id), :class => "user_fb" unless @ticket.requester.fb_profile_id.blank?  %>
                   <%= content_tag :div, h(@ticket.requester.twitter_id), :class => "user_twitter" unless @ticket.requester.twitter_id.blank?  %>
               <%= '</div>' if is_desig_and_email_available %>
               

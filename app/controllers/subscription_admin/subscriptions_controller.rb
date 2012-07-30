@@ -14,7 +14,6 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @day_pass_stats = SubscriptionPayment.day_pass_stats if params[:page].blank?
     @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
     @free_customers = Subscription.free_customers
-    @zero_paying_customers = Subscription.zero_amount_customers
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = Subscription.customers_agent_count - (Subscription.customers_free_agent_count + DUMMY_AGENTS)
@@ -109,10 +108,10 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
    #subscriptions = Subscription.find(:all,:include => :account, :order => 'accounts.created_at desc',:conditions => {:state => 'active'} )
     csv_string = FasterCSV.generate do |csv| 
       # header row 
-      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Free agents","Full Time","Ocassional"] 
+      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Free agents"] 
  
       # data rows 
-    Subscription.find_in_batches(:include => :account,
+    Subscription.find_in_batches(:include => :account,:batch_size => 300,
                                            :conditions => {:state => 'active'} ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account
@@ -120,7 +119,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
         csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
                 sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',
-                sub.free_agents,account.full_time_agents.count,account.agents.count - (account.full_time_agents.count ||= 0)] 
+                sub.free_agents] 
       end 
     end 
   end
