@@ -61,7 +61,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     unless current_user.nil?
 
-      unless params[:force] or cookies[:force_predefined_view]
+      unless params[:force] or cookies[:force_predefined_view] or !params[:filter_key].blank? or !params[:filter_name].blank?
         @cached_filter_data = get_cached_filters
         
         if @cached_filter_data

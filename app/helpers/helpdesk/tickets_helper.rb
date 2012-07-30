@@ -83,7 +83,8 @@ module Helpdesk::TicketsHelper
     unless selected_item.blank?
       selected_item_name = selected_item[:name]
     else
-      selected_item_name = ((SELECTORS.select { |v| v.first == selected.to_sym }.first)[1] || top_views_array.first[:name]).to_s unless selected.blank?
+      selected_item_name = SELECTORS.select { |v| v.first == selected.to_sym }.first unless selected.blank?
+      selected_item_name = ((selected_item_name && selected_item_name[1]) || top_views_array.first[:name]).to_s unless selected.blank?
       selected_item_name = t("tickets_filter.unsaved_view") if selected.blank?
       cannot_delete = true
     end
