@@ -8,7 +8,7 @@
   <div class="intro"><%=t('email_configs.info11')%></div>
 </div>
 <div class="floatr email-settings-bcc">
-  <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl' unless current_account.bcc_email.blank?%>
+  <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl', :title => current_account.bcc_email unless current_account.bcc_email.blank?%>
   <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
   <%= content_tag :span, "", :class => "tool-tip", :title=> t('email_configs.info17')%>
 </div>

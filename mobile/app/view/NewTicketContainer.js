@@ -57,6 +57,9 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                     var errorHtml='Please correct the bellow errors.<br/>';
                     for(var index in response.errors){
                         var error = response.errors[index],eNo= +index+1;
+                        if(error[0] === "requester_id") {
+                            error[0] = "Requester"
+                        }
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);    
