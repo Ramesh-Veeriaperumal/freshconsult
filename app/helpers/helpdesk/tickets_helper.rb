@@ -79,7 +79,7 @@ module Helpdesk::TicketsHelper
     ])
 
     cannot_delete = false
-    selected_item =  top_views_array.select { |v| v[:id] == selected.to_i }.first
+    selected_item =  top_views_array.select { |v| v[:id].to_s == selected.to_s }.first
     unless selected_item.blank?
       selected_item_name = selected_item[:name]
     else
