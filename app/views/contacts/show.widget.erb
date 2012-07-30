@@ -1,15 +1,7 @@
 <div class="contact-box clearfix">
 		<%= user_avatar(@user, :medium, "profile_pic") %>
 		<h1 class="title"><%= @user.display_name %></h1>
-		<% unless @user.job_title.blank? %>
-		   <b><%= h @user.job_title %></b>
-		<% end %>
-		<% if @user.job_title.blank? && !@user.customer.blank? %>
-		   <%= t("working") %>
-		<% end %>
-		<% unless @user.customer.blank? %>
-		   <%= t("at") %> <%= link_to(h(@user.customer.name), @user.customer)  %>
-		<% end %>
+		<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
 		<%= render :partial => "/helpdesk/tags/tag_cloud.html", :object => @user.tags %>
 		<div class="user-info">
 			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %>

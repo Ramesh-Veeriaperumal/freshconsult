@@ -27,7 +27,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values
-
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity
@@ -124,7 +123,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
-  
+
   attr_protected :attachments #by Shan - need to check..
   
   accepts_nested_attributes_for :tweet, :fb_post
@@ -223,25 +222,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #Sphinx configuration starts
   define_index do
-   
-    
-      indexes :display_id, :sortable => true
+       
+     indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
      indexes sphinx_notes.body, :as => :note
     
-     has account_id, deleted
+    has account_id, deleted
 
-     #set_property :delta => :delayed
-     set_property :field_weights => {
+    #set_property :delta => :delayed
+    set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
       :description  => 5,
       :note         => 3
      }
-      
-   
-     
   end
   #Sphinx configuration ends here..
 
@@ -891,7 +886,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 
     account.support_emails.each do |support_email|
-      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email)[:email] == parse_email_text(support_email)[:email]}
+      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email.strip)[:email] == parse_email_text(support_email)[:email]}
     end
 
     reply_to_all_emails

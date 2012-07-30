@@ -217,7 +217,11 @@ module Helpdesk::TicketsHelper
       last_reply_content = last_conv.body_html
       unless last_reply_content.blank?
         doc = Nokogiri::HTML(last_reply_content)
-        doc.at_css("div.freshdesk_quote").remove unless doc.at_css("div.freshdesk_quote").blank?
+        doc_fd_css = doc.css('div.freshdesk_quote')
+        unless doc_fd_css.blank?
+          remove_prev_quote = doc_fd_css.xpath('//div/child::*[1][name()="blockquote"]')[3] # will show last 4 conversations apart from recent one
+          remove_prev_quote.remove unless remove_prev_quote.blank?
+        end
         last_reply_content = doc.at_css("body").inner_html 
       end
     end

@@ -98,8 +98,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             formObj.setUrl('/support/tickets')
         }
 
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);    
+        }
+        catch(e){
+
+        }
         
         Ext.Viewport.animateActiveItem(formContainer, anim);
     },

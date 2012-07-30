@@ -10,19 +10,19 @@ Ext.define('Freshdesk.view.FacebookForm', {
             {
                 xtype: 'fieldset',
                 defaults:{
-                        labelWidth:'20%'
+                        labelWidth:'25%'
                 },
                 items :[
                     {
                         xtype: 'textfield',
                         name: 'facebook_handle',
-                        label: 'From :',
+                        label: 'From:',
                         readOnly:true
                     },
                     {
                         xtype: 'textfield',
                         name: 'to_email',
-                        label: 'Reply To :',
+                        label: 'Reply To:',
                         readOnly:true
                     },
                     {
@@ -43,7 +43,7 @@ Ext.define('Freshdesk.view.FacebookForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Comment *',
+                        placeHolder:'Enter your comment *',
                         required:true,
                         clearIcon:false
                     },

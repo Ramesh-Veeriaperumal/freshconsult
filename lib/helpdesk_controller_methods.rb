@@ -36,12 +36,14 @@ module HelpdeskControllerMethods
   def create_error
     respond_to do |format|
       format.html { render :action => :new }
-      format.xml  { render :xml => @item.errors}
-      format.widget { flash[:error] = "Error in creating the ticket. Try again later."
-        format.mobile {
-        render :json => {:failure => true,:errors => @item.errors}.to_json
+      format.xml  { render :xml => @item.errors }
+      format.widget { 
+        flash[:error] = "Error in creating the ticket. Try again later."
+        render :action=>:create_ticket_status, :layout => "widgets/contacts"
       }
-      render :action=>:create_ticket_status, :layout => "widgets/contacts"}
+      format.mobile {
+        render :json => { :failure => true, :errors => @item.errors }.to_json
+      }
     end
   end
 

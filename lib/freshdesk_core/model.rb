@@ -1,11 +1,6 @@
 module FreshdeskCore::Model
 
     MODEL_DEPENDENCIES = { :account => [{:dependant => :account_admin, :method => :destroy},
-    									{:dependant => :tickets, :method => :delete_all},
-    									{:dependant => :notes, :method => :delete_all},
-    									{:dependant => :activities, :method => :delete_all},
-    									{:dependant => :flexifields, :method => :delete_all},
-    									{:dependant => :ticket_states, :method => :delete_all},
     									{:dependant => :all_email_configs, :method => :destroy_all},
     									{:dependant => :features, :method => :destroy_all},
     									{:dependant => :flexi_field_defs, :method => :destroy_all},

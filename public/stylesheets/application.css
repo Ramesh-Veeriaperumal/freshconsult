@@ -90,7 +90,9 @@ div.contact_hover .user_mobile { background: url('/images/symbols-s78802ad4cb.pn
 div.contact_hover .user_fb { height: 11px; background: url('/images/symbols-s78802ad4cb.png') 0 -648px no-repeat white; }
 div.contact_hover .user_twitter { height: 11px; background: url('/images/symbols-s78802ad4cb.png') 0 -670px no-repeat white; }
 
-.popover .arrow.dbl_left:after { content: " "; display: block; position: absolute; width: 0; height: 0; top: 0px; left: 3px; margin-top: -14px; border-top: 14px solid transparent; border-bottom: 14px solid transparent; border-right: 14px solid white; z-index: 2000; }
+.popover.topRight .inner.hover_card { background: #AAA; padding: 1px; }
+.popover.topRight .arrow.dbl_left { border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-right: 8px solid #AAA; left: -2px; }
+.popover.topRight .arrow.dbl_left:after { content: " "; display: block; position: absolute; width: 0; height: 0; top: 0px; left: 2px; margin-top: -14px; border-top: 14px solid transparent; border-bottom: 14px solid transparent; border-right: 14px solid white; z-index: 2000; }
 
 .pageSeperator { border-top: 1px solid #fefefe; border-bottom: 1px solid #efefef; margin: 0px 18px; }
 
