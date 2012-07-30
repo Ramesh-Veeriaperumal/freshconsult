@@ -49,19 +49,11 @@ class Admin::ProductsController < Admin::AdminController
       @obj = @product = current_account.products.build(params[:product])
     end
 
-    def set_error_msg
-      err_msg = ""
-      @product.errors.each { |attr,msg| err_msg << "#{msg} <br />"  }      
-      flash[:notice] = err_msg unless err_msg.blank?      
-    end
-
     def create_error
-      set_error_msg
       load_other_objects
     end
 
     def update_error
-      set_error_msg
       load_other_objects
     end
     

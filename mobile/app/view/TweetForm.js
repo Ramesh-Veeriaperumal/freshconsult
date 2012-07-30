@@ -10,18 +10,18 @@ Ext.define('Freshdesk.view.TweetForm', {
             {
                 xtype: 'fieldset',
                 defaults:{
-                        labelWidth:'20%'
+                        labelWidth:'25%'
                 },
                 items :[
                     {
                         xtype: 'selectfield',
                         name: 'twitter_handle',
-                        label: 'From :'
+                        label: 'From:'
                     },
                     {
                         xtype: 'textfield',
                         name: 'to_email',
-                        label: 'Reply To :',
+                        label: 'Reply To:',
                         readOnly:true
                     },
                     {
@@ -42,7 +42,7 @@ Ext.define('Freshdesk.view.TweetForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your message *',
                         maxLength:120,
                         required:true,
                         clearIcon:false

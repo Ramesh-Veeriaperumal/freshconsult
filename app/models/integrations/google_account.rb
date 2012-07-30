@@ -113,7 +113,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       query_params = query_params + "&group=#{google_group_uri(self.email, group_id)}" unless group_id.blank?
       query_params = "#{query_params}#{show_deleted}&max-results=#{max_results+1}&start-index=#{self.last_sync_index+1}"
       agg_g_cnts = fetch_google_contacts(query_params)
-      self.last_sync_index = agg_g_cnts.length
+      self.last_sync_index += agg_g_cnts.length
     else
       remaining_results = max_results
       start_index = self.last_sync_index

@@ -4,7 +4,7 @@ module Helpdesk::TicketActions
   
   def create_the_ticket(need_captcha = nil)
     cc_emails = validate_emails(params[:cc_emails])
-    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => []})
+    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails || [] , :fwd_emails => []})
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
@@ -278,7 +278,7 @@ module Helpdesk::TicketActions
    def validate_emails email_array
      parent = @item
      unless email_array.blank?
-     email_array.delete_if {|x| (extract_email(x) == !(valid_email?(x))) }
+     email_array.delete_if {|x| !valid_email?(x)}
      email_array = email_array.collect{|e| e.gsub(/\,/,"")}
      email_array = email_array.uniq
      end

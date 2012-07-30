@@ -15,7 +15,7 @@ Ext.define("Freshdesk.view.Home", {
         hidden:true,
         listeners: {
             show:function(){
-                var portalData = FD.current_account.main_portal;
+                var portalData = FD.current_portal;
                 portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
@@ -105,7 +105,7 @@ Ext.define("Freshdesk.view.Home", {
                         docked:'bottom',
                         centered:true,
                         tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
-                             '<p id="helpdesk_FD_brand" class="hide">A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                             '<p id="helpdesk_FD_brand" class="hide"><a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
                         }

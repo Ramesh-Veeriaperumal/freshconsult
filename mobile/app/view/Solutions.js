@@ -28,7 +28,7 @@ Ext.define("Freshdesk.view.Solutions", {
         items :[
         {
                 xtype:'list',
-                emptyText: '<div class="empty-list-text">You don\'t have any suggested solutions!.</div>',
+                emptyText: '<div class="empty-list-text">We couldn\'t find any related solutions.</div>',
                 onItemDisclosure: false,
                 deferEmptyText:false,
                 itemTpl: '<span class="bullet"></span>&nbsp;{article.title}',
@@ -42,7 +42,7 @@ Ext.define("Freshdesk.view.Solutions", {
         },
         {
             xtype:'titlebar',
-            title:'Solution',
+            title:'Pick Solution',
             ui:'header',
             docked:'top',
             items:[

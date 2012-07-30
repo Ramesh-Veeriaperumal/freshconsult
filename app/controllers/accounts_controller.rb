@@ -45,6 +45,7 @@ class AccountsController < ApplicationController
   def new_signup_free
    create_account 
    if @account.save
+      add_to_crm
       render :json => { :success => true, 
       :url => signup_complete_url(:token => @account.account_admin.perishable_token,:host => @account.full_domain) }, 
       :callback => params[:callback]
@@ -52,6 +53,10 @@ class AccountsController < ApplicationController
     else
       render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
     end    
+  end
+  
+  def add_to_crm
+    Delayed::Job.enqueue Marketo::AddLead.new({:account_id => @account.id,:cookie => ThirdCRM.fetch_cookie_info(request.cookies)})
   end
 
   def create_account

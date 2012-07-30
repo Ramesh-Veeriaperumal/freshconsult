@@ -225,7 +225,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     # The below 2 methods are used only for to_json 
     def user_name
-      user.name || user_info
+      human_note_for_ticket? ? (user.name || user_info) : "-"
     end
     
     def user_info

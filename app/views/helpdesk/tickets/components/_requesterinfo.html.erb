@@ -8,7 +8,7 @@
           %>
 	<%= link_to(h(user.name), contact, :class => "user_name") %>
 	<%= render_item(h(user.email), "link") %>
-	<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
+	<div><%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %></div>
 	<%= render_item(h(user.twitter_id)) %>
 	<%= render_item(h(user.fb_profile_id), "facebook") %>		 
 	<%= render_item(h(user.phone)) %>
