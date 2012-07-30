@@ -68,7 +68,7 @@ class Helpdesk::TicketsController < ApplicationController
           @cached_filter_data.symbolize_keys!
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
           @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
-          @ticket_filter.query_hash = @cached_filter_data[:data_hash]
+          @ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
           params.merge!(@cached_filter_data)
         end
       else 
