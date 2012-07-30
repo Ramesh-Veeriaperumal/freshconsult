@@ -30515,7 +30515,7 @@ Ext.define("Freshdesk.view.Home", {
         hidden:true,
         listeners: {
             show:function(){
-                var portalData = FD.current_account.main_portal;
+                var portalData = FD.current_portal;
                 portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
@@ -30605,7 +30605,7 @@ Ext.define("Freshdesk.view.Home", {
                         docked:'bottom',
                         centered:true,
                         tpl:['<a class="switch_version" onclick="FD.Util.switchToClassic()">Switch to Desktop Version<span class="icon-right-arrow">&nbsp;</span></a>',
-                             '<p id="helpdesk_FD_brand" class="hide">A <a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
+                             '<p id="helpdesk_FD_brand" class="hide"><a href="http://www.freshdesk.com" target="_blank">Helpdesk Software</a> by Freshdesk</p>'].join(''),
                         data:{
                             
                         }
@@ -30843,8 +30843,13 @@ Ext.define('Freshdesk.view.FiltersListContainer', {
             formObj.setUrl('/support/tickets')
         }
 
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);    
+        }
+        catch(e){
+
+        }
         
         Ext.Viewport.animateActiveItem(formContainer, anim);
     },
@@ -31331,7 +31336,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
             },
             {
                 xtype:'titlebar',
-                title:'Canned Responses',
+                title:'Canned Response',
                 ui:'header',
                 docked:'top',
                 items:[
@@ -31340,7 +31345,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                         ui:'plain lightBtn',
                         iconMask:true,
                         align:'left',
-                        text:'hide',
+                        text:'Cancel',
                         handler:function(){
                             Ext.ComponentQuery.query('#cannedResponsesPopup')[0].hide();
                         },
@@ -31351,7 +31356,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
                         ui:'plain headerBtn',
                         iconMask:true,
                         align:'right',
-                        text:'apply',
+                        text:'Insert',
                         handler:function(){
                             var me = Ext.ComponentQuery.query('#cannedResponsesPopup')[0],
                             selection = me.items.items[0].getSelection();
@@ -31397,7 +31402,7 @@ Ext.define("Freshdesk.view.Solutions", {
         items :[
         {
                 xtype:'list',
-                emptyText: '<div class="empty-list-text">You don\'t have any suggested solutions!.</div>',
+                emptyText: '<div class="empty-list-text">We couldn\'t find any related solutions.</div>',
                 onItemDisclosure: false,
                 deferEmptyText:false,
                 itemTpl: '<span class="bullet"></span>&nbsp;{article.title}',
@@ -31411,7 +31416,7 @@ Ext.define("Freshdesk.view.Solutions", {
         },
         {
             xtype:'titlebar',
-            title:'Solution',
+            title:'Pick Solution',
             ui:'header',
             docked:'top',
             items:[
@@ -31532,7 +31537,7 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 
         var backButton = {
             xtype:'button',
-            text:'Hide',
+            text:'Close',
 			ui:'lightBtn back',
             handler:this.goBack,
 			align:'left',
@@ -31541,15 +31546,16 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
 		var topToolbar = {
 			xtype: "titlebar",
 			docked: "top",
+            title:'Results',
             ui:'header',
 			items: [backButton]
 		};
 
         var details = {
             tpl : new Ext.XTemplate(['<div class="flash">',
-                        '<tpl if="title"><div></div><div class="scenario_text">{title}</div></tpl>',
+                        '<tpl if="title"><div><div class="icon-scenario"></div><div class="scenario-text">{title}</div></div></tpl>',
                         '<tpl for="messages">',
-                            '<div class="message"></div><div class="scenario_text">{.}</div>',
+                            '<div><div class="icon-message"></div><div class="scenario-text">{.}</div></div>',
                         '</tpl>',
                     '</div>'
             ].join('')),
@@ -31564,11 +31570,9 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
         this.add([topToolbar,details]);
     },
     goBack : function(){
+        this.hide();
         if(this.hideHandler){
-            this.hide();
             this.hideHandler();            
-        }else{
-            this.hide();
         }
     },
     config: {
@@ -38841,7 +38845,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                         xclass: 'plugin.ux.ListPaging2',
                         autoPaging: false,
                         centered:true,
-                        loadMoreText: 'Please Wait...',
+                        loadMoreText: 'Load more...',
                         noMoreRecordsText: 'No more tickets.'
                     },
                     {
@@ -39364,7 +39368,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'New note',
+            title:'Add Note',
             ui:'header',
             items: [
                 backButton,
@@ -39447,15 +39451,15 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
 
         var backButton = {
             xtype:'button',
-            text:'List',
-			ui:'lightBtn back',
+            text:'Cancel',
+			ui:'lightBtn',
             handler:this.backToViews,
 			align:'left'
 		};
 
         var addBtn = Ext.create('Ext.Button',{
             xtype:'button',
-            text:'Done',
+            text:'Create',
             align:'right',
             ui:'headerBtn',
             disabled:true,
@@ -40680,8 +40684,14 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             this.items.items[1].items.items[2].showProperties();
         }
         
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        }
+        catch(e){
+
+        }
+        
  
     },
     showProperties: function(setActive){
@@ -43030,10 +43040,10 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textfield',
                         name: 'cc_emails',
-                        label:'Cc/Bcc :',
+                        label:'Cc/Bcc:',
                         listeners: {
                             focus: function(){
-                                this.setLabel('Cc : ');
+                                this.setLabel('Cc:');
                                 this.parent.items.items[7].setHidden(false);
                             }
                         }
@@ -43041,14 +43051,14 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'textfield',
                         name: 'bcc_emails',
-                        label:'Bcc :',
+                        label:'Bcc:',
                         hidden:true,
                         showAnimation:'fadeIn'
                     },
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
-                        placeHolder:'Enter your Message... *',
+                        placeHolder:'Enter your message... *',
                         height:180,
                         required:true,
                         clearIcon:false
@@ -43107,18 +43117,18 @@ Ext.define('Freshdesk.view.TweetForm', {
             {
                 xtype: 'fieldset',
                 defaults:{
-                        labelWidth:'20%'
+                        labelWidth:'25%'
                 },
                 items :[
                     {
                         xtype: 'selectfield',
                         name: 'twitter_handle',
-                        label: 'From :'
+                        label: 'From:'
                     },
                     {
                         xtype: 'textfield',
                         name: 'to_email',
-                        label: 'Reply To :',
+                        label: 'Reply To:',
                         readOnly:true
                     },
                     {
@@ -43139,7 +43149,7 @@ Ext.define('Freshdesk.view.TweetForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Message *',
+                        placeHolder:'Enter your message *',
                         maxLength:120,
                         required:true,
                         clearIcon:false
@@ -43171,19 +43181,19 @@ Ext.define('Freshdesk.view.FacebookForm', {
             {
                 xtype: 'fieldset',
                 defaults:{
-                        labelWidth:'20%'
+                        labelWidth:'25%'
                 },
                 items :[
                     {
                         xtype: 'textfield',
                         name: 'facebook_handle',
-                        label: 'From :',
+                        label: 'From:',
                         readOnly:true
                     },
                     {
                         xtype: 'textfield',
                         name: 'to_email',
-                        label: 'Reply To :',
+                        label: 'Reply To:',
                         readOnly:true
                     },
                     {
@@ -43204,7 +43214,7 @@ Ext.define('Freshdesk.view.FacebookForm', {
                     {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body]',
-                        placeHolder:'Comment *',
+                        placeHolder:'Enter your comment *',
                         required:true,
                         clearIcon:false
                     },
@@ -56650,7 +56660,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                     },
                     {
                         xtype:'titlebar',
-                        title:'Notify Agents',
+                        title:'Pick Agents',
                         ui:'header',
                         docked:'top',
                         items:[
@@ -56670,7 +56680,7 @@ Ext.define('Freshdesk.view.MultiSelect', {
                                 ui:'plain headerBtn',
                                 iconMask:true,
                                 align:'right',
-                                text:'Apply',
+                                text:'Add',
                                 handler:this.onButtonTap,
                                 scope:this
                             }
@@ -57025,12 +57035,13 @@ Ext.application({
         ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){
+            FD.current_portal = data[0].raw.portal;
             FD.current_account = data[0].raw.account;
             FD.current_user = data[0].raw.user;
             if(FD.current_user && FD.current_user.is_customer) {
                 FD.Util.initCustomer();
             }
-            document.title = FD.current_account && FD.current_account.main_portal && FD.current_account.main_portal.name;
+            document.title = FD.current_portal && FD.current_portal.name+' : Helpdesk';
             Ext.fly('appLoadingIndicator').destroy();
         }});
 

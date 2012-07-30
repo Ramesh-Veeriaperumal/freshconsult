@@ -24,7 +24,7 @@ require 'openssl'
     
     @user_session = current_account.user_sessions.new
     if mobile?
-      redirect_to root_url
+      render :partial => "shared/login"
     end
   end
  

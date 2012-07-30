@@ -17,7 +17,7 @@ def self.ticket_fields_data
   [
     { :name => "requester", :label => "Requester", :description => "Ticket requester",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
-      :required_in_portal => true , :field_options => {:portalcc => false , :portalcc_to => "company"} },
+      :required_in_portal => true , :field_options => {"portalcc" => false , "portalcc_to" => "company"} },
       
     { :name => "subject", :label => "Subject", :description => "Ticket subject",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 

@@ -117,8 +117,14 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             this.items.items[1].items.items[2].showProperties();
         }
         
-        FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
-        Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        try {
+            FD.all_responders = Ext.getCmp('helpdesk_ticket_responder_id').getOptions(); 
+            Ext.getCmp('helpdesk_ticket_group_id').addListener('change',FD.Util.populateAgents);
+        }
+        catch(e){
+
+        }
+        
  
     },
     showProperties: function(setActive){

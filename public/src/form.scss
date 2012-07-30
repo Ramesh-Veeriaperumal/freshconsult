@@ -849,7 +849,7 @@ span.sort_handle{
 	@include pie-clearfix;
 	li{
 		float:left;
-		position:relative;
+		position:relative;		
 		a{
 			margin:6px 6px 0 0;
 			font-size:13px;
@@ -879,8 +879,11 @@ span.sort_handle{
 		div{ position:relative; }
 		cursor:move;
 		border-bottom:1px solid #efefef;
+		input[type=text]{	width:90%; }
 	} 
-	
+	.requester span{
+		margin-left: 3px;
+	}
 	li:hover, li.hover, li.active{
 		background:#ffffff;
 		border-color:#dfdfdf;
@@ -1985,36 +1988,32 @@ ul.ui-form .inputs-list{
 			}
 		}
 		.configure-portal{
-			position: relative;
-			label{
-				background-color: #efefef;
-				border-bottom: 1px solid #d1d1d1;
-				border-top: 1px solid #d1d1d1;
-				padding: 10px 0;
-				font-family: "Helvetica Neue", sans-serif;
+			text-align: center;
+			background-color: #efefef;
+			border-bottom: 1px solid #d1d1d1;
+			border-top: 1px solid #d1d1d1;
+			padding: 10px 0; 
+			label{				
 				font-weight: 300;
-			}
-			.toggle-button{
-				position: absolute;
-				left: 75%;
-				top: 9px;
-				margin-left: -50px;
+				font-size: 1.3em;
+				display: inline;
 			}
 		}
 		.big-seperator{
-			border-bottom: 2px solid #bfbfbf;
+			border-bottom: 1px solid #dfdfdf;
 			display:block;
-			height:2px;
-			margin:5px 0px;
+			height:1px;
+			margin:5px 0px 12px;
 		}
 		.configure-email-form{
 			padding: 0 10px 12px 10px;
 			margin-bottom: 11px;
 			border: 1px solid #dfdfdf;
 			background-color: #fbfbfb;
-			@include clearfix;
+			@include pie-clearfix;
 			@include corners(4px);
 			width: 90%;
+			position:relative;
 			.column{
 				float: left;
 				&.left-column{
@@ -2046,7 +2045,7 @@ ul.ui-form .inputs-list{
 				width: 25px; 
 				height: 25px;
 				position: absolute;
-				right: 1%;
+				right: -28px;
 				&.disabled{
 					background: url(/images/email_config_delete_disabled.png) no-repeat;
 				}

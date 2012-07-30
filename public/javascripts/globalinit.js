@@ -120,7 +120,7 @@ var $J = jQuery.noConflict();
         offset: 5,
         html: true,
         reloadContent: false,
-        template: '<div class="dbl_left arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).val();
         }

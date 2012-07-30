@@ -223,25 +223,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #Sphinx configuration starts
   define_index do
-   
-    
-      indexes :display_id, :sortable => true
+       
+     indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
      indexes sphinx_notes.body, :as => :note
     
-     has account_id, deleted
+    has account_id, deleted
 
-     #set_property :delta => :delayed
-     set_property :field_weights => {
+    #set_property :delta => :delayed
+    set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
       :description  => 5,
       :note         => 3
      }
-      
-   
-     
   end
   #Sphinx configuration ends here..
 
@@ -891,7 +887,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 
     account.support_emails.each do |support_email|
-      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email)[:email] == parse_email_text(support_email)[:email]}
+      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email.strip)[:email] == parse_email_text(support_email)[:email]}
     end
 
     reply_to_all_emails
