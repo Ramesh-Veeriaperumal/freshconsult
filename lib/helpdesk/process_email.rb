@@ -3,7 +3,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   
-  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   def perform
     from_email = parse_from_email
