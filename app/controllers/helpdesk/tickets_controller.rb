@@ -205,6 +205,7 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
+
   def custom_view_save
      render :partial => "helpdesk/tickets/customview/new"
   end
@@ -221,6 +222,9 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def custom_search
+    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
+    # When there is no data hash sent selecting all_tickets instead of new_my_open
+
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end

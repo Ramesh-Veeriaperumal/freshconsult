@@ -3370,7 +3370,11 @@ div.addReminder{
 		   &.assign {
 		   		padding-left:0; padding-right:0;
 		   		vertical-align:middle;
-		   		width:200px;
+		   		width:180px;
+		   	}
+
+		   	&.source-icon {
+		   		min-width:120px;
 		   	}
 		}
 
@@ -3409,10 +3413,12 @@ div.addReminder{
 	.subject_style {
 		@include border-radius(3px);
 		font-size:8px;
-		padding:2px 5px 1px;
-		letter-spacing:-0.16em;
+		padding:1px 5px 0;
+		letter-spacing:-0.13em;
 		font-smooth:never;
 		-webkit-font-smoothing: none;
+		display:inline-block;
+		white-space:nowrap;
 
 		@include text-shadow(1px, 0, 0, rgba(255,255,255,0.7));
 
@@ -3436,7 +3442,7 @@ div.addReminder{
 
 	
 	.name, .name-user{
-      width:65%;
+      // width:65%;
       padding-left:58px;
       line-height:  16px;
       .preview_pic{
@@ -3540,7 +3546,7 @@ div.addReminder{
 					-webkit-text-overflow: ellipsis;
 					overflow:hidden;
 					white-space:nowrap;
-					width: 120px;
+					width: 100px;
 					vertical-align: bottom;
 				}
 
@@ -4874,7 +4880,7 @@ a.close{
 	width: auto;
 	min-width:135px;
 	padding:3px;
-	margin-top: 8px;
+	margin-top: 5px;
 	right:15px;
 	@include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 1px, 8px );
 	a, li {
@@ -4907,7 +4913,7 @@ a.close{
 	    top:-6px; 
 		bottom:auto;
 		left:auto;
-		right:114px;
+		right:98px;
 	    border-width:0 6px 6px;
 	    z-index:16000;
 	}
@@ -4922,11 +4928,16 @@ a.close{
 	    top:-5px;
 		bottom:auto;
 		left:auto;
-		right:115px;
+		right:99px;
 	    border-width:0 5px 5px;
 	    z-index:16001;
 	}
 
+}
+
+.list_view td .fd-ajaxmenu {
+	margin-right:0;
+	right:auto;
 }
 .setting_bottom{
    position:absolute;
