@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
 
-  EMAIL_REGEX = /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product"]
 
