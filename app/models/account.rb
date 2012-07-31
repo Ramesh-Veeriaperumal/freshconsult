@@ -241,7 +241,8 @@ class Account < ActiveRecord::Base
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :scoreboard_enable => true, :google_signin => true,
-    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
+    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
+    :personalized_email_replies => false}
     
   
   has_features do
@@ -346,6 +347,13 @@ class Account < ActiveRecord::Base
   #Helpdesk hack starts here
   def reply_emails
     to_ret = (email_configs.collect { |ec| ec.friendly_email }).sort
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+  end
+  #HD hack ends..
+
+  #Helpdesk hack starts here
+  def reply_personalize_emails(user_name)
+    to_ret = (email_configs.collect { |ec| ec.friendly_email_personalize(user_name) }).sort
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
