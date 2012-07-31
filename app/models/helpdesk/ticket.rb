@@ -953,12 +953,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
  
   def can_access?(user)
+    if user.agent.blank?
+      return true if self.requester_id==user.id
+      if user.client_manager?
+        return self.requester.customer_id == user.customer_id
+      end
+    else
       return true if user.agent.all_ticket_permission || self.responder_id==user.id
       if user.agent.group_ticket_permission          
-         user.agent_groups.each do |ag|                   
-                 return true if self.group_id == ag.group_id
-          end                           
+        user.agent_groups.each do |ag|                   
+          return true if self.group_id == ag.group_id
+        end                           
       end
+    end
     return false
   end
 

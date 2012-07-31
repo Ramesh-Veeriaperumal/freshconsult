@@ -3,7 +3,6 @@ class SearchController < ApplicationController
   
   extend NewRelic::Agent::MethodTracer
   
-  before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
   
@@ -118,15 +117,24 @@ class SearchController < ApplicationController
         s_options[:category_id] = current_portal.forum_category_id
         @items.concat(Topic.search params[:search_key], :with => s_options, :per_page => 10)
       end
+
+      if f_classes.include?(Helpdesk::Ticket)
+        @items.concat(Helpdesk::Ticket.search params[:search_key], :with => s_options, :per_page => 10)
+      end
+
     end
   
     def search
       begin
-        @items = ThinkingSphinx.search filter_key(params[:search_key]), 
-                                        :with => { :account_id => current_account.id, :deleted => false },
-                                        :star => false,
-                                        :match_mode => :any,
-                                        :page => params[:page], :per_page => 10
+        if permission? :manage_tickets
+          @items = ThinkingSphinx.search filter_key(params[:search_key]), 
+                                          :with => { :account_id => current_account.id, :deleted => false },
+                                          :star => false,
+                                          :match_mode => :any,
+                                          :page => params[:page], :per_page => 10
+        else
+          search_portal_content [Helpdesk::Ticket], { :account_id => current_account.id, :deleted => false }
+        end
         process_results
       rescue Exception => e
         @total_results = 0
