@@ -5,7 +5,7 @@
     <li class="inline-field">
       <label><%= t(".give_a_name") %></label> 
       <div class="inline-radio">
-        <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30, :autofocus => "autofocus" ) %>
+        <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30) %>
       </div>
     </li>
     <% if permission?(:manage_users) %>
@@ -46,8 +46,6 @@
           data_hash: query_hash.toJSON(),
           filter_name: jQuery('#filter_name').val(),
           wf_model: "Helpdesk::Ticket",
-          wf_order: jQuery('#FilterOptions input[name=wf_order]').val(),
-          wf_order_type: jQuery('#FilterOptions input[name=wf_order_type]').val(),
           visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
           "user_id": <%= current_user.id %>,
           "group_id":  jQuery('#visibility_group_id').val() }

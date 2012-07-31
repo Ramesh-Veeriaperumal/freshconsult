@@ -291,7 +291,7 @@ active_dialog = null;
 
  $(document).bind('mousedown', function(e) {       
 	if($(e.target).hasClass("chzn-results")) return;
-  if ($(e.target).parent().hasClass("fd-ajaxmenu")) { return };
+  if ($(e.target).parent().hasClass("fd-ajaxmenu")) {console.log('quick-action'); return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
@@ -338,7 +338,6 @@ active_dialog = null;
           menu_container = $('<div>');
           menu_container.attr('id',"menu_" + menuid);
           menu_container.data('parent',$(node));
-
           menu_container.addClass('loading fd-ajaxmenu');
           // menu_container.width($(node).width());
           menu_container.insertAfter($(node));
@@ -349,17 +348,6 @@ active_dialog = null;
             url: $(node).data('options-url'),
             success: function (data, textStatus, jqXHR) {
               $('#menu_' + menuid).removeClass('loading').html(data);
-              
-              //Setting the Active Element
-              text_to_match = $(node).children('.result').first().text();
-              $('#menu_' + menuid).children().each(function(i) {
-                if ($(this).text() == text_to_match) {
-                  $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
-                }
-              });
-
-              $(node).children('.result').text();
-
               $(node).data('options-fetched',true);
             }
           });
@@ -396,15 +384,6 @@ active_dialog = null;
           $(node).data('menuid',"menu_" + menuid);
           $(node).data('options-fetched',true)
           menuid = "menu_" + menuid;
-
-
-          text_to_match = $(node).children('.result').first().text();
-          menu_container.children().each(function(i) {
-            if ($(this).text() == text_to_match) {
-              $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
-            }
-          });
-
         } else {
           menuid = $(node).data('menuid');
         }
@@ -517,14 +496,16 @@ active_dialog = null;
     }
   };
 
+  
   $.fn.animateHighlight = function(originalBg, highlightColor, duration) {
     var highlightBg = highlightColor || "#FFFF9C";
     var animateMs = duration || 1500;
     var originalBg = originalBg || 'transparent';
     this.stop().css("background-color", highlightBg).animate({backgroundColor: originalBg }, animateMs, function () {
-      $(this).removeAttr('style');
+      jQuery(this).removeAttr('style');
     });
   };
+ 
 
 })( jQuery );
 
@@ -549,12 +530,5 @@ getCookie = function(name)
     {
       return unescape(y);
     }
-  }
-}
-supports_html5_storage = function() {
-  try {
-    return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
-    return false;
   }
 }

@@ -2059,6 +2059,7 @@ function Tip(qTip, command)
 		if(offset.bottom !== undefined) { offset.top = offset.bottom; }
 		offset.option = Math.max(0, opts.offset);
 
+		console.log(offset);
 		pos.left -= offset.left.charAt ? offset.option : (offset.right ? -1 : 1) * offset.left;
 		pos.top -= offset.top.charAt ? offset.option : (offset.bottom ? -1 : 1) * offset.top;
 

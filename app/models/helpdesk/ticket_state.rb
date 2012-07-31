@@ -30,5 +30,21 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   def customer_responded?
     (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
   end
-  
+
+  def current_state
+    return TICKET_LIST_VIEW_STATES[:agent_responded_at] if (closed_at && status_updated_at > closed_at) #inapportune case
+    return TICKET_LIST_VIEW_STATES[:closed_at] if closed_at
+    return TICKET_LIST_VIEW_STATES[:agent_responded_at] if (resolved_at && status_updated_at > resolved_at) #inapportune case
+    return TICKET_LIST_VIEW_STATES[:resolved_at] if resolved_at
+    return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded?
+    return TICKET_LIST_VIEW_STATES[:agent_responded_at] if agent_responded_at
+    return TICKET_LIST_VIEW_STATES[:created_at]
+  end
+
+
+private
+  TICKET_LIST_VIEW_STATES = { :created_at => "created_at", :closed_at => "closed_at", 
+    :resolved_at => "resolved_at", :agent_responded_at => "agent_responded_at", 
+    :requester_responded_at => "requester_responded_at" }
+
 end

@@ -7,7 +7,7 @@ class UserSession < Authlogic::Session::Base
   before_destroy :remove_orphan_filters
 
 	def remove_orphan_filters
-		$redis.keys("filters:#{Account.current.id}:#{self.attempted_record.id}:*").each {|key| $redis.del(key)}
+		$redis.keys("#{self.attempted_record.id}:*").each {|key| $redis.del(key)}
 	end
 
 end

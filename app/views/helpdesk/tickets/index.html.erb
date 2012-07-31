@@ -16,7 +16,7 @@
 <% end %>
 <% content_for :layoutType do -%>ticket_list<%- end %>
 <div class="containerFull">
-  <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != 'deleted' && @current_view != 'spam' && @current_view != 'monitored_by') ? 'block' : 'none' %>">
+  <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != "deleted" && @current_view != "spam" && @current_view != "monitored_by")?"block":"none"%>">
 	  <div class="leftFilter">    
   	  <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
 	  </div>
@@ -25,6 +25,3 @@
 	  <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } %>
   </div>
 </div>
-
-<%= javascript_include_tag "sisyphus.min" %>
-<%= javascript_include_tag "ticket_list" %>

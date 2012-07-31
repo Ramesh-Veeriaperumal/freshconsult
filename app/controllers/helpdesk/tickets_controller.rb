@@ -9,15 +9,12 @@ class Helpdesk::TicketsController < ApplicationController
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
   
-  before_filter :check_user , :only => [:show]
-
   before_filter { |c| c.requires_permission :manage_tickets }
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
-
+  before_filter :check_user , :only => [:show]
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
-  before_filter :add_requester_filter, :only => [:index, :user_tickets]
-  before_filter :cache_filter_params, :only => [:custom_search]
+  before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close? 
 
@@ -55,27 +52,23 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
-  def get_cached_filters
-    filters_str = $redis.get("filters:#{current_account.id}:#{current_user.id}:#{session.session_id}")
-    JSON.parse(filters_str) if filters_str
-  end
-
   def load_cached_ticket_filters
 
     unless current_user.nil?
 
-      unless params[:force] or cookies[:force_predefined_view] or !params[:filter_key].blank? or !params[:filter_name].blank?
-        @cached_filter_data = get_cached_filters
+      unless params[:force] or cookies[:force_predefined_view]
+        filters_str = $redis.get("filters:#{current_user.id}:#{session.session_id}")
+        @cached_filter_data = JSON.parse(filters_str) if filters_str
         
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
           @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
-          @ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
+          @ticket_filter.query_hash = @cached_filter_data[:data_hash]
           params.merge!(@cached_filter_data)
         end
       else 
-        $redis.del("filters:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        $redis.del("filters:#{current_user.id}:#{session.session_id}")
         cookies.delete(:force_predefined_view)
       end
 
@@ -126,7 +119,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
-    cookies.delete(:ticket_list_updated)
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
 
     if @items.empty? && !params[:page].nil? && params[:page] != '1'
@@ -225,27 +217,22 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
-
   def custom_view_save
      render :partial => "helpdesk/tickets/customview/new"
   end
   
-  def cache_filter_params
+  def custom_search
+    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    
     filter_params = params.clone
     filter_params.delete(:action)
     filter_params.delete(:controller)
     
-    $redis.set("filters:#{current_account.id}:#{current_user.id}:#{session.session_id}", filter_params.to_json)
-    $redis.expire("filters:#{current_account.id}:#{current_user.id}:#{session.session_id}", 604800) #expire after one week
+    $redis.set("filters:#{current_user.id}:#{session.session_id}", filter_params.to_json)
 
-    @cached_filter_data = get_cached_filters
-  end
+    filters_str = $redis.get("filters:#{current_user.id}:#{session.session_id}")
+    @cached_filter_data = JSON.parse(filters_str) if filters_str
 
-  def custom_search
-    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
-    # When there is no data hash sent selecting all_tickets instead of new_my_open
-
-    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
   
