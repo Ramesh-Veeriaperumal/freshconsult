@@ -441,7 +441,9 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+      super(:builder => xml, :skip_instruct => true,:only => [:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+                                                              :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
+                                                              :user_role,:fb_profile_id,:language,:address]) 
   end
   
   def original_avatar
