@@ -297,5 +297,9 @@ FD.Util = {
         else {
             FD.Util.setAgentOptions(FD.all_responders)
         }
+    },
+    showTicket : function(id){
+        alert(id);
+        location.href="#tickets/show/"+id;
     }
 }

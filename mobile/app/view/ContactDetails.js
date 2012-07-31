@@ -27,7 +27,17 @@ Ext.define('Freshdesk.view.ContactDetails', {
             xtype:'contactform',
         };
         var contactInfo = {
-            xtype:'contactInfo'
+            xtype:'contactInfo',
+            listeners : {
+                element : 'element',
+                delegate : 'a',
+                tap : function(e, item) {
+                    var hrefParent = Ext.get(item).findParent('a');
+                    if(hrefParent && hrefParent.getAttribute('href')){
+                        location.href=hrefParent.getAttribute('href');
+                    }
+                }
+            }
         };     
 
         this.add([TopTitlebar,contactInfo]);
@@ -38,6 +48,7 @@ Ext.define('Freshdesk.view.ContactDetails', {
         history.back();
     },
     config: {
+        id:'contactDetails',
         scrollable:{
             direction:'vertical',
             directionLock:true

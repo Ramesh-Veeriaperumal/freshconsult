@@ -19,8 +19,8 @@ class User < ActiveRecord::Base
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
   USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
-  EMAIL_REGEX = /(\A[A-Z0-9_\.%\+\-\'=]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
-  
+  EMAIL_REGEX = /(\A[A-Z0-9.\'_%=+-\xe28099]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+
   belongs_to :customer
   
   has_many :authorizations, :dependent => :destroy
@@ -329,7 +329,7 @@ class User < ActiveRecord::Base
     UserNotifier.deliver_password_reset_instructions(self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
           'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)) , 
-          :subject => Liquid::Template.parse(subj_template).render ,:reply_email => portal.product.friendly_email)
+          :subject => Liquid::Template.parse(subj_template).render ,:reply_email => reply_email)
   end
   
   def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
@@ -507,7 +507,7 @@ class User < ActiveRecord::Base
  
   def self.find_by_email_or_name(value)
     conditions = {}
-    if value =~ /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+    if value =~ /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
       conditions[:email] = value
     else
       conditions[:name] = value

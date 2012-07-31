@@ -433,7 +433,7 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false)
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
@@ -443,10 +443,10 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
-        element = add_cc_field_tag element ,field 
+        element = add_cc_field_tag element ,field unless is_edit
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
-        element = add_cc_field_tag element ,field if field.portal_cc_field?
+        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit)
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -479,6 +479,7 @@ module ApplicationHelper
     else
        element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
     end
+    return element
   end
 
   # The field_value(init value) for the nested field should be in the the following format
