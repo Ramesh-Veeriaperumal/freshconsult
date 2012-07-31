@@ -11049,8 +11049,7 @@ a {
   text-decoration: none;
   font-weight: bold;
   text-align: center;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.3) 0 3px 16px;
-  box-shadow: inset rgba(0, 0, 0, 0.3) 0 3px 16px;
+  /* @include box-shadow(inset rgba(0, 0, 0, 0.3) 0 3px 16px); */
   border: 1px solid #AAA;
   position: relative;
   cursor: pointer;
@@ -11059,8 +11058,7 @@ a {
 .x-list-paging .x-list-paging-msg:active {
   color: #1d60bd;
   text-shadow: #86afe6 0 0 20px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
-  box-shadow: inset rgba(0, 0, 0, 0.6) 0 3px 16px;
+  /* @include box-shadow(inset rgba(0, 0, 0, 0.6) 0 3px 16px); */
 }
 
 .ticketDetails #details .HDR {
@@ -11098,8 +11096,8 @@ a {
   -webkit-border-radius: 50%;
   border-radius: 50%;
   vertical-align: top;
-  -webkit-box-shadow: inset 0 0 7px #333333;
-  box-shadow: inset 0 0 7px #333333;
+  -webkit-box-shadow: inset 0 0 4px black, 1px 1px 0px white;
+  box-shadow: inset 0 0 4px black, 1px 1px 0px white;
   color: #fff;
   font-family: 'Freshdesk';
   font-size: 24px;
@@ -11809,6 +11807,9 @@ a {
 }
 .x-field-select.multiselect .x-form-label {
   background-color: transparent !important;
+}
+.x-field-select.multiselect .x-field-input, .x-field-select.multiselect .x-input-el {
+  padding-top: 0px;
 }
 
 .x-empty .x-field-input textarea {

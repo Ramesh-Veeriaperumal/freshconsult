@@ -38858,6 +38858,9 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                         centered:true,
                         loadMoreText: 'Load more...',
                         noMoreRecordsText: 'No more tickets.'
+                    },
+                    {
+                        xclass: 'plugin.ux.Iscroll'
                     }
             ]
         };
