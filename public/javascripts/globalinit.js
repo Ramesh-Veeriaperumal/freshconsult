@@ -34,17 +34,17 @@ var $J = jQuery.noConflict();
        return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
    }, 'Please enter a valid hours.');
    $.validator.addClassRules("hours", { hours: true });
- 	
-	
-	//Domain Name Validator 
+  
+  
+  //Domain Name Validator 
    $.validator.addMethod("domain_validator", function(value, element) {
        if (this.optional(element)) // return true on optional element
          return true;
         if (value.length == 0) { return true; }       
-     	if(/((http|https|ftp):\/\/)\w+/.test(value))
-     	valid = false;
-     	else if(/\w+[\-]\w+/.test(value))
-     	valid = true;
+      if(/((http|https|ftp):\/\/)\w+/.test(value))
+      valid = false;
+      else if(/\w+[\-]\w+/.test(value))
+      valid = true;
         else if((/\W\w*/.test(value))) {
         valid = false;
         }
@@ -59,56 +59,100 @@ var $J = jQuery.noConflict();
    $.validator.addClassRules("url_validator", { url : true });
    
        
-	// App initialisation  
-	$(document).ready(function() {
-		var widgetPopup = null;   
+  // App initialisation  
+  $(document).ready(function() {
+    var widgetPopup = null;
+    var hoverPopup =  false;
+    var hidePopoverTimer;
 
-		$("body").click(function(ev){
-			if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
-				widgetPopup.popover('hide');
-				widgetPopup = null;
-			}
-		});
-		
-		$("a[rel=popover]")
-			.popover({ 
-				delayOut: 300,
-				trigger: 'manual',
-				offset: 5,
-				html: true,
-				reloadContent: false,
-				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-				content: function(){
-					return $("#" + $(this).attr("data-widget-container")).html();
-				}
-			});
-		
-		$("a[rel=widget-popover]")
-			.popover({ 
-				delayOut: 300,
-				trigger: 'manual',
-				offset: 5,
-				html: true,
-				reloadContent: false,
-				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-				content: function(){
-					return $("#" + $(this).attr("data-widget-container")).val();
-				}
-			})
-			
-		$("a[rel=popover], a[rel=widget-popover]").live("click", function(e){
-				e.preventDefault();
-				e.stopPropagation(); 
-				$('[rel=widget-popover]').each(function(){
-					$(this).popover('hide');
-				});
- 				widgetPopup = $(this).popover('show');
-			});
+    $("body").click(function(ev){
+      hideWidgetPopup(ev);
+    });
+
+    hideWidgetPopup = function(ev) {
+      if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
+        widgetPopup.popover('hide');
+        widgetPopup = null;
+      }
+    }
+
+    hidePopover = function (ev) {  
+      if(!$.contains(this, ev.relatedTarget) ) { 
+        if(hoverPopup && !$(ev.relatedTarget).is('[rel=hover-popover]')) {
+          hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
+        }
+      }
+    };
+
+    $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
+      clearTimeout(hidePopoverTimer);
+    });
+    
+    $("a[rel=popover]")
+      .popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).html();
+        }
+      });
+    
+    $("a[rel=widget-popover]")
+      .popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).val();
+        }
+      });
+    $("a[rel=hover-popover]")
+      .popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).val();
+        }
+      });
+
+
+      $("a[rel=hover-popover]").live('mouseenter',function(ev) {
+        ev.preventDefault();
+        hideWidgetPopup(ev);
+        widgetPopup = $(this).popover('show');
+        hoverPopup = true;
+      }).live('mouseleave',function(ev) {
+          hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
+      });
+      
+    $("a[rel=widget-popover]").live("click", function(e){
+        e.preventDefault();
+        e.stopPropagation(); 
+        clearTimeout(hidePopoverTimer);
+        hoverPopup = false;
+        $('[rel=widget-popover],[rel=hover-popover]').each(function(){
+          $(this).popover('hide');
+        });
+        widgetPopup = $(this).popover('show');
+      });
 
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
       $(".nav-trigger").livequery(function(){ $(this).showAsMenu(); });
+      $("input[rel=toggle]").livequery(function(){ $(this).itoggle(); });
+ 
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
 
@@ -159,21 +203,28 @@ var $J = jQuery.noConflict();
         });
       });
       
-      $(".admin_list li").hover(
-        function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-        function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-      );
+      $(".admin_list li")
+         .hover(
+            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+         );
+
+      $(".content_list li")
+         .hover(
+            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+         );
 
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);
       $("form.ui-form").validate(validateOptions);
 
-		$('.single_click_link').live('click',function(ev) {
-			if (! $(ev.srcElement).is('a')) {
-				window.location = $(this).find('a').first().attr('href');
-			}
-		});
+    $('.single_click_link').live('click',function(ev) {
+      if (! $(ev.srcElement).is('a')) {
+        window.location = $(this).find('a').first().attr('href');
+      }
+    });
 
     $("input[rel=companion]")
       .live({ 
@@ -186,7 +237,7 @@ var $J = jQuery.noConflict();
           $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
         }
       });
-		
+    
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
          $('#Pagearea').css("minHeight", sidebarHeight);

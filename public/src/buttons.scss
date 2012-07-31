@@ -322,19 +322,13 @@ div.action_buttons:hover{
              
 .page_info{
 	.toolbar_pagination{			
-    top:4px;  
+    top:-6px;  
 	  .prev_page, .next_page{			
 			width:7px;
-      top:-37px;
+      top:-5px;
 		}
 	}
-}  
-
-#ticket-sub-toolbar .page_info .toolbar_pagination {
-  .prev_page, .next_page{     
-    top:-14px;
-  }
-}
+}                      
 
 .request-title .toolbar_pagination{
   top:-2px;
@@ -389,6 +383,7 @@ div.action_buttons:hover{
       background:#efefef;
       span{ @include opacity(0.3); }  
    }
+
 }
 
 .toggle-button{
@@ -400,12 +395,12 @@ div.action_buttons:hover{
   padding:0;
   height:20px;
   color:#fff;
-  border:1px solid #777;
   text-align:center;
   overflow:hidden;
   background: #9d9d9d;
-  @include background(linear-gradient(top, #9d9d9d, lighten(#9d9d9d, 6%)));
-  @include box-shadow(rgba(0, 0, 0, 0.1) 0 1px 0, rgba(0, 0, 0, 0.2) 0 1px 2px inset);
+  border:1px solid rgba(0, 0, 0, 0.1); 
+  @include background(linear-gradient(top, #777, lighten(#777, 10%)));
+  @include box-shadow(rgba(0, 0, 0, 1) 0 1px 1px inset, rgba(0, 0, 0, 0.5) 0 1px 3px inset);
   @include border-radius(14px);
   @include text-shadow(-1px -1px 0 #666);
   @include inline-block;
@@ -413,13 +408,17 @@ div.action_buttons:hover{
   .toggle-container, .toggle-handle{
     position:absolute; top:0;
   }  
+
+  &, .on-label{
+    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px inset, rgba(0, 0, 0, 0.3) 0 1px 0 inset, rgba(0, 0, 0, 0.2) 0 1px 3px inset);
+  }
   .toggle-container{    
     width:200%;
     height:100%;
     left:-100%;
     overflow:hidden;
     @include clearfix;
-    @include border-radius(12px);
+    @include border-radius(18px);
     @include transition-property(left);
     @include transition-duration(0.1s);    
   }  
@@ -428,7 +427,7 @@ div.action_buttons:hover{
     span{
       @include inline-block;
       @include pie;
-      border:1px solid #777; 
+      border:1px solid rgba(0, 0, 0, 0.5); 
       width:18px;
       height:18px;              
       background: #d9d9d9;
@@ -458,13 +457,13 @@ div.action_buttons:hover{
     width:50%;
     height:100%;
     @include pie;
-    @include border-radius(14px);
+    @include border-radius(16px);
     line-height:0;
+    font-weight: 200;
     span{ display:block; margin-top:10px; font-weight:bold; }
   }  
   .on-label{    
-    @include background(linear-gradient(top, #4ea961, lighten(#4ea961, 6%)));
-    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px inset);
+    @include background(linear-gradient(top, #4ea961, lighten(#4ea961, 10%)));    
     span{ padding-right:12px; }
   }
   .off-label span{ padding-left:12px; }

@@ -8,7 +8,15 @@ class SubscriptionAdmin::SubscriptionPaymentsController < ApplicationController
     @total_revenue = SubscriptionPayment.calculate(:sum, :amount)
     @payments = search
     @payments = @payments.paginate( :page => params[:page], :per_page => 30)
+    fetch_day_pass_payments 
     
+  end
+
+  def fetch_day_pass_payments
+   @day_pass_payments = SubscriptionPayment.sum(:amount, 
+                :joins => "INNER JOIN  day_pass_purchases on day_pass_purchases.payment_id = subscription_payments.id",
+                :group => "DATE_FORMAT(subscription_payments.created_at, '%M, %Y')",
+                :order => "subscription_payments.created_at desc")
   end
   
   protected

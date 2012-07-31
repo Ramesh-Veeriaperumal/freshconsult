@@ -14,7 +14,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
-        display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.email_commands_setting.ticket_id_delimiter)
+        display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
         ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
         if ticket
           return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
@@ -43,7 +43,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     email_config = account.email_configs.find_by_to_email(to_email[:email])
     user = get_user(account, from_email,email_config)
     
-    article_params[:title] = params[:subject].gsub(Regexp.new("\\[#{account.email_commands_setting.ticket_id_delimiter}([0-9]*)\\]"),"")
+    article_params[:title] = params[:subject].gsub(Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]"),"")
     article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
     article_params[:user] = user.id
     article_params[:account] = account.id
@@ -108,26 +108,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def parse_orginal_to(account, email_config)
-      return unless params[:to]
-      original_to_emails = params[:to].split(",")
-
-      parsed_to_emails = original_to_emails.collect {|email| "#{parse_email_text(email)[:email]}"}
-      parsed_to_emails += parse_cc_email
-      original_to_email_config = account.email_configs.find(:first, :conditions => { :reply_email => parsed_to_emails })
-
-      if parsed_to_emails.size == 1
-        if original_to_email_config
-          original_to_email =  original_to_email_config.friendly_email     
-        else
-          original_to = parse_email_text(original_to_emails.first)
-          original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
-        end
-      else
-        original_to_email = original_to_email_config ? original_to_email_config.friendly_email : account.default_friendly_email
-      end
-    end
-    
     def parse_to_email
       envelope = params[:envelope]
       unless envelope.nil?
@@ -164,16 +144,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_to_emails = []
       (to_emails || []).each do |email|
         parsed_email = parse_email_text(email)
-        parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email]}>") if !parsed_email.blank? && !parsed_email[:email].blank?
+        parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email].strip}>") if !parsed_email.blank? && !parsed_email[:email].blank?
       end
       parsed_to_emails
     end
     
     def create_ticket(account, from_email, to_email)
       email_config = account.email_configs.find_by_to_email(to_email[:email])
-      user = get_user(account, from_email,email_config)
+      user = get_user(account, from_email, email_config)
+      
       return if user.blocked? #Mails are dropped if the user is blocked
-      if ( !user.customer? && !user.deleted?)
+      
+      if (user.agent? && !user.deleted?)
         e_email = orig_email_from_text
         user = get_user(account, e_email , email_config) unless e_email.nil?
       end
@@ -183,15 +165,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :subject => params[:subject],
         :description => params[:text],
         :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
-        #:email => from_email[:email],
-        #:name => from_email[:name],
         :requester => user,
-        :to_email => parse_orginal_to(account, email_config),
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :to_emails => parse_to_emails},
+        :to_email => to_email[:email],
+        :to_emails => parse_to_emails,
+        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => []},
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
-        #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
@@ -260,6 +240,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         
         begin
           if (user.agent? && !user.deleted?)
+            ticket.responder ||= user
             process_email_commands(ticket, user, ticket.email_config, note)
             email_cmds_regex = get_email_cmd_regex(ticket.account)
             note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
@@ -277,7 +258,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def can_be_added_to_ticket?(ticket,user)
-      ( !user.customer? && !user.deleted?) or
+      (user.agent? && !user.deleted?) or
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
       belong_to_same_company?(ticket,user)
@@ -288,10 +269,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def get_user(account, from_email, email_config)
-      portal = email_config ? email_config.portal : account.main_portal
       user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
+        portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
           :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
       end

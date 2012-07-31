@@ -2,11 +2,16 @@ class Va::Condition
   
   attr_accessor :handler, :key, :operator
   
+
+  DISPATCHER_COLUMNS = {
+    'to_email'                => 'to_emails'
+  }
+
   QUERY_COLUMNS = {
     'subject_or_description'  => [ 'helpdesk_tickets.subject', 'helpdesk_tickets.description' ],
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
-    'company_name'            => 'customers.name'
+    'company_name'            => 'customers.name',
   }
   
   def initialize(rule, account)
@@ -19,14 +24,19 @@ class Va::Condition
     handler.matches(evaluate_on)
   end
   
+  def dispatcher_key
+    return (DISPATCHER_COLUMNS.key?(key)) ? DISPATCHER_COLUMNS[key] : key
+  end
+
   def filter_query
     handler.filter_query
   end
   
   def db_column
     return QUERY_COLUMNS[key] if QUERY_COLUMNS.key? key
-    
+
     #method_defined? doesn't work..
+    return "helpdesk_schema_less_tickets.#{dispatcher_key}" if Helpdesk::SchemaLessTicket.column_names.include? dispatcher_key
     return "helpdesk_tickets.#{key}" if Helpdesk::Ticket.column_names.include? key
     return "helpdesk_ticket_states.#{key}" if Helpdesk::TicketState.column_names.include? key
     

@@ -62,7 +62,7 @@ module ApplicationHelper
   end         
 
   def page_title
-    portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
+    portal_name = h(current_portal.portal_name) + " : "
     portal_name += @page_title || t('helpdesk_title')
   end 
   
@@ -273,28 +273,30 @@ module ApplicationHelper
   
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders #To do.. i18n
-    [
-      ['{{ticket.id}}', 		 			'Ticket ID' ,				'Unique ticket ID.'],
-      ['{{ticket.subject}}',     			'Subject', 					'Ticket subject.'],
-      ['{{ticket.description}}', 			'Description', 				'Ticket description.'],
-      ['{{ticket.url}}', 		 			'Ticket URL' ,						'Full URL path to ticket.'],
-      ['{{ticket.portal_url}}', 'Product specific ticket URL',	'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
-      ['{{ticket.status}}', 	 			'Status' , 					'Ticket status.'],
-      ['{{ticket.priority}}', 	 			'Priority', 				'Ticket priority.'],
-      ['{{ticket.source}}', 	 			'Source', 					'The source channel of the ticket.'],
-      ['{{ticket.ticket_type}}', 			'Ticket type', 				'Ticket type.'],
-      ['{{ticket.tags}}', 					'Tags', 					'Ticket tags.'],
-      ['{{ticket.due_by_time}}', 			'Due by time',				'Ticket due by time.'],
-      ['{{ticket.requester.name}}', 		'Requester name', 			'Name of the requester who raised the ticket.'],
-      ['{{ticket.requester.email}}',		'Requester email', 			"Requester's email."],
-      ['{{ticket.requester.company_name}}', 'Requester company name', 	"Requester's company name."], #??? should it be requester.company.name?!
-      ['{{ticket.group.name}}', 			'Group name',				'Ticket group.'],
-      ['{{ticket.agent.name}}', 			'Agent name',				'Name of the agent who is currently working on the ticket.'],
-      ['{{ticket.agent.email}}', 			'Agent email',				"Agent's email."],
-      ['{{ticket.latest_public_comment}}',  'Last public comment',	'Latest public comment for this ticket.'],
+    place_holders = [
+      ['{{ticket.id}}',           'Ticket ID' ,       'Unique ticket ID.'],
+      ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
+      ['{{ticket.description}}',      'Description',        'Ticket description.'],
+      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
+      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
+      ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
+      ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],
+      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.'],
+      ['{{ticket.ticket_type}}',      'Ticket type',        'Ticket type.'],
+      ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
+      ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
+      ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
+      ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
+      ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
+      ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
+      ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
     ]
+    place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    place_holders
   end
   
   # Avatar helper for user profile image
@@ -432,7 +434,7 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false)
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
@@ -441,8 +443,12 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
-      when "text", "number", "email" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+        element = add_cc_field_tag element ,field unless is_edit
+      when "email" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit)
+      when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
@@ -459,11 +465,22 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
+        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
+  end
+
+  def add_cc_field_tag element , field    
+    if current_user && current_user.agent? 
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html")) 
+    elsif current_user && current_user.customer? && field.all_cc_in_portal?
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
+    else
+       element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
+    end
+    return element
   end
 
   # The field_value(init value) for the nested field should be in the the following format
@@ -476,11 +493,11 @@ module ApplicationHelper
     }.merge!(_opt)
 
     _field.nested_levels.each do |l|       
-      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = sanitize_to_id(_name +"_"+ l[:name])
+      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
       _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
     end
     
-    _category + javascript_tag("jQuery('##{sanitize_to_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")        
+    _category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")
 
   end
   
@@ -508,7 +525,11 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless (element.blank? || field_value.nil? || field_value == "" || field_value == "...")     
+    content_tag :li, element unless display_tag?(element,field,field_value)
+  end
+
+  def display_tag?(element, field, field_value)
+    (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
    
   def pageless(total_pages, url, message=t("loading.items"), params = {})

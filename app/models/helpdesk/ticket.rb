@@ -13,6 +13,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product"]
+
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
@@ -25,13 +27,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values
-  before_create :set_dueby, :save_ticket_states
+  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity
-  before_update :load_ticket_status, :cache_old_model, :update_dueby
+
+  before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
        :stop_timesheet_timers
   
+  has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+  
+  delegate :product_id, :product, :to_emails, :to => :schema_less_ticket, :allow_nil => true
+
   belongs_to :email_config
   belongs_to :group
  
@@ -46,6 +53,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
     :dependent => :destroy
+
+  has_many :public_notes,
+    :class_name => 'Helpdesk::Note',
+    :as => 'notable', :conditions => {:private =>  false, :deleted => false}
     
   has_many :sphinx_notes, 
     :class_name => 'Helpdesk::Note',
@@ -100,16 +111,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
-  delegate :active?, :open?, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
+  delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
+  has_many :survey_result, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
   
+  has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+
   attr_protected :attachments #by Shan - need to check..
   
   accepts_nested_attributes_for :tweet, :fb_post
@@ -208,13 +222,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #Sphinx configuration starts
   define_index do
-   
+       
      indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
      indexes sphinx_notes.body, :as => :note
     
-     has account_id, deleted
+    has account_id, deleted
 
     #set_property :delta => :delayed
     set_property :field_weights => {
@@ -222,7 +236,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :subject      => 10,
       :description  => 5,
       :note         => 3
-    }
+     }
   end
   #Sphinx configuration ends here..
 
@@ -287,14 +301,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
-  
+  alias :is_twitter :is_twitter?
+
   def is_facebook?
      (fb_post) and (fb_post.facebook_page) 
   end
+  alias :is_facebook :is_facebook?
  
  def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
  end
+ alias :is_fb_message :is_fb_message?
+
 
   def is_fb_wall_post?
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
@@ -352,7 +370,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def encode_display_id
     "[#{ticket_id_delimiter}#{display_id}]"
   end
-  
+
   def conversation(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
   end
@@ -426,7 +444,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
-    portal =  email_config.portal if email_config
+    portal =  product.portal if product
     unless email.blank?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
@@ -560,7 +578,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_id_delimiter
-    delimiter = account.email_commands_setting.ticket_id_delimiter
+    delimiter = account.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
   end
   
@@ -671,34 +689,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
-    { 
-      "id"                                => display_id,
-      "raw_id"                            => id,
-      "encoded_id"                        => encode_display_id,
-      "subject"                           => subject,
-      "description"                       => description_with_attachments,
-      "description_text"                  => description,
-      "requester"                         => requester,
-      "agent"                             => responder,
-      "group"                             => group,
-      "status"                            => status_name,
-      "requester_status_name"             => Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name"),
-      "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
-      "source"                            => SOURCE_NAMES_BY_KEY[source],
-      "ticket_type"                       => ticket_type,
-      "tags"                              => tag_names.join(', '),
-      "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
-      "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
-      "url"                               => helpdesk_ticket_url(self, :host => account.host, :protocol=> url_protocol),
-      "portal_url"                        => support_ticket_url(self, :host => portal_host, :protocol=> url_protocol),
-      "portal_name"                       => portal_name,
-      #"attachments"                      => liquidize_attachments(attachments),
-      #"latest_comment"                   => liquidize_comment(latest_comment),
-      "latest_public_comment"             => liquidize_comment(latest_public_comment)
-      #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
-      #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
-    }
+
+    Helpdesk::TicketDrop.new self
+    
   end
 
   def url_protocol
@@ -730,12 +723,32 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   #Liquid ends here
+  
+  def respond_to?(attribute)
+    SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=")) || super(attribute)
+  end
+
+  def update_schema_less_attributes(attribute, args)
+
+    if (attribute.to_s.include? '=') && SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("="))      
+      logger.debug "method_missing :: args is #{args} and attribute :: #{attribute}"
+      build_schema_less_ticket unless schema_less_ticket
+      args = args.first if args && args.is_a?(Array) 
+      schema_less_ticket.send(attribute,args)
+      return true  
+    end
+
+    return false
+  end
 
   def method_missing(method, *args, &block)
     begin
       super
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+
+      return if update_schema_less_attributes(method, args)
+
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!
       
@@ -756,11 +769,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def requester_name
+    requester.name || requester_info
+  end
+
+  def need_attention
+    active? and ticket_states.need_attention
+  end
+
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name]
+    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep
       self.load_flexifield
-      options[:include] = [:notes,:attachments]
+      self[:notes] = self.notes
+      options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
       options[:methods].push(:custom_field)
     end
@@ -795,17 +817,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-    twt_handles = email_config.nil? ? account.primary_email_config.twitter_handles : email_config.twitter_handles
+    twt_handles = product ? product.twitter_handles : account.twitter_handles
     twt_handles.first.id unless twt_handles.blank?
   end
   
   def portal_host
-    (email_config && email_config.portal && !email_config.portal.portal_url.blank?) ? 
-      email_config.portal.portal_url : account.host
+    (product && !product.portal_url.blank?) ? product.portal_url : account.host
   end
   
   def portal_name
-    (email_config && email_config.portal) ? email_config.portal.name : account.portal_name
+    (product && product.portal_name) ? product.portal_name : account.portal_name
   end
   
   def update_activity
@@ -820,7 +841,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def product_name
-      email_config.nil? ? "No Product" : email_config.name
+      product ? product.name : "No Product"
    end
    
    def responder_name
@@ -847,10 +868,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
    end
 
-   def selected_reply_email
-    ( !to_email.blank? &&  account.pass_through_enabled? ) ? to_email : friendly_reply_email
-   end
-  
   def cc_email_hash
     if cc_email.is_a?(Array)     
       {:cc_emails => cc_email, :fwd_emails => []}
@@ -859,21 +876,77 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def to_emails
-    to_emails_array = (cc_email[:to_emails] || []).clone unless cc_email.nil?
-    to_emails_array = ["#{to_email}"] if (to_emails_array && to_emails_array.empty? && !to_email.blank?)
-    to_emails_array
-  end
-
-  def to_cc_emails
-    return [] if cc_email.nil?
+  def reply_to_all_emails
+    emails_hash = cc_email_hash
+    return [] if emails_hash.nil?
     to_emails_array = []
-    cc_emails_array = (cc_email[:cc_emails] || [])
-    to_emails_array = (cc_email[:to_emails] || []).clone
-    to_emails_array.delete_if {|email| parse_email_text(email)[:email] == parse_email_text(selected_reply_email)[:email]}
-    (cc_emails_array + to_emails_array).uniq
+    cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
+    to_emails_array = (to_emails || []).clone
+
+    reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
+
+    account.support_emails.each do |support_email|
+      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email.strip)[:email] == parse_email_text(support_email)[:email]}
+    end
+
+    reply_to_all_emails
   end  
 
+  def selected_reply_email
+    account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
+  end
+
+  def to_mob_json(only_public_notes=false)
+    notes_option = {
+      :only => [:created_at, :user_id, :id, :private ],
+      :include => {
+        :user => {
+          :only => [:name, :email, :id],
+          :methods => [:avatar_url, :is_agent, :is_customer]
+        },
+        :attachments => {
+          :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+        }
+      },
+      :methods => [ :body_mobile, :source_name ]
+    }
+
+    json_inlcude = {
+      :responder => {
+        :only => [ :name, :email, :id ],
+        :methods => [ :avatar_url ]
+      },
+      :requester => {
+        :only => [ :name, :email, :id, :is_agent, :is_customer, :twitter_id  ],
+        :methods => [ :avatar_url, :is_customer ]
+      },
+      :attachments => {
+        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+      },
+      :fb_post => {
+        :include => {
+          :facebook_page => {
+            :only => [ :id, :page_name ]
+          }
+        }
+       }
+    }
+
+    if only_public_notes
+     json_inlcude[:public_notes] = notes_option 
+    else 
+     json_inlcude[:notes] = notes_option
+    end
+
+    options = {
+      :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
+      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails,
+                    :conversation_count, :selected_reply_email, :from_email, :is_twitter, :is_facebook, :fetch_twitter_handle, :is_fb_message ],
+      :include => json_inlcude
+    }
+    to_json(options,false) 
+  end
+ 
   private
   
     def create_source_activity
@@ -882,12 +955,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   
     def create_product_activity
-      unless email_config
+      unless product
         create_activity(User.current, 'activities.tickets.product_change_none.long', {}, 
                                    'activities.tickets.product_change_none.short')
       else
         create_activity(User.current, 'activities.tickets.product_change.long',
-          {'product_name' => email_config.name}, 'activities.tickets.product_change.short')
+          {'product_name' => product.name}, 'activities.tickets.product_change.short')
       end
     
     end
@@ -998,6 +1071,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
   end
-  
+
+    def assign_schema_less_attributes
+      build_schema_less_ticket unless schema_less_ticket
+      schema_less_ticket.account_id ||= account_id
+    end
+
+    def assign_email_config_and_product
+      if email_config
+        self.product = email_config.product
+      elsif product
+        self.email_config = product.primary_email_config
+      end
+    end
+
+    def assign_email_config
+      if schema_less_ticket.changed.include?("product_id")
+        if product
+          self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      
+        else
+          self.email_config = nil
+        end
+      end
+      schema_less_ticket.save unless schema_less_ticket.changed.empty?
+    end
+
 end
   

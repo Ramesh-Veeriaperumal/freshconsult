@@ -77,6 +77,7 @@ module Helpdesk::TicketsHelper
       { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
       { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
     ])
+    top_index = top_views_array.index{|v| v[:id] == selected} || 0
 
     cannot_delete = false
     selected_item =  top_views_array.select { |v| v[:id].to_s == selected.to_s }.first
@@ -206,12 +207,11 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket) #, class_name = "need-attention")
+  def subject_style(ticket)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
     type = "new" if ticket.ticket_states.is_new? && ticket.active?
     type = "elapsed" if ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
     type = "overdue" if ticket.due_by < Time.now && ticket.active?
-    type = "resolved"  if ticket.status == RESOLVED
     type
   end
 
@@ -231,10 +231,10 @@ module Helpdesk::TicketsHelper
     end
   end
   
-  def bind_last_conv (ticket, signature)
- 
-    last_conv = ticket.notes.visible.public.last ? ticket.notes.visible.public.last : ticket
-    
+  def bind_last_conv (item, signature, forward = false)
+    ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
+    last_conv = (!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item
+
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
       last_reply_time = last_conv.created_at
@@ -246,7 +246,11 @@ module Helpdesk::TicketsHelper
       last_reply_content = last_conv.body_html
       unless last_reply_content.blank?
         doc = Nokogiri::HTML(last_reply_content)
-        doc.at_css("div.freshdesk_quote").remove unless doc.at_css("div.freshdesk_quote").blank?
+        doc_fd_css = doc.css('div.freshdesk_quote')
+        unless doc_fd_css.blank?
+          remove_prev_quote = doc_fd_css.xpath('//div/child::*[1][name()="blockquote"]')[3] # will show last 4 conversations apart from recent one
+          remove_prev_quote.remove unless remove_prev_quote.blank?
+        end
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
@@ -254,9 +258,8 @@ module Helpdesk::TicketsHelper
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content+"</blockquote></div>"
     return content
-    
   end
-  
+
   def status_changed_time_value_hash (ticket)
     status_name = ticket.status_name
     status = ticket.status

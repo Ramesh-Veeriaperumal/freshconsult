@@ -1,3 +1,8 @@
+/**
+ * @author venom
+ * Iphone style toggle button
+ */
+
 (function($){
   var methods = {
     init : function( options ) {
@@ -19,12 +24,19 @@
               .bind("click", function(ev){
                 ev.preventDefault();
                 $(this).toggleClass('active');
-                _checkbox.prop("checked", opts.inverted ? !$(this).hasClass('active') : $(this).hasClass('active'));
+                _checkbox
+                  .prop("checked", opts.inverted ? !$(this).hasClass('active') : $(this).hasClass('active'))
+                  .trigger("change");
               });
 
         _container.append(_onLabel).append(_handle).append(_offLabel);
-        //$.fn.itoggle.applyProps(_ibutton, _checkbox, opts);
         $(_checkbox).hide().after(_ibutton);
+
+        // Updating the button class when a change event is triggered for the checkbox
+        $(_checkbox).bind("change", function(ev){            
+          $(_ibutton).toggleClass('active', (opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked')) );
+        });
+
       });
     }
   };

@@ -8,7 +8,7 @@
       <%= content_tag(:h4, "@#{twitter_handle.screen_name}", :class => "title") %>
     </label>
     <div class="fields">
-      <label>Search Keywords</label>
+      <label><%=t('.search_keywords')%></label>
       <% content_for :onload_script do -%> 
         function lookup(searchString, callback) { }; 
         search_keys = $("social_twitter_handle_search_keys").value;
@@ -25,41 +25,40 @@
       <div>
         <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
       </div>
-      <div class="info-data">
-        Helps you to quickly monitor twitter search relating to your product/brand/service.<br />
-        <strong>Note:</strong> You can add multiple search keywords separated by comma.
-      </div>
+      <div class="info-data"> <%=t('.info_data')%> </div>
       <span class="seperator"></span>
       <label class="checkbox">
         <%= check_box "social_twitter_handle", :capture_mention_as_ticket, { :checked => twitter_handle.capture_mention_as_ticket } %> 	
-        Capture <strong>"@Mentions"</strong> as tickets
+        <%= t('.capture_mentions_msg') %>
       </label>
       <div class="info-data tabbed">
-        Freshdesk will automatically convert any @mentions of this Twitter account into tickets.
+        <%= t('.capture_mentions_info') %>
       </div>				
       <span class="seperator"></span>
       <label class="checkbox">
         <%= check_box "social_twitter_handle", :capture_dm_as_ticket, { :checked => twitter_handle.capture_dm_as_ticket } %> 
-        Capture <strong>"Direct messages"</strong> as ticket
+        <%= t('.capture_dm_msg') %>
       </label>
       <div class="info-data tabbed">
-        Freshdesk will automatically convert any Direct messages to this Twitter account into tickets.
+        <%= t('.capture_dm_info') %>
       </div>
 	  <!-- another one... -->
 	  <span class="seperator"></span>
-	  <label class="caption">DM Thread Time</label>
+	  <label class="caption"><%=t('.dm_time_msg')%></label>
       <div class="fields">
       	<%= select (:social_twitter_handle ,:dm_thread_time, Social::TwitterHandle::DM_THREADTIME_OPTIONS ,{:selected => twitter_handle.dm_thread_time}) %>
       </div>
       <div class="info-data tabbed">
-        Maximum time to consider direct messages from same user as threaded.
+        <%=t('.dm_time_info')%>
       </div>	 	
 	  <!-- --> 
-      <span class="seperator"></span>
-      <label class="caption">Product</label>
-      <div class="fields">
-  	    <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id })%>
-  	  </div>      
+      <% if current_account.products %>
+        <span class="seperator"></span>
+        <label class="caption"><%= t('.product') %></label>
+        <div class="fields">
+    	    <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id })%>
+    	  </div>   
+      <% end %>   
     </div> 
   </li>
 </ul>

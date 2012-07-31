@@ -1,0 +1,17 @@
+<script type="text/javascript" charset="utf-8">
+jQuery(document).ready(function(){	
+	jQuery('#add_cc_btn').bind("click", function(ev){
+		ev.preventDefault();
+		jQuery("#cc_emails_sec").toggle();
+		jQuery("#cc_emails").val("");
+		jQuery("#cc_emails").trigger("liszt:updated");
+	});
+});
+</script>
+<div class="new_ticket_cc_button">
+	&nbsp;<a href="#" class="align-right" id="add_cc_btn">Add cc</a>
+</div>
+<div id="cc_emails_sec" class="hide">
+	<label for="ticket_cc_list">Cc:</label>
+	<%= select_tag (:cc_emails, options_for_select(current_user.customer.users.collect{|c|[c.email, c.email]}),{ :multiple => true, :class => "customSelect" , "data-placeholder".to_sym() =>'Select cc emails'}) %>
+</div>

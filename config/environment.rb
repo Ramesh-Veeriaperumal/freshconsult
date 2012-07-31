@@ -42,7 +42,13 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
+  config.load_paths += %W( #{RAILS_ROOT}/app/drops )
   
+  #observers for our models to execute callbacks - Refer the link - http://rubydoc.info/docs/rails/2.3.8/ActiveRecord/Observer for more 
+  config.load_paths += %W(#{RAILS_ROOT}/app/observers)
+  Dir.chdir("#{RAILS_ROOT}/app/observers") do
+    config.active_record.observers = Dir["*_observer.rb"].collect {|ob_name| ob_name.split(".").first}
+  end
   #To load all the i18n files
   #config.i18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', '**', '*.{rb,yml}')]
 
@@ -84,7 +90,7 @@ Rails::Initializer.run do |config|
   #config.reload_plugins = true if RAILS_ENV == 'development'
   
   config.action_controller.allow_forgery_protection = false
-
+  config.middleware.use 'ResqueWeb'
 end
 
 ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"

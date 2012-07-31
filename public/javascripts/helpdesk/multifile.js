@@ -1,9 +1,10 @@
 if(!window.Helpdesk) Helpdesk = {};
 Helpdesk.Multifile = {	
     load: function(){
-        jQuery("input[fileList]").each( function () {
-            Helpdesk.Multifile.addEventHandler(this);
-        });
+        // jQuery("input[fileList]").each( function () {
+        //     console.log("Attachment form " + this);
+        //     Helpdesk.Multifile.addEventHandler(this);
+        // });
         Helpdesk.Multifile.template = jQuery("#file-list-template").template();
     },
 
@@ -32,6 +33,7 @@ Helpdesk.Multifile = {
 	},
 	
     addEventHandler: function(input){
+
         jQuery(input).bind('change', function() {
                 Helpdesk.Multifile.onFileSelected(input);
         });
@@ -69,8 +71,10 @@ Helpdesk.Multifile = {
 };
 
 jQuery("document").ready(function(){
-     setTimeout(function() {
-        Helpdesk.Multifile.load();
-    },500);
+    // setTimeout(function() {
+    //     Helpdesk.Multifile.load();
+    // },500);
+    Helpdesk.Multifile.load();
+    jQuery("input[fileList]").livequery(function(){ Helpdesk.Multifile.addEventHandler(this); });
 });
 

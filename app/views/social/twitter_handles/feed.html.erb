@@ -7,14 +7,15 @@
 		<tr>
 			<td class="left-panel">
 			  <% @twitter_accounts.each do |twitter_handle| %>
-			    <h4 class="title"><%= twitter_handle.product.name %></h4>
+			    <h4 class="title"><%= twitter_handle.product ? twitter_handle.product.name : current_account.main_portal.name %></h4>
 			    <div class="intro">@<%= twitter_handle.screen_name %></div>
 			    <ul class="search-keys" id="search_keys">
 					  <% twitter_handle.search_keys.each do |search_key| %>
   					  <li>
   							<span class="icon"></span>
   							<% selected_class = (first_search.nil?) ? "selected" : "" %>
-  							<%= link_to( h(search_key), "#", :class => "item_info #{selected_class}", :twitter_id => twitter_handle.id,:product_id => twitter_handle.product.id, :title => h(search_key) ) %>
+  							<% product_id = twitter_handle.product ? twitter_handle.product.id : nil %>
+  							<%= link_to( h(search_key), "#", :class => "item_info #{selected_class}", :twitter_id => twitter_handle.id,:product_id => product_id, :title => h(search_key) ) %>
   							<% first_search ||= h(search_key)  %>
   						</li>
 					  <% end %>
@@ -105,9 +106,9 @@
 <%- end %>
 
 <% javascript_tag do -%>
-  var current_product_id = <%= @twitter_accounts.first.product.id %>,
-      current_twitter_id = <%= @twitter_accounts.first.id %>,
-      feed = null;
+  var current_product_id = <%= @twitter_accounts.first.product ? @twitter_accounts.first.product.id : 0 %> ;
+  var current_twitter_id = <%= @twitter_accounts.first.id %>;
+  var feed = null;
       
 	function initTweetFeed(query){
 	  jQuery("#tweet_no_search").hide();
@@ -187,7 +188,7 @@
 	        tweet_text  = this.getAttribute("data-text"), 
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
 	                        "description"      : tweet_text,
-	                        "email_config_id"  : current_product_id, 
+	                        "product_id"       : current_product_id, 
 	                        "twitter_id"       : screen_name,
 	                        "tweet_attributes" : { "tweet_id": this.getAttribute("data-id"), "account_id": <%= current_account.id %>  }};
 

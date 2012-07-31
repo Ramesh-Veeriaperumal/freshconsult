@@ -1,0 +1,46 @@
+<% content_for :sidebar do -%>
+<div class="sidepanel">
+<p class="intro">	
+You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date.
+</p>   
+<br />
+<p class="intro">
+Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan.
+</p>
+</div>
+<%- end %>
+
+
+
+<% if @subscription && @subscription.errors.any? %>
+  <div class="errorExplanation">
+    <%= content_tag( :h2, t("errors_in_plan_change") ) %>
+    <ul>
+      <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
+    </ul>
+  </div>
+<% end %>
+
+<h3 class="title"><%= @page_title = t('change_plan') %></h3>
+<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
+
+<% javascript_tag do %>
+  jQuery(document).ready(function(){
+    jQuery('<%="##{@subscription.subscription_plan.name}_button"%>')
+      .trigger("click");
+  })  
+<% end %>
+
+<div class="button-container">
+	<%= link_to( t('back_plans_billing'), subscription_url, :class => "uiButton floatl" ) %>
+</div>
+
+
+
+<% if @subscription.needs_payment_info? -%>
+  <!--p>
+    Please make sure you <%# link_to('enter your billing information', billing_account_url) %> before your bill date to prevent an interruption in service.
+  </p-->
+<% end %>
+ 
+ 

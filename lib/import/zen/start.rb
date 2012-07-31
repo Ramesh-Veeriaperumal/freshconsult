@@ -15,6 +15,9 @@ class Import::Zen::Start < Struct.new(:params)
  
   
   def perform
+    params.symbolize_keys!
+    params[:zendesk].symbolize_keys! if params[:zendesk]
+
     @current_account = Account.find_by_full_domain(params[:domain])   
     @current_account.make_current    
     return if @current_account.blank?
@@ -26,9 +29,9 @@ class Import::Zen::Start < Struct.new(:params)
       send_success_email(params[:email] , params[:domain])
       delete_import_files @base_dir
     rescue => e
-      handle_error
       NewRelic::Agent.notice_error(e)
       puts "Error while importing data ::#{e.message}\n#{e.backtrace.join("\n")}"
+      handle_error
       return true   
     end
   end
@@ -49,7 +52,11 @@ def read_data(obj_node)
     while reader.read
      begin
        if reader.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT and reader.name == obj_node
-          send("save_#{obj_node}" , reader.outer_xml)
+          if obj_node.eql?("ticket")
+              Resque.enqueue( Import::Zen::ZendeskTicketImport , reader.outer_xml , params[:domain])
+          else
+            send("save_#{obj_node}" , reader.outer_xml)
+          end
        end
      rescue => err
        puts "Error while reading ::#{err.message}\n#{err.backtrace.join("\n")}"
