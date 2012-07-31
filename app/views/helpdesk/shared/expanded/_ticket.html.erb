@@ -18,15 +18,12 @@
 			<% end %>
 		<% end %>
 	</div>
-
-	<div class="sla hideForList">
-	</div>
   </td>
   <td class="requester_info hideForDetails">
   	<%= h(ticket.requester.display_name) %>
   </td>
   <td class="ticket_info hideForDetails"><%= t("helpdesk.tickets.tabular_view.time_ago", :time_in_words => time_ago_in_words(ticket.updated_at)) %></td>
-  <td class="hideForList"><div class="tooltip status-source source-detailed-<%= ticket.source_name.to_s.downcase %> hideForList" 
+  <td class="source-icon hideForList"><div class="status-source source-detailed-<%= ticket.source_name.to_s.downcase %> hideForList" 
   		title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"
   		>
   	<%= "<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>" unless ticket_style.blank? %>
@@ -38,13 +35,11 @@
 	  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
 
 	  			<label><%=t('ticket.assigned_agent')%>: </label>
-	  			<span class="result" >
 				<% if ticket.freshness == :new %>
-					<%=t('ticket.assigned_none')%>
+					<%=content_tag :span, t('ticket.assigned_none'), :class => "result" %>
 				<% else %>
-					<%= h(ticket.responder.display_name) %>
+					<%=content_tag :span, h(ticket.responder.display_name) , :class => "result" %>
 				<% end %>
-				</span>
 			</li>
 
 	  		<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
