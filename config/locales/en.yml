@@ -1371,6 +1371,11 @@ en:
     add_bcc_text: Add Bcc
     set_bcc_email_text: Set automatic Bcc email
     name_info_msg: Name of the email that will be used in the ticket replies
+    Personalized_email_replies: Use Agent names for Personalized Email Replies ?
+    Personalized_email_replies_info: If YES then agent replies will have agent's name as the sender name (Email address will still be your Support Email address). For example '%{current_user_name} &lt;%{current_account_domain}&gt;'.
+    Personalized_email_replies_yes: "Yes"
+    Personalized_email_replies_no: "No"
+    Personalized_email_replies_message: Your setting is succesfully saved.
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
