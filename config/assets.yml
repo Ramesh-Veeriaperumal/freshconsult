@@ -1,6 +1,6 @@
 package_assets:         on          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
-compress_assets:        off          # (on, off)
+compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
 javascript_compressor:  uglifier    # (yui, closure)
 allow_debugging:        on
