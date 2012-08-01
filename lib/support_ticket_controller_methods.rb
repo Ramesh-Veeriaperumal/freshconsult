@@ -8,10 +8,10 @@ module SupportTicketControllerMethods
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     else
       respond_to do |format|
+        format.html
         format.mobile {
           render :json => @ticket.to_mob_json(true)
         }
-        format.html
         # format.html {
         #   return if current_user && @ticket.requester_id == current_user.id
         #   return if permission?(:manage_tickets)

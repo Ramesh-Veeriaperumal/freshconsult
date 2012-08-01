@@ -23,6 +23,9 @@ class Support::CompanyTicketsController < ApplicationController
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
     respond_to do |format|
+      format.html {
+        render :index
+      }
       format.mobile {
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
@@ -35,9 +38,6 @@ class Support::CompanyTicketsController < ApplicationController
           }
           render :json => json + "]"
         end
-      }
-      format.html {
-        render :index
       }
     end
   end
