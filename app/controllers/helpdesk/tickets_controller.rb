@@ -8,11 +8,12 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
-  
-  before_filter { |c| c.requires_permission :manage_tickets }
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :check_user , :only => [:show]
+    
+  before_filter { |c| c.requires_permission :manage_tickets }
+
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
