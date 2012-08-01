@@ -3502,6 +3502,7 @@ div.addReminder{
          height:45px;
          img{ 
             width:45px; height:45px;
+            @include corners(4px);
          }
       }
       .new_ticket {
@@ -5006,6 +5007,16 @@ a.close{
 .list_view td .fd-ajaxmenu {
 	margin-right:0;
 	right:auto;
+
+	&:before {
+		left:10px;
+		right:auto;
+	}
+
+	&:after {
+		left:11px;
+		right:auto;
+	}
 }
 .setting_bottom{
    position:absolute;

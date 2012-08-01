@@ -95,14 +95,22 @@
   });
   
   jQuery("#FilterOptions").change(function(){
-    jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
+    jQuery("#ticket-list").html("<div class='loading-box'></div>");
+    if (supports_html5_storage()) {
+      window.localStorage['is_unsaved_view'] = false;
+    } 
      jQuery.ajax({
         url: "/helpdesk/tickets/custom_search",
         type: "POST",
         dataType: "script",
         data: jQuery(this).serializeArray(),
-        success: function(msg){ 
-          //jQuery("#ticket-list").hide().html(msg).fadeIn(300);
+        success: function(script){ 
+          if (supports_html5_storage()) {
+            window.localStorage['is_unsaved_view'] = jQuery("#active_filter").hasClass('unsaved');
+            window.localStorage['updated_ticket_list'] = script;
+            setCookie('ticket_list_updated',true);
+          }
+
         }
       }); 
   });

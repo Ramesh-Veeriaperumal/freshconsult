@@ -291,7 +291,7 @@ active_dialog = null;
 
  $(document).bind('mousedown', function(e) {       
 	if($(e.target).hasClass("chzn-results")) return;
-  if ($(e.target).parent().hasClass("fd-ajaxmenu")) {console.log('quick-action'); return };
+  if ($(e.target).parent().hasClass("fd-ajaxmenu")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
@@ -347,7 +347,17 @@ active_dialog = null;
           $.ajax({
             url: $(node).data('options-url'),
             success: function (data, textStatus, jqXHR) {
-              $('#menu_' + menuid).removeClass('loading').html(data);
+              $('#menu_' + menuid).removeClass('loading').html(data);  
+
+              //Setting the Active Element
+              text_to_match = $(node).children('.result').first().text();
+              $('#menu_' + menuid).children().each(function(i) {
+                if ($(this).text() == text_to_match) {
+                  $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
+                }
+              });
+
+
               $(node).data('options-fetched',true);
             }
           });
@@ -384,6 +394,14 @@ active_dialog = null;
           $(node).data('menuid',"menu_" + menuid);
           $(node).data('options-fetched',true)
           menuid = "menu_" + menuid;
+
+          text_to_match = $(node).children('.result').first().text();
+          menu_container.children().each(function(i) {
+            if ($(this).text() == text_to_match) {
+              $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
+            }
+          });
+
         } else {
           menuid = $(node).data('menuid');
         }
@@ -502,7 +520,7 @@ active_dialog = null;
     var animateMs = duration || 1500;
     var originalBg = originalBg || 'transparent';
     this.stop().css("background-color", highlightBg).animate({backgroundColor: originalBg }, animateMs, function () {
-      jQuery(this).removeAttr('style');
+      $(this).removeAttr('style');
     });
   };
  
@@ -530,5 +548,12 @@ getCookie = function(name)
     {
       return unescape(y);
     }
+  }
+}
+supports_html5_storage = function() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
   }
 }
