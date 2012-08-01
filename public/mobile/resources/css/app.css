@@ -11207,9 +11207,9 @@ a {
   text-decoration: none;
   font-size: 175%;
   font-family: 'Freshdesk';
-  color: #666;
+  color: rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px 0px white, 0 0 1px #cccccc;
   text-align: center;
-  text-shadow: white 1px 1px 0;
   speak: none;
 }
 .ticketDetails #details ul.actions li a:active {
@@ -11647,31 +11647,32 @@ a {
   border-bottom: 1px solid #DDD;
 }
 
-#ticketReplyForm .x-button-icon.add_black {
-  -webkit-mask-image: none;
-  background: transparent;
-  margin-right: 5px;
+#ticketReplyForm {
+  /* .x-button-icon.add_black{
+  	-webkit-mask-image:none;
+  	background:transparent;
+  	margin-right:5px;
+  	&:before{
+  		color:#fff;
+   		font-size: 14px;
+  		padding: 5px 5px;
+  		font-family:'Freshdesk';
+  		content:'\e01c';
+  		width:28px;
+  		height:28px;
+  		-webkit-mask-image:none !important;
+  		border:2px solid #fff;
+  		background-color:#4987df !important;;
+  		@include background-image(linear-gradient(top, #82abe5 0%,#4987df 44%));
+  		@include border-radius(50px);
+  		@include text-shadow(-1px -1px 0 #888);
+  		@include box-shadow(0px 2px 4px rgba(0,0,0,0.1));
+  		position: absolute;
+  	}
+  } */
 }
-#ticketReplyForm .x-button-icon.add_black:before {
-  color: #fff;
-  font-size: 14px;
-  padding: 5px 5px;
-  font-family: 'Freshdesk';
-  content: '\e01c';
-  width: 28px;
-  height: 28px;
-  -webkit-mask-image: none !important;
-  border: 2px solid #fff;
-  background-color: #4987df !important;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #82abe5), color-stop(44%, #4987df));
-  background-image: -webkit-linear-gradient(top, #82abe5 0%, #4987df 44%);
-  background-image: linear-gradient(top, #82abe5 0%, #4987df 44%);
-  -webkit-border-radius: 50px;
-  border-radius: 50px;
-  text-shadow: -1px -1px 0 #888888;
-  -webkit-box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  position: absolute;
+#ticketReplyForm .x-button-label, #ticketReplyForm .x-hasbadge .x-badge, .x-hasbadge #ticketReplyForm .x-badge {
+  padding-left: 5px;
 }
 #ticketReplyForm .x-field .x-field-input, #ticketReplyForm .x-field .x-input-el, #ticketReplyForm .x-form-label span {
   /* padding-top:6px; */
@@ -11749,7 +11750,6 @@ a {
   background-color: transparent !important;
 }
 .x-toolbar-formSubheader.green-icon:before {
-  display: block;
   color: #fff;
   font-size: 14px;
   padding: 5px 5px;
