@@ -3303,7 +3303,7 @@ div.addReminder{
 		padding: 6px 10px;
 		font-size:12px;
 		line-height: 16px;
-		background:url('ticket_list_bg.png') repeat #FFF;
+		background:url('/images/ticket_list_bg.png') repeat #FFF;
 		border-top:1px solid #ffffff;
 		border-bottom:1px solid #EFEFEF;
 		a{
@@ -3317,11 +3317,11 @@ div.addReminder{
 		border-bottom:1px solid #f9f9f9;
 	}*/
 	tr:hover td, tr:hover.even td{
-		background:url('ticket_list_bg_hover.png') repeat #FFF;
+		background:url('/images/ticket_list_bg_hover.png') repeat #FFF;
 	}
 
 	tr.active td, tr.active:hover td, tr.active.even td{
-		background:url('ticket_list_bg_active.png') repeat #FFF;
+		background:url('/images/ticket_list_bg_active.png') repeat #FFF;
 		border-top:1px solid #f2f0e3;
 		border-bottom:1px solid #f2f0e3;
 	}
@@ -3385,31 +3385,31 @@ div.addReminder{
 				padding: 20px 24px 0 0;
 		   		font-family: "Silkscreen";
 		   		&.source-detailed-portal {
-		   			background-image: url('sources/detailed_web.png');
+		   			background-image: url('/images/sources/detailed_web.png');
 		   			background-repeat: no-repeat;
 		   		}
 		   		&.source-detailed-email {
-		   			background-image: url('sources/detailed_email.png');
+		   			background-image: url('/images/sources/detailed_email.png');
 		   			background-repeat: no-repeat;
 		   		}
 		   		&.source-detailed-facebook {
-		   			background-image: url('sources/detailed_facebook.png');
+		   			background-image: url('/images/sources/detailed_facebook.png');
 		   			background-repeat: no-repeat;
 		   		}
 		   		&.source-detailed-twitter {
-		   			background-image: url('sources/detailed_twitter.png');
+		   			background-image: url('/images/sources/detailed_twitter.png');
 		   			background-repeat: no-repeat;
 		   		}
 		   		&.source-detailed-phone {
-		   			background-image: url('sources/detailed_web.png');
+		   			background-image: url('/images/sources/detailed_web.png');
 		   			background-repeat: no-repeat;
 		   		}
 		   		&.source-detailed-chat {
-		   			background-image: url('sources/detailed_chat.png');
+		   			background-image: url('/images/sources/detailed_chat.png');
 		   			background-repeat: no-repeat;
 		   		}
 		   		&.source-detailed-forum {
-		   			background-image: url('sources/detailed_forum.png');
+		   			background-image: url('/images/sources/detailed_forum.png');
 		   			background-repeat: no-repeat;
 		   		}
 		   }
