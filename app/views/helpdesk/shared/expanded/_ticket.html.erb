@@ -13,8 +13,8 @@
 		</h3>
 		<% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data hideForList" do %>
-			<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, :username => link_to("<strong>" + h(ticket.requester.display_name) + "</strong>", ticket.requester, :class =>'user_name' ), :time_words => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
-				<div class="sla_status"><%= sla_status(ticket) %></div>
+			<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, :username => link_to("<span class='emphasize'>" + h(ticket.requester.display_name) + "</span>", ticket.requester, :class =>'user_name' ), :time_words => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
+				<div class="emphasize"><%= sla_status(ticket) %></div>
 			<% end %>
 		<% end %>
 	</div>

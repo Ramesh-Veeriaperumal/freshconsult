@@ -27,9 +27,7 @@
           <% end
           end 
         end %>
-   
-
-<% javascript_tag do %> 
+<script type="text/javascript"> 
 	var query_hash  = $A();
   
   function getFilterData(){
@@ -74,7 +72,20 @@
   }
   
 	jQuery(document).ready(function(){
+    
+    jQuery('#FilterOptions').sisyphus({
+      name:'ticket_list_filters',
+      autoRelease: false
+    });
+    
+    if (getCookie('ticket_list_updated') != "true") {
+      jQuery('#FilterOptions').sisyphus().manuallyReleaseData();
+      window.localStorage['is_unsaved_view'] = false;
+      window.localStorage['updated_ticket_list'] = "";
+    }
+
 		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
+
     jQuery(".filter_item").bind("change", function(){
       refresh_tickets();
     });	 
@@ -92,6 +103,7 @@
 			jQuery(document).scrollTop(0);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
 		});		
+
   });
   
   jQuery("#FilterOptions").change(function(){
@@ -114,4 +126,4 @@
         }
       }); 
   });
-<% end %>
+</script>

@@ -202,11 +202,6 @@ jQuery(document).ready(function() {
 	});
 
 
-    jQuery('#FilterOptions').sisyphus({
-    	name:'ticket_list_filters',
-    	autoRelease: false
-    });
-
 });
 
 if (getCookie('ticket_list_updated') == "true") {
@@ -215,6 +210,4 @@ if (getCookie('ticket_list_updated') == "true") {
 		jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
 	}
 	setCookie('ticket_list_updated',false);
-} else {
-	jQuery('#FilterOptions').sisyphus().manuallyReleaseData();
 }
