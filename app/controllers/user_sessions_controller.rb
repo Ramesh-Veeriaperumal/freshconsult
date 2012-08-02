@@ -10,6 +10,7 @@ require 'oauth/request_proxy/action_controller_request'
 require 'oauth/signature/rsa/sha1'
 require 'openssl'
 
+include RedisKeys
   
   before_filter :set_mobile, :only => [:create, :destroy, :new]
   skip_before_filter :require_user, :except => :destroy
@@ -41,6 +42,7 @@ require 'openssl'
       
       @user_session = @current_user.account.user_sessions.new(@current_user)
       if @user_session.save
+        remove_old_filters  if @current_user.agent?
         flash[:notice] = t(:'flash.login.success')
         redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
@@ -119,6 +121,8 @@ require 'openssl'
       @current_user = @user_session.record
       #Hack ends here
       
+      remove_old_filters if @current_user.agent?
+
       redirect_back_or_default('/') if grant_day_pass
       #Unable to put 'grant_day_pass' in after_filter due to double render
     else
@@ -133,6 +137,9 @@ require 'openssl'
   end
   
   def destroy
+
+    remove_old_filters if current_user.agent?
+
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
 
@@ -244,6 +251,8 @@ require 'openssl'
         if @user_session.save
           logger.debug " @user session has been saved :: #{@user_session.inspect}"
           
+          remove_old_filters if @current_user.agent?
+
           if gmail_gadget_temp_token.blank?
             flash[:notice] = t(:'flash.g_app.authentication_success')        
             if (@current_user.account_admin? && @current_user.first_login?)
@@ -272,6 +281,11 @@ require 'openssl'
   end
 
   private
+
+    def remove_old_filters
+      remove_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+    end
+
     def check_sso_params
       if params[:name].blank? or params[:email].blank? or params[:hash].blank?
         flash[:notice] = t(:'flash.login.sso.expected_params')
