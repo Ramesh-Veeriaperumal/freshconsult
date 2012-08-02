@@ -212,6 +212,8 @@ input.time { font-weight: normal; font-size: 12px; }
 .grid table td .search-field .default { width: 100% !important; }
 .grid table td ul.chzn-results li.active-result { float: none; display: block; width: 100%; }
 .grid table tr.even td { background-color: #f4f4f4; }
+.grid table .special_row td { padding: 0; }
+.grid table .special_row div { background: #fff; height: 20px; margin: 0 -1px; }
 .grid .olist { list-style: decimal; }
 .grid .grid_form td { border: 0; padding: 6px 10px 0 10px; background: #fafafa; }
 .grid .grid_form .button-container { text-align: right; padding: 0 10px 10px 0; }
@@ -239,7 +241,7 @@ span.sort_handle { position: relative; left: 0; top: 1px; width: 25px; height: 2
 .admin_form li { position: relative; }
 .admin_form h4.title { color: #555; font-weight: bold; margin: 0; padding: 8px 0 6px 0; }
 
-.button-container { overflow: hidden; *zoom: 1; text-align: right; padding: 1em 0em 1em 0; }
+.button-container { overflow: hidden; *zoom: 1; text-align: right; padding: 20px 0px 15px 0px; background: #ffffff; margin: -2px; }
 
 .ui-draggable-dragging { z-index: 99999; }
 

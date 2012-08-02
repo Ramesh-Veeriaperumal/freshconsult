@@ -492,6 +492,7 @@ en:
       logged_users: Logged In Users
       agents: Agents      
   password_reset_email: Password Reset Email
+  default_reply_template: Agent Reply Template
   import_user_org: Users &amp; Organizations
   to_do: To Do
   feedbackwidget_formcustomize: Form customization
@@ -1299,6 +1300,9 @@ en:
     title: Tags
   email_notifications: 
     customize_email: Customize Email
+    edit_reply_template: Edit Template
+    default_reply_template_title: Agent Reply Template
+    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requestor Notification
     title: Email notifications
