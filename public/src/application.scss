@@ -36,7 +36,9 @@
 
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
-body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
+body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; 
+-webkit-font-smoothing: subpixel-antialiased;
+}
 
 /* Priority Color Codes */
 $COL_PRI_HIGH: #ffb613;		$COL_PRI_MEDIUM: #008ff9;		$COL_PRI_LOW: #7ebf00;		$COL_PRI_URGENT: #de0000;
