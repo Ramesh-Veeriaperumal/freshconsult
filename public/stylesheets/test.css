@@ -108,6 +108,13 @@ a.menu:after, .dropdown-toggle:after { width: 0; height: 0; display: inline-bloc
 
 .tabs li.open a.menu:after, .tabs .dropdown.open .dropdown-toggle:after { border-top-color: #555; }
 
+.right-tabs { margin: 0px -20px; padding: 10px 9px 0 50px; background: #fafafa; background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(60%, #ffffff), color-stop(93%, #f6f6f6), color-stop(97%, #f1f1f1), color-stop(100%, #ffffff)), #fafafa; background: -webkit-linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa; background: -moz-linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa; background: -o-linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa; background: -ms-linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa; background: linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa; }
+.right-tabs a { font-weight: bold; }
+
+.right-tabs > li { float: right; }
+
+.right-tabs .active > a, .right-tabs .active > a:hover { color: #000; }
+
 .pills a { margin: 5px 3px 5px 0; padding: 0 15px; line-height: 30px; text-shadow: 0 1px 1px #ffffff; -webkit-border-radius: 15px; -moz-border-radius: 15px; border-radius: 15px; }
 
 .pills a:hover { color: #ffffff; text-decoration: none; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25); background-color: #00438a; }
@@ -355,7 +362,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner { padding
 
 .sidebar .searchicon { display: none; }
 
-.searchicon { position: absolute; right: 35px; top: 10px; height: 15px; width: 15px; cursor: pointer; background: url('/images/symbols-s87dc8d5d17.png') 0 -644px; }
+.searchicon { position: absolute; right: 35px; top: 10px; height: 15px; width: 15px; cursor: pointer; background: url('/images/symbols-s78802ad4cb.png') 0 -697px; }
 
 /* To be removed after bootstrap migration */
 .modal-body .ui-form { background: none; border: 0; }
@@ -377,9 +384,9 @@ a.pill.help { background-color: #669933; font-size: 13px; }
 
 .timer_box { text-align: right; position: absolute; left: 26px; margin: 2px; }
 
-.clock { top: 0; right: 0; position: absolute; z-index: 3; background: url('/images/symbols-s87dc8d5d17.png') 0 -190px; cursor: pointer; width: 26px; height: 26px; }
+.clock { top: 0; right: 0; position: absolute; z-index: 3; background: url('/images/symbols-s78802ad4cb.png') 0 -190px; cursor: pointer; width: 26px; height: 26px; }
 
-.time_running .clock { background: url('/images/symbols-s87dc8d5d17.png') 0 -216px; }
+.time_running .clock { background: url('/images/symbols-s78802ad4cb.png') 0 -216px; }
 
 .time_running .clock .timer { position: absolute; width: 26px; height: 22px; top: 3px; left: 0px; background: url("../images/animated/timer.gif") no-repeat center; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50); opacity: 0.5; }
 
@@ -409,7 +416,7 @@ a.pill.help { background-color: #669933; font-size: 13px; }
 .timeentry .timespent { width: 16%; text-align: right; margin-right: 2%; }
 .timeentry .note { width: 40%; padding-left: 4%; }
 .timeentry .note em { color: #336666; font-style: italic; }
-.timeentry .billable { background: url('/images/symbols-s87dc8d5d17.png') 0 -102px; position: absolute; left: 0; top: 1px; width: 19px; height: 18px; }
+.timeentry .billable { background: url('/images/symbols-s78802ad4cb.png') 0 -102px; position: absolute; left: 0; top: 1px; width: 19px; height: 18px; }
 
 .report-container .seperator, .seperator-shadow { background: #fafafa; background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(60%, #ffffff), color-stop(85%, #f6f6f6), color-stop(97%, #f1f1f1), color-stop(100%, #ffffff)), #fafafa; background: -webkit-linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; background: -moz-linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; background: -o-linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; background: -ms-linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; background: linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; border-bottom: 1px solid #eeeeee; height: 10px; margin-bottom: 15px; margin-top: 0; }
 

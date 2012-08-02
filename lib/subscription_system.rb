@@ -29,7 +29,7 @@ module SubscriptionSystem
     end
     
     def main_portal?
-      current_portal.main_portal?
+      current_portal.main_portal
     end
     
     def admin?

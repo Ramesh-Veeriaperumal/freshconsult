@@ -17,28 +17,31 @@ class SubscriptionAffiliate < ActiveRecord::Base
   def self.affiliate_param
     "SSAID"
   end
+
+  def self.check_affiliate_in_metrics?(account,shareasale_affiliate_id)
+    metrics = account.conversion_metric
+    if !metrics.nil? and 
+      (metrics.first_referrer.include?(affiliate_param) || 
+       metrics.referrer.include?(affiliate_param))
+      uri = metrics.referrer.include?(affiliate_param) ? metrics.referrer : metrics.first_referrer
+      env = Rack::MockRequest.env_for(uri)
+      req = Rack::Request.new(env)
+      params = req.params
+      affiliate_id = params.fetch(affiliate_param)
+    end
+    affiliate_id and (affiliate_id.eql?(shareasale_affiliate_id))
+  end
   
   def self.add_affiliate(account,affiliate_id)
     begin
-    # metrics = account.conversion_metric
-    # if !metrics.nil? and 
-    #   (metrics.first_referrer.include?(affiliate_param) || 
-    #    metrics.referrer.include?(affiliate_param))
-    #   uri = metrics.referrer.include?(affiliate_param) ? metrics.referrer : metrics.first_referrer
-    #   env = Rack::MockRequest.env_for(uri)
-    #   req = Rack::Request.new(env)
-    #   params = req.params
-    #   affiliate_id = params.fetch(affiliate_param)
-      
-    # end
     unless affiliate_id.nil?
-        affiliate = find_by_token(affiliate_id)
-        affiliate = create({:name => AFILIATE_SOWFTWARE,
-                            :rate => COMMISSION,
-                            :token => affiliate_id}) unless affiliate
-       account.subscription.affiliate = affiliate  
-       account.subscription.save unless account.subscription.active?
-      end
+      affiliate = find_by_token(affiliate_id)
+      affiliate = create({:name => AFILIATE_SOWFTWARE,
+                          :rate => COMMISSION,
+                          :token => affiliate_id}) unless affiliate
+      account.subscription.affiliate = affiliate  
+      account.subscription.save unless account.subscription.active?
+    end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Error creating subscription affiliate"})

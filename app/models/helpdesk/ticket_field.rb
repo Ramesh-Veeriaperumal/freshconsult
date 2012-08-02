@@ -1,5 +1,7 @@
 class Helpdesk::TicketField < ActiveRecord::Base
   
+  serialize :field_options
+
   include Helpdesk::Ticketfields::TicketStatus
   
   set_table_name "helpdesk_ticket_fields"
@@ -13,6 +15,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :autosave => true, :dependent => :destroy, :order => "position"
   
+  before_validation :populate_choices
+
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
   before_save :set_portal_edit
@@ -69,8 +73,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
                   :default_source       => { :type => :default, :dom_type => "hidden"},
                   :default_description  => { :type => :default, :dom_type => "html_paragraph", :visible_in_view_form => false, :form_field => "description_html" },
-                  :default_product      => { :type => :default, :dom_type => "dropdown",
-                                             :form_field => "email_config_id" },
+                  :default_product      => { :type => :default, :dom_type => "dropdown_blank",
+                                             :form_field => "product_id" },
                   :custom_text          => { :type => :custom, :dom_type => "text", 
                                              :va_handler => "text" },
                   :custom_paragraph     => { :type => :custom, :dom_type => "paragraph", 
@@ -119,7 +123,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_group" then
          account.groups.collect { |c| [c.name, c.id] }
        when "default_product" then
-         account.products.collect { |e| [e.name, e.id] }.insert(0, ['...', account.primary_email_config.id])
+         account.products.collect { |e| [e.name, e.id] }
        when "nested_field" then
          picklist_values.collect { |c| [c.value, c.value] }
        else
@@ -224,22 +228,38 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def choices=(c_attr)
-    if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
-      picklist_values.clear
-      c_attr.each do |c| 
-        if c.size > 2 && c[2].is_a?(Array)
-          picklist_values.build({:value => c[0], :choices => c[2]})
-        else
-          picklist_values.build({:value => c[0]})
-        end
-      end
-    elsif("default_status".eql?(self.field_type))
-      #c_attr = [{:status_id => 0, :name => "NeedInfo", :customer_display_name => "Awaiting for your response",:stop_sla_timer => true},{:status_id => 0, :name => "Inprogress", :customer_display_name => "Testing Inprogress",:stop_sla_timer => false}]
-      c_attr.each_with_index{|attr,position| update_ticket_status(attr,position)}
-    end
+    @choices = c_attr
+  end
+
+  def company_cc_in_portal?
+    field_options.fetch("portalcc") && field_options.fetch("portalcc_to").eql?("company")
+  end
+
+  def all_cc_in_portal?
+    field_options.fetch("portalcc") && field_options.fetch("portalcc_to").eql?("all")
+  end
+
+  def portal_cc_field?
+    field_options.fetch("portalcc")
   end
   
   protected
+    def populate_choices
+      return unless @choices
+      if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
+        picklist_values.clear
+        @choices.each do |c| 
+          if c.size > 2 && c[2].is_a?(Array)
+            picklist_values.build({:value => c[0], :choices => c[2]})
+          else
+            picklist_values.build({:value => c[0]})
+          end
+        end
+      elsif("default_status".eql?(self.field_type))
+        @choices.each_with_index{|attr,position| update_ticket_status(attr,position)}
+      end
+    end    
+
     def populate_label
       self.label = name.titleize if label.blank?
       self.label_in_portal = label if label_in_portal.blank?

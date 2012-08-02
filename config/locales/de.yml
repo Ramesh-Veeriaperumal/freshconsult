@@ -2012,7 +2012,7 @@
   email_command_settings_info: "Trennzeichen für die Identifizierung und Extraktion von E-Mail-Befehlen aus der Mail konfigurieren"
   email_command_delimeter_label: "E-Mail-Befehlstrennzeichen"
   email_command_preview_to_email: "An"
-  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Betreff"
   email_command_preview_subject_value: "Supportticket"
   unable_to_charge: "Die Karte für den hinzugefügten Techniker kann nicht belastet werden!"

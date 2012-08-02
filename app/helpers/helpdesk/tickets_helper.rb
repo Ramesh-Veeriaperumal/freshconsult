@@ -202,10 +202,10 @@ module Helpdesk::TicketsHelper
     end
   end
   
-  def bind_last_conv (ticket, signature)
- 
-    last_conv = ticket.notes.visible.public.last ? ticket.notes.visible.public.last : ticket
-    
+  def bind_last_conv (item, signature, forward = false)
+    ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
+    last_conv = (!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item
+
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
       last_reply_time = last_conv.created_at
@@ -217,7 +217,11 @@ module Helpdesk::TicketsHelper
       last_reply_content = last_conv.body_html
       unless last_reply_content.blank?
         doc = Nokogiri::HTML(last_reply_content)
-        doc.at_css("div.freshdesk_quote").remove unless doc.at_css("div.freshdesk_quote").blank?
+        doc_fd_css = doc.css('div.freshdesk_quote')
+        unless doc_fd_css.blank?
+          remove_prev_quote = doc_fd_css.xpath('//div/child::*[1][name()="blockquote"]')[3] # will show last 4 conversations apart from recent one
+          remove_prev_quote.remove unless remove_prev_quote.blank?
+        end
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
@@ -225,9 +229,8 @@ module Helpdesk::TicketsHelper
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content+"</blockquote></div>"
     return content
-    
   end
-  
+
   def status_changed_time_value_hash (ticket)
     status_name = ticket.status_name
     status = ticket.status

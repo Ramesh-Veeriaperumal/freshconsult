@@ -17,7 +17,7 @@ def self.ticket_fields_data
   [
     { :name => "requester", :label => "Requester", :description => "Ticket requester",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
-      :required_in_portal => true },
+      :required_in_portal => true , :field_options => {"portalcc" => false , "portalcc_to" => "company"} },
       
     { :name => "subject", :label => "Subject", :description => "Ticket subject",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
@@ -67,7 +67,8 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
       :editable_in_portal => f[:editable_in_portal] || false,
       :required_in_portal => f[:required_in_portal] || false,
       :required_for_closure => f[:required_for_closure] || false,
-      :choices => f[:choices] || []
+      :choices => f[:choices] || [],
+      :field_options => f[:field_options] 
     }
   end
 )

@@ -1,0 +1,37 @@
+<%= javascript_include_tag :defaults %>
+<%= calendar_date_select_includes 'silver' %>
+<%CalendarDateSelect.format = :iso_date%>
+
+<% form_tag "/analytics", :method => 'get' do %>
+  <p>
+    <%= calendar_date_select_tag 'start_date', "" %>
+	<%= submit_tag "Search", :name => nil %>
+  </p>
+<% end %>
+
+
+<div class="row">
+	<div class="span8">
+		<table id="accounts" class="table">
+		  <tr>
+		    <th>Name</th>
+		    <th>Domain</th>
+		    <th>Last responded </th>
+		    <th>Next Renewal Date</th>
+			<th>Agent Count</th>
+			<th>Amount</th>
+		  </tr>
+		  <% @inactive_accounts.each do |account,inactive_date| %>
+		    <tr>
+		      <td><%= link_to(h(account.name), [:admin, account]) %></td>
+		      <td><%= account.full_domain %></td>
+		      <td><%=inactive_date%></td>
+		      <td><%= account.subscription.next_renewal_at.strftime("%d %b, %Y") %></td>
+			  <td><%= account.subscription.agent_limit %></td>
+			  <td><%= account.subscription.amount %></td>
+		    </tr>
+		  <% end %>      
+		</table>
+
+	</div>
+  

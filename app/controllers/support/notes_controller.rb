@@ -1,4 +1,7 @@
 class Support::NotesController < ApplicationController
+
+  before_filter :set_mobile , :only => [:create]
+
   def create
     @ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless @ticket
@@ -23,8 +26,14 @@ class Support::NotesController < ApplicationController
     else
       flash[:error] = t(:'flash.tickets.notes.create.failure')
     end
-
-    redirect_to :back
+    respond_to do |format|
+      format.html{
+        redirect_to :back
+      }
+      format.mobile {
+        render :json => {:success => true,:item => @note}.to_json
+      }
+    end
   end
   
 
