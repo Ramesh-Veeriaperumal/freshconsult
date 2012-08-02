@@ -519,8 +519,10 @@ active_dialog = null;
     var highlightBg = highlightColor || "#FFFF9C";
     var animateMs = duration || 1500;
     var originalBg = originalBg || 'transparent';
-    this.stop().css("background-color", highlightBg).animate({backgroundColor: originalBg }, animateMs, function () {
-      $(this).removeAttr('style');
+    var element_animated = $(this);
+    element_animated.stop().css("background-color", highlightBg);
+    element_animated.animate({backgroundColor: originalBg }, animateMs, function () {
+      element_animated.css({'background-color':''});
     });
   };
  

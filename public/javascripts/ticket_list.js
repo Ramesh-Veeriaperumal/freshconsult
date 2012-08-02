@@ -12,10 +12,10 @@ priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 jQuery(document).ready(function() {
 	
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
-      jQuery.each(jQuery(".ticket-description-tip"), function(i, item){
-        _self = jQuery(item);        
-        var tipUrl = jQuery(item).data("tipUrl");
-        jQuery(item).qtip({
+	jQuery(".ticket-description-tip").livequery(function () {
+		_self = jQuery(this);        
+        var tipUrl = _self.data("tipUrl");
+        _self.qtip({
 			position: { 
 				my: 'top left',
 				at: 'bottom  left',
@@ -42,7 +42,7 @@ jQuery(document).ready(function() {
 				}
           	}
         }); 
-      });
+	});
         
      jQuery(".nav-trigger").showAsMenu();
 
@@ -86,13 +86,13 @@ jQuery(document).ready(function() {
 
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
-	jQuery('.tickets tbody tr').live('click',function(ev) {
-		if (! jQuery(ev.target).is('input[type=checkbox]') && ! jQuery(ev.target).is('a') && ! jQuery(ev.target).is('.quick-action')) {
-			var checkbox = jQuery(this).find('input[type=checkbox]').first();
-			checkbox.prop('checked',!checkbox.prop('checked'));
-			checkbox.trigger('change');
-		}
-	});
+	// jQuery('.tickets tbody tr').live('click',function(ev) {
+	// 	if (! jQuery(ev.target).is('input[type=checkbox]') && ! jQuery(ev.target).is('a') && ! jQuery(ev.target).is('.quick-action')) {
+	// 		var checkbox = jQuery(this).find('input[type=checkbox]').first();
+	// 		checkbox.prop('checked',!checkbox.prop('checked'));
+	// 		checkbox.trigger('change');
+	// 	}
+	// });
 
     jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
         if (jQuery(this).prop('checked')) {
@@ -122,7 +122,7 @@ jQuery(document).ready(function() {
 			data: {assign: 'agent', value : agent_user_id},
 			success: function (data) {
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').animateHighlight(jQuery('body').css('backgroundColor'));
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').animateHighlight();
 
 				full_menu.find('.ticksymbol').remove();
 				selected_item.prepend(ticksymbol);
@@ -154,9 +154,14 @@ jQuery(document).ready(function() {
 			data: {assign:'status', value : new_status},
 			success: function (data) {
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').animateHighlight(jQuery('body').css('backgroundColor'));
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').animateHighlight();
 
 				full_menu.find('.ticksymbol').remove();
+
+				jQuery('[data-ticket=' + ticket_id + ']').removeClass('ticket-status-4').removeClass('ticket-status-5');
+				if (new_status == 4 || new_status == 5) {
+					jQuery('[data-ticket=' + ticket_id + ']').addClass('ticket-status-' + new_status);
+				}
 				selected_item.prepend(ticksymbol);
 				selected_item.addClass('active').siblings().removeClass('active');
 				full_menu.removeClass('loading');
@@ -188,7 +193,7 @@ jQuery(document).ready(function() {
 				priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_priority]);
 
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').animateHighlight(jQuery('body').css('backgroundColor'));
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').animateHighlight();
 
 				full_menu.find('.ticksymbol').remove();
 				selected_item.prepend(ticksymbol);

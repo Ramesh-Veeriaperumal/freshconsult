@@ -1,7 +1,7 @@
 <!--input type="hidden" id="latest_updated_at" value="<%= @latest_updated_at %>"></input-->
 
 <% unless @items.empty? %>
-  <table class="tickets">	
+  <table class="tickets" width="100%">	
     <tbody>
       <tr class="headings hideForDetails">
         <td class="priority-border"></td>
@@ -15,7 +15,7 @@
       <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @items %>
     </tbody>
   </table>
-  <div class="toolbar">
+  <div class="toolbar" id="ticket-toolbar-bottom">
     <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
   </div>
 <% else %>

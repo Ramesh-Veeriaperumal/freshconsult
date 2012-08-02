@@ -17,7 +17,7 @@ module Helpdesk::TicketsHelper
     extra_class = "unsaved" if unsaved_view
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, (link_to strip_tags(selected_item), "", { :class => "drop-right nav-trigger #{extra_class}", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
+        content_tag(:div, (link_to strip_tags(selected_item), "/helpdesk/tickets", { :class => "drop-right nav-trigger #{extra_class}", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
         content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }, :class => "fd-menu", :id => menuid)
     end
   end
@@ -210,7 +210,7 @@ module Helpdesk::TicketsHelper
   def subject_style(ticket)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
     type = "new" if ticket.ticket_states.is_new? && ticket.active?
-    type = "elapsed" if ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
+    type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
     type = "overdue" if ticket.due_by < Time.now && ticket.active?
     type
   end

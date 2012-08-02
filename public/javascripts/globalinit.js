@@ -5,7 +5,7 @@ var $J = jQuery.noConflict();
  
 (function($){
    // Global Jquery Plugin initialisation
-   $.fn.qtip.baseIndex = 10000;
+   // $.fn.qtip.baseIndex = 10000;
  
    // Tweet custom class
    $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   

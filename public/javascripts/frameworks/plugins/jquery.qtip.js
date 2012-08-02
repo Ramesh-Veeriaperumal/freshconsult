@@ -1643,7 +1643,7 @@ $(window).bind('load.qtip', function() {
 QTIP.version = 'nightly';
 QTIP.nextid = 0;
 QTIP.inactiveEvents = 'click dblclick mousedown mouseup mousemove mouseleave mouseenter'.split(' ');
-QTIP.zindex = 15000;
+QTIP.zindex = 10000;
 
 // Define configuration defaults
 QTIP.defaults = {
@@ -1966,7 +1966,7 @@ function calculateTip(corner, width, height)
 		bottomcenter:	[[0,0],				[width,0],				[width2,height]],
 		rightcenter:	[[0,0],				[width,height2],		[0,height]],
 		leftcenter:		[[width,0],			[width,height],		[0,height2]],
-		ticketleft:   [[width,0],			[width,height],		[0,height2]],
+		ticketleft:   [[width,0],			[width,height],		[0,height2]]
 	};
 
 	// Set common side shapes

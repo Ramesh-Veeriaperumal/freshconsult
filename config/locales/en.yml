@@ -1419,7 +1419,7 @@ en:
       insert_url_tip: Insert this solution URL to your Reply or Note
       insert_content: Insert Content
     unassigned: Unassigned
-    assigned_none: None
+    assigned_none: "-"
     suggest_solutions: Suggest Solutions
     created_on: Created on %{time}
     restore_btn: Restore this ticket
@@ -1821,7 +1821,7 @@ en:
   or: or
   tickets_filter:
     title: "Filter Tickets"
-    unsaved_view: "* Unsaved View"
+    unsaved_view: "Untitled View"
     sort_fields:
       due_by: Due by time
       date_created: Date Created
@@ -1942,7 +1942,8 @@ en:
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
       no_tickets_subtext: "View %{view_1} or %{view_2}"
   conversation: Conversation
-  save_this_view: "Save this View..."
+  save_this_view: "Save"
+  save_this_view_tooltip: "Save View"
   loading:
     activities: Loading more activities
     items: Loading more items

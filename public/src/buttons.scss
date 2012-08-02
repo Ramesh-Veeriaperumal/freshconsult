@@ -359,18 +359,44 @@ div.action_buttons:hover{
    }   
 }
 
-.toolbar_pagination_full{
-   a, span{
+.toolbar .toolbar_pagination_full{
+   a, span, .next_page, .prev_page{
       @extend .button;
       background:#ffffff; 
       border-color:#dfdfdf;
+      @include single-box-shadow(none);
+
+      &:hover {
+        background:#ffffff;
+        border-color:#888;
+      }
    }
-   .disabled.prev_page, .disabled.next_page{ 
-      @include single-box-shadow( rgba(0, 0, 0, 0.3), 0px, -0px, 1px, false, true );      
+
+   .button[disabled]:hover {
+      background:#eee;
+      border-color:#888;
    }
-   .current{
-    background:#efefef;
-    border-color:#dfdfdf;
+   .disabled.prev_page, .disabled.next_page, .disabled.prev_page:hover, .disabled.next_page:hover{ 
+      @include single-box-shadow(none);
+      background: #EFEFEF;      
+      cursor: default;
+      border-color: #DFDFDF;
+      color:#BBB;
+   }
+   .current, .current:hover{
+    cursor: default;
+    color:#FFF;
+    background-color: #444444; // Old browsers
+    @include filter-gradient(#444444, #888888, vertical); // IE6-9
+    @include background-image(linear-gradient(top, #444444 0%,#888888 100%));
+    border:none;
+    @include single-text-shadow(#333, -1px, -1px, 0);
+    @include box-shadow(#000 0 0 6px inset, #FFF 0px 1px 0px);
+   }
+   .gap, .gap:hover {
+    background:none;
+    border:none;
+    cursor: default;
    }
    text-align:center;
 }

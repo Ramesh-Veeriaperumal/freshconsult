@@ -30,7 +30,7 @@
   </div></td>
   <td class="assign hideForList">
 	  	<ul>
-	  		<li class="quick-action ajax-menu" 
+	  		<li class="quick-action ajax-menu" title="Change Agent" 
 	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
 	  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
 
@@ -42,11 +42,11 @@
 				<% end %>
 			</li>
 
-	  		<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+	  		<li class="quick-action dynamic-menu" title="Change Status"  data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
 				<label><%=t('ticket.status')%>: </label>
 				<span class="result"><%= h(ticket.status_name) %></span>
 			</li>
-			<li class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
+			<li class="quick-action dynamic-menu" title="Change Priority"  data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
 				<label><%=t('ticket.priority')%>: </label>
 				<span class="result"><%= h(ticket.priority_name) %></span>
 			</li>

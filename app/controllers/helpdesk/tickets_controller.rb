@@ -524,7 +524,6 @@ class Helpdesk::TicketsController < ApplicationController
   def get_ticket_agents
     unless @item.blank?
       @agents = current_account.agents
-      @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id => @item.group.id ,:users =>{:account_id =>current_account.id} } ) unless @item.group.blank?
     end
     render :partial => "get_ticket_agents", :locals => {:ticket_id => @item.display_id}
   end
