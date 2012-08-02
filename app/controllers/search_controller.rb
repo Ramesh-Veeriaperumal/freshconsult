@@ -155,9 +155,9 @@ class SearchController < ApplicationController
       @total_results += @searched_tickets.size unless @searched_tickets.nil?
       @searched_articles  = results['Solution::Article']
       @total_results += @searched_articles.size unless @searched_articles.nil?
-      @searched_users     = results['User'] unless current_user.can_view_all_tickets?
+      @searched_users     = results['User'] if current_user.can_view_all_tickets?
       @total_results += @searched_users.size unless @searched_users.nil?
-      @searched_companies = results['Customer'] unless current_user.can_view_all_tickets?
+      @searched_companies = results['Customer'] if current_user.can_view_all_tickets?
       @total_results += @searched_companies.size unless @searched_companies.nil?
       @searched_topics    = results['Topic']
       @total_results += @searched_topics.size unless @searched_topics.nil?
