@@ -25,6 +25,7 @@ Ext.define('Freshdesk.view.EmailForm', {
         else {
             solutionList.showEmptyText();
         }
+        solutionsPopup.items.items[0].deselectAll();
         solutionsPopup.show();
     },
     showSolution: function(){
@@ -35,7 +36,8 @@ Ext.define('Freshdesk.view.EmailForm', {
         FD.Util.getJSON(opts,this.populateSolutions,this);
     },
     config: {
-        layout:'fit',
+        layout:'vbox',
+        align:'stretch',
         method:'POST',
         url:'/helpdesk/tickets/',
         items : [
@@ -77,7 +79,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                         value:'0'
                     },
                     {
-                        xtype: 'textfield',
+                        xtype: 'emailfield',
                         name: 'cc_emails',
                         label:'Cc/Bcc:',
                         listeners: {
@@ -88,17 +90,71 @@ Ext.define('Freshdesk.view.EmailForm', {
                         }
                     },
                     {
-                        xtype: 'textfield',
+                        xtype: 'emailfield',
                         name: 'bcc_emails',
                         label:'Bcc:',
                         hidden:true,
                         showAnimation:'fadeIn'
                     },
                     {
+                        xtype:'titlebar',
+                        ui:'formSubheader',
+                        cls:'green-icon',
+                        id:'emailFormCannedResponse',
+                        items:[
+                            {
+                                itemId:'cannedResBtn',
+                                xtype:'button',
+                                text:'Canned Response',
+                                // align:'left',
+                                ui:'plain',
+                                iconMask:true,
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
+                            }
+                        ],
+                        listeners:{
+                            initialize: {
+                                fn:function(component){
+                                    Ext.get('emailFormCannedResponse').on('tap',function(){
+                                        this.parent.parent.showCannedResponse();
+                                    },component);
+                                },
+                                scope:this
+                            }
+                        }
+
+                    },
+                    // {
+                    //     xtype:'titlebar',
+                    //     ui:'formSubheader',
+                    //     cls:'green-icon',
+                    //     id:'emailFormSolution',
+                    //     items:[
+                    //         {
+                    //             itemId:'solutionBtn',
+                    //             xtype:'button',
+                    //             text:'Solution',
+                    //             ui:'plain',
+                    //             iconMask:true,
+                    //             handler: function(){this.parent.parent.parent.parent.showSolution()}
+                    //         }
+                    //     ],
+                    //     listeners:{
+                    //         initialize: {
+                    //             fn:function(component){
+                    //                 Ext.get('emailFormSolution').on('tap',function(){
+                    //                     this.parent.parent.showSolution();
+                    //                 },component);
+                    //             },
+                    //             scope:this
+                    //         }
+                    //     }
+                    // },
+                    {
                         xtype: 'textareafield',
                         name: 'helpdesk_note[body_html]',
                         placeHolder:'Enter your message... *',
-                        height:180,
+                        height:800,
                         required:true,
                         clearIcon:false
                     },
@@ -111,33 +167,6 @@ Ext.define('Freshdesk.view.EmailForm', {
                         xtype: 'hiddenfield',
                         name: 'email_type',
                         value:'Reply'
-                    },
-                    {
-                        xtype:'titlebar',
-                        ui:'formSubheader',
-                        items:[
-                            {
-                                itemId:'cannedResBtn',
-                                xtype:'button',
-                                text:'Canned Response',
-                                align:'left',
-                                ui:'plain',
-                                iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
-                            },
-                            {
-                                itemId:'solutionBtn',
-                                xtype:'button',
-                                text:'Solution',
-                                align:'right',
-                                ui:'plain',
-                                iconMask:true,
-                                iconCls:'add_black lightPlus',
-                                handler: function(){this.parent.parent.parent.parent.showSolution()}
-                            }
-                        ]
-
                     }
                 ]
             }

@@ -10703,18 +10703,30 @@ a {
 }
 .ticketsList .ticket-item > div:first-child.Low {
   background: #0C8AAE;
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #0c8aae), color-stop(80%, #09728e), color-stop(100%, #00475b));
+  background-image: -webkit-linear-gradient(left, #0c8aae 0%, #09728e 80%, #00475b 100%);
+  background-image: linear-gradient(left, #0c8aae 0%, #09728e 80%, #00475b 100%);
 }
 .ticketsList .ticket-item > div:first-child.Medium {
   background: #0A9458;
   /* Old browsers */
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #0a9458), color-stop(80%, #087f4a), color-stop(100%, #005931));
+  background-image: -webkit-linear-gradient(left, #0a9458 0%, #087f4a 80%, #005931 100%);
+  background-image: linear-gradient(left, #0a9458 0%, #087f4a 80%, #005931 100%);
 }
 .ticketsList .ticket-item > div:first-child.Urgent {
   background: #C00;
   /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #c00c00), color-stop(80%, #b20e00), color-stop(100%, #840f00));
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #c00c00 0%, #b20e00 80%, #840f00 100%);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(left, #c00c00 0%, #b20e00 80%, #840f00 100%);
 }
 .ticketsList .ticket-item > div:first-child.High {
   background-color: #CC5600;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #cc5600), color-stop(80%, #c45500), color-stop(100%, #893a01));
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), -webkit-linear-gradient(left, #cc5600 0%, #c45500 80%, #893a01 100%);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==), linear-gradient(left, #cc5600 0%, #c45500 80%, #893a01 100%);
 }
 .ticketsList .ticket-item > div.title {
   width: 90%;

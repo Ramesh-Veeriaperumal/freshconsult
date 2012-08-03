@@ -1,19 +1,46 @@
 Ext.define("Freshdesk.view.CannedResponses", {
     extend: "Ext.Container",
     alias: "widget.cannedResponses",
-    populateMessage : function(res){
+    populateMessage : function(res) {
         var content = res.responseText,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0],
         messageElm  = msgFormContainer.getMessageItem();
         messageElm.setValue(messageElm.getValue()+content);
         this.hide();
     },
-    onCannedResDisclose : function(record){
-        var ca_resp_id = record.id,msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
-        ticket_id = msgFormContainer.ticket_id,
-        opts  = {
-            url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
-        };
+    getFormatedCannedRes : function(ca_resp_id){
+        var msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
+            ticket_id = msgFormContainer.ticket_id,
+            opts  = {
+                url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
+            };
         FD.Util.getJSON(opts,this.populateMessage,this);
+    },
+    onCannedResDisclose : function(record){
+        var self = this,
+            showWarning = JSON.parse(FD.Util.cookie.getItem('dontshowcannResWran'));
+        if(!showWarning){
+            var messageBox = new Ext.MessageBox({
+                message: 'Canned responses wraning message.<br/><form><input id="dontshowcannResWranCheck" type="checkbox" name="dontshowagain"> Don\'t show again.</form>',
+                modal:true,
+                zIndex : 12,
+                buttons: [
+                    {
+                        text:'Ok',
+                        handler:function(){
+                            var dontshowagain = !!document.getElementById('dontshowcannResWranCheck').checked;
+                            FD.Util.cookie.setItem('dontshowcannResWran',dontshowagain,null,'/');
+                            messageBox.hide();
+                            messageBox.destroy();
+                            this.getFormatedCannedRes.apply(self,[record.id]);
+                        },
+                        scope:self
+                    }
+                ]
+            }).show();
+        }
+        else{
+            this.getFormatedCannedRes.apply(self,[record.id]);
+        }
     },
     config: {
         itemId : 'cannedResponsesPopup',

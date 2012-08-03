@@ -23,7 +23,12 @@ class Mobile::TicketsController < ApplicationController
 
   def get_suggested_solutions
     item = current_account.tickets.find_by_display_id(params[:id]) 
-    render :json => Solution::Article.suggest_solutions(item).to_json({:only=> [:id,:title,:desc_un_html]})
+    suggested_articles = Solution::Article.suggest_solutions(item)
+    json = "["; sep=""
+    suggested_articles.each do |article| 
+      json << sep + article.to_mob_json[11..-2]; sep=","
+    end
+    render :json => json + "]"
   end
   
   def ticket_properties

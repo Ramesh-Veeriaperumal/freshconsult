@@ -1,4 +1,5 @@
 require 'fastercsv'
+require 'html2textile'
 
 class Helpdesk::TicketsController < ApplicationController  
   
@@ -144,7 +145,8 @@ class Helpdesk::TicketsController < ApplicationController
 
             json << sep + tic.to_json({
               :except => [ :description_html, :description ],
-              :methods => [ :status_name, :priority_name, :source_name, :requester_name,:responder_name, :need_attention]
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+                            :responder_name, :need_attention, :last_updated_on ]
             }, false)[19..-2]; sep=","
           }
           render :json => json + "]"
@@ -531,7 +533,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    content = mobile? ? ca_resp.content : ca_resp.content_html
+    content = ca_resp.content_html
+    if mobile?
+      parser = HTMLToTextileParser.new
+      parser.feed ca_resp.content_html
+      content = parser.to_textile
+    end
     a_template = Liquid::Template.parse(content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
   end 

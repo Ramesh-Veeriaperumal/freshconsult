@@ -40,6 +40,8 @@ Ext.application({
 
     launch: function() {
         
+        
+
         var dashboardContainer = {
             xtype: "dashboardContainer"
         },filtersListContainer = {

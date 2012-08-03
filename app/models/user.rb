@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   include SavageBeast::UserInit
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
+  include Mobile::Actions::User
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -446,28 +447,8 @@ class User < ActiveRecord::Base
                                                               :user_role,:fb_profile_id,:language,:address]) 
   end
   
-  def original_avatar
-    avatar_url(:original)
-  end
-
-  def medium_avatar
-    avatar_url(:medium)
-  end
-
-  def avatar_url(profile_size = :thumb)
-    avatar.content.url(profile_size) unless avatar.nil?
-  end
- 
   def company_name
     customer.name unless customer.nil?
-  end
-
-  def to_mob_json
-    options = { 
-      :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
-      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
-    }
-    to_json options
   end
 
   def recent_tickets(limit = 5)

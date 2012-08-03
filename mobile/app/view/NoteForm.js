@@ -10,7 +10,8 @@ Ext.define('Freshdesk.view.NoteForm', {
         cannedResPopup.show();
     },
     config: {
-        layout:'fit',
+        layout:'vbox',
+        align:'stretch',
         method:'POST',
         url:'/helpdesk/tickets/',
         items : [
@@ -24,19 +25,6 @@ Ext.define('Freshdesk.view.NoteForm', {
                         xtype: 'hiddenfield',
                         name: 'helpdesk_note[source]',
                         value:'2'
-                    },
-                    {
-                        xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
-                        placeHolder:'Enter your note.. *',
-                        height:180,
-                        required:true,
-                        clearIcon:false
-                    },                    
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'commet',
-                        value:'Add Note'
                     },
                     {
                         xtype:'titlebar',
@@ -79,11 +67,24 @@ Ext.define('Freshdesk.view.NoteForm', {
                     },
                     {
                         xtype: 'togglefield',
-                        name: 'helpdesk_note[private]',
+                        name: 'public',
                         label: 'Visible to requester ',
                         itemId:'noteFormPrivateField',
                         labelWidth: '71%'
                     },
+                    {
+                        xtype: 'textareafield',
+                        name: 'helpdesk_note[body_html]',
+                        placeHolder:'Enter your note.. *',
+                        height:800,
+                        required:true,
+                        clearIcon:false
+                    },                    
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'commet',
+                        value:'Add Note'
+                    }
                 ]
             }
         ]
