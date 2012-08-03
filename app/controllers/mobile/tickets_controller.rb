@@ -58,12 +58,34 @@ class Mobile::TicketsController < ApplicationController
         field[:is_default_field] = field.is_default_field?
         field[:field_name] = field.field_name
         @fields.push(field)
+        #populating cc field
+        if ( is_new and
+            ( field.dom_type.eql?("requester") || ( field.dom_type.eql?('email') && field.portal_cc_field? ) ) )
+          add_cc_field field
+        end
       end
     end
     render :json => @fields.to_json
   end
 
   private
+
+  def add_cc_field field
+    if( current_user.agent? || 
+        (current_user.customer? && (field.all_cc_in_portal?  || field.company_cc_in_portal? ) ) ) 
+          @fields.push(:ticket_field => {
+            :field_value => "",
+            :domtype => field.dom_type,
+            :nested_choices => [],
+            :nested_levels => nil,
+            :choices => [],
+            :is_default_field => true,
+            :field_name => "cc_emails",
+            :label => "Cc ",
+            :is_cc_field => true
+          });
+    end
+  end
 
   def check_permistions 
     requires_permission :manage_tickets

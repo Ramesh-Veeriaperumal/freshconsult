@@ -153,6 +153,7 @@ FD.Util = {
             case 'text':
             case 'paragraph':
                 item.xtype = 'textareafield';
+                item.height = "150px";
                 break;
             case 'checkbox':
                 item.xtype = 'checkboxfield';
@@ -160,6 +161,13 @@ FD.Util = {
                 break;
             case 'number':
                 item.xtype = 'numberfield';
+                break;
+            case 'requester':
+                item.xtype = 'emailfield';
+                if(field.is_cc_field){
+                    item.id = "helpdesk_ticket_"+field_name;
+                    item.name = field_name;
+                }
                 break;
             default :
                 item.xtype = 'textfield';
