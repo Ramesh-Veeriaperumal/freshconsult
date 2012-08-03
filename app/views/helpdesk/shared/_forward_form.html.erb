@@ -1,13 +1,10 @@
 <%= include_tiny_mce_if_needed %>
-<div class="request_panel hide" id="<%=cntid%>">
+<% hide_class = conv_id.nil? ? "hide" : ""
+  note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"
+%>
+<div class="request_panel <%=hide_class%>" id="<%=cntid%>">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskFwd" } do |f| %>
     <%= f.error_messages %>
-    <% capsule_config = get_app_config('capsule_crm') 
-    
-      bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
-      fixed_bcc = (current_account.bcc_email.blank?) ? [] : current_account.bcc_email.split( /,* /).map{|item|[item, item]}
-      bcc_drop_box_email += fixed_bcc  
-    %>
        
     <ul class="ui-form dont-validate">
 				<div class="request_form_options">
@@ -42,7 +39,7 @@
             <%= f.label(:forward_email, "To:", :class => "caption" ) %>
             <div class="fields">
                 
-                <input type="text" id="to_emails_<%=cntid%>" name="to_emails" />
+                <input type="text" id="to_emails_<%=cntid%>" name="helpdesk_note[to_emails]" />
                 <% javascript_tag do -%>
                   new Autocompleter.MultiValue("to_emails_<%=cntid%>", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
                 <%- end %>
@@ -54,7 +51,7 @@
             </label>
 	          <div class="fields" id="fwd_cc_emails_id" rel="fwd_cc_div" data-button="#add_fwd_cc_btn"  data-parent="#fwd-cc-form-container"> 
                 
-                <input type="text" id="fwd_cc_emails_<%=cntid%>" name="fwd_cc_emails" />
+                <input type="text" id="fwd_cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
                 <% javascript_tag do -%>
                   new Autocompleter.MultiValue("fwd_cc_emails_<%=cntid%>", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
         <%- end %>
@@ -67,7 +64,7 @@
 
           <div class="fields">
             
-            <input type="text" id="bcc_emails_<%=cntid%>" name="bcc_emails" />
+            <input type="text" id="bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
             <% javascript_tag do -%>
               new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
             <% end %>
@@ -85,6 +82,7 @@
         <!-- forward will be always private -->
         <%= f.hidden_field :private , :value => true %>
         <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] %>
+        <%= f.hidden_field :from_email , :id => "fwd_from_email_#{cntid}", :value =>  @ticket.selected_reply_email %>
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-forward-<%=cntid%>">
@@ -110,7 +108,7 @@
     </ul>
     <div class="button-container">         
     	<%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
-  		<%= button_to_function(t('cancel'), "jQuery('#cnt-fwd').slideUp()", :class => "uiButton" ) %>
+  		<%= button_to_function(t('cancel'), "jQuery('##{cntid}').slideUp();jQuery('##{note_details_id}').show()", :class => "uiButton" ) %>
     </div>
 
     <% end %>
@@ -118,5 +116,12 @@
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
   	jQuery("#HelpdeskFwd").validate();	
+
+    jQuery('#HelpdeskFwd select#reply_email_id').live('change',function(e){
+    var selectObj = jQuery(e.target),
+        form = e.target.form,
+        fromEmail = selectObj.val();
+        form['helpdesk_note[from_email]'].value = fromEmail;
+  })
   <% end %>
 <% end %>

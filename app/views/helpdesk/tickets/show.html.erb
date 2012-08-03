@@ -25,7 +25,7 @@
 <div class="tab-content">
 	<div class="requestCnt request-conversation active tab-pane" id="Pages">
 		<div id="TicketForms">
-		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
 		  <%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
 		  <%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 		  <%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
@@ -63,7 +63,7 @@
 			activeForm = jQuery('#'+formid).slideDown();
 			switch(formid){
 				case 'cnt-reply':
-					jQuery('#reply_cc_emails_id').trigger("cc_visibility");
+					// jQuery('#reply_cc_emails_id').trigger("cc_visibility");
 				case 'cnt-note':
 					insertIntoConversation("");					
 				break; 

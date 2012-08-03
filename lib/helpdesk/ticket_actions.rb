@@ -1,10 +1,11 @@
 module Helpdesk::TicketActions
   
   include Helpdesk::Ticketfields::TicketStatus
+  include ParserUtil
   
   def create_the_ticket(need_captcha = nil)
-    cc_emails = validate_emails(params[:cc_emails])
-    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails || [] , :fwd_emails => []})
+    cc_emails = fetch_valid_emails(params[:cc_emails])
+    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => []})
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
@@ -219,11 +220,14 @@ module Helpdesk::TicketActions
         :private => params[:source][:is_private] || false,
         :source => params[:source][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
-        :user_id => current_user && current_user.id
+        :user_id => current_user && current_user.id,
+        :from_email => @source_ticket.reply_email,
+        :to_emails => @source_ticket.requester.email.to_a,
+        :cc_emails => @source_ticket.cc_email_hash && @source_ticket.cc_email_hash[:cc_emails]
       )
       
       if !@soucre_note.private
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, @source_ticket, @soucre_note , @source_ticket.reply_email,{:include_cc => true})
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, @source_ticket, @soucre_note ,{:include_cc => true})
       end
   end
   
@@ -233,7 +237,10 @@ module Helpdesk::TicketActions
         :private => params[:target][:is_private] || false,
         :source => params[:target][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
-        :user_id => current_user && current_user.id
+        :user_id => current_user && current_user.id,
+        :from_email => @target_ticket.reply_email,
+        :to_emails => @target_ticket.requester.email.to_a,
+        :cc_emails => @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
       )
       ## handling attachemnt..need to check this
      @source_ticket.attachments.each do |attachment|      
@@ -241,7 +248,7 @@ module Helpdesk::TicketActions
       @target_note.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
     end
     if !@target_note.private
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , @target_ticket.reply_email,{:include_cc => true})
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , {:include_cc => true})
     end
   end
   
@@ -275,24 +282,16 @@ module Helpdesk::TicketActions
     params[:data_hash] = action_hash;
   end
 
-   def validate_emails email_array
-     parent = @item
-     unless email_array.blank?
-     email_array.delete_if {|x| !valid_email?(x)}
-     email_array = email_array.collect{|e| e.gsub(/\,/,"")}
-     email_array = email_array.uniq
-     end
-   end
-    
-    def extract_email(email)
-      email = $1 if email =~ /<(.+?)>/
-      email
-    end
-    
-    def valid_email?(email)
-      email = extract_email(email)
-      (email =~ /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/) ? true : false
-    end
+  def reply_to_conv
+    render :partial => "/helpdesk/shared/reply_form", 
+           :locals => { :id => "send-email", :cntid => "cnt-reply-#{@conv_id}", :conv_id => @conv_id,
+           :note => [@ticket, Helpdesk::Note.new(:private => false)] }
+  end
 
+  def forward_conv
+    render :partial => "/helpdesk/shared/forward_form", 
+           :locals => { :id => "send-fwd-email", :cntid => "cnt-fwd-#{@conv_id}", :conv_id => @conv_id,
+           :note => [@ticket, Helpdesk::Note.new(:private => true)] }
+  end
   
 end
