@@ -1,0 +1,43 @@
+module ExportCsvUtil
+
+  def export_fields(is_portal=false)
+    flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
+    csv_headers = Helpdesk::TicketModelExtension.csv_headers 
+    #Product entry
+    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false, :type => :field_type} ] if current_account.has_multiple_products?
+    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
+
+    if is_portal
+      vfs = visible_fields
+      csv_headers.delete_if{|csv_header|
+        field_name = Helpdesk::TicketModelExtension.field_name csv_header[:value]
+        true unless vfs.include?(field_name)
+      }
+    end
+    csv_headers
+  end
+
+  def export_data(items, csv_hash, is_portal=false)
+    csv_string = FasterCSV.generate do |csv|
+      headers = csv_hash.keys.sort
+      if is_portal
+        vfs = visible_fields
+        headers.delete_if{|header_key|
+          field_name = Helpdesk::TicketModelExtension.field_name csv_hash[header_key]
+          true unless vfs.include?(field_name)
+        }
+      end
+      csv << headers
+      items.each do |record|
+        csv_data = []
+        headers.each do |val|
+          csv_data << record.send(csv_hash[val])
+        end
+        csv << csv_data
+      end
+    end
+    send_data csv_string, 
+            :type => 'text/csv; charset=utf-8; header=present', 
+            :disposition => "attachment; filename=tickets.csv"
+  end
+end

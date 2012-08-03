@@ -5773,3 +5773,17 @@ margin:10px;
 		}
 	}
 }
+
+/* Export link in the Ticket list of Self Service Portal */
+.ssp_export {
+	position:absolute;
+	right:5px;
+	left:auto;
+	width: 60px;
+	font-size: 12px;
+	padding:5px 5px ;
+
+	&:hover {
+		color:#333;
+	}
+}

@@ -3,7 +3,6 @@ class SearchController < ApplicationController
   
   extend NewRelic::Agent::MethodTracer
   
-  before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
   
@@ -118,15 +117,24 @@ class SearchController < ApplicationController
         s_options[:category_id] = current_portal.forum_category_id
         @items.concat(Topic.search params[:search_key], :with => s_options, :per_page => 10)
       end
+
+      if f_classes.include?(Helpdesk::Ticket)
+        @items.concat(Helpdesk::Ticket.search params[:search_key], :with => s_options, :per_page => 10)
+      end
+
     end
   
     def search
       begin
-        @items = ThinkingSphinx.search filter_key(params[:search_key]), 
-                                        :with => { :account_id => current_account.id, :deleted => false },
-                                        :star => false,
-                                        :match_mode => :any,
-                                        :page => params[:page], :per_page => 10
+        if permission? :manage_tickets
+          @items = ThinkingSphinx.search filter_key(params[:search_key]), 
+                                          :with => { :account_id => current_account.id, :deleted => false },
+                                          :star => false,
+                                          :match_mode => :any,
+                                          :page => params[:page], :per_page => 10
+        else
+          search_portal_content [Helpdesk::Ticket], { :account_id => current_account.id, :deleted => false }
+        end
         process_results
       rescue Exception => e
         @total_results = 0
@@ -147,9 +155,9 @@ class SearchController < ApplicationController
       @total_results += @searched_tickets.size unless @searched_tickets.nil?
       @searched_articles  = results['Solution::Article']
       @total_results += @searched_articles.size unless @searched_articles.nil?
-      @searched_users     = results['User'] unless current_user.can_view_all_tickets?
+      @searched_users     = results['User'] if current_user.can_view_all_tickets?
       @total_results += @searched_users.size unless @searched_users.nil?
-      @searched_companies = results['Customer'] unless current_user.can_view_all_tickets?
+      @searched_companies = results['Customer'] if current_user.can_view_all_tickets?
       @total_results += @searched_companies.size unless @searched_companies.nil?
       @searched_topics    = results['Topic']
       @total_results += @searched_topics.size unless @searched_topics.nil?
@@ -173,7 +181,7 @@ class SearchController < ApplicationController
   private
   
   def filter_key(query)
-    email_regex  = Regexp.new('(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
+    email_regex  = Regexp.new('(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
     default_regex = Regexp.new('\w+', nil, 'u')
     enu = query.gsub(/("#{email_regex}(.*?#{email_regex})?"|(?![!-])#{email_regex})/u)
     unless enu.count > 0
