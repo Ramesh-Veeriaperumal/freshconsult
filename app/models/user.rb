@@ -332,14 +332,14 @@ class User < ActiveRecord::Base
           :subject => Liquid::Template.parse(subj_template).render ,:reply_email => reply_email)
   end
   
-  def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
+  def deliver_activation_instructions!(portal, force_notification = false) #Need to refactor this.. Almost similar structure with the above one.
     portal ||= account.main_portal
     reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
     if customer?
-      return unless e_notification.requester_notification?
+      return unless e_notification.requester_notification? or force_notification
       template = e_notification.requester_template
       subj_template = e_notification.requester_subject_template
       user_key = 'contact'
