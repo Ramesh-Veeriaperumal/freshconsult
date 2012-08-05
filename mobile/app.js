@@ -15,7 +15,8 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2','plugin.ux.Iscroll'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2',
+        'plugin.ux.Iscroll', 'plugin.ux.TitleDoubleTap'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
@@ -47,7 +48,12 @@ Ext.application({
         },filtersListContainer = {
             xtype: "filtersListContainer"
         },ticketsListContainer = {
-            xtype: "ticketsListContainer"
+            xtype: "ticketsListContainer",
+            plugins : [
+                {
+                    xclass: 'plugin.ux.TitleDoubleTap'
+                }
+            ]
         },contactsListContainer = {
             xtype: "contactsListContainer"
         },ticketDetailsContainer = {

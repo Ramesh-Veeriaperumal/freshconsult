@@ -153,7 +153,7 @@ FD.Util = {
             case 'text':
             case 'paragraph':
                 item.xtype = 'textareafield';
-                item.height = "150px";
+                item.height = "180px";
                 break;
             case 'checkbox':
                 item.xtype = 'checkboxfield';

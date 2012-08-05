@@ -1,5 +1,7 @@
 module Mobile::Actions::Ticket
   
+  include ActionView::Helpers::DateHelper
+
   NOTES_OPTION = {
       :only => [ :created_at, :user_id, :id, :private ],
       :include => {
@@ -59,4 +61,7 @@ module Mobile::Actions::Ticket
     created_at.strftime(format)
   end
 
+  def pretty_updated_date
+    distance_of_time_in_words_to_now(updated_at) + " ago"
+  end
 end

@@ -42,7 +42,7 @@ Ext.define('Freshdesk.view.TicketNote', {
                 painted : function(self){
                     //For setting scroll..
                     Ext.Function.defer(function(container){
-                        container.getScrollable().getScroller().scrollTo(0,1,true)
+                        container.getScrollable().getScroller().scrollToTop(true)
                     },100,this,[self],true)
                 }
             },

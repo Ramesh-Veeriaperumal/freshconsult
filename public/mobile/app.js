@@ -24583,6 +24583,60 @@ Ext.define('plugin.ux.PullRefresh2', {
     }
 });
 
+Ext.define('plugin.ux.TitleDoubleTap', {
+	extend: 'Ext.Component',
+	alias: 'plugin.titleDoubleTap',
+	config: {
+		action:'goToTop'
+	},
+	initialize: function() {
+	  this.callParent();
+	},
+	init : function(list) {
+		var self = this;
+		self.list = list;
+		list.on({
+			painted : {
+				fn: function(){
+					var titleBarId = this.list && this.getTitleBarId(this.list),
+							listview = this.list && this.getListView(this.list);
+					this.listview = listview;
+					Ext.get(titleBarId).on({
+						doubletap: {
+							fn: function(){
+								this[this.getAction()].apply(this,[listview])
+							},
+							scope:this
+						}
+					})
+				},
+				scope: this
+			}
+		})
+	},
+
+	getTitleBarId : function(list){
+		if(list.items && list.items.items && list.items.items[0])
+		 	return list.items.items[0].id;
+	},
+
+	getListView : function(list){
+		if(list.items && list.items.items && list.items.items[1])
+		 	return list.items.items[1];
+	},
+
+	goToTop : function(listview) {
+		var scroller = listview.getScrollable().getScroller();
+			scroller.scrollToTop(true);
+	},
+
+	pageUp : function(listview) {
+		var scroller = listview.getScrollable().getScroller();
+			scroller.scrollTo(0,scroller.position.y-(Ext.Viewport.windowHeight-46),true);
+	}
+
+});
+
 /**
  * The DelayedTask class provides a convenient way to "buffer" the execution of a method,
  * performing setTimeout where a new timeout cancels the old timeout. When called, the
@@ -30924,7 +30978,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                                             '<div>',
                                                     '<tpl if="responder_id">{helpdesk_ticket.responder_name}',
                                                     '<tpl else>No agent assigned, </tpl>',
-                                            '&nbsp;{helpdesk_ticket.updated_at:this.time_in_words}</div>',
+                                            '&nbsp;{helpdesk_ticket.pretty_updated_date}</div>',
                                     '</div>',
                                     '<div class="disclose icon-arrow-right">&nbsp;</div>',
                         '</div></a>',
@@ -38864,7 +38918,15 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             ui:'header',
 			items: [
 				backButton
-			]
+			],
+            listeners: {
+                doubletap: {
+                    fn:function(){
+                        alert(this);
+                    },
+                    scope:this
+                }
+            }
 		};
 
 		var ticketsList = {
@@ -39441,7 +39503,7 @@ Ext.define('Freshdesk.view.TicketNote', {
                 painted : function(self){
                     //For setting scroll..
                     Ext.Function.defer(function(container){
-                        container.getScrollable().getScroller().scrollTo(0,1,true)
+                        container.getScrollable().getScroller().scrollToTop(true)
                     },100,this,[self],true)
                 }
             },
@@ -47764,7 +47826,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '<div>',
                                         '<tpl if="responder_id">{responder_name},',
                                         '<tpl else>No agent assigned,</tpl>',
-                                '&nbsp;{updated_at:this.time_in_words}</div>',
+                                '&nbsp;{pretty_updated_date}</div>',
                         '</div>',
                         '<div class="disclose icon-arrow-right">&nbsp;</div>',
         	'</div></tpl>'].join(''),
@@ -52878,7 +52940,8 @@ Ext.define('Freshdesk.model.Ticket', {
             { name : 'need_attention', type:'boolean'},
             { name : 'deleted', type:'boolean'},
             { name : 'spam', type:'boolean'},
-            { name : 'conversation_count', type:'int'}
+            { name : 'conversation_count', type:'int'},
+            { name : 'pretty_updated_date', type:'string' }
         ]
     }
 });
@@ -57073,7 +57136,8 @@ Ext.application({
     },
 
     requires: [
-        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2','plugin.ux.Iscroll'
+        'Ext.MessageBox','plugin.ux.SwipeOptions','plugin.ux.ListPaging2', 'plugin.ux.PullRefresh2',
+        'plugin.ux.Iscroll', 'plugin.ux.TitleDoubleTap'
     ],
 
     controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
@@ -57105,7 +57169,12 @@ Ext.application({
         },filtersListContainer = {
             xtype: "filtersListContainer"
         },ticketsListContainer = {
-            xtype: "ticketsListContainer"
+            xtype: "ticketsListContainer",
+            plugins : [
+                {
+                    xclass: 'plugin.ux.TitleDoubleTap'
+                }
+            ]
         },contactsListContainer = {
             xtype: "contactsListContainer"
         },ticketDetailsContainer = {
