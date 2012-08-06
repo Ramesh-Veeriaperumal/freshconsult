@@ -1,15 +1,7 @@
 /*!
- * Bootstrap v2.0.2
+ * Default portal styles for freshdesk
+ * Add theme styles over these styles
  *
- * Copyright 2012 Twitter, Inc
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Designed and built with all the love in the world @twitter by @mdo and @fat.
- *
- * Converted to Sass by @johnwlong / @m5o.
- *
- * Date: @DATE
  */
 
 // Core variables and mixins
@@ -21,7 +13,7 @@
 
 // Grid system and page structure
 @import "lib/scaffolding";
-@import "lib/grid";
+/*@import "lib/grid";*/
 @import "lib/layouts";
 
 // Base CSS
@@ -31,9 +23,9 @@
 @import "lib/tables";
 
 // Components: common
-@import "lib/sprites"; 
+/*@import "lib/sprites"; */
 @import "lib/dropdowns";
-@import "lib/wells";
+/*@import "lib/wells";*/
 @import "lib/component-animations";
 @import "lib/close";
 
@@ -44,7 +36,7 @@
 
 // Components: Nav
 @import "lib/navs";
-@import "lib/navbar";
+/*@import "lib/navbar";*/
 @import "lib/breadcrumbs";
 @import "lib/pagination";
 @import "lib/pager";
@@ -55,14 +47,14 @@
 @import "lib/popovers";
 
 // Components: Misc
-@import "lib/thumbnails";
+/*@import "lib/thumbnails";*/
 @import "lib/labels";
-@import "lib/badges";
+/*@import "lib/badges";
 @import "lib/progress-bars";
 @import "lib/accordion";
 @import "lib/carousel";
 @import "lib/hero-unit";
-
+*/
 // Utility classes
 @import "lib/utilities"; // Has to be last to override when necessary
 
