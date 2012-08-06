@@ -38,6 +38,7 @@ module Mobile::Actions::Ticket
   }
 
   def to_mob_json(only_public_notes=false)
+
     json_inlcude = JSON_INCLUDE
     if only_public_notes
      json_inlcude[:public_notes] = NOTES_OPTION 

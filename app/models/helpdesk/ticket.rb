@@ -779,15 +779,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
+    Rails.logger.debug "deep #{deep}"
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep
+      Rails.logger.debug "inside if 123"
       self.load_flexifield
       self[:notes] = self.notes
       options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
       options[:methods].push(:custom_field)
     end
+    Rails.logger.debug "deep #{options}"
     json_str = super options
+    Rails.logger.debug "json_str #{json_str}"
     json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
   end
 
