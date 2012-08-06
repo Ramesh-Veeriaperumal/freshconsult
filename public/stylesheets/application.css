@@ -1829,3 +1829,28 @@ a.submit_link:hover { text-decoration: none; }
 .email-config-styled-table tbody tr td.to-email div.wrap { width: 250px; }
 
 .product-title { font-size: 1.1em; font-weight: bold; padding-bottom: 10px; }
+
+a.mobile_switchBtn {
+	position: relative;
+	color : #333 !important;
+	display: block;
+	padding: 8px;
+	background-image: linear-gradient(bottom, #DFDFDF 23%, #FAF7F8 62%, #F7F7F7 81%);
+	background-image: -o-linear-gradient(bottom, #DFDFDF 23%, #FAF7F8 62%, #F7F7F7 81%);
+	background-image: -moz-linear-gradient(bottom, #DFDFDF 23%, #FAF7F8 62%, #F7F7F7 81%);
+	background-image: -webkit-linear-gradient(bottom, #DFDFDF 23%, #FAF7F8 62%, #F7F7F7 81%);
+	background-image: -ms-linear-gradient(bottom, #DFDFDF 23%, #FAF7F8 62%, #F7F7F7 81%);
+
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.23, #DFDFDF),
+		color-stop(0.62, #FAF7F8),
+		color-stop(0.81, #F7F7F7)
+	);
+	font-weight: bold;
+	-webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, .05);
+-moz-box-shadow: inset 0 3px 8px rgba(0,0,0,.05);
+box-shadow: inset 0 3px 8px rgba(0, 0, 0, .05);
+}

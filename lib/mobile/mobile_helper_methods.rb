@@ -2,7 +2,10 @@ module Mobile::MobileHelperMethods
 
   MOBILE_URL = "/mobile/"
 
-  MOBILE_VIEWS = { :tickets => { :show => "#{MOBILE_URL}#tickets/show/{{params.id}}" } }
+  MOBILE_VIEWS = { :tickets => { 
+                      :show => "#{MOBILE_URL}#tickets/show/{{params.id}}"
+                    } 
+                  }
 
   DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
   
@@ -32,6 +35,7 @@ module Mobile::MobileHelperMethods
     end
 
     def set_mobile
+      Rails.logger.debug "mobile ::: #{mobile?}"
       params[:format] = "mobile" if mobile?
     end
 

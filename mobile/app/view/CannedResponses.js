@@ -20,7 +20,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
             showWarning = JSON.parse(FD.Util.cookie.getItem('dontshowcannResWran'));
         if(!showWarning){
             var messageBox = new Ext.MessageBox({
-                message: 'Canned responses wraning message.<br/><form><input id="dontshowcannResWranCheck" type="checkbox" name="dontshowagain"> Don\'t show again.</form>',
+                message: 'Canned responses come in textiled version to maintaing the format.<br/><form><input id="dontshowcannResWranCheck" type="checkbox" name="dontshowagain"> Don\'t show again.</form>',
                 modal:true,
                 zIndex : 12,
                 buttons: [
