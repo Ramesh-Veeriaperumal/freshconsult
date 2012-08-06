@@ -1,10 +1,12 @@
-<%= link_to_function("Switch to mobile version", "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
 <div class="header">
   <div class="brand">
     <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
       <%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)) %>
     <% end %>      
     <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
+    <%= link_to_function("Switch to mobile version", 
+    										 "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
+    										 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
   </div>		
   <div class="wrapper">
     <div class="header_links">
