@@ -11176,22 +11176,32 @@ a {
   vertical-align: bottom;
 }
 .ticketDetails #details ul.actions li.half:first-child {
-  text-align: right;
+  text-align: left;
 }
-.ticketDetails #details ul.actions li.half:first-child a {
-  margin-right: 10%;
+.ticketDetails #details ul.actions li.half:first-child a.reply {
+  position: relative;
+  top: -3px;
+  left: 14%;
 }
 .ticketDetails #details ul.actions li.half:first-child span {
   font-size: 16px;
   vertical-align: middle;
+  position: relative;
+  left: 45%;
+  top: -12px;
 }
-.ticketDetails #details ul.actions li.half:last-child a {
-  margin-left: 10%;
+.ticketDetails #details ul.actions li.half:last-child a.close {
+  float: left;
+  position: relative;
+  top: -3px;
+  /*left:-34px;*/
 }
 .ticketDetails #details ul.actions li.half:last-child span {
   font-size: 16px;
   vertical-align: middle;
-  margin-left: 10px;
+  position: relative;
+  left: -15%;
+  top: 4px;
 }
 .ticketDetails #details ul.actions li.half a {
   width: 4em;
