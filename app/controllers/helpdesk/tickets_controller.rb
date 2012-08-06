@@ -205,16 +205,20 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
       #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
       respond_to do |format|
-        format.mobile { render :json => { :success => true, :item => @item }.to_json }
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
           redirect_to item_url 
         }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
+        }
       end
     else
       respond_to do |format|
-        format.mobile { render :json => { :failure => true, :errors => edit_error }.to_json }
         format.html { edit_error }
+        format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
       end
     end
   end

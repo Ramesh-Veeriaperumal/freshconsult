@@ -52,6 +52,10 @@ input.ui-button { padding: .4em 1em; }
 /* workarounds */
 button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra padding in Firefox */
 
+.notif-button .uiButton{
+  margin-left:25px;
+}
+
 .uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active, .uiButton-iphone, .ui-after-submit{
 	@include button-base; 
 	background-image:url(../images/overlay-button.png);

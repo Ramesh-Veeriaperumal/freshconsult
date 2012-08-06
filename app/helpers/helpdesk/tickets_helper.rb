@@ -254,7 +254,12 @@ module Helpdesk::TicketsHelper
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
-    content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
+    default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature
+    if(!forward)
+      reply_email_template = Liquid::Template.parse(current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template).render('ticket'=>ticket)
+      default_reply =reply_email_template+"<br/>"+signature
+    end
+    content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content+"</blockquote></div>"
     return content

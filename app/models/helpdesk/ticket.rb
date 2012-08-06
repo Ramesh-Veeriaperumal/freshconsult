@@ -886,7 +886,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 
     account.support_emails.each do |support_email|
-      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email.strip)[:email] == parse_email_text(support_email)[:email]}
+      reply_to_all_emails.delete_if {|to_email| ((parse_email_text(support_email)[:email]).casecmp(parse_email_text(to_email.strip)[:email]) == 0)}
     end
 
     reply_to_all_emails

@@ -35,6 +35,8 @@ class EmailNotification < ActiveRecord::Base
   FIRST_RESPONSE_SLA_VIOLATION = 12
   RESOLUTION_TIME_SLA_VIOLATION = 13
   PASSWORD_RESET = 14
+
+  DEFAULT_REPLY_TEMPLATE = 15
   
   EMAIL_SUBJECTS = {
     NEW_TICKET                    => "Ticket Received - {{ticket.encoded_id}} {{ticket.subject}}",

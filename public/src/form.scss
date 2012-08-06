@@ -745,7 +745,17 @@ input.time{
 				background-color:#f4f4f4;
 			}	
 		}
-	}
+		.special_row{
+			td{
+				padding:0;
+			}
+			div{
+				background: #fff;
+				height:20px;
+				margin:0 -1px;
+			}
+		} 
+	}	
 	.olist{
 		list-style:decimal;
 	}
@@ -842,7 +852,10 @@ span.sort_handle{
 .button-container{
 	@include clearfix;
 	text-align:right;
-	padding:1em 0em 1em 0; 
+	padding:20px 0px 15px 0px; 
+	background:#ffffff;	
+	margin:-2px;
+
 }
 
 .ui-draggable-dragging{

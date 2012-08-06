@@ -43090,29 +43090,32 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype:'titlebar',
                         ui:'formSubheader',
+                        cls:'green-icon',
                         items:[
                             {
                                 itemId:'cannedResBtn',
                                 xtype:'button',
                                 text:'Canned Response',
-                                align:'left',
                                 ui:'plain',
                                 iconMask:true,
-                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()},
-                                iconCls:'add_black lightPlus'
+                                handler: function(){this.parent.parent.parent.parent.showCannedResponse()}
                             },
+                        ]
+                    },
+                    {
+                        xtype:'titlebar',
+                        ui:'formSubheader',
+                        cls:'green-icon',
+                        items:[
                             {
                                 itemId:'solutionBtn',
                                 xtype:'button',
                                 text:'Solution',
-                                align:'right',
                                 ui:'plain',
                                 iconMask:true,
-                                iconCls:'add_black lightPlus',
                                 handler: function(){this.parent.parent.parent.parent.showSolution()}
-                            }
+                            },
                         ]
-
                     }
                 ]
             }

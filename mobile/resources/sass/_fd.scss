@@ -879,9 +879,9 @@ a {
 					text-decoration:none;
 					font-size:175%;
 					font-family: 'Freshdesk';
-					color:#666;
+					color:rgba(0,0,0, 0.5);
+					@include text-shadow(1px 1px 0px #fff, 0 0 1px #ccc);
 					text-align:center;
-					@include text-shadow( #fff 1px 1px 0);
 					speak: none;
 					&.automation
 					{
@@ -1208,7 +1208,7 @@ a {
 	border-bottom: 1px solid #DDD;
 }
 #ticketReplyForm{
-	.x-button-icon.add_black{
+	/* .x-button-icon.add_black{
 		-webkit-mask-image:none;
 		background:transparent;
 		margin-right:5px;
@@ -1229,6 +1229,9 @@ a {
 			@include box-shadow(0px 2px 4px rgba(0,0,0,0.1));
 			position: absolute;
 		}
+	} */
+	.x-button-label{
+		padding-left: 5px;
 	}
 	.x-field .x-field-input, .x-field .x-input-el, .x-form-label span{
 		/* padding-top:6px; */
@@ -1302,7 +1305,6 @@ a {
 	{
 		background-color:transparent !important;
 		&:before{
-			display: block;
 			color:#fff;
 	 		font-size: 14px;
 			padding: 5px 5px;
