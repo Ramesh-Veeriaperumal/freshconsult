@@ -986,6 +986,10 @@ span.sort_handle{
       margin:0 0 6px 0;
       font-size:13px;
       padding:10px 12px;
+
+      &.error {
+      	color:#993333;
+      }
    }
    .ui-form{
       margin:0 0;

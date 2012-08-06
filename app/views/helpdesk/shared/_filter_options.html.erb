@@ -102,7 +102,11 @@
 			ev.preventDefault();
 			jQuery(document).scrollTop(0);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
-		});		
+		});	
+
+    if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+      jQuery('#export_tickets').hide();
+    }	
 
   });
   
@@ -122,6 +126,12 @@
             window.localStorage['updated_ticket_list'] = script;
             setCookie('ticket_list_updated',true);
           }
+
+          if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+            jQuery('#export_tickets').hide();
+          } else {
+            jQuery('#export_tickets').show();
+          } 
 
         }
       }); 

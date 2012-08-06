@@ -36,9 +36,9 @@ jQuery(document).ready(function() {
 			},
 			show: {
 				solo: true,
-				delay: 200,
+				delay: 500,
 				effect: function(offset) {
-					jQuery(this).show("fade", 240); // "this" refers to the tooltip
+					jQuery(this).show("fade", 200); // "this" refers to the tooltip
 				}
           	}
         }); 
@@ -144,9 +144,7 @@ jQuery(document).ready(function() {
 		full_menu = selected_item.parent();
 		full_menu.addClass('loading');
 
-		parent = full_menu.data('parent');
-
-		ticket_id = parent.data('object-id');
+		ticket_id = full_menu.data('parent').data('object-id');
 		new_status = selected_item.data('status-id');
 
 		jQuery.ajax( {
@@ -180,9 +178,7 @@ jQuery(document).ready(function() {
 		full_menu = selected_item.parent();
 		full_menu.addClass('loading');
 
-		parent = full_menu.data('parent');
-
-		ticket_id = parent.data('object-id');
+		ticket_id = full_menu.data('parent').data('object-id');
 		new_priority = selected_item.data('priority-id');
 
 		jQuery.ajax( {

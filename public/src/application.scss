@@ -6068,9 +6068,17 @@ margin:10px;
 	}
 
 }
+
 #ticket-toolbar [disabled] {
-	opacity: 0.4;
+	opacity: .4;
 	cursor: default;
+	box-shadow: none;
+	background: #F5F5F5;
+	color: #3F3F3F;
+	&:hover {
+		background: #F5F5F5;
+		color: #3F3F3F;
+	}
 }
 
 /* SURVEY REPORT RELATED STYLES */
