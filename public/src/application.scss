@@ -37,7 +37,7 @@
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
 body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; 
--webkit-font-smoothing: subpixel-antialiased;
+-webkit-font-smoothing: antialiased;
 }
 
 /* Priority Color Codes */
@@ -4985,6 +4985,7 @@ a.close{
       color:#333333;
       text-decoration:none;
       position:relative;
+      @include text-shadow(#FFF 1px 1px 0);
       &.active { font-weight:bold;}      
       .icon{
          position:absolute;
@@ -6057,6 +6058,7 @@ margin:10px;
 		border:none;
 	}
 	#ticket-list-body {
+		@include text-shadow(white 1px 1px 0px);
 		background: white;
 		border: #FFF solid 1px;
 		@include corners(4px);
@@ -6074,6 +6076,7 @@ margin:10px;
 	cursor: default;
 	box-shadow: none;
 	background: #F5F5F5;
+	border-color: #DDD;
 	color: #3F3F3F;
 	&:hover {
 		background: #F5F5F5;

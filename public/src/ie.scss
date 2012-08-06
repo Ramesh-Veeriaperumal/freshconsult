@@ -125,3 +125,37 @@
 .ie6, .ie7, .ie8{
    .fd-menu{ border:1px solid #afafaf; a:hover{ background: #5469f9; } }
 }
+
+.ie6, .ie7, .ie8, .ie9{
+	.ticket-leftcol .leftFilter .item {
+		padding: 0;
+	}
+
+	.tickets .subject_style, .tickets-expanded .subject_style {
+   			font-family: "System";
+   			text-transform: uppercase;
+   			letter-spacing: 0em;
+   			font-weight: bold;
+	}
+
+	.fd-ajaxmenu {
+		border: solid 1px #DDD;
+	}
+
+	.tickets, .tickets-expanded{
+		tr, tr.even, tr.active, tr:hover {
+			td {
+				&.priority-high, &.priority-medium , &.priority-low , &.priority-urgent {
+					filter:none;
+				}
+			}
+			&.ticket-status-4, &.ticket-status-5 {
+				td {
+					&.priority-high, &.priority-medium , &.priority-low , &.priority-urgent {
+						filter:none;
+					}
+				}
+			}
+		}
+	}
+}
