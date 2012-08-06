@@ -52,7 +52,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         var id = this.ticket_id,
             formObj = this.items.items[1],
             values = formObj.getValues();
-        if(values["helpdesk_note[body_html]"].trim() != '') {
+        if(values["helpdesk_note[body]"].trim() != '') {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){

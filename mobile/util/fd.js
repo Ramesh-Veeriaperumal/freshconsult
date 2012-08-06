@@ -132,6 +132,7 @@ FD.Util = {
         item.required = field.required;
         item.value = field.nested_levels && field.field_value ? field.field_value.category_val : field.field_value;
         item.id = "helpdesk_ticket_"+field_name;
+        
         switch(field.domtype){
             case 'dropdown_blank':
                 item.options=[{text:'...',value:''}];
@@ -153,7 +154,10 @@ FD.Util = {
             case 'text':
             case 'paragraph':
                 item.xtype = 'textareafield';
-                item.height = "180px";
+                item.height = "100px";
+                if(field.field_name === 'description_html'){
+                    item.height = "300px";
+                }
                 break;
             case 'checkbox':
                 item.xtype = 'checkboxfield';

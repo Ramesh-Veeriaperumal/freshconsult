@@ -32,6 +32,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                         itemId:'noteFormCannedResponse',
                         cls:'green-icon',
                         id:'noteFormCannedResponse',
+                        hidden:true,
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -74,7 +75,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                     },
                     {
                         xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
+                        name: 'helpdesk_note[body]',
                         placeHolder:'Enter your note.. *',
                         height:800,
                         required:true,

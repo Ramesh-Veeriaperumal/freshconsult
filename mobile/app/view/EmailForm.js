@@ -56,7 +56,8 @@ Ext.define('Freshdesk.view.EmailForm', {
                         xtype: 'emailfield',
                         name: 'to_email',
                         label: 'To :',
-                        readOnly:true
+                        readOnly:true,
+                        cls:'disbaled'
                     },
                     {
                         xtype: 'hiddenfield',
@@ -101,6 +102,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                         ui:'formSubheader',
                         cls:'green-icon',
                         id:'emailFormCannedResponse',
+                        hidden:true,
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -152,7 +154,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                     // },
                     {
                         xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
+                        name: 'helpdesk_note[body]',
                         placeHolder:'Enter your message... *',
                         height:800,
                         required:true,

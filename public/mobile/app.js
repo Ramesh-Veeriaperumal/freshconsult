@@ -32105,7 +32105,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj.items.items[6].setLabel('Cc/Bcc :');
         fieldSetObj.items.items[6].reset();
         fieldSetObj.items.items[7].setHidden(true).reset();
-        fieldSetObj.items.items[10].reset();
+        fieldSetObj.items.items[9].reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;
@@ -39333,7 +39333,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         var id = this.ticket_id,
             formObj = this.items.items[1],
             values = formObj.getValues();
-        if(values["helpdesk_note[body_html]"].trim() != '') {
+        if(values["helpdesk_note[body]"].trim() != '') {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
@@ -39522,7 +39522,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         formObj = this.items.items[1],
         values = formObj.getValues(),
         privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
-        if(values["helpdesk_note[body_html]"].trim() != '') {
+        if(values["helpdesk_note[body]"].trim() != '') {
             if(FD.current_user.is_agent){
                 //Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
             }
@@ -39605,7 +39605,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                 padding:0,
                 border:0,
                 layout:'fit',
-                scrollable:true,
+                scrollable:false,
                 id:'NewticketProperties'
         };
         this.add([topToolbar,ticket_fields]);
@@ -39651,7 +39651,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
     },
     config: {
         layout:'fit',
-        scrollable:true,
+        scrollable:false,
         cls:'newTicketForm',
         id:'newTicketForm'
     }
@@ -43154,7 +43154,8 @@ Ext.define('Freshdesk.view.EmailForm', {
                         xtype: 'emailfield',
                         name: 'to_email',
                         label: 'To :',
-                        readOnly:true
+                        readOnly:true,
+                        cls:'disbaled'
                     },
                     {
                         xtype: 'hiddenfield',
@@ -43199,6 +43200,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                         ui:'formSubheader',
                         cls:'green-icon',
                         id:'emailFormCannedResponse',
+                        hidden:true,
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -43250,7 +43252,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                     // },
                     {
                         xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
+                        name: 'helpdesk_note[body]',
                         placeHolder:'Enter your message... *',
                         height:800,
                         required:true,
@@ -48829,6 +48831,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                         itemId:'noteFormCannedResponse',
                         cls:'green-icon',
                         id:'noteFormCannedResponse',
+                        hidden:true,
                         items:[
                             {
                                 itemId:'cannedResBtn',
@@ -48871,7 +48874,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                     },
                     {
                         xtype: 'textareafield',
-                        name: 'helpdesk_note[body_html]',
+                        name: 'helpdesk_note[body]',
                         placeHolder:'Enter your note.. *',
                         height:800,
                         required:true,

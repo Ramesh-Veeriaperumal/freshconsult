@@ -298,7 +298,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         fieldSetObj.items.items[6].setLabel('Cc/Bcc :');
         fieldSetObj.items.items[6].reset();
         fieldSetObj.items.items[7].setHidden(true).reset();
-        fieldSetObj.items.items[10].reset();
+        fieldSetObj.items.items[9].reset();
         if(!FD.current_account){
             location.href="#tickets/show/"+id;
             return;
