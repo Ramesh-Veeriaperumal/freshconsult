@@ -1,12 +1,16 @@
 class Support::RegistrationsController < SupportController
   
   before_filter { |c| c.requires_feature :signup_link }
-  before_filter :chk_for_logged_in_usr
+  # before_filter :chk_for_logged_in_usr
   
-  def chk_for_logged_in_usr
-    if logged_in?
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    end
+  # def chk_for_logged_in_usr
+  #   if logged_in?
+  #     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+  #   end
+  # end
+
+  def new
+    @signup_form = render_to_string :partial => "form"
   end
   
   def create

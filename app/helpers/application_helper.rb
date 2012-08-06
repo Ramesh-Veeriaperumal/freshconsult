@@ -47,7 +47,7 @@ module ApplicationHelper
   end
   
   def show_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
+    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
   
   def show_admin_flash

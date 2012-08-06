@@ -40,14 +40,13 @@
   map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
   map.gauth '/opensocial/google', :controller => 'user_sessions', :action => 'opensocial_google'
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
-  map.login '/login', :controller => 'user_sessions', :action => 'new'
-  map.support_login '/support/login', :controller => 'support', :action => 'new'
+  map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
   map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
  
   # To be removed after Portal customisation developement is done
-  # map.login '/liquid_list', :controller => 'home', :action => 'liquid_list'
+  map.liquid_list '/liquid_list', :controller => 'home', :action => 'liquid_list'
 
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
@@ -288,19 +287,23 @@
     solution.resources :articles, :only => :show         
   end
 
+  # Support Portal routes #
+  map.support_login '/support/login', :controller => 'support', :action => 'new'
+  
   map.namespace :support do |support|
     support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     support.resources :company_tickets
-    support.resources :registrations
+    support.resource :registration, :only => [:new]        
+    support.resource :profile, :only => [:edit, :update]
 
     support.resources :discussions, :only => [:index, :show]
     support.namespace :discussions do |discussion|
       discussion.resources :forums, :only => [:show] do |forum|
-        forum.resources :topics, :only => [:new]
+        forum.resources :topics, :only => [:new, :create]
       end 
-      discussion.resources :topics, :except => [:index, :new]
+      discussion.resources :topics, :except => [:index, :new, :create]
     end
 
     support.resources :solutions, :only => [:index, :show]

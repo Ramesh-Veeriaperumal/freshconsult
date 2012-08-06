@@ -28,6 +28,9 @@ class Portal < ActiveRecord::Base
   belongs_to :solution_category, :class_name => 'Solution::Category',
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
+
+  has_many :portal_forums, :through => :forum_category , :conditions => { :forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone] } 
+  has_many :portal_topics, :through => :portal_forums
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr

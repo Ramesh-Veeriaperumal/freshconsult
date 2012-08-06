@@ -690,9 +690,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
-
-    Helpdesk::TicketDrop.new self
-    
+    Helpdesk::TicketDrop.new self    
   end
 
   def url_protocol

@@ -5,7 +5,7 @@ class Support::TicketsController < SupportController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
-  before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
+  before_filter :require_user_login , :only => [:index, :filter, :close_ticket, :update]
   before_filter :load_item, :only =>[:update]
   before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
   
@@ -14,6 +14,8 @@ class Support::TicketsController < SupportController
   def index
     @page_title = t('helpdesk.tickets.views.all_tickets')
     build_tickets
+    @ticket_filters = render_to_string :partial => "/support/shared/filters"
+    @tickets_list = render_to_string :partial => "/support/shared/tickets"        
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }

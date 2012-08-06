@@ -1,4 +1,4 @@
-class Support::CompanyTicketsController < ApplicationController
+class Support::CompanyTicketsController < SupportController
   
   include SupportTicketControllerMethods 
   before_filter { |c| c.requires_permission :portal_request }
@@ -11,8 +11,10 @@ class Support::CompanyTicketsController < ApplicationController
   before_filter :verify_permission
   
   def index    
-    @page_title = t('helpdesk.tickets.views.all_tickets')
+    @page_title = t('helpdesk.tickets.views.all_tickets') + " inside " + current_user.customer.name
     build_tickets
+    @ticket_filters = render_to_string :partial => "/support/shared/filters"
+    @tickets_list = render_to_string :partial => "/support/shared/tickets"    
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }

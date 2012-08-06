@@ -1,43 +1,53 @@
-
-<% form_for @topic, { :action => "create", :controller => "support/discussions/topics" } , :html => {:multipart => true, :id => "post-form"} do |form| -%>
+<% form_for @topic, :url => support_discussions_forum_topics_path(@forum), 
+					:html => { :multipart => true, :class => "form-horizontal" } do |form| -%>
 <%= include_tiny_mce_if_needed %>
-<ul class="ui-form">
-	<li>
-		<label for="topic_title"><%= t('topic.name') %>*</label>
-		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %></div>
-	</li>	 
-	<li>
-		<label for="topic_body"><%= t('message') %></label>
-		<% if @topic.new_record? %>
-			<%= form.text_area  :body_html, :class => "mceEditor", :id => 'topic_body' %>
-		<% else %>
-			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
-		<% end %>
-	</li>
-	<% if admin? and not @topic.new_record? %>
-		<li id="topic_forum_id">
-	  		<label for="topic_forum_id"><%= t('forum.title') %></label>
-	  		<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
-		</li>
-	<% end %>
-	<li class="inlineChecklist">
-		<% if admin? or current_user.moderator_of?(@topic.forum) %>
-			<label>
-				<%= form.check_box :sticky %> <%= t('topic.sticky') %>
-			</label>
-			<label>
-				<%= form.check_box :locked %> <%= t('topic.locked') %>
-			</label>
-		<% end %>
-		<% if ["new"].include? params[:action] %>
-			<label id="monitor-topic-lable">
-				<%=check_box_tag 'monitor', '',true%> Monitor this topic
-			</label>
-		<%end%>
-	</li>	  
-	<li>
-		<%= render :partial=> "/forum_shared/attachment_form" %>
-	</li>
+<fieldset>
+	<div class="control-group">
+		<label class="control-label" for="topic_title"><%= t('topic.name') %>*</label>
+		<div class="controls">
+			<%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %>
+		</div>
+	</div> 
+	<div class="control-group">
+		<label class="control-label" for="topic_body"><%= t('message') %></label>
+		<div class="controls">
+			<% if @topic.new_record? %>
+				<%= form.text_area  :body_html, :class => "mceEditor", :id => 'topic_body' %>
+			<% else %>
+				<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
+			<% end %>
+		</div>
+	</div>	
+	<div class="control-group">
+		<div class="controls">
+			<% if ["new"].include? params[:action] %>
+				<label class="checkbox" id="monitor-topic-lable"><%= check_box_tag 'monitor', '', true %> Monitor this topic</label>
+			<%end%>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Attach files</label>	
+		<% attach_id = attach_id || "post" %>
+		<div class="controls">
+			<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+			<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+			  <div id="<%=attach_id%>-attachments"></div>
+			</div>
+		</div>	
+
+		<%# 
+		  The following is a template used by multifile.js to create rows in
+		  the attachments table.
+		 %>
+					
+		<script id="file-list-template" type="text/x-jquery-tmpl">			
+		  <div class="item">
+		  	<span>
+		  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
+			</span>
+		  </div>
+		</script>
+	</div>
 	
 	<% unless @topic.new_record? %>
 	<div class="attachment-list-container">
@@ -50,32 +60,9 @@
 	    </table>
 	  </div>
 	<%end%>
-</ul>
-
-<% javascript_tag do %>
-	jQuery("#topic_locked").click(function(ev){
-		jQuery("#monitor-topic-lable").toggle(!this.checked);
-	});
-	jQuery("#monitor-topic-lable").toggle(!jQuery("#topic_locked").checked);
+</fieldset>
+<div class="form-actions">
+	<input type="submit" class="btn btn-primary" value="Submit" />		
+</div>
 <% end %>
-
-<script id="file-list-template" type="text/x-jquery-tmpl">			
-  <tr>
-    <td class="remove">
-      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">
-        <%= image_tag("helpdesk/delete.png") %>
-      </a>
-    </td>
-    <td class="name">${name}</td>
-    <td>
-      <label>Description</label>
-      <input type="text" name="helpdesk_article[attachments][][description]" />
-    </td>
-    </tr>
-</script>
-<div class="button-container">
-		<input type="submit" class="btn btn-primary" value="Submit" />		
-	</div>
-	<%= javascript_tag "$('topic_title').focus();" %>
-
-<% end %>
+<%= javascript_include_tag "helpdesk/multifile.js" %>

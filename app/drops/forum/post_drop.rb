@@ -8,6 +8,10 @@ class Forum::PostDrop < BaseDrop
     super source
   end
 
+  def created_on
+    source.created_at
+  end
+
   def user
   	source.user
   end

@@ -1,6 +1,10 @@
-{{ header_content }}  
+<header class="header">
+	<section class="container">
+		{{ header_content }}  
+	</section>
+</header>
 <header class="portal-nav">
-	<div class="wrapper">
+	<div class="container">
 		<div class="pull-right">
 			<div class="well top-submit-btn">
 				<button class="btn btn-ticket" type="button"><i class='icon-file'></i> Submit a ticket </button>
@@ -17,18 +21,24 @@
 </header>
 <section id="support-portal" class="container">
 	<div class="page-container">
+		{{show_flash}}
 		<div class="row-fluid">			
 	  		<div class="span9">
 	  			<div class="page-body">
 	  				{{ content_for_layout }}
 	  			</div>
 	  		</div>	  		
-	  		<div class="span3">
+	  		<div class="span3 sidebar">
 	  			<div class="page-node">
+	  				{{ content_for_sidebar }}
 	  				Call us @ 888 888 888
 	  			</div>
 	  		</div>
 	  	</div>
   	</div> 
 </section>
-{{ footer_content }}
+<footer class="footer container">	
+	<section class="footer-content">
+		{{ footer_content }}
+	</section>
+</footer>

@@ -1,0 +1,19 @@
+<div class="subnav">
+ 	<ul class="nav nav-pills">
+ 		<li><%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets", :class => "first" ) %></li>
+		<li><%= link_to(t('open_tickets'),"/support/tickets/filter/open_or_pending" ) %></li>
+		<li><%= link_to(t('resolved_tickets') ,"/support/tickets/filter/resolved_or_closed" ) %></li>
+		<% unless current_user.customer.users.empty? %>
+		<li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tickets created by <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            	<% current_user.customer.users.each do |contact|%>
+					<li>
+						<%= link_to(contact.name ,"/support/company_tickets/requester/#{contact.id}" ) %>
+					</li>	
+				<% end %>
+			</ul>
+        </li>
+        <% end %>
+	</ul>
+ </div>

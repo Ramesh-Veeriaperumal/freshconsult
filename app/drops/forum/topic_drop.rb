@@ -20,12 +20,24 @@ class Forum::TopicDrop < BaseDrop
   	source.user
   end
 
+  def created_on
+    source.created_at.to_s(:long_day)
+  end
+
   def has_comments
   	(source.posts_count > 1) ? true : false
   end
 
+  def first_post
+    source.posts.first
+  end
+
   def last_post
   	source.last_post
+  end
+
+  def posts
+    source.posts
   end
   
   def url

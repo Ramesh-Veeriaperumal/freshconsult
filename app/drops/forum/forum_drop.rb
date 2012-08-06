@@ -15,6 +15,12 @@ class Forum::ForumDrop < BaseDrop
   def type
     source.forum_type
   end
+
+  # This is mainly used to hide "Start a topic button" in announcements forums
+  # Can be extended to be used if we are giving permissions to users
+  def users_can_start_topic
+    !source.announcement?
+  end
   
   def visibility
     source.forum_visibility

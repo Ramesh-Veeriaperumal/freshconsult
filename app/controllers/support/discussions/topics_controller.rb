@@ -1,16 +1,16 @@
 class Support::Discussions::TopicsController < SupportController
-  before_filter :find_forum_and_topic, :except => :index 
+  before_filter :find_forum_and_topic, :only => :show
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
   end
   
-  before_filter :only => [:update_stamp,:remove_stamp,:destroy] do |c| 
+  before_filter :only => [:update_stamp, :remove_stamp, :destroy] do |c| 
     c.requires_permission :manage_forums
   end
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission,:only => [:edit,:update] 
+  before_filter :check_user_permission, :only => [:edit, :update] 
   
   before_filter :set_selected_tab
   
@@ -39,7 +39,9 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def new
-    @topic = Topic.new
+    @forum = forum_scoper.find(params[:forum_id])
+    @topic = @forum.topics.new
+    @topic_form = render_to_string :partial => "form"
   end
   
   def show    
@@ -51,8 +53,9 @@ class Support::Discussions::TopicsController < SupportController
         (session[:topics] ||= {})[@topic.id] = Time.now.utc if logged_in?
         # authors of topics don't get counted towards total hits
         @topic.hit! unless logged_in? and @topic.user == current_user
+        @page_title = @topic.title
         @posts = @topic.posts.paginate :page => params[:page]
-        @post   = Post.new
+        @post = Post.new
       end
       format.xml do
         render :xml => @topic.to_xml(:include => :posts)
@@ -69,6 +72,7 @@ class Support::Discussions::TopicsController < SupportController
   
   def create
     topic_saved, post_saved = false, false
+    @forum = scoper.find(params[:forum_id])
     # this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
       @topic  = @forum.topics.build(topic_param)
@@ -87,7 +91,7 @@ class Support::Discussions::TopicsController < SupportController
       @topic.monitorships.create(:user_id => current_user.id,:active => true) if params[:monitor] 
       create_attachments  
       respond_to do |format| 
-        format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+        format.html { redirect_to support_discussions_topic_path(@topic) }
         format.xml  { render  :xml => @topic }
       end
   else
@@ -203,17 +207,21 @@ end
     end
     
     def find_forum_and_topic
-      @forum = scoper.find(params[:forum_id])
-      @forum_category = @forum.category
+      @topic = scoper.find_by_id(params[:id])
+      @forum = @topic.forum
+      @forum_category = @forum.forum_category
 
-      wrong_portal unless(main_portal? || (params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
+      wrong_portal unless(main_portal? || (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
         raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
-      @topic = @forum.topics.find(params[:id]) if params[:id]
     end
 
     def scoper
-      current_account.forums
+      current_account.portal_topics
+    end
+
+    def forum_scoper
+      current_account.portal_forums
     end
     
     def set_selected_tab

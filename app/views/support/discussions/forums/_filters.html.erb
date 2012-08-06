@@ -1,4 +1,3 @@
-<%= topic_filters %>
 <li class="<%= (params[:stamp_type].blank? && params[:order].blank?) ? 'active' : '' %>">
 	<%= link_to(t("forums_order.popular"), support_discussions_forum_path(@forum) ) if @forum.ideas? %>    
 </li>  

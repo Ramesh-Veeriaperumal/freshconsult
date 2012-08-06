@@ -1,0 +1,29 @@
+<ul class="content-list">
+	<% @tickets.each do |ticket| %>
+		<li class="<%= cycle('odd', 'even') %>">
+			<div class="user-pic-thumb">
+				<%= user_avatar(ticket.requester) %>
+			</div>
+			<span class="pull-right label"><%= ticket.status_name %></span>
+		    <h4 class="ellipsis">
+		      	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", support_ticket_path(ticket), :title => truncate(ticket.description, 350, "...")) %> 
+		    </h4>
+				
+			<% content_tag :p, :class => "help-text" do %>
+				<% unless ticket.requester.nil? %>
+					<strong><%= h(ticket.requester.display_name) %></strong> via <%= ticket.source_name.downcase %>,
+			  		on <%= ticket.created_at.to_s(:long_day) %>
+			  		<%#= t("ticket.reported_on", :username => h(ticket.requester.display_name), :date => ticket.created_at.to_s(:long_day)) %>
+			  	<% end %>
+			  	<% unless ticket.freshness == :new %>
+			  		<br />
+			  		Assigned to: <strong><%= h(ticket.responder.display_name)%></strong>
+			  	<% end %>
+			<% end %>
+		</li>
+	<% end %>
+</ul>   
+<%= t("helpdesk.tickets.views.no_tickets") if @tickets.blank? %>
+ <div class="toolbar">
+    <%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  
+ </div>
