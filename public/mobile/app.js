@@ -32088,6 +32088,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         if(FD.current_user.is_agent && !autoTechStore.isLoaded()){
             autoTechStore.load();
         }
+        formObj.items.items[0].items.items[2].setValue('');
         formObj.items.items[0].items.items[4].setValue('');
     },
     initReplyForm : function(id){
