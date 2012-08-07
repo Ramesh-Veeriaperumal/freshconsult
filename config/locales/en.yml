@@ -1404,7 +1404,7 @@ en:
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_words} ago </span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_words} ago </span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_words} ago </span>"
-    ticket_list_status_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_words} ago </span>"
+    ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_words} ago </span>"
     ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize'>%{time_words} ago </span>"
     thanks: Thank you for submitting a feedback
     group: Group

@@ -3328,6 +3328,7 @@ div.addReminder{
 		line-height: 16px;
 		background:url('/images/ticket_list_bg.png') repeat #FFF;
 		border-bottom:1px solid #EEE;
+		vertical-align: middle;
 		a{
 			text-decoration:none;
 			color:#5a8ec1; 
@@ -3397,10 +3398,9 @@ div.addReminder{
 			.status-source {
 				text-align: right;
 				background-position:top right;
-		   		min-width: 30px;
-		   		min-height: 36px;
-				padding: 20px 30px 0 0;
-		   		font-family: "Silkscreen";
+		   		width: 30px;
+		   		height: 36px;
+				padding: 20px 0 0;
 		   		&.source-detailed-portal {
 		   			background-image: url('/images/sources/detailed_web.png');
 		   			background-repeat: no-repeat;
@@ -3439,7 +3439,7 @@ div.addReminder{
 		   	}
 
 		   	&.source-icon {
-		   		width:120px;
+		   		width:30px;
 		   		vertical-align: middle;
 		   	}
 		}
@@ -3493,7 +3493,8 @@ div.addReminder{
 		-webkit-font-smoothing: none;
 		display:inline-block;
 		white-space:nowrap;
-
+   		font-family: "Silkscreen";
+   		
 		@include text-shadow(-1px  -1px 0 rgba(255,255,255,0.7));
 
 		&.customer_responded {
