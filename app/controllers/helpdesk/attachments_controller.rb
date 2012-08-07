@@ -67,7 +67,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
-        return true if current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email))
+        return can_download?
   
       # Is the attachment on a solution  If so, it's always downloadable.
       
@@ -79,4 +79,9 @@ class Helpdesk::AttachmentsController < ApplicationController
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
     end
   
+    def can_download?
+          current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) 
+            || (current_user.client_manager?  && ticket.requester.customer == current_user.customer))
+    end
+
 end
