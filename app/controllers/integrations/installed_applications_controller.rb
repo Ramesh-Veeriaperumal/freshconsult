@@ -53,14 +53,15 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     redirect_to :controller=> 'applications', :action => 'index'
   end
   
-  def configure
+  def edit
     if @installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
       redirect_to :controller=> 'applications', :action => 'index'
-    else
+    elsif @installed_application.application.system_app?
       @installing_application = @installed_application.application
-      @installed_application.configs[:inputs][:password.to_s] = '' unless @installed_application.configs[:inputs][:password.to_s].blank?
-      return @installing_application
+      @installed_application.configs_password = '' unless @installed_application.configs_password.blank?
+    else
+      render "integrations/applications/edit"
     end
   end
   
@@ -101,7 +102,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
     def load_object
       if params[:action] == "install"
-        @installing_application = Integrations::Application.find(params[:id])
+        @installing_application = Integrations::Application.available_apps(current_account.id).find(params[:id])
         @installed_application = current_account.installed_applications.find_by_application_id(@installing_application)
       else
         @installed_application = current_account.installed_applications.find(params[:id])

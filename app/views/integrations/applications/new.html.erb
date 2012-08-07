@@ -1,0 +1,8 @@
+<%= content_tag (:h3, t('integrations.custom_application.label') + " " + t("settings"), :class => "title") %>
+<%form_for @application, :html => {:multipart => true, :id => "custom_application_install" } do |f| %>
+  <%= render :partial => "custom_application_form", :locals => { :is_edit => false } %>
+  <div class="button-container">
+    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "uiButton floatl" %>
+    <%= f.submit t('integrations.custom_application.form.create_n_enable'), :class => "uiButton special" %>
+  </div>
+<% end %>

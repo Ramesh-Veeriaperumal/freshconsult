@@ -519,7 +519,7 @@ en:
       install:
         success: "The Addon has been enabled successfully!"
         error: "Error in enabling the Addon."
-      configure:
+      update:
         success: "The Addon has been updated successfully!"
         error: "Error in configuring the Addon."
       not_installed: "This addon is not yet installed."
@@ -2075,7 +2075,7 @@ en:
         password: "Password"
     salesforce:
       label: "Salesforce"
-      desc: "You can view contact information from Salesforce in Freshdesk."
+      desc: "You can view contact information from Salesforce crm in Freshdesk."
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
@@ -2116,6 +2116,17 @@ en:
         account_key: "Account Key"
         account_key_info: "Request your Account Key from Workflow Max support and paste the same here."
         widget_title: "Widget Title"
+    custom_application:
+      name: "Name"
+      description: "Description"
+      script: "Script"
+      label: "Custom Addon"
+      desc: "You can add a custom widget to display any detail using your own custom script."
+      helptext: "### Helptext goes here. ###"
+      form:
+        widget_title: "Addon Name"
+        widget_script: "Widget code snippet"
+        create_n_enable: "Create and Enable"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

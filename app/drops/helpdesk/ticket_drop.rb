@@ -85,4 +85,8 @@ class Helpdesk::TicketDrop < BaseDrop
 		Survey.satisfaction_survey_html(@source)
 	end
 
+	def custom_field
+		@source.custom_field  # For performance reasons, load_flexifield needs to be called by each implementation separately to use this liquid.
+	end
+
 end

@@ -65,8 +65,8 @@
   map.resources :password_resets, :except => [:index, :show, :destroy]
   map.resources :sso, :collection => {:login => :get, :facebook => :get}
   map.namespace :integrations do |integration|
-    integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
-    integration.resources :applications, :member =>{:show => :get}
+    integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
+    integration.resources :applications
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}

@@ -2,10 +2,10 @@ class Integrations::ApplicationsController < Admin::AdminController
 
   include Integrations::AppsUtil
   include Integrations::SalesforceUtil
-
+  before_filter :load_object, :only => [:show, :edit, :update, :destroy]
 
   def index
-    @applications = Integrations::Application.find(:all, :order => :listing_order)
+    @applications = Integrations::Application.available_apps(current_account).order(:listing_order)
     @installed_applications = get_installed_apps
   end
 
@@ -31,8 +31,43 @@ class Integrations::ApplicationsController < Admin::AdminController
     redirect_to :controller=> 'applications', :action => 'index'
   end
 
-  def show
-    @installing_application = Integrations::Application.find(params[:id])
+  def new
+    @application = Integrations::Application.example_app
   end
 
+  def destroy
+    @installing_application.destroy
+    redirect_to :controller=> 'applications', :action => 'index'
+  end
+
+  def update
+    application_params = params[:application]
+    unless application_params.blank?
+      widget_script = application_params.delete(:script)
+      view_pages = application_params.delete(:view_pages)
+      @installing_application.update_attributes(application_params)
+      wid = @installing_application.widgets[0]
+      wid.script = widget_script
+      wid.display_in_pages_option = view_pages
+      wid.save!
+      flash[:notice] = t(:'flash.application.update.success')
+    end
+    redirect_to :controller=> 'applications', :action => 'index'
+  end
+
+  def create
+    application_params = params[:application]
+    unless application_params.blank?
+      widget_script = application_params.delete(:script)
+      view_pages = application_params.delete(:view_pages)
+      Integrations::Application.create_and_install(application_params, widget_script, view_pages, current_account)
+      flash[:notice] = t(:'flash.application.install.success')   
+    end
+    redirect_to :controller=> 'applications', :action => 'index'
+  end
+
+  private
+    def load_object
+     @installing_application = Integrations::Application.available_apps(current_account).find(params[:id])
+    end
 end

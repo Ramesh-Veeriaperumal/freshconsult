@@ -24,7 +24,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
   private
   	def delete_google_accounts
-	    if self.application.name == "google_contacts"
+	    if !self.application.blank? and self.application.name == "google_contacts"
 	      Rails.logger.info "Deleting all the google accounts corresponding to this account."
 	      Integrations::GoogleAccount.destroy_all ["account_id = ?", self.account]
 	    end

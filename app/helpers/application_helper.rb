@@ -381,15 +381,18 @@ module ApplicationHelper
       return ""
     else
       widget = installed_app.application.widgets[0]
-      # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
-      replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
-      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+      widget_script(installed_app, widget, liquid_objs)
     end
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "")
-    
+  def widget_script(installed_app, widget, liquid_objs)
+    # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+    replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
+    replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
+    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+  end
+
+  def construct_ui_element(object_name, field_name, field, field_value = "")    
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
