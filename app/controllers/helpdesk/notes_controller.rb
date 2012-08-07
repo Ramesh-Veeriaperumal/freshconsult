@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include ParserUtil
   
   before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
-  before_filter :set_mobile, :only => [:create]
+  before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 

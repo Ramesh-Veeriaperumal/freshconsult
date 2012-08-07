@@ -77,7 +77,7 @@ module Mobile::MobileHelperMethods
 
     def prepare_mobile_note
       if mobile?
-        formate_body_html
+        # formate_body_html
         populate_private
       end 
     end
