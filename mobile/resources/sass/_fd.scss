@@ -843,13 +843,13 @@ a {
 						a.reply {
 							position: relative;
 							top: -3px;
-							left: 14%;
+							left: 5%;
 						}
 						span{
 							font-size: 16px;
 							vertical-align: middle;
 							position: relative;
-							left: 45%;
+							left: 35%;
 							top: -12px;
 						}
 					}
@@ -858,17 +858,43 @@ a {
 							float: left;
 							position: relative;
 							top: -3px;
-							/*left:-34px;*/
+							left:-26px;
 						}
 						span{
 							font-size: 16px;
 							vertical-align: middle;
 							position: relative;
-							left: -15%;
+							left: -28%;
 							top: 4px;
 						}
 					}
 					width:50%;
+					vertical-align: bottom;
+					a{
+						width:4em;
+						margin:0 0%;
+						display:inline-block;
+					}
+				}
+				&.full{
+					border-right:0px solid #dbdcdd;
+					@include box-shadow( #fff 0 0 0 );
+					&:first-child{
+						text-align: left;
+						a.reply {
+							position: relative;
+							top: -3px;
+							left: 5%;
+						}
+						span{
+							font-size: 16px;
+							vertical-align: middle;
+							position: relative;
+							left: 35%;
+							top: -12px;
+						}
+					}
+					width:100%;
 					vertical-align: bottom;
 					a{
 						width:4em;
@@ -895,8 +921,10 @@ a {
 					speak: none;
 					&.automation
 					{
+						position: relative;
+						bottom: -5px;
 						&:before {
-							content: '\59';
+							content: '\f0d0';
 						}
 					}
 					&.chat {
@@ -920,6 +948,8 @@ a {
 						}
 					}
 					&.trash {
+					position: relative;
+					bottom: -5px;
 						&:before {
 							content: '\f014';
 						}
