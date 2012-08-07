@@ -1037,6 +1037,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def assign_email_config
+      assign_schema_less_attributes unless schema_less_ticket
       if schema_less_ticket.changed.include?("product_id")
         if product
           self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      
