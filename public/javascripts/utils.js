@@ -184,21 +184,19 @@ function setCaretToPos(input, pos) {
   setSelRange(input, pos, pos);
 }
 
-function construct_reply_url(to_email, account_name){
+function construct_reply_url(to_email, account_full_domain){
    email_split  = to_email.split("@");
    email_name   = email_split[0]||'';
    email_domain = email_split[1]||'';
-   if(email_domain !== ''){
-      email_domain = email_domain.split(".")[0];
-   }
-   account_name = account_name.toLowerCase();
-   reply_email  = "@"+account_name;
 
-   if(email_domain.toLowerCase() == account_name){
+   account_full_domain = account_full_domain.toLowerCase();
+   reply_email  = "@"+account_full_domain;
+
+   if(email_domain.toLowerCase() == account_full_domain){
       reply_email = email_name + reply_email;		
    }
    else{
-      reply_email = email_domain + email_name + reply_email;
+      reply_email = email_domain.replace(/\./g,'') + email_name + reply_email;
    }
    return reply_email;
 }

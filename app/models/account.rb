@@ -2,7 +2,6 @@ class Account < ActiveRecord::Base
   require 'net/dns/resolver'
   require 'net/http' 
   require 'uri' 
-  require 'thirdcrm'
 
   #rebranding starts
   serialize :preferences, Hash
@@ -14,36 +13,44 @@ class Account < ActiveRecord::Base
   has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
   has_many :flexifields, :dependent => :delete_all
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
+  has_many :schme_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :delete_all
   
-  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
+  has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
-  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
-  has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }, :order => "name"
+  has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
+  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
+  has_many :products, :order => "name"
   has_many :portals
+  has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
+
+  accepts_nested_attributes_for :primary_email_config
+  accepts_nested_attributes_for :main_portal
+
+
   has_many :survey_results
   has_many :survey_remarks
-  has_one  :main_portal, :source => :portal, :through => :primary_email_config
-  accepts_nested_attributes_for :main_portal
+  has_one  :subscription_plan, :through => :subscription
+
+  has_one :conversion_metric
+
+  accepts_nested_attributes_for :conversion_metric
  
-  has_many :features,:dependent => :destroy
-  has_many :flexi_field_defs, :class_name => 'FlexifieldDef', :dependent => :destroy
+  has_many :features
+  has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
   
-  has_one :data_export,:dependent => :destroy
+  has_one :data_export
   
-  has_one :email_commands_setting,:dependent => :destroy
-  has_one :conversion_metric,:dependent => :destroy
+  has_one :account_additional_settings
   
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :conditions => ['description = ?', 'logo' ],
-    :dependent => :destroy
+    :conditions => ['description = ?', 'logo' ]
   
   has_one :fav_icon,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :conditions => ['description = ?', 'fav_icon' ],
-    :dependent => :destroy
+    :conditions => ['description = ?', 'fav_icon' ]
     
   #rebranding ends 
 
@@ -57,32 +64,33 @@ class Account < ActiveRecord::Base
   #
   authenticates_many :user_sessions
   
-  has_many :attachments, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
+  has_many :attachments, :class_name => 'Helpdesk::Attachment'
   
-  has_many :users, :dependent => :destroy, :conditions =>{:deleted =>false}, :order => :name
-  has_many :all_users , :class_name => 'User', :dependent => :destroy
+  has_many :users, :conditions =>{:deleted =>false}, :order => :name
+  has_many :all_users , :class_name => 'User'
   
   has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
   has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
   has_many :all_admins, :class_name => "User", :conditions => ["user_role in (?,?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:account_admin],false] ,:order => "name desc"
   
-  has_one :subscription, :dependent => :destroy
+  has_one :subscription
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy, :order => "position"
+  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders,:order => "position"
   has_many :solution_articles , :class_name =>'Solution::Article'
   
-  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication', :dependent => :destroy
-  has_many :customers, :dependent => :destroy
+  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+  has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
   has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
-  has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
-  
+  has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
+  has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
+
   #Scoping restriction for other models starts here
-  has_many :account_va_rules, :class_name => 'VARule', :dependent => :destroy
+  has_many :account_va_rules, :class_name => 'VARule'
   
   has_many :va_rules, :class_name => 'VARule', :conditions => { 
     :rule_type => VAConfig::BUSINESS_RULE, :active => true }, :order => "position"
@@ -98,11 +106,11 @@ class Account < ActiveRecord::Base
   
   
   
-  has_many :email_notifications, :dependent => :destroy
-  has_many :groups, :dependent => :destroy
-  has_many :forum_categories, :dependent => :destroy, :order => "position"
+  has_many :email_notifications
+  has_many :groups
+  has_many :forum_categories, :order => "position"
   
-  has_one :business_calendar, :dependent => :destroy
+  has_one :business_calendar
   
   
   has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
@@ -115,38 +123,43 @@ class Account < ActiveRecord::Base
   has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5
  
   
-  has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer', :dependent => :destroy
-  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :dependent => :destroy, 
+  has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
+  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
-  
-  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy , :order => 'title' 
-  has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
 
-  has_many :facebook_pages, :class_name =>'Social::FacebookPage' ,:dependent => :destroy
+  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :facebook_posts, :class_name =>'Social::FbPost' ,:dependent => :destroy
+  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
+  has_many :user_accesses , :class_name =>'Admin::UserAccess' 
+
+  has_many :facebook_pages, :class_name =>'Social::FacebookPage' 
   
-  has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' , :dependent => :destroy 
+  has_many :facebook_posts, :class_name =>'Social::FbPost' 
+  
+  has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' 
   
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
-  has_many :tweets, :class_name =>'Social::Tweet'  , :dependent => :destroy
+  has_many :tweets, :class_name =>'Social::Tweet'  
   
-  has_one :survey, :dependent => :destroy
-  has_many :scoreboard_ratings, :dependent => :destroy
+  has_one :survey
+  has_many :scoreboard_ratings
   has_many :survey_handles, :through => :survey
 
-  has_one :day_pass_config, :dependent => :destroy
-  has_many :day_pass_usages, :dependent => :destroy
-  has_many :day_pass_purchases, :dependent => :destroy, :order => "created_at desc"
+  has_one :day_pass_config
+  has_many :day_pass_usages
+  has_many :day_pass_purchases, :order => "created_at desc"
   
-  has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
+  has_one :data_import,:class_name => 'Admin::DataImport' 
 
   
-  has_many :tags, :class_name =>'Helpdesk::Tag', :dependent => :destroy
+  has_many :tags, :class_name =>'Helpdesk::Tag'
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
   has_many :support_scores, :class_name => 'SupportScore'
+
+  delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
+
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -178,11 +191,8 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
-  after_create :add_to_crm,:add_affiliate_information
   after_update :update_users_language
   
-  before_destroy :update_google_domain
-    
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
               :joins => [:subscription]
@@ -230,8 +240,9 @@ class Account < ActiveRecord::Base
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
-  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true,
-    :survey_links => true, :scoreboard_enable => true, :google_signin => true, :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false}
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
+    :anonymous_tickets =>true, :survey_links => true, :scoreboard_enable => true, :google_signin => true,
+    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
     
   
   has_features do
@@ -340,6 +351,11 @@ class Account < ActiveRecord::Base
   end
   #HD hack ends..
   
+  def support_emails
+    to_ret = email_configs.collect { |ec| ec.reply_email }
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+  end
+
   def portal_name #by Shan temp.
     main_portal.name
   end
@@ -387,6 +403,10 @@ class Account < ActiveRecord::Base
     ticket_fields.type_field.first.picklist_values
   end
   
+  def ticket_status_values
+    ticket_statuses.visible
+  end
+  
   def has_multiple_products?
     !products.empty?
   end
@@ -400,9 +420,43 @@ class Account < ActiveRecord::Base
   end
 
   def pass_through_enabled?
-    email_commands_setting.pass_through_enabled
+    pass_through_enabled
   end
 
+  def to_mob_json(deep=false)
+    json_include = {
+      :main_portal => {
+        :only => [ :name, :preferences ],
+        :methods => [ :logo_url, :fav_icon_url ]
+      },
+      :subscription => {
+        :methods => [:is_paid_account]
+      }
+    }
+    options = {
+      :only => [:name],
+    }
+    if deep
+      json_include.merge!({
+        :canned_responses => {
+          :methods => [ :my_canned_responses ],
+          :only => [ :title, :id ]
+        },
+        :scn_automations =>{
+          :only => [ :id, :name ]
+        },
+        :twitter_handles => {
+          :only => [ :id, :screen_name ]
+        }
+      })
+      options.merge!({
+        :methods => [ :reply_emails, :bcc_email ],
+      })
+    end
+    options[:include] = json_include;
+    to_json options
+  end
+  
   protected
   
     def valid_domain?
@@ -504,15 +558,6 @@ class Account < ActiveRecord::Base
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
     
-    def add_to_crm
-      send_later(:add_to_internal_capsule)
-    end
-    
-    def add_to_internal_capsule
-      crm = ThirdCRM.new
-      crm.add_signup_data(self)
-    end
-    
     def create_admin
       self.user.active = true  
       self.user.account = self
@@ -525,6 +570,8 @@ class Account < ActiveRecord::Base
     def create_portal
       self.primary_email_config.account = self
       self.primary_email_config.save
+      self.main_portal.account = self
+      self.main_portal.save
     end
 
     def populate_seed_data
@@ -535,18 +582,9 @@ class Account < ActiveRecord::Base
       SubscriptionNotifier.send_later(:deliver_welcome, self) unless google_domain.blank?
     end
     
-    def update_google_domain
-     self.update_attribute(:google_domain, nil)
-    end
-    
-    def subscription_next_renewal_at
+   def subscription_next_renewal_at
        subscription.next_renewal_at
    end
-   
-   def add_affiliate_information
-    SubscriptionAffiliate.add_affiliate(self)
-   end
-   
-   
-  
+
+
 end

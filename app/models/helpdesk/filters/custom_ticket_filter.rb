@@ -1,6 +1,7 @@
 class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   include Search::TicketSearch
+  include Helpdesk::Ticketfields::TicketStatus
   
   attr_accessor :query_hash 
   
@@ -14,16 +15,26 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     { "condition" => "spam", "operator" => "is", "value" => input}
   end
 
+  def on_hold_filter
+    [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::onhold_statuses(Account.current)).join(',')},
+      { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
+  
+  def unresolved_filter
+    [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::unresolved_statuses(Account.current)).join(',')},
+      { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
+
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
                       "deleted" =>  [spam_condition(false),deleted_condition(true)],
                       "overdue" =>  [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},spam_condition(false),deleted_condition(false) ],
-                      "on_hold" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]},spam_condition(false),deleted_condition(false)],
-                      "open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},spam_condition(false),deleted_condition(false)],
+                      "pending" => [{ "condition" => "status", "operator" => "is_in", "value" => PENDING},spam_condition(false),deleted_condition(false)],
+                      "open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},spam_condition(false),deleted_condition(false)],
                       "due_today" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]},spam_condition(false),deleted_condition(false)],
-                      "new" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => ""},spam_condition(false),deleted_condition(false)],
+                      "new" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => ""},spam_condition(false),deleted_condition(false)],
                       "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"},spam_condition(false),deleted_condition(false)],
-                      "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
+                      "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
                       "all_tickets" => [spam_condition(false),deleted_condition(false)]
                    }
                    
@@ -91,7 +102,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def default_filter(filter_name)
      self.name = filter_name.blank? ? "new_my_open" : filter_name
-     DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS["new_my_open"])
+     if "on_hold".eql?filter_name
+       on_hold_filter
+     elsif "unresolved".eql?filter_name
+       unresolved_filter
+     else
+       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS["new_my_open"])
+     end
   end
   
   def self.deserialize_from_params(params)
@@ -139,10 +156,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
-    
+
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
     self.query_hash = action_hash
-   
+
     action_hash.each do |filter|
       add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].nil?
     end
@@ -165,9 +182,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @sql_conditions  ||= begin
 
       if errors? 
-        all_sql_conditions = " 1 = 2 " 
+        all_sql_conditions = [" 1 = 2 "] 
       else
-        all_sql_conditions = ""
+        all_sql_conditions = [""]
         condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
@@ -199,26 +216,20 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
             raise Wf::FilterException.new("Unsupported operator  for container #{condition.container.class.name}")
           end
           
-          if all_sql_conditions.size > 0
-            all_sql_conditions << ( match.to_sym == :any ? "  OR" : " AND ")
+          if all_sql_conditions[0].size > 0
+            all_sql_conditions[0] << ( match.to_sym == :any ? "  OR" : " AND ")
           end
-          all_sql_conditions << sql_condition[0]
+          
+          all_sql_conditions[0] << sql_condition[0]
           sql_condition[1..-1].each do |c|
-            if c.kind_of?(Array)
-              all_sql_conditions.sub!("?", c.map{ |value| ActiveRecord::Base.sanitize(value) }.join(","))
-            elsif c.kind_of?(String)
-              all_sql_conditions.sub!("?", ActiveRecord::Base.sanitize(c.to_s))
-            else
-              all_sql_conditions.sub!("?", c.to_s)
-            end
+            all_sql_conditions << c
           end
         end
       end
       
-      [all_sql_conditions]
+      all_sql_conditions
     end
   end
-  
   def serialize_to_params(merge_params = {})
     params = {}
     params[:wf_type]        = self.class.name
@@ -239,7 +250,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       handle_empty_filter! 
       all_conditions = sql_conditions
       all_joins = get_joins(sql_conditions)
-      recs = model_class.paginate(:include => [:ticket_states,:responder,:requester],
+      recs = model_class.paginate(:include => [:ticket_states,:ticket_status,:responder,:requester],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
       recs.wf_filter = self

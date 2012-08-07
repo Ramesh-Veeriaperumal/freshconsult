@@ -7,30 +7,32 @@
     <tr>
       <td class="portal-logo">
         <% if(product.portal_enabled?) %>
-          <%= image_tag ((product.portal.logo.nil?) ? "/images/fillers/logo_blank.gif" : product.portal.logo.content.url(:logo), :class => "image_logo") %>
+          <%= image_tag((product.portal.logo.nil?) ? "/images/fillers/logo_blank.gif" : product.portal.logo.content.url(:logo), :class => "image_logo") %>
           <div class="color_box">
             <span class="color_item" style="background-color:<%=portal_pref(product.portal, :header_color)%>"></span>
             <span class="color_item" style="background-color:<%=portal_pref(product.portal, :tab_color)%>"></span>
             <span class="color_item" style="background-color:<%=portal_pref(product.portal, :bg_color)%>"></span>
           </div>
         <% else %>
-          <%= image_tag ("/images/fillers/logo_blank.gif", :class => "image_logo") %>
+          <%= image_tag("/images/fillers/logo_blank.gif", :class => "image_logo") %>
         <% end %>
       </td>
       <td class="portal-text">
         <%= link_to(product.name, edit_admin_product_path(product), :class => "big-text") %>
-				<div class="channel-text">					
-        	<%= product.reply_email %>
-					<% if product.active? %>	
-						<span class='icon email-active'></span>
-					<% else %>
-						<span class='icon email'></span>
-        		<span class="not-verified">
-          		<%= content_tag (:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) %>
-							<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(product), :class => "slim-button") %>                
-        		</span> 
-					 <% end %>
-				</div>	
+        <%product.email_configs.each do | email_config|%>
+  				<div class="channel-text">
+          	<%= email_config.reply_email %>
+  					<% if email_config.active? %>	
+  						<span class='icon email-active'></span>
+  					<% else %>
+  						<span class='icon email'></span>
+          		<span class="not-verified">
+            		<%= content_tag(:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) %>
+  							<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config), :class => "slim-button") %>                
+          		</span> 
+  					 <% end %>
+  				</div>	
+        <% end %>
  				<div class="channel-text">
 					<% if(product.portal_enabled?) %>
 						<span class='icon url-active'></span>

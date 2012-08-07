@@ -35,7 +35,7 @@
   			case 'comment':			
   				c_dom = jQuery("<div class=\"s_comment\" />")
   							.append(FactoryUI.paragraph("", "comment", initFeed["comment"]))
-  							.append("<label><%= t('ticket.note_form.private_note') %></label>"); 
+  							.append(FactoryUI.checkbox("<%= t('ticket.note_form.private_note') %>", "private", initFeed["private"]));
   				break;
   			case 'email_select':
   			case 'email_text':

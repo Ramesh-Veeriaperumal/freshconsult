@@ -1,0 +1,37 @@
+<% content_for :onload_script do -%>
+
+jQuery('#add_cc_btn').bind("click", function(ev){
+		ev.preventDefault();
+		jQuery("#cc_emails_sec").toggle();
+		jQuery("#cc_emails").val("");
+		jQuery("#cc_emails").trigger("liszt:updated");
+	});
+ function lookup(searchString, callback) { 
+                    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                                              onSuccess: function(response) {
+                                                                var choices = $A();
+                                                                response.responseJSON.results.each(function(item){
+																  if(item.value == "") {
+																  	choices.push([item.id, item.id]);
+																  } else {
+																	choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+																  }	
+                                                                });                                                
+                                                                callback(choices);
+                                                              } });
+                                                            }
+            var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+            var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+<%- end %>
+
+<div class="new_ticket_cc_button">
+	&nbsp;<a href="#" class="align-right" id="add_cc_btn">Add cc</a>
+</div>
+<div id="cc_emails_sec" class="hide">
+	<label for="ticket_cc_list">Cc:</label>
+	<% content_for :onload_script do -%>
+        new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(),{frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+	<%- end %>
+    <input type="text" id="cc_emails" name="cc_emails" />
+</div>

@@ -30,7 +30,7 @@ module EmailCommands
   end
   
   def get_email_cmd_regex(account)
-    delimeter = account.email_commands_setting.email_cmds_delimeter
+    delimeter = account.email_cmds_delimeter
     escaped_delimeter = Regexp.escape(delimeter)
     email_cmds_regex = Regexp.new("#{escaped_delimeter}(.+)#{escaped_delimeter}",Regexp::IGNORECASE | Regexp::MULTILINE) unless escaped_delimeter.blank?
     email_cmds_regex
@@ -41,7 +41,8 @@ module EmailCommands
   end
   
   def status(ticket, value, user, note)
-    ticket.status = TicketConstants::STATUS_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::STATUS_KEYS_BY_TOKEN[value.to_sym].blank? 
+    status = Helpdesk::TicketStatus.status_keys_by_name(ticket.account)[value]  
+    ticket.status = status unless status.blank?
   end
   
   def priority(ticket, value, user, note)
@@ -72,7 +73,7 @@ module EmailCommands
   end
   
   def product(ticket, value, user, note)
-    email_config = ticket.account.email_configs.find_by_name(value)
-    ticket.email_config = email_config unless email_config.blank? 
+    product = ticket.account.products.find_by_name(value)
+    ticket.product = product unless product
   end
 end

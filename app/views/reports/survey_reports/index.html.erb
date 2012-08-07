@@ -1,5 +1,9 @@
 <%= include_stylesheets :satisfaction  %>
 
+<%
+date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime("%d %B %Y")} - #{Time.zone.now.strftime("%d %B %Y")}" :  h(params[:date_range])
+%>
+
 <div id="report-container" class="report-container">
 <div class="satisfaction-head">
 		<span id="back_to_con" class="floatr">	
@@ -8,14 +12,53 @@
 		<h3 class="title" id="report-main-title">		          
 		  <%= t('reports.satisfaction_title') %><br />		  
 		</h3>
-		<span id="date_range_title" style="align:left"><%= params[:date_range] %></span>		                                                        
+		<div>
+			<span id="date_range_title" style="align:left"><%= params[:date_range] %></span>		
+			
+			<div id="sort_by_option" class="floatr" style="margin-top:-30px;display:none;">				
+					<%
+						sort_option = :name;
+						if params[:sort]== "happy"
+						  sort_option = :happy 
+						elsif params[:sort]== "unhappy" 
+							sort_option = :unhappy 
+						elsif params[:sort]== "neutral" 
+							sort_option = :neutral
+						elsif params[:sort]== "total" 
+							sort_option = :total
+						end
+						sort_by_arr = [["Name" , :name] , ["Maximum response" , :total], [current_account.survey.title("happy").capitalize, :happy] ,
+						[current_account.survey.title("neutral").capitalize , :neutral], [current_account.survey.title("unhappy").capitalize , :unhappy]]
+					%>
+					<span style="font-weight:bold;">Sort By</span>
+					<%=select_tag :sort_filter , options_for_select(sort_by_arr, sort_option) ,{ :multiple => false, :class => "customSelect filter_item chzn-done"}%>
+			</div>
+		</div>
 </div>
 
 <% content_for :sidebar do %>
-	<%= render :partial => "/reports/survey_reports/sidebar" %>
+	<%= render :partial => "/reports/survey_reports/sidebar", :locals => {:sort_option => sort_option}%>
 <%end%>
 	
  <div id="report_list">
 	<%= render :partial => "/reports/survey_reports/list" %>
 </div>
 </div>
+
+<% javascript_tag do %>		
+<%unless @reports_list.blank?%>
+		jQuery('#report_list').pageless({
+		    currentPage:1,
+		    totalPages : <%=@survey_reports.total_pages%>,
+      		    url : "<%=survey_list_url(:date_range => date_range)%>",
+      	                loaderMsg : "<%=t('.agent_list_loading')%>",
+      	                params:{category:"<%=params[:category]%>"}
+		});		
+ <%end%>		
+ jQuery(document).ready(function() {
+ 	jQuery("#sort_filter").change( function(){
+ 			jQuery("#sort").val(jQuery(this).val());
+ 			jQuery("#report_filters").submit();
+ 	 }) 	
+})
+<%end%>

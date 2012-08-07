@@ -7,45 +7,59 @@ class Reports::SurveyReportsController < ApplicationController
 
 	include Reports::SurveyReport
 
+	LIST_LIMIT = 90
+
 	def index
 
-		if params[:category].blank? || params[:category] == "agent"
+		if agent?
 			agent_list
-		elsif params[:category] == "group"
+		elsif group?
 			group_list
 		else
-			report_details and return
+			overall_summary			
+			redirect_to survey_overall_report_path(overall_params) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
+		end
+    		
+	end
+
+	def list
+		if agent?
+			agent_list
+		elsif group?
+			group_list
+		else
+			overall_summary			
+			redirect_to survey_overall_report_path(overall_params) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
 		end
 
-    		render :partial => 'list' unless (params[:category].blank? || params[:uitype]=="main")
-    		
-	end	
+		render :partial => "list"	
+	end
 
 	def fetch_details
-		if params[:category].blank? || params[:category] == "agent"
+		if agent?
 
 			agent_list
 
-			agent_remarks
+			remarks
 
-		elsif params[:category] == "group"
+		elsif group?
 
 			group_list
 
-			group_remarks			
+			remarks
 
 		else
 
 			overall_summary
 
-			overall_remarks
+			remarks
 
 		end
 	end
 
 	def report_details
 
-		fetch_details		
+		fetch_details
 
 	end
 
@@ -59,13 +73,7 @@ class Reports::SurveyReportsController < ApplicationController
 
 	def feedbacks
 
-		if params[:category].blank? || params[:category] == "agent"
-			agent_remarks
-		elsif params[:category] == "group"
-			group_remarks
-		else 
-			overall_remarks
-		end
+		remarks
 
 		render :partial => 'feedbacks'
 
@@ -77,9 +85,9 @@ class Reports::SurveyReportsController < ApplicationController
       		
       		count = 0
 
-		      unless params[:entity_id].blank? 
-		      	conditions = "survey_results.agent_id = #{params[:entity_id]}" if (params[:category] == "agent" || params[:category].blank?)
-		      	conditions = "survey_results.group_id = #{params[:entity_id]}" if (params[:category] == "group")
+		      unless params[:entity_id].blank? || company?
+		      	conditions = "survey_results.agent_id = #{params[:entity_id]}" if agent?
+		      	conditions = "survey_results.group_id = #{params[:entity_id]}" if group?
 		      	count+=1
 		      end	
 
@@ -110,56 +118,58 @@ class Reports::SurveyReportsController < ApplicationController
 
     def agent_list
       							      							      
-      survey_reports = current_account.survey_results.find(:all,
-							 :select => "users.id as id,users.name as name,survey_results.rating as rating,users.job_title as title,count(*) as total",
-							 :joins => :agent, 
-							 :group => "survey_results.agent_id,survey_results.rating",
-							 :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
-      
-      @reports_list = current_account.survey_results.generate_reports_list(survey_reports,"agent")
+      @survey_reports = current_account.survey_results.agent(conditional_params).paginate( :page => current_page, :per_page => LIST_LIMIT )      
+      @reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::AGENT,sort_by)
 
     end
 
     def group_list
       
-      survey_reports = current_account.survey_results.find(:all,
-								:select => "group_id as id,groups.name as name,survey_results.rating as rating,groups.description as title,count(*) as total",
-								:joins => :group, 
-								:group => "survey_results.group_id,survey_results.rating",
-								:conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+      @survey_reports = current_account.survey_results.group(conditional_params).paginate(:page => params[:page], :per_page => LIST_LIMIT)
       
-      @reports_list = current_account.survey_results.generate_reports_list(survey_reports,"group")
+      @reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::GROUP,sort_by)
 
     end
 
     def overall_summary
-    	survey_reports = current_account.survey_results.find(:all,
-    								:joins => [:account],    								
-								:select => "account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total",								
-								:group => "survey_results.account_id,survey_results.rating",
-								:conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
-    	@reports_list = current_account.survey_results.generate_reports_list(survey_reports,"company")
+    	@survey_reports = current_account.survey_results.portal(conditional_params).paginate(:page => params[:page], :per_page => LIST_LIMIT)
+
+    	@reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::OVERALL,sort_by)
     end
 
-    def agent_remarks
-    	
- 	@remarks = current_account.survey_results.find(:all, 								
- 							    :include => [:survey_remark],	
-							   :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+    def remarks
+    	@remarks = current_account.survey_results.remarks(conditional_params).paginate(:page => params[:page], :per_page => page_limit)
     end
-    
-    def group_remarks()
-    	
- 	
- 	@remarks = current_account.survey_results.find(:all, 								
- 							    :include => [:survey_remark],	
-							   :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+
+    private
+
+    def agent?
+    	(params[:category].blank? || params[:category] == Survey::AGENT)
     end
-    
-    def overall_remarks()
-    	
- 	@remarks = current_account.survey_results.find(:all, 								
- 							    :include => [:survey_remark],	
-							   :conditions => conditional_params).paginate(:page => params[:page], :per_page => page_limit)
+
+    def group?
+    	(params[:category] == Survey::GROUP)
+    end
+  
+    def company?
+    	(params[:category] == Survey::OVERALL)
+    end
+
+    def overall_params
+    	custom_params = Hash.new
+	custom_params[:category] = Survey::OVERALL
+	custom_params[:date_range] = params[:date_range] unless params[:date_range].blank?
+	return custom_params
+    end
+
+    def current_page
+    	params[:page] = 1 if params[:page].blank?
+
+    	params[:page]
+    end
+
+    def sort_by
+    	return :name if params[:sort].blank?
+    	params[:sort]
     end
 end

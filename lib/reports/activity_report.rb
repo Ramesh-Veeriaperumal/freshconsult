@@ -1,5 +1,7 @@
 module Reports::ActivityReport
   
+  include Helpdesk::Ticketfields::TicketStatus
+  
   def fetch_activity
     columns_in_use = columns
     unless params[:reports].nil?
@@ -29,7 +31,7 @@ module Reports::ActivityReport
   end
   
   def add_resolved_and_closed_tickets(hash)
-    hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{}).fetch(:count,0).to_i + hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:closed],{}).fetch(:count,0).to_i
+    hash.fetch(RESOLVED,{}).fetch(:count,0).to_i + hash.fetch(CLOSED,{}).fetch(:count,0).to_i
   end
   
   def get_tickets_hash(tickets_count,column_name)
@@ -44,7 +46,7 @@ module Reports::ActivityReport
       end
 
     end
-    tickets_hash.store(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
+    tickets_hash.store(RESOLVED,{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
     @current_month_tot_tickets = tot_count
     tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
     
@@ -108,23 +110,25 @@ module Reports::ActivityReport
   def scoper(starting_time = start_date, ending_time = end_date)
     Account.current.tickets.visible.created_at_inside(starting_time,ending_time)
   end
-  
-  def start_date
-    parse_from_date.nil? ? (Time.zone.now.ago 30.day).beginning_of_day.to_s(:db) : 
-        Time.zone.parse(parse_from_date).beginning_of_day.to_s(:db) 
+
+  def start_date(zone = true)
+    t = zone ? Time.zone : Time
+    parse_from_date.nil? ? (t.now.ago 30.day).beginning_of_day.to_s(:db) : 
+        t.parse(parse_from_date).beginning_of_day.to_s(:db) 
   end
   
-  def end_date
-    parse_to_date.nil? ? Time.zone.now.end_of_day.to_s(:db) : 
-        Time.zone.parse(parse_to_date).end_of_day.to_s(:db)
+  def end_date(zone = true)
+    t = zone ? Time.zone : Time
+    parse_to_date.nil? ? t.now.end_of_day.to_s(:db) : 
+        t.parse(parse_to_date).end_of_day.to_s(:db)
   end
   
   def parse_from_date
-    (params[:date_range].split(" - ")[0]) || params[:date_range]
+    (params[:date_range].split(" - ")[0]) || params[:date_range] unless params[:date_range].blank?
   end
   
   def parse_to_date
-    (params[:date_range].split(" - ")[1]) || params[:date_range]
+    (params[:date_range].split(" - ")[1]) || params[:date_range] unless params[:date_range].blank?
   end
   
   def previous_start
@@ -183,8 +187,8 @@ module Reports::ActivityReport
     row.push("Tickets By #{@pie_chart_labels.fetch(column_name,column_name)}")
     constants_mapping = Reports::ChartGenerator::TICKET_COLUMN_MAPPING.fetch(column_name.to_s,column_hash)
     if column_name.eql?(:status)
-      constants_mapping = TicketConstants::STATUS_NAMES_BY_KEY.clone()
-      constants_mapping.delete(TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]) 
+      constants_mapping = Helpdesk::TicketStatus.status_names_by_key(Account.current).clone()
+      constants_mapping.delete(CLOSED) 
     end
     constants_mapping.each do |k,v|
       row = sheet.row(current_index+=1)

@@ -1,31 +1,26 @@
 class AccountsController < ApplicationController
   
   include ModelControllerMethods
+  include FreshdeskCore::Model
   
   layout :choose_layout 
   
-  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel,:show]
+  skip_before_filter :set_locale, :except => [:cancel,:show]
   skip_before_filter :set_time_zone, :except => [:cancel]
   skip_before_filter :check_account_state
+  skip_before_filter :redirect_to_mobile_url
   
   before_filter :build_user, :only => [ :new, :create ]
-  before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
-  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans, :calculate_amount ]
-  before_filter :load_discount, :only => [ :plans, :plan, :show, :calculate_amount ]
+  before_filter :build_metrics, :only => [ :create ]
+  before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
-  before_filter :load_plans, :only => [:show, :plans]
-  before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
-  before_filter :load_subscription_plan, :only => [:plan, :calculate_amount] 
-  before_filter :check_credit_card, :only => [:plan] 
-  
-  ssl_required :billing
-  #ssl_allowed :plans, :thanks, :canceled, :paypal
+  before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
   
   before_filter :only => [:update, :edit, :delete_logo, :delete_fav, :thanks] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans, :calculate_amount ] do |c| 
+  before_filter :only =>  [:show,:cancel,:destroy ] do |c| 
     c.requires_permission :manage_account
   end
   
@@ -47,15 +42,6 @@ class AccountsController < ApplicationController
     render :json => { :account_name => true }, :callback => params[:callback]
   end
    
-  def signup_free
-   create_account 
-   if @account.save
-      render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
-    else
-      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
-    end    
-  end
-  
   def new_signup_free
    create_account 
    if @account.save
@@ -73,12 +59,8 @@ class AccountsController < ApplicationController
     build_object
     build_primary_email_and_portal
     build_user
-    build_plan  
-    
-    begin
-      store_metrics
-    rescue
-    end
+    build_plan
+    build_metrics
     
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
@@ -276,116 +258,11 @@ class AccountsController < ApplicationController
     redirect_to admin_getting_started_index_path        
   end
   
-  def plans
-    # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
-  end
-  
-  def billing
-    if request.post?
-      if params[:paypal].blank?
-        @address.first_name = @creditcard.first_name
-        @address.last_name = @creditcard.last_name
-        if @creditcard.valid? & @address.valid?
-          if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip, :charge_now => params[:charge_now])
-            flash[:notice] = t('billing_info_update')
-            flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
-            redirect_to :action => "show"
-          end
-        end
-      else
-        if redirect_url = @subscription.start_paypal(paypal_account_url, billing_account_url)
-          redirect_to redirect_url
-        end
-      end
-    end
-  end
-  
-  # Handle the redirect return from PayPal
-  def paypal
-    if params[:token]
-      if @subscription.complete_paypal(params[:token])
-        flash[:notice] = 'Your billing information has been updated'
-        redirect_to :action => "billing"
-      else
-        render :action => 'billing'
-      end
-    else
-      redirect_to :action => "billing"
-    end
-  end
-  
-  def calculate_amount
-      @subscription_plan.discount = @discount
-      @subscription.billing_cycle = params[:billing_cycle].to_i
-      @subscription.plan = @subscription_plan
-      @subscription.agent_limit = params[:agent_limit]
-      #@subscription.update_amount
-      render :partial => "calculate_amount", :locals => { :amount => @subscription.total_amount }
-  end
-
-  def plan
-    @current_subscription = Subscription.find( current_account.subscription.id )
-    if request.post?
-      @subscription_plan.discount = @discount
-      @subscription.billing_cycle = params[:billing_cycle].to_i
-      @subscription.plan = @subscription_plan
-      @subscription.agent_limit = params[:agent_limit]
-      if @subscription.save
-        #SubscriptionNotifier.deliver_plan_changed(@subscription)
-      else
-        load_plans        
-        render :action => "plan" and return
-      end
-      
-      unless  @subscription.active?
-        redirect_to :action => "billing"
-      else
-        flash[:notice] = t('plan_info_update')
-        redirect_to :action => "show"
-      end 
-    else
-      load_plans
-    end
-  end
-  
-  def load_subscription_plan
-    if request.post?
-     @subscription_plan = SubscriptionPlan.find(params[:plan_id])
-    end
-  end
-  
-  def check_credit_card
-    if request.post?
-      if !@subscription_plan.free_plan? and (@subscription.state == 'active') and @subscription.card_number.blank?
-        flash[:notice] = t('enter_billing_for_free')
-        redirect_to :action => "billing"
-      end
-    end
-  end
-  
-  # Handle the redirect return from PayPal when changing plans
-  def plan_paypal
-    if params[:token]
-      @subscription.plan = SubscriptionPlan.find(params[:plan_id])
-      if @subscription.complete_paypal(params[:token])
-        flash[:notice] = "Your subscription has been changed."
-        SubscriptionNotifier.deliver_plan_changed(@subscription)
-        redirect_to :action => "plan"
-      else
-        flash[:error] = "Error completing PayPal profile: #{@subscription.errors.full_messages.to_sentence}"
-        redirect_to :action => "plan"
-      end
-    else
-      redirect_to :action => "plan"
-    end
-  end
-  
-
   def cancel
     if request.post? and !params[:confirm].blank?
-      SubscriptionNotifier.deliver_account_deleted(current_account)
+      SubscriptionNotifier.deliver_account_deleted(current_account) if Rails.env.production?
       create_deleted_customers_info
-      current_account.destroy
+      perform_destroy(current_account)
       redirect_to "http://www.freshdesk.com"
     end
   end
@@ -458,8 +335,8 @@ class AccountsController < ApplicationController
       rescue
         locale =  I18n.default_locale
       end    
-      @account.primary_email_config.build_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
-                               :language => locale.to_s() , :account => @account)
+      @account.build_main_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
+                               :language => locale.to_s() , :account => @account, :main_portal => true)
      
     end
  
@@ -476,22 +353,12 @@ class AccountsController < ApplicationController
       @address = SubscriptionAddress.new(params[:address])
     end
 
-    def load_subscription
-      @subscription = current_account.subscription
-    end
-    
     # Load the discount by code, but not if it's not available
     def load_discount
 #     if params[:discount].blank? || !(@discount = SubscriptionDiscount.find_by_code(params[:discount])) || !@discount.available? || (@subscription.subscription_plan_id != @discount.plan_id)
 #        @discount = nil
 #      end     
       @discount = @subscription.discount unless @subscription.discount.blank?
-    end
-    
-    def load_plans
-      plans = SubscriptionPlan.current
-      plans << @subscription.subscription_plan if @subscription.subscription_plan.classic?
-      @plans = plans.collect {|p| p.discount = @discount; p }
     end
     
     def authorized?
@@ -502,42 +369,48 @@ class AccountsController < ApplicationController
     
     def admin_selected_tab
       @selected_tab = :admin
-    end
+    end    
     
-    def store_metrics
-      return if params[:session_json].blank?
-        
-      metrics =  JSON.parse(params[:session_json])
-      metrics_obj = {}
-
-      metrics_obj[:referrer] = metrics["current_session"]["referrer"]
-      metrics_obj[:landing_url] = metrics["current_session"]["url"]
-      metrics_obj[:first_referrer] = params[:first_referrer]
-      metrics_obj[:first_landing_url] = params[:first_landing_url]
-      metrics_obj[:country] = metrics["locale"]["country"]
-      metrics_obj[:language] = metrics["locale"]["lang"]
-      metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
-      metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
-      metrics_obj[:visits] = params[:pre_visits]
-
-      if metrics["device"]["is_mobile"]
-        metrics_obj[:device] = "M"
-      elsif  metrics["device"]["is_phone"]
-        metrics_obj[:device] = "P"
-      elsif  metrics["device"]["is_tablet"]
-        metrics_obj[:device] = "T"
-      else
-        metrics_obj[:device] = "C"  
-      end
-
-      metrics_obj[:browser] = metrics["browser"]["browser"]                 
-      metrics_obj[:os] = metrics["browser"]["os"]
-      metrics_obj[:offset] = metrics["time"]["tz_offset"]
-      metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
-      metrics_obj[:session_json] = metrics
-
-      c_metric = @account.build_conversion_metric(metrics_obj)
-      c_metric.save
-    end
     
+    def build_metrics
+
+          return if params[:session_json].blank?
+            
+          begin  
+                  metrics =  JSON.parse(params[:session_json])
+                  metrics_obj = {}
+            
+                  metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+                  metrics_obj[:landing_url] = metrics["current_session"]["url"]
+                  metrics_obj[:first_referrer] = params[:first_referrer]
+                  metrics_obj[:first_landing_url] = params[:first_landing_url]
+                  metrics_obj[:country] = metrics["locale"]["country"]
+                  metrics_obj[:language] = metrics["locale"]["lang"]
+                  metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+                  metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+                  metrics_obj[:visits] = params[:pre_visits]
+            
+                  if metrics["device"]["is_mobile"]
+                    metrics_obj[:device] = "M"
+                  elsif  metrics["device"]["is_phone"]
+                    metrics_obj[:device] = "P"
+                  elsif  metrics["device"]["is_tablet"]
+                    metrics_obj[:device] = "T"
+                  else
+                    metrics_obj[:device] = "C"  
+                  end
+            
+                  metrics_obj[:browser] = metrics["browser"]["browser"]                 
+                  metrics_obj[:os] = metrics["browser"]["os"]
+                  metrics_obj[:offset] = metrics["time"]["tz_offset"]
+                  metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+                  metrics_obj[:session_json] = metrics
+                
+                  @account.conversion_metric_attributes = metrics_obj
+
+           rescue => e
+                Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")                
+           end
+
+        end        
 end

@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   include ActionController::UrlWriter
   include SavageBeast::UserInit
   include SentientUser
-  #include ParserUtil
+  include Helpdesk::Ticketfields::TicketStatus
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -66,7 +66,8 @@ class User < ActiveRecord::Base
       { :conditions => ["id != ?", user.id]}  
     end      
   }
-      
+  named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
@@ -100,6 +101,11 @@ class User < ActiveRecord::Base
       new_tags = []
       updated_tag_names.each { |updated_tag_name|
         updated_tag_name = updated_tag_name.strip
+        m=false
+        new_tags.each { |fetched_tag|
+          m=true if fetched_tag.name == updated_tag_name
+        }
+        next if m
         # TODO Below line executes query for every iteration.  Better to use some cached objects.
         new_tags.push self.account.tags.find_by_name(updated_tag_name) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
       }
@@ -220,7 +226,7 @@ class User < ActiveRecord::Base
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
   
   has_many :open_tickets, :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id",
-  :conditions => {:status => [TicketConstants::STATUS_KEYS_BY_TOKEN[:open],TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]]},
+  :conditions => {:status => [OPEN,PENDING]},
   :order => "created_at desc"
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
@@ -250,10 +256,12 @@ class User < ActiveRecord::Base
   def customer?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
+  alias :is_customer :customer?
   
   def agent?
     !customer?
   end
+  alias :is_agent :agent?
   
   def account_admin?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
@@ -262,7 +270,8 @@ class User < ActiveRecord::Base
   def client_manager?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
-  
+  alias :is_client_manager :client_manager?
+
   def supervisor?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:supervisor]
   end
@@ -304,6 +313,7 @@ class User < ActiveRecord::Base
 
   def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
     portal ||= account.main_portal
+    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
     reset_perishable_token!
     
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
@@ -319,16 +329,17 @@ class User < ActiveRecord::Base
     UserNotifier.deliver_password_reset_instructions(self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
           'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)) , 
-          :subject => Liquid::Template.parse(subj_template).render ,:reply_email => portal.product.friendly_email)
+          :subject => Liquid::Template.parse(subj_template).render ,:reply_email => reply_email)
   end
   
-  def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
+  def deliver_activation_instructions!(portal, force_notification = false) #Need to refactor this.. Almost similar structure with the above one.
     portal ||= account.main_portal
+    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
     if customer?
-      return unless e_notification.requester_notification?
+      return unless e_notification.requester_notification? or force_notification
       template = e_notification.requester_template
       subj_template = e_notification.requester_subject_template
       user_key = 'contact'
@@ -340,11 +351,12 @@ class User < ActiveRecord::Base
     UserNotifier.send_later(:deliver_user_activation, self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
           'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-        :subject => Liquid::Template.parse(subj_template).render , :reply_email => portal.product.friendly_email)
+        :subject => Liquid::Template.parse(subj_template).render , :reply_email => reply_email)
   end
   
   def deliver_contact_activation(portal)
     portal ||= account.main_portal
+    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
     unless active?
       reset_perishable_token!
   
@@ -352,7 +364,7 @@ class User < ActiveRecord::Base
       UserNotifier.send_later(:deliver_user_activation, self, 
           :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
             'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-          :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => portal.product.friendly_email)
+          :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => reply_email)
     end
   end
   
@@ -373,20 +385,9 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-    to_ret = { 
-      "id"   => id,
-      "name"  => to_s,
-      "email" => email,
-      "phone" => phone,
-      "mobile" => mobile,
-      "job_title" => job_title,
-      "user_role" => user_role,
-      "time_zone" => time_zone,
-    }
+
+    UserDrop.new self
     
-    to_ret["company_name"] = customer.name if customer
-    
-    to_ret
   end
   
   def has_manage_forums?
@@ -410,9 +411,9 @@ class User < ActiveRecord::Base
     day_pass_usages.on_the_day(start_time).first
   end
   
-  def self.filter(letter, page)
+  def self.filter(letter, page, state = "active")
   paginate :per_page => 10, :page => page,
-           :conditions => ['name like ?', "#{letter}%"],
+           :conditions => [ 'name like ? and deleted = ?', "#{letter}%", !state.eql?("active") ],
            :order => 'name'
   end
   
@@ -440,11 +441,39 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+      super(:builder => xml, :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+                                                              :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
+                                                              :user_role,:fb_profile_id,:language,:address]) 
   end
   
-  
+  def original_avatar
+    avatar_url(:original)
+  end
+
+  def medium_avatar
+    avatar_url(:medium)
+  end
+
+  def avatar_url(profile_size = :thumb)
+    avatar.content.url(profile_size) unless avatar.nil?
+  end
  
+  def company_name
+    customer.name unless customer.nil?
+  end
+
+  def to_mob_json
+    options = { 
+      :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
+      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
+    }
+    to_json options
+  end
+
+  def recent_tickets(limit = 5)
+    tickets.newest(limit)
+  end
+
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?

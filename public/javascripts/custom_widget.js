@@ -160,6 +160,7 @@ Freshdesk.Widget.prototype={
 				},
 				onFailure: function(evt){
 					widgetMain.options.oauth_token = null;
+					if(callback) callback();
 				}
 			});
 	},
@@ -191,18 +192,21 @@ Freshdesk.Widget.prototype={
 	},
 
 	delete_integrated_resource:function(last_fetched_id, resultCallback) {
-		reqData = {
+		if(last_fetched_id != null && last_fetched_id != ""){
+			reqData = {
 			"integrated_resource[id]":last_fetched_id
-		};
-		new Ajax.Request("/integrations/integrated_resources/delete",{
-            asynchronous: true,
-			method: "delete",
-			parameters:reqData,
-			onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
-			},
-			onFailure:function(evt){ if(resultCallback) resultCallback(evt);
-			}
-		});
+			};
+			new Ajax.Request("/integrations/integrated_resources/delete",{
+	            asynchronous: true,
+				method: "delete",
+				parameters:reqData,
+				onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
+				},
+				onFailure:function(evt){ if(resultCallback) resultCallback(evt);
+				}
+			});	
+		}
+		
 	}
 };
 

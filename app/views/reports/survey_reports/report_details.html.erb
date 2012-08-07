@@ -1,14 +1,28 @@
  <%= include_stylesheets :satisfaction  %>
 
+<%
+date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime("%d %B %Y")} - #{Time.zone.now.strftime("%d %B %Y")}" :  h(params[:date_range])
+%>
+
    <div id="report-container" class="report-container">
 <div class="satisfaction-head">
 		<span id="back_to_con" class="floatr">	
-			<%= link_to_function("&larr; #{t('reports.survey_reports.back_to')}", "back_to_list()",{:method => :post,:class => "slim-button", :id => "back_to_link"}) %>
+		<%
+			category = Survey::AGENT if params[:category].blank?
+			category = params[:category] unless params[:category].blank?
+
+			if params[:date_range].blank?
+	   			back_to_link = survey_back_to_list_url(:category=> category,:view => :list)
+	   		else
+	   			back_to_link = survey_back_to_list_url(:category=> category, :view => :list, :date_range => params[:date_range])
+	   		end
+		%>
+		<%= link_to("&larr; #{t('reports.survey_reports.back_to')}", back_to_link, {:method => :post,:class => "slim-button", :id => "back_to_link"}) %>
 		</span>
 		<h3 class="title" id="report-main-title">		          
 		  <%= t('reports.satisfaction_title') %><br />		  
 		</h3>
-		<span id="date_range_title" style="align:left"><%= params[:date_range] %></span>		                                                        
+		<span id="date_range_title" style="align:left"><%= params[:date_range] %></span>                                                        
 </div>
 
   <div id="report_list">  
@@ -28,33 +42,20 @@
 	<%= render :partial => "/reports/survey_reports/details_sidebar" %>
 <%end%>
 
-<%if @reports_list.blank?%>
+<%if @reports_list.blank? and @remarks.total_pages==0 %>
 	 <h1 style="font-size:18px;text-align:center;margin-top:50px;"> <%=t('reports.survey_reports.list.no_feedback')%> </h1>
 <%end%>
 
 <% javascript_tag do %>
-		<% if !params[:category].blank? and params[:category]!="company" %> 
+		var isRefreshed = false;
+		<% if !params[:category].blank? and params[:category]!=Survey::OVERALL %> 
 		   jQuery("#back_to_con").show();		 
 		<%end%>
 		jQuery('#report_feedback').pageless({
 		    currentPage:1,
 		    totalPages : <%=@remarks.total_pages%>,
-      		    url : "/reports/survey_reports/feedbacks",
+      		    url : "<%=survey_feedbacks_url(:date_range => date_range)%>",
       	                loaderMsg : "",
       	                params:{category:"<%=params[:category]%>",rating:"<%=params[:rating]%>",entity_id:"<%=params[:entity_id]%>"}
 		});		
-
-		function back_to_list(){
-	        		 var back_to_form = [ '<form method="POST" action="<%=survey_activity_url%>">' ];
-	        		 back_to_form.push('<input type="hidden" name="uitype" value="main"/>');
-	        		 <%unless params[:category].blank?%>
-    			 	back_to_form.push('<input type="hidden" name="category" value="<%=params[:category]%>"/>');
-    			 <%end%>
-			<%unless params[:date_range].blank?%>
-    			 	back_to_form.push('<input type="hidden" name="date_range" value="<%=params[:date_range]%>"/>');
-    			 <%end%>	    			 	
-    			 back_to_form.push('</form>');
-
-    			 jQuery(back_to_form.join('')).appendTo('body')[0].submit();
-		}
 <%end%>

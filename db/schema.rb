@@ -9,7 +9,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120614121703) do
+ActiveRecord::Schema.define(:version => 20120724102704) do
+
+  create_table "account_additional_settings", :force => true do |t|
+    t.string   "email_cmds_delimeter"
+    t.integer  "account_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "ticket_id_delimiter",               :default => "#"
+    t.boolean  "pass_through_enabled",              :default => true
+    t.string   "bcc_email"
+  end
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -229,15 +239,6 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.datetime "updated_at"
   end
 
-  create_table "email_commands_settings", :force => true do |t|
-    t.string   "email_cmds_delimeter"
-    t.integer  "account_id",           :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "ticket_id_delimiter",               :default => "#"
-    t.boolean  "pass_through_enabled",              :default => true
-  end
-
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"
@@ -249,9 +250,10 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.boolean  "active",                       :default => false
     t.string   "activator_token"
     t.string   "name"
-    t.string   "bcc_email"
+    t.integer  "product_id",      :limit => 8
   end
 
+  add_index "email_configs", ["account_id", "product_id"], :name => "index_email_configs_on_account_id_and_product_id"
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
 
   create_table "email_notification_agents", :force => true do |t|
@@ -275,6 +277,7 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.integer  "notification_type"
     t.text     "requester_subject_template"
     t.text     "agent_subject_template"
+    t.integer  "version",                                 :default => 1
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
@@ -502,7 +505,7 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "account_id"=>nil, "attachable_type"=>"14"}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -600,6 +603,71 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
 
+  create_table "helpdesk_schema_less_tickets", :id => false, :force => true do |t|
+    t.integer  "id",            :limit => 8,                    :null => false
+    t.integer  "account_id",    :limit => 8
+    t.integer  "ticket_id",     :limit => 8
+    t.integer  "product_id",    :limit => 8
+    t.text     "to_emails"
+    t.integer  "long_tc01",     :limit => 8
+    t.integer  "long_tc02",     :limit => 8
+    t.integer  "long_tc03",     :limit => 8
+    t.integer  "long_tc04",     :limit => 8
+    t.integer  "long_tc05",     :limit => 8
+    t.integer  "long_tc06",     :limit => 8
+    t.integer  "long_tc07",     :limit => 8
+    t.integer  "long_tc08",     :limit => 8
+    t.integer  "long_tc09",     :limit => 8
+    t.integer  "long_tc10",     :limit => 8
+    t.integer  "int_tc01"
+    t.integer  "int_tc02"
+    t.integer  "int_tc03"
+    t.integer  "int_tc04"
+    t.integer  "int_tc05"
+    t.string   "string_tc01"
+    t.string   "string_tc02"
+    t.string   "string_tc03"
+    t.string   "string_tc04"
+    t.string   "string_tc05"
+    t.string   "string_tc06"
+    t.string   "string_tc07"
+    t.string   "string_tc08"
+    t.string   "string_tc09"
+    t.string   "string_tc10"
+    t.string   "string_tc11"
+    t.string   "string_tc12"
+    t.string   "string_tc13"
+    t.string   "string_tc14"
+    t.string   "string_tc15"
+    t.datetime "datetime_tc01"
+    t.datetime "datetime_tc02"
+    t.datetime "datetime_tc03"
+    t.datetime "datetime_tc04"
+    t.datetime "datetime_tc05"
+    t.boolean  "boolean_tc01",               :default => false
+    t.boolean  "boolean_tc02",               :default => false
+    t.boolean  "boolean_tc03",               :default => false
+    t.boolean  "boolean_tc04",               :default => false
+    t.boolean  "boolean_tc05",               :default => false
+    t.text     "text_tc01"
+    t.text     "text_tc02"
+    t.text     "text_tc03"
+    t.text     "text_tc04"
+    t.text     "text_tc05"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_schema_less_tickets", ["account_id", "product_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_product_id"
+  add_index "helpdesk_schema_less_tickets", ["id"], :name => "helpdesk_schema_less_tickets_id"
+  add_index "helpdesk_schema_less_tickets", ["int_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_01"
+  add_index "helpdesk_schema_less_tickets", ["int_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_02"
+  add_index "helpdesk_schema_less_tickets", ["long_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_01"
+  add_index "helpdesk_schema_less_tickets", ["long_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_02"
+  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"account_id"=>nil, "string_tc01"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
+
   create_table "helpdesk_sla_details", :force => true do |t|
     t.string   "name"
     t.integer  "priority",        :limit => 8
@@ -666,6 +734,7 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.integer  "flexifield_def_entry_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "field_options"
   end
 
   add_index "helpdesk_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_ticket_fields_on_account_id_and_name", :unique => true
@@ -695,10 +764,29 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.boolean  "group_escalated",                     :default => false
     t.integer  "inbound_count",                       :default => 1
     t.integer  "account_id",             :limit => 8
+    t.datetime "status_updated_at"
+    t.datetime "sla_timer_stopped_at"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
+
+  create_table "helpdesk_ticket_statuses", :force => true do |t|
+    t.integer  "status_id",             :limit => 8
+    t.string   "name"
+    t.string   "customer_display_name"
+    t.boolean  "stop_sla_timer",                     :default => false
+    t.boolean  "deleted",                            :default => false
+    t.boolean  "is_default",                         :default => false
+    t.integer  "account_id",            :limit => 8
+    t.integer  "ticket_field_id",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "position"
+  end
+
+  add_index "helpdesk_ticket_statuses", ["account_id"], :name => "index_helpdesk_ticket_statuses_on_account_id"
+  add_index "helpdesk_ticket_statuses", ["ticket_field_id", "status_id"], :name => "index_helpdesk_ticket_statuses_on_ticket_field_id_and_status_id", :unique => true
 
   create_table "helpdesk_tickets", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                             :null => false
@@ -817,6 +905,7 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.integer  "solution_category_id", :limit => 8
     t.integer  "forum_category_id",    :limit => 8
     t.string   "language",                          :default => "en"
+    t.boolean  "main_portal",                       :default => false
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"
@@ -840,6 +929,16 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+
+  create_table "products", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "products", ["account_id", "name"], :name => "index_products_on_account_id_and_name"
 
   create_table "scoreboard_ratings", :force => true do |t|
     t.integer  "account_id",       :limit => 8
@@ -1008,6 +1107,7 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.boolean  "misc"
     t.integer  "subscription_affiliate_id", :limit => 8
     t.decimal  "affiliate_amount",                       :precision => 6,  :scale => 2, :default => 0.0
+    t.text     "meta_info"
   end
 
   add_index "subscription_payments", ["account_id"], :name => "index_subscription_payments_on_account_id"
@@ -1109,6 +1209,9 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.integer  "send_while"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "happy_text",                :default => "Awesome"
+    t.string   "neutral_text",              :default => "Just Okay"
+    t.string   "unhappy_text",              :default => "Not Good"
   end
 
   create_table "ticket_topics", :force => true do |t|
@@ -1179,6 +1282,8 @@ ActiveRecord::Schema.define(:version => 20120614121703) do
     t.boolean  "blocked",                          :default => false
     t.datetime "blocked_at"
     t.string   "address"
+    t.datetime "deleted_at"
+    t.boolean  "whitelisted",                      :default => false
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

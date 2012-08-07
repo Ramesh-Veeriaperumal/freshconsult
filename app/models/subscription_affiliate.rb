@@ -17,9 +17,8 @@ class SubscriptionAffiliate < ActiveRecord::Base
   def self.affiliate_param
     "SSAID"
   end
-  
-  def self.add_affiliate(account)
-    begin
+
+  def self.check_affiliate_in_metrics?(account,shareasale_affiliate_id)
     metrics = account.conversion_metric
     if !metrics.nil? and 
       (metrics.first_referrer.include?(affiliate_param) || 
@@ -29,14 +28,19 @@ class SubscriptionAffiliate < ActiveRecord::Base
       req = Rack::Request.new(env)
       params = req.params
       affiliate_id = params.fetch(affiliate_param)
-      unless affiliate_id.nil?
-        affiliate = find_by_token(affiliate_id)
-        affiliate = create({:name => AFILIATE_SOWFTWARE,
-                            :rate => COMMISSION,
-                            :token => affiliate_id}) unless affiliate
-       account.subscription.affiliate = affiliate  
-       account.subscription.save
-      end
+    end
+    affiliate_id and (affiliate_id.eql?(shareasale_affiliate_id))
+  end
+  
+  def self.add_affiliate(account,affiliate_id)
+    begin
+    unless affiliate_id.nil?
+      affiliate = find_by_token(affiliate_id)
+      affiliate = create({:name => AFILIATE_SOWFTWARE,
+                          :rate => COMMISSION,
+                          :token => affiliate_id}) unless affiliate
+      account.subscription.affiliate = affiliate  
+      account.subscription.save unless account.subscription.active?
     end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)

@@ -1,4 +1,7 @@
 
+<%= javascript_include_tag  '/javascripts/report/date' %>
+<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
+<%= stylesheet_link_tag 'ui.daterangepicker' %>
   <span class="floatr">
     <%= submit_tag "Export to CSV",{ :class => "slim-button" , :id =>'export_as_csv' }%>
   	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
@@ -28,25 +31,14 @@
         
 		<label><%=t('helpdesk.time_sheets.group_by')%></label>
 		<%=select_tag :group_by , options_for_select(Helpdesk::TimeSheet::GROUP_BY_ARR) ,{ :multiple => false, :class => "customSelect auto"}%>
-		
+			
 	  </li> 
+	  <li>
+	  	<%= render :partial => "/reports/shared/daterange_picker" %> 
+	  </li>
 	  </ul>
     
-   <h4 class="title"><%=t('.view_between')%></h4>
-   <ul class="ui-form">
-     <li class="inline-field"> 
-				<table>
-					<tr>
-						<td width="100px"><label><%=t('.from')%></label></td>
-						<td><%= text_field_tag :start_date, "", :class => "text auto", :size => 10 %></td>
-					</tr>
-					<tr>
-						<td><label><%=t('.to')%></label></td>
-						<td><%= text_field_tag :end_date, "", :class => "text auto", :size => 10 %></td>
-					</tr>
-				</table>
-			</li>
-		</ul>	     
+   	     
   <% end %>
 </div> 
 <% end %>
@@ -74,10 +66,8 @@
 					jQuery("#report_filters").trigger("change");
 				}
 			}); 
-		jQuery("#start_date").val('<%= @start_date.strftime("%m/%d/%Y") %>');
-		jQuery("#end_date").val('<%= @end_date.strftime("%m/%d/%Y") %>');	
 	
-	    jQuery("#report_filters").change(function(){
+	    jQuery("#report_filters, #date_range").change(function(){
     	jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
     	jQuery.ajax({
         url: '<%=report_filter_timesheet_reports_url%>',
@@ -92,6 +82,5 @@
 		jQuery("#export_as_csv").click(function(){
        		jQuery("#report_filters").submit();
   		}); 	
-	
 	});
 <%end%>

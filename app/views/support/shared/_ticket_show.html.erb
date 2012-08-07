@@ -61,7 +61,7 @@
 		has_editable_field = false;
 
 		current_portal.ticket_fields.each do |field|
-			field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+			field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
 			has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
 			has_editable_field = true if (field.visible_in_view_form? && field.editable_in_portal)
 		end
@@ -82,7 +82,7 @@
 				   <% current_portal.ticket_fields.each do |field| %>
 				     <% if (field.visible_in_view_form? && field.visible_in_portal)%>
 				       <% 
-				          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+				          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
 				          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 				          if(field.field_type == "nested_field")
 				          	field_value = {}
@@ -106,7 +106,7 @@
 						   <% current_portal.ticket_fields.each do |field| %>
 						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
 						       <% 
-						          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+						          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
 						          if(field.field_type == "nested_field")
 						          	field_value = {}
 						          	field.nested_levels.each do |ff|
@@ -140,6 +140,11 @@
 					                            }
 					             });
 					           });
+					    	<% if @ticket.ticket_status.deleted? %>
+         					jQuery("#helpdesk_ticket_status")
+         					.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
+         					.val("<%=@ticket.status%>")
+         					<% end %>
 					       <% end %>
 					   </ul>
 					<% end %> 	   	

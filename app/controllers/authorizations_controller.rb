@@ -9,7 +9,7 @@ class AuthorizationsController < ApplicationController
 
   def fetch_request_details
     @omniauth = request.env['omniauth.auth'] 
-    @auth = Authorization.find_from_hash(@omniauth,current_account.id)
+    @auth = Authorization.find_from_hash(@omniauth,current_account.id) unless @omniauth['provider'] == "facebook"
     provider_name = @omniauth['provider']
 
     if provider_name == :open_id or provider_name == :twitter or provider_name == :facebook
@@ -72,21 +72,22 @@ class AuthorizationsController < ApplicationController
 
   def create_for_salesforce(params)
     Account.reset_current_account
-    account_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
-    access_token = get_oauth2_access_token(@omniauth.credentials.refresh_token);
-    account = Account.find(:first, :conditions => {:id => account_id})
-    domain = account.full_domain
+    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    access_token = get_oauth2_access_token(@omniauth.credentials.refresh_token)
+    portal = Portal.find_by_id(portal_id)
+    account = portal.account
+    domain = portal.host
     protocol = (account.ssl_enabled?) ? "https://" : "http://"
     app_name = Integrations::Constants::APP_NAMES[:salesforce]
     instance_url = access_token.params['instance_url']
     config_params = "{'app_name':'#{app_name}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{instance_url}'}"
     config_params = config_params.gsub("'","\"")
-    key_value_pair = KeyValuePair.find_by_account_id_and_key(account_id, 'salesforce_oauth_config')
+    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, 'salesforce_oauth_config')
     key_value_pair.delete unless key_value_pair.blank?
     #KeyValuePair is used to store salesforce configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
     create_key_value_pair("salesforce_oauth_config", config_params, account.id) 
     
-    redirect_url = (Rails.env == "development") ? "http://localhost:3000/integrations/applications/oauth_install/salesforce" : (protocol +  domain + "/integrations/applications/oauth_install/salesforce")
+    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/salesforce"
      
     redirect_to redirect_url
   end
@@ -102,11 +103,14 @@ class AuthorizationsController < ApplicationController
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
       @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
+      @auth = Authorization.find_from_hash(@omniauth,user_account.id)
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
       create_for_sso(@omniauth, user_account)
       curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
       random_hash = Digest::MD5.hexdigest(curr_time)
+      key_value_pair = KeyValuePair.find_by_account_id_and_key(user_account.id, @current_user.id)
+      key_value_pair.delete unless key_value_pair.blank?
       create_key_value_pair(@current_user.id, curr_time, user_account.id)
       redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
     end
@@ -141,31 +145,22 @@ class AuthorizationsController < ApplicationController
   end
 
   def create_for_sso(hash, user_account = nil)
+    account = (user_account.blank?) ? current_account : user_account
     if !@current_user.blank? and !@auth.blank?
       return show_deleted_message if @current_user.deleted?
       make_usr_active
     elsif !@current_user.blank?
-      if user_account.blank?
-        @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => current_account.id) #Add an auth to existing user  
-      else
-        @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => user_account.id) #Add an auth to existing user
-      end
+      @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => account.id) #Add an auth to existing user  
       make_usr_active
     else  
-      @new_auth = create_from_hash(hash, user_account) 
+      @new_auth = create_from_hash(hash, account) 
       @current_user = @new_auth.user
     end
     create_session unless @omniauth['provider'] == "facebook"
   end
   
-  def create_from_hash(hash, user_account = nil)
-    if user_account.blank?
-      account = current_account
-    else
-      account = user_account
-    end
+  def create_from_hash(hash, account)
     user = account.users.new  
-    
     user.name = hash['info']['name']
     user.email = hash['info']['email']
     unless hash['info']['nickname'].blank?

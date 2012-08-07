@@ -7,22 +7,32 @@
     <div class="ctrlHolder">
       <h3 class="title"><%=t(".behavior")%></h3>
       <div class="row-fluid">
-        <div class="span6" id="AgentMandatory">
+        <div class="span6">
           <%= content_tag(:label, t(".for_agents"), :class => "caption") %>
-          <fieldset> 
-            <label class="checkbox"><input type="checkbox" name="agentrequired" /><%= t(".agent_mandatory_submission") %> </label>
-          </fieldset>       
-          <fieldset> 
-            <label class="checkbox"><input type="checkbox" name="agentclosure" /><%= t(".agent_mandatory_closure") %> </label>
-          </fieldset> 
+          <div id="AgentMandatory">
+            <fieldset> 
+              <label class="checkbox"><input type="checkbox" name="agentrequired" /><%= t(".agent_mandatory_submission") %> </label>
+            </fieldset>       
+            <fieldset> 
+              <label class="checkbox"><input type="checkbox" name="agentclosure" /><%= t(".agent_mandatory_closure") %> </label>
+            </fieldset> 
+          </div>
+          <div id="AgentOptions">
+            <div id="agent_cc_field">
+            <fieldset> 
+              <label class="checkbox disabled"><input type="checkbox" disabled="true" name="cc_field" /> <%= t(".display_cc_field") %> </label>
+            </fieldset> 
+            </div>
+          </div>
         </div>
-        <div class="span6" id="CustomerConditions">
+        <div class="span6" id="CustomerOptions">
           <%= content_tag(:label, t(".for_customer"), :class => "caption") %>
-          <fieldset id="nestedConfig">
-            <label class="checkbox"><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" />
+          <div id="CustomerConditions">
+            <fieldset id="nestedConfig">
+              <label class="checkbox"><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" />
               <%= t(".customer_visible") %> 
-            </label>
-             <fieldset id="nestedlvl2" class="nestedChoices">
+              </label>
+            <fieldset id="nestedlvl2" class="nestedChoices">
                <label class="checkbox">
                 <input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t(".customer_edit") %> 
                </label>
@@ -32,10 +42,25 @@
 								 </label>
                </fieldset>
              </fieldset>
-           </fieldset>  
+            </fieldset>  
+           </div>
+          <div id="field_options">
+            <div id="req_field_options">
+            <fieldset> 
+              <label class="checkbox"><input type="checkbox" name="portalcc"  id="portalcc_id"/><%= t(".display_cc_field") %> </label>
+            </fieldset>   
+              <div style="display: none;" id="cc_to_option" class="">
+                <fieldset class="tabbed" > 
+                 <label class="radio"><input type="radio" name="portalcc_to"  value="company" /><%= t(".cc_company_contacts") %> </label>
+                <label class="radio"><input type="radio" name="portalcc_to" value="all"/><%= t(".cc_any_email") %> </label>
+                </fieldset> 
+              </div>
+            </div>  
+          </div> 
         </div>
       </div>
-    </div>    
+    </div>   
+
     <div class="ctrlHolder" id="FieldLabels">
       <h3 class="title"><%= t(".label") %></h3>
       <div class="row-fluid">
@@ -111,6 +136,38 @@
         </ul>
       </div>
     </div>
+    <div class="ctrlHolder colsets" id="StatusFieldChoices" style="display:none;">
+      <%= content_tag(:h3, t(".status_choices"), :class => "title") %>
+      <input type="hidden" name="choicelist" id="ChoiceListValidation" value="" />
+        <div class="customchoices">
+          <fieldset>
+            <span style="visibility:hidden">
+              <span class="sort_handle"></span>
+              <span class="deleteChoice"></span>            
+            </span>
+            <span class="dropchoice">&nbsp;</span>
+            <span class="dropchoice"><label><%= t(".display_to_customer") %></label></span>
+            <label class="floatl"><%= t('.sla_timer') %></label>
+          </fieldset>
+        </div>
+        <div name="statuschoices" class="customchoices" id="statuschoices"></div>        
+        <a class="addchoice" id="addstatus" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
+        <div name="statuschoicesdeleted" class="customchoices deleted" id="statuschoicesdeleted"></div>
+        <script id="statusTemplate" type="text/x-jquery-tmpl">
+          <fieldset>
+            <span class="sort_handle"></span>
+            <span class="deleteChoice {{if (status_id == 2 || status_id == 4 || status_id == 3 || status_id == 5)}} disabled {{/if}}">
+            </span>            
+            <input type="hidden" name="status_id" value="${status_id}" />
+            <input type="checkbox" name="deleted" {{if deleted}}checked="checked"{{/if}} class="hide" />
+            <span class="dropchoice"><input type="text" rel="status-companion" name="name" value="${name}" {{if (status_id == 2 || status_id == 3 || status_id == 4 || status_id == 5) }} disabled="disabled" {{/if}} /></span>
+            <span class="dropchoice"><input type="text" name="customer_display_name" value="${customer_display_name}" /></span>
+            {{if (status_id != 2 && status_id != 4 && status_id != 5) }}
+            <input rel="toggle" type="checkbox" name="stop_sla_timer" data-inverted=true {{if stop_sla_timer}}checked="checked"{{/if}} value=true />
+            {{/if}}
+          </fieldset>
+        </script>
+    </div> 
     <div class="ctrlHolder colsets" id="DropFieldChoices" style="display:none;">
       <%= content_tag(:h3, t(".dropdown_choices"), :class => "title") %>
       <input type="hidden" name="choicelist" id="ChoiceListValidation" value="" />
@@ -121,7 +178,7 @@
             <span class="dropchoice"><input type="text" name="choice" /></span>
           </fieldset>
         </div>
-        <a class="addchoice" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
+        <a class="addchoice" id="addchoice" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
     </div> 
           
 		<span class="seperator"></span> 

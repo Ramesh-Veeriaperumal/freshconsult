@@ -9,8 +9,6 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :notable, :polymorphic => true
 
   belongs_to :user
-
-  before_create :set_note_as_private
   
   Max_Attachment_Size = 15.megabyte
 
@@ -60,7 +58,7 @@ class Helpdesk::Note < ActiveRecord::Base
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 
               :order => "created_at desc"
 
-  SOURCES = %w{email form note status meta twitter feedback facebook}
+  SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
   
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
@@ -105,23 +103,37 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def inbound_email?
-    source == SOURCE_KEYS_BY_TOKEN["email"] && incoming
+    email? && incoming
   end
   
   def outbound_email?
-    source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
+    email_conversation? && !incoming
   end 
   
   def fwd_email?
-    email? and private
+    source == SOURCE_KEYS_BY_TOKEN["forward_email"]
+  end
+
+  def email_conversation?
+    email? or fwd_email?
   end
   
   def to_json(options = {})
+    options[:include] = [:attachments]
     options[:methods] = [:user_name]
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
   end
 
+  def source_name
+    SOURCES[source]
+  end
+
+  def body_mobile
+    body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
+      body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))
+  end
+  
   def to_liquid
     { 
       "commenter" => user,
@@ -148,7 +160,7 @@ class Helpdesk::Note < ActiveRecord::Base
       if human_note_for_ticket?
         ticket_state = notable.ticket_states   
         if user.customer?  
-          ticket_state.requester_responded_at=Time.zone.now if !(email? and notable.included_in_fwd_emails?(user.email))
+          ticket_state.requester_responded_at=Time.zone.now unless replied_by_third_party?
         else
           ticket_state.agent_responded_at=Time.zone.now unless private
           ticket_state.first_response_time=Time.zone.now if ticket_state.first_response_time.nil? && !private
@@ -160,18 +172,23 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer?      	
-        unless notable.open? || feedback? || (fwd_email? and !notable.pending?)
-          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
+      if user.customer?
+        # Will re-open the ticket if it is not in open status and not feedback
+        # Will re-open when the system gets a reply from third party and the ticket is not in resolved/closed statuses.
+        unless notable.open? || feedback? || (replied_by_third_party? and !notable.active?)
+          notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
-      elsif inbound_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self , notable.reply_email,{:include_cc => true})      
+      else    
+        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
+           notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
-      
+      # syntax to move code from delayed jobs to resque.
+      #Resque::MyNotifier.deliver_reply( notable.id, self.id , notable.reply_email,{:include_cc => true})
       notable.updated_at = created_at
       notable.save
     end
@@ -182,14 +199,10 @@ class Helpdesk::Note < ActiveRecord::Base
       notable.ticket_states.update_attribute(:inbound_count,inbound_count+=1)
      end
     end
-     
-     def set_note_as_private
-       self.private = true if note? && !user.customer? && !notable.import_id
-      end 
     
     def add_activity
-      return unless human_note_for_ticket?
-      
+      return if (!human_note_for_ticket? or zendesk_import?)
+          
       if outbound_email?
         unless private?
           notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
@@ -209,10 +222,23 @@ class Helpdesk::Note < ActiveRecord::Base
           "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
       end
     end
+
+    # The below 2 methods are used only for to_json 
+    def user_name
+      human_note_for_ticket? ? (user.name || user_info) : "-"
+    end
+    
+    def user_info
+      user.get_info if user
+    end
     
   private
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
+    end
+
+    def zendesk_import?
+      Thread.current["zenimport_#{account_id}"]
     end
     
     def liquidize_body
@@ -220,13 +246,11 @@ class Helpdesk::Note < ActiveRecord::Base
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 
-    # The below 2 methods are used only for to_json 
-    def user_name
-      user.name || user_info
-    end
-    
-    def user_info
-      user.get_info if user
+
+    # Replied by third pary to the forwarded email
+    # Use this method only after checking human_note_for_ticket? and user.customer?
+    def replied_by_third_party? 
+      private_note? and incoming and notable.included_in_fwd_emails?(user.email)
     end
 
 end

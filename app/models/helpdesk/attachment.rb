@@ -39,16 +39,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
   
   def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires_in => 1.minutes,:s3_host_alias => "cdn.freshdesk.com"
+    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com"
     AWS::S3::S3Object.url_for content.path, content.bucket_name , options
   end
  
  def image?
    (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
   end
-  
-  
-  
+
   def attachment_sizes
    if self.description == "logo"
       return {:logo => "x50>"}

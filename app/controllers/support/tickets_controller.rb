@@ -8,6 +8,7 @@ class Support::TicketsController < ApplicationController
   end
   before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
   before_filter :load_item, :only =>[:update]
+  before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
   
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -22,22 +23,47 @@ class Support::TicketsController < ApplicationController
   
   def update
     if @item.update_attributes(params[:helpdesk_ticket])
-      flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
-      redirect_to @item
+      respond_to do |format|
+        format.html { 
+          flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+          redirect_to @item 
+        }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
+        }
+      end
     end
   end
 
   def filter   
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
-    render :index
+    respond_to do |format|
+      format.html {
+        render :index
+      }
+      format.mobile {
+        unless @response_errors.nil?
+          render :json => {:errors => @response_errors}.to_json
+        else
+          json = "["; sep=""
+          @tickets.each { |tic| 
+            #Removing the root node, so that it conforms to JSON REST API standards
+            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+          }
+          render :json => json + "]"
+        end
+      }
+    end 
   end
   
   def close_ticket
     @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
-     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+     status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
      logger.debug "close the ticket...with status id  #{status_id}"
      res = Hash.new
+     mob_json = {}
      if @item.update_attribute(:status , status_id)
        # res["success"] = true
        #        res["status"] = 'Closed'
@@ -45,13 +71,23 @@ class Support::TicketsController < ApplicationController
        #        res["message"] = "Successfully updated"
        #        render :json => ActiveSupport::JSON.encode(res)
        flash[:notice] = "Successfully updated"
+       mob_json[:success] = true
      else
        # res["success"] = false
        # res["message"] = "closing the ticket failed"
        # render :json => ActiveSupport::JSON.encode(res)      
        flash[:notice] = "Closing the ticket failed"
-     end                                       
-     redirect_to :back
+       mob_json[:failure] = true
+     end
+     respond_to do |format|
+      format.html{
+        redirect_to :back
+      }
+      format.mobile {
+        mob_json[:item] = @item;
+        render :json => mob_json.to_json
+      }
+     end
   end
     
   protected 
@@ -73,9 +109,10 @@ class Support::TicketsController < ApplicationController
     end
   
     def build_tickets
-       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, current_user.tickets)
-       @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) 
-       @tickets ||= []    
+    @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, current_user.tickets)
+    @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) unless mobile?
+    @tickets = @tickets.paginate(:page => params[:page]) if mobile?
+    @tickets ||= []    
    end
    
    def require_user_login

@@ -11,7 +11,7 @@ label{
    font-size:1.4em;
 }
 input[type=text], select, input.text { 
-   width: 95%;
+   width: 93%;
    margin:0 0 3px 0;
    color:#3f3f3f;
    padding:3px;
@@ -189,8 +189,9 @@ a.addchoice:hover{
 		.dropchoice, .tags{
 			@include pie-clearfix;
 			float:left;
-			margin:0 5px 0 0;
+			margin:0 20px 0 0;
 			padding:0;
+			width:30%;
 			input{
 				margin-right:5px;
 				width:100%;
@@ -204,6 +205,16 @@ a.addchoice:hover{
 			float: left;
 			margin:5px 12px 0 5px;
 			cursor: pointer;
+		}
+		.deleteChoice{
+			float: left;
+			margin:5px 12px 0 5px;
+			cursor: pointer;
+			background: sprite($symbol, delete) no-repeat;	
+			width:16px; height:16px;
+		}
+		.deleteChoice.disabled{
+			background: sprite($symbol, delete-inactive) no-repeat;				
 		}
 	}
 	a.addchoice{
@@ -318,6 +329,12 @@ a.addchoice:hover{
 			font-size:1.4em; 
 		}
 	}	 
+	.largelabel{
+		label{
+			font-size:1.8em;
+			font-weight: 300;
+		}
+	}
 	.check_box{
 		@include clearfix;
 		label{
@@ -766,14 +783,14 @@ input.time{
 }
 
 .grid{
-   ul{
+   ul.row{
       @include no-bullets;
       margin:0; padding:0;
       background:#efefef;
       border-top:1px solid #cfcfcf;
       padding:8px 12px;
       @include clearfix;
-      li{
+      li.list{
          margin:0; padding:0;
          float:left;
          width:33%;
@@ -832,7 +849,7 @@ span.sort_handle{
 	@include pie-clearfix;
 	li{
 		float:left;
-		position:relative;
+		position:relative;		
 		a{
 			margin:6px 6px 0 0;
 			font-size:13px;
@@ -862,8 +879,11 @@ span.sort_handle{
 		div{ position:relative; }
 		cursor:move;
 		border-bottom:1px solid #efefef;
+		input[type=text]{	width:90%; }
 	} 
-	
+	.requester span{
+		margin-left: 3px;
+	}
 	li:hover, li.hover, li.active{
 		background:#ffffff;
 		border-color:#dfdfdf;
@@ -1908,4 +1928,148 @@ ul.ui-form .inputs-list{
 	font-weight:bold;
 	position: relative;
 	top:4px;
+}
+
+.new_ticket_cc_button{
+	float:right;
+	margin-top:-25px;
+	width:5.5%;
+	a{
+		text-decoration:underline;
+		&:hover{
+			text-decoration:none;
+		}
+	}
+}
+
+
+
+#cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{
+	width:94% !important;
+}
+
+#cc_emails_sec .chzn-drop{
+	width:100% !important;
+}
+
+.multi-product-add{
+	&.ui-form{
+		background-color: #fafafa;
+		div.inline-field{
+			margin: 0 5px;
+		}
+		div.fields{
+			padding-bottom: 15px;
+			label{
+				font: 13px "Helvetica Neue", sans-serif;
+			}
+		}
+		.add-email{
+			margin-left: 210px;
+			margin-top: -25px;
+			padding-bottom: 34px;
+			a.add-email-icon{
+				padding: 8px 8px 4px 35px;
+				font-size: 14px;
+				font-family: "Helvetica Neue", sans-serif;
+				font-weight: 300;
+				text-decoration: none;
+				color: #404040;
+				position: relative;
+				@include inline-block;
+				span{
+					position: absolute;
+					left: 0px;
+					top: 4px;
+					background: url("../images/email_config_add.png") no-repeat;
+					width: 25px;
+					height: 25px;
+				}
+			}
+		}
+		.configure-portal{
+			text-align: center;
+			background-color: #efefef;
+			border-bottom: 1px solid #d1d1d1;
+			border-top: 1px solid #d1d1d1;
+			padding: 10px 0; 
+			label{				
+				font-weight: 300;
+				font-size: 1.3em;
+				display: inline;
+			}
+		}
+		.big-seperator{
+			border-bottom: 1px solid #dfdfdf;
+			display:block;
+			height:1px;
+			margin:5px 0px 12px;
+		}
+		.configure-email-form{
+			padding: 0 10px 12px 10px;
+			margin-bottom: 11px;
+			border: 1px solid #dfdfdf;
+			background-color: #fbfbfb;
+			@include pie-clearfix;
+			@include corners(4px);
+			width: 90%;
+			position:relative;
+			.column{
+				float: left;
+				&.left-column{
+					width: 50%;
+					.text{
+						font-weight: bold;
+					}
+					span.text{
+						@include wrap;
+					}
+				}
+				&.right-column{
+					width: 50%;
+					input.checkbox{
+						margin: 5px;
+						float: left;
+					}
+					.set_primary{
+						padding-top: 27px;
+					}
+					select{
+						margin-top: 4px;
+					}
+				}
+			}
+			.deleteChoice{
+				cursor: pointer;
+				background: url(/images/email_config_delete.png) no-repeat;	
+				width: 25px; 
+				height: 25px;
+				position: absolute;
+				right: -28px;
+				&.disabled{
+					background: url(/images/email_config_delete_disabled.png) no-repeat;
+				}
+			}
+		}
+	}
+}
+
+.ui-form{
+	.portal-settings{
+		div.fields{
+			padding-top: 4px;
+			label{
+				font-size: 14px;
+			}
+		}
+	}
+}
+
+#cc_emails_sec .multi_value_field {
+	width:93%;
+	padding-left:5px;
+	padding-right:5px;
+	border-color:#C6C6C6;
+	@include box-shadow(#DFDFDF 1px 1px 2px inset);
+	@include border-radius(5px);
 }
