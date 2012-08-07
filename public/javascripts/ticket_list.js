@@ -100,6 +100,8 @@ jQuery(document).ready(function() {
         } else {
           jQuery(this).parent().parent().removeClass('active');
         }
+
+        jQuery("#helpdesk-select-all").prop('checked', jQuery('.tickets tbody tr .check :checkbox:checked').length == jQuery('.tickets tbody tr .check :checkbox').length);
         bulkActionButtonsDisabled();
     });
 

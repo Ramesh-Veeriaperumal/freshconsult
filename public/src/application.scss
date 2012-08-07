@@ -3314,6 +3314,10 @@ div.addReminder{
 .tickets, .tickets-expanded{
 	width:100%;
 	color:#5f5f5f;
+
+	.ralign {
+		text-align: right;
+	}
 	
 	th{
 		background:none;

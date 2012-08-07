@@ -23,7 +23,7 @@
   	<%= h(ticket.requester.display_name) %>
   </td>
   <td class="ticket_info hideForDetails"><%= t("helpdesk.tickets.tabular_view.time_ago", :time_in_words => time_ago_in_words(ticket.updated_at)) %></td>
-  <td class="hideForList">
+  <td class="ralign hideForList">
   	<%= "<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>" unless ticket_style.blank? %>
   </td>
   <td class="source-icon hideForList">
