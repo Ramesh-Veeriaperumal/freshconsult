@@ -21,7 +21,7 @@
 	</div> 
 <%- end %>
 <h3 class="title"><%= @page_title %></h3>
-  <%= link_to("Export", { :action => "configure_export", :a=>params[:action], :i=>params[:id] }, :class => "ssp_export dialog2", :title => "Export to CSV", "data-width" => "650" ) %>
+  <%= link_to("Export", { :action => "configure_export", :a=>params[:action], :i=>params[:id] }, :class => "ssp_export dialog2", :title => "Export to CSV", "data-width" => "650" ) unless @tickets.empty? %>
 <div id="ticket-sub-toolbar">
   <%@items = @tickets%>
   <%= render :partial => "/support/shared/ticket_sort", :locals=>{:is_portal=>true} unless @tickets.empty? %>

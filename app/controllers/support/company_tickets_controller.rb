@@ -12,6 +12,7 @@ class Support::CompanyTicketsController < ApplicationController
   before_filter :set_mobile, :only => [:index, :filter]
 
   before_filter :verify_permission
+  before_filter :set_date_filter ,    :only => [:export_csv]
   
   def index    
     @page_title = t('helpdesk.tickets.views.all_tickets')
@@ -78,7 +79,8 @@ class Support::CompanyTicketsController < ApplicationController
    protected  
   
     def build_tickets
-       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope.tickets)
+      date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? ticket_scope.tickets : ticket_scope.tickets.created_at_inside(params[:start_date], params[:end_date])
+       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, date_added_ticket_scope)
        @tickets = @tickets.paginate(:page => params[:page], :per_page => params[:wf_per_page] || 10, :order=> "#{current_wf_order} #{current_wf_order_type}") 
        @tickets ||= []    
     end

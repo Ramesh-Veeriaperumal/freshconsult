@@ -12,7 +12,8 @@ class Support::TicketsController < ApplicationController
   before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
   before_filter :load_item, :only =>[:update]
   before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
-  
+  before_filter :set_date_filter ,    :only => [:export_csv]
+
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def index
@@ -138,7 +139,8 @@ class Support::TicketsController < ApplicationController
     end
   
     def build_tickets
-    @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, current_user.tickets)
+      ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? current_user.tickets : current_user.tickets.created_at_inside(params[:start_date], params[:end_date])
+    @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope)
     per_page = mobile? ? 30 : params[:wf_per_page] || 10
      @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, :order=> "#{current_wf_order} #{current_wf_order_type}") 
     @tickets ||= []

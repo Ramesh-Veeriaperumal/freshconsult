@@ -8,7 +8,7 @@
 	<%= link_to(t('resolved_tickets') ,"/support/tickets/filter/resolved_or_closed" ) %>
  </div>
 
-  <%= link_to("Export", { :action => "configure_export", :a=>params[:action], :i=>params[:id] }, :class => "ssp_export dialog2", :title => "Export to CSV", "data-width" => "650" ) %>
+  <%= link_to("Export", { :action => "configure_export", :a=>params[:action], :i=>params[:id] }, :class => "ssp_export dialog2", :title => "Export to CSV", "data-width" => "650" ) unless @tickets.blank?%>
 
   <div id="ticket-sub-toolbar">
     <%@items = @tickets%>
