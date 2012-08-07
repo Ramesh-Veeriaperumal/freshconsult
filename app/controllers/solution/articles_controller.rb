@@ -30,7 +30,7 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
       format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
-      format.json  { render :json => @article.to_json(:include => :folder) }
+      format.json  { render :json => @article.to_json(:include => {:folder => {:except => [:is_default]}}) }
     end    
   end
 
