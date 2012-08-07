@@ -14,6 +14,7 @@ class Account < ActiveRecord::Base
   has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
   has_many :flexifields, :dependent => :delete_all
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
+  has_many :schme_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :delete_all
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
