@@ -225,19 +225,21 @@ active_dialog = null;
           return this.each(function(i, item){
             curItem = $(item);
             var dialog = null;
-            
+
             curItem.modal();
             curItem.click(function(e){
                e.preventDefault();
                width = $(this).data("width") || '750px';
-               
+             
+                href = jQuery(this).data('url') || this.href;
+            
                if(dialog == null){
                   dialog = $("<div class='loading-center' />")
                               .html("<br />")
                               .dialog({  modal:true, width: width, height:'auto', position:'top',
                                          title: this.title, resizable: false });
 
-                   active_dialog = dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
+                   active_dialog = dialog.load(href,{}, function(responseText, textStatus, XMLHttpRequest) {
                                                    dialog.removeClass("loading-center");
                                                    dialog.css({"height": "auto"});
                                                 });
@@ -289,13 +291,14 @@ active_dialog = null;
 
  $(document).bind('mousedown', function(e) {       
 	if($(e.target).hasClass("chzn-results")) return;
+  if ($(e.target).parent().hasClass("fd-ajaxmenu")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
     } 
  });
  
- function hideActiveMenu(){
+ hideActiveMenu = function (){
     $($(document).data("active-menu-element")).hide().removeClass("active-nav-menu");
     $($(document).data("active-menu-parent")).removeClass("selected");
     $(document).data("active-menu", false);
@@ -316,6 +319,100 @@ active_dialog = null;
         $(node).data("showAsMenu", true);
      });
    };
+
+  $.fn.showAsAjaxMenu = function(){
+    this.each(function(i, node){
+
+      $(node).bind("click", function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        //Dynamic Menu count is just used to give an ID to the menus, so that they can be hidden properly.
+        if ($(node).data('options-fetched') != true) {
+          if (typeof($(document).data('dynamic-menu-count')) == "undefined") {
+            $(document).data('dynamic-menu-count',0);
+          }
+          menuid = $(document).data('dynamic-menu-count') + 1;
+          $(document).data('dynamic-menu-count',menuid);
+
+          menu_container = $('<div>');
+          menu_container.attr('id',"menu_" + menuid);
+          menu_container.data('parent',$(node));
+          menu_container.addClass('loading fd-ajaxmenu');
+          // menu_container.width($(node).width());
+          menu_container.insertAfter($(node));
+
+          $(node).data('menuid',"menu_" + menuid);
+
+          $.ajax({
+            url: $(node).data('options-url'),
+            success: function (data, textStatus, jqXHR) {
+              $('#menu_' + menuid).removeClass('loading').html(data);  
+
+              //Setting the Active Element
+              text_to_match = $(node).children('.result').first().text();
+              $('#menu_' + menuid).children().each(function(i) {
+                if ($(this).text() == text_to_match) {
+                  $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
+                }
+              });
+
+
+              $(node).data('options-fetched',true);
+            }
+          });
+        }
+
+        menu = $('#' + $(node).data('menuid'));
+        menu.show().css('visibility','visible');
+        $(document).data({ "active-menu": true, "active-menu-element": menu, "active-menu-parent": node });
+
+        $(node).addClass("selected");
+      });
+    });
+  };
+
+  $.fn.showPreloadedMenu = function(){
+    this.each(function(i, node){
+
+      $(node).bind("click", function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        if ($(node).data('options-fetched') != true) {
+          if (typeof($(document).data('dynamic-menu-count')) == "undefined") {
+            $(document).data('dynamic-menu-count',0);
+          }
+          menuid = $(document).data('dynamic-menu-count') + 1;
+          $(document).data('dynamic-menu-count',menuid);
+          menu_container = $('<div>');
+          menu_container.data('parent',$(node));
+          menu_container.attr('id',"menu_" + menuid);
+          menu_container.addClass('loading fd-ajaxmenu');
+          menu_container.append($($(node).data('options')).html());
+          menu_container.insertAfter($(node));
+          $(node).data('menuid',"menu_" + menuid);
+          $(node).data('options-fetched',true)
+          menuid = "menu_" + menuid;
+
+          text_to_match = $(node).children('.result').first().text();
+          menu_container.children().each(function(i) {
+            if ($(this).text() == text_to_match) {
+              $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
+            }
+          });
+
+        } else {
+          menuid = $(node).data('menuid');
+        }
+        menu = $('#' + menuid);
+        menu.show().removeClass('loading').css('visibility','visible');
+        $(document).data({ "active-menu": true, "active-menu-element": menu, "active-menu-parent": node });
+
+        $(node).addClass("selected");
+      });
+    });
+  };
   // jQuery autoGrowInput plugin by James Padolsey
   // See related thread: http://stackoverflow.com/questions/931207/is-there-a-jquery-autogrow-plugin-for-text-fields
   $.fn.autoGrowInput = function(o) {
@@ -417,4 +514,48 @@ active_dialog = null;
     }
   };
 
+  
+  $.fn.animateHighlight = function(originalBg, highlightColor, duration) {
+    var highlightBg = highlightColor || "#FFFF9C";
+    var animateMs = duration || 1500;
+    var originalBg = originalBg || 'transparent';
+    var element_animated = $(this);
+    element_animated.stop().css("background-color", highlightBg);
+    element_animated.animate({backgroundColor: originalBg }, animateMs, function () {
+      element_animated.css({'background-color':''});
+    });
+  };
+ 
+
 })( jQuery );
+
+
+setCookie = function (name,value,expires_in_days)
+{
+  var exdate=new Date();
+  exdate.setDate(exdate.getDate() + expires_in_days);
+  var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString()) + '; path=/';
+  document.cookie=name + "=" + c_value;
+}
+
+getCookie = function(name)
+{
+  var i,x,y,ARRcookies=document.cookie.split(";");
+  for (i=0;i<ARRcookies.length;i++)
+  {
+    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+    x=x.replace(/^\s+|\s+$/g,"");
+    if (x==name)
+    {
+      return unescape(y);
+    }
+  }
+}
+supports_html5_storage = function() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}

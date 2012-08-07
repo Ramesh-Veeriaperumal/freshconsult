@@ -1,6 +1,1 @@
-/* Theme Colors and layout Defaults */
-/* Qtip hack for using our own tool-tip style for new ticket Auto Suggest Solutions  */
-.ui-solution-suggest { margin-top: -15px; }
-.ui-solution-suggest .ui-tooltip-tip { display: none; }
-.ui-solution-suggest:after { content: ""; position: absolute; width: 12px; height: 21px; background: url('/images/symbols-s78802ad4cb.png') 0 -426px no-repeat; left: -11px; top: 20px; }
-.ui-solution-suggest .ui-tooltip-content { padding: 15px 16px; }
+.ui-solution-suggest{margin-top:-15px}.ui-solution-suggest .ui-tooltip-tip{display:none}.ui-solution-suggest:after{content:"";position:absolute;width:12px;height:21px;background:url('/images/symbols-sf1d802b61a.png') 0 -426px no-repeat;left:-11px;top:20px}.ui-solution-suggest .ui-tooltip-content{padding:15px 16px}

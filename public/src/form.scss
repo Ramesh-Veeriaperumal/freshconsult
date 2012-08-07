@@ -38,6 +38,12 @@ textarea[readonly] {
   background-color: #f5f5f5;
   border-color: #ddd;
   cursor: not-allowed;
+
+  &:hover {
+	  background-color: #f5f5f5;
+	  border-color: #ddd;
+	  @include box-shadow(none);
+	}
 }     
 
 textarea {
@@ -993,6 +999,10 @@ span.sort_handle{
       margin:0 0 6px 0;
       font-size:13px;
       padding:10px 12px;
+
+      &.error {
+      	color:#993333;
+      }
    }
    .ui-form{
       margin:0 0;
