@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724102704) do
+ActiveRecord::Schema.define(:version => 20120806041941) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -160,6 +160,17 @@ ActiveRecord::Schema.define(:version => 20120724102704) do
     t.datetime "updated_at"
     t.integer  "referrer_type"
   end
+
+  create_table "customer_forums", :force => true do |t|
+    t.integer  "customer_id", :limit => 8
+    t.integer  "forum_id",    :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "customer_forums", ["account_id", "customer_id"], :name => "index_customer_forum_on_account_id_and_customer_id"
+  add_index "customer_forums", ["account_id", "forum_id"], :name => "index_customer_forum_on_account_id_and_forum_id"
 
   create_table "customers", :force => true do |t|
     t.string   "name"
@@ -1048,6 +1059,17 @@ ActiveRecord::Schema.define(:version => 20120724102704) do
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
+
+  create_table "solution_customer_folders", :force => true do |t|
+    t.integer  "customer_id", :limit => 8
+    t.integer  "folder_id",   :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "solution_customer_folders", ["account_id", "customer_id"], :name => "index_customer_folder_on_account_id_and_customer_id"
+  add_index "solution_customer_folders", ["account_id", "folder_id"], :name => "index_customer_folder_on_account_id_and_folder_id"
 
   create_table "solution_folders", :force => true do |t|
     t.string   "name"

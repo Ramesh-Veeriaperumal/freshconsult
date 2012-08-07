@@ -5,8 +5,20 @@
 </div>
 
 <h3 class="title"><%= folder.name %></h3> 
-<div class="intro"><%= folder.description %></div> 
+<p class="intro">
+	<%= folder.description %>	
+</p> 
+<div class="intro">
+	<%=t('solution.folders.folder_form.visible_to')%>:
+	<% folder.customer_folders.each do |cust|%>
+		<span class="label notice"><%=cust.customer.name%></span>
+	<%end%>
+</div>
+
+<!-- Need to check visiblity is shown to the people or not -->
+
 <span class="seperator"></span>
+
 <% unless (folder.articles.size == 0) %>
 	<ol class="artical_list" id="article_list">
 		<% folder.articles.each do |article| %>
