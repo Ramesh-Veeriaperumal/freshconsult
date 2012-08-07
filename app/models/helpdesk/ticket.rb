@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
 
-  EMAIL_REGEX = /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product"]
 
@@ -228,7 +228,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
      indexes description
      indexes sphinx_notes.body, :as => :note
     
-    has account_id, deleted
+    has account_id, deleted, responder_id, group_id, requester_id
+    has requester.customer_id, :as => :customer_id
 
     #set_property :delta => :delayed
     set_property :field_weights => {
@@ -948,12 +949,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
  
   def can_access?(user)
+    if user.agent.blank?
+      return true if self.requester_id==user.id
+      if user.client_manager?
+        return self.requester.customer_id == user.customer_id
+      end
+    else
       return true if user.agent.all_ticket_permission || self.responder_id==user.id
       if user.agent.group_ticket_permission          
-         user.agent_groups.each do |ag|                   
-                 return true if self.group_id == ag.group_id
-          end                           
+        user.agent_groups.each do |ag|                   
+          return true if self.group_id == ag.group_id
+        end                           
       end
+    end
     return false
   end
 

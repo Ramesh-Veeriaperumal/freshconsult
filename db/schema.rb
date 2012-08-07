@@ -614,6 +614,72 @@ ActiveRecord::Schema.define(:version => 20120806041941) do
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
 
+  create_table "helpdesk_schema_less_notes", :id => false, :force => true do |t|
+    t.integer  "id",            :limit => 8,                    :null => false
+    t.integer  "note_id",       :limit => 8
+    t.integer  "account_id",    :limit => 8
+    t.string   "from_email"
+    t.text     "to_emails"
+    t.text     "cc_emails"
+    t.text     "bcc_emails"
+    t.integer  "long_nc01",     :limit => 8
+    t.integer  "long_nc02",     :limit => 8
+    t.integer  "long_nc03",     :limit => 8
+    t.integer  "long_nc04",     :limit => 8
+    t.integer  "long_nc05",     :limit => 8
+    t.integer  "long_nc06",     :limit => 8
+    t.integer  "long_nc07",     :limit => 8
+    t.integer  "long_nc08",     :limit => 8
+    t.integer  "long_nc09",     :limit => 8
+    t.integer  "long_nc10",     :limit => 8
+    t.integer  "int_nc01"
+    t.integer  "int_nc02"
+    t.integer  "int_nc03"
+    t.integer  "int_nc04"
+    t.integer  "int_nc05"
+    t.string   "string_nc01"
+    t.string   "string_nc02"
+    t.string   "string_nc03"
+    t.string   "string_nc04"
+    t.string   "string_nc05"
+    t.string   "string_nc06"
+    t.string   "string_nc07"
+    t.string   "string_nc08"
+    t.string   "string_nc09"
+    t.string   "string_nc10"
+    t.string   "string_nc11"
+    t.string   "string_nc12"
+    t.string   "string_nc13"
+    t.string   "string_nc14"
+    t.string   "string_nc15"
+    t.datetime "datetime_nc01"
+    t.datetime "datetime_nc02"
+    t.datetime "datetime_nc03"
+    t.datetime "datetime_nc04"
+    t.datetime "datetime_nc05"
+    t.boolean  "boolean_nc01",               :default => false
+    t.boolean  "boolean_nc02",               :default => false
+    t.boolean  "boolean_nc03",               :default => false
+    t.boolean  "boolean_nc04",               :default => false
+    t.boolean  "boolean_nc05",               :default => false
+    t.text     "text_nc01"
+    t.text     "text_nc02"
+    t.text     "text_nc03"
+    t.text     "text_nc04"
+    t.text     "text_nc05"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_schema_less_notes", ["account_id", "note_id"], :name => "index_helpdesk_schema_less_notes_on_account_id_note_id", :unique => true
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"account_id"=>nil, "string_nc01"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"account_id"=>nil, "string_nc02"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["id"], :name => "helpdesk_schema_less_notes_id"
+  add_index "helpdesk_schema_less_notes", ["int_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc01_account_id"
+  add_index "helpdesk_schema_less_notes", ["int_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc02_account_id"
+  add_index "helpdesk_schema_less_notes", ["long_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_long_nc01_account_id"
+  add_index "helpdesk_schema_less_notes", ["long_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_long_nc02_account_id"
+
   create_table "helpdesk_schema_less_tickets", :id => false, :force => true do |t|
     t.integer  "id",            :limit => 8,                    :null => false
     t.integer  "account_id",    :limit => 8

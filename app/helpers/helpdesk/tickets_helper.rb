@@ -3,7 +3,8 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
-  
+  include Helpdesk::NoteActions
+
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
       link_to(strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])), :class => ( selected ? "active #{cls}": "#{cls}" ))
@@ -204,7 +205,8 @@ module Helpdesk::TicketsHelper
   
   def bind_last_conv (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    last_conv = (!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item
+    last_conv = (item.is_a? Helpdesk::Note) ? item : 
+                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
 
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
