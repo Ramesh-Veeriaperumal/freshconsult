@@ -2,7 +2,10 @@ module Mobile::MobileHelperMethods
 
   MOBILE_URL = "/mobile/"
 
-  MOBILE_VIEWS = { :tickets => { :show => "#{MOBILE_URL}#tickets/show/{{params.id}}" } }
+  MOBILE_VIEWS = { :tickets => { 
+                      :show => "#{MOBILE_URL}#tickets/show/{{params.id}}"
+                    } 
+                  }
 
   DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
   
@@ -28,11 +31,11 @@ module Mobile::MobileHelperMethods
     end
 
     def mobile?
-      Rails.logger.debug "request host #{request.host}"
       mobile_agent? && allowed_domain? &&  !classic_view? 
     end
 
     def set_mobile
+      Rails.logger.debug "mobile ::: #{mobile?}"
       params[:format] = "mobile" if mobile?
     end
 
@@ -57,5 +60,25 @@ module Mobile::MobileHelperMethods
 
     def mobile_url
       construct_url(MOBILE_VIEWS[controller_name.to_sym][action_name.to_sym], params)
+    end
+
+    def formate_body_html
+      textiled_body = params[:helpdesk_note][:body_html]
+      @item[:body_html] = RedCloth.new(textiled_body).to_html.gsub(/\n/,'<br />') unless textiled_body.nil?
+    end
+
+    def populate_private
+      if params[:helpdesk_note][:private].nil? and !params["public"].nil?
+        is_public = params["public"]
+        is_public = is_public == true || is_public =~ (/(true|t|yes|y|1)$/i) ? true : false
+        @item[:private] = !is_public
+      end
+    end
+
+    def prepare_mobile_note
+      if mobile?
+        formate_body_html
+        populate_private
+      end 
     end
 end

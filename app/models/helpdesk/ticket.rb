@@ -10,6 +10,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
+  include Mobile::Actions::Ticket
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
@@ -778,15 +779,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
+    Rails.logger.debug "deep #{deep}"
     options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep
+      Rails.logger.debug "inside if 123"
       self.load_flexifield
       self[:notes] = self.notes
       options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
       options[:methods].push(:custom_field)
     end
+    Rails.logger.debug "deep #{options}"
     json_str = super options
+    Rails.logger.debug "json_str #{json_str}"
     json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
   end
 
@@ -896,56 +901,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
-  def to_mob_json(only_public_notes=false)
-    notes_option = {
-      :only => [:created_at, :user_id, :id, :private ],
-      :include => {
-        :user => {
-          :only => [:name, :email, :id],
-          :methods => [:avatar_url, :is_agent, :is_customer]
-        },
-        :attachments => {
-          :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
-        }
-      },
-      :methods => [ :body_mobile, :source_name ]
-    }
-
-    json_inlcude = {
-      :responder => {
-        :only => [ :name, :email, :id ],
-        :methods => [ :avatar_url ]
-      },
-      :requester => {
-        :only => [ :name, :email, :id, :is_agent, :is_customer, :twitter_id  ],
-        :methods => [ :avatar_url, :is_customer ]
-      },
-      :attachments => {
-        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
-      },
-      :fb_post => {
-        :include => {
-          :facebook_page => {
-            :only => [ :id, :page_name ]
-          }
-        }
-       }
-    }
-
-    if only_public_notes
-     json_inlcude[:public_notes] = notes_option 
-    else 
-     json_inlcude[:notes] = notes_option
-    end
-
-    options = {
-      :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
-      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails,
-                    :conversation_count, :selected_reply_email, :from_email, :is_twitter, :is_facebook, :fetch_twitter_handle, :is_fb_message ],
-      :include => json_inlcude
-    }
-    to_json(options,false) 
-  end
  
   private
   

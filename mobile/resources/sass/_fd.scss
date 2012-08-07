@@ -750,7 +750,7 @@ a {
 				div.icon {
 						display:inline-block;
 						margin: 5px 0.4em;
-						@include border-radius(50%);
+						@include border-radius(20px);
 						vertical-align:top;
 						@include box-shadow(inset 0 0 4px #000, 1px 1px 0px #fff);
 						color:#fff;
@@ -839,23 +839,33 @@ a {
 				@include box-shadow( #fff 1px 0 0 );
 				&.half{
 					&:first-child{
-						text-align:right;
-						a {
-							margin-right:10%;
+						text-align: left;
+						a.reply {
+							position: relative;
+							top: -3px;
+							left: 14%;
 						}
 						span{
 							font-size: 16px;
 							vertical-align: middle;
+							position: relative;
+							left: 45%;
+							top: -12px;
 						}
 					}
 					&:last-child{
-						a {
-							margin-left:10%;
+						a.close {
+							float: left;
+							position: relative;
+							top: -3px;
+							/*left:-34px;*/
 						}
 						span{
 							font-size: 16px;
 							vertical-align: middle;
-							margin-left:10px;
+							position: relative;
+							left: -15%;
+							top: 4px;
 						}
 					}
 					width:50%;
@@ -1207,6 +1217,12 @@ a {
 	padding: 4px 0;
 	border-bottom: 1px solid #DDD;
 }
+
+input[readonly=true] {
+		color: #888;
+		font-weight: normal !important;
+}
+
 #ticketReplyForm{
 	/* .x-button-icon.add_black{
 		-webkit-mask-image:none;

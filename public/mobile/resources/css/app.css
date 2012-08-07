@@ -11093,8 +11093,8 @@ a {
 .ticketDetails #details .HDR .subject div.icon {
   display: inline-block;
   margin: 5px 0.4em;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
   vertical-align: top;
   -webkit-box-shadow: inset 0 0 4px black, 1px 1px 0px white;
   box-shadow: inset 0 0 4px black, 1px 1px 0px white;
@@ -11176,22 +11176,32 @@ a {
   vertical-align: bottom;
 }
 .ticketDetails #details ul.actions li.half:first-child {
-  text-align: right;
+  text-align: left;
 }
-.ticketDetails #details ul.actions li.half:first-child a {
-  margin-right: 10%;
+.ticketDetails #details ul.actions li.half:first-child a.reply {
+  position: relative;
+  top: -3px;
+  left: 14%;
 }
 .ticketDetails #details ul.actions li.half:first-child span {
   font-size: 16px;
   vertical-align: middle;
+  position: relative;
+  left: 45%;
+  top: -12px;
 }
-.ticketDetails #details ul.actions li.half:last-child a {
-  margin-left: 10%;
+.ticketDetails #details ul.actions li.half:last-child a.close {
+  float: left;
+  position: relative;
+  top: -3px;
+  /*left:-34px;*/
 }
 .ticketDetails #details ul.actions li.half:last-child span {
   font-size: 16px;
   vertical-align: middle;
-  margin-left: 10px;
+  position: relative;
+  left: -15%;
+  top: 4px;
 }
 .ticketDetails #details ul.actions li.half a {
   width: 4em;
@@ -11645,6 +11655,11 @@ a {
   margin-top: -7px;
   padding: 4px 0;
   border-bottom: 1px solid #DDD;
+}
+
+input[readonly=true] {
+  color: #888;
+  font-weight: normal !important;
 }
 
 #ticketReplyForm {

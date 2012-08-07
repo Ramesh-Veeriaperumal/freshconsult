@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include ParserUtil
   
   before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
-  before_filter :set_mobile , :only => [:create]
+  before_filter :set_mobile, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -18,7 +18,7 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
   
-  def create   
+  def create  
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
