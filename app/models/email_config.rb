@@ -18,11 +18,6 @@ class EmailConfig < ActiveRecord::Base
     active? ? "#{name} <#{reply_email}>" : "support@#{account.full_domain}"
   end
   
-  def friendly_email_personalize(user_name)
-    user_name = user_name ? user_name : name
-    active? ? "#{user_name} <#{reply_email}>" : "support@#{account.full_domain}"
-  end
-
   def set_activator_token
     (self.active = true) and return if reply_email.downcase.ends_with?("@#{account.full_domain.downcase}")
     

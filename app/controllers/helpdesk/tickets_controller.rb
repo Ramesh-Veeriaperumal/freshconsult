@@ -245,7 +245,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def show
-    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @reply_email = current_account.reply_emails
 
     @to_emails = @ticket.to_emails
 
