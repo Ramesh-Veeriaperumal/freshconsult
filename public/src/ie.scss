@@ -132,18 +132,18 @@
 	}
 
 	.tickets .subject_style, .tickets-expanded .subject_style {
-   			font-family: "System";
-   			text-transform: uppercase;
-   			letter-spacing: 0em;
-   			font-weight: bold;
+		font-family: "System" !important;
+		text-transform: uppercase;
+		letter-spacing: 0em !important;
+		font-weight: bold;
 	}
 
 	.fd-ajaxmenu {
 		border: solid 1px #DDD;
 	}
 
-	.tickets, .tickets-expanded{
-		tr, tr.even, tr.active, tr:hover {
+	#tickets-expanded{
+		tr, tr.active, tr:hover {
 			td {
 				&.priority-high, &.priority-medium , &.priority-low , &.priority-urgent {
 					filter:none;

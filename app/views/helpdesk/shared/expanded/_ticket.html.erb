@@ -1,5 +1,5 @@
 <% ticket_style = subject_style(ticket) %>
-<tr class="<%= cycle('odd', 'even') %> ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
+<tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
   <td class="check">
 	<%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
