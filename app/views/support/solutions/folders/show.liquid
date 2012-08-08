@@ -1,0 +1,12 @@
+<div class="row-fluid">	
+	<div class="span3">
+		Category list
+	</div>
+	<div class="span9">	 	
+		<h2 class="page-title">{{ folder.name }}</h2>
+		{{ search_portal }}
+		{% for article in folder.articles %}
+			{{ article.title }}
+		{% endfor %}
+	</div> 
+</div>

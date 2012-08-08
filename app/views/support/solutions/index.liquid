@@ -1,41 +1,34 @@
 <h1 class="page-title">Solutions</h1> 
 <h4 class="lead">Browse by Category</h4>		
-<div>
-	{% comment %}
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>	
-	{% endcomment %}
-	{{ search_portal }}
-</div>
-
+{{ search_portal }}
 <hr />
 <div id="categories-list">	
 	{% for category in portal.solution_categories %}
-		<h2>
-			{{category.name}}
-		</h2>
+		<h2>{{category.name}}</h2>
 		<h4 class="help-text">{{category.description}}</h4>
-		<div class="solution-folders">
+		<div class="collection">
 			{% for folder in category.folders %}
-			<div class="folder">				
-				<h3 title="{{folder.name}}">
-					{{folder.name | truncate: 60}}					
-					{% if folder.solutions != empty %}
-						<span href="#" class="label label-info">
-							{{folder.solutions | size}} articles
-						</span>		
-					{% endif %}
-				</h3>
-				<p class="help-text">					
-					{{folder.description | truncate: 120}}
-				</p>				
-				<ul class="article-list-mini">
-					{% for solution in folder.solutions %}
-					<li>
-						<a href="{{solution.url}}">{{solution.title}}</a>
-					</li>
-					{% endfor %}
-				</ul>
-			</div>
+				<div class="group solution-group {% cycle 'odd', 'even' %}">				
+					<h3 title="{{folder.name}}">
+						{{folder.name | truncate: 60}}						
+					</h3>
+					<p class="help-text">					
+						{{folder.description | truncate: 120}}			
+					</p>
+					
+					<ul>
+						{% for solution in folder.solutions limit:5 %}
+						<li>
+							<a href="{{solution.url}}">{{solution.title}}</a>
+						</li>
+						{% endfor %}
+					</ul>					
+					
+					<span href="#" class="more-items">{{ folder.solutions.size | pluralize: 'article' }} </span>
+					{% if folder.solutions.size > 5 %}
+						- <a href="{{ folder.url }}" class="more-items">View all</a>	
+					{% endif %}		
+				</div>
 			{% endfor %}
 		</div>
 	{% endfor %}

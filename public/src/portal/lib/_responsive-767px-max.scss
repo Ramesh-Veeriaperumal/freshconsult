@@ -161,4 +161,10 @@
     @include border-radius(0);
   }
 
+  .collection .group{
+    clear: both;
+    margin: 0;
+    width: 100%;
+  }
+
 }

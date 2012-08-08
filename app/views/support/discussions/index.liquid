@@ -1,9 +1,9 @@
 {% for category in portal.forum_categories %}	
 	<h1 class="page-title">{{category.name}}</h1>	
 	<p class="help-text" title="{{category.description}}">{{category.description | truncate:250}}</p>
-	<div class="forum-category">
+	<div class="collection">
 	{% for forum in category.forums %}
-		<div class="forum-group {% cycle 'odd', 'even' %}">
+		<div class="group forum-group {% cycle 'odd', 'even' %}">
 			<a href="{{ forum.url }}">
 				<span class="font-icon icon-forum-{{forum.type_name}}"></span>
 				<h4>{{ forum.name }}</h4>

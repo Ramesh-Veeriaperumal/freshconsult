@@ -13,7 +13,7 @@ class Solution::FolderDrop < BaseDrop
   end
   
   def url
-    solution_category_folder_path(source.category, source)
+    support_solutions_folder_path(source)
   end
   
   def solutions #To do.. Scoping.. current_user

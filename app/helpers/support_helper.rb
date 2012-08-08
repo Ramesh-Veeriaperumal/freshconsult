@@ -10,4 +10,8 @@ module SupportHelper
 	def long_day( date_time )
 		date_time.to_s(:long_day)
 	end
+
+	# Applicaiton link helpers
+	# move link_helpers into this area
+	
 end
