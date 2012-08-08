@@ -18,4 +18,16 @@ module Helpdesk::TicketModelExtension
      ]
    end
 
+   def self.field_name(value)
+      FIELD_NAME_MAPPING[value].blank? ? value : FIELD_NAME_MAPPING[value]
+   end
+
+   FIELD_NAME_MAPPING = {
+      "status_name" => "status",
+      "priority_name" => "priority",
+      "source_name" => "source",
+      "requester_info" => "requester",
+      "responder_name" => "agent",
+      "group_name" => "group"
+   }
 end

@@ -3302,6 +3302,30 @@ div.addReminder{
 	}
 
 }
+.tickets {
+	th.toolbar_right{
+      text-align:right;
+      width: 130px;
+      vertical-align:middle;
+      padding:5px 0 0;
+      a {
+      	display:inline-block;
+      }
+   }
+	.check{
+		width:25px;
+		padding:13px 10px 1px 8px; 
+	}
+
+	.headings td.check {
+		border-left: solid 6px #EEE;
+	}
+	th.check{
+		padding:5px 10px 0 5px;
+		text-align:right;
+		vertical-align: top;
+	}
+}
 #tickets-expanded {
 	td.priority-border, th.priority-border {
 		padding:0;
@@ -3311,8 +3335,9 @@ div.addReminder{
 	width:100%;
 	color:#5f5f5f;
 
-	.ralign {
+	td.ralign {
 		text-align: right;
+		padding-right: 0;
 	}
 	
 	th{
@@ -3345,13 +3370,14 @@ div.addReminder{
 		width:25px;
 		padding:13px 10px 1px 8px; 
 		text-align:right;
+		vertical-align: top;
 	}
 
 	.headings td.check {
 		border-left: solid 6px #EEE;
 	}
 	th.check{
-		padding:5px 5px 0 0;
+		padding:5px 10px 0 5px;
 	}
 	
 	/*Priority Border */
@@ -3430,6 +3456,7 @@ div.addReminder{
 		   	&.source-icon {
 		   		width:30px;
 		   		vertical-align: middle;
+		   		padding-left: 0;
 		   	}
 		}
 
@@ -3459,15 +3486,6 @@ div.addReminder{
 			}
 		}
 	}
-	th.toolbar_right{
-      text-align:right;
-      width: 130px;
-      vertical-align:middle;
-      padding:5px 0 0;
-      a {
-      	display:inline-block;
-      }
-   }
 	
 	.subject_style {
 		@include border-radius(3px);
@@ -6353,4 +6371,18 @@ margin:10px;
 	font-size: 1.1em;
 	font-weight: bold;
 	padding-bottom: 10px;
+}
+
+/* Export link in the Ticket list of Self Service Portal */
+.ssp_export {
+	position:absolute;
+	right:5px;
+	left:auto;
+	width: 60px;
+	font-size: 12px;
+	padding:5px 5px ;
+
+	&:hover {
+		color:#333;
+	}
 }
