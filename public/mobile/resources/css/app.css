@@ -11181,29 +11181,56 @@ a {
 .ticketDetails #details ul.actions li.half:first-child a.reply {
   position: relative;
   top: -3px;
-  left: 14%;
+  left: 5%;
 }
 .ticketDetails #details ul.actions li.half:first-child span {
   font-size: 16px;
   vertical-align: middle;
   position: relative;
-  left: 45%;
+  left: 35%;
   top: -12px;
 }
 .ticketDetails #details ul.actions li.half:last-child a.close {
   float: left;
   position: relative;
   top: -3px;
-  /*left:-34px;*/
+  left: -26px;
 }
 .ticketDetails #details ul.actions li.half:last-child span {
   font-size: 16px;
   vertical-align: middle;
   position: relative;
-  left: -15%;
+  left: -28%;
   top: 4px;
 }
 .ticketDetails #details ul.actions li.half a {
+  width: 4em;
+  margin: 0 0%;
+  display: inline-block;
+}
+.ticketDetails #details ul.actions li.full {
+  border-right: 0px solid #dbdcdd;
+  -webkit-box-shadow: white 0 0 0;
+  box-shadow: white 0 0 0;
+  width: 100%;
+  vertical-align: bottom;
+}
+.ticketDetails #details ul.actions li.full:first-child {
+  text-align: left;
+}
+.ticketDetails #details ul.actions li.full:first-child a.reply {
+  position: relative;
+  top: -3px;
+  left: 5%;
+}
+.ticketDetails #details ul.actions li.full:first-child span {
+  font-size: 16px;
+  vertical-align: middle;
+  position: relative;
+  left: 35%;
+  top: -12px;
+}
+.ticketDetails #details ul.actions li.full a {
   width: 4em;
   margin: 0 0%;
   display: inline-block;
@@ -11226,8 +11253,12 @@ a {
   color: #1d60bd;
   text-shadow: #86afe6 0 0 20px;
 }
+.ticketDetails #details ul.actions li a.automation {
+  position: relative;
+  bottom: -5px;
+}
 .ticketDetails #details ul.actions li a.automation:before {
-  content: '\59';
+  content: '\f0d0';
 }
 .ticketDetails #details ul.actions li a.chat:before {
   font-size: 0.9em;
@@ -11244,6 +11275,10 @@ a {
 }
 .ticketDetails #details ul.actions li a.close:before {
   content: '\e047';
+}
+.ticketDetails #details ul.actions li a.trash {
+  position: relative;
+  bottom: -5px;
 }
 .ticketDetails #details ul.actions li a.trash:before {
   content: '\f014';
