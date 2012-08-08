@@ -29,9 +29,41 @@
     <%= form.label :forum_type, t('.type') %>
     <%= form.select :forum_type, Forum::TYPE_OPTIONS, :class => "select" %>
   </li>
-	<li class="small">
-    <%= form.label :forum_visibility, t('.visibility') %>
+  <li class="dropdown">
+  </li>
+  <li class="companies_select">
+    <%= form.label :forum_visibility, t('.visible_to') %>
     <%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, :class => "select" %>
-  </li>	
+
+      	<% form.fields_for :customer_forums_attributes do |cust| %>
+    	    	<span id="company_forums">
+      			<%= cust.select (:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "customSelect" , "data-placeholder" => 'Select company'}) %>
+      			</span>
+      		
+      		<%end%> 
+  </li>
+  	
 </ul>
- 
+    <% javascript_tag do %>  
+     jQuery(document).ready(function(){ 			         
+		jQuery('#forum_forum_visibility')
+			.bind("change", function(e){
+				show_hide_customers();
+		});		
+		function show_hide_customers(){
+			visiblity = jQuery('#forum_forum_visibility').val();				
+				if (visiblity  == 4)
+				{
+				   jQuery('#company_forums').show();
+				}
+				else
+				{
+				  jQuery('#customer_id').val("");
+				  jQuery("#customer_id").trigger("liszt:updated");
+				  jQuery('#company_forums').hide();
+
+				}
+			};
+	    show_hide_customers();			  	
+	});           			    	
+     <% end %>

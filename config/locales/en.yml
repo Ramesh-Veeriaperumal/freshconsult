@@ -490,6 +490,8 @@ en:
       anyone: Anyone
       logged_users: Logged In Users
       agents: Agents      
+      all: All
+      select_company: Select Companies
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   import_user_org: Users &amp; Organizations
@@ -913,6 +915,8 @@ en:
       anyone: Anyone
       logged_in_users: Logged In Users
       agents: Agents
+      all: All
+      select_company: Select Companies
     types:
       permanent: Permanent
       workaround: Workaround
@@ -1194,6 +1198,8 @@ en:
     folders:
       new:
         new_folder: New Folder
+      folder_form:
+        visible_to: Visible to
     info9: Public (Will be published in self service)
     edit: Edit Solution
     add: Add Solution
@@ -1533,7 +1539,8 @@ en:
       placeholder: Search %{name}
     form:
       type: Forum Type
-      visibility: Forum visibility    
+      visibility: Forum visibility 
+      visible_to: Visible to   
   next_charge_amount: "%{type} cost:"
   company: 
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
