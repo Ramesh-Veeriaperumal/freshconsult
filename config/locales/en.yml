@@ -1393,6 +1393,7 @@ en:
   back: Back
   ticket:
     reported_on: "from %{username}, last updated on %{date}"
+    portal_created_on: "from %{username}, reported on %{date}"
     thanks: Thank you for submitting feedback
     group: Group
     spam_btn_title: Mark as spam
