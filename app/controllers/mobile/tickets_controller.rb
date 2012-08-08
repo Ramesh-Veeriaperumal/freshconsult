@@ -42,7 +42,6 @@ class Mobile::TicketsController < ApplicationController
         field_value = (field.is_default_field?) ? @item.send(field.field_name) : @item.get_ff_value(field.name) unless @item.nil?
         dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
         field_value =  current_user.email if (field.field_type.eql?("default_requester") && current_user.customer?)
-        puts "#{field.field_type == 'default_source'}, #{dom_type}"
         if(field.field_type == "nested_field" && !@item.nil?)
           field_value = {}
           field.nested_levels.each do |ff|
@@ -122,6 +121,7 @@ class Mobile::TicketsController < ApplicationController
     view_list = []
     views = current_account.ticket_filters.my_ticket_filters(current_user)
     view_list.concat( views.map { |view| 
+      serialize_params_for_tags(view.data[:data_hash])
       view.deserialize_from_params(view.data)
       filter_id = view[:id]
       filter_name = view[:name]
@@ -147,6 +147,21 @@ class Mobile::TicketsController < ApplicationController
         :type => :filter, :count => count )
     } 
     render :json => view_list.to_json
+  end
+
+  # Method used set the ticket.ids in params[:data_hash] based on tags.name
+  def serialize_params_for_tags(data_hash)
+    return if data_hash.nil? 
+
+    action_hash = data_hash.kind_of?(Array) ? data_hash : 
+      ActiveSupport::JSON.decode(data_hash)
+    
+    action_hash.each_with_index do |filter, index|
+      next if filter["value"].nil? || !filter["condition"].eql?("helpdesk_tags.name")
+      value = current_account.tickets.permissible(current_user).with_tag_names(filter["value"].split(",")).join(",")
+      action_hash[index]={ "condition" => "helpdesk_tickets.id", "operator" => "is_in", "value" => value }
+      break
+    end
   end
 
 end
