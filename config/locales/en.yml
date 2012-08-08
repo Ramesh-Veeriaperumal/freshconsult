@@ -194,7 +194,6 @@ en:
         enter_happy_text: Enter the happy text
         enter_neutral_text: Enter the neutral text
         enter_unhappy_text: Enter the unhappy text
-        
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
@@ -492,6 +491,7 @@ en:
       logged_users: Logged In Users
       agents: Agents      
   password_reset_email: Password Reset Email
+  default_reply_template: Agent Reply Template
   import_user_org: Users &amp; Organizations
   to_do: To Do
   feedbackwidget_formcustomize: Form customization
@@ -1299,6 +1299,9 @@ en:
     title: Tags
   email_notifications: 
     customize_email: Customize Email
+    edit_reply_template: Edit Template
+    default_reply_template_title: Agent Reply Template
+    default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requestor Notification
     title: Email notifications
@@ -1397,11 +1400,17 @@ en:
   ok: Ok
   back: Back
   ticket:
-    reported_on: "from %{username}, last updated on %{date}"
-    thanks: Thank you for submitting feedback
+    reported_on: "from %{username}, Last updated: on %{date}"
+    ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_words} ago </span>"
+    ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_words} ago </span>"
+    ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_words} ago </span>"
+    ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_words} ago </span>"
+    ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize'>%{time_words} ago </span>"
+    thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
+    assigned_agent: Agent
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
@@ -1414,6 +1423,7 @@ en:
       insert_url_tip: Insert this solution URL to your Reply or Note
       insert_content: Insert Content
     unassigned: Unassigned
+    assigned_none: "-"
     suggest_solutions: Suggest Solutions
     created_on: Created on %{time}
     restore_btn: Restore this ticket
@@ -1424,7 +1434,7 @@ en:
     priority: Priority
     to_do: Tickets To-Do
     activity: Activity
-    sort_by: Sort by
+    sort_by: Sorted by
     restore_btn_title: Restore this ticket from trash
     subject: Subject
     created_at: Hours since created
@@ -1701,6 +1711,23 @@ en:
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
       no_email_found: "User with email %{email} is not available in the system."
+      overlay_reply_time: " replied, %{time_in_words} ago"
+      overlay_fwd_time: " forwarded, %{time_in_words} ago"
+      overlay_note_time: " added a note, %{time_in_words} ago"
+      friendly_status:
+        customer_responded: "Customer Responded"
+        overdue: "Overdue"
+        new: "New"
+        elapsed: "Response Due"
+        resolved: "Resolved"
+      tabular_view:
+        title: "Title"
+        posted: "Posted"
+        assigned: "Assigned"
+        status: "Status"
+        priority: "Priority"
+        time_ago: "%{time_in_words} ago"
+        sla: "Due By"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -1797,6 +1824,8 @@ en:
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
+    title: "Filter Tickets"
+    unsaved_view: "Untitled View"
     sort_fields:
       due_by: Due by time
       date_created: Date Created
@@ -1834,6 +1863,7 @@ en:
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
     custom_filter: "Set date"
+    no_fields_selected: "Please check atleast one of the below fields to proceed."
   date:
     ago: Ago
     from: From Now
@@ -1915,8 +1945,11 @@ en:
     messages:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
+      no_tickets_subtext: "View %{view_1} or %{view_2}"
+      no_tickets_subtext_single: "View %{view_1}"
   conversation: Conversation
-  save_this_view: "Save this View..."
+  save_this_view: "Save"
+  save_this_view_tooltip: "Save View"
   loading:
     activities: Loading more activities
     items: Loading more items
@@ -2286,4 +2319,3 @@ en:
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
   forwarded_email: "Forwarded email"
-  

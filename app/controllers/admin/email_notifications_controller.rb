@@ -30,7 +30,10 @@ class Admin::EmailNotificationsController < Admin::AdminController
       { :type => t('agent_closes_tkt'), :requester => true, :agent => false, 
                   :obj => by_type[EmailNotification::TICKET_CLOSED] },
       { :type => t('requester_reopens'), :requester => false, :agent => true, 
-                  :obj => by_type[EmailNotification::TICKET_REOPENED] }]
+                  :obj => by_type[EmailNotification::TICKET_REOPENED] },
+      { :type => t('default_reply_template'), :requester => true, :agent => false, :userSelect => false,
+                  :obj => by_type[EmailNotification::DEFAULT_REPLY_TEMPLATE] }
+                ]
                   
   @agent_hash = {:options => get_agent_options }
   end
