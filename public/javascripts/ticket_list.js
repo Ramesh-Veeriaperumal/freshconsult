@@ -75,6 +75,7 @@ jQuery(document).ready(function() {
 		jQuery(this).parent().addClass('active').siblings().removeClass('active');
 	});
 
+	setCookie('ticket_view_choice','detail',365);
 	var choice = getCookie('ticket_view_choice');
 	if (choice == 'list') {
 		jQuery('.ticket-view-choice.ticket-view-list').click();
@@ -204,6 +205,10 @@ jQuery(document).ready(function() {
 		});
 	});
 
+	jQuery('#leftViewMenu a[rel=default_filter]').click(function(ev) {
+		setCookie('wf_order','created_at');
+		setCookie('wf_order_type','desc');
+	});
 
 });
 
