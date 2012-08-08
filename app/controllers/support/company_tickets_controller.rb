@@ -1,6 +1,9 @@
 class Support::CompanyTicketsController < ApplicationController
   
-  include SupportTicketControllerMethods 
+  include SupportTicketControllerMethods
+  include Support::CompanyTicketsHelper
+  include ExportCsvUtil
+
   before_filter { |c| c.requires_permission :portal_request }
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
@@ -9,6 +12,7 @@ class Support::CompanyTicketsController < ApplicationController
   before_filter :set_mobile, :only => [:index, :filter]
 
   before_filter :verify_permission
+  before_filter :set_date_filter ,    :only => [:export_csv]
   
   def index    
     @page_title = t('helpdesk.tickets.views.all_tickets')
@@ -19,12 +23,16 @@ class Support::CompanyTicketsController < ApplicationController
     end    
   end
   
-  def filter   
+  def filter
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
     respond_to do |format|
       format.html {
-        render :index
+        if params[:partial].blank?
+          render :index
+        else
+          render :partial => "/support/shared/ticket_list_view"
+        end
       }
       format.mobile {
         unless @response_errors.nil?
@@ -49,14 +57,31 @@ class Support::CompanyTicketsController < ApplicationController
     render :index
   end
   
-  protected  
-    def current_filter
-      params[:id] || 'all'
-    end
+  def configure_export
+    render :partial => "helpdesk/tickets/configure_export", :locals => {:csv_headers => export_fields(true)}
+  end
+  
+  def export_csv
+    params[:wf_per_page] = "100000"
+    params[:page] = "1"
+    csv_hash = params[:export_fields]
+    unless params[:a].blank?
+      if params[:a] == "requester"
+        @requested_by = params[:i]
+      else
+        params[:id] = params[:i]
+      end
+    end 
+    items = build_tickets
+    export_data items, csv_hash, true
+  end
+ 
+   protected  
   
     def build_tickets
-       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope.tickets)
-       @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) 
+      date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? ticket_scope.tickets : ticket_scope.tickets.created_at_inside(params[:start_date], params[:end_date])
+       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, date_added_ticket_scope)
+       @tickets = @tickets.paginate(:page => params[:page], :per_page => params[:wf_per_page] || 10, :order=> "#{current_wf_order} #{current_wf_order_type}") 
        @tickets ||= []    
     end
   
