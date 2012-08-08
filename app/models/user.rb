@@ -141,6 +141,8 @@ class User < ActiveRecord::Base
     indexes customer.name, :as => :company
     
     has account_id, deleted
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
     
     set_property :delta => :delayed
     set_property :field_weights => {
@@ -332,14 +334,14 @@ class User < ActiveRecord::Base
           :subject => Liquid::Template.parse(subj_template).render ,:reply_email => reply_email)
   end
   
-  def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
+  def deliver_activation_instructions!(portal, force_notification = false) #Need to refactor this.. Almost similar structure with the above one.
     portal ||= account.main_portal
     reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
     if customer?
-      return unless e_notification.requester_notification?
+      return unless e_notification.requester_notification? or force_notification
       template = e_notification.requester_template
       subj_template = e_notification.requester_subject_template
       user_key = 'contact'
@@ -437,6 +439,10 @@ class User < ActiveRecord::Base
     (can_view_all_tickets?) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
+  def restricted?
+    !can_view_all_tickets?
+  end
+
     def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])

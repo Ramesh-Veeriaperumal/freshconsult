@@ -1,0 +1,3 @@
+@items = @tickets
+page.replace_html 'ticket-list', "<table class='tickets'> <tbody>" + each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) + "</tbody> </table>"
+page.replace_html 'ticket-sub-toolbar', :partial => '/support/shared/ticket_sort', :locals=>{:is_portal=>true}

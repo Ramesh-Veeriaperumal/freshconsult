@@ -88,7 +88,7 @@ var $J = jQuery.noConflict();
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
-		
+
 		$("a[rel=popover]")
 			.popover({ 
 				delayOut: 300,
@@ -114,7 +114,7 @@ var $J = jQuery.noConflict();
           return $("#" + $(this).attr("data-widget-container")).val();
         }
       });
-    $("a[rel=hover-popover]")
+    $("[rel=hover-popover]")
       .popover({ 
         delayOut: 300,
         trigger: 'manual',
@@ -123,12 +123,12 @@ var $J = jQuery.noConflict();
         reloadContent: false,
         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
         content: function(){
-          return $("#" + $(this).attr("data-widget-container")).val();
+          return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
         }
       });
 
 
-      $("a[rel=hover-popover]").live('mouseenter',function(ev) {
+      $("[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         hideWidgetPopup(ev);
         widgetPopup = $(this).popover('show');

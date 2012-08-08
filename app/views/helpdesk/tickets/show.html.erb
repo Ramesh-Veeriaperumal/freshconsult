@@ -23,9 +23,9 @@
 	<% end %>
 </div>		
 <div class="tab-content">
-	<div class="requestCnt request-conversation active tab-pane" id="Pages">
+	<div class="requestCnt request-conversation active tab-pane set-top" id="Pages">
 		<div id="TicketForms">
-		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
 		  <%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
 		  <%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 		  <%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
@@ -47,6 +47,8 @@
 	</div>
 </div>
 
+
+
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
   <%= include_tiny_mce_if_needed %>
@@ -63,7 +65,7 @@
 			activeForm = jQuery('#'+formid).slideDown();
 			switch(formid){
 				case 'cnt-reply':
-					jQuery('#reply_cc_emails_id').trigger("cc_visibility");
+					// jQuery('#reply_cc_emails_id').trigger("cc_visibility");
 				case 'cnt-note':
 					insertIntoConversation("");					
 				break; 
@@ -73,7 +75,8 @@
 				case 'cnt-tweet' : 
 					setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
 				break;
-			}		
+			}
+
 		}
 
     function show_canned_response(ticket_id){
@@ -151,10 +154,9 @@
   	}
 
 function validateMCEData(){
-if(jQuery.browser.opera)
-	jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
+	if(jQuery.browser.opera)
+		jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
 }
-
 	
   <% end %>
 
@@ -162,4 +164,7 @@ if(jQuery.browser.opera)
 
 <% content_for :onload_script do -%> 	
 	jQuery('#custom_ticket_form').validate();
+	<% unless @draft.nil? %>
+	jQuery(document).ready(function(){setTimeout(function(){jQuery("#ReplyButton").trigger('click');},500);});
+	<% end %>
 <%- end %>

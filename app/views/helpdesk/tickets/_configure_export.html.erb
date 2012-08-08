@@ -1,4 +1,4 @@
-<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+<% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<div class="info-highlight">Quickly export ticket information available in the current view to a CSV file.</div>
 	<ul class="ui-form">
