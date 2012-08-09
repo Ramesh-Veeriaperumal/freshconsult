@@ -212,7 +212,9 @@ jQuery(document).ready(function() {
 		setCookie('wf_order','created_at');
 		setCookie('wf_order_type','desc');
 	});
-
+	jQuery('#leftViewMenu a').click(function(ev) {
+		jQuery('#FilterOptions').sisyphus().manuallyReleaseData();
+	});
 });
 
 if (getCookie('ticket_list_updated') == "true") {

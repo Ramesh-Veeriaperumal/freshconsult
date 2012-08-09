@@ -120,6 +120,12 @@ module ApplicationHelper
     end
   end
 
+  def fd_menu_link(text, url, is_active)
+    text << "<span class='icon ticksymbol'></span>" if is_active
+    class_name = is_active ? "active" : ""
+    link_to(text, url, :class => class_name)
+  end
+
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets) ],

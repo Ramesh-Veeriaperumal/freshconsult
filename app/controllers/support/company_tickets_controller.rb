@@ -31,7 +31,7 @@ class Support::CompanyTicketsController < ApplicationController
         if params[:partial].blank?
           render :index
         else
-          render :partial => "/support/shared/ticket_list_view"
+          render :partial => "/support/shared/ticket_list"
         end
       }
       format.mobile {
