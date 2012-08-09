@@ -47,6 +47,15 @@
   <%- end %>
 <% end %>
 
+<% content_for :onload_script do -%>
+jQuery('#add_cc_btn').bind("click", function(ev){
+		ev.preventDefault();
+		jQuery("#cc_emails_sec").toggle();
+		jQuery("#cc_emails").val("");
+		jQuery("#cc_emails").trigger("liszt:updated");
+	});
+<%- end %>
+
 <%= include_tiny_mce_if_needed %>
 <% content_for :sidebar do %>
     <% if @ticket.responder && !@ticket.deleted %>
@@ -207,9 +216,26 @@
 					<%= link_to "Close this ticket", '/support/tickets/close_ticket/'+@ticket.display_id.to_s, :class =>"uiButton" %>
 				<% end %>
 				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add note</a>
+				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#AddCcToTicket').show(); jQuery(this).hide();">Add Cc</a>
 			</div>  
 		<% end %>
-		<br />			
+		<br />
+
+		<div id="AddCcToTicket" class="request_panel" style="display:none;">
+			<% form_for :ticket, @ticket, :url => support_ticket_add_cc_url(:id => @ticket.id), :html => {:id => "add_cc_form"} do |f| %>
+				<ul class="ui-form">
+					<li>			
+					       <% f.fields_for :cc_email do |cc| %>
+						<%=cc.text_field :cc_emails, :class=>"multiemail required error", :id => "cc_emails" %>
+					        <%end%>
+					</li>
+			    		<li class="alignright">
+						<%= f.submit "Add Cc", {:class => "uiButton", :style => "margin-right:35px;"} %>
+					</li>
+				</ul>
+			<% end %>
+		</div>
+
 		<div id="ReplyToTicket" class="request_panel" style="display:none;">
 			<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
 				<%= f.error_messages %>
@@ -237,6 +263,8 @@
 		    </div>
 		<% end %>
 	</div>
- 
+ <% javascript_tag do %>
+ 	jQuery("#add_cc_form").validate();
+ <% end %>
  
 

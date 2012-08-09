@@ -288,6 +288,7 @@
        support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
+    support.ticket_add_cc "/support/ticket/:id/add_cc", :controller => 'tickets', :action => 'add_cc'
     support.resources :company_tickets
     support.resources :minimal_tickets
     support.resources :registrations
