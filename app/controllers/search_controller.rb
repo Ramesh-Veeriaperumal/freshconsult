@@ -51,22 +51,12 @@ class SearchController < ApplicationController
       to_ret
     end
     
-    def get_visibility_array
-      vis_arr = Array.new
-      if permission?(:manage_forums)
-        vis_arr = Forum::VISIBILITY_NAMES_BY_KEY.keys
-      elsif permission?(:post_in_forums)
-        vis_arr = [Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone],Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
-      else
-        vis_arr = [Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
-      end
-    end
-    
-    def get_visibility(f_classes)        
+ 
+    def content_visibility(f_classes)        
       if (f_classes.include?(Solution::Article))        
-        Solution::Folder.get_visibility_array(current_user)
+        solution_visibility
       else        
-        get_visibility_array
+        forum_visibility
       end      
     end
     
@@ -74,12 +64,14 @@ class SearchController < ApplicationController
     def search_content(f_classes)
       s_options = { :account_id => current_account.id }      
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
-      s_options.merge!(:visibility => get_visibility(f_classes)) 
+      s_options.merge!({:visible => 1, :company => 1})
+
       s_options.merge!(:status => 2) if f_classes.include?(Solution::Article) and (current_user.blank? || current_user.customer?)
       begin
         if main_portal?
           @items = ThinkingSphinx.search params[:search_key], 
-                                        :with => s_options,#, :star => true,
+                                        :with => s_options,
+                                        :sphinx_select => content_select(f_classes),
                                         :match_mode => :any,
                                         :max_matches => (4 if @widget_solutions),
                                         :classes => f_classes, :per_page => 10
@@ -110,9 +102,11 @@ class SearchController < ApplicationController
       @items = []
       if f_classes.include?(Solution::Article) && current_portal.solution_category_id
         s_options[:category_id] = current_portal.solution_category_id
-        @items.concat(Solution::Article.search params[:search_key], :with => s_options,
-                                  :max_matches => (4 if @widget_solutions),
-                                  :per_page => page_limit)
+        @items.concat(Solution::Article.search params[:search_key],
+                                               :with => s_options,
+                                               :sphinx_select => content_select(f_classes),
+                                               :max_matches => (4 if @widget_solutions),
+                                               :per_page => page_limit)
       end
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
@@ -201,11 +195,29 @@ class SearchController < ApplicationController
     restriction
   end
 
+  def visibility_condition f_classes
+    condition = "IN (visibility,#{content_visibility(f_classes).join(", ")})" 
+  end
+
+  def company_condition
+    if (current_user && current_user.has_company?) 
+     "visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND IN (customer_ids ,#{current_user.customer_id}) OR
+     IN(visibility,#{[Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone],Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]].join(',')})" 
+    else
+     return 1
+    end
+  end
+
   def sphinx_select
     select_str = "*"
     select_str += ", IF( #{condition}, 1, 0 ) AS restricted" if current_user.restricted?
 
     select_str
+  end
+
+  def content_select f_classes
+    %(*, #{visibility_condition(f_classes)} AS visible, 
+       IF(#{company_condition},1,0) AS company)
   end
 
   def search_with
