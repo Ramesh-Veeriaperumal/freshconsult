@@ -11093,8 +11093,8 @@ a {
 .ticketDetails #details .HDR .subject div.icon {
   display: inline-block;
   margin: 5px 0.4em;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
   vertical-align: top;
   -webkit-box-shadow: inset 0 0 4px black, 1px 1px 0px white;
   box-shadow: inset 0 0 4px black, 1px 1px 0px white;
@@ -11176,24 +11176,61 @@ a {
   vertical-align: bottom;
 }
 .ticketDetails #details ul.actions li.half:first-child {
-  text-align: right;
+  text-align: left;
 }
-.ticketDetails #details ul.actions li.half:first-child a {
-  margin-right: 10%;
+.ticketDetails #details ul.actions li.half:first-child a.reply {
+  position: relative;
+  top: -3px;
+  left: 5%;
 }
 .ticketDetails #details ul.actions li.half:first-child span {
   font-size: 16px;
   vertical-align: middle;
+  position: relative;
+  left: 35%;
+  top: -12px;
 }
-.ticketDetails #details ul.actions li.half:last-child a {
-  margin-left: 10%;
+.ticketDetails #details ul.actions li.half:last-child a.close {
+  float: left;
+  position: relative;
+  top: -3px;
+  left: -26px;
 }
 .ticketDetails #details ul.actions li.half:last-child span {
   font-size: 16px;
   vertical-align: middle;
-  margin-left: 10px;
+  position: relative;
+  left: -28%;
+  top: 4px;
 }
 .ticketDetails #details ul.actions li.half a {
+  width: 4em;
+  margin: 0 0%;
+  display: inline-block;
+}
+.ticketDetails #details ul.actions li.full {
+  border-right: 0px solid #dbdcdd;
+  -webkit-box-shadow: white 0 0 0;
+  box-shadow: white 0 0 0;
+  width: 100%;
+  vertical-align: bottom;
+}
+.ticketDetails #details ul.actions li.full:first-child {
+  text-align: left;
+}
+.ticketDetails #details ul.actions li.full:first-child a.reply {
+  position: relative;
+  top: -3px;
+  left: 5%;
+}
+.ticketDetails #details ul.actions li.full:first-child span {
+  font-size: 16px;
+  vertical-align: middle;
+  position: relative;
+  left: 35%;
+  top: -12px;
+}
+.ticketDetails #details ul.actions li.full a {
   width: 4em;
   margin: 0 0%;
   display: inline-block;
@@ -11216,8 +11253,12 @@ a {
   color: #1d60bd;
   text-shadow: #86afe6 0 0 20px;
 }
+.ticketDetails #details ul.actions li a.automation {
+  position: relative;
+  bottom: -5px;
+}
 .ticketDetails #details ul.actions li a.automation:before {
-  content: '\59';
+  content: '\f0d0';
 }
 .ticketDetails #details ul.actions li a.chat:before {
   font-size: 0.9em;
@@ -11234,6 +11275,10 @@ a {
 }
 .ticketDetails #details ul.actions li a.close:before {
   content: '\e047';
+}
+.ticketDetails #details ul.actions li a.trash {
+  position: relative;
+  bottom: -5px;
 }
 .ticketDetails #details ul.actions li a.trash:before {
   content: '\f014';
@@ -11645,6 +11690,11 @@ a {
   margin-top: -7px;
   padding: 4px 0;
   border-bottom: 1px solid #DDD;
+}
+
+input[readonly=true] {
+  color: #888;
+  font-weight: normal !important;
 }
 
 #ticketReplyForm {

@@ -58,7 +58,11 @@ class Support::TicketsController < ApplicationController
           @tickets.each { |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+            json << sep + tic.to_json({
+              :except => [ :description_html, :description ],
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+                            :responder_name, :need_attention, :pretty_updated_date ]
+            }, false)[19..-2]; sep=","
           }
           render :json => json + "]"
         end
@@ -112,7 +116,20 @@ class Support::TicketsController < ApplicationController
       }
      end
   end
-    
+
+  def add_cc
+      @ticket = Helpdesk::Ticket.find_by_id(params[:id])      
+      cc_params = params[:ticket][:cc_email][:cc_emails].split(/,/)
+      cc_emails_array = @ticket.cc_email[:cc_emails]
+      cc_emails_array = Array.new if cc_emails_array.nil?
+      cc_emails_array = cc_emails_array | cc_params  
+      cc_emails_array = cc_emails_array.delete_if {|x|  !valid_email?(x)}
+      @ticket.cc_email[:cc_emails] = cc_emails_array  
+      @ticket.save
+      flash[:notice] = ['"', cc_params.join(","),'" has been successfully added to CC.'].join()
+      redirect_to support_ticket_path(@ticket)
+  end  
+
   protected 
 
     def cname
