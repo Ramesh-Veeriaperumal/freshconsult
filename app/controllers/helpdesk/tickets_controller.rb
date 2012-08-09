@@ -612,7 +612,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_email_params
     @email_config = current_account.primary_email_config
-    @signature = current_user.agent.signature
+    @signature = current_user.agent.signature || ""
+    @signature = RedCloth.new(@signature).to_html unless @signature.blank?
     @reply_email = current_account.reply_emails
   end
 
