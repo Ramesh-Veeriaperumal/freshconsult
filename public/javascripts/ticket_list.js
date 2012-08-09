@@ -75,6 +75,7 @@ jQuery(document).ready(function() {
 		jQuery(this).parent().addClass('active').siblings().removeClass('active');
 	});
 
+	setCookie('ticket_view_choice','detail',365);
 	var choice = getCookie('ticket_view_choice');
 	if (choice == 'list') {
 		jQuery('.ticket-view-choice.ticket-view-list').click();
@@ -120,8 +121,9 @@ jQuery(document).ready(function() {
 		full_menu = selected_item.parent();
 		full_menu.addClass('loading');
 		jQuery.ajax( {
+			type: "POST",
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign: 'agent', value : agent_user_id},
+			data: {assign: 'agent', value : agent_user_id, _method: 'put'},
 			success: function (data) {
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').text(new_text);
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').animateHighlight();
@@ -150,8 +152,9 @@ jQuery(document).ready(function() {
 		new_status = selected_item.data('status-id');
 
 		jQuery.ajax( {
+			type: "POST",
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign:'status', value : new_status},
+			data: {assign:'status', value : new_status, _method: 'put'},
 			success: function (data) {
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').text(new_text);
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').animateHighlight();
@@ -184,8 +187,9 @@ jQuery(document).ready(function() {
 		new_priority = selected_item.data('priority-id');
 
 		jQuery.ajax( {
+			type: "POST",
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign:'priority', value : new_priority},
+			data: {assign:'priority', value : new_priority, _method: 'put'},
 			success: function (data) {
 				priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
 				priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_priority]);
@@ -204,6 +208,10 @@ jQuery(document).ready(function() {
 		});
 	});
 
+	jQuery('#leftViewMenu a[rel=default_filter]').click(function(ev) {
+		setCookie('wf_order','created_at');
+		setCookie('wf_order_type','desc');
+	});
 
 });
 

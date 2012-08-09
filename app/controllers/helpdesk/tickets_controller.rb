@@ -410,14 +410,18 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def quick_assign
-    unless params[:assign] == 'agent'
-      @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+    if allowed_quick_assign_fields.include?(params[:assign])
+      unless params[:assign] == 'agent'
+        @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+      else
+        agent = current_account.agents.find_by_user_id(params[:value])
+        @item.responder = agent.user
+      end
+      @item.save
+      render :json => {:success => true}.to_json
     else
-      agent = current_account.agents.find_by_user_id(params[:value])
-      @item.responder = agent.user
+      render :json => {:success => false}.to_json
     end
-    @item.save
-    render :json => {:success => true}.to_json
   end
 
   def new
@@ -575,6 +579,10 @@ class Helpdesk::TicketsController < ApplicationController
 
     def redis_key
       HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id}
+    end
+
+    def allowed_quick_assign_fields
+      ['agent','status','priority']
     end
 
     def cache_filter_params
