@@ -19,11 +19,12 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
+  include RedisKeys
   
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
+  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key ] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
@@ -249,6 +250,8 @@ class Helpdesk::TicketsController < ApplicationController
   def show
 
     @to_emails = @ticket.to_emails
+
+    @draft = get_key(draft_key)
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -533,6 +536,16 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def save_draft
+    set_key(draft_key, params[:draft_data])
+    render :nothing => true
+  end
+
+  def clear_draft
+    remove_key(draft_key)
+    render :nothing => true
+  end
+
   protected
   
     def item_url
@@ -651,6 +664,11 @@ class Helpdesk::TicketsController < ApplicationController
       flash[:error] = t("change_deleted_status_msg")
       redirect_to item_url
     end
+  end
+
+  def draft_key
+    HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
+      :ticket_id => @ticket.id}
   end
 
 end

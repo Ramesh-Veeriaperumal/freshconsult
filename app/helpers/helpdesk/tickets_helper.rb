@@ -227,7 +227,7 @@ module Helpdesk::TicketsHelper
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
-    content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
+    content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature.to_s+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content+"</blockquote></div>"
     return content

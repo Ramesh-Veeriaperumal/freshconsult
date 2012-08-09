@@ -57,6 +57,7 @@
 					<% else %>
 						<%= link_to( "<span></span> #{t('header.submit_a_ticket')}", new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
 					<% end %>
+          <% if current_user then %>
 					 <% form_tag '/search', :method => :get, :class => "nav_search" do %>
 					 	<div class="search_bar" id="SearchBar">
 					 	  <span class="searchIcon"></span>
@@ -64,6 +65,7 @@
 							<input value="" type="text" id="header_search" autocomplete="off" name="search_key" />
 						</div>
 					 <% end %>
+          <% end %>
 				</div>
 				<ul class="header-tabs">
 					<%= navigation_tabs %> 

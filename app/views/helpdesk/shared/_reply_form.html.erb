@@ -18,14 +18,57 @@
                                                             }
                   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
                   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+<%- end %>
+
+ <% javascript_tag do %>
+  var saving = 0;
+  var savetime;
+  var dontSave = 0;
+
+function autosave(){
+  if(dontSave==0)
+  {
+  if(tinyMCE.activeEditor.isDirty())
+  { 
+    saving = 1;
+    jQuery("#reply-draft").show();
+    jQuery("#draft-save").text("<%= t('saving_draft') %>");
+    jQuery("#clear-draft").hide();
+    var setval=tinyMCE.activeEditor.getContent({format : 'raw'}).toString();
+    if(setval!=""|| setval!=" "|| setval!="<br>"|| setval!="<br data-mce-bogus=\"1\">")
+    {
+      <%= remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :with => "'draft_data=' + encodeURIComponent(setval)" %>
+      savetime = new Date()
+      setTimeout(function(){
+      jQuery("#draft-save").text("<%= t('saved_draft') %>");
+      jQuery("#clear-draft").show();},1000);
+      tinyMCE.activeEditor.isNotDirty = true;
+    }
+  }
+}
+}
+
+function saveout()
+{    
+  var setval=tinyMCE.activeEditor.getContent({format : 'raw'}).toString();
+  if(tinyMCE.activeEditor.isDirty())
+  {
+    if(setval!=""|| setval!=" "|| setval!="<br>"|| setval!="<br data-mce-bogus=\"1\">")
+    {
+      <%= remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :type => :synchronous, :with => "'draft_data=' + encodeURIComponent(setval)" %>
+    }
+  }
+}
 <% end %>
+
 
 <%
   hide_class = conv_id.nil? ? "hide" : "" 
   note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"
   %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>">
-    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" ,:onsubmit =>"validateMCEData();"} do |f| %>
+  <div class="reply_box">
+    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
        
     <ul class="ui-form dont-validate">
@@ -97,7 +140,7 @@
             </label>
             <div class="fields">
               <% conv_item = conv_id.nil? ? @ticket : @note %>
-                <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_conv(conv_item, @signature) %>
+                <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => bind_last_conv(conv_item, @signature) %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
@@ -118,7 +161,14 @@
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 		    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
         <li class="inline-field field">
+            
+
             <div class="attachment-options fields" id="attachment-options-reply">
+                <div class="reply-draft" id="reply-draft">
+                  <%= t("draft") %>
+                  <%= content_tag :div, t("saving_draft"), :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
+                  <div class="close-img" id="clear-draft"><span></span></div>
+                </div>
                 <% unless local_assigns[:no_attachments] %>
                 <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
                 <% end %>
@@ -128,15 +178,17 @@
             </div>            
         </li>
     </ul>
-    <div class="button-container">         
+    <div class="button-container">        
     	<%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
     	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('resolved');" , :class => "uiButton", :id => "send_resolve_btn") %>
 		<%= button_to_function(t('cancel'), "jQuery('##{cntid}').slideUp();jQuery('##{note_details_id}').show()", :class => "uiButton" ) %>
     </div>
 
+
     <% end %>
 </div>
-<% content_for :pagefixed do %>
+</div>
+  <% content_for :pagefixed do %>
   <% javascript_tag do %>
   	jQuery("#HelpdeskReply").validate();	
   
@@ -146,5 +198,59 @@
         fromEmail = selectObj.val();
         form['helpdesk_note[from_email]'].value = fromEmail;
   })
+
+  <% unless @draft.blank? %>
+    jQuery("#ReplyButton").bind('click', function(){
+      dontSave=0;
+      if(saving==0){
+        setTimeout(function(){tinyMCE.activeEditor.setContent('<%= @draft.to_s %>');},200);
+        jQuery("#reply-draft").show();
+        jQuery("#draft-save").text("<%= t('saved_draft') %>");
+        jQuery("#clear-draft").show();
+        tinyMCE.activeEditor.isNotDirty = true; 
+        setInterval( function(){autosave();}, 30000); 
+      }
+    });
+  <% else %>
+    jQuery("#ReplyButton").bind('click', function(){
+    dont=0;
+    if(saving==0)
+    {
+    tinyMCE.activeEditor.isNotDirty = true;
+    setInterval( function(){autosave();}, 30000); 
+    jQuery("#reply-draft").hide();
+    }
+    });
+  <% end %>
+  jQuery("#AddNoteButton").bind('click',function(){autosave();dontSave=1;});
+  
+  jQuery("#FwdButton").bind('click',function(){autosave();dontSave=1;});
+
+  jQuery(window).bind('beforeunload', function(){
+  if(tinyMCE.activeEditor.isDirty())
+  {saveout();}}); 
+
+  jQuery("#draft-save").bind('mouseover',function timePop(){
+  if(saving != 0){
+    jQuery("#draft-save").attr('title',humaneDate(savetime,new Date()));
+  }
+  });
+
+  jQuery("#draft-save").bind('mouseout',function popOut(){
+    jQuery("#draft-save").attr('title','');
+  }
+  );
+
+  jQuery("#clear-draft").bind('click',function cleardraft(){
+    var clear_conf=confirm("<%= t('clear_draft_text') %>");
+    if(clear_conf==true)
+    {
+      var id = <%= @ticket.display_id %>;
+      <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
+      tinyMCE.activeEditor.setContent("");
+      tinyMCE.activeEditor.setContent("<%= bind_last_conv(@ticket, @signature) %>");
+      jQuery("#reply-draft").hide();
+    }
+  });
   <% end %>
 <% end %>

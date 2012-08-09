@@ -5,6 +5,9 @@
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
 <%- end %>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
+
 
 <%= render :partial => "ticket_info" %>       
 
@@ -23,7 +26,7 @@
 	<% end %>
 </div>		
 <div class="tab-content">
-	<div class="requestCnt request-conversation active tab-pane" id="Pages">
+	<div class="requestCnt request-conversation active tab-pane set-top" id="Pages">
 		<div id="TicketForms">
 		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
 		  <%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
@@ -47,9 +50,10 @@
 	</div>
 </div>
 
+
+
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
-  <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
 	var activeForm = null;
 
@@ -59,6 +63,7 @@
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 
+				jQuery("#"+formid+"-body").redactor({autoformat: false,focus: true,path:'/javascripts/redactor',toolbar: 'default'});
 
 			activeForm = jQuery('#'+formid).slideDown();
 			switch(formid){
@@ -73,7 +78,8 @@
 				case 'cnt-tweet' : 
 					setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
 				break;
-			}		
+			}
+
 		}
 
     function show_canned_response(ticket_id){
@@ -94,10 +100,9 @@
 			fwd_area = jQuery('#cnt-fwd')
 			tweet_area = jQuery('#cnt-tweet');
 			if(note_area.css("display") == 'block'){                                                
-				var addNote = tinyMCE.get("add-note-cnt-note-body");
-				addNote.selection.select(addNote.dom.select('span#caret_pos_holder')[0]);   
-				addNote.dom.remove(addNote.dom.select('span#caret_pos_holder')[0]);
-        tinyMCE.execInstanceCommand("add-note-cnt-note-body","mceInsertContent",false, value);
+				
+        	jQuery("#cnt-note-body").insertHtml(value);
+
 			} 
 			else if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
@@ -110,11 +115,9 @@
 			else{
 				if(reply_area.css("display") == 'none' && fwd_area.css("display") == 'none')
 					jQuery('#ReplyButton').trigger("click");
-        		var msg_body_id = reply_area.css("display") == 'none' ? "send-fwd-email-cnt-fwd" : "send-email-cnt-reply"
-				var replyMessage = tinyMCE.get(msg_body_id+"-body");
-				replyMessage.selection.select(replyMessage.dom.select('span#caret_pos_holder')[0]);   
-				replyMessage.dom.remove(replyMessage.dom.select('span#caret_pos_holder')[0]);
-        tinyMCE.execInstanceCommand(msg_body_id+"-body","mceInsertContent",false, value);
+					var msg_body_id = reply_area.css("display") == 'none' ? "cnt-fwd" : "cnt-reply"
+		       		jQuery("#"+msg_body_id+"-body").insertHtml(value);
+
 			}        
 			
 			return;
@@ -150,11 +153,6 @@
   		}
   	}
 
-function validateMCEData(){
-if(jQuery.browser.opera)
-	jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
-}
-
 	
   <% end %>
 
@@ -162,4 +160,7 @@ if(jQuery.browser.opera)
 
 <% content_for :onload_script do -%> 	
 	jQuery('#custom_ticket_form').validate();
+	<% unless @draft.nil? %>
+	jQuery(document).ready(function(){setTimeout(function(){jQuery("#ReplyButton").trigger('click');},500);});
+	<% end %>
 <%- end %>

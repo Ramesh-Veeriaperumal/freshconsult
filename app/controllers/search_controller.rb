@@ -3,6 +3,8 @@ class SearchController < ApplicationController
   
   extend NewRelic::Agent::MethodTracer
   
+  include SearchUtil
+
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
   
@@ -49,22 +51,12 @@ class SearchController < ApplicationController
       to_ret
     end
     
-    def get_visibility_array
-      vis_arr = Array.new
-      if permission?(:manage_forums)
-        vis_arr = Forum::VISIBILITY_NAMES_BY_KEY.keys
-      elsif permission?(:post_in_forums)
-        vis_arr = [Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone],Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
-      else
-        vis_arr = [Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
-      end
-    end
-    
-    def get_visibility(f_classes)        
+ 
+    def content_visibility(f_classes)        
       if (f_classes.include?(Solution::Article))        
-        Solution::Folder.get_visibility_array(current_user)
+        solution_visibility
       else        
-        get_visibility_array
+        forum_visibility
       end      
     end
     
@@ -72,12 +64,14 @@ class SearchController < ApplicationController
     def search_content(f_classes)
       s_options = { :account_id => current_account.id }      
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
-      s_options.merge!(:visibility => get_visibility(f_classes)) 
+      s_options.merge!({:visible => 1, :company => 1})
+
       s_options.merge!(:status => 2) if f_classes.include?(Solution::Article) and (current_user.blank? || current_user.customer?)
       begin
         if main_portal?
           @items = ThinkingSphinx.search params[:search_key], 
-                                        :with => s_options,#, :star => true,
+                                        :with => s_options,
+                                        :sphinx_select => content_select(f_classes),
                                         :match_mode => :any,
                                         :max_matches => (4 if @widget_solutions),
                                         :classes => f_classes, :per_page => 10
@@ -108,18 +102,16 @@ class SearchController < ApplicationController
       @items = []
       if f_classes.include?(Solution::Article) && current_portal.solution_category_id
         s_options[:category_id] = current_portal.solution_category_id
-        @items.concat(Solution::Article.search params[:search_key], :with => s_options,
-                                  :max_matches => (4 if @widget_solutions),
-                                  :per_page => page_limit)
+        @items.concat(Solution::Article.search params[:search_key],
+                                               :with => s_options,
+                                               :sphinx_select => content_select(f_classes),
+                                               :max_matches => (4 if @widget_solutions),
+                                               :per_page => page_limit)
       end
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
         s_options[:category_id] = current_portal.forum_category_id
         @items.concat(Topic.search params[:search_key], :with => s_options, :per_page => 10)
-      end
-
-      if f_classes.include?(Helpdesk::Ticket)
-        @items.concat(Helpdesk::Ticket.search params[:search_key], :with => s_options, :per_page => 10)
       end
 
     end
@@ -128,12 +120,15 @@ class SearchController < ApplicationController
       begin
         if permission? :manage_tickets
           @items = ThinkingSphinx.search filter_key(params[:search_key]), 
-                                          :with => { :account_id => current_account.id, :deleted => false },
-                                          :star => false,
-                                          :match_mode => :any,
-                                          :page => params[:page], :per_page => 10
+                                                              :with => search_with, 
+                                                              :classes => searchable_classes,
+                                                              :sphinx_select => sphinx_select,
+                                                              :star => false,
+                                                              :match_mode => :any,                                          
+                                                              :page => params[:page], :per_page => 10            
+                                          
         else
-          search_portal_content [Helpdesk::Ticket], { :account_id => current_account.id, :deleted => false }
+          search_portal_tickets
         end
         process_results
       rescue Exception => e
@@ -143,26 +138,23 @@ class SearchController < ApplicationController
     end
 
     def process_results
+      
       results = Hash.new
       @items.each do |i|
         results[i.class.name] ||= []
         results[i.class.name] << i
       end
 
-      @total_results = 0
+      
       @searched_tickets   = results['Helpdesk::Ticket']
-      @searched_tickets = @searched_tickets.select {|ticket| ticket.can_access?(current_user)} unless current_user.agent.all_ticket_permission
-      @total_results += @searched_tickets.size unless @searched_tickets.nil?
       @searched_articles  = results['Solution::Article']
-      @total_results += @searched_articles.size unless @searched_articles.nil?
-      @searched_users     = results['User'] if current_user.can_view_all_tickets?
-      @total_results += @searched_users.size unless @searched_users.nil?
-      @searched_companies = results['Customer'] if current_user.can_view_all_tickets?
-      @total_results += @searched_companies.size unless @searched_companies.nil?
+      @searched_users     = results['User']
+      @searched_companies = results['Customer']
       @searched_topics    = results['Topic']
-      @total_results += @searched_topics.size unless @searched_topics.nil?
       
       @search_key = params[:search_key]
+      @total_results = @items.size
+
     end
     
     def page_limit
@@ -177,9 +169,74 @@ class SearchController < ApplicationController
     def solutions_allowed_in_portal? #Kinda duplicate
       render :nothing => true and return unless allowed_in_portal?(:open_solutions)
   end
-  
+
   private
   
+  def searchable_classes    
+    searchable = [ Helpdesk::Ticket, Solution::Article, User, Customer, Topic ]
+    searchable.delete_if{ |c| RESTRICTED_CLASSES.include?(c) } if current_user.restricted?
+    
+    searchable
+  end 
+  
+  def condition
+    return unless current_user.restricted?
+
+    restriction = "responder_id = #{current_user.id} OR responder_id = #{DEFAULT_SEARCH_VALUE}"
+    if current_user.agent.group_ticket_permission
+      restriction += " OR group_id = #{DEFAULT_SEARCH_VALUE}"
+
+      restriction = current_user.agent_groups.reduce(restriction) do |val, ag|
+         "#{val} OR group_id = #{ag.group_id}"
+      end 
+
+    end 
+        
+    restriction
+  end
+
+  def visibility_condition f_classes
+    condition = "IN (visibility,#{content_visibility(f_classes).join(", ")})" 
+  end
+
+  def company_condition
+    if (current_user && current_user.has_company?) 
+     "visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND IN (customer_ids ,#{current_user.customer_id}) OR
+     IN(visibility,#{[Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone],Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]].join(',')})" 
+    else
+     return 1
+    end
+  end
+
+  def sphinx_select
+    select_str = "*"
+    select_str += ", IF( #{condition}, 1, 0 ) AS restricted" if current_user.restricted?
+
+    select_str
+  end
+
+  def content_select f_classes
+    %(*, #{visibility_condition(f_classes)} AS visible, 
+       IF(#{company_condition},1,0) AS company)
+  end
+
+  def search_with
+    with_params = { :account_id => current_account.id, :deleted => false }
+    with_params[:restricted] = 1 if current_user.restricted?  
+    
+    with_params
+  end 
+
+   def search_portal_tickets
+     with_options = { :account_id => current_account.id, :deleted => false }
+     if current_user.client_manager?
+       with_options[:customer_id] = current_user.customer_id
+     else
+       with_options[:requester_id] = current_user.id
+     end
+      @items = Helpdesk::Ticket.search params[:search_key], :with => with_options, :page => params[:page], :per_page => 10
+   end
+
   def filter_key(query)
     email_regex  = Regexp.new('(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
     default_regex = Regexp.new('\w+', nil, 'u')

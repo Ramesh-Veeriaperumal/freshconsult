@@ -1,5 +1,15 @@
 module ExportCsvUtil
 
+  def set_date_filter
+   if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
+    params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
+    params[:end_date] = Time.now.end_of_day.to_s(:db)
+  else
+    params[:start_date] = Date.parse(params[:start_date]).beginning_of_day.to_s(:db)
+    params[:end_date] = Date.parse(params[:end_date]).end_of_day.to_s(:db)
+   end
+  end
+
   def export_fields(is_portal=false)
     flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
@@ -18,22 +28,25 @@ module ExportCsvUtil
   end
 
   def export_data(items, csv_hash, is_portal=false)
-    csv_string = FasterCSV.generate do |csv|
-      headers = csv_hash.keys.sort
-      if is_portal
-        vfs = visible_fields
-        headers.delete_if{|header_key|
-          field_name = Helpdesk::TicketModelExtension.field_name csv_hash[header_key]
-          true unless vfs.include?(field_name)
-        }
-      end
-      csv << headers
-      items.each do |record|
-        csv_data = []
-        headers.each do |val|
-          csv_data << record.send(csv_hash[val])
+    csv_string = ""
+    unless csv_hash.blank?
+      csv_string = FasterCSV.generate do |csv|
+        headers = csv_hash.keys.sort
+        if is_portal
+          vfs = visible_fields
+          headers.delete_if{|header_key|
+            field_name = Helpdesk::TicketModelExtension.field_name csv_hash[header_key]
+            true unless vfs.include?(field_name)
+          }
         end
-        csv << csv_data
+        csv << headers
+        items.each do |record|
+          csv_data = []
+          headers.each do |val|
+            csv_data << record.send(csv_hash[val])
+          end
+          csv << csv_data
+        end
       end
     end
     send_data csv_string, 

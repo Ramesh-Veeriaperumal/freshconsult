@@ -36,6 +36,9 @@ class Solution::Article < ActiveRecord::Base
     has folder.category_id, :as => :category_id 
     has '0', :as => :deleted, :type => :boolean    
     has folder.visibility , :as => :visibility, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
+    has folder.customer_folders(:customer_id), :as => :customer_ids
 
     set_property :delta => :delayed
     set_property :field_weights => {
