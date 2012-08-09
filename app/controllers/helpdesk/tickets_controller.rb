@@ -31,6 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
+  before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -159,9 +160,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
-    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
-    # When there is no data hash sent selecting all_tickets instead of new_my_open
-
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
@@ -699,6 +697,11 @@ class Helpdesk::TicketsController < ApplicationController
       flash[:error] = t("change_deleted_status_msg")
       redirect_to item_url
     end
+  end
+
+  def set_default_filter
+    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
+    # When there is no data hash sent selecting all_tickets instead of new_my_open
   end
 
 end
