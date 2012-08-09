@@ -36,13 +36,15 @@
 	</div>
 </div>
 
-<% javascript_tag do %>
+<% 
+filter_url = current_filter.is_a?(String) ? "requester/#{current_filter}" : "filter/#{current_filter}"
+javascript_tag do %>
   jQuery('.wf_order_type, .wf_order').live("click", function(ev){
       ev.preventDefault();
       setCookie(this.className, this.getAttribute(this.className),'/support/');
       jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
       jQuery.ajax({
-        url: "/support/company_tickets/filter/<%=current_filter%>?partial=true",
+        url: "/support/company_tickets/<%=filter_url%>?partial=true",
         type: "POST",
         dataType: "script",
         success: function(msg){ 

@@ -54,7 +54,11 @@ class Support::CompanyTicketsController < ApplicationController
     @requested_by = params[:id]
     @page_title = "Tickets by #{current_account.users.find_by_id(@requested_by).name}"
     build_tickets
-    render :index
+    if params[:partial].blank?
+      render :index
+    else
+      render :partial => "/support/shared/ticket_list"
+    end
   end
   
   def configure_export
