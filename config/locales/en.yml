@@ -1840,6 +1840,8 @@ en:
     ago: Ago
     from: From Now
     now: Just Now
+    second: Second
+    seconds: Seconds
     minute: Minute
     minutes: Minutes
     hour: Hour
@@ -2299,4 +2301,8 @@ en:
   cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
   bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
   conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
-  
+  saved_draft: "Saved"
+  saving_draft: "Saving..."
+  draft: "Draft:"
+  last_draft: "Your last draft"
+  clear_draft_text: "Clear stored draft?"

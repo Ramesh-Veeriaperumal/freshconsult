@@ -45,6 +45,7 @@ class AccountsController < ApplicationController
   def new_signup_free
    create_account 
    if @account.save
+      add_to_crm
       render :json => { :success => true, 
       :url => signup_complete_url(:token => @account.account_admin.perishable_token,:host => @account.full_domain) }, 
       :callback => params[:callback]
@@ -412,5 +413,11 @@ class AccountsController < ApplicationController
                 Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")                
            end
 
-        end        
+        end      
+
+    private
+
+      def add_to_crm
+        Delayed::Job.enqueue Marketo::AddLead.new({:account_id => @account.id,:cookie => ThirdCRM.fetch_cookie_info(request.cookies)})
+      end   
 end

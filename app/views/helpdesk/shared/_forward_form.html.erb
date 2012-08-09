@@ -1,8 +1,10 @@
 <%= include_tiny_mce_if_needed %>
+
 <% hide_class = conv_id.nil? ? "hide" : ""
   note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"
 %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>">
+  <div class="reply_box">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskFwd" } do |f| %>
     <%= f.error_messages %>
        
@@ -112,6 +114,7 @@
     </div>
 
     <% end %>
+  </div>
 </div>
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
