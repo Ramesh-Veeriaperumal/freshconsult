@@ -35,7 +35,6 @@ Ext.define('Freshdesk.controller.Filters', {
 
     },
     load_company_tickets : function(type,id){
-        console.log(type,id);
         FD.Util.check_user();
         type = type || 'filter';
         id  = id || 'all_tickets';

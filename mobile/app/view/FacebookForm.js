@@ -45,7 +45,8 @@ Ext.define('Freshdesk.view.FacebookForm', {
                         name: 'helpdesk_note[body]',
                         placeHolder:'Enter your comment *',
                         required:true,
-                        clearIcon:false
+                        clearIcon:false,
+                        height:800
                     },
                     {
                         xtype: 'hiddenfield',

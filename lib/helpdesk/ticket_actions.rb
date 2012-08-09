@@ -242,9 +242,12 @@ module Helpdesk::TicketActions
    def validate_emails email_array
      parent = @item
      unless email_array.blank?
-     email_array.delete_if {|x| !valid_email?(x)}
-     email_array = email_array.collect{|e| e.gsub(/\,/,"")}
-     email_array = email_array.uniq
+      if email_array.is_a? String
+        email_array = email_array.split(/,|;/)
+      end
+      email_array.delete_if {|x| !valid_email?(x)}
+      email_array = email_array.collect{|e| e.gsub(/\,/,"")}
+      email_array = email_array.uniq
      end
    end
     

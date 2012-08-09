@@ -6386,3 +6386,24 @@ margin:10px;
 		color:#333;
 	}
 }
+
+a.mobile_switchBtn {
+		background-color:#FFF;
+		border:1px solid #888;
+		@include border-radius(20px);
+		color:#333 !important;
+		padding: 2px 8px;
+		font-size:11px;
+		font-weight:bold;
+		float:left;
+		float: left;
+		margin: 15px 0px 0px 10px;
+		z-index:5;
+		position:relative;
+		&:active, &:hover{
+			@include background(#444);
+			color:#fff !important;
+			text-shadow: -1px -1px 0 black;
+			text-shadow: -1px -1px 0 black;
+		}
+}
