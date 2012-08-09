@@ -466,6 +466,10 @@ class User < ActiveRecord::Base
     customer.name unless customer.nil?
   end
 
+  def has_company?
+    customer? && customer
+  end
+
   def to_mob_json
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],

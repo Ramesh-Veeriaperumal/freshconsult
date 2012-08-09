@@ -66,12 +66,9 @@ class Solution::Folder < ActiveRecord::Base
 
   def self.visiblity_condition(user)
     condition =   {:visibility =>self.get_visibility_array(user) }
-    condition =  Solution::Folder.merge_conditions(condition) + " OR(solution_folders.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND solution_customer_folders.customer_id = #{ user.customer.id})" if company_specific?(user)
+    condition =  Solution::Folder.merge_conditions(condition) + " OR(solution_folders.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
+                solution_customer_folders.customer_id = #{ user.customer.id})" if (user && user.has_company?)
     return condition
-  end
-
-  def self.company_specific?(user)
-    (user && user.customer? && user.customer)
   end
 
   def customer_folders_attributes=(cust_attr)
