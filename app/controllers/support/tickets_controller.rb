@@ -112,7 +112,20 @@ class Support::TicketsController < ApplicationController
       }
      end
   end
-    
+
+  def add_cc
+      @ticket = Helpdesk::Ticket.find_by_id(params[:id])      
+      cc_params = params[:ticket][:cc_email][:cc_emails].split(/,/)
+      cc_emails_array = @ticket.cc_email[:cc_emails]
+      cc_emails_array = Array.new if cc_emails_array.nil?
+      cc_emails_array = cc_emails_array | cc_params  
+      cc_emails_array = cc_emails_array.delete_if {|x|  !valid_email?(x)}
+      @ticket.cc_email[:cc_emails] = cc_emails_array  
+      @ticket.save
+      flash[:notice] = ['"', cc_params.join(","),'" has been successfully added to CC.'].join()
+      redirect_to support_ticket_path(@ticket)
+  end  
+
   protected 
 
     def cname

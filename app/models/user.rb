@@ -141,6 +141,8 @@ class User < ActiveRecord::Base
     indexes customer.name, :as => :company
     
     has account_id, deleted
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
     
     set_property :delta => :delayed
     set_property :field_weights => {
@@ -437,6 +439,10 @@ class User < ActiveRecord::Base
     (can_view_all_tickets?) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
+  def restricted?
+    !can_view_all_tickets?
+  end
+
     def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
