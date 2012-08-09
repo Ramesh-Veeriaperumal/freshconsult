@@ -418,6 +418,6 @@ class AccountsController < ApplicationController
     private
 
       def add_to_crm
-        Delayed::Job.enqueue Marketo::AddLead.new({:account_id => @account.id,:cookie => ThirdCRM.fetch_cookie_info(request.cookies)})
+        Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
       end   
 end

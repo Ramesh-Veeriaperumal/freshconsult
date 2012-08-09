@@ -332,8 +332,6 @@ DEPENDENCIES
   rufus-scheduler
   sanitize (= 2.0.3)
   sass (= 3.1.1)
-  savon
-  savon_model
   sax-machine (~> 0.1.0)
   searchlogic (= 2.4.27)
   spreadsheet (= 0.6.8)
