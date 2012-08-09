@@ -54,10 +54,6 @@ class AccountsController < ApplicationController
       render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
     end    
   end
-  
-  def add_to_crm
-    Delayed::Job.enqueue Marketo::AddLead.new({:account_id => @account.id,:cookie => ThirdCRM.fetch_cookie_info(request.cookies)})
-  end
 
   def create_account
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:garden]
@@ -417,5 +413,11 @@ class AccountsController < ApplicationController
                 Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")                
            end
 
-        end        
+        end      
+
+    private
+
+      def add_to_crm
+        Delayed::Job.enqueue Marketo::AddLead.new({:account_id => @account.id,:cookie => ThirdCRM.fetch_cookie_info(request.cookies)})
+      end   
 end
