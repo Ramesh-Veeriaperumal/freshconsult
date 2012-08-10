@@ -17,15 +17,15 @@
 					</p>
 					
 					<ul>
-						{% for solution in folder.solutions limit:5 %}
+						{% for article in folder.articles limit:5 %}
 						<li>
-							<a href="{{solution.url}}">{{solution.title}}</a>
+							<a href="{{article.url}}">{{article.title}}</a>
 						</li>
 						{% endfor %}
 					</ul>					
 					
-					<span href="#" class="more-items">{{ folder.solutions.size | pluralize: 'article' }} </span>
-					{% if folder.solutions.size > 5 %}
+					<span class="more-items">{{ folder.articles.size | pluralize: 'article' }} </span>
+					{% if folder.articles.size > 5 %}
 						- <a href="{{ folder.url }}" class="more-items">View all</a>	
 					{% endif %}		
 				</div>

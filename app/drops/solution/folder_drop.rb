@@ -15,9 +15,13 @@ class Solution::FolderDrop < BaseDrop
   def url
     support_solutions_folder_path(source)
   end
+
+  def category
+    source.category
+  end
   
-  def solutions #To do.. Scoping.. current_user
-    @solutions ||= liquify(*@source.articles)
+  def articles #To do.. Scoping.. current_user
+    @articles ||= liquify(*@source.articles)
   end
   
 end

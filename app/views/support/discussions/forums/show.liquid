@@ -12,10 +12,10 @@
 	</ul>
 </div>
 
-<ul class="content-list">	
+<div class="content-list">	
 	{% for topic in forum.topics %}
 	{% assign last_post_user = topic.last_post.user %}
-	<li class="clearfix">
+	<div class="content-row">
 		<div class="user-pic-thumb">
 			<img src="{{ last_post_user.profile_url }}" />
 		</div>		
@@ -41,9 +41,9 @@
 			{% endcase %}
 			{{ topic.user.name | bold }}
 		</p>
-	</li>
+	</div>
 	{% endfor %}	
-</ul>
+</div>
 
 {% comment %}
 

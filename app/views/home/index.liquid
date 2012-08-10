@@ -8,10 +8,22 @@
 {% for category in portal.solution_categories %}
 	<h3>{{category.name}}</h4>				
 	<p>{{category.description | truncate}}</p>
-	<div class="row-fluid">
+	<div class="collection">
 		{% for folder in category.folders %}
-			<div class="span6">
+			<div class="group solution-group {% cycle 'odd', 'even' %}">
 				<h4>{{folder.name}}</h4>
+				<p class="help-text">{{folder.description | truncate: 120}}</p>
+				<ul>
+					{% for article in folder.articles limit:3 %}
+					<li>
+						<a href="{{article.url}}">{{article.title}}</a>
+					</li>
+					{% endfor %}
+				</ul>			
+				<span class="more-items">{{ folder.articles.size | pluralize: 'article' }} </span>
+				{% if folder.articles.size > 3 %}
+					- <a href="{{ folder.url }}" class="more-items">View all</a>	
+				{% endif %}	
 			</div>
 		{% endfor %}
 	</div>

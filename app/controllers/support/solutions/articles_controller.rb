@@ -21,11 +21,14 @@ class Support::Solutions::ArticlesController < SupportController
   end
   
   def show
-    @article = Solution::Article.find(params[:id], :include => :folder) 
-      respond_to do |format|
-        format.html
-        format.xml  { render :xml => @article.to_xml(:include => :folder) }
-      end
+    @article = Solution::Article.find(params[:id], :include => :folder)    
+    @category = @article.folder.category
+    @folder = @article.folder
+
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @article.to_xml(:include => :folder) }
+    end
     raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id) && (@article.folder.visible?(current_user))
  end
  

@@ -5,7 +5,7 @@
 
 
 // Container (centered, fixed-width layouts)
-.container, .wrapper {
+.container{
   @include container-fixed();
 }
 
@@ -14,4 +14,11 @@
   padding-right: $gridGutterWidth;
   padding-left: $gridGutterWidth;
   @include clearfix();
+}
+
+.wrapper{
+  	margin-left: auto;
+  	margin-right: auto;
+  	width:90%;
+  	@include pie-clearfix();  
 }

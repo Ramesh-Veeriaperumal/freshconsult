@@ -7,8 +7,8 @@ module SupportHelper
 		content_tag :strong, content
 	end
 
-	def long_day( date_time )
-		date_time.to_s(:long_day)
+	def day_and_time( date_time )
+		date_time.to_s(:long_day_with_time)
 	end
 
 	# Applicaiton link helpers

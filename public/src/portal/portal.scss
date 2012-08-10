@@ -7,6 +7,7 @@
 // Core variables and mixins
 @import "lib/settings"; // Modify this for custom colors, font-sizes, etc
 @import "lib/mixins";
+@import "compass";
 
 // CSS Reset
 @import "lib/reset";
@@ -24,8 +25,9 @@
 
 // Components: common
 /*@import "lib/sprites"; */
+@import "lib/icons"; 
 @import "lib/dropdowns";
-/*@import "lib/wells";*/
+@import "lib/wells";
 @import "lib/component-animations";
 @import "lib/close";
 
@@ -60,7 +62,7 @@
 
 // App styles
 @import "lib/header";
-@import "compass";
+
 
 .user-pic-thumb, .user-pic-normal{
 	@include float-left;
@@ -86,18 +88,170 @@
 	@include ellipsis;
 }
 
+/* Page styles */
+
+.page-container{
+  background:rgba(255, 255, 255, 0.4);
+  padding:15px;
+}
+.page-body, .footer-content{  
+  padding:22px 30px;
+}
+
+.page-body{ 
+  background:rgba(255, 255, 255, 0.9);
+  border:1px solid #ccc;
+  @include border-radius(6px);
+  @include min-height(500px); 
+}
+
+.footer{
+  background:rgba(255, 255, 255, 0.4);
+  border-top:1px solid rgba(0, 0, 0, 0.04);
+}
+
+.page-node{
+  padding-top:12px;
+}
+
+.page-search{
+  padding:0;
+  input{
+    font-size:16px;
+    height:30px;
+    width:98%;
+    padding:3px 7px;
+  }
+}
+
+.page-title{
+  font-weight: 200;
+}
+
+.collection, .clearfix{ @include pie-clearfix; }
+
+.collection{  
+  hr{
+    clear:both;
+    margin-bottom: 0;
+  }
+  .group{
+    width:47.6%;
+    float:left;
+    padding:12px 0;
+    margin-right:2.4%;
+  }
+  .group.odd{
+    clear:left;
+  }
+}
+
+.font-badge{  
+  @include inline-block;
+  @include border-radius(3em);
+  color: #fff; 
+  background-color: $tabColor;
+  font-size: 32px; line-height: 50px;
+  width: 46px; height: 46px;
+  text-align: center;  
+  @include box-shadow(rgba(0,0,0,0.1) 0 1px 5px inset);
+}
+
+.forum-group a{
+  padding-left:58px;
+  position:relative;
+  color:black;
+  display:block;  
+  @include min-height(50px);
+  h4{ 
+    font-size:16px; 
+    font-weight:500;
+  }
+  &:hover{ 
+    text-decoration:none; 
+    .font-icon{
+      background-color: lighten($tabColor, 5%);
+    }
+  }
+}
+
+.more-items{
+  text-transform: uppercase;  
+  font-weight: bold;
+  font-size:11px;
+}
+
+span.more-items{
+  color:#aaa;
+}
+
+.pill-right{
+  float:right;
+}
+
+.help-text{
+  color: #555;
+  font-weight: 300;
+  font-size: 13px;
+  padding: 3px 0;
+}
 
 .content-list{
-	list-style:none;
-	margin: 8px 0 0 0;
-	li{
-		padding:12px 0 6px 40px;
+	margin-top: 4px;
+	.content-row{
+		padding:10px 6px 0 50px;
 		border-bottom:1px solid $grayLighter;
+    @include clearfix;
+    &:hover{
+      background-color: rgba(0, 0, 0, 0.01);
+    }
 	}
-	.user-pic-thumb{ margin-left: -30px; }
+  .font-badge{
+    color: #96B2B3;
+    background-color: #d7e8e9;    
+    font-size: 25px;
+    width:36px; height:36px;
+    letter-spacing: -2px;
+    line-height:37px;
+    margin-right: 10px;
+    float: left;    
+  }
+	.font-badge, .user-pic-thumb{ margin-left: -45px; }
 	.label{
 		margin:1px 1px 0 10px;
 	}
+  .description{
+    margin: 0;
+    color:#555;
+  }
+}
+
+.page-side-bar-left{
+  border-right:1px solid #f3f3f3;  
+  padding-right: 10px;
+  hr{ margin-right: -10px; }
+}
+
+.solution-folders{
+  margin-bottom:16px;  
+  .folder{ position: relative; }
+  .folder h4{ line-height: 28px; }
+  .folder a{ font-weight: 400; }
+  .folder.active a{ font-weight: 500; color:#333; }
+  .active:after{
+    content: "";
+    position: absolute;
+    width: 1px; height: 1px;
+    border: 6px solid transparent;
+    border-right-color: #f3f3f3;
+    right: -10px; top: 6px;
+  }
+  .folder.muted a, .article-count{ color: #999; font-weight: 200; }
+  .article-count{ 
+    float:right;
+    margin-top:4px;
+    margin-left:10px;
+  }
 }
 
 /* Forum based styles */
@@ -124,7 +278,6 @@
   display: block;
   margin-bottom: 9px;
 }
-
 
 /* Subnav */
 .subnav {

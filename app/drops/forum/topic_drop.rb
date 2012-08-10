@@ -21,7 +21,7 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def created_on
-    source.created_at.to_s(:long_day)
+    source.created_at
   end
 
   def has_comments

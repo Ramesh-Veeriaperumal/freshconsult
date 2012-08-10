@@ -44,9 +44,6 @@
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
   map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
- 
-  # To be removed after Portal customisation developement is done
-  map.liquid_list '/liquid_list', :controller => 'home', :action => 'liquid_list'
 
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
@@ -62,7 +59,7 @@
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
   map.resources :activations, :member => { :send_invite => :put }
-  map.resources :home, :only => :index
+
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
@@ -287,9 +284,16 @@
     solution.resources :articles, :only => :show         
   end
 
-  # Support Portal routes #
+  #!PORTALCSS To be removed afterwords development is over - by venom
+  map.liquid_list '/liquid_list', :controller => 'support/home', :action => 'liquid_list' 
+
+  # Removing the home as it is redundant route to home - by venom  
+  # map.resources :home, :only => :index 
+
+  #!PORTALCSS A bit dirty way for login url... to be changed later - by venom
   map.support_login '/support/login', :controller => 'support', :action => 'new'
-  
+
+  # Support Portal routes #
   map.namespace :support do |support|
     support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'

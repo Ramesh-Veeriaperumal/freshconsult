@@ -1,20 +1,23 @@
-{% comment %}
-<% content_for :sidebar do %>
-	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
-<% end %>
-{% endcomment %}
 <div class="row-fluid">	
-	<div class="span3">
-		Category list
+	<div class="span4">
+		<section class="page-side-bar-left">
+			<div class="ellipsis"><a href="{{folder.url}}">&larr; Back to {{folder.name}}</a></div>
+			<hr />
+			<h3 class="lead">{{category.name}}</h3>
+			<section class="solution-folders">
+				{% for c_folder in category.folders %}
+					<div class="folder {% if c_folder == folder %} active {% endif %} {% if c_folder.articles == empty %} muted {% endif %}">
+						{% if c_folder.articles != empty %}
+							<span class="article-count">{{c_folder.articles.size}}</span>
+						{% endif %}	
+						<h4 class="ellipsis"><a href="{{c_folder.url}}">{{c_folder.name}}</a></h4>
+					</div>
+				{% endfor %}	
+			</section>
+			<hr />
+		</section>
 	</div>
-	<div class="span9">
-	 	{% comment %}
-	 	<div class="crumbs">
-		 	<%= link_to "Solutions", solution_categories_path %> &rarr; 
-			<%= link_to @article.folder.category.name, solution_category_path(@article.folder.category) %> &rarr;
-			<%= link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder)%>
-	 	</div>
-	 	{% endcomment %}	
+	<div class="span8">
 		<h2 class="page-title">{{ article.title }}</h2>
 		<p class="help-text">
 			Modified on: {{ article.modified_on }}
