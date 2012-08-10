@@ -3549,6 +3549,10 @@ div.addReminder{
       		color: #777;
       		font-weight:normal;
       	}
+
+      	a.emphasize:hover, a:hover .emphasize {
+      		color: #037;
+      	}
       }
 
       .sla_status {
@@ -5021,7 +5025,7 @@ a.close{
 }
 
 
-.fd-menu, .fd-ajaxmenu{
+.fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{
    position:absolute;
    display:none;
    font-size:13px;
@@ -5065,7 +5069,7 @@ a.close{
    		color: #888;
    }
 }
-.tickets, .tickets_expanded {
+#tickets-expanded {
 	.fd-ajaxmenu {
 		width: auto;
 		min-width:135px;
