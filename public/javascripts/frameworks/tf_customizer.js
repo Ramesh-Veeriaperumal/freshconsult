@@ -615,6 +615,12 @@
                                       };
 
                 sourceData.set("field_options" , field_options);
+                // Hard setting for requester field
+                sourceData.set("required"              , true);
+                sourceData.set("required_for_closure"  , false);
+                sourceData.set("visible_in_portal"     , true);
+                sourceData.set("editable_in_portal"    , true);
+                sourceData.set("required_in_portal"    , true);
              }
    
             if(_field_type == 'nested_field'){

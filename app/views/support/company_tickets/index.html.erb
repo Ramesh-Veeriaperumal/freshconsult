@@ -37,7 +37,7 @@
 </div>
 
 <% 
-filter_url = current_filter.is_a?(String) ? "requester/#{current_filter}" : "filter/#{current_filter}"
+filter_url = ['all','open_or_pending','resolved_or_closed'].include?(current_filter) ? "filter/#{current_filter}" : "requester/#{current_filter}"
 javascript_tag do %>
   jQuery('.wf_order_type, .wf_order').live("click", function(ev){
       ev.preventDefault();
