@@ -167,6 +167,8 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
 
+    @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+
     @to_emails = @ticket.to_emails
 
     @subscription = current_user && @item.subscriptions.find(
