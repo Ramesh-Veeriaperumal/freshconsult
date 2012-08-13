@@ -11,13 +11,19 @@ class Va::Action
   end
   
   def trigger(act_on)
-       
+    RAILS_DEFAULT_LOGGER.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect}"
     return send(action_key, act_on) if respond_to?(action_key)
     if act_on.respond_to?("#{action_key}=")
       act_on.send("#{action_key}=", value)
-      
       add_activity(property_message act_on)
       return
+    else
+      clazz = @action_key.constantize
+      obj = clazz.new
+      if obj.respond_to?(value)
+        obj.send(value, act_on, act_hash)
+        # add_activity(property_message act_on)  # TODO
+      end
     end
     
     puts "From the trigger of Action... Looks like #{action_key} is not supported!"
@@ -176,5 +182,4 @@ class Va::Action
               act_on, receipients, Liquid::Template.parse(RedCloth.new(act_hash[:email_body]).to_html).render(
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name))
     end
-
 end

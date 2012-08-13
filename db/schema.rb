@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724102704) do
+ActiveRecord::Schema.define(:version => 20120731141311) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -109,6 +109,11 @@ ActiveRecord::Schema.define(:version => 20120724102704) do
     t.integer  "ticket_permission",              :default => 1
     t.boolean  "occasional",                     :default => false
     t.string   "google_viewer_id"
+  end
+
+  create_table "app_business_rules", :force => true do |t|
+    t.integer "va_rule_id",     :limit => 8
+    t.integer "application_id", :limit => 8
   end
 
   create_table "applications", :force => true do |t|
@@ -1338,6 +1343,7 @@ ActiveRecord::Schema.define(:version => 20120724102704) do
     t.string  "description"
     t.text    "script"
     t.integer "application_id"
+    t.text    "options"
   end
 
 end

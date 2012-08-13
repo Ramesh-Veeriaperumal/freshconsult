@@ -3,6 +3,7 @@ module Integrations::Constants
     :freshbooks => "freshbooks", 
     :harvest => "harvest", 
     :google_contacts => "google_contacts", 
+    :jira => "jira",
     :sugarcrm => "sugarcrm", 
     :workflow_max => "workflow_max",
     :salesforce => "salesforce"

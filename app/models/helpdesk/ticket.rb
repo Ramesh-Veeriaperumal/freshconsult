@@ -10,6 +10,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
+  include BusinessRulesObserver
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
@@ -33,7 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-       :stop_timesheet_timers
+      :stop_timesheet_timers, :fire_update_event
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
   
@@ -1096,5 +1097,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.save unless schema_less_ticket.changed.empty?
     end
 
+    def fire_update_event
+      fire_event(:update)
+    end
 end
-  

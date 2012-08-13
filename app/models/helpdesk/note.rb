@@ -1,6 +1,7 @@
 class Helpdesk::Note < ActiveRecord::Base
 
   include ParserUtil
+  include BusinessRulesObserver
 
   set_table_name "helpdesk_notes"
   
@@ -32,7 +33,7 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
-  after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
+  after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count, :fire_create_event
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
@@ -253,4 +254,7 @@ class Helpdesk::Note < ActiveRecord::Base
       private_note? and incoming and notable.included_in_fwd_emails?(user.email)
     end
 
+    def fire_create_event
+      fire_event(:create)
+    end
 end

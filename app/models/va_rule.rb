@@ -10,8 +10,14 @@ class VARule < ActiveRecord::Base
   
   belongs_to :account
   
+  has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
+
   named_scope :disabled, :conditions => { :active => false }
   
+  named_scope :executable_biz_rules, lambda {|account_id| {:joins => 'INNER JOIN accounts ON va_rules.account_id=accounts.id', :conditions => { 
+    "accounts.id" => account_id, "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], "va_rules.active" => true }, :order => "va_rules.position"}
+  }
+
   acts_as_list
   
   # scope_condition for acts_as_list
@@ -38,21 +44,21 @@ class VARule < ActiveRecord::Base
     Va::Action.new(act_hash)
   end
   
-  def pass_through(evaluate_on)
-    RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect} "
-    is_a_match = matches(evaluate_on)
+  def pass_through(evaluate_on, actions=nil)
+    RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
+    is_a_match = matches(evaluate_on, actions)
     trigger_actions(evaluate_on) if is_a_match    
     return evaluate_on if is_a_match
     return nil
   end
   
-  def matches(evaluate_on)
+  def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
-    RAILS_DEFAULT_LOGGER.debug "INSIDE matches WITH conditions : #{conditions.inspect} "
+    RAILS_DEFAULT_LOGGER.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
     s_match = match_type.to_sym   
     to_ret = false
     conditions.each do |c|
-      to_ret = c.matches(evaluate_on)
+      to_ret = c.matches(evaluate_on, actions)
             
       return true if to_ret && (s_match == :any)
       return false if !to_ret && (s_match == :all) #by Shan temp

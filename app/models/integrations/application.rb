@@ -11,6 +11,10 @@ class Integrations::Application < ActiveRecord::Base
     :order => :listing_order }}
   after_destroy :destroy_installed_apps
 
+  has_many :app_business_rules, 
+    :class_name => 'Integrations::AppBusinessRule',
+    :dependent => :destroy
+
   def to_liquid
     Hash.from_xml(self.to_xml)['integrations_application']
   end

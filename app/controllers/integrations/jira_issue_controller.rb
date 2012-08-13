@@ -2,11 +2,11 @@ require 'rubygems'
 require 'jira4r'
 
 class Integrations::JiraIssueController < ApplicationController
+	include Integrations::Constants
 
-	include Integrations::JiraSystem
+	before_filter :validate_ip, :only => [:notify, :register] # TODO Needs to be replaced with OAuth authentication.
+  before_filter :getJiraObject, :except => [:notify, :register]	
 
-	before_filter :getJiraObject
-	
 	def get_issue_types
 		begin
 			resJson = @jiraObj.get_issue_types(params)
@@ -97,7 +97,7 @@ class Integrations::JiraIssueController < ApplicationController
          
 		username = @installed_app.configs_username
 		password = Integrations::AppsUtil.get_decrypted_value(@installed_app.configs_password)
-		@jiraObj = Integrations::JiraIssue.new(username, password, @installed_app, params)
+		@jiraObj = Integrations::JiraIssue.new(username, password, @installed_app, @installed_app.configs_domain)
 
 	end
 
@@ -112,4 +112,51 @@ class Integrations::JiraIssueController < ApplicationController
 
 	end
 
+  def register
+    if Rails.env.production?
+      spec_file_name = "production-register.xml"
+    elsif Rails.env.staging?
+      spec_file_name = "staging-register.xml"
+    elsif Rails.env.development?
+      spec_file_name = "development-register.xml"
+    end
+    cert_file  = "#{RAILS_ROOT}/integrations/atlassian-jira/#{spec_file_name}"
+    respond_to do |format|
+      format.xml do
+        render :xml => File.read(cert_file)
+      end
+    end
+  end
+ 
+  def notify
+    puts "Remote JIRA Calling me with params #{params.inspect}, serverKey: #{params[:serverKey]}"
+    if params[:id] == "remote_app_started"
+      # TODO: Logic to fetch the jira public key and preserve it for later the oauth 2-legged signature verification.
+    else
+      jira_webhook = Integrations::JiraWebhook.new(params)
+      jira_webhook.update_local(@installed_app)
+    end
+  end
+ 
+  private
+    def validate_ip
+      jira_ip = request.remote_ip
+      puts "Validate ip headers #{request.headers['HTTP_AUTHORIZATION']} #{jira_ip}"
+      matches = /207\.223\.247\.(\d\d?\d?)/.match(jira_ip)
+      if (!matches.blank? and matches.size == 2)
+        last_octet = matches[1].to_i
+        if last_octet >= 10 or last_octet <= 52
+          header = request.headers['HTTP_AUTHORIZATION']
+          con_key_mathces = /OAuth oauth_consumer_key="([^"]*)".*/.match(header)
+          unless con_key_mathces.blank?
+            jira_url = con_key_mathces[1]
+            @installed_app = Integrations::InstalledApplication.first(
+                    :joins=>"INNER JOIN applications ON applications.id=installed_applications.application_id", 
+                    :conditions=>"applications.name='#{APP_NAMES[:jira]}' and configs like '%#{jira_url}%'")
+          end
+          return
+        end
+      end
+      render :text => "Unauthorized IP", :status => 401 unless jira_ip == "61.12.112.69"
+    end
 end

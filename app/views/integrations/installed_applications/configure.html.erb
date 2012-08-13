@@ -8,7 +8,7 @@
 					<%= t(@installing_application.description) %>
 				</div>
 			</label>
-   		<%= render :partial => "integrations/applications/application_form", :object => f, :locals => { :is_edit => true } %>
+   			<%= render :partial => "integrations/applications/application_form", :object => f, :locals => { :is_edit => true, :installed_app =>@installed_application, :f => f } %>
 		</li>
   </ul>
   <div class="button-container">

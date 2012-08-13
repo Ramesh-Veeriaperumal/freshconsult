@@ -1,7 +1,6 @@
 class Integrations::InstalledApplicationsController < Admin::AdminController
   
   include Integrations::AppsUtil
-  include Integrations::JiraSystem
 
   before_filter :load_object 
   before_filter :check_jira_authenticity, :only => [:install, :update]
@@ -10,7 +9,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
     if @installed_application.blank?
-      @installed_application = Integrations::InstalledApplication.new
+      @installed_application = Integrations::InstalledApplication.new(params[:integrations_installed_application])
       @installed_application.application = @installing_application
       @installed_application.account = current_account
       @installed_application[:configs] = convert_to_configs_hash(params)
@@ -27,8 +26,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         else
           flash[:error] = t(:'flash.application.install.error')
         end
-      rescue Exception => msg
-        puts "Something went wrong while configuring an installed ( #{msg})"
+      rescue => e
+        Rails.logger.error "Problem in installing an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         flash[:error] = t(:'flash.application.install.error')
       end
     else
@@ -45,8 +44,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       begin
         @installed_application.save!
         flash[:notice] = t(:'flash.application.configure.success')   
-      rescue Exception => msg
-        puts "Something went wrong while configuring an installed ( #{msg})"
+      rescue => e
+        Rails.logger.error "Problem in updating an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         flash[:error] = t(:'flash.application.configure.error')
       end
     end
@@ -73,8 +72,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       else
         flash[:error] = t(:'flash.application.uninstall.error')
       end
-    rescue Exception => e
-      puts "Something went wrong while uninstalling an installed app ( #{e})"
+    rescue => e
+      Rails.logger.error "Problem in uninstalling an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       flash[:error] = t(:'flash.application.uninstall.error')
     end
     redirect_to :controller=> 'applications', :action => 'index'
@@ -113,8 +112,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     def check_jira_authenticity
       if @installing_application.name == "jira"
         begin
-          params[:configs][:password] = decrypt_password if params[:configs][:password].blank? and !@installed_application.configs.blank?
-          jira_version = jira_authenticity(params)   
+          username = params[:configs][:username]
+          password = decrypt_password if params[:configs][:password].blank? and !@installed_application.configs.blank?
+          jiraObj = Integrations::JiraIssue.new(username, password, nil, params[:configs][:domain])
+          jira_version = jiraObj.jira_serverinfo
         rescue Exception => msg
           if msg.to_s.include?("Exception:")
             msg = msg.to_s.split("Exception:")[1]

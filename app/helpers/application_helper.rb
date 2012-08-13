@@ -392,7 +392,7 @@ module ApplicationHelper
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "")    
+  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
@@ -424,7 +424,7 @@ module ApplicationHelper
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
-        rendered_partial = (render :partial => field[:partial])
+        rendered_partial = (render :partial => field[:partial], :locals => {:installed_app=>installed_app, :f=>form})
         element = "#{label} #{rendered_partial}"
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
