@@ -3,7 +3,7 @@ class ForumCategory < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
 
   def self.company_specific?(user)
-    (user && user.customer? && user.customer)
+    (user && user.has_company?)
   end
 
   def self.user_forums_condition
