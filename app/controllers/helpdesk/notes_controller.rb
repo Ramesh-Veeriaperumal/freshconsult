@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include ParserUtil
   
   before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
-  before_filter :set_mobile , :only => [:create]
+  before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -18,7 +18,7 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
   
-  def create   
+  def create  
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -160,7 +160,7 @@ class Helpdesk::NotesController < ApplicationController
    
   def fetch_valid_emails email_array
     unless email_array.blank?
-      email_array = email_array.collect {|email| email.scan(VALID_EMAIL_REGEX).uniq[0]}.compact
+      email_array = email_array.collect {|email| email.scan(VALID_EMAIL_REGEX).uniq[0].strip}.compact
       email_array = email_array.uniq
     else
       email_array = []
@@ -173,7 +173,7 @@ class Helpdesk::NotesController < ApplicationController
         email_array = email_array.split(/,|;/)
       end
         email_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
-        email_array = email_array.collect{|e| e.gsub(/\,/,"")}
+        email_array = email_array.collect{|e| (e.gsub(/\,/,"")).strip}
         email_array = email_array.uniq
      end
    end

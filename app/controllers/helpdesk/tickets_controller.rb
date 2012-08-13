@@ -1,4 +1,5 @@
 require 'fastercsv'
+require 'html2textile'
 
 class Helpdesk::TicketsController < ApplicationController  
   
@@ -30,6 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
+  before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -98,7 +100,8 @@ class Helpdesk::TicketsController < ApplicationController
 
             json << sep + tic.to_json({
               :except => [ :description_html, :description ],
-              :methods => [ :status_name, :priority_name, :source_name, :requester_name,:responder_name, :need_attention]
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+                            :responder_name, :need_attention, :pretty_updated_date ]
             }, false)[19..-2]; sep=","
           }
           render :json => json + "]"
@@ -157,9 +160,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
-    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
-    # When there is no data hash sent selecting all_tickets instead of new_my_open
-
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
@@ -410,14 +410,18 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def quick_assign
-    unless params[:assign] == 'agent'
-      @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+    if allowed_quick_assign_fields.include?(params[:assign])
+      unless params[:assign] == 'agent'
+        @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+      else
+        agent = current_account.agents.find_by_user_id(params[:value])
+        @item.responder = agent.user
+      end
+      @item.save
+      render :json => {:success => true}.to_json
     else
-      agent = current_account.agents.find_by_user_id(params[:value])
-      @item.responder = agent.user
+      render :json => {:success => false}.to_json
     end
-    @item.save
-    render :json => {:success => true}.to_json
   end
 
   def new
@@ -471,7 +475,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    content = mobile? ? ca_resp.content : ca_resp.content_html
+    content = ca_resp.content_html
+    if mobile?
+      parser = HTMLToTextileParser.new
+      parser.feed ca_resp.content_html
+      content = parser.to_textile
+    end
     a_template = Liquid::Template.parse(content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
   end 
@@ -575,6 +584,10 @@ class Helpdesk::TicketsController < ApplicationController
 
     def redis_key
       HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id}
+    end
+
+    def allowed_quick_assign_fields
+      ['agent','status','priority']
     end
 
     def cache_filter_params
@@ -684,6 +697,11 @@ class Helpdesk::TicketsController < ApplicationController
       flash[:error] = t("change_deleted_status_msg")
       redirect_to item_url
     end
+  end
+
+  def set_default_filter
+    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
+    # When there is no data hash sent selecting all_tickets instead of new_my_open
   end
 
 end

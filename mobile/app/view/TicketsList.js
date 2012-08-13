@@ -18,7 +18,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '<div>',
                                         '<tpl if="responder_id">{responder_name},',
                                         '<tpl else>No agent assigned,</tpl>',
-                                '&nbsp;{updated_at:this.time_in_words}</div>',
+                                '&nbsp;{pretty_updated_date}</div>',
                         '</div>',
                         '<div class="disclose icon-arrow-right">&nbsp;</div>',
         	'</div></tpl>'].join(''),

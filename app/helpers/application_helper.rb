@@ -120,6 +120,12 @@ module ApplicationHelper
     end
   end
 
+  def fd_menu_link(text, url, is_active)
+    text << "<span class='icon ticksymbol'></span>" if is_active
+    class_name = is_active ? "active" : ""
+    link_to(text, url, :class => class_name)
+  end
+
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets) ],
@@ -335,9 +341,8 @@ module ApplicationHelper
   end
   
   # Date and time format that is mostly used in our product
-  def formated_date(date_time, format = "%b %e %Y, %l:%M %p")
-    format = format.gsub(/.\b[%Yy]/, "") if (date_time.year == Time.now.year)
-    format = format.gsub(" ,",",")
+  def formated_date(date_time, format = "%a, %b %e, %Y at %l:%M %p")
+    format = format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     date_time.strftime(format)
   end
   

@@ -3112,6 +3112,7 @@ div.addReminder{
 		input.text{
 			color:#734e3d;
 			border:0px; background:0px;
+			@include shadows(0, 0, 0, 0);	
 			font-size:14px;
 			display:block;
 			margin:2px 0px 0px 0px;
@@ -3206,9 +3207,10 @@ div.addReminder{
 
 .intro{
 	color:#666666;
-	font-size:13px;
-	margin-bottom:8px;
-	margin-top:-4px;
+	font-size:13px; 
+	line-height: 17px;
+	margin-bottom:13px;
+	margin-top:-8px;
 }
 
 .info-description p{
@@ -3301,6 +3303,30 @@ div.addReminder{
 	}
 
 }
+.tickets {
+	th.toolbar_right{
+      text-align:right;
+      width: 130px;
+      vertical-align:middle;
+      padding:5px 0 0;
+      a {
+      	display:inline-block;
+      }
+   }
+	.check{
+		width:25px;
+		padding:13px 10px 1px 8px; 
+	}
+
+	.headings td.check {
+		border-left: solid 6px #EEE;
+	}
+	th.check{
+		padding:5px 10px 0 5px;
+		text-align:right;
+		vertical-align: top;
+	}
+}
 #tickets-expanded {
 	td.priority-border, th.priority-border {
 		padding:0;
@@ -3310,8 +3336,9 @@ div.addReminder{
 	width:100%;
 	color:#5f5f5f;
 
-	.ralign {
+	td.ralign {
 		text-align: right;
+		padding-right: 0;
 	}
 	
 	th{
@@ -3344,13 +3371,14 @@ div.addReminder{
 		width:25px;
 		padding:13px 10px 1px 8px; 
 		text-align:right;
+		vertical-align: top;
 	}
 
 	.headings td.check {
 		border-left: solid 6px #EEE;
 	}
 	th.check{
-		padding:5px 5px 0 0;
+		padding:5px 10px 0 5px;
 	}
 	
 	/*Priority Border */
@@ -3429,6 +3457,7 @@ div.addReminder{
 		   	&.source-icon {
 		   		width:30px;
 		   		vertical-align: middle;
+		   		padding-left: 0;
 		   	}
 		}
 
@@ -3458,15 +3487,6 @@ div.addReminder{
 			}
 		}
 	}
-	th.toolbar_right{
-      text-align:right;
-      width: 130px;
-      vertical-align:middle;
-      padding:5px 0 0;
-      a {
-      	display:inline-block;
-      }
-   }
 	
 	.subject_style {
 		@include border-radius(3px);
@@ -3528,6 +3548,10 @@ div.addReminder{
       	.emphasize {
       		color: #777;
       		font-weight:normal;
+      	}
+
+      	a.emphasize:hover, a:hover .emphasize {
+      		color: #037;
       	}
       }
 
@@ -3606,6 +3630,34 @@ div.addReminder{
 					width: 50px;
 					padding:0 2px 0 0;
 				}				
+			}
+		}
+	}
+
+	&.customer_tickets {
+		td.name {
+			padding-left: 6px;
+		}
+
+		td.source-icon {
+			padding-left: 10px;
+		}
+
+		.subject_style {
+			color:#FFF;
+			background: #d48d00;
+			@include text-shadow(-1px -1px 0 rgba(71,71,71,0.53));
+			font-family: $blueprint-font-family;
+			letter-spacing: normal;
+			font-weight: bold;
+			font-size: 10px;
+			padding: 2px 5px;
+			margin-right: 15px;
+			-webkit-font-smoothing:antialiased;
+			text-transform: uppercase;
+
+			&.status-4, &.status-5 {
+				background: #0c8519;
 			}
 		}
 	}
@@ -4073,6 +4125,43 @@ div.addReminder{
 		margin:0px;
 		float:left;
 	}
+}
+.ticket-list-group {
+	margin:0px -20px;
+
+	h3.title {
+		padding: 5px 20px;
+	}
+
+	.sort-bar {
+		margin-top:0;
+	}
+
+	#ticket-list {
+		@include corners(5px);
+		@include box-shadow(0 0 8px rgba(107,107,107,0.7));
+		border: #AAA solid 1px;
+
+		.customer_tickets tr:first-child {
+			td.source-icon {
+				@include border-radius(6px 0 0 0);
+			}
+			td.ralign {
+				@include border-radius(0 6px 0 0);
+			}
+		}
+		.toolbar {
+			@include border-radius(0 0 6px 6px);
+		}
+	}
+
+}
+.ticket-list-group .toolbar {
+	padding-right: 0;
+}
+.toolbar .list-bar {
+	background: none;
+	border-top: none;
 }
 
 
@@ -4695,7 +4784,7 @@ a.close{
    color: #888;
 }
 
-.leftFilter .drop-right:after{
+.leftFilter .drop-right:after, .ssportal_filters .drop-right:after{
 		content:"";
 		width: 0;
 		height: 0;
@@ -4782,61 +4871,61 @@ a.close{
 .contentCol{
    border-left:1px solid #cfcfcf;
    background-color:#ffffff;
+}
 
+.view_filters{
+		display:inline-block;
+		margin:8px 0 2px;
 
-   .view_filters{
-   		display:inline-block;
-   		margin:8px 0 2px;
-
-   		#view_manage_links {
-   			display: inline-block;
-   			zoom:1;
-   		}
-		.link-item.active, a.link-item:hover{
-         margin:0px -5px;
-         padding-left:13px;
-         background: #e2f1fa;
+		#view_manage_links {
+			display: inline-block;
+			zoom:1;
 		}
-		.link-item.active{
-		   color:#336699;
-         font-weight:bold;
-         @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
-		   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
-		}
-		.link-item.active:after{
-		   content:"";
-		   position:absolute;
-		   right:9px;
-		   top:8px;
-		   width:11px;
-		   height:11px;
-		   background: sprite($symbol, arrow-selected-right) no-repeat;
-		}
-		.link-item{ 
-			font-size:13px;
-			display:inline-block;
-			color:#444444;
-			text-decoration:none;
-			padding:10px 8px 5px 3px;
-			width: auto;
-			position:relative;
+	.link-item.active, a.link-item:hover{
+     margin:0px -5px;
+     padding-left:13px;
+     background: #e2f1fa;
+	}
+	.link-item.active{
+	   color:#336699;
+     font-weight:bold;
+     @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
+	}
+	.link-item.active:after{
+	   content:"";
+	   position:absolute;
+	   right:9px;
+	   top:8px;
+	   width:11px;
+	   height:11px;
+	   background: sprite($symbol, arrow-selected-right) no-repeat;
+	}
+	.link-item{ 
+		font-size:13px;
+		display:inline-block;
+		color:#444444;
+		text-decoration:none;
+		padding:10px 8px 5px 3px;
+		width: auto;
+		position:relative;
 
-			.nav-trigger {
-				font-size: 16px;
-				color:#000;
-				font-weight:bold;
-				@include text-shadow(#ffffff, 2px, 2px, 2px);
+		.nav-trigger {
+			font-size: 16px;
+			color:#000;
+			font-weight:bold;
+			@include text-shadow(#ffffff, 2px, 2px, 2px);
 
-				&.selected {
-					color: #FFF;
-				}
-				&.unsaved {
-					font-style:italic;
-				}
-
+			&.selected {
+				color: #FFF;
 			}
+			&.unsaved {
+				font-style:italic;
+			}
+
 		}
-   }
+	}
+
 
    .leftFilter {
 
@@ -4936,7 +5025,7 @@ a.close{
 }
 
 
-.fd-menu, .fd-ajaxmenu{
+.fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{
    position:absolute;
    display:none;
    font-size:13px;
@@ -4972,8 +5061,15 @@ a.close{
 	  @include text-shadow(none);
       .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
    }
+
+   h4.title {
+   		font-size: 13px;
+   		background: none;
+   		padding:2px 12px 2px 24px;
+   		color: #888;
+   }
 }
-.tickets, .tickets_expanded {
+#tickets-expanded {
 	.fd-ajaxmenu {
 		width: auto;
 		min-width:135px;
@@ -6352,4 +6448,44 @@ margin:10px;
 	font-size: 1.1em;
 	font-weight: bold;
 	padding-bottom: 10px;
+}
+
+/* Export link in the Ticket list of Self Service Portal */
+.ssp_export {
+	position:absolute;
+	right:5px;
+	left:auto;
+	width: 60px;
+	font-size: 12px;
+	padding:5px 0 5px 5px ;
+	text-align: right;
+
+	&:hover {
+		color:#333;
+	}
+}
+
+.ssportal_filters {
+	margin:-20px 0 0 -20px;
+}
+
+a.mobile_switchBtn {
+		background-color:#FFF;
+		border:1px solid #888;
+		@include border-radius(20px);
+		color:#333 !important;
+		padding: 2px 8px;
+		font-size:11px;
+		font-weight:bold;
+		float:left;
+		float: left;
+		margin: 15px 0px 0px 10px;
+		z-index:5;
+		position:relative;
+		&:active, &:hover{
+			@include background(#444);
+			color:#fff !important;
+			text-shadow: -1px -1px 0 black;
+			text-shadow: -1px -1px 0 black;
+		}
 }

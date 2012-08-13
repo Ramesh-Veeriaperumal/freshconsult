@@ -3,7 +3,8 @@ class SearchController < ApplicationController
   
   extend NewRelic::Agent::MethodTracer
   
-  before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
+  include SearchUtil
+
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
   
@@ -111,22 +112,30 @@ class SearchController < ApplicationController
         s_options[:category_id] = current_portal.solution_category_id
         @items.concat(Solution::Article.search params[:search_key], :with => s_options,
                                   :max_matches => (4 if @widget_solutions),
-                                  :per_page => 10)
+                                  :per_page => page_limit)
       end
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
         s_options[:category_id] = current_portal.forum_category_id
         @items.concat(Topic.search params[:search_key], :with => s_options, :per_page => 10)
       end
+
     end
   
     def search
       begin
-        @items = ThinkingSphinx.search filter_key(params[:search_key]), 
-                                        :with => { :account_id => current_account.id, :deleted => false },
-                                        :star => false,
-                                        :match_mode => :any,
-                                        :page => params[:page], :per_page => 10
+        if permission? :manage_tickets
+          @items = ThinkingSphinx.search filter_key(params[:search_key]), 
+                                                              :with => search_with, 
+                                                              :classes => searchable_classes,
+                                                              :sphinx_select => sphinx_select,
+                                                              :star => false,
+                                                              :match_mode => :any,                                          
+                                                              :page => params[:page], :per_page => 10            
+                                          
+        else
+          search_portal_tickets
+        end
         process_results
       rescue Exception => e
         @total_results = 0
@@ -135,11 +144,13 @@ class SearchController < ApplicationController
     end
 
     def process_results
+      
       results = Hash.new
       @items.each do |i|
         results[i.class.name] ||= []
         results[i.class.name] << i
       end
+
       
       @searched_tickets   = results['Helpdesk::Ticket']
       @searched_articles  = results['Solution::Article']
@@ -147,10 +158,16 @@ class SearchController < ApplicationController
       @searched_companies = results['Customer']
       @searched_topics    = results['Topic']
       
-      @total_results = @items.size
       @search_key = params[:search_key]
+      @total_results = @items.size
+
     end
-  
+    
+    def page_limit
+      return 20 if current_user.can_view_all_tickets?
+      return 10
+    end
+
     def forums_allowed_in_portal?
       render :nothing => true and return unless (feature?(:forums) && allowed_in_portal?(:open_forums))
     end
@@ -158,11 +175,58 @@ class SearchController < ApplicationController
     def solutions_allowed_in_portal? #Kinda duplicate
       render :nothing => true and return unless allowed_in_portal?(:open_solutions)
   end
-  
+
   private
   
+  def searchable_classes    
+    searchable = [ Helpdesk::Ticket, Solution::Article, User, Customer, Topic ]
+    searchable.delete_if{ |c| RESTRICTED_CLASSES.include?(c) } if current_user.restricted?
+    
+    searchable
+  end 
+  
+  def condition
+    return unless current_user.restricted?
+
+    restriction = "responder_id = #{current_user.id} OR responder_id = #{DEFAULT_SEARCH_VALUE}"
+    if current_user.agent.group_ticket_permission
+      restriction += " OR group_id = #{DEFAULT_SEARCH_VALUE}"
+
+      restriction = current_user.agent_groups.reduce(restriction) do |val, ag|
+         "#{val} OR group_id = #{ag.group_id}"
+      end 
+
+    end 
+        
+    restriction
+  end
+
+  def sphinx_select
+    select_str = "*"
+    select_str += ", IF( #{condition}, 1, 0 ) AS restricted" if current_user.restricted?
+
+    select_str
+  end
+
+  def search_with
+    with_params = { :account_id => current_account.id, :deleted => false }
+    with_params[:restricted] = 1 if current_user.restricted?  
+    
+    with_params
+  end 
+
+   def search_portal_tickets
+     with_options = { :account_id => current_account.id, :deleted => false }
+     if current_user.client_manager?
+       with_options[:customer_id] = current_user.customer_id
+     else
+       with_options[:requester_id] = current_user.id
+     end
+      @items = Helpdesk::Ticket.search params[:search_key], :with => with_options, :page => params[:page], :per_page => 10
+   end
+
   def filter_key(query)
-    email_regex  = Regexp.new('(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
+    email_regex  = Regexp.new('(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
     default_regex = Regexp.new('\w+', nil, 'u')
     enu = query.gsub(/("#{email_regex}(.*?#{email_regex})?"|(?![!-])#{email_regex})/u)
     unless enu.count > 0

@@ -37,8 +37,7 @@ Ext.define('Freshdesk.view.TicketReply', {
             xtype : 'emailForm',
             padding:0,
             border:0,
-            style:'font-size:1em',
-            layout:'fit'
+            style:'font-size:1em'
         };
 
         this.add([topToolbar,emailForm]);
@@ -53,7 +52,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         var id = this.ticket_id,
             formObj = this.items.items[1],
             values = formObj.getValues();
-        if(values["helpdesk_note[body_html]"].trim() != '') {
+        if(values["helpdesk_note[body]"].trim() != '') {
             Ext.Viewport.setMasked(true);
             formObj.submit({
                 success:function(){
@@ -77,7 +76,7 @@ Ext.define('Freshdesk.view.TicketReply', {
         }
     },
     getMessageItem: function(){
-        return this.items.items[1].items.items[0].items.items[8];
+        return this.items.items[1].items.items[0].items.items[9];
     },
     config: {
         layout:'fit',

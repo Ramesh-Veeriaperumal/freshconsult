@@ -530,11 +530,11 @@ active_dialog = null;
 })( jQuery );
 
 
-setCookie = function (name,value,expires_in_days)
+setCookie = function (name,value,expires_in_days,path)
 {
   var exdate=new Date();
   exdate.setDate(exdate.getDate() + expires_in_days);
-  var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString()) + '; path=/';
+  var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString()) + '; path=' + ( (path ==null) ? '/' : path);
   document.cookie=name + "=" + c_value;
 }
 

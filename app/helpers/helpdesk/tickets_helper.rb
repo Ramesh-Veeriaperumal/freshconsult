@@ -6,7 +6,7 @@ module Helpdesk::TicketsHelper
   
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}" ))
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ))
     else
       content_tag(:span, "", :class => "seperator")
     end  
@@ -256,8 +256,12 @@ module Helpdesk::TicketsHelper
     end
     default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature
     if(!forward)
-      reply_email_template = Liquid::Template.parse(current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template).render('ticket'=>ticket)
-      default_reply =reply_email_template+"<br/>"+signature
+      requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
+      if(!requester_template.nil?)
+        reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
+        reply_email_template = "&nbsp;" if (reply_email_template.empty?) #fix for chrome issue no data shown when "" is returned as value
+        default_reply ="<span id='caret_pos_holder'>"+reply_email_template+"</span><br/></br>"+signature
+      end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
