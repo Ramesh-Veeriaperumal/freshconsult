@@ -160,7 +160,7 @@ class Helpdesk::NotesController < ApplicationController
    
   def fetch_valid_emails email_array
     unless email_array.blank?
-      email_array = email_array.collect {|email| email.scan(VALID_EMAIL_REGEX).uniq[0].strip}.compact
+      email_array = email_array.collect {|email| email.strip.scan(VALID_EMAIL_REGEX).uniq[0] if email }.compact
       email_array = email_array.uniq
     else
       email_array = []
