@@ -12,6 +12,7 @@ class ForumCategory < ActiveRecord::Base
     condition = ForumCategory.merge_conditions(condition) + " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
                 customer_forums.customer_id = #{user.customer_id} )" if company_specific?(user) 
 
+    logger.debug "user:: #{user} and condition is :#{condition} "
     return condition
   end
 
