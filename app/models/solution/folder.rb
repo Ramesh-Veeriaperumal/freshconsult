@@ -88,6 +88,10 @@ class Solution::Folder < ActiveRecord::Base
       article.save
     end
   end
+
+  def has_company_visiblity?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
+  end
   
   def to_xml(options = {})
      options[:indent] ||= 2
