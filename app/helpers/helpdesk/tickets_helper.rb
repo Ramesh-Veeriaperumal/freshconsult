@@ -225,7 +225,7 @@ module Helpdesk::TicketsHelper
           t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         end
       else
-        " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('since')} 
+        " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 
             #{distance_of_time_in_words(Time.now, ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]))} "
       end
 
