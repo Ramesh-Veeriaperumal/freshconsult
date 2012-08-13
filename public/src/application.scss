@@ -3175,10 +3175,9 @@ div.addReminder{
 
 .intro{
 	color:#666666;
-	font-size:13px; 
-	line-height: 17px;
-	margin-bottom:13px;
-	margin-top:-8px;
+	font-size:13px;
+	margin-bottom:8px;
+	margin-top:-4px;
 }
 
 .info-description p{
@@ -4664,6 +4663,8 @@ a.close{
 
 #timeentry_add {
 	margin-bottom: 25px;
+	padding-left: 40px;
+	padding-right: 30px;
 }
 .report_items {
 	border-top: 1px solid #F2F2F2;
@@ -5750,4 +5751,40 @@ margin:10px;
 	font-size: 1.1em;
 	font-weight: bold;
 	padding-bottom: 10px;
+}
+
+.email-details{
+	max-height: 200px;
+	overflow: auto;
+	margin: 0 -14px;
+	padding: 0 10px;
+	ul {
+		li {
+			margin-left: 48px;
+			color: #333;
+			padding-bottom: 10px;
+			&.left{
+				float:left;
+				margin-left: 0px;
+				color: #AAA;
+				padding-right: 5px;
+				min-width: 40px;
+				text-align: right;
+			}
+		}
+	}
+}
+
+/* Export link in the Ticket list of Self Service Portal */
+.ssp_export {
+	position:absolute;
+	right:5px;
+	left:auto;
+	width: 60px;
+	font-size: 12px;
+	padding:5px 5px ;
+
+	&:hover {
+		color:#333;
+	}
 }

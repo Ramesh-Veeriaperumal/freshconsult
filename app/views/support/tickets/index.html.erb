@@ -1,0 +1,45 @@
+<% content_for :sidebar do -%><%- end %>
+
+<h3 class="title"><%= @page_title %></h3>
+<div class="list-group tickets-container">          
+ <div class="list-bar">
+ 	<%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets", :class => "first" ) %>      
+	<%= link_to(t('open_tickets'),"/support/tickets/filter/open_or_pending" ) %>     
+	<%= link_to(t('resolved_tickets') ,"/support/tickets/filter/resolved_or_closed" ) %>
+ </div>
+
+  <%= link_to("Export", { :action => "configure_export", :a=>params[:action], :i=>params[:id] }, :class => "ssp_export dialog2", :title => "Export to CSV", "data-width" => "650" ) unless @tickets.blank?%>
+
+  <div id="ticket-sub-toolbar">
+    <%@items = @tickets%>
+    <%= render :partial => "/support/shared/ticket_sort", :locals=>{:is_portal=>true} unless @tickets.empty? %>
+  </div>
+
+  <div id="ticket-list">
+    <table class="tickets">	
+    <tbody>
+      <%= each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) %>
+    </tbody>
+    </table>   
+  </div>
+
+ <div class="toolbar">
+    <%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  
+ </div>
+</div>
+
+<% javascript_tag do %>
+  jQuery('.wf_order_type, .wf_order').live("click", function(ev){
+      ev.preventDefault();
+      document.cookie = this.className+"="+this.getAttribute(this.className)
+      jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
+      jQuery.ajax({
+        url: "/support/tickets/filter/<%=current_filter%>?partial=true",
+        type: "POST",
+        dataType: "script",
+        success: function(msg){ 
+        }
+      }); 
+    jQuery(this).hide();  
+  }); 
+<%end%>

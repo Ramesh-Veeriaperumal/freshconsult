@@ -64,15 +64,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
  
-  def reply(ticket, note , reply_email, options={})    
+  def reply(ticket, note , options={})
+    options = {} unless options.is_a?(Hash) 
+    
     subject       formatted_subject(ticket)
-    recipients    ticket.requester.email
-    cc            ticket.cc_email_hash[:cc_emails] if !options[:include_cc].blank? and !ticket.cc_email.nil?
-    bcc           options[:bcc_emails]
-    from          reply_email
+    recipients    note.to_emails
+    cc            note.cc_emails unless options[:include_cc].blank?
+    bcc           note.bcc_emails
+    from          note.from_email
     body          :ticket => ticket, :body => note.body_html,
                   :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey])
-    headers       "Reply-to" => "#{reply_email}"
+    headers       "Reply-to" => "#{note.from_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"
 
@@ -85,14 +87,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
 
-  def forward(ticket, note , reply_email, options={})
+  def forward(ticket, note, options={})
     subject       fwd_formatted_subject(ticket)
-    recipients    options[:to_emails]
-    cc            options[:fwd_cc_emails]
-    bcc           options[:bcc_emails]
-    from          reply_email
+    recipients    note.to_emails
+    cc            note.cc_emails
+    bcc           note.bcc_emails
+    from          note.from_email
     body          :ticket => ticket, :body => note.body_html
-    headers       "Reply-to" => "#{reply_email}"
+    headers       "Reply-to" => "#{note.from_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"
 

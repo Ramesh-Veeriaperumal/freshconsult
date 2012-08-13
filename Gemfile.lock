@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/freshdesk/Marketo.git
+  revision: 1ac9b6dd3204f709d812edcde0a14334130fe463
+  specs:
+    marketo (0.0.2)
+      savon
+      savon_model
+
 PATH
   remote: vendor/gems/classifier-1.3.1
   specs:
@@ -45,6 +53,9 @@ GEM
     addressable (2.2.7)
     after_commit (1.0.8)
       activerecord (< 3.0.0)
+    akami (1.2.0)
+      gyoku (>= 0.4.0)
+      nokogiri (>= 1.4.0)
     arel (2.0.7)
     authlogic (2.1.6)
       activesupport
@@ -78,11 +89,15 @@ GEM
     fssm (0.2.9)
     gem_plugin (0.2.3)
     git (1.2.5)
+    gyoku (0.4.6)
+      builder (>= 2.1.2)
     hashie (1.2.0)
     http_accept_language (1.0.1)
     httparty (0.6.1)
       crack (= 0.1.8)
     httpclient (2.2.4)
+    httpi (0.9.7)
+      rack
     i18n (0.4.2)
     insensitive_hash (0.2.3)
     jammit (0.6.0)
@@ -125,6 +140,7 @@ GEM
     newrelic_rpm (3.0.0)
     nokogiri (1.4.4)
     nokogiri (1.4.4-x86-mingw32)
+    nori (1.1.3)
     oauth (0.4.5)
     oauth2 (0.5.2)
       faraday (~> 0.7)
@@ -215,6 +231,17 @@ GEM
     sanitize (2.0.3)
       nokogiri (>= 1.4.4, < 1.6)
     sass (3.1.1)
+    savon (0.9.7)
+      akami (~> 1.0)
+      builder (>= 2.1.2)
+      gyoku (>= 0.4.0)
+      httpi (~> 0.9)
+      nokogiri (>= 1.4.0)
+      nori (~> 1.0)
+      wasabi (~> 2.0)
+    savon_model (1.2.0)
+      httpi (>= 0.7.8)
+      savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
     searchlogic (2.4.27)
@@ -247,6 +274,8 @@ GEM
       macaddr (~> 1.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
+    wasabi (2.3.0)
+      nokogiri (>= 1.4.0)
     xml-simple (1.0.15)
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
@@ -276,6 +305,7 @@ DEPENDENCIES
   koala (~> 1.0.0)
   lockfile (= 1.4.3)
   map-fields (= 1.0.0)
+  marketo!
   mongrel
   mysql
   net-dns (= 0.6.1)

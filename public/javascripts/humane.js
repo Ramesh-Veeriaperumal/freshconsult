@@ -14,6 +14,8 @@ var date_lang = {
           ago: 'Ago',
           from: 'From Now',
           now: 'Just Now',
+          second: 'Second',
+          seconds: 'Seconds',
           minute: 'Minute',
           minutes: 'Minutes',
           hour: 'Hour',
@@ -31,7 +33,8 @@ var date_lang = {
 function humaneDate(date, compareTo){
    var  lang = date_lang,
         formats = [
-            [60, lang.now],
+            [1, lang.now], //now
+            [60, lang.second, lang.seconds, 1], // 60 seconds, 1 second
             [3600, lang.minute, lang.minutes, 60], // 60 minutes, 1 minute
             [86400, lang.hour, lang.hours, 3600], // 24 hours, 1 hour
             [604800, lang.day, lang.days, 86400], // 7 days, 1 day
@@ -61,9 +64,11 @@ function humaneDate(date, compareTo){
     }
 
     /*
-     * 0 seconds && < 60 seconds        Now
+     * > 1 sec                          now
+     * 1 sec                            1 Second
+     * 1 secs && < 60 secs              X Seconds
      * 60 seconds                       1 Minute
-     * > 60 seconds && < 60 minutes     X Minutes
+     * > 60 secs && < 60 minutes        X Minutes
      * 60 minutes                       1 Hour
      * > 60 minutes && < 24 hours       X Hours
      * 24 hours                         1 Day
@@ -93,7 +98,7 @@ function humaneDate(date, compareTo){
                 // Now
                 return format[1];
             }
-
+            
             var val = Math.ceil(normalize(seconds, format[3]) / (format[3]));
             return val +
                     ' ' +
