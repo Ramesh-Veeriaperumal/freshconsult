@@ -26,13 +26,6 @@
 	                                        :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
 	                                        :method => :GET },
 	                                      { :class => "slim-button" }) if(note.note? && note.user && note.user.agent?) %>
-	        <%= link_to_remote( t("ticket.reply_to"), { :loading => "$('loading_#{notedetails}').show();",
-	        								:loaded  => "$('loading_#{notedetails}').hide();", 	
-	        								:update  => "reply_#{notedetails}",
-	        								:complete => "jQuery(\"div[id$='#{notedetails}']\").hide();jQuery('#reply_#{notedetails}').show();",
-	                                        :url => { :controller => "helpdesk/tickets", :id => note.notable.display_id, :action => :reply_to_conv , :note_id => note.id }, 
-	                                        :method => :GET },
-	                                      { :class => "slim-button" }) if note.inbound_email? %>
 	        <%= link_to_remote( t("fwd_to"), { :loading => "$('loading_#{notedetails}').show();",
 	        								:loaded  => "$('loading_#{notedetails}').hide();", 	
 	        								:update  => "fwd_#{notedetails}",
@@ -66,7 +59,6 @@
 				"data-content" => conv_info.length > 100 ? conversation_popover_details(note) : "" %>
 		<% end %>
   </div> 
-  	<div id="reply_<%= notedetails %>" class="hide"></div>
   	<div id="fwd_<%= notedetails %>" class="hide"></div>
   	<div id="edit_<%= notedetails %>" class="hide"></div>
 	<div class="details" id='<%= notedetails %>'>
