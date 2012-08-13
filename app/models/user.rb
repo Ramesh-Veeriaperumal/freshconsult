@@ -401,6 +401,11 @@ class User < ActiveRecord::Base
     self.permission?(:manage_tickets)
   end
   
+
+  def has_company?
+    customer? && customer
+  end
+
   def is_not_deleted?
     logger.debug "not ::deleted ?:: #{!self.deleted}"
     !self.deleted
