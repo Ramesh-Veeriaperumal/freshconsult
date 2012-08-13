@@ -65,14 +65,12 @@ body .redactor_box_fullscreen {
 	border-bottom: 1px solid #f2f2f2;
 	border-radius:5px 5px 0 0;
 	background: -moz-linear-gradient(center top , #F2F2F2 0px, #fff 100%) repeat scroll 0 0 transparent;
-		background: -webkit-gradient(linear,center top ,center bottom, from(#F2F2F2),to(#ffffff)) repeat scroll 0 0 transparent;
 }
 .redactor_toolbar li {
 	float: left !important;
 	padding: 3px 1px;
 	padding-right: 0;
 	list-style-type: none;	
-	width:auto;
 }
 .redactor_toolbar li.redactor_separator {
 	float: left;		
