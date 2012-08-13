@@ -35,7 +35,7 @@
       <li class="inline-field field" >
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email) %>
+              <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email) %>
           </div>
         </li>
         <li class="inline-field field" id="fwd_to_mail">
