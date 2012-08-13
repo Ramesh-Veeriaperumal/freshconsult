@@ -45,6 +45,7 @@ class ThirdCRM
     lead_contact[:Phone] = account_admin.phone
     lead_contact[:Email ] = account_admin.email
     lead_contact[:Company ] = account_admin.name
+    lead_contact[:Country] = account.conversion_metric.country if account.conversion_metric
     lead_contact
   end
 
