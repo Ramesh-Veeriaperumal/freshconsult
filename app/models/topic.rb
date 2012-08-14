@@ -34,6 +34,9 @@ class Topic < ActiveRecord::Base
     has forum.forum_visibility, :as => :visibility
     has '0', :as => :deleted, :type => :boolean
     has '2' , :as => :status , :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
+    has forum.customer_forums(:customer_id), :as => :customer_ids
 
     set_property :delta => :delayed
     set_property :field_weights => {

@@ -8,15 +8,15 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
 
         var backButton = {
             xtype:'button',
-            text:'List',
-			ui:'lightBtn back',
+            text:'Cancel',
+			ui:'lightBtn',
             handler:this.backToViews,
 			align:'left'
 		};
 
         var addBtn = Ext.create('Ext.Button',{
             xtype:'button',
-            text:'Done',
+            text:'Create',
             align:'right',
             ui:'headerBtn',
             disabled:true,
@@ -36,7 +36,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                 padding:0,
                 border:0,
                 layout:'fit',
-                scrollable:true,
+                scrollable:false,
                 id:'NewticketProperties'
         };
         this.add([topToolbar,ticket_fields]);
@@ -57,6 +57,9 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                     var errorHtml='Please correct the bellow errors.<br/>';
                     for(var index in response.errors){
                         var error = response.errors[index],eNo= +index+1;
+                        if(error[0] === "requester_id") {
+                            error[0] = "Requester"
+                        }
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);    
@@ -79,7 +82,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
     },
     config: {
         layout:'fit',
-        scrollable:true,
+        scrollable:false,
         cls:'newTicketForm',
         id:'newTicketForm'
     }

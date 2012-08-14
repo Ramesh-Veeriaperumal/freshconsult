@@ -38,7 +38,8 @@ class Post < ActiveRecord::Base
   
   def send_monitorship_emails
     topic.monitorships.active_monitors.each do |monitorship|
-      PostMailer.deliver_monitor_email!(monitorship.user.email,self,self.user)
+      monitorship_email = monitorship.user.email
+      PostMailer.deliver_monitor_email!(monitorship_email,self,self.user) unless monitorship_email.blank?
     end
   end
   

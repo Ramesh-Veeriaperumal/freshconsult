@@ -40,6 +40,8 @@ module AuthenticationSystem
       assume_agent_email = handle_api_key(request, params)
       @current_user_session = current_account.user_sessions.find
       handle_assume_identity_for_api(assume_agent_email) unless assume_agent_email.blank?
+      
+      @current_user_session
     end
 
     def handle_api_key(request, params)
@@ -183,7 +185,7 @@ module AuthenticationSystem
     end
     
     def qualify_for_day_pass?
-      current_user && current_user.occasional_agent? && current_account.subscription.active? && !is_assumed_user?
+      current_user && current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
     end
 
     SUPPORTED_API_KEY_FORMATS = ['xml', 'json', 'widget']

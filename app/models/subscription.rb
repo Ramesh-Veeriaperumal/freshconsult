@@ -36,23 +36,19 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
   
   def self.customer_count
-   count(:conditions => {:state => 'active'})
+   count(:conditions => {:state => ['active','free']})
  end
  
-  def self.zero_amount_customers
-   count(:conditions => {:state => 'active',:amount => 0.00})
+  def self.free_customers
+   count(:conditions => {:state => ['active','free'],:amount => 0.00})
   end
 
-  def self.free_customers
-   count(:conditions => {:state => 'free'})
-  end
-  
   def self.customers_agent_count
     sum(:agent_limit, :conditions => { :state => 'active'})
   end
   
   def self.customers_free_agent_count
-    sum(:free_agents, :conditions => { :state => 'active'})
+    sum(:free_agents, :conditions => { :state => ['active']})
   end
  
   def self.monthly_revenue
@@ -278,7 +274,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def eligible_for_free_plan?
-    (account.agents.count == AGENTS_FOR_FREE_PLAN) and (!active?)
+    (account.full_time_agents.count == AGENTS_FOR_FREE_PLAN) and (!active?)
   end
 
   #Need to re visit

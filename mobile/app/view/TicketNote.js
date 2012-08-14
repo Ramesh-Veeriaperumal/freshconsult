@@ -26,7 +26,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         var topToolbar = {
             xtype: "titlebar",
             docked: "top",
-            title:'New note',
+            title:'Add Note',
             ui:'header',
             items: [
                 backButton,
@@ -38,7 +38,14 @@ Ext.define('Freshdesk.view.TicketNote', {
             padding:0,
             border:0,
             style:'font-size:1em',
-            layout:'fit'
+            listeners : {
+                painted : function(self){
+                    //For setting scroll..
+                    Ext.Function.defer(function(container){
+                        container.getScrollable().getScroller().scrollToTop(true)
+                    },100,this,[self],true)
+                }
+            },
         };
 
         this.add([topToolbar,emailForm]);
@@ -54,9 +61,9 @@ Ext.define('Freshdesk.view.TicketNote', {
         formObj = this.items.items[1],
         values = formObj.getValues(),
         privateObj = Ext.ComponentQuery.query('#noteFormPrivateField')[0];
-        if(values["helpdesk_note[body_html]"].trim() != '') {
+        if(values["helpdesk_note[body]"].trim() != '') {
             if(FD.current_user.is_agent){
-                Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
+                //Ext.ComponentQuery.query('#noteFormPrivateField')[0].setValue(!!!privateObj.getValue()[0]);
             }
             Ext.Viewport.setMasked(true);
             formObj.submit({
@@ -68,7 +75,7 @@ Ext.define('Freshdesk.view.TicketNote', {
                     };
                     location.href="#tickets/show/"+id;
                 },
-                failure:function(){
+                failure:function(form,response){
                     Ext.Viewport.setMasked(false);
                     var errorHtml='Please correct the bellow errors.<br/>';
                     for(var index in response.errors){
@@ -81,7 +88,7 @@ Ext.define('Freshdesk.view.TicketNote', {
         }
     },
     getMessageItem: function(){
-        return this.items.items[1].items.items[0].items.items[1];
+        return this.items.items[1].items.items[0].items.items[4];
     },
     config: {
         layout:'fit',

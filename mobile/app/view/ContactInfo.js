@@ -47,7 +47,7 @@ Ext.define("Freshdesk.view.ContactInfo", {
                                             '<div>',
                                                     '<tpl if="responder_id">{helpdesk_ticket.responder_name}',
                                                     '<tpl else>No agent assigned, </tpl>',
-                                            '&nbsp;{helpdesk_ticket.updated_at:this.time_in_words}</div>',
+                                            '&nbsp;{helpdesk_ticket.pretty_updated_date}</div>',
                                     '</div>',
                                     '<div class="disclose icon-arrow-right">&nbsp;</div>',
                         '</div></a>',

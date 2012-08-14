@@ -1,12 +1,11 @@
 Ext.define("Freshdesk.view.Solutions", {
     extend: "Ext.Container",
     alias: "widget.solutions",
-    onSolutionDisclose : function(list, index, target, record, evt, options){
-        var ca_resp_id = record.raw.id,
-        replyFormContainer = Ext.ComponentQuery.query('#ticketReplyForm')[0], 
+    onSolutionDisclose : function(article){
+        var replyFormContainer = Ext.ComponentQuery.query('#ticketReplyForm')[0], 
         ticket_id = replyFormContainer.ticket_id,
         messageElm  = replyFormContainer.getMessageItem();
-        messageElm.setValue(messageElm.getValue()+record.raw.article.desc_un_html);
+        messageElm.setValue(messageElm.getValue()+article.textile_desc);
         this.hide();
     },
     config: {
@@ -28,35 +27,43 @@ Ext.define("Freshdesk.view.Solutions", {
         items :[
         {
                 xtype:'list',
-                emptyText: '<div class="empty-list-text">You don\'t have any suggested solutions!.</div>',
+                emptyText: '<div class="empty-list-text">We couldn\'t find any related solutions.</div>',
                 onItemDisclosure: false,
                 deferEmptyText:false,
-                itemTpl: '<span class="bullet"></span>&nbsp;{article.title}',
-                listeners:{
-                        itemtap:{
-                            fn:function(){
-                                this.parent.onSolutionDisclose.apply(this.parent,arguments);
-                            }
-                        }
-                }
+                itemTpl: '<span class="bullet"></span>&nbsp;{title}'
         },
         {
             xtype:'titlebar',
-            title:'Solution',
+            title:'Pick Solution',
             ui:'header',
             docked:'top',
             items:[
-                {
-                    xtype:'button',
-                    ui:'plain',
-                    iconCls:'delete_black2',
-                    iconMask:true,
-                    align:'right',
-                    handler:function(){
-                        Ext.ComponentQuery.query('#solutionsPopup')[0].hide();
+                    {
+                        xtype:'button',
+                        ui:'plain lightBtn',
+                        iconMask:true,
+                        align:'left',
+                        text:'Cancel',
+                        handler:function(){
+                            Ext.ComponentQuery.query('#solutionsPopup')[0].hide();
+                        },
+                        scope:this
                     },
-                    scope:this
-                }
+                    {
+                        xtype:'button',
+                        ui:'plain headerBtn',
+                        iconMask:true,
+                        align:'right',
+                        text:'Insert',
+                        handler:function(){
+                            var me = Ext.ComponentQuery.query('#solutionsPopup')[0],
+                            selection = me.items.items[0].getSelection();
+                            if(selection.length) 
+                                me.onSolutionDisclose(selection[0].raw)
+
+                        },
+                        scope:this
+                    }
             ]
         }
         ]

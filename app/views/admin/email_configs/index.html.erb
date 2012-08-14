@@ -1,14 +1,14 @@
 <% content_for :sidebar do %> 
 	<%= render :partial => "helpnote" %>	
 <% end %>
-
+<div class="flash_info notice" id="notice_id" style="display: none; "><%=t('email_configs.Personalized_email_replies_message') %><a class="close" href="#"></a></div>
 <div id="emailconfig-list" class="email-settings-header">
   <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "floatr uiButton" %>
   <h3 class="title"><%=t('email_configs.title')%></h3>
   <div class="intro"><%=t('email_configs.info11')%></div>
 </div>
 <div class="floatr email-settings-bcc">
-  <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl' unless current_account.bcc_email.blank?%>
+  <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl', :title => current_account.bcc_email unless current_account.bcc_email.blank?%>
   <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
   <%= content_tag :span, "", :class => "tool-tip", :title=> t('email_configs.info17')%>
 </div>
@@ -30,7 +30,6 @@
       <% end %>
     </tbody>
   </table>
-
   <% if feature?(:multi_product) %>
     <% @products.each do |product| %>
       <h4 class="product-title"><%= product.name %></h4> 
@@ -53,4 +52,50 @@
    <% end %>
   <% end %>
 </div>
+<div style="overflow:hidden">
+<ul> 
+  <li style="border-top:1px solid #ECECEC; padding-bottom:5px;">
+  <li>
+    <div style="margin:5px 5px 0;font-weight:bold;font-size:14px;color:#555;" class="floatl"><%= t('email_configs.Personalized_email_replies') %></div>    
+    <div id="survey_link_con" class="floatr" style="padding-top:5px;"> 
+
+    <input rel="toggle" type="checkbox" id="Personalize_email" name="stop_sla_timer" data-checked-label="<%= t('email_configs.Personalized_email_replies_yes') %>" data-unchecked-label="<%= t('email_configs.Personalized_email_replies_no') %>" <%if current_account.features?(:personalized_email_replies)%>checked="true"<%end%>/>
+
+    </div>
+    <div style="padding:10px;padding-right:200px;" class="floatl intro"><%= t('email_configs.Personalized_email_replies_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email )%>
+    </div> 
+  </li>
+</ul>
+</div>
+<% javascript_tag do %>
+    function update_status(status_url){
+      jQuery.ajax({
+        url: status_url,
+        type: "post"  
+      })
+    }
+    
+    function enable(){
+      update_status("/admin/email_configs/personalized_email_enable");
+    }
+    
+    function disable(){
+      update_status("/admin/email_configs/personalized_email_disable");
+    }
+    
+    jQuery("#Personalize_email").bind("change", function(){
+      if(this.checked){
+        enable();
+      }
+      else{
+        disable();
+      }
+    });
+
+    function showSuccessMsg(){
+      jQuery("#notice_id").show('fast', function nowHide(){
+        setTimeout("jQuery('#notice_id').hide('fast')",4000)
+      });
+    }
+<%end%>
    

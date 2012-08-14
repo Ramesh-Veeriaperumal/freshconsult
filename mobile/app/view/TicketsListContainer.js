@@ -21,7 +21,15 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             ui:'header',
 			items: [
 				backButton
-			]
+			],
+            listeners: {
+                doubletap: {
+                    fn:function(){
+                        alert(this);
+                    },
+                    scope:this
+                }
+            }
 		};
 
 		var ticketsList = {
@@ -60,7 +68,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                         xclass: 'plugin.ux.ListPaging2',
                         autoPaging: false,
                         centered:true,
-                        loadMoreText: 'Please Wait...',
+                        loadMoreText: 'Load more...',
                         noMoreRecordsText: 'No more tickets.'
                     },
                     {

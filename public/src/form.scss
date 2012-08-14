@@ -38,6 +38,12 @@ textarea[readonly] {
   background-color: #f5f5f5;
   border-color: #ddd;
   cursor: not-allowed;
+
+  &:hover {
+	  background-color: #f5f5f5;
+	  border-color: #ddd;
+	  @include box-shadow(none);
+	}
 }     
 
 textarea {
@@ -739,7 +745,17 @@ input.time{
 				background-color:#f4f4f4;
 			}	
 		}
-	}
+		.special_row{
+			td{
+				padding:0;
+			}
+			div{
+				background: #fff;
+				height:20px;
+				margin:0 -1px;
+			}
+		} 
+	}	
 	.olist{
 		list-style:decimal;
 	}
@@ -837,6 +853,15 @@ span.sort_handle{
 	@include clearfix;
 	text-align:right;
 	padding:1em 0em 1em 0; 
+
+}
+
+.email-notif-button-container{
+	@include clearfix;
+	text-align:right;
+	padding:20px 0px 15px 0px; 
+	background:#ffffff;	
+	margin:-2px;
 }
 
 .ui-draggable-dragging{
@@ -849,7 +874,7 @@ span.sort_handle{
 	@include pie-clearfix;
 	li{
 		float:left;
-		position:relative;
+		position:relative;		
 		a{
 			margin:6px 6px 0 0;
 			font-size:13px;
@@ -879,8 +904,11 @@ span.sort_handle{
 		div{ position:relative; }
 		cursor:move;
 		border-bottom:1px solid #efefef;
+		input[type=text]{	width:90%; }
 	} 
-	
+	.requester span{
+		margin-left: 3px;
+	}
 	li:hover, li.hover, li.active{
 		background:#ffffff;
 		border-color:#dfdfdf;
@@ -977,6 +1005,10 @@ span.sort_handle{
       margin:0 0 6px 0;
       font-size:13px;
       padding:10px 12px;
+
+      &.error {
+      	color:#993333;
+      }
    }
    .ui-form{
       margin:0 0;
@@ -1985,36 +2017,32 @@ ul.ui-form .inputs-list{
 			}
 		}
 		.configure-portal{
-			position: relative;
-			label{
-				background-color: #efefef;
-				border-bottom: 1px solid #d1d1d1;
-				border-top: 1px solid #d1d1d1;
-				padding: 10px 0;
-				font-family: "Helvetica Neue", sans-serif;
+			text-align: center;
+			background-color: #efefef;
+			border-bottom: 1px solid #d1d1d1;
+			border-top: 1px solid #d1d1d1;
+			padding: 10px 0; 
+			label{				
 				font-weight: 300;
-			}
-			.toggle-button{
-				position: absolute;
-				left: 75%;
-				top: 9px;
-				margin-left: -50px;
+				font-size: 1.3em;
+				display: inline;
 			}
 		}
 		.big-seperator{
-			border-bottom: 2px solid #bfbfbf;
+			border-bottom: 1px solid #dfdfdf;
 			display:block;
-			height:2px;
-			margin:5px 0px;
+			height:1px;
+			margin:5px 0px 12px;
 		}
 		.configure-email-form{
 			padding: 0 10px 12px 10px;
 			margin-bottom: 11px;
 			border: 1px solid #dfdfdf;
 			background-color: #fbfbfb;
-			@include clearfix;
+			@include pie-clearfix;
 			@include corners(4px);
 			width: 90%;
+			position:relative;
 			.column{
 				float: left;
 				&.left-column{
@@ -2046,7 +2074,7 @@ ul.ui-form .inputs-list{
 				width: 25px; 
 				height: 25px;
 				position: absolute;
-				right: 1%;
+				right: -28px;
 				&.disabled{
 					background: url(/images/email_config_delete_disabled.png) no-repeat;
 				}
@@ -2073,4 +2101,10 @@ ul.ui-form .inputs-list{
 	border-color:#C6C6C6;
 	@include box-shadow(#DFDFDF 1px 1px 2px inset);
 	@include border-radius(5px);
+}
+
+.companies_select{
+	select{ float:left; }
+	.customSelect{ width:550px; }
+	.chzn-container{ margin-left: 10px; margin-top:-5px; }
 }

@@ -1,12 +1,12 @@
 <% content_for :sidebar do -%>
 	<% if @subscription.state == 'trial' %>
 		<div class="sidepanel">
-			<h3 class="title"><%= t(".billing") %></h3>
+			<h3 class="title"><%= t("accounts.billing.billing") %></h3>
 			<p>
-			  <strong><%= t('accounts.billing.begin_subscription') %></strong> <%= t(".begin_subscription_info") %>
+			  <strong><%= t('accounts.billing.begin_subscription') %></strong> <%= t("accounts.billing.begin_subscription_info") %>
 			</p>
 			<p>
-			  <strong><%= t('accounts.billing.save_billing_information') %></strong> <%= t(".save_billing_information_info") %>
+			  <strong><%= t('accounts.billing.save_billing_information') %></strong> <%= t("accounts.billing.save_billing_information_info") %>
 			</p>
 		</div>
 	<% end %>

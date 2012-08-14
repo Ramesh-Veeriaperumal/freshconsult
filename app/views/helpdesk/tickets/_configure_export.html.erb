@@ -1,4 +1,4 @@
-<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+<% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<div class="info-highlight">Quickly export ticket information available in the current view to a CSV file.</div>
 	<ul class="ui-form">
@@ -26,7 +26,8 @@
 		<li class="inline-field">
 	 		<span class="seperator"></span>
 			<h4 class="title">Select fields to export</h4>
-			<div class="threecol-form">
+			<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
+			<div class="threecol-form" id="ticket_fields">
 	 			<% csv_headers.each do |head| %>
 	 			  	<div class="item <%= head[:type] %>">
 		  				<label class="checkbox prime"> 
@@ -51,14 +52,22 @@
 <%end%>
 
 <% javascript_tag do %>
-  jQuery("#exportFilter").submit(function() {  	
- 	getFilterData();
-	jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
-	jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
-	setTimeout(function(){
-		active_dialog.dialog("close");
-		jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
-	}, 1000);
+  jQuery("#exportFilter").submit(function() {  
+
+	if (jQuery('#ticket_fields :checked').length == 0) {
+		jQuery('#err_no_fields_selected').removeClass('hide');
+		return false;
+	} else {
+		jQuery('#err_no_fields_selected').addClass('hide');
+		
+	 	getFilterData();
+		jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
+		jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+		setTimeout(function(){
+			active_dialog.dialog("close");
+			jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
+		}, 1000);
+	}
   });
 
   jQuery("#date_filter").change(function(){

@@ -1,85 +1,41 @@
 require 'fastercsv'
+require 'html2textile'
 
 class Helpdesk::TicketsController < ApplicationController  
   
   include ActionView::Helpers::TextHelper
   include ParserUtil
-
-  before_filter :check_user , :only => [:show]
-  before_filter :load_ticket_filter , :only => [:index, :show, :custom_view_save, :latest_ticket_count]
-  before_filter :add_requester_filter , :only => [:index, :user_tickets]
-  before_filter :disable_notification, :if => :save_and_close?
-  after_filter  :enable_notification, :if => :save_and_close?
-
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
-  
-  before_filter { |c| c.requires_permission :manage_tickets }
-  
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
-  
+  include RedisKeys
+
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
+  before_filter :check_user , :only => [:show]
+    
+  before_filter { |c| c.requires_permission :manage_tickets }
+
+  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
+  before_filter :add_requester_filter , :only => [:index, :user_tickets]
+  before_filter :cache_filter_params, :only => [:custom_search]
+  before_filter :disable_notification, :if => :save_and_close?
+  after_filter  :enable_notification, :if => :save_and_close? 
+
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
+  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :get_ticket_agents, :quick_assign] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
-  #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
+
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
+  before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
-  def add_requester_filter
-    email = params[:email]
-    unless email.blank?
-      requester = current_account.all_users.find_by_email(email) 
-      @user_name = email
-      unless requester.nil?
-        params[:requester_id] = requester.id;
-      else
-        @response_errors = {:no_email => true}
-      end
-    end
-    company_name = params[:company_name]
-    unless company_name.blank?
-      company = current_account.customers.find_by_name(company_name)
-      unless(company.nil?)
-        params[:company_id] = company.id
-      else
-        @response_errors = {:no_company => true}
-      end
-    end
-  end
-
-  def load_ticket_filter
-   filter_name = @template.current_filter
-   if !is_num?(filter_name)
-    load_default_filter(filter_name)
-   else
-    @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
-    return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
-    @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
-    params.merge!(@ticket_filter.attributes["data"])
-   end
-  end
-
-  def load_default_filter(filter_name)
-    params[:filter_name] = filter_name
-    @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-    @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
-    @ticket_filter.accessible = current_account.user_accesses.new
-    @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
-  end
-
-  def check_user
-    if !current_user.nil? and current_user.customer?
-      return redirect_to support_ticket_url(@ticket,:format => params[:format])
-    end
-  end
-  
+ 
   def user_ticket
     @user = current_account.users.find_by_email(params[:email])
     if !@user.nil?
@@ -94,11 +50,11 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def set_latest_updated_at
-     @latest_updated_at = current_account.tickets.maximum(:updated_at).to_formatted_s(:db)   
-  end
- 
   def index
+
+    #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
+    cookies.delete(:ticket_list_updated) 
+
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
 
     if @items.empty? && !params[:page].nil? && params[:page] != '1'
@@ -144,7 +100,8 @@ class Helpdesk::TicketsController < ApplicationController
 
             json << sep + tic.to_json({
               :except => [ :description_html, :description ],
-              :methods => [ :status_name, :priority_name, :source_name, :requester_name,:responder_name, :need_attention]
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+                            :responder_name, :need_attention, :pretty_updated_date ]
             }, false)[19..-2]; sep=","
           }
           render :json => json + "]"
@@ -197,6 +154,7 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
+
   def custom_view_save
      render :partial => "helpdesk/tickets/customview/new"
   end
@@ -206,44 +164,8 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "custom_search"
   end
   
-  def set_prev_next_tickets
-    if params[:filters].nil?
-      @filters = {}
-      
-      if @item.deleted?
-        @filters = {:filter_name => "deleted"}
-      elsif @item.spam?
-        @filters = {:filter_name => "spam"}
-      else
-        @filters = {:filter_name => "all_tickets"}
-      end
-      conditions = @item.get_default_filter_permissible_conditions(current_user)     
-      @filters.merge!(:data_hash => conditions) unless conditions.blank?
-      index_filter = @ticket_filter.deserialize_from_params(@filters)
-    else  
-      @filters = params[:filters]
-      index_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(@filters)
-    end
-
-    ticket_ids = index_filter.adjacent_tickets(@ticket, current_account, current_user)
-        
-    ticket_ids.each do |t|
-       (t[2] == "previous") ? @previous_ticket_id = t[1] : @next_ticket_id = t[1]        
-    end
-    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
-  end
-  
-  def reply_to_all_emails
-    if @ticket_notes.blank?
-      @to_cc_emails = @ticket.reply_to_all_emails
-    else
-      cc_email_hash = @ticket.cc_email_hash
-      @to_cc_emails = cc_email_hash && cc_email_hash[:cc_emails] ? cc_email_hash[:cc_emails] : []
-    end
-  end
-
   def show
-    @reply_email = current_account.reply_emails
+    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
 
     @to_emails = @ticket.to_emails
 
@@ -283,16 +205,20 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
       #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
       respond_to do |format|
-        format.mobile { render :json => { :success => true, :item => @item }.to_json }
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
           redirect_to item_url 
         }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
+        }
       end
     else
       respond_to do |format|
-        format.mobile { render :json => { :failure => true, :errors => edit_error }.to_json }
         format.html { edit_error }
+        format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
       end
     end
   end
@@ -475,7 +401,29 @@ class Helpdesk::TicketsController < ApplicationController
     end
     
   end
-  
+
+  def get_ticket_agents
+    unless @item.blank?
+      @agents = current_account.agents
+    end
+    render :partial => "get_ticket_agents", :locals => {:ticket_id => @item.display_id}
+  end
+
+  def quick_assign
+    if allowed_quick_assign_fields.include?(params[:assign])
+      unless params[:assign] == 'agent'
+        @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+      else
+        agent = current_account.agents.find_by_user_id(params[:value])
+        @item.responder = agent.user
+      end
+      @item.save
+      render :json => {:success => true}.to_json
+    else
+      render :json => {:success => false}.to_json
+    end
+  end
+
   def new
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
@@ -497,7 +445,8 @@ class Helpdesk::TicketsController < ApplicationController
 
     @item.product ||= current_portal.product
     cc_emails = validate_emails(params[:cc_emails])
-    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
+    @item.cc_email = {:cc_emails => cc_emails || [], :fwd_emails => []} 
+
     @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
@@ -526,7 +475,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    content = mobile? ? ca_resp.content : ca_resp.content_html
+    content = ca_resp.content_html
+    if mobile?
+      parser = HTMLToTextileParser.new
+      parser.feed ca_resp.content_html
+      content = parser.to_textile
+    end
     a_template = Liquid::Template.parse(content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
   end 
@@ -553,7 +507,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
   
     def redirect_url
-      helpdesk_tickets_path(:page => params[:page])
+      helpdesk_tickets_path
     end
     
     def scoper_user_filters
@@ -619,7 +573,110 @@ class Helpdesk::TicketsController < ApplicationController
   
   private
   
-   def verify_permission
+    def reply_to_all_emails
+      if @ticket_notes.blank?
+        @to_cc_emails = @ticket.reply_to_all_emails
+      else
+        cc_email_hash = @ticket.cc_email_hash
+        @to_cc_emails = cc_email_hash && cc_email_hash[:cc_emails] ? cc_email_hash[:cc_emails] : []
+      end
+    end
+
+    def redis_key
+      HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id}
+    end
+
+    def allowed_quick_assign_fields
+      ['agent','status','priority']
+    end
+
+    def cache_filter_params
+      filter_params = params.clone
+      filter_params.delete(:action)
+      filter_params.delete(:controller)
+      
+      set_key(redis_key, filter_params.to_json, 86400)
+
+      @cached_filter_data = get_cached_filters
+    end
+
+    def add_requester_filter
+      email = params[:email]
+      unless email.blank?
+        requester = current_account.all_users.find_by_email(email) 
+        @user_name = email
+        unless requester.nil?
+          params[:requester_id] = requester.id;
+        else
+          @response_errors = {:no_email => true}
+        end
+      end
+      company_name = params[:company_name]
+      unless company_name.blank?
+        company = current_account.customers.find_by_name(company_name)
+        unless(company.nil?)
+          params[:company_id] = company.id
+        else
+          @response_errors = {:no_company => true}
+        end
+      end
+    end
+
+    def get_cached_filters
+      filters_str = get_key(redis_key)
+      JSON.parse(filters_str) if filters_str
+    end
+
+    def load_cached_ticket_filters
+      if custom_filter?
+        @cached_filter_data = get_cached_filters
+        
+        if @cached_filter_data
+          @cached_filter_data.symbolize_keys!
+          @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+          @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
+          @ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
+          params.merge!(@cached_filter_data)
+        end
+      else 
+        remove_key(redis_key)
+      end
+    end
+
+    def custom_filter?
+      params[:filter_key].blank? and params[:filter_name].blank?
+    end
+
+    def load_ticket_filter
+      return if @cached_filter_data
+
+      filter_name = @template.current_filter
+      if !is_num?(filter_name)
+        load_default_filter(filter_name)
+      else
+        @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
+        return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
+        @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+
+        params.merge!(@ticket_filter.attributes["data"])
+      end
+    end
+
+    def load_default_filter(filter_name)
+      params[:filter_name] = filter_name
+      @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+      @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
+      @ticket_filter.accessible = current_account.user_accesses.new
+      @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+    end
+
+    def check_user
+      if !current_user.nil? and current_user.customer?
+        return redirect_to support_ticket_url(@ticket,:format => params[:format])
+      end
+    end
+ 
+    def verify_permission
       unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
         if params['format'] == "widget"
@@ -640,6 +697,11 @@ class Helpdesk::TicketsController < ApplicationController
       flash[:error] = t("change_deleted_status_msg")
       redirect_to item_url
     end
+  end
+
+  def set_default_filter
+    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
+    # When there is no data hash sent selecting all_tickets instead of new_my_open
   end
 
 end
