@@ -72,12 +72,15 @@ module Helpdesk::TicketActions
                                between '#{params[:start_date]}' and '#{params[:end_date]}'
                               )
                             )
+    all_joins = %( INNER JOIN helpdesk_ticket_states ON 
+                   helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
+                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id)
     csv_hash = params[:export_fields]
     csv_tickets_string = ""
     current_account.tickets.find_in_batches(:conditions => sql_conditions, 
-                                            :joins => [:ticket_states, :ticket_status,
-                                                       :responder, :requester
-                                                      ]
+                                            :include => [:ticket_states, :ticket_status, :flexifield,
+                                                         :responder, :requester],
+                                            :joins => all_joins
                                            ) do |items|
       csv_string = FasterCSV.generate do |csv|
         headers = csv_hash.keys.sort
