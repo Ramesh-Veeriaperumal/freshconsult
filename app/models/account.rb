@@ -122,6 +122,8 @@ class Account < ActiveRecord::Base
   
   has_many :user_forums, :through => :forum_categories, :conditions =>['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] 
   has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5
+
+  has_many :topics
  
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
