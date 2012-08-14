@@ -30,12 +30,14 @@
 		  <%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 		  <%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 		  <%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+		  <% content_for :pagefixed do %> 
 			<div class="canned-response-menu hide" id="canned_response_container"> 
 			  <div>
 			    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
 			  </div>
 			  <div id="canned_response_list"></div>
 			</div>
+		  <% end %>
 		</div> 
 		<% unless @ticket_notes.blank? %>
 			<%= render :partial => 'note', :collection => @ticket_notes %>
@@ -79,7 +81,8 @@
 
 		}
 
-    function show_canned_response(ticket_id){
+    function show_canned_response(button, ticket_id){
+      jQuery("#canned_response_container").css(jQuery(button).offset());
       jQuery("#canned_response_container")
         .show().addClass("loading");
       jQuery("#canned_response_list")

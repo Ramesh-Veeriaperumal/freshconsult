@@ -671,7 +671,7 @@ a.new_ticket:hover { *zoom: 1; filter: progid:DXImageTransform.Microsoft.gradien
 
 .canned-response-menu.loading { background-image: url("/images/load.gif"); background-repeat: no-repeat; background-position: center 8px; }
 
-.canned-response-menu { border: 1px solid #cfcfcf; background-color: #ffffff; -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px; -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px; box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px; padding: 6px 6px 16px 6px; width: 400px; position: absolute; z-index: 1000; right: 35px; top: 0; }
+.canned-response-menu { border: 1px solid #cfcfcf; background-color: #ffffff; -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px; -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px; box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px; padding: 6px 6px 16px 6px; width: 400px; position: absolute; text-align: left; margin-left: -300px; margin-top: 20px; z-index: 1000; right: 35px; top: 0; }
 .canned-response-menu ul { border-top: 1px solid #efefef; position: relative; padding: 12px 0 0 0; margin: 6px 0 0 0; overflow: hidden; *zoom: 1; max-height: 300px; overflow: auto; }
 .canned-response-menu span.divider { position: absolute; height: 100%; border-left: 1px solid #efefef; left: 49%; width: 1px; }
 .canned-response-menu li { padding: 6px 8px 6px 24px; margin-left: 10px; position: relative; }
