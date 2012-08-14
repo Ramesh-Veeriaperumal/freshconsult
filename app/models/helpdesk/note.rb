@@ -29,9 +29,13 @@ class Helpdesk::Note < ActiveRecord::Base
     
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
+  has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
+          :foreign_key => 'note_id', :dependent => :destroy
+
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
+  before_create :validate_schema_less_note
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -231,6 +235,10 @@ class Helpdesk::Note < ActiveRecord::Base
     def user_info
       user.get_info if user
     end
+
+    def validate_schema_less_note
+      load_schema_less_note
+    end
     
   private
     def human_note_for_ticket?
@@ -253,4 +261,8 @@ class Helpdesk::Note < ActiveRecord::Base
       private_note? and incoming and notable.included_in_fwd_emails?(user.email)
     end
 
+    def load_schema_less_note
+      build_schema_less_note unless schema_less_note
+      schema_less_note
+    end
 end
