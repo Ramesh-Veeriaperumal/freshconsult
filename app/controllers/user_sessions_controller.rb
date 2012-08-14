@@ -138,7 +138,7 @@ include RedisKeys
   
   def destroy
 
-    remove_old_filters if current_user.agent?
+    remove_old_filters if current_user && current_user.agent?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
