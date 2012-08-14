@@ -66,11 +66,35 @@ module Helpdesk::TicketActions
   end
   
   def export_csv
-    params[:wf_per_page] = "100000"
-    params[:page] = "1"
-    items = current_account.tickets.created_at_inside(params[:start_date],params[:end_date]).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)
+    sql_conditions = index_filter.sql_conditions
+    sql_conditions[0].concat(%(and helpdesk_ticket_states.#{params[:ticket_state_filter]} 
+                               between '#{params[:start_date]}' and '#{params[:end_date]}'
+                              )
+                            )
     csv_hash = params[:export_fields]
-    export_data items, csv_hash
+    csv_tickets_string = ""
+    current_account.tickets.find_in_batches(:conditions => sql_conditions, 
+                                            :joins => [:ticket_states, :ticket_status,
+                                                       :responder, :requester
+                                                      ]
+                                           ) do |items|
+      csv_string = FasterCSV.generate do |csv|
+        headers = csv_hash.keys.sort
+        csv << headers
+        items.each do |record|
+          csv_data = []
+          headers.each do |val|
+            csv_data << record.send(csv_hash[val])
+          end
+          csv << csv_data
+        end
+      end
+      csv_tickets_string << csv_string
+    end
+    send_data csv_tickets_string, 
+        :type => 'text/csv; charset=utf-8; header=present', 
+        :disposition => "attachment; filename=tickets.csv"
   end
   
   def component

@@ -663,3 +663,7 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 li.agents-field { margin-top: 20px; }
 
 #Pages.set-top { margin-top: -6px; }
+
+#exportFilter .ui-form h4.caption { padding: 7px 10px 7px 0px; }
+#exportFilter .ui-form div.fields { margin-left: 250px; }
+#exportFilter .ui-form div.fields div.fields { margin-left: 160px; }
