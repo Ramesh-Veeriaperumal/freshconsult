@@ -1,5 +1,5 @@
   <%= include_tiny_mce_if_needed %>
-	
+  
  <% javascript_tag do %> 
                   function lookup(searchString, callback) { 
                     new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
@@ -7,18 +7,18 @@
                                                               onSuccess: function(response) {
                                                                 var choices = $A();
                                                                 response.responseJSON.results.each(function(item){
-																  if(item.value == "") {
-																  	choices.push([item.id, item.id]);
-																  } else {
-																	choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
-																  }	
+                                  if(item.value == "") {
+                                    choices.push([item.id, item.id]);
+                                  } else {
+                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+                                  } 
                                                                 });                                                
                                                                 callback(choices);
                                                               } });
                                                             }
                   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
                   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
-<%- end %>
+<%- end %> 
 
  <% javascript_tag do %>
   var saving = 0;
@@ -34,7 +34,7 @@ function autosave(){
     jQuery("#reply-draft").show();
     jQuery("#draft-save").text("<%= t('saving_draft') %>");
     jQuery("#clear-draft").hide();
-    var setval=tinyMCE.activeEditor.getContent({format : 'raw'}).toString();
+    var setval=tinyMCE.activeEditor.getContent();
     if(setval!=""|| setval!=" "|| setval!="<br>"|| setval!="<br data-mce-bogus=\"1\">")
     {
       <%= remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :with => "'draft_data=' + encodeURIComponent(setval)" %>
@@ -72,14 +72,14 @@ function saveout()
     <%= f.error_messages %>
        
     <ul class="ui-form dont-validate">
-				<div class="request_form_options">
-					<a href="#" class="slim-button" rel="cc_button_<%=cntid%>" data-input="#include_cc" data-parent="#cc-form-container-<%=cntid%>" data-show-text="<%= t(".addcc")%>" data-hide-text="<%= t(".removecc")%>" id="add_cc_btn_<%=cntid%>">
-						<%= t(".addcc") %>
-					</a>
-					<a href="#" class="slim-button"  rel="cc_button_<%=cntid%>" data-input="#include_bcc" data-parent="#bcc-form-container-<%=cntid%>" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_bcc_btn" >
-						<%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
-					</a>
-					<%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
+        <div class="request_form_options">
+          <a href="#" class="slim-button" rel="cc_button_<%=cntid%>" data-input="#include_cc" data-parent="#cc-form-container-<%=cntid%>" data-show-text="<%= t(".addcc")%>" data-hide-text="<%= t(".removecc")%>" id="add_cc_btn_<%=cntid%>">
+            <%= t(".addcc") %>
+          </a>
+          <a href="#" class="slim-button"  rel="cc_button_<%=cntid%>" data-input="#include_bcc" data-parent="#bcc-form-container-<%=cntid%>" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_bcc_btn" >
+            <%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
+          </a>
+          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.id})", :class => "slim-button insert-canned-response") %>
         </div>
 
         <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title", :id => "reply_email_id" ) %>
@@ -89,13 +89,13 @@ function saveout()
               <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email)%>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= @to_cc_emails.blank? ? "" : "checked" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
-					</div>
+          </div>
         </li>
         <li class="inline-field field hide" id="cc-form-container-<%=cntid%>">
             <label class="caption">
                 <%= t(".cc") %>:
             </label>
-			<div class="fields" id="reply_cc_emails_id" rel="cc_div" data-button="#add_cc_btn_<%=cntid%>"  data-parent="#cc-form-container-<%=cntid%>">
+      <div class="fields" id="reply_cc_emails_id" rel="cc_div" data-button="#add_cc_btn_<%=cntid%>"  data-parent="#cc-form-container-<%=cntid%>">
                 <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
                 <% javascript_tag do %>
                   new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
@@ -120,8 +120,8 @@ function saveout()
     jQuery(jQuery(this).data("button")).trigger("textChange");
   }).trigger('cc_visibility');
   <% end %>
-		    <li class="inline-field field" id="bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
-			    <label class="caption">
+        <li class="inline-field field" id="bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
+          <label class="caption">
             <%= t(".bcc") %>:
           </label>
 
@@ -140,7 +140,7 @@ function saveout()
             </label>
             <div class="fields">
               <% conv_item = conv_id.nil? ? @ticket : @note %>
-                <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_conv(conv_item, @signature) %>
+                <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_reply(conv_item, @signature) %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
@@ -159,7 +159,7 @@ function saveout()
         <%= f.hidden_field :to_emails , :value =>  @ticket.requester.email %>
         <%= f.hidden_field :from_email , :id => "reply_from_email_#{cntid}", :value =>  @ticket.selected_reply_email %>
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
-		    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
+        <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
         <li class="inline-field field">
             
 
@@ -179,9 +179,9 @@ function saveout()
         </li>
     </ul>
     <div class="button-container">        
-    	<%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
-    	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('resolved');" , :class => "uiButton", :id => "send_resolve_btn") %>
-		<%= button_to_function(t('cancel'), "jQuery('##{cntid}').slideUp();jQuery('##{note_details_id}').show()", :class => "uiButton" ) %>
+      <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
+      <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('resolved');" , :class => "uiButton", :id => "send_resolve_btn") %>
+    <%= button_to_function(t('cancel'), "jQuery('##{cntid}').slideUp();jQuery('##{note_details_id}').show()", :class => "uiButton" ) %>
     </div>
 
 
@@ -190,7 +190,13 @@ function saveout()
 </div>
   <% content_for :pagefixed do %>
   <% javascript_tag do %>
-  	jQuery("#HelpdeskReply").validate();	
+    jQuery("#HelpdeskReply")      
+      .bind("submit", function(ev){
+        <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
+      })
+      .validate();  
+
+
   
   jQuery('#HelpdeskReply select#reply_email_id').live('change',function(e){
     var selectObj = jQuery(e.target),
@@ -199,29 +205,30 @@ function saveout()
         form['helpdesk_note[from_email]'].value = fromEmail;
   })
 
-  <% unless @draft.blank? %>
-    jQuery("#ReplyButton").bind('click', function(){
-      dontSave=0;
-      if(saving==0){
-        setTimeout(function(){tinyMCE.activeEditor.setContent('<%= @draft.to_s %>');},200);
-        jQuery("#reply-draft").show();
-        jQuery("#draft-save").text("<%= t('saved_draft') %>");
-        jQuery("#clear-draft").show();
-        tinyMCE.activeEditor.isNotDirty = true; 
-        setInterval( function(){autosave();}, 30000); 
-      }
-    });
-  <% else %>
-    jQuery("#ReplyButton").bind('click', function(){
+  jQuery("#ReplyButton").bind('click', function(){
     dont=0;
+    jQuery.browser.chrome = /chrome/.test(navigator.userAgent.toLowerCase()); 
     if(saving==0)
     {
-    tinyMCE.activeEditor.isNotDirty = true;
-    setInterval( function(){autosave();}, 30000); 
-    jQuery("#reply-draft").hide();
+    if(jQuery.browser.chrome)
+    {
+    setTimeout(function(){tinyMCE.activeEditor.setContent(jQuery('#send-email-cnt-reply-body').text());}, 200);
     }
-    });
-  <% end %>
+    if(!jQuery.browser.msie)
+    {
+    tinyMCE.getInstanceById('send-email-cnt-reply-body').isNotDirty = true;  
+    }
+    setInterval( function(){autosave();}, 30000); 
+    <% unless @draft.blank? %>
+    jQuery("#draft-save").text("<%= t('saved_draft') %>");
+    jQuery("#clear-draft").show();
+    jQuery("#reply-draft").show();
+    <% else %>
+    jQuery("#reply-draft").hide();
+    <% end %>
+    }
+  });
+
   jQuery("#AddNoteButton").bind('click',function(){autosave();dontSave=1;});
   
   jQuery("#FwdButton").bind('click',function(){autosave();dontSave=1;});
@@ -245,10 +252,11 @@ function saveout()
     var clear_conf=confirm("<%= t('clear_draft_text') %>");
     if(clear_conf==true)
     {
-      var id = <%= @ticket.display_id %>;
       <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
       tinyMCE.activeEditor.setContent("");
-      tinyMCE.activeEditor.setContent("<%= bind_last_conv(@ticket, @signature) %>");
+      var dat = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
+      tinyMCE.activeEditor.setContent(dat, {format: 'raw'});
+      tinyMCE.activeEditor.isNotDirty = true;
       jQuery("#reply-draft").hide();
     }
   });

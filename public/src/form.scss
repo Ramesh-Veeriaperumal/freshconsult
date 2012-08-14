@@ -1434,7 +1434,7 @@ table.summary-report{
             padding-top:4px;
             position:relative;
             float:right;
-            width: 640px;
+            width: 85%;
             .info-data{
                margin-top:8px;
             }
@@ -1722,6 +1722,9 @@ a.new_ticket:hover{
    padding:6px 6px 16px 6px;
    width:400px;
    position:absolute;
+   text-align: left;
+   margin-left: -300px;
+   margin-top: 20px;
    z-index:1000;
    right:35px;
    top:0;   
@@ -2107,18 +2110,18 @@ clear: both;
 	color: #ffffff;
 	background-color: #bababa;
 	@include border-radius(4px);
-    display: inline-block;
+	@include inline-block;
     padding: 1px 15px 1px 7px;
     margin-left: 10px;
     cursor: default;
 }
 .close-img{	
 	padding: 0 5px 0 0;
-	display: inline-block;
+	@include inline-block;
 	vertical-align: middle;
 	background-color: #959595;
 	@include border-right-radius(4px);
-	margin: 0 0 2px -12px;
+	margin: 0 0 0 -12px;
 	height: 16px;
 	width:10px;
 	z-index: 3;
@@ -2132,6 +2135,14 @@ clear: both;
 	}
 }
 
+@-moz-document url-prefix(){
+	.close-img{
+		height: 17px;
+		span{
+			margin-top: 3px;
+		}
+	}
+}
 
 .close-img:hover
 {
