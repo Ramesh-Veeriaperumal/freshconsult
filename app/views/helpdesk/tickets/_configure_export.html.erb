@@ -1,22 +1,27 @@
-<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+<% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
-	<div class="info-highlight">Quickly export ticket information available in the current view to a CSV file.</div>
+	<div class="info-highlight"><%=t('export_data.info')%></div>
 	<ul class="ui-form">
 		<li class="inline-field">
-			<label class="caption">
-				Filter tickets created in
-			</label>	 					
+			<% if logged_in? and current_user.agent? %>
+				<h4 class="caption title"><%=t('export_data.filter_label_agent')%></h4>
+				<label class="caption">
+					<%= select_tag "ticket_state_filter", options_for_select(TicketConstants::STATES_HASH.map {|k,v| [v,k]}, [:created_at]), {:class => "dropdown"} %>
+				</label>
+			<% else %>
+				<label class="caption"><%=t('export_data.filter_label_customer')%></label>
+			<% end %>	 					
 			<div class="fields">
 				<label>
 					<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), :class => "dropdown" %>
 				</label>
 	 			<div id="datepicker" style="display:none;">
 					<span class="seperator"></span>
-					<label class="caption">From</label>
+					<label class="caption"><%=t('export_data.from')%></label>
 					<div class="fields">						
 						<input type="text" id="start_date" date="" name="start_date" class="text auto" size="15" />
 					</div>
-					<label class="caption">To</label>
+					<label class="caption"><%=t('export_data.to')%></label>
 					<div class="fields">
 						<input type="text" id="end_date" date="" class="text auto" name="end_date" size="15" />		
 					</div>
@@ -26,7 +31,8 @@
 		<li class="inline-field">
 	 		<span class="seperator"></span>
 			<h4 class="title">Select fields to export</h4>
-			<div class="threecol-form">
+			<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
+			<div class="threecol-form" id="ticket_fields">
 	 			<% csv_headers.each do |head| %>
 	 			  	<div class="item <%= head[:type] %>">
 		  				<label class="checkbox prime"> 
@@ -46,19 +52,27 @@
 		<li>
 	</ul>	
 	<div class="button-container">
-		<%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
+		<%= submit_tag t('export_data.export_to_csv'), :class => "uiButton", :id => "ExportToCSV" %>
 	</div>
 <%end%>
 
 <% javascript_tag do %>
-  jQuery("#exportFilter").submit(function() {  	
- 	getFilterData();
-	jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
-	jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
-	setTimeout(function(){
-		active_dialog.dialog("close");
-		jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
-	}, 1000);
+  jQuery("#exportFilter").submit(function() {  
+
+	if (jQuery('#ticket_fields :checked').length == 0) {
+		jQuery('#err_no_fields_selected').removeClass('hide');
+		return false;
+	} else {
+		jQuery('#err_no_fields_selected').addClass('hide');
+		
+	 	getFilterData();
+		jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
+		jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+		setTimeout(function(){
+			active_dialog.dialog("close");
+			jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
+		}, 1000);
+	}
   });
 
   jQuery("#date_filter").change(function(){

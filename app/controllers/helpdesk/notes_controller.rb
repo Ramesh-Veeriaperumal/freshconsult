@@ -6,8 +6,8 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
   include ParserUtil
   
-  before_filter :validate_attachment_size , :validate_fwd_to_email, :only =>[:create]
-  before_filter :set_mobile , :only => [:create]
+  before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
+  before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -18,7 +18,7 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
   
-  def create   
+  def create  
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -64,11 +64,7 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def create_article
-      kbase_email = current_account.kbase_email
-      if ((params[:bcc_emails] && params[:bcc_emails].include?(kbase_email)) || (params[:cc_emails] && params[:cc_emails].include?(kbase_email)))
-        params[:bcc_emails].delete(kbase_email)
-        params[:cc_emails].delete(kbase_email)
-        
+      if @kbase_email_exists
         body_html = params[:helpdesk_note][:body_html]
         attachments = params[:helpdesk_note][:attachments]
         Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
@@ -80,7 +76,7 @@ class Helpdesk::NotesController < ApplicationController
       if @parent.is_a? Helpdesk::Ticket
         if @item.email_conversation?
           send_reply_email
-          @item.create_fwd_note_activity(params[:to_emails]) if @item.fwd_email?
+          @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails]) if @item.fwd_email?
         end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
@@ -94,8 +90,8 @@ class Helpdesk::NotesController < ApplicationController
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
           @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]
         end
-        unless params[:notify_emails].blank?
-          notify_array = validate_emails(params[:notify_emails])
+        if @item.note? and !params[:helpdesk_note][:to_emails].blank?
+          notify_array = validate_emails(params[:helpdesk_note][:to_emails])
           Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
         end
         
@@ -105,7 +101,7 @@ class Helpdesk::NotesController < ApplicationController
         unless @item.private
           @parent.tickets.each do |t|
             t.notes << (c = @item.clone)
-            Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email)
+            Helpdesk::TicketNotifier.deliver_reply(t, c)
           end
         end
         @parent.owner ||= current_user  if @parent.respond_to?(:owner)
@@ -119,22 +115,15 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-      cc_email_hash_value = @parent.cc_email_hash # cc_email_hash value can be either nil or hash
-      if cc_email_hash_value.nil?
-        cc_email_hash_value = {:cc_emails => [], :fwd_emails => []}
-      end
+      cc_email_hash_value = @parent.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : @parent.cc_email_hash
       if @item.fwd_email?
-        params[:to_emails] = fetch_valid_emails params[:to_emails]
-        params[:fwd_cc_emails] = fetch_valid_emails params[:fwd_cc_emails]
-        params[:bcc_emails] = fetch_valid_emails params[:bcc_emails]
-        fwd_emails = params[:to_emails] | params[:fwd_cc_emails] | params[:bcc_emails] | cc_email_hash_value[:fwd_emails]
+        fwd_emails = @item.to_emails | @item.cc_emails | @item.bcc_emails | cc_email_hash_value[:fwd_emails]
         fwd_emails.delete_if {|email| (email == @parent.requester.email)}
         cc_email_hash_value[:fwd_emails]  = fwd_emails
       else
-        cc_array = validate_emails params[:cc_emails]
-        cc_array = cc_array.compact unless cc_array.nil?
-        cc_array ||= []
-        cc_email_hash_value[:cc_emails] = cc_array.uniq
+        cc_emails = @item.cc_emails | cc_email_hash_value[:cc_emails]
+        cc_emails.delete_if {|email| (email == @parent.requester.email)}
+        cc_email_hash_value[:cc_emails] = cc_emails
       end
       @parent.update_attribute(:cc_email, cc_email_hash_value)      
    end
@@ -155,50 +144,15 @@ class Helpdesk::NotesController < ApplicationController
         @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
       end
     end
-    
   end
-   
-  def fetch_valid_emails email_array
-    unless email_array.blank?
-      email_array = email_array.collect {|email| email.scan(VALID_EMAIL_REGEX).uniq[0]}.compact
-      email_array = email_array.uniq
-    else
-      email_array = []
-    end
-  end
-
-   def validate_emails email_array
-     unless email_array.blank?
-      if email_array.is_a? String
-        email_array = email_array.split(/,|;/)
-      end
-        email_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
-        email_array = email_array.collect{|e| e.gsub(/\,/,"")}
-        email_array = email_array.uniq
-     end
-   end
-    
-    def extract_email(email)
-      email = $1 if email =~ /<(.+?)>/
-      email
-    end
-    
-    def valid_email?(email)
-      email = extract_email(email)
-      (email =~ VALID_EMAIL_REGEX) ? true : false
-    end
 
     def send_reply_email      
-      reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
-      reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
       if @item.fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item , reply_email,{:bcc_emails => params[:bcc_emails],
-                :to_emails => params[:to_emails], :fwd_cc_emails => params[:fwd_cc_emails]})
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
         flash[:notice] = t(:'fwd_success_msg')
       else        
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , 
-                :bcc_emails =>validate_emails(params[:bcc_emails]),
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
                 :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
         flash[:notice] = t(:'flash.tickets.reply.success')
       end
@@ -300,10 +254,23 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def validate_fwd_to_email
-    if(@item.fwd_email? and fetch_valid_emails(params[:to_emails]).blank?)
+    if(@item.fwd_email? and fetch_valid_emails(params[:helpdesk_note][:to_emails]).blank?)
           flash[:error] = t('validate_fwd_to_email_msg')
           redirect_to item_url
     end
   end
-  
+
+  def check_for_kbase_email
+    kbase_email = current_account.kbase_email
+      if ((params[:helpdesk_note][:bcc_emails] && params[:helpdesk_note][:bcc_emails].include?(kbase_email)) || 
+          (params[:helpdesk_note][:cc_emails] && params[:helpdesk_note][:cc_emails].include?(kbase_email)))
+        @item.bcc_emails.delete(kbase_email)
+        @item.cc_emails.delete(kbase_email)
+        @kbase_email_exists = true
+      end
+  end
+
+  def set_default_source
+    @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
+  end
 end

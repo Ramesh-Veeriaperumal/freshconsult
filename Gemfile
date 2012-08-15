@@ -6,6 +6,7 @@ gem "rake", "0.8.7"
 gem "rails", "2.3.8"
 gem "mysql"
 gem "i18n", "0.4.2"
+gem "html2textile", "~> 1.0.0.beta1"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
@@ -71,6 +72,8 @@ gem 'resque-scheduler', :require => 'resque_scheduler'
 gem 'resque_mailer', "1.0.1"
 gem 'resque-status'
 gem 'resque-retry'
+
+gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 
 group :development do
    gem "rspec", "1.3.1"

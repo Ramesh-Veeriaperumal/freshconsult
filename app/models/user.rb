@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   include SavageBeast::UserInit
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
+  include Mobile::Actions::User
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -19,8 +20,8 @@ class User < ActiveRecord::Base
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
   USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
-  EMAIL_REGEX = /(\A[A-Z0-9_\.%\+\-\'=]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
-  
+  EMAIL_REGEX = /(\A[A-Z0-9.\'_%=+-\xe28099]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+
   belongs_to :customer
   
   has_many :authorizations, :dependent => :destroy
@@ -141,6 +142,8 @@ class User < ActiveRecord::Base
     indexes customer.name, :as => :company
     
     has account_id, deleted
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
     
     set_property :delta => :delayed
     set_property :field_weights => {
@@ -398,6 +401,11 @@ class User < ActiveRecord::Base
     self.permission?(:manage_tickets)
   end
   
+
+  def has_company?
+    customer? && customer
+  end
+
   def is_not_deleted?
     logger.debug "not ::deleted ?:: #{!self.deleted}"
     !self.deleted
@@ -437,6 +445,10 @@ class User < ActiveRecord::Base
     (can_view_all_tickets?) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
+  def restricted?
+    !can_view_all_tickets?
+  end
+
     def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -446,20 +458,12 @@ class User < ActiveRecord::Base
                                                               :user_role,:fb_profile_id,:language,:address]) 
   end
   
-  def original_avatar
-    avatar_url(:original)
-  end
-
-  def medium_avatar
-    avatar_url(:medium)
-  end
-
-  def avatar_url(profile_size = :thumb)
-    avatar.content.url(profile_size) unless avatar.nil?
-  end
- 
   def company_name
     customer.name unless customer.nil?
+  end
+
+  def has_company?
+    customer? && customer
   end
 
   def to_mob_json
@@ -509,7 +513,7 @@ class User < ActiveRecord::Base
  
   def self.find_by_email_or_name(value)
     conditions = {}
-    if value =~ /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+    if value =~ /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
       conditions[:email] = value
     else
       conditions[:name] = value

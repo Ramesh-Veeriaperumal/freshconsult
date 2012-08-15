@@ -129,13 +129,9 @@
 /* @group Multi Chosen */
 .chzn-container-multi .chzn-choices {
   background-color: #fff;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
-  background-image: -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  @include inset-shadows(rgba(122,122,122,0.2), 1px, 1px, 2px);
   border: 1px solid #C6C6C6;
+  border-radius:3px;
   margin: 0;
   padding: 0;
   cursor: text;
@@ -254,6 +250,7 @@
   background-image: -ms-linear-gradient(top, #3875d7 20%, #2a62bc 90%);
   background-image: linear-gradient(top, #3875d7 20%, #2a62bc 90%);
   color: #fff;
+  @include text-shadow(none);
 }
 .chzn-container .chzn-results li em {
   background: #feffde;

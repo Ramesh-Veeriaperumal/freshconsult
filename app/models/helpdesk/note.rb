@@ -9,9 +9,14 @@ class Helpdesk::Note < ActiveRecord::Base
 
   belongs_to :notable, :polymorphic => true
 
+  belongs_to_account
+
+  belongs_to :notable, :polymorphic => true
+
   belongs_to :user
   
   Max_Attachment_Size = 15.megabyte
+  include Mobile::Actions::Note
 
   has_many :attachments,
     :as => :attachable,
@@ -30,10 +35,14 @@ class Helpdesk::Note < ActiveRecord::Base
     
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
+  has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
+          :foreign_key => 'note_id', :dependent => :destroy
+
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count, :fire_create_event
+  before_create :validate_schema_less_note
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
@@ -129,11 +138,6 @@ class Helpdesk::Note < ActiveRecord::Base
   def source_name
     SOURCES[source]
   end
-
-  def body_mobile
-    body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
-      body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))
-  end
   
   def to_liquid
     { 
@@ -154,6 +158,10 @@ class Helpdesk::Note < ActiveRecord::Base
             {'eval_args' => {'fwd_path' => ['fwd_path', 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_comma_sep_emails(to_emails)},
             'activities.tickets.conversation.out_email.private.short')  
+  end
+
+  def respond_to?(attribute)
+    super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
   end
 
   protected
@@ -189,7 +197,7 @@ class Helpdesk::Note < ActiveRecord::Base
            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
       # syntax to move code from delayed jobs to resque.
-      #Resque::MyNotifier.deliver_reply( notable.id, self.id , notable.reply_email,{:include_cc => true})
+      #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
       notable.save
     end
@@ -232,6 +240,18 @@ class Helpdesk::Note < ActiveRecord::Base
     def user_info
       user.get_info if user
     end
+
+    def validate_schema_less_note
+      if email_conversation? && human_note_for_ticket?
+        if schema_less_note.to_emails.blank?
+          schema_less_note.to_emails = notable.requester.email 
+          schema_less_note.from_email ||= account.primary_email_config.reply_email
+        end
+        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
+        schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
+        schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
+      end
+    end
     
   private
     def human_note_for_ticket?
@@ -252,6 +272,23 @@ class Helpdesk::Note < ActiveRecord::Base
     # Use this method only after checking human_note_for_ticket? and user.customer?
     def replied_by_third_party? 
       private_note? and incoming and notable.included_in_fwd_emails?(user.email)
+    end
+
+    def method_missing(method, *args, &block)
+      begin
+        super
+      rescue NoMethodError => e
+        logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
+        if (load_schema_less_note && schema_less_note.respond_to?(method))
+          args = args.first if args && args.is_a?(Array)
+          (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
+        end
+      end
+    end
+
+    def load_schema_less_note
+      build_schema_less_note unless schema_less_note
+      schema_less_note
     end
 
     def fire_create_event

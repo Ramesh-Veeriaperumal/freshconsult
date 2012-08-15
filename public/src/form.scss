@@ -38,6 +38,12 @@ textarea[readonly] {
   background-color: #f5f5f5;
   border-color: #ddd;
   cursor: not-allowed;
+
+  &:hover {
+	  background-color: #f5f5f5;
+	  border-color: #ddd;
+	  @include box-shadow(none);
+	}
 }     
 
 textarea {
@@ -352,7 +358,7 @@ a.addchoice:hover{
 		padding:1px;
 	}
 	.inline_field{
-		margin:0 0 10px 30px;
+		margin:0 0 10px 10px;
 		input{		
 			width:45%;
 			margin:0;
@@ -739,7 +745,17 @@ input.time{
 				background-color:#f4f4f4;
 			}	
 		}
-	}
+		.special_row{
+			td{
+				padding:0;
+			}
+			div{
+				background: #fff;
+				height:20px;
+				margin:0 -1px;
+			}
+		} 
+	}	
 	.olist{
 		list-style:decimal;
 	}
@@ -837,6 +853,14 @@ span.sort_handle{
 	@include clearfix;
 	text-align:right;
 	padding:1em 0em 1em 0; 
+}
+
+.email-notif-button-container{
+	@include clearfix;
+	text-align:right;
+	padding:20px 0px 15px 0px; 
+	background:#ffffff;	
+	margin:-2px;
 }
 
 .ui-draggable-dragging{
@@ -980,6 +1004,10 @@ span.sort_handle{
       margin:0 0 6px 0;
       font-size:13px;
       padding:10px 12px;
+
+      &.error {
+      	color:#993333;
+      }
    }
    .ui-form{
       margin:0 0;
@@ -1347,15 +1375,13 @@ table.summary-report{
 }
  
 .request_panel{
-	padding:0 20px 10px 65px; margin:0;
+	padding: 0px 0px 10px 0px; margin:0;
+	border-spacing: 0px 10px;
 	border-bottom: 1px solid #F3F3F3;
 
 	.button-container{ 
-		padding:6px 10px;
+		padding:0px 30px 15px 30px;
 		margin-top:10px;
-		background-color:#efefef;
-		@include border-radius(5px);
-		@include box-shadow(rgba(0, 0, 0, 0.2) 0 0 2px inset);
 	}
 	.absolute-button-container{
 		position:absolute;
@@ -1431,11 +1457,13 @@ table.summary-report{
             width:80px;
          }
          div.fields{
-            margin-left:86px;
+            margin-left:10px;
             padding-top:4px;
             position:relative;
+            float:right;
+            width: 85%;
             .info-data{
-               margin:8px;
+               margin-top:8px;
             }
          }
          input.text, textarea{
@@ -1448,7 +1476,7 @@ table.summary-report{
       }
       .request_form_options{
          position:absolute;
-         right:20px;
+         right:30px;
          top:6px;
          .insert-canned-response{
             position:relative;
@@ -1721,6 +1749,9 @@ a.new_ticket:hover{
    padding:6px 6px 16px 6px;
    width:400px;
    position:absolute;
+   text-align: left;
+   margin-left: -300px;
+   margin-top: 20px;
    z-index:1000;
    right:35px;
    top:0;   
@@ -1942,8 +1973,6 @@ ul.ui-form .inputs-list{
 	}
 }
 
-
-
 #cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{
 	width:94% !important;
 }
@@ -2072,4 +2101,107 @@ ul.ui-form .inputs-list{
 	border-color:#C6C6C6;
 	@include box-shadow(#DFDFDF 1px 1px 2px inset);
 	@include border-radius(5px);
+}
+
+.companies_select{
+	select{ float:left; }
+	.customSelect{ width:550px; }
+	.chzn-container{ margin-left: 10px; margin-top:-5px; }
+}
+
+/* Reply-Draft Panel */
+
+#reply-draft
+{
+padding-top: 10px;
+float: right;
+}
+
+#draft-time
+{
+padding-top: 5px;
+float: right;
+clear: both;
+}
+
+.reply_box
+{
+	background-color: rgb(249,249,249);
+	margin: 0 10px 0 10px;
+	padding: 10px 0 10px 20px;
+	@include border-radius(8px);
+    border: 1px #d0cfcf;
+    @include box-shadow(0 1px 6px #d0cfcf inset);
+}
+.sav
+{
+	color: #ffffff;
+	background-color: #bababa;
+	@include border-radius(4px);
+	@include inline-block;
+    padding: 1px 15px 1px 7px;
+    margin-left: 10px;
+    cursor: default;
+}
+.close-img{	
+	padding: 0 5px 0 0;
+	@include inline-block;
+	vertical-align: middle;
+	background-color: #959595;
+	@include border-right-radius(4px);
+	margin: 0 0 0 -12px;
+	height: 16px;
+	width:10px;
+	z-index: 3;
+	cursor: pointer;
+	span{
+		position: absolute;
+		height: 12px; width: 12px;
+		background:sprite($symbol, draft-close) no-repeat;	
+		margin: 2px 0 0 1px;
+
+	}
+}
+
+@-moz-document url-prefix(){
+	.close-img{
+		height: 17px;
+		span{
+			margin-top: 3px;
+		}
+	}
+}
+
+.close-img:hover
+{
+	background-color: #494949;
+}
+
+.notify
+{
+	width: 82px;
+	display: inline-block;
+}
+li.agents-field
+{
+	margin-top: 20px;
+}
+#Pages.set-top
+{
+	margin-top: -6px;
+}
+#exportFilter{
+	.ui-form{
+		h4{
+			&.caption{
+				padding: 7px 10px 7px 0px; 
+			}
+		}
+		div.fields{
+			margin-left: 250px;
+			div.fields{
+				margin-left: 160px;
+			}
+		}
+	}
 }

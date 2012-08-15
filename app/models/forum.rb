@@ -14,14 +14,39 @@ class Forum < ActiveRecord::Base
   TYPE_SYMBOL_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[0]] }.flatten]
   
   VISIBILITY = [
-    [ :anyone,       I18n.t("forum.visibility.anyone"),       1 ],
+    [ :anyone ,       I18n.t("forum.visibility.all"),       1 ],
     [ :logged_users, I18n.t("forum.visibility.logged_users"), 2 ],
-    [ :agents,       I18n.t("forum.visibility.agents"),       3 ]
+    [ :agents,       I18n.t("forum.visibility.agents"),       3 ],
+    [ :company_users , I18n.t("forum.visibility.select_company") , 4]
   ]
 
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten]
+
+   def self.visibility_array(user)   
+    vis_arr = Array.new
+    if user && user.has_manage_forums?
+      vis_arr = VISIBILITY_NAMES_BY_KEY.keys
+    elsif user
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
+    else
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
+    end
+  end
+
+
+  named_scope :visible, lambda {|user| {
+                    :include => :customer_forums ,
+                    :conditions => visiblity_condition(user) } }
+
+
+  def self.visiblity_condition(user)
+    condition =  {:forum_visibility =>self.visibility_array(user) }
+    condition =  Forum.merge_conditions(condition) + " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
+                customer_forums.customer_id = #{user.customer_id} )" if (user && user.has_company?)
+    return condition
+  end
 
   validates_presence_of :name,:forum_category,:forum_type
   validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
@@ -45,19 +70,32 @@ class Forum < ActiveRecord::Base
   # stickies first even if they are not the most recently modified
   has_many :recent_topics, :class_name => 'Topic', :order => 'replied_at DESC'
   has_one  :recent_topic,  :class_name => 'Topic', :order => 'replied_at DESC'
-
   has_many :posts,     :order => "#{Post.table_name}.created_at DESC", :dependent => :delete_all
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
+  has_many :customer_forums , :class_name => 'CustomerForum' , :dependent => :destroy
   
   format_attribute :description
-  
   attr_protected :forum_category_id , :account_id
 
-   after_save :set_topic_delta_flag
+  after_save :set_topic_delta_flag
+  before_update :clear_customer_forums
   
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   
   
+  def customer_forums_attributes=(cust_attr)
+    customer_forums.destroy_all
+    cust_attr[:customer_id].each do |cust_id|
+      customer_forums.build({:customer_id =>cust_id})
+    end
+  end
+
+  def clear_customer_forums
+    customer_forums.destroy_all if (forum_visibility_changed? and 
+      forum_visibility_was == VISIBILITY_KEYS_BY_TOKEN[:company_users])
+  end
+
+
 #  def self.search(scope, field, value)
 #    return scope unless (field && value)
 #    loose_match = ["#{field} like ?", "%#{value}%"]
@@ -95,9 +133,11 @@ class Forum < ActiveRecord::Base
   end
     
   def visible?(user)
+    return true if (user and user.has_manage_forums?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-    return true if (user and user.has_manage_forums? and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:agents]) )
+    return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
+      user.customer  && customer_forums.map(&:customer_id).include?(user.customer.id))
   end
   
   def set_topic_delta_flag

@@ -4,6 +4,8 @@
 	          ago: "<%= t("date.ago") %>",
 	          from: "<%= t("date.from") %>",
 	          now: "<%= t("date.now") %>",
+	          second: "<%= t("date.second") %>",
+	          seconds: "<%= t("date.seconds") %>",
 	          minute: "<%= t("date.minute") %>",
 	          minutes: "<%= t("date.minutes") %>",
 	          hour: "<%= t("date.hour") %>",
@@ -19,7 +21,7 @@
 	};
 	
   $J(document).ready(function() {
-		$J("a.dialog2, a[data-ajax-dialog]").dialog2();
+		$J("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2();
     <%= yield :onload_script -%>
   });
 <%- end -%>

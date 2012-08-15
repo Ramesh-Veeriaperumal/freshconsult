@@ -79,7 +79,14 @@ class ForumsController < ApplicationController
     end
   end
   
-  
+  def new
+    current_category = scoper.find(params[:category_id])
+    @forum = current_category.forums.new
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @forum }
+    end
+  end 
   
   def destroy
     @forum.destroy

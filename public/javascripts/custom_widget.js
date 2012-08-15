@@ -370,7 +370,7 @@ var XmlUtil = {
 
 	getNodeValueStr:function(dataNode, nodeName){
 		return this.getNodeValue(dataNode, nodeName) || "";
-	},
+	}
 /*
 	getNodeAttrValue:function(dataNode, lookupTag, attrName){
 		var element = dataNode.getElementsByTagName(lookupTag);
@@ -438,7 +438,7 @@ var HashUtil = {
 
 	getNodeValueStr:function(dataNode, lookupKey){
 		return this.getNodeValue(dataNode, lookupKey) || "";
-	},
+	}
 }
 
 var Cookie=Class.create({});

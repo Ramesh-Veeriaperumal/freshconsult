@@ -1,8 +1,9 @@
 <% content_for :onload_script do %>
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
-	$J("#helpdesk-select-all").live("click", function(ev){
-		$J("#tickets-expanded input[type=checkbox]").prop("checked", $J(this).prop("checked"));
-	});	
+  $J("#helpdesk-select-all").live("click", function(ev){
+    $J("#tickets-expanded input[type=checkbox]").prop("checked", $J(this).prop("checked"));
+    $J("#tickets-expanded input[type=checkbox]").trigger('change');
+  }); 
 
   $J("#select_view_id").live("change", function(ev){
     window.location = this.value;
@@ -15,12 +16,15 @@
 <% end %>
 <% content_for :layoutType do -%>ticket_list<%- end %>
 <div class="containerFull">
-  <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != "deleted" && @current_view != "spam" && @current_view != "monitored_by")?"block":"none"%>">
-	  <div class="leftFilter">    
-  	  <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
-	  </div>
+  <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != 'deleted' && @current_view != 'spam' && @current_view != 'monitored_by') ? 'block' : 'none' %>">
+    <div class="leftFilter">    
+      <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
+    </div>
   </div>
   <div id="rightCol" class="contentCol <%="hasRightCol" unless (@current_view == "deleted" or @current_view == "spam" or @current_view == "monitored_by") %>">
-	  <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } %>
+    <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } %>
   </div>
 </div>
+
+<%= javascript_include_tag "sisyphus.min" %>
+<%= javascript_include_tag "ticket_list" %>

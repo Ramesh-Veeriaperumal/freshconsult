@@ -12,6 +12,10 @@ module Reports::ActivityReport
       tickets_count = group_tkts_by_columns({:column_name => column_name })
       tickets_hash = get_tickets_hash(tickets_count,column_name)
       self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_hash", tickets_hash)
+
+    if(!columns.include?(column_name))
+        get_nested_fields_data(column_name)
+    end
     end
 
     count_of_resolved_tickets
@@ -40,25 +44,65 @@ module Reports::ActivityReport
     tickets_count.each do |ticket|
       tot_count += ticket.count.to_i
       if column_name.to_s.starts_with?('flexifields.')
+       
         tickets_hash.store(ticket.send(column_name.gsub('flexifields.','')),{:count => ticket.count})
       else
         tickets_hash.store(ticket.send(column_name),{:count => ticket.count})
       end
-
     end
     tickets_hash.store(RESOLVED,{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
     @current_month_tot_tickets = tot_count
     tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
+
     
     case column_name.to_s
       when "source"
         gen_single_stacked_bar_chart(tickets_hash, column_name)
+      when  /flexifields\..*/ 
+          # @pie_charts_hash[column_name] = generateMultiLevelPie(tickets_hash,options) unless columns.include?(column_name)
       else
         @pie_charts_hash[column_name] = gen_pie_chart(tickets_hash,column_name) unless columns.include?(column_name)
     end
     
     tickets_hash
   end
+
+  def get_nested_fields_data(column_name)
+    nested_hash = {}
+    charts_data ={}
+    levels=0;
+    current_account.ticket_fields.nested_fields.each do | top_level_fields| 
+      
+      if (top_level_fields.flexifield_def_entry.flexifield_name == column_name.gsub("flexifields\.",""))
+        nested_hash =getPlotData("flexifields.#{top_level_fields.flexifield_def_entry.flexifield_name}",nested_hash)
+        charts_data.store("level_#{levels}",nested_hash)
+
+        top_level_fields.nested_ticket_fields.each do |nested_field|
+          if (nested_field.ticket_field_id == top_level_fields.id)
+            levels =levels+1
+            nested_hash =getPlotData("flexifields.#{nested_field.flexifield_def_entry.flexifield_name}",nested_hash)
+            charts_data.store("level_#{levels}",nested_hash)
+          end
+        end
+        options = {:levels=>levels,:chart_name => "#{column_name.gsub('.','_')}_freshdesk_chart",:column_name => column_name.gsub('.','_')}
+        @pie_charts_hash[column_name.gsub('.','_')] = generateMultiLevelPie(nested_hash,options,charts_data) 
+      end
+    end
+  end
+
+
+def getPlotData(data_name,new_hash)
+  data_hash = {}
+   tickets_count = group_tkts_by_columns(data_name)
+          tot_count =0
+          tickets_count.each do |ticket|
+              tot_count += ticket.count.to_i
+                data_hash.store(ticket.send(data_name.gsub("flexifields\.","")),{:count => ticket.count})
+                @current_month_tot_tickets = tot_count
+                data_hash = calculate_percentage_for_columns(data_hash,@current_month_tot_tickets)
+          end
+          data_hash
+end
 
   def calculate_percentage_for_columns(tickets_hash,tkts_count)
     new_val_hash = {}

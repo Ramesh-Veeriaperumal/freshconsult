@@ -57,7 +57,7 @@
 						</div>
           </div>
 					<div class="ticket_actions action_icons">
-            <% if logged_in? %>
+            <% if logged_in? and current_user.has_email?%>
               <% if @topic.editable_by?(current_user) -%>
                 <div class="action_buttons">
                   <%= link_to(t('topic.edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %>

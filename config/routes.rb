@@ -135,7 +135,7 @@
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates'
+      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
@@ -222,8 +222,15 @@
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  , :latest_ticket_count => :post}, 
-                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any, :latest_note => :get } do |ticket|
+    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
+                                    :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
+                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post }, 
+                                 :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
+                                    :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, 
+                                    :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
+                                    :change_due_by => :put, :get_ca_response_content => :post, :split_the_ticket =>:post, 
+                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get, 
+                                    :clear_draft => :delete, :save_draft => :post } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -288,6 +295,7 @@
        support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
+    support.ticket_add_cc "/support/ticket/:id/add_cc", :controller => 'tickets', :action => 'add_cc'
     support.resources :company_tickets
     support.resources :minimal_tickets
     support.resources :registrations
