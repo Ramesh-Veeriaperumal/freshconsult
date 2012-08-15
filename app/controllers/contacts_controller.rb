@@ -124,7 +124,6 @@ class ContactsController < ApplicationController
         format.xml  { head 200}
       end
     else
-      logger.debug "error while saving #{@obj.errors.inspect}"
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
