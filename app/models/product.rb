@@ -1,8 +1,11 @@
 class Product < ActiveRecord::Base
   
+
+  before_destroy :remove_primary_email_config_role
+
   belongs_to :account
   has_one    :portal               , :dependent => :destroy
-  has_many   :email_configs        , :dependent => :destroy, :order => "primary_role desc"
+  has_many   :email_configs        , :dependent => :nullify, :order => "primary_role desc"
   has_one    :primary_email_config , :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many   :twitter_handles      , :class_name => 'Social::TwitterHandle', :dependent => :nullify
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
@@ -45,5 +48,11 @@ class Product < ActiveRecord::Base
   def friendly_email
     primary_email_config.friendly_email
   end
+
+  private
+
+    def remove_primary_email_config_role
+      primary_email_config.update_attribute(:primary_role, false)
+    end
 
 end

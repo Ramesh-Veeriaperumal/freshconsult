@@ -6,13 +6,13 @@ class SAAS::SubscriptionActions
     when :sprout
       drop_custom_sla(account)
       update_timezone_to_users(account)
-      drop_additional_emails(account)
+      drop_products(account)
       drop_facebook_pages(account)
       drop_twitter_handles(account)
     when :blossom
       drop_custom_sla(account)
       update_timezone_to_users(account)
-      drop_additional_emails(account)
+      drop_products(account)
     end
   end
   
@@ -46,10 +46,11 @@ class SAAS::SubscriptionActions
       account.all_users.update_all(:time_zone => account.time_zone)
     end
 
-    def drop_additional_emails(account)
-      EmailConfig.destroy_all(:account_id => account.id, :primary_role => false)
-      #We are not updating the email_config_id in Tickets model knowingly.
-      #Tested, haven't faced any problem with stale email config ids.
+    def drop_products(account)
+      account.products.destroy_all
+
+      #We are not updating the email_config_id or product_id in Tickets model knowingly.
+      #Tested, haven't faced any problem with stale email config ids or product ids.
   end
   
    def drop_facebook_pages(account)
