@@ -54,7 +54,7 @@ namespace :twitter do
          if twt.in_reply_to_status_id.blank?         
             add_tweet_as_ticket twt , twt_handle , :mention
          else
-            tweet = @account.tweets.find_by_tweet_id(235640522914549761)
+            tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
             unless tweet.blank?
               ticket = tweet.get_ticket
               add_tweet_as_note twt , twt_handle , :mention , ticket
