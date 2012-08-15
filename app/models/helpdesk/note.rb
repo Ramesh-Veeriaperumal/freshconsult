@@ -237,10 +237,14 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def validate_schema_less_note
-      if email_conversation?
-        self.to_emails = fetch_valid_emails(schema_less_note.to_emails)
-        self.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
-        self.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
+      if email_conversation? && human_note_for_ticket?
+        if schema_less_note.to_emails.blank?
+          schema_less_note.to_emails = notable.requester.email 
+          schema_less_note.from_email ||= account.primary_email_config.reply_email
+        end
+        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
+        schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
+        schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
       end
     end
     

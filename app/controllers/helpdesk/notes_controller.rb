@@ -6,7 +6,7 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
   include ParserUtil
   
-  before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :only =>[:create]
+  before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
@@ -269,6 +269,10 @@ class Helpdesk::NotesController < ApplicationController
         @item.cc_emails.delete(kbase_email)
         @kbase_email_exists = true
       end
+  end
+
+  def set_default_source
+    @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
   end
 
 end
