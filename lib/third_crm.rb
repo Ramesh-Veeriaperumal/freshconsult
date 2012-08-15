@@ -16,7 +16,11 @@ class ThirdCRM
   end
 
   def self.fetch_cookie_info(cookies)
-    cookies.fetch(COOKIE_NAME, "")
+    begin
+      cookies.fetch(COOKIE_NAME, "")
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+    end
   end
 
   def add_signup_data(account, options = {})
@@ -26,7 +30,6 @@ class ThirdCRM
      lead_record = lead_contact.merge(lead_custom_field)
      marketo_cookie = options[:marketo_cookie]
      marketo_lead = contact_crm_api(lead_record, marketo_cookie)
-     marketo_lead.idnum
    }
     
     #If some error occours while dumping the data into 
@@ -42,6 +45,7 @@ class ThirdCRM
     lead_contact[:Phone] = account_admin.phone
     lead_contact[:Email ] = account_admin.email
     lead_contact[:Company ] = account_admin.name
+    lead_contact[:Country] = account.conversion_metric.country if account.conversion_metric
     lead_contact
   end
 
@@ -53,10 +57,14 @@ class ThirdCRM
     lead_custom_field[:Freshdesk_Domain_Name__c ] = account.full_domain  
     lead_custom_field[:Plan__c ] = subscription.subscription_plan.name 
     lead_custom_field[:Amount__c] = subscription.amount 
+    lead_custom_field[:Lifepoint] = subscription.state
     lead_custom_field
   end
   
   def contact_crm_api(lead_record, marketo_cookie)
+    if !marketo_cookie.blank? and (client.get_lead_by_cookie(marketo_cookie))
+      marketo_cookie = ""
+    end
     client.sync_lead(lead_record[:Email], marketo_cookie, lead_record)
   end
   

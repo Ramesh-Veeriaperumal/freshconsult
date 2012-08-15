@@ -4,6 +4,7 @@ module Helpdesk::TicketsHelper
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::NoteActions
+  include RedisKeys
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -118,23 +119,23 @@ module Helpdesk::TicketsHelper
   end
    
   def current_sort
-  	cookies[:sort] = (params[:sort] ? params[:sort] : ( (!cookies[:sort].blank?) ? cookies[:sort] : DEFAULT_SORT )).to_sym 
+    cookies[:sort] = (params[:sort] ? params[:sort] : ( (!cookies[:sort].blank?) ? cookies[:sort] : DEFAULT_SORT )).to_sym 
   end
  
   def current_sort_order 
-  	cookies[:sort_order] = (params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : DEFAULT_SORT_ORDER )).to_sym
+    cookies[:sort_order] = (params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : DEFAULT_SORT_ORDER )).to_sym
   end
   
   def current_wf_order 
-  	cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
+    cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
   end
 
   def current_wf_order_type 
-  	cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
+    cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
 
   def cookie_sort 
-  	 "#{current_sort} #{current_sort_order}"
+     "#{current_sort} #{current_sort_order}"
   end
  
   def current_selector
@@ -207,7 +208,6 @@ module Helpdesk::TicketsHelper
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
-
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
       last_reply_time = last_conv.created_at
@@ -227,10 +227,19 @@ module Helpdesk::TicketsHelper
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
-    content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature.to_s+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
-              "<span class='separator' /> , "+ last_reply_by +" wrote:"+
-              last_reply_content+"</blockquote></div>"
-    return content
+    "<span id='caret_pos_holder' style='display:none;'></span><br/><br/>" + 
+        signature.to_s + "<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On " +
+        formated_date(last_conv.created_at) + "<span class='separator' /> , " + last_reply_by + " wrote:"+
+        last_reply_content + "</blockquote></div>"
+  end
+
+def bind_last_reply (item, signature, forward = false)
+    ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
+    last_conv = (item.is_a? Helpdesk::Note) ? item : 
+                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+    key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
+
+    return ( get_key(key) || bind_last_conv(item, signature) )
   end
 
   def status_changed_time_value_hash (ticket)

@@ -385,7 +385,7 @@ class AccountsController < ApplicationController
                   metrics_obj[:landing_url] = metrics["current_session"]["url"]
                   metrics_obj[:first_referrer] = params[:first_referrer]
                   metrics_obj[:first_landing_url] = params[:first_landing_url]
-                  metrics_obj[:country] = metrics["locale"]["country"]
+                  metrics_obj[:country] = metrics["location"]["countryName"]
                   metrics_obj[:language] = metrics["locale"]["lang"]
                   metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
                   metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
@@ -418,6 +418,6 @@ class AccountsController < ApplicationController
     private
 
       def add_to_crm
-        Delayed::Job.enqueue Marketo::AddLead.new({:account_id => @account.id,:cookie => ThirdCRM.fetch_cookie_info(request.cookies)})
+        Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
       end   
 end
