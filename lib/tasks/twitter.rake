@@ -6,7 +6,7 @@ namespace :twitter do
   task :fetch => :environment do    
     puts "Twitter task initialized at #{Time.zone.now}"
     Account.active_accounts.each do |account|
-      Account.reset_current_account
+      account.make_current
       twitter_handles = account.twitter_handles.find(:all, :conditions => ["capture_dm_as_ticket = 1 or capture_mention_as_ticket = 1"])    
       twitter_handles.each do |twt_handle| 
         sandbox do ### starts ####
@@ -41,6 +41,7 @@ namespace :twitter do
        end ### ends ####
      end
    end
+   Account.reset_current_account
    puts "Twitter closed at #{Time.zone.now}"
  end
  
@@ -53,7 +54,7 @@ namespace :twitter do
          if twt.in_reply_to_status_id.blank?         
             add_tweet_as_ticket twt , twt_handle , :mention
          else
-            tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
+            tweet = @account.tweets.find_by_tweet_id(235640522914549761)
             unless tweet.blank?
               ticket = tweet.get_ticket
               add_tweet_as_note twt , twt_handle , :mention , ticket
