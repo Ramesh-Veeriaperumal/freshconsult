@@ -88,6 +88,11 @@ module TicketConstants
   CREATED_BY_KEYS_BY_TOKEN = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[2]] }.flatten]
   CREATED_BY_NAMES_BY_SYMBOL = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[1]] }.flatten]
   
+  STATES_HASH = {
+    :closed_at => I18n.t("export_data.closed_at"),
+    :resolved_at => I18n.t("export_data.resolved_at"),
+    :created_at => I18n.t("export_data.created_at")
+  }
   
   ACTIVITY_HASH = {
     :status           =>"create_status_activity",

@@ -7,6 +7,7 @@
 		</li>
 		<li class="button-container">
 			<%= submit_tag(t("update"), :class => "uiButton small") %>
+			<%= button_to_function(t('cancel'), "jQuery('#Edit_Note_#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>
 		</li>
 	</ul>
 <% end %>

@@ -1,6 +1,7 @@
 module RedisKeys
 
 	HELPDESK_TICKET_FILTERS = "HELPDESK_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
+	HELPDESK_REPLY_DRAFTS = "HELPDESK_REPLY_DRAFTS:%{account_id}:%{user_id}:%{ticket_id}"
 
 
 	def get_key(key)
@@ -19,7 +20,7 @@ module RedisKeys
     end
 	end
 
-	def set_key(key, value, expires)
+	def set_key(key, value, expires = 86400)
 		begin
 			$redis.set(key, value)
 			$redis.expire(key,expires) if expires

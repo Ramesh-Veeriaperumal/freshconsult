@@ -20,8 +20,8 @@ class User < ActiveRecord::Base
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
   USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
-  EMAIL_REGEX = /(\A[A-Z0-9_\.%\+\-\'=]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
-  
+  EMAIL_REGEX = /(\A[A-Z0-9.\'_%=+-\xe28099]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+
   belongs_to :customer
   
   has_many :authorizations, :dependent => :destroy
@@ -462,6 +462,18 @@ class User < ActiveRecord::Base
     customer.name unless customer.nil?
   end
 
+  def has_company?
+    customer? && customer
+  end
+
+  def to_mob_json
+    options = { 
+      :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
+      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
+    }
+    to_json options
+  end
+
   def recent_tickets(limit = 5)
     tickets.newest(limit)
   end
@@ -501,7 +513,7 @@ class User < ActiveRecord::Base
  
   def self.find_by_email_or_name(value)
     conditions = {}
-    if value =~ /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+    if value =~ /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
       conditions[:email] = value
     else
       conditions[:name] = value

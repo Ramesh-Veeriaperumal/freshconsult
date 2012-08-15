@@ -8,7 +8,7 @@
 			</li>
 		<% end %>
 
-		<% unless @searched_tickets.nil? %>
+		<% unless @searched_tickets.nil? || @searched_tickets.size==0 %>
 			<li class="ticket_icon"> 
 				<strong class="title">Tickets</strong>
 				<% @searched_tickets.each do |ticket| %>

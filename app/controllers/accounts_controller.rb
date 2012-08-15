@@ -45,6 +45,7 @@ class AccountsController < ApplicationController
   def new_signup_free
    create_account 
    if @account.save
+      add_to_crm
       render :json => { :success => true, 
       :url => signup_complete_url(:token => @account.account_admin.perishable_token,:host => @account.full_domain) }, 
       :callback => params[:callback]
@@ -384,7 +385,7 @@ class AccountsController < ApplicationController
                   metrics_obj[:landing_url] = metrics["current_session"]["url"]
                   metrics_obj[:first_referrer] = params[:first_referrer]
                   metrics_obj[:first_landing_url] = params[:first_landing_url]
-                  metrics_obj[:country] = metrics["locale"]["country"]
+                  metrics_obj[:country] = metrics["location"]["countryName"]
                   metrics_obj[:language] = metrics["locale"]["lang"]
                   metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
                   metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
@@ -412,5 +413,11 @@ class AccountsController < ApplicationController
                 Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")                
            end
 
-        end        
+        end      
+
+    private
+
+      def add_to_crm
+        Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
+      end   
 end

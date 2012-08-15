@@ -3,7 +3,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include ParserUtil
 
   set_table_name "helpdesk_notes"
-  
+
   belongs_to_account
 
   belongs_to :notable, :polymorphic => true
@@ -155,6 +155,10 @@ class Helpdesk::Note < ActiveRecord::Base
             'activities.tickets.conversation.out_email.private.short')  
   end
 
+  def respond_to?(attribute)
+    super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
+  end
+
   protected
     def save_response_time
       if human_note_for_ticket?
@@ -188,7 +192,7 @@ class Helpdesk::Note < ActiveRecord::Base
            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
       # syntax to move code from delayed jobs to resque.
-      #Resque::MyNotifier.deliver_reply( notable.id, self.id , notable.reply_email,{:include_cc => true})
+      #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
       notable.save
     end
@@ -233,7 +237,11 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def validate_schema_less_note
-      load_schema_less_note
+      if email_conversation?
+        self.to_emails = fetch_valid_emails(schema_less_note.to_emails)
+        self.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
+        self.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
+      end
     end
     
   private
@@ -255,6 +263,18 @@ class Helpdesk::Note < ActiveRecord::Base
     # Use this method only after checking human_note_for_ticket? and user.customer?
     def replied_by_third_party? 
       private_note? and incoming and notable.included_in_fwd_emails?(user.email)
+    end
+
+    def method_missing(method, *args, &block)
+      begin
+        super
+      rescue NoMethodError => e
+        logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
+        if (load_schema_less_note && schema_less_note.respond_to?(method))
+          args = args.first if args && args.is_a?(Array)
+          (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
+        end
+      end
     end
 
     def load_schema_less_note
