@@ -598,6 +598,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def friendly_reply_email
     email_config ? email_config.friendly_email : account.default_friendly_email
   end
+
+  def friendly_reply_email_personalize(user_name)
+    email_config ? email_config.friendly_email_personalize(user_name) : account.default_friendly_email_personalize(user_name)
+  end
   
   def reply_email
     email_config ? email_config.reply_email : account.default_email

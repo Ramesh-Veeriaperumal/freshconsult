@@ -211,18 +211,26 @@ module Helpdesk::TicketsHelper
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
     type = "new" if ticket.ticket_states.is_new? && ticket.active?
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if ticket.due_by < Time.now && ticket.active?
+    type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
     type
   end
 
   def sla_status(ticket)
     if( ticket.active? )
-      if(Time.now > ticket.due_by )
-        t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+
+      unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
+        if(Time.now > ticket.due_by )
+          t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        else
+          t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        end
       else
-        t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 
+            #{distance_of_time_in_words(Time.now, ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]))} "
       end
+
     else
+
       if( ticket.ticket_states.resolved_at < ticket.due_by )
         t('resolved_on_time')
       else
