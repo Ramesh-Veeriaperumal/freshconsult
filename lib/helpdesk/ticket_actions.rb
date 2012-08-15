@@ -76,14 +76,15 @@ module Helpdesk::TicketActions
                    helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
                    helpdesk_tickets.account_id = helpdesk_ticket_states.account_id)
     csv_hash = params[:export_fields]
-    headers = csv_hash.keys.sort
-    csv_string = FasterCSV.generate do |csv|
-      csv << headers
-      current_account.tickets.find_in_batches(:conditions => sql_conditions, 
+    csv_tickets_string = ""
+    current_account.tickets.find_in_batches(:conditions => sql_conditions, 
                                             :include => [:ticket_states, :ticket_status, :flexifield,
                                                          :responder, :requester],
                                             :joins => all_joins
                                            ) do |items|
+      csv_string = FasterCSV.generate do |csv|
+        headers = csv_hash.keys.sort
+        csv << headers
         items.each do |record|
           csv_data = []
           headers.each do |val|
@@ -92,12 +93,13 @@ module Helpdesk::TicketActions
           csv << csv_data
         end
       end
+      csv_tickets_string << csv_string
     end
-    send_data csv_string, 
+    send_data csv_tickets_string, 
         :type => 'text/csv; charset=utf-8; header=present', 
         :disposition => "attachment; filename=tickets.csv"
   end
-  
+
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
     render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 

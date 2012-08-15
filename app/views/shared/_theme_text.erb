@@ -5,7 +5,13 @@
 	
 	$bg_ctxt_color:	    if(lightness($background) > 50, black, white) !default;
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;
-	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;  
+	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;
+	$subtxt_color: if(lightness($background) > 50, #222, #EEE) !default;
+	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
+	$alternate_bg_color: if(lightness($background) > 50, #666, #AAA) !default;
+
+	$filterTextShadow: if(lightness($background) > 50, #FFF 1px 1px 0, #333 -1px -1px 0) !default;
+
 	    
 	body { background: $background; }
 	.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color: darken($background, 15%); }
@@ -35,7 +41,7 @@
 	ul.header-tabs li a  { color: $tab_ctxt_color; }
 	ul.header-tabs li a:hover { background: lighten($tab_color, 3%);  color: $tab_ctxt_color; }
 		
-	.uiButton:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, 
+	.uiButton:hover, .forum_button:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, 
 	.ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus, .special.uiButton:hover  {
 		 background-color:$tab_color; 
 		 border-color: darken($tab_color, 20%);  
@@ -49,7 +55,34 @@
 	} 
 	.footerContent, .footerContent a{ color:$bg_ctxt_color; border-color:$bg_ctxt_color;  }
 	.footerContent a:hover{ color:$bg_ctxt_color; }
+	
+	.ticket_list .pagearea {
+		text-shadow: $filterTextShadow;
+	}
+	.ticket-leftcol h3.title, .ticket-leftcol h4.title,  .view_filters .link-item .nav-trigger {
+		color:$bg_ctxt_color;
+	}
 
+	.view_filters .link-item .nav-trigger {
+		text-shadow: $filterTextShadow;
+	}
+
+	.ticket-leftcol .leftFilter .item, .drop-right {
+		color:$subtxt_color;	
+	}
+
+	.drop-right:hover,  .view_filters .link-item .nav-trigger.selected,  .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {
+		color: $subtxt_color;
+		
+	}
+	.sort-bar {
+		color:$subtxt_color;	
+	}
+
+	#view_manage_links a, #save_filter {
+	color: invert($background);
+	}
+	
 	.iphone-inactive.uiButton{
 		background-color:#e7e7e7;
 		color:#7f7f7f;

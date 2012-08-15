@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include ParserUtil
   
   before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
-  before_filter :set_mobile , :only => [:create]
+  before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -18,7 +18,7 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
   
-  def create   
+  def create  
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -146,8 +146,8 @@ class Helpdesk::NotesController < ApplicationController
     end
     
   end
-   
-    def send_reply_email
+
+    def send_reply_email      
       add_cc_email     
       if @item.fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)

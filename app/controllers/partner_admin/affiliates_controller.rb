@@ -6,6 +6,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   skip_before_filter :check_account_state
   skip_before_filter :ensure_proper_protocol
   skip_before_filter :check_day_pass_usage
+  skip_before_filter :redirect_to_mobile_url
   before_filter :ensure_right_parameters, :only => [:add_affiliate_transaction]
   before_filter :fetch_account, :only => [:add_affiliate_transaction]
   before_filter :ensure_right_affiliate, :only => [:add_affiliate_transaction]
@@ -23,8 +24,8 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   protected
 
     def ensure_right_parameters
-     #if ((!request.ssl?) or
-     if ((!request.post?) or 
+     if ((!request.ssl?) or
+      (!request.post?) or 
       (params[:tracking].blank?) or 
       (params[:userID].blank?) or 
       (params[:commission].blank?) or

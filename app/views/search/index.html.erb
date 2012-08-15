@@ -2,7 +2,7 @@
 <div class="big_results">
 	<h3 class="title">Search results</h3>
 	<% form_tag '/search', :method => :get do %>
-		<input class="search" value="<%= @search_key %>" placeholder="Search" autocomplete="off" name="search_key" />
+		<input class="search" value="<%= h(@search_key) %>" placeholder="Search" autocomplete="off" name="search_key" />
 		<input type="submit" value="Search" class="uiButton blue" />
 	<% end %>
 	<span class="seperator"></span>

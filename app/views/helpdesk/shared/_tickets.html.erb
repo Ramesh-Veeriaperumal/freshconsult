@@ -1,47 +1,44 @@
 <!--input type="hidden" id="latest_updated_at" value="<%= @latest_updated_at %>"></input-->
 
 <% unless @items.empty? %>
-  <table class="tickets">	
+  <table class="tickets" width="100%">	
     <tbody>
+      <tr class="headings hideForDetails">
+        <td class="priority-border"></td>
+        <td class="check"></td>
+        <td class="name"><%= t('helpdesk.tickets.tabular_view.title') %></td>
+        <td colspan="2"><%= t('helpdesk.tickets.tabular_view.posted') %></td>
+        <td><%= t('helpdesk.tickets.tabular_view.assigned') %></td>
+        <td><%= t('helpdesk.tickets.tabular_view.status') %></td>
+        <td><%= t('helpdesk.tickets.tabular_view.priority') %></td>
+      </tr>
       <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @items %>
     </tbody>
   </table>
-  <div class="toolbar">
+  <div class="toolbar" id="ticket-toolbar-bottom">
     <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
   </div>
-  <% javascript_tag do %>
-    jQuery(".ticket-description-tip").qtip({
-      position: { 
-          my: 'bottom left',
-          at: 'top  left',
-          viewport: jQuery(window) 
-     }, 
-     style : {
-       classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
-     },             
-     content: {
-         text: function(api) {
-           return jQuery(this).next().html();
-        }
-       },
-     show: {
-        solo: true,
-        delay: 200,
-        effect: function(offset) {
-            jQuery(this).show("fade", 240); // "this" refers to the tooltip
-        }
-     }
-   });          
-     jQuery(".nav-trigger").showAsMenu();
-  <% end %>
 <% else %>
 	<div class="list-noinfo">
 	  <% view_name = t("helpdesk.tickets.views.this_view") %>
-	  <% unless @is_default_filter.nil? %>
-	    <% view_name = (@is_default_filter)? t("helpdesk.tickets.views.#{@current_view}") : @ticket_filter.name %>
-	  <% else %>
-	  
-	  <% end %>
-	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %>
+	  <%  view_name = (@is_default_filter)? t("helpdesk.tickets.views.#{@current_view}") : @ticket_filter.name unless @is_default_filter.nil? or !@cached_filter_data.nil? %>
+	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %> <br />
+
+    <% unless @current_view == "new_my_open" %>
+      <span class="small"><%= t('wf.messages.no_tickets_subtext', 
+                              :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open')), 
+                              :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'))
+                          ) %></span>
+    <% else %>
+      <span class="small"><%= t('wf.messages.no_tickets_subtext_single', 
+                                :view_1 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'))
+                          ) %></span>
+    <% end %>
 	</div>
+<% end %>
+
+<% javascript_tag do %> 
+TICKET_STRINGS = {};
+TICKET_STRINGS['tooltip_loading'] = "<%=t("index_tooltip_loading_msg") %>";
+TICKET_STRINGS['unsaved_view'] = "<%= t("tickets_filter.unsaved_view") %>"
 <% end %>
