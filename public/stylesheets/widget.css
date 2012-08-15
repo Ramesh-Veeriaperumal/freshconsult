@@ -824,6 +824,10 @@ li.agents-field { margin-top: 20px; }
 
 #Pages.set-top { margin-top: -6px; }
 
+#exportFilter .ui-form h4.caption { padding: 7px 10px 7px 0px; }
+#exportFilter .ui-form div.fields { margin-left: 250px; }
+#exportFilter .ui-form div.fields div.fields { margin-left: 160px; }
+
 /* Theme Colors and layout Defaults */
 .ui-datepicker { background: #ffffff; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=95); opacity: 0.95; -moz-border-radius: 5px 5px 5px 5px; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }
 

@@ -325,7 +325,7 @@ class Helpdesk::TicketsController < ApplicationController
   def close_multiple
     status_id = CLOSED       
     @items.each do |item|
-      item.update_attribute(:status , status_id)
+      item.update_attributes(:status => status_id)
     end
     
     flash[:notice] = render_to_string(
@@ -427,7 +427,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def change_due_by     
     due_date = get_due_by_time    
-    @item.update_attribute(:due_by , due_date)
+    @item.update_attributes(:due_by => due_date)
     render :partial => "due_by", :object => @item.due_by
   end  
   
@@ -506,7 +506,7 @@ class Helpdesk::TicketsController < ApplicationController
   def close 
     status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
-    if @item.update_attribute(:status , status_id)
+    if @item.update_attributes(:status => status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
       redirect_to redirect_url
     else

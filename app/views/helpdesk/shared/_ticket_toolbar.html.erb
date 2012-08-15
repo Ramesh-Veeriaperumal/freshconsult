@@ -22,7 +22,7 @@
     				<%= link_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 		            <%= link_to(t('ticket.assign_to_agent'), { :action => "assign_to_agent" }, :class => "button dialog2", :title => t('ticket.assign_to_agent'), "data-width" => "360" ) %>
 	            	<%= link_to(t('bulk_update'), { :action => "update_multiple_tickets"}, :class => "button dialog2", :title => t('update_multiple_tickets'), "data-width" => "360" ) %>
-					<%= link_to("Export", { :action => "configure_export" }, :class => "button dialog2", :title => "Export to CSV", "data-width" => "650" ) %>
+          <%= link_to(t('ticket.export'), { :action => "configure_export" }, :class => "button dialog2", :title => t('export_data.export_to_csv'), "data-width" => "650" ) %>
   
           		<% end %>
           	</th>
