@@ -114,18 +114,7 @@ var $J = jQuery.noConflict();
           return $("#" + $(this).attr("data-widget-container")).val();
         }
       });
-    $("[rel=hover-popover]")
-      .popover({ 
-        delayOut: 300,
-        trigger: 'manual',
-        offset: 5,
-        html: true,
-        reloadContent: false,
-        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
-        content: function(){
-          return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
-        }
-      });
+    
 
 
       $("[rel=hover-popover]").live('mouseenter',function(ev) {
@@ -161,9 +150,37 @@ var $J = jQuery.noConflict();
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
+
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsAjaxMenu();});
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showPreloadedMenu();});
+
+      // !PULP to be moved into the pulp framework as a sperate util or plugin function
+      $("[rel=remote]").livequery(function(){
+        $(this).bind("afterShow", function(ev){
+          var _self = $(this);
+          if(_self.data('remoteUrl'))
+            _self.append("<div class='loading-box'></div>");
+            _self.load(_self.data('remoteUrl'), function(){
+                _self.data('remoteUrl', false);
+            });
+        });
+      });
       
+      $("[rel=hover-popover]").livequery(function(){ 
+        $(this).popover({ 
+          delayOut: 300,
+          trigger: 'manual',
+          offset: 5,
+          html: true,
+          reloadContent: false,
+          template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+          content: function(){
+            return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
+          }
+        }); 
+      });
+      
+
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
