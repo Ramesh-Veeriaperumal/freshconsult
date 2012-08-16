@@ -21,6 +21,7 @@
   var saving = 0;
   var savetime;
   var dontSave = 0;
+  var draftClearedFlag = <%= @draft.blank? %>;
 
 function autosave(){
   if(dontSave==0)
@@ -197,26 +198,20 @@ function saveout()
   })
 
   jQuery("#ReplyButton").bind('click', function(){
-    dont=0;
-    jQuery.browser.chrome = /chrome/.test(navigator.userAgent.toLowerCase()); 
-    if(saving==0)
-    {
-    if(jQuery.browser.chrome)
-    {
-      setTimeout(function(){tinyMCE.activeEditor.setContent(jQuery('#send-email-cnt-reply-body').text());}, 200);
-    }
-    if(!jQuery.browser.msie)
-    {
-      tinyMCE.getInstanceById('send-email-cnt-reply-body').isNotDirty = true;  
-    }
-    setInterval( function(){autosave();}, 30000); 
-    <% unless @draft.blank? %>
-    jQuery("#draft-save").text("<%= t('saved_draft') %>");
-    jQuery("#clear-draft").show();
-    jQuery("#reply-draft").show();
-    <% else %>
-    jQuery("#reply-draft").hide();
-    <% end %>
+    dontSave=0;
+    if(saving==0){
+      //setTimeout(function(){tinyMCE.activeEditor.setContent(jQuery('#send-email-cnt-reply-body').text());}, 200);
+      if(!jQuery.browser.msie){
+        tinyMCE.getInstanceById('send-email-cnt-reply-body').isNotDirty = true;  
+      }
+      setInterval( function(){autosave();}, 30000); 
+      if(!draftClearedFlag){
+        jQuery("#draft-save").text("<%= t('saved_draft') %>");
+        jQuery("#clear-draft").show();
+        jQuery("#reply-draft").show();
+      }else{
+        jQuery("#reply-draft").hide();
+      }
     }
   });
 
@@ -239,17 +234,23 @@ function saveout()
   }
   );
 
-  jQuery("#clear-draft").bind('click',function cleardraft(){
-    var clear_conf=confirm("<%= t('clear_draft_text') %>");
+  jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
+
+  jQuery("#clear-draft").bind('click', function(){    
+  var clear_conf=confirm("<%= t('clear_draft_text') %>");
     if(clear_conf==true)
-    {
+    {cleardraft();}
+  });
+
+  function cleardraft(){
       <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
       tinyMCE.activeEditor.setContent("");
       var dat = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
       tinyMCE.activeEditor.setContent(dat, {format: 'raw'});
       tinyMCE.activeEditor.isNotDirty = true;
+      jQuery("#send-email-cnt-reply-body").val(dat);
       jQuery("#reply-draft").hide();
-    }
-  });
+      draftClearedFlag = true;
+  }
   <% end %>
 <% end %>

@@ -60,6 +60,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   named_scope :type_field, :conditions => { :name => "ticket_type" }
   named_scope :status_field, :conditions => { :name => "status" }
   named_scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
+  named_scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
 
   # Enumerator constant for mapping the CSS class name to the field type
   FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",

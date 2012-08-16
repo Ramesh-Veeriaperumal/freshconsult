@@ -1,0 +1,25 @@
+<div class="seperator"></div> 
+
+  <% unless @bar_charts_hash.nil?
+        @bar_charts_hash.each do |label,bar_chart|
+      %>
+   <div class="nested-title">
+    <h3><div class='sub-title'><%= t('reports.pie_chart_title_prefix') %></div>
+      <div class='nested_column'><div>&nbsp;</div><span><%=@show_fields["flexifields.#{label}"]%>,</span></div>
+      <div class='nested_column_category'><div>&nbsp;</div><span><%=@nested_columns["#{label}"][0] %>,</span></div>
+      <div class='nested_column_sub_category'><div>&nbsp;</div><span><%=@nested_columns["#{label}"][1] %></span></div>
+    </h3>
+  </div>
+  <div class='nested-wrapper'>
+    <div class="nested-unit"> 
+      <div id="<%=label%>_bar_chart" name='level_0' class="nested-stacked-bar"></div>
+        <% javascript_tag do %>
+        <%=bar_chart %>
+        <% end %>
+    </div>
+  </div>  
+
+  <% end
+  end %>
+
+

@@ -43,11 +43,7 @@ module Reports::ChartGenerator
     
     pie_data = []
     sort_data.each do |key,tkt_hash|
-     if (TicketConstants::SOURCE_NAMES_BY_KEY.has_key?(key))
-        pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
-     else
-        pie_data.push({:name=> key,:data =>[tkt_hash.to_f] })#//TODO need to do i18n for the key 
-      end
+      pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
     end
     pie_data
   end
@@ -143,7 +139,7 @@ module Reports::ChartGenerator
           {
             :type => 'pie',
             :data => browser_data,
-            :innerSize => '10%'
+            :innerSize => '30%'
           }
         ],
         :tooltip => {
@@ -153,76 +149,80 @@ module Reports::ChartGenerator
    end
   end 
   
-  def constructChartSeries(chart_data,levels)
-    series_arr = []
-    size =0;
 
-    for i in 0..levels
-      innerSize = size
-      size = 83/((levels+1)-i) 
-      series_arr.push({
-            :name =>"level_#{i}",
-            :size => "#{size.to_i}%",
-            :innerSize=>"#{innerSize.to_i}%",
-            :data => gen_pie_data(chart_data["level_#{i}"],"level_#{i}"),
-            :dataLabels => {
-            :enabled => true,
-            :distance => -10,
-            :formatter => pie_label_formatter,
-              :style => {
-                :font => "6pt",
-                :textTransform => "capitalize"
-              },
-               :color => '#CFCFCF'
-              },
-              :tooltip => {
-              :formatter => pie_tooltip_formatter
-              }
-          })
+def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
 
-      end
-
-    series_arr
-  end
-
-  def generateMultiLevelPie(value_hash,options,chart_data)
-    levels = options [:levels].to_i
-    chart_series = constructChartSeries(chart_data,levels)
-    unless chart_series.blank?
-    Highchart.pie({
-      :chart => {
-          :renderTo => options[:chart_name],
-          :type => 'pie',
-          :margin => [-80, 10, 0, 10],
-          :borderColor => 'rgba(0,0,0,0)'
-        },
-      :plotOptions => {
-         :pie => {
-          :borderWidth => 2,
-          :shadow => false,
-          :showInLegend => true,
-        }
+  Highchart.bar({
+    :chart =>{
+        :renderTo => "#{chart_name}_bar_chart",
+          :margin => [10,15,50,column_width],
+          :borderColor => 'rgba(0,0,0,0)',
+          :height =>(data_arr.length*20 < 400)? 400 :data_arr.length*20,
+          :plotBackgroundColor=>'rgba(255,255,255,0.1)',
+          :backgroundColor=>'rgba(255,255,255,0.1)',
+          },
+           :x_axis=>{
+            :reversed=>false,
+            :categories=>xaxis_arr.reverse,
+            :tickWidth=>0,
+            :labels=>{
+              :formatter => pareto_category_formatter,
+                 :style=> {
+                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                         },
+               },
+            },
+             :y_axis=> {
+              :min => 0,
+              :max =>100,
+              :gridLineColor=> '#cccccc',
+              :gridLineDashStyle=>'dot',
+                :title=> {
+                    :text=> 'Percentage %',
+                    :align=> 'high',
+                    :style=> {
+                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                    },
+                },
+                :labels=> {
+                    :overflow=> 'justify',
+                     :style=> {
+                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                         },
+                }
+            },
+             :plotOptions=> {
+                :bar=> {
+                    :dataLabels=> {
+                        :enabled=> true,
+                         :style=> {
+                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                         },
+                      :overflow=> 'justify',
+                        :formatter =>  pareto_label_formatter,
+                        :align => 'left',
+                        :y => 0,
+                    }
+                },
+                :series=>{
+                  :groupPadding=> 0.025,
+                  :pointWidth=>15,
+                }
+            },
+            :series =>[{:data=>data_arr.reverse}],
+                 :tooltip => {
+                       :style=> {
+                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :padding=>5,
+                         },
+                    :formatter =>  pareto_tooltip_formatter,
       },
-      :legend => {
-          :layout => 'horizontal',
-          :align => 'center',
-          :style => {
-          :top => 285,
-          :left => 2,
-        },
-        :borderWidth => 0,
-        :y => 15,
-        :verticalAlign => 'bottom',
-        :floating => false,
-        :labelFormatter => pie_legend_formatter,
-      },
-      :series => chart_series,
-        
-    })
-   end
- end
+
+  })
+end
 
   def gen_single_stacked_bar_chart(value_arr,column_name)
+
     browser_data = gen_stacked_bar_data(value_arr,column_name)
     self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_single_stacked_bar_chart",
     Highchart.bar({
@@ -403,6 +403,30 @@ module Reports::ChartGenerator
     }))
  end
  
+
+ def pareto_tooltip_formatter
+    "function() {
+        return '<p>' + this.point.name  + '<strong> : ' +this.point.y+ '%</strong> ('+this.point.count+' tickets)</p>';
+    }"
+ end
+
+ def pareto_category_formatter
+  "function(){
+    value = this.value;
+    if(value.length > 15){
+        value =value.substring(0,15);
+        value =value+'...';
+      }
+      return value;
+    }"
+ end
+
+ def pareto_label_formatter
+  "function() {
+     if(this.y>0)  return  this.point.y+'%' ;
+   }"
+ end
+
  def line_tooltip_formatter  
    "function() {
       return  '<strong>' + this.y +' tickets </strong> on ' + Highcharts.dateFormat('%b %e', this.x) ;
