@@ -1754,13 +1754,16 @@ a.new_ticket:hover{
    @include shadows( rgba(0, 0, 0, 0.2), 0, 2px, 4px);
    padding:6px 6px 16px 6px;
    width:400px;
+   margin-left: -300px;
+   margin-top: -10px;
+
    position:absolute;
    text-align: left;
    margin-left: -300px;
    margin-top: 20px;
    z-index:1000;
-   right:35px;
-   top:0;   
+   text-align: left;
+   
    ul{
       border-top:1px solid #efefef;
       position:relative;
