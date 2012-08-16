@@ -72,6 +72,7 @@ body .redactor_box_fullscreen {
 	padding: 3px 1px;
 	padding-right: 0;
 	list-style-type: none;	
+	width:auto;
 }
 .redactor_toolbar li.redactor_separator {
 	float: left;		
