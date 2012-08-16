@@ -41,10 +41,11 @@ class ThirdCRM
   def add_contact(account)
     account_admin = account.account_admin
     lead_contact = {}
-    lead_contact[:LastName] = account_admin.name
+    lead_contact[:FirstName] = account_admin.name
     lead_contact[:Phone] = account_admin.phone
     lead_contact[:Email ] = account_admin.email
     lead_contact[:Company ] = account_admin.name
+    lead_contact[:Country] = account.conversion_metric.country if account.conversion_metric
     lead_contact
   end
 

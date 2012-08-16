@@ -12,4 +12,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
   serialize :to_emails
 
+  alias_attribute :skip_notification, :boolean_tc01
+
 end

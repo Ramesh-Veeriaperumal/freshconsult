@@ -43,7 +43,11 @@ module Reports::ChartGenerator
     
     pie_data = []
     sort_data.each do |key,tkt_hash|
-      pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     if (TicketConstants::SOURCE_NAMES_BY_KEY.has_key?(key))
+        pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     else
+        pie_data.push({:name=> key,:data =>[tkt_hash.to_f] })#//TODO need to do i18n for the key 
+      end
     end
     pie_data
   end
@@ -139,7 +143,7 @@ module Reports::ChartGenerator
           {
             :type => 'pie',
             :data => browser_data,
-            :innerSize => '30%'
+            :innerSize => '10%'
           }
         ],
         :tooltip => {
@@ -149,8 +153,76 @@ module Reports::ChartGenerator
    end
   end 
   
-  def gen_single_stacked_bar_chart(value_arr,column_name)
+  def constructChartSeries(chart_data,levels)
+    series_arr = []
+    size =0;
 
+    for i in 0..levels
+      innerSize = size
+      size = 83/((levels+1)-i) 
+      series_arr.push({
+            :name =>"level_#{i}",
+            :size => "#{size.to_i}%",
+            :innerSize=>"#{innerSize.to_i}%",
+            :data => gen_pie_data(chart_data["level_#{i}"],"level_#{i}"),
+            :dataLabels => {
+            :enabled => true,
+            :distance => -10,
+            :formatter => pie_label_formatter,
+              :style => {
+                :font => "6pt",
+                :textTransform => "capitalize"
+              },
+               :color => '#CFCFCF'
+              },
+              :tooltip => {
+              :formatter => pie_tooltip_formatter
+              }
+          })
+
+      end
+
+    series_arr
+  end
+
+  def generateMultiLevelPie(value_hash,options,chart_data)
+    levels = options [:levels].to_i
+    chart_series = constructChartSeries(chart_data,levels)
+    unless chart_series.blank?
+    Highchart.pie({
+      :chart => {
+          :renderTo => options[:chart_name],
+          :type => 'pie',
+          :margin => [-80, 10, 0, 10],
+          :borderColor => 'rgba(0,0,0,0)'
+        },
+      :plotOptions => {
+         :pie => {
+          :borderWidth => 2,
+          :shadow => false,
+          :showInLegend => true,
+        }
+      },
+      :legend => {
+          :layout => 'horizontal',
+          :align => 'center',
+          :style => {
+          :top => 285,
+          :left => 2,
+        },
+        :borderWidth => 0,
+        :y => 15,
+        :verticalAlign => 'bottom',
+        :floating => false,
+        :labelFormatter => pie_legend_formatter,
+      },
+      :series => chart_series,
+        
+    })
+   end
+ end
+
+  def gen_single_stacked_bar_chart(value_arr,column_name)
     browser_data = gen_stacked_bar_data(value_arr,column_name)
     self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_single_stacked_bar_chart",
     Highchart.bar({

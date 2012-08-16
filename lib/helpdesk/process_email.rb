@@ -175,7 +175,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket = check_for_auto_responders(ticket)      
+      check_for_auto_responders(ticket)
+      check_support_emails_from(account, ticket, user)
 
       begin
         if (user.agent? && !user.deleted?)
@@ -214,10 +215,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) ))
-        ticket.spam = true
+      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
+        ticket.skip_notification = true
       end
-      ticket  
+    end
+
+    def check_support_emails_from(account, ticket, user)
+      ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
     end
 
     def add_email_to_ticket(ticket, from_email)

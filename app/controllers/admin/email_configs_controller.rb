@@ -68,6 +68,16 @@ class Admin::EmailConfigsController < Admin::AdminController
     redirect_to :back
   end
   
+  def personalized_email_enable    
+    current_account.features.personalized_email_replies.create
+    current_account.reload  
+  end
+  
+  def personalized_email_disable
+    current_account.features.personalized_email_replies.destroy
+    current_account.reload   
+  end
+
   private
     # This method uses send grid api to remove the supplied email from send grid bounce list
     def remove_bounced_email (bounced_email_addr)
