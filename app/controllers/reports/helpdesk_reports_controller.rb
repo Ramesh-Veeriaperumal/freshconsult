@@ -9,6 +9,9 @@ class Reports::HelpdeskReportsController < ApplicationController
   
   def generate
     @pie_charts_hash = {}
+
+    @bar_charts_hash ={}
+
     fetch_activity
     calculate_resolved_on_time
     calculate_fcr
@@ -45,8 +48,6 @@ class Reports::HelpdeskReportsController < ApplicationController
     #added for the nested fields helpdesk_activity_reports
     current_account.ticket_fields.nested_fields.each do |fields|
       @show_fields["flexifields.#{fields.flexifield_def_entry.flexifield_name}"] = fields.label
-      @pie_chart_labels.store "flexifields_#{fields.flexifield_def_entry.flexifield_name}" , fields.label
-
     end
   end
   

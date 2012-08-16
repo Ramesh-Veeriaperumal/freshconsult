@@ -15,6 +15,18 @@ module Reports::HelpdeskReport
    [:created_at,:resolved_at] 
  end
 
+
+def get_nested_data(column_names,orderby_column)
+  scoper.find( 
+  :all,
+  :joins =>"INNER JOIN flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id and helpdesk_tickets.account_id = flexifields.account_id",
+  :select =>"count(*) count, #{column_names}",
+  :conditions => ["#{orderby_column} is NOT NULL"],
+  :group=>"#{column_names}",
+  :order =>"#{orderby_column}")
+end
+
+
  def group_tkts_by_columns(vals={})
     scoper.find( 
      :all,
