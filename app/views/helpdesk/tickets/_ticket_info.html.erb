@@ -61,7 +61,12 @@
             </div>
           </textarea>
 
-          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "contact-hovercard" )%>
+           <%
+                          contact = @ticket.requester
+                          contact = "javascript:void(0)" unless current_user.can_view_all_tickets?
+          %>
+ 
+          <%= link_to( h(@ticket.requester.display_name), contact, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "contact-hovercard" )%>
           
           <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
           on <%= formated_date(@ticket.created_at) %>

@@ -32,6 +32,24 @@ crm:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
 
+marketo:
+  development:
+    access_key: "freshdesk1_239416885003D634EEFB51"
+    secret_key: "987509605187632255000033DD663356EEFF59C93D90"
+    api_subdomain: "na-b"
+    api_version: "1_5"
+  production:
+    access_key: "freshdesk1_239416885003D634EEFB51"
+    secret_key: "987509605187632255000033DD663356EEFF59C93D90"
+    api_subdomain: "na-b"
+    api_version: "1_5"
+  staging:
+    access_key: "freshdesk1_239416885003D634EEFB51"
+    secret_key: "987509605187632255000033DD663356EEFF59C93D90"
+    api_subdomain: "na-b"
+    api_version: "1_5"
+
+
 integrations_url:
     development: "http://localhost:3000"
     production: "https://login.freshdesk.com"

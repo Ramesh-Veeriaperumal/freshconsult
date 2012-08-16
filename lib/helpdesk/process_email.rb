@@ -3,7 +3,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   
-  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   def perform
     from_email = parse_from_email
@@ -231,6 +231,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         body = show_quoted_text(params[:text],ticket.reply_email)
         body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
         from_fwd_recipients = from_fwd_emails?(ticket, from_email)
+        parsed_cc_emails = parse_cc_email
+        parsed_cc_emails.delete(ticket.account.kbase_email)
         note = ticket.notes.build(
           :private => (from_fwd_recipients and user.customer?) ? true : false ,
           :incoming => true,
@@ -238,11 +240,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :body_html => body_html ,
           :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
-          :account_id => ticket.account_id
+          :account_id => ticket.account_id,
+          :from_email => from_email[:email],
+          :to_emails => parse_to_emails,
+          :cc_emails => parsed_cc_emails
         )       
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
         
         begin
+          ticket.cc_email = ticket_cc_emails_hash(ticket)
           if (user.agent? && !user.deleted?)
             ticket.responder ||= user
             process_email_commands(ticket, user, ticket.email_config, note)
@@ -369,6 +375,15 @@ end
       else
         false
       end
+    end
+
+    def ticket_cc_emails_hash(ticket)
+      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : ticket.cc_email_hash
+      cc_emails_val =  parse_cc_email
+      cc_emails_val.delete(ticket.account.kbase_email)
+      cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
+      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails]
+      cc_email_hash_value
     end
   
 end

@@ -4,11 +4,13 @@ class Solution::Folder < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :category_id
   
+  belongs_to_account
   belongs_to :category, :class_name => 'Solution::Category'
   set_table_name "solution_folders"
   
   acts_as_list :scope => :category
   
+  before_create :populate_account
   after_save :set_article_delta_flag
   before_update :clear_customer_folders
   
@@ -19,6 +21,8 @@ class Solution::Folder < ActiveRecord::Base
   has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
   
   named_scope :alphabetical, :order => 'name ASC'
+
+  attr_protected :account_id
   
   VISIBILITY = [
   [ :anyone,       I18n.t("solutions.visibility.all"),          1 ], 
@@ -99,5 +103,10 @@ class Solution::Folder < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
+
+  private
+    def populate_account
+      self.account = category.account
+    end
   
 end

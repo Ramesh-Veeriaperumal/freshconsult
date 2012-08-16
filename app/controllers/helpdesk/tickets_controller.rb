@@ -22,16 +22,21 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close? 
 
+
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :get_ticket_agents, :quick_assign] 
+  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign]
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
 
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
+
+  before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
+  before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv]
+  before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -169,20 +174,12 @@ class Helpdesk::TicketsController < ApplicationController
 
     @to_emails = @ticket.to_emails
 
+    @draft = get_key(draft_key)
+
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
       
-    @signature = ""
-    @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id => current_user.id} )     
-    @signature = RedCloth.new("#{@agents.signature}").to_html unless (@agents.nil? || @agents.signature.blank?)
-     
-    @ticket_notes = @ticket.conversation
-    
-    @email_config = current_account.primary_email_config
-
-    reply_to_all_emails
-    
     respond_to do |format|
       format.html  
       format.atom
@@ -444,9 +441,8 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     @item.product ||= current_portal.product
-    cc_emails = validate_emails(params[:cc_emails])
-    @item.cc_email = {:cc_emails => cc_emails || [], :fwd_emails => []} 
-
+    cc_emails = fetch_valid_emails(params[:cc_emails])
+    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
     if @item.save
       post_persist
@@ -492,6 +488,16 @@ class Helpdesk::TicketsController < ApplicationController
     else
       render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
     end
+  end
+
+  def save_draft
+    set_key(draft_key, params[:draft_data])
+    render :nothing => true
+  end
+
+  def clear_draft
+    remove_key(draft_key)
+    render :nothing => true
   end
 
   protected
@@ -569,6 +575,24 @@ class Helpdesk::TicketsController < ApplicationController
     false
    else
     true
+  end
+
+  def load_email_params
+    @email_config = current_account.primary_email_config
+    @signature = current_user.agent.signature || ""
+    @signature = RedCloth.new(@signature).to_html unless @signature.blank?    
+    @reply_email = current_account.reply_emails
+  end
+
+  def load_conversation_params
+    @ticket = current_account.tickets.find_by_display_id(params[:id])
+    @conv_id = params[:note_id]
+    @note = @ticket.notes.visible.find_by_id(@conv_id)
+  end
+
+  def load_reply_to_all_emails
+    @ticket_notes = @ticket.conversation
+    reply_to_all_emails
   end
   
   private
@@ -702,6 +726,11 @@ class Helpdesk::TicketsController < ApplicationController
   def set_default_filter
     params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
     # When there is no data hash sent selecting all_tickets instead of new_my_open
+  end
+
+  def draft_key
+    HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
+      :ticket_id => @ticket.id}
   end
 
 end
