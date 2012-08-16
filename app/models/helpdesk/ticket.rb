@@ -10,6 +10,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
+  include Mobile::Actions::Ticket
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
@@ -228,7 +229,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
      indexes description
      indexes sphinx_notes.body, :as => :note
     
-    has account_id, deleted
+     has account_id, deleted
 
     #set_property :delta => :delayed
     set_property :field_weights => {
@@ -597,6 +598,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def friendly_reply_email
     email_config ? email_config.friendly_email : account.default_friendly_email
   end
+
+  def friendly_reply_email_personalize(user_name)
+    email_config ? email_config.friendly_email_personalize(user_name) : account.default_friendly_email_personalize(user_name)
+  end
   
   def reply_email
     email_config ? email_config.reply_email : account.default_email
@@ -886,7 +891,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 
     account.support_emails.each do |support_email|
-      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email.strip)[:email] == parse_email_text(support_email)[:email]}
+      reply_to_all_emails.delete_if {|to_email| ((parse_email_text(support_email)[:email]).casecmp(parse_email_text(to_email.strip)[:email]) == 0)}
     end
 
     reply_to_all_emails
@@ -896,56 +901,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
-  def to_mob_json(only_public_notes=false)
-    notes_option = {
-      :only => [:created_at, :user_id, :id, :private ],
-      :include => {
-        :user => {
-          :only => [:name, :email, :id],
-          :methods => [:avatar_url, :is_agent, :is_customer]
-        },
-        :attachments => {
-          :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
-        }
-      },
-      :methods => [ :body_mobile, :source_name ]
-    }
-
-    json_inlcude = {
-      :responder => {
-        :only => [ :name, :email, :id ],
-        :methods => [ :avatar_url ]
-      },
-      :requester => {
-        :only => [ :name, :email, :id, :is_agent, :is_customer, :twitter_id  ],
-        :methods => [ :avatar_url, :is_customer ]
-      },
-      :attachments => {
-        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
-      },
-      :fb_post => {
-        :include => {
-          :facebook_page => {
-            :only => [ :id, :page_name ]
-          }
-        }
-       }
-    }
-
-    if only_public_notes
-     json_inlcude[:public_notes] = notes_option 
-    else 
-     json_inlcude[:notes] = notes_option
-    end
-
-    options = {
-      :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
-      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails,
-                    :conversation_count, :selected_reply_email, :from_email, :is_twitter, :is_facebook, :fetch_twitter_handle, :is_fb_message ],
-      :include => json_inlcude
-    }
-    to_json(options,false) 
-  end
  
   private
   
@@ -1086,6 +1041,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def assign_email_config
+      assign_schema_less_attributes unless schema_less_ticket
       if schema_less_ticket.changed.include?("product_id")
         if product
           self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      

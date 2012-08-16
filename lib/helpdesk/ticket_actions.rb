@@ -1,6 +1,7 @@
 module Helpdesk::TicketActions
   
   include Helpdesk::Ticketfields::TicketStatus
+  include ExportCsvUtil
   
   def create_the_ticket(need_captcha = nil)
     cc_emails = validate_emails(params[:cc_emails])
@@ -59,53 +60,16 @@ module Helpdesk::TicketActions
     render :partial => "update_multiple" 
   end
 
-  def set_date_filter
-   if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
-    params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
-    params[:end_date] = Time.now.end_of_day.to_s(:db)
-  else
-    params[:start_date] = Date.parse(params[:start_date]).beginning_of_day.to_s(:db)
-    params[:end_date] = Date.parse(params[:end_date]).end_of_day.to_s(:db)
-   end
-  end
-  
   def configure_export
-    flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
-    csv_headers = Helpdesk::TicketModelExtension.csv_headers 
-    #Product entry
-    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false, :type => :field_type} ] if current_account.has_multiple_products?
-    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
-
-    # csv_headers.each do |flexi_field|
-    #   if flexi_field.type == "nested_field"
-    #     nested_flexi_fields = flexi_field.nested_ticket_fields(:include => :flexifield_def_entry)
-    #     #csv_headers = csv_headers + nested_flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
-    #     flexi_field[:levels] = flexi_field.nested_levels
-    #   end
-    # end
-
-    render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
+    render :partial => "configure_export", :locals => {:csv_headers => export_fields }
   end
   
   def export_csv
     params[:wf_per_page] = "100000"
     params[:page] = "1"
-    @items = current_account.tickets.created_at_inside(params[:start_date],params[:end_date]).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    items = current_account.tickets.created_at_inside(params[:start_date],params[:end_date]).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     csv_hash = params[:export_fields]
-    csv_string = FasterCSV.generate do |csv|
-      headers = csv_hash.keys.sort
-      csv << headers
-       @items.each do |record|
-        csv_data = []
-        headers.each do |val|
-          csv_data << record.send(csv_hash[val])
-        end
-        csv << csv_data
-      end
-    end
-    send_data csv_string, 
-            :type => 'text/csv; charset=utf-8; header=present', 
-            :disposition => "attachment; filename=tickets.csv"
+    export_data items, csv_hash
   end
   
   def component
@@ -278,9 +242,12 @@ module Helpdesk::TicketActions
    def validate_emails email_array
      parent = @item
      unless email_array.blank?
-     email_array.delete_if {|x| !valid_email?(x)}
-     email_array = email_array.collect{|e| e.gsub(/\,/,"")}
-     email_array = email_array.uniq
+      if email_array.is_a? String
+        email_array = email_array.split(/,|;/)
+      end
+      email_array.delete_if {|x| !valid_email?(x)}
+      email_array = email_array.collect{|e| e.gsub(/\,/,"")}
+      email_array = email_array.uniq
      end
    end
     

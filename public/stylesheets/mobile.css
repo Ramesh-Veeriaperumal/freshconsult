@@ -27,7 +27,7 @@
 
 .brand h2 { font-size: 1.1em; color: white; text-shadow: rgba(0, 0, 0, 0.5) -1px -1px 0; }
 
-#forgot-form-container { padding-bottom: 73px; }
+#forgot-form-container { padding-bottom: 73px; padding-top: 20px; }
 
 .login-fieldset { border: 1px solid #aaa; background: #fff; -moz-border-radius: 8px; -webkit-border-radius: 8px; -o-border-radius: 8px; -ms-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; -moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 4px inset, rgba(255, 255, 255, 0.3) 0 1px 0; -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 4px inset, rgba(255, 255, 255, 0.3) 0 1px 0; -o-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 4px inset, rgba(255, 255, 255, 0.3) 0 1px 0; box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 4px inset, rgba(255, 255, 255, 0.3) 0 1px 0; }
 

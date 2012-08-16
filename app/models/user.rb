@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   include SavageBeast::UserInit
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
+  include Mobile::Actions::User
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -141,7 +142,7 @@ class User < ActiveRecord::Base
     indexes customer.name, :as => :company
     
     has account_id, deleted
-    
+     
     set_property :delta => :delayed
     set_property :field_weights => {
       :name         => 10,
@@ -332,14 +333,14 @@ class User < ActiveRecord::Base
           :subject => Liquid::Template.parse(subj_template).render ,:reply_email => reply_email)
   end
   
-  def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
+  def deliver_activation_instructions!(portal, force_notification = false) #Need to refactor this.. Almost similar structure with the above one.
     portal ||= account.main_portal
     reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
     if customer?
-      return unless e_notification.requester_notification?
+      return unless e_notification.requester_notification? or force_notification
       template = e_notification.requester_template
       subj_template = e_notification.requester_subject_template
       user_key = 'contact'
@@ -437,35 +438,17 @@ class User < ActiveRecord::Base
     (can_view_all_tickets?) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
-    def to_xml(options = {})
+  def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+      super(:builder => xml, :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+                                                              :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
+                                                              :user_role,:fb_profile_id,:language,:address]) 
   end
   
-  def original_avatar
-    avatar_url(:original)
-  end
-
-  def medium_avatar
-    avatar_url(:medium)
-  end
-
-  def avatar_url(profile_size = :thumb)
-    avatar.content.url(profile_size) unless avatar.nil?
-  end
- 
   def company_name
     customer.name unless customer.nil?
-  end
-
-  def to_mob_json
-    options = { 
-      :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
-      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
-    }
-    to_json options
   end
 
   def recent_tickets(limit = 5)

@@ -11,6 +11,7 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :user
   
   Max_Attachment_Size = 15.megabyte
+  include Mobile::Actions::Note
 
   has_many :attachments,
     :as => :attachable,
@@ -127,11 +128,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def source_name
     SOURCES[source]
-  end
-
-  def body_mobile
-    body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
-      body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))
   end
   
   def to_liquid
