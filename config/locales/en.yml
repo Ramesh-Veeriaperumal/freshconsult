@@ -1949,7 +1949,7 @@ en:
         product: Product
       edit:
         twitter_settings_for_msg: Twitter settings for
-  all_due: All 
+  all_due: Overdue 
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
