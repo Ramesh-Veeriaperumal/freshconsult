@@ -275,4 +275,8 @@ class Helpdesk::NotesController < ApplicationController
     @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
   end
 
+  def after_restore_url
+    :back
+  end
+
 end
