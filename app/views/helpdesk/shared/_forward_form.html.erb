@@ -113,6 +113,12 @@
     <% end %>
   </div>
 
+<% unless conv_id.nil? %>
+  <% javascript_tag do %>
+    insertIntoConversation("", '<%= "#{id}-#{cntid}-body" %>')
+  <% end %>
+<% end %>
+
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
   	jQuery("#HelpdeskFwd").validate();	
