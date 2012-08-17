@@ -25,28 +25,29 @@ if ((typeof Range !== "undefined") && !Range.prototype.createContextualFragment)
 // Triggering afterShow event for the following function
 // show, slideDown & fadeIn add any other function that may require this property
 
-jQuery(function($) {
-    ["show", "slideDown", "fadeIn"]
-        .each(function(name){
-            var _oldShow = $.fn[name];
-            
-            $.fn[name] = function(speed, oldCallback) {                
-                return $(this).each(function() {
-                        var
-                                obj         = $(this),
-                                newCallback = function() {
-                                        if ($.isFunction(oldCallback)) {
-                                                oldCallback.apply(obj);
-                                        }
+// jQuery(function($) {
+//     ["show", "slideDown", "fadeIn"]
+//         .each(function(name){
+//             var _oldShow = $.fn[name];
+//             console.log(_oldShow);
+//             $.fn[name] = function(speed, oldCallback) {                
+//                 console.log(this);
+//                 return $(this).each(function() {
+//                         var
+//                                 obj         = $(this),
+//                                 newCallback = function() {
+//                                         if ($.isFunction(oldCallback)) {
+//                                                 oldCallback.apply(obj);
+//                                         }
 
-                                        obj.trigger('afterShow');
-                                };
-                        // For initiating trigger if speed is not present for plain show
-                        if(!speed) obj.trigger('afterShow');
+//                                         obj.trigger('afterShow');
+//                                 };
+//                         // For initiating trigger if speed is not present for plain show
+//                         if(!speed) obj.trigger('afterShow');
 
-                        // now use the old function to show the element passing the new callback
-                        _oldShow.apply(obj, [speed, newCallback]);
-                });
-            }    
-    });
-});
+//                         // now use the old function to show the element passing the new callback
+//                         _oldShow.apply(obj, [speed, newCallback]);
+//                 });
+//             }    
+//     });
+// });
