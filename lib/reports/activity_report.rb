@@ -13,9 +13,6 @@ module Reports::ActivityReport
       tickets_hash = get_tickets_hash(tickets_count,column_name)
       self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_hash", tickets_hash)
 
-    if(!columns.include?(column_name))
-        get_nested_fields_data(column_name)
-    end
     end
 
     count_of_resolved_tickets
@@ -58,8 +55,6 @@ module Reports::ActivityReport
     case column_name.to_s
       when "source"
         gen_single_stacked_bar_chart(tickets_hash, column_name)
-      when  /flexifields\..*/ 
-          # @pie_charts_hash[column_name] = generateMultiLevelPie(tickets_hash,options) unless columns.include?(column_name)
       else
         @pie_charts_hash[column_name] = gen_pie_chart(tickets_hash,column_name) unless columns.include?(column_name)
     end

@@ -74,7 +74,10 @@ jQuery("document").ready(function(){
     // setTimeout(function() {
     //     Helpdesk.Multifile.load();
     // },500);
-    Helpdesk.Multifile.load();
-    jQuery("input[fileList]").livequery(function(){ Helpdesk.Multifile.addEventHandler(this); });
+    
+    jQuery("input[fileList]").livequery(function(){ 
+        Helpdesk.Multifile.load();
+        Helpdesk.Multifile.addEventHandler(this); 
+    });
 });
 
