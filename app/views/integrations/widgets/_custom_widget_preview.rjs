@@ -1,0 +1,15 @@
+if params[:id] == "ticket"
+  ticket=Helpdesk::Ticket.first
+  liquid_objects = {"ticket" => ticket, "requester" => ticket.requester}
+else
+  user=User.first
+  liquid_objects = {"user" => user}
+end
+
+widget = Integrations::Widget.new(:script=>params["application_script"])
+widget_code = widget_script(nil, widget, liquid_objects)
+page.replace_html 'preview', %{
+        <div class="sidepanel">
+          #{widget_code}
+        </div>
+}

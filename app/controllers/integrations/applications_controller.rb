@@ -66,6 +66,10 @@ class Integrations::ApplicationsController < Admin::AdminController
     redirect_to :controller=> 'applications', :action => 'index'
   end
 
+  def custom_widget_preview
+    render :partial => "/integrations/widgets/custom_widget_preview", :locals => {:params=>params}
+  end
+
   private
     def load_object
      @installing_application = Integrations::Application.available_apps(current_account).find(params[:id])

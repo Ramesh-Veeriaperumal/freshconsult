@@ -66,7 +66,7 @@
   map.resources :sso, :collection => {:login => :get, :facebook => :get}
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
-    integration.resources :applications
+    integration.resources :applications, :member=>{:custom_widget_preview => :post}
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
