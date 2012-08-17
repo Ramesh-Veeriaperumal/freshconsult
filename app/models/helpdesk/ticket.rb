@@ -27,7 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
+  after_create :refresh_display_id, :save_custom_field, :update_content_ids, :pass_thro_biz_rules,  
       :create_initial_activity
 
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
@@ -912,6 +912,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   private
   
+    def update_content_ids
+      unless attachments.empty? or self.header_info.nil? or self.header_info[:content_ids].blank?
+        attachments.each do |attach| 
+          content_id = self.header_info[:content_ids][attach.content_file_name]
+          self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+        end
+        save if self.changed.include?("description_html")
+      end
+    end
+
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')

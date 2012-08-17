@@ -445,6 +445,9 @@ class Helpdesk::TicketsController < ApplicationController
     cc_emails = fetch_valid_emails(params[:cc_emails])
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
+    
+    build_attachments
+
     if @item.save
       post_persist
       notify_cc_people cc_emails unless cc_emails.blank? 
