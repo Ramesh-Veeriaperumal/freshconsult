@@ -142,6 +142,8 @@
 			insetIntoBlankCaret(msg_body_id+"-body", value);
 		}		
 		return;
+	}
+	
   	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
@@ -160,7 +162,6 @@ function validateMCEData(){
 	if(jQuery.browser.opera)
 		jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
 }
-	}
 		
 	function getCannedResponse(ticket_id, ca_resp_id){
   		jQuery("#canned_response_container").addClass("loading")
