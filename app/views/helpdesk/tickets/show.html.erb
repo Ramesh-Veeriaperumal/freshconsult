@@ -60,10 +60,6 @@
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
 	var activeForm = null;
-
-	jQuery("#cnt-reply").bind("afterShow", function(ev){
-		console.log("Testing after show")
-	});
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
 			
