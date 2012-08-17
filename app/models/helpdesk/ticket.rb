@@ -225,8 +225,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
      indexes description
      indexes sphinx_notes.body, :as => :note
     
-    has account_id, deleted, responder_id, group_id, requester_id
+    has account_id, deleted, responder_id, group_id, requester_id, status
     has requester.customer_id, :as => :customer_id
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
     #set_property :delta => :delayed
     set_property :field_weights => {

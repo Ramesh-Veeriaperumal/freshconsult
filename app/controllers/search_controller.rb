@@ -128,7 +128,7 @@ class SearchController < ApplicationController
                                                               :page => params[:page], :per_page => 10            
                                           
         else
-          search_portal_tickets
+          search_portal_for_logged_in_user
         end
         process_results
       rescue Exception => e
@@ -227,14 +227,28 @@ class SearchController < ApplicationController
     with_params
   end 
 
-   def search_portal_tickets
-     with_options = { :account_id => current_account.id, :deleted => false }
+   def search_portal_for_logged_in_user
+     with_options = { :account_id => current_account.id, :deleted => false, :visibility => [SearchUtil::DEFAULT_SEARCH_VALUE, Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]], :company=>SearchUtil::DEFAULT_SEARCH_VALUE}
+     without_options = { :status=>SearchUtil::DEFAULT_SEARCH_VALUE }
+     classes = [Helpdesk::Ticket, Solution::Article, Topic]
+     sphinx_select = nil
+
      if current_user.client_manager?
-       with_options[:customer_id] = current_user.customer_id
+       with_options[:customer_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.customer_id]
      else
-       with_options[:requester_id] = current_user.id
+       with_options[:requester_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.id]
      end
-      @items = Helpdesk::Ticket.search params[:search_key], :with => with_options, :page => params[:page], :per_page => 10
+     unless current_user.customer_id.blank?
+       with_options[:visibility] = [SearchUtil::DEFAULT_SEARCH_VALUE, Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users], Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]]
+       sphinx_select = %{*, IF( IN(customer_ids, #{current_user.customer_id}) OR IN(visibility,#{Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]},#{Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]}), #{SearchUtil::DEFAULT_SEARCH_VALUE},0) AS company}
+     end
+     #
+     @items = ThinkingSphinx.search filter_key(params[:search_key]), 
+                                      :with => with_options, 
+                                      :without => without_options,
+                                      :classes=>classes,
+                                      :sphinx_select=>sphinx_select,
+                                      :page => params[:page], :per_page => 10
    end
 
   def filter_key(query)
