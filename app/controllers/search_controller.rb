@@ -111,7 +111,9 @@ class SearchController < ApplicationController
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
         s_options[:category_id] = current_portal.forum_category_id
-        @items.concat(Topic.search params[:search_key], :with => s_options, :per_page => 10)
+        @items.concat(Topic.search params[:search_key],
+                        :sphinx_select => content_select(f_classes),
+                        :with => s_options, :per_page => 10)
       end
 
     end
