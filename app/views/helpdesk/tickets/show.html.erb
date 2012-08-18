@@ -60,10 +60,6 @@
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
 	var activeForm = null;
-
-	jQuery("#cnt-reply").bind("afterShow", function(ev){
-		console.log("Testing after show")
-	});
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
 			
@@ -142,6 +138,8 @@
 			insetIntoBlankCaret(msg_body_id+"-body", value);
 		}		
 		return;
+	}
+	
   	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
@@ -160,7 +158,6 @@ function validateMCEData(){
 	if(jQuery.browser.opera)
 		jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
 }
-	}
 		
 	function getCannedResponse(ticket_id, ca_resp_id){
   		jQuery("#canned_response_container").addClass("loading")
