@@ -144,7 +144,7 @@
   <% javascript_tag do %>
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){
-        <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
+        <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous %>
       })
       .validate();  
 
