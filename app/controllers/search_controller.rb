@@ -158,7 +158,6 @@ class SearchController < ApplicationController
     end
     
     def page_limit
-      return 20 if current_user.can_view_all_tickets?
       return 10
     end
 
