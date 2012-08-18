@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120806041941) do
+ActiveRecord::Schema.define(:version => 20120818070125) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -571,9 +571,8 @@ ActiveRecord::Schema.define(:version => 20120806041941) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-  
+
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
- 
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
@@ -742,8 +741,8 @@ ActiveRecord::Schema.define(:version => 20120806041941) do
   add_index "helpdesk_schema_less_tickets", ["int_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_02"
   add_index "helpdesk_schema_less_tickets", ["long_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_01"
   add_index "helpdesk_schema_less_tickets", ["long_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_02"
-  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"account_id"=>nil, "string_tc01"=>"10"}
-  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"string_tc01"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"string_tc02"=>"10", "account_id"=>nil}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
   create_table "helpdesk_sla_details", :force => true do |t|
@@ -786,6 +785,7 @@ ActiveRecord::Schema.define(:version => 20120806041941) do
   end
 
   add_index "helpdesk_tag_uses", ["tag_id"], :name => "index_helpdesk_tag_uses_on_tag_id"
+  add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_id"=>nil, "taggable_type"=>"10"}
 
   create_table "helpdesk_tags", :force => true do |t|
     t.string  "name"
@@ -1148,6 +1148,7 @@ ActiveRecord::Schema.define(:version => 20120806041941) do
     t.integer  "visibility",  :limit => 8
     t.integer  "position"
     t.boolean  "is_default",               :default => false
+    t.integer  "account_id",  :limit => 8
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
@@ -1293,7 +1294,7 @@ ActiveRecord::Schema.define(:version => 20120806041941) do
   add_index "survey_results", ["id"], :name => "survey_results_id"
 
   create_table "surveys", :force => true do |t|
-    t.integer  "account_id", :limit => 8
+    t.integer  "account_id",   :limit => 8
     t.text     "link_text"
     t.integer  "send_while"
     t.datetime "created_at"
