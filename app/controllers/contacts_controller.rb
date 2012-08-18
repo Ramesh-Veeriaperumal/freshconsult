@@ -1,5 +1,7 @@
 class ContactsController < ApplicationController
-   
+
+    before_filter :requires_all_tickets_access 
+
     before_filter :except => [:make_agent] do |c| 
       c.requires_permission :manage_tickets
     end
@@ -166,6 +168,11 @@ class ContactsController < ApplicationController
       render :show, :layout => "widgets/contacts"
     end
   end
+
+  def requires_all_tickets_access              
+        access_denied unless current_user.can_view_all_tickets?
+  end
+  
 protected
 
   def initialize_new_user

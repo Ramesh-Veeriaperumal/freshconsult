@@ -213,14 +213,17 @@ jQuery(document).ready(function() {
 		setCookie('wf_order_type','desc');
 	});
 	jQuery('#leftViewMenu a').click(function(ev) {
-		jQuery('#FilterOptions').sisyphus().manuallyReleaseData();
+		filter_opts_sisyphus.manuallyReleaseData();
 	});
 });
 
 if (getCookie('ticket_list_updated') == "true") {
-	eval(window.localStorage['updated_ticket_list']);
-	if (window.localStorage['is_unsaved_view']) {
-		jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
+	if (supports_html5_storage()) {
+		
+		eval(window.localStorage['updated_ticket_list']);
+		if (window.localStorage['is_unsaved_view']) {
+			jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
+		}
+		setCookie('ticket_list_updated',false);	
 	}
-	setCookie('ticket_list_updated',false);
 }

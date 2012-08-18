@@ -3,7 +3,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   
-  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   def perform
     from_email = parse_from_email
@@ -175,7 +175,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket = check_for_auto_responders(ticket)      
+      check_for_auto_responders(ticket)
+      check_support_emails_from(account, ticket, user)
 
       begin
         if (user.agent? && !user.deleted?)
@@ -214,10 +215,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) ))
-        ticket.spam = true
+      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
+        ticket.skip_notification = true
       end
-      ticket  
+    end
+
+    def check_support_emails_from(account, ticket, user)
+      ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
     end
 
     def add_email_to_ticket(ticket, from_email)
@@ -227,6 +231,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         body = show_quoted_text(params[:text],ticket.reply_email)
         body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
         from_fwd_recipients = from_fwd_emails?(ticket, from_email)
+        parsed_cc_emails = parse_cc_email
+        parsed_cc_emails.delete(ticket.account.kbase_email)
         note = ticket.notes.build(
           :private => (from_fwd_recipients and user.customer?) ? true : false ,
           :incoming => true,
@@ -234,11 +240,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :body_html => body_html ,
           :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
-          :account_id => ticket.account_id
+          :account_id => ticket.account_id,
+          :from_email => from_email[:email],
+          :to_emails => parse_to_emails,
+          :cc_emails => parsed_cc_emails
         )       
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
         
         begin
+          ticket.cc_email = ticket_cc_emails_hash(ticket)
           if (user.agent? && !user.deleted?)
             ticket.responder ||= user
             process_email_commands(ticket, user, ticket.email_config, note)
@@ -365,6 +375,15 @@ end
       else
         false
       end
+    end
+
+    def ticket_cc_emails_hash(ticket)
+      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : ticket.cc_email_hash
+      cc_emails_val =  parse_cc_email
+      cc_emails_val.delete(ticket.account.kbase_email)
+      cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
+      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails]
+      cc_email_hash_value
     end
   
 end

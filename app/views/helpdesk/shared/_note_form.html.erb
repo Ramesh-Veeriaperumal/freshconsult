@@ -1,10 +1,11 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
+  <div class="reply_box">
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
         <div class="request_form_options">
-          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
+          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.id})", :class => "slim-button insert-canned-response", "data-tiny-mce-id" => "#{id}-#{cntid}-body") %>
         </div>
         <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
         <label class="caption"><%= t("message")%>:</label>
@@ -15,14 +16,18 @@
           <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 		      <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
         </div>
-		<li class="inline-field field" id="notify-email-form-container" style="display:block">
-			
-            <div class="fields">
-            	<span class="seperator"></span>
-            	 <label>
+        <li class="inline-field field">
+        <div class="attachment-options fields" id="attachment-options-note">
+          <% unless local_assigns[:no_attachments] %>
+            <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% end %>
+        </div>
+      </li>
+		<li class="inline-field field agents-field" id="notify-email-form-container" style="display:block">
+            	 <label class="notify">
                		 <%= t("ticket.note_form.notify_agents") %>:
            		 </label>
-
+            <div class="fields">
                 <% content_for :onload_script do -%>
 				        function agent_lookup(searchString, callback) { 
                     new Ajax.Request('<%= agent_autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
@@ -38,20 +43,14 @@
                   var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {choices: 10});
                   var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
 				
-				          new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
+	               new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 
                 <%- end %>
-                <input type="text" id="notify_emails" name="notify_emails" />
+                <input type="text" id="notify_emails" name="helpdesk_note[to_emails]" />
             </div>
 		</li>
 	    </li>	
-			<li class="inline-field field">
-				<div class="attachment-options fields" id="attachment-options-note">
-					<% unless local_assigns[:no_attachments] %>
-						<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-			  	<% end %>
-				</div>
-			</li>
+			
     </ul> 
     <div class="button-container">
     	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
@@ -59,6 +58,7 @@
 			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').slideUp()", :class => "uiButton" ) %>   
     </div>
   <% end %>
+</div>
 </div> 
 <% content_for :pagefixed do %>
   <%= javascript_include_tag "helpdesk/page_switcher" %>

@@ -143,7 +143,7 @@ module Reports::ChartGenerator
           {
             :type => 'pie',
             :data => browser_data,
-            :innerSize => '10%'
+            :innerSize => '30%'
           }
         ],
         :tooltip => {

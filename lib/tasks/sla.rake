@@ -7,7 +7,9 @@ namespace :sla do
       accounts = Account.active_accounts
       accounts.each do |account|     
       account.make_current
-     overdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states, :readonly => false, 
+     overdue_tickets = account.tickets.visible.find(:all, :joins => "inner join helpdesk_ticket_states on helpdesk_tickets.id = 
+              helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = 
+              helpdesk_ticket_states.account_id", :readonly => false, 
                         :conditions =>['due_by <=? AND isescalated=? AND status IN (?)', Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
      overdue_tickets.each do |ticket|      
       sla_policy_id = nil

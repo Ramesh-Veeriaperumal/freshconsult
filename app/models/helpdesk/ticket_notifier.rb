@@ -54,7 +54,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                   :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type])
     from          params[:ticket].friendly_reply_email
-    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}"
+    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     params[:attachments].each do |a|
       attachment  :content_type => a.content_content_type,
@@ -64,15 +64,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
  
-  def reply(ticket, note , reply_email, options={})    
+  def reply(ticket, note , options={})
+    options = {} unless options.is_a?(Hash) 
+    
     subject       formatted_subject(ticket)
-    recipients    ticket.requester.email
-    cc            ticket.cc_email_hash[:cc_emails] if !options[:include_cc].blank? and !ticket.cc_email.nil?
-    bcc           options[:bcc_emails]
-    from          reply_email
+    recipients    note.to_emails
+    cc            note.cc_emails unless options[:include_cc].blank?
+    bcc           note.bcc_emails
+    from          note.from_email
     body          :ticket => ticket, :body => note.body_html,
                   :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey])
-    headers       "Reply-to" => "#{reply_email}"
+    headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/alternative"
 
@@ -85,14 +87,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
 
-  def forward(ticket, note , reply_email, options={})
+  def forward(ticket, note, options={})
     subject       fwd_formatted_subject(ticket)
-    recipients    options[:to_emails]
-    cc            options[:fwd_cc_emails]
-    bcc           options[:bcc_emails]
-    from          reply_email
+    recipients    note.to_emails
+    cc            note.cc_emails
+    bcc           note.bcc_emails
+    from          note.from_email
     body          :ticket => ticket, :body => note.body_html
-    headers       "Reply-to" => "#{reply_email}"
+    headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/alternative"
 
@@ -110,7 +112,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     recipients    options[:cc_emails] unless options[:cc_emails].blank?
     from          ticket.friendly_reply_email
     body          :ticket => ticket, :body => ticket.body_html
-    headers       "Reply-to" => "#{ticket.friendly_reply_email}"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/alternative"
 
@@ -128,7 +130,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     recipients    options[:notify_emails]     
     body          :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host)          
     from          reply_email
-    headers       "Reply-to" => "#{reply_email}"
+    headers       "Reply-to" => "#{reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "text/html"
   end
@@ -138,7 +140,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
     body          content
-    headers       "Reply-to" => "#{ticket.friendly_reply_email}"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-replied", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "text/html"
   end
@@ -148,7 +150,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     recipients    receips
     from          ticket.friendly_reply_email
     body          content
-    headers       "Reply-to" => "#{ticket.friendly_reply_email}"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "text/html"
   end

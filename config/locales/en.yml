@@ -14,6 +14,7 @@ en:
   status: "Status"
   preview: "Preview"
   proceed_now: "\n\nProceed now?"
+  forward: "Forward"
   apply: "Apply"
   meta:
    language_name: 'English'
@@ -490,6 +491,8 @@ en:
       anyone: Anyone
       logged_users: Logged In Users
       agents: Agents      
+      all: All
+      select_company: Select Companies
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   import_user_org: Users &amp; Organizations
@@ -913,6 +916,8 @@ en:
       anyone: Anyone
       logged_in_users: Logged In Users
       agents: Agents
+      all: All
+      select_company: Select Companies
     types:
       permanent: Permanent
       workaround: Workaround
@@ -1194,6 +1199,8 @@ en:
     folders:
       new:
         new_folder: New Folder
+      folder_form:
+        visible_to: Visible to
     info9: Public (Will be published in self service)
     edit: Edit Solution
     add: Add Solution
@@ -1497,6 +1504,7 @@ en:
     flag_spam: Flag Spam
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
+    export: Export
     delete_btn: Delete
     status: Status
     source: Source
@@ -1535,7 +1543,8 @@ en:
       placeholder: Search %{name}
     form:
       type: Forum Type
-      visibility: Forum visibility    
+      visibility: Forum visibility 
+      visible_to: Visible to   
   next_charge_amount: "%{type} cost:"
   company: 
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
@@ -1861,15 +1870,27 @@ en:
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
   export_data:
+    info: Export ticket information available in the current view to a CSV file.
+    filter_label_customer: "Filter tickets created in"
+    filter_label_agent: "Filter tickets by:"
+    field_select_title: Select fields to export
+    export_to_csv: Export to CSV
     thirt_days: "Last 30 Days"
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
     custom_filter: "Set date"
     no_fields_selected: "Please check atleast one of the below fields to proceed."
+    created_at: Created time
+    resolved_at: Resolved time
+    closed_at: Closed time
+    from: From
+    to: To
   date:
     ago: Ago
     from: From Now
     now: Just Now
+    second: Second
+    seconds: Seconds
     minute: Minute
     minutes: Minutes
     hour: Hour
@@ -1928,7 +1949,7 @@ en:
         product: Product
       edit:
         twitter_settings_for_msg: Twitter settings for
-  all_due: All 
+  all_due: Overdue 
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
@@ -2323,3 +2344,18 @@ en:
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
   forwarded_email: "Forwarded email"
+  forwarded_to: "Forwarded to"
+  replied_to: "Replied to"
+  notified_to: "Notified to"
+  to: "to"
+  cc_emails_key: ", cc : %{cc_emails}"
+  bcc_emails_key: ", bcc : %{bcc_emails}"
+  conv_contacts_info: "%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
+  cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
+  bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
+  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  saved_draft: "Saved"
+  saving_draft: "Saving..."
+  draft: "Draft:"
+  last_draft: "Your last draft"
+  clear_draft_text: "Clear stored draft?"

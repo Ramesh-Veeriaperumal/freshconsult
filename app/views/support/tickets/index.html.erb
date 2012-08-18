@@ -19,7 +19,6 @@
 <div class="ticket-list-group tickets-container">   
   <!-- <h3 class="title"><%= @page_title %></h3> -->
        
-
   <%= link_to("Export", { :action => "configure_export", :a=>params[:action], :i=>params[:id] }, :class => "ssp_export dialog2", :title => "Export to CSV", "data-width" => "650" ) unless @tickets.blank?%>
 
   <div id="ticket-sub-toolbar">

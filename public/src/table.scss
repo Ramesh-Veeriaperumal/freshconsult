@@ -208,13 +208,13 @@ table .headerSortUp.purple, table .headerSortDown.purple {
   padding: 1px 3px 2px;
   font-size: 9.75px;
   font-weight: bold;
-  color: #ffffff;
+  color: #fff;
   text-transform: uppercase;
   white-space: nowrap;
   background-color: #bfbfbf;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .label.important {
   background-color: #c43c35;
@@ -226,5 +226,5 @@ table .headerSortUp.purple, table .headerSortDown.purple {
   background-color: #46a546;
 }
 .label.notice {
-  background-color: #62cffc;
+  background-color: #4D769F;
 }

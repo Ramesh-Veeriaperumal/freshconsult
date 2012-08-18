@@ -12,9 +12,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ParserUtil
   include Mobile::Actions::Ticket
 
-  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product"]
+  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
   
@@ -38,8 +36,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
   
-  delegate :product_id, :product, :to_emails, :to => :schema_less_ticket, :allow_nil => true
-
   belongs_to :email_config
   belongs_to :group
  
@@ -229,7 +225,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
      indexes description
      indexes sphinx_notes.body, :as => :note
     
-     has account_id, deleted
+    has account_id, deleted, responder_id, group_id, requester_id, status
+    has requester.customer_id, :as => :customer_id
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
     #set_property :delta => :delayed
     set_property :field_weights => {
@@ -445,7 +444,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
-    portal =  product.portal if product
+    portal =  self.product.portal if self.product
     unless email.blank?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
@@ -478,7 +477,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    return if spam? || deleted?
+    return if spam? || deleted? || self.skip_notification?
     notify_by_email(EmailNotification::NEW_TICKET)
     notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id and !group_id_changed?
     notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id and !responder_id_changed?
@@ -729,21 +728,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   #Liquid ends here
   
-  def respond_to?(attribute)
-    SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=")) || super(attribute)
+  def schema_less_attr_respond_to?(attribute)
+    build_schema_less_ticket unless schema_less_ticket
+    schema_less_ticket.respond_to? attribute
   end
 
-  def update_schema_less_attributes(attribute, args)
+  def respond_to?(attribute)
+    super(attribute) || schema_less_attr_respond_to?(attribute)
+  end
 
-    if (attribute.to_s.include? '=') && SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("="))      
-      logger.debug "method_missing :: args is #{args} and attribute :: #{attribute}"
-      build_schema_less_ticket unless schema_less_ticket
-      args = args.first if args && args.is_a?(Array) 
-      schema_less_ticket.send(attribute,args)
-      return true  
-    end
-
-    return false
+  def schema_less_attributes(attribute, args)
+    logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    args = args.first if args && args.is_a?(Array) 
+    (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
   def method_missing(method, *args, &block)
@@ -752,7 +749,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
 
-      return if update_schema_less_attributes(method, args)
+      return schema_less_attributes(method, args) if schema_less_attr_respond_to?(method)
 
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!
@@ -822,16 +819,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-    twt_handles = product ? product.twitter_handles : account.twitter_handles
+    twt_handles = self.product ? self.product.twitter_handles : account.twitter_handles
     twt_handles.first.id unless twt_handles.blank?
   end
   
   def portal_host
-    (product && !product.portal_url.blank?) ? product.portal_url : account.host
+    (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host
   end
   
   def portal_name
-    (product && product.portal_name) ? product.portal_name : account.portal_name
+    (self.product && self.product.portal_name) ? self.product.portal_name : account.portal_name
   end
   
   def update_activity
@@ -846,7 +843,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def product_name
-      product ? product.name : "No Product"
+      self.product ? self.product.name : "No Product"
    end
    
    def responder_name
@@ -886,7 +883,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
-    to_emails_array = (to_emails || []).clone
+    to_emails_array = (self.to_emails || []).clone
 
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 
@@ -902,6 +899,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
  
+  def can_access?(user)
+    if user.agent.blank?
+      return true if self.requester_id==user.id
+      if user.client_manager?
+        return self.requester.customer_id == user.customer_id
+      end
+    else
+      return true if user.agent.all_ticket_permission || self.responder_id==user.id
+      if user.agent.group_ticket_permission          
+        user.agent_groups.each do |ag|                   
+          return true if self.group_id == ag.group_id
+        end                           
+      end
+    end
+    return false
+  end
+
   private
   
     def create_source_activity
@@ -910,12 +924,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   
     def create_product_activity
-      unless product
+      unless self.product
         create_activity(User.current, 'activities.tickets.product_change_none.long', {}, 
                                    'activities.tickets.product_change_none.short')
       else
         create_activity(User.current, 'activities.tickets.product_change.long',
-          {'product_name' => product.name}, 'activities.tickets.product_change.short')
+          {'product_name' => self.product.name}, 'activities.tickets.product_change.short')
       end
     
     end
@@ -1035,16 +1049,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def assign_email_config_and_product
       if email_config
         self.product = email_config.product
-      elsif product
-        self.email_config = product.primary_email_config
+      elsif self.product
+        self.email_config = self.product.primary_email_config
       end
     end
 
     def assign_email_config
       assign_schema_less_attributes unless schema_less_ticket
       if schema_less_ticket.changed.include?("product_id")
-        if product
-          self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      
+        if self.product
+          self.email_config = self.product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != self.product.id))      
         else
           self.email_config = nil
         end

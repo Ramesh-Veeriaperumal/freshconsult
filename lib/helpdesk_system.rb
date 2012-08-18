@@ -6,12 +6,16 @@ module HelpdeskSystem
   def requires_permission(p)
     unless permission?(p)
       store_location
-      flash[:notice] = current_user ? I18n.t(:'flash.general.access_denied') : 
-                                      I18n.t(:'flash.general.need_login')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      access_denied
     end
   end
-  
+
+ def access_denied
+  flash[:notice] = current_user ? I18n.t(:'flash.general.access_denied') : 
+                                      I18n.t(:'flash.general.need_login')
+  redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+ end 
+
   protected
   
     def permission?(p)
