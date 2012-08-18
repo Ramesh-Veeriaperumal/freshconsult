@@ -27,6 +27,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
+
+  has_many :attachments,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :dependent => :destroy
+  
   after_create :refresh_display_id, :save_custom_field, :update_content_ids, :pass_thro_biz_rules,  
       :create_initial_activity
 
@@ -90,11 +96,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
     
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
-  
   has_one :tweet,
     :as => :tweetable,
     :class_name => 'Social::Tweet',
