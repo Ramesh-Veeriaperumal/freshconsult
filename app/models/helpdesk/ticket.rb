@@ -923,7 +923,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
       self.description_html = description_html
 
-      Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, acocunt_id]) \
+      Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, account_id]) \
               if self.changed.include?("description_html")
     end
 
