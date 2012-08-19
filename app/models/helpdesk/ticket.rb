@@ -921,8 +921,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         content_id = header[:content_ids][attach.content_file_name]
         self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
       end
-      self.description_html = description_html
-
+      
       Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, account_id]) \
               if self.changed.include?("description_html")
     end
