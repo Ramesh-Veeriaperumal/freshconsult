@@ -914,13 +914,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   private
   
     def update_content_ids
-      unless attachments.empty? or self.header_info.nil? or self.header_info[:content_ids].blank?
-        attachments.each do |attach| 
-          content_id = self.header_info[:content_ids][attach.content_file_name]
-          self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
-        end
-        save if self.changed.include?("description_html")
+      header = self.header_info
+      return if attachments.empty? or header.nil? or header[:content_ids].blank?
+      
+      attachments.each do |attach| 
+        content_id = header[:content_ids][attach.content_file_name]
+        self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
       end
+      self.description_html = description_html
+
+      Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, acocunt_id]) \
+              if self.changed.include?("description_html")
     end
 
     def create_source_activity
