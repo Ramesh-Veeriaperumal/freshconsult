@@ -921,9 +921,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
         content_id = header[:content_ids][attach.content_file_name]
         self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
       end
-      
+
+      # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
       Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, account_id]) \
-              if self.changed.include?("description_html")
+          if description_html_changed?
     end
 
     def create_source_activity
