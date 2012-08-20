@@ -29,7 +29,7 @@
 	        <%= link_to_remote( t("fwd_to"), { :loading => "$('loading_#{notedetails}').show();",
 	        								:loaded  => "$('loading_#{notedetails}').hide();", 	
 	        								:update  => "fwd_#{notedetails}",
-	        								:complete => "jQuery(\"div[id$='#{notedetails}']\").hide();jQuery('#fwd_#{notedetails}').show();",
+	        								:complete => "jQuery(\"div[id$='#{notedetails}']\").hide();jQuery('#fwd_#{notedetails}').show();invokeRedactor('cnt-fwd-#{note.id}-body');",
 	                                        :url => { :controller => "helpdesk/tickets", :id => note.notable.display_id, :action => :forward_conv , :note_id => note.id }, 
 	                                        :method => :GET },
 	                                      { :class => "slim-button" }) unless note.private %>

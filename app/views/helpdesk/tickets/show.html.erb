@@ -8,6 +8,7 @@
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
 
+<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 
 <div class="request-well">			
@@ -64,7 +65,7 @@
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 			
-			jQuery("#"+formid+"-body").redactor({autoformat: false,focus: true,path:'/javascripts/redactor',toolbar: 'default'});
+			invokeRedactor(formid+"-body");
 
 			activeForm = jQuery('#'+formid).slideDown();
 			switch(formid){
@@ -95,6 +96,9 @@
         .show();        
     }
          
+    function invokeRedactor(element_id){
+         jQuery('#'+element_id).redactor({ focus: true, autoresize:false, buttons:['formatting','|','bold','italic','deleted','|','unorderedlist', 'orderedlist', 'outdent', 'indent', '|','image', 'file', 'table', 'link', '|','fontcolor', '|','alignleft', 'aligncenter', 'alignright', 'justify', '|','horizontalrule']});
+     }
 
 		function insertIntoConversation(value){
 			note_area  = jQuery('#cnt-note');

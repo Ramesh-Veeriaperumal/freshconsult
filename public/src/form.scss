@@ -567,6 +567,9 @@ li.nested_field{
 		margin-left:210px;
 		clear:right;
 		position:relative;
+		textarea.required{
+		height:200px;
+		}
 		label{
 			font-size:1.2em;
 		}

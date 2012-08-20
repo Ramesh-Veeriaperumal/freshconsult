@@ -253,13 +253,13 @@ module Helpdesk::TicketsHelper
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
-    default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature
+    default_reply = "<p id='caret_pos_holder'>&nbsp;</p><br/><br/>"+signature #modified for the new redactor editor stylesheet
     if(!forward)
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
         reply_email_template = "&nbsp;" if (reply_email_template.empty?) #fix for chrome issue no data shown when "" is returned as value
-        default_reply ="<span id='caret_pos_holder'>"+reply_email_template+"</span><br/></br>"+signature
+        default_reply ="<p id='caret_pos_holder'>"+reply_email_template+"</p><br/></br>"+signature #modified for the new redactor editor stylesheet
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
