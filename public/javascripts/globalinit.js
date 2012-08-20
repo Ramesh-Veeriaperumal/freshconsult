@@ -237,6 +237,7 @@ var $J = jQuery.noConflict();
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);
       $("form.ui-form").validate(validateOptions);
+      $("form[rel=validate]").validate(validateOptions);
 
     $('.single_click_link').live('click',function(ev) {
       if (! $(ev.srcElement).is('a')) {
