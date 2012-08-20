@@ -7,6 +7,7 @@ module Reports::ActivityReport
     unless params[:reports].nil?
       columns_in_use = columns_in_use.concat(params[:reports])
     end
+    @nested_columns={}
 
     columns_in_use.each do |column_name|
       tickets_count = group_tkts_by_columns({:column_name => column_name })
@@ -40,25 +41,131 @@ module Reports::ActivityReport
     tickets_count.each do |ticket|
       tot_count += ticket.count.to_i
       if column_name.to_s.starts_with?('flexifields.')
+       
         tickets_hash.store(ticket.send(column_name.gsub('flexifields.','')),{:count => ticket.count})
       else
         tickets_hash.store(ticket.send(column_name),{:count => ticket.count})
       end
-
     end
     tickets_hash.store(RESOLVED,{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
     @current_month_tot_tickets = tot_count
     tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
+
     
     case column_name.to_s
       when "source"
         gen_single_stacked_bar_chart(tickets_hash, column_name)
-      else
+      when /flexifields\..*/ 
+        current_account.ticket_fields.nested_and_dropdown_fields.each do | ticket_field|#added for the dropdown fields
+          if(ticket_field.flexifield_def_entry.flexifield_name == column_name.gsub("flexifields\.",""))
+            if(ticket_field.field_type == 'nested_field')
+              get_nested_field_reports(column_name)
+            else
+               @pie_charts_hash[column_name] = gen_pie_chart(tickets_hash,column_name)
+            end
+          end
+        end
+      else 
         @pie_charts_hash[column_name] = gen_pie_chart(tickets_hash,column_name) unless columns.include?(column_name)
     end
     
     tickets_hash
   end
+
+
+def get_nested_field_reports(column_name)
+  current_account.ticket_fields.nested_fields.each do | top_level_fields|
+    next if (top_level_fields.flexifield_def_entry.flexifield_name != column_name.gsub("flexifields\.","")) #continue if !=
+      column_names = []
+      nested_cols_names=[]
+      column_names.push(column_name.gsub("flexifields.",""))
+      top_level_fields.nested_ticket_fields.each do |nested_field|
+        column_name = "#{nested_field.flexifield_def_entry.flexifield_name}"
+        column_names.push(column_name)
+        nested_cols_names.push(nested_field.label)
+      end
+
+      column_width = 60 # Default width of the category column in the chart. Calculated based on length of category-string
+
+      nested_data=get_nested_data(column_names * ",",column_names[0])
+
+      data_arr = [] # data passed to the chart
+      xaxis_arr =[] # categories passed to the chart
+      top_level_data =[]  
+      second_vs_first ={}
+      count = 0
+      tot_count = get_total_data_count(nested_data)
+
+        nested_data.each do |data|
+            next if data.nil?
+              value = data.send(column_names[0])
+              unless top_level_data.include?(value)
+                top_level_data.push(value)
+
+                count = get_data_count(value,column_names[0],nested_data,nil,nil)
+                percentage = count.to_i/tot_count.to_i * 100
+
+                data_arr.push({:y=>0}) #to add the space b/w two categories in the chart
+                xaxis_arr.push('')#to add the empty category 
+
+                xaxis_arr.push(value)
+                column_width = (value.length * 8) if((value.length * 8) > 60 && column_width< (value.length * 8))
+                data_arr.push({:name=>value,:y=>sprintf( "%0.02f",percentage).to_f,:count=>count,:color=>'#AA4643',:borderColor=>'black',:borderWidth=>1})
+              end
+
+                #Adding the second level data
+                value = data.send(column_names[1])
+                count = get_data_count(value,column_names[1],nested_data,column_names[0],data.send(column_names[0]))
+                percentage = count.to_i/tot_count.to_i * 100
+                if((second_vs_first[value] != data.send(column_names[0])))
+                    second_vs_first[value] = data.send(column_names[0])
+                    xaxis_arr.push(value)
+                    column_width = (value.length * 8) if((value.length * 8) > 60 && column_width< (value.length * 8))
+                    data_arr.push({:name=>value,:y=>sprintf( "%0.02f",percentage).to_f,:count=>count,:color=>'#89A54E',:borderColor=>'black',:borderWidth=>1})
+                end
+
+                #Adding third level data. No check as the queried data is grouped by all 3 cols so data is unique.
+                value = data.send(column_names[2])
+                  count = data.count
+                  percentage = count.to_i/tot_count.to_i * 100
+                  xaxis_arr.push(value)  
+                  column_width = (value.length * 8) if((value.length * 8) > 60 && column_width< (value.length * 8))
+                  data_arr.push({:name=>value,:y=>sprintf( "%0.02f",percentage).to_f,:count=>count,:color=>'#4572A7',:borderColor=>'black',:borderWidth=>1})
+
+        end
+      chart_name ="#{top_level_fields.flexifield_def_entry.flexifield_name}"
+
+      column_width = 100 if(column_width>100)
+
+      @nested_columns["#{top_level_fields.flexifield_def_entry.flexifield_name}"] = nested_cols_names#this is used to display the nested column names in view.
+      @bar_charts_hash[chart_name] =gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
+    
+  end
+
+end
+
+
+def get_data_count(value,column,nested_data,group_column,group_value)
+  count = 0
+  nested_data.each do |data|
+    next if data.nil?
+      if group_column.nil? 
+        count = count+data.count.to_i if(value == data.send(column))
+      else
+        count = count +data.count.to_i if((value == data.send(column)) && group_value == data.send(group_column))
+      end
+  end
+  return count
+end
+
+#Method to calculate the total count 
+def get_total_data_count(nested_data)
+  total_count =0
+    nested_data.each do |data|
+      total_count = total_count + data.count.to_i
+    end
+  return total_count
+end
 
   def calculate_percentage_for_columns(tickets_hash,tkts_count)
     new_val_hash = {}

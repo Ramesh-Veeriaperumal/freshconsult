@@ -23,6 +23,25 @@ class Topic < ActiveRecord::Base
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
   named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
+
+  named_scope :visible, lambda {|user| visiblity_options(user) }
+
+  def self.visiblity_options(user)
+    if user
+       if user.has_manage_forums?
+          {}
+       else
+          { :include => [:forum =>:customer_forums],
+            :conditions =>["forums.forum_visibility in(?) OR (forums.forum_visibility = ? and customer_forums.customer_id =?)" ,
+                           Forum.visibility_array(user) , Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] ,user.customer_id]
+          }
+       end
+    else
+      { 
+        :include =>[:forum],:conditions => ["forums.forum_visibility = ?" , Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]] 
+      } 
+    end
+  end
   
   #Sphinx configuration starts
   define_index do

@@ -33,7 +33,7 @@ class Support::CompanyTicketsController < SupportController
         if params[:partial].blank?
           render :index
         else
-          render :partial => "/support/shared/ticket_list_view"
+          render :partial => "/support/shared/ticket_list"
         end
       }
       format.mobile {
@@ -56,7 +56,11 @@ class Support::CompanyTicketsController < SupportController
     @requested_by = params[:id]
     @page_title = "Tickets by #{current_account.users.find_by_id(@requested_by).name}"
     build_tickets
-    render :index
+    if params[:partial].blank?
+      render :index
+    else
+      render :partial => "/support/shared/ticket_list"
+    end
   end
   
   def configure_export

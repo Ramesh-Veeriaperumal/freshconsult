@@ -47,6 +47,12 @@ textarea[readonly] {
   background-color: #f5f5f5;
   border-color: #ddd;
   cursor: not-allowed;
+
+  &:hover {
+	  background-color: #f5f5f5;
+	  border-color: #ddd;
+	  @include box-shadow(none);
+	}
 }     
 
 textarea {
@@ -314,8 +320,9 @@ a.addchoice:hover{
 	}
 
 	label.overlabel{
-		color:#999999;
-		margin-top:0;
+		color: #999;
+		margin-left: 7px;
+		font-weight: 300;
 		font-size:14px;	
 	}	 
 	li.checkbox{
@@ -752,7 +759,17 @@ input.time{
 				background-color:#f4f4f4;
 			}	
 		}
-	}
+		.special_row{
+			td{
+				padding:0;
+			}
+			div{
+				background: #fff;
+				height:20px;
+				margin:0 -1px;
+			}
+		} 
+	}	
 	.olist{
 		list-style:decimal;
 	}
@@ -850,6 +867,14 @@ span.sort_handle{
 	@include clearfix;
 	text-align:right;
 	padding:1em 0em 1em 0; 
+	margin:-2px;
+}
+
+.email-notif-button-container{
+	@include clearfix;
+	text-align:right;
+	padding:20px 0px 15px 0px; 
+	background:#ffffff;	
 	margin:-2px;
 }
 
@@ -994,6 +1019,10 @@ span.sort_handle{
       margin:0 0 6px 0;
       font-size:13px;
       padding:10px 12px;
+
+      &.error {
+      	color:#993333;
+      }
    }
    .ui-form{
       margin:0 0;
@@ -1447,7 +1476,7 @@ table.summary-report{
             padding-top:4px;
             position:relative;
             float:right;
-            width: 640px;
+            width: 85%;
             .info-data{
                margin-top:8px;
             }
@@ -1470,6 +1499,11 @@ table.summary-report{
          }
       }
    }
+}
+
+.note-forward-form{ border-bottom: 0; }
+.note-forward-form .reply_box{
+	margin: 10px 0 0;
 }
 
 table.vmiddle {
@@ -1734,13 +1768,13 @@ a.new_ticket:hover{
    @include shadows( rgba(0, 0, 0, 0.2), 0, 2px, 4px);
    padding:6px 6px 16px 6px;
    width:400px;
-   margin-left: -300px;
-   margin-top: -10px;
-
    position:absolute;
-   z-index:1000;
    text-align: left;
-   
+   margin-left: -300px;
+   margin-top: 20px;
+   z-index:1000;
+   right:35px;
+   top:0;   
    ul{
       border-top:1px solid #efefef;
       position:relative;
@@ -2112,29 +2146,29 @@ clear: both;
 .reply_box
 {
 	background-color: rgb(249,249,249);
-	margin: 0 10px 0 10px;
+	margin: 0 10px;
 	padding: 10px 0 10px 20px;
 	@include border-radius(8px);
     border: 1px #d0cfcf;
-    @include box-shadow(0 1px 6px #d0cfcf inset);
+    @include box-shadow(0 1px 3px rgba(0, 0, 0, 0.1) inset);
 }
 .sav
 {
 	color: #ffffff;
 	background-color: #bababa;
 	@include border-radius(4px);
-    display: inline-block;
+	@include inline-block;
     padding: 1px 15px 1px 7px;
     margin-left: 10px;
     cursor: default;
 }
 .close-img{	
 	padding: 0 5px 0 0;
-	display: inline-block;
+	@include inline-block;
 	vertical-align: middle;
 	background-color: #959595;
 	@include border-right-radius(4px);
-	margin: 0 0 2px -12px;
+	margin: 0 0 0 -12px;
 	height: 16px;
 	width:10px;
 	z-index: 3;
@@ -2148,6 +2182,14 @@ clear: both;
 	}
 }
 
+@-moz-document url-prefix(){
+	.close-img{
+		height: 17px;
+		span{
+			margin-top: 3px;
+		}
+	}
+}
 
 .close-img:hover
 {
@@ -2166,4 +2208,19 @@ li.agents-field
 #Pages.set-top
 {
 	margin-top: -6px;
+}
+#exportFilter{
+	.ui-form{
+		h4{
+			&.caption{
+				padding: 7px 10px 7px 0px; 
+			}
+		}
+		div.fields{
+			margin-left: 250px;
+			div.fields{
+				margin-left: 160px;
+			}
+		}
+	}
 }

@@ -4,7 +4,10 @@
 @import '_icons.scss';
 @import '_fonticons.scss';
 
-$img:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///+nMYLYYAYj4yxGGAMkCADU+AtnRrreewAAAABJRU5ErkJggg==);
+$img:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///8bM4LYYAYj41lGGAMkCADN/ws0WTnAvgAAAABJRU5ErkJggg==);
+*{
+	-webkit-user-select: text !important; 
+}
 
 .x-body{
 	@include text-shadow( #fff 1px 1px 0);
@@ -16,31 +19,7 @@ $img:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAH
 .x-mask{
 	background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///8bM4LYYAYj41lGGAMkCADN/ws0WTnAvgAAAABJRU5ErkJggg==') repeat, rgba(0, 0, 0, 0.4) center center no-repeat;
 }
-.x-button-headerBtn {
-	span{
-		&.info{
-			display:block;
-			text-decoration:none;
-			font-size: 140%;
-			color: #fff;
-			text-align: center;
-			background: none !important;
-			speak: none;
-			-webkit-mask-image: none !important;
-			margin: -5px 0 0 -5px;
-			padding: 1px 2px;
-		}
-	}
-	.x-button-label{
-		text-shadow: -1px -1px 0 rgba(0,0,0, 0.5); /* Also Change in .x-button-back*/
-	}
-}
 
-.x-button-back{
-	.x-button-label{
-		text-shadow: -1px -1px 0 rgba(0,0,0, 0.5); /* Also Change in .x-button-headerBtn*/
-	}
-}
 input, textarea, select {
 	font-size: 0.9em;
 }
@@ -145,10 +124,6 @@ input, textarea, select {
 .x-field .x-field-input, .x-field .x-input-el {
 	padding-top: 6px;
 }
-.x-button-forward::before, .x-button-forward::after, .x-button-back::before, .x-button-back::after{
-	width: 0.7em;
-	-webkit-mask-size: 0.74em 1.8em;
-}
 
 .x-toolbar-header,.x-toolbar-dark{
 	margin-bottom: 1px;
@@ -207,16 +182,7 @@ input, textarea, select {
 		}
 	}
 
-.x-button {
-	&.lightPlus {
-		background:#AAA !important;
-	}
-	.x-button-icon.x-icon-mask{
-		width: 1em;
-		height: 1em;
-		-webkit-mask-size: 1em;
-	}
-}
+
 .loading{
 	.x-mask-inner{
 		background:transparent !important;
@@ -355,29 +321,25 @@ a {
 			display:inline-block;
 			&:first-child{
 				z-index:100;
-				width:7px;
+				width:10px;
 				height: 99%;
 				position: absolute;
 				margin-top:1px;
 				&.Low{
 					background: #0C8AAE; 
-					// @include background-image($img, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
+					@include background-image($img, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 				}
 				&.Medium{
-					background: #0A9458; /* Old browsers */
-					// @include filter-gradient(#89ce00, #005290, horizontal); // IE6-9
-					// @include background-image( $img, linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%)); 
+					background: #0A9458; 
+					@include background-image( $img, linear-gradient(left,  #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%)); 
 				}
 				&.Urgent{
-					background: #C00; /* Old browsers */
-					/* IE9 SVG, needs conditional override of 'filter' to 'none' */
-					// @include filter-gradient(#de0000, #810000, horizontal); // IE6-9
-					// @include background-image( $img, linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%)); 
+					background: #C00; 
+					@include background-image( $img, linear-gradient(left,  #de0000 0%,#d50000 71%,#bd0000 84%,#810000 100%)); 
 				}
 				&.High{
-					background-color: #CC5600; // Old browsers
-					// @include filter-gradient(#ffb613, #005290, horizontal); // IE6-9
-					// @include background-image( $img, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
+					background-color: #CC5600;
+					@include background-image($img, linear-gradient(left, #e8680d 0%,#cc6216 80%,#af4b03 100%));
 				}
 			};
 			&.title{
@@ -745,7 +707,7 @@ a {
 		text-decoration: none;
 		font-weight: bold;
 		text-align: center;
-		@include box-shadow(inset rgba(0, 0, 0, 0.3) 0 3px 16px);
+		/* @include box-shadow(inset rgba(0, 0, 0, 0.3) 0 3px 16px); */
 		border: 1px solid #AAA;
 		position: relative;
 		cursor: pointer;
@@ -753,108 +715,12 @@ a {
 		&:active{
 			color:#1d60bd;
 			@include text-shadow( #86afe6 0 0 20px );
-			@include box-shadow(inset rgba(0, 0, 0, 0.6) 0 3px 16px);
+			/* @include box-shadow(inset rgba(0, 0, 0, 0.6) 0 3px 16px); */
 		}
 	}
 }
-.x-toolbar{
-	.x-button.x-button-lightBtn, .x-button.x-button-headerBtn {
-		box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.3) inset;
-		color:#fff;
-	}
-	.x-button.x-button-headerBtn{
-		border: 1px solid #151515;
-		border-top-color: #222;
-		&.x-button-back::before, &.x-button-forward::before {
-			background:#151515;
-		}
-	}
-	.x-button.x-button-lightBtn{
-		border: 1px solid #3E577B;
-		&.x-button-back::before,&.x-button-forward::before {
-			background:#3e577b;
-		}
-	}
-}
-.x-sheet{
-	.x-docking-vertical{
-		box-shadow: 0 0 20px #666;
-		.x-picker-mask{
-		// needs latest Compass, add '@import "compass"' to your scss
-		@include filter-gradient(#333333, #333333, vertical); // IE6-8
-		// IE9 SVG, needs conditional override of 'filter' to 'none'
-		$experimental-support-for-svg: true;
-		@include background-image(linear-gradient(top,  rgba(51,51,51,0.5) 0%,rgba(51,51,51,0) 25%,rgba(51,51,51,0) 75%,rgba(51,51,51,0.5) 100%));
-			border-radius: 7px;
-		}
-		.x-toolbar{
-			.x-button {
-				&.x-button-action{
-					border: 1px solid #151515;
-					border-top-color: #222;
-					@include box-shadow(1px 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.3) inset);
-					color: white;
-					background-color: #484848;
-					@include background-image(linear-gradient(top, #6E6E6E, #555 50%, #484848 51%, #3B3B3B));
-					&.x-button-pressing{
-						background-image: none;
-					  	background-color: #484848;
-						@include background-image(linear-gradient(top, #272727, #343434 10%, #404040 65%, #424242));
-					}
-				}
-				&.x-button-normal{
-					border: 1px solid #3E577B;
-					@include box-shadow(1px 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.3) inset);
-					color: white;
-					background-color: #6E84A3;
-					@include background-image(linear-gradient(top, #9DACC1, #7E91AD 50%, #6E84A3 51%, #607797));
-					&.x-button-pressing{
-						  background-image: none;
-						  background-color: #6E84A3;
-					}
-				}
-			}
-		}
-	}
-}
-.x-button.x-button-action, .x-button.x-button-action.x-button-back::after, .x-button.x-button-action.x-button-forward::after, .x-toolbar .x-button.x-button-action, .x-toolbar .x-button.x-button-action.x-button-back::after, .x-toolbar .x-button.x-button-action.x-button-forward::after, .x-button.x-button-action-round, .x-button.x-button-action-round.x-button-back::after, .x-button.x-button-action-round.x-button-forward::after, .x-toolbar .x-button.x-button-action-round, .x-toolbar .x-button.x-button-action-round.x-button-back::after, .x-toolbar .x-button.x-button-action-round.x-button-forward::after, .x-button.x-button-action-small, .x-button.x-button-action-small.x-button-back::after, .x-button.x-button-action-small.x-button-forward::after, .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-action-small.x-button-back::after, .x-toolbar .x-button.x-button-action-small.x-button-forward::after{
-	overflow: hidden;
-    font-weight: bold;
-    @include text-shadow( rgba(0, 0, 0, 0.6) 0px -1px 0);
-    text-overflow: ellipsis;
-    text-decoration: none;
-    text-align: center;
-    white-space: nowrap;
-    background: none;
-    background-image: -webkit-gradient(linear, left top, left bottom,
-        color-stop(0, #8ea4c1),
-        color-stop(0.5, #5877a2),
-        color-stop(0.5, #476999),
-        color-stop(1, #4a6c9b));
-    @include border-radius(6px);
-    border: 1px solid #45505d;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .25),
-                        0 1px 0 rgba(255, 255, 255, 0.25);
 
-}
-.x-toolbar-dark .x-button, .x-toolbar-dark .x-button.x-button-back::after, .x-toolbar-dark .x-button.x-button-forward::after, .x-toolbar .x-toolbar-dark .x-button, .x-toolbar .x-toolbar-dark .x-button.x-button-back::after, .x-toolbar .x-toolbar-dark .x-button.x-button-forward::after, .x-toolbar-dark .x-field-select .x-component-outer, .x-toolbar-dark .x-field-select .x-component-outer.x-button-back::after, .x-toolbar-dark .x-field-select .x-component-outer.x-button-forward::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer.x-button-back::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer.x-button-forward::after, .x-toolbar-dark .x-field-select .x-component-outer::before, .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-back::after, .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-forward::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer::before, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-back::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-forward::after {
-    font-weight: bold;
-    @include text-shadow( rgba(0, 0, 0, 0.6) 0px -1px 0);
-    text-overflow: ellipsis;
-    text-decoration: none;
-    text-align: center;
-    white-space: nowrap;
-    background: none;
-    background-image: -webkit-gradient(linear, left top, left bottom,
-        color-stop(0, #7d88a5),
-        color-stop(0.5, #3a4e78),
-        color-stop(0.5, #273f6d),
-        color-stop(1, #273f6d));
-    @include border-radius(6px);
-    border: 1px solid #45505d;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .25),
-                        0 1px 0 rgba(255, 255, 255, 0.25);
-}
+
 .ticketDetails{
 	#details {
 		.HDR {
@@ -884,9 +750,9 @@ a {
 				div.icon {
 						display:inline-block;
 						margin: 5px 0.4em;
-						@include border-radius(50%);
+						@include border-radius(20px);
 						vertical-align:top;
-						@include box-shadow(inset 0 0 7px #333);
+						@include box-shadow(inset 0 0 4px #000, 1px 1px 0px #fff);
 						color:#fff;
 						font-family:'Freshdesk';
 						font-size: 24px;
@@ -897,15 +763,19 @@ a {
 						padding-top: 6px;	
 						&.Low{
 							background-color:#0C8AAE;
+							background-image:$img;
 						}
 						&.Medium{
 							background-color:#0A9458;
+							background-image:$img;
 						}
 						&.High{
 							background-color:#CC5600;
+							background-image:$img;
 						}
 						&.Urgent{
 							background-color:#C00;
+							background-image:$img;
 						}
 						&.Email {
 							&:before{
@@ -969,26 +839,62 @@ a {
 				@include box-shadow( #fff 1px 0 0 );
 				&.half{
 					&:first-child{
-						text-align:right;
-						a {
-							margin-right:10%;
+						text-align: left;
+						a.reply {
+							position: relative;
+							top: -3px;
+							left: 5%;
 						}
 						span{
 							font-size: 16px;
 							vertical-align: middle;
+							position: relative;
+							left: 35%;
+							top: -12px;
 						}
 					}
 					&:last-child{
-						a {
-							margin-left:10%;
+						a.close {
+							float: left;
+							position: relative;
+							top: -3px;
+							left:-26px;
 						}
 						span{
 							font-size: 16px;
 							vertical-align: middle;
-							margin-left:10px;
+							position: relative;
+							left: -28%;
+							top: 4px;
 						}
 					}
 					width:50%;
+					vertical-align: bottom;
+					a{
+						width:4em;
+						margin:0 0%;
+						display:inline-block;
+					}
+				}
+				&.full{
+					border-right:0px solid #dbdcdd;
+					@include box-shadow( #fff 0 0 0 );
+					&:first-child{
+						text-align: left;
+						a.reply {
+							position: relative;
+							top: -3px;
+							left: 5%;
+						}
+						span{
+							font-size: 16px;
+							vertical-align: middle;
+							position: relative;
+							left: 35%;
+							top: -12px;
+						}
+					}
+					width:100%;
 					vertical-align: bottom;
 					a{
 						width:4em;
@@ -1009,14 +915,16 @@ a {
 					text-decoration:none;
 					font-size:175%;
 					font-family: 'Freshdesk';
-					color:#666;
+					color:rgba(0,0,0, 0.5);
+					@include text-shadow(1px 1px 0px #fff, 0 0 1px #ccc);
 					text-align:center;
-					@include text-shadow( #fff 1px 1px 0);
 					speak: none;
 					&.automation
 					{
+						position: relative;
+						bottom: -5px;
 						&:before {
-							content: '\59';
+							content: '\f0d0';
 						}
 					}
 					&.chat {
@@ -1040,6 +948,8 @@ a {
 						}
 					}
 					&.trash {
+					position: relative;
+					bottom: -5px;
 						&:before {
 							content: '\f014';
 						}
@@ -1068,7 +978,7 @@ a {
 	}
 
 	.conversation{
-		padding:0.3em 0.5em;
+		padding: 0.3em 0.5em 0.3em 0.45em;
 		.thumb {
 			margin-right: 0.5em;
 			height: 44px;
@@ -1113,8 +1023,8 @@ a {
 				font-family: 'Freshdesk';	
 				position: absolute;
 				right: 8px;
-				font-size: 22px;
-				color: #ccc;
+				font-size: 20px;
+				color: #aaa;
 				margin-top: -6px;
 				&:before{
 					content:"\e021";
@@ -1167,6 +1077,9 @@ a {
 			}
 			p{
 				margin : 0;
+				-moz-user-select: text;  
+			    -webkit-user-select: text !important;  
+			    -ms-user-select: text; 
 				font-size:1.1em;
 				white-space: pre-wrap; /* css-3 */
 				white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
@@ -1264,16 +1177,16 @@ a {
 						}
 					}
 					span.name{
-						max-width: 70%;
+						max-width: 50%;
 						display: inline-block;
 						@include ellipsis;
 					}
 					span.size{
 						text-align: left;
 						position: absolute;
-						right: 30px;
+						right: 20px;
 						padding: 1px;
-						color: #666;
+						color: #999;
 					}
 				}
 			}
@@ -1334,8 +1247,14 @@ a {
 	padding: 4px 0;
 	border-bottom: 1px solid #DDD;
 }
+
+input[readonly=true] {
+		color: #888;
+		font-weight: normal !important;
+}
+
 #ticketReplyForm{
-	.x-button-icon.add_black{
+	/* .x-button-icon.add_black{
 		-webkit-mask-image:none;
 		background:transparent;
 		margin-right:5px;
@@ -1356,9 +1275,12 @@ a {
 			@include box-shadow(0px 2px 4px rgba(0,0,0,0.1));
 			position: absolute;
 		}
+	} */
+	.x-button-label{
+		padding-left: 5px;
 	}
 	.x-field .x-field-input, .x-field .x-input-el, .x-form-label span{
-		padding-top:6px;
+		/* padding-top:6px; */
 	}
 	.x-button.x-button-plain{
 		padding: 0;
@@ -1429,7 +1351,6 @@ a {
 	{
 		background-color:transparent !important;
 		&:before{
-			display: block;
 			color:#fff;
 	 		font-size: 14px;
 			padding: 5px 5px;
@@ -1481,6 +1402,9 @@ a {
 	}
 	.x-form-label{
 		background-color:transparent !important;
+	}
+	.x-field-input, .x-input-el {
+		padding-top: 0px;
 	}
 }
 
@@ -1687,10 +1611,127 @@ a {
 .x-toolbar{
 	.x-button-forward{
 		&:before{
-			right: -0.6em !important;
+			right: -0.7em !important;
+			width: 0.73em !important;
 		}
 		&:after{
 			right: -0.62em !important;
 		}
 	}
+}
+
+
+
+/* Button Styles */
+
+.x-button-headerBtn {
+	span{
+		&.info{
+			display:block;
+			text-decoration:none;
+			font-size: 140%;
+			color: #fff;
+			text-align: center;
+			background: none !important;
+			speak: none;
+			-webkit-mask-image: none !important;
+			margin: -5px 0 0 -5px;
+			padding: 1px 2px;
+		}
+	}
+	.x-button-label{
+		text-shadow: -1px -1px 0 rgba(0,0,0, 0.5); /* Also Change in .x-button-back*/
+	}
+}
+
+.x-button-back{
+	.x-button-label{
+		text-shadow: -1px -1px 0 rgba(0,0,0, 0.5); /* Also Change in .x-button-headerBtn*/
+	}
+}
+
+.x-button-forward, .x-button-back{
+	&:before, &:after{
+		width: 0.7em;
+		-webkit-mask-size: 0.74em 1.8em;
+	}
+}
+.x-button {
+	&.lightPlus {
+		background:#AAA !important;
+	}
+	.x-button-icon.x-icon-mask{
+		width: 1em;
+		height: 1em;
+		-webkit-mask-size: 1em;
+	}
+}
+.x-toolbar{
+	.x-button.x-button-lightBtn, .x-button.x-button-headerBtn {
+		box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.1) inset;
+		color:#fff;
+	}
+	.x-button.x-button-headerBtn{
+		border: 1px solid #151515;
+		border-top-color: #222;
+		&.x-button-back::before, &.x-button-forward::before {
+			background:#151515;
+		}
+	}
+	.x-button.x-button-lightBtn{
+		border: 1px solid #3E577B;
+		&.x-button-back::before,&.x-button-forward::before {
+			background:#3e577b;
+		}
+	}
+}
+.x-sheet{
+	.x-docking-vertical{
+		box-shadow: 0 0 20px #666;
+		.x-picker-mask{
+		// needs latest Compass, add '@import "compass"' to your scss
+		@include filter-gradient(#333333, #333333, vertical); // IE6-8
+		// IE9 SVG, needs conditional override of 'filter' to 'none'
+		$experimental-support-for-svg: true;
+		@include background-image(linear-gradient(top,  rgba(51,51,51,0.5) 0%,rgba(51,51,51,0) 25%,rgba(51,51,51,0) 75%,rgba(51,51,51,0.5) 100%));
+			border-radius: 7px;
+		}
+		
+	}
+}
+/* POP UP BUTTONS*/
+.x-button.x-button-action, .x-button.x-button-action.x-button-back::after, .x-button.x-button-action.x-button-forward::after, 
+.x-toolbar .x-button.x-button-action, .x-toolbar .x-button.x-button-action.x-button-back::after, 
+ .x-toolbar .x-button.x-button-action.x-button-forward::after,  .x-button.x-button-action-round, .x-button.x-button-action-round.x-button-back::after, 
+ .x-button.x-button-action-round.x-button-forward::after, .x-toolbar .x-button.x-button-action-round, 
+ .x-toolbar .x-button.x-button-action-round.x-button-back::after,  .x-toolbar .x-button.x-button-action-round.x-button-forward::after, .x-button.x-button-action-small, 
+ .x-button.x-button-action-small.x-button-back::after, .x-button.x-button-action-small.x-button-forward::after,  .x-toolbar .x-button.x-button-action-small, .x-toolbar .x-button.x-button-action-small.x-button-back::after, 
+ .x-toolbar .x-button.x-button-action-small.x-button-forward::after{
+
+	overflow: hidden;
+    font-weight: bold;
+    @include text-shadow( rgba(0, 0, 0, 0.6) 0px -1px 0);
+    text-overflow: ellipsis;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+    background: none;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #8ea4c1), color-stop(0.5, #5877a2), color-stop(0.5, #476999),color-stop(1, #4a6c9b));
+    @include border-radius(6px);
+    @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, .25), 0 1px 0 rgba(255, 255, 255, 0.25));
+    border: 1px solid #45505d;
+
+}
+.x-toolbar-dark .x-button, .x-toolbar-dark .x-button.x-button-back::after, .x-toolbar-dark .x-button.x-button-forward::after, .x-toolbar .x-toolbar-dark .x-button, .x-toolbar .x-toolbar-dark .x-button.x-button-back::after, .x-toolbar .x-toolbar-dark .x-button.x-button-forward::after, .x-toolbar-dark .x-field-select .x-component-outer, .x-toolbar-dark .x-field-select .x-component-outer.x-button-back::after, .x-toolbar-dark .x-field-select .x-component-outer.x-button-forward::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer.x-button-back::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer.x-button-forward::after, .x-toolbar-dark .x-field-select .x-component-outer::before, .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-back::after, .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-forward::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer::before, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-back::after, .x-toolbar .x-toolbar-dark .x-field-select .x-component-outer::before.x-button-forward::after {
+    font-weight: bold;
+    @include text-shadow( rgba(0, 0, 0, 0.6) 0px -1px 0);
+    text-overflow: ellipsis;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+    background: none;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #7d88a5), color-stop(0.5, #3a4e78), color-stop(0.5, #273f6d), color-stop(1, #273f6d));
+    @include border-radius(6px);
+    border: 1px solid #45505d;
+    @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, .25), 0 1px 0 rgba(255, 255, 255, 0.25));
 }

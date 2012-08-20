@@ -135,13 +135,13 @@ div.bg_pulp{
 	@include pie-clearfix;
 	position:absolute;
 	left:0px;       
-	top:3px;
-	margin-left:8px;
+	top:-3px;
+	margin-left:0px;
 	text-decoration:none;
 	a{ text-decoration:none; }
 	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo{
-		margin:0px 0px 0px 4px;
+		margin:0px 0px 0px 2px;
 	}
 	.logo_text{
 	   font-size:1.6em;

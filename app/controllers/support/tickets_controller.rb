@@ -29,10 +29,12 @@ class Support::TicketsController < SupportController
   def update
     if @item.update_attributes(params[:helpdesk_ticket])
       respond_to do |format|
-        format.mobile { render :json => { :success => true, :item => @item }.to_json }
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
           redirect_to @item 
+        }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
         }
       end
     end
@@ -57,7 +59,11 @@ class Support::TicketsController < SupportController
           @tickets.each { |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+            json << sep + tic.to_json({
+              :except => [ :description_html, :description ],
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+                            :responder_name, :need_attention, :pretty_updated_date ]
+            }, false)[19..-2]; sep=","
           }
           render :json => json + "]"
         end
@@ -102,12 +108,12 @@ class Support::TicketsController < SupportController
        mob_json[:failure] = true
      end
      respond_to do |format|
+      format.html{
+        redirect_to :back
+      }
       format.mobile {
         mob_json[:item] = @item;
         render :json => mob_json.to_json
-      }
-      format.html{
-        redirect_to :back
       }
      end
   end

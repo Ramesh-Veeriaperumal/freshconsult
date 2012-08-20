@@ -92,5 +92,9 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       :account_id => account.id, :requester_notification => false, :agent_notification => true,
       :agent_template => '<p>Hi {{ticket.agent.name}},<br /><br />Ticket "#{{ticket.id}} - {{ticket.subject}}" has been reopened, please visit {{ticket.url}} to view the ticket.<br /><br />Ticket comment<br />{{comment.body}}</p>',
     :agent_subject_template => "Ticket re-opened - [\#{{ticket.id}}] {{ticket.subject}}"
+},
+{ :notification_type => EmailNotification::DEFAULT_REPLY_TEMPLATE, 
+      :account_id => account.id, :requester_notification => true, :agent_notification => false,
+      :requester_template => '<p>Hi {{ticket.requester.name}},<br /><br />Ticket: {{ticket.url}}<br/></p>'
 }
 ])

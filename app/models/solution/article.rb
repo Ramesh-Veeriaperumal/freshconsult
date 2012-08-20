@@ -1,3 +1,4 @@
+
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
   
@@ -25,7 +26,7 @@ class Solution::Article < ActiveRecord::Base
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
- 
+  include Mobile::Actions::Article
 
   define_index do
     indexes :title, :sortable => true
@@ -112,7 +113,7 @@ class Solution::Article < ActiveRecord::Base
     to_ret = suggest(ticket, ticket.description) if to_ret.empty?
     
     to_ret
-    
+
   end
   
   def self.suggest(ticket, search_by)

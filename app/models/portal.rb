@@ -7,6 +7,8 @@ class Portal < ActiveRecord::Base
 
   delegate :friendly_email, :to => :product, :allow_nil => true
   
+  include Mobile::Actions::Portal
+
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -101,13 +103,6 @@ class Portal < ActiveRecord::Base
     fav_icon.content.url unless fav_icon.nil?
   end
   
-  def to_mob_json
-    options = {
-      :only => [ :name, :preferences ],
-      :methods => [ :logo_url, :fav_icon_url ]
-    }
-    to_json options
-  end
 
   private
     def handle_icon(icon_field, icon_attr)

@@ -20,8 +20,8 @@
 	          years: "<%= t("date.years") %>"
 	};
 	
-  $J(document).ready(function() {
-		$J("a.dialog2, a[data-ajax-dialog]").dialog2();
-    	<%= yield :onload_script -%>
+  jQuery(document).ready(function() {
+	jQuery("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2();
+    <%= yield :onload_script -%>
   });
 <%- end -%>

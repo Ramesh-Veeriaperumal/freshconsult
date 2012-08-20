@@ -52,6 +52,10 @@ input.ui-button { padding: .4em 1em; }
 /* workarounds */
 button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra padding in Firefox */
 
+.notif-button .uiButton{
+  margin-left:25px;
+}
+
 .uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active, .uiButton-iphone, .ui-after-submit{
 	@include button-base; 
 	background-image:url(../images/overlay-button.png);
@@ -234,7 +238,7 @@ div.action_buttons:hover{
 	@include shadows(rgba(0, 0, 0, 0.1), 0, 0, 2px);
 }
 
-.button, .slim-button {
+.button, .slim-button, .button[disabled]:hover {
   @include inline-block;
   margin: 0.7em 0.5em 0.7em;
   font-size: 100%;
@@ -247,6 +251,7 @@ div.action_buttons:hover{
   overflow: hidden;
   padding: 4px 8px;
   margin: 2px;    
+  font-family: $blueprint-font-family;
 	@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
   @include border-radius(4px);
 	@include box-shadow(rgba(0, 0, 0, 0.05) 0 -2px 0 inset);
@@ -257,6 +262,10 @@ div.action_buttons:hover{
   border: 1px solid #cfcfcf;
   position:relative;   
 }
+
+ .button[disabled]:hover {
+    padding:5px 10px;
+  }
 
 .close-button{
 	display:inline-block;
@@ -286,6 +295,7 @@ div.action_buttons:hover{
 
 .button:hover {
     background: #eee;
+    font-family: $blueprint-font-family;
 }
 
 .button.selected {
@@ -319,7 +329,7 @@ div.action_buttons:hover{
     top:-6px;  
 	  .prev_page, .next_page{			
 			width:7px;
-      top:-37px;
+      top:-5px;
 		}
 	}
 }                      
@@ -353,12 +363,44 @@ div.action_buttons:hover{
    }   
 }
 
-.toolbar_pagination_full{
-   a, span{
+.toolbar .toolbar_pagination_full{
+   a, span, .next_page, .prev_page{
       @extend .button;
+      background:#ffffff; 
+      border-color:#dfdfdf;
+      @include single-box-shadow(none);
+
+      &:hover {
+        background:#ffffff;
+        border-color:#888;
+      }
    }
-   .disabled.prev_page, .disabled.next_page{ 
-      @include single-box-shadow( rgba(0, 0, 0, 0.3), 0px, -0px, 1px, false, true );      
+
+   .button[disabled]:hover {
+      background:#eee;
+      border-color:#888;
+   }
+   .disabled.prev_page, .disabled.next_page, .disabled.prev_page:hover, .disabled.next_page:hover{ 
+      @include single-box-shadow(none);
+      background: #EFEFEF;      
+      cursor: default;
+      border-color: #DFDFDF;
+      color:#BBB;
+   }
+   .current, .current:hover{
+    cursor: default;
+    color:#FFF;
+    background-color: #444444; // Old browsers
+    @include filter-gradient(#444444, #888888, vertical); // IE6-9
+    @include background-image(linear-gradient(top, #444444 0%,#888888 100%));
+    border:none;
+    @include single-text-shadow(#333, -1px, -1px, 0);
+    @include box-shadow(#000 0 0 6px inset, #FFF 0px 1px 0px);
+   }
+   .gap, .gap:hover {
+    background:none;
+    border:none;
+    cursor: default;
    }
    text-align:center;
 }
@@ -366,15 +408,12 @@ div.action_buttons:hover{
    position:relative;
    .prev_page, .next_page{
       @extend .button;
-      border-color:#dfdfdf;
    }
    .disabled.prev_page, .disabled.next_page{ 
       background:#efefef;
       span{ @include opacity(0.3); }  
    }
-   .current{
-      background:#ffffff; border-color:#dfdfdf;
-   }
+
 }
 
 .toggle-button{
@@ -399,10 +438,10 @@ div.action_buttons:hover{
   .toggle-container, .toggle-handle{
     position:absolute; top:0;
   }  
+
   &, .on-label{
     @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px inset, rgba(0, 0, 0, 0.3) 0 1px 0 inset, rgba(0, 0, 0, 0.2) 0 1px 3px inset);
   }
-
   .toggle-container{    
     width:200%;
     height:100%;

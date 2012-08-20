@@ -1,5 +1,5 @@
 <div class="tickets-container">
- <table class="tickets">	
+ <table class="tickets customer_tickets" id="tickets-expanded">	
 	<tbody>
 		<%= each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) %>
 	</tbody>

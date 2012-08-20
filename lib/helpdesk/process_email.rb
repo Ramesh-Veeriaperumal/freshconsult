@@ -175,7 +175,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket = check_for_auto_responders(ticket)      
+      check_for_auto_responders(ticket)
+      check_support_emails_from(account, ticket, user)
 
       begin
         if (user.agent? && !user.deleted?)
@@ -189,9 +190,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
 
       begin
+        build_attachments(ticket, ticket)
         ticket.save!
-        create_attachments(ticket, ticket)
-        ticket
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
@@ -214,10 +214,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) ))
-        ticket.spam = true
+      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
+        ticket.skip_notification = true
       end
-      ticket  
+    end
+
+    def check_support_emails_from(account, ticket, user)
+      ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
     end
 
     def add_email_to_ticket(ticket, from_email)
@@ -255,12 +258,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
         end
-        ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)
       end
-      create_attachments(ticket, note) if note.save 
-      note
+      build_attachments(ticket, note)
+      ticket.save
     end
     
     def can_be_added_to_ticket?(ticket,user)
@@ -286,25 +288,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       user
     end
 
-    def create_attachments(ticket, item)
-      temp_body_html = String.new(item.body_html)
-      content_ids = params["content-ids"].nil? ? {} : get_content_ids 
+    def build_attachments(ticket, item)
+      content_ids = params["content-ids"].nil? ? {} : get_content_ids
+      content_id_hash = {}
      
       Integer(params[:attachments]).times do |i|
-        created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-        temp_body_html = replace_content_id(temp_body_html, content_ids["attachment#{i+1}"], created_attachment)
+        created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+        file_name = created_attachment.content_file_name
+        content_id_hash[file_name] = content_ids["attachment#{i+1}"] if content_ids["attachment#{i+1}"]
       end
-
-      unless content_ids.blank?
-        item.update_attributes!(:body_html => temp_body_html)
-      end
+      item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
     end
-    
-    def replace_content_id(bodyHTML, content_id, created_attachment)
-        bodyHTML.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
-        bodyHTML
-    end
-  
+      
     def get_content_ids
         content_ids = {}
         split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")   
@@ -315,49 +310,50 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         content_ids  
     end
   
-  def show_quoted_text(text, address)
-    
-    return text if text.blank?
-    
-    regex_arr = [
-      Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
-      Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
-      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
-      Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
-      Regexp.new("<div>\n<br>On.*?wrote:"),
-      Regexp.new("On.*?wrote:"),
-      Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
-      Regexp.new("from:\s*", Regexp::IGNORECASE)
-    ]
-    tl = text.length
-
-    #calculates the matching regex closest to top of page
-    index = regex_arr.inject(tl) do |min, regex|
-        (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
-    end
-    
-    original_msg = text[0, index]
-    old_msg = text[index,text.size]
-    
-    #Sanitizing the original msg   
-    unless original_msg.blank?
-      sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
-      original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
-    end
-    #Sanitizing the old msg   
-    unless old_msg.blank?
-      sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
-      old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
-    end
+    def show_quoted_text(text, address)
       
-    unless old_msg.blank?
-     original_msg = original_msg +
-     "<div class='freshdesk_quote'>" +
-     "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
-     "</div>"
-    end   
-    return original_msg
-end
+      return text if text.blank?
+      
+      regex_arr = [
+        Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+        Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
+        Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
+        Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
+        Regexp.new("<div>\n<br>On.*?wrote:"),
+        Regexp.new("On.*?wrote:"),
+        Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
+        Regexp.new("from:\s*", Regexp::IGNORECASE)
+      ]
+      tl = text.length
+
+      #calculates the matching regex closest to top of page
+      index = regex_arr.inject(tl) do |min, regex|
+          (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
+      end
+      
+      original_msg = text[0, index]
+      old_msg = text[index,text.size]
+      
+      #Sanitizing the original msg   
+      unless original_msg.blank?
+        sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+        original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
+      end
+      #Sanitizing the old msg   
+      unless old_msg.blank?
+        sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+        old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
+      end
+        
+      unless old_msg.blank?
+       original_msg = original_msg +
+       "<div class='freshdesk_quote'>" +
+       "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
+       "</div>"
+      end   
+      return original_msg
+    end
+
     def get_envelope_to
       envelope = params[:envelope]
       envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']

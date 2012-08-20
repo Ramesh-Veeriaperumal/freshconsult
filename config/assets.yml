@@ -13,16 +13,18 @@ stylesheets:
     - public/stylesheets/reset.css
     - public/stylesheets/layout.css
     - public/stylesheets/defaults.css
-    - public/stylesheets/application.css
-    - public/stylesheets/test.css
     - public/stylesheets/validation.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css
     - public/stylesheets/table.css
     - public/stylesheets/autocomplete.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
+
+  app:
+    - public/stylesheets/application.css
+    - public/stylesheets/test.css
+    - public/stylesheets/form.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/chosen.css
     - public/stylesheets/hacks.css
     - public/stylesheets/ie.css
     - public/stylesheets/satisfaction.css
@@ -120,6 +122,8 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/lib/nestedtree.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
   custom_widget:
     - public/javascripts/custom_widget.js

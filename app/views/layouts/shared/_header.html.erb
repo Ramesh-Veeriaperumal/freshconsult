@@ -1,13 +1,16 @@
 <div class="header">
+  <div class="wrapper">
   <div class="brand">
     <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
       <%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)) %>
     <% end %>      
     <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
+    <%= link_to_function("Switch to mobile version", 
+    										 "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
+    										 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
   </div>		
-  <div class="wrapper">
+
     <div class="header_links">
-      <%= link_to_function("Mobile version", "document.cookie='classic_view=false';location.href='/';") if mobile_agent? && allowed_domain? %>
       <% if current_user then %>  
 		<%= content_tag(:span, is_assumed_user? ? t('header.assumed_text') : t('header.welcome') ) %>
 		<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>

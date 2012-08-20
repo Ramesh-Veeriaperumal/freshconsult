@@ -21,7 +21,15 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
             ui:'header',
 			items: [
 				backButton
-			]
+			],
+            listeners: {
+                doubletap: {
+                    fn:function(){
+                        alert(this);
+                    },
+                    scope:this
+                }
+            }
 		};
 
 		var ticketsList = {
