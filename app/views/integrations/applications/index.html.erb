@@ -1,30 +1,32 @@
 <%= javascript_include_tag  '/javascripts/frameworks/list.min.js' %>
 <% content_for :sidebar do -%><%-end %>
+<%# link_to image_tag("symbols/add.png"), new_integrations_application_path, :class => "button custom-tip-bottom floatr", :title => t("application.add_addon") %>
 <h3 class="title"><%=t('application.title')%></h3>
 <div class="intro"><%=t('application.desc')%></div>
-<%= link_to image_tag("symbols/add.png"), new_integrations_application_path, :class => "button custom-tip-bottom", :title => t("application.add_addon") %>		
 
 <div id="integrations-list">
-	<input class="search" placeholder="Search Integrations"/>
+
+	<div class="request-well">
+		<ul class="tabs">
+			<li class="active first">
+				<a data-show="app-native" data-hide="app-custom" href="#">Native Applications</a>
+			</li>
+			<li>
+				<a data-hide="app-native" data-show="app-custom" href="#">Custom Applications</a>
+			</li>
+		</ul>
+	</div>
+	<div class="app-custom">
+		<%= link_to "New Custom Application", new_integrations_application_path, 
+					:class => "uiButton custom-tip-bottom floatr", :title => t("application.add_addon") %>
+	</div>
+	<!-- <input class="search floatr" placeholder="Search Integrations"/> -->
 	<ul class="table-list">
 		<% disp_header = 0
 			@applications.each do |application| %>
 			<%next if (!feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest' or application.name == 'workflow_max'))%>
 
-		  	<% # TODO: Bad logic to disply headers.  Fix it.
-		  	if application.system_app?
-		  	 if disp_header == 1
-		  		disp_header = 2%>
-					<h2>Native Applications</h2>
-		  	<%end
-		  	else
-		  	 if disp_header == 0
-		  		disp_header = 1%>
-					<h2>Custom Applications</h2>
-		  	<%end
-		  	end%>
-
-			<li>
+			<li class="app-<%= application.system_app? ? "native" : "custom" %>">
 				<div class="application">
 					<div class="logo application-logo-<%= application.name %>"></div>
 		  		<div class="actions"> 
@@ -61,7 +63,8 @@
 					<div class="info-data"><%= t(application.description) %></div>
 
 				<%else # Custom Applications%>
-				    <%= link_to t('delete'), application, :confirm => 'Are you sure?', :method => :delete, :class => "uiButton" %>
+
+				    <%= link_to image_tag("symbols/delete-inactive.png"), application, :confirm => 'Are you sure?', :method => :delete, :class => "button custom-tip-bottom", :title => t('delete') %>
 	    			<%= link_to image_tag("symbols/setting.png"), edit_integrations_application_path(application), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
 					  <%if i_app_index.nil?%>
 				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
@@ -77,7 +80,12 @@
 			</div>
 	 	</li>
 	<% end %>
-</ul>
+	</ul>
+	<div class="app-custom list-noinfo">
+		You donot have any custom applications.
+		<br />
+		<%= link_to "Add new custom application", new_integrations_application_path %>
+	</div>
 </div>
 <script>
 	var options = {
@@ -86,4 +94,16 @@
 	};
 
 	var integrationsList = new List('integrations-list', options);
+
+	jQuery(document).ready(function() {
+		jQuery('#integrations-list .tabs a').click(function(ev) {
+			ev.preventDefault();
+			jQuery('#integrations-list .' + jQuery(this).data('hide')).fadeOut();
+			jQuery('#integrations-list .' + jQuery(this).data('show')).fadeIn();
+
+			jQuery('#integrations-list .tabs li').removeClass('active');
+			jQuery(this).parent().addClass('active');
+		});
+		jQuery('#integrations-list .tabs a').first().click();
+	})
 </script>

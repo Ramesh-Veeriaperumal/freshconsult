@@ -5553,6 +5553,20 @@ a.close{
    	} 
 }
 
+#integrations-list {
+	display:block;
+	overflow: hidden;
+	margin: 0 -20px;
+
+	.search {
+		position: relative;
+		right:10px;
+		top: 0px;
+	}
+	ul.table-list {
+		margin: 35px 0 0 0;
+	}
+}
 
 .integration_widget {
 	.content {

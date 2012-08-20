@@ -7,7 +7,7 @@
   <%widget = @application.widgets.first 
   disp_in_pages = widget.display_in_pages_option || {}%>
   <ul class="ui-form">  
-    <li class="inline-field">
+    <li class="field">
     <label class="caption">
       <div class="logo application-logo-<%= @application.name %>"></div>
       <div class="logo info-data">
@@ -15,19 +15,19 @@
       </div>
     </label>
     </li>
-    <li class="inline-field">
+    <li class="field">
       <label class="caption"><%=t('integrations.custom_application.name')%></label>
       <%= text_field_tag "application[display_name]", @application.display_name%>
     </li>
-    <li class="inline-field">
+    <li class="field">
       <label class="caption"><%=t('integrations.custom_application.description')%></label>
       <%= text_field_tag "application[description]", @application.description%>
     </li>
-    <li class="inline-field">
+    <li class="field">
       <label class="caption"><%=t('integrations.custom_application.script')%></label>
       <%= text_area_tag "application[script]", widget.script%>
     </li>
-    <li class="inline-field">
+    <li class="field">
     <label class="checkwrapper"><%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>Show the widget in ticket view page.</label> <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"ticket" %>
     <label class="checkwrapper"><%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", disp_in_pages.include?('contacts_show_page_side_bar')%>Show the widget in contact view page.</label> <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"contact" %>
     </li>
