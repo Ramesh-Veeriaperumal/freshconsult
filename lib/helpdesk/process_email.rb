@@ -3,8 +3,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   
-  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
+  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -85,7 +85,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       email = parsed_email[:email]
 
       if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
-        email = $1  
+        email = $1 
       end
 
 
@@ -205,7 +205,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def check_for_chat_scources(ticket,from_email)
       ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
       if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
-        emailreg = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
+        emailreg = Regexp.new(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
         chat_email =  params[:subject].scan(emailreg).uniq[0]
         ticket.email = chat_email unless chat_email.blank? && (chat_email == "unknown@example.com")
       end

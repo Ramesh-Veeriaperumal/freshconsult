@@ -12,7 +12,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ParserUtil
   include Mobile::Actions::Ticket
 
-  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
   
