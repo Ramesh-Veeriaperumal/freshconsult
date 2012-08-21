@@ -128,6 +128,7 @@ def get_nested_field_reports(column_name)
 
                 #Adding third level data. No check as the queried data is grouped by all 3 cols so data is unique.
                 value = data.send(column_names[2])
+                next if value.nil?
                   count = data.count
                   percentage = count.to_i/tot_count.to_i * 100
                   xaxis_arr.push(value)  
