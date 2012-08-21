@@ -48,7 +48,7 @@ module Reports::ActivityReport
       end
     end
     tickets_hash.store(RESOLVED,{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
-    @current_month_tot_tickets = tot_count
+    @current_month_tot_tickets = tot_count if (!column_name.to_s.match(/flexifields\..*/)) #this should n't be updated for flexifields.(used in report page to draw charts)
     tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
 
     
