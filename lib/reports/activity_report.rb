@@ -99,6 +99,7 @@ def get_nested_field_reports(column_name)
         nested_data.each do |data|
             next if data.nil?
               value = data.send(column_names[0])
+              next if value.nil?
               unless top_level_data.include?(value)
                 top_level_data.push(value)
 
@@ -115,6 +116,7 @@ def get_nested_field_reports(column_name)
 
                 #Adding the second level data
                 value = data.send(column_names[1])
+                next if value.nil?
                 count = get_data_count(value,column_names[1],nested_data,column_names[0],data.send(column_names[0]))
                 percentage = count.to_i/tot_count.to_i * 100
                 if((second_vs_first[value] != data.send(column_names[0])))

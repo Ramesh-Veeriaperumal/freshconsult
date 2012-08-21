@@ -151,13 +151,13 @@ module Reports::ChartGenerator
   
 
 def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
-
+return nil if data_arr.empty?
   Highchart.bar({
     :chart =>{
         :renderTo => "#{chart_name}_bar_chart",
-          :margin => [10,15,50,column_width],
+          :margin => [10,35,50,column_width],
           :borderColor => 'rgba(0,0,0,0)',
-          :height =>(data_arr.length*20 < 400)? 400 :data_arr.length*20,
+          :height =>(data_arr.length*20 < 320)? 320 :data_arr.length*20,
           :plotBackgroundColor=>'rgba(255,255,255,0.1)',
           :backgroundColor=>'rgba(255,255,255,0.1)',
           },
@@ -168,7 +168,7 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
             :labels=>{
               :formatter => pareto_category_formatter,
                  :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                          },
                },
             },
@@ -181,13 +181,13 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
                     :text=> 'Percentage %',
                     :align=> 'high',
                     :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                     },
                 },
                 :labels=> {
                     :overflow=> 'justify',
                      :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                          },
                 }
             },
@@ -196,7 +196,7 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
                     :dataLabels=> {
                         :enabled=> true,
                          :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                          },
                       :overflow=> 'justify',
                         :formatter =>  pareto_label_formatter,
@@ -212,7 +212,7 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
             :series =>[{:data=>data_arr.reverse}],
                  :tooltip => {
                        :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                            :padding=>5,
                          },
                     :formatter =>  pareto_tooltip_formatter,
