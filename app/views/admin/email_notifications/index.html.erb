@@ -34,7 +34,7 @@
 				var index =template_name.indexOf('_div');
 				editorName=template_name.substring(0,index);
 				lang = "<%=current_account.language%>";
-				jQuery("#"+editorName+"_"+hideData).redactor({ autoresize: false, lang:lang, autoformat:false,focus:true,buttons:['bold','italic','underline', '|','unorderedlist', 'orderedlist','link','fontcolor', 'backcolor','|']});
+				jQuery("#"+editorName+"_"+hideData).redactor({ autoresize: false, lang:lang, autoformat:false,focus:true,buttons:['bold','italic','underline', '|','unorderedlist', 'orderedlist','fontcolor', 'backcolor','|','link', 'horizontalrule']});
 				active_email_body=jQuery("#"+editorName+"_"+hideData);
 					
 			}
