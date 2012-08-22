@@ -46,7 +46,7 @@ include RedisKeys
         flash[:notice] = t(:'flash.login.success')
         redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
-        flash[:notice] = "Login was unscucessfull!"
+        flash[:notice] = t(:'flash.login.failed')
         redirect_to login_normal_url
       end
     else

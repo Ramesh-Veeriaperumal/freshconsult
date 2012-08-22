@@ -634,6 +634,7 @@ en:
       sso: 
         expected_params: "Expected params are name, email and hash which are not present "
       success: Login successful!
+      failed: Login was unsuccessful!
     email_notifications: 
       update: 
         success: Email notifications have been updated.
