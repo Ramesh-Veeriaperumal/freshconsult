@@ -13,6 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification"]
 
   set_table_name "helpdesk_tickets"
   
@@ -728,17 +729,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   #Liquid ends here
   
-  def schema_less_attr_respond_to?(attribute)
-    build_schema_less_ticket unless schema_less_ticket
-    schema_less_ticket.respond_to? attribute
-  end
-
   def respond_to?(attribute)
-    super(attribute) || schema_less_attr_respond_to?(attribute)
+    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("="))
   end
 
   def schema_less_attributes(attribute, args)
     logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array) 
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
@@ -749,7 +746,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
 
-      return schema_less_attributes(method, args) if schema_less_attr_respond_to?(method)
+      return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("="))
 
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!
