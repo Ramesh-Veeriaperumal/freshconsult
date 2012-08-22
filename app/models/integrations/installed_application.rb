@@ -37,7 +37,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
   private
   	def delete_google_accounts
-	    if !self.application.blank? and self.application.name == "google_contacts"
+      return if self.application.blank?
+	    if self.application.name == "google_contacts"
 	      Rails.logger.info "Deleting all the google accounts corresponding to this account."
         Integrations::GoogleAccount.destroy_all ["account_id = ?", self.account]
         Integrations::GoogleAccount.destroy_all ["account = ?", self.account]
@@ -61,7 +62,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
     end
 
     def execute_custom_clazz(action)
-      as = application.options[action]
+      return if self.application.blank?
+      as = self.application.options[action]
       unless as.blank?
         execute(as[:clazz], as[:method], self)
       end

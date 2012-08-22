@@ -53,8 +53,8 @@ class Integrations::Application < ActiveRecord::Base
   def self.example_app()
     example_app = Integrations::Application.new
     example_app.name = "custom_application"  
-    example_app.display_name = "integrations.custom_application.label"
-    example_app.description = "integrations.custom_application.desc"
+    example_app.display_name = "My Test App"
+    example_app.description = "Description about this application."
     script = %{
       <div id="custom_application_{{widget.id}}" title="Custom Widget">
         <div class="content"></div>

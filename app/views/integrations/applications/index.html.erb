@@ -23,6 +23,7 @@
 	<!-- <input class="search floatr" placeholder="Search Integrations"/> -->
 	<ul class="table-list">
 		<% disp_header = 0
+			no_custom_app = true
 			@applications.each do |application| %>
 			<%next if (!feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest' or application.name == 'workflow_max'))%>
 
@@ -62,7 +63,8 @@
 					<%end%>
 					<div class="info-data"><%= t(application.description) %></div>
 
-				<%else # Custom Applications%>
+				<%else # Custom Applications
+					no_custom_app = false%>
 
 				    <%= link_to image_tag("symbols/delete-inactive.png"), application, :confirm => 'Are you sure?', :method => :delete, :class => "button custom-tip-bottom", :title => t('delete') %>
 	    			<%= link_to image_tag("symbols/setting.png"), edit_integrations_application_path(application), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
@@ -81,11 +83,13 @@
 	 	</li>
 	<% end %>
 	</ul>
-	<div class="app-custom list-noinfo">
-		You donot have any custom applications.
-		<br />
-		<%= link_to "Add new custom application", new_integrations_application_path %>
-	</div>
+	<%if no_custom_app%>
+		<div class="app-custom list-noinfo">
+			You do not have any custom applications.
+			<br />
+			<%= link_to "Add new custom application", new_integrations_application_path %>
+		</div>
+	<%end%>
 </div>
 <script>
 	var options = {

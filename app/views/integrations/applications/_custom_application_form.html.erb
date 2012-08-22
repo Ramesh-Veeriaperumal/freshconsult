@@ -1,8 +1,8 @@
 <% content_for :sidebar do -%>
   <div class="sidepanel helpcard">
-    <%= t("integrations."+@application.name+".helptext", :full_domain => current_account.full_domain) %>
+    <%= t("integrations.custom_application.helptext", :full_domain => current_account.full_domain) %>
   </div>
-  <div id="preview"></div>
+  <div id="preview" title="Preview"></div>
 <%- end %>
   <%widget = @application.widgets.first 
   disp_in_pages = widget.display_in_pages_option || {}%>
