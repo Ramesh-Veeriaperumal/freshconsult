@@ -80,6 +80,7 @@ var RLANG = {
 	align_justify: 'Justify',
 	horizontalrule: 'Insert Horizontal Rule',
 	deleted: 'Deleted',
+	underline: 'Underline',
 	anchor: 'Anchor',
 	link_new_tab: 'Open link in new tab'
 };
@@ -163,7 +164,7 @@ var Redactor = function(element, options)
 		
 		buttonsCustom: {},
 		buttonsAdd: [],
-		buttons: ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', '|', 'unorderedlist', 'orderedlist', 'outdent', 'indent', '|',
+		buttons: ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', 'underline', '|', 'unorderedlist', 'orderedlist', 'outdent', 'indent', '|',
 				'image', 'video', 'file', 'table', 'link', '|',
 				'fontcolor', 'backcolor', '|', 'alignleft', 'aligncenter', 'alignright', 'justify', '|', 'horizontalrule'],
 
@@ -361,6 +362,11 @@ var Redactor = function(element, options)
 				title: RLANG.deleted,
 				exec: 'strikethrough'
 			},	
+			underline:
+			{
+				title:RLANG.underline,
+				exec: 'underline'
+			},
 			unorderedlist:
 			{
 				title: '&bull; ' + RLANG.unorderedlist,
