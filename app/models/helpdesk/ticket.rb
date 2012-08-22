@@ -730,7 +730,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("="))
+    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def schema_less_attributes(attribute, args)
@@ -746,7 +746,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
 
-      return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("="))
+      return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
 
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!
