@@ -16,7 +16,7 @@
 			</li>
 		</ul>
 	</div>
-	<div class="app-custom">
+	<div class="app-custom clearfix">
 		<%= link_to "New Custom Application", new_integrations_application_path, 
 					:class => "uiButton custom-tip-bottom floatr", :title => t("application.add_addon") %>
 	</div>
@@ -29,7 +29,7 @@
 
 			<li class="app-<%= application.system_app? ? "native" : "custom" %>">
 				<div class="application">
-					<div class="logo application-logo-<%= application.name %>"></div>
+					<div class="logo application-logo-<%= application.system_app? ? application.name : "custom_app" %>"></div>
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
 
@@ -102,8 +102,8 @@
 	jQuery(document).ready(function() {
 		jQuery('#integrations-list .tabs a').click(function(ev) {
 			ev.preventDefault();
-			jQuery('#integrations-list .' + jQuery(this).data('hide')).fadeOut();
-			jQuery('#integrations-list .' + jQuery(this).data('show')).fadeIn();
+			jQuery('#integrations-list .' + jQuery(this).data('hide')).hide();
+			jQuery('#integrations-list .' + jQuery(this).data('show')).show();
 
 			jQuery('#integrations-list .tabs li').removeClass('active');
 			jQuery(this).parent().addClass('active');
