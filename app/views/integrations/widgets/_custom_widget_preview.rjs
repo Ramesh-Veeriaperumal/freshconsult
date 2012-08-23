@@ -1,9 +1,9 @@
 if params[:id] == "ticket"
-  ticket=current_account.tickets.first
+  ticket=current_account.tickets.last
   liquid_objects = {"ticket" => ticket, "requester" => ticket.requester}
 else
-  user=current_account.users.first
-  liquid_objects = {"user" => user}
+  user=current_account.users.last(:order=>:id)
+  liquid_objects = {"requester" => user}
 end
 
 widget = Integrations::Widget.new(:script=>params["application_script"])
