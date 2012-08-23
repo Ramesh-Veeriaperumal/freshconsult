@@ -111,7 +111,9 @@ class SearchController < ApplicationController
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
         s_options[:category_id] = current_portal.forum_category_id
-        @items.concat(Topic.search params[:search_key], :with => s_options, :per_page => 10)
+        @items.concat(Topic.search params[:search_key],
+                        :sphinx_select => content_select(f_classes),
+                        :with => s_options, :per_page => 10)
       end
 
     end
@@ -125,8 +127,8 @@ class SearchController < ApplicationController
                                                               :sphinx_select => sphinx_select,
                                                               :star => false,
                                                               :match_mode => :any,                                          
-                                                              :page => params[:page], :per_page => 10
-        elsif permission? :portal_request
+                                                              :page => params[:page], :per_page => 10                                          
+        else
           search_portal_for_logged_in_user
         end
         process_results
@@ -157,7 +159,6 @@ class SearchController < ApplicationController
     end
     
     def page_limit
-      return 20 if current_user.can_view_all_tickets?
       return 10
     end
 
@@ -252,7 +253,7 @@ class SearchController < ApplicationController
    end
 
   def filter_key(query)
-    email_regex  = Regexp.new('(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
+    email_regex  = Regexp.new('(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
     default_regex = Regexp.new('\w+', nil, 'u')
     enu = query.gsub(/("#{email_regex}(.*?#{email_regex})?"|(?![!-])#{email_regex})/u)
     unless enu.count > 0

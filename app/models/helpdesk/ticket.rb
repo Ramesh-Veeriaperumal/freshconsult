@@ -12,7 +12,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ParserUtil
   include Mobile::Actions::Ticket
 
-  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification"]
 
   set_table_name "helpdesk_tickets"
   
@@ -44,6 +45,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+
+  belongs_to :sphinx_requester,
+    :class_name => 'User',
+    :foreign_key => 'requester_id',
+    :conditions => 'helpdesk_tickets.account_id = users.account_id'
+
   
 
   has_many :notes, 
@@ -220,17 +227,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Sphinx configuration starts
   define_index do
        
-     indexes :display_id, :sortable => true
-     indexes :subject, :sortable => true
-     indexes description
-     indexes sphinx_notes.body, :as => :note
+    indexes :display_id, :sortable => true
+    indexes :subject, :sortable => true
+    indexes description
+    indexes sphinx_notes.body, :as => :note
     
     has account_id, deleted, responder_id, group_id, requester_id, status
-    has requester.customer_id, :as => :customer_id
+    has sphinx_requester.customer_id, :as => :customer_id
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
-    #set_property :delta => :delayed
+    
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -597,6 +604,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def friendly_reply_email
     email_config ? email_config.friendly_email : account.default_friendly_email
   end
+
+  def friendly_reply_email_personalize(user_name)
+    email_config ? email_config.friendly_email_personalize(user_name) : account.default_friendly_email_personalize(user_name)
+  end
   
   def reply_email
     email_config ? email_config.reply_email : account.default_email
@@ -724,17 +735,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   #Liquid ends here
   
-  def schema_less_attr_respond_to?(attribute)
-    build_schema_less_ticket unless schema_less_ticket
-    schema_less_ticket.respond_to? attribute
-  end
-
   def respond_to?(attribute)
-    super(attribute) || schema_less_attr_respond_to?(attribute)
+    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def schema_less_attributes(attribute, args)
     logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array) 
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
@@ -745,7 +752,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
 
-      return schema_less_attributes(method, args) if schema_less_attr_respond_to?(method)
+      return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
 
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!

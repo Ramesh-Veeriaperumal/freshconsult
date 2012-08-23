@@ -46,7 +46,7 @@ include RedisKeys
         flash[:notice] = t(:'flash.login.success')
         redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
-        flash[:notice] = "Login was unscucessfull!"
+        flash[:notice] = t(:'flash.login.failed')
         redirect_to login_normal_url
       end
     else
@@ -138,7 +138,7 @@ include RedisKeys
   
   def destroy
 
-    remove_old_filters if current_user.agent?
+    remove_old_filters if current_user && current_user.agent?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)

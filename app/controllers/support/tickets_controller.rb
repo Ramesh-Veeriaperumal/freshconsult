@@ -9,6 +9,7 @@ class Support::TicketsController < ApplicationController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
+  before_filter :check_user_permission, :only => [:show]
   before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
   before_filter :load_item, :only =>[:update]
   before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
@@ -154,6 +155,12 @@ class Support::TicketsController < ApplicationController
    
    def require_user_login
      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+   end
+
+   def check_user_permission
+     if current_user and current_user.agent?
+       return redirect_to helpdesk_ticket_url(:format => params[:format])
+     end
    end
   
 end

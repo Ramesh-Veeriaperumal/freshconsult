@@ -144,7 +144,7 @@ class User < ActiveRecord::Base
     has account_id, deleted
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    
+
     set_property :delta => :delayed
     set_property :field_weights => {
       :name         => 10,
@@ -449,7 +449,7 @@ class User < ActiveRecord::Base
     !can_view_all_tickets?
   end
 
-    def to_xml(options = {})
+  def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
