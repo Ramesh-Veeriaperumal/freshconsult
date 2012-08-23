@@ -125,9 +125,8 @@ class SearchController < ApplicationController
                                                               :sphinx_select => sphinx_select,
                                                               :star => false,
                                                               :match_mode => :any,                                          
-                                                              :page => params[:page], :per_page => 10            
-                                          
-        else
+                                                              :page => params[:page], :per_page => 10
+        elsif permission? :portal_request
           search_portal_for_logged_in_user
         end
         process_results
@@ -228,7 +227,7 @@ class SearchController < ApplicationController
   end 
 
    def search_portal_for_logged_in_user
-     with_options = { :account_id => current_account.id, :deleted => false, :visibility => [SearchUtil::DEFAULT_SEARCH_VALUE, Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]], :company=>SearchUtil::DEFAULT_SEARCH_VALUE}
+     with_options = { :account_id => current_account.id, :deleted => false, :visibility => [SearchUtil::DEFAULT_SEARCH_VALUE, Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]]}
      without_options = { :status=>SearchUtil::DEFAULT_SEARCH_VALUE }
      classes = [Helpdesk::Ticket, Solution::Article, Topic]
      sphinx_select = nil
@@ -239,10 +238,11 @@ class SearchController < ApplicationController
        with_options[:requester_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.id]
      end
      unless current_user.customer_id.blank?
+       with_options[:company] = SearchUtil::DEFAULT_SEARCH_VALUE
        with_options[:visibility] = [SearchUtil::DEFAULT_SEARCH_VALUE, Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users], Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]]
        sphinx_select = %{*, IF( IN(customer_ids, #{current_user.customer_id}) OR IN(visibility,#{Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]},#{Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]}), #{SearchUtil::DEFAULT_SEARCH_VALUE},0) AS company}
      end
-     #
+     Rails.logger.debug "SSP :with => #{with_options.inspect}, :without => #{without_options.inspect}, :classes => [#{classes.join(',')}], :sphinx_select => #{sphinx_select}"
      @items = ThinkingSphinx.search filter_key(params[:search_key]), 
                                       :with => with_options, 
                                       :without => without_options,
