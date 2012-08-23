@@ -1,8 +1,8 @@
 if params[:id] == "ticket"
-  ticket=Helpdesk::Ticket.first
+  ticket=current_account.tickets.first
   liquid_objects = {"ticket" => ticket, "requester" => ticket.requester}
 else
-  user=User.first
+  user=current_account.users.first
   liquid_objects = {"user" => user}
 end
 

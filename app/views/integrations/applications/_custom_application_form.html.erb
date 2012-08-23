@@ -28,13 +28,16 @@
       <%= text_area_tag "application[script]", widget.script%>
     </li>
     <li class="field">
-    <label class="checkwrapper"><%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>Show the widget in ticket view page.</label> <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"ticket" %>
-    <label class="checkwrapper"><%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", disp_in_pages.include?('contacts_show_page_side_bar')%>Show the widget in contact view page.</label> <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"contact" %>
+    <label class="checkwrapper"><%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>Show the widget in ticket view page. | <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"ticket" %>
+      </label>
+    <label class="checkwrapper"><%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", disp_in_pages.include?('contacts_show_page_side_bar')%>Show the widget in contact view page. | <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"contact" %>
+      </label>
     </li>
   </ul>
 <%#<div id="capsule_widget" domain="hirickross.capsulecrm.com" title="Custom CRM App"><div class="content"></div></div><script type="text/javascript">CustomWidget.include_js("/javascripts/capsule_crm.js");capsuleBundle={ t:"748b80fb0f4ecd19b68561dcc39c9f4f", reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; </script>%>
 <% javascript_tag do %>
   jQuery('.preview_link').bind("click", function(ev){
+      ev.preventDefault();
       jQuery("#preview").html("<div class='loading-box'></div>"); 
       params = {"application_script": jQuery("#application_script").val()};
       jQuery.ajax({
@@ -45,6 +48,5 @@
         success: function(msg){ 
         }
       }); 
-    jQuery(this).hide();  
   }); 
 <%end%>

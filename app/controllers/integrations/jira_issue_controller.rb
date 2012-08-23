@@ -113,14 +113,7 @@ class Integrations::JiraIssueController < ApplicationController
 	end
 
   def register
-    if Rails.env.production?
-      spec_file_name = "production-register.xml"
-    elsif Rails.env.staging?
-      spec_file_name = "staging-register.xml"
-    elsif Rails.env.development?
-      spec_file_name = "development-register.xml"
-    end
-    cert_file  = "#{RAILS_ROOT}/integrations/atlassian-jira/#{spec_file_name}"
+    cert_file  = "#{RAILS_ROOT}/integrations/atlassian-jira/#{Rails.env}-register.xml"
     respond_to do |format|
       format.xml do
         render :xml => File.read(cert_file)
