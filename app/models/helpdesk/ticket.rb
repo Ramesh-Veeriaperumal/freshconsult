@@ -45,6 +45,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+
+  belongs_to :sphinx_requester,
+    :class_name => 'User',
+    :foreign_key => 'requester_id',
+    :conditions => 'helpdesk_tickets.account_id = users.account_id'
+
   
 
   has_many :notes, 
@@ -221,17 +227,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Sphinx configuration starts
   define_index do
        
-     indexes :display_id, :sortable => true
-     indexes :subject, :sortable => true
-     indexes description
-     indexes sphinx_notes.body, :as => :note
+    indexes :display_id, :sortable => true
+    indexes :subject, :sortable => true
+    indexes description
+    indexes sphinx_notes.body, :as => :note
     
     has account_id, deleted, responder_id, group_id, requester_id, status
-    has requester.customer_id, :as => :customer_id
+    has sphinx_requester.customer_id, :as => :customer_id
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
-    #set_property :delta => :delayed
+    
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
