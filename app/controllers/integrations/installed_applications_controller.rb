@@ -43,10 +43,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       @installed_application.configs = convert_to_configs_hash(params)
       begin
         @installed_application.save!
-        flash[:notice] = t(:'flash.application.configure.success')   
+        flash[:notice] = t(:'flash.application.update.success')   
       rescue => e
         Rails.logger.error "Problem in updating an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-        flash[:error] = t(:'flash.application.configure.error')
+        flash[:error] = t(:'flash.application.update.error')
       end
     end
     redirect_to :controller=> 'applications', :action => 'index'

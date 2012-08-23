@@ -90,6 +90,10 @@ class Integrations::ObjectMapper
       ours_handler.send(ours_handler_config[:method], data, config)
     end
 
+    def self.clone(obj)
+      Marshal.load(Marshal.dump(obj))
+    end
+
   generic_config = {
         :fetch => {:ours => {
             :handler=>:db_fetch,
@@ -112,19 +116,19 @@ class Integrations::ObjectMapper
         :update=>{:theirs_to_ours_handler=>:db_save}
       }
 
-  PRIVATE_NOTE_CONFIG = generic_config.clone
+  PRIVATE_NOTE_CONFIG = clone(generic_config)
 
-  STATUS_AS_PRIVATE_NOTE_CONFIG = generic_config.clone
-  # STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}. {% if comment.body %} JIRA comment:\n {{comment.body}} {% endif %}\n"
+  STATUS_AS_PRIVATE_NOTE_CONFIG = clone(generic_config)
+  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}. {% if comment.body %} JIRA comment:\n {{comment.body}} {% endif %}\n"
 
-  PUBLIC_NOTE_CONFIG = generic_config.clone
-  # PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
+  PUBLIC_NOTE_CONFIG = clone(generic_config)
+  PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
-  STATUS_AS_PUBLIC_NOTE_CONFIG = generic_config.clone
-  # STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}. {% if comment.body %} JIRA comment:\n {{comment.body}} {% endif %}\n"
-  # STATUS_AS_PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
+  STATUS_AS_PUBLIC_NOTE_CONFIG = clone(generic_config)
+  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}. {% if comment.body %} JIRA comment:\n {{comment.body}} {% endif %}\n"
+  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
-  REPLY_CONFIG = generic_config.clone
+  REPLY_CONFIG = clone(generic_config)
   REPLY_CONFIG[:map][2][:theirs_to_ours][:value] = 2 #source
   REPLY_CONFIG[:map][3][:theirs_to_ours][:value] = false #private
   REPLY_CONFIG[:map].push({:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}})
