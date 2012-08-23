@@ -261,7 +261,7 @@ module Helpdesk::TicketsHelper
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
         reply_email_template = "&nbsp;" if (reply_email_template.empty?) #fix for chrome issue no data shown when "" is returned as value
-        default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>#{reply_email_template}<br/>#{signature}"
+        default_reply = "<span id='caret_pos_holder' style='display:none;'></span>#{reply_email_template}<br/>#{signature}"
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+

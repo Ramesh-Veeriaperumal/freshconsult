@@ -136,6 +136,12 @@
     		
     		var msg_body_id = reply_area.css("display") == 'none' ? "send-fwd-email-cnt-fwd" : "send-email-cnt-reply";
 			insetIntoBlankCaret(msg_body_id+"-body", value);
+			//Fix for the viewport scrolling in firefox.
+			if(jQuery.browser.mozilla){
+				editor =  tinyMCE.get(msg_body_id+"-body");
+				viewportBodyElement =  editor.getBody();
+				viewportBodyElement.scrollTop = 0;
+			}
 		}		
 		return;
 	}
