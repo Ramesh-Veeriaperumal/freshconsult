@@ -92,6 +92,7 @@ module Helpdesk::TicketActions
           csv << csv_data
         end
       end
+      csv_tickets_string << csv_string
     end
     send_data csv_string, 
         :type => 'text/csv; charset=utf-8; header=present', 

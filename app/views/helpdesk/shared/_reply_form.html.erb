@@ -17,6 +17,7 @@
   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
+
 <% end %>
 <%
   hide_class = conv_id.nil? ? "hide" : "" 
@@ -157,5 +158,6 @@
 
     <%= render(:partial => '/helpdesk/shared/reply_draft') %>
    
+
   <% end %>
 <% end %>
