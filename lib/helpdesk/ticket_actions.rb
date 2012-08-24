@@ -72,9 +72,10 @@ module Helpdesk::TicketActions
                                between '#{params[:start_date]}' and '#{params[:end_date]}'
                               )
                             )
-    all_joins = %( INNER JOIN helpdesk_ticket_states ON 
+    all_joins = index_filter.get_joins(sql_conditions)
+    all_joins[0].concat(%( INNER JOIN helpdesk_ticket_states ON 
                    helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
-                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id)
+                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id))
     csv_hash = params[:export_fields]
     headers = csv_hash.keys.sort
     csv_string = FasterCSV.generate do |csv|
