@@ -1472,8 +1472,8 @@ en:
       send_and_resolve: Send and Resolve
       send: Send
       send_satisfaction_survey: Include satisfaction survey
-    facebook_form: 	  	
-      send_and_resolve: Send and Resolve	  	
+    facebook_form:
+      send_and_resolve: Send and Resolve
       send: Send
     reported_by: from %{requester}
     close_btn: Close
@@ -1703,7 +1703,7 @@ en:
         removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
-      facebook_form:  	
+      facebook_form:
         title: "Reply to %{user}"
       history:
         recent_item: Recent Items
@@ -2249,9 +2249,9 @@ en:
         list_content:
               rating_msg_none: nobody said %{rating}
               rating_msg_single: one said %{rating}
-              rating_msg_multiple: %{count} said %{rating}
+              rating_msg_multiple: "%{count} said %{rating}"
               rating_primary_msg_single: one customer said %{rating}
-              rating_primary_msg_multiple: %{count} customers said %{rating}
+              rating_primary_msg_multiple: "%{count} customers said %{rating}"
               happy: awesome
               neutral: just okay
               unhappy: not good
