@@ -96,10 +96,6 @@
         .show();        
     }
          
-    function invokeRedactor(element_id){
-         jQuery('#'+element_id).redactor({ focus: true,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],execCommandCallback: function(obj, command) { isDirty=true; } , keyupCallback: function(obj, event) {isDirty=true;} });
- 	}
-
 		function insertIntoConversation(value){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');

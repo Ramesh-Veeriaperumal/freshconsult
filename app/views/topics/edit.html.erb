@@ -1,4 +1,11 @@
 <% content_for :sidebar do -%><%-end %>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
+<%javascript_tag do%>
+	jQuery(document).ready(function(){
+	invokeRedactor('topic_body_html','forum');
+});
+<%end%>
 <h3 class="title"><%= t('topic.edit') %></h3>
 <%= error_messages_for :topic %>
 <% form_for :topic,

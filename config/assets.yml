@@ -138,3 +138,4 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
   redactor:
     - public/javascripts/redactor/redactor.js
+    - public/javascripts/redactor/freshdesk_redactor.js
