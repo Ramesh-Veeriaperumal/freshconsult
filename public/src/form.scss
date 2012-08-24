@@ -2064,7 +2064,6 @@ ul.ui-form .inputs-list{
 		}
 	}
 }
-
 #cc_emails_sec .multi_value_field {
 	width:93%;
 	padding-left:5px;
@@ -2073,9 +2072,15 @@ ul.ui-form .inputs-list{
 	@include box-shadow(#DFDFDF 1px 1px 2px inset);
 	@include border-radius(5px);
 }
-
 .companies_select{
 	select{ float:left; }
 	.customSelect{ width:550px; }
 	.chzn-container{ margin-left: 10px; margin-top:-5px; }
 }
+#reset_password{
+	padding: 8px;
+}
+#reset_pasword_body{	padding-top: 6px; }
+#reset_password_buttons{ margin-top: 35px; }
+ #reset_password_template{
+ display:none;}

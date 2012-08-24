@@ -638,3 +638,11 @@ ul.ui-form .inputs-list { margin: -8px 0 20px; }
 .companies_select select { float: left; }
 .companies_select .customSelect { width: 550px; }
 .companies_select .chzn-container { margin-left: 10px; margin-top: -5px; }
+
+#reset_password { padding: 8px; }
+
+#reset_pasword_body { padding-top: 6px; }
+
+#reset_password_buttons { margin-top: 35px; }
+
+#reset_password_template { display: none; }

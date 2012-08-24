@@ -67,7 +67,7 @@ ul.activityfeed li div.preview_pic img { width: 40px; height: 40px; }
 .left_connected { position: relative; left: 3px; border-right: 0px; margin: 12px 0px; }
 
 .ui-list_with_icon { margin-left: 0; padding-top: 5px; list-style: none; margin: 0px; padding: 0px; }
-.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1324885769') no-repeat 3px 9px; list-style-type: none; }
+.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1343718368') no-repeat 3px 9px; list-style-type: none; }
 .ui-list_with_icon li { padding: 4px 0px 4px 18px; color: #41658a; position: relative; }
 .ui-list_with_icon li img { position: absolute; left: 0px; top: 4px; }
 .ui-list_with_icon li a { color: #527eaa; font-size: 1.0em; line-height: 1.5; text-decoration: none; }
@@ -689,7 +689,7 @@ h4.border_title { font-size: 16px; border-bottom: 1px solid #ebebeb; padding-bot
 .solution-list .odd a:hover, .solution-list .even a:hover { color: #3399cc; }
 .solution-list .odd a:active, .solution-list .even a:active { color: #4d769f; }
 .solution-list .odd ul, .solution-list .even ul { margin-left: 0; }
-.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1324885769') no-repeat -0.5px 5px; list-style-type: none; }
+.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1343718368') no-repeat -0.5px 5px; list-style-type: none; }
 .solution-list .odd li, .solution-list .even li { line-height: 22px; padding: 0px 0px 4px 18px; color: black; }
 .solution-list .odd li a, .solution-list .even li a { font-size: 13px; color: #21759b; }
 .solution-list .odd li a:visited, .solution-list .even li a:visited { color: #21759b; }
@@ -1829,3 +1829,11 @@ a.submit_link:hover { text-decoration: none; }
 .email-config-styled-table tbody tr td.to-email div.wrap { width: 250px; }
 
 .product-title { font-size: 1.1em; font-weight: bold; padding-bottom: 10px; }
+
+.email-details { max-height: 200px; overflow: auto; margin: 0 -14px; padding: 0 10px; }
+.email-details ul li { margin-left: 48px; color: #333; padding-bottom: 10px; }
+.email-details ul li.left { float: left; margin-left: 0px; color: #AAA; padding-right: 5px; min-width: 40px; text-align: right; }
+
+/* Export link in the Ticket list of Self Service Portal */
+.ssp_export { position: absolute; right: 5px; left: auto; width: 60px; font-size: 12px; padding: 5px 5px; }
+.ssp_export:hover { color: #333; }
