@@ -11,6 +11,7 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :user
   
   Max_Attachment_Size = 15.megabyte
+  include Mobile::Actions::Note
 
   has_many :attachments,
     :as => :attachable,
@@ -36,7 +37,7 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_protected :attachments, :notable_id
   
   before_create :validate_schema_less_note
-  after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
+  after_create :save_response_time, :update_content_ids, :update_parent, :add_activity, :update_in_bound_count
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
@@ -132,11 +133,6 @@ class Helpdesk::Note < ActiveRecord::Base
   def source_name
     SOURCES[source]
   end
-
-  def body_mobile
-    body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
-      body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))
-  end
   
   def to_liquid
     { 
@@ -176,6 +172,20 @@ class Helpdesk::Note < ActiveRecord::Base
         ticket_state.save
       end
     end
+
+    def update_content_ids
+      header = self.header_info
+      return if attachments.empty? or header.nil? or header[:content_ids].blank?
+      
+      attachments.each do |attach| 
+        content_id = header[:content_ids][attach.content_file_name]
+        self.body_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+      end
+      
+      # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
+      Helpdesk::Note.update_all("body_html= '#{body_html}'", ["id=? and account_id=?", id, account_id]) if body_html_changed?
+    end
+
     
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
@@ -241,10 +251,18 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def validate_schema_less_note
+      return unless human_note_for_ticket?
+      
       if email_conversation?
-        self.to_emails = fetch_valid_emails(schema_less_note.to_emails)
-        self.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
-        self.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
+        if schema_less_note.to_emails.blank?
+          schema_less_note.to_emails = notable.requester.email 
+          schema_less_note.from_email ||= account.primary_email_config.reply_email
+        end
+        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
+        schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
+        schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
+      elsif note?
+        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
     end
     
@@ -285,5 +303,4 @@ class Helpdesk::Note < ActiveRecord::Base
       build_schema_less_note unless schema_less_note
       schema_less_note
     end
-
 end

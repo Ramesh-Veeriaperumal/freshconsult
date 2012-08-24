@@ -7,10 +7,10 @@
     <% end %>
   </div>
 </div>  
+<% unless @pie_charts_hash.blank? %>
 <div class="seperator"></div>
 <div class="report-wrapper pagebreak">
-<% unless @pie_charts_hash.nil?
-  	@pie_charts_hash.each do |label,pie_chart|
+  	<% @pie_charts_hash.each do |label,pie_chart|
   		%>
   		<div class="report-unit report-pie-chart">
   			<h3><%= t('reports.pie_chart_title_prefix') %> <%= @pie_chart_labels.fetch(label,'')%></h3>
@@ -19,9 +19,9 @@
   			</div>
   		</div>
   		<%
-  	end
-  end %>
+  	end%>
 </div>  
+  <%end %>
 <% javascript_tag do %>
 	jQuery(document).ready(function() {
 	<%	unless @pie_charts_hash.nil?

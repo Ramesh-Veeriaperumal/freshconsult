@@ -9,6 +9,7 @@ class Support::TicketsController < ApplicationController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
+  before_filter :check_user_permission, :only => [:show]
   before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
   before_filter :load_item, :only =>[:update]
   before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
@@ -28,10 +29,12 @@ class Support::TicketsController < ApplicationController
   def update
     if @item.update_attributes(params[:helpdesk_ticket])
       respond_to do |format|
-        format.mobile { render :json => { :success => true, :item => @item }.to_json }
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
           redirect_to @item 
+        }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
         }
       end
     end
@@ -56,7 +59,11 @@ class Support::TicketsController < ApplicationController
           @tickets.each { |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep + tic.to_json({}, false)[19..-2]; sep=","
+            json << sep + tic.to_json({
+              :except => [ :description_html, :description ],
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+                            :responder_name, :need_attention, :pretty_updated_date ]
+            }, false)[19..-2]; sep=","
           }
           render :json => json + "]"
         end
@@ -101,12 +108,12 @@ class Support::TicketsController < ApplicationController
        mob_json[:failure] = true
      end
      respond_to do |format|
+      format.html{
+        redirect_to :back
+      }
       format.mobile {
         mob_json[:item] = @item;
         render :json => mob_json.to_json
-      }
-      format.html{
-        redirect_to :back
       }
      end
   end
@@ -148,6 +155,12 @@ class Support::TicketsController < ApplicationController
    
    def require_user_login
      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+   end
+
+   def check_user_permission
+     if current_user and current_user.agent?
+       return redirect_to helpdesk_ticket_url(:format => params[:format])
+     end
    end
   
 end

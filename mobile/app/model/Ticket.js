@@ -20,7 +20,8 @@ Ext.define('Freshdesk.model.Ticket', {
             { name : 'need_attention', type:'boolean'},
             { name : 'deleted', type:'boolean'},
             { name : 'spam', type:'boolean'},
-            { name : 'conversation_count', type:'int'}
+            { name : 'conversation_count', type:'int'},
+            { name : 'pretty_updated_date', type:'string' }
         ]
     }
 });

@@ -34,6 +34,13 @@ class AgentsController < Admin::AdminController
     end
   end
 
+  def convert_to_user
+    user = current_account.all_users.first(:include=>:agent, :conditions=>["agents.id=?",params[:id]])
+    user.agent.delete
+    user.user_role=3
+    user.save!
+  end
+
   def show    
     @agent = current_account.all_agents.find(params[:id])
     @user  = @agent.user

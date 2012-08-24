@@ -1,5 +1,7 @@
 <% note_view_id = "note_view_"+note.id.to_s() %>
 <% notedetails  = "note_details_#{note.id.to_s()}" %>
+<% forward_note_id = "cnt-fwd-#{note.id.to_s()}" %>
+<% edit_id = "edit-#{note.id.to_s()}" %>
 <div id="<%= note_view_id %>" class="description count <%= cycle('stripe', '') %>">  
    	<a name="<%= "note#{note.id}" %>"></a>
    	<div class="conversation-sprite">
@@ -19,27 +21,8 @@
 		</div> 
 		<div class="actions">
 	  	<% if permission?(:manage_tickets) %>
-	      	<%= link_to_remote( t("edit"), { :loading => "$('loading_#{notedetails}').show();", 
-	                                        :loaded  => "$('loading_#{notedetails}').hide();", 
-	                                        :update  => "edit_#{notedetails}", 
-											:complete => "jQuery(\"div[id$='#{notedetails}']\").hide();jQuery('#edit_#{notedetails}').show();",
-	                                        :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
-	                                        :method => :GET },
-	                                      { :class => "slim-button" }) if(note.note? && note.user && note.user.agent?) %>
-	        <%= link_to_remote( t("ticket.reply_to"), { :loading => "$('loading_#{notedetails}').show();",
-	        								:loaded  => "$('loading_#{notedetails}').hide();", 	
-	        								:update  => "reply_#{notedetails}",
-	        								:complete => "jQuery(\"div[id$='#{notedetails}']\").hide();jQuery('#reply_#{notedetails}').show();",
-	                                        :url => { :controller => "helpdesk/tickets", :id => note.notable.display_id, :action => :reply_to_conv , :note_id => note.id }, 
-	                                        :method => :GET },
-	                                      { :class => "slim-button" }) if note.inbound_email? %>
-	        <%= link_to_remote( t("fwd_to"), { :loading => "$('loading_#{notedetails}').show();",
-	        								:loaded  => "$('loading_#{notedetails}').hide();", 	
-	        								:update  => "fwd_#{notedetails}",
-	        								:complete => "jQuery(\"div[id$='#{notedetails}']\").hide();jQuery('#fwd_#{notedetails}').show();",
-	                                        :url => { :controller => "helpdesk/tickets", :id => note.notable.display_id, :action => :forward_conv , :note_id => note.id }, 
-	                                        :method => :GET },
-	                                      { :class => "slim-button" }) unless note.private %>
+			<%= link_to_function(t("edit"), "jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow');", {:class => "slim-button"}) if(note.note? && note.user && note.user.agent?) %>
+	        <%= link_to_function(t("fwd_to"), "jQuery('##{forward_note_id}').show().trigger('afterShow');", {:class => "slim-button"}) unless note.private %>
 	      <% if note.incoming %>
 	        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id }, :method => :post, :class => "slim-button tooltip", :title => t(".split_this_as_new_ticket"), :confirm => t(".split_ticket_confirm") if @item && !@item.fb_post %>
 	      <% end %>
@@ -48,35 +31,40 @@
     </div>
 	<div class="user_details">    
 		<%= user_avatar(note.user) if note.user %>
-    <%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name"), :note_date => formated_date(note.created_at) ) %>
-		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span> 
+    	<%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name"), :note_date => formated_date(note.created_at) ) %>
 		<br>
 		<%  if permission?(:manage_tickets)
 			conv_info = conversation_info(note) %>
-		<%= content_tag :span, truncate(conv_info, :length => 100), 
-				:rel => "hover-popover", 
-				"data-placement" => "below",
-				"data-content" => conv_info.length > 100 ? conversation_popover_details(note) : "" %>
+			<%= content_tag :span, truncate(conv_info, :length => 100), 
+					:rel => "hover-popover", 
+					"data-placement" => "below",
+					"data-content" => conv_info.length > 100 ? conversation_popover_details(note) : "" %>
 		<% end %>
   </div> 
-  	<div id="reply_<%= notedetails %>" class="hide"></div>
-  	<div id="fwd_<%= notedetails %>" class="hide"></div>
-  	<div id="edit_<%= notedetails %>" class="hide"></div>
-	<div class="details" id='<%= notedetails %>'>
-		<div class="request_mail">
-			<% 
-		       		notes = note.body_html
-		       
-		       		notes = "<span class='"+note.survey_remark.survey_result.get_small_img_class+"' style='float:left;margin-top:-11px;'></span>"+notes unless note.survey_remark.nil?
-			%>			
-			<%=notes%>
+  	<div id='<%= notedetails %>'>
+	  	<div class="details">
+			<div class="request_mail">
+				<% 
+			       	notes = note.body_html		       
+			       	notes = "<span class='"+note.survey_remark.survey_result.get_small_img_class+"' style='float:left;margin-top:-11px;'></span>"+notes unless note.survey_remark.nil?
+				%>			
+				<%= notes %>
+			</div>
 		</div>
+	    <% unless note.attachments.empty? %>
+			<span class="seperator"></span>
+			<h4 class="lowercase"><%= pluralize(note.attachments.size, t('attachment'), t('attachments'))%></h4>
+			<ul class="attachment_list">
+			    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+			</ul>
+		<% end %>
 	</div>
-	<% unless note.attachments.empty? %>
-		<span class="seperator"></span>
-		<h4 class="lowercase"><%= pluralize(note.attachments.size, t('attachment'), t('attachments'))%></h4>
-		<ul class="attachment_list">
-		    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-		</ul>
-	<% end %>
+
+	<%= content_tag :div, "", :id => "#{edit_id}", :class => "hide", :rel => "remote", 
+							"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note) %>
+    <%= content_tag :div, "", :id => forward_note_id, :class => "request_panel note-forward-form hide", :rel => "remote", 
+					"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
+												:id => note.notable.display_id, 
+												:note_id => note.id }) %>
 </div> 
+

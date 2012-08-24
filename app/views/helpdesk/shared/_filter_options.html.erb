@@ -1,6 +1,5 @@
   <%= will_filter_scripts_tag %>
-  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view"), :class => "slim-button floatr dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
-    <h3 class="title">Filters</h3>
+    <h3 class="title"><%= t("tickets_filter.title") %></h3>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />
       <input type="hidden" name="filter_name" value="<%= @current_view %>" />
@@ -12,22 +11,23 @@
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
-          else    
+          elsif     
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 
-    	  <% content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
-                              :class       => "ff_item", 
-                              :condition   => c_hash[:condition],
-                              :operator    => c_hash[:operator],
-                              :container   => container } do %>
-          <h4 class="title"><%= c_hash[:name] %></h4>
-          <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
-        <% end %>
-      <% end %>
-   
-
-<% javascript_tag do %> 
+    	  <% 
+        unless c_hash[:options].blank?
+          content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+                                :class       => "ff_item", 
+                                :condition   => c_hash[:condition],
+                                :operator    => c_hash[:operator],
+                                :container   => container } do %>
+            <h4 class="title"><%= c_hash[:name] %></h4>
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
+          <% end
+          end 
+        end %>
+<script type="text/javascript"> 
 	var query_hash  = $A();
   
   function getFilterData(){
@@ -58,16 +58,46 @@
 		jQuery("#FilterOptions input[name=page]").val(1);
   }
 
+  function refresh_tickets(){
+    jQuery("#save_filter").show();
+    jQuery("#delete_filter").hide();
+    if (!jQuery("#active_filter").hasClass('unsaved')) {
+      jQuery("#active_filter").text("<%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
+    }
+    jQuery("#leftViewMenu a.active").removeClass('active').children('span').remove();
+    jQuery("#FilterOptions input[name=filter_name]").val("");
+    jQuery(".view_filters .active").removeClass("active");
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
+  }
   
 	jQuery(document).ready(function(){
+    
+    filter_opts_sisyphus = jQuery('#FilterOptions').sisyphus({
+      name:'ticket_list_filters',
+      autoRelease: false
+    });
+    
+    if (getCookie('ticket_list_updated') != "true") {
+      filter_opts_sisyphus.manuallyReleaseData();
+      window.localStorage['is_unsaved_view'] = false;
+      window.localStorage['updated_ticket_list'] = "";
+    }
+
 		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
+
+
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON())
+
     jQuery(".filter_item").bind("change", function(){
+      refresh_tickets();
+    });	 
+
+    if (jQuery("#active_filter").hasClass('unsaved')) {
       jQuery("#save_filter").show();
-			jQuery("#FilterOptions input[name=filter_name]").val("");
-      jQuery(".view_filters .active").removeClass("active");
-      getFilterData();
-      jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
-    });	
+      jQuery("#delete_filter").hide();
+    }
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
@@ -76,19 +106,38 @@
 			ev.preventDefault();
 			jQuery(document).scrollTop(0);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
-		});		
+		});	
+
+    if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+      jQuery('#export_tickets').hide();
+    }	
+
   });
   
   jQuery("#FilterOptions").change(function(){
-    jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
+    jQuery("#ticket-list").html("<div class='loading-box'></div>");
+    if (supports_html5_storage()) {
+      window.localStorage['is_unsaved_view'] = false;
+    } 
      jQuery.ajax({
         url: "/helpdesk/tickets/custom_search",
         type: "POST",
         dataType: "script",
         data: jQuery(this).serializeArray(),
-        success: function(msg){ 
-          //jQuery("#ticket-list").hide().html(msg).fadeIn(300);
+        success: function(script){ 
+          if (supports_html5_storage()) {
+            window.localStorage['is_unsaved_view'] = jQuery("#active_filter").hasClass('unsaved');
+            window.localStorage['updated_ticket_list'] = script;
+            setCookie('ticket_list_updated',true);
+          }
+
+          if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+            jQuery('#export_tickets').hide();
+          } else {
+            jQuery('#export_tickets').show();
+          } 
+
         }
       }); 
   });
-<% end %>
+</script>

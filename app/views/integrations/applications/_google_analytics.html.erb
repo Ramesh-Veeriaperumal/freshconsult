@@ -1,4 +1,4 @@
-<%portals = Portal.find(:all, :joins => [:product], :conditions => {:account_id => current_account}, :order => 'primary_role DESC')%>
+<%portals = Portal.find(:all, :joins => [:product], :conditions => {:account_id => current_account}, :order => 'main_portal DESC')%>
 <div class="google_analytics">
 <fieldset>
 <% if portals.size > 1 %>

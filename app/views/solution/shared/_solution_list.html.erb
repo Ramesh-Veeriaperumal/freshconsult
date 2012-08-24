@@ -10,9 +10,13 @@
 </p> 
 <div class="intro">
 	<%=t('solution.folders.folder_form.visible_to')%>:
+	<% if folder.has_company_visiblity?%>
 	<% folder.customer_folders.each do |cust|%>
 		<span class="label notice"><%=cust.customer.name%></span>
 	<%end%>
+    <%else%>
+    	<span class="label notice"><%=Solution::Folder::VISIBILITY_NAMES_BY_KEY[folder.visibility]%></span>
+    <%end%>
 </div>
 
 <!-- Need to check visiblity is shown to the people or not -->

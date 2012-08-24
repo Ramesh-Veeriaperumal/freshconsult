@@ -24,7 +24,7 @@
 		<% end %>
 		<% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
 			<div class="right_col">
-				<% unless (@topics.size == 0) %> 
+				<% unless (@topics.blank?) %> 
 					<%= content_tag( :h3, t('recent_forum_posts'), :class => "title" ) %>  
 					<ul class="list_with_icon">
 						<% @topics.each do |topic|  %>

@@ -43,7 +43,11 @@ module Reports::ChartGenerator
     
     pie_data = []
     sort_data.each do |key,tkt_hash|
-      pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     if (TicketConstants::SOURCE_NAMES_BY_KEY.has_key?(key))
+        pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     else
+        pie_data.push({:name=> key,:data =>[tkt_hash.to_f] })#//TODO need to do i18n for the key 
+      end
     end
     pie_data
   end
@@ -149,8 +153,81 @@ module Reports::ChartGenerator
    end
   end 
   
-  def gen_single_stacked_bar_chart(value_arr,column_name)
 
+
+def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
+return nil if data_arr.empty?
+  Highchart.bar({
+    :chart =>{
+        :renderTo => "#{chart_name}_bar_chart",
+          :margin => [10,35,50,column_width],
+          :borderColor => 'rgba(0,0,0,0)',
+          :height =>(data_arr.length*20 < 320)? 320 :data_arr.length*20,
+          :plotBackgroundColor=>'rgba(255,255,255,0.1)',
+          :backgroundColor=>'rgba(255,255,255,0.1)',
+          },
+           :x_axis=>{
+            :reversed=>false,
+            :categories=>xaxis_arr.reverse,
+            :tickWidth=>0,
+            :labels=>{
+              :formatter => pareto_category_formatter,
+                 :style=> {
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
+                         },
+               },
+            },
+             :y_axis=> {
+              :min => 0,
+              :max =>100,
+              :gridLineColor=> '#cccccc',
+              :gridLineDashStyle=>'dot',
+                :title=> {
+                    :text=> 'Percentage %',
+                    :align=> 'high',
+                    :style=> {
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
+                    },
+                },
+                :labels=> {
+                    :overflow=> 'justify',
+                     :style=> {
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
+                         },
+                }
+            },
+             :plotOptions=> {
+                :bar=> {
+                    :dataLabels=> {
+                        :enabled=> true,
+                         :style=> {
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
+                         },
+                      :overflow=> 'justify',
+                        :formatter =>  pareto_label_formatter,
+                        :align => 'left',
+                        :y => 0,
+                    }
+                },
+                :series=>{
+                  :groupPadding=> 0.025,
+                  :pointWidth=>15,
+                }
+            },
+            :series =>[{:data=>data_arr.reverse}],
+                 :tooltip => {
+                       :style=> {
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
+                           :padding=>5,
+                         },
+                    :formatter =>  pareto_tooltip_formatter,
+      },
+
+  })
+end
+
+
+  def gen_single_stacked_bar_chart(value_arr,column_name)
     browser_data = gen_stacked_bar_data(value_arr,column_name)
     self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_single_stacked_bar_chart",
     Highchart.bar({
@@ -331,6 +408,30 @@ module Reports::ChartGenerator
     }))
  end
  
+
+ def pareto_tooltip_formatter
+    "function() {
+        return '<p>' + this.point.name  + '<strong> : ' +this.point.y+ '%</strong> ('+this.point.count+' tickets)</p>';
+    }"
+ end
+
+ def pareto_category_formatter
+  "function(){
+    value = this.value;
+    if(value.length > 15){
+        value =value.substring(0,15);
+        value =value+'...';
+      }
+      return value;
+    }"
+ end
+
+ def pareto_label_formatter
+  "function() {
+     if(this.y>0)  return  this.point.y+'%' ;
+   }"
+ end
+
  def line_tooltip_formatter  
    "function() {
       return  '<strong>' + this.y +' tickets </strong> on ' + Highcharts.dateFormat('%b %e', this.x) ;
