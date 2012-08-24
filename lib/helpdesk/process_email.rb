@@ -85,7 +85,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       email = parsed_email[:email]
 
       if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
-        emailregl = $1 
+        email = $1 
       end
 
 
