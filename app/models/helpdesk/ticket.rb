@@ -12,7 +12,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ParserUtil
   include Mobile::Actions::Ticket
 
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification"]
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", "header_info"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
