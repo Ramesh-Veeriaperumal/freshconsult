@@ -19,13 +19,11 @@ include RedisKeys
   skip_before_filter :check_day_pass_usage
   
   def new
-    if current_account.sso_enabled? and (request.request_uri != "/login/normal")
+    if current_account.sso_enabled? and (request.request_uri != "/login/normal") 
       redirect_to current_account.sso_options[:login_url]
-    end
-    
-    @user_session = current_account.user_sessions.new
-    if mobile?
-      render :partial => "shared/login"
+    else
+      @user_session = current_account.user_sessions.new
+      render :partial => "shared/login" if mobile?
     end
   end
  
