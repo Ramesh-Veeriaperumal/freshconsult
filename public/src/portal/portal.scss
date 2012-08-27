@@ -139,20 +139,21 @@
 }
 
 .font-badge{  
-  @include inline-block;
   @include border-radius(3em);
+  @include float-left;
   color: #fff; 
   background-color: $tabColor;
   font-size: 32px; line-height: 50px;
   width: 46px; height: 46px;
   text-align: center;  
+  margin-left: -55px; 
   @include box-shadow(rgba(0,0,0,0.1) 0 1px 5px inset);
 }
 
 .forum-group a{
-  padding-left:58px;
   position:relative;
   color:black;
+  padding-left:55px;
   display:block;  
   @include min-height(50px);
   h4{ 
@@ -206,7 +207,6 @@ span.more-items{
     letter-spacing: -2px;
     line-height:37px;
     margin-right: 10px;
-    float: left;    
   }
 	.font-badge, .user-pic-thumb{ margin-left: -45px; }
 	.label{

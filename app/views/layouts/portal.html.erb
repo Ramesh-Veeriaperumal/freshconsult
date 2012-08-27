@@ -19,8 +19,8 @@
 	<script src="/javascripts/modernizr-2.5.3-respond-1.1.0.min.js"></script>
 </head>
 <body>
-	
-	<%= render :partial => "portal/layout", :locals => { :dynamic_template => current_portal.template.layout } %>    
+
+	<%= render :partial => "portal/layout", :locals => { :dynamic_template => (current_portal.template.layout unless current_portal.template.blank?) } %>    
 
 	<%= include_javascripts :portal %>
 	<script type="text/javascript">
