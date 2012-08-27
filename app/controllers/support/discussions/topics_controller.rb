@@ -11,7 +11,7 @@ class Support::Discussions::TopicsController < SupportController
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission, :only => [:edit, :update] 
-  
+
   before_filter :set_selected_tab
   
   uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
@@ -39,12 +39,16 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def new
+    set_portal_page :new_topic
+
     @forum = forum_scoper.find(params[:forum_id])
     @topic = @forum.topics.new
     @topic_form = render_to_string :partial => "form"
   end
   
   def show    
+    set_portal_page :topic_view
+    
     respond_to do |format|
       format.html do
         # see notes in application.rb on how this works

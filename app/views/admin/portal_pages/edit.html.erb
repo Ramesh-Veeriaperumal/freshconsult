@@ -1,6 +1,4 @@
-<% form_for :portal_page, @portal_page, :url => admin_portal_page_path, :html => { :method => :put } do |f| %>
-  <%= f.error_messages %>
-  <%= f.hidden_field :page_type %>
-  <%= f.label @portal_page.page_name %> 
-  <%= f.text_area :content, :class => "auto", :rows => 24  %>
+<% form_for :portal_page, @portal_page, :url => admin_portal_template_page_path, :builder => Admin::PortalTemplatesHelper::AppFormBuilder, :html => { :method => :put } do |form| %>
+	<%= content_tag :h3, "Customize portal page", :class => "title" %>
+  	<%= render :partial => 'form', :object => form %>
 <% end %>

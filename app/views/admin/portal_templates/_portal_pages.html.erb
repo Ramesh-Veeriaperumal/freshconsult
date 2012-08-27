@@ -1,3 +1,23 @@
-<% portal_pages.each do |page| %>
-  <li><%= link_to	page.page_name, "#EditPage", "data-remote-url" => edit_admin_portal_page_path(@portal, page.id) %> </li>
-<% end %>
+<h4 class="title">Customized pages</h4>
+<ul id="PortalPages">
+	<% portal_pages.each do |page| %>
+  	<li>
+  		<%= link_to_remote page.name, 
+  			:url => edit_admin_portal_template_page_path( :id => page.id, :portal_id => @portal.id, :template_id => @portal_template.id ), 
+  			:method => :get, 
+  			:update => "Customizepage" %> 
+  	</li>
+	<% end %>
+</ul>
+<hr />
+<h4 class="title">Available pages</h4>
+<ul>
+	<% @page_types.reject{ |p| @available_pages.include?(p[1]) }.each do |page| %>
+	<li>
+		<%= link_to_remote page[0], 
+			:url => new_admin_portal_template_page_path(:portal_id => @portal.id, :template_id => @portal_template.id, :page_type => page[1]), 
+			:method => :get, 
+			:update => "Customizepage" %> 
+	</li>
+	<% end %>
+</ul>

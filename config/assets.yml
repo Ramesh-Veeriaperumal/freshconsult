@@ -28,6 +28,7 @@ stylesheets:
     - public/stylesheets/hacks.css
     - public/stylesheets/ie.css
     - public/stylesheets/satisfaction.css
+    - public/stylesheets/ace-editor.css
 
   portal:                
     - public/stylesheets/portal/portal.css
@@ -98,10 +99,9 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+  # Code editor for portal cms
   aceeditor:
-    - public/javascripts/aceeditor/ace.js
-    - public/javascripts/aceeditor/theme-textmate.js
-    - public/javascripts/aceeditor/mode-javascript.js        
+    - public/javascripts/ace/*.js
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace: 

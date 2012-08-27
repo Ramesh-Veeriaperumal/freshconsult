@@ -94,8 +94,9 @@
     admin.resources :canned_responses
     admin.resources :products
     admin.resources :portal, :only => [ :index, :update ] do |portal|
-      portal.resources :templates, :controller => 'portal_templates'
-      portal.resources :pages, :controller => 'portal_pages'
+      portal.resources :templates, :controller => 'portal_templates' do |template|
+        template.resources :pages, :controller => 'portal_pages'
+      end
     end
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :zen_import, :collection => {:import_data => :any }
@@ -321,7 +322,7 @@
     support.resources :solutions, :only => [:index, :show]
     support.namespace :solutions do |solution|
       solution.resources :folders, :only => [:show]
-      solution.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
+      solution.resources :articles, :only => [:show, :index], :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
     end
 
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'

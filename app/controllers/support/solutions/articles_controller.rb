@@ -3,6 +3,10 @@ class Support::Solutions::ArticlesController < SupportController
   include Helpdesk::TicketActions
   
   before_filter { |c| c.requires_permission :portal_knowledgebase }
+
+  before_filter :only => :show do |c|
+    c.send(:set_portal_page, :article_view)
+  end
   
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
   
@@ -13,11 +17,7 @@ class Support::Solutions::ArticlesController < SupportController
   end
   
   def index
-    @articles = Solution::Article.visible(current_account).paginate(
-      :page => params[:page], 
-      :conditions => ["title LIKE ?", "%#{params[:v]}%"],
-      :per_page => 10
-    )
+    redirect_to support_solutions_path
   end
   
   def show

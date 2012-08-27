@@ -1,6 +1,7 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 @import "base";
 @import "mixins";
+@import "compass";
 
 /* Importing admin icons */
 @import "admin-icon/*.png";
@@ -4888,7 +4889,7 @@ a.close{
 	.link-item.active{
 	   color:#336699;
      font-weight:bold;
-     @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+     /*@include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);*/
 	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{

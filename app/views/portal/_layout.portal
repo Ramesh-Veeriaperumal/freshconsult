@@ -31,7 +31,8 @@
 	  		<div class="span3 sidebar">
 	  			<div class="page-node">
 	  				{{ content_for_sidebar }}
-	  				Call us @ 888 888 888
+	  				
+	  				{{ contact_us }}
 	  			</div>
 	  		</div>
 	  	</div>

@@ -103,7 +103,6 @@ class Portal < ActiveRecord::Base
     fav_icon.content.url unless fav_icon.nil?
   end
   
-
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)

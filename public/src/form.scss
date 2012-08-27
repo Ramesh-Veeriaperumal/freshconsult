@@ -15,9 +15,8 @@ label{
 .help-text{
   font-size:13px;
   color:#888888;
-   display: block;
-   padding:5px 0;
-   font-size:1.4em;
+  display: block;
+  padding:0 0 5px 0;
 }
 input[type=text], select, input.text { 
    width: 93%;
@@ -57,9 +56,19 @@ textarea[readonly] {
 
 textarea {
    height: 100px;
-   width: 99%;
+   width: 99%;   
+   overflow:auto;
+   font-size:13px;
+   line-height:18px;
+   resize:none;
+   padding:3px;
    font-family:$blueprint-font-family;
 }
+
+textarea.auto{
+   height:auto !important;
+}
+
 
 input:focus { outline: none; }
 textarea, input{ outline:none; }
@@ -96,18 +105,6 @@ div.color{
 	span{
 		display:inline;
 	}
-}
-
-textarea{  
-   overflow:auto;
-   font-size:13px;
-   line-height:18px;
-   resize:none;
-   padding:3px;
-}       
-
-textarea.auto{
-  height:auto;
 }
 
 input.very_small{

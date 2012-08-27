@@ -1,0 +1,4 @@
+<% form_for :portal_page, @portal_page, :url => admin_portal_template_pages_path, :builder => Admin::PortalTemplatesHelper::AppFormBuilder, :html => { :method => :post } do |form| %>
+	<%= content_tag :h3, "Customize portal page", :class => "title" %>
+	<%= render :partial => 'form', :object => form %>
+<% end %>

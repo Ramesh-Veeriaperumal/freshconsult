@@ -2,6 +2,9 @@ class Support::Discussions::ForumsController < SupportController
 	before_filter { |c| c.requires_feature :forums }
  	before_filter { |c| c.check_portal_scope :open_forums }
   	before_filter :find_or_initialize_forum
+  	before_filter do |c|
+		c.send(:set_portal_page, :topic_list)
+	end
 
 	def show
 		(session[:forums] ||= {})[@forum.id] = Time.now.utc if logged_in?

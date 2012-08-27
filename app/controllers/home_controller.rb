@@ -2,7 +2,10 @@ class HomeController < SupportController
 	
  	before_filter { @hash_of_additional_params = { :format => "html" } }  
  	before_filter :set_portal_variables
-  before_filter :set_content_scope, :set_mobile  
+  before_filter :set_content_scope, :set_mobile
+  before_filter :only => :index do |c|
+    c.send(:set_portal_page, :portal_home)
+  end
   
   def index
     redirect_to MOBILE_URL and return if (current_user && mobile?)

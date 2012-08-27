@@ -1,0 +1,11 @@
+<%= form.error_messages %>
+<%= form.hidden_field :page_type %>
+<p>
+	<%= form.label @portal_page.name %>
+	<%= form.ace_editor :content %>
+</p>
+<br />
+<div class="well">
+	<%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr" %>
+	<%= submit_tag "Save changes", :class => "btn" %>
+</div>

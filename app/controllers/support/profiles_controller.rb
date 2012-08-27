@@ -3,9 +3,10 @@ class Support::ProfilesController < SupportController
   before_filter :require_user 
   before_filter :set_profile
 
-  def edit   	
+  def edit
+    set_portal_page :profile_edit
    	@user_edit_form = render_to_string :partial => "form"
-  end 
+  end
 
   def update
     company_name = params[:user][:customer]

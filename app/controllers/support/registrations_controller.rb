@@ -1,6 +1,7 @@
 class Support::RegistrationsController < SupportController
   
   before_filter { |c| c.requires_feature :signup_link }
+  
   # before_filter :chk_for_logged_in_usr
   
   # def chk_for_logged_in_usr
@@ -10,6 +11,7 @@ class Support::RegistrationsController < SupportController
   # end
 
   def new
+    set_portal_page :user_signup
     @signup_form = render_to_string :partial => "form"
   end
   

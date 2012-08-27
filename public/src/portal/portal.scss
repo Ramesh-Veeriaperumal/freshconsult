@@ -24,7 +24,6 @@
 @import "lib/tables";
 
 // Components: common
-/*@import "lib/sprites"; */
 @import "lib/icons"; 
 @import "lib/dropdowns";
 @import "lib/wells";
@@ -38,7 +37,6 @@
 
 // Components: Nav
 @import "lib/navs";
-/*@import "lib/navbar";*/
 @import "lib/breadcrumbs";
 @import "lib/pagination";
 @import "lib/pager";
@@ -49,14 +47,8 @@
 @import "lib/popovers";
 
 // Components: Misc
-/*@import "lib/thumbnails";*/
 @import "lib/labels";
-/*@import "lib/badges";
-@import "lib/progress-bars";
-@import "lib/accordion";
-@import "lib/carousel";
-@import "lib/hero-unit";
-*/
+
 // Utility classes
 @import "lib/utilities"; // Has to be last to override when necessary
 
