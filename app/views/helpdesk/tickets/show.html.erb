@@ -25,19 +25,23 @@
 <div class="tab-content">
 	<div class="requestCnt request-conversation active tab-pane set-top" id="Pages">
 		<div id="TicketForms">
-		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
-		  <%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
-		  <%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		  <%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		  <%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		  <% content_for :pagefixed do %> 
-			<div class="canned-response-menu hide" id="canned_response_container"> 
-			  <div>
-			    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
-			  </div>
-			  <div id="canned_response_list"></div>
-			</div>
-		  <% end %>
+		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
+
+		  	<div class="request_panel hide" id="cnt-fwd">
+				<%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
+		  	</div>
+
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<% content_for :pagefixed do %> 
+				<div class="canned-response-menu hide" id="canned_response_container"> 
+				  <div>
+				    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+				  </div>
+				  <div id="canned_response_list"></div>
+				</div>
+			<% end %>
 		</div> 
 		<% unless @ticket_notes.blank? %>
 			<%= render :partial => 'note', :collection => @ticket_notes %>
@@ -56,7 +60,6 @@
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
 	var activeForm = null;
-
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
 			
@@ -64,12 +67,12 @@
 				jQuery("#"+activeForm.get(0).id).hide();
 
 
-			activeForm = jQuery('#'+formid).slideDown();
+			activeForm = jQuery('#'+formid).show();
 			switch(formid){
 				case 'cnt-reply':
-					// jQuery('#reply_cc_emails_id').trigger("cc_visibility");
 				case 'cnt-note':
-					insertIntoConversation("");					
+				case 'cnt-fwd':
+					insertIntoConversation("");
 				break; 
 				case 'cnt-fb-post': 
 					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
@@ -78,70 +81,71 @@
 					setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
 				break;
 			}
-
 		}
 
+	var activeTinyMce = null;
     function show_canned_response(button, ticket_id){
-      jQuery("#canned_response_container").css(jQuery(button).offset());
-      jQuery("#canned_response_container")
-        .show().addClass("loading");
-      jQuery("#canned_response_list")
-        .load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
-          jQuery("#canned_response_container")
-            .removeClass("loading");
-        })
-        .show();        
+      	jQuery("#canned_response_container").css(jQuery(button).offset());
+
+      	activeTinyMce = jQuery(button).data("tinyMceId") || "";
+      	
+      	jQuery("#canned_response_container")   	
+        	.show()
+        	.addClass("loading");
+
+      	jQuery("#canned_response_list")
+        	.load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
+          		jQuery("#canned_response_container")
+            		.removeClass("loading");
+        	})
+      		.show();        
     }
-         
 
-		function insertIntoConversation(value){
-			note_area  = jQuery('#cnt-note');
-			reply_area = jQuery('#cnt-reply');
-			fwd_area = jQuery('#cnt-fwd')
-			tweet_area = jQuery('#cnt-tweet');
-			if(note_area.css("display") == 'block'){                                                
-				var addNote = tinyMCE.get("add-note-cnt-note-body");
-				addNote.selection.select(addNote.dom.select('span#caret_pos_holder')[0]);   
-				addNote.dom.remove(addNote.dom.select('span#caret_pos_holder')[0]);
-        tinyMCE.execInstanceCommand("add-note-cnt-note-body","mceInsertContent",false, value);
-			} 
-			else if(tweet_area.css("display") == 'block'){
-				get_short_url(value, function(bitly){
-						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
-						jQuery('#send-tweet-cnt-tweet-body')
-								.trigger("focus")
-								.trigger("keydown");
-				});			
-			}
-			else{
-				if(reply_area.css("display") == 'none' && fwd_area.css("display") == 'none')
-					jQuery('#ReplyButton').trigger("click");
-        		var msg_body_id = reply_area.css("display") == 'none' ? "send-fwd-email-cnt-fwd" : "send-email-cnt-reply"
-				var replyMessage = tinyMCE.get(msg_body_id+"-body");
-				replyMessage.selection.select(replyMessage.dom.select('span#caret_pos_holder')[0]);   
-				replyMessage.dom.remove(replyMessage.dom.select('span#caret_pos_holder')[0]);
-        tinyMCE.execInstanceCommand(msg_body_id+"-body","mceInsertContent",false, value);
-			}        
-			
-			return;
+    function insetIntoBlankCaret(element_id, value){
+    	if(!$(element_id)) return 
+
+    	currentEditItem = tinyMCE.get(element_id);
+    	currentEditItemCaret = currentEditItem.dom.select('span#caret_pos_holder')[0];
+		currentEditItem.selection.select(currentEditItemCaret);   
+		currentEditItem.dom.remove(currentEditItemCaret);
+		tinyMCE.execInstanceCommand(element_id, "mceInsertContent", false, value);
+	}
+    
+	function insertIntoConversation(value, element_id){
+		note_area  = jQuery('#cnt-note');
+		reply_area = jQuery('#cnt-reply');
+		fwd_area = jQuery('#cnt-fwd')
+		tweet_area = jQuery('#cnt-tweet');
+		if($(element_id)){
+			insetIntoBlankCaret(element_id, value);
 		}
-		
-		function getCannedResponse(ticket_id, ca_resp_id){
-  	  jQuery("#canned_response_container").addClass("loading")
-  		jQuery.ajax({	type: 'POST',
-  						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
-  						contentType: 'application/text',
-  						async: false,
-  						success: function(data){		
-  									insertIntoConversation(data);
-  							    jQuery("#canned_response_list")
-  							      .removeClass("loading")
-  							      .hide(300);
-  								}
-  						});
-  		return true;
-  	}
-
+		else if(note_area.css("display") == 'block'){               
+			insetIntoBlankCaret("add-note-cnt-note-body", value);
+		} 
+		else if(tweet_area.css("display") == 'block'){
+			get_short_url(value, function(bitly){
+					insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
+					jQuery('#send-tweet-cnt-tweet-body')
+							.trigger("focus")
+							.trigger("keydown");
+			});			
+		}
+		else{
+			if(reply_area.css("display") == 'none' && fwd_area.css("display") == 'none')
+				jQuery('#ReplyButton').trigger("click");
+    		
+    		var msg_body_id = reply_area.css("display") == 'none' ? "send-fwd-email-cnt-fwd" : "send-email-cnt-reply";
+			insetIntoBlankCaret(msg_body_id+"-body", value);
+			//Fix for the viewport scrolling in firefox.
+			if(jQuery.browser.mozilla){
+				editor =  tinyMCE.get(msg_body_id+"-body");
+				viewportBodyElement =  editor.getBody();
+				viewportBodyElement.scrollTop = 0;
+			}
+		}		
+		return;
+	}
+	
   	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
@@ -155,11 +159,29 @@
   			jQuery(".toEmailMoreLink").text('');
   		}
   	}
+		
+	function getCannedResponse(ticket_id, ca_resp_id){
+  		jQuery("#canned_response_container").addClass("loading")
+  		jQuery.ajax({	type: 'POST',
+  						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
+  						contentType: 'application/text',
+  						async: false,
+  						success: function(data){		
+  							elementId = jQuery("#canned_response_container").data("tinyMceId")
 
-function validateMCEData(){
-	if(jQuery.browser.opera)
-		jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
-}
+  							insertIntoConversation(data, activeTinyMce);
+  							jQuery("#canned_response_list")
+  							    .removeClass("loading")
+  							    .hide(300);
+  							}
+  						});
+  		return true;
+  	}
+
+	function validateMCEData(){
+		if(jQuery.browser.opera)
+			jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
+	}
 	
   <% end %>
 
@@ -168,6 +190,6 @@ function validateMCEData(){
 <% content_for :onload_script do -%> 	
 	jQuery('#custom_ticket_form').validate();
 	<% unless @draft.nil? %>
-	jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
+		jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
 	<% end %>
 <%- end %>

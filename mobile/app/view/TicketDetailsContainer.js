@@ -177,12 +177,20 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         location.href="#filters/"+type+"/"+id;
     },
     updateProperties : function(){
-        var formObj = this.items.items[1].items.items[2].items.items[1].items.items[1],id=this.ticket_id,me=this;
+        var formObj = this.items.items[1].items.items[2].items.items[1].items.items[1],id=this.ticket_id,me=this,
+        id = this.ticket_id;
+        Ext.Viewport.setMasked(true);
         formObj.submit({
             success:function(form,response){
                 me.toggleProperties();
+                Ext.Viewport.setMasked(false);
+                Freshdesk.notification={
+                    success : "The ticket has been updated."
+                };
+                location.href="#tickets/reload/"+id;
             },
             failure:function(form,response){
+                Ext.Viewport.setMasked(false);
                 var errorHtml='Please correct the bellow errors.<br/>';
                 for(var index in response.errors){
                     var error = response.errors[index],eNo= +index+1;

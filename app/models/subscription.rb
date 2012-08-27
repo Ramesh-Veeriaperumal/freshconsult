@@ -248,7 +248,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def eligible_for_free_plan?
-    (account.agents.count == AGENTS_FOR_FREE_PLAN) and (!active?)
+    (account.full_time_agents.count == AGENTS_FOR_FREE_PLAN) and (!active?)
   end
 
   #Need to re visit

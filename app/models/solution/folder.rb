@@ -71,7 +71,7 @@ class Solution::Folder < ActiveRecord::Base
   def self.visiblity_condition(user)
     condition =   {:visibility =>self.get_visibility_array(user) }
     condition =  Solution::Folder.merge_conditions(condition) + " OR(solution_folders.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
-                solution_customer_folders.customer_id = #{ user.customer.id})" if (user && user.has_company?)
+                solution_customer_folders.customer_id = #{ user.customer_id})" if (user && user.has_company?)
     return condition
   end
 
@@ -91,6 +91,10 @@ class Solution::Folder < ActiveRecord::Base
       article.delta = true
       article.save
     end
+  end
+
+  def has_company_visiblity?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
   
   def to_xml(options = {})

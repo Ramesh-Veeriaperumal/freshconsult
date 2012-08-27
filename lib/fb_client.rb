@@ -2,6 +2,8 @@ class FBClient
   
   require 'koala'  
    
+   DEFAULT_PAGE_IMG_URL = "http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yG/r/2lIfT16jRCO.jpg"
+
   def initialize(fb_page  , options = {} )
     #@product = options[:product] || fb_user.product
     #@account = options[:current_account]  || fb_user.product.account
@@ -33,7 +35,7 @@ class FBClient
       page_info = @graph.get_object(page_id)
       page_info.symbolize_keys!
       fb_pages << {:profile_id => profile_id , :access_token =>oauth_access_token, :page_id=> page_id,:page_name => page_info[:name], 
-                   :page_token => page[:access_token],:page_img_url => page_info[:picture], :page_link => page_info[:link] , :fetch_since => 0,
+                   :page_token => page[:access_token],:page_img_url => page_info[:picture] || DEFAULT_PAGE_IMG_URL, :page_link => page_info[:link] , :fetch_since => 0,
                    :reauth_required => false , :last_error => nil} unless page[:access_token].blank?
     
     end

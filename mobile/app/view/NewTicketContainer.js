@@ -36,7 +36,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                 padding:0,
                 border:0,
                 layout:'fit',
-                scrollable:true,
+                scrollable:false,
                 id:'NewticketProperties'
         };
         this.add([topToolbar,ticket_fields]);
@@ -82,7 +82,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
     },
     config: {
         layout:'fit',
-        scrollable:true,
+        scrollable:false,
         cls:'newTicketForm',
         id:'newTicketForm'
     }

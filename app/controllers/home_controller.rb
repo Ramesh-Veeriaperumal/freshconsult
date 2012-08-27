@@ -26,9 +26,9 @@ class HomeController < ApplicationController
     end
   
     def recent_topics
-      current_portal.main_portal? ? current_account.send("#{@content_scope}topics").newest(5) : 
+      current_portal.main_portal? ? current_account.topics.visible(current_user).newest(5) : 
         (current_portal.forum_category ? 
-            current_portal.forum_category.send("#{@content_scope}topics").newest(5) : [])
+            current_portal.forum_category.topics.visible(current_user).newest(5) : [])
     end
   
 end

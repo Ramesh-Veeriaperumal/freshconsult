@@ -126,6 +126,27 @@
 			</tr>
 			<% @notifications.each do |item| %>
 			<% data = item[:obj] %>
+			<%if data[:notification_type] == EmailNotification::DEFAULT_REPLY_TEMPLATE%>
+			<tr class="special_row">
+				<td colspan="3">
+					<div></div>
+				</td>
+			</tr>
+			<tr class="main_rows" notify_type=<%= data.id %>>
+				<td><%= item[:type] %> 
+				<span class="notif-link">
+					<% if (item[:requester])  %>
+						<% if (item[:userSelect] == false )  
+						   	 checkStyle = "visibility:hidden" 
+						   end %>
+						<input type="checkbox" style="<%=checkStyle%>" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
+						<a href="javascript:void(0)" showdiv='<%= "requester_template_div_#{data.id}" %>' class="notify_check"><%=t('email_notifications.edit_reply_template')%> </a>
+					<% end %>
+				</span	>
+					</td>
+					<td>&nbsp;
+				</td>
+			<%else%>
 			<tr class="main_rows" notify_type=<%= data.id %>>
 				<td><%= item[:type] %> </td>
 				<td>
@@ -138,6 +159,7 @@
 					<% end %>
 					&nbsp;
 				</td>
+			<%end%>
 				<td>
 					<% if (item[:agent])  %>
 						<% if (item[:agentSelect] == false )  
@@ -155,6 +177,10 @@
 						<%if item[:placeholder] != false %>
 							<a href="#" class="link_placeholder slim-button"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<% end %>
+						 <%if data[:notification_type] == EmailNotification::DEFAULT_REPLY_TEMPLATE%>
+						<h4 class="title"><%=t('email_notifications.default_reply_template_title')%></h4> 
+						<div class="info-data"><%=t('email_notifications.default_reply_template_info')%></div>
+						 <%else%>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
             <input type="hidden" name="requester_subject_template_hid" value="<%= h ("#{data.requester_subject_template}") %>" />              
 						<label><%= t('email_notifications.subject') %></label>
@@ -163,7 +189,7 @@
 						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
 							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
 						<%end%>						
-						
+						<%end%>		
 						<label><%= t('message') %></label>
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" name="<%= "requester_template_#{data.id}_hid"%>"/>
 						
@@ -203,11 +229,12 @@
 			<% end %> 
 			
 		</table>
-		<div class="button-container">
-			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "uiButton floatl" } %>
-			<%= f.submit t('save'), { :class => "uiButton" } %>
-		</div>
 	</div>
+
+		<div class="email-notif-button-container">
+			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "uiButton floatl" } %>
+			<div class="notif-button"><%= f.submit t('save'), { :class => "uiButton floatl " } %></div>
+		</div>
 	<% end %>
 </div>
 

@@ -131,17 +131,17 @@
 
 .ui-tooltip-ticket{
 	max-width: 650px !important;
-	margin-left:20px;
+	margin-left:18px;
 }
 
 .ui-tooltip-ticket .ui-tooltip-content{
 	padding:0.8em 1em;
+	width: 500px;
 	color:#000000;
-	text-align:justify;
+	text-align:left;
 	font-size:1.0em;
 	background-color:#FFFDE1;
 	border-color:#d0cdaa;
-	line-height: 22px;
 	margin-left:-14px; 
 }
 
