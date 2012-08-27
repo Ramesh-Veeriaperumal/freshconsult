@@ -571,8 +571,9 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
+  
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
+ 
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false

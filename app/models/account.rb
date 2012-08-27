@@ -331,6 +331,10 @@ class Account < ActiveRecord::Base
   def default_friendly_email
     primary_email_config.friendly_email
   end
+
+  def default_friendly_email_personalize(user_name)
+    primary_email_config.friendly_email_personalize(user_name)
+  end
   
   def default_email
     primary_email_config.reply_email

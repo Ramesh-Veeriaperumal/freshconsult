@@ -14,6 +14,7 @@ module SearchUtil
       else
         vis_arr = [Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
       end
+      vis_arr
     end
 
   def solution_visibility

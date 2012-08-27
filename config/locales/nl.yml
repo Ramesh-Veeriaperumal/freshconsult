@@ -29,7 +29,7 @@
   eight: "8 uur"
   security_code: "Veiligheidscode"
   example: "voorbeeld"
-  pending: "In behandeling"
+  pending: "in afwachting van"
   twitter_source: "Twitter"
   facebook_source: "Facebook"
   working: "Bezig"
@@ -112,7 +112,7 @@
   cancel: "Annuleren"
   last: "laatste"
   agent_emailnotverified: "E-mailadres is nog niet geverifieerd voor deze medewerker!"
-  agent_assigned_info: "Er zijn geen open of in behandeling zijnde tickets voor deze medewerker"
+  agent_assigned_info: "Er zijn geen open of in afwachting van zijnde tickets voor deze medewerker"
   basic_details: "E-mail antwoordbeheer, Verdeler van regels, Standaard SLA-beleid, Kennisbank, Self service-portaal, Domeintoewijzing, Community-ondersteuning."
   choose_plan: "Plan kiezen"
   create: "Creëren"
@@ -773,7 +773,7 @@
   delete: "Verwijderen"
   message: "Bericht"
   edit_forum_category: "Forumcategorie wijzigen"
-  agent_assigned_title: "Recent toegewezen tickets (Open en in behandeling)"
+  agent_assigned_title: "Recent toegewezen tickets (Open en in afwachting van)"
   send_email_to_requester: "E-mail naar aanvrager versturen"
   feedbackwidget_btcustomize: "Knop aanpassing"
   solution_category: 
@@ -1295,7 +1295,7 @@
     subject: "Onderwerp"
     created_at: "Uren sinds gecreëerd"
     opened_at: "Uren sinds opnieuw geopend"
-    pending_since: "Uren sinds status In behandeling"
+    pending_since: "Uren sinds status in afwachting van"
     resolved_at: "Uren sinds status opgelost"
     closed_at: "Uren sinds afsluiting"
     first_assigned_at: "Uren sinds eerste toewijzing"
@@ -1547,7 +1547,7 @@
         open: "Openen"
         due_today: "Streefdatum vandaag"
         unassigned: "Niet-toegewezen"
-        pending: "In behandeling"
+        pending: "in afwachting van"
     rebranding: 
       name: 
         info: "Dit is de naam van de helpdesk welke zal worden getoond in de kopregel en de mail berichten."
@@ -1616,7 +1616,7 @@
         my_open: "Mijn Open Tickets"
         tickets_by: "Tickets van"
         tickets_twitter: "Tickets via Twitter"
-        open_or_pending: "Open of In behandeling"
+        open_or_pending: "Open of in afwachting van"
         resolved_or_closed: "Opgelost of Afgesloten"
         no_tickets: "U heeft in de huidige weergave geen tickets"
       note:

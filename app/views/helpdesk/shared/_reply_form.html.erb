@@ -17,6 +17,7 @@
   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
+
 <% end %>
 <%
   hide_class = conv_id.nil? ? "hide" : "" 
@@ -42,7 +43,7 @@
         <li class="inline-field field" >
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email)%>
+              <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= @to_cc_emails.blank? ? "" : "checked" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
           </div>
@@ -111,7 +112,7 @@
         <!--reply source will be always email-->
         <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
         <%= f.hidden_field :to_emails , :value =>  @ticket.requester.email %>
-        <%= f.hidden_field :from_email , :id => "reply_from_email_#{cntid}", :value =>  @ticket.selected_reply_email %>
+        <%= f.hidden_field :from_email, :id => "reply_from_email_#{cntid}", :value => @selected_reply_email%>
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
         <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
         <li class="inline-field field">
@@ -157,5 +158,6 @@
 
     <%= render(:partial => '/helpdesk/shared/reply_draft') %>
    
+
   <% end %>
 <% end %>

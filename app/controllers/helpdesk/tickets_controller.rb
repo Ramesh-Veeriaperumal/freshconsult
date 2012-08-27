@@ -172,6 +172,8 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
 
+    @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+
     @to_emails = @ticket.to_emails
 
     @draft = get_key(draft_key)
@@ -252,7 +254,7 @@ class Helpdesk::TicketsController < ApplicationController
   def close_multiple
     status_id = CLOSED       
     @items.each do |item|
-      item.update_attribute(:status , status_id)
+      item.update_attributes(:status => status_id)
     end
     
     flash[:notice] = render_to_string(
@@ -354,7 +356,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def change_due_by     
     due_date = get_due_by_time    
-    @item.update_attribute(:due_by , due_date)
+    @item.update_attributes(:due_by => due_date)
     render :partial => "due_by", :object => @item.due_by
   end  
   
@@ -444,6 +446,9 @@ class Helpdesk::TicketsController < ApplicationController
     cc_emails = fetch_valid_emails(params[:cc_emails])
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
+    
+    build_attachments
+
     if @item.save
       post_persist
       notify_cc_people cc_emails unless cc_emails.blank? 
@@ -455,7 +460,7 @@ class Helpdesk::TicketsController < ApplicationController
   def close 
     status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
-    if @item.update_attribute(:status , status_id)
+    if @item.update_attributes(:status => status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
       redirect_to redirect_url
     else

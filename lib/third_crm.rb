@@ -24,18 +24,18 @@ class ThirdCRM
   end
 
   def add_signup_data(account, options = {})
-   returned_val = sandbox(0) {
+   #returned_val = sandbox(0) {
      lead_contact = add_contact(account)
      lead_custom_field = add_custom_field_data(account)
      lead_record = lead_contact.merge(lead_custom_field)
      marketo_cookie = options[:marketo_cookie]
      marketo_lead = contact_crm_api(lead_record, marketo_cookie)
-   }
+   #}
     
     #If some error occours while dumping the data into 
-    if returned_val == 0
-      FreshdeskErrorsMailer.deliver_error_in_crm!(account)
-    end
+    # if returned_val == 0
+    #   FreshdeskErrorsMailer.deliver_error_in_crm!(account)
+    # end
   end
   
   def add_contact(account)
@@ -62,9 +62,9 @@ class ThirdCRM
   end
   
   def contact_crm_api(lead_record, marketo_cookie)
-    if !marketo_cookie.blank? and (client.get_lead_by_cookie(marketo_cookie))
-      marketo_cookie = ""
-    end
+    # if !marketo_cookie.blank? and (client.get_lead_by_cookie(marketo_cookie))
+    #   marketo_cookie = ""
+    # end
     client.sync_lead(lead_record[:Email], marketo_cookie, lead_record)
   end
   

@@ -31,7 +31,7 @@
       <li class="inline-field field" >
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.selected_reply_email) %>
+              <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email) %>
           </div>
         </li>
         <li class="inline-field field" id="fwd_to_mail">
@@ -81,7 +81,7 @@
         <!-- forward will be always private -->
         <%= f.hidden_field :private , :value => true %>
         <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] %>
-        <%= f.hidden_field :from_email , :id => "fwd_from_email_#{cntid}", :value =>  @ticket.selected_reply_email %>
+        <%= f.hidden_field :from_email , :id => "fwd_from_email_#{cntid}", :value =>  @selected_reply_email %>
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-forward-<%=cntid%>">

@@ -854,6 +854,15 @@ span.sort_handle{
 	@include clearfix;
 	text-align:right;
 	padding:1em 0em 1em 0; 
+	margin:-2px;
+}
+
+.email-notif-button-container{
+	@include clearfix;
+	text-align:right;
+	padding:20px 0px 15px 0px; 
+	background:#ffffff;	
+	margin:-2px;
 }
 
 .email-notif-button-container{
