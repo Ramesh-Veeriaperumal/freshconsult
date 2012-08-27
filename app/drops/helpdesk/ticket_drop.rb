@@ -54,15 +54,15 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def due_by_time
-		@source.due_by.strftime("%B %e %Y at %I:%M %p")
+		in_user_time_zone(@source.due_by).strftime("%B %e %Y at %I:%M %p")
 	end
 
 	def due_by_hrs
-		@source.due_by.strftime("%I:%M %p")
+		in_user_time_zone(@source.due_by).strftime("%I:%M %p")
 	end
 
 	def fr_due_by_hrs
-		@source.frDueBy.strftime("%I:%M %p")
+		in_user_time_zone(@source.frDueBy).strftime("%I:%M %p")
 	end
 
 	def url
@@ -84,5 +84,11 @@ class Helpdesk::TicketDrop < BaseDrop
 	def satisfaction_survey		
 		Survey.satisfaction_survey_html(@source)
 	end
+
+	def in_user_time_zone(time)
+      return time unless User.current
+      user_time_zone = User.current.time_zone 
+      time.in_time_zone(user_time_zone)
+  	end
 
 end

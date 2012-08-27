@@ -16,6 +16,10 @@ module SentientUser
         Thread.current[:user] = self
       end
 
+      def self.reset_current
+        Thread.current[:user] = nil
+      end
+
       def current?
         !Thread.current[:user].nil? && self.id == Thread.current[:user].id
       end
