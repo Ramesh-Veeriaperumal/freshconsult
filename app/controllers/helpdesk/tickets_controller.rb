@@ -10,6 +10,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
   include RedisKeys
+  include Helpdesk::AdjacentTickets
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :check_user , :only => [:show]
@@ -26,7 +27,7 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign]
+  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
 
@@ -37,6 +38,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv]
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
+
+  after_filter  :set_adjacent_list, :only => [:index, :custom_search]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -196,6 +199,11 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => @item.to_mob_json
       }
     end
+  end
+  
+  def prevnext
+    @previous_ticket = find_adjacent(:prev)
+    @next_ticket = find_adjacent(:next)
   end
   
   def update
