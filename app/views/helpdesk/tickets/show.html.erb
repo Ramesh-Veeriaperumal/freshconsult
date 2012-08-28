@@ -192,4 +192,5 @@
 	<% unless @draft.nil? %>
 		jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
 	<% end %>
+	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 <%- end %>

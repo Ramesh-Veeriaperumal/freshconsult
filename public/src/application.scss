@@ -657,6 +657,64 @@ body h5{
 	.high:before{ border-left-color: $COL_PRI_HIGH; }
 	.urgent{ background-color: $COL_PRI_URGENT; }
 	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
+
+	#adjacents {
+		float: right;
+		width: 60px;
+		margin:4px 6px;
+		position: absolute;
+		right: 0;
+		top: 0;
+
+		.prev, .next {
+			width: 16px;
+			height: 16px;
+			padding: 4px 5px 5px 4px;
+			display: block;
+			float:left;
+			margin:0 1px;
+			background-color:#EDEDED;
+			@include vertical-gradient(#f4f4f4, #ededed);
+			border:solid 1px #d6d6d6;
+			@include border-radius(3px 0 0 3px);
+			text-align:center;
+
+			span {
+				width:16px;
+				height:16px;
+				display:inline-block;
+				text-indent: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+
+			&:hover {
+				border-color:#acacac;
+				@include vertical-gradient(#e6e6e6, #d7d7d7);
+			}
+
+			&.disabled, .disabled:hover {
+				background: #f8f8f8;
+				border-color:#eee;
+				span {
+					@include opacity(0.1);
+				}
+			}
+		}
+
+		.prev {
+			span  {
+				background:sprite($symbol, prev-arrow) no-repeat;
+			}
+			margin-left: 2px;
+		}
+		.next {
+			span  {
+				background:sprite($symbol, next-arrow) no-repeat;
+			}
+			@include border-radius(0 3px 3px 0);
+		}
+	}
 }
 h4.title{
 	font-size:1.1em;
