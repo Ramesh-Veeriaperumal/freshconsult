@@ -19,7 +19,6 @@ module Helpdesk::AdjacentTickets
 				:list_push => "left",
 				:which_end => "last",
 				:list_index_operator => '-'
-
 			},
 			:next => {
 				:sql_operator => ">", 
@@ -29,6 +28,8 @@ module Helpdesk::AdjacentTickets
 				:list_index_operator => '+'
 			}
 		}
+
+		NO_ADJACENT_TICKET_FLAG = -1
 
 		def clear_adjacent_data
 			remove_key(adjacent_list_redis_key)
@@ -53,8 +54,6 @@ module Helpdesk::AdjacentTickets
 			return nil if index.blank?
 
 			new_index = index.send(SWITCHES[direction][:list_index_operator] , 1)
-			puts "new_index is #{new_index}"
-			puts "within_bounds??? #{within_bounds?(new_index)}"
 			return tickets_adjacents_list[new_index] if within_bounds?(new_index)
 
 			find_in_adjacent_pages(direction)
@@ -71,7 +70,7 @@ module Helpdesk::AdjacentTickets
 		def find_in_adjacent_pages(direction)
 			filter_params = criteria
 			if filter_params
-				return -1 if direction == :prev and (filter_params[:page].blank? or filter_params[:page] == 1)
+				return NO_ADJACENT_TICKET_FLAG if direction == :prev and (filter_params[:page].blank? or filter_params[:page] == 1)
 
 				filter_params[:page] = new_page(filter_params,direction)
 				filter_params[:without_pagination] = true
@@ -87,31 +86,33 @@ module Helpdesk::AdjacentTickets
 					return tickets.send(SWITCHES[direction][:which_end]).display_id
 				end
 			end
-			return -1
+			return NO_ADJACENT_TICKET_FLAG
 		end
 
 		def criteria
-			filter_params = get_key(cached_filters_key)
-			if filter_params
-				filter_params = JSON.parse(filter_params) 
-				filter_params.symbolize_keys!      
+			@adjacent_tickets_criteria ||= begin
+				filter_params = get_key(cached_filters_key)
+				if filter_params
+					filter_params = JSON.parse(filter_params) 
+					filter_params.symbolize_keys!      
 
-				@ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-				@ticket_filter = @ticket_filter.deserialize_from_params(filter_params)
-				@ticket_filter.query_hash = JSON.parse(filter_params[:data_hash]) unless filter_params[:data_hash].blank?
+					@ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+					@ticket_filter = @ticket_filter.deserialize_from_params(filter_params)
+					@ticket_filter.query_hash = JSON.parse(filter_params[:data_hash]) unless filter_params[:data_hash].blank?
 
-			else
-				unless cookies[:filter_name].blank?
-					filter_params = { :filter_name => cookies[:filter_name] }
-					#If this is a number, if so consider as custom view
-					unless cookies[:filter_name].to_i.to_s != cookies[:filter_name]	
-						@ticket_filter = current_account.ticket_filters.find_by_id(cookies[:filter_name])
-						@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
-						filter_params.merge!(@ticket_filter.attributes["data"])
+				else
+					unless cookies[:filter_name].blank?
+						filter_params = { :filter_name => cookies[:filter_name] }
+						#If this is a number, if so consider as custom view
+						unless cookies[:filter_name].to_i.to_s != cookies[:filter_name]	
+							@ticket_filter = current_account.ticket_filters.find_by_id(cookies[:filter_name])
+							@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+							filter_params.merge!(@ticket_filter.attributes["data"])
+						end
 					end
 				end
+				filter_params
 			end
-			filter_params
 		end
 
 		def new_page(filter_params, direction)
@@ -125,7 +126,7 @@ module Helpdesk::AdjacentTickets
 			current = send("new_page_" + direction.to_s , filter_params, current)
 
 			end_page[direction] = current
-			set_key(adjacent_meta_key, end_page.to_json, 86400)
+			set_key(adjacent_meta_key, end_page.to_json, 1.day.to_i)
 			current
 		end
 
@@ -154,8 +155,8 @@ module Helpdesk::AdjacentTickets
 
 		def prepare_redis_key(key)
 			key % { :account_id => current_account.id, 
-							:user_id => current_user.id, 
-							:session_id => session.session_id }
+					:user_id => current_user.id, 
+					:session_id => session.session_id }
 		end
 
 end
