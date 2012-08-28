@@ -16,8 +16,8 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :account_id => account.id, 
     :requester_notification => true, 
     :agent_notification => true,
-    :agent_template => '<p>A request to reset your password has been made.If you did not make this request, simply ignore this email. If you did make this request, just click the link below:<br />{{password_reset_url}}<br />If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.<br />Regards,<br />{{helpdesk_name}}</p>'    
-    :requester_template => '<p>A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, just click the link below:<br />{{password_reset_url}}<br />If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.<br />Regards,<br />{{helpdesk_name}}</p>'
+    :agent_template => '<p>A request to reset your password has been made.If you did not make this request, simply ignore this email. If you did make this request, just click the link below:<br />{{password_reset_url}}<br />If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.<br />Regards,<br />{{helpdesk_name}}</p>',    
+    :requester_template => '<p>A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, just click the link below:<br />{{password_reset_url}}<br />If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.<br />Regards,<br />{{helpdesk_name}}</p>',
     :requester_subject_template => "{{ticket.portal_name}} password reset instructions",
     :agent_subject_template => "{{ticket.portal_name}} password reset instructions"
   },

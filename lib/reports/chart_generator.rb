@@ -441,7 +441,7 @@ end
  # format the tooltips
   def pie_tooltip_formatter  
    'function() {
-      return "<strong>" + this.point.name + "</strong>: " + this.y + "%";
+      return "<strong>" + this.point.name + "</strong>: " +  Math.round(this.percentage) + "%";
     }'
   end
   
@@ -463,7 +463,7 @@ end
  
  def  pie_label_formatter 
   "function() {
-      if (this.y > 5) return Math.round(this.percentage) + '<span style=\"font-size:7px\">%</span>' ;
+     if(this.percentage > 3) return Math.round(this.percentage) + '<span style=\"font-size:7px\">%</span>' ;
     }"
   end
 
