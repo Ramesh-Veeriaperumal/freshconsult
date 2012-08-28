@@ -28,7 +28,9 @@ stylesheets:
     - public/stylesheets/hacks.css
     - public/stylesheets/ie.css
     - public/stylesheets/satisfaction.css
-    - public/stylesheets/ace-editor.css
+
+  codemirror:
+    - public/stylesheets/codemirror.css
 
   portal:                
     - public/stylesheets/portal/portal.css
@@ -100,8 +102,9 @@ javascripts:
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
   # Code editor for portal cms
-  aceeditor:
-    - public/javascripts/ace/*.js
+  codemirror:
+    - public/javascripts/codemirror/*.js
+
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace: 
