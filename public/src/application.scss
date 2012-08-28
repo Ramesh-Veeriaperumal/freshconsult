@@ -3395,12 +3395,12 @@ div.addReminder{
 				@include filter-gradient(#ffb613, #005290, horizontal); // IE6-9
 				@include background-image( $priority_gradient, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
 			}
-			&.priority-medium {
+			&.priority-low {
 				background: #89ce00; /* Old browsers */
 				@include filter-gradient(#89ce00, #005290, horizontal); // IE6-9
 				@include background-image( $priority_gradient, linear-gradient(left, #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%));
 			}
-			&.priority-low {
+			&.priority-medium {
 				background: #008ff9;
 				@include background-image($priority_gradient, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 			}
@@ -3488,18 +3488,17 @@ div.addReminder{
 	}
 	
 	.subject_style {
-		@include border-radius(3px);
-		font-size:8px;
-		padding:3px 5px 0;
-		line-height: 120%;
-		letter-spacing:-0.13em;
-		font-smooth:never;
-		-webkit-font-smoothing: none;
+		@include border-radius(16px);
+		font-size:9px;
+		padding:3px 8px;
+		line-height: 100%;
+		font-weight: bold;
+		text-transform: uppercase;
 		display:inline-block;
 		white-space:nowrap;
-   		font-family: "Silkscreen";
+		@include box-shadow(1px 1px 0 white);
    		
-		@include text-shadow(-1px  -1px 0 rgba(255,255,255,0.7));
+		@include text-shadow(1px  1px 0 rgba(255,255,255,0.7));
 
 		&.customer_responded, &.overdue  {
 			background: #698ee4;
@@ -3540,12 +3539,12 @@ div.addReminder{
       }
 
       .info-data {
-      	color:#999;
+      	color:#888;
       	a {
-      		color:#999;
+      		color:#888;
       	}
       	.emphasize {
-      		color: #777;
+      		color: #555;
       		font-weight:normal;
       	}
 
@@ -5031,6 +5030,8 @@ a.close{
    background:#ffffff;
    padding:5px 0;
    z-index:999999;
+   max-height: 420px;
+   overflow-y:auto;
    @include min-width(250px);
    @include opacity(0.95);
    @include corners(5px);

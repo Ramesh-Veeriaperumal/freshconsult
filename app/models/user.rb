@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
   USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
-  EMAIL_REGEX = /(\A[A-Z0-9.\'_%=+-\xe28099]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
 
   belongs_to :customer
   
@@ -144,7 +144,7 @@ class User < ActiveRecord::Base
     has account_id, deleted
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    
+
     set_property :delta => :delayed
     set_property :field_weights => {
       :name         => 10,
@@ -449,7 +449,7 @@ class User < ActiveRecord::Base
     !can_view_all_tickets?
   end
 
-    def to_xml(options = {})
+  def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
@@ -513,7 +513,7 @@ class User < ActiveRecord::Base
  
   def self.find_by_email_or_name(value)
     conditions = {}
-    if value =~ /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+    if value =~ /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
       conditions[:email] = value
     else
       conditions[:name] = value

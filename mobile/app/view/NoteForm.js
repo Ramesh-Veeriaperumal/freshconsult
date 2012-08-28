@@ -57,7 +57,7 @@ Ext.define('Freshdesk.view.NoteForm', {
                     },
                     {
                         xtype: 'multiselectfield',
-                        name: 'notify_emails',
+                        name: 'helpdesk_note[to_emails]',
                         label:'Notify Agents',
                         displayField : 'id', //don't change this property
                         valueField   : 'value', //don't change this property,

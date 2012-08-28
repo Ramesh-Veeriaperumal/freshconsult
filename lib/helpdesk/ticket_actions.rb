@@ -72,9 +72,10 @@ module Helpdesk::TicketActions
                                between '#{params[:start_date]}' and '#{params[:end_date]}'
                               )
                             )
-    all_joins = %( INNER JOIN helpdesk_ticket_states ON 
+    all_joins = index_filter.get_joins(sql_conditions)
+    all_joins[0].concat(%( INNER JOIN helpdesk_ticket_states ON 
                    helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
-                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id)
+                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id))
     csv_hash = params[:export_fields]
     headers = csv_hash.keys.sort
     csv_string = FasterCSV.generate do |csv|
@@ -204,32 +205,33 @@ module Helpdesk::TicketActions
   end
   
   def add_note_to_source_ticket
+    pvt_note = params[:source][:is_private]
       @soucre_note = @source_ticket.notes.create(
         :body => params[:source][:note],
-        :private => params[:source][:is_private] || false,
-        :source => params[:source][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+        :private => pvt_note || false,
+        :source => pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id,
         :from_email => @source_ticket.reply_email,
-        :to_emails => @source_ticket.requester.email.to_a,
-        :cc_emails => @source_ticket.cc_email_hash && @source_ticket.cc_email_hash[:cc_emails]
+        :to_emails => pvt_note ? [] : @source_ticket.requester.email.to_a,
+        :cc_emails => pvt_note ? [] : @source_ticket.cc_email_hash && @source_ticket.cc_email_hash[:cc_emails]
       )
-      
       if !@soucre_note.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @source_ticket, @soucre_note ,{:include_cc => true})
       end
   end
   
   def add_note_to_target_ticket
+    target_pvt_note = params[:target][:is_private]
     @target_note = @target_ticket.notes.create(
         :body_html => params[:target][:note],
-        :private => params[:target][:is_private] || false,
-        :source => params[:target][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+        :private => target_pvt_note || false,
+        :source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id,
         :from_email => @target_ticket.reply_email,
-        :to_emails => @target_ticket.requester.email.to_a,
-        :cc_emails => @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
+        :to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
+        :cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
       )
       ## handling attachemnt..need to check this
      @source_ticket.attachments.each do |attachment|      

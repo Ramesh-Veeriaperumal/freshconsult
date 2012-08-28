@@ -210,18 +210,26 @@ module Helpdesk::TicketsHelper
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
     type = "new" if ticket.ticket_states.is_new? && ticket.active?
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if ticket.due_by < Time.now && ticket.active?
+    type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
     type
   end
 
   def sla_status(ticket)
     if( ticket.active? )
-      if(Time.now > ticket.due_by )
-        t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+
+      unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
+        if(Time.now > ticket.due_by )
+          t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        else
+          t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        end
       else
-        t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 
+            #{distance_of_time_in_words(Time.now, ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]))} "
       end
+
     else
+
       if( ticket.ticket_states.resolved_at < ticket.due_by )
         t('resolved_on_time')
       else
@@ -253,13 +261,15 @@ module Helpdesk::TicketsHelper
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
-    default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature
+    
+    default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/>#{signature}"
+
     if(!forward)
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
         reply_email_template = "&nbsp;" if (reply_email_template.empty?) #fix for chrome issue no data shown when "" is returned as value
-        default_reply ="<span id='caret_pos_holder'>"+reply_email_template+"</span><br/></br>"+signature
+        default_reply = "<span id='caret_pos_holder' style='display:none;'></span>#{reply_email_template}<br/>#{signature}"
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+

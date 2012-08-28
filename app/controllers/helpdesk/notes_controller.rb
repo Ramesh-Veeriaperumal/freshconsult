@@ -19,6 +19,7 @@ class Helpdesk::NotesController < ApplicationController
   end
   
   def create  
+    build_attachments
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -273,6 +274,10 @@ class Helpdesk::NotesController < ApplicationController
 
   def set_default_source
     @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
+  end
+
+  def after_restore_url
+    :back
   end
 
 end

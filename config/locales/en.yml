@@ -14,6 +14,7 @@ en:
   status: "Status"
   preview: "Preview"
   proceed_now: "\n\nProceed now?"
+  forward: "Forward"
   apply: "Apply"
   meta:
    language_name: 'English'
@@ -633,6 +634,7 @@ en:
       sso: 
         expected_params: "Expected params are name, email and hash which are not present "
       success: Login successful!
+      failed: Login was unsuccessful!
     email_notifications: 
       update: 
         success: Email notifications have been updated.
@@ -1948,7 +1950,7 @@ en:
         product: Product
       edit:
         twitter_settings_for_msg: Twitter settings for
-  all_due: All 
+  all_due: Overdue 
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
@@ -2310,6 +2312,7 @@ en:
   status_name_validate_uniqueness_msg: " Status name has already been taken"
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   since: "Since"
+  for: "for"
   since_time: "Since %{time_words}"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
