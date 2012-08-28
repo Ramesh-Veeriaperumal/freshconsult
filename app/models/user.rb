@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
   include SavageBeast::UserInit
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
+  include Users::Activator
+  include Mobile::Actions::User
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -19,7 +21,7 @@ class User < ActiveRecord::Base
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
   USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
-  EMAIL_REGEX = /(\A[A-Z0-9.\'_%=+-\xe28099]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
 
   belongs_to :customer
   
@@ -143,7 +145,7 @@ class User < ActiveRecord::Base
     has account_id, deleted
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    
+
     set_property :delta => :delayed
     set_property :field_weights => {
       :name         => 10,
@@ -312,67 +314,6 @@ class User < ActiveRecord::Base
   def url_protocol
     account.ssl_enabled? ? 'https' : 'http'
   end
-
-  def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
-    portal ||= account.main_portal
-    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
-    reset_perishable_token!
-    
-    e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
-    if customer?
-      template = e_notification.requester_template
-      subj_template = e_notification.requester_subject_template
-      user_key = 'contact'
-    else
-      template = e_notification.agent_template
-      subj_template = e_notification.agent_subject_template
-    end
-    
-    UserNotifier.deliver_password_reset_instructions(self, 
-        :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)) , 
-          :subject => Liquid::Template.parse(subj_template).render ,:reply_email => reply_email)
-  end
-  
-  def deliver_activation_instructions!(portal, force_notification = false) #Need to refactor this.. Almost similar structure with the above one.
-    portal ||= account.main_portal
-    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
-    reset_perishable_token!
-
-    e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
-    if customer?
-      return unless e_notification.requester_notification? or force_notification
-      template = e_notification.requester_template
-      subj_template = e_notification.requester_subject_template
-      user_key = 'contact'
-    else
-      template = e_notification.agent_template
-      subj_template = e_notification.agent_subject_template
-    end
-    
-    UserNotifier.send_later(:deliver_user_activation, self, 
-        :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-        :subject => Liquid::Template.parse(subj_template).render , :reply_email => reply_email)
-  end
-  
-  def deliver_contact_activation(portal)
-    portal ||= account.main_portal
-    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
-    unless active?
-      reset_perishable_token!
-  
-      e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
-      UserNotifier.send_later(:deliver_user_activation, self, 
-          :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-          :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => reply_email)
-    end
-  end
-  
-  def deliver_account_admin_activation
-      UserNotifier.send_later(:deliver_account_admin_activation,self)
-  end
   
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
@@ -400,6 +341,11 @@ class User < ActiveRecord::Base
     self.permission?(:manage_tickets)
   end
   
+
+  def has_company?
+    customer? && customer
+  end
+
   def is_not_deleted?
     logger.debug "not ::deleted ?:: #{!self.deleted}"
     !self.deleted
@@ -443,25 +389,15 @@ class User < ActiveRecord::Base
     !can_view_all_tickets?
   end
 
-    def to_xml(options = {})
+  def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+      super(:builder => xml, :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+                                                              :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
+                                                              :user_role,:fb_profile_id,:language,:address]) 
   end
   
-  def original_avatar
-    avatar_url(:original)
-  end
-
-  def medium_avatar
-    avatar_url(:medium)
-  end
-
-  def avatar_url(profile_size = :thumb)
-    avatar.content.url(profile_size) unless avatar.nil?
-  end
- 
   def company_name
     customer.name unless customer.nil?
   end
@@ -517,7 +453,7 @@ class User < ActiveRecord::Base
  
   def self.find_by_email_or_name(value)
     conditions = {}
-    if value =~ /(\b[a-zA-Z0-9.'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+    if value =~ /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
       conditions[:email] = value
     else
       conditions[:name] = value

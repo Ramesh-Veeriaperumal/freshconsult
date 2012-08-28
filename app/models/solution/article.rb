@@ -1,3 +1,4 @@
+
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
   
@@ -25,7 +26,7 @@ class Solution::Article < ActiveRecord::Base
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
- 
+  include Mobile::Actions::Article
 
   define_index do
     indexes :title, :sortable => true
@@ -38,6 +39,12 @@ class Solution::Article < ActiveRecord::Base
     has folder.visibility , :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
+    has folder.customer_folders(:customer_id), :as => :customer_ids
+
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
     has folder.customer_folders(:customer_id), :as => :customer_ids
 
     set_property :delta => :delayed
@@ -112,7 +119,7 @@ class Solution::Article < ActiveRecord::Base
     to_ret = suggest(ticket, ticket.description) if to_ret.empty?
     
     to_ret
-    
+
   end
   
   def self.suggest(ticket, search_by)
@@ -126,7 +133,7 @@ class Solution::Article < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
-  
+ 
   private    
     def create_activity
       activities.create(

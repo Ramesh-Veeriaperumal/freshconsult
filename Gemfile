@@ -6,6 +6,7 @@ gem "rake", "0.8.7"
 gem "rails", "2.3.8"
 gem "mysql"
 gem "i18n", "0.4.2"
+gem "html2textile", "~> 1.0.0.beta1"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
@@ -52,8 +53,6 @@ gem "sass", "3.1.1"
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.0.0"
-
-#gem "win32-open3", "0.3.2"
 
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
 gem "sanitize", "2.0.3"

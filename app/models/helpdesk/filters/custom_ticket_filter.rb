@@ -127,6 +127,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @page                 = params[:page]           || 1
     @order_type           = params[:wf_order_type]  || default_order_type
     @order                = params[:wf_order]       || default_order
+    @without_pagination   = params[:without_pagination]         if params[:without_pagination]
     
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
@@ -250,6 +251,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       handle_empty_filter! 
       all_conditions = sql_conditions
       all_joins = get_joins(sql_conditions)
+
+      if @without_pagination
+        return model_class.find(:all, :order => order_clause, 
+                                      :limit => per_page, :offset => (page - 1) * per_page,
+                                      :conditions => all_conditions, :joins => all_joins)
+      end
+
       recs = model_class.paginate(:include => [:ticket_states,:ticket_status,:responder,:requester],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
