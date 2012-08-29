@@ -17,8 +17,8 @@
         <%= content_tag :span, h(@ticket.subject), :class => "subject" %>
         <%
                 customer_opinion = ""                                
-                unless @ticket.survey_result.nil? || @ticket.survey_result.last.nil?
-                  customer_opinion = ["<div class='customer-opinion ", @ticket.survey_result.last.get_small_img_class ,"'></div>"].join
+                unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
+                  customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join
                 end  
         %>
         <%=customer_opinion%>

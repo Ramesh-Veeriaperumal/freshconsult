@@ -6512,3 +6512,198 @@ a.mobile_switchBtn {
 			text-shadow: -1px -1px 0 black;
 		}
 }
+
+/* SURVEY FORM FOR SELF SERVICE PORTAL */
+.survey-form{
+        width: 98%;
+        margin: 5px 0;
+        padding: 0px 0px 10px 0px;
+        min-height: 50px;
+        background: #f1f1f1;
+        clear: both;
+        border: 4px #d5d5d5 solid;
+        -webkit-box-shadow: inset 0px 0px 5px #dfdfdf;
+           -moz-box-shadow: inset 0px 0px 5px #dfdfdf;
+            -ms-box-shadow: inset 0px 0px 5px #dfdfdf;
+                box-shadow: inset 0px 0px 5px #dfdfdf;
+    }
+
+    .clear{
+        clear: both;
+    }
+
+    .survey-form-left{
+        width: 220px;
+        float: left;
+    }
+    .survey-form-left h3{
+        font: normal 16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #000;
+        padding: 14px 0px 10px 10px;
+        min-height: 30px;
+    }
+
+    .survey-form-right{
+        width: 565px;
+        float: left;
+    }
+
+    ul.survey-options{
+        width: 100%;
+        display: block;
+    }
+
+    ul.survey-options li{
+        float: left;
+        padding: 8px 0px 0px 0px;
+    }
+
+
+    ul.survey-options li a{
+        display: inline-block;
+        color: #333;
+        width: 119px;
+        height: 40px;
+        padding: 17px 1px 0px 61px;
+        border: 1px #ededed solid;
+        margin-right: 5px;
+        font-size: 14px;
+        background-repeat: no-repeat; 
+        background-position: 11px 8px;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+                border-radius: 3px;
+    }
+
+    .survey-form-close {
+    	ul.survey-options li a:hover, ul.survey-options li.active a{
+        		background-color: transparent;
+        		border: 0;
+        		height:40px;
+        		-webkit-box-shadow: inset 0px 0px 0px #ccc;
+            	-moz-box-shadow: inset 0px 0px 0px #ccc;
+              	-ms-box-shadow: inset 0px 0px 0px #ccc;
+                     	box-shadow: inset 0px 0px 0px #ccc;        
+    	}
+    }	
+
+    ul.survey-options li a:hover{
+        background-color: #fafafa;
+    }    
+
+    ul.survey-options li.active a{
+        background-color: #fafafa;
+        height: 50px;
+        border: 1px #ccc solid;
+        -webkit-box-shadow: inset 0px 0px 10px #ccc;
+            -moz-box-shadow: inset 0px 0px 10px #ccc;
+              -ms-box-shadow: inset 0px 0px 10px #ccc;
+                     box-shadow: inset 0px 0px 10px #ccc;
+        -webkit-border-radius: 3px 3px 0px 0px;
+           -moz-border-radius: 3px 3px 0px 0px;
+             -ms-border-radius: 3px 3px 0px 0px;
+                    border-radius: 3px 3px 0px 0px;
+    }
+
+    ul.survey-options li a.happy{
+        background-image: url(../images/happy-smily-tab.png);
+    }
+
+    ul.survey-options li a.neutral{
+        background-image: url(../images/neutral-smily-tab.png);
+    }
+
+    ul.survey-options li a.unhappy{
+        background-image: url(../images/unhappy-smily-tab.png);
+    }
+
+    .survey-comment{
+        border-top: 2px #919191 solid;
+        display: none;
+        width: 559px;
+    }
+
+    .survey-form-right{
+        min-height: 50px;
+    }
+
+    .survey-form-right h4{
+        font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #000;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        clear: both;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .survey-comment textarea{
+        width: 460px;
+        height: 58px;
+        float: left;
+    }
+
+    .survey-comment input[type="button"],.survey-comment input[type="submit"]{
+        width: 80px;
+        margin-left: 10px;
+        margin-bottom:3px;
+        text-transform: capitalize;
+        float: left;
+        padding: 7px 0px 6px 0px;
+        display: inline-block;
+        border: 1px #8a8a8a solid;
+        color: #fff;
+        cursor: pointer;
+        text-shadow: -1px -1px -1px #6c6c6c;
+         font: normal 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+                border-radius: 3px;
+        background: #b2b2b2; /* Old browsers */
+        /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2IyYjJiMiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1YTVhNWEiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+        background: -moz-linear-gradient(top,  #b2b2b2 0%, #5a5a5a 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b2b2b2), color-stop(100%,#5a5a5a)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  #b2b2b2 0%,#5a5a5a 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  #b2b2b2 0%,#5a5a5a 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  #b2b2b2 0%,#5a5a5a 100%); /* IE10+ */
+        background: linear-gradient(to bottom,  #b2b2b2 0%,#5a5a5a 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b2b2b2', endColorstr='#5a5a5a',GradientType=0 ); /* IE6-8 */
+    }
+
+    .survey-comment input[type="button"]:hover,.survey-comment input[type="submit"]:hover{
+        background: #8e8e8e;
+    }
+
+    .survey-comment input[type="button"]:active,.survey-comment input[type="submit"]:active{
+        background: #6e6e6e;
+        border-bottom: 1px #ccc solid;
+        -webkit-box-shadow: inset 0px 0px 3px #444;
+           -moz-box-shadow: inset 0px 0px 3px #444;
+            -ms-box-shadow: inset 0px 0px 3px #444;
+                box-shadow: inset 0px 0px 3px #444;
+    }
+
+.close-comment{
+    width: 400px;
+    float: left;
+    margin-top: 10px;
+    padding: 5px 3px 0px 0px;
+    line-height: 20px;
+    border-right: 1px #c2c2c2 solid;
+}
+
+.close-comment span{
+    color: #777;
+}
+
+.rate-again{
+    width: 140px;
+    float: left;
+    border-left: 1px #fff solid;
+    margin-top: 10px;
+    padding: 5px 3px 0px 5px;
+    line-height: 20px;
+} 

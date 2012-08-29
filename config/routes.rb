@@ -300,6 +300,7 @@
     support.resources :minimal_tickets
     support.resources :registrations
     
+    support.portal_survey '/surveys/:ticket_id', :controller => 'surveys', :action => 'create_for_portal'
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
         :conditions => { :method => :post }
