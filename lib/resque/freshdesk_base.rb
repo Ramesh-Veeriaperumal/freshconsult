@@ -7,6 +7,7 @@ class Resque::FreshdeskBase
 
   def self.before_perform_set_account_and_user(*args)
     Account.reset_current_account
+    User.reset_current
     job_account = args[0]["current_account_id"]
     job_user = args[0]["current_user_id"]
     Account.find(job_account).make_current if job_account
