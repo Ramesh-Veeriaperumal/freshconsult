@@ -1,7 +1,5 @@
 class ContactsController < ApplicationController
 
-    before_filter :requires_all_tickets_access 
-
     before_filter :except => [:make_agent] do |c| 
       c.requires_permission :manage_tickets
     end
@@ -10,6 +8,8 @@ class ContactsController < ApplicationController
       c.requires_permission :manage_users
     end
 
+    before_filter :requires_all_tickets_access 
+    
    include HelpdeskControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
@@ -126,7 +126,6 @@ class ContactsController < ApplicationController
         format.xml  { head 200}
       end
     else
-      logger.debug "error while saving #{@obj.errors.inspect}"
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }

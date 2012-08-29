@@ -133,6 +133,9 @@ en:
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
+  confirm: Confirm
+  yes_password_reset: "Yes"
+  no_password_reset: "No"
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
@@ -420,14 +423,12 @@ en:
         screen_name: Twitter account
         add_key: Add Search Query
         edit_key: Edit Search Query
-        
       change:
         edit_twitter :  Edit Twitter
         capture_mention: Convert public mentions as tickets       
         capture_dm: Convert direct messages as tickets
         screen_name: Screen Name
-        default_group : Default Group       
-        
+        default_group : Default Group 
     home:
       index: 
         group: Groups
@@ -478,7 +479,6 @@ en:
         groups: Agents in group
         me_only: Me only
         response_name: Response title
-                
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -636,7 +636,8 @@ en:
       update: 
         success: Password successfully updated
         invalid_token: We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process.
-      email: 
+      email:
+        reset: "A reset mail with instructions has been sent to %{requester}."
         user_not_found: No user was found with that email address
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login: 
@@ -644,6 +645,7 @@ en:
       sso: 
         expected_params: "Expected params are name, email and hash which are not present "
       success: Login successful!
+      failed: Login was unsuccessful!
     email_notifications: 
       update: 
         success: Email notifications have been updated.
@@ -938,7 +940,7 @@ en:
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
-  reset: Reset
+  reset_password_title: Reset Password
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
@@ -1090,6 +1092,8 @@ en:
     occasional: Occasionally
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
+    password_reset_message: "Do you want to reset %{requester}'s password?"
+    password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
   account_admin: Account admin
   right: Right
   footer: 
@@ -1111,6 +1115,7 @@ en:
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
+  reset: Reset
   ticket_due_by_time: Due by
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
@@ -1959,7 +1964,7 @@ en:
         product: Product
       edit:
         twitter_settings_for_msg: Twitter settings for
-  all_due: All 
+  all_due: Overdue 
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
@@ -2321,6 +2326,7 @@ en:
   status_name_validate_uniqueness_msg: " Status name has already been taken"
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   since: "Since"
+  for: "for"
   since_time: "Since %{time_words}"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"

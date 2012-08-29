@@ -88,7 +88,7 @@ var $J = jQuery.noConflict();
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
-
+    
     $("a[rel=popover]")
       .popover({ 
         delayOut: 300,
@@ -237,6 +237,7 @@ var $J = jQuery.noConflict();
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);
       $("form.ui-form").validate(validateOptions);
+      $("form[rel=validate]").validate(validateOptions);
 
     $('.single_click_link').live('click',function(ev) {
       if (! $(ev.srcElement).is('a')) {

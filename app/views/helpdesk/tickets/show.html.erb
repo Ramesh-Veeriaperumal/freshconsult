@@ -60,10 +60,6 @@
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
 	var activeForm = null;
-
-	jQuery("#cnt-reply").bind("afterShow", function(ev){
-		console.log("Testing after show")
-	});
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
 			
@@ -140,8 +136,16 @@
     		
     		var msg_body_id = reply_area.css("display") == 'none' ? "send-fwd-email-cnt-fwd" : "send-email-cnt-reply";
 			insetIntoBlankCaret(msg_body_id+"-body", value);
+			//Fix for the viewport scrolling in firefox.
+			if(jQuery.browser.mozilla){
+				editor =  tinyMCE.get(msg_body_id+"-body");
+				viewportBodyElement =  editor.getBody();
+				viewportBodyElement.scrollTop = 0;
+			}
 		}		
 		return;
+	}
+	
   	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
@@ -155,12 +159,6 @@
   			jQuery(".toEmailMoreLink").text('');
   		}
   	}
-
-function validateMCEData(){
-	if(jQuery.browser.opera)
-		jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
-}
-	}
 		
 	function getCannedResponse(ticket_id, ca_resp_id){
   		jQuery("#canned_response_container").addClass("loading")
@@ -194,4 +192,5 @@ function validateMCEData(){
 	<% unless @draft.nil? %>
 		jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
 	<% end %>
+	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 <%- end %>

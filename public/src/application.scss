@@ -657,6 +657,64 @@ body h5{
 	.high:before{ border-left-color: $COL_PRI_HIGH; }
 	.urgent{ background-color: $COL_PRI_URGENT; }
 	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
+
+	#adjacents {
+		float: right;
+		width: 60px;
+		margin:4px 6px;
+		position: absolute;
+		right: 0;
+		top: 0;
+
+		.prev, .next {
+			width: 16px;
+			height: 16px;
+			padding: 4px 5px 5px 4px;
+			display: block;
+			float:left;
+			margin:0 1px;
+			background-color:#EDEDED;
+			@include vertical-gradient(#f4f4f4, #ededed);
+			border:solid 1px #d6d6d6;
+			@include border-radius(3px 0 0 3px);
+			text-align:center;
+
+			span {
+				width:16px;
+				height:16px;
+				display:inline-block;
+				text-indent: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+
+			&:hover {
+				border-color:#acacac;
+				@include vertical-gradient(#e6e6e6, #d7d7d7);
+			}
+
+			&.disabled, .disabled:hover {
+				background: #f8f8f8;
+				border-color:#eee;
+				span {
+					@include opacity(0.1);
+				}
+			}
+		}
+
+		.prev {
+			span  {
+				background:sprite($symbol, prev-arrow) no-repeat;
+			}
+			margin-left: 2px;
+		}
+		.next {
+			span  {
+				background:sprite($symbol, next-arrow) no-repeat;
+			}
+			@include border-radius(0 3px 3px 0);
+		}
+	}
 }
 h4.title{
 	font-size:1.1em;
@@ -3395,12 +3453,12 @@ div.addReminder{
 				@include filter-gradient(#ffb613, #005290, horizontal); // IE6-9
 				@include background-image( $priority_gradient, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
 			}
-			&.priority-medium {
+			&.priority-low {
 				background: #89ce00; /* Old browsers */
 				@include filter-gradient(#89ce00, #005290, horizontal); // IE6-9
 				@include background-image( $priority_gradient, linear-gradient(left, #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%));
 			}
-			&.priority-low {
+			&.priority-medium {
 				background: #008ff9;
 				@include background-image($priority_gradient, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 			}
@@ -3488,18 +3546,17 @@ div.addReminder{
 	}
 	
 	.subject_style {
-		@include border-radius(3px);
-		font-size:8px;
-		padding:3px 5px 0;
-		line-height: 120%;
-		letter-spacing:-0.13em;
-		font-smooth:never;
-		-webkit-font-smoothing: none;
+		@include border-radius(16px);
+		font-size:9px;
+		padding:3px 8px;
+		line-height: 100%;
+		font-weight: bold;
+		text-transform: uppercase;
 		display:inline-block;
 		white-space:nowrap;
-   		font-family: "Silkscreen";
+		@include box-shadow(1px 1px 0 white);
    		
-		@include text-shadow(-1px  -1px 0 rgba(255,255,255,0.7));
+		@include text-shadow(1px  1px 0 rgba(255,255,255,0.7));
 
 		&.customer_responded, &.overdue  {
 			background: #698ee4;
@@ -3540,12 +3597,12 @@ div.addReminder{
       }
 
       .info-data {
-      	color:#999;
+      	color:#888;
       	a {
-      		color:#999;
+      		color:#888;
       	}
       	.emphasize {
-      		color: #777;
+      		color: #555;
       		font-weight:normal;
       	}
 
@@ -5031,6 +5088,8 @@ a.close{
    background:#ffffff;
    padding:5px 0;
    z-index:999999;
+   max-height: 420px;
+   overflow-y:auto;
    @include min-width(250px);
    @include opacity(0.95);
    @include corners(5px);

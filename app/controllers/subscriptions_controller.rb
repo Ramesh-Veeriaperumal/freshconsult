@@ -1,10 +1,8 @@
 class SubscriptionsController < ApplicationController
 
   skip_before_filter :check_account_state
-  
-  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans, :calculate_amount,:free,:convert_subscription_to_free ] do |c| 
-    c.requires_permission :manage_account
-  end
+
+  before_filter { |c| c.requires_permission :manage_account }
   
   before_filter :load_billing, :only => [ :show, :billing, :payment_info ]
   before_filter :load_subscription, :only => [ :show, :billing, :plan, :plans, :calculate_amount, :free, :convert_subscription_to_free ]

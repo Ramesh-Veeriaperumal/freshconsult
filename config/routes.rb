@@ -25,7 +25,7 @@
   
   map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get }, :collection => {:create_multiple_items => :put}
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put}
   
   map.resources :sla_details
   
