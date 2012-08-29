@@ -150,6 +150,16 @@ en:
     popular: Popular
   payment_info: Payment information
   support:
+      
+      shared:
+        survey_form:
+          survey_title: How was your support experience?
+          feedback_title: Also your good words and specific critique can help us better our support in the future
+          rated_on: You gave us this rating on %{rated_on}
+          change_of_mind: Changed your mind?
+          rate_again: Rate us again
+          submit: Submit
+          cancel: Cancel
       surveys:
           thanks_for_feedback: "We have received your feedback. Thank you very much."
           feedback_already_done: "You have already given feedback for this response."
@@ -2364,3 +2374,5 @@ en:
   draft: "Draft:"
   last_draft: "Your last draft"
   clear_draft_text: "Clear stored draft?"
+  ticket_close_success: Your ticket has been successfully closed.
+  ticket_close_failure: Closing the ticket failed.
