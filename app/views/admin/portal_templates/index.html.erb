@@ -22,18 +22,18 @@
   </ul>        
     <div class="tab-content">
     	<div class="active tab-pane" id="template">
-        <% form_for [:admin, @portal_template], :builder => Admin::PortalTemplatesHelper::AppFormBuilder, :url => { :action => :update }, :html => { :method => :put } do |f| -%>
+        <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
           <label>Header</label>  
           <p class="help-text">Change the header area of your support portal</p>
-          <%= f.code_editor :header %>          
+          <%= f.code_editor :header, :height => "150px" %>          
           <br />
           <label>Contact Information</label>        
           <p class="help-text">Add contact information like phone no. or email. This information will come in the side bar of your support portal</p>
-          <%= f.code_editor :contact_info, :height => "250px" %>
+          <%= f.code_editor :contact_info, :height => "80px" %>
           <br />
         	<label>Footer</label>
         	<p class="help-text">Change the footer area of your support portal</p>	
-        	<%= f.code_editor :footer, :height => "60px" %>
+        	<%= f.code_editor :footer, :height => "80px" %>
           <br />
           <div class="well">
             <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
@@ -44,7 +44,7 @@
       
 
     	<div class="tab-pane" id="custom-css">		
-        <% form_for [:admin, @portal_template], :builder => Admin::PortalTemplatesHelper::AppFormBuilder, :url => { :action => :update }, :html => { :method => :put } do |f| -%>
+        <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
       	<label>Custom stylesheet</label>   
       	<p class="help-text">Add or overwrite freshdesk default styles with your own custom css</p>
       	<%= f.code_editor :custom_css, :mode => "css" %>            
@@ -57,7 +57,7 @@
     	</div>
   	     
     	<div class="tab-pane" id="layout">
-        <% form_for [:admin, @portal_template], :builder => Admin::PortalTemplatesHelper::AppFormBuilder, :url => { :action => :update }, :html => { :method => :put } do |f| -%>
+        <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
       	<label>Page layout</label>
       	<p class="help-text">Customize the entire layout of your support portal</p>	
       	<%= f.code_editor :layout %>  
