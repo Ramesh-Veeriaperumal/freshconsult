@@ -10,10 +10,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
+  include Mobile::Actions::Ticket
 
-  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product"]
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", "header_info"]
+  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
   
@@ -28,7 +28,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
+
+  has_many :attachments,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :dependent => :destroy
+  
+  after_create :refresh_display_id, :save_custom_field, :update_content_ids, :pass_thro_biz_rules,  
       :create_initial_activity
 
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
@@ -37,8 +43,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
   
-  delegate :product_id, :product, :to_emails, :to => :schema_less_ticket, :allow_nil => true
-
   belongs_to :email_config
   belongs_to :group
  
@@ -47,6 +51,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+
+  belongs_to :sphinx_requester,
+    :class_name => 'User',
+    :foreign_key => 'requester_id',
+    :conditions => 'helpdesk_tickets.account_id = users.account_id'
+
   
 
   has_many :notes, 
@@ -93,11 +103,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
     
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
-  
   has_one :tweet,
     :as => :tweetable,
     :class_name => 'Social::Tweet',
@@ -117,7 +122,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :topic, :through => :ticket_topic
   
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
-  has_many :survey_result, :as => :surveyable, :dependent => :destroy
+  has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
@@ -223,15 +228,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Sphinx configuration starts
   define_index do
        
-     indexes :display_id, :sortable => true
-     indexes :subject, :sortable => true
-     indexes description
-     indexes sphinx_notes.body, :as => :note
+    indexes :display_id, :sortable => true
+    indexes :subject, :sortable => true
+    indexes description
+    indexes sphinx_notes.body, :as => :note
     
-    has account_id, deleted, responder_id, group_id, requester_id
-    has requester.customer_id, :as => :customer_id
+    has account_id, deleted, responder_id, group_id, requester_id, status
+    has sphinx_requester.customer_id, :as => :customer_id
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
-    #set_property :delta => :delayed
+    
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -445,7 +452,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
-    portal =  product.portal if product
+    portal =  self.product.portal if self.product
     unless email.blank?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
@@ -478,7 +485,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    return if spam? || deleted?
+    return if spam? || deleted? || self.skip_notification?
     notify_by_email(EmailNotification::NEW_TICKET)
     notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id and !group_id_changed?
     notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id and !responder_id_changed?
@@ -597,6 +604,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def friendly_reply_email
     email_config ? email_config.friendly_email : account.default_friendly_email
+  end
+
+  def friendly_reply_email_personalize(user_name)
+    email_config ? email_config.friendly_email_personalize(user_name) : account.default_friendly_email_personalize(user_name)
   end
   
   def reply_email
@@ -726,20 +737,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=")) || super(attribute)
+    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
-  def update_schema_less_attributes(attribute, args)
-
-    if (attribute.to_s.include? '=') && SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("="))      
-      logger.debug "method_missing :: args is #{args} and attribute :: #{attribute}"
-      build_schema_less_ticket unless schema_less_ticket
-      args = args.first if args && args.is_a?(Array) 
-      schema_less_ticket.send(attribute,args)
-      return true  
-    end
-
-    return false
+  def schema_less_attributes(attribute, args)
+    logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    build_schema_less_ticket unless schema_less_ticket
+    args = args.first if args && args.is_a?(Array) 
+    (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
   def method_missing(method, *args, &block)
@@ -748,7 +753,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
 
-      return if update_schema_less_attributes(method, args)
+      return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
 
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!
@@ -818,16 +823,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-    twt_handles = product ? product.twitter_handles : account.twitter_handles
+    twt_handles = self.product ? self.product.twitter_handles : account.twitter_handles
     twt_handles.first.id unless twt_handles.blank?
   end
   
   def portal_host
-    (product && !product.portal_url.blank?) ? product.portal_url : account.host
+    (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host
   end
   
   def portal_name
-    (product && product.portal_name) ? product.portal_name : account.portal_name
+    (self.product && self.product.portal_name) ? self.product.portal_name : account.portal_name
   end
   
   def update_activity
@@ -842,7 +847,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def product_name
-      product ? product.name : "No Product"
+      self.product ? self.product.name : "No Product"
    end
    
    def responder_name
@@ -882,12 +887,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
-    to_emails_array = (to_emails || []).clone
+    to_emails_array = (self.to_emails || []).clone
 
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 
     account.support_emails.each do |support_email|
-      reply_to_all_emails.delete_if {|to_email| parse_email_text(to_email.strip)[:email] == parse_email_text(support_email)[:email]}
+      reply_to_all_emails.delete_if {|to_email| ((parse_email_text(support_email)[:email]).casecmp(parse_email_text(to_email.strip)[:email]) == 0)}
     end
 
     reply_to_all_emails
@@ -897,56 +902,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
-  def to_mob_json(only_public_notes=false)
-    notes_option = {
-      :only => [:created_at, :user_id, :id, :private ],
-      :include => {
-        :user => {
-          :only => [:name, :email, :id],
-          :methods => [:avatar_url, :is_agent, :is_customer]
-        },
-        :attachments => {
-          :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
-        }
-      },
-      :methods => [ :body_mobile, :source_name ]
-    }
-
-    json_inlcude = {
-      :responder => {
-        :only => [ :name, :email, :id ],
-        :methods => [ :avatar_url ]
-      },
-      :requester => {
-        :only => [ :name, :email, :id, :is_agent, :is_customer, :twitter_id  ],
-        :methods => [ :avatar_url, :is_customer ]
-      },
-      :attachments => {
-        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
-      },
-      :fb_post => {
-        :include => {
-          :facebook_page => {
-            :only => [ :id, :page_name ]
-          }
-        }
-       }
-    }
-
-    if only_public_notes
-     json_inlcude[:public_notes] = notes_option 
-    else 
-     json_inlcude[:notes] = notes_option
-    end
-
-    options = {
-      :only => [ :id, :display_id, :subject, :description, :description_html, :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
-      :methods => [ :status_name, :priority_name, :requester_name, :responder_name, :source_name, :is_closed, :to_cc_emails,
-                    :conversation_count, :selected_reply_email, :from_email, :is_twitter, :is_facebook, :fetch_twitter_handle, :is_fb_message ],
-      :include => json_inlcude
-    }
-    to_json(options,false) 
-  end
  
   def can_access?(user)
     if user.agent.blank?
@@ -967,18 +922,32 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   private
   
+    def update_content_ids
+      header = self.header_info
+      return if attachments.empty? or header.nil? or header[:content_ids].blank?
+      
+      attachments.each do |attach| 
+        content_id = header[:content_ids][attach.content_file_name]
+        self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+      end
+
+      # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
+      Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, account_id]) \
+          if description_html_changed?
+    end
+
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')
     end
   
     def create_product_activity
-      unless product
+      unless self.product
         create_activity(User.current, 'activities.tickets.product_change_none.long', {}, 
                                    'activities.tickets.product_change_none.short')
       else
         create_activity(User.current, 'activities.tickets.product_change.long',
-          {'product_name' => product.name}, 'activities.tickets.product_change.short')
+          {'product_name' => self.product.name}, 'activities.tickets.product_change.short')
       end
     
     end
@@ -1098,15 +1067,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def assign_email_config_and_product
       if email_config
         self.product = email_config.product
-      elsif product
-        self.email_config = product.primary_email_config
+      elsif self.product
+        self.email_config = self.product.primary_email_config
       end
     end
 
     def assign_email_config
+      assign_schema_less_attributes unless schema_less_ticket
       if schema_less_ticket.changed.include?("product_id")
-        if product
-          self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))      
+        if self.product
+          self.email_config = self.product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != self.product.id))      
         else
           self.email_config = nil
         end

@@ -24,6 +24,30 @@ class Forum < ActiveRecord::Base
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten]
 
+   def self.visibility_array(user)   
+    vis_arr = Array.new
+    if user && user.has_manage_forums?
+      vis_arr = VISIBILITY_NAMES_BY_KEY.keys
+    elsif user
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
+    else
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
+    end
+  end
+
+
+  named_scope :visible, lambda {|user| {
+                    :include => :customer_forums ,
+                    :conditions => visiblity_condition(user) } }
+
+
+  def self.visiblity_condition(user)
+    condition =  {:forum_visibility =>self.visibility_array(user) }
+    condition =  Forum.merge_conditions(condition) + " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
+                customer_forums.customer_id = #{user.customer_id} )" if (user && user.has_company?)
+    return condition
+  end
+
   validates_presence_of :name,:forum_category,:forum_type
   validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   validates_inclusion_of :forum_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max

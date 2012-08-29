@@ -6,7 +6,7 @@ class EmailConfigNotifier < ActionMailer::Base
     from          email_config.account.default_friendly_email
     recipients    email_config.reply_email
     sent_on       Time.now
-    headers       "Reply-to" => "#{email_config.account.default_friendly_email}"
+    headers       "Reply-to" => "#{email_config.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     content_type  "text/plain"
   end
   
@@ -16,7 +16,7 @@ class EmailConfigNotifier < ActionMailer::Base
     from          "Freshdesk Test <rachel@freshdesk.com>"
     recipients    email_config.reply_email
     sent_on       Time.now
-    headers       "Reply-to" => "rachel@freshdesk.com"
+    headers       "Reply-to" => "rachel@freshdesk.com", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     content_type  "text/html"
   end  
 end

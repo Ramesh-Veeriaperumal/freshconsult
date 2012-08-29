@@ -90,6 +90,7 @@ GEM
     gyoku (0.4.6)
       builder (>= 2.1.2)
     hashie (1.2.0)
+    html2textile (1.0.0.beta1)
     http_accept_language (1.0.1)
     httparty (0.6.1)
       crack (= 0.1.8)
@@ -294,6 +295,7 @@ DEPENDENCIES
   compass
   delayed_job (= 1.8.4)
   factory_girl (= 1.2.3)
+  html2textile (~> 1.0.0.beta1)
   http_accept_language (= 1.0.1)
   httparty (= 0.6.1)
   i18n (= 0.4.2)

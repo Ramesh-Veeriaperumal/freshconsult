@@ -3,6 +3,7 @@ class Account < ActiveRecord::Base
   require 'net/http' 
   require 'uri' 
 
+  include Mobile::Actions::Account
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
@@ -13,6 +14,8 @@ class Account < ActiveRecord::Base
   has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
   has_many :flexifields, :dependent => :delete_all
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
+  has_many :schema_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :delete_all
+  has_many :schema_less_notes, :class_name => 'Helpdesk::SchemaLessNote', :dependent => :delete_all
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }
@@ -120,6 +123,8 @@ class Account < ActiveRecord::Base
   
   has_many :user_forums, :through => :forum_categories, :conditions =>['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] 
   has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5
+
+  has_many :topics
  
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
@@ -241,7 +246,8 @@ class Account < ActiveRecord::Base
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :scoreboard_enable => true, :google_signin => true,
-    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false}
+    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
+    :personalized_email_replies => false}
     
   
   has_features do
@@ -325,6 +331,10 @@ class Account < ActiveRecord::Base
   def default_friendly_email
     primary_email_config.friendly_email
   end
+
+  def default_friendly_email_personalize(user_name)
+    primary_email_config.friendly_email_personalize(user_name)
+  end
   
   def default_email
     primary_email_config.reply_email
@@ -346,6 +356,13 @@ class Account < ActiveRecord::Base
   #Helpdesk hack starts here
   def reply_emails
     to_ret = (email_configs.collect { |ec| ec.friendly_email }).sort
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+  end
+  #HD hack ends..
+
+  #Helpdesk hack starts here
+  def reply_personalize_emails(user_name)
+    to_ret = (email_configs.collect { |ec| ec.friendly_email_personalize(user_name) }).sort
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
@@ -422,39 +439,6 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def to_mob_json(deep=false)
-    json_include = {
-      :main_portal => {
-        :only => [ :name, :preferences ],
-        :methods => [ :logo_url, :fav_icon_url ]
-      },
-      :subscription => {
-        :methods => [:is_paid_account]
-      }
-    }
-    options = {
-      :only => [:name],
-    }
-    if deep
-      json_include.merge!({
-        :canned_responses => {
-          :methods => [ :my_canned_responses ],
-          :only => [ :title, :id ]
-        },
-        :scn_automations =>{
-          :only => [ :id, :name ]
-        },
-        :twitter_handles => {
-          :only => [ :id, :screen_name ]
-        }
-      })
-      options.merge!({
-        :methods => [ :reply_emails, :bcc_email ],
-      })
-    end
-    options[:include] = json_include;
-    to_json options
-  end
   
   protected
   

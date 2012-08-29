@@ -56,7 +56,7 @@ module TicketConstants
     [ :group_id,            "Groups",   :dropdown],
     [ :source,              "Source",   :dropdown],
     [ :priority,            "Priority", :dropdown],
-    [ :due_by,              "Overdue",  :due_by],
+    [ :due_by,              "Due By",  :due_by],
     [ "helpdesk_tags.name", "Tags",     :dropdown],
     [ "users.customer_id",  "Customers", :dropdown],
     #[ :created_at,          "Created At", :created_at]
