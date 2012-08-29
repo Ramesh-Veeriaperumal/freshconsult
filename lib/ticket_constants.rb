@@ -4,6 +4,8 @@ module TicketConstants
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
    
+  DATE_RANGE_CSV = 31
+
   SOURCES = [
     [ :email,      I18n.t('email'),            1 ],
     [ :portal,     I18n.t('portal_key'),       2 ],

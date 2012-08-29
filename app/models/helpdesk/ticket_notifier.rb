@@ -63,6 +63,21 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
     content_type  "text/html"
   end
+
+  def export(params, string_csv, recipient)
+    subject       formatted_export_subject(params)
+    recipients    recipient.email
+    body          :user => recipient
+    from          AppConfig['from_email']
+    sent_on       Time.now
+    content_type  "multipart/alternative"
+
+    attachment    :content_type => 'text/csv; charset=utf-8; header=present', 
+                  :body => string_csv, 
+                  :filename => 'tickets.csv'
+
+    content_type  "text/html"
+  end
  
   def reply(ticket, note , options={})
     options = {} unless options.is_a?(Hash) 
@@ -161,6 +176,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def fwd_formatted_subject(ticket)
     "Fwd: #{ticket.encode_display_id} #{ticket.subject}"
+  end
+
+protected
+
+  def formatted_export_subject(params)
+    filter = TicketConstants::STATES_HASH[params[:ticket_state_filter].to_sym]
+    I18n.t('export_data.mail.subject',
+            :filter => filter,
+            :start_date => params[:start_date].to_date, 
+            :end_date => params[:end_date].to_date)
   end
   
 end

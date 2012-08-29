@@ -66,36 +66,20 @@ module Helpdesk::TicketActions
   end
   
   def export_csv
-    index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)
-    sql_conditions = index_filter.sql_conditions
-    sql_conditions[0].concat(%(and helpdesk_ticket_states.#{params[:ticket_state_filter]} 
-                               between '#{params[:start_date]}' and '#{params[:end_date]}'
-                              )
-                            )
-    all_joins = %( INNER JOIN helpdesk_ticket_states ON 
-                   helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
-                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id)
-    csv_hash = params[:export_fields]
-    headers = csv_hash.keys.sort
-    csv_string = FasterCSV.generate do |csv|
-      csv << headers
-      current_account.tickets.find_in_batches(:conditions => sql_conditions, 
-                                            :include => [:ticket_states, :ticket_status, :flexifield,
-                                                         :responder, :requester],
-                                            :joins => all_joins
-                                           ) do |items|
-        items.each do |record|
-          csv_data = []
-          headers.each do |val|
-            csv_data << record.send(csv_hash[val])
-          end
-          csv << csv_data
-        end
-      end
+    params[:later] = false
+
+    #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
+    if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
+      params[:later] = true
+      Resque.enqueue(Helpdesk::TicketsExport, params)
+      flash[:notice] = t("export_data.mail.info")
+      redirect_to :back
+    else
+      csv_tickets_string = Helpdesk::TicketsExport.perform(params)
+      send_data csv_tickets_string, 
+              :type => 'text/csv; charset=utf-8; header=present', 
+              :disposition => "attachment; filename=tickets.csv"
     end
-    send_data csv_string, 
-        :type => 'text/csv; charset=utf-8; header=present', 
-        :disposition => "attachment; filename=tickets.csv"
   end
   
   def component

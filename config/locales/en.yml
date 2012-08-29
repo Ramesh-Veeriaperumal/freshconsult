@@ -1847,6 +1847,10 @@ en:
     closed_at: Closed time
     from: From
     to: To
+    mail:
+      info: Your Ticket data will be sent to your email shortly!
+      subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
+      body: Please find the CSV file attached.
   date:
     ago: Ago
     from: From Now
