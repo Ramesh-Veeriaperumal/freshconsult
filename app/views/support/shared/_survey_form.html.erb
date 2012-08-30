@@ -1,0 +1,102 @@
+<div class="survey-form clearfix">
+         <% 
+                form_display = "block"
+                unless @ticket.survey_results.blank?  
+                    form_display = "none"
+                    sresult = @ticket.survey_results.last
+                    feedback = ""
+                    feedback =  sresult.survey_remark.feedback.body unless sresult.survey_remark.blank?
+                    rating_class = "neutral"
+                    rating_msg =  current_account.survey.neutral_text
+                    if sresult.happy?
+                        rating_class = "happy"
+                        rating_msg =  current_account.survey.happy_text
+                    elsif sresult.unhappy?
+                        rating_class = "unhappy"                              
+                        rating_msg =  current_account.survey.unhappy_text
+                    end
+         %>
+            <div id="survey_feedback">
+                <div class="survey-form-close">
+                    <ul class="survey-options">
+                        <li><span class="<%=rating_class%>"><%=rating_msg%></span></li>
+                    </ul>
+                        <div class="close-comment">
+                           <% unless feedback.blank? %> 
+                            <span class="cote"></span><p style="margin:0px 0 0px 24px;"><%=feedback%><p>
+                           <%end%>
+                            <span style="margin:0px 0 0px 24px;"><%= t('.rated_on', :rated_on => sresult.created_at.strftime("%a, %b %d, %Y"))%></span>
+                        </div>
+
+                        <div class="rate-again">
+                            <p><%= t('.change_of_mind') %></p>
+                            <a id="rate_us_again" href="javascript:show_survey_form();"><%= t('.rate_again') %></a>
+                        </div>
+                    
+                </div> 
+              </div>
+            <% end %>
+	<div id="survey_form" style="display:<%=form_display%>">
+                <div class="survey-form-left">
+                    <h3><%= t('.survey_title') %></h3>
+                    
+                </div>
+                <div class="survey-form-right clearfix">
+                    <ul class="survey-options clearfix">
+                        <li><a href="#" class="happy" id="happy_tab" data-rating="<%=Survey::HAPPY%>"><%=current_account.survey.happy_text%></a></li>
+                        <li><a href="#" class="neutral" id="neutral_tab" data-rating="<%=Survey::NEUTRAL%>"><%=current_account.survey.neutral_text%></a></li>
+                        <li><a href="#" class="unhappy" id="unhappy_tab" data-rating="<%=Survey::UNHAPPY%>"><%=current_account.survey.unhappy_text%></a></li>
+                    </ul>
+                    <div class="survey-comment">
+                    <% form_for :survey, :url => support_portal_survey_path(@ticket) , :html => { :method => "put" } do %>
+                        <input type="hidden" name="rating" id="survey_rating" vlaue="">
+                        <h4><%= t('.feedback_title') %></h4>
+                        <textarea name="feedback" id="feedback"></textarea> <input type="submit" value="<%= t('.submit')%>" />
+                        <input type="button" value="<%= t('.cancel')%>" id="survey_cancel" onclick="javascript:show_survey_feedback();" />
+                    <% end %>
+                    </div>
+                </div>
+            </div>
+	
+	<div class="clear"></div>
+</div>
+
+<script>
+ jQuery(document).ready(function () {
+            jQuery('.survey-comment').hide();
+
+            jQuery('.happy, .unhappy, .neutral').click(function (ev) {
+            	ev.preventDefault();
+            	jQuery(this).parent().addClass("active").siblings().removeClass("active");
+            	jQuery('.survey-comment').slideDown();                        
+            	jQuery('#survey_rating').val(jQuery(this).data("rating"))
+            });
+
+            jQuery('#survey_cancel').click(function(ev){
+                        jQuery('.survey-comment').slideUp();
+                        jQuery('.happy').parent().removeClass("active").siblings().removeClass("active");
+            });
+
+            <% 
+        	   unless @ticket.survey_results.blank? 
+        		sresult = @ticket.survey_results.last
+        		feedback = ""
+        		feedback =  sresult.survey_remark.feedback.body unless sresult.survey_remark.blank?
+        %>        
+
+                jQuery("#survey_form").hide();
+
+                jQuery("#rate_us_again").click(function(ev){
+                             jQuery('#survey_feedback').hide();
+                             jQuery('#survey_form').show();                        
+                });
+
+                jQuery('#survey_cancel').click(function(ev){
+                            jQuery('#survey_form').hide();
+                             jQuery('#survey_feedback').show();
+                });
+        	 
+        <% end %>
+            
+        });        
+</script>
