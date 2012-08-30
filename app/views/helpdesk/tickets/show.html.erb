@@ -106,8 +106,10 @@
 
     	currentEditItem = tinyMCE.get(element_id);
     	currentEditItemCaret = currentEditItem.dom.select('span#caret_pos_holder')[0];
-		currentEditItem.selection.select(currentEditItemCaret);   
-		currentEditItem.dom.remove(currentEditItemCaret);
+    	if(!jQuery.browser.msie){
+			currentEditItem.selection.select(currentEditItemCaret);
+			currentEditItem.dom.remove(currentEditItemCaret);
+		}
 		tinyMCE.execInstanceCommand(element_id, "mceInsertContent", false, value);
 	}
     
