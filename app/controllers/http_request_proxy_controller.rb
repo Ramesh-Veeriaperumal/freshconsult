@@ -9,12 +9,12 @@ class HttpRequestProxyController < ApplicationController
   end
 
   private
-  	def populate_server_password
-  		if !params[:use_server_password].blank? and params[:use_server_password] == 'true'
-  			password = get_password_for_app(params[:app_name], current_account)
-  			params[:password] = password
-  		end
-  	end
+    def populate_server_password
+      if !params[:use_server_password].blank? and params[:use_server_password] == 'true'
+        installed_app = current_account.installedApplications.with_name(params[:app_name]).first
+        params[:password] = installed_app.configsdecrypt_password
+      end
+    end
   
     def authenticated_agent_check
       render :status => 401 if current_user.blank? || current_user.agent.blank?

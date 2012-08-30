@@ -96,7 +96,7 @@ class Integrations::JiraIssueController < ApplicationController
                   :conditions => {:applications => {:name => "jira"}, :account_id => current_account})
          
 		username = @installed_app.configs_username
-		password = Integrations::AppsUtil.get_decrypted_value(@installed_app.configs_password)
+		password = @installed_app.configsdecrypt_password
 		@jiraObj = Integrations::JiraIssue.new(username, password, @installed_app, @installed_app.configs_domain)
 
 	end

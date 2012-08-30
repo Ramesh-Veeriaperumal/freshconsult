@@ -3,6 +3,7 @@
 	jira_comment_sync_opts = [[t("integrations.jira_settings.none"), "none"], [t("integrations.jira_settings.add_private_note_in_fd"), "add_private_note_in_fd"], [t("integrations.jira_settings.add_public_note_in_fd"), "add_public_note_in_fd"], [t("integrations.jira_settings.send_reply_in_fd"), "send_reply_in_fd"]]
 	fd_status_sync_opts = [[t("integrations.jira_settings.none"), "none"], [t("integrations.jira_settings.add_comment_in_jira"), "add_status_as_comment_in_jira"], [t("integrations.jira_settings.update_jira_status"), "update_jira_status"]]
 	fd_comment_sync_opts = [[t("integrations.jira_settings.none"), "none"], [t("integrations.jira_settings.add_comment_in_jira"), "add_comment_in_jira"]]
+	installed_app = Integrations::InstalledApplication.new if installed_app.blank?
 %>
 <table>
 	<tr><td colspan="2" width="40%" ><b>Sync Updates</b></td></tr>

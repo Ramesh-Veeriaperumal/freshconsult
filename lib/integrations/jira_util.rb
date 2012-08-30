@@ -54,8 +54,7 @@ class Integrations::JiraUtil
       resource_needs_to_be_notified = Integrations::IntegratedResource.find_by_account_id_and_local_integratable_id_and_installed_application_id(data.account.id, data.id, installed_jira_app)
       unless resource_needs_to_be_notified.blank?
         resource_needs_to_be_notified = [resource_needs_to_be_notified] unless resource_needs_to_be_notified.instance_of?(Array)
-        password = Integrations::AppsUtil.get_decrypted_value(installed_jira_app.configs_password)
-        jira_obj = Integrations::JiraIssue.new(installed_jira_app.configs_username, password, installed_jira_app, installed_jira_app.configs_domain)
+        jira_obj = Integrations::JiraIssue.new(installed_jira_app.configs_username, installed_jira_app.configsdecrypt_password, installed_jira_app, installed_jira_app.configs_domain)
         obj_mapper = Integrations::ObjectMapper.new
         resource_needs_to_be_notified.each {|notify_resource|
           issue_id = notify_resource.remote_integratable_id

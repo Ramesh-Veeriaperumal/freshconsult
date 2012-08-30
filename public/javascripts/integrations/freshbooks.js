@@ -43,23 +43,21 @@ FreshbooksWidget.prototype = {
 				on_failure: function(evt){}
 			}
 		freshbooksOptions = {
+			app_name:"Freshbooks",
 			application_id:freshbooksBundle.application_id,
 			integratable_type:"timesheet",
-			anchor: "freshbooks_widget",
-			app_name:"Freshbooks",
 			domain: $('freshbooks_widget').getAttribute('api_url').escapeHTML(),
-			application_content: function() {
+			application_html: function() {
 				return widgetInst.FRESHBOOKS_FORM.evaluate({});
 			},
-			application_resources: init_reqs
+			init_requests: init_reqs
 		};
 
 		if (typeof(freshbooksBundle) != 'undefined' && freshbooksBundle.k) {
 			freshbooksOptions.username = freshbooksBundle.k;
-			freshbooksOptions.password = "x";
 			this.freshdeskWidget = new Freshdesk.Widget(freshbooksOptions);
 		} else {
-			freshbooksOptions.login_content = function() {
+			freshbooksOptions.login_html = function() {
 				return '<form onsubmit="freshbooksWidget.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
 			};
 			this.freshdeskWidget = new Freshdesk.Widget(freshbooksOptions);

@@ -8,12 +8,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
-    if @installed_application.blank?
-      @installed_application = Integrations::InstalledApplication.new(params[:integrations_installed_application])
-      @installed_application.application = @installing_application
-      @installed_application.account = current_account
-      @installed_application[:configs] = convert_to_configs_hash(params)
-
       begin
         successful = @installed_application.save!
         if successful
@@ -30,9 +24,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         Rails.logger.error "Problem in installing an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         flash[:error] = t(:'flash.application.install.error')
       end
-    else
-      flash[:error] = t(:'flash.application.already')
-    end
     redirect_to :controller=> 'applications', :action => 'index'
   end
 
@@ -40,7 +31,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     if @installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
     else
-      @installed_application.configs = convert_to_configs_hash(params)
       begin
         @installed_application.save!
         flash[:notice] = t(:'flash.application.update.success')   
@@ -81,40 +71,39 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   private
     def convert_to_configs_hash(params)
-      if params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
+      if params[:configs].blank?
         {:inputs => {}}  
       else
-        params[:configs] = get_encrypted_value(params[:configs]) unless params[:configs].blank?
-        if(params[:configs][:password] == '')
-          params[:configs][:password] = @installed_application.configs[:inputs][:password.to_s] unless @installed_application.configs[:inputs][:password.to_s].blank?
-        end
         params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
         {:inputs => params[:configs].to_hash || {}}  
       end
-    end
-
-    def decrypt_password  
-      pwd_encrypted = @installed_application.configs_password unless @installed_application.configs.blank?
-      pwd_decrypted = Integrations::AppsUtil.get_decrypted_value(pwd_encrypted) unless pwd_encrypted.blank?
-      return pwd_decrypted
     end
 
     def load_object
       if params[:action] == "install"
         @installing_application = Integrations::Application.available_apps(current_account.id).find(params[:id])
         @installed_application = current_account.installed_applications.find_by_application_id(@installing_application)
+        if @installed_application.blank?
+          @installed_application = Integrations::InstalledApplication.new(params[:integrations_installed_application])
+          @installed_application.application = @installing_application
+          @installed_application.account = current_account
+        else
+          flash[:error] = t(:'flash.application.already')
+          redirect_to :controller=> 'applications', :action => 'index'
+        end
       else
         @installed_application = current_account.installed_applications.find(params[:id])
         @installing_application = @installed_application.application
       end
+      @installed_application.set_configs params[:configs]
     end
 
     def check_jira_authenticity
       if @installing_application.name == "jira"
         begin
-          username = params[:configs][:username]
-          password = decrypt_password if params[:configs][:password].blank? and !@installed_application.configs.blank?
-          jiraObj = Integrations::JiraIssue.new(username, password, nil, params[:configs][:domain])
+          username = @installed_application.configs_username
+          password = @installed_application.configsdecrypt_password
+          jiraObj = Integrations::JiraIssue.new(username, password, nil, @installed_application.configs_domain)
           jira_version = jiraObj.jira_serverinfo
         rescue Exception => msg
           if msg.to_s.include?("Exception:")
