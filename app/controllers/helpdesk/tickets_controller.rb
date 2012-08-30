@@ -30,7 +30,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
-
+  before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
