@@ -153,7 +153,7 @@ en:
       
       shared:
         survey_form:
-          survey_title: How was your support experience?
+          survey_title: Please take a minute to rate our support
           feedback_title: Also your good words and specific critique can help us better our support in the future
           rated_on: You gave us this rating on %{rated_on}
           change_of_mind: Changed your mind?
