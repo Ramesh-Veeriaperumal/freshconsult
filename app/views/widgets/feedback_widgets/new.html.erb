@@ -2,7 +2,7 @@
 <% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]) , :html => {:method => :post, :multipart => true, :id => "fd_feedback_widget", :target => "freshwidget-submit-frame"}  do |f| %>
   <%= f.error_messages %>
     <ul class="ui-form"> 
-      <% current_portal.customer_editable_ticket_fields.each do |field| %>
+		<% current_portal.customer_editable_ticket_fields.each do |field| %>
 				<% 
 					dom_type_correction = 
 						(case field.dom_type
@@ -12,18 +12,32 @@
 						 end)
 					field_name_correction = (field.field_name == "description_html") ? "description" : field.field_name
 				%>  
-        <%= construct_ticket_element :helpdesk_ticket, field, 
-                                       field.label_in_portal,
-                                       dom_type_correction, 
-                                       field.required_in_portal, 
-                                       (field.dom_type == "requester" && logged_in?) ? @ticket.email : "",
-                                       field_name_correction, true %>
-        <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  nil, :type => "edit"}) if field.field_type == "nested_field"%>                                       
-      <% end %>                                                              
-      <li>
-        <%= render :partial=>"/helpdesk/shared/attachment_form"  %>
-      </li>
-	  </ul>
+		<%= construct_ticket_element :helpdesk_ticket, field, 
+		                               field.label_in_portal,
+		                               dom_type_correction, 
+		                               field.required_in_portal, 
+		                               (field.dom_type == "requester" && logged_in?) ? @ticket.email : "",
+		                               field_name_correction, true %>
+		<%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  nil, :type => "edit"}) if field.field_type == "nested_field"%>                                       
+		<% end %>                                                              
+		<li class="widget_attachment">
+			<div class="screenshot-wrap">
+				<ul>
+					<li class="ie8plusonly" >       				
+						<input type="button" value="Take screenshot" id="takescreen-btn"/>
+					<!--<input type="checkbox" name="screen" id="screen" /> Attach a screenshot-->
+					</li>
+					<li class="ie8plusonly">
+						<div class="flash" style="display:none"></div>
+						<canvas class="screenshotpop" id="mycanvas" style="display:none"></canvas>
+						<a href="#" class="closeBtn" style="display:none" onClick="remove_screenshot()">Remove</a>
+					</li>
+				</ul>	
+			</div>
+			<div class="attachment"><%= render :partial=>"/helpdesk/shared/attachment_form"  %></div>
+		</li>	
+	</ul>
+	 
 	<div class="button-container">
 		<%= f.submit t('ticket.submit_ticket'), :class => "uiButton" %>
 		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
@@ -31,17 +45,3 @@
 	</div>
 <% end %>
 <iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="visibility:hidden; width:0px; height:0px;"></iframe>
-<script type="text/javascript">
-	jQuery("document").ready(function(){
-		setTimeout(function() {
-	 		jQuery("#fd_feedback_widget").validate();
-	 	},500);
-	 	jQuery("#freshwidget-submit-frame").bind("load", function() {
-	 		if(jQuery("#freshwidget-submit-frame").contents().find("#ui-widget-container").length != 0) {
-	 			jQuery("#ui-widget-container").hide();
-		 		jQuery("#ui-thanks-container").html(jQuery("#freshwidget-submit-frame").contents().find("#ui-widget-container").html());
-		 		jQuery("#ui-thanks-container").show();
-		 	}
-	 	});
-	});
-</script>
