@@ -14,6 +14,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :path => "/data/helpdesk/attachments/#{Rails.env}/:id/:style/:filename",
     :url => ":s3_alias_url",
     :s3_host_alias => "cdn.freshdesk.com",
+    :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
     
    

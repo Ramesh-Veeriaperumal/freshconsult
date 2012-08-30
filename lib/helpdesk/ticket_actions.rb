@@ -28,6 +28,17 @@ module Helpdesk::TicketActions
     
   end
 
+  def handle_screenshot_attachments
+    decoded_file = Base64.decode64(params[:screenshot][:data])
+    file = Tempfile.new([params[:screenshot][:name]]) 
+    file.binmode
+    file.write decoded_file
+    attachment = @ticket.attachments.new
+    attachment.content = file
+    file.close
+    attachment.save
+  end
+
   def notify_cc_people cc_emails
       Helpdesk::TicketNotifier.send_later(:deliver_send_cc_email, @ticket , {:cc_emails => cc_emails})
   end
@@ -41,6 +52,7 @@ module Helpdesk::TicketActions
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
   #we are getting the mass-assignment warning right now..
   def handle_attachments
+     handle_screenshot_attachments unless params[:screenshot].blank?
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
       @ticket.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
