@@ -47,7 +47,8 @@ class Helpdesk::TicketsController < ApplicationController
   def user_ticket
     @user = current_account.users.find_by_email(params[:email])
     if !@user.nil?
-      @tickets =  current_account.tickets.visible.requester_active(@user)
+      @tickets =  current_account.tickets.visible.requester_active(@user).paginate(:page => 
+                    params[:page],:per_page => 30)
     else
       @tickets = []
     end
