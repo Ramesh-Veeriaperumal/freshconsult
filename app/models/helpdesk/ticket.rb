@@ -932,7 +932,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
 
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, account_id]) \
+      Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
           if description_html_changed?
     end
 
