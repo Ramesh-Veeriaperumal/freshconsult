@@ -157,11 +157,11 @@
   </div>
 
 <% content_for :onload_script do %>  
- jQuery('#close_ticket_btn').live('click', function(event){
-    event.preventDefault();
+ jQuery('#close_ticket_btn').live('click', function(ev){
+    ev.preventDefault();
     var form = jQuery("<form>")
                 .attr("method", "post")
-                .attr("action", jQuery(this).attr('data-href') +"?disable_notification=" + event.shiftKey);
+                .attr("action", jQuery(this).attr('data-href') +"?disable_notification=" + ev.shiftKey);
      form.submit();
     });
 <% end %>
