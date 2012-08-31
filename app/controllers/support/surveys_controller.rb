@@ -16,7 +16,7 @@ class Support::SurveysController < ApplicationController
   def create
     
     if @survey_handle.survey_result
-      @survey_handle.survey_result.add_feedback(params[:survey][:feedback])
+      @survey_handle.survey_result.add_feedback(params[:survey][:feedback]) unless params[:survey][:feedback].blank?
       @survey_handle.destroy
     end
 
@@ -40,7 +40,7 @@ class Support::SurveysController < ApplicationController
         :rating => params[:rating]
       })
 
-      survey_result.add_feedback(params[:feedback])
+      survey_result.add_feedback(params[:feedback]) unless params[:feedback].blank?
 
       redirect_to :back
     end

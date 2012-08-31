@@ -254,6 +254,7 @@ a.addchoice:hover{
 	position:relative;
 	border:1px solid #EFEFEF; 
 	background-color:#F8F8F8; 
+	min-height: 462px;
 	div.field-box{
 		padding:6px 2% 10px 2%;
 		@include clearfix; 		
@@ -2234,4 +2235,103 @@ li.agents-field
 			}
 		}
 	}
+}
+
+
+#takescreen-btn{
+	background: #f3f3f3 url(../images/takescreenshot.png) no-repeat 10px 4px;
+	padding: 5px 10px 5px 40px;
+	float: right;
+	border: 1px #ccc solid;
+	@include border-radius(3px);
+	cursor: pointer;
+	font-size: 12px;
+	-webkit-box-shadow: inset 0px 0px 4px #ccc;
+	   -moz-box-shadow: inset 0px 0px 4px #ccc;
+	    -ms-box-shadow: inset 0px 0px 4px #ccc;
+	        box-shadow: inset 0px 0px 4px #ccc;
+}
+#takescreen-btn:hover{
+	background-color: #fafafa;
+	color: #444;
+}
+
+.screenshotpop{
+	width: 200px;
+	float:right;
+	right: 12px;
+	height: 100px;
+	border: 1px #f9f9f9 solid;
+	outline: 4px #595959 solid;
+	background: #fff;
+}
+
+.closeBtn{
+	font-size: 12px;
+	float: right;
+	margin-top: 115px;
+	margin-right: -204px;
+	z-index: 100;
+	top: 27px;
+
+}
+
+.flash{
+	width: 212px;
+	position: absolute;
+	top: 2px;
+	right: 0px;
+	height: 112px;
+	background: white;
+	z-index: 200;
+	-webkit-animation: flash 0.8s ease-out 1;
+	   -moz-animation: flash 0.8s ease-out 1;
+	    -ms-animation: flash 0.8s ease-out 1;
+	        animation: flash 0.8s ease-out 1;
+	-webkit-animation-fill-mode: forwards;
+	   -moz-animation-fill-mode: forwards;	
+	    -ms-animation-fill-mode: forwards;	
+	        animation-fill-mode: forwards;		
+}
+
+@-webkit-keyframes flash {
+	0%,25%{opacity: 0.7; background-color: #fff;}	
+	25%,50%{opacity: 1; background-color: #fff;}
+	50%, 100% {opacity: 1; background-color: transparent;}
+}
+
+
+@-moz-keyframes flash {
+	0%,25%{opacity: 0.7; background-color: #fff;}	
+	25%,50%{opacity: 1; background-color: #fff;}
+	50%, 100% {opacity:1; background-color: transparent;}
+}
+
+@-ms-keyframes flash {
+	0%,25%{opacity: 0.7; background-color: #fff;}	
+	25%,50%{opacity: 1; background-color: #fff;}
+	50%, 100% {opacity:1; background-color: transparent;}
+}
+
+@keyframes flash {
+	0%,25%{opacity: 0.7; background-color: #fff;}	
+	25%,50%{opacity: 1; background-color: #fff;}
+	50%, 100% {opacity:1; background-color: transparent;}
+}
+
+
+.ie8plusonly{
+	position: relative;
+}
+
+.attachment{
+	float: left;
+	width: 250px;
+	min-height: 100px;
+}
+
+.screenshot-wrap{
+	float: right;
+	width: 250px;
+	min-height: 100px;
 }
