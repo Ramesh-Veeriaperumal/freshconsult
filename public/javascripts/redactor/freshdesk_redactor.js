@@ -2,13 +2,13 @@
     function invokeRedactor(element_id,type){
     	switch(type){
     		case 'forum':
-    			jQuery('#'+element_id).redactor({autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
+    			jQuery('#'+element_id).redactor({autoresize:false,convertDivs: false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
     			break;
 	    	case 'cnt-reply':
-	         	jQuery('#'+element_id).redactor({ focus: true,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],execCommandCallback: function(obj, command) { isDirty=true; } , keyupCallback: function(obj, event) {isDirty=true;} });
+	         	jQuery('#'+element_id).redactor({ focus: true, convertDivs: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],execCommandCallback: function(obj, command) { isDirty=true; } , keyupCallback: function(obj, event) {isDirty=true;} });
 	         	break;
 	        default:
-	    	 	 jQuery('#'+element_id).redactor({ focus: true,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+	    	 	 jQuery('#'+element_id).redactor({ focus: true,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
 	     	}
  	}
 

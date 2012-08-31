@@ -85,9 +85,15 @@ body .redactor_air {
 	margin-bottom: 15px !important;
 }
 .redactor_editor blockquote {
-	margin-left: 3em !important;
+	border-left: 1px dotted #999999;
+    color: #666666;
+    font-size: 13px;
+    margin-left: 0.5em !important;
+    padding-left:1em;
+    padding: 6px 6px 1px 1em;
+/*	margin-left: 3em !important; //Changed for the inline style in our reply editors.-john	
 	font-style: italic !important;
-	color: #777;	
+	color: #777;	*/
 }
 .redactor_editor ul, 
 .redactor_editor ol {
