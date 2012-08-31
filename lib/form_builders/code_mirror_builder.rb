@@ -12,15 +12,17 @@ module FormBuilders
     }
 
     def code_editor(method, options = {})     
-      options[:id] = field_id( method, options[:index] )
+      options[:id] = field_id( method, options[:index] )  
       code_editor_tag(field_name(method), @object.send(method), options)
     end
 
     def code_editor_tag(name, content = nil, options = {})      
       id = options[:id] = options[:id] || field_id( name )
-      if options[:height].present?
-        set_height = "window.code_mirrors['#{id}'].getScrollerElement().style.height = '#{options[:height]}'"
-      end
+      
+      (set_height = "window.code_mirrors['#{id}'].getScrollerElement().style.height = '#{options[:height]}'") if options[:height].present?
+        
+      content = options[:value] if options[:value].present?
+      # puts "===> #{options[:value]}"
 
       _javascript_options = CODEMIRROR_DEFAULTS.merge(options).to_json
 
@@ -46,5 +48,3 @@ HTML
 
   end
 end
-
-ActionView::Base.default_form_builder = FormBuilders::CodeMirrorBuilder
