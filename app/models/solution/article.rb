@@ -41,11 +41,8 @@ class Solution::Article < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
     has folder.customer_folders(:customer_id), :as => :customer_ids
 
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
-    has folder.customer_folders(:customer_id), :as => :customer_ids
 
     set_property :delta => :delayed
     set_property :field_weights => {
