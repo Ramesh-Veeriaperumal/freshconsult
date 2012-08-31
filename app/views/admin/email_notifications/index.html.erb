@@ -1,6 +1,7 @@
 <% content_for :layoutType do%>single<% end %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
+<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <% javascript_tag do %>
 	var active_email_body = null;
 	jQuery(document).ready(function(){
@@ -9,7 +10,7 @@
 		var notifyType =$H();
 		var hideData=null;
 		var editorName =null;
-		jQuery("a.notify_check").bind("click", function(ev){
+		jQuery("a.notify_check").on("click", function(ev){
 			//jQuery(active_template).hide();
 			hideData = (jQuery(this).parents("tr").attr("notify_type"));
 			var emailTr = jQuery(this).parents("tr").next();
@@ -32,13 +33,13 @@
 				var template_name=jQuery("#"+active_link.getAttribute("showdiv")).get(0).id;
 				var index =template_name.indexOf('_div');
 				editorName=template_name.substring(0,index);
-			
-				jQuery("#"+editorName+"_"+hideData).redactor({autoformat: false,focus: true,path: '/javascripts/redactor',toolbar: 'small'});
+				lang = "<%=current_account.language%>";
+				invokeRedactor(editorName+"_"+hideData);
 				active_email_body=jQuery("#"+editorName+"_"+hideData);
 					
 			}
 		});
-	jQuery("a.close_template").bind("click", function(ev){
+	jQuery("a.close_template").on("click", function(ev){
 		
 			jQuery(active_template).hide();	
 			jQuery("#"+jQuery(active_link).attr("showdiv")).hide();
@@ -47,7 +48,7 @@
 			active_link = null;
 	});
 		
-	jQuery("a.reset_template").bind("click", function(ev){
+	jQuery("a.reset_template").on("click", function(ev){
       jQuery(this).prevAll("input[name$=_subject_template]")
         .val(jQuery(this).prevAll("input[name$=_subject_template_hid]").val());
 			template = jQuery(this).prevAll("textarea.desc_info");
