@@ -1036,7 +1036,7 @@
     restore: "Restaurar"
     info6: "Agregar notas específicas sobre este contacto"
     role:
-      info: "Puede ver todos los tiquetes de esta empresa "
+      info: "Puede ver todos los tickets de esta empresa "
   between: "Entre"
   portal_key: "Portal"
   add_new_forum: "añadir un nuevo foro"
