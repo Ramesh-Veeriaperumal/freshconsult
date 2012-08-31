@@ -20,8 +20,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
-  before_filter :disable_notification, :if => :save_and_close?
-  after_filter  :enable_notification, :if => :save_and_close? 
+  before_filter :disable_notification, :if => :notification_not_required?
+  after_filter  :enable_notification, :if => :notification_not_required?
 
 
   layout :choose_layout 
@@ -728,6 +728,10 @@ class Helpdesk::TicketsController < ApplicationController
   
   def save_and_close?
     !params[:save_and_close].blank?
+  end
+
+  def notification_not_required?
+    (!params[:save_and_close].blank?) || (params[:disable_notification] && params[:disable_notification].to_bool)
   end
 
   def check_ticket_status
