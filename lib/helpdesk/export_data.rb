@@ -4,7 +4,7 @@ require 'zip/zipfilesystem'
 require 'fileutils'
 
 class Helpdesk::ExportData < Struct.new(:params)
-  
+  include ActionController::UrlWriter
   def perform
    begin
     @current_account = Account.find_by_full_domain(params[:domain])
@@ -32,13 +32,13 @@ class Helpdesk::ExportData < Struct.new(:params)
       @data_export.attachment.update_attributes(:content => @file)
     end
     @data_export.save!
-    url =  @data_export.attachment.content.url
-    update_export_status
+    url =  helpdesk_attachment_url(@data_export.attachment,:host => @current_account.host,:protocol => 'https')
     DataExportMailer.deliver_export_email({:email => params[:email], :domain => params[:domain], :url =>  url})
     delete_zip_file zip_file_path  #cleaning up the directory
    rescue Exception => e
-        NewRelic::Agent.notice_error(e)
+      NewRelic::Agent.notice_error(e)
    end
+   update_export_status
    Account.reset_current_account
   end
   
