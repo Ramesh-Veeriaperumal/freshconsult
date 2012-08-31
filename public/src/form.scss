@@ -271,6 +271,9 @@ a.addchoice:hover{
 	li.search-choice, li.search-field{
 		width:auto;
 	}
+	.required.html_paragraph {
+		height:250px;
+		}
 	/*li:last-child{
 		border-bottom: 0;
     	box-shadow: none;
@@ -569,6 +572,9 @@ li.nested_field{
 		margin-left:210px;
 		clear:right;
 		position:relative;
+		textarea.required{
+		height:200px;
+		}
 		label{
 			font-size:1.2em;
 		}

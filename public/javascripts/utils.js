@@ -161,6 +161,7 @@ function helpdesk_submit(url, method, params){
                      value: source.value
                   });
           field.name = source.name;
+          field.value = source.value;
           form.appendChild(field);
    });
    form.action = url;
