@@ -105,7 +105,7 @@
     	if(!$(element_id)) return 
 
     	currentEditItem = tinyMCE.get(element_id);
-    	currentEditItemCaret = currentEditItem.dom.select('span#caret_pos_holder')[0];
+    	currentEditItemCaret = currentEditItem.dom.select('span#caret_position_holder')[0];
     	if(!jQuery.browser.msie){
 			currentEditItem.selection.select(currentEditItemCaret);   
 			currentEditItem.dom.remove(currentEditItemCaret);
