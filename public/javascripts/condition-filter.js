@@ -140,8 +140,26 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   //console.log(data_id, name, rule].join(">>>>"));
                   inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
+					var filterList = [];
+					if(quest_criteria_types) {
+						var selected_quest = jQuery("#quest_questtype").val();
+						var criteria_list = quest_criteria_types[selected_quest];
+						filterList.push(filter_data[0]);
+						jQuery(filter_data).each(function(key, item) {
+							if(criteria_list) { 
+								jQuery(criteria_list.criteria_type).each(function(i, value) {
+									if (value == item.name) {
+										filterList.push(item);
+									}
+								});
+							}
+						});
+					} else {
+						filterList = filter_data;
+					}
+
                   jQuery.data(r_dom, "inner")
-                     .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))
+                     .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name).val(rule.name))
                      .append(inner);	
 
                   list_C = jQuery(parentDom).find(setting.rule_dom);

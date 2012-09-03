@@ -55,8 +55,7 @@ class Admin::QuestsController < Admin::AdminController
   ]
 
   def index
-    @inactive_quests = all_scoper.disabled
-  	@quests = scoper.find(:all)
+    redirect_back_or_default '/admin/gamification'
   end
 
   def edit

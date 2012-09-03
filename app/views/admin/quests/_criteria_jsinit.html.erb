@@ -129,16 +129,6 @@
                     modeHTML += "</select>";
                     quest.disp_name = quest.disp_name.replace("##questmode##", modeHTML);
                     break;
-                  case "questtime":
-                    timeHTML = "&nbsp; <input id='quest_data_time' type='text' style='width:30%;' value=''>";
-
-                    /*timeHTML = "&nbsp; <select name='quest_time'>";
-                    $.each(quest.questtime, function(index, value) {
-                        timeHTML += "<option value='" + value[0] + "'>" + value[1] + "</option>";
-                    });
-                    timeHTML += "</select>";*/
-                    quest.disp_name = quest.disp_name.replace("##questtime##", timeHTML);
-                    break;
                   default:
                     break;
                 }
@@ -148,7 +138,7 @@
             
             $("#questDOM").html(criHtml);
 
-            jQuery("#quest_data_time").daterangepicker({
+            /*jQuery("#quest_data_time").daterangepicker({
               earliestDate: Date.parse('1/1/2010'),
               presetRanges: [
               {text: '<%= t('reports.date_ranges.next_2_days') %>', dateStart: 'Today', dateEnd: 'Today+2' },
@@ -162,7 +152,7 @@
               dateFormat: 'dd M yy',
               closeOnSelect: true
             });
-            jQuery("#quest_data_time").val('<%= Time.now.strftime("%d %B %Y") %>');
+            jQuery("#quest_data_time").val('<%= Time.now.strftime("%d %B %Y") %>');*/
 
           }
       };
