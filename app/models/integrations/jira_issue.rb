@@ -51,7 +51,7 @@ class Integrations::JiraIssue
 			comment = false
 		else
 			issueId = params['remoteKey']
-			commentResponse = addCommentToJira(issueId, params['ticketData'])
+			commentResponse = add_comment(issueId, params['ticketData'])
 			Rails.logger.debug "Received response for adding a comment to jira : #{commentResponse.inspect}"
 			comment = true
 		end
@@ -72,7 +72,7 @@ class Integrations::JiraIssue
         return server_info
     end
 
-  def addCommentToJira(issueId, ticketData)
+  def add_comment(issueId, ticketData)
     jiraComment = Jira4R::V2::RemoteComment.new
     jiraComment.body = ticketData
     Rails.logger.debug "Sending request get a jira comment object : #{jiraComment.inspect}"

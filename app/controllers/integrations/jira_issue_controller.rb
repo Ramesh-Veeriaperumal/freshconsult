@@ -3,8 +3,9 @@ require 'jira4r'
 
 class Integrations::JiraIssueController < ApplicationController
 	include Integrations::Constants
+  include RedisKeys
 
-	before_filter :validate_ip, :only => [:notify, :register] # TODO Needs to be replaced with OAuth authentication.
+	before_filter :validate_request, :only => [:notify, :register] # TODO Needs to be replaced with OAuth authentication.
   before_filter :getJiraObject, :except => [:notify, :register]	
 
 	def get_issue_types
@@ -122,30 +123,44 @@ class Integrations::JiraIssueController < ApplicationController
   end
  
   def notify
-    puts "Remote JIRA Calling me with params #{params.inspect}, serverKey: #{params[:serverKey]}"
     if params[:id] == "remote_app_started"
       # TODO: Logic to fetch the jira public key and preserve it for later the oauth 2-legged signature verification.
     else
       jira_webhook = Integrations::JiraWebhook.new(params)
-      jira_webhook.update_local(@installed_app)
+      if @installed_app.blank?
+        Rails.logger.log "Linked ticket not found for remote JIRA app with params #{params.inspect}"
+      else
+        jira_webhook.update_local(@installed_app)
+      end
     end
   end
  
   private
-    def validate_ip
+    def validate_request
       jira_ip = request.remote_ip
-      puts "Validate ip headers #{request.headers['HTTP_AUTHORIZATION']} #{jira_ip}"
+      Rails.logger.debug "Validate ip headers #{request.headers['HTTP_AUTHORIZATION']} #{jira_ip}"
       matches = /207\.223\.247\.(\d\d?\d?)/.match(jira_ip)
       if (!matches.blank? and matches.size == 2)
         last_octet = matches[1].to_i
         if last_octet >= 10 or last_octet <= 52
           header = request.headers['HTTP_AUTHORIZATION']
           con_key_mathces = /OAuth oauth_consumer_key="([^"]*)".*/.match(header)
-          unless con_key_mathces.blank?
+          unless con_key_mathces.blank? # TODO: Logic to fetch the jira public key and preserve it for later the oauth 2-legged signature verification.
             jira_url = con_key_mathces[1]
-            @installed_app = Integrations::InstalledApplication.first(
-                    :joins=>"INNER JOIN applications ON applications.id=installed_applications.application_id", 
-                    :conditions=>"applications.name='#{APP_NAMES[:jira]}' and configs like '%#{jira_url}%'")
+            remote_integratable_id = params["issue"]["key"];
+            # TODO:  Costly query.  Needs to revisit and index the integrated_resources table and/or split the quries.
+            @installed_app = Integrations::InstalledApplication.with_name(APP_NAMES[:jira]).first(:select=>["installed_applications.*, integrated_resources.*"],
+                    :joins=>"INNER JOIN integrated_resources ON integrated_resources.installed_application_id=installed_applications.id", 
+                    :conditions=>["integrated_resources.remote_integratable_id=? and configs like ?", remote_integratable_id, "%#{jira_url}%"])
+            unless @installed_app.blank?
+              local_integratable_id = @installed_app.local_integratable_id
+              account_id = @installed_app.account_id
+              recently_updated_by_fd = get_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
+              if recently_updated_by_fd # If JIRA has been update recently with same params then ignore that event.
+                @installed_app = nil
+                Rails.logger.log("Recently freshdesk updated JIRA with same params.  So ignoring the event.")
+              end
+            end
           end
           return
         end

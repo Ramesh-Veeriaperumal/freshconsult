@@ -26,7 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   unhtml_it :description
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :disable_observer
   
   before_validation :populate_requester, :set_default_values
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
@@ -1064,6 +1064,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def fire_update_event
-      fire_event(:update)
+      fire_event(:update) unless disable_observer
     end
 end

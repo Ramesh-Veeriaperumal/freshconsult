@@ -75,7 +75,6 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 	    if self.application.name == "google_contacts"
 	      Rails.logger.info "Deleting all the google accounts corresponding to this account."
         Integrations::GoogleAccount.destroy_all ["account_id = ?", self.account]
-        Integrations::GoogleAccount.destroy_all ["account = ?", self.account]
 	    end
   	end
 

@@ -23,6 +23,7 @@ class Va::Action
       if obj.respond_to?(value)
         obj.send(value, act_on, act_hash)
         # add_activity(property_message act_on)  # TODO
+        return
       end
     end
     

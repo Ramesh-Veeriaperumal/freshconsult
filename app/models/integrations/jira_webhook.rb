@@ -28,10 +28,10 @@ class Integrations::JiraWebhook
     notify_value = nil
     if self.updated_entity_type == "comment" and (self.notification_cause == "added" || self.notification_cause == "edited")
       notify_value = installed_application.configs_jira_comment_sync
-    elsif self.updated_entity_type == "issue" and self.notification_cause != "updated" # Any notification other than update notification will be propagated to Freshdesk.  Even if we encouter some non-status related notification the same status will be updated one more time in Freshdesk, which is ok.
+    elsif self.updated_entity_type == "issue" and self.notification_cause != "updated" # Any notification other than update notification will be propagated to Freshdesk.  Even if we encouter any non-status related notification the same status will be updated one more time in Freshdesk, which is ok.
       notify_value = installed_application.configs_jira_status_sync
     end
-    Rails.logger.debug "update_local #{notification_cause} #{updated_entity_type} #{notify_value}, installed_application #{installed_application}"
+    Rails.logger.debug "update_local #{notification_cause}, #{updated_entity_type}, #{notify_value}, installed_application #{installed_application}"
     obj_mapper = Integrations::ObjectMapper.new
     obj_mapper.map_it(installed_application.account_id, notify_value, self.params) unless notify_value.blank?
   end

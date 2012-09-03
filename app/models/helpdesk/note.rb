@@ -38,7 +38,7 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :dependent => :destroy
 
-  attr_accessor :nscname
+  attr_accessor :nscname, :disable_observer
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count, :fire_create_event
@@ -292,6 +292,6 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def fire_create_event
-      fire_event(:create)
+      fire_event(:create) unless disable_observer
     end
 end

@@ -11,7 +11,7 @@ class HttpRequestProxyController < ApplicationController
   private
     def populate_server_password
       if !params[:use_server_password].blank? and params[:use_server_password] == 'true'
-        installed_app = current_account.installedApplications.with_name(params[:app_name]).first
+        installed_app = current_account.installed_applications.with_name(params[:app_name]).first
         params[:password] = installed_app.configsdecrypt_password
       end
     end

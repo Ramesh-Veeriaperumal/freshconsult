@@ -111,7 +111,8 @@ class Integrations::ObjectMapper
           {:ours=>"notable", :theirs_to_ours=>{:handler=>:db_fetch, :entity=>Helpdesk::Ticket, 
                         :using=>{:select=>"helpdesk_tickets.*", :joins=>"INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id", 
                         :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}}},
-          {:ours=>"account_id", :theirs_to_ours=>{:value=>"{{account_id}}"}}
+          {:ours=>"account_id", :theirs_to_ours=>{:value=>"{{account_id}}"}},
+          {:ours=>"disable_observer", :theirs_to_ours=>{:handler=>:static_value, :value=>true}}
         ], 
         :update=>{:theirs_to_ours_handler=>:db_save}
       }
@@ -152,16 +153,17 @@ class Integrations::ObjectMapper
                       "Default"=>OPEN,
                       "Resolved"=>RESOLVED,
                       "Closed"=>CLOSED}
-                    }}
+                    }},
+          {:ours=>"disable_observer", :theirs_to_ours=>{:handler=>:static_value, :value=>true}}
         ], 
         :update=>{:theirs_to_ours_handler=>:db_save}
       },
-      :add_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Added note in Freshdesk:\n {{body}}\n"}}]},
-      :add_status_as_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Status changed to : {{status}}"}}]},
-      :update_jira_status => {:map => [{:ours_to_theirs=>{:handler=>:map_field, :value=>"{{status}}", :mapping_values=>{
+      :add_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Note added in Freshdesk:\n {{body}}\n"}}]},
+      :add_status_as_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Freshdesk ticket status changed to : {{helpdesk_ticket.status}}"}}]},
+      :update_jira_status => {:map => [{:ours_to_theirs=>{:handler=>:map_field, :value=>"{{helpdesk_ticket.status}}", :mapping_values=>{
                       "Default"=>"Reopen Issue",
-                      RESOLVED.to_s=>"Resolve Issue",
-                      CLOSED.to_s=>"Close Issue"}
+                      "Resolved"=>"Resolve Issue",
+                      "Closed"=>"Close Issue"}
                     }}]}
     }
 
