@@ -35,7 +35,7 @@ module Admin::HomeHelper
           ['/social/twitters',            'twitter-setting',feature?(:twitter) ],
           ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ],
           ['/admin/surveys',              'survey-settings', current_account.features?(:surveys)      ],
-          # ['/admin/scoreboard',           'scoreboard-settings', current_account.features?(:scoreboard)      ]
+          ['/admin/gamification',         'gamification-settings', current_account.features?(:scoreboard)      ]
       ]],
         
       [ t(".everything_else"), [

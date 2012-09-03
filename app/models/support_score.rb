@@ -3,8 +3,10 @@ class SupportScore < ActiveRecord::Base
   #TICKET_CLOSURE = 1
   #SURVEY_FEEDBACK = 2
   
-  TICKET_CLOSURE = [ScoreboardRating::FAST_RESOLUTION, ScoreboardRating::ON_TIME_RESOLUTION, ScoreboardRating::LATE_RESOLUTION]
-  SURVEY_FEEDBACK = [ScoreboardRating::HAPPY_CUSTOMER, ScoreboardRating::UNHAPPY_CUSTOMER]
+  TICKET_CLOSURE = [  ScoreboardRating::FAST_RESOLUTION, ScoreboardRating::ON_TIME_RESOLUTION, 
+                      ScoreboardRating::LATE_RESOLUTION ]
+
+  SURVEY_FEEDBACK = [ ScoreboardRating::HAPPY_CUSTOMER, ScoreboardRating::UNHAPPY_CUSTOMER ]
   
   #SCORE_TRIGGERS = { ScoreboardRating::HAPPY_CUSTOMER => SURVEY_FEEDBACK }
 
@@ -17,6 +19,9 @@ class SupportScore < ActiveRecord::Base
   named_scope :fastcall_resolution, {
     :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::FAST_RESOLUTION]
   }
+
+  # named_scope :fast_resolution, { :conditions => 
+  #   { :score_trigger => ScoreboardRating::FAST_RESOLUTION } }
 
   named_scope :ontime_resolution, {
     :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::ON_TIME_RESOLUTION]
@@ -60,7 +65,6 @@ class SupportScore < ActiveRecord::Base
     end
   end 
   
-
   def self.add_support_score(scorable, resolution_speed)
     sb_rating = scorable.account.scoreboard_ratings.find_by_resolution_speed(resolution_speed)
     scorable.support_scores.create({
@@ -70,4 +74,23 @@ class SupportScore < ActiveRecord::Base
       :score_trigger => sb_rating.resolution_speed #SCORE_TRIGGERS.fetch(resolution_speed, TICKET_CLOSURE)
     }) if scorable.responder
   end
+
+  def self.add_score(scorable, score, badge)
+    scorable.support_scores.create({
+      :account_id => scorable.account_id,
+      :agent_id => scorable.user.id,
+      :score => score,
+      :score_trigger => 201
+    }) if scorable.user
+  end
+
+  def self.add_ticket_score(scorable, score, badge)
+    scorable.support_scores.create({
+      :account_id => scorable.account_id,
+      :agent_id => scorable.responder.id,
+      :score => score,
+      :score_trigger => 201
+    }) if scorable.responder
+  end
+
 end

@@ -95,6 +95,8 @@
     admin.resources :canned_responses
     admin.resources :products
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
+    admin.resources :gamification, :collection => { :enable => :post, :disable => :post }
+    admin.resources :quests, :member => { :deactivate => :put, :activate => :put }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
@@ -107,8 +109,8 @@
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
   map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
   map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
-  map.scoreboard_activity '/scoreboard/reports', :controller => 'reports/scoreboard_reports', :action => 'index' 
-  map.scoreboard_activity_generate '/scoreboard/reports/generate', :controller => 'reports/scoreboard_reports', :action => 'generate'
+  map.scoreboard_activity '/gamification/reports', :controller => 'reports/gamification_reports', :action => 'index' 
+  map.scoreboard_activity_generate '/gamification/reports/generate', :controller => 'reports/gamification_reports', :action => 'generate'
   map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
   map.survey_back_to_list '/survey/reports/:category/:view', :controller => 'reports/survey_reports', :action => 'index'
   map.survey_list '/survey/reports_list', :controller => 'reports/survey_reports', :action => 'list'

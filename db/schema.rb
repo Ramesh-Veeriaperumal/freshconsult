@@ -1027,6 +1027,27 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
     t.datetime "updated_at"
   end
 
+  create_table "scoreboard_levels", :force => true do |t|
+    t.integer  "account_id",  :limit => 8
+    t.text     "levels_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "quests", :force => true do |t|
+    t.integer  "account_id",  :limit => 8
+    t.string   "name"
+    t.text     "description"
+    t.integer  "questtype"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active"
+    t.integer  "award_point"
+    t.text     "award_badge"
+    t.text     "filter_data"
+    t.text     "quest_data"
+  end
+  
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",           :limit => 8
     t.string   "access_token"
@@ -1244,6 +1265,7 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
     t.integer  "scorable_id",   :limit => 8
     t.string   "scorable_type"
     t.integer  "score"
+    t.string   "badge"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "score_trigger"

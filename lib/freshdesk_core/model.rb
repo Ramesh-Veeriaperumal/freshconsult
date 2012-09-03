@@ -30,6 +30,7 @@ module FreshdeskCore::Model
     									{:dependant => :tweets, :method => :destroy_all},
     									{:dependant => :survey, :method => :destroy},
     									{:dependant => :scoreboard_ratings, :method => :destroy_all},
+                                        {:dependant => :scoreboard_levels, :method => :destroy_all},
     									{:dependant => :survey_handles, :method => :destroy_all},
     									{:dependant => :day_pass_config, :method => :destroy},
     									{:dependant => :day_pass_usages, :method => :destroy_all},

@@ -26,6 +26,8 @@ class Solution::Article < ActiveRecord::Base
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
+  has_many :support_scores, :as => :scorable, :dependent => :destroy
+  
   include Mobile::Actions::Article
 
   define_index do
@@ -89,8 +91,12 @@ class Solution::Article < ActiveRecord::Base
  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }    
  SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
  
- named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
-    
+  named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
+ 
+  named_scope :user, lambda { |userid|
+      { :conditions => ["user_id = ?", userid ] }
+  }
+
   def type_name
     TYPE_NAMES_BY_KEY[art_type]
   end

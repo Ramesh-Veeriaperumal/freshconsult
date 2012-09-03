@@ -161,7 +161,68 @@ en:
               neutral_info: Wish you were a little more happy.
               unhappy_info: We will ensure that we will take extra care the next time around.
               additional_info: Additionally, you could also share your experience working with us.
+  gamification:
+    levels:
+      beginner: Beginner
+      intermediate: Intermediate
+      professional: Professional
+      expert: Expert
+      master: Master
+      guru: Guru
+  quests:
+    inactive_quests: Inactive Quests
+    date: Date
+    satisfaction: Satisfaction
   admin:
+    quests:
+      index:
+        title: Quest
+        sideinfo1: Info 1
+        sideinfo2: Info 2
+        quest_title: Quests
+        new_quest: New Quest
+    gamification:
+      successfully_updated: Gamification settings has been successfully updated.
+      error_update: Error while updating gamification settings.
+      helptext: "<p><b>Why enable gamification?</b> <br>
+       Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
+       <br><br>
+       <b>Creating your satisfaction survey:</b><br>
+       The following steps let you collect feedback from your customers through a link in your response emails:<br>
+       1.Enable the Customer Satisfaction Surveys checkbox<br>
+       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+       <br>
+       <b>Choose which emails have the satisfaction survey link:</b><br>
+       You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
+       <br><br>
+       You can learn more about satisfaction surveys from our solutions page.     
+       </p>"
+      index:
+        title: Gamification Settings
+      gamification_settings:
+        enable_label: Agents Gamification
+        title_points_configuration: Points Configuration
+        title_ticket_points: Ticket Points
+        label_fast_resolution: Fast (< 1 hr)
+        label_ontime_resolution: On time (Within SLA)
+        label_late_resolution: Late (Overdue)
+        title_bonus_points: Bonus Points
+        label_firstcall_resolution: First Call Resolution
+        label_happy_customer: Happy Customer
+        label_unhappy_customer: Unhappy Customer
+        title_levels: Levels
+        info_level_new_agent: "Note: For Newly joining Agents 'Beginner' title & points will be given"
+        title_trophies: Trophies
+        label_trophie_mvp: Most Valuable Player
+        label_trophie_mvp_info: Agent who has points higher then others
+        label_trophie_sharp: Sharpshooter
+        label_trophie_sharp_info: Agent who has points higher then others
+        label_trophie_fcr: FCR's
+        label_trophie_fcr_info: Agent who has points higher then others
+        label_trophie_happy: Customer Champion
+        label_trophie_happy_info: Agent who has points higher then others
+        new_quest: New Quest
+        quest_title: Quests
     surveys:
      successfully_updated: Customer Satisfaction settings has been successfully updated.
      error_updated: Error while updating survey settings.
@@ -195,20 +256,6 @@ en:
         enter_happy_text: Enter the happy text
         enter_neutral_text: Enter the neutral text
         enter_unhappy_text: Enter the unhappy text
-     scoreboard_ratings:
-        enable_scoreboard_label: Enable Support Scoreboard
-        about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
-        points_table_title: Support Scoreboard - Points Table
-        when_resolution_label: When resolution is
-        point_tobe_awarded_label: Points to be awarded
-        fast_resolution_label: Fast (< 1 hr)
-        ontime_resolution_label: On time (Within SLA)
-        late_resolution_label: Late (Overdue)
-        happy_customer_score_label: If the customer says they are "Happy" award %{happy_score} bonus points
-        first_call_resolution_label: First Call Resolution
-        when_customer_label: Bonus points when 
-        happy_customer_label: Happy Customer
-        unhappy_customer_label: Unhappy Customer     
     getting_started:
         send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
@@ -426,6 +473,7 @@ en:
         title: Admin
         email-notifications: Email Notifications
         survey-settings: Customer Satisfaction Settings
+        gamification-settings: Gamification Settings
         rebranding: Helpdesk Rebranding
         account-settings: Account Settings
         customer-portal: Customer Portal

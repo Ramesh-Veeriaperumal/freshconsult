@@ -55,6 +55,15 @@ class Survey < ActiveRecord::Base
                                                                     :locals => {:ticket => ticket, :survey_handle => survey_handle})
   end
 
+  def self.survey_names(account)
+    surveys = account.survey
+    survey_names = [
+      [ CUSTOMER_RATINGS[HAPPY], surveys.happy_text ],
+      [ CUSTOMER_RATINGS[NEUTRAL], surveys.neutral_text ],
+      [ CUSTOMER_RATINGS[UNHAPPY], surveys.unhappy_text ]
+    ]
+  end
+
   def title(rating)        
         if rating==CUSTOMER_RATINGS[HAPPY]
            self.happy_text.downcase

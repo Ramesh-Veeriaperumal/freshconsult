@@ -7,7 +7,12 @@ class Post < ActiveRecord::Base
   belongs_to :topic
   
   named_scope :answered_posts, :conditions => { :answer => true }
-  
+  has_many :support_scores, :as => :scorable, :dependent => :destroy
+
+  named_scope :user, lambda { |userid|
+      { :conditions => ["#{Post.table_name}.user_id = ?", userid ] }
+  }
+
   has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',

@@ -15,6 +15,11 @@
 /*Ticket View icons */
 @import "ticket-view/*.png";
 
+/*Gamification-Trophy */
+@import "scoreboard/*.png";
+
+/*Gamification-Badges */
+@import "badges/*.png";
 /*@include font-face('Silkscreen',
   font-files(
     'slkscr.woff', woff,
@@ -6512,4 +6517,12 @@ a.mobile_switchBtn {
 			text-shadow: -1px -1px 0 black;
 			text-shadow: -1px -1px 0 black;
 		}
+}
+
+.scoreboard_items {
+	@include all-scoreboard-sprites;
+}
+
+.badges_items {
+	@include all-badges-sprites;
 }

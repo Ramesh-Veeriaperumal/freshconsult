@@ -51,6 +51,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	// Setting initial data elements	
 	var hg_data			= $H(),
 		operator_types	= setting.operators,
+		quest_criteria_types = setting.quest_criteria_types;
 		name			   = _name || "default",
 		hidden_			= null,
 		// Setting initial dom elements
@@ -85,12 +86,31 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				jQuery.data(outer, "inner", inner);
 				return outer;
 			},
+
 		add_dom: 
 			function(){
 				// Adding a new Filter DOM element to the Filter Container
 				var r_dom = domUtil.getContainer(name);
+				var filterList = [];
+				if(quest_criteria_types) {
+					var selected_quest = jQuery("#quest_questtype").val();
+					var criteria_list = quest_criteria_types[selected_quest];
+					filterList.push(filter_data[0]);
+					jQuery(filter_data).each(function(key, item) {
+						if(criteria_list) { 
+							jQuery(criteria_list.criteria_type).each(function(i, value) {
+								if (value == item.name) {
+									filterList.push(item);
+								}
+							});
+						}
+					});
+				} else {
+					filterList = filter_data;
+				}
+
 				jQuery.data(r_dom, "inner")
-					  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name))
+					  .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name))
 					  .append("<div />");
 
 				list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -107,7 +127,12 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
                   if(rule.operator){	
                      opType = hg_data.get(rule.name).operatortype;
-                     inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                     if (operator_types.get(opType).length === 1 && setting.quest_criteria_types) {
+                     	var value = operator_types.get(opType)[0].value;
+						inner.append("<span style='padding: 3px 10px 0px 10px;'>" + value + "</span>");
+                     } else {
+                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                     }
                   }	
                   if(rule.name == "set_nested_fields")
                   	rule.name = rule.category_name;
@@ -183,7 +208,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	// Public Methods and Attributes
 	var pub_Methods = {		
 		add_filter:domUtil.add_new_filter,
-		get_filter_list:domUtil.get_filter_list
+		get_filter_list:domUtil.get_filter_list,
+
 	};	 
 	
 	// Applying Events and on Window ready initialization	
@@ -217,8 +243,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								var hg_item = hg_data.get(this.value);
 								var data_id = hg_item.name + itemManager.get();
 
-								if(hg_item.operatortype)
-									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
+								if(hg_item.operatortype) {
+									if (operator_types.get(hg_item.operatortype).length === 1 && setting.quest_criteria_types){
+										var value = operator_types.get(hg_item.operatortype)[0].value;
+										rule_drop.append("<span style='padding: 3px 10px 0px 10px;'>" + value + "</span>");
+									} else {
+										rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
+									}
+								}
 
 								rule_drop.append(conditional_dom(hg_item, data_id, name));
 								postProcessCondition(hg_item, data_id);
@@ -239,7 +271,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							if(filter.parent().children().size() != 1)
 								filter.remove();
 						});
-
 			domUtil.init();
 		}init();
 

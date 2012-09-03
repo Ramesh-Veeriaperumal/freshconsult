@@ -125,6 +125,8 @@ class Account < ActiveRecord::Base
   has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5
 
   has_many :topics
+  has_many :posts
+
  
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
@@ -146,8 +148,14 @@ class Account < ActiveRecord::Base
   has_many :tweets, :class_name =>'Social::Tweet'  
   
   has_one :survey
-  has_many :scoreboard_ratings
   has_many :survey_handles, :through => :survey
+
+  has_many :scoreboard_ratings
+  has_one :scoreboard_level
+
+  has_many :quests, :class_name => 'Quest', :conditions => { :active => true }, :order => "updated_at"
+  has_many :all_quests, :class_name => 'Quest', :order => "updated_at"
+
 
   has_one :day_pass_config
   has_many :day_pass_usages
