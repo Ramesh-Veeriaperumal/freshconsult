@@ -1,0 +1,70 @@
+<%= render :partial => "admin/quests/criteria_jsinit", :locals => { :filter_type => "quest" } %>
+
+<%= f.error_messages :object_name => 'quest' %>
+<br>
+<div class="selectgame">
+	<h2>Select a Game</h2> 
+	<%= f.select :questtype, Quest::GAME_TYPE_OPTIONS %>
+	<hr>
+</div>
+
+<div id="enablequest">
+	<div class="gamecriteria">
+		<h2>Specify Quest Criteria</h2>
+		<div class="ui-form gray-box-rounded">
+			<div id="questDOM"></div>
+			<div class="conditionset" id="filterDOM">
+				<div id="RuleList" class="rule_list"></div>
+				<fieldset class="addchoice">
+		         <p><%=t('dispatch.add_condition')%></p> <img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+		    	</fieldset>
+	    	</div>
+		</div>
+	</div>
+
+	<div class="gamereward">
+		<h2>Reward</h2>
+		<div class="gray-box-rounded">
+			Award
+			<input type="text" id="quest_award_point" class="required text" />
+			bonus points and Unlock this badge
+			<button id="showbadges" type="button"><b>Select Badge</b></button>
+			<div class="badges_items" style="padding-top:20px;"><div id="selected-badge"></div><span id="selected-badge-name"></span></div>
+			<input type="hidden" id="quest_award_badge" class="required text"/>
+		</div>
+		<div id="select-badge" style="display:none;" class="badgelist badges_items">
+			<ul>
+			<% (Quest::BADGES_DATA).each do | badges | %>
+				<li><div class="gamesettings-badges <%= badges[:classname] %>" data-name="<%= badges[:name] %>"></div> <%= badges[:name] %></li>
+			<% end %>
+			</ul>
+			<br>
+			<a href="#" id="add-new-badge">Add New Badge</a>
+			<div class="gray-box-rounded" id="show-new-badge">
+				<form id='badge_upload_form' enctype="multipart/form-data" method="post" target="iframe-badge-upload"> 
+					<strong>Upload New Badge</strong><br><br>
+					Badge Name <br> <input type="text">
+					<br><br>
+					Attach Badge <br> <input type="file"><br><br>
+					<input type="submit" class="uiButton" value="<%= t('submit') %>">
+				</form>
+				<iframe id="iframe-badge-upload" name="iframe-badge-upload" style="border:0px; height:1px; visibility:hidden;" src="about:blank"></iframe>
+			</div>
+		</div>
+	</div>
+
+	<div class="gamename">
+		<h2>Give your Quest a Name</h2>
+		<div class="gray-box-rounded">
+			<%= f.text_field :name, :class => "required text", :placeholder => "Name" %>
+			<%= f.text_area :description, :class => "mediumpara", :placeholder => "Brief about the quest" %>
+		</div>
+	</div>
+
+	<div class="button-container">
+		<input type="hidden" name="award_data" id="quest_award_data" value=""/>
+		<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
+		<input type="submit" class="uiButton" value="<%=t('save')%>" />
+		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
+	</div>
+</div>

@@ -1,0 +1,22 @@
+<% if @sharp_shooters.length > 0 %>
+	<% high_score = @sharp_shooters[0].tot_score.to_i %> 
+<% end %>
+<table class="leaderboard-small" padding="0" margin="0" border="0">
+ <thead>
+  <tr>
+  	<th colspan="5"><b><%= t('reports.scoreboard_reports.sharpshooter_title')%></b></th>
+  </tr>
+</thead>
+<tbody>
+<% @sharp_shooters.each_with_index do |sharp_shooter, index|%>
+<% unless sharp_shooter.tot_score.to_i < 0 %>
+<tr>
+ 	<td width="1%"><div class="bignum floatleft"><%= (index + 1)%></div></td>
+ 	<td width="1%"><div class="floatleft photo"><%= user_avatar(sharp_shooter.user, :medium, 'preview_pic') %></div></td>
+ 	<td><b><%= sharp_shooter.user.display_name %></b></td>
+ 	<td width="5%" class="up"><%= sharp_shooter.tot_score %>&#9650;</td>
+ </tr>
+<% end %>
+<% end %>
+</tbody>
+</table>

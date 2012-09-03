@@ -1,0 +1,22 @@
+<% if @happycustomers.length > 0 %>
+	<% high_score = @happycustomers[0].tot_score.to_i %> 
+<% end %>
+<table class="leaderboard-small" padding="0" margin="0" border="0">
+ <thead>
+  <tr>
+  	<th colspan="5"><b>Customer Champion</b></th>
+  </tr>
+ </thead>
+ <tbody> 
+<% @happycustomers.each_with_index  do |happycustomer, index|%>
+<% unless happycustomer.tot_score.to_i < 0 %>
+<tr>
+ 	<td width="1%"><div class="bignum floatleft"><%= (index + 1)%></div></td>
+ 	<td width="1%"><%= user_avatar(happycustomer.user, :thumb, 'preview_pic') %></td>
+ 	<td><b><%= happycustomer.user.display_name %></b><img src="badges.png" width="50%" border="0"></td>
+ 	<td width="5%" class="up"><%= happycustomer.tot_score %> &#9650;</td>
+ </tr>
+<% end %>
+<% end %>
+</tbody>
+</table>

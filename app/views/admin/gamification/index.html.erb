@@ -1,0 +1,19 @@
+<% javascript_tag do %>
+ jQuery(document).ready(function(){
+	jQuery('input#account_features_scoreboard_enable').click( function(event) {						
+		    var form = jQuery('form#scoreboard_enabled');
+		    form.submit();
+	});		
+  });
+<% end %>
+ 
+<h3 class="title"><%=t('.title')%></h3>
+  
+<%= render :partial => "gamification_settings" %>
+<%= render :partial => "/admin/quests/index" %>
+
+<% content_for :sidebar do %>
+<div class="sidepanel helpcard">
+	<p>	<%= t('admin.gamification.helptext') %> </p>
+</div>
+<%end%>

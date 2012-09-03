@@ -1,0 +1,247 @@
+<%= javascript_include_tag  '/javascripts/report/date' %>
+<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
+<%= stylesheet_link_tag 'ui.daterangepicker' %>
+
+<% content_for :pagefixed do %>
+  <% javascript_tag do %>
+    var Gamification = function($) {
+      var base = this;
+
+      base.init = function(cridefs, questinput, awardinput ) {
+          base.cridefs = cridefs;
+          
+          $("#quest_questtype").live('change', function(ev) {
+              base.onQuestChange($(this).val());
+          });
+          base.onQuestChange($("#quest_questtype").val());
+
+          base.questinput = questinput[0];
+          base.awardinput = awardinput[0];
+          
+          if(base.questinput && base.awardinput) {
+              base.processInputFeeds();
+          }
+          
+          $("#show-new-badge").hide()
+
+          $("#showbadges").live('click', function(ev) {
+            $("#show-new-badge").hide();
+            $("#select-badge").dialog({  modal:true, width:'600px', height:'auto', position:'top',
+            title: "Select badges to Unlock", resizable: false, draggable: false});
+          });
+            
+          $("#add-new-badge").live('click', function(ev) {
+            if(!$("#show-new-badge").is(':visible')) {
+              $("#show-new-badge").show();
+              $("#add-new-badge").html("Hide");
+            } else {
+              $("#show-new-badge").hide();
+              $("#add-new-badge").html("Add New");
+            } 
+          });
+          $("#select-badge > ul").live('mouseover', function(ev) {
+              if($(ev.target).hasClass('gamesettings-badges')) {
+                $(this).css({cursor:"pointer"});
+              } else {
+                $(this).css({cursor:""});
+              }
+            }).live('click', function(ev) {
+              if($(ev.target).hasClass('gamesettings-badges')) {
+                $("#selected-badge").removeClass();
+                $("#selected-badge").addClass($(ev.target).attr('class'));
+                $("#select-badge").dialog('close');
+                $("#selected-badge-name").text($(ev.target).attr('data-name'));
+              };
+          });
+          $('#formQuestNew').submit(function(e) {
+            //Award Data               
+            var awardObj = {};
+            var awardData = [];
+
+            awardObj["award_point"] = jQuery("#quest_award_point").val();
+            awardObj["award_badge"] = jQuery("#quest_award_badge").val();
+            awardData.push(awardObj);
+
+            jQuery("#quest_award_data").val(awardData.toJSON());
+
+            //Award Data               
+            var awardObj = {};
+            var awardData = [];
+
+            awardObj["point"] = jQuery("#quest_award_point").val();
+            awardObj["badge"] = jQuery("#quest_award_badge").val();
+            awardData.push(awardObj);
+
+            jQuery("#quest_award_data").val(awardData.toJSON());
+
+             //Quest Data
+            /*var questInput = ["value", "mode", "time"];
+            
+            jQuery.each(questInput, function(index) {
+                alert(questInput[index]);
+            });*/               
+
+            var questObj = {};
+            var questData = [];
+
+            questObj["value"] = jQuery("#quest_data_value").val();
+            questObj["mode"] = jQuery("#quest_data_mode").val();
+            questObj["time"] = jQuery("#quest_data_time").val();
+
+            questData.push(questObj);
+
+            jQuery("#quest_quest_data").val(questData.toJSON());
+
+
+          });
+          //alert('here');
+      };
+      
+      base.processInputFeeds = function() {
+        jQuery.each(base.awardinput[0], function(key, value) {
+          jQuery("#quest_award_"+key).val(value);
+        });
+        jQuery.each(base.questinput[0], function(key, value) {
+          jQuery("#quest_data_"+key).val(value);
+        });
+      }
+
+      base.onQuestChange = function(type) {
+          
+          $("#RuleList").html("");
+          $("#questDOM").html("");
+          $("#enablequest").hide();
+
+          if(base.cridefs[type]) {
+            $("#enablequest").show();
+            quest = base.cridefs[type];
+              
+            $.each(quest.input, function(index, value) {
+                switch(value) {
+                  case "questvalue":
+                    quest.disp_name = quest.disp_name.replace("##questvalue##", "&nbsp;<input type='text' id='quest_data_value' class='smallinput' id='quest_criteria_value'/>");
+                    break;
+                  case "questmode":
+                    modeHTML = "&nbsp;<select id='quest_data_mode'>";
+                    $.each(quest.questmode, function(index, value) {
+                        modeHTML += "<option value='" + value[0] + "'>" + value[1] + "</option>";
+                    });
+                    modeHTML += "</select>";
+                    quest.disp_name = quest.disp_name.replace("##questmode##", modeHTML);
+                    break;
+                  case "questtime":
+                    timeHTML = "&nbsp; <input id='quest_data_time' type='text' style='width:30%;' value=''>";
+
+                    /*timeHTML = "&nbsp; <select name='quest_time'>";
+                    $.each(quest.questtime, function(index, value) {
+                        timeHTML += "<option value='" + value[0] + "'>" + value[1] + "</option>";
+                    });
+                    timeHTML += "</select>";*/
+                    quest.disp_name = quest.disp_name.replace("##questtime##", timeHTML);
+                    break;
+                  default:
+                    break;
+                }
+            });
+            
+            var criHtml = quest.disp_name + "<br>";
+            
+            $("#questDOM").html(criHtml);
+
+            jQuery("#quest_data_time").daterangepicker({
+              earliestDate: Date.parse('1/1/2010'),
+              presetRanges: [
+              {text: '<%= t('reports.date_ranges.next_2_days') %>', dateStart: 'Today', dateEnd: 'Today+2' },
+              {text: '<%= t('reports.date_ranges.next_7_days') %>', dateStart: 'Today', dateEnd: 'Today+7' },
+              {text: '<%= t('reports.date_ranges.next_30_days') %>',dateStart: 'Today', dateEnd: 'Today+31'},
+              {text: '<%= t('reports.date_ranges.next_90_days') %>',dateStart: 'Today',  dateEnd: 'Today+91'}
+              ],
+              presets: {
+                dateRange: '<%= t('reports.date_ranges.custom') %>'
+              },
+              dateFormat: 'dd M yy',
+              closeOnSelect: true
+            });
+            jQuery("#quest_data_time").val('<%= Time.now.strftime("%d %B %Y") %>');
+
+          }
+      };
+
+      return {
+        init : base.init
+      }
+
+    }(jQuery);
+    Gamification.init(<%= @criteria_defs %>, [<%= @quest_input%>], [<%= @award_input %>]);    
+  <% end %>
+  <% javascript_tag do %>
+    // Condition Parsing 
+    // This template contains the dom population information 
+    var conditional_dom = function(filter, id, compName, initFeed){
+      var type      = filter.domtype;
+      var initFeed  = initFeed || {};
+      var compName  = compName || "filter";
+      // Conditional Dom created based on the options available 
+      c_dom = "";
+      switch (type) {
+        case 'text':
+        case 'number':
+        case 'autocompelete':
+          c_dom = FactoryUI.text("", "value", initFeed["value"], type);
+          jQuery(c_dom).prop("id", id);     
+          break;
+        case 'dropdown':
+          var choices = [];
+          filter.choices.each(function(arrayItem){
+            choices.push({
+              name: arrayItem[0],
+              value: arrayItem[1]
+            });
+          });
+          c_dom = FactoryUI.dropdown(choices, "value");
+          jQuery(c_dom).val(initFeed["value"]);
+          break;
+        
+        case 'paragraph':
+          c_dom = FactoryUI.paragraph("", "value", initFeed["value"]);
+          break;
+        case 'comment':     
+          c_dom = jQuery("<div class=\"s_comment\" />")
+                .append(FactoryUI.paragraph("", "comment", initFeed["comment"]))
+                .append(FactoryUI.checkbox("<%= I18n.t('ticket.note_form.private_note') %>", "private", initFeed["private"])); 
+          break;
+        case 'email_select':
+        case 'email_text':
+        case 'checkbox':
+          if (compName == 'action') {
+            var choices = [{
+              name: 1,
+              value: "<%= I18n.t(".selected") %>"
+            }, {
+              name: 0,
+              value: "<%= I18n.t(".not_selected") %>"
+            }];
+            c_dom = FactoryUI.dropdown(choices, "value");
+            jQuery(c_dom).val(initFeed["value"]);
+          } 
+          break;
+        
+        default:
+          c_dom = "";
+      }     
+      return c_dom;
+    }
+    var active_email_body = null;
+  <% end %>
+  <%= javascript_include_tag "condition-filter" %>
+<% end %>
+
+<% content_for :onload_script do %> 
+  <% if(filter_type == "quest") %>
+    var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);  
+            filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), "quest_criteria_types" : <%= @quest_criteria_types %>});  
+  <% end %>
+<% end %>
+
+<% javascript_tag do %>   
+<% end %>
