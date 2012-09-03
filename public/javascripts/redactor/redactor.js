@@ -763,7 +763,15 @@ Redactor.prototype = {
 				else if (key === 72)
 				{
 					this.shortcuts(e, 'subscript'); // Ctrl + h
-				}					
+				}	
+				else if (key === 85)
+				{
+					this.shortcuts(e, 'underline'); // Ctrl + u
+				}
+				else if(key === 37)	
+				{
+					e.preventDefault(); //Ctrl + left arrow
+				}							
 			}	
 			
 			// clear undo buffer

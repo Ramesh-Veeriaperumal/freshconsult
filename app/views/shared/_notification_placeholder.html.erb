@@ -15,7 +15,7 @@
         var placeHolderText = jQuery(this).data("placeholder");  
         
 
-        if(active_email_body.hasClass("desc_info")){
+        if(active_email_body.hasClass("desc_info") || active_email_body.hasClass("ca_content_body")){
 			active_email_body.insertHtml(placeHolderText);
 
         }else{
