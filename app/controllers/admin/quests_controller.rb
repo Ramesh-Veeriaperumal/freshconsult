@@ -6,9 +6,9 @@ class Admin::QuestsController < Admin::AdminController
   before_filter :load_config, :only => [:new, :edit]
 
   QUEST_CRITERIA_TYPES = [
-    { :criteria_type => ['priority', 'source' , 'datetime'] },
+    { :criteria_type => ['priority', 'source', 'satisfaction', 'datetime'] },
     { :criteria_type => ['solutionstatus', 'solutiontype' , 'datetime'] },
-    { :criteria_type => ['datetime'] },
+    { :criteria_type => ['forums','datetime'] },
     { :criteria_type => ['satisfaction','datetime'] }
   ]
 
@@ -132,6 +132,8 @@ class Admin::QuestsController < Admin::AdminController
 
       @current_account.solution_categories.find(:all)
       
+      puts Forum.forum_names(current_account).inspect
+
       filter_hash = [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
         { :name => "priority", :value => I18n.t('ticket.priority'), :domtype => "dropdown", 
@@ -146,6 +148,8 @@ class Admin::QuestsController < Admin::AdminController
           :choices => Solution::Article::TYPE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => "satisfaction", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
           :choices => Survey.survey_names(current_account), :operatortype => "choicelist" },
+        { :name => "forums", :value => I18n.t('quests.forums'), :domtype => "dropdown", 
+          :choices => Forum.forum_names(current_account), :operatortype => "choicelist" }, 
         { :name => "datetime", :value => I18n.t('quests.date'), :domtype => "dropdown", 
           :choices => QUEST_TIME_BY_KEY.sort, :operatortype => "choicelist" }
         

@@ -172,7 +172,8 @@ en:
   quests:
     inactive_quests: Inactive Quests
     date: Date
-    satisfaction: Satisfaction
+    satisfaction: Customer Satisfaction
+    forums: Forums
   admin:
     quests:
       index:

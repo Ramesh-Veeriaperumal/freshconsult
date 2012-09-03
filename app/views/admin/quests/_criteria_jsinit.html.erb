@@ -22,15 +22,15 @@
               base.processInputFeeds();
           }
           
-          $("#show-new-badge").hide()
+          //$("#show-new-badge").hide()
 
           $("#showbadges").live('click', function(ev) {
-            $("#show-new-badge").hide();
+            //$("#show-new-badge").hide();
             $("#select-badge").dialog({  modal:true, width:'600px', height:'auto', position:'top',
             title: "Select badges to Unlock", resizable: false, draggable: false});
           });
             
-          $("#add-new-badge").live('click', function(ev) {
+          /*$("#add-new-badge").live('click', function(ev) {
             if(!$("#show-new-badge").is(':visible')) {
               $("#show-new-badge").show();
               $("#add-new-badge").html("Hide");
@@ -38,7 +38,8 @@
               $("#show-new-badge").hide();
               $("#add-new-badge").html("Add New");
             } 
-          });
+          });*/
+
           $("#select-badge > ul").live('mouseover', function(ev) {
               if($(ev.target).hasClass('gamesettings-badges')) {
                 $(this).css({cursor:"pointer"});
@@ -51,19 +52,10 @@
                 $("#selected-badge").addClass($(ev.target).attr('class'));
                 $("#select-badge").dialog('close');
                 $("#selected-badge-name").text($(ev.target).attr('data-name'));
+                $("#quest_award_badge").val($(ev.target).attr('class'));
               };
           });
           $('#formQuestNew').submit(function(e) {
-            //Award Data               
-            var awardObj = {};
-            var awardData = [];
-
-            awardObj["award_point"] = jQuery("#quest_award_point").val();
-            awardObj["award_badge"] = jQuery("#quest_award_badge").val();
-            awardData.push(awardObj);
-
-            jQuery("#quest_award_data").val(awardData.toJSON());
-
             //Award Data               
             var awardObj = {};
             var awardData = [];
@@ -74,19 +66,11 @@
 
             jQuery("#quest_award_data").val(awardData.toJSON());
 
-             //Quest Data
-            /*var questInput = ["value", "mode", "time"];
-            
-            jQuery.each(questInput, function(index) {
-                alert(questInput[index]);
-            });*/               
-
             var questObj = {};
             var questData = [];
 
             questObj["value"] = jQuery("#quest_data_value").val();
             questObj["mode"] = jQuery("#quest_data_mode").val();
-            questObj["time"] = jQuery("#quest_data_time").val();
 
             questData.push(questObj);
 
@@ -94,12 +78,14 @@
 
 
           });
-          //alert('here');
       };
       
       base.processInputFeeds = function() {
         jQuery.each(base.awardinput[0], function(key, value) {
           jQuery("#quest_award_"+key).val(value);
+          if(key == "badge") {
+            jQuery("#selected-badge").addClass(value);
+          }
         });
         jQuery.each(base.questinput[0], function(key, value) {
           jQuery("#quest_data_"+key).val(value);

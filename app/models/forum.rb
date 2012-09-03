@@ -124,6 +124,11 @@ class Forum < ActiveRecord::Base
     find :all, options.update(:conditions => {:account_id => account}, :order => 'position')
   end
   
+  def self.forum_names(account)
+    forums = account.user_forums
+    forums.map{|forum| [forum.id, forum.name]}
+  end
+
   def type_name
     TYPE_NAMES_BY_KEY[forum_type]
   end
