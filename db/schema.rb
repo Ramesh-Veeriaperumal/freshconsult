@@ -1042,8 +1042,7 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active"
-    t.integer  "award_point"
-    t.text     "award_badge"
+    t.text     "award_data"
     t.text     "filter_data"
     t.text     "quest_data"
   end
