@@ -38,9 +38,9 @@ class Helpdesk::ExportData < Struct.new(:params)
     DataExportMailer.deliver_export_email({:email => params[:email], :domain => params[:domain], :url =>  url})
     delete_zip_file zip_file_path  #cleaning up the directory
    rescue Exception => e
-    update_export_status
     NewRelic::Agent.notice_error(e)
    end
+   update_export_status
    Account.reset_current_account
   end
   
