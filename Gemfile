@@ -72,6 +72,8 @@ gem 'resque-status'
 gem 'resque-retry'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
+gem 'rforce'
+
 
 group :development do
    gem "rspec", "1.3.1"

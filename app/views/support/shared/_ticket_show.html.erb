@@ -46,7 +46,10 @@
 	
   <%- end %>
 <% end %>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
 
+<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <% content_for :onload_script do -%>
 jQuery('#add_cc_btn').bind("click", function(ev){
 		ev.preventDefault();
@@ -56,7 +59,6 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 	});
 <%- end %>
 
-<%= include_tiny_mce_if_needed %>
 <% content_for :sidebar do %>
     <% if @ticket.responder && !@ticket.deleted %>
 		<div class="sidepanel clearfix">
@@ -215,7 +217,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 				<% unless (@ticket.status == 5) %>
 					<%= link_to "Close this ticket", '/support/tickets/close_ticket/'+@ticket.display_id.to_s, :class =>"uiButton" %>
 				<% end %>
-				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add note</a>
+				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();invokeRedactor('portal_ticket_note');">Add note</a>
 				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#AddCcToTicket').show(); jQuery(this).hide();">Add Cc</a>
 			</div>  
 		<% end %>
@@ -242,7 +244,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 				<ul class="ui-form">
 			    <li> 
 							<%= content_tag( :h4, "Add a note", :class => "title" ) %>
-			  			<%= f.text_area :body_html, :class => "mceEditor" %>
+			  			<%= f.text_area :body_html, :id=>"portal_ticket_note" %>
 					</li>
 					<li class="attachment-options"  id="attachment-options">
 						<% unless local_assigns[:no_attachments] %>

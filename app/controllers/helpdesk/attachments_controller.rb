@@ -84,8 +84,4 @@ class Helpdesk::AttachmentsController < ApplicationController
         (current_user.client_manager?  && ticket.requester.customer == current_user.customer))
     end
   
-    def can_download?
-      (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || (current_user.client_manager?  && ticket.requester.customer == current_user.customer)))
-    end
-
 end

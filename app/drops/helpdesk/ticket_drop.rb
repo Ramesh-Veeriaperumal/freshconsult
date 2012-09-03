@@ -86,9 +86,9 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def in_user_time_zone(time)
-      return time unless User.current
-      user_time_zone = User.current.time_zone 
-      time.in_time_zone(user_time_zone)
-  	end
+	  return time unless User.current
+	  user_time_zone = User.current.time_zone 
+	  time.in_time_zone(user_time_zone)
+	end
 
 end
