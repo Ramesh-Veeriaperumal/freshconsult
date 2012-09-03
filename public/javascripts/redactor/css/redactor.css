@@ -95,8 +95,12 @@ body .redactor_air {
 	font-style: italic !important;
 	color: #777;	*/
 }
-.redactor_editor ul, 
+.redactor_editor ul{/* overriding our reset.css file configuration ul and ol not shown in redactor*/
+	list-style: disc outside none; 
+	padding-left: 2em !important;	
+}
 .redactor_editor ol {
+	list-style: decimal outside none; /* end custom change for reset.css file overriding*/
 	padding-left: 2em !important;	
 }
 .redactor_editor ul ul, 
@@ -107,6 +111,9 @@ body .redactor_air {
 	margin: 2px !important;
 	padding: 0 !important;
 	padding-left: 2em !important;
+}
+.redactor_editor li{
+	display: list-item;/* overriding our reset.css file configuration ul and ol not shown in redactor*/
 }
 .redactor_editor dl dt { font-weight: bold; }
 .redactor_editor dd { margin-left: 1em;}
