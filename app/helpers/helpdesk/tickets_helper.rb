@@ -208,7 +208,7 @@ module Helpdesk::TicketsHelper
   
   def subject_style(ticket)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && ticket.active?
+    type = "new" if ticket.ticket_states.is_new? && !ticket.onhold_and_closed?
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
     type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
     type
