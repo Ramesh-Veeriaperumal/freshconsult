@@ -44,8 +44,8 @@
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
               <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email) %>
-              <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= @to_cc_emails.blank? ? "" : "checked" %> />              
-              <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
+              <input type="checkbox" class="hide" id="include_cc" name="include_cc"  />              
+              <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" />
           </div>
         </li>
         <li class="inline-field field hide" id="cc-form-container-<%=cntid%>">
@@ -145,6 +145,10 @@
   <% javascript_tag do %>
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){
+      if(!jQuery('#include_cc').is(':checked'))
+          jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
+      if(!jQuery('#include_bcc').is(':checked'))
+          jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
         <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous %>
         isDirty = false;
       })
