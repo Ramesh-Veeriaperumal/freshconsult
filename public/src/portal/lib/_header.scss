@@ -1,12 +1,10 @@
-@import "compass";
-
 //
 // Header area
 // --------------------------------------------
 
 .header { 
 	position:relative;	
-	background:$headerColor;
+	background:$header_color;
 	color:#ffffff;	
 	a:hover{ text-decoration:none; }
 	.brand{		
@@ -47,7 +45,7 @@
 /* Header Tab styles */
 
 .portal-nav{
-	@include background-image(linear-gradient(top, lighten($tabColor, 1%), $tabColor));
+	@include background-image(linear-gradient(top, lighten($tab_color, 1%), $tab_color));
 	@include box-shadow(rgba(0, 0, 0, 0.2) 0px -1px 2px inset);
 	.top-submit-btn, .btn-ticket{
 		@include border-radius(2em);
@@ -55,8 +53,8 @@
 	.top-submit-btn{		
 		padding: 1px;
 		margin: 3px 0 0;
-		border-color: darken($tabColor, 5%);
-		@include background-image(linear-gradient(top, darken($tabColor, 2%), darken($tabColor, 4%)));
+		border-color: darken($tab_color, 5%);
+		@include background-image(linear-gradient(top, darken($tab_color, 2%), darken($tab_color, 4%)));
 	}
 	.btn-ticket{
 		margin:0; border:0;
@@ -83,14 +81,14 @@
 			@include text-shadow(rgba(0, 0, 0, 0.1), 1px, 1px, 1px);
 		}
 		a:hover{
-			background:lighten($tabColor, 5%);
+			background:lighten($tab_color, 5%);
 			@include box-shadow(rgba(0, 0, 0, 0.1) 1px 1px 1px inset);
 			text-decoration:none;
 		} 
 	}  
 	li.active a, li.active a:hover{
-		border-color:darken($tabColor, 5%);
-		background:$bodyBackground;
+		border-color:darken($tab_color, 5%);
+		background:$bg_color;
 		top:2px;                                                 
 		color:#000000; 
 	} 

@@ -67,7 +67,7 @@ GEM
       builder
     builder (3.0.0)
     cgi_multipart_eof_fix (2.5.0)
-    chunky_png (1.2.5)
+    chunky_png (1.2.6)
     closure-compiler (1.1.1)
     columnize (0.3.2)
     compass (0.12.2)

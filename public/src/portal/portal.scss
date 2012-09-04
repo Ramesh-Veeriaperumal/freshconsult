@@ -1,8 +1,5 @@
-/*!
- * Default portal styles for freshdesk
- * Add theme styles over these styles
- *
- */
+/* Default portal styles for freshdesk
+ * Add theme styles over these styles */
 
 // Core variables and mixins
 @import "lib/settings"; // Modify this for custom colors, font-sizes, etc
@@ -14,7 +11,7 @@
 
 // Grid system and page structure
 @import "lib/scaffolding";
-/*@import "lib/grid";*/
+@import "lib/grid";
 @import "lib/layouts";
 
 // Base CSS
@@ -142,7 +139,7 @@
   @include border-radius(3em);
   @include float-left;
   color: #fff; 
-  background-color: $tabColor;
+  background-color: $tab_color;
   font-size: 32px; line-height: 50px;
   width: 46px; height: 46px;
   text-align: center;  
@@ -163,7 +160,7 @@
   &:hover{ 
     text-decoration:none; 
     .font-icon{
-      background-color: lighten($tabColor, 5%);
+      background-color: lighten($tab_color, 5%);
     }
   }
 }

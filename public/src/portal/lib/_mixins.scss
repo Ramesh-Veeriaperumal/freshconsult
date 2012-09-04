@@ -164,7 +164,7 @@
 
 
 // Mixin for form field states
-@mixin formFieldState($textColor: #555, $borderColor: #ccc, $backgroundColor: #f5f5f5) {
+@mixin formFieldState($textColor: #555, $borderColor: #ccc, $bg_color: #f5f5f5) {
   // Set the text color
   > label,
   .help-block,
@@ -188,7 +188,7 @@
   .input-prepend .add-on,
   .input-append .add-on {
     color: $textColor;
-    background-color: $backgroundColor;
+    background-color: $bg_color;
     border-color: $textColor;
   }
 }

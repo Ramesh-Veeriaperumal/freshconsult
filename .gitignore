@@ -17,3 +17,4 @@ config/development.sphinx.conf
 config/database.yml
 config/sphinx.yml
 config/redis.yml
+.sass-cache/

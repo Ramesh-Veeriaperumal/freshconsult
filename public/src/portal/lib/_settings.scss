@@ -34,15 +34,15 @@ $purple:                #7a43b6 !default;
 
 // Scaffolding
 // -------------------------
-$bodyBackground:        $grayLighter !default;
+$bg_color:        		$grayLighter !default;
 $textColor:             $grayDark !default;
 
-$headerColor: 			$greenDark !default;
-$tabColor:				$green !default;
+$header_color: 			$greenDark !default;
+$tab_color:				$green !default;
 
 // Links
 // -------------------------
-$linkColor:             $tabColor !default; //#08c
+$linkColor:             $tab_color !default; //#08c
 $linkColorHover:        darken($linkColor, 15) !default;
 
 

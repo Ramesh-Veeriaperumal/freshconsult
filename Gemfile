@@ -49,7 +49,10 @@ gem "tiny_mce", "0.1.9", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/
 gem "jammit"
 gem "zendesk-features", :require => "features"
 
+# Sass and compass gem for advanced css styling
 gem "sass", "3.1.1"
+gem "compass-rails"
+
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.0.0"
@@ -81,5 +84,4 @@ group :development do
    gem "rspec-rails", "1.3.3"
    gem "factory_girl", "1.2.3"  
    gem "mongrel"
-   gem "compass-rails"
 end

@@ -300,6 +300,8 @@
 
   #!PORTALCSS A bit dirty way for login url... to be changed later - by venom
   map.support_login '/support/login', :controller => 'support', :action => 'new'
+  map.support_theme '/support/theme.:format', :controller => 'support', :action => 'theme'
+  map.connect "/theme.:format", :controller => 'theme'
 
   # Support Portal routes #
   map.namespace :support do |support|
