@@ -31,7 +31,7 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
-          :foreign_key => 'note_id', :dependent => :destroy
+          :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
