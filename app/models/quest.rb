@@ -39,19 +39,19 @@ class Quest < ActiveRecord::Base
   named_scope :enabled, :conditions => { :active => true }
 
   named_scope :ticket_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:qticket],
+    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_ticket],
   }
 
   named_scope :forum_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:qforums],
+    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_forum],
   }
 
   named_scope :solution_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:qkbase],
+    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_solution],
   }
 
   named_scope :survey_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:qsurveys],
+    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_survey],
   }
 
   def after_find
