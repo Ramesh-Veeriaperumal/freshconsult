@@ -95,7 +95,7 @@ jQuery("#clear-draft").bind('click', function(){
       jQuery('#cnt-reply-body').setCode("");
       var draftData = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
       jQuery('#cnt-reply-body').setCode(draftData)
-      istDirty = false;
+      isDirty = false;
       jQuery("#reply-draft").hide();
       draftClearedFlag = true;
   }
