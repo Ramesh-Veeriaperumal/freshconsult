@@ -195,7 +195,9 @@ module Helpdesk::TicketActions
   end
   
   def close_source_ticket
+    EmailNotification.disable_notification(current_account)
     @source_ticket.update_attribute(:status , CLOSED)
+    EmailNotification.enable_notification(current_account)
   end
   
   def add_note_to_source_ticket
