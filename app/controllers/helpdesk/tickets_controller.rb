@@ -731,7 +731,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def notification_not_required?
-    (!params[:save_and_close].blank?) || (params[:disable_notification] && params[:disable_notification].to_bool)
+    (!params[:save_and_close].blank?) || (params[:disable_notification] && params[:disable_notification].to_bool) || 
+    (params[:action] == "quick_assign" && params[:assign] == "status" && params[:disable_notification].to_bool)
   end
 
   def check_ticket_status
