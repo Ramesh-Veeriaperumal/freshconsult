@@ -6,10 +6,10 @@ class Admin::QuestsController < Admin::AdminController
   before_filter :load_config, :only => [:new, :edit]
 
   QUEST_CRITERIA_TYPES = [
-    { :criteria_type => ['priority', 'source', 'satisfaction', 'datetime'] },
-    { :criteria_type => ['solutionstatus', 'solutiontype' , 'datetime'] },
-    { :criteria_type => ['forums','datetime'] },
-    { :criteria_type => ['satisfaction','datetime'] }
+    { :criteria_type => ['priority', 'source'] },
+    { :criteria_type => ['solutionstatus', 'solutiontype'] },
+    { :criteria_type => ['datetime'] },
+    { :criteria_type => ['satisfaction'] }
   ]
 
 
@@ -18,12 +18,12 @@ class Admin::QuestsController < Admin::AdminController
   }
 
   OPERATOR_LIST =  {
-    :is                =>  I18n.t('is')
+    :is  =>  I18n.t('is')
   }
 
   QUEST_MODE = [
-      [ :overall,       "Overall",        1],
-      [ :consecutive,   "Consecutively",  2 ]
+      [ :create, "Create", 1],
+      [ :answer, "Answer", 2]
   ]
 
   QUEST_MODE_BY_KEY = Hash[*QUEST_MODE.map { |i| [i[2], i[1]] }.flatten]
@@ -41,17 +41,17 @@ class Admin::QuestsController < Admin::AdminController
   QUEST_TIME_BY_KEY = Hash[*QUEST_TIME.map { |i| [i[2], i[1]] }.flatten] 
   
   CRITERIA_HASH = [
-      { :name => "quest_ticket", :disp_name => "Resolve ##questvalue## Tickets &nbsp;&nbsp;##questmode##", 
-        :input => ["questvalue","questmode"], :criteriatype => ["ratingfilter", "dtfilter"], :questmode => QUEST_MODE_BY_KEY.sort },
+      { :name => "quest_ticket", :disp_name => "Resolve ##questvalue## Tickets within ##questtime##", 
+        :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort},
 
-      { :name => "quest_solution", :disp_name => "Create ##questvalue## Knowledgebase article", 
-        :input => ["questvalue"], :criterialist => ["kbasefilter"] },
+      { :name => "quest_solution", :disp_name => "Create ##questvalue## Knowledgebase article within ##questtime##", 
+        :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort},
 
-      { :name => "quest_forum", :disp_name => "Answer ##questvalue## Forum posts", 
-        :input => ["questvalue"], :criterialist => ["forumfilter", "dtfilter"] },
+      { :name => "quest_forum", :disp_name => "##questmode## ##questvalue## Forum posts within ##questtime##", 
+        :input => ["questvalue","questmode","questtime"], :questmode => QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort },
 
-      { :name => "quest_survey", :disp_name => "Get ##questvalue## Survery feedback", 
-        :input => ["questvalue"], :criterialist => ["ratingfilter", "dtfilter"] }
+      { :name => "quest_survey", :disp_name => "Get ##questvalue## Survery feedback within ##questtime##", 
+        :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort}
   ]
 
   def index
@@ -132,8 +132,6 @@ class Admin::QuestsController < Admin::AdminController
 
       @current_account.solution_categories.find(:all)
       
-      puts Forum.forum_names(current_account).inspect
-
       filter_hash = [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
         { :name => "priority", :value => I18n.t('ticket.priority'), :domtype => "dropdown", 

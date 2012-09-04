@@ -3,7 +3,7 @@
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 
 <% content_for :pagefixed do %>
-  <% javascript_tag do %>
+  <% content_for :onload_script do %> 
     var Gamification = function($) {
       var base = this;
 
@@ -115,11 +115,22 @@
                     modeHTML += "</select>";
                     quest.disp_name = quest.disp_name.replace("##questmode##", modeHTML);
                     break;
+                  case "questtime":
+                   /*timeHTML = "  <input id='quest_data_time' name='quest_data_time' type='text' style='width:30%;' value=''>";
+                   quest.disp_name = quest.disp_name.replace("##questtime##", timeHTML);*/
+                   timeHTML = "&nbsp;<select id='quest_data_time'>";
+                   console.log(quest.questtime);
+                   $.each(quest.questtime, function(index, value) {
+                        timeHTML += "<option value='" + value[0] + "'>" + value[1] + "</option>";
+                    });
+                    timeHTML += "</select>";
+                    quest.disp_name = quest.disp_name.replace("##questtime##", timeHTML);
+                   break;
                   default:
                     break;
                 }
             });
-            
+
             var criHtml = quest.disp_name + "<br>";
             
             $("#questDOM").html(criHtml);
@@ -138,8 +149,12 @@
               dateFormat: 'dd M yy',
               closeOnSelect: true
             });
-            jQuery("#quest_data_time").val('<%= Time.now.strftime("%d %B %Y") %>');*/
+            jQuery("#quest_data_time").val('<%= Time.now.strftime("%d %B %Y") %>');
 
+            jQuery("#quest_data_time").bind('keypress keyup keydown', function(ev) {
+              ev.preventDefault();
+              return false;
+            });*/
           }
       };
 

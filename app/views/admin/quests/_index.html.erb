@@ -9,6 +9,7 @@
 <% content_for :page_active_list do -%>
   <% @quests.each do |quest| %>
     <% content_tag :li, :questid => quest.id, :class => cycle('odd badges_items ', 'even badges_items') do %>
+
         <div class="item_actions">
             <%= link_to(t('delete'), admin_quest_path(quest), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>
             <%= link_to(t('deactivate'), deactivate_admin_quest_path(quest), :method => 'put', :class => "button") %>
