@@ -1185,6 +1185,8 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
     t.boolean  "apply_to_recurring",                                                :default => true
     t.integer  "trial_period_extension",                                            :default => 0
     t.integer  "plan_id",                :limit => 8
+    t.integer  "life_time"
+    t.integer  "free_agents"
   end
 
   create_table "subscription_payments", :force => true do |t|
@@ -1234,6 +1236,7 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
     t.integer  "agent_limit"
     t.integer  "free_agents"
     t.decimal  "day_pass_amount",                        :precision => 10, :scale => 2
+    t.datetime "discount_expires_at"
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"

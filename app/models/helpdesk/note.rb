@@ -183,7 +183,7 @@ class Helpdesk::Note < ActiveRecord::Base
       end
       
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      Helpdesk::Note.update_all("body_html= '#{body_html}'", ["id=? and account_id=?", id, account_id]) if body_html_changed?
+      Helpdesk::Note.update_all("body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
     end
 
     

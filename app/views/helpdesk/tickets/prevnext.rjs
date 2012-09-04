@@ -1,0 +1,15 @@
+content = ""
+unless @previous_ticket.blank? or  @previous_ticket == -1
+	content << link_to("<span>Prev</span>", "/helpdesk/tickets/#{@previous_ticket}", :class => 'prev')
+else
+	content << '<div class="prev disabled"><span>Prev</span></div>'
+end
+
+unless @next_ticket.blank? or  @next_ticket == -1
+	content << link_to("<span>Prev</span>", "/helpdesk/tickets/#{@next_ticket}", :class => 'next')
+else
+	content << '<div class="next disabled"><span>Prev</span></div>'
+end
+
+page.replace_html 'adjacents', content
+page << "jQuery('#adjacents').removeClass('hide');"

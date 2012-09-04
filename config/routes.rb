@@ -25,7 +25,7 @@
   
   map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get }, :collection => {:create_multiple_items => :put}
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put}
   
   map.resources :sla_details
   
@@ -226,7 +226,7 @@
                                     :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post }, 
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
-                                    :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, 
+                                    :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
                                     :change_due_by => :put, :get_ca_response_content => :post, :split_the_ticket =>:post, 
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get, 
@@ -300,6 +300,7 @@
     support.resources :minimal_tickets
     support.resources :registrations
     
+    support.portal_survey '/surveys/:ticket_id', :controller => 'surveys', :action => 'create_for_portal'
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
         :conditions => { :method => :post }

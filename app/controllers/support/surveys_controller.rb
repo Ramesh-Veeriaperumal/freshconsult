@@ -1,6 +1,9 @@
 class Support::SurveysController < ApplicationController
-  before_filter :load_handle
+
+  before_filter :load_handle, :except => [:create_for_portal]
   
+  include SupportTicketControllerMethods
+
   def new
   	send_error and return if @survey_handle.rated?
   	
@@ -11,16 +14,39 @@ class Support::SurveysController < ApplicationController
   end
   
   def create
-    #2. Clear the handle record.
+    
     if @survey_handle.survey_result
-      @survey_handle.survey_result.add_feedback(params[:survey][:feedback])
+      @survey_handle.survey_result.add_feedback(params[:survey][:feedback]) unless params[:survey][:feedback].blank?
       @survey_handle.destroy
     end
-    
+
     flash[:notice] = I18n.t('support.surveys.thanks_for_feedback')
     redirect_to root_path
   end
   
+  def create_for_portal
+
+    @ticket = current_account.tickets.find_by_id(params[:ticket_id])
+    
+    unless can_access_support_ticket?
+      access_denied
+    else        
+      survey_result = @ticket.survey_results.create({        
+        :survey_id => current_account.survey.id,                
+        :surveyable_type => "Helpdesk::Ticket",
+        :customer_id => @ticket.requester_id,
+        :agent_id => @ticket.responder_id,
+        :group_id => @ticket.group_id,                
+        :rating => params[:rating]
+      })
+
+      survey_result.add_feedback(params[:feedback]) unless params[:feedback].blank?
+
+      redirect_to :back
+    end
+
+  end
+
   protected
     def load_handle
       @survey_handle = current_account.survey_handles.find_by_id_token(params[:survey_code])

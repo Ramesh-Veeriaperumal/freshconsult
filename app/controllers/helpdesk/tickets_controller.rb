@@ -10,6 +10,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
   include RedisKeys
+  include Helpdesk::AdjacentTickets
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :check_user , :only => [:show]
@@ -19,17 +20,17 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
-  before_filter :disable_notification, :if => :save_and_close?
-  after_filter  :enable_notification, :if => :save_and_close? 
+  before_filter :disable_notification, :if => :notification_not_required?
+  after_filter  :enable_notification, :if => :notification_not_required?
 
 
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign]
+  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
-
+  before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update]
   before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
@@ -38,13 +39,16 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv]
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
 
+  after_filter  :set_adjacent_list, :only => [:index, :custom_search]
+
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
  
   def user_ticket
     @user = current_account.users.find_by_email(params[:email])
     if !@user.nil?
-      @tickets =  current_account.tickets.visible.requester_active(@user)
+      @tickets =  current_account.tickets.visible.requester_active(@user).paginate(:page => 
+                    params[:page],:per_page => 30)
     else
       @tickets = []
     end
@@ -192,6 +196,11 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => @item.to_mob_json
       }
     end
+  end
+  
+  def prevnext
+    @previous_ticket = find_adjacent(:prev)
+    @next_ticket = find_adjacent(:next)
   end
   
   def update
@@ -716,6 +725,11 @@ class Helpdesk::TicketsController < ApplicationController
   
   def save_and_close?
     !params[:save_and_close].blank?
+  end
+
+  def notification_not_required?
+    (!params[:save_and_close].blank?) || (params[:disable_notification] && params[:disable_notification].to_bool) || 
+    (params[:action] == "quick_assign" && params[:assign] == "status" && params[:disable_notification].to_bool)
   end
 
   def check_ticket_status
