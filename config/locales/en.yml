@@ -35,6 +35,7 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  logmein_source: LogMeIn Rescue
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -2206,6 +2207,25 @@ en:
         widget_title: "Addon Name"
         widget_script: "Widget code snippet"
         create_n_enable: "Create and Enable"
+    logmein:
+      label: "LogMeIn Rescue"
+      desc: "Provide remote support to your customers using LogMeIn Rescue"
+      helptext: "LogMeIn Rescue Helptext goes here"
+      note:
+        header: "Your LogMeIn Rescue Session details"
+        session_id: "Session ID"
+        tech_name: "Technician Name"
+        tech_email: "Technician Email"
+        platform: "End User Platform"
+        work_time: "Total Work Time(in seconds)"
+        chatlog: "Chat Log"
+        tech_notes: "Technician Notes"
+      form:
+        widget_title: "Widget Title"
+        company_id: "Company ID"
+        password: "SSO Password"
+        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Name -> Global Settings -> ASP.NET C# example "
+        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Name -> Global Settings -> Single Sign-On"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

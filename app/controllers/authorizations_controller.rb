@@ -175,8 +175,15 @@ class AuthorizationsController < ApplicationController
   end
   
   def failure
+    portal = Portal.find_by_id(session["omniauth.origin"])  unless session["omniauth.origin"].blank?
     flash[:notice] = t(:'flash.g_app.authentication_failed')
-    redirect_to root_url
+    unless portal.blank?
+      domain = portal.host
+      protocol = (portal.account.ssl_enabled?) ? "https://" : "http://"
+      redirect_to protocol+domain
+    else
+      redirect_to root_url
+    end
   end
   
   def destroy

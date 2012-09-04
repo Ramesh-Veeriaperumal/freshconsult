@@ -328,6 +328,7 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.options.application_html = this.displayIssueContent 
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs;
 		jiraWidget.freshdeskWidget.display();
+		jiraWidget.freshdeskWidget.call_init_requests();
 
 		//Show loading
 		this.showSpinner();
@@ -345,6 +346,7 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.options.application_html = this.displayFormContent;
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs;
 		jiraWidget.freshdeskWidget.display();
+		jiraWidget.freshdeskWidget.call_init_requests();
 		
 		jQuery('#jira-issue-summary').val(jiraBundle.ticketSubject);
 
@@ -359,7 +361,6 @@ JiraWidget.prototype= {
 	},
 
 	displayParentWidget:function(){
-
 		jiraWidget.freshdeskWidget.options.application_html = this.displayParentContent;
 		jiraWidget.freshdeskWidget.options.init_requests = null;
 		jiraWidget.freshdeskWidget.display();

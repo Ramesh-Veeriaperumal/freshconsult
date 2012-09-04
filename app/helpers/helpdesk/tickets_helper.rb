@@ -5,6 +5,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::NoteActions
   include RedisKeys
+  include Integrations::AppsUtil
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)

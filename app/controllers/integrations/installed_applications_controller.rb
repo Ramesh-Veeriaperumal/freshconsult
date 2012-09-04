@@ -39,16 +39,25 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         flash[:error] = t(:'flash.application.update.error')
       end
     end
-    redirect_to :controller=> 'applications', :action => 'index'
+    respond_to do |format|
+      format.json do
+        render :json => {:status => "Success"}
+      end
+      format.html do
+        redirect_to :controller=> 'applications', :action => 'index'
+      end
+    end
   end
   
   def edit
+    puts "SYSTEM APP : #{@installed_application.application.system_app?}"
     if @installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
       redirect_to :controller=> 'applications', :action => 'index'
     elsif @installed_application.application.system_app?
       @installing_application = @installed_application.application
       @installed_application.configs_password = '' unless @installed_application.configs_password.blank?
+      puts "PWD: #{@installed_application.configs_password}"
     else
       render "integrations/applications/edit"
     end

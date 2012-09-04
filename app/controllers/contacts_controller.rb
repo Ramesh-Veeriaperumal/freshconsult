@@ -81,6 +81,11 @@ class ContactsController < ApplicationController
       end
     end
   end
+
+  def hover_card
+    @user = current_account.all_users.find(params[:id])    
+    render :partial => "hover_card"
+  end
   
   def build_and_save
     @user = current_account.users.new #by Shan need to check later  

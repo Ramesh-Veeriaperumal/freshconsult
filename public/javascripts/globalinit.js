@@ -5,7 +5,7 @@ var $J = jQuery.noConflict();
  
 (function($){
    // Global Jquery Plugin initialisation
-   // $.fn.qtip.baseIndex = 10000;
+   $.fn.qtip.baseIndex = 10000;
  
    // Tweet custom class
    $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
@@ -23,7 +23,6 @@ var $J = jQuery.noConflict();
        valid = true;
        $.each(emails, function(i, email){            
           valid=/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(email);                     
-          if(!valid) return false
        });
        return valid;
    }, 'One or more email addresses are invalid.');
@@ -35,17 +34,17 @@ var $J = jQuery.noConflict();
        return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
    }, 'Please enter a valid hours.');
    $.validator.addClassRules("hours", { hours: true });
-  
-  
-  //Domain Name Validator 
+ 	
+	
+	//Domain Name Validator 
    $.validator.addMethod("domain_validator", function(value, element) {
        if (this.optional(element)) // return true on optional element
          return true;
         if (value.length == 0) { return true; }       
-      if(/((http|https|ftp):\/\/)\w+/.test(value))
-      valid = false;
-      else if(/\w+[\-]\w+/.test(value))
-      valid = true;
+     	if(/((http|https|ftp):\/\/)\w+/.test(value))
+     	valid = false;
+     	else if(/\w+[\-]\w+/.test(value))
+     	valid = true;
         else if((/\W\w*/.test(value))) {
         valid = false;
         }
@@ -60,15 +59,15 @@ var $J = jQuery.noConflict();
    $.validator.addClassRules("url_validator", { url : true });
    
        
-  // App initialisation  
-  $(document).ready(function() {
-    var widgetPopup = null;
+	// App initialisation  
+	$(document).ready(function() {
+		var widgetPopup = null;
     var hoverPopup =  false;
     var hidePopoverTimer;
 
-    $("body").click(function(ev){
-      hideWidgetPopup(ev);
-    });
+		$("body").click(function(ev){
+			hideWidgetPopup(ev);
+		});
 
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
@@ -79,7 +78,7 @@ var $J = jQuery.noConflict();
 
     hidePopover = function (ev) {  
       if(!$.contains(this, ev.relatedTarget) ) { 
-        if(hoverPopup && !$(ev.relatedTarget).is('[rel=hover-popover]')) {
+        if(hoverPopup && !$(ev.relatedTarget).is('[rel=contact-hover]')) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
         }
       }
@@ -88,20 +87,20 @@ var $J = jQuery.noConflict();
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
-    
-    $("a[rel=popover]")
-      .popover({ 
-        delayOut: 300,
-        trigger: 'manual',
-        offset: 5,
-        html: true,
-        reloadContent: false,
-        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-        content: function(){
-          return $("#" + $(this).attr("data-widget-container")).html();
-        }
-      });
-
+		
+		$("a[rel=popover]")
+			.popover({ 
+				delayOut: 300,
+				trigger: 'manual',
+				offset: 5,
+				html: true,
+				reloadContent: false,
+				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+				content: function(){
+					return $("#" + $(this).attr("data-widget-container")).html();
+				}
+			});
+		
     $("a[rel=widget-popover]")
       .popover({ 
         delayOut: 300,
@@ -114,8 +113,9 @@ var $J = jQuery.noConflict();
           return $("#" + $(this).attr("data-widget-container")).val();
         }
       });
-    $("[rel=hover-popover]")
-      .popover({ 
+
+    $("[rel=contact-hover]").livequery(function(){ 
+      $(this).popover({ 
         delayOut: 300,
         trigger: 'manual',
         offset: 5,
@@ -123,12 +123,25 @@ var $J = jQuery.noConflict();
         reloadContent: false,
         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
         content: function(){
-          return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
+          var container_id = "user-info-div-"+$(this).data('contactId');
+          return jQuery("#"+container_id).html() || "<div class='loading-box' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
         }
-      });
+      }); 
+    });
 
+    $("[rel=remote-load]").livequery(function(){ 
+      if(!document.getElementById('remote_loaded_dom_elements'))
+        $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body")
 
-      $("[rel=hover-popover]").live('mouseenter',function(ev) {
+      $(this)
+        .load($(this).data("url"), function(){
+          $(this).attr("rel", "");
+          $(this).removeClass("loading-box");
+          $(this).clone().prependTo('#remote_loaded_dom_elements');          
+        });
+    });
+
+      $("a[rel=contact-hover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         hideWidgetPopup(ev);
         widgetPopup = $(this).popover('show');
@@ -136,22 +149,21 @@ var $J = jQuery.noConflict();
       }).live('mouseleave',function(ev) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
       });
-      
-    $("a[rel=widget-popover]").live("click", function(e){
-        e.preventDefault();
-        e.stopPropagation(); 
+			
+		$("a[rel=widget-popover]").live("click", function(e){
+				e.preventDefault();
+				e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-        $('[rel=widget-popover],[rel=hover-popover]').each(function(){
-          $(this).popover('hide');
-        });
-        widgetPopup = $(this).popover('show');
-      });
+				$('[rel=widget-popover],[rel=contact-hover]').each(function(){
+					$(this).popover('hide');
+				});
+ 				widgetPopup = $(this).popover('show');
+			});
 
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
-      $(".nav-trigger").livequery(function(){ $(this).showAsMenu(); });
       $("input[rel=toggle]").livequery(function(){ $(this).itoggle(); });
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
@@ -221,11 +233,11 @@ var $J = jQuery.noConflict();
       $("form.uniForm").validate(validateOptions);
       $("form.ui-form").validate(validateOptions);
 
-    $('.single_click_link').live('click',function(ev) {
-      if (! $(ev.srcElement).is('a')) {
-        window.location = $(this).find('a').first().attr('href');
-      }
-    });
+		$('.single_click_link').live('click',function(ev) {
+			if (! $(ev.srcElement).is('a')) {
+				window.location = $(this).find('a').first().attr('href');
+			}
+		});
 
     $("input[rel=companion]")
       .live({ 
@@ -238,7 +250,7 @@ var $J = jQuery.noConflict();
           $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
         }
       });
-    
+		
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
          $('#Pagearea').css("minHeight", sidebarHeight);
@@ -277,8 +289,8 @@ var $J = jQuery.noConflict();
              }
         });
          
+        $(".nav-trigger").showAsMenu(); 
         
-         
         menu_box_count = 0;
         fd_active_drop_box = null;
          

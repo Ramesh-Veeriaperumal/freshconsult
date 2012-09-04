@@ -6,7 +6,8 @@ module Integrations::Constants
     :jira => "jira",
     :sugarcrm => "sugarcrm", 
     :workflow_max => "workflow_max",
-    :salesforce => "salesforce"
+    :salesforce => "salesforce",
+    :logmein => "logmein"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

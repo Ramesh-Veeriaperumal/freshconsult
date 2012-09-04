@@ -5726,6 +5726,45 @@ a.close{
 
 }
 
+.remote_support{
+	.session_data{
+		text-align: center;
+		.pin_submit{
+			margin-top: 15px;
+		}
+		.tech_console{
+			margin-top: 5px;
+		}	
+	}
+	.active_header{
+		font-weight: bold;
+	}
+	.active_session_pin{
+		border: 1px solid #D4D4D4;
+		text-align: center;
+		margin-top: 5px;
+		border-radius: 4px;
+		-moz-border-radius: 4px;
+		padding: 15px 10px;
+		background-color: #FDF8D8;
+
+		.pincode{
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+	}
+	.resend{
+		margin-top: 5px;		
+	}
+	
+}
+
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right top no-repeat;
+}
+
+
 .crm_contact_widget {
 	.content { width:auto; }
 
@@ -5812,6 +5851,10 @@ a.close{
 
 .app-form .hide{
 	display:none
+}
+
+.error{
+	color: #F00;
 }
 
 .twipsy-inner.big {

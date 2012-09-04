@@ -173,6 +173,14 @@ module ApplicationHelper
       content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
     end
   end
+
+  def show_contact_hovercard(user, options=nil)
+    if current_user.can_view_all_tickets?
+      link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
+    else
+      link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
+    end
+  end
   
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?

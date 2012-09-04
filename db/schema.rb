@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120731141311) do
+ActiveRecord::Schema.define(:version => 20120814102445) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -122,7 +122,7 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
-    t.integer "account_id",    :limit => 8
+    t.integer "account_id",    :default => 0
   end
 
   create_table "authorizations", :force => true do |t|
@@ -165,6 +165,17 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
     t.datetime "updated_at"
     t.integer  "referrer_type"
   end
+
+  create_table "customer_forums", :force => true do |t|
+    t.integer  "customer_id", :limit => 8
+    t.integer  "forum_id",    :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "customer_forums", ["account_id", "customer_id"], :name => "index_customer_forum_on_account_id_and_customer_id"
+  add_index "customer_forums", ["account_id", "forum_id"], :name => "index_customer_forum_on_account_id_and_forum_id"
 
   create_table "customers", :force => true do |t|
     t.string   "name"
@@ -410,7 +421,7 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
     t.integer  "account_id",          :limit => 8
   end
 
-  add_index "flexifields", ["flexifield_def_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
+  add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
   add_index "flexifields", ["id"], :name => "flexifields_id"
 
@@ -510,7 +521,7 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "account_id"=>nil, "attachable_type"=>"14"}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -608,6 +619,72 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
 
+  create_table "helpdesk_schema_less_notes", :id => false, :force => true do |t|
+    t.integer  "id",            :limit => 8,                    :null => false
+    t.integer  "note_id",       :limit => 8
+    t.integer  "account_id",    :limit => 8
+    t.string   "from_email"
+    t.text     "to_emails"
+    t.text     "cc_emails"
+    t.text     "bcc_emails"
+    t.integer  "long_nc01",     :limit => 8
+    t.integer  "long_nc02",     :limit => 8
+    t.integer  "long_nc03",     :limit => 8
+    t.integer  "long_nc04",     :limit => 8
+    t.integer  "long_nc05",     :limit => 8
+    t.integer  "long_nc06",     :limit => 8
+    t.integer  "long_nc07",     :limit => 8
+    t.integer  "long_nc08",     :limit => 8
+    t.integer  "long_nc09",     :limit => 8
+    t.integer  "long_nc10",     :limit => 8
+    t.integer  "int_nc01"
+    t.integer  "int_nc02"
+    t.integer  "int_nc03"
+    t.integer  "int_nc04"
+    t.integer  "int_nc05"
+    t.string   "string_nc01"
+    t.string   "string_nc02"
+    t.string   "string_nc03"
+    t.string   "string_nc04"
+    t.string   "string_nc05"
+    t.string   "string_nc06"
+    t.string   "string_nc07"
+    t.string   "string_nc08"
+    t.string   "string_nc09"
+    t.string   "string_nc10"
+    t.string   "string_nc11"
+    t.string   "string_nc12"
+    t.string   "string_nc13"
+    t.string   "string_nc14"
+    t.string   "string_nc15"
+    t.datetime "datetime_nc01"
+    t.datetime "datetime_nc02"
+    t.datetime "datetime_nc03"
+    t.datetime "datetime_nc04"
+    t.datetime "datetime_nc05"
+    t.boolean  "boolean_nc01",               :default => false
+    t.boolean  "boolean_nc02",               :default => false
+    t.boolean  "boolean_nc03",               :default => false
+    t.boolean  "boolean_nc04",               :default => false
+    t.boolean  "boolean_nc05",               :default => false
+    t.text     "text_nc01"
+    t.text     "text_nc02"
+    t.text     "text_nc03"
+    t.text     "text_nc04"
+    t.text     "text_nc05"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_schema_less_notes", ["account_id", "note_id"], :name => "index_helpdesk_schema_less_notes_on_account_id_note_id", :unique => true
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"account_id"=>nil, "string_nc01"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"account_id"=>nil, "string_nc02"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["id"], :name => "helpdesk_schema_less_notes_id"
+  add_index "helpdesk_schema_less_notes", ["int_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc01_account_id"
+  add_index "helpdesk_schema_less_notes", ["int_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc02_account_id"
+  add_index "helpdesk_schema_less_notes", ["long_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_long_nc01_account_id"
+  add_index "helpdesk_schema_less_notes", ["long_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_long_nc02_account_id"
+
   create_table "helpdesk_schema_less_tickets", :id => false, :force => true do |t|
     t.integer  "id",            :limit => 8,                    :null => false
     t.integer  "account_id",    :limit => 8
@@ -669,8 +746,8 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
   add_index "helpdesk_schema_less_tickets", ["int_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_02"
   add_index "helpdesk_schema_less_tickets", ["long_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_01"
   add_index "helpdesk_schema_less_tickets", ["long_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_02"
-  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"account_id"=>nil, "string_tc01"=>"10"}
-  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"string_tc01"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"string_tc02"=>"10", "account_id"=>nil}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
   create_table "helpdesk_sla_details", :force => true do |t|
@@ -832,7 +909,6 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
   add_index "helpdesk_tickets", ["account_id", "updated_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_updated_at_and_id"
   add_index "helpdesk_tickets", ["id"], :name => "helpdesk_tickets_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
-  add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
@@ -1054,6 +1130,17 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
 
+  create_table "solution_customer_folders", :force => true do |t|
+    t.integer  "customer_id", :limit => 8
+    t.integer  "folder_id",   :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "solution_customer_folders", ["account_id", "customer_id"], :name => "index_customer_folder_on_account_id_and_customer_id"
+  add_index "solution_customer_folders", ["account_id", "folder_id"], :name => "index_customer_folder_on_account_id_and_folder_id"
+
   create_table "solution_folders", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -1064,6 +1151,7 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
     t.integer  "visibility",  :limit => 8
     t.integer  "position"
     t.boolean  "is_default",               :default => false
+    t.integer  "account_id",  :limit => 8
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
@@ -1209,7 +1297,7 @@ ActiveRecord::Schema.define(:version => 20120731141311) do
   add_index "survey_results", ["id"], :name => "survey_results_id"
 
   create_table "surveys", :force => true do |t|
-    t.integer  "account_id", :limit => 8
+    t.integer  "account_id",   :limit => 8
     t.text     "link_text"
     t.integer  "send_while"
     t.datetime "created_at"
