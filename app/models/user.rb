@@ -175,6 +175,7 @@ class User < ActiveRecord::Base
     self.address = params[:user][:address]
     self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
+    self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
     signup(portal)
   end
 
