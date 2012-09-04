@@ -71,6 +71,7 @@
 
             questObj["value"] = jQuery("#quest_data_value").val();
             questObj["mode"] = jQuery("#quest_data_mode").val();
+            questObj["date"] = jQuery("#quest_data_date").val();
 
             questData.push(questObj);
 
@@ -118,8 +119,7 @@
                   case "questtime":
                    /*timeHTML = "  <input id='quest_data_time' name='quest_data_time' type='text' style='width:30%;' value=''>";
                    quest.disp_name = quest.disp_name.replace("##questtime##", timeHTML);*/
-                   timeHTML = "&nbsp;<select id='quest_data_time'>";
-                   console.log(quest.questtime);
+                   timeHTML = "&nbsp;<select name='quest_data_date' id='quest_data_date'>";
                    $.each(quest.questtime, function(index, value) {
                         timeHTML += "<option value='" + value[0] + "'>" + value[1] + "</option>";
                     });
