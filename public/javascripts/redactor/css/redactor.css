@@ -451,6 +451,7 @@ body .redactor_toolbar li a.redactor_btn_underline		 	{ background-position: -52
   	-webkit-border-radius: 8px;
   	-moz-border-radius: 8px;
   	border-radius: 8px;  	  	
+  	border:1px solid #c2c2c2;	  	
   		
   	z-index: 50001;	
 	font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;      
