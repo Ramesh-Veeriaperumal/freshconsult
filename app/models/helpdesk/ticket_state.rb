@@ -31,6 +31,10 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
   end
 
+  def first_call_resolution?
+      (inbound_count == 1)
+  end
+
   def current_state
 
     if (closed_at && status_updated_at && status_updated_at > closed_at) #inapportune case

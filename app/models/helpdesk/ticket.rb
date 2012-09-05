@@ -1007,15 +1007,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def support_score_on_update
       if active? && !@old_ticket.active?
-        s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
-        s_score.destroy if s_score
+        Scoreboard::Constants::TICKET_CLOSURE.each do |resolution_status|
+          s_score = support_scores.find_by_score_trigger resolution_status
+          s_score.destroy if s_score
+        end
+
+        # SupportScore.destroy_all(:account_id => account_id,  :scorable_type => "Helpdesk::Ticket", :scorable_id => id, 
+        #   :score_trigger => Scoreboard::Constants::TICKET_CLOSURE)
+
       elsif !active? && @old_ticket.active?
         add_support_score
       end
-    end
-    
+    end    
+
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
+      SupportScore.add_fcr_bonus_score(self) if ticket_states.first_call_resolution?
     end
 
     def parse_email(email)
