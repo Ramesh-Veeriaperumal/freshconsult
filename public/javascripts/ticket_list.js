@@ -154,7 +154,7 @@ jQuery(document).ready(function() {
 		jQuery.ajax( {
 			type: "POST",
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign:'status', value : new_status, _method: 'put'},
+			data: {assign:'status', disable_notification: ev.shiftKey, value : new_status, _method: 'put' },
 			success: function (data) {
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').text(new_text);
 				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').animateHighlight();

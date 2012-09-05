@@ -20,8 +20,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
-  before_filter :disable_notification, :if => :save_and_close?
-  after_filter  :enable_notification, :if => :save_and_close? 
+  before_filter :disable_notification, :if => :notification_not_required?
+  after_filter  :enable_notification, :if => :notification_not_required?
 
 
   layout :choose_layout 
@@ -174,10 +174,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def show
-    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
-
-    @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
-
     @to_emails = @ticket.to_emails
 
     @draft = get_key(draft_key)
@@ -595,11 +591,12 @@ class Helpdesk::TicketsController < ApplicationController
     @email_config = current_account.primary_email_config
     @signature = current_user.agent.signature || ""
     @signature = RedCloth.new(@signature).to_html unless @signature.blank?    
-    @reply_email = current_account.reply_emails
+    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @ticket ||= current_account.tickets.find_by_display_id(params[:id])
+    @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
 
   def load_conversation_params
-    @ticket = current_account.tickets.find_by_display_id(params[:id])
     @conv_id = params[:note_id]
     @note = @ticket.notes.visible.find_by_id(@conv_id)
   end
@@ -728,6 +725,11 @@ class Helpdesk::TicketsController < ApplicationController
   
   def save_and_close?
     !params[:save_and_close].blank?
+  end
+
+  def notification_not_required?
+    (!params[:save_and_close].blank?) || (params[:disable_notification] && params[:disable_notification].to_bool) || 
+    (params[:action] == "quick_assign" && params[:assign] == "status" && params[:disable_notification].to_bool)
   end
 
   def check_ticket_status

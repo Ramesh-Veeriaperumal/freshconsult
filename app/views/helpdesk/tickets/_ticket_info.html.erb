@@ -23,7 +23,7 @@
         %>
         <%=customer_opinion%>
 
-        <div id="adjacents"></div>
+        <div id="adjacents" class="toolbar_pagination"></div>
       </div>
 			<div class="description">         
         <div class="user_details">
@@ -117,7 +117,7 @@
             <div class="action_buttons clearfix">
               <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket", "data-ajax-dialog" => true %>
-              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
+              <%= link_to(t('ticket.close_btn'), "#", :title  => t('ticket.close_btn_title'), :class => "last" , :id=>"close_ticket_btn" , :"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
             </div>	
             <div class="action_icons floatr"> 
               <% if is_application_installed?("jira")  %>   
@@ -155,3 +155,13 @@
       </div>
     </div>
   </div>
+
+<% content_for :onload_script do %>  
+ jQuery('#close_ticket_btn').live('click', function(ev){
+    ev.preventDefault();
+    var form = jQuery("<form>")
+                .attr("method", "post")
+                .attr("action", jQuery(this).attr('data-href') +"?disable_notification=" + ev.shiftKey);
+     form.submit();
+    });
+<% end %>

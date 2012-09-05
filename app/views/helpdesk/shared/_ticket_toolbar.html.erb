@@ -19,7 +19,7 @@
     			<% end %> 
 			
     			<% if @current_view != "deleted" && @current_view != "spam" %>
-    				<%= button_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+    			  <%= button_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put' , [{name: 'disable_notification' , value: event.shiftKey}])", :class => "button") %>
     				<%= button_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 		            <%= content_tag(:button, t('ticket.assign_to_agent'),  "data-url" => url_for(:action => "assign_to_agent"), :class => "button dialog2", :title => t('ticket.assign_to_agent'), "data-width" => "360" ) %>
 	            	<%= content_tag(:button, t('bulk_update'), "data-url" => url_for(:action => "update_multiple_tickets") , :class => "button dialog2", :title => t('update_multiple_tickets'), "data-width" => "360" ) %>

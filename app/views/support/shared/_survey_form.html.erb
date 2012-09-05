@@ -22,8 +22,9 @@
                         <li><span class="<%=rating_class%>"><%=rating_msg%></span></li>
                     </ul>
                         <div class="close-comment">
+                            <span class="cote"></span>
                            <% unless feedback.blank? %> 
-                            <span class="cote"></span><p style="margin:0px 0 0px 24px;"><%=feedback%><p>
+                            <p style="margin:0px 0 0px 24px;"><%=feedback%><p>
                            <%end%>
                             <span style="margin:0px 0 0px 24px;"><%= t('.rated_on', :rated_on => sresult.created_at.strftime("%a, %b %d, %Y"))%></span>
                         </div>

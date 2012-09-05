@@ -208,7 +208,7 @@ module Helpdesk::TicketsHelper
   
   def subject_style(ticket)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && ticket.active?
+    type = "new" if ticket.ticket_states.is_new? && !ticket.onhold_and_closed?
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
     type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
     type
@@ -262,14 +262,13 @@ module Helpdesk::TicketsHelper
       end
     end
     
-    default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/>#{signature}"
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
 
     if(!forward)
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
-        reply_email_template = "&nbsp;" if (reply_email_template.empty?) #fix for chrome issue no data shown when "" is returned as value
-        default_reply = "<span id='caret_pos_holder' style='display:none;'></span>#{reply_email_template}<br/>#{signature}"
+        default_reply = (signature.blank?)? "<p/><br/><div>#{reply_email_template}</div>" : "<p/><br/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+

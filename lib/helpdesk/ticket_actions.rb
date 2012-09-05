@@ -11,8 +11,8 @@ module Helpdesk::TicketActions
     set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
+    build_attachments
     return false unless @ticket.save
-    handle_attachments
 
     if params[:meta]
       @ticket.notes.create(
@@ -33,10 +33,9 @@ module Helpdesk::TicketActions
     file = Tempfile.new([params[:screenshot][:name]]) 
     file.binmode
     file.write decoded_file
-    attachment = @ticket.attachments.new
+    attachment = @ticket.attachments.build
     attachment.content = file
     file.close
-    attachment.save
   end
 
   def notify_cc_people cc_emails
@@ -51,10 +50,10 @@ module Helpdesk::TicketActions
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
   #we are getting the mass-assignment warning right now..
-  def handle_attachments
+  def build_attachments
      handle_screenshot_attachments unless params[:screenshot].blank?
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
-      @ticket.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
+      @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
   end
   
@@ -134,9 +133,9 @@ module Helpdesk::TicketActions
       @note.tweet.destroy
     end
     build_item
+    move_attachments   
     if @item.save
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
-      move_attachments   
     else
       puts @item.errors.to_json
     end
@@ -146,7 +145,7 @@ module Helpdesk::TicketActions
   def move_attachments   
     @note.attachments.each do |attachment|      
       url = attachment.content.url.split('?')[0]
-      @item.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @item.account_id)    
+      @item.attachments.build(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @item.account_id)    
     end
   end
   
@@ -196,7 +195,9 @@ module Helpdesk::TicketActions
   end
   
   def close_source_ticket
+    EmailNotification.disable_notification(current_account)
     @source_ticket.update_attribute(:status , CLOSED)
+    EmailNotification.enable_notification(current_account)
   end
   
   def add_note_to_source_ticket
@@ -218,7 +219,7 @@ module Helpdesk::TicketActions
   
   def add_note_to_target_ticket
     target_pvt_note = params[:target][:is_private]
-    @target_note = @target_ticket.notes.create(
+    @target_note = @target_ticket.notes.build(
         :body_html => params[:target][:note],
         :private => target_pvt_note || false,
         :source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
@@ -231,7 +232,7 @@ module Helpdesk::TicketActions
       ## handling attachemnt..need to check this
      @source_ticket.attachments.each do |attachment|      
       url = attachment.content.url.split('?')[0]
-      @target_note.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
+      @target_note.attachments.build(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
     end
     if !@target_note.private
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , {:include_cc => true})
