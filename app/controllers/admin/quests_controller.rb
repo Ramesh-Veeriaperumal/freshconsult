@@ -8,23 +8,36 @@ class Admin::QuestsController < Admin::AdminController
   QUEST_CRITERIA_TYPES = [
     { :criteria_type => ['priority', 'source'] },
     { :criteria_type => ['solutionstatus', 'solutiontype'] },
-    { :criteria_type => ['datetime'] },
+    { :criteria_type => [] },
     { :criteria_type => ['satisfaction'] }
   ]
 
 
   OPERATOR_TYPES = {
-    :choicelist  => [ "is"]
+    :choicelist  => [ "is","is_not"],
+    :checkbox    => [ "selected", "not_selected"],
+    :number      => [ "is","is_not"]
   }
 
   OPERATOR_LIST =  {
-    :is  =>  I18n.t('is')
+    :is  =>  I18n.t('is'),
+    :is_not            =>  I18n.t('is_not'),
+    :selected          =>  I18n.t('selected'),
+    :not_selected      =>  I18n.t('not_selected'),
+    :contains          =>  I18n.t('contains')
   }
 
   QUEST_MODE = [
       [ :create, "Create", 1],
       [ :answer, "Answer", 2]
   ]
+
+  CF_OPERATOR_TYPES = {
+    "custom_dropdown" => "choicelist",
+    "custom_checkbox" => "checkbox",
+    "custom_number"   => "number",
+    "nested_field"    => "nestedlist",
+  }
 
   QUEST_MODE_BY_KEY = Hash[*QUEST_MODE.map { |i| [i[2], i[1]] }.flatten]
 
@@ -64,7 +77,6 @@ class Admin::QuestsController < Admin::AdminController
 
   def create
     @quest.award_data = ActiveSupport::JSON.decode params[:award_data]
-    puts @quest.award_data
     if @quest.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default '/admin/gamification'
@@ -152,11 +164,39 @@ class Admin::QuestsController < Admin::AdminController
           :choices => QUEST_TIME_BY_KEY.sort, :operatortype => "choicelist" }
         
       ]
-
+      add_custom_filters filter_hash
       @quest_criteria_types = ActiveSupport::JSON.encode QUEST_CRITERIA_TYPES
       @criteria_defs = ActiveSupport::JSON.encode CRITERIA_HASH
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
     
     end
 
+    def add_custom_filters filter_hash
+      current_account.ticket_fields.custom_fields.each do |field|
+        if field.field_type == 'custom_dropdown' || field.field_type == 'custom_checkbox' || field.field_type == 'custom_number'
+          filter_hash.push({
+            :id => field.id,
+            :name => field.name,
+            :value => field.label,
+            :field_type => field.field_type,
+            :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
+            :choices =>  (field.field_type == "nested_field") ? field.nested_choices : field.picklist_values.collect { |c| [c.value, c.value ] },
+            :action => "set_custom_field",
+            :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
+            :nested_fields => nested_fields(field)
+          })
+          QUEST_CRITERIA_TYPES[0][:criteria_type] = QUEST_CRITERIA_TYPES[0][:criteria_type].push(field.name).uniq
+        end
+      end
+    end
+
+    def nested_fields ticket_field
+      nestedfields = { :subcategory => "", :items => "" }
+      if ticket_field.field_type == "nested_field"
+        ticket_field.nested_ticket_fields.each do |field|
+          nestedfields[(field.level == 2) ? :subcategory : :items] = { :name => field.field_name, :label => field.label }      
+        end
+      end
+      nestedfields
+    end
 end
