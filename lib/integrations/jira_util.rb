@@ -3,7 +3,7 @@ class Integrations::JiraUtil
   include RedisKeys
 
   def install_jira_biz_rules(installed_app)
-    jira_app_biz_rules = VARule.find_all_by_rule_type_and_account_id(VAConfig::APP_BUSINESS_RULE, 2, 
+    jira_app_biz_rules = VARule.find_all_by_rule_type_and_account_id(VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID, 
                                         :joins=>"INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id", 
                                         :conditions=>["app_business_rules.application_id=?", installed_app.application_id]) if jira_app_biz_rules.blank? # for create
     jira_app_biz_rules.each { |jira_app_biz_rule|
@@ -66,7 +66,7 @@ class Integrations::JiraUtil
           invoke_action = notify_value.match("comment_in_jira") ? "add_comment" : "update_status"
           jira_obj.send(invoke_action, issue_id, mapped_data)
           jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id}
-          set_key(jira_key, "true")
+          set_key(jira_key, "true", 60) # The key will expire within 60secs.
         }
       end
     end
