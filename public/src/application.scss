@@ -6531,6 +6531,10 @@ a.mobile_switchBtn {
 
 @import "gamification";
 
+.thick-border-top{
+	border-top:2px solid #b5b5be;
+}
+
 .side-panel .action-right{
 	float: right;
 	font-size: 13px;
@@ -6539,7 +6543,7 @@ a.mobile_switchBtn {
 }
 
 .panel-row{
-	@include clearfix;
+	@include pie-clearfix;
 	border-top:1px solid #e6e6e6;
 	padding:8px 0;
 	.preview_pic{
