@@ -151,7 +151,7 @@ class Account < ActiveRecord::Base
   has_many :survey_handles, :through => :survey
 
   has_many :scoreboard_ratings
-  has_one :scoreboard_level
+  has_many :scoreboard_levels, :order => "points"
 
   has_many :quests, :class_name => 'Quest', :conditions => { :active => true }, :order => "updated_at"
   has_many :all_quests, :class_name => 'Quest', :order => "updated_at"

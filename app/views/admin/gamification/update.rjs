@@ -1,2 +1,2 @@
-flash[:notice] = t(:'admin.gamification.successfully_updated')
+#flash[:notice] = t(:'admin.gamification.successfully_updated')
 show_ajax_flash page

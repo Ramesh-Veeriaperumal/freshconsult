@@ -14,6 +14,8 @@ class Agent < ActiveRecord::Base
 
   has_many :time_sheets , :class_name => 'Helpdesk::TimeSheet' , :through => :user , :foreign_key =>'user_id'
 
+  belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
+  
   before_create :set_default_ticket_permission
  
   TICKET_PERMISSION = [

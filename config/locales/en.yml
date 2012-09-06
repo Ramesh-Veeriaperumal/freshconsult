@@ -184,7 +184,7 @@ en:
         new_quest: New Quest
     gamification:
       successfully_updated: Gamification settings has been successfully updated.
-      error_update: Error while updating gamification settings.
+      error_updated: Error while updating gamification settings.
       helptext: "<p><b>Why enable gamification?</b> <br>
        Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
        <br><br>

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120818070125) do
+ActiveRecord::Schema.define(:version => 20120906104631) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -102,13 +102,15 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
-    t.integer  "user_id",           :limit => 8
+    t.integer  "user_id",             :limit => 8
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ticket_permission",              :default => 1
-    t.boolean  "occasional",                     :default => false
+    t.integer  "ticket_permission",                :default => 1
+    t.boolean  "occasional",                       :default => false
     t.string   "google_viewer_id"
+    t.integer  "points",              :limit => 8
+    t.integer  "scoreboard_level_id", :limit => 8
   end
 
   create_table "applications", :force => true do |t|
@@ -1019,21 +1021,6 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
 
   add_index "products", ["account_id", "name"], :name => "index_products_on_account_id_and_name"
 
-  create_table "scoreboard_ratings", :force => true do |t|
-    t.integer  "account_id",       :limit => 8
-    t.integer  "resolution_speed"
-    t.integer  "score"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "scoreboard_levels", :force => true do |t|
-    t.integer  "account_id",  :limit => 8
-    t.text     "levels_data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "quests", :force => true do |t|
     t.integer  "account_id",  :limit => 8
     t.string   "name"
@@ -1046,7 +1033,25 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
     t.text     "filter_data"
     t.text     "quest_data"
   end
-  
+
+  create_table "scoreboard_levels", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "points"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "scoreboard_levels", ["account_id"], :name => "index_scoreboard_levels_on_account_id"
+
+  create_table "scoreboard_ratings", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "resolution_speed"
+    t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",           :limit => 8
     t.string   "access_token"
@@ -1260,11 +1265,10 @@ ActiveRecord::Schema.define(:version => 20120818070125) do
 
   create_table "support_scores", :force => true do |t|
     t.integer  "account_id",    :limit => 8
-    t.integer  "agent_id",      :limit => 8
+    t.integer  "user_id",       :limit => 8
     t.integer  "scorable_id",   :limit => 8
     t.string   "scorable_type"
     t.integer  "score"
-    t.string   "badge"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "score_trigger"
