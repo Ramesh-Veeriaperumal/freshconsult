@@ -2,7 +2,11 @@ class SupportScore < ActiveRecord::Base
 
   include Scoreboard::Constants  
 
-  belongs_to :user, :class_name =>'User', :foreign_key =>'agent_id'
+  after_commit_on_destroy :update_agents_score
+  after_commit_on_create  :update_agents_score
+
+  belongs_to :user
+  has_one :agent, :through => :user
 
   belongs_to_account
 
@@ -49,7 +53,7 @@ class SupportScore < ActiveRecord::Base
   def self.add_support_score(scorable, resolution_speed)    
     sb_rating = scorable.account.scoreboard_ratings.find_by_resolution_speed(resolution_speed)
     scorable.support_scores.create({      
-      :agent_id => scorable.responder_id,
+      :user_id => scorable.responder_id,
       :score => sb_rating.score,
       :score_trigger => sb_rating.resolution_speed
     }) if scorable.responder
@@ -57,7 +61,7 @@ class SupportScore < ActiveRecord::Base
 
   def self.add_score(scorable, score, badge)    
     scorable.support_scores.create({      
-      :agent_id => scorable.user.id,
+      :user_id => scorable.user.id,
       :score => score,
       :score_trigger => 201
     }) if scorable.user
@@ -65,10 +69,19 @@ class SupportScore < ActiveRecord::Base
 
   def self.add_ticket_score(scorable, score, badge)
     scorable.support_scores.create({      
-      :agent_id => scorable.responder.id,
+      :user_id => scorable.responder.id,
       :score => score,
       :score_trigger => 201
     }) if scorable.responder
   end
-    
+  
+protected
+  
+  def update_agents_score
+      total_score = user.support_scores.sum(:score)
+      unless (agent.points.eql? total_score)
+        agent.update_attribute(:points, total_score)
+      end
+  end
+
 end

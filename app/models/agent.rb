@@ -17,7 +17,8 @@ class Agent < ActiveRecord::Base
   belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
   
   before_create :set_default_ticket_permission
- 
+  before_update :update_agents_level
+
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
     [ :group_tickets,  2 ], 
@@ -47,5 +48,16 @@ end
  end
 
 named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
+
+protected
+  
+  def update_agents_level
+    return unless points_changed?
+
+    level = user.account.scoreboard_levels.level_for_score(points).first
+    if level and !(scoreboard_level_id.eql? level.id)
+      self.level = level
+    end
+  end
 
 end
