@@ -40,6 +40,7 @@ class HttpRequestProxy
       end
       resource = resource ? "/" + resource : ""
       remote_url = domain + resource
+      remote_url = Liquid::Template.parse(remote_url).render("password"=>params[:password])
 
       if auth_header.blank?
         auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
