@@ -6542,6 +6542,44 @@ a.mobile_switchBtn {
 	margin-top: 4px;
 }
 
+.level-progress{
+	border:1px solid #c6c6c6;
+	@include border-radius(3px);
+	margin-top: 6px;
+	padding: 5px 10px;
+	position: relative;
+	p{
+		position: relative;
+		z-index: 1;
+	}
+	.bar{
+		position: absolute;
+		background-color: #e8f1f4;
+		top:0;
+		left:0;
+		height: 100%; 
+		@include border-left-radius(3px);
+		z-index: 0;
+	}
+}
+
+.badge-list{
+	@include clearfix;
+	.gamesettings-badges{
+		float:left;
+		position: relative;
+		margin:3px 0 18px 6px;
+	}
+	.score{
+		position: absolute;
+		width: 100%;
+		text-align: center;
+		bottom:-18px;
+		@include ellipsis;
+		color: #666666;
+	}
+}
+
 .panel-row{
 	@include pie-clearfix;
 	border-top:1px solid #e6e6e6;
