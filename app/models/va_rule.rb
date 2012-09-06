@@ -13,10 +13,8 @@ class VARule < ActiveRecord::Base
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
 
   named_scope :disabled, :conditions => { :active => false }
-  
-  named_scope :executable_biz_rules, lambda {|account_id| {:joins => 'INNER JOIN accounts ON va_rules.account_id=accounts.id', :conditions => { 
-    "accounts.id" => account_id, "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], "va_rules.active" => true }, :order => "va_rules.position"}
-  }
+
+  named_scope :observer_biz_rules, :conditions => { "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], "va_rules.active" => true }, :order => "va_rules.position"
 
   acts_as_list
   
