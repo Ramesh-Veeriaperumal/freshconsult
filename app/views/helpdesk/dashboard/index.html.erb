@@ -38,15 +38,7 @@
 
   </div>
   <% end %> 
-
-  <div id="quests-section" class="side-panel">
-  	<a href="#" class="action-right">See all</a>
-  	<h3 class="title">Quest</h3>  
-  	<div id="quests-container" class="panel-list">
-  		
-  	</div>
-  </div>
-
+  <div id="quests-section-container"  rel="remote" data-remote-url="/admin/gamification/active_quests"></div>
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
@@ -66,7 +58,6 @@
   <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities"), { :activity_id => @items.first.id}) unless @items.empty?%>
   <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) if @items.empty? %>
 <% end %>
-<%= javascript_include_tag "helpdesk/quests_dashboard.js" %>
 <% content_for :onload_script do %>
 	activity_count = 0;
 	previous_id = jQuery('#Pages li').first().prop('id');
@@ -106,5 +97,5 @@
 		      jQuery('#TicketSummary').replaceWith(data);
 		  });
 		}, 60);*/
-	
+	jQuery('#quests-section-container').trigger('afterShow');
 <%end%>

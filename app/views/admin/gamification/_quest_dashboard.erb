@@ -1,0 +1,19 @@
+<% unless @active_quest.empty? %>
+	<div id="quests-section" class="side-panel">
+	  	<a href="#" class="action-right">See all</a>
+	  	<h3 class="title">Quest</h3>  
+	  	<div id="quests-container" class="panel-list">
+	  		<% @active_quest.each do |quest| %>
+		  		<div id="quest-container" class="panel-row">
+					<div class="floatl ">
+						<ul id="quest-badge-menu"><li class="<%=quest.award_data[0][:badge]%>"></li>
+						<li class="dashboard-quest-points" style=""><%=quest.award_data[0][:point]%></li></ul></div>
+					<div id="quest-details-container" class="panel-content">
+		  				<h4><%=quest.name%></h4>
+						<p class="help-text"><%=quest.description%></p>
+					</div>
+				</div>
+			<% end %>
+	  	</div>
+	</div>
+<% end %>

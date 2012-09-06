@@ -41,10 +41,9 @@ class Admin::GamificationController < Admin::AdminController
   end
 
   def active_quests
+    ##need to fetch only locked quests for the agent.
     @active_quest = scoper.find(:all)
-    respond_to do |format|
-      format.json { render :json => @active_quest}
-    end
+    render :partial => '/admin/gamification/quest_dashboard'
   end
 
   protected
