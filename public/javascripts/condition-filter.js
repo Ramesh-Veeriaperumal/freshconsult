@@ -127,12 +127,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
                   if(rule.operator){	
                      opType = hg_data.get(rule.name).operatortype;
-                     if (operator_types.get(opType).length === 1 && setting.quest_criteria_types) {
-                     	var value = operator_types.get(opType)[0].value;
-						inner.append("<span style='padding: 3px 10px 0px 10px;'>" + value + "</span>");
-                     } else {
-                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
-                     }
+                     inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
                   }	
                   if(rule.name == "set_nested_fields")
                   	rule.name = rule.category_name;
@@ -262,12 +257,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								var data_id = hg_item.name + itemManager.get();
 
 								if(hg_item.operatortype) {
-									if (operator_types.get(hg_item.operatortype).length === 1 && setting.quest_criteria_types){
-										var value = operator_types.get(hg_item.operatortype)[0].value;
-										rule_drop.append("<span style='padding: 3px 10px 0px 10px;'>" + value + "</span>");
-									} else {
-										rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
-									}
+									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
 								}
 
 								rule_drop.append(conditional_dom(hg_item, data_id, name));

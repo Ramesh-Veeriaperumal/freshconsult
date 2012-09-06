@@ -1,7 +1,7 @@
 <% if @champions.length > 0 %>
 	<% high_score = @champions[0].tot_score.to_i %> 
 <% end %>
-<table class="leaderboard-big" padding="0" margin="0" border="0">
+<table class="leaderboard-big" padding="0" margin="0" border="0" style="width:100%;margin:0;padding:0;">
 <thead>
   <tr>	
   	<th colspan="7"><h3>Most valuable Player</h3></th>
@@ -12,7 +12,7 @@
 <% unless champion.tot_score.to_i < 0 %>
 <tr>
 	<td width="1%"><%= (index + 1)%></td>
-	<td width="1%"><%= user_avatar(champion.user, :small, 'preview_pic') %></td>
+	<td width="1%"><%= user_avatar(champion.user, :thumb, 'preview_pic') %></td>
 	<td width="20%"><b><%= champion.user.display_name %></b></td>
 	<td width="30%">&nbsp;</td>
 	<td width="40%">

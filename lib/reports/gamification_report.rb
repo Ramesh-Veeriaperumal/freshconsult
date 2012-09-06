@@ -1,20 +1,20 @@
 module Reports::GamificationReport
 	include Reports::ActivityReport
 
-	def list_of_champions()
-		scoper.support_scores_all
+	def champions
+		scoper.total_score
 	end
 
-	def list_of_sharpshooters()
-		scoper.support_scores_all.fastcall_resolution
+	def sharpshooters
+		scoper.total_score.fast
 	end
 
-	def list_of_fcr()
-		scoper.support_scores_all.firstcall_resolution
-	end
+	def first_call_resolution
+		scoper.total_score.first_call
+	end	
 
-	def list_of_happycustomers()
-		scoper.support_scores_all.happycustomer_resolution
+	def happy_customers
+		scoper.total_score.happy_customer
 	end
 
 	def scoper(starting_time = start_date, ending_time = end_date)
