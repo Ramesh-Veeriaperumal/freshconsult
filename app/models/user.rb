@@ -51,6 +51,8 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
+  has_many :support_scores
+
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?

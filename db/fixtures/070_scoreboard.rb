@@ -16,7 +16,12 @@ ScoreboardRating.seed_many(:account_id, :resolution_speed, [
   end
 )
 
-ScoreboardLevel.seed(:account_id) do |s|
-  s.account_id = Account.current.id
-  s.levels_data = ScoreboardLevel::LEVELS
-end
+ScoreboardLevel.seed_many(:account_id, :name, :points,  
+    ScoreboardLevel::LEVELS_SEED_DATA.map do |level|
+    {
+      :account_id => account.id,
+      :name => level[0],
+      :points => level[1]
+    }
+    end 
+)
