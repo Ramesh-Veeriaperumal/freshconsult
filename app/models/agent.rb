@@ -1,6 +1,7 @@
 class Agent < ActiveRecord::Base
   
     
+  include Notifications::MessageBroker
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id' , :dependent => :destroy 
 
   accepts_nested_attributes_for :user
@@ -18,6 +19,8 @@ class Agent < ActiveRecord::Base
   
   before_create :set_default_ticket_permission
   before_update :update_agents_level
+
+  after_update  :publish_game_notifications
 
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
@@ -57,6 +60,12 @@ protected
     level = user.account.scoreboard_levels.level_for_score(points).first
     if level and !(scoreboard_level_id.eql? level.id)
       self.level = level
+    end
+  end
+
+  def publish_game_notifications
+    if scoreboard_level_id_changed?
+      publish("#{I18n.t('gamification.notifications.newlevel',:name => level.name)}", [user_id.to_s]) 
     end
   end
 
