@@ -26,13 +26,12 @@
 				}
 
 				var menu = $('#menu_' + menuid);
-				console.log(menu);
 				menu.show().css('visibility','visible');
 				$(document).data({ "active-menu": true, "active-menu-element": menu, "active-menu-parent": node });
-
+				
 				$(node).addClass("selected");
+
 				showAllOptions(menuid);
-				console.log('Menu ID is ' + menuid);
 				setFocusOnSearch(menuid);
 				setFirstElementActive(menuid);
 			});
@@ -100,16 +99,8 @@
 		}
 
 		var setFocusOnSearch = function(menuid) {
-			// var setFocus = setInterval(function() {
-		// 		console.log('trying to set the focus');
-		// 		console.log( menuid);
-				// if ($('#menu_' + menuid).css('display') == 'block') {
-					$('#menu_' + menuid + ' .menu_search').val('').focus();
-					console.log('setting the focus @ ' + menuid);
-			// 		clearInterval(setFocus);
-			// 	}
-			// },100);
-			
+			$('#menu_' + menuid + ' .menu_search').val('').focus();
+			console.log('setting the focus @ ' + menuid);
 		}
 
 		var initSearchBox = function(menuid) {
@@ -117,45 +108,44 @@
 			var txt_box = $('<input>').attr('type','text').addClass('menu_search');
 
 			$('#menu_' + menuid ).prepend(txt_box);
-				txt_box.bind('keydown, keypress', function(e){
-					if(e.keyCode == 13) 
+			txt_box.bind('keydown, keypress', function(e){
+				if(e.keyCode == 13) 
+					return false;
+			});
+			txt_box.bind('keyup',function(e) {
+				switch (e.keyCode) {
+					case 40:
+					case 38:
+					case 13:
+						e.preventDefault();
+						e.stopPropagation();
+						executeAction(e.keyCode, menuid);
 						return false;
-				})
-				txt_box.bind('keyup',function(e) {
-					switch (e.keyCode) {
-						case 40:
-						case 38:
-						case 13:
-							e.preventDefault();
-							e.stopPropagation();
-							executeAction(e.keyCode, menuid);
-							return false;
-						break;
+					break;
 
-						default:
-							var search_txt = txt_box.val().trim();
-							regex = new RegExp(search_txt,"i");
-							var content_element = $('#menu_' + menuid + ' .contents');
-							if (search_txt != '') {
-								
-								content_element.find('.seperator').addClass('hide');
-								console.log(search_txt);
-								$('#menu_' + menuid + ' .contents').children().not('.seperator').each(function(i) {
-									if ($(this).text().search(regex) == -1){
-										$(this).addClass('hide')
-									} else {
-										$(this).removeClass('hide');
-									}
-								});
-							} else {
-								content_element.children().removeClass('hide');
-								content_element.find('.seperator').removeClass('hide');
-								deselectActiveElement(menuid);
-							}
-						break;
-					}
-				});
-			}
+					default:
+						var search_txt = txt_box.val().trim();
+						regex = new RegExp(search_txt,"i");
+						var content_element = $('#menu_' + menuid + ' .contents');
+						if (search_txt != '') {
+							
+							content_element.find('.seperator').addClass('hide');
+							console.log(search_txt);
+							$('#menu_' + menuid + ' .contents').children().not('.seperator').each(function(i) {
+								if ($(this).text().search(regex) == -1){
+									$(this).addClass('hide')
+								} else {
+									$(this).removeClass('hide');
+								}
+							});
+						} else {
+							content_element.children().removeClass('hide');
+							content_element.find('.seperator').removeClass('hide');
+							deselectActiveElement(menuid);
+						}
+					break;
+				}
+			});
 		}
 
 		var initElementHover = function(menuid) {
@@ -226,5 +216,7 @@
 			$('#menu_' + menuid ).data('currentactive',currentactive);
 			$('#menu_' + menuid ).data('selection_position', position);
 		}
+
+	}
 
 })( jQuery );
