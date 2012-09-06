@@ -274,7 +274,9 @@
     
     helpdesk.resources :support_plans
     
-    helpdesk.resources :sla_policies   
+    helpdesk.resources :sla_policies 
+
+    helpdesk.resources :notifications, :only => :index
     
   end
   

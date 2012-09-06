@@ -75,5 +75,14 @@ class ApplicationController < ActionController::Base
     Thread.current[:account] = nil
   end
   
+  protected
+    def silence_logging
+      @bak_log_level = logger.level 
+      logger.level = Logger::ERROR
+    end
+
+    def revoke_logging
+      logger.level = @bak_log_level 
+    end
 end
 

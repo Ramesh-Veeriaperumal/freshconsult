@@ -29,6 +29,9 @@ stylesheets:
     - public/stylesheets/ie.css
     - public/stylesheets/satisfaction.css
 
+  notifications:
+    - public/stylesheets/jquery.gritter.css
+
   widget:
     - public/stylesheets/reset.css   
     - public/stylesheets/defaults.css
@@ -138,3 +141,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
   redactor:
     - public/javascripts/redactor/redactor.js
+  notifications:
+    - public/javascripts/jquery.gritter/jquery.gritter.js
+    - public/javascripts/notifications.js

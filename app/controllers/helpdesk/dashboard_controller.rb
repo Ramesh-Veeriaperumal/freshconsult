@@ -42,14 +42,4 @@ class Helpdesk::DashboardController < ApplicationController
         Helpdesk::Activity.freshest(current_account).permissible(current_user)
       end
     end
-
-    def silence_logging
-      @bak_log_level = logger.level 
-      logger.level = Logger::ERROR
-    end
-
-    def revoke_logging
-      logger.level = @bak_log_level 
-    end
-
 end
