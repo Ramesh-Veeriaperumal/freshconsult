@@ -10,8 +10,7 @@ class Quest < ActiveRecord::Base
     [ :quest_none,     "--- Click to Select ---",  -1],
     [ :quest_ticket,   "Tickets",     0 ], 
     [ :quest_solution, "Solutions",   1 ], 
-    [ :quest_forum,    "Forums",      2 ],
-    [ :quest_survey,   "Surveys",     3 ],
+    [ :quest_forum,    "Forums",      2 ]
   ]
 
   GAME_TYPE_OPTIONS = GAME_TYPE.map { |i| [i[1], i[2]] }

@@ -6,12 +6,10 @@ class Admin::QuestsController < Admin::AdminController
   before_filter :load_config, :only => [:new, :edit]
 
   QUEST_CRITERIA_TYPES = [
-    { :criteria_type => ['priority', 'source'] },
-    { :criteria_type => ['solutionstatus', 'solutiontype'] },
+    { :criteria_type => ['priority', 'source','satisfaction'] },
     { :criteria_type => [] },
-    { :criteria_type => ['satisfaction'] }
+    { :criteria_type => [] }
   ]
-
 
   OPERATOR_TYPES = {
     :choicelist  => [ "is","is_not"],
@@ -61,10 +59,7 @@ class Admin::QuestsController < Admin::AdminController
         :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort},
 
       { :name => "quest_forum", :disp_name => "##questmode## ##questvalue## Forum posts within ##questtime##", 
-        :input => ["questvalue","questmode","questtime"], :questmode => QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort },
-
-      { :name => "quest_survey", :disp_name => "Get ##questvalue## Survery feedback within ##questtime##", 
-        :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort}
+        :input => ["questvalue","questmode","questtime"], :questmode => QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort }
   ]
 
   def index

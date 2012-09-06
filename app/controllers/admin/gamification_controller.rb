@@ -17,7 +17,7 @@ class Admin::GamificationController < Admin::AdminController
   
   def disable
    current_account.features.scoreboard_enable.destroy
-   current_account.reload  	
+   current_account.reload
   end
 
   def update
@@ -43,6 +43,13 @@ class Admin::GamificationController < Admin::AdminController
     else
       flash[:notice] = t(:'admin.scoreboard.error_updated')
     end  
+  end
+
+  def active_quests
+    @active_quest = scoper.find(:all)
+    respond_to do |format|
+      format.json { render :json => @active_quest}
+    end
   end
 
   protected
