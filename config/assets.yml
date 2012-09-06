@@ -99,6 +99,7 @@ javascripts:
   workspace: 
     - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js
+    - public/javascripts/dyn_menu.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
