@@ -28,7 +28,6 @@ stylesheets:
     - public/stylesheets/hacks.css
     - public/stylesheets/ie.css
     - public/stylesheets/satisfaction.css
-    - public/stylesheets/gamification.css
 
   widget:
     - public/stylesheets/reset.css   

@@ -7,24 +7,86 @@
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
   </div>
   <% if feature?(:scoreboard) %>
-  <div id="leaderboard" class="sidepanel">
-  	<h3 class="title">Leaderboard</h3>
-  	<% @champions.each_with_index  do |champion, index|%>
-	<% unless champion.tot_score.to_i < 0 %>
-		<div class="agentreport">
-			<ul>
-				<li class="nospace"><div class="bignum floatleft"><%= (index + 1)%></div></li>	
-				<li>
-					<div class="floatleft photo"><%= user_avatar(champion.user, :thumb, 'preview_pic') %></div>
-					<div class="floatleft agentname"><%= champion.user.display_name %><div>Job Title</div></div>								
-				</li>
-				<li class="nospace"><%= champion.tot_score %> points</li>			
-			</ul>
+  <div id="leaderboard" class="side-panel">  	
+  	<a href="#" class="action-right">See all</a>
+  	<h3 class="title">LeaderBoard</h3>  	
+  	<p class="intro">This Month</p>  	
+  	<% @champions.each_with_index do |champion, index|%>
+		<% unless champion.tot_score.to_i < 0 %>
+			<div class="panel-list">
+				<div class="panel-row">
+					<%= user_avatar(champion.user, :thumb, 'preview_pic') %>
+					<div class="lb-trophy scoreboard-trophy-forum"></div>
+					<div class="panel-content">
+						<h4><a href="#"><%= champion.user.display_name %></a></h4>
+						<p class="help-text"># Most valuable player #</p>
+					</div>
+				</div>
+			</div>
+		<% end %>
+	<% end %>
+	<div class="panel-row">
+		<div class="preview_pic" size_type="thumb"><img alt="" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif?1345480192"></div>
+		<div class="lb-trophy scoreboard-trophy-love"></div>
+		<div class="panel-content">
+			<h4><a href="#"># Mary J watson #</a></h4>
+			<p class="help-text"># Customer Campion #</p>
 		</div>
-	<% end %>
-	<% end %>
+	</div>
+	<div class="panel-row">
+		<div class="preview_pic" size_type="thumb"><img alt="" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif?1345480192"></div>
+		<div class="lb-trophy scoreboard-trophy-sharpshooter"></div>
+		<div class="panel-content">
+			<h4><a href="#"># Bruce Banner #</a></h4>
+			<p class="help-text"># SharpShooter #</p>
+		</div>
+	</div>
+	<div class="panel-row">
+		<div class="preview_pic" size_type="thumb"><img alt="" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif?1345480192"></div>
+		<div class="lb-trophy scoreboard-trophy-fcr"></div>
+		<div class="panel-content">
+			<h4><a href="#"># Sherlock Holmes #</a></h4>
+			<p class="help-text"># FCR #</p>
+		</div>
+	</div>
+
   </div>
   <% end %> 
+
+  <div class="side-panel">
+  	<a href="#" class="action-right">See all</a>
+  	<h3 class="title">Quest</h3>  
+  	<div class="panel-list">
+  		<div class="panel-row">
+  			<div class="floatl gamesettings-badges badges-elephant"></div>
+  			<div class="panel-content">
+	  			<h4>Customer Hapiness</h4>
+				<p class="help-text"> 
+					Resolve 20 tickets in a span of 15 days, with following conditions. Priority is high, lead is a customer and  type is portal
+				</p>
+			</div>
+  		</div>
+		<div class="panel-row">
+			<div class="floatl gamesettings-badges badges-forum"></div>
+			<div class="panel-content">
+  				<h4>Forum Fanboy</h4>
+				<p class="help-text">
+					Resolve 20 tickets in a span of 15 days, with following conditions. Priority is high, lead is a customer and  type is portal
+				</p>
+			</div>
+		</div>
+		<div class="panel-row">
+			<div class="floatl gamesettings-badges badges-call"></div>
+			<div class="panel-content">
+  				<h4>Support superstar</h4>
+				<p class="help-text">
+					Resolve 20 tickets in a span of 15 days, with following conditions. Priority is high, lead is a customer and  type is portal days, with following conditions. Priority is high, lead is a customer and  type is portal
+				</p>
+			</div>
+		</div>
+  	</div>
+  </div>
+
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 

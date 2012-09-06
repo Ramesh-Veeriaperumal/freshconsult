@@ -63,7 +63,7 @@ $priority-hover-alpha: 1;
 }
 
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
-   @extend .sp_border;
+   	@extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
 }
 
@@ -72,7 +72,15 @@ $priority-hover-alpha: 1;
 } 
 
 .sidepanel{
-	position:relative;
+	position:relative;	
+}
+
+.side-panel{
+	background-color:#ffffff;
+	border:1px solid #b3b3b3;
+	padding:6px 12px 12px;
+	margin:0px 10px 10px 0px;
+	@include box-shadow(rgba(0,0,0, 0.2) 0 0 3px);
 }
 
 .pagearea{
@@ -6499,30 +6507,62 @@ margin:10px;
 }
 
 a.mobile_switchBtn {
-		background-color:#FFF;
-		border:1px solid #888;
-		@include border-radius(20px);
-		color:#333 !important;
-		padding: 2px 8px;
-		font-size:11px;
+	background-color:#FFF;
+	border:1px solid #888;
+	@include border-radius(20px);
+	color:#333 !important;
+	padding: 2px 8px;
+	font-size:11px;
+	font-weight:bold;
+	float:left;
+	float: left;
+	margin: 15px 0px 0px 10px;
+	z-index:5;
+	position:relative;
+	&:active, &:hover{
+		@include background(#444);
+		color:#fff !important;
+		text-shadow: -1px -1px 0 black;
+		text-shadow: -1px -1px 0 black;
+	}
+}
+
+/* Importing gamification related style information */ 
+
+@import "gamification";
+
+.side-panel .action-right{
+	float: right;
+	font-size: 13px;
+	line-height: 24px;
+	margin-top: 4px;
+}
+
+.panel-row{
+	@include clearfix;
+	border-top:1px solid #e6e6e6;
+	padding:8px 0;
+	.preview_pic{
+		padding:2px;
+		background:#AFAFAF;
+		border-radius:3em;
+		line-height:0;
+	}
+	.preview_pic img{
+		@include border-radius(2em);
+		width:36px;
+		height:36px;
+	}
+	.help-text{
+		color:#333333;
+		font-size:13px;
+	}
+	h4{
+		font-size:14px;		
+		line-height:20px;
 		font-weight:bold;
-		float:left;
-		float: left;
-		margin: 15px 0px 0px 10px;
-		z-index:5;
-		position:relative;
-		&:active, &:hover{
-			@include background(#444);
-			color:#fff !important;
-			text-shadow: -1px -1px 0 black;
-			text-shadow: -1px -1px 0 black;
-		}
-}
-
-.scoreboard_items {
-	@include all-scoreboard-sprites;
-}
-
-.badges_items {
-	@include all-badges-sprites;
+	}
+	.panel-content{
+		padding-left:50px;
+	}
 }
