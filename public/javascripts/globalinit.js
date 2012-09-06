@@ -175,8 +175,8 @@ var $J = jQuery.noConflict();
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
 
-      $('.quick-action.ajax-menu').livequery(function() { $(this).showAsAjaxMenu();});
-      $('.quick-action.dynamic-menu').livequery(function() { $(this).showPreloadedMenu();});
+      $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
+      $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $("[rel=remote]").livequery(function(){
