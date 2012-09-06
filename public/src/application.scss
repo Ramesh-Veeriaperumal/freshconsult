@@ -160,7 +160,7 @@ ul.activityfeed li{
 		margin:0px 0px 14px 0px;
 		color:#444;
 	}  
-	 h4{
+	h4{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
@@ -5620,7 +5620,6 @@ a.close{
 	.ui-form {
 		background:none;
 		border:none;
-
 		div.field {
 			float:left;
 			margin:5px 0;
@@ -5685,6 +5684,70 @@ a.close{
 	}
 
 }
+
+.remote_support{
+	.session_data{
+		text-align: center;
+		.pin_submit{
+			margin-top: 15px;
+		}
+		.tech_console{
+			margin-top: 5px;
+		}	
+	}
+	.active_header{
+		font-weight: bold;
+	}
+	.active_session_pin{
+		border: 1px solid #D4D4D4;
+		text-align: center;
+		margin-top: 5px;
+		border-radius: 4px;
+		-moz-border-radius: 4px;
+		padding: 15px 10px;
+		background-color: #FDF8D8;
+
+		.pincode{
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+	}
+	.resend{
+		margin-top: 5px;		
+	}
+	
+}
+
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right top no-repeat;
+}
+
+
+.error{
+	color: #F00;
+}
+
+
+#integrations-list {
+	display:block;
+	overflow: hidden;
+	margin: 0 -20px;
+
+	.search {
+		position: relative;
+		right:10px;
+		top: 0px;
+	}
+	ul.table-list {
+		margin: 15px 0 0 0;
+	}
+
+	.tabs {
+		margin-bottom: 10px;
+	}
+}
+
 
 .crm_contact_widget {
 	.content { width:auto; }

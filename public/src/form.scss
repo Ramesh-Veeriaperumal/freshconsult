@@ -264,6 +264,9 @@ a.addchoice:hover{
 		margin:0;
 		@include float-left;
 		width: 96%;
+		&.hide{
+			display: none;
+		}
 		div.field-box{
 			padding:4px 0 8px 0;
 		}

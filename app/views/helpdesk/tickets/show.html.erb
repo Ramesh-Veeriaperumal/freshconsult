@@ -1,13 +1,15 @@
 <% content_for :sidebar do -%>
-     <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
-  
+  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
+  <%= render :partial => "/integrations/widgets/helpdesk_tickets_show_side_bar_widget", :locals => {:ticket => @ticket, :user => @ticket.requester}%>
+
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
+  <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
+
 <%- end %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
-
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 
@@ -64,7 +66,7 @@
 	var activeForm = null;
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
-			
+
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 
@@ -75,7 +77,7 @@
 				case 'cnt-note':
 				case 'cnt-fwd':
 					invokeRedactor(formid+"-body",formid);
-					insertIntoConversation("");
+					jQuery('#'+formid+"-body").getEditor().focus();
 				break; 
 				case 'cnt-fb-post': 
 					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
@@ -105,16 +107,13 @@
     }
 
          
-		function insertIntoConversation(value){
+		function insertIntoConversation(value,element_id){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
 			fwd_area = jQuery('#cnt-fwd')
 			tweet_area = jQuery('#cnt-tweet');
-			if(note_area.css("display") == 'block'){     
-				jQuery("#cnt-note-body").insertHtml(value);
-				jQuery("#cnt-note-body").getEditor().focus();
-			} 
-			else if(tweet_area.css("display") == 'block'){
+
+			if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
 						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
 						jQuery('#send-tweet-cnt-tweet-body')
@@ -122,23 +121,14 @@
 								.trigger("keydown");
 				});			
 			}
-			else{
-				if(reply_area.css("display") == 'none' && fwd_area.css("display") == 'none'){
-					jQuery('#ReplyButton').trigger("click");
-				}
-		        	var msg_body_id = reply_area.css("display") == 'none' ? "cnt-fwd" : "cnt-reply"
-		        	if(!jQuery.browser.opera){
-			       		jQuery("#"+msg_body_id+"-body").insertHtml(value);
-			        }
-			        else
-			        
-			console.log(value);
-				jQuery("#"+msg_body_id+"-body").getEditor().focus();
+			if(jQuery(element_id)){
+		        	jQuery("#"+element_id).getEditor().focus();
+		       		jQuery("#"+element_id).insertHtml(value);
 			}        
-			
+
 			return;
 		}
-		
+
 		function getCannedResponse(ticket_id, ca_resp_id){
   	  jQuery("#canned_response_container").addClass("loading")
   		jQuery.ajax({	type: 'POST',
@@ -146,7 +136,7 @@
   						contentType: 'application/text',
   						async: false,
   						success: function(data){		
-  									insertIntoConversation(data);
+  									insertIntoConversation(data,activeTinyMce);
   							    jQuery("#canned_response_list")
   							      .removeClass("loading")
   							      .hide(300);
@@ -154,7 +144,7 @@
   						});
   		return true;
   	}
-	
+
   	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
@@ -168,7 +158,7 @@
   			jQuery(".toEmailMoreLink").text('');
   		}
   	}
-		
+
   <% end %>
 
 <% end %>

@@ -5,6 +5,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::NoteActions
   include RedisKeys
+  include Integrations::AppsUtil
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -216,7 +217,6 @@ module Helpdesk::TicketsHelper
 
   def sla_status(ticket)
     if( ticket.active? )
-
       unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
         if(Time.now > ticket.due_by )
           t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
@@ -229,7 +229,6 @@ module Helpdesk::TicketsHelper
       end
 
     else
-
       if( ticket.ticket_states.resolved_at < ticket.due_by )
         t('resolved_on_time')
       else
