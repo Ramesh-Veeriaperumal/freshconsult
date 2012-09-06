@@ -261,13 +261,13 @@ module Helpdesk::TicketsHelper
       end
     end
     
-    default_reply = "<br/><br/>#{signature}"
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
 
     if(!forward)
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
-        default_reply = "<br/>#{reply_email_template}<br/>#{signature}"
+        default_reply = (signature.blank?)? "<p/><br/><div>#{reply_email_template}</div>" : "<p/><br/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+

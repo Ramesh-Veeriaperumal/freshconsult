@@ -112,7 +112,6 @@
 			reply_area = jQuery('#cnt-reply');
 			fwd_area = jQuery('#cnt-fwd')
 			tweet_area = jQuery('#cnt-tweet');
-
 			if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
 						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );

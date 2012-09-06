@@ -12,7 +12,7 @@
 					<a href="#" class="slim-button"  rel="fwd_cc_button_<%=cntid%>" data-input="#fwd_include_bcc_<%=cntid%>" data-parent="#fwd-bcc-form-container-<%=cntid%>" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_fwd_bcc_btn" >
 						<%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
 					</a>
-					<%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.id})", :class => "slim-button insert-canned-response", :id => "#{cntid}", "data-tiny-mce-id" => "#{id}-#{cntid}-body") %>
+					<%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.id})", :class => "slim-button insert-canned-response", :id => "#{cntid}", "data-tiny-mce-id" => "#{cntid}-body") %>
         </div>
         <% javascript_tag do %>
           jQuery('a[rel=fwd_cc_button_<%= cntid %>]').click(function(ev){
