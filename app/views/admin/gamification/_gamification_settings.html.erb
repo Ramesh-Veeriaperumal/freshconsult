@@ -2,7 +2,7 @@
     <li>
         <div class="floatl"><h3 style="font-weight: bold; color: #333; font-size: 19px;"><%= t('.enable_label') %></h3></div>        
         <div id="scoreboard_link_con" class="floatr">               
-        <%if @account.features?(:scoreboard_enable)%>
+        <%if current_account.features?(:scoreboard_enable)%>
            <%= link_to_function "<strong> #{t('application.enabled')} </strong><span></span>", "toggle_status()",  :id => "scoreboard_status_link", :class => "uiButton special iphone-active" %>
         <%else%>
            <%= link_to_function "<strong> #{t('application.disabled')} </strong><span></span>", "toggle_status()",  :id => "scoreboard_status_link", :class => "uiButton special iphone-inactive" %>
@@ -10,7 +10,7 @@
         </div>      
     </li>
     <li style="border-top:1px solid #ccc;" id="scoreboard_elements" 
-    <%unless @account.features?(:scoreboard_enable)%>style="display:none"<%end%>>
+    <%unless current_account.features?(:scoreboard_enable)%>style="display:none"<%end%>>
     <div class="gamesettings">
     <% form_remote_tag :url => { :action => "update" }, :before => "if(!callValid()){ return false; }", :html => { :method => :put, :id => "scoreboard_ratings_form" } do %>
     <h3><%= t('.title_points_configuration')%></h3>
