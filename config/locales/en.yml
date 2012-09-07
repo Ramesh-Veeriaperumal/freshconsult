@@ -186,6 +186,10 @@ en:
     date: Date
     satisfaction: Customer Satisfaction
     forums: Forums
+    forum_category: Category
+    solution_articles: Article 
+    solution_folder: Folder
+    fcr: First Call Resolution
   admin:
     quests:
       index:

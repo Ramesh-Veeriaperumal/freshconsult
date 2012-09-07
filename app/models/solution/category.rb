@@ -25,6 +25,12 @@ class Solution::Category < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
+
+  def self.folder_names(account)
+    account.solution_categories.map { |category| 
+      [ category.name, category.folders.map {|folder| [folder.id, folder.name] } ]
+    }
+  end
   
   def self.get_default_categories_visibility(user)
     user.customer? ? {:is_default=>false} : {}
