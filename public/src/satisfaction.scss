@@ -157,37 +157,32 @@
 
 .happy-smily-small{
 	background: url("../images/happy-smily-small.png") no-repeat;
-	width:20px;
-	height:21px;
-	display: block;
-	float: right;
-	position: relative;
-	top: 9px;
-	left: -65px;
 }
 
 .unhappy-smily-small{
 	background: url("../images/unhappy-smily-small.png") no-repeat;
-	width:20px;
-	height:21px;
-	display: block;
-	float: right;
-	position: relative;
-	top: 9px;
-	left: -65px;
 }
 
 .neutral-smily-small{
 	background: url("../images/neutral-smily-small.png") no-repeat;
+}
+
+.happy-smily-small, .unhappy-smily-small, .neutral-smily-small {
+	top: 9px;
+	left: -65px;
+
 	width:20px;
 	height:21px;
 	display: block;
 	float: right;
 	position: relative;
-	top: 9px;
-	left: -65px;
 }
 
+#report_feedback {
+	.happy-smily-small, .unhappy-smily-small, .neutral-smily-small {
+		left: -4px;
+	}
+}
 .box-title{
 	font-size:13px;
 	position: relative;
