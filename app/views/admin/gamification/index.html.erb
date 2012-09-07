@@ -7,6 +7,8 @@
   });
 <% end %>
  
+<%= feature?(:scoreboard_enable) %> 
+<%= check_box_tag :scoreboard_enable, feature?(:scoreboard_enable), :selected => feature?(:scoreboard_enable) %>
 <h3 class="title"><%=t('.title')%></h3>
   
 <%= render :partial => "gamification_settings" %>

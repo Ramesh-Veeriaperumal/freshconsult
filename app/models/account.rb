@@ -153,8 +153,8 @@ class Account < ActiveRecord::Base
   has_many :scoreboard_ratings
   has_many :scoreboard_levels
 
-  has_many :quests, :class_name => 'Quest', :conditions => { :active => true }, :order => "updated_at"
-  has_many :all_quests, :class_name => 'Quest', :order => "updated_at"
+  has_many :quests, :class_name => 'Quest', :conditions => { :active => true }, :order => "created_at desc"
+  has_many :all_quests, :class_name => 'Quest', :order => "created_at desc"
 
 
   has_one :day_pass_config

@@ -40,12 +40,6 @@ class Admin::GamificationController < Admin::AdminController
     flash[:notice] = t(:'admin.gamification.successfully_updated')
   end
 
-  def active_quests
-    ##need to fetch only locked quests for the agent.
-    @active_quest = scoper.find(:all)
-    render :partial => '/admin/gamification/quest_dashboard'
-  end
-
   protected
     def scoper
       current_account.quests

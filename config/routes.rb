@@ -95,7 +95,7 @@
     admin.resources :canned_responses
     admin.resources :products
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
-    admin.resources :gamification, :collection => { :enable => :post, :disable => :post, :active_quests => :get, :quests => :get }
+    admin.resources :gamification, :collection => { :enable => :post, :disable => :post, :quests => :get }
     admin.resources :quests, :member => { :deactivate => :put, :activate => :put }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
@@ -243,7 +243,7 @@
     #helpdesk.resources :ticket_issues
 
     helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :user_list => :get, :group_list => :get }, :only => [ :mini_list, :user_list, :group_list ]
-    helpdesk.resources :quests, :collection => { :activity => :get, :achievements => :get }, :only => [ :activity, :achievements ]
+    helpdesk.resources :quests, :collection => { :active => :get, :achievements => :get }, :only => [ :active, :achievements ]
 
     helpdesk.resources :notes
 
