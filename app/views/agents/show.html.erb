@@ -13,20 +13,36 @@ function setUserRole()
 }
 </script>
 
-<% content_for :sidebar do -%> 
+<% content_for :sidebar do -%>
+	<%if feature?(:scoreboard_enable)%> 
 	<div class="side-panel">
+		<% unless @agent.level.blank? %>
 		<div class="level-progress">
 			<!-- Must give the width for the progressbar as an inline style !-->
-			<span class="bar" style="width: 70%;"></span>
+			<% nxtlevel = @agent.next_level %>
+			<% unless nxtlevel.blank? %>
+				<% progress = ((@agent.points / nxtlevel.points) * 100).to_i %>
+			<% end %>	
+			<span class="bar" style="width: <%= progress%>%;"></span>
 			<p>
-				<span class="floatr"><strong>1234</strong> pts</span>
-				Level: <strong>Beginner</strong> 
+				<span class="floatr"><strong><%= h @agent.points %></strong> pts</span>
+				<%= t('level_label') %> : <strong>
+		   			<%= h @agent.level.name %>
+				</strong> 
 			</p>
 		</div>
 		<p class="info-text center">
-			+344pts to become intermediate
+			<% unless nxtlevel.blank? %>
+				<%= t('next_level_info', 
+					:points =>  (nxtlevel.points - @agent.points), 
+					:name => nxtlevel.name ) %>
+			<% end %>
 		</p>
 		<span class="seperator"></span>
+		<% else %>
+			<div class="level-progress"><strong> No levels achieved yet..!! </strong> </div>
+			<span class="seperator"></span>
+		<% end %>
 		<h3 class="title">Badges achieved</h3>
 		<div class="badge-list">
 			<div class="gamesettings-badges badges-elephant">
@@ -43,6 +59,7 @@ function setUserRole()
 			</div>
 		</div>
 	</div>
+	<%end%>
 <%- end %> 
 <div class="contact-box clearfix">
 		<div class="action_buttons">

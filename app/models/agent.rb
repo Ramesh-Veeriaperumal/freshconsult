@@ -49,6 +49,11 @@ end
 
 named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
 
+def next_level
+  return unless points?
+  user.account.scoreboard_levels.next_level_for_points(points).first
+end
+
 protected
   
   def update_agents_level
