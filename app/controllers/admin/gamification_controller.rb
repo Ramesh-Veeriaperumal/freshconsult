@@ -1,6 +1,6 @@
 class Admin::GamificationController < Admin::AdminController
   
-  before_filter { |c| c.requires_feature :scoreboard }
+  before_filter { |c| c.requires_feature :gamification }
 
   def index
     @scoreboard_ratings = current_account.scoreboard_ratings

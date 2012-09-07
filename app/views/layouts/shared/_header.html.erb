@@ -78,7 +78,7 @@
 		</div>
 	</div>	
 </div>
-<% if feature?(:scoreboard) and current_user and current_user.agent? %>
+<% if feature?(:gamification) and current_user and current_user.agent? %>
 	<%= include_stylesheets :notifications %>
 	<% content_for :pagefixed do %>
 		<%= include_javascripts :notifications %>

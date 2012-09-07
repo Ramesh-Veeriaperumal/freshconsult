@@ -6,7 +6,7 @@
     <%= render :partial => '/helpdesk/reminders/reminders', 
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
   </div>
-  <% if feature?(:scoreboard) %>
+  <% if feature?(:gamification) %>
   <div id="leaderboard" class="side-panel">  	
   	<a href="#" class="action-right">See all</a>
   	<h3 class="title">LeaderBoard</h3>  	
