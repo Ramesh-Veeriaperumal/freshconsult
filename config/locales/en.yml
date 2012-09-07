@@ -169,6 +169,8 @@ en:
       expert: Expert
       master: Master
       guru: Guru
+    notifications:
+      newlevel: <b> Hurry! </b><br/> Now you became <b>%{name}</b>.
   quests:
     inactive_quests: Inactive Quests
     date: Date
