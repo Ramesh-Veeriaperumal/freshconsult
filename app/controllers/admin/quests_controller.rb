@@ -6,7 +6,7 @@ class Admin::QuestsController < Admin::AdminController
   before_filter :load_config, :only => [:new, :edit]
 
   QUEST_CRITERIA_TYPES = [
-    { :criteria_type => ['priority', 'source','satisfaction'] },
+    { :criteria_type => ['priority', 'ticket_type','source','satisfaction'] },
     { :criteria_type => [] },
     { :criteria_type => [] }
   ]
@@ -145,6 +145,9 @@ class Admin::QuestsController < Admin::AdminController
           :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => "status", :value => I18n.t('ticket.status'), :domtype => "dropdown", 
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist" },
+        { :name => "ticket_type", :value => t('ticket.type'), :domtype => "dropdown", 
+          :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }, 
+          :operatortype => "choicelist" },
         { :name => "source", :value => I18n.t('ticket.source'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => "solutionstatus", :value => I18n.t('solution.status'), :domtype => "dropdown", 

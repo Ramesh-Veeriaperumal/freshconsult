@@ -1,0 +1,3 @@
+module Helpdesk::LeaderboardHelper
+	
+end
