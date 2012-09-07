@@ -28,13 +28,28 @@ class SupportScore < ActiveRecord::Base
   named_scope :unhappy_customer, {
     :conditions => {:score_trigger => UNHAPPY_CUSTOMER}}
 
-  named_scope :total_score,
-  { 
-      :select => ["users.*, support_scores.*, SUM(support_scores.score) as tot_score"],
-      :joins => [:user],
-      :group => "users.id",
-      :order => "tot_score desc"
+  named_scope :customer_champion, {
+    :conditions => { :score_trigger => [HAPPY_CUSTOMER, UNHAPPY_CUSTOMER] }
   }
+
+  named_scope :group_score,
+  { 
+    :select => ["agent_groups.group_id, SUM(support_scores.score) as tot_score"],
+    #:joins => [:agent_groups],
+    :joins => "INNER JOIN agent_groups on support_scores.user_id = agent_groups.user_id",
+    :group => "agent_groups.group_id",
+    :order => "tot_score desc"
+  }
+
+  named_scope :user_score,
+  { 
+    :select => ["support_scores.*, SUM(support_scores.score) as tot_score"],
+    :include => [:user],
+    :group => "user_id",
+    :order => "tot_score desc"
+  }
+
+  named_scope :limit, lambda { |num| { :limit => num } } 
 
   def self.add_happy_customer(scorable)
     add_support_score(scorable, HAPPY_CUSTOMER)
@@ -63,7 +78,7 @@ class SupportScore < ActiveRecord::Base
     scorable.support_scores.create({      
       :user_id => scorable.user.id,
       :score => score,
-      :score_trigger => 201
+      :score_trigger => TICKET_QUEST
     }) if scorable.user
   end
 
@@ -71,7 +86,7 @@ class SupportScore < ActiveRecord::Base
     scorable.support_scores.create({      
       :user_id => scorable.responder.id,
       :score => score,
-      :score_trigger => 201
+      :score_trigger => TICKET_QUEST
     }) if scorable.responder
   end
   

@@ -18,4 +18,11 @@ class ScoreboardLevel < ActiveRecord::Base
     } 
   }
 
+  named_scope :next_level_for_points, lambda { |points| {
+      :conditions => [ 'points > ?', points ],
+      :limit => 1,
+      :order => 'points ASC'
+    }
+  }
+
 end

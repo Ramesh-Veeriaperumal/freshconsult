@@ -6,53 +6,16 @@
     <%= render :partial => '/helpdesk/reminders/reminders', 
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
   </div>
+  
   <% if feature?(:gamification) %>
-  <div id="leaderboard" class="side-panel">  	
-  	<a href="#" class="action-right">See all</a>
-  	<h3 class="title">LeaderBoard</h3>  	
-  	<p class="intro">This Month</p>  	
-  	<% @champions.each_with_index do |champion, index|%>
-		<% unless champion.tot_score.to_i < 0 %>
-			<div class="panel-list">
-				<div class="panel-row">
-					<%= user_avatar(champion.user, :thumb, 'preview_pic') %>
-					<div class="lb-trophy scoreboard-trophy-forum"></div>
-					<div class="panel-content">
-						<h4><a href="#"><%= champion.user.display_name %></a></h4>
-						<p class="help-text"># Most valuable player #</p>
-					</div>
-				</div>
-			</div>
-		<% end %>
-	<% end %>
-	<div class="panel-row">
-		<div class="preview_pic" size_type="thumb"><img alt="" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif?1345480192"></div>
-		<div class="lb-trophy scoreboard-trophy-love"></div>
-		<div class="panel-content">
-			<h4><a href="#"># Mary J watson #</a></h4>
-			<p class="help-text"># Customer Campion #</p>
-		</div>
-	</div>
-	<div class="panel-row">
-		<div class="preview_pic" size_type="thumb"><img alt="" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif?1345480192"></div>
-		<div class="lb-trophy scoreboard-trophy-sharpshooter"></div>
-		<div class="panel-content">
-			<h4><a href="#"># Bruce Banner #</a></h4>
-			<p class="help-text"># SharpShooter #</p>
-		</div>
-	</div>
-	<div class="panel-row">
-		<div class="preview_pic" size_type="thumb"><img alt="" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif?1345480192"></div>
-		<div class="lb-trophy scoreboard-trophy-fcr"></div>
-		<div class="panel-content">
-			<h4><a href="#"># Sherlock Holmes #</a></h4>
-			<p class="help-text"># FCR #</p>
-		</div>
-	</div>
+  	<%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "mini-leaderboard",
+  						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>
 
-  </div>
+
+  	<div id="quests-section-container" rel="remote" class="side-panel" data-remote-url="/admin/gamification/active_quests">
+  	</div>
   <% end %> 
-  <div id="quests-section-container"  rel="remote" data-remote-url="/admin/gamification/active_quests"></div>
+
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
@@ -111,5 +74,5 @@
 		      jQuery('#TicketSummary').replaceWith(data);
 		  });
 		}, 60);*/
-	jQuery('#quests-section-container').trigger('afterShow');
+	jQuery('#quests-section-container, #mini-leaderboard').trigger('afterShow');
 <%end%>

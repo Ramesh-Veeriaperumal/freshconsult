@@ -6,23 +6,25 @@ class Admin::QuestsController < Admin::AdminController
   before_filter :load_config, :only => [:new, :edit]
 
   QUEST_CRITERIA_TYPES = [
-    { :criteria_type => ['priority', 'ticket_type','source','satisfaction'] },
-    { :criteria_type => [] },
-    { :criteria_type => [] }
+    { :criteria_type => ['priority', 'ticket_type','source','fcr','satisfaction'] },
+    { :criteria_type => ['solutiontype','solution_categories','solution_folders','solution_likes'] },
+    { :criteria_type => ['forum_categories','forums','customer_votes'] }
   ]
 
   OPERATOR_TYPES = {
     :choicelist  => [ "is","is_not"],
     :checkbox    => [ "selected", "not_selected"],
-    :number      => [ "is","is_not"]
+    :number      => [ "is","is_not"],
+    :greater     => ["greater"]
   }
 
   OPERATOR_LIST =  {
-    :is  =>  I18n.t('is'),
+    :is                =>  I18n.t('is'),
     :is_not            =>  I18n.t('is_not'),
     :selected          =>  I18n.t('selected'),
     :not_selected      =>  I18n.t('not_selected'),
-    :contains          =>  I18n.t('contains')
+    :contains          =>  I18n.t('contains'),
+    :greater           => '>'
   }
 
   QUEST_MODE = [
@@ -145,21 +147,30 @@ class Admin::QuestsController < Admin::AdminController
           :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => "status", :value => I18n.t('ticket.status'), :domtype => "dropdown", 
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist" },
+        { :name => "source", :value => I18n.t('ticket.source'), :domtype => "dropdown", 
+          :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => "fcr", :value => I18n.t('quests.fcr'),:choices =>[['true','true']], :domtype => "dropdown" },
+        { :name => "solutiontype", :value => I18n.t('solution.type'), :domtype => "dropdown", 
+          :choices => Solution::Article::TYPE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => "solution_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
+          :choices => current_account.solution_categories.map{|solution| [solution.id, solution.name]}, :operatortype => "choicelist" },
+        { :name => "solution_folders", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
+          :choices => Solution::Category.folder_names(current_account), :operatortype => "choicelist" },
+        { :name => "satisfaction", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
+          :choices => Survey.survey_names(current_account), :operatortype => "choicelist" },
+        { :name => "forum_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
+          :choices => current_account.forum_categories.map{|forum| [forum.id, forum.name]}, :operatortype => "choicelist" },
+        { :name => "forums", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
+          :choices => ForumCategory.forum_names(current_account), :operatortype => "choicelist" }, 
+        { :name => "datetime", :value => I18n.t('quests.date'), :domtype => "dropdown", 
+          :choices => QUEST_TIME_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => "ticket_type", :value => t('ticket.type'), :domtype => "dropdown", 
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }, 
           :operatortype => "choicelist" },
-        { :name => "source", :value => I18n.t('ticket.source'), :domtype => "dropdown", 
-          :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
-        { :name => "solutionstatus", :value => I18n.t('solution.status'), :domtype => "dropdown", 
-          :choices => Solution::Article::STATUS_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
-        { :name => "solutiontype", :value => I18n.t('solution.type'), :domtype => "dropdown", 
-          :choices => Solution::Article::TYPE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
-        { :name => "satisfaction", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
-          :choices => Survey.survey_names(current_account), :operatortype => "choicelist" },
-        { :name => "forums", :value => I18n.t('quests.forums'), :domtype => "dropdown", 
-          :choices => Forum.forum_names(current_account), :operatortype => "choicelist" }, 
-        { :name => "datetime", :value => I18n.t('quests.date'), :domtype => "dropdown", 
-          :choices => QUEST_TIME_BY_KEY.sort, :operatortype => "choicelist" }
+        { :name => "customer_votes", :value => I18n.t('quests.customer_votes'), :domtype => "text", 
+          :operatortype => 'greater' },
+         { :name => "solution_likes", :value => I18n.t('quests.solution_likes'), :domtype => "text", 
+          :operatortype => 'greater' }
         
       ]
       add_custom_filters filter_hash
