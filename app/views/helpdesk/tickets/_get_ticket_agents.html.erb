@@ -1,3 +1,6 @@
+<a data-agent-id="-" data-ticket-id="<%= ticket_id %>" class="action_assign_agent" data-value="-" href="">Unassigned</a>
+<a data-agent-id="me" data-ticket-id="<%= ticket_id %>" class="action_assign_agent" data-value="<%= current_user.name %>" href="">Me</a>
+<span class="seperator"></span>
 <% if @agents.blank? %>
   <a class="disabled">No agents in selected group</a>
 <% else %>

@@ -108,104 +108,58 @@ jQuery(document).ready(function() {
 
 	bulkActionButtonsDisabled();
 	
-	// Quick Actions	
-	// Assign Agent
-	jQuery('.action_assign_agent').live("click",function(ev) {
-		
+	// Quick Actions
+	jQuery('.action_assign').live("click", function(ev) {
 		ev.preventDefault();
+
 		selected_item = jQuery(this);
-		ticket_id = selected_item.data('ticket-id');
+
+		if (selected_item.hasClass('active')) {
+			hideActiveMenu();
+			return false;
+		}
+
+		full_menu = selected_item.parent().parent();
+		full_menu.addClass('loading');
+
+		ticket_id = full_menu.data('parent').data('object-id');
 		agent_user_id = selected_item.data('agent-id');
-		new_text = selected_item.text();
-
-		full_menu = selected_item.parent();
-		full_menu.addClass('loading');
-		jQuery.ajax( {
-			type: "POST",
-			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign: 'agent', value : agent_user_id, _method: 'put'},
-			success: function (data) {
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').animateHighlight();
-
-				full_menu.find('.ticksymbol').remove();
-				selected_item.prepend(ticksymbol);
-				selected_item.addClass('active').siblings().removeClass('active');
-				full_menu.removeClass('loading');
-
-				hideActiveMenu();
-			}
-		});
-	});
-
-	// Assign Status
-	jQuery('.action_assign_status').live("click",function(ev) {
-		
-		ev.preventDefault();
-		selected_item = jQuery(this);
-		new_text = selected_item.text();
-
-		full_menu = selected_item.parent();
-		full_menu.addClass('loading');
-
-		ticket_id = full_menu.data('parent').data('object-id');
-		new_status = selected_item.data('status-id');
+		assign_action = selected_item.data('assign-action');
+		new_value = selected_item.data('value');
+		new_text = selected_item.data('text') || selected_item.text();
 
 		jQuery.ajax( {
 			type: "POST",
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign:'status', disable_notification: ev.shiftKey, value : new_status, _method: 'put' },
+			data: {assign: assign_action, value : new_value, disable_notification: ev.shiftKey, _method: 'put'},
 			success: function (data) {
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').animateHighlight();
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').text(new_text);
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').animateHighlight();
 
-				full_menu.find('.ticksymbol').remove();
-
-				jQuery('[data-ticket=' + ticket_id + ']').removeClass('ticket-status-4').removeClass('ticket-status-5');
-				if (new_status == 4 || new_status == 5) {
-					jQuery('[data-ticket=' + ticket_id + ']').addClass('ticket-status-' + new_status);
+				//Special Processing for Priority
+				if (assign_action == 'priority') {
+					priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
+					priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_value]);
 				}
-				selected_item.prepend(ticksymbol);
-				selected_item.addClass('active').siblings().removeClass('active');
-				full_menu.removeClass('loading');
-				hideActiveMenu();
-			}
-		});
-	});
 
-	// Assign Priority
-	jQuery('.action_assign_priority').live("click",function(ev) {
-		
-		ev.preventDefault();
-		selected_item = jQuery(this);
-		new_text = selected_item.text();
-
-		full_menu = selected_item.parent();
-		full_menu.addClass('loading');
-
-		ticket_id = full_menu.data('parent').data('object-id');
-		new_priority = selected_item.data('priority-id');
-
-		jQuery.ajax( {
-			type: "POST",
-			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign:'priority', value : new_priority, _method: 'put'},
-			success: function (data) {
-				priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
-				priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_priority]);
-
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').animateHighlight();
+				//Special Processing for Status
+				if (assign_action == 'status') {
+					jQuery('[data-ticket=' + ticket_id + ']').removeClass('ticket-status-4').removeClass('ticket-status-5');
+					if (new_value == 4 || new_value == 5) {
+						jQuery('[data-ticket=' + ticket_id + ']').addClass('ticket-status-' + new_value);
+					}
+				}
 
 				full_menu.find('.ticksymbol').remove();
 				selected_item.prepend(ticksymbol);
-
 				selected_item.addClass('active').siblings().removeClass('active');
 				full_menu.removeClass('loading');
 
 				hideActiveMenu();
 			}
 		});
+
+		return false;
 	});
 
 	jQuery('#leftViewMenu a[rel=default_filter]').click(function(ev) {
@@ -224,6 +178,6 @@ if (getCookie('ticket_list_updated') == "true") {
 		if (window.localStorage['is_unsaved_view']) {
 			jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
 		}
-		setCookie('ticket_list_updated',false);	
+		setCookie('ticket_list_updated',true);
 	}
 }
