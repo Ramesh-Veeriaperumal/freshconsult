@@ -59,7 +59,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def set_discount_expiry
-    self.discount_expires_at = discount.calculate_discount_expiry
+    self.discount_expires_at = discount.calculate_discount_expiry if discount
   end
   
   # This hash is used for validating the subscription when a plan
