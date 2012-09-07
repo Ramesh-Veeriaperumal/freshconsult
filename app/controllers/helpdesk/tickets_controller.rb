@@ -418,8 +418,8 @@ class Helpdesk::TicketsController < ApplicationController
       unless params[:assign] == 'agent'
         @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
       else
-        agent = current_account.agents.find_by_user_id(params[:value])
-        @item.responder = agent.user
+        @item.responder = nil
+        @item.responder = current_account.users.find(params[:value]) unless params[:value]== "-"
       end
       @item.save
       render :json => {:success => true}.to_json
