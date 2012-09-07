@@ -30,6 +30,13 @@ class ForumCategory < ActiveRecord::Base
     find :all, options.update(:conditions => {:account_id => account}, :order => 'name')
   end
   
+  def self.forum_names(account)
+    account.forum_categories.map { |category| 
+      [ category.name, category.user_forums.map {|forum| [forum.id, forum.name] } ]
+    }
+  end
+
+
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
