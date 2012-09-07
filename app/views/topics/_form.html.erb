@@ -1,3 +1,4 @@
+<%= include_tiny_mce_if_needed %>
 <ul class="ui-form">
 	<li>
 		<label for="topic_title"><%= t('topic.name') %>*</label>
@@ -6,9 +7,9 @@
 	<li>
 		<label for="topic_body"><%= t('message') %></label>
 		<% if @topic.new_record? %>
-			<%= form.text_area  :body_html, :class=>"topic", :id => 'topic_body' %>
+			<%= form.text_area  :body_html, :class=>"mceEditor", :id => 'topic_body' %>
 		<% else %>
-			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html %>
+			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class=>"mceEditor"%>
 		<% end %>
 	</li>
 	<% if admin? and not @topic.new_record? %>
