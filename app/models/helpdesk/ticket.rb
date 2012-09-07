@@ -10,6 +10,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
+  include BusinessRulesObserver
   include Mobile::Actions::Ticket
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", "header_info"]
@@ -24,7 +25,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   unhtml_it :description
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :disable_observer
   
   before_validation :populate_requester, :set_default_values
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
@@ -39,10 +40,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-       :stop_timesheet_timers
+       :stop_timesheet_timers, :fire_update_event
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
-  
+
   belongs_to :email_config
   belongs_to :group
  
@@ -51,6 +52,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+  
 
   belongs_to :sphinx_requester,
     :class_name => 'User',
@@ -238,7 +240,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
-    
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -902,7 +903,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
- 
   def can_access?(user)
     if user.agent.blank?
       return true if self.requester_id==user.id
@@ -932,7 +932,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
 
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      Helpdesk::Ticket.update_all("description_html= '#{description_html}'", ["id=? and account_id=?", id, account_id]) \
+      Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
           if description_html_changed?
     end
 
@@ -1084,5 +1084,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.save unless schema_less_ticket.changed.empty?
     end
 
+    def fire_update_event
+      fire_event(:update) unless disable_observer
+    end
 end
-  

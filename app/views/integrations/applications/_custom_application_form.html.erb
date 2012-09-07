@@ -1,0 +1,67 @@
+<% content_for :sidebar do -%>
+  <div class="sidepanel helpcard">
+    <%= t("integrations.custom_application.helptext", :full_domain => current_account.full_domain) %>
+  </div>
+  <div id="preview" title="Preview"></div>
+<%- end %>
+  <%widget = @application.widgets.first 
+  disp_in_pages = widget.display_in_pages_option || {}%>
+
+
+  <ul class="ui-form">  
+    <li class="inline-field">
+      <label class="caption">
+        <div class="logo application-logo-custom_app"></div>
+        <div class="logo info-data">
+          <%= t(@application.description) %>
+        </div>
+      </label>
+      <div class="fields">
+        <ul class="app-form">
+          <li class="field">
+            <label class="caption"><%=t('integrations.custom_application.name')%></label>
+            <%= text_field_tag "application[display_name]", @application.display_name%>
+          </li>
+          <li class="field">
+            <label class="caption"><%=t('integrations.custom_application.description')%></label>
+            <%= text_field_tag "application[description]", @application.description%>
+          </li>
+          <li class="field">
+            <label class="caption"><%=t('integrations.custom_application.script')%></label>
+            <%= text_area_tag "application[script]", widget.script%>
+          </li>
+          <li class="field">
+            <label class="checkwrapper">
+              <%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", 
+                      disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>
+                  Show the widget in ticket view page. 
+                  | <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"ticket" %>
+            </label>
+            <label class="checkwrapper">
+              <%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", 
+              disp_in_pages.include?('contacts_show_page_side_bar')%>
+              Show the widget in contact view page. 
+              | <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"contact" %>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+    </li>
+  </ul>
+<%#<div id="capsule_widget" domain="hirickross.capsulecrm.com" title="Custom CRM App"><div class="content"></div></div><script type="text/javascript">CustomWidget.include_js("/javascripts/capsule_crm.js");capsuleBundle={ t:"748b80fb0f4ecd19b68561dcc39c9f4f", reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; </script>%>
+<% javascript_tag do %>
+  jQuery('.preview_link').bind("click", function(ev){
+      ev.preventDefault();
+      jQuery("#preview").html("<div class='loading-box'></div>"); 
+      params = {"application_script": jQuery("#application_script").val()};
+      jQuery.ajax({
+        url: "/integrations/applications/custom_widget_preview/"+this.getAttribute("preview_page"),
+        type: "POST",
+        data: params,
+        dataType: "script",
+        success: function(msg){ 
+        }
+      }); 
+  }); 
+<%end%>

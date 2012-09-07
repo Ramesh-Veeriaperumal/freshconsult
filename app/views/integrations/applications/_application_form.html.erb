@@ -7,6 +7,7 @@
 	<div class="fields">
 		<%= application_form.error_messages %>
 		<%= hidden_field_tag  :application_id,  params[:application_id] %> 
+		<ul class="app-form">
 		<% all_field_values = @installed_application.configs[:inputs] unless @installed_application.blank? or @installed_application.configs.blank?
 			unless @installing_application.options.blank?%>
 			<% @installing_application.options[:keys_order].each do |input_key|
@@ -18,15 +19,17 @@
 			    end
 
 				unless input_value.blank? %>
-					<%= construct_ui_element :configs, input_key.to_s, input_value, field_value%>
+				<li class="field <%=input_value[:css_class]%>">
+					<%= construct_ui_element :configs, input_key.to_s, input_value, field_value, @installed_application, form%>
 					<%# Move the below line into construct_ui_element method.%>
 					<%= content_tag(:div, t(input_value[:info]), :class => "info-data") unless input_value[:info].blank? %>
 					<span class="seperator"></span>
+				</li>
 			 <% end %>
 		  <% end %>
 		<% end %>
+		</ul>
 	</div>
 
 <%= javascript_include_tag 'ghost-mod' %>
 <%= stylesheet_link_tag 'ghost-style' %> 
-	

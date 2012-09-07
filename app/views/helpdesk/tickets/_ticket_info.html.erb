@@ -23,52 +23,24 @@
         %>
         <%=customer_opinion%>
 
-        <div id="adjacents"></div>
+        <div id="adjacents" class="toolbar_pagination"></div>
       </div>
-			<div class="description">         
+      <div class="description">         
         <div class="user_details">
-			    <%= user_avatar(@ticket.requester)  %>
-			    <% if is_application_installed?("capsule_crm") %>
-				    <textarea id="widget-capsule-crm" style="display:none;">
-					    <% @liquid_objects = {"requester" => @ticket.requester} %>
-				 	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
-				    </textarea>
-				    <div class="app-link">
-					    <a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
-						    <%= image_tag("application-logo/capsule_crm-small.png") %>
-					    </a>
-				    </div> 
-	        <% end %>
+          <%= user_avatar(@ticket.requester)  %>
+          <% if is_application_installed?("capsule_crm") %>
+            <textarea id="widget-capsule-crm" style="display:none;">
+              <% @liquid_objects = {"requester" => @ticket.requester} %>
+              <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
+            </textarea>
+            <div class="app-link">
+              <a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
+                <%= image_tag("application-logo/capsule_crm-small.png") %>
+              </a>
+            </div> 
+          <% end %>
           
-          <textarea id="contact-hovercard" style="display:none;">
-            <div class="contact_hover">
-              <%= user_avatar(@ticket.requester) %>
-              <%= content_tag :div, link_to(h(@ticket.requester.display_name), @ticket.requester), :class => "user_name" %>
-
-              <div class="user_desig">
-                <%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @ticket.requester } %>
-              </div>
-
-              <%= content_tag :div, h(@ticket.requester.email), :class => "user_email" unless @ticket.requester.email.blank?  %>
-              <%= content_tag :div,"", :class => "clearfix" unless @ticket.requester.email.blank? and @ticket.requester.customer.blank?  %>
-              <% is_desig_and_email_available = @ticket.requester.email.blank? and @ticket.requester.customer.blank? %>
-              <%=  '<div>' if is_desig_and_email_available %>
-                  <%= content_tag :div, h(@ticket.requester.twitter_id), :class => "user_twitter" unless @ticket.requester.twitter_id.blank?  %>
-              <%= '</div>' if is_desig_and_email_available %>
-              
-              <div class="clearfix"></div>
-                <%= content_tag :div, h(@ticket.requester.phone), :class => "user_phone" unless @ticket.requester.phone.blank?  %>
-                <%= content_tag :div, h(@ticket.requester.mobile), :class => "user_mobile" unless @ticket.requester.mobile.blank?  %>
-            </div>
-          </textarea>
-
-           <%
-                          contact = @ticket.requester
-                          contact = "javascript:void(0)" unless current_user.can_view_all_tickets?
-          %>
- 
-          <%= link_to( h(@ticket.requester.display_name), contact, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "contact-hovercard" )%>
-          
+              <%= show_contact_hovercard(@ticket.requester) %>
           <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
           on <%= formated_date(@ticket.created_at) %>
           <div class="info"> 
@@ -83,30 +55,30 @@
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %> 
           <%= content_tag :span, t("helpdesk.tickets.show.meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
           </div> 
-		  <% cc_email_hash_value = @ticket.cc_email_hash %>
+      <% cc_email_hash_value = @ticket.cc_email_hash %>
           <% unless cc_email_hash_value.nil? %>
             <% @cc_email_count = cc_email_hash_value[:cc_emails].length %> 
             <div class="info">
-				<%if @cc_email_count > 0 %>            	           
-                	<%if @cc_email_count < 3 %>
-                  		<%= content_tag :span, "Cc: " + cc_email_hash_value[:cc_emails].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" %>  
-                	<% else %>
-                  		<%= content_tag :span, "Cc: " + cc_email_hash_value[:cc_emails][0,2].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ cc_email_hash_value[:cc_emails][2,@cc_email_count].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@cc_email_count-2} "+t('ticket_cc_email_more')+"</a>", :class => "" %>  
-                	<% end %>
-				<% end %>             
+        <%if @cc_email_count > 0 %>                        
+                  <%if @cc_email_count < 3 %>
+                      <%= content_tag :span, "Cc: " + cc_email_hash_value[:cc_emails].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" %>  
+                  <% else %>
+                      <%= content_tag :span, "Cc: " + cc_email_hash_value[:cc_emails][0,2].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='ccEmailMoreContainer hide'>,&nbsp;"+ cc_email_hash_value[:cc_emails][2,@cc_email_count].collect{ |cc_e| cc_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideEmailContainer();'  class='ccEmailMoreLink'> #{@cc_email_count-2} "+t('ticket_cc_email_more')+"</a>", :class => "" %>  
+                  <% end %>
+        <% end %>             
             </div>
           <% end %> 
         </div>
         <% unless @ticket.deleted %>
-          <div class="ticket_actions">          	
-           	<div class="item-right-actions">
-        			<ul class="nav-drop"> 
-        				<li>
-        					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
+          <div class="ticket_actions">            
+            <div class="item-right-actions">
+              <ul class="nav-drop"> 
+                <li>
+                  <a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
                   <ul class="menu-box">
                     <li class="menu-item"> 
                        <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
-                    </li>	 
+                    </li>  
                     <li class="menu-item">
                       <%= link_to(t('ticket.delete_btn'), helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :delete, :title => t('ticket.delete_btn_title')) %>
                     </li>
@@ -117,8 +89,8 @@
             <div class="action_buttons clearfix">
               <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket", "data-ajax-dialog" => true %>
-              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
-            </div>	
+              <%= link_to(t('ticket.close_btn'), "#", :title  => t('ticket.close_btn_title'), :class => "last" , :id=>"close_ticket_btn" , :"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
+            </div>  
             <div class="action_icons floatr"> 
               <% if is_application_installed?("jira")  %>   
                   <%= render :partial => "/helpdesk/integrations/jira_issue"%>
@@ -130,7 +102,7 @@
                 <%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
               </span>
             </div>
-     	    </div>	
+          </div>  
         <% end %>
         <div class="request-wrapper">
         <div id="description-full" class="request_mail details min_height">
@@ -155,3 +127,13 @@
       </div>
     </div>
   </div>
+
+<% content_for :onload_script do %>  
+ jQuery('#close_ticket_btn').live('click', function(ev){
+    ev.preventDefault();
+    var form = jQuery("<form>")
+                .attr("method", "post")
+                .attr("action", jQuery(this).attr('data-href') +"?disable_notification=" + ev.shiftKey);
+     form.submit();
+    });
+<% end %>

@@ -160,7 +160,7 @@ ul.activityfeed li{
 		margin:0px 0px 14px 0px;
 		color:#444;
 	}  
-	 h4{
+	h4{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
@@ -659,61 +659,12 @@ body h5{
 	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
 
 	#adjacents {
-		float: right;
-		width: 60px;
 		margin:4px 6px;
 		position: absolute;
 		right: 0;
 		top: 0;
-
-		.prev, .next {
-			width: 16px;
-			height: 16px;
-			padding: 4px 5px 5px 4px;
-			display: block;
-			float:left;
-			margin:0 1px;
-			background-color:#EDEDED;
-			@include vertical-gradient(#f4f4f4, #ededed);
-			border:solid 1px #d6d6d6;
-			@include border-radius(3px 0 0 3px);
-			text-align:center;
-
-			span {
-				width:16px;
-				height:16px;
-				display:inline-block;
-				text-indent: 100%;
-				white-space: nowrap;
-				overflow: hidden;
-			}
-
-			&:hover {
-				border-color:#acacac;
-				@include vertical-gradient(#e6e6e6, #d7d7d7);
-			}
-
-			&.disabled, .disabled:hover {
-				background: #f8f8f8;
-				border-color:#eee;
-				span {
-					@include opacity(0.1);
-				}
-			}
-		}
-
-		.prev {
-			span  {
-				background:sprite($symbol, prev-arrow) no-repeat;
-			}
-			margin-left: 2px;
-		}
-		.next {
-			span  {
-				background:sprite($symbol, next-arrow) no-repeat;
-			}
-			@include border-radius(0 3px 3px 0);
-		}
+		left:auto;
+		bottom:auto;
 	}
 }
 h4.title{
@@ -3585,7 +3536,7 @@ div.addReminder{
          margin-top:3px;
          margin-left:-55px;         
          @include corners(5px);
-         border:1px solid #9a9a9a;
+         border:1px solid #CCC;
          height:45px;
          img{ 
             width:45px; height:45px;
@@ -3828,6 +3779,8 @@ div.addReminder{
 		text-align:center; 
 		img{
 		   max-width:130px;
+		   width: 90px;
+		   height:90px;
 		}
 	}
 	.info-highlight{
@@ -4860,7 +4813,7 @@ a.close{
       color:#333;
       font-size:16px;
       font-weight:normal;
-      padding:8px 8px 10px 8px;
+      padding:8px 8px 10px 0;
       margin:0;
    }
    h4.title{
@@ -4885,7 +4838,7 @@ a.close{
 			display:none;
       	}
 	   	.ff_item{
-			margin:0 6px 0;
+			margin:0 6px 0 0;
 			padding:4px 2px 10px;
 		}
 	   	.item{
@@ -4933,10 +4886,6 @@ a.close{
 		display:inline-block;
 		margin:8px 0 2px;
 
-		#view_manage_links {
-			display: inline-block;
-			zoom:1;
-		}
 	.link-item.active, a.link-item:hover{
      margin:0px -5px;
      padding-left:13px;
@@ -4980,21 +4929,23 @@ a.close{
 			}
 
 		}
+	}   
+}
+
+.leftFilter {
+
+	#save_filter, #view_manage_links {
+		visibility: hidden;
+	}
+	#view_manage_links {
+		display: inline-block;
 	}
 
-
-   .leftFilter {
-
+	&:hover{
 		#save_filter, #view_manage_links {
-			visibility: hidden;
+			visibility: visible;
 		}
-		&:hover{
-			#save_filter, #view_manage_links {
-				visibility: visible;
-			}
-		}
-   }
-   
+	}
 }
 
 .scroll_fixed_options .leftFilter {
@@ -5088,8 +5039,6 @@ a.close{
    background:#ffffff;
    padding:5px 0;
    z-index:999999;
-   max-height: 420px;
-   overflow-y:auto;
    @include min-width(250px);
    @include opacity(0.95);
    @include corners(5px);
@@ -5113,7 +5062,10 @@ a.close{
       }
       .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
-   a:hover{
+   a.hide {
+   	display:none;
+   }
+   a:hover, a.selected{
       color:#FFF;
       background: #999;
 	  @include text-shadow(none);
@@ -5142,7 +5094,14 @@ a.close{
 
 			&:hover {
 				@include text-shadow(none);
-				color:#FFF;
+				color:#333;
+   				background:#ffffff;
+
+   				&.selected {
+					color:#FFF;
+					background: #999;
+					@include text-shadow(none);
+   				}
 			}
 
 			.ticksymbol {
@@ -5150,14 +5109,30 @@ a.close{
 			}
 		}
 
+		.contents {
+			max-height: 400px;
+			overflow-y:auto;
+			display:block;
+		}
 		&.loading {
 			background-image:url('/images/loading.gif');
 			background-repeat:no-repeat;
 			background-position: center;
 			padding:20px 10px;
 
-			a, li {
+			a, li, .contents, .menu_search {
 				display:none;
+			}
+		}
+
+		.menu_search {
+			&.invisible {
+				height:0px;
+				margin-top:-1px;
+				margin-bottom:-1px;
+				padding:0px;
+				border:none;
+				position:absolute;
 			}
 		}
 
@@ -5669,7 +5644,6 @@ a.close{
 	.ui-form {
 		background:none;
 		border:none;
-
 		div.field {
 			float:left;
 			margin:5px 0;
@@ -5734,6 +5708,70 @@ a.close{
 	}
 
 }
+
+.remote_support{
+	.session_data{
+		text-align: center;
+		.pin_submit{
+			margin-top: 15px;
+		}
+		.tech_console{
+			margin-top: 5px;
+		}	
+	}
+	.active_header{
+		font-weight: bold;
+	}
+	.active_session_pin{
+		border: 1px solid #D4D4D4;
+		text-align: center;
+		margin-top: 5px;
+		border-radius: 4px;
+		-moz-border-radius: 4px;
+		padding: 15px 10px;
+		background-color: #FDF8D8;
+
+		.pincode{
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+	}
+	.resend{
+		margin-top: 5px;		
+	}
+	
+}
+
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right top no-repeat;
+}
+
+
+.error{
+	color: #F00;
+}
+
+
+#integrations-list {
+	display:block;
+	overflow: hidden;
+	margin: 0 -20px;
+
+	.search {
+		position: relative;
+		right:10px;
+		top: 0px;
+	}
+	ul.table-list {
+		margin: 15px 0 0 0;
+	}
+
+	.tabs {
+		margin-bottom: 10px;
+	}
+}
+
 
 .crm_contact_widget {
 	.content { width:auto; }
@@ -6592,18 +6630,18 @@ a.mobile_switchBtn {
     }
 
     .survey-form-left{
-        width: 220px;
+        width: 260px;
         float: left;
     }
     .survey-form-left h3{
-        font: normal 16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
         color: #000;
-        padding: 14px 0px 10px 10px;
+        padding: 19px 0px 10px 10px;
         min-height: 30px;
     }
 
     .survey-form-right{
-        width: 565px;
+        width: 530px;
         float: left;
     }
 
@@ -6617,14 +6655,26 @@ a.mobile_switchBtn {
         padding: 8px 0px 0px 0px;
     }
 
+     .survey-form-close {
+    	ul.survey-options li a:hover, ul.survey-options li.active a{
+        		background-color: transparent;
+        		border: 0;
+        		height:30px;
+        		-webkit-box-shadow: inset 0px 0px 0px #ccc;
+            	-moz-box-shadow: inset 0px 0px 0px #ccc;
+              	-ms-box-shadow: inset 0px 0px 0px #ccc;
+                     	box-shadow: inset 0px 0px 0px #ccc;        
+    	}
+    }
+
 
     ul.survey-options li a{
         display: inline-block;
         color: #333;
-        width: 119px;
-        height: 40px;
-        padding: 17px 1px 0px 61px;
-        border: 1px #ededed solid;
+        height: 30px;
+        padding: 10px 20px 0px 41px;
+        background-color: #f4f4f4;
+        border: 1px #e8e8e8 solid;
         margin-right: 5px;
         font-size: 14px;
         background-repeat: no-repeat; 
@@ -6635,50 +6685,58 @@ a.mobile_switchBtn {
                 border-radius: 3px;
     }
 
-    .survey-form-close {
-    	ul.survey-options li a:hover, ul.survey-options li.active a{
-        		background-color: transparent;
-        		border: 0;
-        		height:40px;
-        		-webkit-box-shadow: inset 0px 0px 0px #ccc;
-            	-moz-box-shadow: inset 0px 0px 0px #ccc;
-              	-ms-box-shadow: inset 0px 0px 0px #ccc;
-                     	box-shadow: inset 0px 0px 0px #ccc;        
-    	}
-    }	
+   	
 
     ul.survey-options li a:hover{
-        background-color: #fafafa;
+        background-color: #f9f9f9;
     }    
 
     ul.survey-options li.active a{
-        background-color: #fafafa;
-        height: 50px;
-        border: 1px #ccc solid;
-        -webkit-box-shadow: inset 0px 0px 10px #ccc;
-            -moz-box-shadow: inset 0px 0px 10px #ccc;
-              -ms-box-shadow: inset 0px 0px 10px #ccc;
-                     box-shadow: inset 0px 0px 10px #ccc;
-        -webkit-border-radius: 3px 3px 0px 0px;
-           -moz-border-radius: 3px 3px 0px 0px;
-             -ms-border-radius: 3px 3px 0px 0px;
-                    border-radius: 3px 3px 0px 0px;
+        background-color: #a5a5a5;
+        color: #fff;
+        height: 30px;
+        border: 1px #a5a5a5 solid;
+        -webkit-box-shadow: inset 1px 1px 3px #7c7c7c;
+            -moz-box-shadow: inset 1px 1px 3px #7c7c7c;
+              -ms-box-shadow: inset 1px 1px 3px #7c7c7c;
+                     box-shadow: inset 1px 1px 3px #7c7c7c;
+        -webkit-border-radius: 3px ;
+           -moz-border-radius: 3px ;
+             -ms-border-radius: 3px ;
+                    border-radius: 3px ;
     }
 
     ul.survey-options li a.happy{
-        background-image: url(../images/happy-smily-tab.png);
+        background-image: url(../images/portal/smiley-good.png);
     }
 
     ul.survey-options li a.neutral{
-        background-image: url(../images/neutral-smily-tab.png);
+        background-image: url(../images/portal/smiley-neutral.png);
     }
 
     ul.survey-options li a.unhappy{
-        background-image: url(../images/unhappy-smily-tab.png);
+        background-image: url(../images/portal/smiley-bad.png);
+    }
+
+    span.happy, span.neutral, span.unhappy{
+         padding: 5px 20px 10px 30px;
+         margin: 4px 0px 0px 10px;
+         display: inline-block;
+    }
+
+     span.happy{
+        background: url(../images/portal/smiley-good.png) no-repeat;
+    }
+
+    span.neutral{
+        background: url(../images/portal/smiley-neutral.png) no-repeat;
+    }
+
+    span.unhappy{
+        background: url(../images/portal/smiley-bad.png) no-repeat;
     }
 
     .survey-comment{
-        border-top: 2px #919191 solid;
         display: none;
         width: 559px;
     }
@@ -6698,55 +6756,52 @@ a.mobile_switchBtn {
     }
 
     .survey-comment textarea{
-        width: 460px;
-        height: 58px;
-        float: left;
+        width: 500px;
+        height: 40px;
+        clear: both;
     }
 
     .survey-comment input[type="button"],.survey-comment input[type="submit"]{
         width: 80px;
-        margin-left: 10px;
-        margin-bottom:3px;
+        margin: 10px 10px 10px 0px;
         text-transform: capitalize;
-        float: left;
-        padding: 7px 0px 6px 0px;
+        padding: 4px 0px 4px 0px;
         display: inline-block;
         border: 1px #8a8a8a solid;
-        color: #fff;
+        color: #252525;
         cursor: pointer;
-        text-shadow: -1px -1px -1px #6c6c6c;
+        text-shadow: 0px 1px 0px #fff;
          font: normal 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
         -webkit-border-radius: 3px;
            -moz-border-radius: 3px;
             -ms-border-radius: 3px;
                 border-radius: 3px;
-        background: #b2b2b2; /* Old browsers */
-        /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2IyYjJiMiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1YTVhNWEiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-        background: -moz-linear-gradient(top,  #b2b2b2 0%, #5a5a5a 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b2b2b2), color-stop(100%,#5a5a5a)); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  #b2b2b2 0%,#5a5a5a 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  #b2b2b2 0%,#5a5a5a 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  #b2b2b2 0%,#5a5a5a 100%); /* IE10+ */
-        background: linear-gradient(to bottom,  #b2b2b2 0%,#5a5a5a 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b2b2b2', endColorstr='#5a5a5a',GradientType=0 ); /* IE6-8 */
+	background-color: #e8e8e8; // Old browsers
+	@include filter-gradient(#e8e8e8, #d9d9d9, vertical); // IE6-8
+	// IE9 SVG, needs conditional override of 'filter' to 'none'
+	$experimental-support-for-svg: true;
+	@include background-image(linear-gradient(top,  #e8e8e8 0%,#d9d9d9 100%));
+        
     }
 
     .survey-comment input[type="button"]:hover,.survey-comment input[type="submit"]:hover{
-        background: #8e8e8e;
+        background: #e8e8e8;
     }
 
     .survey-comment input[type="button"]:active,.survey-comment input[type="submit"]:active{
-        background: #6e6e6e;
-        border-bottom: 1px #ccc solid;
-        -webkit-box-shadow: inset 0px 0px 3px #444;
-           -moz-box-shadow: inset 0px 0px 3px #444;
-            -ms-box-shadow: inset 0px 0px 3px #444;
-                box-shadow: inset 0px 0px 3px #444;
+        
+	background-color: #ababab; // Old browsers
+	@include filter-gradient(#ababab, #646464, vertical); // IE6-8
+	$experimental-support-for-svg: true;
+	@include background-image(linear-gradient(top,  #ababab 0%,#646464 100%));
+             border-bottom: 1px #8a8a8a solid;
+             color: #fff;
+             text-shadow: 0px 1px 0px #333;
+        
     }
 
 .close-comment{
-    width: 400px;
+    width: 500px;
     float: left;
     margin-top: 10px;
     padding: 5px 3px 0px 0px;
