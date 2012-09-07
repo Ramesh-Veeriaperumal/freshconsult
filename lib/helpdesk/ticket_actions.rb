@@ -234,6 +234,7 @@ module Helpdesk::TicketActions
       url = attachment.content.url.split('?')[0]
       @target_note.attachments.build(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
     end
+    @target_note.save
     if !@target_note.private
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , {:include_cc => true})
     end
