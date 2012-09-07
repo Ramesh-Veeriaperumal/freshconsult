@@ -1,6 +1,6 @@
 <% unless @active_quest.empty? %>
 	<div id="quests-section">
-	  	<a href="#" class="action-right">See all</a>
+	  	<%= link_to "See all", achievements_helpdesk_quests_path, :class => "action-right" %>
 	  	<h3 class="title">Quest</h3>  
 	  	<div id="quests-container" class="panel-list">
 	  		<% @active_quest.each do |quest| %>

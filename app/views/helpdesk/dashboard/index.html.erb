@@ -11,9 +11,8 @@
   	<%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "mini-leaderboard",
   						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>
 
-
-  	<div id="quests-section-container" rel="remote" class="side-panel" data-remote-url="/helpdesk/quests/active">
-  	</div>
+    <%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "quests-section-container",
+               "data-remote-url" => active_helpdesk_quests_path() %>
   <% end %> 
 
   <%= render :partial => '/helpdesk/shared/history' %>

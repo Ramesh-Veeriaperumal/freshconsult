@@ -20,19 +20,21 @@
 			</p>
 		</div>
 		<% board[0].each_with_index do |score_card, i| %>
-			<% current_user_class = (score_card.user == current_user) ? "lb-cu" : "" %>
-			<div class="panel-row <%= current_user_class %> ">
+			<% content_tag :div, :class => "panel-row " + cycle(' ', 'odd ') + ((score_card.user == current_user) ? "lb-cu" : "") do %>
 				<%= content_tag :span, i+1, :class => "lb-number" if (board[1] == :mvp) %> 
 				<%= user_avatar(score_card.user) %>
 				<div class="panel-content">
 					<h4 class="name"><%= link_to score_card.user.name, score_card.user %></h4>
 					<p class="help-text score"><%= score_card.tot_score %></p>
 				</div>
-			</div>
+			<% end %>
 		<% end %>
+		<% reset_cycle %>
 	</div>
 <% end %>
 </div>
-<div class="report-show-more">
-	<a href="#" class="">Show 25 more</a>
-</div>
+<% if leaderboard.size > 10 %>
+	<div class="report-show-more">
+		<a href="#" class="">Show 25 more</a>
+	</div>
+<% end %>

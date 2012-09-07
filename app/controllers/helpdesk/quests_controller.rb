@@ -1,4 +1,5 @@
 class Helpdesk::QuestsController < ApplicationController
+  before_filter :set_selected_tab
     
   def achievements
     
@@ -14,5 +15,9 @@ class Helpdesk::QuestsController < ApplicationController
   	def scoper
 		current_account.quests
   	end
-  
+
+	def set_selected_tab
+      @selected_tab = :dashboard
+    end
+
 end

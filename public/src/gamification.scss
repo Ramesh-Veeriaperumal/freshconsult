@@ -291,7 +291,7 @@ li.dashboard-quest-points {
 			color:#adadad;
 		}
 	}	
-	.lb-cu{
+	.panel-row.lb-cu{
 		background-color:#f2f9e6;
 		border-left: 7px solid #dbe8c8;
 	}
@@ -309,12 +309,12 @@ li.dashboard-quest-points {
 	margin-top: 3px;
 }
 
-.lb-mvp{
-	background-color: #fffff4;
+.lb-mvp .lb-report-title{
+	background-color: darken(#e4e4e4, 5%);
 }
 
 .lb-number{
-	background-color: #e5e4e4;
+	background-color: #e4e4e4;
 	font-weight: bold;
 	font-size: 14px;
 	padding:13px 10px;

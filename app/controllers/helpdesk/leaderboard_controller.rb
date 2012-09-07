@@ -1,4 +1,5 @@
 class Helpdesk::LeaderboardController < ApplicationController
+  before_filter :set_selected_tab
     
   def mini_list
     generate_score_card
@@ -32,6 +33,10 @@ class Helpdesk::LeaderboardController < ApplicationController
 
     def this_month
       @this_month ||= [Time.zone.now.beginning_of_month, Time.zone.now]
+    end
+
+    def set_selected_tab
+      @selected_tab = :dashboard
     end
 
 end

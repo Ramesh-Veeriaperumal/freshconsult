@@ -181,6 +181,15 @@ en:
       love_trophie_label: "Customer champion"
       love_trophie_info: "Agent with more survey points"
 
+      mvp_trophie_label_group: "Most valuable team"
+      mvp_trophie_info_group: "Groups who have overall points higher than others"
+      sharpshooter_trophie_label_group: "Sharpshooters"
+      sharpshooter_trophie_info_group: "Groups with first call resolution points"
+      speed_trophie_label_group: "Speed champions"
+      speed_trophie_info_group: "Groups who resolve within the SLA time"
+      love_trophie_label_group: "Customer champions"
+      love_trophie_info_group: "Groups with more survey points"
+
   quests:
     inactive_quests: Inactive Quests
     date: Date
