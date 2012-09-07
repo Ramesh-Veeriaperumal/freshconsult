@@ -10,6 +10,7 @@ class Helpdesk::NotificationsController < ApplicationController
 			render :json => subscribe.to_json
 		rescue Exception => e
 			NewRelic::Agent.notice_error(e,{:description => "Error occoured in getting notification"})
+			render :json => []
 		end
 	end
 

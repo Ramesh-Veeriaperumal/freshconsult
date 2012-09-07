@@ -10,6 +10,9 @@ module Scoreboard::Constants
   HAPPY_CUSTOMER = 102
   UNHAPPY_CUSTOMER = 103
 
+  #Quest-points - score_trigger
+  TICKET_QUEST = 201
+
   RESOLUTION = [
     [ :fast_resolution,         I18n.t('admin.gamification.gamification_settings.label_fast_resolution'),         FAST_RESOLUTION ],
     [ :ontime_resolution,   I18n.t('admin.gamification.gamification_settings.label_ontime_resolution'),     ON_TIME_RESOLUTION ],

@@ -1007,13 +1007,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def support_score_on_update
       if active? && !@old_ticket.active?
-        Scoreboard::Constants::TICKET_CLOSURE.each do |resolution_status|
-          s_score = support_scores.find_by_score_trigger resolution_status
-          s_score.destroy if s_score
-        end
-
-        # SupportScore.destroy_all(:account_id => account_id,  :scorable_type => "Helpdesk::Ticket", :scorable_id => id, 
-        #   :score_trigger => Scoreboard::Constants::TICKET_CLOSURE)
+        
+        SupportScore.destroy_all(:account_id => account_id,  :scorable_type => "Helpdesk::Ticket", :scorable_id => id, 
+          :score_trigger => Scoreboard::Constants::TICKET_CLOSURE)
 
       elsif !active? && @old_ticket.active?
         add_support_score
