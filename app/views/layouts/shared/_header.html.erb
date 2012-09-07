@@ -83,7 +83,7 @@
 	<% content_for :pagefixed do %>
 		<%= include_javascripts :notifications %>
 	  <% javascript_tag do %>
-	  	FD.Notifications.init();
+	  	FD.Notifications.init({pollInterval:60000});
 	  <% end %>
   <% end %>
 <% end %>
