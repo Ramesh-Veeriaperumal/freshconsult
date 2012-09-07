@@ -7,7 +7,7 @@
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
   </div>
   
-  <% if feature?(:scoreboard) %>
+  <% if feature?(:gamification) %>
   	<%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "mini-leaderboard",
   						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>
 

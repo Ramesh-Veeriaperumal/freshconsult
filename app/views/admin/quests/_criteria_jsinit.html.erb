@@ -77,6 +77,12 @@
 
             jQuery("#quest_quest_data").val(questData.toJSON());
 
+            if(jQuery("#quest_award_badge").val() == ""){
+              jQuery("#noticeajax").text('Please select the badge.');
+              jQuery("#noticeajax").show();
+              closeableFlash('#noticeajax');
+              return false;
+            }
 
           });
       };
@@ -192,7 +198,11 @@
           c_dom = FactoryUI.dropdown(choices, "value");
           jQuery(c_dom).val(initFeed["value"]);
           break;
-        
+        case 'optgroup':
+          debugger;
+          c_dom = FactoryUI.optgroup(filter.choices, "value");
+          jQuery(c_dom).val(initFeed["value"]);
+          break;
         case 'paragraph':
           c_dom = FactoryUI.paragraph("", "value", initFeed["value"]);
           break;
@@ -230,7 +240,7 @@
 <% content_for :onload_script do %> 
   <% if(filter_type == "quest") %>
     var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);  
-            filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), "quest_criteria_types" : <%= @quest_criteria_types %>});  
+            filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), "quest_criteria_types" : <%= @quest_criteria_types %>});
   <% end %>
 <% end %>
 

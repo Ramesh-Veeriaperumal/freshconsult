@@ -36,7 +36,7 @@ class SupportScore < ActiveRecord::Base
 
   named_scope :group_score,
   { 
-    :select => ["agent_groups.group_id, support_scores.*, SUM(support_scores.score) as tot_score"],
+    :select => ["agent_groups.group_id, SUM(support_scores.score) as tot_score"],
     #:joins => [:agent_groups],
     :joins => "INNER JOIN agent_groups on support_scores.user_id = agent_groups.user_id",
     :group => "agent_groups.group_id",
