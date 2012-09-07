@@ -17,7 +17,7 @@ class Helpdesk::DashboardController < ApplicationController
       render(:partial => "ticket_note", :collection => @items)
     end
     #for leaderboard widget
-    @champions = champions
+    # @champions = champions
   end
   
   def latest_activities
