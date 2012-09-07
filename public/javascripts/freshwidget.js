@@ -140,7 +140,7 @@
 			container = document.createElement('div');
 			container.className = "freshwidget-container";
 			container.id = "FreshWidget";
-			container.style.visibility = 'hidden';
+			container.style.display = 'none';
 			document.body.insertBefore(container, document.body.childNodes[0]);
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
@@ -183,7 +183,7 @@
 	 
 	 function showContainer(){ 
 	 	scroll(0,0);
-	 	container.style.visibility = '';	 	
+	 	container.style.display = 'block';	 	
         html2canvas( [ document.body ], {
 				ignoreIds: "FreshWidget|freshwidget-button",
 				proxy:false,
@@ -208,7 +208,7 @@
 	 }
 	 
 	 function close(){
-	 	container.style.visibility = 'hidden';
+	 	container.style.display = 'none';
 	 	widgetFormUrl();
 	 }
 	 

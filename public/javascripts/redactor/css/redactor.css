@@ -98,10 +98,12 @@ body .redactor_air {
 .redactor_editor ul{/* overriding our reset.css file configuration ul and ol not shown in redactor*/
 	list-style: disc outside none; 
 	padding-left: 2em !important;	
+	margin-bottom: 8px !important;
 }
 .redactor_editor ol {
 	list-style: decimal outside none; /* end custom change for reset.css file overriding*/
 	padding-left: 2em !important;	
+	margin-bottom: 8px !important;
 }
 .redactor_editor ul ul, 
 .redactor_editor ol ol, 
@@ -113,7 +115,10 @@ body .redactor_air {
 	padding-left: 2em !important;
 }
 .redactor_editor li{
-	display: list-item;/* overriding our reset.css file configuration ul and ol not shown in redactor*/
+	display: list-item !important;/* overriding our reset.css file configuration ul and ol not shown in redactor*/
+	width: auto !important;
+	float: none !important;
+	padding: 0 2px 4px 0 !important;
 }
 .redactor_editor dl dt { font-weight: bold; }
 .redactor_editor dd { margin-left: 1em;}
@@ -224,7 +229,7 @@ body .redactor_air {
 	position: relative;
 	left: 0;
 	top: 0;
-	margin: 0 !important;
+	margin: 1px !important;
 	padding: 0 !important;
 	padding-left: 2px !important;
 	line-height: 0 !important;
@@ -446,6 +451,7 @@ body .redactor_toolbar li a.redactor_btn_underline		 	{ background-position: -52
   	-webkit-border-radius: 8px;
   	-moz-border-radius: 8px;
   	border-radius: 8px;  	  	
+  	border:1px solid #c2c2c2;	  	
   		
   	z-index: 50001;	
 	font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;      

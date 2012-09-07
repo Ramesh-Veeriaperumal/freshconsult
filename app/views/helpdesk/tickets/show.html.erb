@@ -75,7 +75,7 @@
 				case 'cnt-note':
 				case 'cnt-fwd':
 					invokeRedactor(formid+"-body",formid);
-					insertIntoConversation("");
+					jQuery('#'+formid+"-body").getEditor().focus();
 				break; 
 				case 'cnt-fb-post': 
 					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
@@ -105,16 +105,13 @@
     }
 
          
-		function insertIntoConversation(value){
+		function insertIntoConversation(value,element_id){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
 			fwd_area = jQuery('#cnt-fwd')
 			tweet_area = jQuery('#cnt-tweet');
-			if(note_area.css("display") == 'block'){     
-				jQuery("#cnt-note-body").insertHtml(value);
-				jQuery("#cnt-note-body").getEditor().focus();
-			} 
-			else if(tweet_area.css("display") == 'block'){
+			
+			if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
 						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
 						jQuery('#send-tweet-cnt-tweet-body')
@@ -122,18 +119,9 @@
 								.trigger("keydown");
 				});			
 			}
-			else{
-				if(reply_area.css("display") == 'none' && fwd_area.css("display") == 'none'){
-					jQuery('#ReplyButton').trigger("click");
-				}
-		        	var msg_body_id = reply_area.css("display") == 'none' ? "cnt-fwd" : "cnt-reply"
-		        	if(!jQuery.browser.opera){
-			       		jQuery("#"+msg_body_id+"-body").insertHtml(value);
-			        }
-			        else
-			        
-			console.log(value);
-				jQuery("#"+msg_body_id+"-body").getEditor().focus();
+			if(jQuery(element_id)){
+		        	jQuery("#"+element_id).getEditor().focus();
+		       		jQuery("#"+element_id).insertHtml(value);
 			}        
 			
 			return;
@@ -146,7 +134,7 @@
   						contentType: 'application/text',
   						async: false,
   						success: function(data){		
-  									insertIntoConversation(data);
+  									insertIntoConversation(data,activeTinyMce);
   							    jQuery("#canned_response_list")
   							      .removeClass("loading")
   							      .hide(300);

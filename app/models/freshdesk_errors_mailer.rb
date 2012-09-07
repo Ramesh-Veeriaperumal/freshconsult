@@ -9,13 +9,13 @@ class FreshdeskErrorsMailer < ActionMailer::Base
     content_type  "text/html"
   end 
   
-  def error_in_crm(model) 
+  def error_in_crm(account) 
     recipients    AppConfig['billing_email']
     from          "kiran@freshdesk.com"
     cc            "vijayaraj@freshdesk.com"
-    subject       "Error while adding to CRM"
+    subject       "Error while adding to Marketo"
     sent_on       Time.now
-    body(:model => model)
+    body(:account => account)
     content_type  "text/html"
   end
   

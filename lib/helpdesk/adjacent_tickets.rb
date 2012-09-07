@@ -74,6 +74,7 @@ module Helpdesk::AdjacentTickets
 
 				filter_params[:page] = new_page(filter_params,direction)
 				filter_params[:without_pagination] = true
+				filter_params[:select_fields] = "helpdesk_tickets.id, helpdesk_tickets.display_id"
 
 				tickets = current_account.tickets.permissible(current_user).filter(
 					:params => filter_params, 
