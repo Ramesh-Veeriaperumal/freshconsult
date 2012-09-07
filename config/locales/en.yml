@@ -190,6 +190,9 @@ en:
     solution_articles: Article 
     solution_folder: Folder
     fcr: First Call Resolution
+    customer_votes: Customers Vote
+    solution_likes: Solution Likes
+    true : True 
   admin:
     quests:
       index:

@@ -7,24 +7,24 @@ class Admin::QuestsController < Admin::AdminController
 
   QUEST_CRITERIA_TYPES = [
     { :criteria_type => ['priority', 'ticket_type','source','fcr','satisfaction'] },
-    { :criteria_type => ['solutiontype','solution_categories','solution_folders'] },
-    { :criteria_type => ['forum_categories','forums'] }
+    { :criteria_type => ['solutiontype','solution_categories','solution_folders','solution_likes'] },
+    { :criteria_type => ['forum_categories','forums','customer_votes'] }
   ]
 
   OPERATOR_TYPES = {
     :choicelist  => [ "is","is_not"],
     :checkbox    => [ "selected", "not_selected"],
     :number      => [ "is","is_not"],
-    :true        => ["true"]
+    :greater     => ["greater"]
   }
 
   OPERATOR_LIST =  {
-    :is  =>  I18n.t('is'),
+    :is                =>  I18n.t('is'),
     :is_not            =>  I18n.t('is_not'),
     :selected          =>  I18n.t('selected'),
     :not_selected      =>  I18n.t('not_selected'),
     :contains          =>  I18n.t('contains'),
-    :true              => 'True'
+    :greater           => '>'
   }
 
   QUEST_MODE = [
@@ -166,7 +166,11 @@ class Admin::QuestsController < Admin::AdminController
           :choices => QUEST_TIME_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => "ticket_type", :value => t('ticket.type'), :domtype => "dropdown", 
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }, 
-          :operatortype => "choicelist" }
+          :operatortype => "choicelist" },
+        { :name => "customer_votes", :value => I18n.t('quests.customer_votes'), :domtype => "text", 
+          :operatortype => 'greater' },
+         { :name => "solution_likes", :value => I18n.t('quests.solution_likes'), :domtype => "text", 
+          :operatortype => 'greater' }
         
       ]
       add_custom_filters filter_hash
