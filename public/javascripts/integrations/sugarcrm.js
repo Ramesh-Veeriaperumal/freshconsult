@@ -51,15 +51,12 @@ SugarWidget.prototype= {
 		var init_reqs = [];
 		if(sugarBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
+				app_name:"Sugar CRM",
+				widget_name:"sugarcrm",
 				application_id:sugarBundle.application_id,
 				integratable_type:"crm",
-				anchor:"sugarcrm_widget",
-				app_name:"Sugar CRM",
 				domain:sugarBundle.domain,
-				ssl_enabled:sugarBundle.ssl_enabled || "false",
-				login_content: null,
-				application_content: null,
-				application_resources:null
+				ssl_enabled:sugarBundle.ssl_enabled || "false"
 			});
 			var sugar_session = Cookie.retrieve("sugar_session");
 			if(sugar_session == "" || sugar_session == null){
@@ -127,17 +124,14 @@ SugarWidget.prototype= {
 
 	searchLeads:function(){
 		var entry_list_body = 'method=get_entry_list&input_type=JSON&response_type=JSON&rest_data={"session":"#{session}","module_name":"Leads","query":"#{email_query}","order_by":"", "offset":0,"select_fields":[],"link_name_to_fields_array":[],"max_results":"","deleted":0}';
-		init_reqs = [{
+		sugarWidget.freshdeskWidget.request({
 			resource: "service/v4/rest.php",
 			method:"post",	
 			body:entry_list_body.interpolate({session: Cookie.retrieve("sugar_session")||"", email_query: "leads.id in (SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address ='"+ sugarWidget.sugarBundle.reqEmail +"')"}),
 			content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
 			on_failure: sugarWidget.processFailure,
 			on_success: sugarWidget.handleLeadSuccess.bind(this)
-		}];
-		sugarWidget.freshdeskWidget.options.application_content = null; 
-		sugarWidget.freshdeskWidget.options.application_resources = init_reqs;
-		sugarWidget.freshdeskWidget.display();
+		});
 	},
 
 	renderSearchResults:function(){
@@ -209,22 +203,18 @@ SugarWidget.prototype= {
 	},
 
 	renderContactNa:function(){
-		sugarWidget.freshdeskWidget.options.application_content = function(){ return sugarWidget.SUGAR_CONTACT_NA.evaluate({});	} 
-		sugarWidget.freshdeskWidget.options.application_resources = null;
+		sugarWidget.freshdeskWidget.options.application_html = function(){ return sugarWidget.SUGAR_CONTACT_NA.evaluate({});	} 
 		sugarWidget.freshdeskWidget.display();
-		jQuery("#sugarcrm_widget").removeClass('loading-fb');
-		
+		jQuery("#sugarcrm_widget").removeClass('loading-fb');		
 	},
 
 	renderContactWidget:function(){
-		sugarWidget.freshdeskWidget.options.application_content = function(){ return sugarWidget.SUGAR_CONTACT.evaluate({});	} 
-		sugarWidget.freshdeskWidget.options.application_resources = null;
+		sugarWidget.freshdeskWidget.options.application_html = function(){ return sugarWidget.SUGAR_CONTACT.evaluate({});	} 
 		sugarWidget.freshdeskWidget.display();
 	},
 
 	renderSearchResultsWidget:function(){
-		sugarWidget.freshdeskWidget.options.application_content = function(){ return sugarWidget.SUGAR_SEARCH_RESULTS.evaluate({});	} 
-		sugarWidget.freshdeskWidget.options.application_resources = null;
+		sugarWidget.freshdeskWidget.options.application_html = function(){ return sugarWidget.SUGAR_SEARCH_RESULTS.evaluate({});	} 
 		sugarWidget.freshdeskWidget.display();
 	},
 
@@ -247,19 +237,14 @@ SugarWidget.prototype= {
 
 	get_sugar_session:function(callBack){
 		var session_body = 'method=login&input_type=JSON&response_type=JSON&rest_data={"user_auth" : {"user_name" : "#{username}", "password" : "#{password}", "version" : 4},"application": "freshdesk_sugarcrm"}';
-		init_reqs = [{
+		sugarWidget.freshdeskWidget.request({
 				resource: "service/v4/rest.php",
 				method:"post",
 				body:session_body.interpolate({username: sugarWidget.sugarBundle.username, password: sugarWidget.sugarBundle.password}),
 				content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
 				on_failure: sugarWidget.processFailure,
-				on_success: function(evt){
-					sugarWidget.handleSessionSuccess(evt)
-				}
-			}];		
-		sugarWidget.freshdeskWidget.options.application_content = null; 
-		sugarWidget.freshdeskWidget.options.application_resources = init_reqs;
-		sugarWidget.freshdeskWidget.display();
+				on_success: this.handleSessionSuccess.bind(this)
+			});
 	},
 
 	handleSessionSuccess:function(evt){
@@ -278,18 +263,14 @@ SugarWidget.prototype= {
 
 	get_sugar_contact:function(){
 		var entry_list_body = 'method=get_entry_list&input_type=JSON&response_type=JSON&rest_data={"session":"#{session}","module_name":"Contacts","query":"#{email_query}","order_by":"", "offset":0,"select_fields":[],"link_name_to_fields_array":[],"max_results":"","deleted":0}';
-		init_reqs = [{
+		sugarWidget.freshdeskWidget.request({
 			resource: "service/v4/rest.php",
 			method:"post",	
 			body:entry_list_body.interpolate({session: Cookie.retrieve("sugar_session")||"", email_query: "contacts.id in (SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address ='"+ sugarWidget.sugarBundle.reqEmail +"')"}),
 			content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
 			on_failure: sugarWidget.processFailure,
 			on_success: sugarWidget.handleContactSuccess.bind(this)
-		}];
-		sugarWidget.freshdeskWidget.options.application_content = null; 
-		sugarWidget.freshdeskWidget.options.application_resources = init_reqs;
-		sugarWidget.freshdeskWidget.display();
-
+		});
 	},
 
 	removeRequestKeyword:function(responseText){

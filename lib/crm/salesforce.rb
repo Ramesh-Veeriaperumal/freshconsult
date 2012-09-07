@@ -6,12 +6,12 @@ class CRM::Salesforce
   
   PAYMENT_TYPE = "Credit Card"
 
-  STAGE_NAME = "Closed"
+  STAGE_NAME = "Closed Won"
 
   ACCOUNT_ATTR = { :accountId => :account_id, :Type => :business_type }
 
   PAYMENT_ATTR = { :Name => :to_s, :Agents__c => :agents, :Plan__c => :plan_name, 
-                   :Discount__c => :discount, :Amount__c => :amount, :Amount => :amount }
+                   :Discount__c => :discount, :Amount => :amount }
 
 	def initialize
     username = AppConfig['salesforce'][RAILS_ENV]['username']
@@ -64,8 +64,6 @@ class CRM::Salesforce
     end
 
     def account_id(payment)
-      # search_query = %(FIND {#{payment.account.name}} IN NAME FIELDS RETURNING Account(id WHERE 
-      #   domain__c ='#{payment.account.full_domain}'))
       search_query = %(FIND {#{payment.account.full_domain}} IN NAME FIELDS RETURNING Account(id))
       query = binding.search(:searchString => search_query)
       result = query.searchResponse.result
@@ -80,4 +78,5 @@ class CRM::Salesforce
       (payment.account.subscription_payments.length > 1) ? BUSINESS_TYPES[:existing] : 
         BUSINESS_TYPES[:new] 
     end
+
 end

@@ -341,13 +341,13 @@ CapsuleWidget = {
 }
 
 capsuleResourceOptions = {
-	anchor: "capsule_widget",
+	widget_name: "capsule_widget",
+    app_name:"Capsule CRM",
 	domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
 	ssl_enabled: true,
-	app_name:"Capsule CRM",
 	content_type: "application/xml",
 	enable_resource_cache: false,
-	application_content: function() {
+	application_html: function() {
 		var content = '<div class="negtive-margin"><h3 id="capsule-title" class="title paddingloading">';
 		content += '<span class="searchicon" onclick="$(\'cap-search\').toggle()"></span>';
 		content += $('capsule_widget').getAttribute('title').escapeHTML() + '</h3>';
@@ -360,7 +360,7 @@ capsuleResourceOptions = {
 		content += '</div></div>'; // close capsule-content
 		return content;
 	},
-	application_resources: [{
+	init_requests: [{
 		resource: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(CapsuleWidget.searchTerm()),
 		on_success: CapsuleWidget.processSearch,
 		on_failure: CapsuleWidget.processFailure
@@ -372,7 +372,7 @@ capsuleResourceOptions = {
    	capsuleResourceOptions.password = "x";
    	capsuleResource = new Freshdesk.Widget(capsuleResourceOptions);
    } else {
-   	capsuleResourceOptions.login_content = function() {
+   	capsuleResourceOptions.login_html = function() {
    		return '<form onsubmit="capsuleResource.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
    	};
    	capsuleResource = new Freshdesk.Widget(capsuleResourceOptions);

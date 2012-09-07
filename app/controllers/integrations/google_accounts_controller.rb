@@ -29,7 +29,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
     if params[:iapp_id].blank?
       redirect_to :controller=> 'applications', :action => 'index'
     else
-      redirect_to configure_integrations_installed_application_path(params[:iapp_id]) 
+      redirect_to edit_integrations_installed_application_path(params[:iapp_id]) 
     end
   end
 
@@ -42,7 +42,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
         Rails.logger.error("Error during delete. \n#{err.message}\n#{err.backtrace.join("\n")}")
       flash[:error] = t('integrations.google_contacts.delete_action.error')
     end
-    redirect_to configure_integrations_installed_application_path(params[:iapp_id])
+    redirect_to edit_integrations_installed_application_path(params[:iapp_id])
   end
 
   def import_contacts

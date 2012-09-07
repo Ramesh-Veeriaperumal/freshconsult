@@ -62,6 +62,8 @@ default_fields:
         <<: *date_time
     inbound_count:
         handler: numeric
+    any:
+        handler: allow_all
 
 handlers:
     email: Va::Handlers::Email
@@ -72,3 +74,4 @@ handlers:
     dropdown:  Va::Handlers::Text
     checkbox: Va::Handlers::Boolean
     nested_field: Va::Handlers::NestedField
+    allow_all: Va::Handlers::AllowAll

@@ -12,7 +12,9 @@ module VAConfig
   BUSINESS_RULE = 1
   SCENARIO_AUTOMATION = 2
   SUPERVISOR_RULE = 3
-  
+  APP_BUSINESS_RULE = 11
+  INSTALLED_APP_BUSINESS_RULE = 12
+
   def self.handler(field, account)
     field_type = DEFAULT_FIELDS[field]
     
