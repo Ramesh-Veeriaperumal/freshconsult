@@ -3,7 +3,6 @@ class Integrations::Mapper::GenericMapper
     liq_cname = LIQUID_CLASSES[from_entity.class]
     input_entity = liq_cname.blank? ? (from_entity.respond_to?(:attributes) ? from_entity.attributes : from_entity) : {liq_cname=>from_entity}
     set_data = Liquid::Template.parse(config[:value]).render(input_entity)
-    Rails.logger.debug "GenericMapper:: input_entity #{input_entity.inspect}, config_value #{config[:value]}, set_data #{set_data}"
   end
 
   def static_value(from_entity, config)
