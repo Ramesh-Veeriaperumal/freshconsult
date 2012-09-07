@@ -18,7 +18,7 @@
   map.resources :customers ,:member => {:quick => :post}
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post ,:make_agent =>:put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put}
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
   
   map.resources :groups
@@ -65,13 +65,14 @@
   map.resources :password_resets, :except => [:index, :show, :destroy]
   map.resources :sso, :collection => {:login => :get, :facebook => :get}
   map.namespace :integrations do |integration|
-    integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
-    integration.resources :applications, :member =>{:show => :get}
+    integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
+    integration.resources :applications, :member=>{:custom_widget_preview => :post}
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
-    integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put}
+    integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
     integration.resources :salesforce, :collection => {:fields_metadata => :get}
+    integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
     integration.oauth_action '/refresh_access_token/:provider', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
   end

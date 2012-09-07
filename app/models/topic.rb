@@ -59,7 +59,7 @@ class Topic < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
 
-    set_property :delta => :delayed
+    #set_property :delta => :delayed
     set_property :field_weights => {
       :title    => 10,
       :comment  => 4

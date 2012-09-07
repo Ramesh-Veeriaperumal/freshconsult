@@ -25,19 +25,18 @@ HarvestWidget.prototype= {
 			}
 		if(harvestBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
+				app_name:"Harvest",
 				application_id:harvestBundle.application_id,
 				integratable_type:"timesheet",
-				anchor:"harvest_widget",
-				app_name:"Harvest",
 				domain:harvestBundle.domain,
 				ssl_enabled:harvestBundle.ssl_enabled || "true",
-				login_content: function(){
+				login_html: function(){
 					return harvestWidget.LOGIN_FORM.evaluate({});
 				},
-				application_content: function(){
+				application_html: function(){
 					return harvestWidget.HARVEST_FORM.evaluate({});
 				},
-				application_resources:init_reqs
+				init_requests:init_reqs
 			});
 		}
 		if(loadInline) this.convertToInlineWidget();

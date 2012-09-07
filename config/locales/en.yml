@@ -36,6 +36,7 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  logmein_source: LogMeIn Rescue
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -150,7 +151,6 @@ en:
     popular: Popular
   payment_info: Payment information
   support:
-      
       shared:
         survey_form:
           survey_title: Please take a minute to rate our support
@@ -532,7 +532,7 @@ en:
       install:
         success: "The Addon has been enabled successfully!"
         error: "Error in enabling the Addon."
-      configure:
+      update:
         success: "The Addon has been updated successfully!"
         error: "Error in configuring the Addon."
       not_installed: "This addon is not yet installed."
@@ -2153,9 +2153,28 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+        jira_status_sync: "For any change in JIRA issue status %{dropdown}"
+        jira_comment_sync: "For any comment added in JIRA issue %{dropdown}"
+        do_nothing: "Do nothing."
+        add_note: "Add it as a private note."
+        send_reply: "Send it as reply to customer."
+        jira_status_sync_update_field: "Update Freshdesk status field."
+        jira_status_sync_update_customer: "Send reply to customer and update status field."
+        fd_status_sync: "For any change in Freshdesk status %{dropdown}"
+        fd_comment_sync: "For any comment added in Freshdesk %{dropdown}"
+        add_jira_comment: "Add it as a comment in JIRA."
+        update_jira_status: "Update JIRA status as well."
+    jira_settings:
+      none: "Do nothing."
+      add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
+      add_public_note_in_fd: "Add a public note in Freshdesk."
+      update_status_in_fd: "Update status in Freshdesk."
+      send_reply_in_fd: "Notify customer via email"
+      add_comment_in_jira: "Add a comment in JIRA"
+      update_jira_status: "Update JIRA status"
     salesforce:
       label: "Salesforce"
-      desc: "You can view contact information from Salesforce in Freshdesk."
+      desc: "You can view contact information from Salesforce crm in Freshdesk."
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
@@ -2196,6 +2215,36 @@ en:
         account_key: "Account Key"
         account_key_info: "Request your Account Key from Workflow Max support and paste the same here."
         widget_title: "Widget Title"
+    custom_application:
+      name: "Name"
+      description: "Description"
+      script: "Script"
+      label: "Custom Addon"
+      desc: "You can add a custom widget to display any detail using your own custom script."
+      helptext: "### Helptext goes here. ###"
+      form:
+        widget_title: "Addon Name"
+        widget_script: "Widget code snippet"
+        create_n_enable: "Create and Enable"
+    logmein:
+      label: "LogMeIn Rescue"
+      desc: "Provide remote support to your customers using LogMeIn Rescue"
+      helptext: "LogMeIn Rescue Helptext goes here"
+      note:
+        header: "Your LogMeIn Rescue Session details"
+        session_id: "Session ID"
+        tech_name: "Technician Name"
+        tech_email: "Technician Email"
+        platform: "End User Platform"
+        work_time: "Total Work Time(in seconds)"
+        chatlog: "Chat Log"
+        tech_notes: "Technician Notes"
+      form:
+        widget_title: "Widget Title"
+        company_id: "Company ID"
+        password: "SSO Password"
+        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Name -> Global Settings -> ASP.NET C# example "
+        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Name -> Global Settings -> Single Sign-On"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

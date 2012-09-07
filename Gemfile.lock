@@ -51,8 +51,8 @@ GEM
       activesupport (= 2.3.8)
     activesupport (2.3.8)
     addressable (2.2.7)
-    after_commit (1.0.8)
-      activerecord (< 3.0.0)
+    after_commit (1.0.10)
+      activerecord (>= 1.15.6, < 3.0.0)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
@@ -290,6 +290,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.3)
   SystemTimer (= 1.2.3)
+  after_commit (~> 1.0.10)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   aws-s3 (= 0.6.2)

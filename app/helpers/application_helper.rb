@@ -173,6 +173,14 @@ module ApplicationHelper
       content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
     end
   end
+
+  def show_contact_hovercard(user, options=nil)
+    if current_user.can_view_all_tickets?
+      link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
+    else
+      link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
+    end
+  end
   
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
@@ -387,15 +395,18 @@ module ApplicationHelper
       return ""
     else
       widget = installed_app.application.widgets[0]
-      # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
-      replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
-      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+      widget_script(installed_app, widget, liquid_objs)
     end
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "")
-    
+  def widget_script(installed_app, widget, liquid_objs)
+    replace_objs = liquid_objs || {}
+    # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+    replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, "application" => installed_app.application}) unless installed_app.blank?# Application name based liquid obj values.
+    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+  end
+
+  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
@@ -427,7 +438,7 @@ module ApplicationHelper
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
-        rendered_partial = (render :partial => field[:partial])
+        rendered_partial = (render :partial => field[:partial], :locals => {:installed_app=>installed_app, :f=>form})
         element = "#{label} #{rendered_partial}"
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
