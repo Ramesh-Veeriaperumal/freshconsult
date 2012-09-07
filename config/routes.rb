@@ -243,6 +243,7 @@
     #helpdesk.resources :ticket_issues
 
     helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :user_list => :get, :group_list => :get }, :only => [ :mini_list, :user_list, :group_list ]
+    helpdesk.resources :quests, :collection => { :activity => :get, :achievements => :get }, :only => [ :activity, :achievements ]
 
     helpdesk.resources :notes
 

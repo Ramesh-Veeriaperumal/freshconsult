@@ -170,7 +170,17 @@ en:
       master: Master
       guru: Guru
     notifications:
-      newlevel: <b> Hurry! </b><br/> Now you became <b>%{name}</b>.
+      newlevel: "<b> Hurry! </b><br/> Now you became <b>%{name}</b>."
+    leaderboard:      
+      mvp_trophie_label: "Most valuable player"
+      mvp_trophie_info: "Agent who have overall points higher than others"
+      sharpshooter_trophie_label: "Sharpshooter"
+      sharpshooter_trophie_info: "Agent with first call resolution points"
+      speed_trophie_label: "Speed champion"
+      speed_trophie_info: "Agent who resolve within the SLA time"
+      love_trophie_label: "Customer champion"
+      love_trophie_info: "Agent with more survey points"
+
   quests:
     inactive_quests: Inactive Quests
     date: Date
@@ -216,14 +226,6 @@ en:
         title_levels: Levels
         info_level_new_agent: "Note: For Newly joining Agents 'Beginner' title & points will be given"
         title_trophies: Trophies
-        label_trophie_mvp: Most Valuable Player
-        label_trophie_mvp_info: Agent who has points higher then others
-        label_trophie_sharp: Sharpshooter
-        label_trophie_sharp_info: Agent who has points higher then others
-        label_trophie_fcr: FCR's
-        label_trophie_fcr_info: Agent who has points higher then others
-        label_trophie_happy: Customer Champion
-        label_trophie_happy_info: Agent who has points higher then others
         new_quest: New Quest
         quest_title: Quests
     surveys:
@@ -1694,7 +1696,7 @@ en:
   tickets_were: tickets were
   undo: Undo
   total: "Total"
-  helpdesk:
+  helpdesk: 
     ticket_notifier:
         reply:
             happy: Awesome

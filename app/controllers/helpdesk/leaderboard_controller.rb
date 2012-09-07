@@ -2,10 +2,17 @@ class Helpdesk::LeaderboardController < ApplicationController
     
   def mini_list
     @mvp = mvp_scoper.first
-    @fcr = fcr_scoper.first
     @customer_champ = customer_champ_scoper.first
+    @fcr = fcr_scoper.first    
     @speed_champ = speed_champ_scoper.first
     render :layout => false
+  end
+
+  def user_list
+    @mvp = mvp_scoper.limit(10)
+    @customer_champ = customer_champ_scoper.limit(10)
+    @fcr = fcr_scoper.limit(10)
+    @speed_champ = speed_champ_scoper.limit(10)
   end
 
   private
