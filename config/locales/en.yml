@@ -1638,7 +1638,7 @@ en:
   agent_info_title: Agent information
   level_label: Level
   next_level_info: +%{points} to become %{name}
-  no_level_achieved_lable: No levels achieved yet..!!
+  no_level_achieved_label: No levels achieved yet..!!
   account: 
     name: Account Name
     cancel: Cancel and go back
