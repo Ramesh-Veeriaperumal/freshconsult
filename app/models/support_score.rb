@@ -8,6 +8,8 @@ class SupportScore < ActiveRecord::Base
   belongs_to :user
   has_one :agent, :through => :user
 
+  belongs_to :group
+
   belongs_to_account
 
   attr_protected  :account_id
@@ -69,6 +71,7 @@ class SupportScore < ActiveRecord::Base
     sb_rating = scorable.account.scoreboard_ratings.find_by_resolution_speed(resolution_speed)
     scorable.support_scores.create({      
       :user_id => scorable.responder_id,
+      :group_id => scorable.group_id,
       :score => sb_rating.score,
       :score_trigger => sb_rating.resolution_speed
     }) if scorable.responder
@@ -77,6 +80,7 @@ class SupportScore < ActiveRecord::Base
   def self.add_score(scorable, score, badge)    
     scorable.support_scores.create({      
       :user_id => scorable.user.id,
+      :group_id => scorable.group_id,
       :score => score,
       :score_trigger => TICKET_QUEST
     }) if scorable.user
@@ -85,6 +89,7 @@ class SupportScore < ActiveRecord::Base
   def self.add_ticket_score(scorable, score, badge)
     scorable.support_scores.create({      
       :user_id => scorable.responder.id,
+      :group_id => scorable.group_id,
       :score => score,
       :score_trigger => TICKET_QUEST
     }) if scorable.responder
