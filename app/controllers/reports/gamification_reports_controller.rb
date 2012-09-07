@@ -2,7 +2,7 @@ class Reports::GamificationReportsController < ApplicationController
 	
       include Reports::GamificationReport
 
-      before_filter { |c| c.requires_feature :scoreboard }
+      before_filter { |c| c.requires_feature :gamification }
       before_filter { |c| c.requires_permission :manage_reports }
       before_filter :set_selected_tab
 

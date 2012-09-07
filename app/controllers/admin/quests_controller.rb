@@ -1,7 +1,7 @@
 class Admin::QuestsController < Admin::AdminController
   include ModelControllerMethods
 	
-  before_filter { |c| c.requires_feature :scoreboard }
+  before_filter { |c| c.requires_feature :gamification }
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :load_config, :only => [:new, :edit]
 

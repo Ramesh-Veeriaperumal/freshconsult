@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120906104631) do
+ActiveRecord::Schema.define(:version => 20120907125116) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1263,16 +1263,20 @@ ActiveRecord::Schema.define(:version => 20120906104631) do
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
 
-  create_table "support_scores", :force => true do |t|
+  create_table "support_scores", :id => false, :force => true do |t|
+    t.integer  "id",            :limit => 8, :null => false
     t.integer  "account_id",    :limit => 8
     t.integer  "user_id",       :limit => 8
+    t.integer  "group_id",      :limit => 8
     t.integer  "scorable_id",   :limit => 8
     t.string   "scorable_type"
     t.integer  "score"
+    t.integer  "score_trigger"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "score_trigger"
   end
+
+  add_index "support_scores", ["id"], :name => "support_scores_id"
 
   create_table "survey_handles", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false

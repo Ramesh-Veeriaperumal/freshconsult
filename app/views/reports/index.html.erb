@@ -16,7 +16,7 @@
 		<%= report_item({:label => t('reports.surveys_title_nav'), :class => 'survey', :url => 
 			survey_activity_url}) %>
 	<% end %>
-	<% if feature?(:scoreboard) %>
+	<% if feature?(:gamification) %>
 		<%= report_item({:label => t('reports.scoreboard_title_nav'), :class => 'scoreboard', :url => 
 			scoreboard_activity_url}) %>
 	<% end %>	

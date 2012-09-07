@@ -23,7 +23,7 @@ FD.Notifications = (function($){
 			$.getJSON(options.pollUrl,publish);
 		};
 		if(options.pollInterval){
-			setInterval(fn,options.pollInterval)
+			requestInterval(fn,options.pollInterval)
 		}
 		fn();
 	};
