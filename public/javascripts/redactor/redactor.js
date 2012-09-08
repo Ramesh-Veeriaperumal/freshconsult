@@ -793,7 +793,7 @@ Redactor.prototype = {
 			{
 				if (pre === false)
 				{
-					this.shortcuts(e, 'indent'); // Tab
+				//	this.shortcuts(e, 'indent'); // Tab
 				}
 				else
 				{
