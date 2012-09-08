@@ -2,7 +2,7 @@ class Helpdesk::QuestsController < ApplicationController
   before_filter :set_selected_tab
     
   def achievements
-    
+    @active_quest = scoper.find(:all)
   end
 
   def active

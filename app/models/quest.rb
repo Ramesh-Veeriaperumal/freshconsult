@@ -9,7 +9,7 @@ class Quest < ActiveRecord::Base
   GAME_TYPE = [
     [ :quest_none,     "--- Click to Select ---",  -1],
     [ :quest_ticket,   "Resolving Tickets",     0 ], 
-    [ :quest_solution, "Creating/Participating Solutions",   1 ], 
+    [ :quest_solution, "Publishing Solutions",   1 ], 
     [ :quest_forum,    "Contribute in Forums",      2 ]
   ]
 
