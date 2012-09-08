@@ -9,18 +9,17 @@ class Admin::GamificationController < Admin::AdminController
     @quests = scoper.all
   end
   
-  def enable    
-   current_account.features.scoreboard_enable.create     
-   current_account.reload
-  end
-  
-  def disable
-   current_account.features.scoreboard_enable.destroy
-   current_account.reload
+  def toggle
+    if feature?(:scoreboard_enable)
+      current_account.features.scoreboard_enable.destroy
+    else
+      current_account.features.scoreboard_enable.create
+    end
+    current_account.reload
+    render :nothing => true
   end
 
-  def update
-    
+  def update    
     params[:scoreboard_ratings].each_value do |sb|
       scoreboard_rating = current_account.scoreboard_ratings.find(sb[:id])
       unless scoreboard_rating.update_attribute(:score, sb[:score])
