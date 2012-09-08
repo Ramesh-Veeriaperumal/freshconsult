@@ -44,7 +44,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			rule_dom	    : ".rule_list",
 			rem_dom		 : ".delete",
 			operators	 : false,
-			onRuleSelect : function(){}
+			delete_last  : false,
+ 			onRuleSelect : function(){}
 		};
 	if ( options ) jQuery.extend( setting, options );
 	
@@ -276,7 +277,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				.live("click", 
 						function(){
 							filter = jQuery(this).parent();
-							if(filter.parent().children().size() != 1)
+							if(setting.delete_last || (filter.parent().children().size() != 1))
 								filter.remove();
 						});
 			domUtil.init();
