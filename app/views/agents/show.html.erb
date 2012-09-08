@@ -14,7 +14,7 @@ function setUserRole()
 </script>
 
 <% content_for :sidebar do -%>
-	<%if feature?(:scoreboard_enable)%> 
+	<%if feature?(:gamification)%> 
 	<div class="side-panel">
 		<% unless @agent.level.blank? %>
 		<div class="level-progress">
