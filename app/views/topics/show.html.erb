@@ -46,7 +46,9 @@
 							<div class="contact_hover" style="min-height:50px;">
 							  <%= user_avatar(@topic.user) if @topic.user %>
 							  <%= content_tag :div, link_to(h(@topic.user), @topic.user), :class => "user_name" %>
-							  <strong><%= content_tag :div, h(@topic.user.agent.level.name) unless @topic.user.agent.level.blank? %></strong>
+							  <% if @topic.user.agent? %>
+							  	<strong><%= content_tag :div, h(@topic.user.agent.level.name) unless @topic.user.agent.level.blank? %></strong>
+							  <% end %>
 							</div>
 						</textarea>
             		<% end %>
