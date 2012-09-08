@@ -35,7 +35,7 @@
 		</div>
 		<div id="select-badge" style="display:none;" class="badgelist badges_items">
 			<ul>
-			<% (Quest::BADGES_DATA).each do | badges | %>
+			<% @available_badges.each do | badges | %>
 				<li><div class="gamesettings-badges <%= badges[:classname] %>" data-name="<%= badges[:name] %>"></div> <%= badges[:name] %></li>
 			<% end %>
 			</ul>
