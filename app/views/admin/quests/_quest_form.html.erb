@@ -10,14 +10,6 @@
 
 <div id="enablequest">
 
-	<div class="gamename">
-		<h2>Give your Quest a Name</h2>
-		<div class="gray-box-rounded">
-			<%= f.text_field :name, :class => "required text", :style => "width:98%;", :placeholder => "Name" %>
-			<%= f.text_area :description, :class => "mediumpara", :placeholder => "Brief about the quest" %>
-		</div>
-	</div>
-
 	<div class="gamecriteria">
 		<h2>Specify Quest Criteria</h2>
 		<div class="ui-form gray-box-rounded">
@@ -61,6 +53,15 @@
 			</div-->
 		</div>
 	</div>
+
+	<div class="gamename">
+		<h2>Give your Quest a Name</h2>
+		<div class="gray-box-rounded">
+			<%= f.text_field :name, :class => "required text", :style => "width:98%;", :placeholder => "Name" %>
+			<%= f.text_area :description, :class => "mediumpara", :placeholder => "Brief about the quest" %>
+		</div>
+	</div>
+
 
 	<div class="button-container">
 		<input type="hidden" name="award_data" id="quest_award_data" value=""/>
