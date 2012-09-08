@@ -227,7 +227,7 @@ en:
        You can learn more about satisfaction surveys from our solutions page.     
        </p>"
       index:
-        title: Gamification Settings
+        title: Gamification
       gamification_settings:
         enable_label: Agents Gamification
         title_points_configuration: Points Configuration
