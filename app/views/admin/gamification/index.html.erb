@@ -16,23 +16,26 @@
 </div>
 <h3 class="title"><%=t('.title')%></h3>
 
-<ul data-tabs="tabs" class="tabs">
-	<li class="active first">
-		<a id="PointsTab" href="#Points">Points</a>
-	</li>
-	<li>
-		<a id="QuestsTab" href="#Quests">Quests</a>
-	</li>
-</ul>
+<div id="scoreboard_elements" <% unless feature?(:scoreboard_enable) %>style="display:none"<%end%> >
+	<ul data-tabs="tabs" class="tabs admin-tabs">
+		<li class="active first">
+			<a id="points-tab" href="#points">Points</a>
+		</li>
+		<li>
+			<a id="quests-tab" href="#quests">Quests</a>
+		</li>
+	</ul>
 
-<div class="tab-content">
-	<div id="Points" class="tab-pane active">
-		<%= render :partial => "gamification_settings" %>
-	</div>			  
-	<div id="Quests" class="tab-pane">
-		<%= render :partial => "/admin/quests/index" %>
+	<div class="tab-content">
+		<div id="points" class="tab-pane active">
+			<%= render :partial => "gamification_settings" %>
+		</div>			  
+		<div id="quests" class="tab-pane">
+			<%= render :partial => "/admin/quests/index" %>
+		</div>
 	</div>
 </div>
+
 <% content_for :sidebar do %>
 <div class="sidepanel helpcard">
 	<p>	<%= t('admin.gamification.helptext') %> </p>

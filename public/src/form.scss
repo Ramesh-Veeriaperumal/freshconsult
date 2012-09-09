@@ -252,7 +252,7 @@ a.addchoice:hover{
 .ui-form{
 	padding:6px 0 12px 0;
 	position:relative;
-	border:1px solid #EFEFEF; 
+	border:1px solid #E4E4E4; 
 	background-color:#F8F8F8; 
 	div.field-box{
 		padding:6px 2% 10px 2%;
@@ -2222,4 +2222,25 @@ li.agents-field
 			}
 		}
 	}
+}
+
+.admin-tabs{
+	margin:0;
+	z-index: 2;
+	position: relative;
+	& > li > a, &{ font-size: 14px; border-color: #E4E4E4; }
+	.active a, .active a:hover{
+		background-color: #f8f8f8;
+	}
+}
+
+.section-title{
+	margin: 0 0 16px;
+	h3{ margin:0 0 6px; font-size: 16px; color: #000000; }
+	.help-text{ font-size: 13px; }
+}
+
+h4.label-title{
+	font-weight: bold;
+	margin-bottom: 5px;
 }

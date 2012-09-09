@@ -65,7 +65,7 @@ class Admin::QuestsController < Admin::AdminController
   ]
 
   def index
-    redirect_back_or_default '/admin/gamification'
+    redirect_back_or_default '/admin/gamification#quests'
   end
 
   def edit
@@ -76,7 +76,7 @@ class Admin::QuestsController < Admin::AdminController
     @quest.award_data = ActiveSupport::JSON.decode params[:award_data]
     if @quest.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
-      redirect_back_or_default '/admin/gamification'
+      redirect_back_or_default '/admin/gamification#quests'
     else
       load_config
       edit_data
@@ -87,7 +87,7 @@ class Admin::QuestsController < Admin::AdminController
    def update
     if @quest.update_attributes(params[:quest])
       flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
-      redirect_back_or_default '/admin/gamification'
+      redirect_back_or_default '/admin/gamification#quests'
     else
       load_config
       edit_data
@@ -99,14 +99,14 @@ class Admin::QuestsController < Admin::AdminController
     quest = scoper.find(params[:id])
     quest.active = false
     quest.save
-    redirect_back_or_default '/admin/gamification'
+    redirect_back_or_default '/admin/gamification#quests'
   end
   
   def activate
     quest = all_scoper.disabled.find(params[:id])
     quest.active = true
     quest.save
-    redirect_back_or_default '/admin/gamification'
+    redirect_back_or_default '/admin/gamification#quests'
   end
 
   protected

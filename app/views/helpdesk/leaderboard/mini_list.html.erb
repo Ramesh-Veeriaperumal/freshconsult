@@ -6,6 +6,8 @@
 				 [ @first_call_scorecard, "SharpShooter", "sharpshooter"],
 				 [ @fast_scorecard, "Speed champion", "speed"]] %>
 
+<% list_empty = false %>
+
 <% mini_board.each do |score_list| %>
 	<% (score_list[0] || []).each do |score| %>
 	<div class="panel-row" style="overflow:hidden">
@@ -16,5 +18,10 @@
 			<p class="help-text"><%= score_list[1] %></p>
 		</div>
 	</div>
+	<% list_empty = true %>
 	<% end %>
+<% end %>
+
+<% unless list_empty %>
+	<script type="text/javascript">$('mini-leaderboard').hide()</script>
 <% end %>

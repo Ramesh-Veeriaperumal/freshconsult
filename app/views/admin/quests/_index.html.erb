@@ -1,15 +1,6 @@
-<% content_for :page_toolbar do -%>
-    <%= link_to t('.new_quest'), new_admin_quest_path, :class => "uiButton" %>
-<%- end %>
-
-<% content_for :page_title do -%>
-  <%= t('.quest_title') %>
-<%- end %>
-
 <% content_for :page_active_list do -%>
   <% @quests.each do |quest| %>
     <% content_tag :li, :questid => quest.id, :class => cycle('odd badges_items ', 'even badges_items') do %>
-
         <div class="item_actions">
             <%= link_to(t('delete'), admin_quest_path(quest), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>
             <%= link_to(t('deactivate'), deactivate_admin_quest_path(quest), :method => 'put', :class => "button") %>
@@ -36,23 +27,29 @@
         <% end %>
   <% end %>
 <% end %>
-<br><br>
+
 <ul class="ui-form gamesettings">
     <li>
-        <div class="">
-            <div class="floatr"> 
-                <h2 class="points-box"><%= yield :page_toolbar %></h2>
-            </div>
-            <%= content_tag(:h3, yield(:page_title), :class => "title" )%>
-            <ul class="admin_list" id="normal">
-              <%= yield :page_active_list %>
-            </ul>
-            <% if yield(:page_inactive_list) %>
-            <h4 class="title"><%= t('quests.inactive_quests') %></h4>
-              <ul class="admin_list deactivated">
-                  <%= yield :page_inactive_list %>    
-              </ul>
-          <% end %>
+      <div class="floatr"> 
+          <%= link_to t('.new_quest'), new_admin_quest_path, :class => "uiButton" %>
       </div>
+      <div class="section-title">
+        <%= content_tag(:h3, t('.quest_title'))%>
+        <br />
+        <p class="help-text">
+          Well, it must be removed,' said the King very decidedly, and he called the Queen, who was passing at the moment,
+          'My dear! I wish you would have this cat removed!' The Queen had only one way of settling all difficulties, great or small. 
+        </p>
+        <br />
+      </div>
+      <ul class="admin_list" id="normal">
+        <%= yield :page_active_list %>
+      </ul>
+      <% if yield(:page_inactive_list) %>
+      <h4 class="title"><%= t('quests.inactive_quests') %></h4>
+        <ul class="admin_list deactivated">
+            <%= yield :page_inactive_list %>    
+        </ul>
+    <% end %>
     </li>    
 </ul>  
