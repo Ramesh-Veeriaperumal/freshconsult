@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
   before_filter :set_locale
+
+  rescue_from ActionController::RoutingError, :with => :render_404
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -73,6 +75,13 @@ class ApplicationController < ActionController::Base
   
   def reset_current_account
     Thread.current[:account] = nil
+  end
+
+  def render_404
+     NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
+                                                                  :referer => request.referer,
+                                                                  :request_params => params})
+    render :file => "#{Rails.root}/public/404.html", :status => :not_found
   end
   
 end
