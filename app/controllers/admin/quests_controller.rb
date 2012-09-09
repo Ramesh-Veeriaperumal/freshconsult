@@ -16,7 +16,6 @@ class Admin::QuestsController < Admin::AdminController
   end
 
   def create
-    @quest.award_data = ActiveSupport::JSON.decode params[:award_data]
     if @quest.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default '/admin/gamification'
@@ -63,14 +62,12 @@ class Admin::QuestsController < Admin::AdminController
     end
 
     def set_filter_data
-      @quest.award_data = params[:award_data].blank? ? [] : ActiveSupport::JSON.decode(params[:award_data])
       @quest.filter_data = params[:filter_data].blank? ? [] : ActiveSupport::JSON.decode(params[:filter_data])
       @quest.quest_data = params[:quest_data].blank? ? [] : ActiveSupport::JSON.decode(params[:quest_data])
     end
 
     def edit_data
-      @award_input = ActiveSupport::JSON.encode @quest.award_data
-      @filter_input = ActiveSupport::JSON.encode @quest.filter_data
+      @filter_input = ActiveSupport::JSON.encode @quest.filter_data[:actual_data]
       @quest_input = ActiveSupport::JSON.encode @quest.quest_data
     end
 

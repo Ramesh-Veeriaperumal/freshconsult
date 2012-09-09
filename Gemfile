@@ -73,6 +73,8 @@ gem 'resque-retry'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 
+gem 'chronic'
+
 group :development do
    gem "rspec", "1.3.1"
    gem "thoughtbot-shoulda","2.10.2"

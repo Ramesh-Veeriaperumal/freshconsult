@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120907125116) do
+ActiveRecord::Schema.define(:version => 20120908074125) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -40,6 +40,17 @@ ActiveRecord::Schema.define(:version => 20120907125116) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+
+  create_table "achieved_quests", :force => true do |t|
+    t.integer  "user_id",    :limit => 8
+    t.integer  "account_id", :limit => 8
+    t.integer  "quest_id",   :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "achieved_quests", ["quest_id", "account_id"], :name => "index_achieved_quests_on_quest_id_and_account_id"
+  add_index "achieved_quests", ["user_id", "account_id", "quest_id"], :name => "index_achieved_quests_on_user_id_account_id_quest_id", :unique => true
 
   create_table "addresses", :force => true do |t|
     t.string   "first_name"
@@ -573,9 +584,8 @@ ActiveRecord::Schema.define(:version => 20120907125116) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-  
+
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
- 
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
@@ -1025,13 +1035,14 @@ ActiveRecord::Schema.define(:version => 20120907125116) do
     t.integer  "account_id",  :limit => 8
     t.string   "name"
     t.text     "description"
-    t.integer  "questtype"
+    t.integer  "quest_type"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active"
-    t.text     "award_data"
     t.text     "filter_data"
     t.text     "quest_data"
+    t.integer  "points"
+    t.integer  "badge_id"
   end
 
   create_table "scoreboard_levels", :force => true do |t|
