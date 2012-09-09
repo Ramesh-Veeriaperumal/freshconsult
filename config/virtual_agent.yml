@@ -62,6 +62,8 @@ default_fields:
         <<: *date_time
     inbound_count:
         handler: numeric
+    st_survey_rating:
+        handler: numeric
 
 handlers:
     email: Va::Handlers::Email

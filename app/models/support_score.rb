@@ -86,7 +86,7 @@ class SupportScore < ActiveRecord::Base
     }) if scorable.user
   end
 
-  def self.add_ticket_score(scorable, score, badge)
+  def self.add_ticket_score(scorable, score)
     scorable.support_scores.create({      
       :user_id => scorable.responder.id,
       :group_id => scorable.group_id,

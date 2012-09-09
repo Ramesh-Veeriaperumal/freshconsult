@@ -12,7 +12,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ParserUtil
   include Mobile::Actions::Ticket
 
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", "header_info"]
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
+                            "header_info", "st_survey_rating"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
@@ -737,7 +738,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
+    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
+      ticket_states.respond_to?(attribute)
   end
 
   def schema_less_attributes(attribute, args)
@@ -754,6 +756,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
 
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
+      return ticket_states.send(method) if ticket_states.respond_to?(method)
 
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!

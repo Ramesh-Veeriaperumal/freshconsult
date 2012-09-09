@@ -6,7 +6,7 @@
             <%= link_to(t('deactivate'), deactivate_admin_quest_path(quest), :method => 'put', :class => "button") %>
             <%= link_to(t('edit'), edit_admin_quest_path(quest), :class => "button") %> 
         </div>
-        <div style="height:40px;" class="floatl <%= quest.award_data[0][:badge] %>"></div>
+        <div style="height:40px;" class="floatl <%= quest.badge %>"></div>
         <b><%= link_to(h(quest.name), edit_admin_quest_path(quest), :class => "item_info") %></b>
         <%= content_tag :div, truncate(h(quest.description), :length => 80), :title => h(quest.description)  %>
     <% end %>

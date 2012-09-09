@@ -239,6 +239,10 @@ class User < ActiveRecord::Base
       :occasional => false  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
+
+  has_many :achieved_quests, :dependent => :destroy
+
+  has_many :quests, :through => :achieved_quests
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' 
   

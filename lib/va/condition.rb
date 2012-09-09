@@ -12,6 +12,7 @@ class Va::Condition
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
     'company_name'            => 'customers.name',
+    'st_survey_rating'        => 'helpdesk_schema_less_tickets.int_tc01'
   }
   
   def initialize(rule, account)
