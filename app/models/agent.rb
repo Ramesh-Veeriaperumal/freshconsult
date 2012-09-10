@@ -20,7 +20,8 @@ class Agent < ActiveRecord::Base
   before_create :set_default_ticket_permission
   before_update :update_agents_level
 
-  after_update  :publish_game_notifications
+  after_save  :update_agent_levelup
+  after_update  :update_agent_levelup, :publish_game_notifications
 
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
@@ -74,4 +75,10 @@ protected
     end
   end
 
+  def update_agent_levelup
+    return unless scoreboard_level_id_changed?
+    if level and ((points ? points : 0) < level.points)
+      SupportScore.add_agent_levelup_score(user, level.points)
+    end  
+  end
 end

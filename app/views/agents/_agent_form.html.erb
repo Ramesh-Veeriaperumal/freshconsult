@@ -75,7 +75,14 @@
 		<li>
 			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
 		</li>
-		
+		<% if feature?(:gamification) %>
+			<li>
+				<%= label(:agent , :scoreboard_level_id, t('level_label'))%>
+				<%= select(:agent, :scoreboard_level_id, 
+					options_from_collection_for_select(@scoreboard_levels, "id", "name", @agent.level ? @agent.level.id : "-1")) %>
+			</li>
+		<% end %>
+
 		<% if feature?(:multi_timezone) %>
 			<li> 
 				<%= label(:user , :time_zone,t('account.time_zone')) %>			

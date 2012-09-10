@@ -9,6 +9,7 @@ class AgentsController < Admin::AdminController
   
   def load_object
     @agent = scoper.find(params[:id])
+    @scoreboard_levels = current_account.scoreboard_levels.level_up_for @agent.level
   end
   
   def check_user_permission
@@ -53,6 +54,7 @@ class AgentsController < Admin::AdminController
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
+    @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
      respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agent }
@@ -77,7 +79,8 @@ class AgentsController < Admin::AdminController
     @agent = current_account.agents.new(params[nscname]) 
     #check_agent_limit
     if @user.signup!(:user => params[:user])       
-      @agent.user_id = @user.id      
+      @agent.user_id = @user.id
+      @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       if @agent.save
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
@@ -119,8 +122,10 @@ class AgentsController < Admin::AdminController
   def update
       @agent.occasional = params[:agent][:occasional]
       #check_agent_limit
+      @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
+      
       if @agent.update_attributes(params[nscname])            
-          @user = current_account.all_users.find(@agent.user_id)          
+          @user = current_account.all_users.find(@agent.user_id)
           if @user.update_attributes(params[:user])        
              flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
              redirect_to :action => 'index'

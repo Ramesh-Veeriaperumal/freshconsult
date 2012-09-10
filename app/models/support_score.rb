@@ -86,6 +86,14 @@ class SupportScore < ActiveRecord::Base
     }) if scorable.user
   end
 
+  def self.add_agent_levelup_score(scorable, score)
+    scorable.support_scores.create({
+      :user_id => scorable.id,
+      :score => score,
+      :score_trigger => AGENT_LEVEL_UP
+    }) if scorable
+  end
+
   def self.add_ticket_score(scorable, score, badge)
     scorable.support_scores.create({      
       :user_id => scorable.responder.id,
