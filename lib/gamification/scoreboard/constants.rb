@@ -15,6 +15,9 @@ module Gamification
       #Quest-points - score_trigger
       TICKET_QUEST = 201
 
+      #Admin-config - levels_to_agents
+      AGENT_LEVEL_UP = 301
+
       RESOLUTION = [
         [ :fast_resolution,         I18n.t('admin.gamification.gamification_settings.label_fast_resolution'),      FAST_RESOLUTION ],
         [ :ontime_resolution,   I18n.t('admin.gamification.gamification_settings.label_ontime_resolution'),        ON_TIME_RESOLUTION ],

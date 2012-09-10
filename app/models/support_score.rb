@@ -95,6 +95,14 @@ class SupportScore < ActiveRecord::Base
     }) if scorable.responder
   end
   
+  def self.add_agent_levelup_score(scorable, score)
+    scorable.support_scores.create({
+      :user_id => scorable.id,
+      :score => score,
+      :score_trigger => AGENT_LEVEL_UP
+    }) if scorable
+  end
+
 protected
   
   def update_agents_score
