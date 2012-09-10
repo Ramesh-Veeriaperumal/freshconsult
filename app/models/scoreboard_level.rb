@@ -25,4 +25,10 @@ class ScoreboardLevel < ActiveRecord::Base
     }
   }
 
+  named_scope :level_up_for, lambda { |level| {
+      :conditions => ['id = ? or points > ?', level, level.points ],
+      :order => 'points ASC'
+    } if level
+  }
+
 end
