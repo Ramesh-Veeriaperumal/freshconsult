@@ -12,13 +12,16 @@ module Gamification
       HAPPY_CUSTOMER = 102
       UNHAPPY_CUSTOMER = 103
 
+      #Quest-points - score_trigger
+      TICKET_QUEST = 201
+
       RESOLUTION = [
-        [ :fast_resolution,     I18n.t('admin.gamification.gamification_settings.label_fast_resolution'),         FAST_RESOLUTION ],
-        [ :ontime_resolution,   I18n.t('admin.gamification.gamification_settings.label_ontime_resolution'),     ON_TIME_RESOLUTION ],
-        [ :late_resolution,     I18n.t('admin.gamification.gamification_settings.label_late_resolution'),         LATE_RESOLUTION ],
-        [ :firstcall_resolution,I18n.t('admin.gamification.gamification_settings.label_firstcall_resolution'),    FIRST_CALL_RESOLUTION ],
-        [ :happy_customer,      I18n.t('admin.gamification.gamification_settings.label_happy_customer'),      HAPPY_CUSTOMER ],
-        [ :unhappy_customer,    I18n.t('admin.gamification.gamification_settings.label_unhappy_customer'),  UNHAPPY_CUSTOMER ]
+        [ :fast_resolution,         I18n.t('admin.gamification.gamification_settings.label_fast_resolution'),      FAST_RESOLUTION ],
+        [ :ontime_resolution,   I18n.t('admin.gamification.gamification_settings.label_ontime_resolution'),        ON_TIME_RESOLUTION ],
+        [ :late_resolution,         I18n.t('admin.gamification.gamification_settings.label_late_resolution'),      LATE_RESOLUTION ],
+        [ :firstcall_resolution,    I18n.t('admin.gamification.gamification_settings.label_firstcall_resolution'), FIRST_CALL_RESOLUTION ],
+        [ :happy_customer,      I18n.t('admin.gamification.gamification_settings.label_happy_customer'),           HAPPY_CUSTOMER ],
+        [ :unhappy_customer,  I18n.t('admin.gamification.gamification_settings.label_unhappy_customer'),           UNHAPPY_CUSTOMER ]
       ]
       
       RESOLUTION_OPTIONS = RESOLUTION.map { |i| [i[1], i[2]] }

@@ -1,6 +1,6 @@
 class ScoreboardRating < ActiveRecord::Base
   
-  include Scoreboard::Constants
+  include Gamification::Scoreboard::Constants
  
   belongs_to_account
 

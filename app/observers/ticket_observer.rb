@@ -7,21 +7,58 @@ class TicketObserver < ActiveRecord::Observer
 	include Helpdesk::Ticketfields::TicketStatus
 
 	def after_save(ticket)
-		RAILS_DEFAULT_LOGGER.debug "$$$$$$$$$$$$$$$$$$$$$$$$$$ "
-		RAILS_DEFAULT_LOGGER.debug "INSIDE AFTER_SAVE OBSERVER "
+		RAILS_DEFAULT_LOGGER.debug "INSIDE TICKET AFTER_SAVE OBSERVER "
+		process_available_quests(ticket)
+		rollback_achieved_quests(ticket)
+	end
+
+	private
+
+	def process_available_quests(ticket)
 		if ticket.responder and resolved_now?(ticket)
-			available_quests(ticket).each do |quest|
+			ticket.responder.available_quests.ticket_quests.each do |quest|
 				ticket.load_flexifield if quest.has_custom_field_filters?(ticket)
 				is_a_match = quest.matches(ticket)
-				if is_a_match and evaluate_quest_query(quest,ticket)
-					add_as_achieved_quest(quest, ticket)
-					add_reward_points(quest, ticket)
+				start_time = Time.zone.now - quest.time_span unless quest.any_time_span?
+				
+				if is_a_match and evaluate_quest_query(quest,ticket,start_time,Time.zone.now)
+					quest.award!(ticket.responder)
 				end
 			end
 		end
 	end
 
-	private
+	def rollback_achieved_quests(ticket)
+		if ticket.responder and reopened_now?(ticket)
+			ticket.responder.quests.ticket_quests.each do |quest|
+				badge_awarded_time = ticket.responder.badge_awarded_at(quest)
+				quest_span_time = quest.time_span
+				RAILS_DEFAULT_LOGGER.debug %(INSIDE ROLLBACK CASE 1
+											 : #{badge_awarded_time} : span_time : #{quest_span_time.inspect})
+				unless quest.any_time_span?
+					ach_quest_start_time = badge_awarded_time - quest_span_time
+					resolved_in_quest_span = ticket.ticket_states.resolved_at.between?(
+						ach_quest_start_time,badge_awarded_time)
+				else
+					resolved_in_quest_span = ticket.ticket_states.resolved_at < badge_awarded_time
+				end
+				RAILS_DEFAULT_LOGGER.debug %(INSIDE ROLLBACK CASE 2 : resolved_in_quest_span : #{resolved_in_quest_span})
+				if resolved_in_quest_span
+					start_time = Time.zone.now - quest_span_time
+					if (evaluate_quest_query(quest,ticket,ach_quest_start_time,badge_awarded_time) || 
+							evaluate_quest_query(quest,ticket,start_time,Time.zone.now))
+						ach_quest = ticket.responder.achieved_quest(quest)
+						ach_quest.updated_at = Time.zone.now
+						ach_quest.save
+					else # Rollback points and badge
+						RAILS_DEFAULT_LOGGER.debug %(ROLLBACK POINTS N BADGE of
+											user_id : #{ticket.responder.id} : quest_id : #{quest.id})
+						quest.revoke!(ticket.responder)
+					end
+				end
+			end
+		end
+	end
 
 	def resolved_now?(ticket)
 		ticket.status_changed? && ((ticket.resolved? && ticket.status_was != CLOSED) ||
@@ -33,13 +70,9 @@ class TicketObserver < ActiveRecord::Observer
 			[RESOLVED, CLOSED].include?(ticket.status_was))
 	end
 
-	def available_quests(ticket)
-		ticket.account.quests.available(ticket.responder)
-	end
-
-	def evaluate_quest_query(quest,ticket)
+	def evaluate_quest_query(quest, ticket, start_time, end_time)
 		conditions = quest.filter_query
-		f_criteria = quest.time_condition(ticket.account) + 
+		f_criteria = quest.time_condition(start_time,end_time) + 
 			' and helpdesk_tickets.responder_id = '+ticket.responder_id.to_s
 		conditions[0] = conditions.empty? ? 
 											f_criteria : (conditions[0] + ' and ' + f_criteria)
@@ -70,11 +103,5 @@ class TicketObserver < ActiveRecord::Observer
 		ach_quest.account = ticket.account
 		ach_quest.save
 	end
-
-	def add_reward_points(quest,ticket)
-		RAILS_DEFAULT_LOGGER.debug "INSIDE ADD_REWARD_POINTS "
-		SupportScore.add_ticket_score(ticket, quest.points)
-	end
-
 
 end

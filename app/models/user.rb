@@ -484,6 +484,18 @@ class User < ActiveRecord::Base
     tickets.newest(limit)
   end
 
+  def available_quests
+    account.quests.available(self)
+  end
+
+  def achieved_quest(quest)
+    achieved_quests.find_by_quest_id(quest.id)
+  end
+
+  def badge_awarded_at(quest)
+    achieved_quest(quest).updated_at
+  end
+
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?

@@ -1,5 +1,6 @@
 class Quest < ActiveRecord::Base
   include Gamification::Quests::Constants
+  include Gamification::Scoreboard::Constants
   
   belongs_to_account
 
@@ -20,26 +21,22 @@ class Quest < ActiveRecord::Base
   named_scope :enabled, :conditions => { :active => true }
 
   named_scope :ticket_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_ticket],
+    :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:ticket],
   }
 
   named_scope :forum_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_forum],
+    :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:forum],
   }
 
   named_scope :solution_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_solution],
-  }
-
-  named_scope :survey_quests, :conditions => {
-    :questtype => GAME_TYPE_KEYS_BY_TOKEN[:quest_survey],
+    :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:solution],
   }
 
   def matches(evaluate_on) 
     return true unless filter_data
-    return false unless evaluate_and_conditions(evaluate_on, filter_data[:and_filters])
+    return false unless evaluate_and_conditions(evaluate_on, and_filter_conditions)
     
-    filter_data[:or_filters].each_pair do |k, v_arr|
+    or_filter_conditions.each_pair do |k, v_arr|
       return false unless evaluate_or_conditions(evaluate_on, v_arr)
     end
     
@@ -62,13 +59,11 @@ class Quest < ActiveRecord::Base
   end
 
 
-  def time_condition(account)
-    time_token = QUEST_TIME_BY_KEY[quest_data[0][:date].to_i]
-    time_value = Chronic.parse(time_token + ' ago')
-    return " helpdesk_ticket_states.resolved_at > '#{created_at.to_s(:db)}' " if time_value.blank?
-    time_value = Time.parse(time_value.to_s).in_time_zone(account.time_zone)
-    %( helpdesk_ticket_states.resolved_at > '#{time_value.to_s(:db)}' and 
-      helpdesk_ticket_states.resolved_at > '#{created_at.to_s(:db)}' )
+  def time_condition(start_time, end_time)
+    return " helpdesk_ticket_states.resolved_at >= '#{created_at.to_s(:db)}' " if any_time_span?
+    %((helpdesk_ticket_states.resolved_at >= '#{start_time.to_s(:db)}' and 
+       helpdesk_ticket_states.resolved_at <= '#{end_time.to_s(:db)}') and
+       helpdesk_ticket_states.resolved_at >= '#{created_at.to_s(:db)}' )
   end
 
   def has_custom_field_filters?(evaluate_on)
@@ -83,6 +78,24 @@ class Quest < ActiveRecord::Base
     #badge_id
   end
 
+  def time_span
+    QUEST_TIME_SPAN_BY_KEY[quest_data[0][:date].to_i]
+  end
+
+  def any_time_span?
+    quest_data[0][:date].to_i == 1
+  end
+
+  def award!(user)
+    achieved_quests.create(:user => user)
+    user.support_scores.create({:score => points.to_i, :score_trigger => TICKET_QUEST})
+  end
+
+  def revoke!(user)
+    achieved_quests.find_by_user_id(user.id).delete
+    user.support_scores.create({:score => -(points.to_i), :score_trigger => TICKET_QUEST})
+  end
+
   private
 
     def modify_quest_data
@@ -90,11 +103,11 @@ class Quest < ActiveRecord::Base
     end
 
     def symbolize_data(data)
-      data.collect! {|d| d.symbolize_keys!} unless data.blank?
+      data.collect! {|d| d.symbolize_keys!} unless ( data.blank? or data.is_a? Hash)
     end
 
     def denormalize_filter_data
-      return unless filter_data
+      return if (filter_data.blank? or filter_data.is_a? Hash)
       
       f_data_hash = { :actual_data => filter_data }
       filters_hash = process_filter_data
@@ -127,12 +140,8 @@ class Quest < ActiveRecord::Base
 
     def evaluate_and_conditions(evaluate_on, condition_arr)
       return true if condition_arr.empty?
-      RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_and_conditions WITH 
-                       conditions_arr :  #{condition_arr.inspect})
 
-      condition_arr.each do |f|
-        f_condition = Va::Condition.new(f, account)
-        and_filter_conditions << f_condition
+      condition_arr.each do |f_condition|
         return false unless f_condition.matches(evaluate_on)
       end
       RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_and_conditions return : true)
@@ -141,20 +150,15 @@ class Quest < ActiveRecord::Base
 
     def evaluate_or_conditions(evaluate_on, condition_arr)
       return true if condition_arr.empty?
-      RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_or_conditions WITH 
-                       conditions_arr :  #{condition_arr.inspect})
 
       to_ret = false
-      condition_arr.each do |f|
-        f_condition = Va::Condition.new(f, account)
+      condition_arr.each do |f_condition|
         temp_ret = f_condition.matches(evaluate_on)
-        process_hash_data(or_filter_conditions, f_condition, f_condition.key)
         to_ret = to_ret || temp_ret
       end
       RAILS_DEFAULT_LOGGER.debug %(INSIDE evaluate_or_conditions return : #{to_ret})
       to_ret
     end
-
 
     def construct_query_strings(conditions_arr, join_operator)
       query_strings = []
@@ -169,13 +173,34 @@ class Quest < ActiveRecord::Base
         ([ '(' + query_strings.join( join_operator ) + ')'] + params)
     end
 
-    #Singleton instance wrappers
     def and_filter_conditions
-      @and_filter_conditions ||= []
+      @and_filter_conditions ||= populate_and_filters
     end
 
     def or_filter_conditions
-      @or_filter_conditions ||= {}
+      @or_filter_conditions ||= populate_or_filters
+    end
+
+    def populate_and_filters
+      return [] if filter_data[:and_filters].empty?
+
+      filter_data[:and_filters].map do |f|
+        Va::Condition.new(f, account)
+      end
+    end
+
+    def populate_or_filters
+      return {} if filter_data[:or_filters].empty?
+
+      to_ret = {}
+      filter_data[:or_filters].each_pair do |k, conditions_arr|
+        conditions_arr.each do |f|
+          f_condition = Va::Condition.new(f, account)
+          process_hash_data(to_ret, f_condition, f_condition.key)
+        end
+      end
+
+      to_ret
     end
 
 end

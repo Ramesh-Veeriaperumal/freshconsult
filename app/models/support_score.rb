@@ -1,6 +1,6 @@
 class SupportScore < ActiveRecord::Base
 
-  include Scoreboard::Constants  
+  include Gamification::Scoreboard::Constants
 
   after_commit_on_destroy :update_agents_score
   after_commit_on_create  :update_agents_score

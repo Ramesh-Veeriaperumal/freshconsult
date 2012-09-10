@@ -1012,7 +1012,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if active? && !@old_ticket.active?
         
         SupportScore.destroy_all(:account_id => account_id,  :scorable_type => "Helpdesk::Ticket", :scorable_id => id, 
-          :score_trigger => Scoreboard::Constants::TICKET_CLOSURE)
+          :score_trigger => Gamification::Scoreboard::Constants::TICKET_CLOSURE)
 
       elsif !active? && @old_ticket.active?
         add_support_score
