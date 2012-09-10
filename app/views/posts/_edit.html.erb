@@ -1,13 +1,11 @@
+<%= include_tiny_mce_if_needed %>
 <% form_for :post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>		
  <ul class="ui-form">
 	<li>
-		<%= f.text_area :body_html, :id => "edit_post_#{@post.id}", :tabindex => 1 %>
+		<%= f.text_area :body_html,  :class => "mceEditor", :id => "edit_post_#{@post.id}", :tabindex => 1 %>
 	</li>		    
 	<li class="button-container"> 
 		<%= submit_tag(t("update"), :class => "uiButton small") %>			
 	</li>
  </ul>
-  	<% javascript_tag do %>
- 	invokeRedactor('edit_post_<%= "#{@post.id}"%>','forum');
- 	<% end %>
 <% end -%>
