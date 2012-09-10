@@ -32,12 +32,12 @@ module Gamification
       
       QUEST_BASE_CRITERIA = {
         :ticket   =>  { :disp_name => "Resolve ##questvalue## Tickets within ##questtime##", 
-                        :input => ["questvalue","questtime"] },
+                        :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
         :solution =>  { :disp_name => "Create ##questvalue## Knowledgebase article within ##questtime##", 
-                        :input => ["questvalue","questtime"] },
+                        :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
         :forum    =>  { :disp_name => "##questmode## ##questvalue## Forum posts within ##questtime##", 
                         :input => ["questvalue","questmode","questtime"], 
-                        :questmode => FORUM_QUEST_MODE_BY_KEY.sort }
+                        :questmode => FORUM_QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort }
       }
     end
   end

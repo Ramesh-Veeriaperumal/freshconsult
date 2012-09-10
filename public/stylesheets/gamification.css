@@ -1,7 +1,7 @@
 /*
 Syntax error: Undefined mixin 'all-scoreboard-sprites'.
-        on line 2 of /Users/venom/helpkit/public/src/gamification.scss, in `all-scoreboard-sprites'
-        from line 2 of /Users/venom/helpkit/public/src/gamification.scss
+        on line 2 of /Users/hariprasad/freshdesk/public/src/gamification.scss, in `all-scoreboard-sprites'
+        from line 2 of /Users/hariprasad/freshdesk/public/src/gamification.scss
 
 1: /* Sprite sheet creation for badges and trophies */
 2: @include all-scoreboard-sprites;
@@ -12,8 +12,8 @@ Syntax error: Undefined mixin 'all-scoreboard-sprites'.
 7: }
 
 Backtrace:
-/Users/venom/helpkit/public/src/gamification.scss:2:in `all-scoreboard-sprites'
-/Users/venom/helpkit/public/src/gamification.scss:2
+/Users/hariprasad/freshdesk/public/src/gamification.scss:2:in `all-scoreboard-sprites'
+/Users/hariprasad/freshdesk/public/src/gamification.scss:2
 /Library/Ruby/Gems/1.8/gems/sass-3.1.1/lib/sass/../sass/tree/visitors/perform.rb:169:in `visit_mixin'
 /Library/Ruby/Gems/1.8/gems/sass-3.1.1/lib/sass/../sass/tree/visitors/base.rb:37:in `send'
 /Library/Ruby/Gems/1.8/gems/sass-3.1.1/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
@@ -45,7 +45,7 @@ Backtrace:
 /Library/Ruby/Gems/1.8/gems/sass-3.1.1/rails/../lib/sass/plugin.rb:81:in `update_stylesheets'
 /Library/Ruby/Gems/1.8/gems/sass-3.1.1/rails/../lib/sass/plugin.rb:54:in `check_for_updates'
 /Library/Ruby/Gems/1.8/gems/sass-3.1.1/rails/../lib/sass/plugin/rack.rb:51:in `call'
-/Users/venom/helpkit/vendor/plugins/rack-openid/lib/rack/openid.rb:103:in `call'
+/Users/hariprasad/freshdesk/vendor/plugins/rack-openid/lib/rack/openid.rb:103:in `call'
 /Library/Ruby/Gems/1.8/gems/sinatra-1.2.8/lib/sinatra/base.rb:704:in `forward'
 /Library/Ruby/Gems/1.8/gems/sinatra-1.2.8/lib/sinatra/base.rb:787:in `route_missing'
 /Library/Ruby/Gems/1.8/gems/sinatra-1.2.8/lib/sinatra/base.rb:734:in `route!'
@@ -57,22 +57,22 @@ Backtrace:
 /Library/Ruby/Gems/1.8/gems/sinatra-1.2.8/lib/sinatra/base.rb:823:in `invoke'
 /Library/Ruby/Gems/1.8/gems/sinatra-1.2.8/lib/sinatra/base.rb:659:in `call!'
 /Library/Ruby/Gems/1.8/gems/sinatra-1.2.8/lib/sinatra/base.rb:644:in `call'
-/Users/venom/helpkit/lib/resque_web.rb:12:in `call'
+/Users/hariprasad/freshdesk/lib/resque_web.rb:12:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/showexceptions.rb:24:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/head.rb:9:in `call'
 /Library/Ruby/Gems/1.8/gems/sinatra-1.2.8/lib/sinatra/showexceptions.rb:21:in `call'
-/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/string_coercion.rb:25:in `call'
+/Library/Ruby/Gems/1.8/gems/actionpack-2.3.8/lib/action_controller/string_coercion.rb:25:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/head.rb:9:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/methodoverride.rb:24:in `call'
-/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/params_parser.rb:15:in `call'
-/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/session/cookie_store.rb:99:in `call'
-/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/failsafe.rb:26:in `call'
+/Library/Ruby/Gems/1.8/gems/actionpack-2.3.8/lib/action_controller/params_parser.rb:15:in `call'
+/Library/Ruby/Gems/1.8/gems/actionpack-2.3.8/lib/action_controller/session/cookie_store.rb:99:in `call'
+/Library/Ruby/Gems/1.8/gems/actionpack-2.3.8/lib/action_controller/failsafe.rb:26:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `synchronize'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `call'
-/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:114:in `call'
-/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/reloader.rb:34:in `run'
-/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:108:in `call'
+/Library/Ruby/Gems/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:114:in `call'
+/Library/Ruby/Gems/1.8/gems/actionpack-2.3.8/lib/action_controller/reloader.rb:34:in `run'
+/Library/Ruby/Gems/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:108:in `call'
 /Library/Ruby/Gems/1.8/gems/rails-2.3.8/lib/rails/rack/static.rb:31:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:47:in `call'
 /Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:41:in `each'
@@ -99,4 +99,4 @@ script/server:3
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Syntax error: Undefined mixin 'all-scoreboard-sprites'.\A         on line 2 of /Users/venom/helpkit/public/src/gamification.scss, in `all-scoreboard-sprites'\A         from line 2 of /Users/venom/helpkit/public/src/gamification.scss\A \A 1: /* Sprite sheet creation for badges and trophies */\A 2: @include all-scoreboard-sprites;\A 3: @include all-badges-sprites;\A 4: \A 5: .gamesettings .admin_list{\A 6: 	margin: 0 -16px;\A 7: }"; }
+  content: "Syntax error: Undefined mixin 'all-scoreboard-sprites'.\A         on line 2 of /Users/hariprasad/freshdesk/public/src/gamification.scss, in `all-scoreboard-sprites'\A         from line 2 of /Users/hariprasad/freshdesk/public/src/gamification.scss\A \A 1: /* Sprite sheet creation for badges and trophies */\A 2: @include all-scoreboard-sprites;\A 3: @include all-badges-sprites;\A 4: \A 5: .gamesettings .admin_list{\A 6: 	margin: 0 -16px;\A 7: }"; }

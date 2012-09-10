@@ -69,6 +69,7 @@ class Admin::QuestsController < Admin::AdminController
     def edit_data
       @filter_input = ActiveSupport::JSON.encode @quest.filter_data[:actual_data]
       @quest_input = ActiveSupport::JSON.encode @quest.quest_data
+      @badge_class = Gamification::Quests::Badges::BADGES_CLASS_BY_ID[@quest.badge_id]
     end
 
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods
@@ -122,6 +123,8 @@ class Admin::QuestsController < Admin::AdminController
           })
         end
       end
+
+      filter_hash
     end
 
     def nested_fields ticket_field
