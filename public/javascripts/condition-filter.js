@@ -45,14 +45,15 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			rem_dom		 : ".delete",
 			operators	 : false,
 			delete_last  : false,
- 			onRuleSelect : function(){}
+			selectListArr: [],
+			onRuleSelect : function(){}
 		};
 	if ( options ) jQuery.extend( setting, options );
 	
 	// Setting initial data elements	
 	var hg_data			= $H(),
 		operator_types	= setting.operators,
-		quest_criteria_types = setting.quest_criteria_types;
+		//quest_criteria_types = setting.quest_criteria_types;
 		name			   = _name || "default",
 		hidden_			= null,
 		// Setting initial dom elements
@@ -71,6 +72,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 		add_to_hash:
 			function(h_data){
 				// Hash list for dropdown
+				if(setting.delete_last){
+					h_data = h_data[0]['ticket'].concat(h_data[0]['forum'],h_data[0]['solution']);
+				}
 				h_data.each(function(option){
 					hg_data.set(option.name, option);
 				});
@@ -93,19 +97,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				// Adding a new Filter DOM element to the Filter Container
 				var r_dom = domUtil.getContainer(name);
 				var filterList = [];
-				if(quest_criteria_types) {
-					var selected_quest = jQuery("#quest_questtype").val();
-					var criteria_list = quest_criteria_types[selected_quest];
-					filterList.push(filter_data[0]);
-					jQuery(filter_data).each(function(key, item) {
-						if(criteria_list) { 
-							jQuery(criteria_list.criteria_type).each(function(i, value) {
-								if (value == item.name) {
-									filterList.push(item);
-								}
-							});
-						}
-					});
+				if(setting.delete_last) {
+					var selected_quest = jQuery("#quest_quest_type").val();
+					//var criteria_list = quest_criteria_types[selected_quest];
+					filterList = filter_data[0][setting.selectListArr[selected_quest]];
 				} else {
 					filterList = filter_data;
 				}
@@ -137,19 +132,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
 					var filterList = [];
-					if(quest_criteria_types) {
-						var selected_quest = jQuery("#quest_questtype").val();
-						var criteria_list = quest_criteria_types[selected_quest];
-						filterList.push(filter_data[0]);
-						jQuery(filter_data).each(function(key, item) {
-							if(criteria_list) { 
-								jQuery(criteria_list.criteria_type).each(function(i, value) {
-									if (value == item.name) {
-										filterList.push(item);
-									}
-								});
-							}
-						});
+					if(setting.delete_last) {
+						var selected_quest = jQuery("#quest_quest_type").val();
+						//var criteria_list = quest_criteria_types[selected_quest];
+						filterList = filter_data[0][setting.selectListArr[selected_quest]];
 					} else {
 						filterList = filter_data;
 					}
@@ -202,8 +188,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				if( current_filter.length != 0 ){
 					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
 				}
-				
-				
 				hidden_.val(save_data);
 				return save_data;
 			},
@@ -265,6 +249,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								postProcessCondition(hg_item, data_id);
 							}
 						});
+			jQuery(parentDom+' select')
+				.live("change",function(){
+					var formObj = jQuery(parentDom).parents('form:first');
+					setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj])
+				});
 
 			jQuery(ADD_DOM)
 				.bind("click",
@@ -279,6 +268,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							filter = jQuery(this).parent();
 							if(setting.delete_last || (filter.parent().children().size() != 1))
 								filter.remove();
+							var formObj = jQuery(parentDom).parents('form:first');
+							setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj]);
 						});
 			domUtil.init();
 		}init();

@@ -8,7 +8,7 @@ class Admin::QuestsController < Admin::AdminController
   before_filter :load_config, :only => [:new, :edit]
 
   def index
-    redirect_back_or_default '/admin/gamification'
+    redirect_back_or_default '/admin/gamification#quests'
   end
 
   def edit
@@ -18,7 +18,7 @@ class Admin::QuestsController < Admin::AdminController
   def create
     if @quest.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
-      redirect_back_or_default '/admin/gamification'
+      redirect_back_or_default '/admin/gamification#quests'
     else
       load_config
       edit_data
@@ -29,7 +29,7 @@ class Admin::QuestsController < Admin::AdminController
    def update
     if @quest.update_attributes(params[:quest])
       flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
-      redirect_back_or_default '/admin/gamification'
+      redirect_back_or_default '/admin/gamification#quests'
     else
       load_config
       edit_data
@@ -41,14 +41,14 @@ class Admin::QuestsController < Admin::AdminController
     quest = scoper.find(params[:id])
     quest.active = false
     quest.save
-    redirect_back_or_default '/admin/gamification'
+    redirect_back_or_default '/admin/gamification#quests'
   end
   
   def activate
     quest = all_scoper.disabled.find(params[:id])
     quest.active = true
     quest.save
-    redirect_back_or_default '/admin/gamification'
+    redirect_back_or_default '/admin/gamification#quests'
   end
 
   protected
@@ -69,6 +69,7 @@ class Admin::QuestsController < Admin::AdminController
     def edit_data
       @filter_input = ActiveSupport::JSON.encode @quest.filter_data[:actual_data]
       @quest_input = ActiveSupport::JSON.encode @quest.quest_data
+      @badge_class = Gamification::Quests::Badges::BADGES_CLASS_BY_ID[@quest.badge_id]
     end
 
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods
@@ -122,6 +123,8 @@ class Admin::QuestsController < Admin::AdminController
           })
         end
       end
+
+      filter_hash
     end
 
     def nested_fields ticket_field

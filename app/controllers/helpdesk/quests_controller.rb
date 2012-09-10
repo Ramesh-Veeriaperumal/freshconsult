@@ -11,6 +11,10 @@ class Helpdesk::QuestsController < ApplicationController
     render :layout => false
   end
 
+  def un_achived
+    @active_quest = scoper.find(:all)
+  end
+
   private
   	def scoper
 		current_account.quests
