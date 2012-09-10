@@ -11,7 +11,7 @@ module BusinessRulesObserver
     else
       events.push(event_name)
     end
-    send_later(:biz_rules_check, events)
+    send_later(:biz_rules_check, events) unless events.blank?
   end
 
   def biz_rules_check(events)
