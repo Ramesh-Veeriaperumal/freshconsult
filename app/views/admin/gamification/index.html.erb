@@ -7,12 +7,34 @@
   });
 <% end %>
  
-<%= feature?(:scoreboard_enable) %> 
-<%= check_box_tag :scoreboard_enable, feature?(:scoreboard_enable), :selected => feature?(:scoreboard_enable) %>
+<div class="floatr">
+	<%= check_box_tag :scoreboard_enable, 1, feature?(:scoreboard_enable), 
+			:rel => "toggle", 
+			"data-checked-label" => "enabled", 
+			"data-unchecked-label" => "disabled", 
+			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#scoreboard_elements').toggle();") %>
+</div>
 <h3 class="title"><%=t('.title')%></h3>
-  
-<%= render :partial => "gamification_settings" %>
-<%= render :partial => "/admin/quests/index" %>
+
+<div id="scoreboard_elements" <% unless feature?(:scoreboard_enable) %>style="display:none"<%end%> >
+	<ul data-tabs="tabs" class="tabs admin-tabs">
+		<li class="active first">
+			<a id="points-tab" href="#points">Points</a>
+		</li>
+		<li>
+			<a id="quests-tab" href="#quests">Quests</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="points" class="tab-pane active">
+			<%= render :partial => "gamification_settings" %>
+		</div>			  
+		<div id="quests" class="tab-pane">
+			<%= render :partial => "/admin/quests/index" %>
+		</div>
+	</div>
+</div>
 
 <% content_for :sidebar do %>
 <div class="sidepanel helpcard">

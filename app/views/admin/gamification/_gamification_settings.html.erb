@@ -1,116 +1,71 @@
 <ul class="ui-form">
     <li>
-        <div class="floatl"><h3 style="font-weight: bold; color: #333; font-size: 19px;"><%= t('.enable_label') %></h3></div>        
-        <div id="scoreboard_link_con" class="floatr">               
-        <%if feature?(:scoreboard_enable)%>
-           <%= link_to_function "<strong> #{t('application.enabled')} </strong><span></span>", "toggle_status()",  :id => "scoreboard_status_link", :class => "uiButton special iphone-active" %>
-        <%else%>
-           <%= link_to_function "<strong> #{t('application.disabled')} </strong><span></span>", "toggle_status()",  :id => "scoreboard_status_link", :class => "uiButton special iphone-inactive" %>
-        <%end%>
-        </div>      
-    </li>
-    <li style="border-top:1px solid #ccc;" id="scoreboard_elements" 
-    <% unless feature?(:scoreboard_enable) %>style="display:none"<%end%>>
-    <div class="gamesettings">
     <% form_remote_tag :url => { :action => "update" }, :before => "if(!callValid()){ return false; }", :html => { :method => :put, :id => "scoreboard_ratings_form" } do %>
-    <h3><%= t('.title_points_configuration')%></h3>
-    <div class="gray-box-rounded">
-        <div class="points-box floatl" style="border-right: 1px solid #fff;">
-            <h2><%= t('.title_ticket_points')%></h2>
-            <ul class="points" style="margin-left: 2px;">
-                <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
-                    <%if scoreboard.resolution_speed < 100 %>
-                        <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                            <li> 
-                                <%= scoreboard.resolution_name %>
-                                <%= sb.text_field :score, :value => scoreboard.score, :class => "number required", :maxlength => "5" %>
-                                <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
-                                <%= sb.hidden_field :id, :value => scoreboard.id %>
-                            </li>
-                        <% end %>
-                    <% end %>
-                <% end %>
-            </ul>
-        </div>
-        <div class="points-box  floatl" style="border-left: 1px solid #e9e9e9; padding-left: 20px;">
-            <h2><%= t('.title_bonus_points')%></h2>
-            <ul class="points">
-                <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
-                    <%if scoreboard.resolution_speed > 100 %>
-                        <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                            <li style="margin-right:10px;" > 
-                                <%= scoreboard.resolution_name%>
-                                <%= sb.text_field :score, :value => scoreboard.score, :class => "number required", :maxlength => "5" %>
-                                <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
-                                <%= sb.hidden_field :id, :value => scoreboard.id %>
-                            </li>
-                        <% end %>
-                    <% end %>
-                <% end %>
-            </ul>
+    <div class="section-title">
+        <h3>Award points</h3>
+    </div>
+    <div class="row-fluid">
+        <div class="span3">
+            <strong>
+                When agent resolves a ticket:
+            </strong>
         </div>        
-    </div>
-    <h3><%= t('.title_levels')%></h3>
-    <div class="gray-box-rounded">
-        <div class="points-box levels">
-            <ul class="points">
-                <% @scoreboard_levels.each_with_index do |level , index| %>
-                    <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
-                    <li>
-                        <%= level.name %>
-                        <%= sl.text_field :points, :value => level.points, :maxlength => "6", :class => "number required" %></td>
-                        <%= sl.hidden_field :id, :value => level.id %>
-                    </li>
-                    <% end %>
+        <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
+            <%if scoreboard.resolution_speed < 100 %>
+                <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                    <div class="span3">
+                        <h4 class="label-title"><%= scoreboard.resolution_name %> </h4>
+                        <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
+                        <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
+                        <%= sb.hidden_field :id, :value => scoreboard.id %>
+                    </div>
                 <% end %>
-            </ul>
+            <% end %>
+        <% end %>
+    </div>
+    <br />
+    <div class="row-fluid">
+        <div class="span3">
+            <strong>
+                Bonus points for:
+            </strong>
         </div>
-        <div> <%= t('.info_level_new_agent')%> </div>       
+        <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
+            <%if scoreboard.resolution_speed < 100 %>
+                <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                    <div class="span3"> 
+                        <h4 class="label-title"><%= scoreboard.resolution_name %> </h4>
+                        <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
+                        <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
+                        <%= sb.hidden_field :id, :value => scoreboard.id %>
+                    </div>
+                <% end %>
+            <% end %>
+        <% end %>
     </div>
-    <h3><%= t('.title_trophies')%></h3>
-    <div class="gray-box-rounded quest floatl" style="border-right: 1px solid white;">
-         <div class="floatl scoreboard_items">
-            <div class="scoreboard-trophy-mvp"></div>
-        </div>
-        <div class="points-box">
-            <h2><%= t('gamification.leaderboard.mvp_trophie_label') %></h2>
-            <p><%= t('gamification.leaderboard.mvp_trophie_info') %></p>
-        </div>    
+    <br /><br />
+    <div class="section-title">
+        <h3><%= t('.title_levels')%></h3>
+        <p class="help-text">Set points to be acheived by an agent to reach a level </p>
     </div>
-
-    <div class="gray-box-rounded quest floatl" style="clear: both; border-right: 1px solid white;">
-         <div class="floatl scoreboard_items">
-            <div class="scoreboard-trophy-sharpshooter"></div>
-        </div>
-        <div class="points-box">
-            <h2><%= t('gamification.leaderboard.sharpshooter_trophie_label')%></h2>
-            <p><%= t('gamification.leaderboard.sharpshooter_trophie_info')%></p>
-        </div>    
+    <div class="row-fluid">
+        <% @scoreboard_levels.each_with_index do |level , index| %>
+            <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
+            <div class="span2">
+                <h4 class="label-title"><%= level.name %></h4>
+                <%= sl.text_field :points, :value => level.points, :maxlength => "6", :class => "number points required" %></td>
+                <%= sl.hidden_field :id, :value => level.id %>
+            </div>
+            <% end %>
+        <% end %>        
     </div>
-
-    <div class="gray-box-rounded quest floatl" style="border-left: 1px solid #e9e9e9;">
-        <div class="floatl scoreboard_items">
-            <div class="scoreboard-trophy-speed"></div>
-        </div>
-        <div class="points-box">
-            <h2><%= t('gamification.leaderboard.speed_trophie_label')%></h2>
-            <p><%= t('gamification.leaderboard.speed_trophie_info')%></p>
-        </div>    
-    </div>
-    <div class="gray-box-rounded quest scoreboard_items" style="border-left: 1px solid #e9e9e9;">
-        <div class="floatl scoreboard-trophy-love"></div>
-        <div class="points-box">
-            <h2><%= t('gamification.leaderboard.love_trophie_label')%></h2>
-            <p><%= t('gamification.leaderboard.love_trophie_info')%></p>
-        </div>    
-    </div>
-    
-    <div class="button-container" style="clear: both;">
-        <%= submit_tag t('account.save'), :class => 'uiButton submit' %>
+    <br /><br />
+    <span class="seperator"></span>
+    <div class="button-container">        
         <a class="uiButton" href="/admin/home">Cancel</a>
+        <%= submit_tag t('account.save'), :class => 'uiButton special' %>
     </div>
     <% end %>
-    </div>
     </li>
 </ul>
 
@@ -122,36 +77,4 @@
             return true;
         }
     };
-
-    function update_status(status_url){
-        jQuery.ajax({
-            url: status_url,
-            type: "post"    
-        })
-    }
-    
-    function enable(){
-        update_status("/admin/gamification/enable");
-    }
-    
-    function disable(){
-        update_status("/admin/gamification/disable");
-    }
-    
-    function toggle_status(){
-        jQuery('#scoreboard_status_link').hasClass("iphone-active")? disable() : enable();      
-    }
-    
-    function change_enable_status(status){
-       if(status){
-        jQuery('#scoreboard_elements').show();
-        jQuery('#scoreboard_status_link').removeClass("iphone-inactive").addClass("iphone-active");
-        jQuery('#scoreboard_status_link').html('<strong> <%=t('application.enabled')%> </strong><span></span>');        
-       }
-       else{
-        jQuery('#scoreboard_elements').hide();
-        jQuery('#scoreboard_status_link').removeClass("iphone-active").addClass("iphone-inactive");
-        jQuery('#scoreboard_status_link').html('<strong> <%=t('application.disabled')%> </strong><span></span>');       
-       }
-    }
 <%end%>

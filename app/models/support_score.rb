@@ -1,6 +1,6 @@
 class SupportScore < ActiveRecord::Base
 
-  include Scoreboard::Constants  
+  include Gamification::Scoreboard::Constants
 
   after_commit_on_destroy :update_agents_score
   after_commit_on_create  :update_agents_score
@@ -86,15 +86,7 @@ class SupportScore < ActiveRecord::Base
     }) if scorable.user
   end
 
-  def self.add_agent_levelup_score(scorable, score)
-    scorable.support_scores.create({
-      :user_id => scorable.id,
-      :score => score,
-      :score_trigger => AGENT_LEVEL_UP
-    }) if scorable
-  end
-
-  def self.add_ticket_score(scorable, score, badge)
+  def self.add_ticket_score(scorable, score)
     scorable.support_scores.create({      
       :user_id => scorable.responder.id,
       :group_id => scorable.group_id,

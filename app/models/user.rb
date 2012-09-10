@@ -239,6 +239,10 @@ class User < ActiveRecord::Base
       :occasional => false  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
+
+  has_many :achieved_quests, :dependent => :destroy
+
+  has_many :quests, :through => :achieved_quests
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' 
   
@@ -478,6 +482,18 @@ class User < ActiveRecord::Base
 
   def recent_tickets(limit = 5)
     tickets.newest(limit)
+  end
+
+  def available_quests
+    account.quests.available(self)
+  end
+
+  def achieved_quest(quest)
+    achieved_quests.find_by_quest_id(quest.id)
+  end
+
+  def badge_awarded_at(quest)
+    achieved_quest(quest).updated_at
   end
 
   protected

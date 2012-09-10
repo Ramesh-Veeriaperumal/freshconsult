@@ -1,12 +1,12 @@
 account = Account.current
 
 ScoreboardRating.seed_many(:account_id, :resolution_speed, [
-    [ Scoreboard::Constants::FAST_RESOLUTION, 3 ],
-    [ Scoreboard::Constants::ON_TIME_RESOLUTION, 1 ],
-    [ Scoreboard::Constants::LATE_RESOLUTION, -1 ],
-    [ Scoreboard::Constants::FIRST_CALL_RESOLUTION, 3 ],
-    [ Scoreboard::Constants::HAPPY_CUSTOMER, 3 ],
-    [ Scoreboard::Constants::UNHAPPY_CUSTOMER, -1 ]
+    [ Gamification::Scoreboard::Constants::FAST_RESOLUTION, 3 ],
+    [ Gamification::Scoreboard::Constants::ON_TIME_RESOLUTION, 1 ],
+    [ Gamification::Scoreboard::Constants::LATE_RESOLUTION, -1 ],
+    [ Gamification::Scoreboard::Constants::FIRST_CALL_RESOLUTION, 3 ],
+    [ Gamification::Scoreboard::Constants::HAPPY_CUSTOMER, 3 ],
+    [ Gamification::Scoreboard::Constants::UNHAPPY_CUSTOMER, -1 ]
   ].map do |f|
     {
       :account_id => account.id,

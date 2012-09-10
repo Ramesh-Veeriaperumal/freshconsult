@@ -227,7 +227,7 @@ en:
        You can learn more about satisfaction surveys from our solutions page.     
        </p>"
       index:
-        title: Gamification Settings
+        title: Gamification
       gamification_settings:
         enable_label: Agents Gamification
         title_points_configuration: Points Configuration
@@ -239,8 +239,8 @@ en:
         label_firstcall_resolution: First Call Resolution
         label_happy_customer: Happy Customer
         label_unhappy_customer: Unhappy Customer
-        title_levels: Levels
-        info_level_new_agent: "Note: For Newly joining Agents 'Beginner' title & points will be given"
+        title_levels: Agent levels
+        info_levels: "Set points to be acheived by an agent to reach a level"
         title_trophies: Trophies
         new_quest: New Quest
         quest_title: Quests

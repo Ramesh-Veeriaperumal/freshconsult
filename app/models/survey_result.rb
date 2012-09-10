@@ -9,7 +9,7 @@ class SurveyResult < ActiveRecord::Base
   belongs_to :customer,:class_name => 'User', :foreign_key => :customer_id
   belongs_to :group,:class_name => 'Group', :foreign_key => :group_id
 
-  after_create :add_support_score
+  after_create :update_ticket_rating, :add_support_score
   
   def add_feedback(feedback)
     note = surveyable.notes.build({
@@ -123,6 +123,13 @@ class SurveyResult < ActiveRecord::Base
     def add_support_score
       SupportScore.add_happy_customer(surveyable) if happy?
       SupportScore.add_unhappy_customer(surveyable) if unhappy?
+    end
+
+    def update_ticket_rating
+      return unless surveyable.is_a? Helpdesk::Ticket
+
+      surveyable.st_survey_rating= rating
+      surveyable.save
     end
     
 end
