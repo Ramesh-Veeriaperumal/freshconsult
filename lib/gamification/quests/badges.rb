@@ -29,7 +29,7 @@ module Gamification
           :classname => "badges-trophy", :id => 12 }
       ]
 
-      BADGES_CLASS_BY_ID = Hash[*BADGES.map { |badge| [badge[:id], badge] }.flatten] 
+      BADGES_BY_ID = Hash[*BADGES.map { |badge| [badge[:id], badge] }.flatten] 
     end
   end
 end

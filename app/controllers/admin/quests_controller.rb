@@ -69,7 +69,7 @@ class Admin::QuestsController < Admin::AdminController
     def edit_data
       @filter_input = ActiveSupport::JSON.encode @quest.filter_data[:actual_data]
       @quest_input = ActiveSupport::JSON.encode @quest.quest_data
-      @badge_class = Gamification::Quests::Badges::BADGES_CLASS_BY_ID[@quest.badge_id]
+      @badge_class = Gamification::Quests::Badges::BADGES_BY_ID[@quest.badge_id]
     end
 
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods
@@ -144,7 +144,7 @@ class Admin::QuestsController < Admin::AdminController
           :choices => current_account.solution_categories.map{|solution| [solution.id, solution.name]}, :operatortype => "choicelist" },
         { :name => "solution_folders", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
           :choices => Solution::Category.folder_names(current_account), :operatortype => "choicelist" },
-         { :name => "solution_likes", :value => I18n.t('quests.solution_likes'), :domtype => "text", 
+         { :name => "solution_likes", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
           :operatortype => 'greater' }
       ]
     end
@@ -156,7 +156,7 @@ class Admin::QuestsController < Admin::AdminController
           :choices => current_account.forum_categories.map{|forum| [forum.id, forum.name]}, :operatortype => "choicelist" },
         { :name => "forums", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
           :choices => ForumCategory.forum_names(current_account), :operatortype => "choicelist" }, 
-        { :name => "customer_votes", :value => I18n.t('quests.customer_votes'), :domtype => "text", 
+        { :name => "customer_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
           :operatortype => 'greater' },
       ]
     end

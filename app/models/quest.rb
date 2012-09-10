@@ -1,6 +1,7 @@
 class Quest < ActiveRecord::Base
   include Gamification::Quests::Constants
   include Gamification::Scoreboard::Constants
+  include Gamification::Quests::Badges
   
   belongs_to_account
 
@@ -59,9 +60,9 @@ class Quest < ActiveRecord::Base
   end
 
 
-  def time_condition(start_time, end_time)
+  def time_condition(end_time=Time.zone.now)
     return " helpdesk_ticket_states.resolved_at >= '#{created_at.to_s(:db)}' " if any_time_span?
-    %((helpdesk_ticket_states.resolved_at >= '#{start_time.to_s(:db)}' and 
+    %( (helpdesk_ticket_states.resolved_at >= '#{start_time(end_time).to_s(:db)}' and 
        helpdesk_ticket_states.resolved_at <= '#{end_time.to_s(:db)}') and
        helpdesk_ticket_states.resolved_at >= '#{created_at.to_s(:db)}' )
   end
@@ -75,7 +76,7 @@ class Quest < ActiveRecord::Base
   end
 
   def badge
-    #badge_id
+    BADGES_BY_ID[badge_id]
   end
 
   def time_span
@@ -84,6 +85,10 @@ class Quest < ActiveRecord::Base
 
   def any_time_span?
     quest_data[0][:date].to_i == 1
+  end
+
+  def start_time(end_time=Time.zone.now)
+    end_time - time_span
   end
 
   def award!(user)

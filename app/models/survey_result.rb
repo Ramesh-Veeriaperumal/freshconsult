@@ -1,5 +1,7 @@
 class SurveyResult < ActiveRecord::Base
 
+  include Gamification::Quests::ProcessTicketQuests
+
   belongs_to_account
     
   has_one :survey_remark, :dependent => :destroy
@@ -10,6 +12,7 @@ class SurveyResult < ActiveRecord::Base
   belongs_to :group,:class_name => 'Group', :foreign_key => :group_id
 
   after_create :update_ticket_rating, :add_support_score
+  after_commit_on_create :process_ticket_quests_on_feedback
   
   def add_feedback(feedback)
     note = surveyable.notes.build({
@@ -132,4 +135,8 @@ class SurveyResult < ActiveRecord::Base
       surveyable.save
     end
     
+    def process_ticket_quests_on_feedback
+      evaluate_ticket_quests(surveyable)
+    end
+
 end
