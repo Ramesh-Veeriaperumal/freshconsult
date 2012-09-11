@@ -160,7 +160,7 @@ ul.activityfeed li{
 		margin:0px 0px 14px 0px;
 		color:#444;
 	}  
-	 h4{
+	h4{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
@@ -659,61 +659,12 @@ body h5{
 	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
 
 	#adjacents {
-		float: right;
-		width: 60px;
 		margin:4px 6px;
 		position: absolute;
 		right: 0;
 		top: 0;
-
-		.prev, .next {
-			width: 16px;
-			height: 16px;
-			padding: 4px 5px 5px 4px;
-			display: block;
-			float:left;
-			margin:0 1px;
-			background-color:#EDEDED;
-			@include vertical-gradient(#f4f4f4, #ededed);
-			border:solid 1px #d6d6d6;
-			@include border-radius(3px 0 0 3px);
-			text-align:center;
-
-			span {
-				width:16px;
-				height:16px;
-				display:inline-block;
-				text-indent: 100%;
-				white-space: nowrap;
-				overflow: hidden;
-			}
-
-			&:hover {
-				border-color:#acacac;
-				@include vertical-gradient(#e6e6e6, #d7d7d7);
-			}
-
-			&.disabled, .disabled:hover {
-				background: #f8f8f8;
-				border-color:#eee;
-				span {
-					@include opacity(0.1);
-				}
-			}
-		}
-
-		.prev {
-			span  {
-				background:sprite($symbol, prev-arrow) no-repeat;
-			}
-			margin-left: 2px;
-		}
-		.next {
-			span  {
-				background:sprite($symbol, next-arrow) no-repeat;
-			}
-			@include border-radius(0 3px 3px 0);
-		}
+		left:auto;
+		bottom:auto;
 	}
 }
 h4.title{
@@ -3585,7 +3536,7 @@ div.addReminder{
          margin-top:3px;
          margin-left:-55px;         
          @include corners(5px);
-         border:1px solid #9a9a9a;
+         border:1px solid #CCC;
          height:45px;
          img{ 
             width:45px; height:45px;
@@ -3828,6 +3779,8 @@ div.addReminder{
 		text-align:center; 
 		img{
 		   max-width:130px;
+		   width: 90px;
+		   height:90px;
 		}
 	}
 	.info-highlight{
@@ -4860,7 +4813,7 @@ a.close{
       color:#333;
       font-size:16px;
       font-weight:normal;
-      padding:8px 8px 10px 8px;
+      padding:8px 8px 10px 0;
       margin:0;
    }
    h4.title{
@@ -4885,7 +4838,7 @@ a.close{
 			display:none;
       	}
 	   	.ff_item{
-			margin:0 6px 0;
+			margin:0 6px 0 0;
 			padding:4px 2px 10px;
 		}
 	   	.item{
@@ -4933,10 +4886,6 @@ a.close{
 		display:inline-block;
 		margin:8px 0 2px;
 
-		#view_manage_links {
-			display: inline-block;
-			zoom:1;
-		}
 	.link-item.active, a.link-item:hover{
      margin:0px -5px;
      padding-left:13px;
@@ -4980,21 +4929,23 @@ a.close{
 			}
 
 		}
+	}   
+}
+
+.leftFilter {
+
+	#save_filter, #view_manage_links {
+		visibility: hidden;
+	}
+	#view_manage_links {
+		display: inline-block;
 	}
 
-
-   .leftFilter {
-
+	&:hover{
 		#save_filter, #view_manage_links {
-			visibility: hidden;
+			visibility: visible;
 		}
-		&:hover{
-			#save_filter, #view_manage_links {
-				visibility: visible;
-			}
-		}
-   }
-   
+	}
 }
 
 .scroll_fixed_options .leftFilter {
@@ -5088,8 +5039,6 @@ a.close{
    background:#ffffff;
    padding:5px 0;
    z-index:999999;
-   max-height: 420px;
-   overflow-y:auto;
    @include min-width(250px);
    @include opacity(0.95);
    @include corners(5px);
@@ -5113,7 +5062,10 @@ a.close{
       }
       .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
-   a:hover{
+   a.hide {
+   	display:none;
+   }
+   a:hover, a.selected{
       color:#FFF;
       background: #999;
 	  @include text-shadow(none);
@@ -5142,7 +5094,14 @@ a.close{
 
 			&:hover {
 				@include text-shadow(none);
-				color:#FFF;
+				color:#333;
+   				background:#ffffff;
+
+   				&.selected {
+					color:#FFF;
+					background: #999;
+					@include text-shadow(none);
+   				}
 			}
 
 			.ticksymbol {
@@ -5150,14 +5109,30 @@ a.close{
 			}
 		}
 
+		.contents {
+			max-height: 400px;
+			overflow-y:auto;
+			display:block;
+		}
 		&.loading {
 			background-image:url('/images/loading.gif');
 			background-repeat:no-repeat;
 			background-position: center;
 			padding:20px 10px;
 
-			a, li {
+			a, li, .contents, .menu_search {
 				display:none;
+			}
+		}
+
+		.menu_search {
+			&.invisible {
+				height:0px;
+				margin-top:-1px;
+				margin-bottom:-1px;
+				padding:0px;
+				border:none;
+				position:absolute;
 			}
 		}
 
@@ -5669,7 +5644,6 @@ a.close{
 	.ui-form {
 		background:none;
 		border:none;
-
 		div.field {
 			float:left;
 			margin:5px 0;
@@ -5734,6 +5708,70 @@ a.close{
 	}
 
 }
+
+.remote_support{
+	.session_data{
+		text-align: center;
+		.pin_submit{
+			margin-top: 15px;
+		}
+		.tech_console{
+			margin-top: 5px;
+		}	
+	}
+	.active_header{
+		font-weight: bold;
+	}
+	.active_session_pin{
+		border: 1px solid #D4D4D4;
+		text-align: center;
+		margin-top: 5px;
+		border-radius: 4px;
+		-moz-border-radius: 4px;
+		padding: 15px 10px;
+		background-color: #FDF8D8;
+
+		.pincode{
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+	}
+	.resend{
+		margin-top: 5px;		
+	}
+	
+}
+
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right top no-repeat;
+}
+
+
+.error{
+	color: #F00;
+}
+
+
+#integrations-list {
+	display:block;
+	overflow: hidden;
+	margin: 0 -20px;
+
+	.search {
+		position: relative;
+		right:10px;
+		top: 0px;
+	}
+	ul.table-list {
+		margin: 15px 0 0 0;
+	}
+
+	.tabs {
+		margin-bottom: 10px;
+	}
+}
+
 
 .crm_contact_widget {
 	.content { width:auto; }

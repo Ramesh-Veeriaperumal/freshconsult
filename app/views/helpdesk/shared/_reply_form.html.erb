@@ -44,8 +44,8 @@
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
               <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email) %>
-              <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= @to_cc_emails.blank? ? "" : "checked" %> />              
-              <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
+              <input type="checkbox" class="hide" id="include_cc" name="include_cc"  />              
+              <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
           </div>
         </li>
         <li class="inline-field field hide" id="cc-form-container-<%=cntid%>">
@@ -134,7 +134,7 @@
     <div class="button-container">        
       <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
       <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('resolved');" , :class => "uiButton", :id => "send_resolve_btn") %>
-    <%= button_to_function(t('cancel'), "jQuery('##{cntid}').slideUp();jQuery('##{note_details_id}').show()", :class => "uiButton" ) %>
+    <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{note_details_id}').show();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
     </div>
 
 
@@ -145,6 +145,10 @@
   <% javascript_tag do %>
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){
+      if(!jQuery('#include_cc').is(':checked'))
+          jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
+      if(!jQuery('#include_bcc').is(':checked'))
+          jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
         <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous %>
       })
       .validate();  

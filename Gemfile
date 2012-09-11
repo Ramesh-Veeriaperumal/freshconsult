@@ -73,6 +73,7 @@ gem 'resque-retry'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
+gem 'after_commit', "~> 1.0.10"
 
 
 group :development do

@@ -64,7 +64,7 @@ stylesheets:
     - public/stylesheets/reports.css
 
   redactor:
-    - public/javascripts/redactor/css/redactor.css 
+    - public/stylesheets/redactor.css 
 
 javascripts:
   defaults:
@@ -98,6 +98,7 @@ javascripts:
     - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/*.js
+    - public/javascripts/dyn_menu.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js

@@ -112,13 +112,18 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
     t.text     "signature_html"
   end
 
+  create_table "app_business_rules", :force => true do |t|
+    t.integer "va_rule_id",     :limit => 8
+    t.integer "application_id", :limit => 8
+  end
+
   create_table "applications", :force => true do |t|
     t.string  "name"
     t.string  "display_name"
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
-    t.integer "account_id",    :limit => 8
+    t.integer "account_id",    :default => 0
   end
 
   create_table "authorizations", :force => true do |t|
@@ -417,7 +422,7 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
     t.integer  "account_id",          :limit => 8
   end
 
-  add_index "flexifields", ["flexifield_def_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
+  add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
   add_index "flexifields", ["id"], :name => "flexifields_id"
 
@@ -517,7 +522,7 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "attachable_type"=>"14", "account_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -572,9 +577,8 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-  
+
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
- 
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
@@ -674,8 +678,8 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
   end
 
   add_index "helpdesk_schema_less_notes", ["account_id", "note_id"], :name => "index_helpdesk_schema_less_notes_on_account_id_note_id", :unique => true
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"account_id"=>nil, "string_nc01"=>"10"}
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"account_id"=>nil, "string_nc02"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"string_nc01"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"string_nc02"=>"10", "account_id"=>nil}
   add_index "helpdesk_schema_less_notes", ["id"], :name => "helpdesk_schema_less_notes_id"
   add_index "helpdesk_schema_less_notes", ["int_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc01_account_id"
   add_index "helpdesk_schema_less_notes", ["int_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc02_account_id"
@@ -907,7 +911,6 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
   add_index "helpdesk_tickets", ["account_id", "updated_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_updated_at_and_id"
   add_index "helpdesk_tickets", ["id"], :name => "helpdesk_tickets_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
-  add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
@@ -1433,6 +1436,7 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
     t.string  "description"
     t.text    "script"
     t.integer "application_id"
+    t.text    "options"
   end
 
 end

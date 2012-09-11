@@ -13,8 +13,7 @@ WorkflowMaxWidget.prototype = {
 			accept_type: "application/xml",
 			method: "get", 
 			resource: "job.api/tasks"+this.auth_keys,
-			on_success: widgetInst.loadJobList.bind(this),
-			on_failure: function(evt){}
+			on_success: widgetInst.loadJobList.bind(this)
 		}]
 		if (workflowMaxBundle.remote_integratable_id)
 			init_reqs[0] = {
@@ -25,23 +24,22 @@ WorkflowMaxWidget.prototype = {
 				on_failure: function(evt){}
 			}
 		workflowMaxOptions = {
+			widget_name:"workflow_max_widget",
+			app_name:"Workflow Max",
 			application_id:workflowMaxBundle.application_id,
 			integratable_type:"timesheet",
-			anchor: "workflow_max_widget",
-			app_name:"Workflow Max",
 			domain: workflowMaxBundle.api_url,
-			application_content: function() {
+			application_html: function() {
 				return widgetInst.WORKFLOW_MAX_FORM.evaluate({});
 			},
-			application_resources: init_reqs
+			init_requests: init_reqs
 		};
 
 		if (typeof(workflowMaxBundle) != 'undefined' && workflowMaxBundle.k) {
 			workflowMaxOptions.username = workflowMaxBundle.k;
-			workflowMaxOptions.password = "x";
 			this.freshdeskWidget = new Freshdesk.Widget(workflowMaxOptions);
 		} else {
-			workflowMaxOptions.login_content = function() {
+			workflowMaxOptions.login_html = function() {
 				return '<form onsubmit="workflowMaxWidget.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
 			};
 			this.freshdeskWidget = new Freshdesk.Widget(workflowMaxOptions);
@@ -66,9 +64,7 @@ WorkflowMaxWidget.prototype = {
 		filterBy = staff_id ? {"Staff,ID":staff_id} : null
 		if(this.isRespSuccessful(this.jobData)) {
 			selectedJobNode = UIUtil.constructDropDown(this.jobData, 'xml', "workflow-max-timeentry-jobs", "Job", "ID", [["Client", "Name"], " ", "-", " ", "Name"], filterBy, searchTerm||"", false);
-			jQuery("#workflow-max-timeentry-jobs").html(jQuery("#workflow-max-timeentry-jobs option").sort(function (a, b) {
-   				return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
-			}))
+			UIUtil.sortDropdown("workflow-max-timeentry-jobs");
 		}
 		UIUtil.hideLoading('workflow-max','jobs','-timeentry');
 		$("workflow-max-timeentry-jobs").enable();
@@ -209,8 +205,7 @@ WorkflowMaxWidget.prototype = {
 				accept_type: "application/xml",
 				method: "get", 
 				resource: "time.api/get/"+workflowMaxBundle.remote_integratable_id+this.auth_keys,
-				on_success: this.loadTimeEntry.bind(this),
-				on_failure: function(evt){}
+				on_success: this.loadTimeEntry.bind(this)
 			});
 		}
 	},

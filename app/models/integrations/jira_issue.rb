@@ -4,9 +4,8 @@ require 'json'
 
 class Integrations::JiraIssue
 
-	def initialize(username, password, installed_app, params)
-			@jira = Jira4R::JiraTool.new(2, params['domain'])
-			@jira.driver.options["protocol.http.ssl_config.verify_mode"] =  nil
+	def initialize(username, password, installed_app, domain)
+			@jira = Jira4R::JiraTool.new(2, domain)
 			@jira.login(username, password)
             @installed_app = installed_app unless installed_app.blank?
             Rails.logger.debug "Initialized jira object :: " + @jira.inspect
@@ -52,7 +51,7 @@ class Integrations::JiraIssue
 			comment = false
 		else
 			issueId = params['remoteKey']
-			commentResponse = addCommentToJira(issueId, params['ticketData'])
+			commentResponse = add_comment(issueId, params['ticketData'])
 			Rails.logger.debug "Received response for adding a comment to jira : #{commentResponse.inspect}"
 			comment = true
 		end
@@ -73,24 +72,32 @@ class Integrations::JiraIssue
         return server_info
     end
 
-    private
-	def getCustomFieldId
-		customData = @jira.getCustomFields()
-		Rails.logger.debug "Received response for getting custom fields : #{customData.inspect}"
-		customData.each do |customField|
-			if(customField.name == "Freshdesk Tickets")
-				return customField.id
-			end
-		end
-		return
-	end
+  def add_comment(issueId, ticketData)
+    jiraComment = Jira4R::V2::RemoteComment.new
+    jiraComment.body = ticketData
+    Rails.logger.debug "Sending request get a jira comment object : #{jiraComment.inspect}"
+    @jira.addComment(issueId, jiraComment)
+  end
 
-	def addCommentToJira(issueId, ticketData)
-		jiraComment = Jira4R::V2::RemoteComment.new
-		jiraComment.body = ticketData
-		Rails.logger.debug "Sending request get a jira comment object : #{jiraComment.inspect}"
-		@jira.addComment(issueId, jiraComment)
-	end
+  def update_status(issue_id, new_status)
+      ava_actions = @jira.getAvailableActions(issue_id)
+      Rails.logger.debug "AvailableActions for #{issue_id}: #{ava_actions.inspect}"
+      ava_actions.each { |action|
+        return @jira.progressWorkflowAction(issue_id, action.id, []) if action.name == new_status
+      }
+      Rails.logger.error "JIRA Issue not updated for #{issue_id}.  #{new_status} is not a valid status."
+  end
+
+  private
+  	def getCustomFieldId
+  		customData = @jira.getCustomFields()
+  		Rails.logger.debug "Received response for getting custom fields : #{customData.inspect}"
+  		customData.each do |customField|
+  			if(customField.name == "Freshdesk Tickets")
+  				return customField.id
+  			end
+  		end
+  	end
 
     def customFieldChecker 
         if @installed_app.configs_customFieldId
@@ -98,17 +105,18 @@ class Integrations::JiraIssue
         else
             return populate_custom_field
         end
-        return
     end
 
     def populate_custom_field 
+    	begin
         custom_field_id = getCustomFieldId
-        unless custom_field_id.blank?
-            @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
-            @installed_app.save!
-            return custom_field_id
-        end
-        return
+    	rescue Exception => e
+        Rails.logger.error "Problem in fetching the custom field. \t#{e.message}"
+    	end
+      unless custom_field_id.blank?
+        @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
+        @installed_app.save!
+        return custom_field_id
+      end
     end
-	
 end

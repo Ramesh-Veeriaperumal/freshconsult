@@ -195,7 +195,9 @@ module Helpdesk::TicketActions
   end
   
   def close_source_ticket
+    EmailNotification.disable_notification(current_account)
     @source_ticket.update_attribute(:status , CLOSED)
+    EmailNotification.enable_notification(current_account)
   end
   
   def add_note_to_source_ticket
@@ -232,6 +234,7 @@ module Helpdesk::TicketActions
       url = attachment.content.url.split('?')[0]
       @target_note.attachments.build(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
     end
+    @target_note.save
     if !@target_note.private
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , {:include_cc => true})
     end
