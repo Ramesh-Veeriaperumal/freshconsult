@@ -1664,8 +1664,8 @@ en:
   agent_info_title: Agent information
   level_label: Level
   next_level_info: +%{points} to become %{name}
-  no_level_achieved_label: No levels achieved yet..!!
-  no_badge_achieved_label: No Badges achieved yet..!!
+  no_level_achieved_label: No levels achieved yet.
+  no_badge_achieved_label: No Badges achieved yet.
   badges_achieved_label: Badges achieved
   account: 
     name: Account Name
