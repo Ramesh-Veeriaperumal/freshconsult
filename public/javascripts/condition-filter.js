@@ -46,6 +46,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			operators	 : false,
 			delete_last  : false,
 			selectListArr: [],
+			empty_dom 	 : ".empty_choice",
 			onRuleSelect : function(){}
 		};
 	if ( options ) jQuery.extend( setting, options );
@@ -54,7 +55,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	var hg_data			= $H(),
 		operator_types	= setting.operators,
 		//quest_criteria_types = setting.quest_criteria_types;
-		name			   = _name || "default",
+		name			= _name || "default",
 		hidden_			= null,
 		// Setting initial dom elements
 		RULE_DOM	   	= parentDom + " " + setting.rule_dom,
@@ -91,14 +92,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				jQuery.data(outer, "inner", inner);
 				return outer;
 			},
-
+		dom_size: 0,
 		add_dom: 
 			function(){
 				// Adding a new Filter DOM element to the Filter Container
 				var r_dom = domUtil.getContainer(name);
 				var filterList = [];
 				if(setting.delete_last) {
-					var selected_quest = jQuery("#quest_quest_type").val();
+					var selected_quest = jQuery("input[name=quest[quest_type]]:checked").val();
 					//var criteria_list = quest_criteria_types[selected_quest];
 					filterList = filter_data[0][setting.selectListArr[selected_quest]];
 				} else {
@@ -111,6 +112,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 				list_C = jQuery(parentDom).find(setting.rule_dom);
 				r_dom.appendTo(list_C);
+
+				this.dom_size++;
+				this.populateEmpty();
 			},
 		// Used to Edit pre-population
       feed_data:
@@ -128,12 +132,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   if(rule.name == "set_nested_fields")
                   	rule.name = rule.category_name;
 
-                  //console.log(data_id, name, rule].join(">>>>"));
                   inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
 					var filterList = [];
 					if(setting.delete_last) {
-						var selected_quest = jQuery("#quest_quest_type").val();
+						var selected_quest = jQuery("input[name=quest[quest_type]]:checked").val();
 						//var criteria_list = quest_criteria_types[selected_quest];
 						filterList = filter_data[0][setting.selectListArr[selected_quest]];
 					} else {
@@ -151,14 +154,20 @@ rules_filter = function(_name, filter_data, parentDom, options){
             });
          },
 
+        populateEmpty: 
+        	function(){
+        		console.log(this.dom_size);
+				jQuery(parentDom).find(setting.empty_dom).toggle(this.dom_size <= 1);
+		},
+
 		get_filter_list:
 			function(_type, c_form){
 				var serialArray	= jQuery(c_form).serializeArray(),
-					 serialHash		= $H(),
-				 	 setValue		= [],
+					serialHash		= $H(),
+				 	setValue		= [],
 				    tempConstruct	= $H(),
-					 type			   = _type || "object";
-				  	 flag			   = false;
+					type			   = _type || "object";
+				  	flag			   = false;
 
 				serialArray.each(function(item){				   
 					if(item.name == name || flag){
@@ -184,11 +193,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				    save_data	    = [];
 				
 				current_filter = serialHash.get(name);
-				   
-				if( current_filter.length != 0 ){
+
+				if( current_filter && current_filter.length != 0 )
 					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
-				}
+
 				hidden_.val(save_data);
+
+				this.populateEmpty();
+
 				return save_data;
 			},
 		init: 
@@ -200,6 +212,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				else
 					domUtil.add_dom();	
 					
+				this.populateEmpty();
 			}
 		};
 	
@@ -207,7 +220,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	var pub_Methods = {		
 		add_filter:domUtil.add_new_filter,
 		get_filter_list:domUtil.get_filter_list,
-
+		get_size: (domUtil.dom_size - 1)
 	};	 
 	
 	// Applying Events and on Window ready initialization	
@@ -226,8 +239,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
-					active_email_body = jQuery(this).prev();
-					jQuery('#place-dialog').slideDown();
+				active_email_body = jQuery(this).prev();
+				jQuery('#place-dialog').slideDown();
 			});
 
 			// Binding Events to Containers
@@ -249,7 +262,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								postProcessCondition(hg_item, data_id);
 							}
 						});
-			jQuery(parentDom+' select')
+				
+			jQuery(parentDom).find('select, :text')
 				.live("change",function(){
 					var formObj = jQuery(parentDom).parents('form:first');
 					setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj])
@@ -258,7 +272,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			jQuery(ADD_DOM)
 				.bind("click",
 						function(){
-							domUtil.add_dom();
+							domUtil.add_dom();							
 						});
 
 			// Delete button action
@@ -266,8 +280,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				.live("click", 
 						function(){
 							filter = jQuery(this).parent();
-							if(setting.delete_last || (filter.parent().children().size() != 1))
+							if(setting.delete_last || (filter.parent().children().size() != 1)){
 								filter.remove();
+								domUtil.dom_size--;
+							}
+
 							var formObj = jQuery(parentDom).parents('form:first');
 							setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj]);
 						});

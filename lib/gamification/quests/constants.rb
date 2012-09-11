@@ -2,7 +2,6 @@ module Gamification
   module Quests
     module Constants
       GAME_TYPES = [
-        [ :none,     "--- Click to Select ---",  -1],
         [ :ticket,   "Resolving Tickets",     0 ], 
         [ :solution, "Publishing Solutions",   1 ], 
         [ :forum,    "Contribute in Forums",      2 ]

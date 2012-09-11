@@ -10,10 +10,11 @@
       base.init = function(cridefs, questinput, awardinput ) {
           base.cridefs = cridefs;
           
-          $("#quest_quest_type").live('change', function(ev) {
+          $(".quest_types").live('change', function(ev) {
               base.onQuestChange(selectListArr[$(this).val()]);
           });
-          base.onQuestChange(selectListArr[$("#quest_quest_type").val()]);
+
+          base.onQuestChange(selectListArr[$("input[name=quest[quest_type]]:checked").val()]);
 
           base.questinput = questinput[0];
           base.awardinput = awardinput[0];
@@ -192,7 +193,4 @@
     var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);  
         filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['ticket','solution','forum'], delete_last: true});
   <% end %>
-<% end %>
-
-<% javascript_tag do %>   
 <% end %>

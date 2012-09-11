@@ -1,31 +1,40 @@
 <%= render :partial => "admin/quests/criteria_jsinit", :locals => { :filter_type => "quest" } %>
 
 <%= f.error_messages :object_name => 'quest' %>
-<br>
-<div class="selectgame">
-	<h2>Select a Game</h2> 
-	<%= f.select :quest_type, Quest::GAME_TYPE_OPTIONS %>
-	<hr>
+<h3 class="s-title">Quest type</h3> 
+<div class="form-section">	
+	<div class="row">
+		<% Quest::GAME_TYPE_KEYS_BY_TOKEN.each do |game_type| %>
+		<label class="s-label radio-label span2">
+			<%= f.radio_button :quest_type, game_type[1], :class => "quest_types" %>
+			<%= t(".#{game_type[0]}") %>
+		</label>
+		<% end %>
+	</div>
 </div>
-
+<br />
 <div id="enablequest">
-
 	<div class="gamecriteria">
 		<h2>Specify Quest Criteria</h2>
 		<div class="ui-form gray-box-rounded">
 			<div id="questDOM"></div>
 			<div class="conditionset" id="filterDOM">
 				<div id="RuleList" class="rule_list"></div>
+				<fieldset class="empty_choice">
+		        	<p>No conditions present</p>
+		    	</fieldset>
 				<fieldset class="addchoice">
-		         <p><%=t('dispatch.add_condition')%></p> <img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+		         	<p><%=t('dispatch.add_condition')%></p> 
+		         	<img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
 		    	</fieldset>
 	    	</div>
 		</div>
 	</div>
 
 	<div class="gamereward">
-		<h2>Reward</h2>
-		<div class="gray-box-rounded">
+		<h3 class="s-title">Reward</h3>
+		<p class="help-text">On successful completion of a quest award a badge and bonus points</p>
+		<div class="form-section">
 			Award
 			<%= f.text_field :points, :class => "required text", :style => "width:50px;", :placeholder => "Points" %>
 			bonus points and Unlock <a href="javascript:void(0)" id="showbadges"> this badge</a>
@@ -60,8 +69,8 @@
 	</div>
 
 	<div class="gamename">
-		<h2>Give your Quest a Name</h2>
-		<div class="gray-box-rounded">
+		<h3 class="s-title">...and finally</h3>
+		<div class="form-section">
 			<%= f.text_field :name, :class => "required text", :style => "width:98%;", :placeholder => "Name" %>
 			<%= f.text_area :description, :class => "mediumpara", :placeholder => "Brief about the quest" %>
 		</div>
