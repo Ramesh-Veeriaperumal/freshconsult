@@ -32,6 +32,10 @@ class Quest < ActiveRecord::Base
   named_scope :solution_quests, :conditions => {
     :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:solution],
   }
+  
+  def achieved_by?(user)
+    !achieved_quests.find_by_user_id(user.id).nil?
+  end
 
   def matches(evaluate_on) 
     return true unless filter_data

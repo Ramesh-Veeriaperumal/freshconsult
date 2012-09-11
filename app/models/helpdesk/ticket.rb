@@ -1009,7 +1009,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     def support_score_on_update
-      if active? && !@old_ticket.active?
+      if (active? && !@old_ticket.active?) or (deleted_changed? && deleted?)
         
         SupportScore.destroy_all(:account_id => account_id,  :scorable_type => "Helpdesk::Ticket", :scorable_id => id, 
           :score_trigger => Gamification::Scoreboard::Constants::TICKET_CLOSURE)
