@@ -496,10 +496,6 @@ class User < ActiveRecord::Base
     achieved_quest(quest).updated_at
   end
   
-  def badges
-    quests.collect { |q| q.badge }
-  end
-
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?
