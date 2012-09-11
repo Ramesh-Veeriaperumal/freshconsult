@@ -4,9 +4,9 @@
 <h3 class="s-title">Quest type</h3> 
 <div class="form-section">	
 	<div class="row">
-		<% Quest::GAME_TYPE_KEYS_BY_TOKEN.each do |game_type| %>
+		<% Quest::GAME_TYPES.each do |game_type| %>
 		<label class="s-label radio-label span2">
-			<%= f.radio_button :quest_type, game_type[1], :class => "quest_types" %>
+			<%= f.radio_button :quest_type, game_type[3], :class => "quest_types" %>
 			<%= t(".#{game_type[0]}") %>
 		</label>
 		<% end %>
@@ -35,16 +35,26 @@
 		<h3 class="s-title">Reward</h3>
 		<p class="help-text">On successful completion of a quest award a badge and bonus points</p>
 		<div class="form-section">
+			<div class="row">
+				<div class="span3">
+					<strong>Badge</strong><br />
+					<% unless @badge_class.blank? %>
+						<div class="badges_items"><div id="selected-badge" class="gamesettings-badges <%= @badge_class[:classname]%>"></div><span id="selected-badge-name"><%= @badge_class[:name]%></span></div>
+					<%= f.hidden_field :badge_id, :id => "quest_badge_id" %>
+					<% else %>
+						<input type="hidden" id="quest_badge_id" name="quest[badge_id]" class="required text"/>
+						<div class="badges_items"><div id="selected-badge" ></div><span id="selected-badge-name"></span></div>
+					<% end %>
+				</div>
+				<div class="span4">
+					<strong>Bonus points</strong><br />
+					<%= f.text_field :points, :class => "required points" %>
+				</div>
+			</div>
 			Award
-			<%= f.text_field :points, :class => "required text", :style => "width:50px;", :placeholder => "Points" %>
+			
 			bonus points and Unlock <a href="javascript:void(0)" id="showbadges"> this badge</a>
-			<% unless @badge_class.blank? %>
-				<div class="badges_items" style="padding-top:20px;"><div id="selected-badge" class="gamesettings-badges <%= @badge_class[:classname]%>"></div><span id="selected-badge-name"><%= @badge_class[:name]%></span></div>
-			<%= f.hidden_field :badge_id, :id => "quest_badge_id" %>
-			<% else %>
-				<input type="hidden" id="quest_badge_id" name="quest[badge_id]" class="required text"/>
-				<div class="badges_items" style="padding-top:20px;"><div id="selected-badge" ></div><span id="selected-badge-name"></span></div>
-			<% end %>
+			
 			
 		</div>
 		<div id="select-badge" style="display:none;" class="badgelist badges_items">
