@@ -1,14 +1,19 @@
 module Gamification
   module Quests
     module Constants
+      include Gamification::Scoreboard::Constants
+
       GAME_TYPES = [
-        [ :ticket,   "Resolving Tickets",     0 ], 
-        [ :solution, "Publishing Solutions",   1 ], 
-        [ :forum,    "Contribute in Forums",      2 ]
+        [ :ticket,   "Resolving Tickets",        TICKET_QUEST,    1 ], 
+        [ :solution, "Publishing Solutions",     SOLUTION_QUEST,  2 ], 
+        [ :forum,    "Contribute in Forums",     FORUM_QUEST,     3 ]
       ]
 
-      GAME_TYPE_OPTIONS = GAME_TYPES.map { |i| [i[1], i[2]] }
-      GAME_TYPE_KEYS_BY_TOKEN = Hash[*GAME_TYPES.map { |i| [i[0], i[2]] }.flatten]
+      GAME_TYPE_OPTIONS = GAME_TYPES.map { |i| [i[1], i[3]] }
+      GAME_TYPE_KEYS_BY_TOKEN = Hash[*GAME_TYPES.map { |i| [i[0], i[3]] }.flatten]
+      GAME_TYPE_TOKENS_BY_KEY = Hash[*GAME_TYPES.map { |i| [i[3], i[0]] }.flatten]
+      QUEST_SCORE_TRIGGERS_BY_ID = Hash[*GAME_TYPES.map { |i| [i[3], i[2]] }.flatten]
+
       
       QUEST_TIME = [
           [ :any_time,      "Any time",  "",       1 ],
@@ -39,6 +44,12 @@ module Gamification
                         :input => ["questvalue","questmode","questtime"], 
                         :questmode => FORUM_QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort }
       }
+
+      QUEST_TIME_COLUMNS = {
+        :ticket => 'helpdesk_ticket_states.resolved_at',
+        :solution => 'solution_articles.created_at',
+      }
+
     end
   end
 end

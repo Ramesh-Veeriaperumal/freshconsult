@@ -32,6 +32,10 @@ class Quest < ActiveRecord::Base
   named_scope :solution_quests, :conditions => {
     :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:solution],
   }
+  
+  def achieved_by?(user)
+    !achieved_quests.find_by_user_id(user.id).nil?
+  end
 
   def matches(evaluate_on) 
     return true unless filter_data
@@ -61,10 +65,11 @@ class Quest < ActiveRecord::Base
 
 
   def time_condition(end_time=Time.zone.now)
-    return " helpdesk_ticket_states.resolved_at >= '#{created_at.to_s(:db)}' " if any_time_span?
-    %( (helpdesk_ticket_states.resolved_at >= '#{start_time(end_time).to_s(:db)}' and 
-       helpdesk_ticket_states.resolved_at <= '#{end_time.to_s(:db)}') and
-       helpdesk_ticket_states.resolved_at >= '#{created_at.to_s(:db)}' )
+    time_column = QUEST_TIME_COLUMNS[GAME_TYPE_TOKENS_BY_KEY[quest_type]]
+    return " #{time_column} >= '#{created_at.to_s(:db)}' " if any_time_span?
+    %( (#{time_column} >= '#{start_time(end_time).to_s(:db)}' and 
+       #{time_column} <= '#{end_time.to_s(:db)}') and
+       #{time_column} >= '#{created_at.to_s(:db)}' )
   end
 
   def has_custom_field_filters?(evaluate_on)
@@ -93,12 +98,14 @@ class Quest < ActiveRecord::Base
 
   def award!(user)
     achieved_quests.create(:user => user)
-    user.support_scores.create({:score => points.to_i, :score_trigger => TICKET_QUEST})
+    user.support_scores.create({:score => points.to_i, 
+          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[quest_type]})
   end
 
   def revoke!(user)
     achieved_quests.find_by_user_id(user.id).delete
-    user.support_scores.create({:score => -(points.to_i), :score_trigger => TICKET_QUEST})
+    user.support_scores.create({:score => -(points.to_i), 
+          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[quest_type]})
   end
 
   private

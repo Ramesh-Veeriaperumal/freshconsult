@@ -5,10 +5,16 @@
 <% content_for :pagefixed do %>
   <% content_for :onload_script do %> 
     var Gamification = function($) {
-      var base = this, selectListArr = ['ticket','solution','forum'];
+      var base = this, selectListArr = ['','ticket','solution','forum'];
 
       base.init = function(cridefs, questinput, awardinput ) {
           base.cridefs = cridefs;
+          var _mand_fields = {'quest_data_value': ['','<%= I18n.t('quests.ticket_mand') %>',
+                                                    '<%= I18n.t('quests.solution_mand') %>',
+                                                    '<%= I18n.t('quests.forum_mand') %>'],
+                              'quest_badge_id': '<%= I18n.t('quests.badge_mand') %>'
+                             },
+              _mand_check_fails = false;
           
           $(".quest_types").live('change', function(ev) {
               base.onQuestChange(selectListArr[$(this).val()]);
@@ -59,10 +65,21 @@
 
             jQuery("#quest_quest_data").val(questData.toJSON());
 
-            if(jQuery("#quest_badge_id").val() == ""){
-              jQuery("#noticeajax").text('Please select the badge.');
-              jQuery("#noticeajax").show();
-              closeableFlash('#noticeajax');
+            jQuery.each(_mand_fields,function(index,value){
+              _mand_check_fails = false;
+              if(jQuery("#"+index).val() == ""){
+                event.stopPropagation();
+                var txt = (index == 'quest_data_value') ? value[jQuery("#quest_quest_type").val()] : value
+                jQuery("#noticeajax").text(txt);
+                jQuery("#noticeajax").show();
+                closeableFlash('#noticeajax');
+                _mand_check_fails = true;
+                return false;
+              }
+            });
+            if(_mand_check_fails){
+              e.stopPropagation();
+              e.stopImmediatePropagation();
               return false;
             }
 
@@ -191,6 +208,6 @@
 <% content_for :onload_script do %> 
   <% if(filter_type == "quest") %>
     var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);  
-        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['ticket','solution','forum'], delete_last: true});
+        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['','ticket','solution','forum'], delete_last: true});
   <% end %>
 <% end %>
