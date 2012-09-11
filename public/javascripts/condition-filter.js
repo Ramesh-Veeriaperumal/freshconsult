@@ -39,15 +39,16 @@ var preProcessCondition = function(types, list){
 
 rules_filter = function(_name, filter_data, parentDom, options){
 	var setting = {
-			init_feed	 : [],
-			add_dom		 : ".addchoice",
-			rule_dom	    : ".rule_list",
-			rem_dom		 : ".delete",
-			operators	 : false,
-			delete_last  : false,
-			selectListArr: [],
-			empty_dom 	 : ".empty_choice",
-			onRuleSelect : function(){}
+			init_feed	       : [],
+			add_dom		       : ".addchoice",
+			rule_dom	       : ".rule_list",
+			rem_dom		       : ".delete",
+			operators	       : false,
+			delete_last        : false,
+			selectListArr      : [],
+			empty_dom 	 	   : ".empty_choice",
+			onRuleSelect       : function(){},
+			change_filter_data : function(_filter_data){return _filter_data}
 		};
 	if ( options ) jQuery.extend( setting, options );
 	
@@ -101,7 +102,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				if(setting.delete_last) {
 					var selected_quest = jQuery("input[name=quest[quest_type]]:checked").val();
 					//var criteria_list = quest_criteria_types[selected_quest];
-					filterList = filter_data[0][setting.selectListArr[selected_quest]];
+					filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
 				} else {
 					filterList = filter_data;
 				}
@@ -138,7 +139,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 					if(setting.delete_last) {
 						var selected_quest = jQuery("input[name=quest[quest_type]]:checked").val();
 						//var criteria_list = quest_criteria_types[selected_quest];
-						filterList = filter_data[0][setting.selectListArr[selected_quest]];
+						filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
 					} else {
 						filterList = filter_data;
 					}
@@ -157,6 +158,13 @@ rules_filter = function(_name, filter_data, parentDom, options){
         populateEmpty: 
         	function(){
 				jQuery(parentDom).find(setting.empty_dom).toggle(this.dom_size <= 1);
+		},
+
+		refresh_list:
+			function(){
+				jQuery(parentDom).find(setting.rule_dom).empty();
+				hidden_.val("");
+				this.dom_size = 1;
 		},
 
 		get_filter_list:
@@ -219,7 +227,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	var pub_Methods = {		
 		add_filter:domUtil.add_new_filter,
 		get_filter_list:domUtil.get_filter_list,
-		get_size: (domUtil.dom_size - 1)
+		get_size: (domUtil.dom_size - 1),
+		refresh_list: domUtil.refresh_list
 	};	 
 	
 	// Applying Events and on Window ready initialization	
