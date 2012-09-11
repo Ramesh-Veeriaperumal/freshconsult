@@ -156,7 +156,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
         populateEmpty: 
         	function(){
-        		console.log(this.dom_size);
 				jQuery(parentDom).find(setting.empty_dom).toggle(this.dom_size <= 1);
 		},
 
