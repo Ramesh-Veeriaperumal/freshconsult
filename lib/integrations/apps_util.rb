@@ -21,9 +21,7 @@ module Integrations::AppsUtil
   end
 
   def get_cached_values(ticket_id)
-    Rails.logger.debug "Redis Key : INTEGRATIONS_LOGMEIN:#{current_account.id}:#{ticket_id}"
     cache_val = get_key("INTEGRATIONS_LOGMEIN:#{current_account.id}:#{ticket_id}")
-    Rails.logger.debug "Cache val: #{cache_val.inspect}"
     (cache_val.blank?) ? {} : JSON.parse(cache_val)
   end
 
