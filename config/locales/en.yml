@@ -202,6 +202,10 @@ en:
     customer_votes: Customers Vote
     solution_likes: Solution Likes
     true : True 
+    ticket_mand: Please populate number of resolved tickets.
+    solution_mand: Please populate number of Solutions.
+    forum_mand: Please populate number of Forums.
+    badge_mand: Please select a badge.
   admin:
     quests:
       index:

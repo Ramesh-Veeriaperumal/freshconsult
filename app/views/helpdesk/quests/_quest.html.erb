@@ -1,0 +1,9 @@
+<div id="quest-container" class="panel-row">
+	<span class="floatl gamesettings-badges <%=quest.badge[:classname]%>"></span>
+	<div id="quest-details-container" class="panel-content">
+			<% if quest.achieved_by? current_user%><div class="floatr">Achieved</div><% end %>
+			<h4><%=quest.name%></h4>
+		<p style="width:90%;"class="help-text"><%=quest.description%></p>
+		<strong><%=quest.points%></strong>
+	</div>
+</div>
