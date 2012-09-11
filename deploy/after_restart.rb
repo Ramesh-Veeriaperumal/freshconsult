@@ -16,7 +16,6 @@ on_utilities("redis") do
 	run "sudo monit restart all -g helpkit_resque" 
 end
 
-on_utilities("memcache") do
-	run "sudo /etc/init.d/memcached restart" 
+on_utilities("memcached") do
+	run "sudo monit restart all -g memcached" 
 end
-
