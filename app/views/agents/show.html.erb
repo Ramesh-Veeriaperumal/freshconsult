@@ -40,7 +40,7 @@ function setUserRole()
 		</p>
 		<span class="seperator"></span>
 		<% else %>
-			<div class="level-progress"><strong> <%= t('no_level_achieved_label') %> </strong> </div>
+			<p class="info-text left"><%= t('no_level_achieved_label') %></p>
 			<span class="seperator"></span>
 		<% end %>
 		<h3 class="title"><%= t('badges_achieved_label') %></h3>
@@ -53,7 +53,7 @@ function setUserRole()
 			<% end %>
 			</div>
 		<% else %>
-			<p class="info-text left"><strong> <%= t('no_badge_achieved_label') %> </strong> </p>
+			<p class="info-text left"><%= t('no_badge_achieved_label') %></p>
 		<% end %>
 	</div>
 	<%end%>
