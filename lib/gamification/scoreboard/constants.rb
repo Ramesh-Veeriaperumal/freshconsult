@@ -14,6 +14,8 @@ module Gamification
 
       #Quest-points - score_trigger
       TICKET_QUEST = 201
+      SOLUTION_QUEST = 202
+      FORUM_QUEST = 203
 
       #Admin-config - levels_to_agents
       AGENT_LEVEL_UP = 301

@@ -142,9 +142,9 @@ class Admin::QuestsController < Admin::AdminController
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
         { :name => "solution_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
           :choices => current_account.solution_categories.map{|solution| [solution.id, solution.name]}, :operatortype => "choicelist" },
-        { :name => "solution_folders", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
+        { :name => "folder_id", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
           :choices => Solution::Category.folder_names(current_account), :operatortype => "choicelist" },
-         { :name => "solution_likes", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
+         { :name => "thumbs_up", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
           :operatortype => 'greater' }
       ]
     end

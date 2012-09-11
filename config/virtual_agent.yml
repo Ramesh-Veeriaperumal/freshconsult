@@ -64,6 +64,10 @@ default_fields:
         handler: numeric
     st_survey_rating:
         handler: numeric
+    folder_id:
+        handler: numeric
+    thumbs_up:
+        handler: numeric
 
 handlers:
     email: Va::Handlers::Email

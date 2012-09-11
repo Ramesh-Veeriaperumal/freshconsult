@@ -104,6 +104,10 @@ class Solution::Article < ActiveRecord::Base
   def status_name
     STATUS_NAMES_BY_KEY[status]
   end
+
+  def published?
+    status == STATUS_KEYS_BY_TOKEN[:published]
+  end
   
   def to_param
     id ? "#{id}-#{title.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil

@@ -12,7 +12,9 @@ class Va::Condition
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
     'company_name'            => 'customers.name',
-    'st_survey_rating'        => 'helpdesk_schema_less_tickets.int_tc01'
+    'st_survey_rating'        => 'helpdesk_schema_less_tickets.int_tc01',
+    'folder_id'               => 'solution_articles.folder_id',
+    'thumbs_up'               => 'solution_articles.thumbs_up'
   }
   
   def initialize(rule, account)
