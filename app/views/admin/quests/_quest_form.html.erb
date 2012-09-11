@@ -4,9 +4,9 @@
 <h3 class="s-title">Quest type</h3> 
 <div class="form-section">	
 	<div class="row">
-		<% Quest::GAME_TYPE_KEYS_BY_TOKEN.each do |game_type| %>
+		<% Quest::GAME_TYPES.each do |game_type| %>
 		<label class="s-label radio-label span2">
-			<%= f.radio_button :quest_type, game_type[1], :class => "quest_types" %>
+			<%= f.radio_button :quest_type, game_type[3], :class => "quest_types" %>
 			<%= t(".#{game_type[0]}") %>
 		</label>
 		<% end %>
