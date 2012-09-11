@@ -12,7 +12,7 @@ SalesforceWidget.prototype= {
 	},
 
 	get_contact_request: function() {
-		var sosl = encodeURIComponent("FIND {" + this.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")");
+		var sosl = encodeURIComponent("FIND {" + this.salesforceBundle.reqEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")");
 		return { resource: "services/data/v20.0/search?q="+sosl };
 	},
 
