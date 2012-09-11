@@ -21,8 +21,8 @@ class Agent < ActiveRecord::Base
   before_update :update_agents_level
 
   after_save  :update_agent_levelup
-  after_update  :update_agent_levelup, :publish_game_notifications
-
+  after_update :publish_game_notifications
+  
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
     [ :group_tickets,  2 ], 
@@ -77,8 +77,9 @@ protected
 
   def update_agent_levelup
     return unless scoreboard_level_id_changed?
-    if level and ((points ? points : 0) < level.points)
-      SupportScore.add_agent_levelup_score(user, level.points)
-    end  
+    new_point = user.account.scoreboard_levels.find(scoreboard_level_id).points
+    if level and ((points ? points : 0) < new_point)
+      SupportScore.add_agent_levelup_score(user, new_point)
+    end 
   end
 end
