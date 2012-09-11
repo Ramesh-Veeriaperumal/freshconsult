@@ -6,19 +6,11 @@
 <a href="/">< Back to dashboard </a>
 <h3 class="title">Quests</h3>
 <div class="report-nmleft thick-border-top lb-report">
-	<div class="panel-list"> 
-			<% @quests.each do |quest| %>
-				<div id="quest-container" class="panel-row">
-					<span class="floatl gamesettings-badges <%=quest.badge[:classname]%>"></span>
-					<div id="quest-details-container" class="panel-content">
-		  				<h4><%=quest.name%></h4>
-						<p style="width:90%;"class="help-text"><%=quest.description%></p>
-						<strong><%=quest.points%></strong>
-					</div>
-				</div>
-			<% end %>
+	<div class="panel-list" id="Pages"> 
+		<%= render :partial => "quest", :collection => @quests %>
   	</div>
 </div>
-<div class="report-show-more">
-	<a href="#" class="">Show 25 more</a>
-</div>
+<%= will_paginate @quests %>
+<% content_for :pagefixed do %> 
+  <%= pageless(@quests.total_pages, "/helpdesk/quests")  %>
+<% end %>
