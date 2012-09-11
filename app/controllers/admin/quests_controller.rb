@@ -140,8 +140,6 @@ class Admin::QuestsController < Admin::AdminController
     def solution_filters
       [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
-        { :name => "solution_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
-          :choices => current_account.solution_categories.map{|solution| [solution.id, solution.name]}, :operatortype => "choicelist" },
         { :name => "folder_id", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
           :choices => Solution::Category.folder_names(current_account), :operatortype => "choicelist" },
          { :name => "thumbs_up", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
@@ -152,8 +150,6 @@ class Admin::QuestsController < Admin::AdminController
     def forum_filters
       [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
-        { :name => "forum_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
-          :choices => current_account.forum_categories.map{|forum| [forum.id, forum.name]}, :operatortype => "choicelist" },
         { :name => "forums", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
           :choices => ForumCategory.forum_names(current_account), :operatortype => "choicelist" }, 
         { :name => "customer_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
