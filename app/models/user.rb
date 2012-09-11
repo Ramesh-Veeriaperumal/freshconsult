@@ -495,6 +495,10 @@ class User < ActiveRecord::Base
   def badge_awarded_at(quest)
     achieved_quest(quest).updated_at
   end
+  
+  def badges
+    quests.collect { |q| q.badge }
+  end
 
   protected
     def set_account_id_in_children
