@@ -1,0 +1,16 @@
+<% content_for :sidebar do %><% end %>
+<div class="btn-group floatr">
+  <a href="/helpdesk/quests" class="btn">All</a>
+  <a href="/helpdesk/quests/unachieved" class="btn  active">Un-achieved</a>
+</div>
+<a href="/">< Back to dashboard </a>
+<h3 class="title">Quests</h3>
+<div class="report-nmleft thick-border-top lb-report">
+	<div class="panel-list" id="Pages"> 
+		<%= render :partial => "quest", :collection => @quests %>
+  	</div>
+</div>
+<%= will_paginate @quests %>
+<% content_for :pagefixed do %> 
+  <%= pageless(@quests.total_pages, "/helpdesk/quests")  %>
+<% end %>
