@@ -1,26 +1,30 @@
 class Helpdesk::QuestsController < ApplicationController
   before_filter :set_selected_tab
-    
-  def achievements
-    @active_quest = scoper.find(:all)
+  
+  def index
+    @quests = scoper.all
   end
 
   def active
     ##need to fetch only locked quests for the agent.
-    @active_quest = scoper.find(:all, :limit => 3)
+    @quests = unachieved_scoper.find(:all, :limit => 3)
     render :layout => false
   end
 
-  def un_achived
-    @active_quest = scoper.find(:all)
+  def unachieved
+    @quests = unachieved_scoper.all
   end
 
   private
   	def scoper
-		current_account.quests
+  	  current_account.quests
+  	end
+  	
+  	def unachieved_scoper
+  	  scoper.available(current_user)
   	end
 
-	def set_selected_tab
+	  def set_selected_tab
       @selected_tab = :dashboard
     end
 

@@ -5,7 +5,7 @@
 <% content_for :pagefixed do %>
   <% content_for :onload_script do %> 
     var Gamification = function($) {
-      var base = this, selectListArr = ['ticket','solution','forum'];
+      var base = this, selectListArr = ['','ticket','solution','forum'];
 
       base.init = function(cridefs, questinput, awardinput ) {
           base.cridefs = cridefs;
@@ -190,7 +190,7 @@
 <% content_for :onload_script do %> 
   <% if(filter_type == "quest") %>
     var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);  
-        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['ticket','solution','forum'], delete_last: true});
+        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['','ticket','solution','forum'], delete_last: true});
   <% end %>
 <% end %>
 

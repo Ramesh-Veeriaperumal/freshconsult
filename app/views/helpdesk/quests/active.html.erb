@@ -1,12 +1,12 @@
-<% unless @active_quest.empty? %>
+<% unless @quests.empty? %>
 	<div id="quests-section">
-	  	<%= link_to "See all", achievements_helpdesk_quests_path, :class => "action-right" %>
+	  	<%= link_to "See all", helpdesk_quests_path, :class => "action-right" %>
 	  	<h3 class="title">Quest</h3>  
 	  	<div id="quests-container" class="panel-list">
-	  		<% @active_quest.each do |quest| %>
+	  		<% @quests.each do |quest| %>
 		  		<div id="quest-container" class="panel-row">
 					<div class="floatl ">
-						<ul id="quest-badge-menu"><li class="<%=quest.award_data[0][:badge]%>"></li>
+						<ul id="quest-badge-menu"><li class="gamesettings-badges <%=quest.badge[:classname]%>"></li>
 						<li class="dashboard-quest-points" style=""><%=quest.points%></li></ul></div>
 					<div id="quest-details-container" class="panel-content">
 		  				<h4><%=quest.name%></h4>

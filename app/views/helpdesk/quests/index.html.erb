@@ -1,24 +1,22 @@
 <% content_for :sidebar do %><% end %>
 <div class="btn-group floatr">
-  <a href="/helpdesk/quests/achievements" class="btn">All</a>
-  <a href="/helpdesk/quests/un_achived" class="btn  active">Un-achieved</a>
+  <a href="/helpdesk/quests" class="btn active">All</a>
+  <a href="/helpdesk/quests/unachieved" class="btn">Un-achieved</a>
 </div>
 <a href="/">< Back to dashboard </a>
 <h3 class="title">Quests</h3>
 <div class="report-nmleft thick-border-top lb-report">
 	<div class="panel-list"> 
-		<% unless @active_quest.empty? %>
-			<% @active_quest.each do |quest| %>
+			<% @quests.each do |quest| %>
 				<div id="quest-container" class="panel-row">
-					<span class="floatl <%=quest.award_data[0][:badge]%>"></span>
+					<span class="floatl gamesettings-badges <%=quest.badge[:classname]%>"></span>
 					<div id="quest-details-container" class="panel-content">
 		  				<h4><%=quest.name%></h4>
 						<p style="width:90%;"class="help-text"><%=quest.description%></p>
-						<strong><%=quest.award_data[0][:point]%></strong>
+						<strong><%=quest.points%></strong>
 					</div>
 				</div>
 			<% end %>
-		<% end %>
   	</div>
 </div>
 <div class="report-show-more">
