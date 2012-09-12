@@ -230,10 +230,13 @@ var getFilterDef = function(name,quest_type){
                      'forum':'<%= I18n.t("quests.js_forum_txt") %>',
                      'quest':'<%= I18n.t("quests.js_quest_txt") %>'
                     },
-  getSelectedChoice = function(choices,val){
+  getSelectedChoice = function(choices,val,domtype){
     if(!choices){
       //No choices case need to display the val itself..
       return [val,val];
+    }
+    if(domtype == 'optgroup'){
+      choices = choices[0][1];
     }
     return jQuery(choices).filter(function(key,value){
       return value[0] == val;
@@ -250,7 +253,7 @@ var getFilterDef = function(name,quest_type){
             filterDef = getFilterDef(cri.name,game_type)[0],
             operator_name = filterDef.value,
             operator = op_list[cri.operator],
-            operationValue = getSelectedChoice(filterDef.choices,cri.value),
+            operationValue = getSelectedChoice(filterDef.choices,cri.value,filterDef.domtype),
             operationValue = operationValue && operator ? operationValue[1] : '',
             prev_cri = humaneCriteria[cri.name+'_'+cri.operator];
             if(prev_cri){
