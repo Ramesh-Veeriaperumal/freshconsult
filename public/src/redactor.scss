@@ -587,8 +587,3 @@ body .redactor_toolbar li a.redactor_btn_underline		 	{ background-position: -52
     background: #f4f4ee;
     border-color: #e0e5d6;
 }
-
-.redactor_editor{
-	@include text-formatting();
-}
-

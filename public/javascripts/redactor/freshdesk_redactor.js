@@ -7,8 +7,10 @@
 	    	case 'cnt-reply':
 	         	jQuery('#'+element_id).redactor({ focus: true, convertDivs: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],execCommandCallback: function(obj, command) { isDirty=true; } , keyupCallback: function(obj, event) {isDirty=true;} });
 	         	break;
+	        case 'signature':
+	         	jQuery('#'+element_id).redactor({ focus: true,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	
 	        default:
-	    	 	 jQuery('#'+element_id).redactor({ focus: true,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+	    	 	jQuery('#'+element_id).redactor({ focus: true,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
 	     	}
  	}
 

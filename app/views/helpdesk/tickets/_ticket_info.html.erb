@@ -133,7 +133,9 @@
     ev.preventDefault();
     var form = jQuery("<form>")
                 .attr("method", "post")
-                .attr("action", jQuery(this).attr('data-href') +"?disable_notification=" + ev.shiftKey);
+                .attr("action", jQuery(this).attr('data-href') +"?disable_notification=" + ev.shiftKey )
+                .appendTo(document.body);
      form.submit();
+     return false;
     });
 <% end %>
