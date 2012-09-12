@@ -1,9 +1,21 @@
-<div id="quest-container" class="panel-row">
-	<span class="floatl gamesettings-badges <%=quest.badge[:classname]%>"></span>
-	<div id="quest-details-container" class="panel-content">
-			<% if quest.achieved_by? current_user%><div class="floatr">Achieved</div><% end %>
-			<h4><%=quest.name%></h4>
-		<p style="width:90%;"class="help-text"><%=quest.description%></p>
-		<strong><%=quest.points%></strong>
+<div id="quest-container" class="panel-row <%= (quest.achieved_by? current_user) ? 'acheived' : '' %>">
+	<div class="floatl">
+		<div class="badges left <%=quest.badge[:classname]%>">
+			<%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? %>
+		</div>
+	</div>
+	<div class="panel-content">
+		<div class="row-fluid">
+			<div class="span10">
+				<h4><%=quest.name%></h4>
+				<p class="help-text" title="<%= quest.description %>"><%= truncate quest.description, :length => 300 %></p>
+			</div>
+			<div class="span2 alignright">
+				<% if quest.achieved_by? current_user %>
+					<%= content_tag :span, "", :class => "symbol-done-tick" %>
+					<%= content_tag :span, "Achieved", :class => "acheived-text" %>
+				<% end %>
+			</div>
+		</div>
 	</div>
 </div>
