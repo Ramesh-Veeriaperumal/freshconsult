@@ -68,6 +68,10 @@ default_fields:
         handler: numeric
     thumbs_up:
         handler: numeric
+    forum_id:
+        handler: numeric
+    user_votes:
+        handler: numeric
 
 handlers:
     email: Va::Handlers::Email

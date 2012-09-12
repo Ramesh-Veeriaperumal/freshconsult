@@ -1,11 +1,9 @@
-require "post"
-
 class PostObserver < ActiveRecord::Observer
 
-	include ProcessQuests
+	include Gamification::Quests::ProcessPostQuests
 
 	def after_create(post)
-		process_forums_quest(post)
+		evaluate_post_quests(post)
 	end
 
 end

@@ -24,15 +24,25 @@ class Quest < ActiveRecord::Base
   named_scope :enabled, :conditions => { :active => true }
 
   named_scope :ticket_quests, :conditions => {
-    :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:ticket],
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:ticket],
   }
 
   named_scope :forum_quests, :conditions => {
-    :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:forum],
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
   }
 
   named_scope :solution_quests, :conditions => {
-    :quest_type => GAME_TYPE_KEYS_BY_TOKEN[:solution],
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:solution],
+  }
+
+  named_scope :create_forum_quests, :conditions => {
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
+    :sub_category => FORUM_QUEST_MODE_BY_TOKEN[:create]
+  }
+
+  named_scope :answer_forum_quests, :conditions => {
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
+    :sub_category => FORUM_QUEST_MODE_BY_TOKEN[:answer]
   }
   
   def achieved_by?(user)
@@ -55,19 +65,18 @@ class Quest < ActiveRecord::Base
     
     query_params = construct_query_strings(and_filter_conditions, ' and ')
     final_query_strings << query_params.shift
-    
+
     or_filter_conditions.each_pair do |k, v_arr|
       or_querystrings = construct_query_strings(v_arr, ' or ')
       final_query_strings << or_querystrings.shift
       query_params << or_querystrings
     end
-
+    return [] if final_query_strings.compact.blank?
     [ final_query_strings.compact.join(' and ') ] + query_params.flatten
   end
 
 
   def time_condition(end_time=Time.zone.now)
-    time_column = QUEST_TIME_COLUMNS[GAME_TYPE_TOKENS_BY_KEY[quest_type]]
     return " #{time_column} >= '#{created_at.to_s(:db)}' " if any_time_span?
     %( (#{time_column} >= '#{start_time(end_time).to_s(:db)}' and 
        #{time_column} <= '#{end_time.to_s(:db)}') and
@@ -99,15 +108,24 @@ class Quest < ActiveRecord::Base
   end
 
   def award!(user)
+    return unless user.achieved_quest(quest).nil?
     achieved_quests.create(:user => user)
     user.support_scores.create({:score => points.to_i, 
-          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[quest_type]})
+          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category]})
   end
 
   def revoke!(user)
-    achieved_quests.find_by_user_id(user.id).delete
+    user_ach_quest = user.achieved_quest(quest)
+    return if user_ach_quest.nil?
+    user_ach_quest.delete
     user.support_scores.create({:score => -(points.to_i), 
-          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[quest_type]})
+          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category]})
+  end
+
+  def time_column
+    return 'topics.created_at' if create_forum_quest?
+    return 'posts.created_at' if answer_forum_quest?
+    QUEST_TIME_COLUMNS[GAME_TYPE_TOKENS_BY_KEY[category]]
   end
 
   private
@@ -125,7 +143,11 @@ class Quest < ActiveRecord::Base
     end
 
     def denormalize_filter_data
-      return if (filter_data.blank? or filter_data.is_a? Hash)
+      return if filter_data.is_a? Hash
+      if filter_data.blank?
+        self.filter_data = {:actual_data => [], :and_filters => [], :or_filters => {}}
+        return
+      end
       
       f_data_hash = { :actual_data => filter_data }
       filters_hash = process_filter_data
@@ -219,6 +241,19 @@ class Quest < ActiveRecord::Base
       end
 
       to_ret
+    end
+
+    # forum quest related methods
+    def forum_quest?
+      category == GAME_TYPE_KEYS_BY_TOKEN[:forum]
+    end
+
+    def create_forum_quest?
+      forum_quest? and sub_category == FORUM_QUEST_MODE_BY_TOKEN[:create]
+    end
+
+    def answer_forum_quest?
+      forum_quest? and sub_category == FORUM_QUEST_MODE_BY_TOKEN[:answer]
     end
 
 end

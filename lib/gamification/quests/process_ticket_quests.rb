@@ -17,10 +17,10 @@ module Gamification
 
 			def evaluate_query(quest, ticket, end_time=Time.zone.now)
 				conditions = quest.filter_query
-				f_criteria = quest.time_condition(end_time) + 
-					' and helpdesk_tickets.responder_id = '+ticket.responder_id.to_s
+				f_criteria = quest.time_condition(end_time)
 				conditions[0] = conditions.empty? ? f_criteria : (conditions[0] + ' and ' + f_criteria)
-				resolv_tkts_in_time = quest_scoper(ticket.account).count(
+				
+				resolv_tkts_in_time = quest_scoper(ticket.account, ticket.responder).count(
 					'helpdesk_tickets.id',
 					:joins => %(inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = 
 									helpdesk_schema_less_tickets.ticket_id
@@ -37,8 +37,8 @@ module Gamification
 				quest_achieved = resolv_tkts_in_time >= quest.quest_data[0][:value].to_i
 			end
 
-			def quest_scoper(account)
-				account.tickets.visible.resolved_and_closed_tickets
+			def quest_scoper(account, user)
+				account.tickets.visible.assigned_to(user).resolved_and_closed_tickets
 			end
 
 		end

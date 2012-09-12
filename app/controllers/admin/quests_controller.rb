@@ -147,10 +147,10 @@ class Admin::QuestsController < Admin::AdminController
     def forum_filters
       [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
-        { :name => "forums", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
+        { :name => "forum_id", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
           :choices => ForumCategory.forum_names(current_account), :operatortype => "choicelist" }, 
-        { :name => "customer_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
-          :operatortype => 'greater' },
+        { :name => "user_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
+          :operatortype => 'greater' }
       ]
     end
 end

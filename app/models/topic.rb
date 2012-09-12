@@ -8,6 +8,7 @@ class Topic < ActiveRecord::Base
   before_destroy :update_post_user_counts
   after_destroy  :update_forum_counter_cache
 
+  belongs_to_account
   belongs_to :forum
   belongs_to :user
   belongs_to :last_post, :class_name => "Post", :foreign_key => 'last_post_id'
@@ -25,6 +26,8 @@ class Topic < ActiveRecord::Base
   named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
 
   named_scope :visible, lambda {|user| visiblity_options(user) }
+
+  named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   def self.visiblity_options(user)
     if user

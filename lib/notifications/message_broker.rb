@@ -9,7 +9,7 @@ module Notifications::MessageBroker
 	NOTIFICATION_TYPES = { :Feed => "Feed", :Achievement => "Achievement", :Warning => "Warning" }
 
 	#Default notification_badge
-	DEFAULT_BADGE = "/images/badges/trophy.png"
+	DEFAULT_BADGE = "badges-levelup"
 
 	#Used to put the notifications
 	def publish(message, recievers, badge=DEFAULT_BADGE, type=NOTIFICATION_TYPES[:Feed])

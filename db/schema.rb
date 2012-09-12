@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120908074125) do
+ActiveRecord::Schema.define(:version => 20120911074816) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1032,17 +1032,18 @@ ActiveRecord::Schema.define(:version => 20120908074125) do
   add_index "products", ["account_id", "name"], :name => "index_products_on_account_id_and_name"
 
   create_table "quests", :force => true do |t|
-    t.integer  "account_id",  :limit => 8
+    t.integer  "account_id",   :limit => 8
     t.string   "name"
     t.text     "description"
-    t.integer  "quest_type"
+    t.integer  "category"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active"
     t.text     "filter_data"
     t.text     "quest_data"
-    t.integer  "points"
+    t.integer  "points",                    :default => 0
     t.integer  "badge_id"
+    t.integer  "sub_category"
   end
 
   create_table "scoreboard_levels", :force => true do |t|
@@ -1369,6 +1370,7 @@ ActiveRecord::Schema.define(:version => 20120908074125) do
     t.integer  "stamp_type"
     t.boolean  "delta",                     :default => true,  :null => false
     t.integer  "import_id",    :limit => 8
+    t.integer  "user_votes",                :default => 0
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
