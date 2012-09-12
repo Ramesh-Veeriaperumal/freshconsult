@@ -119,7 +119,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		// Used to Edit pre-population
       feed_data:
-         function(dataFeed){
+         function(dataFeed){			
             dataFeed.each(function(rule){
               try{
                   var r_dom	= domUtil.getContainer(name);
@@ -153,6 +153,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   postProcessCondition(hg_data.get(rule.name), data_id);
              }catch(e){}
             });
+			this.dom_size = dataFeed.size()+1;
          },
 
         populateEmpty: 

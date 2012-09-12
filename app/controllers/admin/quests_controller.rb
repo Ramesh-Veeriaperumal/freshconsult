@@ -15,7 +15,7 @@ class Admin::QuestsController < Admin::AdminController
     edit_data
   end
 
-  def create
+  def create    
     if @quest.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default '/admin/gamification#quests'
@@ -37,24 +37,15 @@ class Admin::QuestsController < Admin::AdminController
     end
   end
 
-  def deactivate
-    quest = scoper.find(params[:id])
-    quest.active = false
-    quest.save
-    redirect_back_or_default '/admin/gamification#quests'
-  end
-  
-  def activate
-    quest = all_scoper.disabled.find(params[:id])
-    quest.active = true
-    quest.save
-    redirect_back_or_default '/admin/gamification#quests'
+  def toggle
+    @quest = all_scoper.find(params[:id])
+    @quest.update_attribute(:active, !@quest.active)
   end
 
   protected
 
     def scoper
-      current_account.quests
+      current_account.all_quests
     end
     
     def all_scoper

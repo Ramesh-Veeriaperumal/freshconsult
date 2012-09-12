@@ -36,11 +36,11 @@ module Gamification
       FORUM_QUEST_MODE_BY_KEY = Hash[*FORUM_QUEST_MODE.map { |i| [i[2], i[1]] }.flatten]
       
       QUEST_BASE_CRITERIA = {
-        :ticket   =>  { :disp_name => "Resolve ##questvalue## Tickets within ##questtime##", 
+        :ticket   =>  { :disp_name => "Resolve ##questvalue## tickets in a span of ##questtime##", 
                         :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
-        :solution =>  { :disp_name => "Create ##questvalue## Knowledgebase article within ##questtime##", 
+        :solution =>  { :disp_name => "Create ##questvalue## knowledge base article in a span of ##questtime##", 
                         :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
-        :forum    =>  { :disp_name => "##questmode## ##questvalue## Forum posts within ##questtime##", 
+        :forum    =>  { :disp_name => "##questmode## ##questvalue## forum posts in a span of ##questtime##", 
                         :input => ["questvalue","questmode","questtime"], 
                         :questmode => FORUM_QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort }
       }

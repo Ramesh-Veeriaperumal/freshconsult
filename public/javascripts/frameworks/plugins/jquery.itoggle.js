@@ -7,6 +7,8 @@
   var methods = {
     init : function( options ) {
       return this.each(function(){
+        if( $(this).data('itoggle') ) return;
+
         var opts = $.extend( {}, $.fn.itoggle.defaults, options ),
             _checkbox = $(this),
             opts = $.extend( {}, opts, _checkbox.data()),
@@ -15,7 +17,7 @@
             _container = $("<span />", { 'class': 'toggle-container' }),
             _handle = $("<span />", { 'class': 'toggle-handle' }).append("<span></span>"),
             _proxy = $("<p />").html((opts.checkedLabel.length > opts.uncheckedLabel.length) ? opts.checkedLabel : opts.uncheckedLabel)
-            _invert = opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked')
+            _invert = opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked'),
             _ibutton = $("<a />", {
               'href': "#",
               'class': opts.buttonClass + " " + (_invert ? "active" : "")
@@ -30,10 +32,15 @@
               });
 
         _container.append(_onLabel).append(_handle).append(_offLabel);
+
+        _checkbox.data("button-dom", _ibutton);
+        _checkbox.data("itoggle", true);
+
         $(_checkbox).hide().after(_ibutton);
 
         // Updating the button class when a change event is triggered for the checkbox
-        $(_checkbox).bind("change", function(ev){            
+        $(_checkbox).bind("change", function(ev){
+          var _ibutton = $(this).data("button-dom");
           $(_ibutton).toggleClass('active', (opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked')) );
         });
 

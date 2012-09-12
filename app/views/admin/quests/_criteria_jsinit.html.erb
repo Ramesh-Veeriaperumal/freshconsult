@@ -32,28 +32,23 @@
           //$("#show-new-badge").hide()
 
           $("#showbadges").live('click', function(ev) {
-            //$("#show-new-badge").hide();
             $("#select-badge").dialog({  modal:true, width:'600px', height:'auto', position:'top',
             title: "Select badges to Unlock", resizable: false, draggable: false});
           });
 
-          $("#select-badge > ul").live('mouseover', function(ev) {
-              if($(ev.target).hasClass('gamesettings-badges')) {
-                $(this).css({cursor:"pointer"});
-              } else {
-                $(this).css({cursor:""});
-              }
-            }).live('click', function(ev) {
-              if($(ev.target).hasClass('gamesettings-badges')) {
-                $("#selected-badge").removeClass();
-                $("#selected-badge").addClass($(ev.target).attr('class'));
-                $("#select-badge").dialog('close');
-                $("#selected-badge-name").text($(ev.target).attr('data-name'));
-                $("#quest_badge_id").val($(ev.target).attr('badge_id'));
-              };
-          });
-          $('#formQuestNew').submit(function(e) {
+          $("#select-badge .gamesettings-badges").live('click', function(ev) {
+            $("#selected-badge").removeClass();
+            var badge_class = "gamesettings-badges " + $(this).data('class');
+            $("#selected-badge").html("<div class='"+badge_class+"' />");
+            $("#select-badge").dialog('close');
+            $("#selected-badge-name").text($(this).data('dataName'));
+            $("#quest_badge_id").val($(this).data('badgeId'));
 
+            console.log($(this).data('badgeId'));
+            $("#showbadges").html("Change");
+          });
+
+          $('#formQuestNew').submit(function(e) {
             var questObj = {};
             var questData = [];
 
@@ -127,7 +122,7 @@
                 }
             });
 
-            var criHtml = quest.disp_name + "<br>";
+            var criHtml = quest.disp_name + "matching below conditions <br />";
             
             $("#questDOM").html(criHtml);
           }

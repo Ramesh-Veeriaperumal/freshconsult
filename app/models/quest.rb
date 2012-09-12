@@ -11,6 +11,8 @@ class Quest < ActiveRecord::Base
   serialize :filter_data
   serialize :quest_data
 
+  before_create :set_active
+
   before_save :modify_quest_data, :denormalize_filter_data
 
   named_scope :available, lambda{|user| {
@@ -112,6 +114,10 @@ class Quest < ActiveRecord::Base
 
     def modify_quest_data
       [filter_data, quest_data].each {|d| symbolize_data(d)}
+    end
+
+    def set_active
+      self.active = true
     end
 
     def symbolize_data(data)

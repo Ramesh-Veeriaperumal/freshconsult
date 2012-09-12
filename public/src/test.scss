@@ -1150,6 +1150,11 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 .label.notice {
   background-color: #62cffc;
 }
+.label.points {
+  background-color: #333; 
+  font-size: 11px;
+  padding:1px 3px;
+}
 .media-grid {
   margin-left: -20px;
   margin-bottom: 0;
