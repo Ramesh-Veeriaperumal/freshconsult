@@ -207,7 +207,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 				hidden_.val(save_data);
 
-				this.populateEmpty();
+				this.populateEmpty && this.populateEmpty();
 
 				return save_data;
 			},

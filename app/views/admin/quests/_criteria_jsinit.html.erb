@@ -7,7 +7,7 @@
     var Gamification = function($) {
       var base = this, selectListArr = ['','ticket','solution','forum'];
 
-      base.init = function(cridefs, questinput, awardinput ) {
+      base.init = function(cridefs, questinput, sub_category ) {
           base.cridefs = cridefs;
           var _mand_fields = {'quest_data_value': ['','<%= I18n.t('quests.ticket_mand') %>',
                                                     '<%= I18n.t('quests.solution_mand') %>',
@@ -18,12 +18,16 @@
           
           $(".quest_types").live('change', function(ev) {
               base.onQuestChange(selectListArr[$(this).val()]);
+              $("#quest_description").val("");
           });
 
           base.onQuestChange(selectListArr[$("input[name=quest[category]]:checked").val()]);
 
+          if(sub_category){
+            questinput[0][0].mode = sub_category;
+          }
+
           base.questinput = questinput[0];
-          base.awardinput = awardinput[0];
           
           if(base.questinput) {
               base.processInputFeeds();
@@ -41,10 +45,9 @@
             var badge_class = "gamesettings-badges " + $(this).data('class');
             $("#selected-badge").html("<div class='"+badge_class+"' />");
             $("#select-badge").dialog('close');
-            $("#selected-badge-name").text($(this).data('dataName'));
+            $("#selected-badge-name").text($(this).data('name'));
             $("#quest_badge_id").val($(this).data('badgeId'));
 
-            console.log($(this).data('badgeId'));
             $("#showbadges").html("Change");
           });
 
@@ -53,7 +56,6 @@
             var questData = [];
 
             questObj["value"] = jQuery("#quest_data_value").val();
-            questObj["mode"] = jQuery("#quest_data_mode").val();
             questObj["date"] = jQuery("#quest_data_date").val();
 
             questData.push(questObj);
@@ -103,7 +105,7 @@
                     quest.disp_name = quest.disp_name.replace("##questvalue##", "&nbsp;<input type='text' id='quest_data_value' class='smallinput' id='quest_criteria_value'/>");
                     break;
                   case "questmode":
-                    modeHTML = "&nbsp;<select id='quest_data_mode'>";
+                    modeHTML = "&nbsp;<select id='quest_data_mode' name='quest[sub_category]'>";
                     $.each(quest.questmode, function(index, value) {
                         modeHTML += "<option value='" + value[0] + "'>" + value[1] + "</option>";
                     });
@@ -123,7 +125,7 @@
                 }
             });
 
-            var criHtml = quest.disp_name + "matching below conditions <br />";
+            var criHtml = quest.disp_name + "<br />";
             
             $("#questDOM").html(criHtml);
           }
@@ -134,7 +136,7 @@
       }
 
     }(jQuery);
-    Gamification.init(<%= @criteria_defs %>, [<%= @quest_input%>], [<%= @award_input %>]);    
+    Gamification.init(<%= @criteria_defs %>, [<%= @quest_input%>], <%= @quest.sub_category.blank? ? 'undefined' : @quest.sub_category%>);    
   <% end %>
   <% javascript_tag do %>
     // Condition Parsing 
@@ -206,7 +208,7 @@
     var filterList = [];
     if(jQuery("input[name=quest[category]]:checked").val() == 3 && jQuery("#quest_data_mode").val() == 2 ){
       jQuery.each(_filter_data, function(index,value){
-        if(value.name != "customer_votes"){
+        if(value.name != "user_votes"){
           filterList.push(value);
         }
       });
@@ -216,12 +218,98 @@
     }
     return filterList;
 };
+
+var getFilterDef = function(name,quest_type){
+    var filter_defs = jQuery(<%= @filter_defs %>)[0][quest_type];
+    return filter_defs.filter(function(value,index){
+      return value.name === name;
+    });
+  },
+  getSelectedChoice = function(choices,val){
+    if(!choices){
+      //No choices case need to display the val itself..
+      return [val,val];
+    }
+    return jQuery(choices).filter(function(key,value){
+      return value[0] == val;
+    })[0];
+  },
+  getHumaneCriteria = function(criteria,questtype) {
+    var op_types = <%= @op_types %>,
+        op_list = <%= @op_list %>,
+        humaneCriteria = {},
+        humaneCriteriaStr = '';
+      jQuery(criteria).each(function(index,value){
+        var cri = value,
+            game_type = game_types[questtype],
+            filterDef = getFilterDef(cri.name,game_type)[0],
+            operator_name = filterDef.value,
+            operator = op_list[cri.operator],
+            operationValue = getSelectedChoice(filterDef.choices,cri.value),
+            operationValue = operationValue && operator ? operationValue[1] : '',
+            prev_cri = humaneCriteria[cri.name+'_'+cri.operator];
+            if(prev_cri){
+              prev_cri[2].push(operationValue);
+            }
+            else{
+              humaneCriteria[cri.name+'_'+cri.operator] = [operator_name,operator,[operationValue]];
+            }
+      })
+    jQuery(Object.keys(humaneCriteria)).each(function(index,value){
+        humaneCriteriaStr+=' And '+humaneCriteria[value].join(' ');
+    });
+    return humaneCriteriaStr.substr(5);
+  },
+  populateQuestDes = function(filter,data,form) {
+    if(_is_Desc_edited){
+      return false;
+    }
+    var data = typeof data ==='string' ? jQuery.parseJSON(data) : data ,
+        description = '',
+        selectListArr = game_types,
+        quentity = +jQuery('#quest_data_value').val(),
+        timeframe = +jQuery('#quest_data_date').val(),
+        quest_data_mode_value = +jQuery('#quest_data_mode').val(),
+        questtype = jQuery("input[name=quest[category]]:checked").val();
+        cridefs = <%= @criteria_defs %>,
+        activeCriteria = cridefs[selectListArr[questtype]],
+        display_name_tpl = activeCriteria.disp_name,
+        timeframeStr = activeCriteria.questtime[timeframe-1][1];
+        
+      display_name = display_name_tpl.replace(/##questvalue##/,quentity)
+                     .replace(/##questtime##/,timeframeStr)
+                     .replace(/##questmode##/,jQuery('#quest_data_mode option[value="'+quest_data_mode_value+'"]').text());
+      humaneCriteria = getHumaneCriteria(data,questtype);
+      
+    if(data.length > 0 ){
+      description = display_name+' with :\n'+humaneCriteria+'\n';
+    }
+    else{
+      description = display_name;
+    }
+      
+    jQuery('#quest_description').val(description);
+  };
+
   <% if(filter_type == "quest") %>
-    var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);  
-        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['','ticket','solution','forum'], delete_last: true,
-        change_filter_data : manipulateFilterData});
+    var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>),
+        game_types = ['','ticket','solution','forum'],_is_Desc_edited = false,  
+        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: game_types, delete_last: true,
+        change_filter_data : manipulateFilterData,onRuleSelect : populateQuestDes});
         jQuery("#quest_data_mode").live('change',function(){
            filter_rule.refresh_list();
          });
+    var fnPopulateQuestDes = function(){
+      var formObj = this.form,
+          data = jQuery('#RuleList').children().length ? filter_rule.get_filter_list('json',formObj) : [];
+      populateQuestDes(this,data,formObj);
+    }
+    jQuery('#quest_data_value').live('keyup',fnPopulateQuestDes);
+    jQuery('#quest_data_date,#quest_data_mode').live('change',fnPopulateQuestDes);
+
+    jQuery('#quest_description').live('keyup',function(){_is_Desc_edited = true;})
+  <% end %>
+  <% unless @quest.id.nil?%>
+    _is_Desc_edited = true;
   <% end %>
 <% end %>
