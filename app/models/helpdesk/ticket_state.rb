@@ -6,8 +6,13 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   attr_protected :ticket_id
   
   def reset_tkt_states
+    @resolved_time_was = self.resolved_at_was
     self.resolved_at = nil
     self.closed_at = nil
+  end
+
+  def resolved_time_was
+    @resolved_time_was ||= resolved_at
   end
   
   def set_resolved_at_state

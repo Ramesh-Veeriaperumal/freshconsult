@@ -154,9 +154,9 @@ class Admin::QuestsController < Admin::AdminController
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
         { :name => "forum_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
           :choices => current_account.forum_categories.map{|forum| [forum.id, forum.name]}, :operatortype => "choicelist" },
-        { :name => "forums", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
+        { :name => "forum_id", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
           :choices => ForumCategory.forum_names(current_account), :operatortype => "choicelist" }, 
-        { :name => "customer_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
+        { :name => "user_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
           :operatortype => 'greater' },
       ]
     end

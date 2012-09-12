@@ -10,10 +10,10 @@
       base.init = function(cridefs, questinput, awardinput ) {
           base.cridefs = cridefs;
           
-          $("#quest_quest_type").live('change', function(ev) {
+          $("#quest_category").live('change', function(ev) {
               base.onQuestChange(selectListArr[$(this).val()]);
           });
-          base.onQuestChange(selectListArr[$("#quest_quest_type").val()]);
+          base.onQuestChange(selectListArr[$("#quest_category").val()]);
 
           base.questinput = questinput[0];
           base.awardinput = awardinput[0];

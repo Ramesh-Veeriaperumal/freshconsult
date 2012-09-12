@@ -35,6 +35,7 @@ module Gamification
       ]
 
       FORUM_QUEST_MODE_BY_KEY = Hash[*FORUM_QUEST_MODE.map { |i| [i[2], i[1]] }.flatten]
+      FORUM_QUEST_MODE_BY_TOKEN = Hash[*FORUM_QUEST_MODE.map { |i| [i[0], i[2]] }.flatten]
       
       QUEST_BASE_CRITERIA = {
         :ticket   =>  { :disp_name => "Resolve ##questvalue## Tickets within ##questtime##", 

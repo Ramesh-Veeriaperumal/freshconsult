@@ -1,6 +1,8 @@
 class Post < ActiveRecord::Base
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
+
+  belongs_to_account
   
   belongs_to :forum
   belongs_to :user
@@ -9,8 +11,10 @@ class Post < ActiveRecord::Base
   named_scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
 
-  named_scope :user, lambda { |userid|
-      { :conditions => ["#{Post.table_name}.user_id = ?", userid ] }
+  named_scope :by_user, lambda { |user|
+      { :joins => [:topic],
+        :conditions => ["posts.user_id = ? and posts.user_id != topics.user_id", user.id ] 
+      }
   }
 
   has_many :attachments,

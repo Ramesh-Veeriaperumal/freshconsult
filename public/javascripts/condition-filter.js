@@ -98,7 +98,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				var r_dom = domUtil.getContainer(name);
 				var filterList = [];
 				if(setting.delete_last) {
-					var selected_quest = jQuery("#quest_quest_type").val();
+					var selected_quest = jQuery("#quest_category").val();
 					//var criteria_list = quest_criteria_types[selected_quest];
 					filterList = filter_data[0][setting.selectListArr[selected_quest]];
 				} else {
@@ -133,7 +133,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 					var filterList = [];
 					if(setting.delete_last) {
-						var selected_quest = jQuery("#quest_quest_type").val();
+						var selected_quest = jQuery("#quest_category").val();
 						//var criteria_list = quest_criteria_types[selected_quest];
 						filterList = filter_data[0][setting.selectListArr[selected_quest]];
 					} else {
