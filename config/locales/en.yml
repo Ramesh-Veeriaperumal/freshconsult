@@ -194,20 +194,24 @@ en:
   quests:
     inactive_quests: Inactive Quests
     date: Date
-    satisfaction: Customer Satisfaction
+    satisfaction: Customer satisfaction rating
     forums: Forums
     forum_category: Category
     solution_articles: Article 
     solution_folder: Folder
     fcr: First Call Resolution
-    customer_votes: Customers Vote
-    solution_likes: Solution Likes
+    customer_votes: Number of votes
+    solution_likes: Number of likes
     true : True 
     ticket_mand: Please populate number of resolved tickets.
     solution_mand: Please populate number of Solutions.
     forum_mand: Please populate number of Forums.
     badge_mand: Please select a badge.
     name_mand: Please provide Quest name.
+    js_ticket_txt: Resolve $$questvalue$$ tickets in a span of $$questtime$$ days, matching these conditions.
+    js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ matching these conditions.
+    js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ matching these conditions.
+    js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points. 
   admin:
     quests:
       index:
