@@ -6596,8 +6596,9 @@ a.mobile_switchBtn {
 		height:36px;
 	}
 	.help-text{
-		color:#333333;
+		color:#666;
 		font-size:13px;
+		line-height: 18px;
 	}
 	h4{
 		font-size:14px;		
@@ -6616,4 +6617,20 @@ a.mobile_switchBtn {
 
 .panel-row.odd{
 	background-color: #f8f8f8;
+}
+
+.panel-row.acheived{
+	background-color: #f3f6ee;	
+}
+
+.acheived-text{
+	color: #4b7200;
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.symbol-done-tick{
+	@include inline-block;
+	width: 15px; height: 15px;
+	background:sprite($symbol, done-tick) no-repeat;	
 }
