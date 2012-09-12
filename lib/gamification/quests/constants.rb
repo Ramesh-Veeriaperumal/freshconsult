@@ -12,6 +12,7 @@ module Gamification
       GAME_TYPE_OPTIONS = GAME_TYPES.map { |i| [i[1], i[3]] }
       GAME_TYPE_KEYS_BY_TOKEN = Hash[*GAME_TYPES.map { |i| [i[0], i[3]] }.flatten]
       GAME_TYPE_TOKENS_BY_KEY = Hash[*GAME_TYPES.map { |i| [i[3], i[0]] }.flatten]
+      GAME_TYPE_NAME_BY_KEY = Hash[*GAME_TYPES.map { |i| [i[3], i[1]] }.flatten]
       QUEST_SCORE_TRIGGERS_BY_ID = Hash[*GAME_TYPES.map { |i| [i[3], i[2]] }.flatten]
 
       

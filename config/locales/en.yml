@@ -207,6 +207,7 @@ en:
     solution_mand: Please populate number of Solutions.
     forum_mand: Please populate number of Forums.
     badge_mand: Please select a badge.
+    name_mand: Please provide Quest name.
   admin:
     quests:
       index:

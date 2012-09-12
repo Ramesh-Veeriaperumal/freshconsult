@@ -1,8 +1,8 @@
 <%= render :partial => "admin/quests/criteria_jsinit", :locals => { :filter_type => "quest" } %>
 
 <%= f.error_messages :object_name => 'quest' %>
-<h3 class="s-title">Quest type</h3> 
-<div class="form-section">	
+<h3 class="s-title">Quest type  <%= ' - '+Quest::GAME_TYPE_NAME_BY_KEY[@quest.category] unless @quest.category.blank? %></h3>
+<div class="form-section" style="<%= 'display:none' unless @quest.name.blank? %>">	
 	<div class="row">
 		<% Quest::GAME_TYPES.each do |game_type| %>
 		<label class="s-label radio-label span2">
