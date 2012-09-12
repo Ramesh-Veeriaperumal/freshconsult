@@ -204,7 +204,7 @@
   <%= javascript_include_tag "condition-filter" %>
 <% end %>
 
-<% content_for :onload_script do %> 
+<% content_for :onload_script do %>
   var manipulateFilterData = function(_filter_data){
     var filterList = [];
     if(jQuery("input[name=quest[category]]:checked").val() == 3 && jQuery("#quest_data_mode").val() == 2 ){
@@ -226,6 +226,11 @@ var getFilterDef = function(name,quest_type){
       return value.name === name;
     });
   },
+  stringTemplates = {'ticket': '<%= I18n.t("quests.js_ticket_txt") %>',
+                     'solution':'<%= I18n.t("quests.js_solution_txt") %>',
+                     'forum':'<%= I18n.t("quests.js_forum_txt") %>',
+                     'quest':'<%= I18n.t("quests.js_quest_txt") %>'
+                    },
   getSelectedChoice = function(choices,val){
     if(!choices){
       //No choices case need to display the val itself..
@@ -255,11 +260,18 @@ var getFilterDef = function(name,quest_type){
             else{
               humaneCriteria[cri.name+'_'+cri.operator] = [operator_name,operator,[operationValue]];
             }
-      })
+      });
+    var humaneCriteria_len = Object.keys(humaneCriteria).length;
     jQuery(Object.keys(humaneCriteria)).each(function(index,value){
-        humaneCriteriaStr+=' And '+humaneCriteria[value].join(' ');
+        humaneCriteria[value][2] =  humaneCriteria[value][2] != '' ? "'"+humaneCriteria[value][2].join(' or ')+"'" : '';
+        if(humaneCriteria_len > 1){
+          humaneCriteriaStr+=  index == (humaneCriteria_len-1) ? ' and '+humaneCriteria[value].join(' ')+'.' : ', '+humaneCriteria[value].join(' ');
+        }
+        else{
+          humaneCriteriaStr+=  ' '+humaneCriteria[value].join(' ')+'.';
+        }
     });
-    return humaneCriteriaStr.substr(5);
+    return humaneCriteriaStr.substr(1);
   },
   populateQuestDes = function(filter,data,form) {
     if(_is_Desc_edited){
@@ -274,21 +286,25 @@ var getFilterDef = function(name,quest_type){
         questtype = jQuery("input[name=quest[category]]:checked").val();
         cridefs = <%= @criteria_defs %>,
         activeCriteria = cridefs[selectListArr[questtype]],
-        display_name_tpl = activeCriteria.disp_name,
+        display_name_tpl = stringTemplates[selectListArr[questtype]],
         timeframeStr = activeCriteria.questtime[timeframe-1][1];
         
-      display_name = display_name_tpl.replace(/##questvalue##/,quentity)
-                     .replace(/##questtime##/,timeframeStr)
-                     .replace(/##questmode##/,jQuery('#quest_data_mode option[value="'+quest_data_mode_value+'"]').text());
+      display_name = display_name_tpl.replace('$$questvalue$$',quentity)
+                     .replace('$$questtime$$',timeframeStr)
+                     .replace('$$questmode$$',jQuery('#quest_data_mode option[value="'+quest_data_mode_value+'"]').text());
       humaneCriteria = getHumaneCriteria(data,questtype);
       
     if(data.length > 0 ){
-      description = display_name+' with :\n'+humaneCriteria+'\n';
+      description = display_name+humaneCriteria;
     }
     else{
       description = display_name;
     }
-      
+    
+    if(jQuery("#quest_badge_id").val() != ''){
+      description += stringTemplates['quest'].replace('$$badgename$$',jQuery('#selected-badge-name').text())
+                     .replace('$$questpoints$$',jQuery('#quest_points').val());
+    }
     jQuery('#quest_description').val(description);
   };
 
