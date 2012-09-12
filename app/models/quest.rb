@@ -9,6 +9,7 @@ class Quest < ActiveRecord::Base
   has_many :users, :through => :achieved_quests
 
   validates_presence_of :name
+  validates_presence_of :badge_id, :message => I18n.t('quests.badge_mand')
   validates_numericality_of :points
 
   serialize :filter_data
