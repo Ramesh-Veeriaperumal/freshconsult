@@ -28,6 +28,7 @@ module Gamification
       
       QUEST_TIME_BY_KEY = Hash[*QUEST_TIME.map { |i| [i[3], i[1]] }.flatten] 
       QUEST_TIME_SPAN_BY_KEY = Hash[*QUEST_TIME.map { |i| [i[3], i[2]] }.flatten] 
+      TIME_TYPE_BY_TOKEN = Hash[*QUEST_TIME.map { |i| [i[0], i[3]] }.flatten] 
 
       FORUM_QUEST_MODE = [
           [ :create, "Create", 1 ],

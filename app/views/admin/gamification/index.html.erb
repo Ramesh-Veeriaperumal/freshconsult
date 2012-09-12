@@ -1,12 +1,3 @@
-<% javascript_tag do %>
- jQuery(document).ready(function(){
-	jQuery('input#account_features_scoreboard_enable').click( function(event) {						
-		    var form = jQuery('form#scoreboard_enabled');
-		    form.submit();
-	});		
-  });
-<% end %>
- 
 <div class="floatr">
 	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
 			:rel => "toggle", 

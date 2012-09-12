@@ -52,6 +52,7 @@ module Gamification
       ]
 
       BADGES_BY_ID = Hash[*BADGES.map { |badge| [badge[:id], badge] }.flatten] 
+      BADGES_BY_CLASS = Hash[*BADGES.map { |badge| [badge[:classname], badge] }.flatten] 
     end
   end
 end
