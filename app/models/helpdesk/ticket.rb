@@ -11,6 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
   include Mobile::Actions::Ticket
+  include Gamification::GamificationUtil
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
                             "header_info", "st_survey_rating"]
@@ -1005,11 +1006,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     def support_score_on_create
-      add_support_score unless active?
+      add_support_score if gamification_feature?(account) && !active?
     end
     
     def support_score_on_update
-      if (active? && !@old_ticket.active?) or (deleted_changed? && deleted?)
+      if gamification_feature?(account) && ((active? && !@old_ticket.active?) or (deleted_changed? && deleted?))
         
         SupportScore.destroy_all(:account_id => account_id,  :scorable_type => "Helpdesk::Ticket", :scorable_id => id, 
           :score_trigger => Gamification::Scoreboard::Constants::TICKET_CLOSURE)

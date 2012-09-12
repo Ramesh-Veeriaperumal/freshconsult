@@ -9,10 +9,10 @@ class Admin::GamificationController < Admin::AdminController
   end
   
   def toggle
-    if feature?(:scoreboard_enable)
-      current_account.features.scoreboard_enable.destroy
+    if feature?(:gamification_enable)
+      current_account.features.gamification_enable.destroy
     else
-      current_account.features.scoreboard_enable.create
+      current_account.features.gamification_enable.create
     end
     current_account.reload
     render :nothing => true

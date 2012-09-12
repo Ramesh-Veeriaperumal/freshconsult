@@ -1,5 +1,6 @@
 class Helpdesk::QuestsController < ApplicationController
   before_filter :set_selected_tab
+  before_filter { |c| c.requires_feature :gamification }
   
   def index
     @quests = scoper.paginate(:all, :page => params[:page], :per_page => 25)

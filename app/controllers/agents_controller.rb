@@ -1,5 +1,7 @@
 class AgentsController < Admin::AdminController
   
+  include Gamification::GamificationUtil
+
   skip_before_filter :check_account_state, :only => :destroy
   
   before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
@@ -122,7 +124,7 @@ class AgentsController < Admin::AdminController
   def update
       @agent.occasional = params[:agent][:occasional]
       #check_agent_limit
-      @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
+      @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
       
       if @agent.update_attributes(params[nscname])            
           @user = current_account.all_users.find(@agent.user_id)

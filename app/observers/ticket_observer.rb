@@ -6,10 +6,13 @@ class TicketObserver < ActiveRecord::Observer
 
 	include Helpdesk::Ticketfields::TicketStatus
 	include Gamification::Quests::ProcessTicketQuests
+	include Gamification::GamificationUtil
 
 	def after_save(ticket)
-		process_available_quests(ticket)
-		rollback_achieved_quests(ticket)
+		if gamification_feature?(ticket.account)
+			process_available_quests(ticket)
+			rollback_achieved_quests(ticket)
+		end
 	end
 
 	private

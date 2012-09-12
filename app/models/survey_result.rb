@@ -1,6 +1,7 @@
 class SurveyResult < ActiveRecord::Base
 
   include Gamification::Quests::ProcessTicketQuests
+  include Gamification::GamificationUtil
 
   belongs_to_account
     
@@ -124,8 +125,10 @@ class SurveyResult < ActiveRecord::Base
   private                                                   
 
     def add_support_score
-      SupportScore.add_happy_customer(surveyable) if happy?
-      SupportScore.add_unhappy_customer(surveyable) if unhappy?
+      if gamification_feature?(surveyable.account)
+        SupportScore.add_happy_customer(surveyable) if happy?
+        SupportScore.add_unhappy_customer(surveyable) if unhappy?
+      end
     end
 
     def update_ticket_rating
