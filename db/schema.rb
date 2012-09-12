@@ -1036,15 +1036,17 @@ ActiveRecord::Schema.define(:version => 20120912094765) do
     t.string   "name"
     t.text     "description"
     t.integer  "category"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "active"
+    t.integer  "sub_category"
+    t.boolean  "active",                    :default => true
     t.text     "filter_data"
     t.text     "quest_data"
     t.integer  "points",                    :default => 0
     t.integer  "badge_id"
-    t.integer  "sub_category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
+
+  add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
 
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
