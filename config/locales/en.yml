@@ -210,7 +210,7 @@ en:
     name_mand: Please provide Quest name.
     js_ticket_txt: Resolve $$questvalue$$ tickets in a span of $$questtime$$ days, matching these conditions.
     js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ matching these conditions.
-    js_forum_txt: $$questmode$$ $$questvalue## forum posts in a span of $$questtime$$ matching these conditions.
+    js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points. 
   admin:
     quests:
