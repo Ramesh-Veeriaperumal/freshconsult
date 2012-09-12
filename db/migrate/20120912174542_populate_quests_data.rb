@@ -7,8 +7,10 @@ class PopulateQuestsData < ActiveRecord::Migration
       :include => :account)
       
     subscriptions.each do |subscription|
-      puts "Populate Quest Data for #{subscription.account.id} - #{subscription.account.name}"
-      subscription.account.quests.create(Gamification::Quests::Seed::DEFAULT_DATA)
+      if subscription.account
+        puts "Populate Quest Data for #{subscription.account.id} - #{subscription.account.name}"
+        subscription.account.quests.create(Gamification::Quests::Seed::DEFAULT_DATA)
+      end
     end
   end
 
