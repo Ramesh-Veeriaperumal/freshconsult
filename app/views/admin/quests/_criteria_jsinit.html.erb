@@ -66,7 +66,6 @@
             jQuery.each(_mand_fields,function(index,value){
               _mand_check_fails = false;
               if(jQuery("#"+index).val() == ""){
-                event.stopPropagation();
                 var txt = (index == 'quest_data_value') ? 
                            value[jQuery("input[name=quest[category]]:checked").val()] : value
                 jQuery("#noticeajax").text(txt);
