@@ -1,7 +1,7 @@
 /* Clearlooks 2 */
 
 /* Reset */
-.fresh, .fresh div, .fresh span, .fresh a {vertical-align:baseline; text-align:left; position:absolute; border:0; padding:0; margin:0; background:transparent; font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif; font-size:13px; color:#000; text-decoration:none; font-weight:normal; width:auto; height:auto; overflow:hidden; display:block}
+.fresh, .fresh div, .fresh span, .fresh a {vertical-align:baseline; text-align:left; position:absolute; border:0; padding:0; margin:0; background:transparent; font-family: "Helvetica Neue", Geneva, Arial,Verdana,sans-serif; font-size:13px; color:#000; text-decoration:none; font-weight:normal; width:auto; height:auto; overflow:hidden; display:block}
 
 /* General */
 .fresh {position:absolute; direction:ltr; border:6px solid rgba(0,0,0, 0.3);}
@@ -40,7 +40,7 @@
 .fresh .mceStatusbar .mceBottom .mceLeft {background:#efebe7; border-top:1px solid #d1c8bd;}
 .fresh .mceStatusbar .mceBottom .mceCenter {background:#efebe7; border-top:1px solid #d1c8bd;}
 .fresh .mceStatusbar .mceBottom .mceRight {background:#efebe7; border-top:1px solid #d1c8bd;}
-.fresh .mceStatusbar .mceBottom span {display:block; left:7px; font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif; font-size:11px; line-height:23px}
+.fresh .mceStatusbar .mceBottom span {display:block; left:7px; font-family: "Helvetica Neue", Geneva, Arial,Verdana,sans-serif; font-size:11px; line-height:23px}
 
 /* Actions */
 .fresh a {width:29px; height:16px; top:5px;}
