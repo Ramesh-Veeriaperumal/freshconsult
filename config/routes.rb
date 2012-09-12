@@ -242,8 +242,8 @@
 
     #helpdesk.resources :ticket_issues
 
-    helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :user_list => :get, 
-      :group_list => :get }, :only => [ :mini_list, :user_list, :group_list ]
+    helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :agents => :get, 
+      :groups => :get }, :only => [ :mini_list, :agents, :groups ]
     helpdesk.resources :quests, :only => [ :active, :index, :unachieved ], 
       :collection => { :active => :get, :unachieved => :get }
 

@@ -1,7 +1,7 @@
 <% cache ("#{memcache_local_key}", :expires_in => 1.hour) do %>
 
-	<%= link_to "See all", user_list_helpdesk_leaderboard_path(), :class => "action-right" %>
-	<h3 class="title">LeaderBoard</h3>  	
+	<%= link_to "See all", agents_helpdesk_leaderboard_path(), :class => "action-right" %>
+	<h3 class="title"><%= t('reports.scoreboard_title_nav')%></h3>  	
 	<p class="intro">This Month</p>  
 	<% mini_board = [[ @mvp_scorecard, "Most valuable player", "mvp"],
 					 [ @customer_champion_scorecard, "Customer champion", "love"],

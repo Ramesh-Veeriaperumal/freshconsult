@@ -8,11 +8,11 @@ class Helpdesk::LeaderboardController < ApplicationController
       render :layout => false
   end
 
-  def user_list
+  def agents
     generate_score_card 10
   end
 
-  def group_list
+  def groups
     generate_score_card 10, :group
   end
 

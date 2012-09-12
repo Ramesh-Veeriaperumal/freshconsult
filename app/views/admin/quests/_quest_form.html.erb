@@ -43,6 +43,7 @@
 						<div id="selected-badge">
 							<%= content_tag :div, "", :class => "gamesettings-badges #{@badge_class[:classname]}" if @badge_class %>
 						</div>
+						<span style="margin-left:-3px;" id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></span>
 					</div>
 					<br />
 					<a href="javascript:void(0)" id="showbadges">
@@ -82,7 +83,6 @@
 
 
 	<div class="button-container">
-		<input type="hidden" name="award_data" id="quest_award_data" value=""/>
 		<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
 		<input type="submit" class="uiButton" value="<%=t('save')%>" />
 		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>

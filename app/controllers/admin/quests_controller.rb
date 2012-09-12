@@ -2,6 +2,7 @@ class Admin::QuestsController < Admin::AdminController
   include ModelControllerMethods
 	include Va::Constants
 	include Gamification::Quests::Constants
+	include Gamification::Quests::Badges
   
   before_filter { |c| c.requires_feature :gamification }
   before_filter :set_filter_data, :only => [ :create, :update ]
@@ -60,7 +61,7 @@ class Admin::QuestsController < Admin::AdminController
     def edit_data
       @filter_input = ActiveSupport::JSON.encode @quest.actual_filter_data
       @quest_input = ActiveSupport::JSON.encode @quest.quest_data
-      @badge_class = Gamification::Quests::Badges::BADGES_BY_ID[@quest.badge_id]
+      @badge_class = BADGES_BY_ID[@quest.badge_id]
     end
 
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods
@@ -70,7 +71,7 @@ class Admin::QuestsController < Admin::AdminController
     def load_config
       @op_types        = ActiveSupport::JSON.encode OPERATOR_TYPES
       @op_list        = ActiveSupport::JSON.encode OPERATOR_LIST
-      @available_badges = Gamification::Quests::Badges::BADGES
+      @available_badges = available_badges
       
       filter_hash = {
         :ticket   => add_custom_filters(ticket_filters),
@@ -80,6 +81,11 @@ class Admin::QuestsController < Admin::AdminController
       
       @criteria_defs = ActiveSupport::JSON.encode QUEST_BASE_CRITERIA
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
+    end
+    
+    def available_badges #Nasty implementation, need to refactor - Shan
+      used_up_badges = current_account.quests.collect { |q| q.badge_id }
+      BADGES.select { |b| !used_up_badges.include? b[:id] }
     end
     
     def ticket_filters
