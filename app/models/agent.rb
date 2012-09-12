@@ -45,7 +45,7 @@ def set_default_ticket_permission
 end
 
 def signature_value
-  self.signature_html || (RedCloth.new(self.signature).to_html)
+  self.signature_html || (RedCloth.new(self.signature).to_html unless @signature.blank?)
 end
 
 named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
