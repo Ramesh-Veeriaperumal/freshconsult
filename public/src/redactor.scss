@@ -44,6 +44,7 @@ body .redactor_air {
 	background: #fff !important;
 	overflow: auto;
 	font-family: $blueprint-font-family !important;
+	font-size: 13px;
 	white-space: normal;
 	border-radius:0 0 5px 5px;
 }
@@ -587,8 +588,3 @@ body .redactor_toolbar li a.redactor_btn_underline		 	{ background-position: -52
     background: #f4f4ee;
     border-color: #e0e5d6;
 }
-
-.redactor_editor{
-	@include text-formatting();
-}
-
