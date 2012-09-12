@@ -1,5 +1,10 @@
 class PopulateScoreboardLevelsData < ActiveRecord::Migration
   def self.up
+    
+    execute <<-SQL
+      DELETE FROM scoreboard_levels;
+    SQL
+
   	execute <<-SQL
       INSERT INTO scoreboard_levels 
         (account_id, name, points, created_at, updated_at) 
@@ -34,7 +39,7 @@ class PopulateScoreboardLevelsData < ActiveRecord::Migration
 
   def self.down
   	execute <<-SQL
-		DELETE FROM scoreboard_levels;
-	SQL
+		  DELETE FROM scoreboard_levels;
+	  SQL
   end
 end
