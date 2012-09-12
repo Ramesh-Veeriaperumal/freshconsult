@@ -102,7 +102,6 @@
 	jQuery(document).ready(function() {
 		jQuery('#integrations-list .tabs a').click(function(ev) {
 			ev.preventDefault();
-			console.log('Adas');
 			jQuery('#integrations-list .' + jQuery(this).data('hide')).hide();
 			jQuery('#integrations-list .' + jQuery(this).data('show')).show();
 
