@@ -1,6 +1,7 @@
 class SupportScore < ActiveRecord::Base
 
   include Gamification::Scoreboard::Constants
+  include Gamification::Scoreboard::Memcache
 
   after_commit_on_destroy :update_agents_score
   after_commit_on_create  :update_agents_score
@@ -110,6 +111,7 @@ protected
       unless (agent.points.eql? total_score)
         agent.update_attribute(:points, total_score)
       end
+      memcache_delete(self)
   end
 
 end
