@@ -8,6 +8,9 @@ class Quest < ActiveRecord::Base
   has_many :achieved_quests, :dependent => :destroy
   has_many :users, :through => :achieved_quests
 
+  validates_presence_of :name
+  validates_numericality_of :points
+
   serialize :filter_data
   serialize :quest_data
 
@@ -126,6 +129,11 @@ class Quest < ActiveRecord::Base
     return 'topics.created_at' if create_forum_quest?
     return 'posts.created_at' if answer_forum_quest?
     QUEST_TIME_COLUMNS[GAME_TYPE_TOKENS_BY_KEY[category]]
+  end
+
+  def actual_filter_data
+    return filter_data[:actual_data]  if filter_data.is_a? Hash
+    filter_data
   end
 
   private
