@@ -26,17 +26,22 @@
 	@include inline-block;
 	width: 50px;
 	height: 50px;
-	margin: -5px 5px 0;
+	margin: -5px 5px 18px 5px;
+	text-align: center;
 	.label.points {
   		position: relative;
-  		top: 35px;
+  		top:53px;
   	}
 }
 
 .badges.center{
-	margin-left: auto ;
-	margin-right: auto ;
+	margin-left: auto;
+	margin-right: auto;
 } 
+
+.badges.left{
+	margin: -2px 0 18px -5px;
+}
 
 #select-badge .gamesettings-badges{
 	cursor: pointer;
@@ -271,6 +276,17 @@ li.dashboard-quest-points {
 		color: #333;
 		font-weight: bold;
 	}	
+}
+
+.q-report{
+	padding-top:1px;
+	margin-top: 10px;
+	.panel-row{
+		padding: 12px 20px 12px 13px;
+		position: relative;
+		border-top:0;
+		border-bottom:1px solid #E6E6E6;
+	}
 }
 
 .lb-report{	
