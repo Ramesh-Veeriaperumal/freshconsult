@@ -8,7 +8,7 @@ class Notifications::Message
 		}
 		@body = {
 			:message => message,
-			:icon => badge
+			:icon_class => badge
 		}	
 	end
 

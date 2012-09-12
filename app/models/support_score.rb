@@ -34,6 +34,8 @@ class SupportScore < ActiveRecord::Base
   named_scope :customer_champion, {
     :conditions => { :score_trigger => [HAPPY_CUSTOMER, UNHAPPY_CUSTOMER] }
   }
+  
+  named_scope :by_performance, { :conditions => ["score_trigger != ?", AGENT_LEVEL_UP] }
 
   named_scope :group_score,
   { 

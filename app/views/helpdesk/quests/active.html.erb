@@ -1,7 +1,7 @@
 <% unless @quests.empty? %>
 	<div id="quests-section">
 	  	<%= link_to "See all", helpdesk_quests_path, :class => "action-right" %>
-	  	<h3 class="title">Quest</h3>  
+	  	<h3 class="title">Available Quests</h3>  
 	  	<div id="quests-container" class="panel-list">
 	  		<% @quests.each do |quest| %>
 		  		<div id="quest-container" class="panel-row">

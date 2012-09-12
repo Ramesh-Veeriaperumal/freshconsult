@@ -26,11 +26,11 @@ class Helpdesk::LeaderboardController < ApplicationController
     end
 
     def user_scoper
-      current_account.support_scores.user_score.created_at_inside(*this_month)
+      current_account.support_scores.by_performance.user_score.created_at_inside(*this_month)
     end
 
     def group_scoper
-      current_account.support_scores.group_score.created_at_inside(*this_month)
+      current_account.support_scores.by_performance.group_score.created_at_inside(*this_month)
     end
 
     def this_month

@@ -108,6 +108,7 @@
 			var title = params.title, 
 				text = params.text,
 				image = params.image || '',
+				image_class = params.image_class || '',
 				sticky = params.sticky || false,
 				item_class = params.class_name || $.gritter.options.class_name,
 				position = $.gritter.options.position,
@@ -132,7 +133,7 @@
 				this._custom_timer = time_alive;
 			}
 			
-			var image_str = (image != '') ? '<img src="' + image + '" class="gritter-image" />' : '',
+			var image_str = (image != '') ? '<img src="' + image + '" class="gritter-image '+image_class+'" />' : '',
 				class_name = (image != '') ? 'gritter-with-image' : 'gritter-without-image';
 			
 			// String replacements on the template
