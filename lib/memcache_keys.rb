@@ -1,0 +1,5 @@
+module MemcacheKeys
+	
+  MEMCACHE_LEADERBOARD_MINILIST = "HELPDESK_LEADERBOARD_MINILIST:%{account_id}"
+
+end

@@ -1,16 +1,18 @@
 class Helpdesk::LeaderboardController < ApplicationController
   before_filter :set_selected_tab
-    
-  def mini_list
-    generate_score_card
-    render :layout => false
+
+  helper Helpdesk::LeaderboardHelper
+
+  def mini_list    
+      generate_score_card
+      render :layout => false
   end
 
-  def user_list
+  def agents
     generate_score_card 10
   end
 
-  def group_list
+  def groups
     generate_score_card 10, :group
   end
 
@@ -24,11 +26,11 @@ class Helpdesk::LeaderboardController < ApplicationController
     end
 
     def user_scoper
-      current_account.support_scores.user_score.created_at_inside(*this_month)
+      current_account.support_scores.by_performance.user_score.created_at_inside(*this_month)
     end
 
     def group_scoper
-      current_account.support_scores.group_score.created_at_inside(*this_month)
+      current_account.support_scores.by_performance.group_score.created_at_inside(*this_month)
     end
 
     def this_month

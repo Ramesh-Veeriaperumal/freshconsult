@@ -120,6 +120,7 @@ GEM
       systemu (~> 2.5.0)
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
+    memcache-client (1.8.5)
     metaclass (0.0.1)
     mime-types (1.16)
     mocha (0.11.4)
@@ -308,6 +309,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   map-fields (= 1.0.0)
   marketo!
+  memcache-client (= 1.8.5)
   mongrel
   mysql
   net-dns (= 0.6.1)

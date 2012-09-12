@@ -1,9 +1,9 @@
 <div class="btn-group floatr">
-  <%= link_to "Agent", user_list_helpdesk_leaderboard_path(), :class => "btn" %>
-  <%= link_to "Group", group_list_helpdesk_leaderboard_path(), :class => "btn active" %>
+  <%= link_to "Agent", agents_helpdesk_leaderboard_path(), :class => "btn" %>
+  <%= link_to "Group", groups_helpdesk_leaderboard_path(), :class => "btn active" %>
 </div>
 <a href="/">< Back to dashboard </a>
-<h3 class="title"><%= t('reports.scoreboard_title_nav')%></h3>
+<h3 class="title"><%= t('reports.scoreboard_group_title')%></h3>
 <% leaderboard = [[ @mvp_scorecard, :mvp],
 				  [ @customer_champion_scorecard, :love],
 				  [ @first_call_scorecard, :sharpshooter],

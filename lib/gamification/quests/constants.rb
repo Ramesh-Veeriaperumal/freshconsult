@@ -12,6 +12,7 @@ module Gamification
       GAME_TYPE_OPTIONS = GAME_TYPES.map { |i| [i[1], i[3]] }
       GAME_TYPE_KEYS_BY_TOKEN = Hash[*GAME_TYPES.map { |i| [i[0], i[3]] }.flatten]
       GAME_TYPE_TOKENS_BY_KEY = Hash[*GAME_TYPES.map { |i| [i[3], i[0]] }.flatten]
+      GAME_TYPE_NAME_BY_KEY = Hash[*GAME_TYPES.map { |i| [i[3], i[1]] }.flatten]
       QUEST_SCORE_TRIGGERS_BY_ID = Hash[*GAME_TYPES.map { |i| [i[3], i[2]] }.flatten]
 
       
@@ -34,13 +35,14 @@ module Gamification
       ]
 
       FORUM_QUEST_MODE_BY_KEY = Hash[*FORUM_QUEST_MODE.map { |i| [i[2], i[1]] }.flatten]
+      FORUM_QUEST_MODE_BY_TOKEN = Hash[*FORUM_QUEST_MODE.map { |i| [i[0], i[2]] }.flatten]
       
       QUEST_BASE_CRITERIA = {
-        :ticket   =>  { :disp_name => "Resolve ##questvalue## tickets in a span of ##questtime##", 
+        :ticket   =>  { :disp_name => "Resolve ##questvalue## tickets in a span of ##questtime## matching below conditions ", 
                         :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
-        :solution =>  { :disp_name => "Create ##questvalue## knowledge base article in a span of ##questtime##", 
+        :solution =>  { :disp_name => "Create ##questvalue## knowledge base article in a span of ##questtime## matching below conditions ", 
                         :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
-        :forum    =>  { :disp_name => "##questmode## ##questvalue## forum posts in a span of ##questtime##", 
+        :forum    =>  { :disp_name => "##questmode## ##questvalue## forum posts in a span of ##questtime## matching below conditions ", 
                         :input => ["questvalue","questmode","questtime"], 
                         :questmode => FORUM_QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort }
       }

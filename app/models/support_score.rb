@@ -1,6 +1,7 @@
 class SupportScore < ActiveRecord::Base
 
   include Gamification::Scoreboard::Constants
+  include Gamification::Scoreboard::Memcache
 
   after_commit_on_destroy :update_agents_score
   after_commit_on_create  :update_agents_score
@@ -33,6 +34,8 @@ class SupportScore < ActiveRecord::Base
   named_scope :customer_champion, {
     :conditions => { :score_trigger => [HAPPY_CUSTOMER, UNHAPPY_CUSTOMER] }
   }
+  
+  named_scope :by_performance, { :conditions => ["score_trigger != ?", AGENT_LEVEL_UP] }
 
   named_scope :group_score,
   { 
@@ -110,6 +113,7 @@ protected
       unless (agent.points.eql? total_score)
         agent.update_attribute(:points, total_score)
       end
+      memcache_delete(self)
   end
 
 end

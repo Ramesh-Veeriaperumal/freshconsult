@@ -93,8 +93,8 @@ class Solution::Article < ActiveRecord::Base
  
   named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
  
-  named_scope :user, lambda { |userid|
-      { :conditions => ["user_id = ?", userid ] }
+  named_scope :by_user, lambda { |user|
+      { :conditions => ["user_id = ?", user.id ] }
   }
 
   def type_name

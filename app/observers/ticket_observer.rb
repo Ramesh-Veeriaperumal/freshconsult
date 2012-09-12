@@ -25,11 +25,16 @@ class TicketObserver < ActiveRecord::Observer
 			ticket.responder.quests.ticket_quests.each do |quest|
 				badge_awarded_time = ticket.responder.badge_awarded_at(quest)
 
-				unless quest.any_time_span?
-					resolved_in_quest_span = ticket.ticket_states.resolved_at.between?(
-						quest.start_time(badge_awarded_time), badge_awarded_time)
+				old_resolv_time = ticket.ticket_states.resolved_time_was
+				if !old_resolv_time.blank?
+					unless quest.any_time_span?
+						resolved_in_quest_span = old_resolv_time.between?(
+							quest.start_time(badge_awarded_time), badge_awarded_time)
+					else
+						resolved_in_quest_span = old_resolv_time <= badge_awarded_time
+					end
 				else
-					resolved_in_quest_span = ticket.ticket_states.resolved_at <= badge_awarded_time
+					resolved_in_quest_span = true
 				end
 
 				if resolved_in_quest_span

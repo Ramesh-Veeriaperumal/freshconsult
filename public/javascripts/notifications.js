@@ -4,7 +4,7 @@ FD.Notifications = (function($){
 		sticky:false,
 		pollUrl : '/helpdesk/notifications',
 		pollInterval: 10000,
-		image : '/images/badges/trophy.png',
+		image : '/images/spacer.gif',
 		time : 8000,
 		position : 'bottom-right',
 		fade_in_speed: 10,
@@ -13,7 +13,11 @@ FD.Notifications = (function($){
 	publish = function(feeds){
 		$.each(feeds,function(index,feed) {
 			var feed = $.parseJSON(feed),
-				feedData = { text: feed.body.message, image : feed.body.icon, title:''},
+				feedData = { 
+					text: feed.body.message, 
+					image_class : feed.body.icon_class ? 'badges '+ feed.body.icon_class : '',
+					title:''
+				},
 				gritterOpts = $.extend(true,{},options,feedData);
 			$.gritter.add(gritterOpts);
 		})

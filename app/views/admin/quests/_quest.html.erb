@@ -15,7 +15,7 @@
         </div>
         <div class="span9">      
           <strong> <%= link_to(h(quest.name), edit_admin_quest_path(quest), :class => "item_info") %> </strong>
-          <%= content_tag :div, truncate(h(quest.description), :length => 80), :title => h(quest.description)  %>
+          <%= content_tag :div, truncate(h(quest.description), :length => 180), :title => h(quest.description)  %>
         </div>
         <div class="span2 alignright">
           <div class="actions">

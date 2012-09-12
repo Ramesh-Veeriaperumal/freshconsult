@@ -1,12 +1,12 @@
 <%= render :partial => "admin/quests/criteria_jsinit", :locals => { :filter_type => "quest" } %>
 
 <%= f.error_messages :object_name => 'quest' %>
-<h3 class="s-title">Quest type</h3> 
-<div class="form-section">	
+<h3 class="s-title">Quest type  <%= ' - '+Quest::GAME_TYPE_NAME_BY_KEY[@quest.category] unless @quest.category.blank? %></h3>
+<div class="form-section" style="<%= 'display:none' unless @quest.name.blank? %>">	
 	<div class="row">
 		<% Quest::GAME_TYPES.each do |game_type| %>
 		<label class="s-label radio-label span2">
-			<%= f.radio_button :quest_type, game_type[3], :class => "quest_types" %>
+			<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
 			<%= t(".#{game_type[0]}") %>
 		</label>
 		<% end %>
@@ -43,6 +43,7 @@
 						<div id="selected-badge">
 							<%= content_tag :div, "", :class => "gamesettings-badges #{@badge_class[:classname]}" if @badge_class %>
 						</div>
+						<span style="margin-left:-3px;" id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></span>
 					</div>
 					<br />
 					<a href="javascript:void(0)" id="showbadges">
@@ -82,7 +83,6 @@
 
 
 	<div class="button-container">
-		<input type="hidden" name="award_data" id="quest_award_data" value=""/>
 		<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
 		<input type="submit" class="uiButton" value="<%=t('save')%>" />
 		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
