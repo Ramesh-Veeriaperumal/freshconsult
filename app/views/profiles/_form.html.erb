@@ -74,7 +74,6 @@
 			<li>
 				<%= label(:agent, :signature_html, t("agent.signature")) %>
 				<label class="overlabel" for="user_binfo">
-					<%=t('agent.add_signature')%> 
 				</label>
 				<%= text_area(:agent, :signature_html, :class => "text", :id => "user_binfo" , :value =>@profile.signature_value  ) %>			
 				<%= hidden_field(:agent, :user_id, :id => "user_id", :value =>@profile.user_id  ) %>
