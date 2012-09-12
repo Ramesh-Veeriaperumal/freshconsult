@@ -2,7 +2,10 @@ class Helpdesk::QuestsController < ApplicationController
   before_filter :set_selected_tab
   
   def index
-    @quests = scoper.all
+    @quests = scoper.paginate(:all, :page => params[:page], :per_page => 25)
+    if request.xhr?
+      render :partial => "quest", :collection => @quests
+    end
   end
 
   def active
@@ -12,7 +15,10 @@ class Helpdesk::QuestsController < ApplicationController
   end
 
   def unachieved
-    @quests = unachieved_scoper.all
+    @quests = unachieved_scoper.paginate(:all, :page => params[:page], :per_page => 25)
+    if request.xhr?
+      render :partial => "quest", :collection => @quests
+    end
   end
 
   private

@@ -495,7 +495,7 @@ class User < ActiveRecord::Base
   def badge_awarded_at(quest)
     achieved_quest(quest).updated_at
   end
-
+  
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?

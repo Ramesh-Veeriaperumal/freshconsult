@@ -22,6 +22,27 @@
 	margin-left: -5px;
 }
 
+.badges {
+	@include inline-block;
+	width: 50px;
+	height: 50px;
+	margin: -5px 5px 0;
+	.label.points {
+  		position: relative;
+  		top: 35px;
+  	}
+}
+
+.badges.center{
+	margin-left: auto ;
+	margin-right: auto ;
+} 
+
+#select-badge .gamesettings-badges{
+	cursor: pointer;
+	margin:0 auto;
+}
+
 .gamesettings h3{
 	color: #333;
 	margin: 0 0 3px 2px;
@@ -153,35 +174,20 @@ input[type="text"].points{
 	width: 200px;
 	margin-right: 10px;
 } 
- .gray-box-rounded .smallinput{
- 	width: 50px;
- 	font-size: 14px;
- 	margin-right: 10px;
- 	border-radius: 4px;
- 	border: 1px solid #d9d9d9;
- }
 
- .gamereward input{
- 	width: 50px;
- 	font-size: 14px;
- 	margin: 0 5px;
- 	border-radius: 4px;
- 	border: 1px solid #d9d9d9;
- }
+.gray-box-rounded .smallinput{
+	width: 50px;
+	font-size: 14px;
+	margin-right: 10px;
+	border-radius: 4px;
+	border: 1px solid #d9d9d9;
+}
+
  
- .gamename input, .gamename textarea{
- 	width: 98%;
- 	font-size: 16px;
- 	margin-bottom: 15px;
- 	padding: 4px;
- 	border-radius: 4px;
- 	border: 1px solid #d9d9d9;
-
- } 
-
- .gamename textarea{
- 	margin-bottom: 0 !important;
- }
+.gamename input[type="text"], .gamename textarea{
+	width: 98%;
+	padding: 5px;
+} 
 
 .badgelist ul{
 	overflow: hidden;
@@ -333,4 +339,8 @@ li.dashboard-quest-points {
 	@include min-height(450px);
 	width:24.9%;
 	border-left: 1px solid #d5d5d5;
+}
+
+.inactive{
+	@include opacity(0.5);
 }

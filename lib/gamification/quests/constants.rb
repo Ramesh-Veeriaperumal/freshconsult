@@ -4,7 +4,6 @@ module Gamification
       include Gamification::Scoreboard::Constants
 
       GAME_TYPES = [
-        [ :none,     "--- Click to Select ---",  "",              0 ],
         [ :ticket,   "Resolving Tickets",        TICKET_QUEST,    1 ], 
         [ :solution, "Publishing Solutions",     SOLUTION_QUEST,  2 ], 
         [ :forum,    "Contribute in Forums",     FORUM_QUEST,     3 ]
@@ -38,11 +37,11 @@ module Gamification
       FORUM_QUEST_MODE_BY_TOKEN = Hash[*FORUM_QUEST_MODE.map { |i| [i[0], i[2]] }.flatten]
       
       QUEST_BASE_CRITERIA = {
-        :ticket   =>  { :disp_name => "Resolve ##questvalue## Tickets within ##questtime##", 
+        :ticket   =>  { :disp_name => "Resolve ##questvalue## tickets in a span of ##questtime##", 
                         :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
-        :solution =>  { :disp_name => "Create ##questvalue## Knowledgebase article within ##questtime##", 
+        :solution =>  { :disp_name => "Create ##questvalue## knowledge base article in a span of ##questtime##", 
                         :input => ["questvalue","questtime"], :questtime => QUEST_TIME_BY_KEY.sort },
-        :forum    =>  { :disp_name => "##questmode## ##questvalue## Forum posts within ##questtime##", 
+        :forum    =>  { :disp_name => "##questmode## ##questvalue## forum posts in a span of ##questtime##", 
                         :input => ["questvalue","questmode","questtime"], 
                         :questmode => FORUM_QUEST_MODE_BY_KEY.sort, :questtime => QUEST_TIME_BY_KEY.sort }
       }

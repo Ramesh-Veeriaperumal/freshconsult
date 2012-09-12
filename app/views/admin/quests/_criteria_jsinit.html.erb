@@ -9,11 +9,18 @@
 
       base.init = function(cridefs, questinput, awardinput ) {
           base.cridefs = cridefs;
+          var _mand_fields = {'quest_data_value': ['','<%= I18n.t('quests.ticket_mand') %>',
+                                                    '<%= I18n.t('quests.solution_mand') %>',
+                                                    '<%= I18n.t('quests.forum_mand') %>'],
+                              'quest_badge_id': '<%= I18n.t('quests.badge_mand') %>'
+                             },
+              _mand_check_fails = false;
           
-          $("#quest_category").live('change', function(ev) {
+          $(".quest_types").live('change', function(ev) {
               base.onQuestChange(selectListArr[$(this).val()]);
           });
-          base.onQuestChange(selectListArr[$("#quest_category").val()]);
+
+          base.onQuestChange(selectListArr[$("input[name=quest[category]]:checked").val()]);
 
           base.questinput = questinput[0];
           base.awardinput = awardinput[0];
@@ -25,28 +32,23 @@
           //$("#show-new-badge").hide()
 
           $("#showbadges").live('click', function(ev) {
-            //$("#show-new-badge").hide();
             $("#select-badge").dialog({  modal:true, width:'600px', height:'auto', position:'top',
             title: "Select badges to Unlock", resizable: false, draggable: false});
           });
 
-          $("#select-badge > ul").live('mouseover', function(ev) {
-              if($(ev.target).hasClass('gamesettings-badges')) {
-                $(this).css({cursor:"pointer"});
-              } else {
-                $(this).css({cursor:""});
-              }
-            }).live('click', function(ev) {
-              if($(ev.target).hasClass('gamesettings-badges')) {
-                $("#selected-badge").removeClass();
-                $("#selected-badge").addClass($(ev.target).attr('class'));
-                $("#select-badge").dialog('close');
-                $("#selected-badge-name").text($(ev.target).attr('data-name'));
-                $("#quest_badge_id").val($(ev.target).attr('badge_id'));
-              };
-          });
-          $('#formQuestNew').submit(function(e) {
+          $("#select-badge .gamesettings-badges").live('click', function(ev) {
+            $("#selected-badge").removeClass();
+            var badge_class = "gamesettings-badges " + $(this).data('class');
+            $("#selected-badge").html("<div class='"+badge_class+"' />");
+            $("#select-badge").dialog('close');
+            $("#selected-badge-name").text($(this).data('dataName'));
+            $("#quest_badge_id").val($(this).data('badgeId'));
 
+            console.log($(this).data('badgeId'));
+            $("#showbadges").html("Change");
+          });
+
+          $('#formQuestNew').submit(function(e) {
             var questObj = {};
             var questData = [];
 
@@ -58,10 +60,22 @@
 
             jQuery("#quest_quest_data").val(questData.toJSON());
 
-            if(jQuery("#quest_badge_id").val() == ""){
-              jQuery("#noticeajax").text('Please select the badge.');
-              jQuery("#noticeajax").show();
-              closeableFlash('#noticeajax');
+            jQuery.each(_mand_fields,function(index,value){
+              _mand_check_fails = false;
+              if(jQuery("#"+index).val() == ""){
+                event.stopPropagation();
+                var txt = (index == 'quest_data_value') ? 
+                           value[jQuery("input[name=quest[category]]:checked").val()] : value
+                jQuery("#noticeajax").text(txt);
+                jQuery("#noticeajax").show();
+                closeableFlash('#noticeajax');
+                _mand_check_fails = true;
+                return false;
+              }
+            });
+            if(_mand_check_fails){
+              e.stopPropagation();
+              e.stopImmediatePropagation();
               return false;
             }
 
@@ -109,7 +123,7 @@
                 }
             });
 
-            var criHtml = quest.disp_name + "<br>";
+            var criHtml = quest.disp_name + "matching below conditions <br />";
             
             $("#questDOM").html(criHtml);
           }
@@ -188,11 +202,26 @@
 <% end %>
 
 <% content_for :onload_script do %> 
+  var manipulateFilterData = function(_filter_data){
+    var filterList = [];
+    if(jQuery("input[name=quest[category]]:checked").val() == 3 && jQuery("#quest_data_mode").val() == 2 ){
+      jQuery.each(_filter_data, function(index,value){
+        if(value.name != "customer_votes"){
+          filterList.push(value);
+        }
+      });
+    }
+    else {
+      filterList = _filter_data;
+    }
+    return filterList;
+};
   <% if(filter_type == "quest") %>
     var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);  
-        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['','ticket','solution','forum'], delete_last: true});
+        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: ['','ticket','solution','forum'], delete_last: true,
+        change_filter_data : manipulateFilterData});
+        jQuery("#quest_data_mode").live('change',function(){
+           filter_rule.refresh_list();
+         });
   <% end %>
-<% end %>
-
-<% javascript_tag do %>   
 <% end %>

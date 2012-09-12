@@ -396,25 +396,24 @@ a.addchoice:hover{
 		}		
 	}
 	fieldset.addchoice{		
-		padding:0;			
-		color:#999999;
-		font-size:14px;
+		padding:0;		
+		font-size:13px;
 		font-weight:bold;
-		cursor:pointer;
-		
+		cursor:pointer;		
 	} 
 	fieldset.addchoice:hover{
-		background:#f8f8f8;
+		background:#efefef;
 	}	
 	.conditionset{
-		border:1px solid #cfcfcf;
-		margin:4px 0;
+		margin:8px 0 0;
 		fieldset{
 			@include pie-clearfix;			
-			padding:5px 0 5px 4px;
-			border-bottom:1px solid #cfcfcf;
-			background:#efefef;
+			padding:8px 0 8px 4px;
+			border-top:1px solid #DDD;
 			position:relative;			
+
+			&.addchoice{ padding-left:28px;	}
+
 			*{
 				float:left;
 				margin:2px 4px;
@@ -433,7 +432,10 @@ a.addchoice:hover{
 				padding:0;
 				cursor:pointer;
 				right:10px;
-				top:5px;
+				top:10px;
+			}
+			.add{
+				left:6px;
 			}
 			div.controls{
 				width:95%;
@@ -2234,13 +2236,33 @@ li.agents-field
 	}
 }
 
+.s-title{ font-size: 16px; margin: 10px 0 8px; }
+.s-label{ font-size: 13px; margin: 0;}
 .section-title{
 	margin: 0 0 16px;
 	h3{ margin:0 0 6px; font-size: 16px; color: #000000; }
 	.help-text{ font-size: 13px; }
 }
 
+.radio-label,
+.checkbox-label {
+  padding-left: 20px;
+}
+.radio-label input[type="radio"],
+.checkbox-label input[type="checkbox"] {
+  float: left;
+  margin: 2px 7px 0 -20px;
+}
+
+
 h4.label-title{
 	font-weight: bold;
 	margin-bottom: 5px;
+}
+
+.form-section{
+	border:1px solid #efefef;
+	background-color: #f7f7f7;
+	@include border-radius(4px);
+	padding: 10px;
 }

@@ -15,7 +15,7 @@ class Admin::QuestsController < Admin::AdminController
     edit_data
   end
 
-  def create
+  def create    
     if @quest.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default '/admin/gamification#quests'
@@ -37,24 +37,15 @@ class Admin::QuestsController < Admin::AdminController
     end
   end
 
-  def deactivate
-    quest = scoper.find(params[:id])
-    quest.active = false
-    quest.save
-    redirect_back_or_default '/admin/gamification#quests'
-  end
-  
-  def activate
-    quest = all_scoper.disabled.find(params[:id])
-    quest.active = true
-    quest.save
-    redirect_back_or_default '/admin/gamification#quests'
+  def toggle
+    @quest = all_scoper.find(params[:id])
+    @quest.update_attribute(:active, !@quest.active)
   end
 
   protected
 
     def scoper
-      current_account.quests
+      current_account.all_quests
     end
     
     def all_scoper
@@ -140,8 +131,6 @@ class Admin::QuestsController < Admin::AdminController
     def solution_filters
       [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
-        { :name => "solution_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
-          :choices => current_account.solution_categories.map{|solution| [solution.id, solution.name]}, :operatortype => "choicelist" },
         { :name => "folder_id", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
           :choices => Solution::Category.folder_names(current_account), :operatortype => "choicelist" },
          { :name => "thumbs_up", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
@@ -152,12 +141,10 @@ class Admin::QuestsController < Admin::AdminController
     def forum_filters
       [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
-        { :name => "forum_categories", :value => I18n.t('quests.forum_category'), :domtype => "dropdown", 
-          :choices => current_account.forum_categories.map{|forum| [forum.id, forum.name]}, :operatortype => "choicelist" },
         { :name => "forum_id", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
           :choices => ForumCategory.forum_names(current_account), :operatortype => "choicelist" }, 
         { :name => "user_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
-          :operatortype => 'greater' },
+          :operatortype => 'greater' }
       ]
     end
 end

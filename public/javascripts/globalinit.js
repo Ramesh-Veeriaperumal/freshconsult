@@ -134,7 +134,6 @@ var $J = jQuery.noConflict();
         widgetPopup = $(this).popover('show');
       });
 
-
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
       $(".nav-trigger").livequery(function(){ $(this).showAsMenu(); });

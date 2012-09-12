@@ -1,0 +1,32 @@
+<% content_tag :div, :id => "quest_#{quest.id}", :class => "panel-row"  do %>
+  <div class="row-fluid">
+    <div class="span1">
+      <%= check_box_tag :quest, quest.active, quest.active, :id => "quest_toggle_#{quest.id}", :rel => "toggle", 
+          :onchange => remote_function( 
+                            :url => toggle_admin_quest_path(quest), 
+                            :method => :put ) %>
+    </div>
+    <div class="span11">
+      <div class="row-fluid <%= quest.active ? 'active' : 'inactive' %>">
+        <div class="span1 aligncenter">
+            <div class="badges center <%=quest.badge[:classname]%>">
+              <%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? %>
+            </div>            
+        </div>
+        <div class="span9">      
+          <strong> <%= link_to(h(quest.name), edit_admin_quest_path(quest), :class => "item_info") %> </strong>
+          <%= content_tag :div, truncate(h(quest.description), :length => 80), :title => h(quest.description)  %>
+        </div>
+        <div class="span2 alignright">
+          <div class="actions">
+            <%= link_to(t('delete'), admin_quest_path(quest), :method => 'delete', 
+                    :confirm => t("dispatch.delete"), :class => "button" ) %>
+          </div>
+        </div>
+      </div>
+    </div>
+   </div> 
+    <% javascript_tag do %>
+      jQuery("#quest_toggle_<%= quest.id %>").itoggle()
+    <% end %>
+<% end %>

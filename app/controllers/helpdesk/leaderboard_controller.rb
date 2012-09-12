@@ -1,9 +1,11 @@
 class Helpdesk::LeaderboardController < ApplicationController
   before_filter :set_selected_tab
-    
-  def mini_list
-    generate_score_card
-    render :layout => false
+
+  helper Helpdesk::LeaderboardHelper
+
+  def mini_list    
+      generate_score_card
+      render :layout => false
   end
 
   def user_list

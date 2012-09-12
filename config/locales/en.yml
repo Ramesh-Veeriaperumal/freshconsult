@@ -202,6 +202,10 @@ en:
     customer_votes: Customers Vote
     solution_likes: Solution Likes
     true : True 
+    ticket_mand: Please populate number of resolved tickets.
+    solution_mand: Please populate number of Solutions.
+    forum_mand: Please populate number of Forums.
+    badge_mand: Please select a badge.
   admin:
     quests:
       index:
@@ -210,6 +214,10 @@ en:
         sideinfo2: Info 2
         quest_title: Quests
         new_quest: New Quest
+      quest_form:
+        ticket: "Resolving <br /> <strong> Tickets </strong>"
+        solution: "Publishing <br /> <strong> Solutions </strong>"
+        forum: "Contribute in <br /> <strong> Forums </strong>"
     gamification:
       successfully_updated: Gamification settings has been successfully updated.
       error_updated: Error while updating gamification settings.
@@ -1656,7 +1664,9 @@ en:
   agent_info_title: Agent information
   level_label: Level
   next_level_info: +%{points} to become %{name}
-  no_level_achieved_label: No levels achieved yet..!!
+  no_level_achieved_label: No levels achieved yet.
+  no_badge_achieved_label: No Badges achieved yet.
+  badges_achieved_label: Badges achieved
   account: 
     name: Account Name
     cancel: Cancel and go back

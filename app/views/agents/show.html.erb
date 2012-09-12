@@ -40,24 +40,21 @@ function setUserRole()
 		</p>
 		<span class="seperator"></span>
 		<% else %>
-			<div class="level-progress"><strong> <%= t('no_level_achieved_label') %> </strong> </div>
+			<p class="info-text left"><%= t('no_level_achieved_label') %></p>
 			<span class="seperator"></span>
 		<% end %>
-		<h3 class="title">Badges achieved</h3>
-		<div class="badge-list">
-			<div class="gamesettings-badges badges-elephant">
-				<span class="score" title="200">200</span>
+		<h3 class="title"><%= t('badges_achieved_label') %></h3>
+		<% unless @user.quests.blank? %>
+			<div class="badge-list">
+			<% @user.quests.each do |quest| %>
+				<div class="gamesettings-badges <%= quest.badge[:classname] %>">
+					<span class="score" title="<%= quest.badge[:name] %>"><%= quest.points%></span>
+				</div>
+			<% end %>
 			</div>
-			<div class="gamesettings-badges badges-love">
-				<span class="score" title="2000">2000</span>
-			</div>
-			<div class="gamesettings-badges badges-shooter">
-				<span class="score" title="30000000">30000000</span>
-			</div>
-			<div class="gamesettings-badges badges-priority">
-				<span class="score" title="30000000">30000000</span>
-			</div>
-		</div>
+		<% else %>
+			<p class="info-text left"><%= t('no_badge_achieved_label') %></p>
+		<% end %>
 	</div>
 	<%end%>
 <%- end %> 

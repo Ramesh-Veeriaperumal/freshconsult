@@ -5,8 +5,7 @@ class Admin::GamificationController < Admin::AdminController
   def index
     @scoreboard_ratings = current_account.scoreboard_ratings
     @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
-    @inactive_quests = all_scoper.disabled
-    @quests = scoper.all
+    @quests = all_scoper.all
   end
   
   def toggle
@@ -19,7 +18,7 @@ class Admin::GamificationController < Admin::AdminController
     render :nothing => true
   end
 
-  def update    
+  def update_game    
     params[:scoreboard_ratings].each_value do |sb|
       scoreboard_rating = current_account.scoreboard_ratings.find(sb[:id])
       unless scoreboard_rating.update_attribute(:score, sb[:score])
@@ -37,6 +36,7 @@ class Admin::GamificationController < Admin::AdminController
     end
 
     flash[:notice] = t(:'admin.gamification.successfully_updated')
+    redirect_back_or_default '/admin/gamification'
   end
 
   protected

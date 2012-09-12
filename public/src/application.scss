@@ -6607,7 +6607,12 @@ a.mobile_switchBtn {
 	.panel-content{
 		padding-left:50px;
 	}
+	.actions{ display:none; }
+	&:hover .actions{ display:block; }
+	.toggle-button { margin-left: 0; }
 }
+
+.admin-list .panel-row{ padding: 12px 0; }
 
 .panel-row.odd{
 	background-color: #f8f8f8;
