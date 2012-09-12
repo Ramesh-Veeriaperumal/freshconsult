@@ -59,7 +59,7 @@ class Admin::QuestsController < Admin::AdminController
     end
 
     def edit_data
-      @filter_input = ActiveSupport::JSON.encode @quest.filter_data[:actual_data]
+      @filter_input = ActiveSupport::JSON.encode @quest.actual_filter_data
       @quest_input = ActiveSupport::JSON.encode @quest.quest_data
       @badge_class = BADGES_BY_ID[@quest.badge_id]
     end
