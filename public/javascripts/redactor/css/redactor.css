@@ -250,7 +250,7 @@ body .redactor_toolbar li a.redactor_btn_normalscreen span		  { background-posit
   	border-radius: 8px;  	  	
   		
   	z-index: 50001;	
-	font-family: "Trebuchet MS", "Helvetica Neue", "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;   	
+	font-family: "Trebuchet MS", "Helvetica Neue", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;   	
 	color: #000;
 }
 #redactor_modal_header {
