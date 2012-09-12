@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120912134926) do
+ActiveRecord::Schema.define(:version => 20120912174542) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1036,14 +1036,14 @@ ActiveRecord::Schema.define(:version => 20120912134926) do
     t.string   "name"
     t.text     "description"
     t.integer  "category"
-    t.integer  "sub_category"
-    t.boolean  "active",                    :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active"
     t.text     "filter_data"
     t.text     "quest_data"
     t.integer  "points",                    :default => 0
     t.integer  "badge_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "sub_category"
   end
 
   add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
