@@ -56,7 +56,8 @@
 				</div>
 			</div>
 		</div>
-		<div id="select-badge" style="display:none;" class="badgelist badges_items">
+		<div id="select-badge" style="display:none;max-height:340px; overflow:auto;" class="badgelist badges_items">
+			<span class="seperator"></span>
 			<div class="row">
 				<% @available_badges.each do | badges | %>
 					<div class="span2">
