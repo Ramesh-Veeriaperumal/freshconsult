@@ -108,7 +108,7 @@
     </ul>
     <div class="button-container">         
     	<%= submit_tag(t('forward'), :class => "uiButton special" ) %>
-  		<%= button_to_function(t('cancel'), "jQuery('##{cntid}').slideUp();", :class => "uiButton" ) %>
+  		<%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
     </div>
 
     <% end %>

@@ -100,7 +100,6 @@
 
 		var setFocusOnSearch = function(menuid) {
 			$('#menu_' + menuid + ' .menu_search').val('').focus();
-			console.log('setting the focus @ ' + menuid);
 		}
 
 		var initSearchBox = function(menuid) {
@@ -130,7 +129,6 @@
 						if (search_txt != '') {
 							
 							content_element.find('.seperator').addClass('hide');
-							console.log(search_txt);
 							$('#menu_' + menuid + ' .contents').children().not('.seperator').each(function(i) {
 								if ($(this).text().search(regex) == -1){
 									$(this).addClass('hide')
@@ -201,7 +199,6 @@
 		}
 
 		var moveActiveElement = function(offset, menuid) {
-			console.log('Moving');
 			var searchlist 	= $('#menu_' + menuid + ' .contents a').not('.hide');
 			var currentactive = $('#menu_' + menuid ).data('currentactive');
 			var position = $('#menu_' + menuid ).data('selection_position');
@@ -210,8 +207,6 @@
 			$(currentactive).removeClass("selected");
 			position = Math.min((searchlist.size()-1), Math.max(0, position + offset)); 
 			currentactive = $(searchlist.get(position)).addClass("selected"); 
-
-			console.log(currentactive);
 
 			$('#menu_' + menuid ).data('currentactive',currentactive);
 			$('#menu_' + menuid ).data('selection_position', position);
