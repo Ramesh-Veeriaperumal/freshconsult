@@ -8,7 +8,7 @@ class Helpdesk::LeaderboardController < ApplicationController
       render :layout => false
   end
 
-  def users
+  def agents
     generate_score_card 10
   end
 
