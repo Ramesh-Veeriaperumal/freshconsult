@@ -171,6 +171,7 @@ en:
       guru: Guru
     notifications:
       newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
+      achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:      
       mvp_trophie_label: "Most valuable player"
       mvp_trophie_info: "Agent who have overall points higher than others"
