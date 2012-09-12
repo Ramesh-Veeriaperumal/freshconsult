@@ -111,14 +111,14 @@ class Quest < ActiveRecord::Base
   end
 
   def award!(user)
-    return unless user.achieved_quest(quest).nil?
+    return unless user.achieved_quest(self).nil?
     achieved_quests.create(:user => user)
     user.support_scores.create({:score => points.to_i, 
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category]})
   end
 
   def revoke!(user)
-    user_ach_quest = user.achieved_quest(quest)
+    user_ach_quest = user.achieved_quest(self)
     return if user_ach_quest.nil?
     user_ach_quest.delete
     user.support_scores.create({:score => -(points.to_i), 
