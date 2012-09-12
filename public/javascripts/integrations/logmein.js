@@ -68,7 +68,7 @@ LogMeInWidget.prototype= {
 		else{
 			pincodeEndpoint = "API/requestPINCode.aspx?cfield0=#{reqName}&tracking0=INTEGRATIONS_LOGMEIN:#{account}:#{ticket}:#{secret}&notechconsole=1&authcode=#{authcode}";
 			this.freshdeskWidget.request({
-				resource: pincodeEndpoint.interpolate({reqName: logmeinBundle.reqName, account: logmeinBundle.accountId, ticket: logmeinBundle.ticketId, secret: logmeinBundle.secret, authcode: logmeinBundle.authcode}) ,
+				resource: pincodeEndpoint.interpolate({reqName: encodeURIComponent(logmeinBundle.reqName), account: logmeinBundle.accountId, ticket: logmeinBundle.ticketId, secret: logmeinBundle.secret, authcode: logmeinBundle.authcode}) ,
 				on_failure: this.processFailure,
 				on_success: this.processPincode.bind(this)
 			});	

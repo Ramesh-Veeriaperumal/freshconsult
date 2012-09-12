@@ -176,9 +176,6 @@ class AuthorizationsController < ApplicationController
   
   def failure
     portal = Portal.find_by_id(session["omniauth.origin"])  unless session["omniauth.origin"].blank?
-    Rails.logger.debug "Redirecting to portal on auth failure. Portal ID : #{portal.inspect}"
-    Rails.logger.debug "Portal on Rack Session : #{request.env["rack.session"]["omniauth.origin"]}"
-    Rails.logger.debug "Portal on session : #{session["omniauth.origin"]}"
     flash[:notice] = t(:'flash.g_app.authentication_failed')
     unless portal.blank?
       domain = portal.host
