@@ -295,7 +295,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         file_name = created_attachment.content_file_name
-        content_id_hash[file_name] = content_ids["attachment#{i+1}"] if content_ids["attachment#{i+1}"]
+        if content_ids["attachment#{i+1}"]
+          content_id_hash[file_name] = content_ids["attachment#{i+1}"] 
+          created_attachment.description = "content_id"
+        end
       end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
     end
