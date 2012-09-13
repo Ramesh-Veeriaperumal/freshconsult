@@ -12,8 +12,9 @@ class ArticleObserver < ActiveRecord::Observer
 	end
 
 	def after_update(article)
+		return unless gamification_feature?(article.account)
 		changed_filter_attributes = article.changed & SOLUTION_UPDATE_ATTRIBUTES
-		add_resque_job(article) if gamification_feature?(article.account) && changed_filter_attributes.any?
+		add_resque_job(article) if changed_filter_attributes.any?
 	end
 
 	def add_resque_job(article)

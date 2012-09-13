@@ -1,3 +1,5 @@
+require RAILS_ROOT+'/app/models/user.rb'
+
 unless Account.current
   if Account.count == 0
     user = User.new(:name => 'Support', :password => 'test', :password_confirmation => 'test', 

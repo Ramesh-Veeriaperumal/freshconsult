@@ -14,7 +14,7 @@
 <% leaderboard.each do |board| %>
 	<div class="lb-report-col <%= (board[1] == :mvp) ? 'lb-mvp' : '' %>" id="leaderboard_list_<%= board[1] %>">
 		<div class="lb-report-title">
-			<div class="lb-report-trophy scoreboard-trophy-<%= board[1] %>"></div>
+			<div class="lbr-trophy trophy trophy-<%= board[1] %>"></div>
 			<h3 class="title"><%= t("gamification.leaderboard.#{board[1]}_trophie_label_group") %></h3>
 			<p class="intro">
 				<%= t("gamification.leaderboard.#{board[1]}_trophie_info_group") %>

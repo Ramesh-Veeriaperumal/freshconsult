@@ -190,7 +190,7 @@ en:
       mvp_trophie_info: "Agent who have overall points higher than others"
       sharpshooter_trophie_label: "Sharpshooter"
       sharpshooter_trophie_info: "Agent with first call resolution points"
-      speed_trophie_label: "Speed champion"
+      speed_trophie_label: "Speed racer"
       speed_trophie_info: "Agent who resolve within the SLA time"
       love_trophie_label: "Customer champion"
       love_trophie_info: "Agent with more survey points"
@@ -199,7 +199,7 @@ en:
       mvp_trophie_info_group: "Groups who have overall points higher than others"
       sharpshooter_trophie_label_group: "Sharpshooters"
       sharpshooter_trophie_info_group: "Groups with first call resolution points"
-      speed_trophie_label_group: "Speed champions"
+      speed_trophie_label_group: "Speed racers"
       speed_trophie_info_group: "Groups who resolve within the SLA time"
       love_trophie_label_group: "Customer champions"
       love_trophie_info_group: "Groups with more survey points"
@@ -240,11 +240,22 @@ en:
     gamification:
       successfully_updated: Gamification settings has been successfully updated.
       error_updated: Error while updating gamification settings.
-      helptext: "<p><b>Why enable gamification?</b> <br>
-       Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
-       <br><br>
-       <b>Creating your satisfaction survey:</b><br>
-       The following steps let you collect feedback from your customers through a link in your response emails:<br>
+      help_text: 
+        why_game: "Why enable Gamification?"
+        why_game_info1: "With Freshdesk’s new Gamification, you can now turn your helpdesk into a game, where agents amass points and trophies and badges for great performance, go on quests and compete against each other."
+        why_game_info2: "As agents amass more and more points and complete quests, they will receive trophies - Most Valuable Player, Customer Champion, Sharpshooter and Speed Racer, depending on the quests they complete."
+        why_game_info3: "Enter how many points you want your agents to get when they resolve tickets within an hour and exactly on time, and how many points they lose when they resolve tickets late. "
+        why_game_info4: "Choose the number of bonus points agents for first call resolution and happy customers and by how much to reduce them for unhappy customers."
+        why_game_info5: "Also, set the points that each agent has to amass for them to climb up the levels from beginner to guru."
+        why_game_info6: "Click on ‘Save Changes’ to save your settings."
+        quest: "Quests"
+        quest_info1: "Quests represent goals that you can set for your agents, completing which they will be awarded a badge of your choosing."
+        quest_info2: "All the Quests are ON by default. You may choose to switch OFF the ones you don’t want. If you want to add more quests or create quests specific to your goals, click on ‘New Quest’, and you can create brand new quests with the conditions you want."
+        quest_form_info1: "Choose the type of quest you want to set for your agents. It can be on of the three shown."
+        quest_form_info2: "You can then choose the quest criteria (what the agent has to do), add conditions, choose the reward and the badge the agent wins, and finally, name your quest and provide a small brief about it."
+        quest_form_info3: "Click on ‘Save Quest’ to save your settings."
+        creating_survey: "Creating your satisfaction survey:"
+        creating_survey_help: "The following steps let you collect feedback from your customers through a link in your response emails:<br>
        1.Enable the Customer Satisfaction Surveys checkbox<br>
        2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
        <br>

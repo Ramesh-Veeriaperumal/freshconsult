@@ -1,0 +1,26 @@
+<div class="tab-content" id="gamification-help">
+	<div class="sidepanel helpcard tab-pane active" id="points-tab-help">
+		<h4><%= t('.why_game') %> </h4>
+		<p> <%= t('.why_game_info1') %> </p>
+		<p> <%= t('.why_game_info2') %> </p>
+		<h4><%= t("admin.gamification.gamification_settings.title_trophies") %></h4>
+		<% [:mvp, :love, :sharpshooter, :speed].each do |leaders| %>
+			<div class="lbr-trophy trophy trophy-<%= leaders %>"></div>
+			<h4 class="title"><%= t("gamification.leaderboard.#{leaders}_trophie_label") %></h4>
+			<p class="intro">
+				<%= t("gamification.leaderboard.#{leaders}_trophie_info") %>
+			</p>
+		<% end %>
+		<br />
+		<p> <%= t('.why_game_info3') %> </p>
+		<p> <%= t('.why_game_info4') %> </p>
+		<p> <%= t('.why_game_info5') %> </p>
+		<p> <%= t('.why_game_info6') %> </p>
+	</div>
+
+	<div class="sidepanel helpcard tab-pane" id="quests-tab-help">
+		<h4><%= t('.quest') %> </h4>
+		<p> <%= t('.quest_info1') %> </p>
+		<p> <%= t('.quest_info2') %> </p>
+	</div>
+</div>

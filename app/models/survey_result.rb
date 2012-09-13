@@ -124,10 +124,9 @@ class SurveyResult < ActiveRecord::Base
   private                                                   
 
     def add_support_score
-      if gamification_feature?(surveyable.account)
-        SupportScore.add_happy_customer(surveyable) if happy?
-        SupportScore.add_unhappy_customer(surveyable) if unhappy?
-      end
+      return unless gamification_feature?(surveyable.account)
+      SupportScore.add_happy_customer(surveyable) if happy?
+      SupportScore.add_unhappy_customer(surveyable) if unhappy?
     end
 
     def update_ticket_rating
@@ -139,7 +138,7 @@ class SurveyResult < ActiveRecord::Base
     
     def process_ticket_quests_on_feedback
       Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => surveyable_id, 
-                      :account_id => account_id })
+                :account_id => account_id }) if gamification_feature?(surveyable.account)
     end
 
 end

@@ -237,7 +237,11 @@ var getFilterDef = function(name,quest_type){
       return [val,val];
     }
     if(domtype == 'optgroup'){
-      choices = choices[0][1];
+      var choices_list = [];
+      jQuery.each(choices,function(index,value){
+        jQuery.merge(choices_list,choices[index][1]);
+      });
+      choices = choices_list;
     }
     return jQuery(choices).filter(function(key,value){
       return value[0] == val;
