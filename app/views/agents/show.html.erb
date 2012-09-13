@@ -46,8 +46,8 @@ function setUserRole()
 		<% unless @user.quests.blank? %>
 			<div class="badge-list">
 			<% @user.quests.each do |quest| %>
-				<div class="gamesettings-badges <%= quest.badge[:classname] %>">
-					<span class="score" title="<%= quest.badge[:name] %>"><%= quest.points%></span>
+				<div class="badges <%= quest.badge[:classname] %>">
+					<span class="label points" title="<%= quest.badge[:name] %>"><%= quest.points%></span>
 				</div>
 			<% end %>
 			</div>

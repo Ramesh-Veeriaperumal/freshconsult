@@ -6578,10 +6578,10 @@ a.mobile_switchBtn {
 
 .badge-list{
 	@include clearfix;
-	.gamesettings-badges{
+	.badges{
 		float:left;
 		position: relative;
-		margin:3px 0 18px 6px;
+		margin: 15px 18px 25px 0;
 	}
 	.score{
 		position: absolute;
@@ -6859,4 +6859,3 @@ a.mobile_switchBtn {
     padding: 5px 3px 0px 5px;
     line-height: 20px;
 } 
-

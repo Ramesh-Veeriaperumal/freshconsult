@@ -27,6 +27,13 @@
 	</div>
 </div>
 
+<% javascript_tag do %>
+	jQuery('#points-tab, #quests-tab').bind("click", function(){
+		jQuery("#gamification-help .active").removeClass("active");
+		jQuery('#'+this.id+'-help').addClass('active');
+	});
+<% end %>
+
 <% content_for :sidebar do %>
 	<%= render :partial => "help_text" %>
 <%end%>
