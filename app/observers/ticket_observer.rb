@@ -26,7 +26,8 @@ class TicketObserver < ActiveRecord::Observer
 	def rollback_achieved_quests(ticket)
 		if ticket.responder and reopened_now?(ticket)
 			Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => ticket.id, 
-							:account_id => ticket.account_id, :rollback => true })
+							:account_id => ticket.account_id, :rollback => true,
+							:resolved_time_was => ticket.ticket_states.resolved_time_was })
 		end
 	end
 

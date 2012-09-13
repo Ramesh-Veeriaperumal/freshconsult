@@ -8,7 +8,7 @@ module Gamification
 				id, account_id = args[:id], args[:account_id]
 				ticket = Helpdesk::Ticket.find_by_id_and_account_id(id, account_id)
 				return if ticket.deleted or ticket.spam
-				args.key?(:rollback) ? rollback_ticket_quests(ticket) : evaluate_ticket_quests(ticket)
+				args.key?(:rollback) ? rollback_ticket_quests(ticket, args[:resolved_time_was]) : evaluate_ticket_quests(ticket)
 			end
 
 			def self.evaluate_ticket_quests(ticket)
@@ -50,12 +50,12 @@ module Gamification
 				account.tickets.visible.assigned_to(user).resolved_and_closed_tickets
 			end
 
-			def self.rollback_ticket_quests(ticket)
+			def self.rollback_ticket_quests(ticket, old_resolv_time)
 				ticket.responder.quests.ticket_quests.each do |quest|
 				badge_awarded_time = ticket.responder.badge_awarded_at(quest)
 
-				old_resolv_time = ticket.ticket_states.resolved_time_was
 				if !old_resolv_time.blank?
+					old_resolv_time = Time.parse(old_resolv_time)
 					unless quest.any_time_span?
 						resolved_in_quest_span = old_resolv_time.between?(
 							quest.start_time(badge_awarded_time), badge_awarded_time)
