@@ -12,10 +12,9 @@
 		<% end %>
 	</div>
 </div>
-<br />
 <div id="enablequest">
 	<div class="gamecriteria">
-		<h2>Specify Quest Criteria</h2>
+		<h3 class="s-title">Specify Quest Criteria</h3>
 		<div class="ui-form gray-box-rounded">
 			<div id="questDOM"></div>
 			<div class="conditionset" id="filterDOM">
@@ -80,13 +79,13 @@
 			<%= f.text_field :name, :class => "required text", :placeholder => "Name your quest" %>
 			<%= f.text_area :description, :class => "mediumpara", :placeholder => "Brief about the quest" %>
 		</div>
-	</div>
-
-
-	<div class="button-container">
-		<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
-		<input type="submit" class="uiButton" value="<%=t('save')%>" />
-		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
+	</div>	
+</div>
+<div class="button-container">
+	<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
+	<%= link_to t('cancel_and_back'), { :action => 'index' }, :class => "uiButton floatl" %>
+	<div class="hide" id="save-button">
+		<input type="submit" class="uiButton special" value="Save quest" />
 	</div>
 </div>
 
