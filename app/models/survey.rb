@@ -58,9 +58,9 @@ class Survey < ActiveRecord::Base
   def self.survey_names(account)
     surveys = account.survey
     survey_names = [
-      [ CUSTOMER_RATINGS[HAPPY], surveys.happy_text ],
-      [ CUSTOMER_RATINGS[NEUTRAL], surveys.neutral_text ],
-      [ CUSTOMER_RATINGS[UNHAPPY], surveys.unhappy_text ]
+      [ HAPPY, surveys.happy_text ],
+      [ NEUTRAL, surveys.neutral_text ],
+      [ UNHAPPY, surveys.unhappy_text ]
     ]
   end
 

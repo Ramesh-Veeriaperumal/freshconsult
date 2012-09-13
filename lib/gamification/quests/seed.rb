@@ -130,11 +130,11 @@ module Gamification
           :badge_id => BADGES_BY_CLASS["badges-love"][:id],
           :filter_data => { 
               :and_filters => [
-                  { :name => "st_survey_rating", :operator => "is", :value => "happy" }
+                  { :name => "st_survey_rating", :operator => "is", :value => "1" }
               ],
               :or_filters => {},
               :actual_data => [
-                  { :name => "st_survey_rating", :operator => "is", :value => "happy" }
+                  { :name => "st_survey_rating", :operator => "is", :value => "1" }
               ]
             },
           :quest_data => [{
