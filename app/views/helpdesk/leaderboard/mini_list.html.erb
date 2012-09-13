@@ -12,10 +12,10 @@
 
 	<% mini_board.each do |score_list| %>
 		<% (score_list[0] || []).each do |score| %>
-		<div class="panel-row" style="overflow:hidden">
-			<%= user_avatar(score.user) %>
-			<div class="lb-trophy scoreboard-trophy-<%= score_list[2] %>"></div>
+		<div class="panel-row">
+			<%= user_avatar(score.user) %>			
 			<div class="panel-content">
+				<div class="floatr trophy trophy-<%= score_list[2] %>"></div>
 				<h4><%= link_to score.user.name, score.user %></h4>
 				<p class="help-text"><%= score_list[1] %></p>
 			</div>

@@ -41,7 +41,7 @@ class SupportScore < ActiveRecord::Base
   { 
     :select => ["support_scores.*, SUM(support_scores.score) as tot_score"],
     :conditions => ["group_id is not null"],
-    :include => [:user],
+    :include => [ :group ],
     :group => "group_id",
     :order => "tot_score desc"
   }
@@ -49,7 +49,7 @@ class SupportScore < ActiveRecord::Base
   named_scope :user_score,
   { 
     :select => ["support_scores.*, SUM(support_scores.score) as tot_score"],
-    :include => [:user],
+    :include => { :user => [ :avatar ] },
     :group => "user_id",
     :order => "tot_score desc"
   }

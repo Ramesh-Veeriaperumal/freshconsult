@@ -1,6 +1,7 @@
 class Helpdesk::LeaderboardController < ApplicationController
   before_filter :set_selected_tab
   before_filter { |c| c.requires_feature :gamification }
+  before_filter { |c| c.requires_permission :manage_tickets }
 
   helper Helpdesk::LeaderboardHelper
 
@@ -10,11 +11,11 @@ class Helpdesk::LeaderboardController < ApplicationController
   end
 
   def agents
-    generate_score_card 10
+    generate_score_card 50
   end
 
   def groups
-    generate_score_card 10, :group
+    generate_score_card 50, :group
   end
 
   private

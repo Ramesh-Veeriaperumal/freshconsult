@@ -1,19 +1,5 @@
-/* Sprite sheet creation for badges and trophies */
-@include all-scoreboard-sprites;
-@include all-badges-sprites;
-
 .gamesettings .admin_list{
 	margin: 0 -16px;
-}
-.scoreboard-trophy-speed, .scoreboard-trophy-mvp, .scoreboard-trophy-love, .scoreboard-trophy-sharpshooter {
-	width: 50px;
-	height: 50px;
-}
-
-.lb-trophy{
-	float:right;
-	margin-top:-16px;
-	@include opacity(0.5);
 }
 
 .gamesettings-badges {
@@ -41,6 +27,12 @@
 
 .badges.left{
 	margin: -2px 0 18px -5px;
+}
+
+.trophy{
+	@include inline-block;
+	width: 50px;
+	height: 50px;
 }
 
 #select-badge .gamesettings-badges{
@@ -305,9 +297,9 @@ li.dashboard-quest-points {
 .lb-report-title{
 	background-color: #e4e4e4;
 	border-bottom: 1px solid #fff;
-	@include min-height(70px);
+	@include min-height(65px);
 }
-.lb-report-trophy{
+.lbr-trophy{
 	float: left;
 	margin-left: -5px;
 	margin-right: 5px;

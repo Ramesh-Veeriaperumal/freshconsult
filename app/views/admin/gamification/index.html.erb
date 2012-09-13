@@ -28,7 +28,5 @@
 </div>
 
 <% content_for :sidebar do %>
-<div class="sidepanel helpcard">
-	<p>	<%= t('admin.gamification.helptext') %> </p>
-</div>
+	<%= render :partial => "help_text" %>
 <%end%>
