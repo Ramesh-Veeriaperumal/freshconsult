@@ -29,6 +29,10 @@ module AgentsHelper
      false
    end
  end
+
+  def can_reset_password?(agent)
+   agent.user.active? and (current_user != agent.user)
+  end
  
  
   

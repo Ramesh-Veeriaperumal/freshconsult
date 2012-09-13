@@ -1,10 +1,11 @@
 class AgentsController < Admin::AdminController
+  include AgentsHelper
   
   include Gamification::GamificationUtil
 
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
+  before_filter :load_object, :only => [:update,:destroy,:restore,:edit, :reset_password ]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :check_user_permission, :only => :destroy
   before_filter :check_agent_limit, :only =>  :restore
@@ -91,7 +92,8 @@ class AgentsController < Admin::AdminController
       end
     else       
         check_email_exist
-        @agent.user =@user       
+        @agent.user =@user
+        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")       
         render :action => :new        
     end    
   end
@@ -151,7 +153,7 @@ class AgentsController < Admin::AdminController
        flash[:notice] = t(:'flash.general.destroy.failure', :human_name => 'Agent')
      end
     redirect_to :back
-end
+  end
 
  def restore
    @agent = current_account.all_agents.find(params[:id])
@@ -162,6 +164,14 @@ end
    end 
    redirect_to :back  
  end
+
+  def reset_password
+    if can_reset_password?(@agent)
+      @agent.user.reset_agent_password(current_portal)
+      flash[:notice] = t(:'flash.password_resets.email.reset', :requester => h(@agent.user.email))      
+      redirect_to :back
+    end
+  end
 
  protected
  

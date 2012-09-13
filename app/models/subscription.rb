@@ -20,6 +20,9 @@ class Subscription < ActiveRecord::Base
   
   before_create :set_renewal_at
   before_update  :cache_old_model,:charge_plan_change_mis
+  before_update :set_discount_expiry, :if => :subscription_discount_id_changed?
+    
+  
   before_destroy :destroy_gateway_record
   before_validation :update_amount
   after_update :update_features,:send_invoice
@@ -54,6 +57,10 @@ class Subscription < ActiveRecord::Base
   def self.monthly_revenue
     sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 "]).to_f
   end
+
+  def set_discount_expiry
+    self.discount_expires_at = discount.calculate_discount_expiry if discount
+  end
   
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
@@ -85,6 +92,15 @@ class Subscription < ActiveRecord::Base
     self.free_agents = plan.free_agents if free_agents.nil?
     self.day_pass_amount = plan.day_pass_amount
   end
+
+  def subscription_discount=(discount)
+    subscription_plan.discount = discount
+    if discount and discount.can_be_applied_to?(subscription_plan) and discount.has_free_agents?
+      self.free_agents = discount.free_agents
+    else
+      self.free_agents = subscription_plan.free_agents
+    end
+  end
   
   # The plan_id and plan_id= methods are convenience methods for the
   # administration interface.
@@ -114,7 +130,6 @@ class Subscription < ActiveRecord::Base
   
   def store_card(creditcard, gw_options = {})
     # Clear out payment info if switching to CC from PayPal
-    destroy_gateway_record(paypal) if paypal?
     @charge_now = gw_options[:charge_now]
     @response = if billing_id.blank?
       gateway.store(creditcard, gw_options)
@@ -189,43 +204,6 @@ class Subscription < ActiveRecord::Base
     end
   end
   
-  def start_paypal(return_url, cancel_url)
-    if (@response = paypal.setup_agreement(:return_url => return_url, :cancel_return_url => cancel_url, :description => AppConfig['app_name'])).success?
-      paypal.redirect_url_for(@response.params['token'])
-    else
-      errors.add_to_base("PayPal Error: #{@response.message}")
-      false
-    end
-  end
-  
-  def complete_paypal(token)
-    # Make sure the paypal subscription gets started tomorrow at the 
-    # earliest
-    start_date = next_renewal_at < 1.day.from_now.at_beginning_of_day ? 1.day.from_now : next_renewal_at
-    
-    if (@response = paypal.create_profile(token, :description => AppConfig['app_name'], :start_date => start_date, :frequency => renewal_period, :amount => amount_in_pennies)).success?
-
-      # Clear out payment info if changing the PayPal billing
-      # info or if switching from a CC
-      if paypal?
-        destroy_gateway_record(paypal)
-      else
-        destroy_gateway_record(cc)
-      end
-
-      self.card_number = 'PayPal'
-      self.card_expiration = 'N/A'
-      self.state = 'active'
-      self.billing_id = @response.params['profile_id']
-      # Sync up our next renewal date with PayPal.
-      self.next_renewal_at = Time.parse(paypal.get_profile_details(@response.params['profile_id']).params['next_billing_date'])
-      save
-    else
-      errors.add_to_base("PayPal Error: #{@response.message}")
-      false
-    end
-  end
-  
   def needs_payment_info?
     self.card_number.blank? && self.subscription_plan.amount > 0
   end
@@ -241,24 +219,20 @@ class Subscription < ActiveRecord::Base
   def self.find_due(renew_at = Time.now)
     find(:all, :include => :account, :conditions => { :state => ['active','free'], :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
   end
-  
-  def paypal?
-    card_number == 'PayPal'
+
+  def self.find_discount_expiry(discount_expiry = Time.now)
+    find(:all, :include => :account, :conditions => { :discount_expires_at => (discount_expiry.beginning_of_day .. discount_expiry.end_of_day) })
+  end
+
+  def remove_discount
+    self.discount = nil
+    self.free_agents = subscription_plan.free_agents
+    self.amount = total_amount
+    update_without_callbacks
   end
   
   def current?
     next_renewal_at >= Time.now
-  end
-  
-  def purge_paypal
-    return true if billing_id.blank?
-    if (@response = paypal.unstore(billing_id)).success?
-      clear_billing_info
-      return save
-    else
-      errors.add_to_base(@response.message)
-      return false
-    end
   end
   
   def active?
@@ -334,7 +308,6 @@ class Subscription < ActiveRecord::Base
     # plan amount with the new discount.
     def update_amount
       if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed? || renewal_period_changed?        
-        subscription_plan.discount = discount 
         total_amount
       end
     end
@@ -360,9 +333,14 @@ class Subscription < ActiveRecord::Base
     end
     
     def total_amount
+      apply_the_discount
       apply_the_cycle
       self.amount = agent_limit ? (self.amount * paid_agents) : subscription_plan.amount
       self.amount = (amount > 0)?  amount : 0.00
+    end
+
+    def apply_the_discount
+      self.subscription_discount = discount 
     end
     
     def apply_the_cycle
@@ -417,6 +395,10 @@ class Subscription < ActiveRecord::Base
     def update_features
       return if subscription_plan_id == @old_subscription.subscription_plan_id
       SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
+    end
+
+    def paypal?
+      card_number == 'paypal'
     end
     
     def gateway

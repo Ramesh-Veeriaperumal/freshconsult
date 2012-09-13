@@ -10,6 +10,10 @@ module ExportCsvUtil
    end
   end
 
+  def csv_date_range_in_days
+    duration_in_days = (params[:end_date].to_date - params[:start_date].to_date).to_i
+  end
+
   def export_fields(is_portal=false)
     flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 

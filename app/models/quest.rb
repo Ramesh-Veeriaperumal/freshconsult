@@ -113,9 +113,10 @@ class Quest < ActiveRecord::Base
 
   def award!(user)
     return unless user.achieved_quest(self).nil?
-    achieved_quests.create(:user => user)
+    achieved_quests.create(:user => user, :account => account)
     user.support_scores.create({:score => points.to_i, 
-          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category]})
+          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
+          :account => account})
   end
 
   def revoke!(user)
@@ -123,7 +124,8 @@ class Quest < ActiveRecord::Base
     return if user_ach_quest.nil?
     user_ach_quest.delete
     user.support_scores.create({:score => -(points.to_i), 
-          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category]})
+          :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
+          :account => account})
   end
 
   def time_column
