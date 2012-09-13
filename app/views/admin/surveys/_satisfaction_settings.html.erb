@@ -12,7 +12,7 @@
 	</li>
 	<li style="border-top:1px solid #ccc;" id="survey_elements" <%unless @account.features?(:survey_links)%>style="display:none"<%end%>>	
 	
-<% remote_form_for :survey, @survey, :url => { :action => "update" },  :html => { :method => :put } do |f| %>
+<% remote_form_for :survey, @survey, :url => { :action => "update" },  :html => { :id => "survey_form", :method => :put } do |f| %>
 <ul>
 	<li><strong><%=t('.link_text_label')%></strong><br/> <span class="link_text_info"><%=t('.link_text_info')%></span></li>
 	<li>
@@ -25,16 +25,16 @@
 	        
 		<div class="happy-smily"></div>
 	        
-		<%= f.text_field :happy_text, :value => (@survey[:happy_text] || t('helpdesk.ticket_notifier.reply.happy')) %>
+		<%= f.text_field :happy_text, :value => (@survey[:happy_text] || t('helpdesk.ticket_notifier.reply.happy')), :class => "required" %>
 	        
 	     </li>
 	     <li>	
 	     	<div class="neutral-smily"></div>
-		<%= f.text_field :neutral_text, :value => (@survey[:neutral_text] || t('helpdesk.ticket_notifier.reply.neutral')) %>
+		<%= f.text_field :neutral_text, :value => (@survey[:neutral_text] || t('helpdesk.ticket_notifier.reply.neutral')), :class => "required" %>
 	     </li>
 	     <li>	
 	     	<div class="unhappy-smily"></div>
-		<%= f.text_field :unhappy_text, :value => (@survey[:unhappy_text] || t('helpdesk.ticket_notifier.reply.unhappy')) %>
+		<%= f.text_field :unhappy_text, :value => (@survey[:unhappy_text] || t('helpdesk.ticket_notifier.reply.unhappy')), :class => "required" %>
 	     </li>
 	   </ul>  	
 	</li>
@@ -87,4 +87,8 @@
 	   	jQuery('#survey_status_link').html('<strong> <%=t('application.disabled')%> </strong><span></span>');	   	
 	   }
 	}
+
+   jQuery(document).ready(function(){
+   		jQuery("#survey_form").validate();
+   });
 <%end%>
