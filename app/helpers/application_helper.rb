@@ -4,6 +4,7 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
+  include Gamification::GamificationUtil
 
   require "twitter"
   

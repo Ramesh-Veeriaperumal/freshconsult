@@ -1,1 +1,1 @@
-page << "change_enable_status(#{current_account.features?(:scoreboard_enable)});"
+page << "change_enable_status(#{current_account.features?(:gamification_enable)});"

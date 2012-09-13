@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120912094765) do
+ActiveRecord::Schema.define(:version => 20120912174542) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1035,8 +1035,8 @@ ActiveRecord::Schema.define(:version => 20120912094765) do
     t.integer  "account_id",   :limit => 8
     t.string   "name"
     t.text     "description"
-    t.integer  "category"
     t.integer  "sub_category"
+    t.integer  "category"
     t.boolean  "active",                    :default => true
     t.text     "filter_data"
     t.text     "quest_data"

@@ -75,7 +75,7 @@
 		<li>
 			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
 		</li>
-		<% if feature?(:gamification) %>
+		<% if gamification_feature?(current_account) %>
 			<li>
 				<%= label(:agent , :scoreboard_level_id, t('level_label'))%>
 				<%= select(:agent, :scoreboard_level_id, 

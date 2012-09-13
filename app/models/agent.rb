@@ -70,7 +70,9 @@ protected
   end
 
   def publish_game_notifications
-    if scoreboard_level_id_changed? && scoreboard_level_id_change[0] < scoreboard_level_id_change[1]
+    level_change = scoreboard_level_id_changed? && scoreboard_level_id_change 
+    level_up = level_change && ( level_change[0].nil? || level_change[0] < level_change[1] )
+    if level_up
       publish("#{I18n.t('gamification.notifications.newlevel',:name => level.name)}", [user_id.to_s]) 
     end
   end

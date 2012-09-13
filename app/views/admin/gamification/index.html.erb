@@ -1,5 +1,5 @@
 <div class="floatr">
-	<%= check_box_tag :scoreboard_enable, 1, feature?(:scoreboard_enable), 
+	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
 			:rel => "toggle", 
 			"data-checked-label" => "enabled", 
 			"data-unchecked-label" => "disabled", 
@@ -7,7 +7,7 @@
 </div>
 <h3 class="title"><%=t('.title')%></h3>
 
-<div id="scoreboard_elements" <% unless feature?(:scoreboard_enable) %>style="display:none"<%end%> >
+<div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
 	<ul data-tabs="tabs" class="tabs admin-tabs">
 		<li class="active first">
 			<a id="points-tab" href="#points">Points</a>

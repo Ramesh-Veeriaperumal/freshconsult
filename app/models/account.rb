@@ -153,8 +153,9 @@ class Account < ActiveRecord::Base
   has_many :scoreboard_ratings
   has_many :scoreboard_levels
 
-  has_many :quests, :class_name => 'Quest', :conditions => { :active => true }, :order => "quests.created_at desc"
-  has_many :all_quests, :class_name => 'Quest', :order => "quests.created_at desc"
+  has_many :quests, :class_name => 'Quest', :conditions => { :active => true }, 
+    :order => "quests.created_at desc, quests.id desc"
+  has_many :all_quests, :class_name => 'Quest', :order => "quests.created_at desc, quests.id desc"
 
 
   has_one :day_pass_config
@@ -257,7 +258,7 @@ class Account < ActiveRecord::Base
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
-    :anonymous_tickets =>true, :survey_links => true, :scoreboard_enable => true, :google_signin => true,
+    :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false}
     
