@@ -92,7 +92,8 @@ class AgentsController < Admin::AdminController
       end
     else       
         check_email_exist
-        @agent.user =@user       
+        @agent.user =@user
+        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")       
         render :action => :new        
     end    
   end
