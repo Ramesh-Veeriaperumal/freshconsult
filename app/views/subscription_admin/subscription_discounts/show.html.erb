@@ -13,4 +13,16 @@
     <th>Amount</th>
     <td><%= discount_label(@subscription_discount) %></td>
   </tr>
+  <tr>
+    <th>Free Agents</th>
+    <td><%= @subscription_discount.free_agents %></td>
+  </tr>
+  <tr>
+    <th>Life time</th>
+    <td><%= @subscription_discount.life_time %></td>
+  </tr>
+  <tr>
+    <th>Plan</th>
+    <td><%= @subscription_discount.subscription_plan.name %></td>
+  </tr>
 </table>

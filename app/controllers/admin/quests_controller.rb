@@ -99,7 +99,7 @@ class Admin::QuestsController < Admin::AdminController
         { :name => "source", :value => I18n.t('ticket.source'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
         { :name => "fcr", :value => I18n.t('quests.fcr'),:choices =>[['true','true']], :domtype => "dropdown" },
-        { :name => "satisfaction", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
+        { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
           :choices => Survey.survey_names(current_account), :operatortype => "choicelist" },
       ]
     end

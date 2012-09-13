@@ -133,6 +133,9 @@ en:
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
+  confirm: Confirm
+  yes_password_reset: "Yes"
+  no_password_reset: "No"
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
@@ -147,6 +150,16 @@ en:
     popular: Popular
   payment_info: Payment information
   support:
+      
+      shared:
+        survey_form:
+          survey_title: Please take a minute to rate our support
+          feedback_title: Also your good words and specific critique can help us better our support in the future
+          rated_on: You gave us this rating on %{rated_on}
+          change_of_mind: Changed your mind?
+          rate_again: Rate us again
+          submit: Submit
+          cancel: Cancel
       surveys:
           thanks_for_feedback: "We have received your feedback. Thank you very much."
           feedback_already_done: "You have already given feedback for this response."
@@ -496,14 +509,12 @@ en:
         screen_name: Twitter account
         add_key: Add Search Query
         edit_key: Edit Search Query
-        
       change:
         edit_twitter :  Edit Twitter
         capture_mention: Convert public mentions as tickets       
         capture_dm: Convert direct messages as tickets
         screen_name: Screen Name
-        default_group : Default Group       
-        
+        default_group : Default Group 
     home:
       index: 
         group: Groups
@@ -555,7 +566,6 @@ en:
         groups: Agents in group
         me_only: Me only
         response_name: Response title
-                
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -713,7 +723,8 @@ en:
       update: 
         success: Password successfully updated
         invalid_token: We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process.
-      email: 
+      email:
+        reset: "A reset mail with instructions has been sent to %{requester}."
         user_not_found: No user was found with that email address
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login: 
@@ -1016,7 +1027,7 @@ en:
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
-  reset: Reset
+  reset_password_title: Reset Password
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
@@ -1168,6 +1179,8 @@ en:
     occasional: Occasionally
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
+    password_reset_message: "Do you want to reset %{requester}'s password?"
+    password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
   account_admin: Account admin
   right: Right
   footer: 
@@ -1189,6 +1202,7 @@ en:
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
+  reset: Reset
   ticket_due_by_time: Due by
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
@@ -1980,6 +1994,10 @@ en:
     closed_at: Closed time
     from: From
     to: To
+    mail:
+      info: Your Ticket data will be sent to your email shortly!
+      subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
+      body: Please find the CSV file attached.
   date:
     ago: Ago
     from: From Now
@@ -2397,7 +2415,7 @@ en:
   unauthorized_msg: "Authorization failed"
   assuming_identity_user_does_not_exist_msg: "User you've tried to assume does not exist."
   assuming_identity_not_allowed_msg: "You are not allowed to assume this user."
-  identity_reverted_msg: "You have reverted your identify back to you."
+  identity_reverted_msg: "You have reverted your identity back to you."
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
@@ -2456,3 +2474,5 @@ en:
   draft: "Draft:"
   last_draft: "Your last draft"
   clear_draft_text: "Clear stored draft?"
+  ticket_close_success: Your ticket has been successfully closed.
+  ticket_close_failure: Closing the ticket failed.

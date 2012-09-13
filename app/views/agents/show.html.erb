@@ -12,7 +12,6 @@ function setUserRole()
 	}
 }
 </script>
-
 <% content_for :sidebar do -%>
 	<%if feature?(:gamification)%> 
 	<div class="side-panel">
@@ -59,10 +58,18 @@ function setUserRole()
 	<%end%>
 <%- end %> 
 <div class="contact-box clearfix">
+		<div id="reset_password_template" >
+			<%= render :partial=> "reset_password" %>
+		</div>
 		<div class="action_buttons">
 			<%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user)%>
-			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last" %>
+			<% if can_reset_password?(@agent) %>
+				<%= link_to_function t('reset_password_title'), "confirm_password()"%>
+			<%end%>
+			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last"  %>
 		</div>
+		
+
 		<%= user_avatar(@user, :medium, "profile_pic") %>	
 		<h3 class="title"><%= @user.display_name %></h3>
 		<% unless @user.job_title.blank? %>
@@ -90,3 +97,18 @@ function setUserRole()
 		<%= render :partial => "tickets", :object => @recent_unresolved_tickets %> 
 	<% end %>
 </div>	 
+<% javascript_tag do %> 
+jQuery("#reset_password_button").click(function() 
+{
+	jQuery(this).addClass("disabled");
+});
+
+
+function confirm_password()
+{
+ 	jQuery("#reset_password_template").dialog({
+       position: "top",
+       title: '<%= t('reset_password_title') %>'
+    });
+ }
+<%end%>

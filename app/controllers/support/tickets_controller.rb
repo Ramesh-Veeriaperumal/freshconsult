@@ -1,6 +1,7 @@
 class Support::TicketsController < ApplicationController
 
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
+  helper SupportTicketControllerMethods
   include SupportTicketControllerMethods 
   include Support::TicketsHelper
   include ExportCsvUtil
@@ -98,13 +99,13 @@ class Support::TicketsController < ApplicationController
        #        res["value"]  = status_id
        #        res["message"] = "Successfully updated"
        #        render :json => ActiveSupport::JSON.encode(res)
-       flash[:notice] = "Successfully updated"
+       flash[:notice] = I18n.t('ticket_close_success')
        mob_json[:success] = true
      else
        # res["success"] = false
        # res["message"] = "closing the ticket failed"
        # render :json => ActiveSupport::JSON.encode(res)      
-       flash[:notice] = "Closing the ticket failed"
+       flash[:notice] = I18n.t('ticket_close_failure')
        mob_json[:failure] = true
      end
      respond_to do |format|

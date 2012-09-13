@@ -19,7 +19,18 @@ class Admin::SurveysController < Admin::AdminController
   
   def update
     @survey = current_account.survey
-    @survey.store(params[:survey])        
+    unless invalid_params?
+      @survey.store(params[:survey])        
+      flash[:notice] = t(:'admin.surveys.successfully_updated')
+    else
+      flash[:notice] = t(:'admin.surveys.error_updated')
+    end
+  end
+
+  def invalid_params?
+      survey_params = params[:survey]
+      survey_params[:link_text].blank? || survey_params[:happy_text].blank? ||
+                      survey_params[:unhappy_text].blank? || survey_params[:neutral_text].blank?
   end
 
 end

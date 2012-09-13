@@ -125,10 +125,9 @@ class SurveyResult < ActiveRecord::Base
   private                                                   
 
     def add_support_score
-      if gamification_feature?(surveyable.account)
-        SupportScore.add_happy_customer(surveyable) if happy?
-        SupportScore.add_unhappy_customer(surveyable) if unhappy?
-      end
+      return unless gamification_feature?(surveyable.account)
+      SupportScore.add_happy_customer(surveyable) if happy?
+      SupportScore.add_unhappy_customer(surveyable) if unhappy?
     end
 
     def update_ticket_rating
@@ -139,7 +138,7 @@ class SurveyResult < ActiveRecord::Base
     end
     
     def process_ticket_quests_on_feedback
-      evaluate_ticket_quests(surveyable)
+      evaluate_ticket_quests(surveyable) if gamification_feature?(surveyable.account)
     end
 
 end
