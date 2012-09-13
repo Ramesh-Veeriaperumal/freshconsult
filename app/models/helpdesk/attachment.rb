@@ -27,7 +27,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
 
    def s3_permissions
-    puts "#{description}$$$$$$$$$$$$$$$$$$$$$#{self.description}$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#{public_permissions?}"
     public_permissions? ? "public-read" : "private"
    end
 
