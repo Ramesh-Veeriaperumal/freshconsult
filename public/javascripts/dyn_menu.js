@@ -78,7 +78,7 @@
 
 			initSearchBox(menuid);
 			// setFirstElementActive(menuid);
-			if (content_element.children().not('.seperator').length <= 5) {
+			if (content_element.children().not('.seperator').length <= 10) {
 				$('#menu_' + menuid + ' .menu_search').addClass('invisible');
 			} else {
 				$('#menu_' + menuid + ' .menu_search').removeClass('invisible');
