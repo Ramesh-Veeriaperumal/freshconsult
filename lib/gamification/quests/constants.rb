@@ -6,7 +6,7 @@ module Gamification
       GAME_TYPES = [
         [ :ticket,   "Resolving Tickets",        TICKET_QUEST,    1 ], 
         [ :solution, "Publishing Solutions",     SOLUTION_QUEST,  2 ], 
-        [ :forum,    "Contribute in Forums",     FORUM_QUEST,     3 ]
+        [ :forum,    "Engage the Community",     FORUM_QUEST,     3 ]
       ]
 
       GAME_TYPE_OPTIONS = GAME_TYPES.map { |i| [i[1], i[3]] }
