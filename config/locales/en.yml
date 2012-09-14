@@ -237,7 +237,7 @@ en:
       quest_form:
         ticket: "Resolving <br /> <strong> Tickets </strong>"
         solution: "Publishing <br /> <strong> Solutions </strong>"
-        forum: "Contribute in <br /> <strong> Forums </strong>"
+        forum: "Engage the <br /> <strong> Community </strong>"
     gamification:
       successfully_updated: Gamification settings has been successfully updated.
       error_updated: Error while updating gamification settings.
