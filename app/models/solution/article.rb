@@ -8,8 +8,6 @@ class Solution::Article < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to :account
   
-  before_save :set_un_html_content
-  
   has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -53,7 +51,6 @@ class Solution::Article < ActiveRecord::Base
     }
   end
 
-  after_create :create_activity
   attr_protected :account_id ,:attachments
   
   validates_presence_of :title, :description, :user_id , :account_id
@@ -141,19 +138,4 @@ class Solution::Article < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
  
-  private    
-    def create_activity
-      activities.create(
-        :description => 'activities.solutions.new_solution.long',
-        :short_descr => 'activities.solutions.new_solution.short',
-        :account => account,
-        :user => user,
-        :activity_data => {}
-      )
-    end
-  
-    def set_un_html_content        
-      self.desc_un_html = (self.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description.empty?
-    end
-    
 end

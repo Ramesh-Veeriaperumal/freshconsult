@@ -30,13 +30,15 @@ module FreshdeskCore::Model
     									{:dependant => :tweets, :method => :destroy_all},
     									{:dependant => :survey, :method => :destroy},
     									{:dependant => :scoreboard_ratings, :method => :destroy_all},
-                                        {:dependant => :scoreboard_levels, :method => :destroy_all},
+                      {:dependant => :scoreboard_levels, :method => :destroy_all},
     									{:dependant => :survey_handles, :method => :destroy_all},
     									{:dependant => :day_pass_config, :method => :destroy},
     									{:dependant => :day_pass_usages, :method => :destroy_all},
     									{:dependant => :day_pass_purchases, :method => :destroy_all},
     									{:dependant => :data_import, :method => :destroy},
-    									{:dependant => :tags, :method => :destroy_all}
+    									{:dependant => :tags, :method => :destroy_all},
+                      {:dependant => :all_quests, :method => :destroy_all},
+                      {:dependant => :support_scores, :method => :destroy_all}
     	] }
 
 	def perform_destroy(obj)
