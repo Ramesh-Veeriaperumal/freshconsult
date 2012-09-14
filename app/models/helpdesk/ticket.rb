@@ -42,6 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
        :stop_timesheet_timers, :support_score_on_update
+  after_save :process_quests
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
   
@@ -1024,6 +1025,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
       SupportScore.add_fcr_bonus_score(self) if ticket_states.first_call_resolution?
     end
+    
+    #Temporary move of quest processing from observer - Shan
+    def process_quests
+      if gamification_feature?(account)
+  			process_available_quests
+  			rollback_achieved_quests
+  		end
+    end
+    
+    def process_available_quests
+  		if responder and resolved_now?
+  			Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => id, 
+  							:account_id => account_id })
+  		end
+  	end
+
+  	def rollback_achieved_quests
+  		if responder and reopened_now?
+  			Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => id, 
+  							:account_id => account_id, :rollback => true,
+  							:resolved_time_was => ticket_states.resolved_time_was })
+  		end
+  	end
+
+  	def resolved_now?
+  		status_changed? && ((resolved? && status_was != CLOSED) || 
+  		  (closed? && status_was != RESOLVED))
+  	end
+
+  	def reopened_now?
+  		status_changed? && (active? && [RESOLVED, CLOSED].include?(status_was))
+  	end
+    #Quest processing ends here..
 
     def parse_email(email)
       if email =~ /(.+) <(.+?)>/
