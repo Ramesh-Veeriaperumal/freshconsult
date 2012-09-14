@@ -14,7 +14,7 @@
             <%if scoreboard.resolution_speed < 100 %>
                 <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
                     <div class="span3">
-                        <label class="label-title"> <%= scoreboard.resolution_name %> </label>
+                        <label class="label-title"> <%= t(".#{scoreboard.resolution_name}") %> </label>
                         <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
                         <span class="info_data">Pts</span>
                         <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
@@ -37,7 +37,7 @@
             <%if scoreboard.resolution_speed > 100 %>
                 <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
                     <div class="span3"> 
-                        <label class="label-title"><%= scoreboard.resolution_name %> </label>
+                        <label class="label-title"><%= t(".#{scoreboard.resolution_name}") %> </label>
                         <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
                         <span class="info_data">Pts</span>
                         <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>

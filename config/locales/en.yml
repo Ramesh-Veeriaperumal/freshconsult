@@ -270,13 +270,13 @@ en:
         enable_label: Agents Gamification
         title_points_configuration: Points Configuration
         title_ticket_points: Ticket Points
-        label_fast_resolution: Fast (< 1 hr)
-        label_ontime_resolution: On time (Within SLA)
-        label_late_resolution: Late (Overdue)
-        title_bonus_points: Bonus Points
-        label_firstcall_resolution: First Call Resolution
-        label_happy_customer: Happy Customer
-        label_unhappy_customer: Unhappy Customer
+        fast_resolution: Fast <span>(< 1 hr)</span>
+        ontime_resolution: On time <span>(Within SLA)</span>
+        late_resolution: Late <span>(Overdue)</span>
+        bonus_points: Bonus Points
+        firstcall_resolution: First Call Resolution
+        happy_customer: Happy Customer
+        unhappy_customer: Unhappy Customer
         title_levels: Agent levels
         info_levels: "Set points to be acheived by an agent to reach a level"
         title_trophies: Trophies

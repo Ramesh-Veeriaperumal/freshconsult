@@ -19,7 +19,7 @@ class ScoreboardRating < ActiveRecord::Base
   end
 
   def resolution_name
-    RESOLUTION_NAMES_BY_KEY[resolution_speed]
+    RESOLUTION_TOKEN_BY_KEY[resolution_speed]
   end
 
 end

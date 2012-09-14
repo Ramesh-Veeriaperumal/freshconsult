@@ -1,20 +1,22 @@
 <%= render :partial => "admin/quests/criteria_jsinit", :locals => { :filter_type => "quest" } %>
 
 <%= f.error_messages :object_name => 'quest' %>
-<h3 class="s-title">Quest type  <%= ' - '+Quest::GAME_TYPE_NAME_BY_KEY[@quest.category] unless @quest.category.blank? %></h3>
-<div class="form-section" style="<%= 'display:none' unless @quest.name.blank? %>">	
-	<div class="row">
-		<% Quest::GAME_TYPES.each do |game_type| %>
-		<label class="s-label radio-label span2">
-			<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
-			<%= t(".#{game_type[0]}") %>
-		</label>
-		<% end %>
+<div style="<%= 'display:none' unless @quest.name.blank? %>">
+	<h3 class="s-title">Quest type</h3>
+	<div class="form-section">		
+		<div class="row">
+			<% Quest::GAME_TYPES.each do |game_type| %>
+			<label class="s-label radio-label span2">
+				<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
+				<%= t(".#{game_type[0]}") %>
+			</label>
+			<% end %>
+		</div>
 	</div>
 </div>
 <div id="enablequest">
 	<div class="gamecriteria">
-		<h3 class="s-title">Specify Quest Criteria</h3>
+		<h3 class="s-title">Quest objectives</h3>
 		<div class="ui-form gray-box-rounded">
 			<div id="questDOM"></div>
 			<div class="conditionset" id="filterDOM">
