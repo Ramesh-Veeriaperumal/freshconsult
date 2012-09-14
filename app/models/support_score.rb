@@ -80,24 +80,6 @@ class SupportScore < ActiveRecord::Base
     }) if scorable.responder
   end
 
-  def self.add_score(scorable, score, badge)    
-    scorable.support_scores.create({      
-      :user_id => scorable.user.id,
-      :group_id => scorable.group_id,
-      :score => score,
-      :score_trigger => TICKET_QUEST
-    }) if scorable.user
-  end
-
-  def self.add_ticket_score(scorable, score)
-    scorable.support_scores.create({      
-      :user_id => scorable.responder.id,
-      :group_id => scorable.group_id,
-      :score => score,
-      :score_trigger => TICKET_QUEST
-    }) if scorable.responder
-  end
-  
   def self.add_agent_levelup_score(scorable, score)
     scorable.support_scores.create({
       :user_id => scorable.id,
@@ -109,11 +91,9 @@ class SupportScore < ActiveRecord::Base
 protected
   
   def update_agents_score
-      total_score = user.support_scores.sum(:score)
-      unless (agent.points.eql? total_score)
-        agent.update_attribute(:points, total_score)
-      end
-      memcache_delete(self)
+    Resque.enqueue(Gamification::Scoreboard::UpdateUserScore, { :id => user.id, 
+                    :account_id => user.account_id })
+    memcache_delete(self)
   end
 
 end

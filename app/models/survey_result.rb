@@ -1,6 +1,5 @@
 class SurveyResult < ActiveRecord::Base
 
-  include Gamification::Quests::ProcessTicketQuests
   include Gamification::GamificationUtil
 
   belongs_to_account
@@ -138,7 +137,8 @@ class SurveyResult < ActiveRecord::Base
     end
     
     def process_ticket_quests_on_feedback
-      evaluate_ticket_quests(surveyable) if gamification_feature?(surveyable.account)
+      Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => surveyable_id, 
+                :account_id => account_id }) if gamification_feature?(surveyable.account)
     end
 
 end

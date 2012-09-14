@@ -1,10 +1,13 @@
 class PostObserver < ActiveRecord::Observer
 
-	include Gamification::Quests::ProcessPostQuests
 	include Gamification::GamificationUtil
 
 	def after_create(post)
-		evaluate_post_quests(post) if gamification_feature?(post.account)
+		if gamification_feature?(post.account)
+			return if (post.user.customer? or post.user_id == post.topic.user_id)
+			Resque.enqueue(Gamification::Quests::ProcessPostQuests, { :id => post.id, 
+							:account_id => post.account_id }) 
+		end
 	end
 
 end

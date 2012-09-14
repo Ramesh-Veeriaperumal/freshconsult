@@ -12,7 +12,8 @@ class AchievedQuest < ActiveRecord::Base
 
   private
     def publish_game_notifications
-      publish("#{I18n.t('gamification.notifications.achieved_quest',:name => quest.name)}", [user_id], quest.badge[:classname]) 
+      publish("#{I18n.t('gamification.notifications.achieved_quest',:name => quest.name)}", 
+        [user_id], quest.badge[:classname]) 
     end
 
 end

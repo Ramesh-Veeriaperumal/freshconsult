@@ -1,8 +1,16 @@
 module Gamification
 	module Quests
-		module ProcessSolutionQuests
+		class ProcessSolutionQuests < Resque::FreshdeskBase
+			@queue = "gamificationQueue"
 
-			def evaluate_solution_quests(article)
+			def self.perform(args)
+				args.symbolize_keys!
+				id, account_id = args[:id], args[:account_id]
+				article = Solution::Article.find_by_id_and_account_id(id, account_id)
+				evaluate_solution_quests(article)
+			end
+
+			def self.evaluate_solution_quests(article)
 				return unless article.published?
 
 				article.user.available_quests.solution_quests.each do |quest|
@@ -13,7 +21,7 @@ module Gamification
 				end
 			end
 
-			def evaluate_query(quest, article, end_time=Time.zone.now)
+			def self.evaluate_query(quest, article, end_time=Time.zone.now)
 				conditions = quest.filter_query
 				f_criteria = quest.time_condition(end_time)
 				conditions[0] = conditions.empty? ? f_criteria : (conditions[0] + ' and ' + f_criteria)
@@ -23,7 +31,7 @@ module Gamification
 				quest_achieved = created_solns_in_time >= quest.quest_data[0][:value].to_i
 			end
 
-			def quest_scoper(account, user)
+			def self.quest_scoper(account, user)
 				account.solution_articles.visible.by_user(user)
 			end
 
