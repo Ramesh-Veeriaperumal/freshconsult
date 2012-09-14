@@ -309,6 +309,15 @@ a.addchoice:hover{
 		font-weight:400;
 	}
 
+
+	label.label-title{	
+		margin-bottom: 5px;
+		color:#333;
+		span{
+			color:#999;
+		}
+	}
+
 	label.overlabel{
 		color: #999;
 		margin-left: 7px;
@@ -2239,13 +2248,21 @@ li.agents-field
 }
 
 .admin-tabs{
-	margin:0;
+	margin:10px 0 0;
 	z-index: 2;
 	position: relative;
 	& > li > a, &{ font-size: 14px; border-color: #E4E4E4; }
 	.active a, .active a:hover{
 		background-color: #f8f8f8;
+		font-weight: bold;
+		color: #333;
 	}
+}
+
+.right-title{
+	float:right;
+	font-weight: normal;
+	font-size: 13px;
 }
 
 .s-title{ font-size: 16px; margin: 10px 0 8px; }
@@ -2264,11 +2281,6 @@ li.agents-field
 .checkbox-label input[type="checkbox"] {
   float: left;
   margin: 2px 7px 0 -20px;
-}
-
-
-.label-title{	
-	margin-bottom: 5px;
 }
 
 h4.label-title{

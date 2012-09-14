@@ -16,7 +16,7 @@
 			<%= user_avatar(score.user) %>			
 			<div class="panel-content">
 				<div class="floatr trophy trophy-<%= score_list[1] %>"></div>
-				<h4><%= link_to score.user.name, score.user %></h4>
+				<h4><%= link_to_agent(score.user) %></h4>
 				<p class="help-text"><%= t("gamification.leaderboard.#{score_list[1]}_trophie_label") %></p>
 			</div>
 		</div>

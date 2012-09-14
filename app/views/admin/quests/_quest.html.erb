@@ -10,7 +10,7 @@
       <div class="row-fluid <%= quest.active ? 'active' : 'inactive' %>">
         <div class="span1 aligncenter">
             <div class="badges center <%=quest.badge[:classname]%>">
-              <%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? %>
+              <%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? || quest.points == 0 %>
             </div>            
         </div>
         <div class="span9">      

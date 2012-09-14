@@ -1,14 +1,10 @@
 <script>
-function setUserRole()
-{
-	if (jQuery('input[name=user_role]').is(':checked'))
-	{
+function setUserRole(){
+	if (jQuery('input[name=user_role]').is(':checked')){
 		jQuery('#role_taken').val('admin');
 	}
-	else
-	{
-		jQuery('#role_taken').val('poweruser');
-		
+	else{
+		jQuery('#role_taken').val('poweruser');		
 	}
 }
 </script>
@@ -16,7 +12,7 @@ function setUserRole()
 	<%if feature?(:gamification)%> 
 	<div class="side-panel">
 		<% unless @agent.level.blank? %>
-		<div class="level-progress">
+		<div class="level-progress" id="user-level">
 			<!-- Must give the width for the progressbar as an inline style !-->
 			<% nxtlevel = @agent.next_level %>
 			<% unless nxtlevel.blank? %>
@@ -30,7 +26,7 @@ function setUserRole()
 				</strong> 
 			</p>
 		</div>
-		<p class="info-text center">
+		<p class="info-text center" id="user-next-level">
 			<% unless nxtlevel.blank? %>
 				<%= t('next_level_info', 
 					:points =>  (nxtlevel.points - @agent.points), 
@@ -44,7 +40,7 @@ function setUserRole()
 		<% end %>
 		<h3 class="title"><%= t('badges_achieved_label') %></h3>
 		<% unless @user.quests.blank? %>
-			<div class="badge-list">
+			<div id="user-badge-list" class="badge-list">
 			<% @user.quests.each do |quest| %>
 				<div class="badges <%= quest.badge[:classname] %>">
 					<span class="label points" title="<%= quest.badge[:name] %>"><%= quest.points%></span>
@@ -58,6 +54,7 @@ function setUserRole()
 	<%end%>
 <%- end %> 
 <div class="contact-box clearfix">
+	  <% if manage_agents? %>
 		<div id="reset_password_template" >
 			<%= render :partial=> "reset_password" %>
 		</div>
@@ -68,7 +65,7 @@ function setUserRole()
 			<%end%>
 			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last"  %>
 		</div>
-		
+	  <% end %>
 
 		<%= user_avatar(@user, :medium, "profile_pic") %>	
 		<h3 class="title"><%= @user.display_name %></h3>
@@ -77,12 +74,12 @@ function setUserRole()
 		<% end %> 
 		<div class="user-info">
 			<%= content_tag(:h4, t('agent_info_title'), :class => "title") %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %> 
-			<%= content_tag (:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
-			<%= content_tag (:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %> 
+			<%= content_tag(:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
+			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
-		<% if @user.deleted || !@user.active? %>
+		<% if ((@user.deleted || !@user.active?) && manage_agents?) %>
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('agent_deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) }") if @user.deleted %>
 			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>

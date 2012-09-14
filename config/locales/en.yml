@@ -187,13 +187,13 @@ en:
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:      
       mvp_trophie_label: "Most Valuable Player"
-      mvp_trophie_info: "Agent with the most overall points this month"
+      mvp_trophie_info: "The agent with the most number of points."
       sharpshooter_trophie_label: "Sharpshooter"
-      sharpshooter_trophie_info: "Agent with the highest First Call Resolution points this month"
+      sharpshooter_trophie_info: "The agent with the most first call resolutions."
       speed_trophie_label: "Speed Racer"
-      speed_trophie_info: "Agent with the maximum points for fast resolution this month"
-      love_trophie_label: "Customer Wow Champion"
-      love_trophie_info: "Agent with the maximum Customer satisfaction points this month"
+      speed_trophie_info: "Agents who resolve most tickets within SLAs."
+      love_trophie_label: "Customer Champion"
+      love_trophie_info: "The agent with the most number of survey points."
 
       mvp_trophie_label_group: "Most Valuable Team"
       mvp_trophie_info_group: "Group with the most overall points this month"
@@ -243,19 +243,17 @@ en:
       successfully_updated: Gamification settings has been successfully updated.
       error_updated: Error while updating gamification settings.
       help_text: 
-        why_game: "Why enable Gamification?"
-        why_game_info1: "With Freshdesk’s new Gamification, you can now turn your helpdesk into a game, where agents amass points and trophies and badges for great performance, go on quests and compete against each other."
-        why_game_info2: "As agents amass more and more points and complete quests, they will receive trophies - Most Valuable Player, Customer Champion, Sharpshooter and Speed Racer, depending on the quests they complete."
-        why_game_info3: "Enter how many points you want your agents to get when they resolve tickets within an hour and exactly on time, and how many points they lose when they resolve tickets late. "
-        why_game_info4: "Choose the number of bonus points agents for first call resolution and happy customers and by how much to reduce them for unhappy customers."
-        why_game_info5: "Also, set the points that each agent has to amass for them to climb up the levels from beginner to guru."
-        why_game_info6: "Click on ‘Save Changes’ to save your settings."
+        why_game: "Points and levels"
+        why_game_info1: "Points are awarded to agents based on how fast they resolve the tickets assigned to them. There are also bonus points for first call resolution and satisfied customers. Agents also lose points for late resolution of tickets and for unhappy customers."
+        why_game_info2: "An agent can reach higher levels as he keeps getting more and more points, the set points to be achieved will be set by the Admin."
+        trophies_info1: "The agent will receive 4 trophies based on different criteria."
         quest: "Quests"
-        quest_info1: "Quests represent goals that you can set for your agents, completing which they will be awarded a badge of your choosing."
+        quest_info1: "Quests represent performance goals that you set for agents, completing which they will be awarded badges of honour."
         quest_info2: "All the Quests are ON by default. You may choose to switch OFF the ones you don’t want. If you want to add more quests or create quests specific to your goals, click on ‘New Quest’, and you can create brand new quests with the conditions you want."
-        quest_form_info1: "Choose the type of quest you want to set for your agents. It can be on of the three shown."
-        quest_form_info2: "You can then choose the quest criteria (what the agent has to do), add conditions, choose the reward and the badge the agent wins, and finally, name your quest and provide a small brief about it."
-        quest_form_info3: "Click on ‘Save Quest’ to save your settings."
+        quest_form_info1: "Choose the type of quest  to set for agents. It can be one of three <br /> a) resolving tickets,<br /> b) publishing solutions and <br /> c) contributing in forums."
+        quest_form_info2: "Once that is done, choose the quest criteria (what the agent has to do) and add the conditions, fulfilling which he will win the badge,"
+        quest_form_info3: "Choose the points the agent wins and the badge he will be awarded. Finally, name your quest and provide a small brief about it."
+        quest_form_info4: "Click on ‘Save Quest’ to save your settings."
         creating_survey: "Creating your satisfaction survey:"
         creating_survey_help: "The following steps let you collect feedback from your customers through a link in your response emails:<br>
        1.Enable the Customer Satisfaction Surveys checkbox<br>
@@ -272,13 +270,13 @@ en:
         enable_label: Agents Gamification
         title_points_configuration: Points Configuration
         title_ticket_points: Ticket Points
-        label_fast_resolution: Fast (< 1 hr)
-        label_ontime_resolution: On time (Within SLA)
-        label_late_resolution: Late (Overdue)
-        title_bonus_points: Bonus Points
-        label_firstcall_resolution: First Call Resolution
-        label_happy_customer: Happy Customer
-        label_unhappy_customer: Unhappy Customer
+        fast_resolution: Fast <span>(< 1 hr)</span>
+        ontime_resolution: On time <span>(Within SLA)</span>
+        late_resolution: Late <span>(Overdue)</span>
+        bonus_points: Bonus Points
+        firstcall_resolution: First Call Resolution
+        happy_customer: Happy Customer
+        unhappy_customer: Unhappy Customer
         title_levels: Agent levels
         info_levels: "Set points to be acheived by an agent to reach a level"
         title_trophies: Trophies
