@@ -7,6 +7,7 @@ class Quest < ActiveRecord::Base
 
   has_many :achieved_quests, :dependent => :destroy
   has_many :users, :through => :achieved_quests
+  has_many :support_scores, :as => :scorable, :dependent => :nullify
 
   validates_presence_of :name
   validates_presence_of :badge_id, :message => I18n.t('quests.badge_mand')
@@ -114,7 +115,8 @@ class Quest < ActiveRecord::Base
   def award!(user)
     return unless user.achieved_quest(self).nil?
     achieved_quests.create(:user => user, :account => account)
-    user.support_scores.create({:score => points.to_i, 
+    support_scores.create({:score => points.to_i,
+          :user => user,
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
           :account => account})
   end
@@ -123,7 +125,8 @@ class Quest < ActiveRecord::Base
     user_ach_quest = user.achieved_quest(self)
     return if user_ach_quest.nil?
     user_ach_quest.delete
-    user.support_scores.create({:score => -(points.to_i), 
+    support_scores.create({:score => -(points.to_i),
+          :user => user,
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
           :account => account})
   end
