@@ -74,10 +74,10 @@ function setUserRole(){
 		<% end %> 
 		<div class="user-info">
 			<%= content_tag(:h4, t('agent_info_title'), :class => "title") %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %> 
-			<%= content_tag (:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
-			<%= content_tag (:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %> 
+			<%= content_tag(:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
+			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
 		<% if ((@user.deleted || !@user.active?) && manage_agents?) %>
 		<div class="info-highlight">
