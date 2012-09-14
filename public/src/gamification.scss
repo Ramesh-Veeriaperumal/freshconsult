@@ -35,10 +35,41 @@
 	height: 50px;
 }
 
-#select-badge .gamesettings-badges{
-	cursor: pointer;
-	margin:0 auto;
+.badge-set{
+	cursor: pointer;		
+	@include border-radius(6px);
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 3px 0;
+	&:hover{
+		background-color:#efefef;
+		@include box-shadow(rgba(0, 0, 0, 0.1) 0 1px 3px inset);
+	}
 }
+
+.select_badge{
+	border: 1px solid #DFDFDF;
+	width: 100px;
+	text-align: center;
+	margin: 5px 0;
+	background-color: #EFEFEF;
+	border-radius: 6px;
+	padding: 3px;
+	strong{
+		font-size: 11px;
+	}
+	.gamesettings-badges{
+		margin: 0 auto;
+	}
+}
+
+#select-badge{
+	max-height:340px; 
+	overflow:auto;	
+	.gamesettings-badges{		
+		margin: 0 auto;
+	}
+} 
 
 .gamesettings h3{
 	color: #333;

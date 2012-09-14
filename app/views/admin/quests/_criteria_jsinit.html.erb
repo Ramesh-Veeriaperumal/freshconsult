@@ -46,9 +46,8 @@
             var badge_class = "gamesettings-badges " + $(this).data('class');
             $("#selected-badge").html("<div class='"+badge_class+"' />");
             $("#select-badge").dialog('close');
-            $("#selected-badge-name").text($(this).data('name'));
+            $("#selected-badge-name").html($(this).data('name'));
             $("#quest_badge_id").val($(this).data('badgeId'));
-
             $("#showbadges").html("Change");
           });
 

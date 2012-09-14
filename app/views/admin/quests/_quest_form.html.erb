@@ -1,20 +1,22 @@
 <%= render :partial => "admin/quests/criteria_jsinit", :locals => { :filter_type => "quest" } %>
 
 <%= f.error_messages :object_name => 'quest' %>
-<h3 class="s-title">Quest type  <%= ' - '+Quest::GAME_TYPE_NAME_BY_KEY[@quest.category] unless @quest.category.blank? %></h3>
-<div class="form-section" style="<%= 'display:none' unless @quest.name.blank? %>">	
-	<div class="row">
-		<% Quest::GAME_TYPES.each do |game_type| %>
-		<label class="s-label radio-label span2">
-			<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
-			<%= t(".#{game_type[0]}") %>
-		</label>
-		<% end %>
+<div style="<%= 'display:none' unless @quest.name.blank? %>">
+	<h3 class="s-title">Quest type</h3>
+	<div class="form-section">		
+		<div class="row">
+			<% Quest::GAME_TYPES.each do |game_type| %>
+			<label class="s-label radio-label span2">
+				<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
+				<%= t(".#{game_type[0]}") %>
+			</label>
+			<% end %>
+		</div>
 	</div>
 </div>
 <div id="enablequest">
 	<div class="gamecriteria">
-		<h3 class="s-title">Specify Quest Criteria</h3>
+		<h3 class="s-title">Quest objectives</h3>
 		<div class="ui-form gray-box-rounded">
 			<div id="questDOM"></div>
 			<div class="conditionset" id="filterDOM">
@@ -37,14 +39,13 @@
 			<div class="row">
 				<div class="span3">
 					<strong>Badge</strong><br />			
-					<%= f.hidden_field :badge_id, :class => "required text" %>
-					<div class="badges_items">
+					<%= f.hidden_field :badge_id, :class => "required text" %>					
+					<div class="select_badge">
 						<div id="selected-badge">
 							<%= content_tag :div, "", :class => "gamesettings-badges #{@badge_class[:classname]}" if @badge_class %>
 						</div>
-						<span style="margin-left:-3px;" id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></span>
+						<strong id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></strong>
 					</div>
-					<br />
 					<a href="javascript:void(0)" id="showbadges">
 						<%= (!@badge_class) ? "Pick a badge" : "Change" %>
 					</a>
@@ -55,18 +56,17 @@
 				</div>
 			</div>
 		</div>
-		<div id="select-badge" style="display:none;max-height:340px; overflow:auto;" class="badgelist badges_items">
+		<div id="select-badge" class="badgelist hide badges_items">
 			<span class="seperator"></span>
 			<div class="row">
 				<% @available_badges.each do | badges | %>
-					<div class="span2">
+					<div class="span2 badge-set">
 						<%= content_tag :div, "", 
 									:class => "gamesettings-badges center-align #{badges[:classname]}", 
 									"data-class" => badges[:classname],
 									"data-name" => badges[:name],
 									"data-badge-id" => badges[:id] %>
 						<p class="aligncenter"><strong><%= badges[:name] %></strong></p>
-						<br />
 					</div>
 				<% end %>
 			</div>

@@ -23,11 +23,6 @@ class Post < ActiveRecord::Base
     :dependent => :destroy
 
   #format_attribute :body
-  before_create { |r| r.forum_id = r.topic.forum_id }
-  before_save :set_body_content
-  after_create  :update_cached_fields,:monitor_reply
-  after_destroy :update_cached_fields
-
   
   attr_protected	:topic_id , :account_id , :attachments
   
@@ -41,35 +36,11 @@ class Post < ActiveRecord::Base
     super
   end
   
-  def monitor_reply
-    send_later(:send_monitorship_emails)
-  end
-  
-  def send_monitorship_emails
-    topic.monitorships.active_monitors.each do |monitorship|
-      monitorship_email = monitorship.user.email
-      PostMailer.deliver_monitor_email!(monitorship_email,self,self.user) unless monitorship_email.blank?
-    end
-  end
-  
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
-  
-  protected
-    # using count isn't ideal but it gives us correct caches each time
-    def update_cached_fields
-      Forum.update_all ['posts_count = ?', Post.count(:id, :conditions => {:forum_id => forum_id})], ['id = ?', forum_id]
-      User.update_posts_count(user_id)
-      topic.update_cached_post_fields(self)
-  end
-    def set_body_content        
-      self.body = (self.body_html.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.body_html.empty?
-    end
-  
-  
   
 end
