@@ -186,23 +186,23 @@ en:
       newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:      
-      mvp_trophie_label: "Most valuable player"
-      mvp_trophie_info: "Agent who have overall points higher than others"
+      mvp_trophie_label: "Most Valuable Player"
+      mvp_trophie_info: "Agent with the most overall points this month"
       sharpshooter_trophie_label: "Sharpshooter"
-      sharpshooter_trophie_info: "Agent with first call resolution points"
-      speed_trophie_label: "Speed racer"
-      speed_trophie_info: "Agent who resolve within the SLA time"
-      love_trophie_label: "Customer champion"
-      love_trophie_info: "Agent with more survey points"
+      sharpshooter_trophie_info: "Agent with the highest First Call Resolution points this month"
+      speed_trophie_label: "Speed Racer"
+      speed_trophie_info: "Agent with the maximum points for fast resolution this month"
+      love_trophie_label: "Customer Wow Champion"
+      love_trophie_info: "Agent with the maximum Customer satisfaction points this month"
 
-      mvp_trophie_label_group: "Most valuable team"
-      mvp_trophie_info_group: "Groups who have overall points higher than others"
+      mvp_trophie_label_group: "Most Valuable Team"
+      mvp_trophie_info_group: "Group with the most overall points this month"
       sharpshooter_trophie_label_group: "Sharpshooters"
-      sharpshooter_trophie_info_group: "Groups with first call resolution points"
-      speed_trophie_label_group: "Speed racers"
-      speed_trophie_info_group: "Groups who resolve within the SLA time"
-      love_trophie_label_group: "Customer champions"
-      love_trophie_info_group: "Groups with more survey points"
+      sharpshooter_trophie_info_group: "Group with the highest First Call Resolution points this month"
+      speed_trophie_label_group: "Speed Racers"
+      speed_trophie_info_group: "Group with the maximum points for fast resolution this month"
+      love_trophie_label_group: "Customer Wow Champions"
+      love_trophie_info_group: "Group with the maximum Customer Satisfaction points this month"
 
   quests:
     inactive_quests: Inactive Quests
@@ -233,6 +233,7 @@ en:
         sideinfo2: Info 2
         quest_title: Quests
         new_quest: New Quest
+        quest_description: "Quests are Business-Specific goals that you create to challenge your agents to achieve!"
       quest_form:
         ticket: "Resolving <br /> <strong> Tickets </strong>"
         solution: "Publishing <br /> <strong> Solutions </strong>"
@@ -265,7 +266,7 @@ en:
        You can learn more about satisfaction surveys from our solutions page.     
        </p>"
       index:
-        title: Gamification
+        title: Arcade Settings
       gamification_settings:
         enable_label: Agents Gamification
         title_points_configuration: Points Configuration
@@ -530,7 +531,7 @@ en:
         title: Admin
         email-notifications: Email Notifications
         survey-settings: Customer Satisfaction Settings
-        gamification-settings: Gamification Settings
+        gamification-settings: Arcade Settings
         rebranding: Helpdesk Rebranding
         account-settings: Account Settings
         customer-portal: Customer Portal
