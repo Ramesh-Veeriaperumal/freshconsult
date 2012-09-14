@@ -2,7 +2,7 @@
 	<%#= content_tag :span, i+1, :class => "lb-number" if (card_type == :mvp) %> 
 	<%= user_avatar(score_card_agent.user) %>
 	<div class="panel-content">
-		<h4 class="name"><%= link_to score_card_agent.user.name, score_card_agent.user %></h4>
+		<h4 class="name"><%= link_to_agent(score_card_agent.user) %></h4>
 		<p class="help-text score"><%= score_card_agent.tot_score %></p>
 	</div>
 <% end %>
