@@ -37,14 +37,13 @@
 			<div class="row">
 				<div class="span3">
 					<strong>Badge</strong><br />			
-					<%= f.hidden_field :badge_id, :class => "required text" %>
-					<div class="badges_items">
+					<%= f.hidden_field :badge_id, :class => "required text" %>					
+					<div class="select_badge">
 						<div id="selected-badge">
 							<%= content_tag :div, "", :class => "gamesettings-badges #{@badge_class[:classname]}" if @badge_class %>
 						</div>
-						<span style="margin-left:-3px;" id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></span>
+						<strong id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></strong>
 					</div>
-					<br />
 					<a href="javascript:void(0)" id="showbadges">
 						<%= (!@badge_class) ? "Pick a badge" : "Change" %>
 					</a>
@@ -55,18 +54,17 @@
 				</div>
 			</div>
 		</div>
-		<div id="select-badge" style="display:none;max-height:340px; overflow:auto;" class="badgelist badges_items">
+		<div id="select-badge" class="badgelist hide badges_items">
 			<span class="seperator"></span>
 			<div class="row">
 				<% @available_badges.each do | badges | %>
-					<div class="span2">
+					<div class="span2 badge-set">
 						<%= content_tag :div, "", 
 									:class => "gamesettings-badges center-align #{badges[:classname]}", 
 									"data-class" => badges[:classname],
 									"data-name" => badges[:name],
 									"data-badge-id" => badges[:id] %>
 						<p class="aligncenter"><strong><%= badges[:name] %></strong></p>
-						<br />
 					</div>
 				<% end %>
 			</div>

@@ -1,7 +1,7 @@
 <div id="quest-container" class="panel-row <%= (quest.achieved_by? current_user) ? 'acheived' : '' %>">
 	<div class="floatl">
 		<div class="badges left <%=quest.badge[:classname]%>">
-			<%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? %>
+			<%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? || quest.points == 0 %>
 		</div>
 	</div>
 	<div class="panel-content">
