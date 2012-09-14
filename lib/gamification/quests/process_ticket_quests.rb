@@ -55,7 +55,7 @@ module Gamification
 				badge_awarded_time = ticket.responder.badge_awarded_at(quest)
 
 				if !old_resolv_time.blank?
-					old_resolv_time = Time.parse(old_resolv_time)
+					old_resolv_time = Time.parse(old_resolv_time.to_s)
 					unless quest.any_time_span?
 						resolved_in_quest_span = old_resolv_time.between?(
 							quest.start_time(badge_awarded_time), badge_awarded_time)

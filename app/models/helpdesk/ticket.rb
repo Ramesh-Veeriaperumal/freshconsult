@@ -1012,20 +1012,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def support_score_on_update
       return unless gamification_feature?(account)
-      
-      if ((active? && !@old_ticket.active?) or (deleted_changed? && deleted?))
-        
-        SupportScore.destroy_all(:account_id => account_id,  :scorable_type => "Helpdesk::Ticket", :scorable_id => id, 
-          :score_trigger => Gamification::Scoreboard::Constants::TICKET_CLOSURE)
 
+      if ((active? && !@old_ticket.active?) or (deleted_changed? && deleted?))
+        Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
+                :account_id => account_id,
+                :remove_score => true })
       elsif !active? && @old_ticket.active?
         add_support_score
       end
     end    
 
     def add_support_score
-      SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-      SupportScore.add_fcr_bonus_score(self) if ticket_states.first_call_resolution?
+      Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
+                :account_id => account_id,
+                :fcr =>  ticket_states.first_call_resolution?,
+                :remove_score => false })
     end
     
     #Temporary move of quest processing from observer - Shan
