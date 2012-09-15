@@ -1,7 +1,7 @@
 class SupportScore < ActiveRecord::Base
 
   include Gamification::Scoreboard::Constants
-  include Gamification::Scoreboard::Memcache
+  
 
   after_commit_on_destroy :update_agents_score
   after_commit_on_create  :update_agents_score
@@ -93,7 +93,6 @@ protected
   def update_agents_score
     Resque.enqueue(Gamification::Scoreboard::UpdateUserScore, { :id => user.id, 
                     :account_id => user.account_id })
-    memcache_delete(self)
   end
 
 end

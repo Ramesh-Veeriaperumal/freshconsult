@@ -1,7 +1,8 @@
 class Agent < ActiveRecord::Base
   
-    
   include Notifications::MessageBroker
+  include Gamification::Scoreboard::Memcache #Need to refactor this!
+
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id' , :dependent => :destroy 
 
   accepts_nested_attributes_for :user
@@ -51,12 +52,16 @@ end
    self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:all_tickets] if self.ticket_permission.blank?
  end
 
-named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
+  named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
 
-def next_level
-  return unless points?
-  user.account.scoreboard_levels.next_level_for_points(points).first
-end
+  def next_level
+    return unless points?
+    user.account.scoreboard_levels.next_level_for_points(points).first
+  end
+
+  def clear_leaderboard_cache! #Refactor this code!
+    memcache_delete(user)
+  end
 
 protected
   
@@ -84,4 +89,5 @@ protected
       SupportScore.add_agent_levelup_score(user, new_point)
     end 
   end
+
 end
