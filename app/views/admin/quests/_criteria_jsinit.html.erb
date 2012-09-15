@@ -136,6 +136,7 @@
       }
 
     }(jQuery);
+
     Gamification.init(<%= @criteria_defs %>, [<%= @quest_input%>], <%= @quest.sub_category.blank? ? 'undefined' : @quest.sub_category%>);    
   <% end %>
   <% javascript_tag do %>
@@ -168,6 +169,10 @@
         case 'optgroup':
           c_dom = FactoryUI.optgroup(filter.choices, "value");
           jQuery(c_dom).val(initFeed["value"]);
+          break;
+        case 'blank_boolen':
+          c_dom = "<input type='hidden' value='is' name='operator' />"; 
+          c_dom += "<input type='hidden' value='1' name='value' />";
           break;
         case 'paragraph':
           c_dom = FactoryUI.paragraph("", "value", initFeed["value"]);

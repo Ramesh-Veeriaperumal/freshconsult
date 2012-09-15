@@ -119,19 +119,22 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		// Used to Edit pre-population
       feed_data:
-         function(dataFeed){			
-            dataFeed.each(function(rule){
+         function(dataFeed){	
+            dataFeed.each(function(rule){            	
               try{
                   var r_dom	= domUtil.getContainer(name);
                   var inner	= jQuery("<div />");
                   var data_id = rule.name + itemManager.get();
 
                   if(rule.operator){	
-                     opType = hg_data.get(rule.name).operatortype;
-                     inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                  	try{
+                     	opType = hg_data.get(rule.name).operatortype;
+                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                    }catch(e){}
                   }	
                   if(rule.name == "set_nested_fields")
                   	rule.name = rule.category_name;
+
 
                   inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
