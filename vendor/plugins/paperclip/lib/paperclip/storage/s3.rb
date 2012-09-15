@@ -70,10 +70,10 @@ module Paperclip
           @bucket         = @options[:bucket]         || @s3_credentials[:bucket]
           @bucket         = @bucket.call(self) if @bucket.is_a?(Proc)
           @s3_options     = @options[:s3_options]     || {}
-          Rails.logger.debug "#{instance_read(:description)}" #Fix for build which is not populating the description
-          Rails.logger.debug "#{self.instance.description}"
+          Rails.logger.debug "14609235 #{instance_read(:description)}" #Fix for build which is not populating the description
+          Rails.logger.debug "234567 #{self.instance.description}"
           @s3_permissions = @options[:s3_permissions] 
-          @s3_permissions = @s3_permissions.call(self) if @s3_permissions.is_a?(Proc)
+          #@s3_permissions = @s3_permissions.call(self) if @s3_permissions.is_a?(Proc)
           @s3_protocol    = @options[:s3_protocol]    || 'http' 
           @s3_headers     = @options[:s3_headers]     || {}
           @s3_host_alias  = @options[:s3_host_alias]
