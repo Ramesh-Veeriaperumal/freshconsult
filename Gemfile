@@ -73,8 +73,6 @@ gem 'resque-retry'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 
-gem 'chronic'
-
 gem 'memcache-client', '1.8.5'
 
 group :development do
