@@ -25,3 +25,7 @@
 	<div class="list-noinfo">The leaderboard is empty</div>
 <% end %>
 </div>
+<% javascript_tag do %>
+	jQuery("#leaderboard_list_love, #leaderboard_list_sharpshooter, #leaderboard_list_speed")
+		.css("minHeight", jQuery('#leaderboard_list_mvp').height());
+<% end %>

@@ -108,8 +108,10 @@ module Helpdesk::AdjacentTickets
 						#If this is a number, if so consider as custom view
 						unless cookies[:filter_name].to_i.to_s != cookies[:filter_name]	
 							@ticket_filter = current_account.ticket_filters.find_by_id(cookies[:filter_name])
-							@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
-							filter_params.merge!(@ticket_filter.attributes["data"])
+							unless @ticket_filter.blank?
+								@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+								filter_params.merge!(@ticket_filter.attributes["data"])
+							end
 						end
 					end
 				end

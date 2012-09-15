@@ -32,8 +32,7 @@
 	<% reset_cycle %>
 <% end %>
 </div>
-<% if leaderboard.size > 10 %>
-	<div class="report-show-more">
-		<a href="#" class="">Show 25 more</a>
-	</div>
+<% javascript_tag do %>
+	jQuery("#leaderboard_list_love, #leaderboard_list_sharpshooter, #leaderboard_list_speed")
+		.css("minHeight", jQuery('#leaderboard_list_mvp').height());
 <% end %>
