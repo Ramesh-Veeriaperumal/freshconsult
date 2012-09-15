@@ -34,5 +34,5 @@
 </div>
 <% javascript_tag do %>
 	jQuery("#leaderboard_list_love, #leaderboard_list_sharpshooter, #leaderboard_list_speed")
-		.height(jQuery('#leaderboard_list_mvp').height());
+		.css("minHeight", jQuery('#leaderboard_list_mvp').height());
 <% end %>
