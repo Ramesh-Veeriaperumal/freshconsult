@@ -142,7 +142,7 @@ class ContactsController < ApplicationController
     respond_to do |format|
       if @agent.save        
         format.html { redirect_to @item }
-        format.xml  { render :xml => @agent, :status => 200 }
+        format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @agent.errors, :status => 500 }
