@@ -1,10 +1,9 @@
 class Notifications::Message
 	
-	def initialize(message, badge, type, sender=User.current)
+	def initialize(message, badge, type)
 		@header = {
 			:timestamp => timestamp,
-			:type => type,
-			:sender => sender.display_name,
+			:type => type
 		}
 		@body = {
 			:message => message,
