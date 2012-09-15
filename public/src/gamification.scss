@@ -310,6 +310,11 @@ li.dashboard-quest-points {
 	padding-top:1px;
 	margin-top: 10px;
 	@include pie-clearfix;
+	line-height: 18px;
+	h3.title{ font-size: 13px; }
+	.intro{
+		font-size: 12px;
+	}
 	.panel-row{
 		padding: 12px 20px 12px 13px;
 		position: relative;
@@ -328,8 +333,9 @@ li.dashboard-quest-points {
 .lb-report-title{
 	background-color: #e4e4e4;
 	border-bottom: 1px solid #fff;
-	@include min-height(65px);
+	@include min-height(70px);
 }
+
 .lbr-trophy{
 	float: left;
 	margin-left: -5px;
@@ -364,7 +370,7 @@ li.dashboard-quest-points {
 }
 
 .lb-report-row, .lb-report-title{
-	padding: 6px 20px 3px;
+	padding: 6px 9px 3px 15px;
 }
 
 .lb-report-col{
@@ -372,6 +378,10 @@ li.dashboard-quest-points {
 	@include min-height(450px);
 	width:24.9%;
 	border-left: 1px solid #d5d5d5;
+}
+
+.report-3-col .lb-report-col{
+	width: 33.2%;
 }
 
 .inactive{

@@ -1,11 +1,12 @@
 <div class="btn-group floatr">
-  <%= link_to "Agent", agents_helpdesk_leaderboard_path(), :class => "btn" %>
-  <%= link_to "Group", groups_helpdesk_leaderboard_path(), :class => "btn active" %>
+  <%= link_to "Agent", agents_helpdesk_leaderboard_path, :class => "btn" %>
+  <%= link_to "Group", groups_helpdesk_leaderboard_path, :class => "btn active" %>
 </div>
 <a href="/">< Back to dashboard </a>
 <h3 class="title"><%= t('reports.scoreboard_group_title')%></h3>
 
-<div class="report-nmleft thick-border-top lb-report">
+<div class="report-nmleft thick-border-top lb-report report-<%= leaderboard.length %>-col">
+
 <% leaderboard.each do |board| %>
 	<div class="lb-report-col <%= (board[1] == :mvp) ? 'lb-mvp' : '' %>" id="leaderboard_list_<%= board[1] %>">
 		<div class="lb-report-title">

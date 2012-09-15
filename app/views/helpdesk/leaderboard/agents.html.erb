@@ -4,7 +4,7 @@
 </div>
 <a href="/">< Back to dashboard </a>
 <h3 class="title"><%= t('reports.scoreboard_agent_title')%></h3>
-<div class="report-nmleft thick-border-top lb-report">
+<div class="report-nmleft thick-border-top lb-report report-<%= leaderboard.length %>-col">
 <% unless (@mvp_scorecard.blank? && @customer_champion_scorecard.blank? && @first_call_scorecard.blank? && @fast_scorecard.blank?) %>
 	<% 		
 		leaderboard.each do |board| 
