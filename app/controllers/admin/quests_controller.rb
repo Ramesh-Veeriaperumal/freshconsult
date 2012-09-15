@@ -84,7 +84,7 @@ class Admin::QuestsController < Admin::AdminController
     end
     
     def available_badges #Nasty implementation, need to refactor - Shan
-      used_up_badges = current_account.quests.collect { |q| q.badge_id }
+      used_up_badges = current_account.all_quests.collect { |q| q.badge_id }
       BADGES.select { |b| !used_up_badges.include? b[:id] }
     end
     
