@@ -36,7 +36,6 @@ var $J = jQuery.noConflict();
   }, 'Please enter a valid hours.');
   $.validator.addClassRules("hours", { hours: true });
 
-
   //Domain Name Validator 
   $.validator.addMethod("domain_validator", function(value, element) {
      if (this.optional(element)) // return true on optional element
