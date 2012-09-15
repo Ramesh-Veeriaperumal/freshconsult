@@ -9,9 +9,9 @@ class ScoreboardRating < ActiveRecord::Base
   # We are not doing any validation here, whether the ticket is actually resolved or
   # resolved_at is not null and stuffs like that.
   # It is helpdesk module's responsibility.
-  def self.resolution_speed(ticket)
+  def self.resolution_speed(ticket, resolved_at)
     
-    resolved_at = ticket.ticket_states.resolved_at
+    resolved_at = Time.zone.parse(resolved_at.to_s)
     inbound_count = ticket.ticket_states.inbound_count
 
     (resolved_at < 1.hour.since(ticket.created_at)) ? FAST_RESOLUTION : ( (resolved_at < 

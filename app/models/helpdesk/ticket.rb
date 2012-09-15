@@ -1026,7 +1026,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
                 :account_id => account_id,
                 :fcr =>  ticket_states.first_call_resolution?,
-                :remove_score => false })
+                :resolved_at_time => ticket_states.resolved_at,
+                :remove_score => false }) unless ticket_states.resolved_at.nil?
     end
     
     #Temporary move of quest processing from observer - Shan

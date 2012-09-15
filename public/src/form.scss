@@ -2402,3 +2402,22 @@ input[type="text"].number{
 	width: 250px;
 	min-height: 100px;
 }
+
+.grey-background{
+	border:1px solid #E4E4E4; 
+	background-color:#F8F8F8; 
+	margin: 0 -12px;
+	@include border-radius(6px);
+}
+
+.aracde-content{	
+    padding: 20px;
+    margin-top: 60px;
+    h2{ font-size: 24px; font-weight: bold; margin-bottom: 16px; }
+    p{
+    	font-size: 13px;
+    	line-height: 18px;
+    	margin-bottom: 18px;
+    	color:#666666;	
+    }
+}
