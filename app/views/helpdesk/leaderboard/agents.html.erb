@@ -5,11 +5,10 @@
 <a href="/">< Back to dashboard </a>
 <h3 class="title"><%= t('reports.scoreboard_agent_title')%></h3>
 <div class="report-nmleft thick-border-top lb-report">
-<% unless(@mvp_scorecard.blank? && @customer_champion_scorecard.blank? && @first_call_scorecard.blank? && @fast_scorecard.blank?) %>
-	<% [[ @mvp_scorecard, :mvp],
-		[ @customer_champion_scorecard, :love],
-		[ @first_call_scorecard, :sharpshooter],
-		[ @fast_scorecard, :speed]].each do |board| %>
+<% unless (@mvp_scorecard.blank? && @customer_champion_scorecard.blank? && @first_call_scorecard.blank? && @fast_scorecard.blank?) %>
+	<% 		
+		leaderboard.each do |board| 
+	%>
 		<div class="lb-report-col <%= (board[1] == :mvp) ? 'lb-mvp' : '' %>" id="leaderboard_list_<%= board[1] %>">
 			<div class="lb-report-title">
 				<div class="lbr-trophy trophy trophy-<%= board[1] %>"></div>

@@ -2,15 +2,11 @@
 
 	<%= link_to "See all", agents_helpdesk_leaderboard_path(), :class => "action-right" %>
 	<h3 class="title"><%= t('reports.scoreboard_title_nav')%></h3>  	
-	<p class="intro">This Month</p>  
-	<% mini_board = [[ @mvp_scorecard, "mvp"],
-					 [ @customer_champion_scorecard, "love"],
-					 [ @first_call_scorecard, "sharpshooter"],
-					 [ @fast_scorecard, "speed"]] %>
+	<p class="intro">This Month</p>  	
 
 	<% list_empty = false %>
 
-	<% mini_board.each do |score_list| %>
+	<% leaderboard.each do |score_list| %>
 		<% (score_list[0] || []).each do |score| %>
 		<div class="panel-row">
 			<%= user_avatar(score.user) %>			

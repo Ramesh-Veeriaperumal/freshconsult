@@ -4,11 +4,6 @@
 </div>
 <a href="/">< Back to dashboard </a>
 <h3 class="title"><%= t('reports.scoreboard_group_title')%></h3>
-<% leaderboard = [[ @mvp_scorecard, :mvp],
-				  [ @customer_champion_scorecard, :love],
-				  [ @first_call_scorecard, :sharpshooter],
-				  [ @fast_scorecard, :speed]
-				  ] %>
 
 <div class="report-nmleft thick-border-top lb-report">
 <% leaderboard.each do |board| %>
