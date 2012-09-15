@@ -8,15 +8,21 @@ module Helpdesk::LeaderboardHelper
 	end	
 
 	def leaderboard
-		scoreboard = [[ @mvp_scorecard, :mvp],
-				[ @first_call_scorecard, :sharpshooter],
-				[ @fast_scorecard, :speed]]
-		scoreboard.insert(1, [ @customer_champion_scorecard, :love]) if customer_satisfaction_enabled?
-		scoreboard
+		@leaderboard ||= load_leaderboard
 	end
 
 	def customer_satisfaction_enabled?
 		current_account.features?(:surveys, :survey_links)
 	end
+
+	private
+		def load_leaderboard
+			scoreboard = [[ @mvp_scorecard, :mvp],
+				[ @first_call_scorecard, :sharpshooter],
+				[ @fast_scorecard, :speed]]
+			scoreboard.insert(1, [ @customer_champion_scorecard, :love]) if customer_satisfaction_enabled?
+			
+			scoreboard
+		end
 
 end

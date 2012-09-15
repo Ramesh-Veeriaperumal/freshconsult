@@ -1,6 +1,6 @@
 <ul class="ui-form">
     <li>
-    <% form_tag update_game_admin_gamification_path, :method => :put, :id => "scoreboard_ratings_form" do %>
+    <% form_tag update_game_admin_gamification_path, :method => :put, :id => "scoreboard_ratings_form", :rel => "validate" do %>
     <div class="section-title">
         <h3>Award points</h3>
     </div>
@@ -58,7 +58,8 @@
             <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
             <div class="span2">
                 <label class="label-title"><%= level.name %></label>
-                <%= sl.text_field :points, :value => level.points, :maxlength => "6", :class => "number points required" %></td>
+                <%= sl.text_field :points, :value => level.points, :maxlength => "9", 
+                        :class => "number points required #{ 'level' if (index > 0) }" %></td>
                 <%= sl.hidden_field :id, :value => level.id %>
             </div>
             <% end %>
@@ -73,3 +74,18 @@
     <% end %>
     </li>
 </ul>
+
+<% content_for :onload_script do %>
+    jQuery.validator.addMethod("level", function(value, element, param) {
+    console.log(element);
+        _array = element.id.split("_");
+        _array[2] = parseInt(_array[2]) - 1;
+        prev_val = parseInt(jQuery("#" + _array.join("_")).val());
+        current_val = parseInt(value);
+        
+        return (prev_val < current_val);
+    }, "This should be greater than its previous level");
+
+    jQuery.validator.addClassRules("level", { level: true });
+
+<% end %>

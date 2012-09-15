@@ -9,7 +9,7 @@ function setUserRole(){
 }
 </script>
 <% content_for :sidebar do -%>
-	<%if feature?(:gamification)%> 
+	<%if gamification_feature?(current_account)%>
 	<div class="side-panel">
 		<% unless @agent.level.blank? %>
 		<div class="level-progress" id="user-level">
