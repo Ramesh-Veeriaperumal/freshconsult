@@ -139,11 +139,15 @@ class ContactsController < ApplicationController
     @agent = current_account.agents.new
     @agent.user = @item 
     @agent.occasional = false
-     if @agent.save        
-      redirect_to @item
-    else
-      redirect_to :back
-    end    
+    respond_to do |format|
+      if @agent.save        
+        format.html { redirect_to @item }
+        format.xml  { render :xml => @agent, :status => 200 }
+      else
+        format.html { redirect_to :back }
+        format.xml  { render :xml => @agent.errors, :status => 500 }
+      end   
+    end 
   end
   
   def autocomplete   
