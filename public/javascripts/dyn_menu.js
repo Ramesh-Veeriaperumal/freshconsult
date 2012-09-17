@@ -127,7 +127,8 @@
 						regex = new RegExp(search_txt,"i");
 						var content_element = $('#menu_' + menuid + ' .contents');
 						if (search_txt != '') {
-							
+							$('#menu_' + menuid + ' .contents .selected').removeClass('selected');
+							$('#menu_' + menuid ).data('currentactive','');
 							content_element.find('.seperator').addClass('hide');
 							$('#menu_' + menuid + ' .contents').children().not('.seperator').each(function(i) {
 								if ($(this).text().search(regex) == -1){
@@ -172,7 +173,9 @@
 
 				case 13:
 					var currentactive = $('#menu_' + menuid ).data('currentactive');
-					currentactive.trigger("click");
+					if ($('#menu_' + menuid ).data('currentactive') != '') {
+						currentactive.trigger("click");
+					}
 				break; 
 			}
 		}
