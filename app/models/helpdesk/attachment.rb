@@ -75,9 +75,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
      end
    end
 
-  def expiring_url(style = "original")
+  def expiring_url(style = "original",expiry = 300)
     AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
-                                          :expires_in => 300.seconds)
+                                          :expires_in => expiry.to_i.seconds)
   end
   
   private
