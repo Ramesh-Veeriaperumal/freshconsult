@@ -18,7 +18,7 @@ module Mobile::Actions::User
   end
 
   def avatar_url(profile_size = :thumb)
-    avatar.content.url(profile_size) unless avatar.nil?
+    avatar.expiring_url(profile_size) unless avatar.nil?
   end
 
 end
