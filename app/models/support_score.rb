@@ -39,19 +39,19 @@ class SupportScore < ActiveRecord::Base
 
   named_scope :group_score,
   { 
-    :select => ["support_scores.*, SUM(support_scores.score) as tot_score"],
+    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
     :conditions => ["group_id is not null"],
     :include => [ :group ],
     :group => "group_id",
-    :order => "tot_score desc"
+    :order => "tot_score desc, recent_created_at"
   }
 
   named_scope :user_score,
   { 
-    :select => ["support_scores.*, SUM(support_scores.score) as tot_score"],
+    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
     :include => { :user => [ :avatar ] },
     :group => "user_id",
-    :order => "tot_score desc"
+    :order => "tot_score desc, recent_created_at"
   }
 
   named_scope :limit, lambda { |num| { :limit => num } } 
