@@ -308,8 +308,12 @@ module ApplicationHelper
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
-  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" )
-    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options[:expiry]) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  end
+
+  def user_avatar_with_expiry( user, expiry = 300)
+    user_avatar(user,:thumb,"preview_pic",{:expiry => expiry})
   end
   
   def is_user_social( user, profile_size )
