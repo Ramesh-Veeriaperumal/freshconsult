@@ -9,7 +9,7 @@
 	<% leaderboard.each do |score_list| %>
 		<% (score_list[0] || []).each do |score| %>
 		<div class="panel-row">
-			<%= user_avatar(score.user) %>			
+			<%= user_avatar_with_expiry(score.user,3605) %>			
 			<div class="panel-content">
 				<div class="floatr trophy trophy-<%= score_list[1] %>"></div>
 				<h4><%= link_to_agent(score.user) %></h4>
