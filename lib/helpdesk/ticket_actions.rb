@@ -177,6 +177,7 @@ module Helpdesk::TicketActions
   def handle_merge      
     add_note_to_target_ticket
     move_source_notes_to_target   
+    move_source_time_sheets_to_traget
     add_note_to_source_ticket
     close_source_ticket 
     update_merge_activity  
@@ -191,6 +192,12 @@ module Helpdesk::TicketActions
   def move_source_notes_to_target
     @source_ticket.notes.each do |note|
       note.update_attribute(:notable_id, @target_ticket.id)
+    end
+  end
+
+  def move_source_time_sheets_to_traget
+    @source_ticket.time_sheets.each do |time_sheet|
+      time_sheet.update_attribute(:ticket_id, @target_ticket.id)
     end
   end
   
