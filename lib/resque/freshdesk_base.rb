@@ -12,6 +12,7 @@ class Resque::FreshdeskBase
     job_user = args[0]["current_user_id"]
     Account.find(job_account).make_current if job_account
     User.find(job_user).make_current if job_user
+    TimeZone.set_time_zone
   end
 
 end
