@@ -19,6 +19,17 @@
 		<% end %>
 	</div>
   </td>
+  <td style="padding:25px 25px 10px 0px;">	  
+	  <div class="index-notifications">
+	   <ul>
+	    <li rel="notice-popover" id="tickets:<%= current_account.id%>:viewers:<%= ticket.id%>" data-object="viewing" data-placement="right" title="Currently viewing">
+	      <a href="#" class="symbols-ac-viewingon tooltip">
+	        <span class="pill"></span>
+	      </a>
+	    </li>
+	   </ul>
+	  </div>
+  </td>
   <td class="requester_info hideForDetails">
   	<%= h(ticket.requester.display_name) %>
   </td>

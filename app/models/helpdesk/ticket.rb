@@ -41,7 +41,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-       :stop_timesheet_timers, :support_score_on_update
+       :stop_timesheet_timers, :support_score_on_update, :publish_to_update_channel
   after_save :process_quests
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
@@ -1128,6 +1128,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
       schema_less_ticket.save unless schema_less_ticket.changed.empty?
     end
+
+  def publish_to_update_channel
+    channel = "tickets:#{self.account.id}:#{self.id}"
+    agent = User.current.nil? ? "" : User.current.name
+    #client_count = $redis.publish(channel,"{\"ticket_id\":\"#{self.id}\",\"agent\":\"#{agent}\",\"type\":\"edited\"}") if $redis
+    #RAILS_DEFAULT_LOGGER.debug "Message : {\"ticket_id\":\"#{self.id}\",\"agent\":\"#{agent}\",\"type\":\"edited\"} Received by #{client_count} clients from channel : #{channel}"
+  end
 
 end
   

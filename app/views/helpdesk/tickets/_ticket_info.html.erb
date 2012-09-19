@@ -8,7 +8,7 @@
     </div>
   <% end %>  
 <% end %>
- 
+  <%= render :partial => "collision_show" %>
   <div class="request_details">
     <div class="requestCnt request-cnt-first">
       <div class="request-title">
@@ -96,6 +96,8 @@
 				<% end %>             
             </div>
           <% end %> 
+          <span id="agent_viewing_message" style="color:#ffa04c; font-size:12px;" class="hide"></span>
+          <span id="agent_replying_message_top" style="color:#ffa04c; font-size:12px;" class="hide"></span>
         </div>
         <% unless @ticket.deleted %>
           <div class="ticket_actions">          	

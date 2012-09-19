@@ -1,0 +1,113 @@
+<%= javascript_include_tag "frameworks/socket.io"%>   
+
+<% content_for :pagefixed do %>
+  <% javascript_tag do %>
+ 
+  /********************************** node.js and socket implementation ****************************************/ 
+ 
+    var socket = null;
+    var agents_viewing = {};
+    var init_params = {};
+    var current_user = "<%= current_user.name %>";
+    var current_account_id = "<%=current_account.id%>";
+
+    init_params.agent = current_user;
+    init_params.account_id = <%= current_account.id%>;
+    init_params.ticket_viewers_key = 'tickets:'+current_account_id+':viewers:*';
+    init_params.ticket_channel = 'tickets:'+current_account_id+':*';
+    init_params.source = "index";
+    
+    jQuery(document).ready(function() {
+
+      socket = io.connect('<%= node_url %>'); 
+
+      socket.on('connect', function(){
+        socket.emit('set_params_for_index', init_params);
+        handle_agent_collision();
+      });
+
+      socket.on('recieve_existing_viewers_for_index',function(_viewers) {
+        //console.log("In recieve_existing_viewers_for_index : "+_viewers);
+        agents_viewing = {};
+        viewers = JSON.parse(_viewers);
+        //console.log("In recieve_existing_viewers_for_index viewers : "+viewers.toString());
+        for (var key in viewers) {
+          if (viewers.hasOwnProperty(key)) {  
+            if($(key)){
+              agents_viewing[key] = viewers[key].without(current_user);
+              update_notification_ui(key);
+            }  
+          }
+        }
+      });
+   
+      socket.on('message', function(_params){
+        params = JSON.parse(_params);
+        key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
+        
+        if($(key)){
+          if(agents_viewing[key] == undefined){
+            agents_viewing[key] = [];
+            agents_viewing[key].push(params.agent);
+          }
+          switch(params.type){
+            case "connected":
+              agents_viewing[key].push(params.agent);
+              break;
+            case "disconnected":
+              agents_viewing[key] = agents_viewing[key].without(params.agent);
+              break;
+          }    
+          update_notification_ui(key);
+        }
+      });
+   
+      //socket.socket.on('error', function (error_msg){
+        //console.log('Unable to connect Socket.IO', error_msg);
+      //});
+
+      jQuery("li[rel=notice-popover]")      
+        .bind({ 
+          mouseenter: function(){  
+            if(this.className == "active")
+              jQuery(this).popover('show');
+          }, 
+          mouseleave: function(){
+            jQuery(this).popover('hide');
+          }
+        }).popover({
+            html: true,           
+            trigger: "manual",
+            content: function(){
+            container = "";
+            agents_viewing[jQuery(this).prop('id')].each(function(item){
+              container += "<div>" + item + "</div>";
+            });                         
+            return container;
+          },
+          template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
+        });
+
+      function update_notification_ui(key){
+        agents_viewing[key] =   agents_viewing[key].uniq();
+        jQuery($(key)).toggleClass("active", (agents_viewing[key].size() != 0)).effect("highlight", { color: "#fffff3" }, 400);
+        jQuery($(key)).find(".pill").html(agents_viewing[key].size());
+
+      }
+ 
+      function handle_agent_collision() {
+        ticket_ids = [];
+        jQuery("li[rel=notice-popover]").each(function(){
+          ticket_ids.push(jQuery(this).prop('id'));
+        });
+        if(ticket_ids.length > 0){
+          params_ticket_ids = {};
+          params_ticket_ids.ticket_ids = ticket_ids;
+          params_ticket_ids.account_id = current_account_id;
+          socket.emit('get_existing_viewers_for_index',params_ticket_ids);
+        }
+      }  
+
+    });  
+  <% end %>
+<% end %>

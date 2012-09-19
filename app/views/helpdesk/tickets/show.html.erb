@@ -15,6 +15,7 @@
 	<%= ticket_tabs %>        
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
+			<span id="agent_replying_message_bottom" style="color:#048b00; font-size:12px;"></span>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
 			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
 				:id => "FwdButton", :class => "button forward reply") %>

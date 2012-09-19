@@ -97,6 +97,7 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/socket.io.js
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace: 

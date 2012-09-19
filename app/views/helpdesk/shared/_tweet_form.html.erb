@@ -1,4 +1,4 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
+<div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
     <%= f.error_messages %>
 	<%= hidden_field_tag :tweet, "true", :id => "tweet" %>

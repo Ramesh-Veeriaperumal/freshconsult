@@ -327,4 +327,12 @@ module Helpdesk::TicketsHelper
     show_params
   end
   
+  def node_url
+    if Rails.env.development?
+      "http://localhost:8080/node"
+    else
+      protocol = current_account.ssl_enabled ? "https" : "http"
+      "#{protocol}://#{current_account.full_domain}:82/node"
+    end
+  end
 end
