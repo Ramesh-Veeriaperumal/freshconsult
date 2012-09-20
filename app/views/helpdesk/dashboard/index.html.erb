@@ -18,7 +18,9 @@
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
-<%= render :partial => "summary" %>
+<%= content_tag :div, "", :rel => "remote", :id => "quests-section-container",
+               "data-remote-url" => '/helpdesk/dashboard/latest_summary' %>
+
 <div id="Activity">
 	<h3 class="title"><%=t('recent_activity')%></h3>
 	<div id="recent_activities_count" class='more-tweets'></div>

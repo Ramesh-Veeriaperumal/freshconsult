@@ -80,7 +80,6 @@
 </div>
 <% if feature?(:gamification) and current_user and current_user.agent? %>
 	<% content_for :pagefixed do %>
-		<%= include_javascripts :notifications %>
 	  <% javascript_tag do %>
 	  	FD.Notifications.init({ 
 	  		pollInterval:60000

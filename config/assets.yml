@@ -68,6 +68,24 @@ stylesheets:
 
   redactor:
     - public/stylesheets/redactor.css 
+  freshdesk:
+    - public/stylesheets/reset.css
+    - public/stylesheets/layout.css
+    - public/stylesheets/defaults.css
+    - public/stylesheets/validation.css
+    - public/stylesheets/table.css
+    - public/stylesheets/autocomplete.css
+    - public/stylesheets/jquery-ui.css
+    - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/application.css
+    - public/stylesheets/test.css
+    - public/stylesheets/form.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/chosen.css
+    - public/stylesheets/hacks.css
+    - public/stylesheets/ie.css
+    - public/stylesheets/satisfaction.css
+    - public/stylesheets/jquery.gritter.css
 
 javascripts:
   defaults:
@@ -151,3 +169,23 @@ javascripts:
     - public/javascripts/notifications.js
   excanvas:
     - public/javascripts/excanvas.js
+  freshdesk:
+    - public/javascripts/prototype.js
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.overlabel.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
+    - public/javascripts/frameworks/plugins/jquery.cookie.js
+    - public/javascripts/frameworks/plugins/jquery.ui.js
+    - public/javascripts/frameworks/plugins/jquery.pageless.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/jquery.qtip.js
+    - public/javascripts/hackz.js
+    - public/javascripts/bootstrap/*.js
+    - public/javascripts/utils.js
+    - public/javascripts/humane.js
+    - public/javascripts/lib/json2.js
+    - public/javascripts/globalinit.js
+    - public/javascripts/jquery.gritter/jquery.gritter.js
+    - public/javascripts/requestAnimFrame.js
+    - public/javascripts/notifications.js
