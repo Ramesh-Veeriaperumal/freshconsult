@@ -3,7 +3,7 @@
 			:rel => "toggle", 
 			"data-checked-label" => "enabled", 
 			"data-unchecked-label" => "disabled", 
-			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#scoreboard_elements').toggle();") %>
+			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
 </div>
 <h3 class="title"><%=t('.title')%></h3>
 
@@ -24,6 +24,29 @@
 		<div id="quests" class="tab-pane">
 			<%= render :partial => "/admin/quests/index" %>
 		</div>
+	</div>
+</div>
+
+<div class="grey-background clearfix" id="gamification-intro" <% if feature?(:gamification_enable) %>style="display:none"<%end%>>	
+	<div class="aracde-content">
+		<%= image_tag '/images/helpimages/arcade-admin-page.png' %>
+		<h2>What is Freshdesk Arcade?</h2>
+		<p>
+			Now every support ticket that flows in is a chance for agents to score. What’s even cooler - you get to award bonus points to your support team based on what is most important to you. Like shooting out answers super fast, getting the solution right the first time, and winning awesome satisfaction ratings from customers. 
+		</p>
+		<p>
+			Follow your support teams’ progress with the leaderboard right off the dashboard. And award special trophies to the top scorers for being the Speed Racer, Sharp Shooter, Customer Wow Champ, and best of all, your Most Valuable Player of the month.
+		</p>
+		<p>	
+			<a href="#">Check out the video</a>
+			<br />
+			<a href="javascript: jQuery('#gamification_enable').trigger('click'); " class="uiButton special floatr">
+				Enable freshdesk arcade
+			</a>
+		</p>
+		<p>			
+			<a href="#">Learn more about the arcade</a>			
+		</p>
 	</div>
 </div>
 
