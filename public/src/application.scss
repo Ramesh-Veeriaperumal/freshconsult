@@ -15,6 +15,16 @@
 /*Ticket View icons */
 @import "ticket-view/*.png";
 
+/* Sprite sheet creation for badges and trophies */
+/*Gamification-Trophy */
+@import "trophy/*.png";
+@include all-trophy-sprites;
+
+/*Gamification-Badges */
+@import "badges/*.png";
+@include all-badges-sprites;
+
+
 /*@include font-face('Silkscreen',
   font-files(
     'slkscr.woff', woff,
@@ -58,7 +68,7 @@ $priority-hover-alpha: 1;
 }
 
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
-   @extend .sp_border;
+   	@extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
 }
 
@@ -67,7 +77,15 @@ $priority-hover-alpha: 1;
 } 
 
 .sidepanel{
-	position:relative;
+	position:relative;	
+}
+
+.side-panel{
+	background-color:#ffffff;
+	border:1px solid #b3b3b3;
+	padding:6px 12px 12px;
+	margin:0px 10px 10px 0px;
+	@include box-shadow(rgba(0,0,0, 0.2) 0 0 3px);
 }
 
 .pagearea{
@@ -3892,7 +3910,7 @@ div.addReminder{
 	border-style: solid;
 	border-width: 1px 0;
 	padding:0px 0px;
-	margin:0 -20px;
+	margin:5px -20px 0;
 	li{	
 		@include pie-clearfix;
 		padding:8px 20px;
@@ -6596,24 +6614,133 @@ margin:10px;
 }
 
 a.mobile_switchBtn {
-		background-color:#FFF;
-		border:1px solid #888;
-		@include border-radius(20px);
-		color:#333 !important;
-		padding: 2px 8px;
-		font-size:11px;
-		font-weight:bold;
+	background-color:#FFF;
+	border:1px solid #888;
+	@include border-radius(20px);
+	color:#333 !important;
+	padding: 2px 8px;
+	font-size:11px;
+	font-weight:bold;
+	float:left;
+	float: left;
+	margin: 15px 0px 0px 10px;
+	z-index:5;
+	position:relative;
+	&:active, &:hover{
+		@include background(#444);
+		color:#fff !important;
+		text-shadow: -1px -1px 0 black;
+		text-shadow: -1px -1px 0 black;
+	}
+}
+
+/* Importing gamification related style information */ 
+
+@import "gamification";
+
+.thick-border-top{
+	border-top:2px solid #b5b5be;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.side-panel .action-right{
+	float: right;
+	font-size: 13px;
+	line-height: 24px;
+	margin-top: 4px;
+}
+
+.level-progress{
+	border:1px solid #c6c6c6;
+	@include border-radius(3px);
+	margin-top: 6px;
+	padding: 5px 10px;
+	position: relative;
+	p{
+		position: relative;
+		z-index: 1;
+	}
+	.bar{
+		position: absolute;
+		background-color: #e8f1f4;
+		top:0;
+		left:0;
+		height: 100%; 
+		@include border-left-radius(3px);
+		z-index: 0;
+	}
+}
+
+.badge-list{
+	@include clearfix;
+	.badges{
 		float:left;
-		float: left;
-		margin: 15px 0px 0px 10px;
-		z-index:5;
-		position:relative;
-		&:active, &:hover{
-			@include background(#444);
-			color:#fff !important;
-			text-shadow: -1px -1px 0 black;
-			text-shadow: -1px -1px 0 black;
-		}
+		position: relative;
+		margin: 15px 18px 25px 0;
+	}
+	.score{
+		position: absolute;
+		width: 100%;
+		text-align: center;
+		bottom:-18px;
+		@include ellipsis;
+		color: #666666;
+	}
+}
+
+.panel-row{
+	@include pie-clearfix;
+	border-top:1px solid #e6e6e6;
+	padding:8px 0;
+	.preview_pic{
+		padding:2px;
+		background:#AFAFAF;
+		border-radius:3em;
+		line-height:0;
+	}
+	.preview_pic img{
+		@include border-radius(2em);
+		width:36px;
+		height:36px;
+	}
+	.help-text{
+		color:#666;
+		font-size:13px;
+		line-height: 18px;
+	}
+	h4{
+		font-size:14px;		
+		line-height:20px;
+		font-weight:bold;
+	}
+	.panel-content{
+		padding-left:50px;
+	}
+	.actions{ display:none; }
+	&:hover .actions{ display:block; }
+	.toggle-button { margin-left: 0; }
+}
+
+.admin-list .panel-row{ padding: 12px 0; }
+
+.panel-row.odd{
+	background-color: #f8f8f8;
+}
+
+.panel-row.acheived{
+	background-color: #f3f6ee;	
+}
+
+.acheived-text{
+	color: #4b7200;
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.symbol-done-tick{
+	@include inline-block;
+	width: 15px; height: 15px;
+	background:sprite($symbol, done-tick) no-repeat;	
 }
 
 /* SURVEY FORM FOR SELF SERVICE PORTAL */
@@ -6826,4 +6953,4 @@ a.mobile_switchBtn {
     margin-top: 10px;
     padding: 5px 3px 0px 5px;
     line-height: 20px;
-} 
+}

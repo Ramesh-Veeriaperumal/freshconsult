@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120911103708) do
+ActiveRecord::Schema.define(:version => 20120912174542) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -40,6 +40,17 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+
+  create_table "achieved_quests", :force => true do |t|
+    t.integer  "user_id",    :limit => 8
+    t.integer  "account_id", :limit => 8
+    t.integer  "quest_id",   :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "achieved_quests", ["quest_id", "account_id"], :name => "index_achieved_quests_on_quest_id_and_account_id"
+  add_index "achieved_quests", ["user_id", "account_id", "quest_id"], :name => "index_achieved_quests_on_user_id_account_id_quest_id", :unique => true
 
   create_table "addresses", :force => true do |t|
     t.string   "first_name"
@@ -102,14 +113,16 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
-    t.integer  "user_id",           :limit => 8
+    t.integer  "user_id",             :limit => 8
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ticket_permission",              :default => 1
-    t.boolean  "occasional",                     :default => false
+    t.integer  "ticket_permission",                :default => 1
+    t.boolean  "occasional",                       :default => false
     t.string   "google_viewer_id"
     t.text     "signature_html"
+    t.integer  "points",              :limit => 8
+    t.integer  "scoreboard_level_id", :limit => 8
   end
 
   create_table "app_business_rules", :force => true do |t|
@@ -1023,6 +1036,33 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
 
   add_index "products", ["account_id", "name"], :name => "index_products_on_account_id_and_name"
 
+  create_table "quests", :force => true do |t|
+    t.integer  "account_id",   :limit => 8
+    t.string   "name"
+    t.text     "description"
+    t.integer  "sub_category"
+    t.integer  "category"
+    t.boolean  "active",                    :default => true
+    t.text     "filter_data"
+    t.text     "quest_data"
+    t.integer  "points",                    :default => 0
+    t.integer  "badge_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
+
+  create_table "scoreboard_levels", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "points"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "scoreboard_levels", ["account_id"], :name => "index_scoreboard_levels_on_account_id"
+
   create_table "scoreboard_ratings", :force => true do |t|
     t.integer  "account_id",       :limit => 8
     t.integer  "resolution_speed"
@@ -1245,16 +1285,20 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
 
-  create_table "support_scores", :force => true do |t|
+  create_table "support_scores", :id => false, :force => true do |t|
+    t.integer  "id",            :limit => 8, :null => false
     t.integer  "account_id",    :limit => 8
-    t.integer  "agent_id",      :limit => 8
+    t.integer  "user_id",       :limit => 8
+    t.integer  "group_id",      :limit => 8
     t.integer  "scorable_id",   :limit => 8
     t.string   "scorable_type"
     t.integer  "score"
+    t.integer  "score_trigger"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "score_trigger"
   end
+
+  add_index "support_scores", ["id"], :name => "support_scores_id"
 
   create_table "survey_handles", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false
@@ -1336,6 +1380,7 @@ ActiveRecord::Schema.define(:version => 20120911103708) do
     t.integer  "stamp_type"
     t.boolean  "delta",                     :default => true,  :null => false
     t.integer  "import_id",    :limit => 8
+    t.integer  "user_votes",                :default => 0
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"

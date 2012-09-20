@@ -1,8 +1,8 @@
 module RedisKeys
 
-	HELPDESK_TICKET_FILTERS 			= "HELPDESK_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
-	HELPDESK_REPLY_DRAFTS 				= "HELPDESK_REPLY_DRAFTS:%{account_id}:%{user_id}:%{ticket_id}"
-
+	HELPDESK_TICKET_FILTERS = "HELPDESK_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
+	HELPDESK_REPLY_DRAFTS = "HELPDESK_REPLY_DRAFTS:%{account_id}:%{user_id}:%{ticket_id}"
+	HELPDESK_GAME_NOTIFICATIONS = "HELPDESK_GAME_NOTIFICATIONS:%{account_id}:%{user_id}"
 	HELPDESK_TICKET_ADJACENTS 			= "HELPDESK_TICKET_ADJACENTS:%{account_id}:%{user_id}:%{session_id}"
 	HELPDESK_TICKET_ADJACENTS_META	 	= "HELPDESK_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
 	INTEGRATIONS_JIRA_NOTIFICATION = "INTEGRATIONS_JIRA_NOTIFY:%{account_id}:%{local_integratable_id}:%{remote_integratable_id}"
@@ -12,24 +12,24 @@ module RedisKeys
 		begin
 			$redis.get(key)
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+      NewRelic::Agent.notice_error(e)
+	  end
 	end
 
 	def remove_key(key)
 		begin
 			$redis.del(key)
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+      NewRelic::Agent.notice_error(e)
+	  end
 	end
 
 	def set_key(key, value, expires = 86400)
 		begin
 			$redis.set(key, value)
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+      NewRelic::Agent.notice_error(e)
+	  end
 	end
 
 	def add_to_set(key, values)
@@ -41,8 +41,8 @@ module RedisKeys
 			# $redis.sadd(key, *values)
 			$redis.expire(key,expires) if expires
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+      NewRelic::Agent.notice_error(e)
+	  end
 
 	end
 
@@ -50,8 +50,8 @@ module RedisKeys
 		begin
 			$redis.smembers(key)
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+	    NewRelic::Agent.notice_error(e)
+	  end
 
 	end
 
@@ -67,8 +67,8 @@ module RedisKeys
 				end
 			end
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+      NewRelic::Agent.notice_error(e)
+	  end
 	end
 
 	def list_pull(key,direction = 'left')
@@ -76,8 +76,8 @@ module RedisKeys
 			command = direction == 'right' ? 'rpull' : 'lpull'
 			$redis.send(command, key)
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+      NewRelic::Agent.notice_error(e)
+	  end
 	end
 
 
@@ -86,8 +86,8 @@ module RedisKeys
 			length = $redis.llen(key)
 			$redis.lrange(key,0,length - 1)
 		rescue Exception => e
-	        NewRelic::Agent.notice_error(e)
-	    end
+      NewRelic::Agent.notice_error(e)
+	  end
 	end
 
 end

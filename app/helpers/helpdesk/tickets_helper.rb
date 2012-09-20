@@ -72,14 +72,14 @@ module Helpdesk::TicketsHelper
       dynamic_view.concat([{ :id => -1 }])
     end
     
-    top_views_array = [ 
-    ].concat(dynamic_view).concat([
+    default_views = [
       { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
       { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },      
       { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
       { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
       { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
-    ])
+    ]
+    top_views_array = [].concat(dynamic_view).concat(default_views)
     top_index = top_views_array.index{|v| v[:id] == selected} || 0
 
     cannot_delete = false
@@ -87,8 +87,12 @@ module Helpdesk::TicketsHelper
     unless selected_item.blank?
       selected_item_name = selected_item[:name]
     else
-      selected_item_name = ((SELECTORS.select { |v| v.first == selected.to_sym }.first)[1] || top_views_array.first[:name]).to_s unless selected.blank?
-      selected_item_name = t("tickets_filter.unsaved_view") if selected.blank?
+      if selected.blank?
+        selected_item_name = t("tickets_filter.unsaved_view")
+      else
+        selected_from_default = SELECTORS.select { |v| v.first == selected.to_sym }
+        selected_item_name =  (selected_from_default.blank? ? default_views.first[:name] : selected_from_default.first[1]).to_s
+      end
       cannot_delete = true
     end
 

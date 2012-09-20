@@ -57,6 +57,8 @@ module Paperclip
     #   S3 (strictly speaking) does not support directories, you can still use a / to
     #   separate parts of your file name.
     module S3
+      PUBLIC_DESCRIPTIONS = %w(logo fav_icon public content_id)
+
       def self.extended base
         begin
           require 'aws/s3'
@@ -70,8 +72,11 @@ module Paperclip
           @bucket         = @options[:bucket]         || @s3_credentials[:bucket]
           @bucket         = @bucket.call(self) if @bucket.is_a?(Proc)
           @s3_options     = @options[:s3_options]     || {}
-          @s3_permissions = @options[:s3_permissions] || :public_read
-          @s3_protocol    = @options[:s3_protocol]    || (@s3_permissions == :public_read ? 'http' : 'https')
+          #Rails.logger.debug "14609235 #{instance_read(:description)}" #Fix for build which is not populating the description
+          #Rails.logger.debug "234567 #{self.instance.to_json}"
+          @s3_permissions = @options[:s3_permissions] 
+          #@s3_permissions = @s3_permissions.call(self) if @s3_permissions.is_a?(Proc)
+          @s3_protocol    = @options[:s3_protocol]    || 'http' 
           @s3_headers     = @options[:s3_headers]     || {}
           @s3_host_alias  = @options[:s3_host_alias]
           unless @url.to_s.match(/^:s3.*url$/)
@@ -145,11 +150,12 @@ module Paperclip
         @queued_for_write.each do |style, file|
           begin
             log("saving #{path(style)}")
+            log("creation 14609235 #{self.instance.description}")
             AWS::S3::S3Object.store(path(style),
                                     file,
                                     bucket_name,
                                     {:content_type => instance_read(:content_type),
-                                     :access => @s3_permissions,
+                                     :access => s3_helpkit_permissions,
                                     }.merge(@s3_headers))
           rescue AWS::S3::NoSuchBucket => e
             create_bucket
@@ -185,6 +191,12 @@ module Paperclip
           raise ArgumentError, "Credentials are not a path, file, or hash."
         end
       end
+      protected
+
+      def s3_helpkit_permissions
+        (self.instance.description and PUBLIC_DESCRIPTIONS.include?(self.instance.description))? "public-read" : "private"
+      end
+      
       private :find_credentials
 
     end

@@ -94,7 +94,7 @@ jQuery("#clear-draft").bind('click', function(){
       <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
       var draftData = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
       jQuery('#cnt-reply-body').setCode(draftData)
-      istDirty = false;
+      isDirty = false;
       jQuery("#reply-draft").hide();
       draftClearedFlag = true;
   }

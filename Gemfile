@@ -75,6 +75,7 @@ gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 gem 'after_commit', "~> 1.0.10"
 
+gem 'memcache-client', '1.8.5'
 
 group :development do
    gem "rspec", "1.3.1"

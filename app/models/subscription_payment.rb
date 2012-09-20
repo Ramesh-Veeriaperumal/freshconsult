@@ -54,5 +54,4 @@ class SubscriptionPayment < ActiveRecord::Base
     name = "Freshdesk #{plan_name} #{renewal_type} subscription for #{agents} Agents 
            (with #{free_agents} free agents)"          
   end
-
 end
