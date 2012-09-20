@@ -79,7 +79,6 @@
 	</div>	
 </div>
 <% if feature?(:gamification) and current_user and current_user.agent? %>
-	<%= include_stylesheets :notifications %>
 	<% content_for :pagefixed do %>
 		<%= include_javascripts :notifications %>
 	  <% javascript_tag do %>

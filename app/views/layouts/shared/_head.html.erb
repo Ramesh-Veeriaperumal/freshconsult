@@ -1,4 +1,7 @@
 <head>
+	<script type="text/javascript">
+    var t_pagestart=new Date().getTime();
+  </script>
   <meta charset="utf-8">
 	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
 	     Remove this if you use the .htaccess -->
@@ -14,6 +17,7 @@
 	<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
 	<%= include_stylesheets :common  %>
 	<%= include_stylesheets :app  %>
+	<%= include_stylesheets :notifications %>
 	<%= render :partial => "shared/theme.css"  %>	
 	<%= include_javascripts :defaults  %>
 	<%= include_javascripts :frameworks %>
@@ -21,4 +25,22 @@
 	<%= include_javascripts :custom_widget %>
 	
 	<%= yield :head %>
+	<style>
+		#benchmarkresult{
+			width: 25%;
+			display: inline-block;
+			position: fixed;
+			z-index: 999;
+			background: #DFDFDF;
+			bottom: 10px;
+			right: 10px;
+			border: 1px solid gainsboro;
+			padding: 10px;
+			box-shadow: 2px 2px #AAA;
+			color: #333;
+			border-radius: 5px;
+		}
+	</style>
 </head>
+<div id="benchmarkresult">
+</div>

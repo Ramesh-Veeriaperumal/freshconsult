@@ -3,7 +3,8 @@
 
 .ie6, .ie7{
 	.wrapper{ 
-		width: expression((document.body.clientWidth < 982)? "982px" : "#{$blueprint-liquid-container-width}");
+		//expressions are too dangoreus ... pratheepv
+		// width: expression((document.body.clientWidth < 982)? "982px" : "#{$blueprint-liquid-container-width}");
 		width: 980px; 
 	}
 	

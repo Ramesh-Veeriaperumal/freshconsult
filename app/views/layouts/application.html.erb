@@ -4,6 +4,10 @@
 	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">
 		<div id="wrap">
 			<%= render(:partial => '/layouts/shared/header') %>
+			<script type="text/javascript">
+    		var t_headerend = new Date().getTime();
+  		</script>
+
 				<div class="content">
 					<div class="wrapper">
 						<%= render(:partial => '/search/navsearch') %>
