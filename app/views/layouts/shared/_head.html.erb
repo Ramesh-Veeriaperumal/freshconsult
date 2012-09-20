@@ -25,22 +25,6 @@
 	<%= include_javascripts :custom_widget %>
 	
 	<%= yield :head %>
-	<style>
-		#benchmarkresult{
-			width: 25%;
-			display: inline-block;
-			position: fixed;
-			z-index: 999;
-			background: #DFDFDF;
-			bottom: 10px;
-			right: 10px;
-			border: 1px solid gainsboro;
-			padding: 10px;
-			box-shadow: 2px 2px #AAA;
-			color: #333;
-			border-radius: 5px;
-		}
-	</style>
 </head>
-<div id="benchmarkresult">
+<div id="benchmarkresult" style="width: 25%;display: inline-block;position: fixed;z-index: 999;background: #DFDFDF;bottom: 10px;right: 10px;border: 1px solid gainsboro;padding: 10px;box-shadow: 2px 2px #AAA;color: #333;border-radius: 5px;">
 </div>
