@@ -16,5 +16,9 @@ module Support::TicketsHelper
     visible_fields = ["display_id", "status", "created_at", "updated_at"] # removed "due_by", "resolved_at"
     current_portal.ticket_fields(:customer_visible).each { |field| visible_fields.push(field.name) }
     visible_fields
+  end
+  
+  def email_regex
+    Helpdesk::Ticket::VALID_EMAIL_REGEX.source
   end  
 end

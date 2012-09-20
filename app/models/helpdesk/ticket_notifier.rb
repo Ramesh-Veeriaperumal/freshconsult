@@ -50,18 +50,22 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def email_notification(params)
     subject       params[:subject]
     recipients    params[:receips]
-    body          :ticket => params[:ticket], :body => params[:email_body],
-                  :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
-                    params[:notification_type])
     from          params[:ticket].friendly_reply_email
     headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}"
     sent_on       Time.now
+    content_type  "multipart/mixed"
+    
+    part "text/html" do |html|
+      html.body   render_message("email_notification",:ticket => params[:ticket], :body => params[:email_body],
+                  :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+                  params[:notification_type]))
+    end
+
     params[:attachments].each do |a|
       attachment  :content_type => a.content_content_type,
                   :body => File.read(a.content.to_file.path),
                   :filename => a.content_file_name
     end
-    content_type  "text/html"
   end
  
   def reply(ticket, note , options={})
@@ -72,19 +76,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     cc            note.cc_emails unless options[:include_cc].blank?
     bcc           note.bcc_emails
     from          note.from_email
-    body          :ticket => ticket, :body => note.body_html,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey])
     headers       "Reply-to" => "#{note.from_email}"
     sent_on       Time.now
-    content_type  "multipart/alternative"
+    content_type  "multipart/mixed"
+  
+    part "text/html" do |html|
+      html.body   render_message("reply",:ticket => ticket, :body => note.body_html,
+                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]))
+    end
 
     note.attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name
     end
-    
-    content_type  "text/html"
   end
 
   def forward(ticket, note, options={})
@@ -93,36 +98,38 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     cc            note.cc_emails
     bcc           note.bcc_emails
     from          note.from_email
-    body          :ticket => ticket, :body => note.body_html
     headers       "Reply-to" => "#{note.from_email}"
     sent_on       Time.now
-    content_type  "multipart/alternative"
+    content_type  "multipart/mixed"
+
+    part "text/html" do |html|
+      html.body   render_message("forward",:ticket => ticket, :body => note.body_html)
+    end
 
     note.attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name
     end
-    
-    content_type  "text/html"
   end
 
    def send_cc_email(ticket,options={})
     subject       formatted_subject(ticket)
     recipients    options[:cc_emails] unless options[:cc_emails].blank?
     from          ticket.friendly_reply_email
-    body          :ticket => ticket, :body => ticket.body_html
     headers       "Reply-to" => "#{ticket.friendly_reply_email}"
     sent_on       Time.now
-    content_type  "multipart/alternative"
-
+    content_type  "multipart/mixed"
+    
+    part "text/html" do |html|
+      html.body   render_message("send_cc_mail",:ticket => ticket, :body => ticket.body_html)
+    end
+    
     ticket.attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name
     end
-    
-    content_type  "text/html"
   end
   
   def notify_comment(ticket, note , reply_email, options={})

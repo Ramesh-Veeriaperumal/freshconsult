@@ -38,5 +38,21 @@ module SupportTicketControllerMethods
       render :action => :new unless mobile?
       render :json => { :errors => @response_errors, :failure => true }.to_json if mobile?
     end
-  end 
+  end
+  
+  def check_email
+    items = check_email_scoper.find(
+            :all, 
+            :conditions => ["email = ?", "#{params[:v]}"])
+    respond_to do |format|
+      format.json { render :json => { :user_exists => items.blank? }  }
+    end
+  end  
+  
+  private
+  
+    def check_email_scoper
+      current_account.all_users
+    end
+
 end
