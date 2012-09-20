@@ -1,7 +1,6 @@
 class CreateScoreboardLevelsTable < ActiveRecord::Migration
   def self.up
-    drop_table :scoreboard_levels
-    
+
   	create_table :scoreboard_levels do |t|
       t.column :account_id , "bigint unsigned"
       t.integer  "points"
@@ -17,4 +16,5 @@ class CreateScoreboardLevelsTable < ActiveRecord::Migration
   def self.down
   	drop_table :scoreboard_levels
   end
+
 end
