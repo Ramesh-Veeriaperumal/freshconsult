@@ -4,21 +4,18 @@ Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
 		this.options = widgetOptions || {};
-		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
-		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
-		this.content_anchor = $$("#"+this.options.anchor+" .content")[0];
-		this.error_anchor = $$("#"+this.options.anchor+" .error")[0];
-		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		this.app_name = this.options.app_name || "Integrated Application";
-		Ajax.Responders.register({
-			onException:function(request, ex){
-			   //console.log(widget.on_exception(request));
-			}
-		});
+		if(!this.options.widget_name) this.options.widget_name = this.app_name.toLowerCase()+"_widget"
+		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.widget_name+"_username");
+		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.widget_name+"_password") || 'x'; // 'x' is for API key handling.
+		this.content_element = $$("#"+this.options.widget_name+" .content")[0];
+		this.error_element = $$("#"+this.options.widget_name+" .error")[0];
+		this.title_element = $$("#"+this.options.widget_name+" #title")[0];
 		if(this.options.title){
-			this.title_anchor.innerHTML = this.options.title;
+			this.title_element.innerHTML = this.options.title;
 		}
 		this.display();
+		this.call_init_requests();
 	},
 
 	getUsername: function() {
@@ -32,53 +29,60 @@ Freshdesk.Widget.prototype={
 			this.alert_failure("Please provide Username and password.");
 		} else {
 			if (credentials.remember_me.value == "true") {
-				Cookie.update(this.options.anchor + "_username", this.options.username);
-				Cookie.update(this.options.anchor + "_password", this.options.password);
+				Cookie.update(this.options.widget_name + "_username", this.options.username);
+				Cookie.update(this.options.widget_name + "_password", this.options.password);
 			}
 			this.display();
+			this.call_init_requests();
 		}
 	},
 
 	logout:function(){
-		Cookie.remove(this.options.anchor+"_username"); this.options.username=null;
-		Cookie.remove(this.options.anchor+"_password"); this.options.password=null;
+		Cookie.remove(this.options.widget_name+"_username"); this.options.username=null;
+		Cookie.remove(this.options.widget_name+"_password"); this.options.password=null;
 		this.display();
 	},
 
 	display_login:function(){
-		if (this.options.login_content != null) {
-			this.content_anchor.innerHTML = this.options.login_content();
+		if (this.options.login_html != null) {
+			this.content_element.innerHTML = (typeof this.options.login_html == "function") ? this.options.login_html() : this.options.login_html;
 		}
 	},
 
 	display:function(){
 		var cw = this;
-		if(this.options.login_content != null && !(this.options.username && this.options.password)){
-			this.content_anchor.innerHTML = this.options.login_content();
+		if(this.options.login_html != null && !(this.options.username && this.options.password)){
+			cw.display_login();
 		} else {
-			if (this.options.application_content){
-				this.content_anchor.innerHTML = this.options.application_content();	
-			}
-			if(this.options.application_resources){
-			this.options.application_resources.each(
-				function(reqData){
-					if(reqData) cw.request(reqData);
-				});
+			if (this.options.application_html){
+				this.content_element.innerHTML = (typeof this.options.application_html == "function") ? this.options.application_html() : this.options.application_html;
 			}
 		}
 	},
 
+	call_init_requests: function() {
+		if(this.options.init_requests){
+			cw=this;
+			this.options.init_requests.each(function(reqData){
+				if(reqData) cw.request(reqData);
+			});
+		}
+	},
+
 	request:function(reqData){
+		reqName = reqData;
+		if(typeof reqData == "string") {
+			reqData = this.options.requests[reqName];
+		}
 		reqData.domain = this.options.domain;
 		reqData.ssl_enabled = this.options.ssl_enabled;
-		reqData.cache_gets = this.options.cache_gets;
 		reqData.accept_type = reqData.accept_type || reqData.content_type;
 		reqData.method = reqData.method || "get";
 		reqHeader = {}
 		if(this.options.use_server_password) {
 			reqData.username = this.options.username
 			reqData.use_server_password = this.options.use_server_password
-			reqData.app_name = this.options.app_name
+			reqData.app_name = this.options.app_name.toLowerCase()
 		}
 		else if(this.options.auth_type == 'OAuth'){
 			reqHeader = {Authorization:"OAuth " + this.options.oauth_token}
@@ -87,19 +91,29 @@ Freshdesk.Widget.prototype={
 			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
 		}
 		new Ajax.Request("/http_request_proxy/fetch",{
-            asynchronous: true,
+      asynchronous: true,
 			parameters:reqData,
 			requestHeaders:reqHeader,
 			onSuccess:function(evt) {
-				if(reqData != null && reqData.on_success != null){
-					reqData.on_success(evt);
-				}
-			},
+				this.resource_success(evt, reqName, reqData)
+			}.bind(this),
 			onFailure:function(evt) {
-				
 				this.resource_failure(evt, reqData)
 			}.bind(this)
 		});
+	},
+
+	resource_success:function(evt, reqName, reqData) {
+		if(reqData != null && reqData.on_success != null){
+			reqData.on_success(evt);
+		} else {
+			resJ = evt.responseJSON;
+			if(this.options.parsers != null && this.options.parsers[reqName] != null) resJ = this.options.parsers[reqName](resJ)
+			if(this.options.templates != null && this.options.templates[reqName] != null) {
+				this.options.application_html = _.template(this.options.templates[reqName], resJ)
+				this.options.display();
+			}
+		}
 	},
 
 	resource_failure:function(evt, reqData){
@@ -107,15 +121,25 @@ Freshdesk.Widget.prototype={
 		if (evt.status == 401) {
 			this.options.username = null;
 			this.options.password = null;
-			Cookie.remove(this.options.anchor + "_username");
-			Cookie.remove(this.options.anchor + "_password");
+			Cookie.remove(this.options.widget_name + "_username");
+			Cookie.remove(this.options.widget_name + "_password");
 			if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 				reqData.on_failure(evt);
-			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
-		} 
+			} else if (this.options.auth_type == 'OAuth'){
+				cw = this;
+				this.refresh_access_token(function(){
+					if(cw.options.oauth_token) {
+						cw.request(reqData);
+					} else {
+						cw.alert_failure("Problem in connecting to "+this.app_name+". Please try again later.")
+					}
+				});
+			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them."); }
+		}
 		else if (evt.status == 403) {
-			this.alert_failure(this.app_name+" declined the request. \n\n " + this.app_name + " returns the following error : " + resJ[0].message);
-		} 
+			err_msg = (resJ) ? resJ[0].message : "Request forbidden."
+			this.alert_failure(this.app_name+" declined the request. \n\n " + this.app_name + " returns the following error : " + err_msg);
+		}
 		else if (evt.status == 502) {
 			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
@@ -134,36 +158,36 @@ Freshdesk.Widget.prototype={
 		} else {
 				errorStr = evt.responseText;
 				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
-			
 		}
 	},
 
 	alert_failure:function(errorMsg) {
-		if (this.error_anchor == null || this.error_anchor == "") {
+		if (this.error_element == null || this.error_element == "") {
 			alert(errorMsg);
 		} else {
-			jQuery(this.error_anchor).removeClass('hide').parent().removeClass('loading-fb');
-			this.error_anchor.innerHTML = errorMsg;
+			jQuery(this.error_element).removeClass('hide').parent().removeClass('loading-fb');
+			this.error_element.innerHTML = errorMsg;
 		}
 	},
 
 	refresh_access_token:function(callback){
-		widgetMain = this;
+		cw = this;
 		this.options.oauth_token = null;
-		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name, {
+		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name.toLowerCase(), {
 				asynchronous: true,
 				method: "get",
 				onSuccess: function(evt){
 					resJ = evt.responseJSON;
-					widgetMain.options.oauth_token = resJ.access_token;
+					cw.options.oauth_token = resJ.access_token;
 					if(callback) callback();
 				},
 				onFailure: function(evt){
-					widgetMain.options.oauth_token = null;
+					cw.options.oauth_token = null;
 					if(callback) callback();
 				}
 			});
 	},
+
 
 	create_integrated_resource:function(resultCallback) {
 		if (this.remote_integratable_id && this.local_integratable_id) {
@@ -184,7 +208,7 @@ Freshdesk.Widget.prototype={
 						resultCallback(evt);
 				},
 				onFailure: function(evt){
-					if (resultCallback) 
+					if (resultCallback)
 						resultCallback(evt);
 				}
 			});
@@ -207,7 +231,140 @@ Freshdesk.Widget.prototype={
 			});	
 		}
 		
+	},
+
+	prettyDate: function(dateStr){
+		var date = new Date(dateStr),
+        diff = (((new Date()).getTime() - date.getTime()) / 1000),
+        day_diff = Math.floor(diff / 86400);
+
+      // return date for anything greater than a day
+      if ( isNaN(day_diff) || day_diff < 0 || day_diff > 0 )
+        return date.getDate() + " " + date.toDateString().split(" ")[1];
+
+      return day_diff == 0 && (
+          diff < 60 && "just now" ||
+          diff < 120 && "a minute ago" ||
+          diff < 3600 && Math.floor( diff / 60 ) + " minutes ago" ||
+          diff < 7200 && "1 hour ago" ||
+          diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
+        day_diff == 1 && "Yesterday" ||
+        day_diff < 7 && day_diff + " days ago" ||
+        day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago";
 	}
+};
+
+Freshdesk.CRMWidget=Class.create();
+Freshdesk.CRMWidget.prototype={
+	initialize:function(widgetOptions, integratable_impl) {
+		Freshdesk.CRMWidget.addMethods(Freshdesk.Widget.prototype); // Extend the Freshdesk.Widget
+		if(widgetOptions.domain) {
+			if(widgetOptions.reqEmail == ""){
+				this.alert_failure('Email not available for this requester. Please make sure a valid Email is set for this requester.');
+			} else {
+				widgetOptions.integratable_impl = integratable_impl;
+				cnt_req = integratable_impl.get_contact_request();
+				if(cnt_req) {
+					cnt_req.on_success = this.handleContactSuccess.bind(this);
+					if (widgetOptions.auth_type != 'OAuth') cnt_req.on_failure = this.handleFailure.bind(this);
+					widgetOptions.init_requests = [cnt_req];
+				}
+				this.initialize(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
+			}
+		} else {
+			this.alert_failure('Domain name not configured. Try reinstalling '+this.options.app_name);
+		}
+	},
+
+	handleFailure:function(response) {
+		this.options.integratable_impl.processFailure(response, this);
+	},
+
+	handleContactSuccess:function(response){
+		resJson = response.responseJSON;
+		this.contacts = this.options.integratable_impl.parse_contact(resJson);
+		if (this.contacts.length > 0) {
+			if(this.contacts.length == 1){
+				this.renderContactWidget(this.contacts[0]);
+				jQuery('#search-back').hide();
+			} else {
+				this.renderSearchResults();
+			}
+		} else {
+			this.renderContactNa();
+		}
+		jQuery("#"+this.options.widget_name).removeClass('loading-fb');
+	},
+
+	renderSearchResults:function(){
+		var salesforceResults="";
+		for(var i=0; i<this.contacts.length; i++){
+			salesforceResults += '<a href="javascript:cw.renderContactWidget(this.contacts[' + i + '])">'+this.contacts[i].name+'</a><br/>';
+		}
+		var results_number = {resLength: this.contacts.length, requester: this.options.reqEmail, resultsData: salesforceResults};
+		this.renderSearchResultsWidget(results_number);
+	},
+
+	renderContactWidget:function(eval_params){
+		cw=this;
+		eval_params.app_name = this.options.app_name;
+		this.options.application_html = function(){ return _.template(cw.VIEW_CONTACT, eval_params);	} 
+		this.display();
+		jQuery("#"+this.options.widget_name+" .contact-type").show();
+	},
+
+	renderSearchResultsWidget:function(results_number){
+		cw=this;
+		this.options.application_html = function(){ return _.template(cw.CONTACT_SEARCH_RESULTS, results_number);} 
+		this.display();
+	},
+
+	renderContactNa:function(){
+		cw=this;
+		this.options.application_html = function(){ return _.template(cw.CONTACT_NA, cw.options);} 
+		this.display();
+	},
+
+	VIEW_CONTACT:
+			'<span class="contact-type hide"><%=type%></span>' +
+			'<div class="title">' +
+				'<div class="salesforce-name">' +
+					'<div id="contact-name"><a target="_blank" href="<%=url%>"><%=name%></a></div>' +
+				    '<div id="contact-desig"><%=designation%></div>'+
+			    '</div>' + 
+		    '</div>' + 
+		    '<div class="field half_width">' +
+		    	'<div id="crm-contact">' +
+				    '<label>Contact</label>' +
+				    '<span id="contact-address"><%=address%></span>' +
+			    '</div>'+	
+		    	'<div  id="crm-dept">' +
+				    '<label>Department</label>' +
+				    '<span id="contact-dept"><%=department%></span>' +
+			    '</div>'+	
+		    '</div>'+
+		    '<div class="field half_width">' +
+		    	'<div  id="crm-phone">' +
+				    '<label>Phone</label>' +
+				    '<span id="contact-phone"><%=phone%></span>'+
+			    '</div>' +
+				'<div id="crm-mobile">' +
+				    '<label>Mobile</label>' +
+				    '<span id="contact-mobile"><%=mobile%></span>'+
+				'</div>' +
+			'</div>'+
+			'<div class="external_link"><a id="search-back" href="javascript:cw.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view" href="<%=url%>">View <span id="crm-contact-type"><%=type%></span> in <%=app_name%></a></div>',
+
+	CONTACT_SEARCH_RESULTS:
+		'<div class="title">' +
+			'<div id="number-returned" class="salesforce-name"> <%=resLength%> results returned for <%=requester%> </div>'+
+			'<div id="search-results"><%=resultsData%></div>'+
+		'</div>',
+
+	CONTACT_NA:
+		'<div class="title contact-na">' +
+			'<div class="salesforce-name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
+		'</div>'
 };
 
 var UIUtil = {
@@ -310,6 +467,14 @@ var UIUtil = {
 		}
 	},
 
+	sortDropdown: function(dropDownBoxId) {
+		jQuery("#"+dropDownBoxId).html(jQuery("#"+dropDownBoxId+" option").sort(function (a, b) {
+				a = a.text.toLowerCase();
+				b = b.text.toLowerCase();
+				return a == b ? 0 : a < b ? -1 : 1
+		}))
+	},
+
 	hideLoading: function(integrationName,fieldName,context) {
 		jQuery("#" + integrationName + context + '-' + fieldName).removeClass('hide');
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');
@@ -339,6 +504,7 @@ var CustomWidget =  {
 	}
 };
 CustomWidget.include_js("/javascripts/base64.js");
+CustomWidget.include_js("/javascripts/frameworks/underscore-min.js");
 
 var XmlUtil = {
 	extractEntities:function(resStr, lookupTag){
@@ -362,7 +528,7 @@ var XmlUtil = {
 
 	getNodeValueStr:function(dataNode, nodeName){
 		return this.getNodeValue(dataNode, nodeName) || "";
-	},
+	}
 /*
 	getNodeAttrValue:function(dataNode, lookupTag, attrName){
 		var element = dataNode.getElementsByTagName(lookupTag);
@@ -430,7 +596,7 @@ var HashUtil = {
 
 	getNodeValueStr:function(dataNode, lookupKey){
 		return this.getNodeValue(dataNode, lookupKey) || "";
-	},
+	}
 }
 
 var Cookie=Class.create({});

@@ -1,4 +1,4 @@
-<div class="sort-bar toolbar">
+<div class="sort-bar">
   <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
     <ul>             
        <% current_sort_name = "" %>
@@ -35,7 +35,7 @@
     </ul>   
   </div>
   <a class="drop-right nav-trigger" href="#" menuid="#SortMenu">
-    <%= t('ticket.sort_by') %> <b><%= current_sort_name %></b>
+    <%= t('ticket.sort_by') %> <b><%= current_sort_name.blank? ? sort_fields.first[0] : current_sort_name %></b>
   </a>
 </div>
   <% javascript_tag do %>

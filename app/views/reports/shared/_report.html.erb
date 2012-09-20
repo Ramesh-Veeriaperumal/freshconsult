@@ -1,4 +1,4 @@
-	<div id="ticket-toolbar" class="toolbar">
+	<div class="toolbar">
 		<h3 class="title" id="report-main-title">
 		  <span><%= params[:date_range] %></span>        
 		  <%= params[:controller].ends_with("customer_reports") ? 
@@ -19,6 +19,9 @@
 	  <div class="seperator"></div>		  
 	  <div id="pie-charts">
 	    <%= render :partial => '/reports/shared/pie_charts' %>     
+	  </div>
+	  <div id="bar-charts">
+	    <%= render :partial => '/reports/shared/bar_charts' %>     
 	  </div>
 	  <% else %>
 	  	<div id="charts-nodata" class="list-noinfo"> No data to display </div>   

@@ -1,7 +1,5 @@
 class ContactsController < ApplicationController
 
-    before_filter :requires_all_tickets_access 
-
     before_filter :except => [:make_agent] do |c| 
       c.requires_permission :manage_tickets
     end
@@ -10,6 +8,8 @@ class ContactsController < ApplicationController
       c.requires_permission :manage_users
     end
 
+    before_filter :requires_all_tickets_access 
+    
    include HelpdeskControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
@@ -84,6 +84,11 @@ class ContactsController < ApplicationController
       end
     end
   end
+
+  def hover_card
+    @user = current_account.all_users.find(params[:id])    
+    render :partial => "hover_card"
+  end
   
   def build_and_save
     @user = current_account.users.new #by Shan need to check later  
@@ -128,7 +133,6 @@ class ContactsController < ApplicationController
         format.xml  { head 200}
       end
     else
-      logger.debug "error while saving #{@obj.errors.inspect}"
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
@@ -142,11 +146,15 @@ class ContactsController < ApplicationController
     @agent = current_account.agents.new
     @agent.user = @item 
     @agent.occasional = false
-     if @agent.save        
-      redirect_to @item
-    else
-      redirect_to :back
-    end    
+    respond_to do |format|
+      if @agent.save        
+        format.html { redirect_to @item }
+        format.xml  { render :xml => @item, :status => 200 }
+      else
+        format.html { redirect_to :back }
+        format.xml  { render :xml => @agent.errors, :status => 500 }
+      end   
+    end 
   end
   
   def autocomplete   

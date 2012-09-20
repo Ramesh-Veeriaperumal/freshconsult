@@ -24,35 +24,36 @@ class ThirdCRM
   end
 
   def add_signup_data(account, options = {})
-   returned_val = sandbox(0) {
+   #returned_val = sandbox(0) {
      lead_contact = add_contact(account)
      lead_custom_field = add_custom_field_data(account)
      lead_record = lead_contact.merge(lead_custom_field)
      marketo_cookie = options[:marketo_cookie]
      marketo_lead = contact_crm_api(lead_record, marketo_cookie)
-   }
+   #}
     
     #If some error occours while dumping the data into 
-    if returned_val == 0
-      FreshdeskErrorsMailer.deliver_error_in_crm!(account)
-    end
+    # if returned_val == 0
+    #   FreshdeskErrorsMailer.deliver_error_in_crm!(account)
+    # end
   end
   
   def add_contact(account)
     account_admin = account.account_admin
     lead_contact = {}
-    lead_contact[:LastName] = account_admin.name
+    lead_contact[:FirstName] = account_admin.name
     lead_contact[:Phone] = account_admin.phone
     lead_contact[:Email ] = account_admin.email
-    lead_contact[:Company ] = account_admin.name
+    lead_contact[:Company ] = account.name
+    lead_contact[:Country] = account.conversion_metric.country if account.conversion_metric
     lead_contact
   end
 
   def add_custom_field_data(account)
     subscription = account.subscription
     lead_custom_field = {}
-    lead_custom_field[:Account_Created_Date__c ] = account.created_at 
-    lead_custom_field[:Account_Renewal_Date__c] = subscription.next_renewal_at 
+    lead_custom_field[:Account_Created_Date__c ] = account.created_at.to_s(:db) 
+    lead_custom_field[:Account_Renewal_Date__c] = subscription.next_renewal_at.to_s(:db) 
     lead_custom_field[:Freshdesk_Domain_Name__c ] = account.full_domain  
     lead_custom_field[:Plan__c ] = subscription.subscription_plan.name 
     lead_custom_field[:Amount__c] = subscription.amount 
@@ -61,9 +62,9 @@ class ThirdCRM
   end
   
   def contact_crm_api(lead_record, marketo_cookie)
-    if !marketo_cookie.blank? and (client.get_lead_by_cookie(marketo_cookie))
-      marketo_cookie = ""
-    end
+    # if !marketo_cookie.blank? and (client.get_lead_by_cookie(marketo_cookie))
+    #   marketo_cookie = ""
+    # end
     client.sync_lead(lead_record[:Email], marketo_cookie, lead_record)
   end
   

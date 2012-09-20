@@ -17,7 +17,8 @@ class Reports::SurveyReportsController < ApplicationController
 			group_list
 		else
 			overall_summary			
-			redirect_to survey_overall_report_path(overall_params) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
+			redirect_to survey_overall_report_path(overall_params) and 
+			   return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
 		end
     		
 	end
@@ -29,7 +30,8 @@ class Reports::SurveyReportsController < ApplicationController
 			group_list
 		else
 			overall_summary			
-			redirect_to survey_overall_report_path(overall_params) and return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
+			redirect_to survey_overall_report_path(overall_params) and 
+			  return if (@reports_list.size > 0 && !(!params[:view].blank? && params[:view] == Survey::LIST ))
 		end
 
 		render :partial => "list"	

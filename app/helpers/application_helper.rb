@@ -4,6 +4,7 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
+  include Gamification::GamificationUtil
 
   require "twitter"
   
@@ -120,6 +121,12 @@ module ApplicationHelper
     end
   end
 
+  def fd_menu_link(text, url, is_active)
+    text << "<span class='icon ticksymbol'></span>" if is_active
+    class_name = is_active ? "active" : ""
+    link_to(text, url, :class => class_name)
+  end
+
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets) ],
@@ -165,6 +172,14 @@ module ApplicationHelper
 
     navigation = tabs.map do |s| 
       content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
+    end
+  end
+
+  def show_contact_hovercard(user, options=nil)
+    if current_user.can_view_all_tickets?
+      link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
+    else
+      link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
     end
   end
   
@@ -301,8 +316,12 @@ module ApplicationHelper
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
-  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" )
-    content_tag( :div, (image_tag (user.avatar) ? user.avatar.content.url(profile_size) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  end
+
+  def user_avatar_with_expiry( user, expiry = 300)
+    user_avatar(user,:thumb,"preview_pic",{:expiry => expiry})
   end
   
   def is_user_social( user, profile_size )
@@ -335,8 +354,8 @@ module ApplicationHelper
   end
   
   # Date and time format that is mostly used in our product
-  def formated_date(date_time, format = "%B %e %Y @ %I:%M %p")
-    format = format.gsub(/.\b[%Yy]/, "") if (date_time.year == Time.now.year)
+  def formated_date(date_time, format = "%a, %b %e, %Y at %l:%M %p")
+    format = format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     date_time.strftime(format)
   end
   
@@ -381,15 +400,18 @@ module ApplicationHelper
       return ""
     else
       widget = installed_app.application.widgets[0]
-      # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
-      replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
-      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+      widget_script(installed_app, widget, liquid_objs)
     end
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "")
-    
+  def widget_script(installed_app, widget, liquid_objs)
+    replace_objs = liquid_objs || {}
+    # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+    replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, "application" => installed_app.application}) unless installed_app.blank?# Application name based liquid obj values.
+    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+  end
+
+  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
@@ -421,7 +443,7 @@ module ApplicationHelper
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
-        rendered_partial = (render :partial => field[:partial])
+        rendered_partial = (render :partial => field[:partial], :locals => {:installed_app=>installed_app, :f=>form})
         element = "#{label} #{rendered_partial}"
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
@@ -449,7 +471,7 @@ module ApplicationHelper
         end
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
-        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit)
+        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
         element += add_name_field unless is_edit
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)

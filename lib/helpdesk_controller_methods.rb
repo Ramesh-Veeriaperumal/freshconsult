@@ -10,6 +10,7 @@ module HelpdeskControllerMethods
   end
 
   def create
+    build_attachments
     if @item.save
       post_persist
     else
@@ -18,7 +19,7 @@ module HelpdeskControllerMethods
   end
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do 
-    create_attachments 
+    #create_attachments 
     flash.now[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     process_item #    
     #redirect_back_or_default redirect_url
@@ -190,10 +191,10 @@ protected
     @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
   end
   
-  def create_attachments
+  def build_attachments
     return unless @item.respond_to?(:attachments) 
     (params[nscname][:attachments] || []).each do |a|
-      @item.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @item.account_id)
+      @item.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @item.account_id)
     end
     
   end

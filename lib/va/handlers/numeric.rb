@@ -12,6 +12,14 @@ class Va::Handlers::Numeric < Va::RuleHandler
     def is_not(evaluate_on_value)
       !is(evaluate_on_value)
     end
+
+    def greater_than(evaluate_on_value)
+      evaluate_on_value > numeric_value
+    end
+
+    def less_than(evaluate_on_value)
+      evaluate_on_value < numeric_value
+    end
     
     def filter_query_is
       construct_query '='

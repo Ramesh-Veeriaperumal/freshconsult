@@ -337,14 +337,14 @@ Autocompleter.MultiValue = Class.create({
   selectEntry: function() {
     this.active = false;
     var element = this.getCurrentEntry();
-    this.addEntry(element.choiceId, element.textContent || element.innerText);
+    this.addEntry(element.choiceId, element.textContent || element.innerText, true);
     this.searchField.clear();
     this.searchField.focus();
   },
 
-  addEntry: function(id, title) {
+  addEntry: function(id, title, skip_separatorRegEx) {
     var items = [id],index,titleArr=[title];
-    if(this.options.separatorRegEx){
+    if(!skip_separatorRegEx && this.options.separatorRegEx){
         items = id.split(this.options.separatorRegEx);
         titleArr = title.split(this.options.separatorRegEx);
     }

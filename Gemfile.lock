@@ -51,8 +51,8 @@ GEM
       activesupport (= 2.3.8)
     activesupport (2.3.8)
     addressable (2.2.7)
-    after_commit (1.0.8)
-      activerecord (< 3.0.0)
+    after_commit (1.0.10)
+      activerecord (>= 1.15.6, < 3.0.0)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
@@ -90,6 +90,7 @@ GEM
     gyoku (0.4.6)
       builder (>= 2.1.2)
     hashie (1.2.0)
+    html2textile (1.0.0.beta1)
     http_accept_language (1.0.1)
     httparty (0.6.1)
       crack (= 0.1.8)
@@ -118,6 +119,7 @@ GEM
       systemu (~> 2.5.0)
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
+    memcache-client (1.8.5)
     metaclass (0.0.1)
     mime-types (1.16)
     mocha (0.11.4)
@@ -209,6 +211,9 @@ GEM
       uuid (>= 2.0.2)
       uuid (>= 2.0.2)
     resque_mailer (1.0.1)
+    rforce (0.10)
+      builder (~> 3.0)
+      oauth (~> 0.4)
     riddle (1.2.2)
     rspec (1.3.1)
     rspec-rails (1.3.3)
@@ -286,6 +291,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.3)
   SystemTimer (= 1.2.3)
+  after_commit (~> 1.0.10)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   aws-s3 (= 0.6.2)
@@ -294,6 +300,7 @@ DEPENDENCIES
   compass
   delayed_job (= 1.8.4)
   factory_girl (= 1.2.3)
+  html2textile (~> 1.0.0.beta1)
   http_accept_language (= 1.0.1)
   httparty (= 0.6.1)
   i18n (= 0.4.2)
@@ -304,6 +311,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   map-fields (= 1.0.0)
   marketo!
+  memcache-client (= 1.8.5)
   mongrel
   mysql
   net-dns (= 0.6.1)
@@ -323,6 +331,7 @@ DEPENDENCIES
   resque-scheduler
   resque-status
   resque_mailer (= 1.0.1)
+  rforce
   rspec (= 1.3.1)
   rspec-rails (= 1.3.3)
   ruby-debug (= 0.10.3)

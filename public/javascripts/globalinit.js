@@ -5,7 +5,7 @@ var $J = jQuery.noConflict();
  
 (function($){
    // Global Jquery Plugin initialisation
-   $.fn.qtip.baseIndex = 10000;
+   // $.fn.qtip.baseIndex = 10000;
  
    // Tweet custom class
    $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
@@ -35,17 +35,17 @@ var $J = jQuery.noConflict();
        return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
    }, 'Please enter a valid hours.');
    $.validator.addClassRules("hours", { hours: true });
- 	
-	
-	//Domain Name Validator 
+  
+  
+  //Domain Name Validator 
    $.validator.addMethod("domain_validator", function(value, element) {
        if (this.optional(element)) // return true on optional element
          return true;
         if (value.length == 0) { return true; }       
-     	if(/((http|https|ftp):\/\/)\w+/.test(value))
-     	valid = false;
-     	else if(/\w+[\-]\w+/.test(value))
-     	valid = true;
+      if(/((http|https|ftp):\/\/)\w+/.test(value))
+      valid = false;
+      else if(/\w+[\-]\w+/.test(value))
+      valid = true;
         else if((/\W\w*/.test(value))) {
         valid = false;
         }
@@ -79,7 +79,7 @@ var $J = jQuery.noConflict();
 
     hidePopover = function (ev) {  
       if(!$.contains(this, ev.relatedTarget) ) { 
-        if(hoverPopup && !$(ev.relatedTarget).is('[rel=hover-popover]')) {
+        if(hoverPopup && !$(ev.relatedTarget).is('[rel=contact-hover]')) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
         }
       }
@@ -88,7 +88,7 @@ var $J = jQuery.noConflict();
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
-
+		
 		$("a[rel=popover]")
 			.popover({ 
 				delayOut: 300,
@@ -114,8 +114,9 @@ var $J = jQuery.noConflict();
           return $("#" + $(this).attr("data-widget-container")).val();
         }
       });
-    $("[rel=hover-popover]")
-      .popover({ 
+
+    $("[rel=contact-hover]").livequery(function(){ 
+      $(this).popover({ 
         delayOut: 300,
         trigger: 'manual',
         offset: 5,
@@ -123,12 +124,25 @@ var $J = jQuery.noConflict();
         reloadContent: false,
         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
         content: function(){
-          return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
+          var container_id = "user-info-div-"+$(this).data('contactId');
+          return jQuery("#"+container_id).html() || "<div class='loading-box' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
         }
-      });
+      }); 
+    });
 
+    $("[rel=remote-load]").livequery(function(){ 
+      if(!document.getElementById('remote_loaded_dom_elements'))
+        $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body")
 
-      $("[rel=hover-popover]").live('mouseenter',function(ev) {
+      $(this)
+        .load($(this).data("url"), function(){
+          $(this).attr("rel", "");
+          $(this).removeClass("loading-box");
+          $(this).clone().prependTo('#remote_loaded_dom_elements');          
+        });
+    });
+
+      $("a[rel=contact-hover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         hideWidgetPopup(ev);
         widgetPopup = $(this).popover('show');
@@ -136,13 +150,12 @@ var $J = jQuery.noConflict();
       }).live('mouseleave',function(ev) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
       });
-			
 		$("a[rel=widget-popover]").live("click", function(e){
 				e.preventDefault();
 				e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-				$('[rel=widget-popover],[rel=hover-popover]').each(function(){
+				$('[rel=widget-popover],[rel=contact-hover]').each(function(){
 					$(this).popover('hide');
 				});
  				widgetPopup = $(this).popover('show');
@@ -151,6 +164,7 @@ var $J = jQuery.noConflict();
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
+      $(".nav-trigger").livequery(function(){ $(this).showAsMenu(); });
       $("input[rel=toggle]").livequery(function(){ $(this).itoggle(); });
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
@@ -160,6 +174,21 @@ var $J = jQuery.noConflict();
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
+
+      $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
+      $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
+
+      // !PULP to be moved into the pulp framework as a sperate util or plugin function
+      $("[rel=remote]").livequery(function(){
+        $(this).bind("afterShow", function(ev){
+          var _self = $(this);
+          if(_self.data('remoteUrl'))
+            _self.append("<div class='loading-box'></div>");
+            _self.load(_self.data('remoteUrl'), function(){
+                _self.data('remoteUrl', false);
+            });
+        });
+      });
       
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
@@ -200,29 +229,18 @@ var $J = jQuery.noConflict();
           
         });
       });
-      
-      $(".admin_list li")
-         .hover(
-            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-         );
-
-      $(".content_list li")
-         .hover(
-            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-         );
 
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);
       $("form.ui-form").validate(validateOptions);
+      $("form[rel=validate]").validate(validateOptions);
 
-		$('.single_click_link').live('click',function(ev) {
-			if (! $(ev.srcElement).is('a')) {
-				window.location = $(this).find('a').first().attr('href');
-			}
-		});
+    $('.single_click_link').live('click',function(ev) {
+      if (! $(ev.srcElement).is('a')) {
+        window.location = $(this).find('a').first().attr('href');
+      }
+    });
 
     $("input[rel=companion]")
       .live({ 
@@ -236,14 +254,6 @@ var $J = jQuery.noConflict();
         }
       });
 
-		//Clicking on the row (for ticket list only), the check box is toggled.
-		$('.tickets tbody tr').live('click',function(ev) {
-      if (! $(ev.target).is('input[type=checkbox]') && ! $(ev.target).is('a')) {
-				var checkbox = $(this).find('input[type=checkbox]').first();
-				checkbox.prop('checked',!checkbox.prop('checked'));
-			}
-		});
-		
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
          $('#Pagearea').css("minHeight", sidebarHeight);
@@ -281,8 +291,6 @@ var $J = jQuery.noConflict();
                 classes: 'ui-tooltip-rounded ui-tooltip-shadow'
              }
         });
-         
-        $(".nav-trigger").showAsMenu();
          
         menu_box_count = 0;
         fd_active_drop_box = null;

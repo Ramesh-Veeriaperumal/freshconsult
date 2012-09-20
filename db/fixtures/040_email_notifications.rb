@@ -16,8 +16,18 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :account_id => account.id, 
     :requester_notification => true, 
     :agent_notification => true,
-    :agent_template => '<p>A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, just click the link below:<br /><br />{{password_reset_url}}<br /><br />If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.<br /><br />Regards,<br />{{helpdesk_name}}</p>',
-    :requester_template => '<p>A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, just click the link below:<br /><br />{{password_reset_url}}<br /><br />If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.<br /><br />Regards,<br />{{helpdesk_name}}</p>',
+    :agent_template => 'Hey {{agent.name}},<br /><br />
+              A request to change your password has been made.<br /><br />
+              To reset your password, click on the link below:<br />
+              <a href="{{password_reset_url}}">Click here to reset the password.</a> <br /><br />
+              If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us, if you continue to face any problems.<br /><br />
+              Regards,<br />{{helpdesk_name}}',
+    :requester_template => 'Hey {{contact.name}},<br /><br />
+              A request to change your password has been made.<br /><br />
+              To reset your password, click on the link below:<br />
+              <a href="{{password_reset_url}}">Click here to reset the password.</a> <br /><br />
+              If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us,if you continue to face any problems.<br /><br />
+              Regards,<br />{{helpdesk_name}}',
     :requester_subject_template => "{{ticket.portal_name}} password reset instructions",
     :agent_subject_template => "{{ticket.portal_name}} password reset instructions"
   },
@@ -92,5 +102,9 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       :account_id => account.id, :requester_notification => false, :agent_notification => true,
       :agent_template => '<p>Hi {{ticket.agent.name}},<br /><br />Ticket "#{{ticket.id}} - {{ticket.subject}}" has been reopened, please visit {{ticket.url}} to view the ticket.<br /><br />Ticket comment<br />{{comment.body}}</p>',
     :agent_subject_template => "Ticket re-opened - [\#{{ticket.id}}] {{ticket.subject}}"
+},
+{ :notification_type => EmailNotification::DEFAULT_REPLY_TEMPLATE, 
+      :account_id => account.id, :requester_notification => true, :agent_notification => false,
+      :requester_template => '<p>Hi {{ticket.requester.name}},<br /><br />Ticket: {{ticket.url}}<br/></p>'
 }
 ])

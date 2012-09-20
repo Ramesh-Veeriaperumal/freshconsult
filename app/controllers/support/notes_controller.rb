@@ -18,29 +18,28 @@ class Support::NotesController < ApplicationController
         "account_id" => current_account && current_account.id
       }.merge(params[:helpdesk_note]))
     
-
+    build_attachments
     if @note.save
       update_cc_list if current_user.client_manager?
-      create_attachments
       flash[:notice] = t(:'flash.tickets.notes.create.success')
     else
       flash[:error] = t(:'flash.tickets.notes.create.failure')
     end
     respond_to do |format|
-      format.mobile {
-        render :json => {:success => true,:item => @note}.to_json
-      }
       format.html{
         redirect_to :back
+      }
+      format.mobile {
+        render :json => {:success => true,:item => @note}.to_json
       }
     end
   end
   
 
-  def create_attachments 
+  def build_attachments 
     return unless @note.respond_to?(:attachments)
     (params[:helpdesk_note][:attachments] || []).each do |a| 
-      @note.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @note.account_id)
+      @note.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @note.account_id)
     end
   end
   

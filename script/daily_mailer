@@ -58,6 +58,10 @@ Lockfile('lock', :retries => 0) do
    end
   end
 
+  Subscription.find_discount_expiry.each do |sub|
+    sub.remove_discount
+  end
+
   Subscription.find_due.each do |sub|
   	begin
   		puts "#{sub.account.full_domain}"

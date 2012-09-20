@@ -4,20 +4,24 @@ module Helpdesk::TicketsHelper
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::NoteActions
+  include RedisKeys
+  include Integrations::AppsUtil
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to(strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])), :class => ( selected ? "active #{cls}": "#{cls}" ))
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ))
     else
       content_tag(:span, "", :class => "seperator")
     end  
   end
   
-  def drop_down_views(viewlist, menuid = "leftViewMenu")
+  def drop_down_views(viewlist, selected_item, menuid = "leftViewMenu", unsaved_view=false)
+    extra_class = ""
+    extra_class = "unsaved" if unsaved_view
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, ( link_to "#{viewlist.size-1} more views", "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}" }), :class => "link-item" ) +
-        content_tag(:div, viewlist.map { |s| view_menu_links(s) }, :class => "fd-menu", :id => menuid)
+        content_tag(:div, (link_to strip_tags(selected_item), "/helpdesk/tickets", { :class => "drop-right nav-trigger #{extra_class}", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
+        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }, :class => "fd-menu", :id => menuid)
     end
   end
   
@@ -68,24 +72,32 @@ module Helpdesk::TicketsHelper
       dynamic_view.concat([{ :id => -1 }])
     end
     
-    top_views_array = [ 
-    ].concat(dynamic_view).concat([
+    default_views = [
       { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
       { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },      
       { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
       { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
       { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
-    ])
+    ]
+    top_views_array = [].concat(dynamic_view).concat(default_views)
     top_index = top_views_array.index{|v| v[:id] == selected} || 0
 
-    if( show_max-1 < top_index )
-      top_views_array.insert(show_max-1, top_views_array.slice!(top_index))
+    cannot_delete = false
+    selected_item =  top_views_array.select { |v| v[:id].to_s == selected.to_s }.first
+    unless selected_item.blank?
+      selected_item_name = selected_item[:name]
+    else
+      if selected.blank?
+        selected_item_name = t("tickets_filter.unsaved_view")
+      else
+        selected_from_default = SELECTORS.select { |v| v.first == selected.to_sym }
+        selected_item_name =  (selected_from_default.blank? ? default_views.first[:name] : selected_from_default.first[1]).to_s
+      end
+      cannot_delete = true
     end
-    
-    top_view_html = 
-        (top_views_array.shift(show_max).map do |s|
-            view_menu_links(s, "link-item", (s[:id] == selected)) unless( s[:id] == -1 )
-        end).to_s + drop_down_views(top_views_array).to_s
+
+    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", selected.blank? ).to_s +
+      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
   end
   
   def filter_select( prompt = t('helpdesk.tickets.views.select'))    
@@ -118,23 +130,25 @@ module Helpdesk::TicketsHelper
   end
    
   def current_sort
-  	cookies[:sort] = (params[:sort] ? params[:sort] : ( (!cookies[:sort].blank?) ? cookies[:sort] : DEFAULT_SORT )).to_sym 
+    cookies[:sort] = (params[:sort] ? params[:sort] : ( (!cookies[:sort].blank?) ? cookies[:sort] : DEFAULT_SORT )).to_sym 
   end
  
   def current_sort_order 
-  	cookies[:sort_order] = (params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : DEFAULT_SORT_ORDER )).to_sym
+    cookies[:sort_order] = (params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : DEFAULT_SORT_ORDER )).to_sym
   end
   
-  def current_wf_order 
-  	cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
+  def current_wf_order
+    return @cached_filter_data[:wf_order].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order].blank?
+    cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
   end
 
   def current_wf_order_type 
-  	cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
+    return @cached_filter_data[:wf_order_type] if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
+    cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
 
   def cookie_sort 
-  	 "#{current_sort} #{current_sort_order}"
+     "#{current_sort} #{current_sort_order}"
   end
  
   def current_selector
@@ -197,9 +211,33 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket, class_name = "need-attention")
-    if ticket.active? && ticket.ticket_states.need_attention 
-      class_name
+  def subject_style(ticket)
+    type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
+    type = "new" if ticket.ticket_states.is_new? && !ticket.onhold_and_closed?
+    type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
+    type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
+    type
+  end
+
+  def sla_status(ticket)
+    if( ticket.active? )
+      unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
+        if(Time.now > ticket.due_by )
+          t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        else
+          t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        end
+      else
+        " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 
+            #{distance_of_time_in_words(Time.now, ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]))} "
+      end
+
+    else
+      if( ticket.ticket_states.resolved_at < ticket.due_by )
+        t('resolved_on_time')
+      else
+        t('resolved_late')
+      end
     end
   end
   
@@ -207,7 +245,6 @@ module Helpdesk::TicketsHelper
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
-
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
       last_reply_time = last_conv.created_at
@@ -227,10 +264,29 @@ module Helpdesk::TicketsHelper
         last_reply_content = doc.at_css("body").inner_html 
       end
     end
-    content = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/><br/>"+signature.to_s+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
+    
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
+
+    if(!forward)
+      requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
+      if(!requester_template.nil?)
+        reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
+        default_reply = (signature.blank?)? "<p/><br/><div>#{reply_email_template}</div>" : "<p/><br/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
+      end 
+    end
+    content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content+"</blockquote></div>"
     return content
+  end
+
+  def bind_last_reply (item, signature, forward = false)
+    ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
+    last_conv = (item.is_a? Helpdesk::Note) ? item : 
+                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+    key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
+
+    return ( get_key(key) || bind_last_conv(item, signature) )
   end
 
   def status_changed_time_value_hash (ticket)

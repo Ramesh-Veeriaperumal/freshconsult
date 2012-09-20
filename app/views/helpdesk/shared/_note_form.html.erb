@@ -5,7 +5,7 @@
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
         <div class="request_form_options">
-          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
+          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.id})", :class => "slim-button insert-canned-response", "data-tiny-mce-id" => "#{cntid}-body") %>
         </div>
         <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
         <label class="caption"><%= t("message")%>:</label>
@@ -43,7 +43,7 @@
                   var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {choices: 10});
                   var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
 				
-				          new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
+	               new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
 
                 <%- end %>
                 <input type="text" id="notify_emails" name="helpdesk_note[to_emails]" />

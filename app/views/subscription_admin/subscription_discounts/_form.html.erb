@@ -18,6 +18,18 @@
 	  	<%= form.text_field :amount %>
 		</div>
 	</div>
+	<div class="control-group">
+	  <%= form.label :free_agents, "", :class => "control-label" %>
+		<div class="controls">
+	  	<%= form.text_field :free_agents %>
+		</div>
+	</div>
+	<div class="control-group">
+	  <%= form.label :life_time, "", :class => "control-label" %>
+		<div class="controls">
+	  	<%= form.text_field :life_time %>
+		</div>
+	</div>
 	<div class="control-group">                                
 		<div class="controls">             
 			<label class="checkbox">
@@ -58,7 +70,7 @@
 		<%= form.label :trial_period_extension, "", :class => "control-label" %>
 		<div class="controls">
 		  <%= form.text_field :trial_period_extension %>
-		  <%= form.select :plan_id, options_from_collection_for_select(SubscriptionPlan.all, :id, :name) %>    
+		  <%= form.select :plan_id, options_from_collection_for_select(SubscriptionPlan.all, :id, :name,@subscription_discount.plan_id) %>    
 		</div>		
   </div>
 	<div class="form-actions"> 

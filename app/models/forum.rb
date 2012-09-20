@@ -24,6 +24,30 @@ class Forum < ActiveRecord::Base
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten]
 
+   def self.visibility_array(user)   
+    vis_arr = Array.new
+    if user && user.has_manage_forums?
+      vis_arr = VISIBILITY_NAMES_BY_KEY.keys
+    elsif user
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
+    else
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
+    end
+  end
+
+
+  named_scope :visible, lambda {|user| {
+                    :include => :customer_forums ,
+                    :conditions => visiblity_condition(user) } }
+
+
+  def self.visiblity_condition(user)
+    condition =  {:forum_visibility =>self.visibility_array(user) }
+    condition =  Forum.merge_conditions(condition) + " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
+                customer_forums.customer_id = #{user.customer_id} )" if (user && user.has_company?)
+    return condition
+  end
+
   validates_presence_of :name,:forum_category,:forum_type
   validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   validates_inclusion_of :forum_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max
@@ -53,7 +77,7 @@ class Forum < ActiveRecord::Base
   format_attribute :description
   attr_protected :forum_category_id , :account_id
 
-  after_save :set_topic_delta_flag
+  # after_save :set_topic_delta_flag
   before_update :clear_customer_forums
   
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
@@ -100,6 +124,11 @@ class Forum < ActiveRecord::Base
     find :all, options.update(:conditions => {:account_id => account}, :order => 'position')
   end
   
+  def self.forum_names(account)
+    forums = account.user_forums
+    forums.map{|forum| [forum.id, forum.name]}
+  end
+
   def type_name
     TYPE_NAMES_BY_KEY[forum_type]
   end
@@ -116,12 +145,12 @@ class Forum < ActiveRecord::Base
       user.customer  && customer_forums.map(&:customer_id).include?(user.customer.id))
   end
   
-  def set_topic_delta_flag
-    self.topics.each do |topic|
-      topic.delta = true
-      topic.save
-    end
-  end
+  # def set_topic_delta_flag
+  #   self.topics.each do |topic|
+  #     topic.delta = true
+  #     topic.save
+  #   end
+  # end
   
   def to_xml(options = {})
      options[:indent] ||= 2

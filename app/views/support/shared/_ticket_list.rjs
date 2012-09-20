@@ -1,3 +1,6 @@
 @items = @tickets
-page.replace_html 'ticket-list', "<table class='tickets'> <tbody>" + each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) + "</tbody> </table>"
+page.replace_html 'ticket-list', "<table class='customer_tickets tickets' id='tickets-expanded'> <tbody>" + 
+				each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) + 
+				"</tbody> </table><div class='toolbar'>" + 
+				(will_paginate(@tickets, :class => "toolbar_pagination_full") || "") + '</div>'
 page.replace_html 'ticket-sub-toolbar', :partial => '/support/shared/ticket_sort', :locals=>{:is_portal=>true}

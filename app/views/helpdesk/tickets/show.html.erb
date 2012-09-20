@@ -1,14 +1,16 @@
 <% content_for :sidebar do -%>
-     <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
-  
+  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
+  <%= render :partial => "/integrations/widgets/helpdesk_tickets_show_side_bar_widget", :locals => {:ticket => @ticket, :user => @ticket.requester}%>
+
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
+  <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
+
 <%- end %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
-
-
+<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 
 <div class="request-well">			
@@ -28,17 +30,23 @@
 <div class="tab-content">
 	<div class="requestCnt request-conversation active tab-pane set-top" id="Pages">
 		<div id="TicketForms">
-		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
-		  <%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
-		  <%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		  <%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		  <%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<div class="canned-response-menu hide" id="canned_response_container"> 
-			  <div>
-			    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
-			  </div>
-			  <div id="canned_response_list"></div>
-			</div>
+		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
+
+		  	<div class="request_panel hide" id="cnt-fwd">
+				<%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
+		  	</div>
+
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<% content_for :pagefixed do %> 
+				<div class="canned-response-menu hide" id="canned_response_container"> 
+				  <div>
+				    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+				  </div>
+				  <div id="canned_response_list"></div>
+				</div>
+			<% end %>
 		</div> 
 		<% unless @ticket_notes.blank? %>
 			<%= render :partial => 'note', :collection => @ticket_notes %>
@@ -56,21 +64,20 @@
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
 	<% javascript_tag do %>
 	var activeForm = null;
-
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
-			
+
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 
-				jQuery("#"+formid+"-body").redactor({autoformat: false,focus: true,path:'/javascripts/redactor',toolbar: 'default'});
 
-			activeForm = jQuery('#'+formid).slideDown();
+			activeForm = jQuery('#'+formid).show();
 			switch(formid){
 				case 'cnt-reply':
-					// jQuery('#reply_cc_emails_id').trigger("cc_visibility");
 				case 'cnt-note':
-					insertIntoConversation("");					
+				case 'cnt-fwd':
+					invokeRedactor(formid+"-body",formid);
+					jQuery('#'+formid+"-body").getEditor().focus();
 				break; 
 				case 'cnt-fb-post': 
 					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
@@ -79,32 +86,42 @@
 					setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
 				break;
 			}
-
 		}
 
-    function show_canned_response(ticket_id){
-      jQuery("#canned_response_container")
-        .show().addClass("loading");
-      jQuery("#canned_response_list")
-        .load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
-          jQuery("#canned_response_container")
-            .removeClass("loading");
-        })
-        .show();        
-    }
-         
+	var activeTinyMce = null;
+    function show_canned_response(button, ticket_id){
+      	jQuery("#canned_response_container").css(jQuery(button).offset());
 
-		function insertIntoConversation(value){
+      	activeTinyMce = jQuery(button).data("tinyMceId") || "";
+      	
+      	jQuery("#canned_response_container")   	
+        	.show()
+        	.addClass("loading");
+
+      	jQuery("#canned_response_list")
+        	.load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
+          		jQuery("#canned_response_container")
+            		.removeClass("loading");
+        	})
+      		.show();        
+    }
+
+         
+		function insertIntoConversation(value,element_id){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
 			fwd_area = jQuery('#cnt-fwd')
 			tweet_area = jQuery('#cnt-tweet');
-			if(note_area.css("display") == 'block'){                                                
-				
-        	jQuery("#cnt-note-body").insertHtml(value);
 
-			} 
-			else if(tweet_area.css("display") == 'block'){
+			if(element_id == undefined){
+				 if(reply_area.css('display')== 'block') {
+					 element_id = "cnt-reply-body";
+				}
+				else if (note_area.css('display') =='block'){
+					element_id = "cnt-note-body";
+				}
+			}
+			if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
 						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
 						jQuery('#send-tweet-cnt-tweet-body')
@@ -112,17 +129,14 @@
 								.trigger("keydown");
 				});			
 			}
-			else{
-				if(reply_area.css("display") == 'none' && fwd_area.css("display") == 'none')
-					jQuery('#ReplyButton').trigger("click");
-					var msg_body_id = reply_area.css("display") == 'none' ? "cnt-fwd" : "cnt-reply"
-		       		jQuery("#"+msg_body_id+"-body").insertHtml(value);
-
+			if(jQuery(element_id)){
+		        	jQuery("#"+element_id).getEditor().focus();
+		       		jQuery("#"+element_id).insertHtml(value);
 			}        
-			
+
 			return;
 		}
-		
+
 		function getCannedResponse(ticket_id, ca_resp_id){
   	  jQuery("#canned_response_container").addClass("loading")
   		jQuery.ajax({	type: 'POST',
@@ -130,7 +144,7 @@
   						contentType: 'application/text',
   						async: false,
   						success: function(data){		
-  									insertIntoConversation(data);
+  									insertIntoConversation(data,activeTinyMce);
   							    jQuery("#canned_response_list")
   							      .removeClass("loading")
   							      .hide(300);
@@ -153,7 +167,6 @@
   		}
   	}
 
-	
   <% end %>
 
 <% end %>
@@ -161,6 +174,8 @@
 <% content_for :onload_script do -%> 	
 	jQuery('#custom_ticket_form').validate();
 	<% unless @draft.nil? %>
-	jQuery(document).ready(function(){setTimeout(function(){jQuery("#ReplyButton").trigger('click');},500);});
+	jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
+	var isDirty= false;
 	<% end %>
+	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 <%- end %>

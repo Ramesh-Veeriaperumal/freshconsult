@@ -6,8 +6,13 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   attr_protected :ticket_id
   
   def reset_tkt_states
+    @resolved_time_was = self.resolved_at_was
     self.resolved_at = nil
     self.closed_at = nil
+  end
+
+  def resolved_time_was
+    @resolved_time_was ||= resolved_at
   end
   
   def set_resolved_at_state
@@ -23,4 +28,44 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     first_response_time.blank? or (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
   end
   
+  def is_new?
+    first_response_time.blank?
+  end
+
+  def customer_responded?
+    (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
+  end
+
+  def first_call_resolution?
+      (inbound_count == 1)
+  end
+
+  def current_state
+
+    if (closed_at && status_updated_at && status_updated_at > closed_at) #inapportune case
+        return TICKET_LIST_VIEW_STATES[:resolved_at] if(resolved_at && resolved_at > closed_at )
+        return TICKET_LIST_VIEW_STATES[:created_at] if(agent_responded_at.nil?)
+        return TICKET_LIST_VIEW_STATES[:agent_responded_at] 
+    end
+
+    return TICKET_LIST_VIEW_STATES[:closed_at] if closed_at
+    
+    if (resolved_at && status_updated_at && status_updated_at > resolved_at) #inapportune case
+      return TICKET_LIST_VIEW_STATES[:created_at] if(agent_responded_at.nil?)
+      return TICKET_LIST_VIEW_STATES[:agent_responded_at] 
+    end
+    
+    return TICKET_LIST_VIEW_STATES[:resolved_at] if resolved_at
+    
+    return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded?
+    return TICKET_LIST_VIEW_STATES[:agent_responded_at] if agent_responded_at
+    return TICKET_LIST_VIEW_STATES[:created_at]
+  end
+
+
+private
+  TICKET_LIST_VIEW_STATES = { :created_at => "created_at", :closed_at => "closed_at", 
+    :resolved_at => "resolved_at", :agent_responded_at => "agent_responded_at", 
+    :requester_responded_at => "requester_responded_at" }
+
 end

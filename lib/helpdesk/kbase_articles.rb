@@ -16,8 +16,9 @@ class Helpdesk::KbaseArticles
     content_ids = article_params[:content_ids] 
    
     article_params[:attachments].each_pair do |key,value|
-      created_attachment = article.attachments.create(:content => value, :account_id => account.id)
       content_id = content_ids[key]
+      description = "content_id" unless content_id.nil?
+      created_attachment = article.attachments.create(:content => value, :account_id => account.id, :description => description)
       temp_body_html = temp_body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
     end
 

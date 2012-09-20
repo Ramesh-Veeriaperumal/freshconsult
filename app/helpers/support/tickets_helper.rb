@@ -5,7 +5,7 @@ module Support::TicketsHelper
   end
 
   def current_wf_order 
-    cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : "due_by" )).to_sym
+    cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : "created_at" )).to_sym
   end
 
   def current_wf_order_type 
