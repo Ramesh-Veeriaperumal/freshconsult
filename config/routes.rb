@@ -226,7 +226,7 @@
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
-                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post }, 
+                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post, :add_requester => :post}, 
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -300,7 +300,7 @@
 
   map.namespace :support do |support|
      support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-       support.resources :tickets do |ticket|
+       support.resources :tickets , :collection => { :check_email => :get } do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     support.ticket_add_cc "/support/ticket/:id/add_cc", :controller => 'tickets', :action => 'add_cc'

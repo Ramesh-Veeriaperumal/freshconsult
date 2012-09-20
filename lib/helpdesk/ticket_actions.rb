@@ -298,4 +298,8 @@ module Helpdesk::TicketActions
            :note => [@ticket, Helpdesk::Note.new(:private => true)] }
   end
   
+  def add_requester
+    @user = current_account.users.new
+    render :partial => "contacts/add_requester_form"
+  end
 end
