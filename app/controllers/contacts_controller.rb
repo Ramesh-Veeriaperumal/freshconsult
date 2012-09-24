@@ -72,6 +72,7 @@ class ContactsController < ApplicationController
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
         format.widget { render :action => :show}
+        format.js
       end
     else
       check_email_exist
@@ -79,6 +80,7 @@ class ContactsController < ApplicationController
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
         format.widget { render :action => :show}
+        format.js
       end
     end
   end
@@ -144,11 +146,15 @@ class ContactsController < ApplicationController
     @agent = current_account.agents.new
     @agent.user = @item 
     @agent.occasional = false
-     if @agent.save        
-      redirect_to @item
-    else
-      redirect_to :back
-    end    
+    respond_to do |format|
+      if @agent.save        
+        format.html { redirect_to @item }
+        format.xml  { render :xml => @item, :status => 200 }
+      else
+        format.html { redirect_to :back }
+        format.xml  { render :xml => @agent.errors, :status => 500 }
+      end   
+    end 
   end
   
   def autocomplete   

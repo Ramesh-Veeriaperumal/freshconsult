@@ -56,7 +56,7 @@ class AccountsController < ApplicationController
   end
 
   def create_account
-    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:garden]
+    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:estate]
     build_object
     build_primary_email_and_portal
     build_user

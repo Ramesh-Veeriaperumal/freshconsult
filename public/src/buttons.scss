@@ -490,11 +490,87 @@ div.action_buttons:hover{
     @include border-radius(16px);
     line-height:0;
     font-weight: 200;
+    font-size: 13px;
     span{ display:block; margin-top:10px; font-weight:bold; }
   }  
   .on-label{    
-    @include background(linear-gradient(top, #4ea961, lighten(#4ea961, 10%)));    
+    background-color: #40894c; // Old browsers
+    @include filter-gradient(#40894c, #4ea961, vertical); // IE6-9
+    @include background-image(linear-gradient(top, hsla(130,36%,40%,1) 0%,hsla(133,37%,49%,1) 100%));
+
     span{ padding-right:12px; }
   }
   .off-label span{ padding-left:12px; }
+}
+
+// BUTTON GROUPS
+// -------------
+// To be moved out after bootstrap migration
+
+
+// Make the div behave like a button
+.btn-group {
+  position: relative;
+  @include clearfix(); // clears the floated buttons
+  @include ie7-restore-left-whitespace();
+}
+
+// Space out series of button groups
+.btn-group + .btn-group {
+  margin-left: 5px;
+}
+
+// Float them, remove border radius, then re-add to first and last elements
+.btn-group .btn {
+  position: relative;
+  float: left;
+  margin-left: -1px;
+  margin-right: 0;
+  @include border-radius(0);
+}
+// Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
+.btn-group .btn:first-child {
+  margin-left: 0;
+     -webkit-border-top-left-radius: 4px;
+         -moz-border-radius-topleft: 4px;
+             border-top-left-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+      -moz-border-radius-bottomleft: 4px;
+          border-bottom-left-radius: 4px;
+}
+.btn-group .btn:last-child,
+.btn-group .dropdown-toggle {
+     -webkit-border-top-right-radius: 4px;
+         -moz-border-radius-topright: 4px;
+             border-top-right-radius: 4px;
+  -webkit-border-bottom-right-radius: 4px;
+      -moz-border-radius-bottomright: 4px;
+          border-bottom-right-radius: 4px;
+}
+// Reset corners for large buttons
+.btn-group .btn.large:first-child {
+  margin-left: 0;
+     -webkit-border-top-left-radius: 6px;
+         -moz-border-radius-topleft: 6px;
+             border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+      -moz-border-radius-bottomleft: 6px;
+          border-bottom-left-radius: 6px;
+}
+.btn-group .btn.large:last-child,
+.btn-group .large.dropdown-toggle {
+     -webkit-border-top-right-radius: 6px;
+         -moz-border-radius-topright: 6px;
+             border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+      -moz-border-radius-bottomright: 6px;
+          border-bottom-right-radius: 6px;
+}
+
+// On hover/focus/active, bring the proper btn to front
+.btn-group .btn:hover,
+.btn-group .btn:focus,
+.btn-group .btn:active,
+.btn-group .btn.active {
+  z-index: 2;
 }

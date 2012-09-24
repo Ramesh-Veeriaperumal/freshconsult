@@ -15,4 +15,3 @@ end
 on_utilities("redis") do
 	run "sudo monit restart all -g helpkit_resque" 
 end
-

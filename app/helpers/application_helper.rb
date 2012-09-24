@@ -4,6 +4,7 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
+  include Gamification::GamificationUtil
 
   require "twitter"
   
@@ -315,8 +316,12 @@ module ApplicationHelper
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
-  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" )
-    content_tag( :div, (image_tag (user.avatar) ? user.avatar.content.url(profile_size) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  end
+
+  def user_avatar_with_expiry( user, expiry = 300)
+    user_avatar(user,:thumb,"preview_pic",{:expiry => expiry})
   end
   
   def is_user_social( user, profile_size )
@@ -460,10 +465,14 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
-        element = add_cc_field_tag element ,field unless is_edit
+        unless is_edit
+          element += add_requester_field 
+          element = add_cc_field_tag element, field
+        end
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
+        element += add_name_field unless is_edit
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -497,6 +506,15 @@ module ApplicationHelper
        element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
     end
     return element
+  end
+  
+  def add_requester_field
+    content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
+  end
+  
+  def add_name_field
+    content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
+                :id => "name_field", :class => "hide") unless current_user
   end
 
   # The field_value(init value) for the nested field should be in the the following format

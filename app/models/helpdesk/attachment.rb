@@ -24,6 +24,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_post_process :image?
     #before_post_process :set_content_dispositon
     before_create :set_content_type
+
+   def s3_permissions
+    public_permissions? ? "public-read" : "private"
+   end
+
+   def public_permissions?
+    description and (description == "logo" || description == "fav_icon" || description == "public" || description == "content_id")
+   end
   
    def set_content_type
     mime_content_type = File.extname(self.content_file_name).gsub('.','')
@@ -66,6 +74,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
          xml.tag!("attachment_url",AWS::S3::S3Object.url_for(content.path,content.bucket_name,:expires_in => 300.seconds).gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
      end
    end
+
+  def expiring_url(style = "original",expiry = 300)
+    AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
+                                          :expires_in => expiry.to_i.seconds)
+  end
   
   private
   

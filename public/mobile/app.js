@@ -32122,6 +32122,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         })
         fieldSetObj.items.items[0].setOptions(reply_emails).show();
         fieldSetObj.items.items[0].setValue(this.ticket.selected_reply_email);
+        fieldSetObj.items.items[12].setValue(this.ticket.selected_reply_email);
         if(reply_emails.length === 1) 
             fieldSetObj.items.items[0].setHidden(true);
 
@@ -43153,11 +43154,16 @@ Ext.define('Freshdesk.view.EmailForm', {
                     {
                         xtype: 'selectfield',
                         name: 'reply_email[id]',
-                        label: 'From :'
+                        label: 'From :',
+                        listeners: {
+                            change: function(selObj,newVal,oldVal,eOpts){
+                                this.parent.items.items[12].setValue(newVal);
+                            }
+                        }
                     },
                     {
                         xtype: 'emailfield',
-                        name: 'to_email',
+                        name: 'helpdesk_note[to_emails]',
                         label: 'To :',
                         readOnly:true,
                         cls:'disbaled'
@@ -43184,7 +43190,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                     },
                     {
                         xtype: 'emailfield',
-                        name: 'cc_emails',
+                        name: 'helpdesk_note[cc_emails]',
                         label:'Cc/Bcc:',
                         listeners: {
                             focus: function(){
@@ -43195,7 +43201,7 @@ Ext.define('Freshdesk.view.EmailForm', {
                     },
                     {
                         xtype: 'emailfield',
-                        name: 'bcc_emails',
+                        name: 'helpdesk_note[bcc_emails]',
                         label:'Bcc:',
                         hidden:true,
                         showAnimation:'fadeIn'
@@ -43272,6 +43278,11 @@ Ext.define('Freshdesk.view.EmailForm', {
                         xtype: 'hiddenfield',
                         name: 'email_type',
                         value:'Reply'
+                    },
+                    {
+                        xtype: 'hiddenfield',
+                        name: 'helpdesk_note[from_email]',
+                        label: 'From :'
                     }
                 ]
             }

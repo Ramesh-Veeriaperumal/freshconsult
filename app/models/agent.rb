@@ -1,6 +1,8 @@
 class Agent < ActiveRecord::Base
   
-    
+  include Notifications::MessageBroker
+  include Gamification::Scoreboard::Memcache #Need to refactor this!
+
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id' , :dependent => :destroy 
 
   accepts_nested_attributes_for :user
@@ -14,8 +16,14 @@ class Agent < ActiveRecord::Base
 
   has_many :time_sheets , :class_name => 'Helpdesk::TimeSheet' , :through => :user , :foreign_key =>'user_id'
 
+  belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
+  
   before_create :set_default_ticket_permission
- 
+  before_update :update_agents_level
+
+  after_save  :update_agent_levelup
+  after_update :publish_game_notifications
+  
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
     [ :group_tickets,  2 ], 
@@ -48,6 +56,42 @@ def signature_value
   self.signature_html || (RedCloth.new(self.signature).to_html unless @signature.blank?)
 end
 
-named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
+  named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
+
+  def next_level
+    return unless points?
+    user.account.scoreboard_levels.next_level_for_points(points).first
+  end
+
+  def clear_leaderboard_cache! #Refactor this code!
+    memcache_delete(user)
+  end
+
+protected
+  
+  def update_agents_level
+    return unless points_changed?
+
+    level = user.account.scoreboard_levels.level_for_score(points).first
+    if level and !(scoreboard_level_id.eql? level.id)
+      self.level = level
+    end
+  end
+
+  def publish_game_notifications
+    level_change = scoreboard_level_id_changed? && scoreboard_level_id_change 
+    level_up = level_change && ( level_change[0].nil? || level_change[0] < level_change[1] )
+    if level_up
+      publish("#{I18n.t('gamification.notifications.newlevel',:name => level.name)}", [user_id.to_s]) 
+    end
+  end
+
+  def update_agent_levelup
+    return unless scoreboard_level_id_changed?
+    new_point = user.account.scoreboard_levels.find(scoreboard_level_id).points
+    if level and ((points ? points : 0) < new_point)
+      SupportScore.add_agent_levelup_score(user, new_point)
+    end 
+  end
 
 end

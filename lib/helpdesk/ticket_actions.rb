@@ -144,8 +144,13 @@ module Helpdesk::TicketActions
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
     @note.attachments.each do |attachment|      
-      url = attachment.content.url.split('?')[0]
-      @item.attachments.build(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @item.account_id)    
+      url = attachment.authenticated_s3_get_url
+      io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
+      if io
+        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+      end
+      @item.attachments.build(:content => io, :description => "", 
+        :account_id => @item.account_id)
     end
   end
   
@@ -238,8 +243,12 @@ module Helpdesk::TicketActions
       )
       ## handling attachemnt..need to check this
      @source_ticket.attachments.each do |attachment|      
-      url = attachment.content.url.split('?')[0]
-      @target_note.attachments.build(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
+      url = attachment.authenticated_s3_get_url
+      io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
+      if io
+        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+      end
+      @target_note.attachments.build(:content => io, :description => "", :account_id => @target_note.account_id)
     end
     @target_note.save
     if !@target_note.private
@@ -289,4 +298,8 @@ module Helpdesk::TicketActions
            :note => [@ticket, Helpdesk::Note.new(:private => true)] }
   end
   
+  def add_requester
+    @user = current_account.users.new
+    render :partial => "contacts/add_requester_form"
+  end
 end

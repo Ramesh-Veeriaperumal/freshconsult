@@ -64,6 +64,16 @@ default_fields:
         handler: numeric
     any:
         handler: allow_all
+    st_survey_rating:
+        handler: numeric
+    folder_id:
+        handler: numeric
+    thumbs_up:
+        handler: numeric
+    forum_id:
+        handler: numeric
+    user_votes:
+        handler: numeric
 
 handlers:
     email: Va::Handlers::Email

@@ -96,6 +96,8 @@
     admin.resources :canned_responses
     admin.resources :products
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
+    admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
+    admin.resources :quests, :member => { :toggle => :put }
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
@@ -108,8 +110,7 @@
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
   map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
   map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
-  map.scoreboard_activity '/scoreboard/reports', :controller => 'reports/scoreboard_reports', :action => 'index' 
-  map.scoreboard_activity_generate '/scoreboard/reports/generate', :controller => 'reports/scoreboard_reports', :action => 'generate'
+  map.scoreboard_activity '/gamification/reports', :controller => 'reports/gamification_reports', :action => 'index'   
   map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
   map.survey_back_to_list '/survey/reports/:category/:view', :controller => 'reports/survey_reports', :action => 'index'
   map.survey_list '/survey/reports_list', :controller => 'reports/survey_reports', :action => 'list'
@@ -225,7 +226,7 @@
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
-                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post }, 
+                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post, :add_requester => :post}, 
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -237,11 +238,15 @@
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_'   
-      
+      ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_' 
     end
 
     #helpdesk.resources :ticket_issues
+
+    helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :agents => :get, 
+      :groups => :get }, :only => [ :mini_list, :agents, :groups ]
+    helpdesk.resources :quests, :only => [ :active, :index, :unachieved ], 
+      :collection => { :active => :get, :unachieved => :get }
 
     helpdesk.resources :notes
 
@@ -274,7 +279,9 @@
     
     helpdesk.resources :support_plans
     
-    helpdesk.resources :sla_policies   
+    helpdesk.resources :sla_policies 
+
+    helpdesk.resources :notifications, :only => :index
     
   end
   
@@ -293,7 +300,7 @@
 
   map.namespace :support do |support|
      support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-       support.resources :tickets do |ticket|
+       support.resources :tickets , :collection => { :check_email => :get } do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     support.ticket_add_cc "/support/ticket/:id/add_cc", :controller => 'tickets', :action => 'add_cc'

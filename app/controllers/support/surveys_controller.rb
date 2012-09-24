@@ -26,7 +26,7 @@ class Support::SurveysController < ApplicationController
   
   def create_for_portal
 
-    @ticket = current_account.tickets.find_by_id(params[:ticket_id])
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
     
     unless can_access_support_ticket?
       access_denied
