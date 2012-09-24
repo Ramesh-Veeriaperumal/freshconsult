@@ -9,7 +9,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
   attr_protected :account_id, :sync_tag_id
   serialize :last_sync_status, Hash
-  has_many :google_contacts, :dependent => :destroy
+  has_many :google_contacts, :dependent => :destroy # TODO: Handle the destroy through single query.
   attr_accessor :last_sync_index, :import_groups, :donot_update_sync_time, :access_token # Non persisted property used only for importing.
 
   def self.find_or_create(params, account)

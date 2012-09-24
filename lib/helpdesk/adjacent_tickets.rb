@@ -95,8 +95,8 @@ module Helpdesk::AdjacentTickets
 				filter_params = get_key(cached_filters_key)
 				if filter_params
 					filter_params = JSON.parse(filter_params) 
-					filter_params[:data_hash] = JSON.parse(filter_params["data_hash"])
-					filter_params.symbolize_keys!      
+					filter_params["data_hash"] = JSON.parse(filter_params["data_hash"])
+					filter_params.symbolize_keys!
 
 					@ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
 					@ticket_filter = @ticket_filter.deserialize_from_params(filter_params)
@@ -108,7 +108,7 @@ module Helpdesk::AdjacentTickets
 						#If this is a number, if so consider as custom view
 						unless cookies[:filter_name].to_i.to_s != cookies[:filter_name]	
 							@ticket_filter = current_account.ticket_filters.find_by_id(cookies[:filter_name])
-							unless @ticket_filter.blank?
+							unless @ticket_filter.nil?
 								@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
 								filter_params.merge!(@ticket_filter.attributes["data"])
 							end
@@ -130,7 +130,6 @@ module Helpdesk::AdjacentTickets
 	      action_hash[index]={ "condition" => "helpdesk_tickets.id", "operator" => "is_in", "value" => value }
 	      break
 	    end
-
 	    filter_params[:data_hash] = action_hash
 
 	    filter_params

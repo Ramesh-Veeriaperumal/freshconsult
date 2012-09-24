@@ -1,5 +1,7 @@
 class SurveyResult < ActiveRecord::Base
 
+  include Gamification::GamificationUtil
+
   belongs_to_account
     
   has_one :survey_remark, :dependent => :destroy
@@ -8,6 +10,9 @@ class SurveyResult < ActiveRecord::Base
   belongs_to :agent,:conditions => {:deleted => false},:class_name => 'User', :foreign_key => :agent_id
   belongs_to :customer,:class_name => 'User', :foreign_key => :customer_id
   belongs_to :group,:class_name => 'Group', :foreign_key => :group_id
+
+  after_create :update_ticket_rating, :add_support_score
+  after_commit_on_create :process_ticket_quests_on_feedback
   
   def add_feedback(feedback)
     note = surveyable.notes.build({
@@ -25,8 +30,7 @@ class SurveyResult < ActiveRecord::Base
       :account_id => account_id,
       :note_id => note.id
     })
-    
-    # add_support_score
+         
   end
   
   def happy?
@@ -47,8 +51,6 @@ class SurveyResult < ActiveRecord::Base
         end
   end
 
-  private
-  
   def self.generate_reports_list(survey_reports,category,sort_by)
     
   agents_report = Hash.new
@@ -107,21 +109,36 @@ class SurveyResult < ActiveRecord::Base
                                                      :order => :name
                                                    }}
 
-named_scope :portal , lambda { |conditional_params| { :joins => :account,                    
+  named_scope :portal , lambda { |conditional_params| { :joins => :account,                    
                                                       :select => "account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total",                
                                                       :group => "survey_results.account_id,survey_results.rating",
                                                       :conditions => conditional_params,                                                     
                                                       :order => :name
                                                    }}
 
-named_scope :remarks , lambda { |conditional_params| { 
+  named_scope :remarks , lambda { |conditional_params| { 
                                                       :include => :survey_remark,
                                                       :conditions => conditional_params,
                                                       :order => "survey_results.created_at DESC"
                                                    }}                                                   
+  private                                                   
+
     def add_support_score
-      SupportScore.happy_customer(surveyable) if happy?
-      SupportScore.unhappy_customer(surveyable) if unhappy?
+      return unless gamification_feature?(surveyable.account)
+      SupportScore.add_happy_customer(surveyable) if happy?
+      SupportScore.add_unhappy_customer(surveyable) if unhappy?
+    end
+
+    def update_ticket_rating
+      return unless surveyable.is_a? Helpdesk::Ticket
+
+      surveyable.st_survey_rating= rating
+      surveyable.save
     end
     
+    def process_ticket_quests_on_feedback
+      Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => surveyable_id, 
+                :account_id => account_id }) if gamification_feature?(surveyable.account)
+    end
+
 end

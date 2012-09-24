@@ -49,7 +49,7 @@ class AuthorizationsController < ApplicationController
       if !@db_google_account.blank? && @omniauth_origin == "install"
         Rails.logger.error "As already an account has been configured can not configure one more account."
         flash[:error] = t("integrations.google_contacts.already_exist")
-        redirect_to configure_integrations_installed_application_path(params[:iapp_id]) 
+        redirect_to edit_integrations_installed_application_path(params[:iapp_id]) 
       else
         @existing_google_accounts = Integrations::GoogleAccount.find_all_by_account_id(current_account)
         @google_account.account = current_account
@@ -175,8 +175,15 @@ class AuthorizationsController < ApplicationController
   end
   
   def failure
+    portal = Portal.find_by_id(session["omniauth.origin"])  unless session["omniauth.origin"].blank?
     flash[:notice] = t(:'flash.g_app.authentication_failed')
-    redirect_to root_url
+    unless portal.blank?
+      domain = portal.host
+      protocol = (portal.account.ssl_enabled?) ? "https://" : "http://"
+      redirect_to protocol+domain
+    else
+      redirect_to root_url
+    end
   end
   
   def destroy

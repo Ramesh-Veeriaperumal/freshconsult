@@ -1,13 +1,15 @@
 <% content_for :sidebar do -%>
-     <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
-  
+  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
+  <%= render :partial => "/integrations/widgets/helpdesk_tickets_show_side_bar_widget", :locals => {:ticket => @ticket, :user => @ticket.requester}%>
+
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
+  <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
+
 <%- end %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
-
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 
@@ -64,7 +66,7 @@
 	var activeForm = null;
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
-			
+
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 
@@ -110,7 +112,7 @@
 			reply_area = jQuery('#cnt-reply');
 			fwd_area = jQuery('#cnt-fwd')
 			tweet_area = jQuery('#cnt-tweet');
-			
+
 			if(element_id == undefined){
 				 if(reply_area.css('display')== 'block') {
 					 element_id = "cnt-reply-body";
@@ -131,10 +133,10 @@
 		        	jQuery("#"+element_id).getEditor().focus();
 		       		jQuery("#"+element_id).insertHtml(value);
 			}        
-			
+
 			return;
 		}
-		
+
 		function getCannedResponse(ticket_id, ca_resp_id){
   	  jQuery("#canned_response_container").addClass("loading")
   		jQuery.ajax({	type: 'POST',
@@ -150,7 +152,7 @@
   						});
   		return true;
   	}
-	
+
   	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
@@ -164,7 +166,7 @@
   			jQuery(".toEmailMoreLink").text('');
   		}
   	}
-		
+
   <% end %>
 
 <% end %>

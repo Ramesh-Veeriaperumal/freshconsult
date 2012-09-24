@@ -10,9 +10,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
+  include BusinessRulesObserver
   include Mobile::Actions::Ticket
+  include Gamification::GamificationUtil
 
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", "header_info"]
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
+                            "header_info", "st_survey_rating"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
@@ -24,7 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   unhtml_it :description
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :disable_observer
   
   before_validation :populate_requester, :set_default_values
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
@@ -36,21 +39,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   after_create :refresh_display_id, :save_custom_field, :update_content_ids, :pass_thro_biz_rules,  
       :create_initial_activity
+  before_save :update_ticket_changes
+  after_commit_on_create :support_score_on_create, :process_quests
+  after_commit_on_update :support_score_on_update, :process_quests
 
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-       :stop_timesheet_timers
+       :stop_timesheet_timers, :fire_update_event
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
-  
+
   belongs_to :email_config
   belongs_to :group
  
   belongs_to :responder,
-    :class_name => 'User'
+    :class_name => 'User',
+    :conditions => ['users.user_role not in (?,?)',User::USER_ROLES_KEYS_BY_TOKEN[:customer],
+    User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]
 
   belongs_to :requester,
     :class_name => 'User'
+  
 
   belongs_to :sphinx_requester,
     :class_name => 'User',
@@ -114,6 +123,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
+  delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
@@ -238,7 +248,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
-    
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -737,7 +746,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
+    super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
+      ticket_states.respond_to?(attribute)
   end
 
   def schema_less_attributes(attribute, args)
@@ -754,6 +764,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
 
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
+      return ticket_states.send(method) if ticket_states.respond_to?(method)
 
       load_flexifield if custom_field.nil?
       custom_field.symbolize_keys!
@@ -858,11 +869,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       requester.customer.nil? ? "No company" : requester.customer.name
     end
     
-    def resolved_at
-      return ticket_states.closed_at if closed?
-      ticket_states.resolved_at 
-    end
-    
     def priority_name
       PRIORITY_NAMES_BY_KEY[priority]
     end
@@ -902,7 +908,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
- 
   def can_access?(user)
     if user.agent.blank?
       return true if self.requester_id==user.id
@@ -1001,22 +1006,68 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
     
-    # def support_score_on_create
-    #   add_support_score unless active?
-    # end
+    def support_score_on_create
+      add_support_score if gamification_feature?(account) && !active?
+    end
     
-    # def support_score_on_update
-    #   if active? && !@old_ticket.active?
-    #     s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
-    #     s_score.destroy if s_score
-    #   elsif !active? && @old_ticket.active?
-    #     add_support_score
-    #   end
-    # end
+    def support_score_on_update
+      return unless gamification_feature?(account)
+
+      if (reopened_now? or (@ticket_changes.key?(:deleted) && deleted?))
+        Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
+                :account_id => account_id,
+                :remove_score => true })
+      elsif resolved_now?
+        add_support_score
+      end
+    end    
+
+    def add_support_score
+      Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
+                :account_id => account_id,
+                :fcr =>  ticket_states.first_call_resolution?,
+                :resolved_at_time => ticket_states.resolved_at,
+                :remove_score => false }) unless ticket_states.resolved_at.nil?
+    end
+
+    def update_ticket_changes
+      @ticket_changes = self.changes.clone
+      @ticket_changes.symbolize_keys!
+    end
     
-    # def add_support_score
-    #   SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-    # end
+    #Temporary move of quest processing from observer - Shan
+    def process_quests
+      if gamification_feature?(account)
+  			process_available_quests
+  			rollback_achieved_quests
+  		end
+    end
+    
+    def process_available_quests
+  		if responder and resolved_now?
+  			Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => id, 
+  							:account_id => account_id })
+  		end
+  	end
+
+  	def rollback_achieved_quests
+  		if responder and reopened_now?
+  			Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => id, 
+  							:account_id => account_id, :rollback => true,
+  							:resolved_time_was => ticket_states.resolved_time_was })
+  		end
+  	end
+
+  	def resolved_now?
+      @ticket_changes.key?(:status) && ((resolved? && @ticket_changes[:status][0] != CLOSED) || 
+            (closed? && @ticket_changes[:status][0] != RESOLVED))
+  	end
+
+  	def reopened_now?
+      @ticket_changes.key?(:status) && (active? && 
+                      [RESOLVED, CLOSED].include?(@ticket_changes[:status][0]))
+  	end
+    #Quest processing ends here..
 
     def parse_email(email)
       if email =~ /(.+) <(.+?)>/
@@ -1084,5 +1135,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.save unless schema_less_ticket.changed.empty?
     end
 
+    def fire_update_event
+      fire_event(:update) unless disable_observer
+    end
 end
-  
