@@ -123,6 +123,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
+  delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
@@ -866,11 +867,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def customer_name
       requester.customer.nil? ? "No company" : requester.customer.name
-    end
-    
-    def resolved_at
-      return ticket_states.closed_at if closed?
-      ticket_states.resolved_at 
     end
     
     def priority_name

@@ -1614,6 +1614,7 @@ en:
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
+      ca_responses : Canned Responses
       insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
@@ -2439,9 +2440,10 @@ en:
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
-  bulk_update: "Bulk Update"
+  bulk_actions: "Bulk Actions"
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
+  select: "Select ..."
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"

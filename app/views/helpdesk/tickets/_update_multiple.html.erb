@@ -1,61 +1,125 @@
-<div class="dialog-special">
-  <div class="content solution-list">
-  	<ul>
-  	<% helpdesk_submit_options = []%>
+<div class="bulktickets" id="bulktickets">
+<div class="dialog-special small_curve " id="update-fields">
+  <div class="content clearfix scrollbar">
+    <%= include_stylesheets :redactor  %>
+    <%= include_javascripts :redactor  %>
+
+    <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
+  	
+    <% helpdesk_submit_options = []%>
   	<% current_portal.ticket_fields.each  do |field| %>
-		<% if field.visible_in_view_form? %>
-      <%
-        dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type  
-      %>
-      <%if ((dom_type == "dropdown") || (dom_type == "dropdown_blank") || (dom_type == "nested_field"))%>
+  		<% if field.visible_in_view_form? %>
         <%
-          object_name     = "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
-			    label = label_tag object_name+"_"+field.field_name, field.label
+          dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type  
+        %>
+        <%if ((dom_type == "dropdown") || (dom_type == "dropdown_blank") || (dom_type == "nested_field"))%>
+          <%
+            object_name = "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+  			    
+            checkbox = check_box_tag object_name+"_"+field.field_name+"_label"
+            label = label_tag (object_name+"_"+field.field_name+"_label", checkbox + field.label,:rel => "inputcheckbox")
+            
+            if field.field_type == "nested_field"
+              helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+field.field_name
+                field.nested_ticket_fields.each do |nested_ticket_fields|
+                    helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+nested_ticket_fields.field_name
+            end 
+              element = label + nested_field_tag(object_name, field.field_name, field, {:include_blank => t('select'), :selected => {}},{:class => dom_type, :rel => "inputselectbox"}, {}, false)
+              
+            else
+              helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '_custom_field' : '' }"+"_"+field.field_name
+              element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('select'), :selected => t('select')},{:class => dom_type, :rel => "inputselectbox"})   
 
-          if field.field_type == "nested_field"
-            helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+field.field_name
-              field.nested_ticket_fields.each do |nested_ticket_fields|
-                  helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+nested_ticket_fields.field_name
+              
+            end
+          %>  
+  			  <%= content_tag :div, element, :class => "field-item #{cycle('clear', '', '') }" %>
 
-              end 
-            element = label + nested_field_tag(object_name, field.field_name, field, {:include_blank => t('no_change'), :selected => {}}, {:class => dom_type}, {}, false)
-          else
-            helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '_custom_field' : '' }"+"_"+field.field_name
-            element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('no_change'), :selected => t('no_change')},{:class => dom_type})   
-          end
-        %>  
-			  <%=content_tag :li, element, :class => cycle('odd', 'even') %>
-			<%end%>
-		<%end%>
-	 <%end%>	
-	 </ul>
+  			<%end%>
+  		<%end%>
+	   <%end%>
   </div>
-  <div class="button-container">
-    <%= link_to_function t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
-    <%= link_to_function t('ticket_update_multiple_button'), "helpdesk_submit('#{update_multiple_helpdesk_tickets_path}', 'put', #{helpdesk_submit_options.to_json})", :class => "uiButton" %>
+</div>
+<div class="dialog-special small_curve top_spacing" id="reply-fields">
+  <div class="content clearfix">
+    <div class="field-item" id="bulkreplycheck">
+      <label for="addbulkreply" rel="inputcheckbox">
+        <input id="addbulkreply" type="checkbox" name="Add Bulk Reply" value="addbulkreply" /> Add Bulk Reply
+      </label> 
+    </div>
+    <div class="request_panel clearBoth hide" id="bulkreplyform">
+      <%= render :partial => "/helpdesk/tickets/reply_multiple", :locals => { :helpdesk_submit_options=>helpdesk_submit_options, :id => 'reply-multiple', :cntid => "cnt-reply-multiple"} %>
+    </div>
   </div>  
 </div> 
-
+<div class="button-container">
+  <div class="loading hide" id="loader">
+  </div>
+  <%= button_to_function t('ticket_update_multiple_button'), "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', #{helpdesk_submit_options.to_json})", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
+  <%= button_to_function t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
+</div>
+</div>
 
 <% javascript_tag do %> 
  jQuery('#ticket_cancel_multiple_button').click(
  	function(){
 		active_dialog.dialog('close');
  	}); 
-	
- jQuery('#helpdesk_ticket_group_id')
-   .bind("change", function(e){
-     jQuery('#helpdesk_ticket_responder_id')
-             .html("<option value=''><%=t('no_change')%></option>");
+ 
+ jQuery("#ticket_update_multiple_button").bind('click',  function(ev){
+    jQuery(this).attr('disabled','disabled');
+    jQuery('#ticket_cancel_multiple_button').attr('disabled','disabled');
+    jQuery('#loader').removeClass("hide");
+  });
+
+ jQuery("[rel=inputselectbox]").bind('change',  function(ev){
+    if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
+    {
+      if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
+      {
+        jQuery('#helpdesk_ticket_responder_id_label').prop('checked', false); 
+        jQuery('#helpdesk_ticket_responder_id_label').parent().removeClass('active');
+      }
+      value=jQuery(this).find(':selected').attr('value');
+      groupchange(value);
+    }
+    jQuery(this).parent().find("input").prop("checked", true);
+    jQuery(this).parent().find("label").addClass("active");
+  }); 
+ 
+  jQuery("[rel=inputcheckbox]").bind('change',  function(ev){
+    if(jQuery(this).parent().find("input").is(':checked'))
+    {
+      jQuery(this).addClass("active");
+      if(jQuery(this).attr('for')=="addbulkreply")
+      {
+        jQuery("#bulkreplyform").slideDown();
+      }
+    }
+    else
+    {
+      jQuery(this).removeClass("active");
+      if(jQuery(this).attr('for')=="addbulkreply")
+        jQuery("#bulkreplyform").slideUp();
+      jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');
+    }
+
+  });
+
+function groupchange(value){
+    this.value = value;
+    jQuery('#helpdesk_ticket_responder_id')
+             .html("<option value=''><%=t('select')%></option>");
 	 blank_value = "No Change";
      jQuery.ajax({
        type:        'POST',
-       url: 		'/helpdesk/tickets/get_agents/'+this.value+'?blank_value=<%=t('no_change')%>',
+       url: 		'/helpdesk/tickets/get_agents/'+this.value+'?blank_value=<%=t('select')%>',
        contentType: 'application/text',
        success:     function(data){
-                       jQuery('#helpdesk_ticket_responder_id')
+
+                        jQuery('#helpdesk_ticket_responder_id')
                          .html(data);
                     }
      });
-   });
+   }
 <% end %>

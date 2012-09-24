@@ -729,7 +729,8 @@ Redactor.prototype = {
 					}
 					else
 					{
-						this.shortcuts(e, 'undo'); // Ctrl + z
+					// 	this.shortcuts(e, 'undo'); // Ctrl + z ((removing for polish character issue))
+					//Ctrl +z works by default this.shortcuts() eats up the default events hence removing it.
 					}
 				}
 				else if (key === 90 && e.shiftKey)
@@ -758,7 +759,7 @@ Redactor.prototype = {
 				}
 				else if (key === 76)
 				{
-					this.shortcuts(e, 'superscript'); // Ctrl + l
+				//	this.shortcuts(e, 'superscript'); // Ctrl + l (removing for polish character issue) not using superscript anyway.
 				}
 				else if (key === 72)
 				{

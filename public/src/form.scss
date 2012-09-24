@@ -2029,6 +2029,12 @@ ul.ui-form .inputs-list{
 				font: 13px "Helvetica Neue", sans-serif;
 			}
 		}
+		input[type=text], input.text { 
+		   width: 93%;
+		}
+		select{
+			width: auto;
+		}
 		.add-email{
 			margin-left: 210px;
 			margin-top: -25px;
