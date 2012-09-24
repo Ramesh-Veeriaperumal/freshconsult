@@ -11,7 +11,7 @@ module Helpdesk::TicketActions
     set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
-    build_attachments
+    build_ticket_attachments
     return false unless @ticket.save
 
     if params[:meta]
@@ -50,8 +50,8 @@ module Helpdesk::TicketActions
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
   #we are getting the mass-assignment warning right now..
-  def build_attachments
-     handle_screenshot_attachments unless params[:screenshot].blank?
+  def build_ticket_attachments
+    handle_screenshot_attachments unless params[:screenshot].blank?
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
       @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
@@ -96,11 +96,6 @@ module Helpdesk::TicketActions
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
     render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
-  end
-  
-  def canned_reponse
-    @ticket = current_account.tickets.find_by_id(params[:id])
-    render :partial => "helpdesk/tickets/components/canned_responses"
   end
   
   def update_split_activity    
@@ -268,7 +263,7 @@ module Helpdesk::TicketActions
    def decode_utf8_b64(string)
       URI.unescape(CGI::escape(Base64.decode64(string)))
    end
-  
+
    # Method used set the ticket.ids in params[:data_hash] based on tags.name
   def serialize_params_for_tags
     return if params[:data_hash].nil? 
