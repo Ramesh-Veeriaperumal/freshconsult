@@ -11,7 +11,7 @@ label{
    font-size:1.4em;
 }
 input[type=text], select, input.text { 
-   width: 93%;
+   width: 99%;
    margin:0 0 3px 0;
    color:#3f3f3f;
    padding:3px;
@@ -252,7 +252,7 @@ a.addchoice:hover{
 .ui-form{
 	padding:6px 0 12px 0;
 	position:relative;
-	border:1px solid #EFEFEF; 
+	border:1px solid #E4E4E4; 
 	background-color:#F8F8F8; 
 	div.field-box{
 		padding:6px 2% 10px 2%;
@@ -261,8 +261,11 @@ a.addchoice:hover{
 	li{
 		padding:8px 2% 8px 2%; 
 		margin:0;
-		@include float-left;
+ 		float: left;
 		width: 96%;
+		&.hide{
+			display: none;
+		}
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
@@ -307,6 +310,15 @@ a.addchoice:hover{
 		color:#565656;
 		font-size:13px;
 		font-weight:400;
+	}
+
+
+	label.label-title{	
+		margin-bottom: 5px;
+		color:#333;
+		span{
+			color:#999;
+		}
 	}
 
 	label.overlabel{
@@ -399,25 +411,24 @@ a.addchoice:hover{
 		}		
 	}
 	fieldset.addchoice{		
-		padding:0;			
-		color:#999999;
-		font-size:14px;
+		padding:0;		
+		font-size:13px;
 		font-weight:bold;
-		cursor:pointer;
-		
+		cursor:pointer;		
 	} 
 	fieldset.addchoice:hover{
-		background:#f8f8f8;
+		background:#efefef;
 	}	
 	.conditionset{
-		border:1px solid #cfcfcf;
-		margin:4px 0;
+		margin:8px 0 0;
 		fieldset{
 			@include pie-clearfix;			
-			padding:5px 0 5px 4px;
-			border-bottom:1px solid #cfcfcf;
-			background:#efefef;
+			padding:8px 0 8px 4px;
+			border-top:1px solid #DDD;
 			position:relative;			
+
+			&.addchoice{ padding-left:28px;	}
+
 			*{
 				float:left;
 				margin:2px 4px;
@@ -436,7 +447,10 @@ a.addchoice:hover{
 				padding:0;
 				cursor:pointer;
 				right:10px;
-				top:5px;
+				top:10px;
+			}
+			.add{
+				left:6px;
 			}
 			div.controls{
 				width:95%;
@@ -1987,14 +2001,12 @@ ul.ui-form .inputs-list{
 
 .new_ticket_cc_button{
 	float:right;
-	margin-top:-25px;
-	width:5.5%;
-	a{
-		text-decoration:underline;
-		&:hover{
-			text-decoration:none;
-		}
-	}
+	margin-top:5px;
+}
+
+.add_requester_button { 
+	float: left; 
+	margin-top: 5px;
 }
 
 #cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{
@@ -2118,13 +2130,16 @@ ul.ui-form .inputs-list{
 	}
 }
 #cc_emails_sec .multi_value_field {
-	width:93%;
+	width:99%;
 	padding-left:5px;
 	padding-right:5px;
 	border-color:#C6C6C6;
 	@include box-shadow(#DFDFDF 1px 1px 2px inset);
 	@include border-radius(5px);
 }
+
+#cc_emails_sec { padding-top: 30px;}
+
 .companies_select{
 	select{ float:left; }
 	.customSelect{ width:550px; }
@@ -2236,6 +2251,63 @@ li.agents-field
 	}
 }
 
+.admin-tabs{
+	margin:10px 0 0;
+	z-index: 2;
+	position: relative;
+	& > li > a, &{ font-size: 14px; border-color: #E4E4E4; }
+	.active a, .active a:hover{
+		background-color: #f8f8f8;
+		font-weight: bold;
+		color: #333;
+	}
+}
+
+.right-title{
+	float:right;
+	font-weight: normal;
+	font-size: 13px;
+}
+
+.s-title{ font-size: 16px; margin: 10px 0 8px; }
+.s-label{ font-size: 13px; margin: 0;}
+.section-title{
+	margin: 0 0 16px;
+	h3{ margin:0 0 6px; font-size: 16px; color: #000000; }
+	.help-text{ font-size: 13px; }
+}
+
+.radio-label,
+.checkbox-label {
+  padding-left: 20px;
+}
+.radio-label input[type="radio"],
+.checkbox-label input[type="checkbox"] {
+  float: left;
+  margin: 2px 7px 0 -20px;
+}
+
+h4.label-title{
+	font-weight: bold;
+}
+
+.form-section{
+	border:1px solid #efefef;
+	background-color: #f7f7f7;
+	@include border-radius(4px);
+	padding: 10px;
+}
+
+input[type="text"].points{
+	font-size: 16px;
+	font-weight: bold;
+	padding: 6px;
+	width: 70px;
+}
+
+input[type="text"].number{
+	width:70px;
+}
 
 #takescreen-btn{
 	background: #f3f3f3 url(../images/takescreenshot.png) no-repeat 10px 4px;
@@ -2333,4 +2405,23 @@ li.agents-field
 	float: right;
 	width: 250px;
 	min-height: 100px;
+}
+
+.grey-background{
+	border:1px solid #E4E4E4; 
+	background-color:#F8F8F8; 
+	margin: 0 -12px;
+	@include border-radius(6px);
+}
+
+.aracde-content{	
+    padding: 20px;
+    margin-top: 60px;
+    h2{ font-size: 24px; font-weight: bold; margin-bottom: 16px; }
+    p{
+    	font-size: 13px;
+    	line-height: 18px;
+    	margin-bottom: 18px;
+    	color:#666666;	
+    }
 }

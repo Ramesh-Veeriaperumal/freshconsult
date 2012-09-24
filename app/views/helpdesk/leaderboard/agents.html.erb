@@ -1,0 +1,31 @@
+<div class="btn-group floatr">
+  <%= link_to "Agent", agents_helpdesk_leaderboard_path(), :class => "btn active" %>
+  <%= link_to "Group", groups_helpdesk_leaderboard_path(), :class => "btn" %>
+</div>
+<a href="/">< Back to dashboard </a>
+<h3 class="title"><%= t('reports.scoreboard_agent_title')%></h3>
+<div class="report-nmleft thick-border-top lb-report report-<%= leaderboard.length %>-col">
+<% unless (@mvp_scorecard.blank? && @customer_champion_scorecard.blank? && @first_call_scorecard.blank? && @fast_scorecard.blank?) %>
+	<% 		
+		leaderboard.each do |board| 
+	%>
+		<div class="lb-report-col <%= (board[1] == :mvp) ? 'lb-mvp' : '' %>" id="leaderboard_list_<%= board[1] %>">
+			<div class="lb-report-title">
+				<div class="lbr-trophy trophy trophy-<%= board[1] %>"></div>
+				<h3 class="title"><%= t("gamification.leaderboard.#{board[1]}_trophie_label") %></h3>
+				<p class="intro">
+					<%= t("gamification.leaderboard.#{board[1]}_trophie_info") %>
+				</p>
+			</div>
+			<%= render :partial => "score_card_agent", :collection => board[0] %>
+			<% reset_cycle %>			
+		</div>
+	<% end %>
+<% else %>
+	<div class="list-noinfo">The leaderboard is empty</div>
+<% end %>
+</div>
+<% javascript_tag do %>
+	jQuery("#leaderboard_list_love, #leaderboard_list_sharpshooter, #leaderboard_list_speed")
+		.css("minHeight", jQuery('#leaderboard_list_mvp').height());
+<% end %>

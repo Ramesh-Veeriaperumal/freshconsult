@@ -52,10 +52,13 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
+  has_many :support_scores
+
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   
+  named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
   named_scope :visible, :conditions => { :deleted => false }
@@ -239,6 +242,10 @@ class User < ActiveRecord::Base
       :occasional => false  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
+
+  has_many :achieved_quests, :dependent => :destroy
+
+  has_many :quests, :through => :achieved_quests
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' 
   
@@ -419,6 +426,18 @@ class User < ActiveRecord::Base
     tickets.newest(limit)
   end
 
+  def available_quests
+    account.quests.available(self)
+  end
+
+  def achieved_quest(quest)
+    achieved_quests.find_by_quest_id(quest.id)
+  end
+
+  def badge_awarded_at(quest)
+    achieved_quest(quest).updated_at
+  end
+  
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?

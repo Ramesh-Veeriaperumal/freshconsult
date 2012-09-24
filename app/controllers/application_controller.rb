@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
     begin
       current_account.make_current
       User.current = current_user
-      Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
+      TimeZone.set_time_zone
     rescue ActiveRecord::RecordNotFound
     end
   end
@@ -84,5 +84,14 @@ class ApplicationController < ActionController::Base
     render :file => "#{Rails.root}/public/404.html", :status => :not_found
   end
   
+  protected
+    def silence_logging
+      @bak_log_level = logger.level 
+      logger.level = Logger::ERROR
+    end
+
+    def revoke_logging
+      logger.level = @bak_log_level 
+    end
 end
 

@@ -39,19 +39,24 @@ var preProcessCondition = function(types, list){
 
 rules_filter = function(_name, filter_data, parentDom, options){
 	var setting = {
-			init_feed	 : [],
-			add_dom		 : ".addchoice",
-			rule_dom	    : ".rule_list",
-			rem_dom		 : ".delete",
-			operators	 : false,
-			onRuleSelect : function(){}
+			init_feed	       : [],
+			add_dom		       : ".addchoice",
+			rule_dom	       : ".rule_list",
+			rem_dom		       : ".delete",
+			operators	       : false,
+			delete_last        : false,
+			selectListArr      : [],
+			empty_dom 	 	   : ".empty_choice",
+			onRuleSelect       : function(){},
+			change_filter_data : function(_filter_data){return _filter_data}
 		};
 	if ( options ) jQuery.extend( setting, options );
 	
 	// Setting initial data elements	
 	var hg_data			= $H(),
 		operator_types	= setting.operators,
-		name			   = _name || "default",
+		//quest_criteria_types = setting.quest_criteria_types;
+		name			= _name || "default",
 		hidden_			= null,
 		// Setting initial dom elements
 		RULE_DOM	   	= parentDom + " " + setting.rule_dom,
@@ -69,6 +74,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 		add_to_hash:
 			function(h_data){
 				// Hash list for dropdown
+				if(setting.delete_last){
+					h_data = h_data[0]['ticket'].concat(h_data[0]['forum'],h_data[0]['solution']);
+				}
 				h_data.each(function(option){
 					hg_data.set(option.name, option);
 				});
@@ -85,38 +93,62 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				jQuery.data(outer, "inner", inner);
 				return outer;
 			},
+		dom_size: 0,
 		add_dom: 
 			function(){
 				// Adding a new Filter DOM element to the Filter Container
 				var r_dom = domUtil.getContainer(name);
+				var filterList = [];
+				if(setting.delete_last) {
+					var selected_quest = jQuery("input[name=quest[category]]:checked").val();
+					//var criteria_list = quest_criteria_types[selected_quest];
+					filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
+				} else {
+					filterList = filter_data;
+				}
+
 				jQuery.data(r_dom, "inner")
-					  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name))
+					  .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name))
 					  .append("<div />");
 
 				list_C = jQuery(parentDom).find(setting.rule_dom);
 				r_dom.appendTo(list_C);
+
+				this.dom_size++;
+				this.populateEmpty();
 			},
 		// Used to Edit pre-population
       feed_data:
-         function(dataFeed){
-            dataFeed.each(function(rule){
+         function(dataFeed){	
+            dataFeed.each(function(rule){            	
               try{
                   var r_dom	= domUtil.getContainer(name);
                   var inner	= jQuery("<div />");
                   var data_id = rule.name + itemManager.get();
 
                   if(rule.operator){	
-                     opType = hg_data.get(rule.name).operatortype;
-                     inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                  	try{
+                     	opType = hg_data.get(rule.name).operatortype;
+                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                    }catch(e){}
                   }	
                   if(rule.name == "set_nested_fields")
                   	rule.name = rule.category_name;
 
-                  //console.log(data_id, name, rule].join(">>>>"));
+
                   inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
+					var filterList = [];
+					if(setting.delete_last) {
+						var selected_quest = jQuery("input[name=quest[category]]:checked").val();
+						//var criteria_list = quest_criteria_types[selected_quest];
+						filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
+					} else {
+						filterList = filter_data;
+					}
+
                   jQuery.data(r_dom, "inner")
-                     .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))
+                     .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name).val(rule.name))
                      .append(inner);	
 
                   list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -124,16 +156,29 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   postProcessCondition(hg_data.get(rule.name), data_id);
              }catch(e){}
             });
+			this.dom_size = dataFeed.size()+1;
          },
+
+        populateEmpty: 
+        	function(){
+				jQuery(parentDom).find(setting.empty_dom).toggle(this.dom_size <= 1);
+		},
+
+		refresh_list:
+			function(){
+				jQuery(parentDom).find(setting.rule_dom).empty();
+				hidden_.val("");
+				this.dom_size = 1;
+		},
 
 		get_filter_list:
 			function(_type, c_form){
 				var serialArray	= jQuery(c_form).serializeArray(),
-					 serialHash		= $H(),
-				 	 setValue		= [],
+					serialHash		= $H(),
+				 	setValue		= [],
 				    tempConstruct	= $H(),
-					 type			   = _type || "object";
-				  	 flag			   = false;
+					type			   = _type || "object";
+				  	flag			   = false;
 
 				serialArray.each(function(item){				   
 					if(item.name == name || flag){
@@ -159,13 +204,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				    save_data	    = [];
 				
 				current_filter = serialHash.get(name);
-				   
-				if( current_filter.length != 0 ){
+
+				if( current_filter && current_filter.length != 0 )
 					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
-				}
-				
-				
+
 				hidden_.val(save_data);
+
+				this.populateEmpty && this.populateEmpty();
+
 				return save_data;
 			},
 		init: 
@@ -177,13 +223,16 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				else
 					domUtil.add_dom();	
 					
+				this.populateEmpty();
 			}
 		};
 	
 	// Public Methods and Attributes
 	var pub_Methods = {		
 		add_filter:domUtil.add_new_filter,
-		get_filter_list:domUtil.get_filter_list
+		get_filter_list:domUtil.get_filter_list,
+		get_size: (domUtil.dom_size - 1),
+		refresh_list: domUtil.refresh_list
 	};	 
 	
 	// Applying Events and on Window ready initialization	
@@ -202,8 +251,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
-					active_email_body = jQuery(this).prev();
-					jQuery('#place-dialog').slideDown();
+				active_email_body = jQuery(this).prev();
+				jQuery('#place-dialog').slideDown();
 			});
 
 			// Binding Events to Containers
@@ -217,18 +266,25 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								var hg_item = hg_data.get(this.value);
 								var data_id = hg_item.name + itemManager.get();
 
-								if(hg_item.operatortype)
+								if(hg_item.operatortype) {
 									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
+								}
 
 								rule_drop.append(conditional_dom(hg_item, data_id, name));
 								postProcessCondition(hg_item, data_id);
 							}
 						});
+				
+			jQuery(parentDom).find('select, :text')
+				.live("change",function(){
+					var formObj = jQuery(parentDom).parents('form:first');
+					setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj])
+				});
 
 			jQuery(ADD_DOM)
 				.bind("click",
 						function(){
-							domUtil.add_dom();
+							domUtil.add_dom();							
 						});
 
 			// Delete button action
@@ -236,10 +292,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				.live("click", 
 						function(){
 							filter = jQuery(this).parent();
-							if(filter.parent().children().size() != 1)
+							if(setting.delete_last || (filter.parent().children().size() != 1)){
 								filter.remove();
-						});
+								domUtil.dom_size--;
+							}
 
+							var formObj = jQuery(parentDom).parents('form:first');
+							setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj]);
+						});
 			domUtil.init();
 		}init();
 

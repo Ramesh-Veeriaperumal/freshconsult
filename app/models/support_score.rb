@@ -1,73 +1,98 @@
 class SupportScore < ActiveRecord::Base
-  #Score triggers
-  #TICKET_CLOSURE = 1
-  #SURVEY_FEEDBACK = 2
-  
-  TICKET_CLOSURE = [ScoreboardRating::FAST_RESOLUTION, ScoreboardRating::ON_TIME_RESOLUTION, ScoreboardRating::LATE_RESOLUTION]
-  SURVEY_FEEDBACK = [ScoreboardRating::HAPPY_CUSTOMER, ScoreboardRating::UNHAPPY_CUSTOMER]
-  
-  #SCORE_TRIGGERS = { ScoreboardRating::HAPPY_CUSTOMER => SURVEY_FEEDBACK }
 
-  belongs_to :user, :class_name =>'User', :foreign_key =>'agent_id'
+  include Gamification::Scoreboard::Constants
+  
+
+  after_commit_on_destroy :update_agents_score
+  after_commit_on_create  :update_agents_score
+
+  belongs_to :user
+  has_one :agent, :through => :user
+
+  belongs_to :group
+
+  belongs_to_account
+
+  attr_protected  :account_id
 
   named_scope :created_at_inside, lambda { |start, stop|
     { :conditions => [" support_scores.created_at >= ? and support_scores.created_at <= ?", start, stop] }
-  } 
-
-  named_scope :fastcall_resolution, {
-    :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::FAST_RESOLUTION]
   }
 
-  named_scope :ontime_resolution, {
-    :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::ON_TIME_RESOLUTION]
-  }
+  named_scope :fast, { :conditions => 
+        {:score_trigger => FAST_RESOLUTION }}
 
-  named_scope :late_resolution, {
-    :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::LATE_RESOLUTION]
-  }
+  named_scope :first_call, {
+    :conditions => {:score_trigger => FIRST_CALL_RESOLUTION}}
 
-  named_scope :firstcall_resolution, {
-    :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::FIRST_CALL_RESOLUTION]
-  }
+  named_scope :happy_customer, {
+    :conditions => {:score_trigger => HAPPY_CUSTOMER}}
 
-  named_scope :happycustomer_resolution, {
-    :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::HAPPY_CUSTOMER]
-  }
+  named_scope :unhappy_customer, {
+    :conditions => {:score_trigger => UNHAPPY_CUSTOMER}}
 
-  named_scope :unhappycustomer_resolution, {
-    :conditions => ["#{SupportScore.table_name}.score_trigger = ?", ScoreboardRating::UNHAPPY_CUSTOMER]
+  named_scope :customer_champion, {
+    :conditions => { :score_trigger => [HAPPY_CUSTOMER, UNHAPPY_CUSTOMER] }
   }
+  
+  named_scope :by_performance, { :conditions => ["score_trigger != ?", AGENT_LEVEL_UP] }
 
-  named_scope :support_scores_all,
+  named_scope :group_score,
   { 
-      :select => ["users.*, support_scores.*, SUM(#{SupportScore.table_name}.score) as tot_score"],
-      :joins => [:user],
-      :group => "#{User.table_name}.id",
-      :order => "SUM(#{SupportScore.table_name}.score) desc"
+    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
+    :conditions => ["group_id is not null"],
+    :include => [ :group ],
+    :group => "group_id",
+    :order => "tot_score desc, recent_created_at"
   }
 
-  def self.happy_customer(scorable)
-    add_support_score(scorable, ScoreboardRating::HAPPY_CUSTOMER)
+  named_scope :user_score,
+  { 
+    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
+    :include => { :user => [ :avatar ] },
+    :group => "user_id",
+    :order => "tot_score desc, recent_created_at"
+  }
+
+  named_scope :limit, lambda { |num| { :limit => num } } 
+
+  def self.add_happy_customer(scorable)
+    add_support_score(scorable, HAPPY_CUSTOMER)
   end
 
-  def self.unhappy_customer(scorable)
-    add_support_score(scorable, ScoreboardRating::UNHAPPY_CUSTOMER)
+  def self.add_unhappy_customer(scorable)
+    add_support_score(scorable, UNHAPPY_CUSTOMER)
   end
   
   def self.add_fcr_bonus_score(scorable)
     if (scorable.resolved_at  && scorable.ticket_states.inbound_count == 1)
-      add_support_score(scorable, ScoreboardRating::FIRST_CALL_RESOLUTION)
+      add_support_score(scorable, FIRST_CALL_RESOLUTION)
     end
   end 
   
-
-  def self.add_support_score(scorable, resolution_speed)
+  def self.add_support_score(scorable, resolution_speed)    
     sb_rating = scorable.account.scoreboard_ratings.find_by_resolution_speed(resolution_speed)
-    scorable.support_scores.create({
-      :account_id => scorable.account_id,
-      :agent_id => scorable.responder_id,
+    scorable.support_scores.create({      
+      :user_id => scorable.responder_id,
+      :group_id => scorable.group_id,
       :score => sb_rating.score,
-      :score_trigger => sb_rating.resolution_speed #SCORE_TRIGGERS.fetch(resolution_speed, TICKET_CLOSURE)
+      :score_trigger => sb_rating.resolution_speed
     }) if scorable.responder
   end
+
+  def self.add_agent_levelup_score(scorable, score)
+    scorable.support_scores.create({
+      :user_id => scorable.id,
+      :score => score,
+      :score_trigger => AGENT_LEVEL_UP
+    }) if scorable
+  end
+
+protected
+  
+  def update_agents_score
+    Resque.enqueue(Gamification::Scoreboard::UpdateUserScore, { :id => user.id, 
+                    :account_id => user.account_id })
+  end
+
 end

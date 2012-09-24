@@ -13,7 +13,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
     :path => "/data/helpdesk/attachments/#{Rails.env}/:id/:style/:filename",
     :url => ":s3_alias_url",
-    :s3_permissions => Proc.new  { |attachment| attachment.instance.s3_permissions },
     :s3_host_alias => "cdn.freshdesk.com",
     :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
@@ -76,9 +75,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
      end
    end
 
-  def expiring_url(style = "original")
+  def expiring_url(style = "original",expiry = 300)
     AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
-                                          :expires_in => 300.seconds)
+                                          :expires_in => expiry.to_i.seconds)
   end
   
   private

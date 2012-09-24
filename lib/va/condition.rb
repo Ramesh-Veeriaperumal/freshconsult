@@ -1,6 +1,6 @@
 class Va::Condition
   
-  attr_accessor :handler, :key, :operator
+  attr_accessor :handler, :key, :operator, :action_performed
   
 
   DISPATCHER_COLUMNS = {
@@ -12,16 +12,25 @@ class Va::Condition
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
     'company_name'            => 'customers.name',
+    'st_survey_rating'        => 'helpdesk_schema_less_tickets.int_tc01',
+    'folder_id'               => 'solution_articles.folder_id',
+    'thumbs_up'               => 'solution_articles.thumbs_up',
+    'forum_id'                => 'topics.forum_id',
+    'user_votes'              => 'topics.user_votes'
   }
   
   def initialize(rule, account)
-    @key, @operator = rule[:name], rule[:operator] #by Shan hack must spelling mistake in criteria
+    @key, @operator, @action_performed = rule[:name], rule[:operator], rule[:action_performed] #by Shan hack must spelling mistake in criteria
     handler_class = VAConfig.handler @key.to_sym, account
     @handler = handler_class.constantize.new(self, rule)
   end
   
-  def matches(evaluate_on)
-    handler.matches(evaluate_on)
+  def matches(evaluate_on, actions=nil)
+    if actions.blank?
+      handler.matches(evaluate_on) 
+    elsif action_matches?(evaluate_on, actions) 
+      handler.matches(evaluate_on)
+    end
   end
   
   def dispatcher_key
@@ -44,5 +53,11 @@ class Va::Condition
     #Need to optimize.
     "flexifields.#{FlexifieldDefEntry.ticket_db_column key}"
   end
-  
+
+  private
+    def action_matches?(evaluate_on, performed_actions)
+      expected_action = @action_performed[:action]
+      RAILS_DEFAULT_LOGGER.debug "Inside action_matches check: expected_action #{expected_action} performed_actions #{performed_actions} action_performed #{@action_performed.inspect}"
+      performed_actions.include?(expected_action) && @action_performed[:entity] == evaluate_on.class.name
+    end
 end

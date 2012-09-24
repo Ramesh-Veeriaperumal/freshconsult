@@ -1,12 +1,13 @@
 <% content_for :layoutType do %>single<% end %>
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
-<div class="floatr">
-	<% if admin? %>
-  		<%= link_to t('category.new'), new_category_path, :class => "uiButton" %>
-	<% end %> 
+<div class="clearfix">
+	<div class="floatr">
+		<% if admin? %>
+	  		<%= link_to t('category.new'), new_category_path, :class => "uiButton special" %>
+		<% end %> 
+	</div>
+	<h3 class="title"><%= t('forum.title') %></h3>
 </div>
-<h3 class="title"><%= t('forum.title') %></h3>
-
 <div class="forum_list">
 	<div class="forum-group">
 		<div class="search-grey-box">
