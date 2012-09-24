@@ -465,10 +465,14 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
-        element = add_cc_field_tag element ,field unless is_edit
+        unless is_edit
+          element += add_requester_field 
+          element = add_cc_field_tag element, field
+        end
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
+        element += add_name_field unless is_edit
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -502,6 +506,15 @@ module ApplicationHelper
        element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
     end
     return element
+  end
+  
+  def add_requester_field
+    content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
+  end
+  
+  def add_name_field
+    content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
+                :id => "name_field", :class => "hide") unless current_user
   end
 
   # The field_value(init value) for the nested field should be in the the following format

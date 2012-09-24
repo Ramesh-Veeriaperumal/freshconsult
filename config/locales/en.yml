@@ -55,6 +55,7 @@ en:
     mobile: Mobile
     twitter_id: Twitter Id
     full_name: Full Name
+    name: Name
     secondary: secondary
     phone_no: Phone No
     address: Address
@@ -720,6 +721,7 @@ en:
     contacts: 
       create: 
         success: The contact has been created successfully.
+      cancel: cancel
       info_select: Please select at least 1 user.
     customers:
       info_select: Please select at least 1 customer.
@@ -1163,10 +1165,12 @@ en:
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
+    contact_exists: A requester with email '%{existing_email}' already exists, %{use_email} 
     signature: Signature
     info3: Are you sure you want delete
     make_admin: Make this agent an admin
     view_user: View User
+    use_email: Use this email
     restore: restore
     add_signature: Add signature
     update: Update
@@ -1235,6 +1239,7 @@ en:
     import_google_no: "No"
     import_google_yes: "Yes"
     quick_contact: Quick Contact
+    add_new_requester: Add New Requester
     tags: "Tags"
     tag_cloud: "Contact Tag Cloud"
     info3: Background information of %{nick_name}
@@ -2488,6 +2493,7 @@ en:
   ticket_cc_email_more: "more"
   fwd_to: "Forward"
   add_cc: Add Cc
+  add_new_requester: "Add new requester"
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
   use_reply_option: "Please use Reply option for sending an email to the requester"
