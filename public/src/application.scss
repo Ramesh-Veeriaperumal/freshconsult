@@ -18,20 +18,17 @@
 /* Sprite sheet creation for badges and trophies */
 /*Gamification-Trophy */
 @import "trophy/*.png";
+$trophy-sprite-dimensions:true;
+$trophy-layout:smart;
 @include all-trophy-sprites;
 
 /*Gamification-Badges */
+$badges-layout:smart;
+$badges-a-layout:smart;
 @import "badges/*.png";
+@import "badges-a/*.png";
 @include all-badges-sprites;
-
-
-/*@include font-face('Silkscreen',
-  font-files(
-    'slkscr.woff', woff,
-    'slkscr.ttf', ttf,
-    'slkscr.svg', svg),
-    'slkscr.eot');
-*/
+@include all-badges-a-sprites;
 
 @font-face {
     font-family: 'Silkscreen';
@@ -41,7 +38,6 @@
          url('/fonts/slkscr.svg#Silkscreen') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
 
 /* Bullet icon */ 
@@ -4918,7 +4914,7 @@ a.close{
 	.link-item.active{
 	   color:#336699;
      font-weight:bold;
-     @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+     /*@include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);*/
 	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{
@@ -6709,9 +6705,12 @@ a.mobile_switchBtn {
 		line-height: 18px;
 	}
 	h4{
-		font-size:14px;		
+		font-size:13px;		
 		line-height:20px;
 		font-weight:bold;
+	}
+	h4.name{
+		@include ellipsis;
 	}
 	.panel-content{
 		padding-left:50px;
@@ -6723,7 +6722,7 @@ a.mobile_switchBtn {
 
 .admin-list .panel-row{ padding: 12px 0; }
 
-.panel-row.odd{
+.panel-row.odd, .lb-report .odd{
 	background-color: #f8f8f8;
 }
 
@@ -6954,3 +6953,102 @@ a.mobile_switchBtn {
     padding: 5px 3px 0px 5px;
     line-height: 20px;
 }
+
+.field-item{
+	display:inline;
+	float:left;
+	width:33%;
+	margin-bottom:12px; 
+	label{
+		font-size:13px;
+	} 
+	label.active{
+		font-weight:bold;
+	}
+}
+
+/* Update multiple tickets css start */
+.bulktickets{
+    .small_curve{
+        @include border-radius(5px);
+    }
+    .top_spacing{
+        margin-top : 10px;
+    }
+    select{
+        width : 150px;
+    }
+    .inline-field{
+        width: 575px;
+    }
+    .fields{
+        float :left;
+        margin-left : 0px ;
+        width : 575px;
+    }
+    .field-item{
+        max-height : 49px;
+    }
+    .label{
+        max-height: 18px;
+    }
+    #bulkreplycheck{
+        margin-bottom:0;
+    }
+    #bulkreplyform{
+    	.ui-form{
+    	 min-height: 250px;
+    	}
+    }
+    .request_panel .ui-form li.inline-field div.fields, .request_panel .ui-form fieldset div.fields { margin-left: 0px; padding-top: 4px; position: relative; }
+    .request_panel { 
+    	padding : 0 0px 0px 0px; 
+    	border-spacing: 0px 0px;
+    }
+    .attachment-options { clear : both;}    
+    .request_panel .ui-form .request_form_options .insert-canned-response {
+        position: relative;
+        z-index: 1001;
+    }
+    .canned-response-menu{
+        right : -1px;
+        z-index : 1000;
+        top : -24px;
+    }
+    #update-fields
+    {
+        max-height : 132px;
+        overflow : auto;
+    }
+	.menu-item{
+        width : 350px;
+        a{
+        	padding-left:20px;
+        }
+    }
+}
+.button-container #loader{
+        height: 35px;
+        width: 33px;
+        float: left;
+        position: relative;
+        left: 390px;
+        top: -6px;
+    }
+.ui-widget-content {
+    .bulktickets li a{
+        color:#369 !important;
+    }
+}
+ 
+#cnt-reply-multiple{
+    .request_form_options{ z-index:1000; top:-25px; right:0; }
+    .slim-button { z-index : 1001;}
+ 	.ui-form li{
+ 		padding-left:0;
+ 		padding-right:0;
+ 	}
+}
+ 
+/* end */
+

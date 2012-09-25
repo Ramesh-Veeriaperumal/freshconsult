@@ -12,11 +12,9 @@ class Helpdesk::TicketsController < ApplicationController
   include RedisKeys
   include Helpdesk::AdjacentTickets
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :check_user , :only => [:show]
-    
   before_filter { |c| c.requires_permission :manage_tickets }
-
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
@@ -26,13 +24,14 @@ class Helpdesk::TicketsController < ApplicationController
 
   layout :choose_layout 
   
-  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
+
+  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
+  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
+
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update]
-  before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
@@ -242,20 +241,6 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def update_multiple
-    params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless params[nscname][:custom_field].nil?
-    @items.each do |item|
-      params[nscname].each do |key, value|
-        if(!value.blank?)
-            item.send("#{key}=", value) if item.respond_to?("#{key}=")
-        end    
-      end
-      item.save!
-    end
-    flash[:notice] = render_to_string(:inline => t("helpdesk.flash.tickets_update", :tickets => get_updated_ticket_count ))
-    redirect_to helpdesk_tickets_path
-  end
-  
   def close_multiple
     status_id = CLOSED       
     @items.each do |item|
@@ -452,7 +437,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
     
-    build_attachments
+    build_attachments @item, :helpdesk_ticket
 
     if @item.save
       post_persist
@@ -479,18 +464,6 @@ class Helpdesk::TicketsController < ApplicationController
     render :text => sol_desc.description || "" 
   end
 
-  def get_ca_response_content   
-    ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    content = ca_resp.content_html
-    if mobile?
-      parser = HTMLToTextileParser.new
-      parser.feed ca_resp.content_html
-      content = parser.to_textile
-    end
-    a_template = Liquid::Template.parse(content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
-    render :text => a_template || ""
-  end 
-  
   def latest_note
     ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
     if ticket.nil?
@@ -709,7 +682,7 @@ class Helpdesk::TicketsController < ApplicationController
         return redirect_to support_ticket_url(@ticket,:format => params[:format])
       end
     end
- 
+
     def verify_permission
       unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
@@ -719,9 +692,9 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to helpdesk_tickets_url
         end
       end
-    true
-  end
-  
+      true
+    end
+ 
   def save_and_close?
     !params[:save_and_close].blank?
   end

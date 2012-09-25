@@ -129,6 +129,7 @@ def get_nested_field_reports(column_name)
                 end
 
                 #Adding third level data. No check as the queried data is grouped by all 3 cols so data is unique.
+                next if(column_names.length == 2) #Last level can be left blank
                 value = data.send(column_names[2])
                 next if value.nil?
                   count = data.count
