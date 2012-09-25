@@ -1348,9 +1348,9 @@ Redactor.prototype = {
 		// remove attributes
 		html = html.replace(/<(\w+)([\w\W]*?)>/gi, '<$1>');
 		
-		// remove empty
-		html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
-		html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
+		// remove empty  //Commented by John to avoid empty line cleanup on paste
+		// html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
+		// html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
 		
 		// revert
 		html = html.replace(/\[td\]/gi, '<td><br></td>');
