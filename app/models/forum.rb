@@ -77,7 +77,7 @@ class Forum < ActiveRecord::Base
   format_attribute :description
   attr_protected :forum_category_id , :account_id
 
-  after_save :set_topic_delta_flag
+  # after_save :set_topic_delta_flag
   before_update :clear_customer_forums
   
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
@@ -124,6 +124,11 @@ class Forum < ActiveRecord::Base
     find :all, options.update(:conditions => {:account_id => account}, :order => 'position')
   end
   
+  def self.forum_names(account)
+    forums = account.user_forums
+    forums.map{|forum| [forum.id, forum.name]}
+  end
+
   def type_name
     TYPE_NAMES_BY_KEY[forum_type]
   end
@@ -140,12 +145,12 @@ class Forum < ActiveRecord::Base
       user.customer  && customer_forums.map(&:customer_id).include?(user.customer.id))
   end
   
-  def set_topic_delta_flag
-    self.topics.each do |topic|
-      topic.delta = true
-      topic.save
-    end
-  end
+  # def set_topic_delta_flag
+  #   self.topics.each do |topic|
+  #     topic.delta = true
+  #     topic.save
+  #   end
+  # end
   
   def to_xml(options = {})
      options[:indent] ||= 2

@@ -1,0 +1,18 @@
+<ul class="ui-form gamesettings">
+    <li>
+      <div class="floatr"> 
+          <%= link_to t('.new_quest'), new_admin_quest_path, :class => "uiButton" %>
+      </div>
+      <div class="section-title">
+        <%= content_tag(:h3, t('.quest_title'))%>
+        <br />
+        <p class="help-text">
+          <%= t('.quest_description') %>
+        </p>
+        <br />
+      </div>
+      <div id="quests-container" class="admin-list">
+        <%= render :partial => "/admin/quests/quest", :collection => @quests %>
+      </div>
+    </li>    
+</ul>  

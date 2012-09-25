@@ -10,6 +10,7 @@
     										 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
   </div>		
 
+
     <div class="header_links">
       <% if current_user then %>  
 		<%= content_tag(:span, is_assumed_user? ? t('header.assumed_text') : t('header.welcome') ) %>
@@ -77,3 +78,14 @@
 		</div>
 	</div>	
 </div>
+<% if feature?(:gamification) and current_user and current_user.agent? %>
+	<%= include_stylesheets :notifications %>
+	<% content_for :pagefixed do %>
+		<%= include_javascripts :notifications %>
+	  <% javascript_tag do %>
+	  	FD.Notifications.init({ 
+	  		pollInterval:300000
+			});
+	  <% end %>
+  <% end %>
+<% end %>

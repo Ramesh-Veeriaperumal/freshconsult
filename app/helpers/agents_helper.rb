@@ -29,7 +29,25 @@ module AgentsHelper
      false
    end
  end
+
+  def can_reset_password?(agent)
+   agent.user.active? and (current_user != agent.user)
+  end
  
- 
-  
+ def authorized_to_manage_agents
+       access_denied unless  manage_agents?
+ end
+
+ def authorized_to_view_agents
+      access_denied unless can_show?
+ end
+
+ def manage_agents?
+     permission?(:manage_users)
+  end
+
+  def can_show?
+    (current_user && current_user.can_view_all_tickets?)
+  end  
+
 end

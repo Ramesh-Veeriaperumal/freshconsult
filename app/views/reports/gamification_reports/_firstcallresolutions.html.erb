@@ -1,0 +1,22 @@
+<% if @fcr_agents.length > 0 %>
+	<% high_score = @fcr_agents[0].tot_score.to_i %> 
+<% end %>
+<table class="leaderboard-small" padding="0" margin="0" border="0">
+ <thead>
+  <tr>
+  	<th colspan="5"><b>Speed Champion</b></th>
+  </tr>
+ </thead> 
+ <tbody>
+<% @fcr_agents.each_with_index  do |fcr_agent, index|%>
+<% unless fcr_agent.tot_score.to_i < 0 %>
+<tr>
+ 	<td width="1%"><div class="bignum floatleft"><%= (index + 1)%></div></td>
+ 	<td width="1%"><%= user_avatar(fcr_agent.user, :thumb, 'preview_pic') %></td>
+ 	<td><b><%= fcr_agent.user.display_name %></b></td>
+ 	<td width="5%" class="up"><%= fcr_agent.tot_score %> &#9650;</td>
+</tr>
+<% end %>
+<% end %>
+</tbody>
+</table>

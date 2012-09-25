@@ -36,6 +36,9 @@ stylesheets:
     - public/stylesheets/portal/portal.css
     - public/stylesheets/portal/responsive.css 
 
+  notifications:
+    - public/stylesheets/jquery.gritter.css
+
   widget:
     - public/stylesheets/reset.css   
     - public/stylesheets/defaults.css
@@ -71,7 +74,7 @@ stylesheets:
     - public/stylesheets/reports.css
 
   redactor:
-    - public/javascripts/redactor/css/redactor.css 
+    - public/stylesheets/redactor.css 
 
 javascripts:
   defaults:
@@ -81,7 +84,7 @@ javascripts:
     - public/javascripts/controls.js
     - public/javascripts/application.js
   frameworks:
-    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
@@ -109,6 +112,7 @@ javascripts:
     - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/*.js
+    - public/javascripts/dyn_menu.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js
@@ -119,15 +123,18 @@ javascripts:
     - public/javascripts/timesheet.js
   freshwidget:
     - public/javascripts/freshwidget.js
+  html2canvas:
+    - public/javascripts/html2canvas.js
   fdwidget:
     - public/javascripts/prototype.js
-    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/feedback_widget_form.js
   custom_widget:
     - public/javascripts/custom_widget.js
   portal:
@@ -153,3 +160,10 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
   redactor:
     - public/javascripts/redactor/redactor.js
+    - public/javascripts/redactor/freshdesk_redactor.js
+  notifications:
+    - public/javascripts/jquery.gritter/jquery.gritter.js
+    - public/javascripts/requestAnimFrame.js
+    - public/javascripts/notifications.js
+  excanvas:
+    - public/javascripts/excanvas.js

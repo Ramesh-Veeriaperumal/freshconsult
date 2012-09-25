@@ -104,7 +104,7 @@
 							<% 
 								avatar_url = '/images/fillers/profile_blank_thumb.gif'
 								unless user.avatar.nil?
-									avatar_url = user.avatar.content.url(:thumb)
+									avatar_url = user.avatar.expiring_url(:thumb)
 								end 
 							%>
 							<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
@@ -127,7 +127,7 @@
 						@group.agents.each do |user| 
 						avatar_agent = '/images/fillers/profile_blank_thumb.gif'
 						unless user.avatar.nil?
-							avatar_agent = user.avatar.content.url(:thumb)
+							avatar_agent = user.avatar.expiring_url(:thumb)
 						end					  
 					%> 
 					<li agent_thumb="<%=avatar_agent%>" agent_id="<%=user.id %>" agent_name="<%= user.name %>">

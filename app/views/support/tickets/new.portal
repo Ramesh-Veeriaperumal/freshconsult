@@ -1,5 +1,6 @@
 <% content_for :sidebar do-%><%-end %> 
-<%= include_tiny_mce_if_needed %>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
 <% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true } do |f| %>
   <%= f.error_messages %>
   	<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
@@ -96,6 +97,8 @@
                 jQuery(this).removeClass("loading-right");        
               }
           });
+
+          invokeRedactor('helpdesk_ticket_description_html');
       }); 
     })(jQuery);
   <% end %>

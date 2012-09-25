@@ -6,6 +6,15 @@
     <%= render :partial => '/helpdesk/reminders/reminders', 
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
   </div>
+  
+  <% if gamification_feature?(current_account) %>
+  	<%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "mini-leaderboard",
+  						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>
+
+    <%= content_tag :div, "", :rel => "remote", :class => "side-panel", :id => "quests-section-container",
+               "data-remote-url" => active_helpdesk_quests_path() %>
+  <% end %> 
+
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
@@ -25,7 +34,6 @@
   <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities"), { :activity_id => @items.first.id}) unless @items.empty?%>
   <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) if @items.empty? %>
 <% end %>
-
 <% content_for :onload_script do %>
 	activity_count = 0;
 	previous_id = jQuery('#Pages li').first().prop('id');
@@ -65,7 +73,5 @@
 		      jQuery('#TicketSummary').replaceWith(data);
 		  });
 		}, 60);*/
-	
+	jQuery('#quests-section-container, #mini-leaderboard').trigger('afterShow');
 <%end%>
-
-

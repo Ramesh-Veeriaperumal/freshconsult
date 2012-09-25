@@ -690,7 +690,10 @@ footer {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 .btn.active, .btn:active {
-	@include box-shadow( inset 0 1px 1px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.05) );
+	@include box-shadow( inset 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 0 12px rgba(0, 0, 0, 0.15) );
+  background-position: 0 -15px;
+  color: #333;
+  text-decoration: none;
 }
 .btn.disabled {
   cursor: default;
@@ -1149,6 +1152,11 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 }
 .label.notice {
   background-color: #62cffc;
+}
+.label.points {
+  background-color: #333; 
+  font-size: 11px;
+  padding:1px 3px;
 }
 .media-grid {
   margin-left: -20px;

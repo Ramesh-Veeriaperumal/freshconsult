@@ -1,6 +1,7 @@
 class Helpdesk::Note < ActiveRecord::Base
 
   include ParserUtil
+  include BusinessRulesObserver
 
   set_table_name "helpdesk_notes"
 
@@ -31,13 +32,14 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
-          :foreign_key => 'note_id', :dependent => :destroy
+          :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
 
-  attr_accessor :nscname
+  attr_accessor :nscname, :disable_observer
   attr_protected :attachments, :notable_id
   
   before_create :validate_schema_less_note
-  after_create :save_response_time, :update_content_ids, :update_parent, :add_activity, :update_in_bound_count
+  after_create :save_response_time, :update_content_ids, :update_parent, :add_activity, :update_in_bound_count, :fire_create_event
+
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
@@ -183,7 +185,7 @@ class Helpdesk::Note < ActiveRecord::Base
       end
       
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      Helpdesk::Note.update_all("body_html= '#{body_html}'", ["id=? and account_id=?", id, account_id]) if body_html_changed?
+      Helpdesk::Note.update_all("body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
     end
 
     
@@ -251,7 +253,9 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def validate_schema_less_note
-      if email_conversation? && human_note_for_ticket?
+      return unless human_note_for_ticket?
+      
+      if email_conversation?
         if schema_less_note.to_emails.blank?
           schema_less_note.to_emails = notable.requester.email 
           schema_less_note.from_email ||= account.primary_email_config.reply_email
@@ -259,6 +263,8 @@ class Helpdesk::Note < ActiveRecord::Base
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
         schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
         schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
+      elsif note?
+        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
     end
     
@@ -298,5 +304,9 @@ class Helpdesk::Note < ActiveRecord::Base
     def load_schema_less_note
       build_schema_less_note unless schema_less_note
       schema_less_note
+    end
+
+    def fire_create_event
+      fire_event(:create) unless disable_observer
     end
 end

@@ -57,7 +57,11 @@ makePageNonSelectable = function(source){
 
 //Image error problem
 function imgerror(source){
-    source.src = "/images/fillers/profile_blank_thumb.gif";
+    if (source.width <= 50) {
+      source.src = PROFILE_BLANK_THUMB_PATH;
+    } else {
+      source.src = PROFILE_BLANK_MEDIUM_PATH;
+    }
     source.onerror = "";
     return true;
 }
@@ -161,6 +165,7 @@ function helpdesk_submit(url, method, params){
                      value: source.value
                   });
           field.name = source.name;
+          field.value = source.value;
           form.appendChild(field);
    });
    form.action = url;
@@ -291,7 +296,7 @@ active_dialog = null;
 
  $(document).bind('mousedown', function(e) {       
 	if($(e.target).hasClass("chzn-results")) return;
-  if ($(e.target).parent().hasClass("fd-ajaxmenu")) { return };
+  if ($(e.target).parent().is(".fd-ajaxmenu, .fd-ajaxmenu .contents")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
@@ -339,7 +344,7 @@ active_dialog = null;
           menu_container.attr('id',"menu_" + menuid);
           menu_container.data('parent',$(node));
           menu_container.addClass('loading fd-ajaxmenu');
-          // menu_container.width($(node).width());
+          menu_container.html('<div class="contents"></div>');
           menu_container.insertAfter($(node));
 
           $(node).data('menuid',"menu_" + menuid);
@@ -347,13 +352,16 @@ active_dialog = null;
           $.ajax({
             url: $(node).data('options-url'),
             success: function (data, textStatus, jqXHR) {
-              $('#menu_' + menuid).removeClass('loading').html(data);  
+              $('#menu_' + menuid).removeClass('loading');
+              $('#menu_' + menuid + ' .contents').html(data);  
 
               //Setting the Active Element
+              match_found = false;
               text_to_match = $(node).children('.result').first().text();
-              $('#menu_' + menuid).children().each(function(i) {
-                if ($(this).text() == text_to_match) {
+              $('#menu_' + menuid + ' .contents').children().each(function(i) {
+                if (!found && $(this).data('text') == text_to_match || $(this).text() == text_to_match) {
                   $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
+                  match_found = true;
                 }
               });
 
@@ -385,20 +393,23 @@ active_dialog = null;
           }
           menuid = $(document).data('dynamic-menu-count') + 1;
           $(document).data('dynamic-menu-count',menuid);
-          menu_container = $('<div>');
-          menu_container.data('parent',$(node));
-          menu_container.attr('id',"menu_" + menuid);
-          menu_container.addClass('loading fd-ajaxmenu');
-          menu_container.append($($(node).data('options')).html());
+          menu_container = $('<div>').attr('id',"menu_" + menuid)
+                          .addClass('loading fd-ajaxmenu')
+                          .html('<div class="contents"></div>')
+                          .data('parent',$(node));
+                          
+          menu_container.find('.contents').append($($(node).data('options')).html());
           menu_container.insertAfter($(node));
           $(node).data('menuid',"menu_" + menuid);
           $(node).data('options-fetched',true)
           menuid = "menu_" + menuid;
 
           text_to_match = $(node).children('.result').first().text();
-          menu_container.children().each(function(i) {
-            if ($(this).text() == text_to_match) {
+          match_found = false;
+          $('#' + menuid + ' .contents').children().each(function(i) {
+            if (!match_found && ($(this).data('text') == text_to_match || $(this).text() == text_to_match)) {
               $(this).addClass('active').prepend('<span class="icon ticksymbol"></span>');
+              match_found = true;
             }
           });
 
