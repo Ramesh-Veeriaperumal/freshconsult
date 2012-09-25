@@ -32,7 +32,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update]
-  before_filter :serialize_params_for_tags , :only => [:index, :custom_search, :export_csv]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]

@@ -102,7 +102,7 @@ ul.activityfeed, ul.summary{
 ul.summary{
 	@include border-radius(6px);    
 	background:#fafafa; 
-	@include background-with-css2-fallback(linear-gradient(white, #fafafa));
+	/* @include background-with-css2-fallback(linear-gradient(white, #fafafa)); */
 	border:1px solid #efefef; 
 	margin-bottom:10px; 
 	li{ 
@@ -4918,7 +4918,7 @@ a.close{
 	.link-item.active{
 	   color:#336699;
      font-weight:bold;
-     @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+     /* @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom); */
 	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{
