@@ -1,5 +1,12 @@
 module MailAutolink
   
+  def self.included(base)
+    base.class_eval do
+      include ClassMethods
+      alias_method_chain :deliver!, :autolink
+    end
+  end
+
   module ClassMethods
     
     include ActionView::Helpers::TextHelper
@@ -32,15 +39,7 @@ module MailAutolink
         end
       end
   end
-
   
-  def self.included(base)
-    base.class_eval do
-      include ClassMethods
-      alias_method_chain :deliver!, :autolink
-   end
-  end
-
 end
 
 ActionMailer::Base.send :include, MailAutolink
