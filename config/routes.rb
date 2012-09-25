@@ -301,7 +301,7 @@
   end
 
   #!PORTALCSS To be removed afterwords development is over - by venom
-  map.liquid_list '/liquid_list', :controller => 'support/home', :action => 'liquid_list' 
+  map.liquid_list '/liquid_list', :controller => 'home', :action => 'liquid_list' 
 
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 

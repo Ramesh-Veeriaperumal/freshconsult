@@ -1,4 +1,3 @@
-
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
   
@@ -142,18 +141,4 @@ class Solution::Article < ActiveRecord::Base
     Solution::ArticleDrop.new self
   end
   
-  private    
-    def create_activity
-      activities.create(
-        :description => 'activities.solutions.new_solution.long',
-        :short_descr => 'activities.solutions.new_solution.short',
-        :account => account,
-        :user => user,
-        :activity_data => {}
-      )
-    end
-  
-    def set_un_html_content        
-      self.desc_un_html = (self.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description.empty?
-    end
 end
