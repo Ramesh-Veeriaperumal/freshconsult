@@ -3,7 +3,7 @@ class Agent < ActiveRecord::Base
   include Notifications::MessageBroker
   include Gamification::Scoreboard::Memcache #Need to refactor this!
 
-  belongs_to :user, :class_name =>'User', :foreign_key =>'user_id' , :dependent => :destroy 
+  belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
   accepts_nested_attributes_for :user
   
@@ -12,9 +12,22 @@ class Agent < ActiveRecord::Base
   attr_accessible :signature_html, :user_id , :ticket_permission, :occasional
   
   
-  has_many :agent_groups ,:class_name => 'AgentGroup', :through => :user , :foreign_key =>'user_id', :source =>'agents'
+  has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
+          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
+          :dependent => :delete_all
 
-  has_many :time_sheets , :class_name => 'Helpdesk::TimeSheet' , :through => :user , :foreign_key =>'user_id'
+  has_many :time_sheets, :class_name => 'Helpdesk::TimeSheet' , :through => :user , 
+          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
+          :dependent => :delete_all
+
+  has_many :achieved_quests, :foreign_key =>'user_id', :primary_key => "user_id",
+          :dependent => :delete_all
+
+  has_many :support_scores, :foreign_key =>'user_id', :primary_key => "user_id",
+          :dependent => :delete_all
+
+  has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key =>'responder_id', 
+          :primary_key => "user_id", :dependent => :nullify
 
   belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
   
