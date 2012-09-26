@@ -1,7 +1,7 @@
 class Agent < ActiveRecord::Base
   
   include Notifications::MessageBroker
-  include Gamification::Scoreboard::Memcache #Need to refactor this!
+  include MemcacheKeys
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id' , :dependent => :destroy 
 
@@ -60,7 +60,11 @@ end
   end
 
   def clear_leaderboard_cache! #Refactor this code!
-    memcache_delete(user)
+    memcache_delete(MEMCACHE_LEADERBOARD_MINILIST)
+  end
+
+  def clear_available_quests_cache!
+    memcache_delete(MEMCACHE_AVAILABLE_QUEST_LIST)
   end
 
 protected
