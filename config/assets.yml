@@ -181,6 +181,9 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
     - public/javascripts/hackz.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js
     - public/javascripts/humane.js
