@@ -5106,8 +5106,7 @@ a.close{
 #tickets-expanded {
 	.fd-ajaxmenu {
 		width: auto;
-		min-width:135px;
-		padding:3px;
+		min-width:250px;
 		margin-top: 5px;
 		right:15px;
 		@include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 1px, 8px );
@@ -5138,6 +5137,10 @@ a.close{
 			overflow-y:auto;
 			display:block;
 		}
+		.no_results {
+			text-align:center;
+			font-style:italic;
+		}
 		&.loading {
 			background-image:url('/images/loading.gif');
 			background-repeat:no-repeat;
@@ -5148,15 +5151,29 @@ a.close{
 				display:none;
 			}
 		}
+		&.hasSearch{
+			padding: 0;
+			.search_container {
+				display:block;
+			}
+		}
+		.search_container {
+			display:none;
+			margin: 0 0;
+			padding:3px 6px 0;
+			background:#EEE;
+			overflow:hidden;
+			@include border-radius(6px 6px 0 0);
 
+		}
 		.menu_search {
-			&.invisible {
-				height:0px;
-				margin-top:-1px;
-				margin-bottom:-1px;
-				padding:0px;
-				border:none;
-				position:absolute;
+			width: 86%;
+			padding: 5px 5%;
+			margin: 5px 1% 8px;
+
+			&:focus {
+				@include shadows(#999, 0, 0, 3px);
+				border-color: #999 !important;
 			}
 		}
 
@@ -5173,6 +5190,22 @@ a.close{
 			right:98px;
 		    border-width:0 6px 6px;
 		    z-index:16000;
+		}
+
+		&.hasSearch:after {
+			content:"";
+			position:absolute;
+			border-style:solid;
+			border-color:#EEE transparent;
+
+		    display:block; 
+		    width:0;
+		    top:-5px;
+			bottom:auto;
+			left:auto;
+			right:99px;
+		    border-width:0 5px 5px;
+		    z-index:16001;
 		}
 		&:after {
 			content:"";
