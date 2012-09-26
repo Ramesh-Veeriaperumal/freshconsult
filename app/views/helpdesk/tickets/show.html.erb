@@ -66,11 +66,14 @@
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
 			
-			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
-				jQuery("#"+activeForm.get(0).id).hide();
+			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid)){
+				//!VISIBILITY a visibility trigger is done to inform node that an agent has stopped replying
+				jQuery("#"+activeForm.get(0).id).hide().trigger('visibility'); 
+			}
 
+			//!VISIBILITY a visibility trigger is done to inform node that an agent is replying
+			activeForm = jQuery('#'+formid).show().trigger('visibility');
 
-			activeForm = jQuery('#'+formid).show();
 			switch(formid){
 				case 'cnt-reply':
 				case 'cnt-note':

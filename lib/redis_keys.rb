@@ -1,11 +1,11 @@
 module RedisKeys
 
-	HELPDESK_TICKET_FILTERS = "HELPDESK_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
-	HELPDESK_REPLY_DRAFTS = "HELPDESK_REPLY_DRAFTS:%{account_id}:%{user_id}:%{ticket_id}"
-	HELPDESK_GAME_NOTIFICATIONS = "HELPDESK_GAME_NOTIFICATIONS:%{account_id}:%{user_id}"
-	HELPDESK_TICKET_ADJACENTS 			= "HELPDESK_TICKET_ADJACENTS:%{account_id}:%{user_id}:%{session_id}"
-	HELPDESK_TICKET_ADJACENTS_META	 	= "HELPDESK_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
-
+	HELPDESK_TICKET_FILTERS             = "HELPDESK_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
+	HELPDESK_REPLY_DRAFTS               = "HELPDESK_REPLY_DRAFTS:%{account_id}:%{user_id}:%{ticket_id}"
+	HELPDESK_GAME_NOTIFICATIONS         = "HELPDESK_GAME_NOTIFICATIONS:%{account_id}:%{user_id}"
+	HELPDESK_TICKET_ADJACENTS           = "HELPDESK_TICKET_ADJACENTS:%{account_id}:%{user_id}:%{session_id}"
+	HELPDESK_TICKET_ADJACENTS_META      = "HELPDESK_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
+	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"ticket_id\":\"%{ticket_id}\",\"agent\":\"%{agent_name}\",\"type\":\"edited\"}"
 
 	def get_key(key)
 		begin
@@ -89,4 +89,11 @@ module RedisKeys
 	  end
 	end
 
+	def publish_to_channel channel, message
+	  begin
+	  	return $redis.publish(channel, message)
+	  rescue Exception => e
+	  	NewRelic::Agent.notice_error(e)
+	  end
+	end
 end

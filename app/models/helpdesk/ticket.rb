@@ -12,6 +12,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ParserUtil
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
+  include RedisKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
                             "header_info", "st_survey_rating"]
@@ -1131,9 +1132,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def publish_to_update_channel
     channel = "tickets:#{self.account.id}:#{self.id}"
-    agent = User.current.nil? ? "" : User.current.name
-    #client_count = $redis.publish(channel,"{\"ticket_id\":\"#{self.id}\",\"agent\":\"#{agent}\",\"type\":\"edited\"}") if $redis
-    #RAILS_DEFAULT_LOGGER.debug "Message : {\"ticket_id\":\"#{self.id}\",\"agent\":\"#{agent}\",\"type\":\"edited\"} Received by #{client_count} clients from channel : #{channel}"
+    agent_name = User.current ? User.current.name : ""
+    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name}
+    client_count = publish_to_channel(channel, message)
+    RAILS_DEFAULT_LOGGER.debug "Message : #{message} Received by #{client_count} clients from channel : #{channel}"
   end
 
 end
