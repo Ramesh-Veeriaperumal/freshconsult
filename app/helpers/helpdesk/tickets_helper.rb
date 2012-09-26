@@ -332,7 +332,8 @@ module Helpdesk::TicketsHelper
       "http://localhost:8080/node"
     else
       protocol = current_account.ssl_enabled ? "https" : "http"
-      "#{protocol}://#{current_account.full_domain}:82/node"
+      port = current_account.ssl_enabled ? 445 : 82
+      "#{protocol}://#{current_account.full_domain}:#{port}/node"
     end
   end
 end
