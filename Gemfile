@@ -72,6 +72,7 @@ gem 'resque-status'
 gem 'resque-retry'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
+gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 
 gem 'memcache-client', '1.8.5'
 
