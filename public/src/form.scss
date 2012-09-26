@@ -2032,6 +2032,11 @@ ul.ui-form .inputs-list{
 		input[type=text], input.text { 
 		   width: 93%;
 		}
+		div.color{
+			input{
+				width: 220px;
+			}
+		}
 		select{
 			width: auto;
 		}

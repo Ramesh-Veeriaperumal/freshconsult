@@ -76,6 +76,7 @@ gem 'rforce'
 gem 'after_commit', "~> 1.0.10"
 
 gem 'memcache-client', '1.8.5'
+gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 
 group :development do
    gem "rspec", "1.3.1"
