@@ -4,6 +4,20 @@
 	  			required: function(element) { return ((!!jQuery("input[@id=EnablePortal]:checked").length)); }
 	   }); */
 <% end %>
+<% javascript_tag do %>
+  jQuery(document).ready(function(){ 
+    jQuery("#PortalUrl").blur(function(){
+      input_url = jQuery('#PortalUrl').val();
+      protocol_exists = !(input_url.indexOf('http://') && input_url.indexOf('https://'));
+      if(protocol_exists)
+      {
+        get_index = input_url.indexOf("://");
+        result_url = input_url.substring(get_index+3);
+        jQuery('#PortalUrl').val(result_url);
+      }
+    });
+  }); 
+<% end %>
 <div class="portal-settings">
   <br />
   <div class="largelabel">
@@ -12,7 +26,7 @@
 
   <div class="fields">
     <%= content_tag(:label, t('.portal_url') + "*") %>
-  	<%= portal.text_field :portal_url, :class => "text", :id => "PortalUrl" %>
+  	<%= portal.text_field :portal_url, :class => "text url_without_protocol", :id => "PortalUrl" %>
   	<%= content_tag(:div, t('.cname_configure_info', :full_domain => current_account.full_domain), :class => "info-data") %>
   	<span class="seperator"></span>
 

@@ -107,6 +107,7 @@ javascripts:
     - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
+    - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
   timesheet:
     - public/javascripts/timesheet.js

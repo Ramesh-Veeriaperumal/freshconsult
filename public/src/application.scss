@@ -18,20 +18,17 @@
 /* Sprite sheet creation for badges and trophies */
 /*Gamification-Trophy */
 @import "trophy/*.png";
+$trophy-sprite-dimensions:true;
+$trophy-layout:smart;
 @include all-trophy-sprites;
 
 /*Gamification-Badges */
+$badges-layout:smart;
+$badges-a-layout:smart;
 @import "badges/*.png";
+@import "badges-a/*.png";
 @include all-badges-sprites;
-
-
-/*@include font-face('Silkscreen',
-  font-files(
-    'slkscr.woff', woff,
-    'slkscr.ttf', ttf,
-    'slkscr.svg', svg),
-    'slkscr.eot');
-*/
+@include all-badges-a-sprites;
 
 @font-face {
     font-family: 'Silkscreen';
@@ -41,7 +38,6 @@
          url('/fonts/slkscr.svg#Silkscreen') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
 
 /* Bullet icon */ 
@@ -4918,7 +4914,7 @@ a.close{
 	.link-item.active{
 	   color:#336699;
      font-weight:bold;
-     @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+     /*@include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);*/
 	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{
@@ -6709,9 +6705,12 @@ a.mobile_switchBtn {
 		line-height: 18px;
 	}
 	h4{
-		font-size:14px;		
+		font-size:13px;		
 		line-height:20px;
 		font-weight:bold;
+	}
+	h4.name{
+		@include ellipsis;
 	}
 	.panel-content{
 		padding-left:50px;
@@ -6723,7 +6722,7 @@ a.mobile_switchBtn {
 
 .admin-list .panel-row{ padding: 12px 0; }
 
-.panel-row.odd{
+.panel-row.odd, .lb-report .odd{
 	background-color: #f8f8f8;
 }
 

@@ -101,6 +101,10 @@ input.very_small{
 	width:200px;
 }
 
+input.portal_url{
+	width: 220px;
+}
+
 textarea.smallpara{
 	height:50px;
 }
@@ -2031,6 +2035,11 @@ ul.ui-form .inputs-list{
 		}
 		input[type=text], input.text { 
 		   width: 93%;
+		}
+		div.color{
+			input{
+				width: 220px;
+			}
 		}
 		select{
 			width: auto;

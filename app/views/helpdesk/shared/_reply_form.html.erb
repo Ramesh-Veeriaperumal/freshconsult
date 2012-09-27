@@ -134,7 +134,7 @@
     <div class="button-container">        
       <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
       <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('resolved');" , :class => "uiButton", :id => "send_resolve_btn") %>
-    <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{note_details_id}').show();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
+    <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{note_details_id}').show();cleardraft();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
     </div>
 
 
