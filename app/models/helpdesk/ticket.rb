@@ -594,6 +594,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
 
+  def custom_field_aliases
+    return ff_aliases if flexifield
+    fields_def = FlexifieldDef.first(:include => [:flexifield_def_entries], 
+      :conditions => ['account_id=? AND module=?',account_id,'Ticket'] )
+    fields_def.ff_aliases
+  end
+
   def ticket_id_delimiter
     delimiter = account.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
@@ -747,7 +754,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def respond_to?(attribute)
     super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
-      ticket_states.respond_to?(attribute)
+      ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def schema_less_attributes(attribute, args)
@@ -757,32 +764,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
+  def custom_field_attribute attribute, args    
+    logger.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
+    
+    load_flexifield if custom_field.nil?
+    return custom_field[attribute] unless  attribute.to_s.include?("=")
+      
+    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
+    field = attribute.to_s.chomp("=")
+    args = args.first if !args.blank? && args.is_a?(Array) 
+    self.ff_def = ff_def_id
+    custom_field[field] = args
+  end
+
   def method_missing(method, *args, &block)
     begin
       super
     rescue NoMethodError => e
-      logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+      logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
 
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
-
-      load_flexifield if custom_field.nil?
-      custom_field.symbolize_keys!
-      
-      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("=").to_sym)
-        logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
-        
-        ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
-        field = method.to_s.chomp("=")
-        logger.debug "field is #{field}"
-        self.ff_def = ff_def_id
-        self.set_ff_value field, args
-        save
-        return
-      end
-      
-      raise e unless custom_field.has_key?(method)
-      custom_field[method]
+      return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))
+      raise e
     end
   end
 
