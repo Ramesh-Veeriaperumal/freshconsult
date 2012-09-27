@@ -5141,18 +5141,25 @@ a.close{
 			text-align:center;
 			font-style:italic;
 		}
+		
 		&.loading {
 			background-image:url('/images/loading.gif');
 			background-repeat:no-repeat;
 			background-position: center;
 			padding:20px 10px;
 
-			a, li, .contents, .menu_search {
+			a, li, .contents {
 				display:none;
 			}
 		}
 		&.hasSearch{
 			padding: 0;
+			&.loading {
+				padding: 20px 10px;
+				.search_container {
+					display:none;
+				}
+			}
 			.search_container {
 				display:block;
 			}
