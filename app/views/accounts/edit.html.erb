@@ -8,6 +8,16 @@
 			jQuery("#TabColor").val("#006063").trigger("keyup");
 			jQuery("#BackgroundColor").val("#efefef").trigger("keyup");
 		});
+		jQuery("#account_main_portal_attributes_portal_url").blur(function(){
+			input_url = jQuery('#account_main_portal_attributes_portal_url').val();
+			protocol_exists = !(input_url.indexOf('http://') && input_url.indexOf('https://'));
+			if(protocol_exists)
+			{
+			    get_index = input_url.indexOf("://");
+			    result_url = input_url.substring(get_index+3);
+			    jQuery('#account_main_portal_attributes_portal_url').val(result_url);
+			}
+		});
 	}); 
 <% end %>
 <h3 class="title"><%=t('account.rebrand')%></h3> 
@@ -65,7 +75,7 @@
 					<label class="overlabel" for="account_main_portal_attributes_portal_url">
 						Eg. support.mycompanyname.com						
 					</label>
-			    <%= portal.text_field :portal_url, :class => "text auto" %> 
+			    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol" %> 
 					<div class="info-data">
 						<%=t('account.info2',:full_domain => @account.full_domain)%>
 					</div>	

@@ -775,6 +775,7 @@ Redactor.prototype = {
 					if(navigator.userAgent.indexOf('Firefox') > -1)
 					{
 						e.preventDefault();
+						this.getSelection().modify("move", "backward", "lineboundary");
 					}
 				}							
 			}	
