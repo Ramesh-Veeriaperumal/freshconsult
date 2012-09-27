@@ -1,4 +1,6 @@
 class ThemeController < SupportController
+	include RedisKeys
+
 	caches_page :index
 	skip_before_filter :set_liquid_variables
 
@@ -6,8 +8,12 @@ class ThemeController < SupportController
 		@theme_colors = @portal.preferences.map{ |k, p| (k != "logo_link") ? "$#{k}:#{p};" : "" }.join("")
 
 		@default_custom_css = render_to_string(:file => "#{Rails.root}/public/src/portal/portal.scss")
-
-		@custom_css = (@portal.template.present?) ? @portal.template.custom_css.to_s : ""
+		if (!params[:preview].blank? && !current_user.blank?)
+			key = redis_key(":custom_css", current_portal.template[:id])
+			@custom_css = exists(key) ? get_key(key) : @portal.template.custom_css.to_s
+		else
+			@custom_css = (@portal.template.present?) ? @portal.template.custom_css.to_s : ""
+		end
 
 		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compressed)
 		_options[:load_paths] << "#{Rails.root}/public/src/portal"
@@ -20,5 +26,15 @@ class ThemeController < SupportController
 		  format.css  { render :text => @output_css, :content_type => "text/css", :cache => true}
 		end
 	end
+
+	private
+
+		def redis_key label, template_id
+      PORTAL_PREVIEW % {:account_id => current_account.id, 
+                        :label=> label, 
+                        :template_id=> template_id, 
+                        :user_id => current_user.id
+                      }
+    end
 
 end

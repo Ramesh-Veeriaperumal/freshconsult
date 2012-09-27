@@ -1,8 +1,10 @@
 class SupportController < ApplicationController
+  include RedisKeys
+
   layout 'portal'
   before_filter :set_portal
-  before_filter :set_liquid_variables
-
+  before_filter :set_liquid_variables  
+  
   def new
      @user_session = current_account.user_sessions.new   
      @login_form = render_to_string :partial => "login"
@@ -38,11 +40,27 @@ class SupportController < ApplicationController
 
   	def set_liquid_variables
       Portal::Template::TEMPLATE_MAPPING.each do |t|
-        _content = render_to_string :partial => t[1], :locals => { :dynamic_template => (current_portal.template[t[0]] unless current_portal.template.blank?) }
+        _content = render_to_string :partial => t[1], :locals => { :dynamic_template => (get_data_for_template(t[0])) }
         instance_variable_set "@#{t[0]}", _content
       end      
   		@search_portal  ||= render_to_string :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') }
   	end
 
+    def get_data_for_template sym
+      if (!params[:preview].blank? && !current_user.blank?)
+        key = redis_key(sym, current_portal.template[:id])
+        @data = exists(key) ? get_key(key) : current_portal.template[sym]
+      else
+        @data = current_portal.template[sym] unless current_portal.template.blank?
+      end
+    end
+
+    def redis_key label, template_id
+      PORTAL_PREVIEW % {:account_id => current_account.id, 
+                        :label=> label, 
+                        :template_id=> template_id, 
+                        :user_id => current_user.id
+                      }
+    end
 
 end

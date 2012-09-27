@@ -1,23 +1,37 @@
-class Admin::PortalPagesController < Admin::AdminController               
+class Admin::PortalPagesController < Admin::AdminController
+  include RedisKeys
+
   before_filter :build_object, :only => [:new, :create]
   before_filter :find_object, :only => [:edit, :update]
   before_filter :get_raw_page, :except => [:create, :update]
-  
+  before_filter :get_portal_page_label , :only =>[:create, :update]
+
   layout false
 
   def create
     @portal_page.update_attributes(params[:portal_page])
-    if @portal_page.save
+    if params[:preview_button]
+      set_key redis_key , params[:portal_page][:content]
+      redirect_to support_solutions_url
+    else  
+      @portal_page.save       
+      remove_key(redis_key)
       flash[:notice] = "Page successfully customized with your changes"
+      redirect_to :back 
     end
-    redirect_to :back
   end
 
-  def update    
-    if @portal_page.update_attributes(params[:portal_page])
-      flash[:notice] = "Page customization updated successfully"
+  def update  
+    
+    if params[:preview_button]
+      set_key redis_key , params[:portal_page][:content]
+      redirect_to support_solutions_url
+    else 
+      @portal_page.update_attributes(params[:portal_page])
+      remove_key(redis_key) 
+      flash[:notice] = "Page successfully customized with your changes"
+      redirect_to :back 
     end
-    redirect_to :back
   end
   
   protected  
@@ -38,5 +52,16 @@ class Admin::PortalPagesController < Admin::AdminController
     def get_raw_page
       @portal_page[:content] = render_to_string(:file => @portal_page.default_page, :content_type => 'text/plain') if @portal_page[:content].blank?
     end
+
+    def redis_key 
+      PORTAL_PREVIEW % {:account_id => current_account.id, 
+                        :label=> @portal_page_label, 
+                        :template_id=> @portal_page[:template_id], 
+                        :user_id => current_user.id
+                      }
+    end
     
+    def get_portal_page_label
+      @portal_page_label = Portal::Page::PAGE_TYPE_TOKEN_BY_KEY[params[:portal_page][:page_type].to_i]
+    end
 end
