@@ -29,6 +29,12 @@ namespace :facebook do
   def fb_sandbox
       begin
         yield
+      rescue Koala::Facebook::APIError => e
+        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
+        puts e.to_s
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Errno::ECONNRESET => e
         puts e.to_s
         NewRelic::Agent.notice_error(e)
@@ -60,13 +66,11 @@ namespace :facebook do
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Exception => e
-        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
         puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue 
-        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
         puts e.to_s
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
       end
