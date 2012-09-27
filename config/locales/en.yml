@@ -2335,7 +2335,7 @@ en:
     logmein:
       label: "LogMeIn Rescue"
       desc: "Provide remote support to your customers using LogMeIn Rescue"
-      helptext: "LogMeIn Rescue Helptext goes here"
+      helptext: "<h4>LogMeIn Rescue Integration Help</h4><p><br/> To integrate LogMeIn Rescue with Freshdesk, enter your LogMeIn Rescue CompanyID and SSO password and click on Update. <br/>Once enabled, LogMeIn Rescue widget can be found in ticket details page. <br/><br/>Use the  &quot;Launch Technician Console&quot; to launch the technician console directly from the Freshdesk Widget. <br/>Now you can generate a pincode and share the instructions with the requester to continue the support in LogMeIn Rescue. <br/><br/> <b>Note:</b> The agent's email should match LogMeIn Rescue's technician SSO ID. To set your SSO ID go to Admin Center -> Technician Name -> Organization -> SSOID"
       note:
         header: "Your LogMeIn Rescue Session details"
         session_id: "Session ID"
@@ -2349,8 +2349,8 @@ en:
         widget_title: "Widget Title"
         company_id: "Company ID"
         password: "SSO Password"
-        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Name -> Global Settings -> ASP.NET C# example "
-        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Name -> Global Settings -> Single Sign-On"
+        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Group -> Global Settings -> ASP.Net C# server side example "
+        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
