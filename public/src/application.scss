@@ -16,6 +16,16 @@
 /*Ticket View icons */
 @import "ticket-view/*.png";
 
+/* Sprite sheet creation for badges and trophies */
+/*Gamification-Trophy */
+@import "trophy/*.png";
+@include all-trophy-sprites;
+
+/*Gamification-Badges */
+@import "badges/*.png";
+@include all-badges-sprites;
+
+
 /*@include font-face('Silkscreen',
   font-files(
     'slkscr.woff', woff,
@@ -59,7 +69,7 @@ $priority-hover-alpha: 1;
 }
 
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
-   @extend .sp_border;
+   	@extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
 }
 
@@ -68,7 +78,15 @@ $priority-hover-alpha: 1;
 } 
 
 .sidepanel{
-	position:relative;
+	position:relative;	
+}
+
+.side-panel{
+	background-color:#ffffff;
+	border:1px solid #b3b3b3;
+	padding:6px 12px 12px;
+	margin:0px 10px 10px 0px;
+	@include box-shadow(rgba(0,0,0, 0.2) 0 0 3px);
 }
 
 .pagearea{
@@ -85,7 +103,7 @@ ul.activityfeed, ul.summary{
 ul.summary{
 	@include border-radius(6px);    
 	background:#fafafa; 
-	@include background-with-css2-fallback(linear-gradient(white, #fafafa));
+	/* @include background-with-css2-fallback(linear-gradient(white, #fafafa)); */
 	border:1px solid #efefef; 
 	margin-bottom:10px; 
 	li{ 
@@ -161,7 +179,7 @@ ul.activityfeed li{
 		margin:0px 0px 14px 0px;
 		color:#444;
 	}  
-	 h4{
+	h4{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
@@ -658,6 +676,15 @@ body h5{
 	.high:before{ border-left-color: $COL_PRI_HIGH; }
 	.urgent{ background-color: $COL_PRI_URGENT; }
 	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
+
+	#adjacents {
+		margin:4px 6px;
+		position: absolute;
+		right: 0;
+		top: 0;
+		left:auto;
+		bottom:auto;
+	}
 }
 h4.title{
 	font-size:1.1em;
@@ -3396,12 +3423,12 @@ div.addReminder{
 				@include filter-gradient(#ffb613, #005290, horizontal); // IE6-9
 				@include background-image( $priority_gradient, linear-gradient(left, #ffb613 0%,#d99b10 80%,#946a0b 100%,#005290 100%));
 			}
-			&.priority-medium {
+			&.priority-low {
 				background: #89ce00; /* Old browsers */
 				@include filter-gradient(#89ce00, #005290, horizontal); // IE6-9
 				@include background-image( $priority_gradient, linear-gradient(left, #89ce00 0%,#75af00 80%,#4e7600 100%,#005290 100%));
 			}
-			&.priority-low {
+			&.priority-medium {
 				background: #008ff9;
 				@include background-image($priority_gradient, linear-gradient(left, rgba(0,143,249,1) 0%,rgba(0,122,212,1) 80%,rgba(0,83,145,1) 100%,rgba(0,82,144,1) 100%));
 			}
@@ -3489,18 +3516,17 @@ div.addReminder{
 	}
 	
 	.subject_style {
-		@include border-radius(3px);
-		font-size:8px;
-		padding:3px 5px 0;
-		line-height: 120%;
-		letter-spacing:-0.13em;
-		font-smooth:never;
-		-webkit-font-smoothing: none;
+		@include border-radius(16px);
+		font-size:9px;
+		padding:3px 8px;
+		line-height: 100%;
+		font-weight: bold;
+		text-transform: uppercase;
 		display:inline-block;
 		white-space:nowrap;
-   		font-family: "Silkscreen";
+		@include box-shadow(1px 1px 0 white);
    		
-		@include text-shadow(-1px  -1px 0 rgba(255,255,255,0.7));
+		@include text-shadow(1px  1px 0 rgba(255,255,255,0.7));
 
 		&.customer_responded, &.overdue  {
 			background: #698ee4;
@@ -3529,7 +3555,7 @@ div.addReminder{
          margin-top:3px;
          margin-left:-55px;         
          @include corners(5px);
-         border:1px solid #9a9a9a;
+         border:1px solid #CCC;
          height:45px;
          img{ 
             width:45px; height:45px;
@@ -3541,12 +3567,12 @@ div.addReminder{
       }
 
       .info-data {
-      	color:#999;
+      	color:#888;
       	a {
-      		color:#999;
+      		color:#888;
       	}
       	.emphasize {
-      		color: #777;
+      		color: #555;
       		font-weight:normal;
       	}
 
@@ -3772,6 +3798,8 @@ div.addReminder{
 		text-align:center; 
 		img{
 		   max-width:130px;
+		   width: 90px;
+		   height:90px;
 		}
 	}
 	.info-highlight{
@@ -3883,7 +3911,7 @@ div.addReminder{
 	border-style: solid;
 	border-width: 1px 0;
 	padding:0px 0px;
-	margin:0 -20px;
+	margin:5px -20px 0;
 	li{	
 		@include pie-clearfix;
 		padding:8px 20px;
@@ -3915,7 +3943,7 @@ div.addReminder{
 			padding:2px 0px;
 			position:relative;
 			top:-4px;
-			/*visibility:hidden;*/
+			visibility:hidden;
 			a{
 				color:#333333;
 				font-weight:bold;
@@ -3925,6 +3953,12 @@ div.addReminder{
 				text-decoration:none;
 			}
 		}		
+
+		&:hover {
+			div.item_actions{
+				visibility: visible;
+			}
+		}
 		div.item_information{
 			@include clearfix;
 			float:left;
@@ -4804,7 +4838,7 @@ a.close{
       color:#333;
       font-size:16px;
       font-weight:normal;
-      padding:8px 8px 10px 8px;
+      padding:8px 8px 10px 0;
       margin:0;
    }
    h4.title{
@@ -4829,7 +4863,7 @@ a.close{
 			display:none;
       	}
 	   	.ff_item{
-			margin:0 6px 0;
+			margin:0 6px 0 0;
 			padding:4px 2px 10px;
 		}
 	   	.item{
@@ -4877,19 +4911,15 @@ a.close{
 		display:inline-block;
 		margin:8px 0 2px;
 
-		#view_manage_links {
-			display: inline-block;
-			zoom:1;
-		}
 	.link-item.active, a.link-item:hover{
      margin:0px -5px;
      padding-left:13px;
      background: #e2f1fa;
 	}
 	.link-item.active{
-	   color:#336699;
-     font-weight:bold;
-     /*@include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);*/
+		color:#336699;
+		font-weight:bold;
+		/* @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom); */
 	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{
@@ -4924,21 +4954,23 @@ a.close{
 			}
 
 		}
+	}   
+}
+
+.leftFilter {
+
+	#save_filter, #view_manage_links {
+		visibility: hidden;
+	}
+	#view_manage_links {
+		display: inline-block;
 	}
 
-
-   .leftFilter {
-
+	&:hover{
 		#save_filter, #view_manage_links {
-			visibility: hidden;
+			visibility: visible;
 		}
-		&:hover{
-			#save_filter, #view_manage_links {
-				visibility: visible;
-			}
-		}
-   }
-   
+	}
 }
 
 .scroll_fixed_options .leftFilter {
@@ -5055,7 +5087,10 @@ a.close{
       }
       .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
-   a:hover{
+   a.hide {
+   	display:none;
+   }
+   a:hover, a.selected{
       color:#FFF;
       background: #999;
 	  @include text-shadow(none);
@@ -5084,7 +5119,14 @@ a.close{
 
 			&:hover {
 				@include text-shadow(none);
-				color:#FFF;
+				color:#333;
+   				background:#ffffff;
+
+   				&.selected {
+					color:#FFF;
+					background: #999;
+					@include text-shadow(none);
+   				}
 			}
 
 			.ticksymbol {
@@ -5092,14 +5134,30 @@ a.close{
 			}
 		}
 
+		.contents {
+			max-height: 400px;
+			overflow-y:auto;
+			display:block;
+		}
 		&.loading {
 			background-image:url('/images/loading.gif');
 			background-repeat:no-repeat;
 			background-position: center;
 			padding:20px 10px;
 
-			a, li {
+			a, li, .contents, .menu_search {
 				display:none;
+			}
+		}
+
+		.menu_search {
+			&.invisible {
+				height:0px;
+				margin-top:-1px;
+				margin-bottom:-1px;
+				padding:0px;
+				border:none;
+				position:absolute;
 			}
 		}
 
@@ -5611,7 +5669,6 @@ a.close{
 	.ui-form {
 		background:none;
 		border:none;
-
 		div.field {
 			float:left;
 			margin:5px 0;
@@ -5676,6 +5733,70 @@ a.close{
 	}
 
 }
+
+.remote_support{
+	.session_data{
+		text-align: center;
+		.pin_submit{
+			margin-top: 15px;
+		}
+		.tech_console{
+			margin-top: 5px;
+		}	
+	}
+	.active_header{
+		font-weight: bold;
+	}
+	.active_session_pin{
+		border: 1px solid #D4D4D4;
+		text-align: center;
+		margin-top: 5px;
+		border-radius: 4px;
+		-moz-border-radius: 4px;
+		padding: 15px 10px;
+		background-color: #FDF8D8;
+
+		.pincode{
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+	}
+	.resend{
+		margin-top: 5px;		
+	}
+	
+}
+
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right top no-repeat;
+}
+
+
+.error{
+	color: #F00;
+}
+
+
+#integrations-list {
+	display:block;
+	overflow: hidden;
+	margin: 0 -20px;
+
+	.search {
+		position: relative;
+		right:10px;
+		top: 0px;
+	}
+	ul.table-list {
+		margin: 15px 0 0 0;
+	}
+
+	.tabs {
+		margin-bottom: 10px;
+	}
+}
+
 
 .crm_contact_widget {
 	.content { width:auto; }
@@ -6494,22 +6615,343 @@ margin:10px;
 }
 
 a.mobile_switchBtn {
-		background-color:#FFF;
-		border:1px solid #888;
-		@include border-radius(20px);
-		color:#333 !important;
-		padding: 2px 8px;
-		font-size:11px;
-		font-weight:bold;
+	background-color:#FFF;
+	border:1px solid #888;
+	@include border-radius(20px);
+	color:#333 !important;
+	padding: 2px 8px;
+	font-size:11px;
+	font-weight:bold;
+	float:left;
+	float: left;
+	margin: 15px 0px 0px 10px;
+	z-index:5;
+	position:relative;
+	&:active, &:hover{
+		@include background(#444);
+		color:#fff !important;
+		text-shadow: -1px -1px 0 black;
+		text-shadow: -1px -1px 0 black;
+	}
+}
+
+/* Importing gamification related style information */ 
+
+@import "gamification";
+
+.thick-border-top{
+	border-top:2px solid #b5b5be;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.side-panel .action-right{
+	float: right;
+	font-size: 13px;
+	line-height: 24px;
+	margin-top: 4px;
+}
+
+.level-progress{
+	border:1px solid #c6c6c6;
+	@include border-radius(3px);
+	margin-top: 6px;
+	padding: 5px 10px;
+	position: relative;
+	p{
+		position: relative;
+		z-index: 1;
+	}
+	.bar{
+		position: absolute;
+		background-color: #e8f1f4;
+		top:0;
+		left:0;
+		height: 100%; 
+		@include border-left-radius(3px);
+		z-index: 0;
+	}
+}
+
+.badge-list{
+	@include clearfix;
+	.badges{
 		float:left;
-		float: left;
-		margin: 15px 0px 0px 10px;
-		z-index:5;
-		position:relative;
-		&:active, &:hover{
-			@include background(#444);
-			color:#fff !important;
-			text-shadow: -1px -1px 0 black;
-			text-shadow: -1px -1px 0 black;
-		}
+		position: relative;
+		margin: 15px 18px 25px 0;
+	}
+	.score{
+		position: absolute;
+		width: 100%;
+		text-align: center;
+		bottom:-18px;
+		@include ellipsis;
+		color: #666666;
+	}
+}
+
+.panel-row{
+	@include pie-clearfix;
+	border-top:1px solid #e6e6e6;
+	padding:8px 0;
+	.preview_pic{
+		padding:2px;
+		background:#AFAFAF;
+		border-radius:3em;
+		line-height:0;
+	}
+	.preview_pic img{
+		@include border-radius(2em);
+		width:36px;
+		height:36px;
+	}
+	.help-text{
+		color:#666;
+		font-size:13px;
+		line-height: 18px;
+	}
+	h4{
+		font-size:14px;		
+		line-height:20px;
+		font-weight:bold;
+	}
+	.panel-content{
+		padding-left:50px;
+	}
+	.actions{ display:none; }
+	&:hover .actions{ display:block; }
+	.toggle-button { margin-left: 0; }
+}
+
+.admin-list .panel-row{ padding: 12px 0; }
+
+.panel-row.odd{
+	background-color: #f8f8f8;
+}
+
+.panel-row.acheived{
+	background-color: #f3f6ee;	
+}
+
+.acheived-text{
+	color: #4b7200;
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.symbol-done-tick{
+	@include inline-block;
+	width: 15px; height: 15px;
+	background:sprite($symbol, done-tick) no-repeat;	
+}
+
+/* SURVEY FORM FOR SELF SERVICE PORTAL */
+.survey-form{
+        width: 98%;
+        margin: 5px 0;
+        padding: 0px 0px 10px 0px;
+        min-height: 50px;
+        background: #f1f1f1;
+        clear: both;
+        border: 4px #d5d5d5 solid;
+        -webkit-box-shadow: inset 0px 0px 5px #dfdfdf;
+           -moz-box-shadow: inset 0px 0px 5px #dfdfdf;
+            -ms-box-shadow: inset 0px 0px 5px #dfdfdf;
+                box-shadow: inset 0px 0px 5px #dfdfdf;
+    }
+
+    .clear{
+        clear: both;
+    }
+
+    .survey-form-left{
+        width: 260px;
+        float: left;
+    }
+    .survey-form-left h3{
+        font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #000;
+        padding: 19px 0px 10px 10px;
+        min-height: 30px;
+    }
+
+    .survey-form-right{
+        width: 530px;
+        float: left;
+    }
+
+    ul.survey-options{
+        width: 100%;
+        display: block;
+    }
+
+    ul.survey-options li{
+        float: left;
+        padding: 8px 0px 0px 0px;
+    }
+
+     .survey-form-close {
+    	ul.survey-options li a:hover, ul.survey-options li.active a{
+        		background-color: transparent;
+        		border: 0;
+        		height:30px;
+        		-webkit-box-shadow: inset 0px 0px 0px #ccc;
+            	-moz-box-shadow: inset 0px 0px 0px #ccc;
+              	-ms-box-shadow: inset 0px 0px 0px #ccc;
+                     	box-shadow: inset 0px 0px 0px #ccc;        
+    	}
+    }
+
+
+    ul.survey-options li a{
+        display: inline-block;
+        color: #333;
+        height: 30px;
+        padding: 10px 20px 0px 41px;
+        background-color: #f4f4f4;
+        border: 1px #e8e8e8 solid;
+        margin-right: 5px;
+        font-size: 14px;
+        background-repeat: no-repeat; 
+        background-position: 11px 8px;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+                border-radius: 3px;
+    }
+
+   	
+
+    ul.survey-options li a:hover{
+        background-color: #f9f9f9;
+    }    
+
+    ul.survey-options li.active a{
+        background-color: #a5a5a5;
+        color: #fff;
+        height: 30px;
+        border: 1px #a5a5a5 solid;
+        -webkit-box-shadow: inset 1px 1px 3px #7c7c7c;
+            -moz-box-shadow: inset 1px 1px 3px #7c7c7c;
+              -ms-box-shadow: inset 1px 1px 3px #7c7c7c;
+                     box-shadow: inset 1px 1px 3px #7c7c7c;
+        -webkit-border-radius: 3px ;
+           -moz-border-radius: 3px ;
+             -ms-border-radius: 3px ;
+                    border-radius: 3px ;
+    }
+
+    ul.survey-options li a.happy{
+        background-image: url(../images/portal/smiley-good.png);
+    }
+
+    ul.survey-options li a.neutral{
+        background-image: url(../images/portal/smiley-neutral.png);
+    }
+
+    ul.survey-options li a.unhappy{
+        background-image: url(../images/portal/smiley-bad.png);
+    }
+
+    span.happy, span.neutral, span.unhappy{
+         padding: 5px 20px 10px 30px;
+         margin: 4px 0px 0px 10px;
+         display: inline-block;
+    }
+
+     span.happy{
+        background: url(../images/portal/smiley-good.png) no-repeat;
+    }
+
+    span.neutral{
+        background: url(../images/portal/smiley-neutral.png) no-repeat;
+    }
+
+    span.unhappy{
+        background: url(../images/portal/smiley-bad.png) no-repeat;
+    }
+
+    .survey-comment{
+        display: none;
+        width: 559px;
+    }
+
+    .survey-form-right{
+        min-height: 50px;
+    }
+
+    .survey-form-right h4{
+        font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #000;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        clear: both;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .survey-comment textarea{
+        width: 500px;
+        height: 40px;
+        clear: both;
+    }
+
+    .survey-comment input[type="button"],.survey-comment input[type="submit"]{
+        width: 80px;
+        margin: 10px 10px 10px 0px;
+        text-transform: capitalize;
+        padding: 4px 0px 4px 0px;
+        display: inline-block;
+        border: 1px #8a8a8a solid;
+        color: #252525;
+        cursor: pointer;
+        text-shadow: 0px 1px 0px #fff;
+         font: normal 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+                border-radius: 3px;
+	background-color: #e8e8e8; // Old browsers
+	@include filter-gradient(#e8e8e8, #d9d9d9, vertical); // IE6-8
+	// IE9 SVG, needs conditional override of 'filter' to 'none'
+	$experimental-support-for-svg: true;
+	@include background-image(linear-gradient(top,  #e8e8e8 0%,#d9d9d9 100%));
+        
+    }
+
+    .survey-comment input[type="button"]:hover,.survey-comment input[type="submit"]:hover{
+        background: #e8e8e8;
+    }
+
+    .survey-comment input[type="button"]:active,.survey-comment input[type="submit"]:active{
+        
+	background-color: #ababab; // Old browsers
+	@include filter-gradient(#ababab, #646464, vertical); // IE6-8
+	$experimental-support-for-svg: true;
+	@include background-image(linear-gradient(top,  #ababab 0%,#646464 100%));
+             border-bottom: 1px #8a8a8a solid;
+             color: #fff;
+             text-shadow: 0px 1px 0px #333;
+        
+    }
+
+.close-comment{
+    width: 500px;
+    float: left;
+    margin-top: 10px;
+    padding: 5px 3px 0px 0px;
+    line-height: 20px;
+    border-right: 1px #c2c2c2 solid;
+}
+
+.close-comment span{
+    color: #777;
+}
+
+.rate-again{
+    width: 140px;
+    float: left;
+    border-left: 1px #fff solid;
+    margin-top: 10px;
+    padding: 5px 3px 0px 5px;
+    line-height: 20px;
 }

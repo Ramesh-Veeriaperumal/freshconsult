@@ -17,6 +17,7 @@ var RLANG = {
 	format: 'Format',
 	bold:  'Bold',
 	italic: 'Italic',
+	underline: 'Underline',
 	superscript: 'Superscript',
 	strikethrough: 'Strikethrough',
 	fontcolor: 'Font color',

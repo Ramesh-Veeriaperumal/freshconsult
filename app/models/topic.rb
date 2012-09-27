@@ -2,12 +2,8 @@ class Topic < ActiveRecord::Base
   include Juixe::Acts::Voteable
   acts_as_voteable 
   validates_presence_of :forum, :user, :title
-  before_create  :set_default_replied_at_and_sticky
-  before_update  :check_for_changing_forums
-  after_save     :update_forum_counter_cache
-  before_destroy :update_post_user_counts
-  after_destroy  :update_forum_counter_cache
 
+  belongs_to_account
   belongs_to :forum
   belongs_to :user
   belongs_to :last_post, :class_name => "Post", :foreign_key => 'last_post_id'
@@ -25,6 +21,8 @@ class Topic < ActiveRecord::Base
   named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
 
   named_scope :visible, lambda {|user| visiblity_options(user) }
+
+  named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   def self.visiblity_options(user)
     if user
@@ -56,8 +54,10 @@ class Topic < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
     has forum.customer_forums(:customer_id), :as => :customer_ids
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
 
-    set_property :delta => :delayed
+    #set_property :delta => :delayed
     set_property :field_weights => {
       :title    => 10,
       :comment  => 4
@@ -149,47 +149,6 @@ class Topic < ActiveRecord::Base
 
   def to_liquid
     Forum::TopicDrop.new self
-  end
-
-  protected
-    def set_default_replied_at_and_sticky
-      self.replied_at = Time.now.utc
-      self.sticky   ||= 0
-    end
-
-    def set_post_forum_id
-      Post.update_all ['forum_id = ?', forum_id], ['topic_id = ?', id]
-    end
-
-    def check_for_changing_forums
-      old = Topic.find(id)
-      @old_forum_id = old.forum_id if old.forum_id != forum_id
-      true
-    end
-    
-    # using count isn't ideal but it gives us correct caches each time
-    def update_forum_counter_cache
-      forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => forum_id})]
-      # if the topic moved forums
-      if !frozen? && @old_forum_id && @old_forum_id != forum_id
-        set_post_forum_id
-        Forum.update_all ['topics_count = ?, posts_count = ?', 
-          Topic.count(:id, :conditions => {:forum_id => @old_forum_id}),
-          Post.count(:id,  :conditions => {:forum_id => @old_forum_id})], ['id = ?', @old_forum_id]
-      end
-      # if the topic moved forums or was deleted
-      if frozen? || (@old_forum_id && @old_forum_id != forum_id)
-        forum_conditions.first << ", posts_count = ?"
-        forum_conditions       << Post.count(:id, :conditions => {:forum_id => forum_id})
-      end
-      # User doesn't have update_posts_count method in SB2, as reported by Ryan
-      # @voices.each &:update_posts_count if @voices
-      Forum.update_all forum_conditions, ['id = ?', forum_id]
-      @old_forum_id = @voices = nil
-    end
-
-    def update_post_user_counts
-      @voices = voices.to_a
   end
 
 end

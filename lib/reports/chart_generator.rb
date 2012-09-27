@@ -43,7 +43,11 @@ module Reports::ChartGenerator
     
     pie_data = []
     sort_data.each do |key,tkt_hash|
-      pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     if (TicketConstants::SOURCE_NAMES_BY_KEY.has_key?(key))
+        pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     else
+        pie_data.push({:name=> key,:data =>[tkt_hash.to_f] })#//TODO need to do i18n for the key 
+      end
     end
     pie_data
   end
@@ -150,14 +154,15 @@ module Reports::ChartGenerator
   end 
   
 
-def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
 
+def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
+return nil if data_arr.empty?
   Highchart.bar({
     :chart =>{
         :renderTo => "#{chart_name}_bar_chart",
-          :margin => [10,15,50,column_width],
+          :margin => [10,35,50,column_width],
           :borderColor => 'rgba(0,0,0,0)',
-          :height =>(data_arr.length*20 < 400)? 400 :data_arr.length*20,
+          :height =>(data_arr.length*20 < 320)? 320 :data_arr.length*20,
           :plotBackgroundColor=>'rgba(255,255,255,0.1)',
           :backgroundColor=>'rgba(255,255,255,0.1)',
           },
@@ -168,7 +173,7 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
             :labels=>{
               :formatter => pareto_category_formatter,
                  :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                          },
                },
             },
@@ -181,13 +186,13 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
                     :text=> 'Percentage %',
                     :align=> 'high',
                     :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                     },
                 },
                 :labels=> {
                     :overflow=> 'justify',
                      :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                          },
                 }
             },
@@ -196,7 +201,7 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
                     :dataLabels=> {
                         :enabled=> true,
                          :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                          },
                       :overflow=> 'justify',
                         :formatter =>  pareto_label_formatter,
@@ -212,7 +217,7 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
             :series =>[{:data=>data_arr.reverse}],
                  :tooltip => {
                        :style=> {
-                           :font=>'normal 10px Helvetica Neue, sans-serif',
+                           :font=>'normal 11px Helvetica Neue, sans-serif',
                            :padding=>5,
                          },
                     :formatter =>  pareto_tooltip_formatter,
@@ -221,8 +226,8 @@ def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
   })
 end
 
-  def gen_single_stacked_bar_chart(value_arr,column_name)
 
+  def gen_single_stacked_bar_chart(value_arr,column_name)
     browser_data = gen_stacked_bar_data(value_arr,column_name)
     self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_single_stacked_bar_chart",
     Highchart.bar({
@@ -316,7 +321,7 @@ end
             :formatter => gauge_label_formatter,
             :color => '#000000',
             :style => {
-              :font => '14pt "Lucida Grande"'
+              :font => '14pt "Helvetica Neue"'
             }
           },
         }
@@ -436,7 +441,7 @@ end
  # format the tooltips
   def pie_tooltip_formatter  
    'function() {
-      return "<strong>" + this.point.name + "</strong>: " + this.y + "%";
+      return "<strong>" + this.point.name + "</strong>: " +  Math.round(this.percentage) + "%";
     }'
   end
   
@@ -458,7 +463,7 @@ end
  
  def  pie_label_formatter 
   "function() {
-      if (this.y > 5) return Math.round(this.percentage) + '<span style=\"font-size:7px\">%</span>' ;
+     if(this.percentage > 3) return Math.round(this.percentage) + '<span style=\"font-size:7px\">%</span>' ;
     }"
   end
 

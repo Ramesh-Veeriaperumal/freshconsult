@@ -11,8 +11,8 @@ module Helpdesk::TicketActions
     set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
+    build_attachments
     return false unless @ticket.save
-    handle_attachments
 
     if params[:meta]
       @ticket.notes.create(
@@ -28,6 +28,16 @@ module Helpdesk::TicketActions
     
   end
 
+  def handle_screenshot_attachments
+    decoded_file = Base64.decode64(params[:screenshot][:data])
+    file = Tempfile.new([params[:screenshot][:name]]) 
+    file.binmode
+    file.write decoded_file
+    attachment = @ticket.attachments.build
+    attachment.content = file
+    file.close
+  end
+
   def notify_cc_people cc_emails
       Helpdesk::TicketNotifier.send_later(:deliver_send_cc_email, @ticket , {:cc_emails => cc_emails})
   end
@@ -40,9 +50,10 @@ module Helpdesk::TicketActions
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
   #we are getting the mass-assignment warning right now..
-  def handle_attachments
+  def build_attachments
+     handle_screenshot_attachments unless params[:screenshot].blank?
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
-      @ticket.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
+      @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
   end
   
@@ -66,38 +77,20 @@ module Helpdesk::TicketActions
   end
   
   def export_csv
-    index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)
-    sql_conditions = index_filter.sql_conditions
-    sql_conditions[0].concat(%(and helpdesk_ticket_states.#{params[:ticket_state_filter]} 
-                               between '#{params[:start_date]}' and '#{params[:end_date]}'
-                              )
-                            )
-    all_joins = %( INNER JOIN helpdesk_ticket_states ON 
-                   helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
-                   helpdesk_tickets.account_id = helpdesk_ticket_states.account_id)
-    csv_hash = params[:export_fields]
-    csv_tickets_string = ""
-    current_account.tickets.find_in_batches(:conditions => sql_conditions, 
-                                            :include => [:ticket_states, :ticket_status, :flexifield,
-                                                         :responder, :requester],
-                                            :joins => all_joins
-                                           ) do |items|
-      csv_string = FasterCSV.generate do |csv|
-        headers = csv_hash.keys.sort
-        csv << headers
-        items.each do |record|
-          csv_data = []
-          headers.each do |val|
-            csv_data << record.send(csv_hash[val])
-          end
-          csv << csv_data
-        end
-      end
-      csv_tickets_string << csv_string
+    params[:later] = false
+
+    #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
+    if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
+      params[:later] = true
+      Resque.enqueue(Helpdesk::TicketsExport, params)
+      flash[:notice] = t("export_data.mail.info")
+      redirect_to :back
+    else
+      csv_tickets_string = Helpdesk::TicketsExport.perform(params)
+      send_data csv_tickets_string, 
+              :type => 'text/csv; charset=utf-8; header=present', 
+              :disposition => "attachment; filename=tickets.csv"
     end
-    send_data csv_tickets_string, 
-        :type => 'text/csv; charset=utf-8; header=present', 
-        :disposition => "attachment; filename=tickets.csv"
   end
 
   def component
@@ -140,9 +133,9 @@ module Helpdesk::TicketActions
       @note.tweet.destroy
     end
     build_item
+    move_attachments   
     if @item.save
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
-      move_attachments   
     else
       puts @item.errors.to_json
     end
@@ -151,8 +144,13 @@ module Helpdesk::TicketActions
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
     @note.attachments.each do |attachment|      
-      url = attachment.content.url.split('?')[0]
-      @item.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @item.account_id)    
+      url = attachment.authenticated_s3_get_url
+      io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
+      if io
+        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+      end
+      @item.attachments.build(:content => io, :description => "", 
+        :account_id => @item.account_id)
     end
   end
   
@@ -184,6 +182,7 @@ module Helpdesk::TicketActions
   def handle_merge      
     add_note_to_target_ticket
     move_source_notes_to_target   
+    move_source_time_sheets_to_traget
     add_note_to_source_ticket
     close_source_ticket 
     update_merge_activity  
@@ -200,44 +199,58 @@ module Helpdesk::TicketActions
       note.update_attribute(:notable_id, @target_ticket.id)
     end
   end
+
+  def move_source_time_sheets_to_traget
+    @source_ticket.time_sheets.each do |time_sheet|
+      time_sheet.update_attribute(:ticket_id, @target_ticket.id)
+    end
+  end
   
   def close_source_ticket
+    EmailNotification.disable_notification(current_account)
     @source_ticket.update_attribute(:status , CLOSED)
+    EmailNotification.enable_notification(current_account)
   end
   
   def add_note_to_source_ticket
+    pvt_note = params[:source][:is_private]
       @soucre_note = @source_ticket.notes.create(
         :body => params[:source][:note],
-        :private => params[:source][:is_private] || false,
-        :source => params[:source][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+        :private => pvt_note || false,
+        :source => pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id,
         :from_email => @source_ticket.reply_email,
-        :to_emails => @source_ticket.requester.email.to_a,
-        :cc_emails => @source_ticket.cc_email_hash && @source_ticket.cc_email_hash[:cc_emails]
+        :to_emails => pvt_note ? [] : @source_ticket.requester.email.to_a,
+        :cc_emails => pvt_note ? [] : @source_ticket.cc_email_hash && @source_ticket.cc_email_hash[:cc_emails]
       )
-      
       if !@soucre_note.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @source_ticket, @soucre_note ,{:include_cc => true})
       end
   end
   
   def add_note_to_target_ticket
-    @target_note = @target_ticket.notes.create(
+    target_pvt_note = params[:target][:is_private]
+    @target_note = @target_ticket.notes.build(
         :body_html => params[:target][:note],
-        :private => params[:target][:is_private] || false,
-        :source => params[:target][:is_private] ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+        :private => target_pvt_note || false,
+        :source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id,
         :from_email => @target_ticket.reply_email,
-        :to_emails => @target_ticket.requester.email.to_a,
-        :cc_emails => @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
+        :to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
+        :cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
       )
       ## handling attachemnt..need to check this
      @source_ticket.attachments.each do |attachment|      
-      url = attachment.content.url.split('?')[0]
-      @target_note.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
+      url = attachment.authenticated_s3_get_url
+      io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
+      if io
+        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+      end
+      @target_note.attachments.build(:content => io, :description => "", :account_id => @target_note.account_id)
     end
+    @target_note.save
     if !@target_note.private
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , {:include_cc => true})
     end
@@ -255,23 +268,6 @@ module Helpdesk::TicketActions
    def decode_utf8_b64(string)
       URI.unescape(CGI::escape(Base64.decode64(string)))
    end
-  
-   # Method used set the ticket.ids in params[:data_hash] based on tags.name
-  def serialize_params_for_tags
-    return if params[:data_hash].nil? 
-
-    action_hash = params[:data_hash].kind_of?(Array) ? params[:data_hash] : 
-      ActiveSupport::JSON.decode(params[:data_hash])
-    
-    action_hash.each_with_index do |filter, index|
-      next if filter["value"].nil? || !filter["condition"].eql?("helpdesk_tags.name")
-      value = current_account.tickets.permissible(current_user).with_tag_names(filter["value"].split(",")).join(",")
-      action_hash[index]={ :condition => "helpdesk_tickets.id", :operator => "is_in", :value => value }
-      break
-    end
-    
-    params[:data_hash] = action_hash;
-  end
 
   def reply_to_conv
     render :partial => "/helpdesk/shared/reply_form", 
@@ -285,4 +281,8 @@ module Helpdesk::TicketActions
            :note => [@ticket, Helpdesk::Note.new(:private => true)] }
   end
   
+  def add_requester
+    @user = current_account.users.new
+    render :partial => "contacts/add_requester_form"
+  end
 end

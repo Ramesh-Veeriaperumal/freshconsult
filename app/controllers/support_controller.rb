@@ -26,7 +26,7 @@ class SupportController < ApplicationController
   #   end
   # end
 
-  def set_portal_page( page_type_token )
+  def set_portal_page page_type_token
     unless current_portal.template.blank?
       @dynamic_page = current_portal.template.pages.find_by_page_type( Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[ page_type_token ] )
       @dynamic_template = @dynamic_page.content unless @dynamic_page.blank?

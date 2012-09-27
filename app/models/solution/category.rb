@@ -1,3 +1,8 @@
+require RAILS_ROOT+'/app/models/solution/folder.rb'
+#In the gamification environment, Solution::Folder::VISIBILITY_KEYS_BY_TOKEN was not
+#accessible. It may be due to some screw up with the order of class loading.
+#So, temporarily put the 'require' here. Shan
+
 class Solution::Category < ActiveRecord::Base
   
   validates_presence_of :name,:account
@@ -24,6 +29,12 @@ class Solution::Category < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+  end
+
+  def self.folder_names(account)
+    account.solution_categories.map { |category| 
+      [ category.name, category.folders.map {|folder| [folder.id, folder.name] } ]
+    }
   end
   
   def self.get_default_categories_visibility(user)

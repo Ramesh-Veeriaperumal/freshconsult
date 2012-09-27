@@ -5,6 +5,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::NoteActions
   include RedisKeys
+  include Integrations::AppsUtil
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -71,14 +72,14 @@ module Helpdesk::TicketsHelper
       dynamic_view.concat([{ :id => -1 }])
     end
     
-    top_views_array = [ 
-    ].concat(dynamic_view).concat([
+    default_views = [
       { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
       { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },      
       { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
       { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
       { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
-    ])
+    ]
+    top_views_array = [].concat(dynamic_view).concat(default_views)
     top_index = top_views_array.index{|v| v[:id] == selected} || 0
 
     cannot_delete = false
@@ -86,8 +87,12 @@ module Helpdesk::TicketsHelper
     unless selected_item.blank?
       selected_item_name = selected_item[:name]
     else
-      selected_item_name = ((SELECTORS.select { |v| v.first == selected.to_sym }.first)[1] || top_views_array.first[:name]).to_s unless selected.blank?
-      selected_item_name = t("tickets_filter.unsaved_view") if selected.blank?
+      if selected.blank?
+        selected_item_name = t("tickets_filter.unsaved_view")
+      else
+        selected_from_default = SELECTORS.select { |v| v.first == selected.to_sym }
+        selected_item_name =  (selected_from_default.blank? ? default_views.first[:name] : selected_from_default.first[1]).to_s
+      end
       cannot_delete = true
     end
 
@@ -208,19 +213,25 @@ module Helpdesk::TicketsHelper
   
   def subject_style(ticket)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && ticket.active?
+    type = "new" if ticket.ticket_states.is_new? && !ticket.onhold_and_closed?
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if ticket.due_by < Time.now && ticket.active?
+    type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
     type
   end
 
   def sla_status(ticket)
     if( ticket.active? )
-      if(Time.now > ticket.due_by )
-        t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+      unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
+        if(Time.now > ticket.due_by )
+          t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        else
+          t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        end
       else
-        t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+        " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 
+            #{distance_of_time_in_words(Time.now, ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]))} "
       end
+
     else
       if( ticket.ticket_states.resolved_at < ticket.due_by )
         t('resolved_on_time')
@@ -254,14 +265,13 @@ module Helpdesk::TicketsHelper
       end
     end
     
-    default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span><br/>#{signature}"
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
 
     if(!forward)
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
-        reply_email_template = "&nbsp;" if (reply_email_template.empty?) #fix for chrome issue no data shown when "" is returned as value
-        default_reply = "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>#{reply_email_template}<br/>#{signature}"
+        default_reply = (signature.blank?)? "<p/><br/><div>#{reply_email_template}</div>" : "<p/><br/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+

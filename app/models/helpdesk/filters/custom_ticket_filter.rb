@@ -127,6 +127,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @page                 = params[:page]           || 1
     @order_type           = params[:wf_order_type]  || default_order_type
     @order                = params[:wf_order]       || default_order
+    @without_pagination   = params[:without_pagination]         if params[:without_pagination]
+    @filter_fields_to_select   = params[:select_fields]         if params[:select_fields]
     
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
@@ -250,7 +252,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       handle_empty_filter! 
       all_conditions = sql_conditions
       all_joins = get_joins(sql_conditions)
-      recs = model_class.paginate(:include => [:ticket_states,:ticket_status,:responder,:requester],
+
+      if @without_pagination
+        return model_class.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
+                                      :limit => per_page, :offset => (page - 1) * per_page,
+                                      :conditions => all_conditions, :joins => all_joins)
+      end
+
+      recs = model_class.paginate(:select => [" DISTINCT(helpdesk_tickets.id) as 'unique_id', helpdesk_tickets.* "],
+                                  :include => [:ticket_states,:ticket_status,:responder,:requester],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
       recs.wf_filter = self
@@ -262,9 +272,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins = joins
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
+    all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins
   end
-  
+
+  def tags_join
+    " INNER JOIN `helpdesk_tag_uses` ON (`helpdesk_tickets`.`id` = `helpdesk_tag_uses`.`taggable_id` 
+                                        AND `helpdesk_tag_uses`.`taggable_type` = 'Helpdesk::Ticket') 
+      INNER JOIN `helpdesk_tags` ON (`helpdesk_tags`.`id` = `helpdesk_tag_uses`.`tag_id`)  "
+  end
+
  def monitor_ships_join
    " INNER JOIN helpdesk_subscriptions ON helpdesk_subscriptions.ticket_id = helpdesk_tickets.id  "
  end

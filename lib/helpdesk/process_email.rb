@@ -3,8 +3,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   
-  EMAIL_REGEX = /(\b[a-zA-Z0-9.\'_%+-\xe28099]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
+  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -85,7 +85,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       email = parsed_email[:email]
 
       if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
-        email = $1  
+        email = $1 
       end
 
 
@@ -205,7 +205,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def check_for_chat_scources(ticket,from_email)
       ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
       if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
-        emailreg = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
+        emailreg = Regexp.new(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
         chat_email =  params[:subject].scan(emailreg).uniq[0]
         ticket.email = chat_email unless chat_email.blank? && (chat_email == "unknown@example.com")
       end
@@ -214,7 +214,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
+      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
         ticket.skip_notification = true
       end
     end
@@ -293,9 +293,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       content_id_hash = {}
      
       Integer(params[:attachments]).times do |i|
-        created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+        if content_ids["attachment#{i+1}"]
+          description = "content_id"
+        end
+        created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id,:description => description)
         file_name = created_attachment.content_file_name
-        content_id_hash[file_name] = content_ids["attachment#{i+1}"] if content_ids["attachment#{i+1}"]
+        if content_ids["attachment#{i+1}"]
+          content_id_hash[file_name] = content_ids["attachment#{i+1}"]
+          created_attachment.description = "content_id"
+        end
       end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
     end

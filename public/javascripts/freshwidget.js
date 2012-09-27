@@ -44,7 +44,15 @@
 		  	fileref.setAttribute("href", filename);
 		if (typeof fileref!="undefined")
   			document.getElementsByTagName("head")[0].appendChild(fileref);	
-	 }					  
+	 }
+
+	 function loadjsfile(filename){
+	 	var fileref = document.createElement("script");
+	 		fileref.setAttribute("type","text/javascript");
+	 		fileref.setAttribute("src", filename);
+	 	if (typeof fileref!="undefined")
+	 		document.getElementsByTagName("head")[0].appendChild(fileref);
+	 }			  
 					  
 	 function bind(obj, evt, callback){
 		if (obj && obj.addEventListener) {
@@ -132,7 +140,7 @@
 			container = document.createElement('div');
 			container.className = "freshwidget-container";
 			container.id = "FreshWidget";
-			container.style.visibility = 'hidden';
+			container.style.display = 'none';
 			document.body.insertBefore(container, document.body.childNodes[0]);
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
@@ -175,21 +183,40 @@
 	 
 	 function showContainer(){ 
 	 	scroll(0,0);
-	 	container.style.visibility = '';
+	 	container.style.display = 'block';	 	
+        html2canvas( [ document.body ], {
+				ignoreIds: "FreshWidget|freshwidget-button",
+				proxy:false,
+			    onrendered: function( canvas ) {
+			      	var img = canvas.toDataURL();
+			      	var message = img;
+					 
+					 sendMessage = setInterval(function() {
+					 	if (iframeLoaded) {
+						 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, options.url);
+						 	clearInterval(sendMessage);
+					 	} 
+					 	else {
+					 		console.log('waiting for iframe to load');
+					 	}	
+					 }, 500);
+			    }
+		});
 	 	if(!iframeLoaded) {
 	 		widgetFormUrl();
 	 	}
 	 }
 	 
 	 function close(){
-	 	container.style.visibility = 'hidden';
+	 	container.style.display = 'none';
 	 	widgetFormUrl();
 	 }
 	 
 	 function initialize(params){ 
 		extend(params);
+		loadjsfile(options.assetUrl+"/html2canvas.js");
 		bind(window, 'load', function(){
-			// File name to be changed later when uploaded
+			// File name to be changed later when uploaded			
 			createButton();
 			createContainer();
 		});

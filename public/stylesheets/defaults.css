@@ -24,7 +24,7 @@ h1.title { font-size: 2em; text-transform: capitalize; font-weight: normal; }
 
 h2.title { font-size: 1.6em; }
 
-h3.title, h3.sub_title, h3.title-band { font-size: 1.46em; }
+h3.title, h3.sub_title, h3.title-band { font-size: 16px; }
 
 h4.title { font-size: 1.30em; }
 
@@ -64,7 +64,7 @@ textarea.auto-height { height: auto !important; }
 
 .padding { padding: 3px 6px; }
 
-label.error { color: red; }
+label.error { color: #A90329; font-size: 13px; }
 
 .close-text { float: right; font-family: arial; font-size: 16px; font-weight: bold; line-height: 18px; color: #000000; text-shadow: 0 1px 0 #ffffff; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40); opacity: 0.4; }
 

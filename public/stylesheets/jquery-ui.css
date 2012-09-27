@@ -43,8 +43,7 @@
 /* .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: ; font-size: 1em; }*/
 .ui-widget-content { border: 1px solid #dfdfdf; color: #222222; }
 
-.ui-widget-content a { color: #222222; }
-
+/*.ui-widget-content a { color: #222222; }*/
 /* Interaction states
 ----------------------------------*/
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #d4d4d4; background-image: url(../images/overlay-button.png); background-color: #eeeeee; background-repeat: repeat-x; font-weight: normal; color: #333333; }

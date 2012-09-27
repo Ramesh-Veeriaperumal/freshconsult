@@ -7,10 +7,10 @@
 <br />
 <div class="clearfix">
   <ul data-tabs="tabs" class="tabs">
-    <li>
+    <li class="active">
       <a href="#template" data-toggle="tab">Page elements</a>
     </li>
-    <li class="active">
+    <li>
       <a id="custom-css-tab" href="#custom-css" code-refresh-id="portal_template_custom_css">Custom stylesheet</a>
     </li>
     <li>
@@ -26,7 +26,7 @@
     });
   <% end %>
     <div class="tab-content">
-    	<div class="tab-pane" id="template">
+    	<div class="tab-pane active" id="template">
         <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
           <label>Header</label>  
           <p class="help-text">Change the header area of your support portal</p>
@@ -48,7 +48,7 @@
     	</div>
       
 
-    	<div class="tab-pane active" id="custom-css">		
+    	<div class="tab-pane" id="custom-css">		
         <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
       	<label>Custom stylesheet</label>   
       	<p class="help-text">Add or overwrite freshdesk default styles with your own custom css</p>

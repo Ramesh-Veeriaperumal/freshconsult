@@ -183,7 +183,7 @@ footer { margin-top: 17px; padding-top: 17px; border-top: 1px solid #eee; }
 
 .btn.primary { color: #ffffff; background-color: #0064cd; background-repeat: repeat-x; background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd)); background-image: -moz-linear-gradient(top, #049cdb, #0064cd); background-image: -ms-linear-gradient(top, #049cdb, #0064cd); background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd)); background-image: -webkit-linear-gradient(top, #049cdb, #0064cd); background-image: -o-linear-gradient(top, #049cdb, #0064cd); background-image: linear-gradient(top, #049cdb, #0064cd); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#049cdb', endColorstr='#0064cd', GradientType=0); text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); border-color: #0064cd #0064cd #003f81; border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); }
 
-.btn.active, .btn:active { -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.05); }
+.btn.active, .btn:active { -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 0 12px rgba(0, 0, 0, 0.15); -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 0 12px rgba(0, 0, 0, 0.15); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 0 12px rgba(0, 0, 0, 0.15); background-position: 0 -15px; color: #333; text-decoration: none; }
 
 .btn.disabled { cursor: default; background-image: none; filter: progid:DXImageTransform.Microsoft.gradient(enabled = false); filter: alpha(opacity=65); -khtml-opacity: 0.65; -moz-opacity: 0.65; opacity: 0.65; -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; }
 
@@ -330,6 +330,8 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner { padding
 
 .label.notice { background-color: #62cffc; }
 
+.label.points { background-color: #333; font-size: 11px; padding: 1px 3px; }
+
 .media-grid { margin-left: -20px; margin-bottom: 0; zoom: 1; }
 
 .media-grid:before, .media-grid:after { display: table; content: ""; zoom: 1; }
@@ -362,7 +364,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner { padding
 
 .sidebar .searchicon { display: none; }
 
-.searchicon { position: absolute; right: 35px; top: 10px; height: 15px; width: 15px; cursor: pointer; background: url('/images/symbols-s89437f3f6c.png') 0 -546px; }
+.searchicon { position: absolute; right: 35px; top: 10px; height: 15px; width: 15px; cursor: pointer; background: url('/images/symbols-s6708faa735.png') 0 -561px; }
 
 /* To be removed after bootstrap migration */
 .modal-body .ui-form { background: none; border: 0; }
@@ -384,9 +386,9 @@ a.pill.help { background-color: #669933; font-size: 13px; }
 
 .timer_box { text-align: right; position: absolute; left: 26px; margin: 2px; }
 
-.clock { top: 0; right: 0; position: absolute; z-index: 3; background: url('/images/symbols-s89437f3f6c.png') 0 -49px; cursor: pointer; width: 26px; height: 26px; }
+.clock { top: 0; right: 0; position: absolute; z-index: 3; background: url('/images/symbols-s6708faa735.png') 0 -49px; cursor: pointer; width: 26px; height: 26px; }
 
-.time_running .clock { background: url('/images/symbols-s89437f3f6c.png') 0 -23px; }
+.time_running .clock { background: url('/images/symbols-s6708faa735.png') 0 -23px; }
 
 .time_running .clock .timer { position: absolute; width: 26px; height: 22px; top: 3px; left: 0px; background: url("../images/animated/timer.gif") no-repeat center; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50); opacity: 0.5; }
 
@@ -416,7 +418,7 @@ a.pill.help { background-color: #669933; font-size: 13px; }
 .timeentry .timespent { width: 16%; text-align: right; margin-right: 2%; }
 .timeentry .note { width: 40%; padding-left: 4%; }
 .timeentry .note em { color: #336666; font-style: italic; }
-.timeentry .billable { background: url('/images/symbols-s89437f3f6c.png') 0 -127px; position: absolute; left: 0; top: 1px; width: 19px; height: 18px; }
+.timeentry .billable { background: url('/images/symbols-s6708faa735.png') 0 -127px; position: absolute; left: 0; top: 1px; width: 19px; height: 18px; }
 
 .report-container .seperator, .seperator-shadow { background: #fafafa; background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(60%, #ffffff), color-stop(85%, #f6f6f6), color-stop(97%, #f1f1f1), color-stop(100%, #ffffff)), #fafafa; background: -webkit-linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; background: -moz-linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; background: -o-linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; background: linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa; border-bottom: 1px solid #eeeeee; height: 10px; margin-bottom: 15px; margin-top: 0; }
 

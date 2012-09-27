@@ -29,6 +29,7 @@
 .ie6 .ui-widget-container, .ie7 .ui-widget-container { -moz-box-shadow: #afafaf -3px 5px 10px; -webkit-box-shadow: #afafaf -3px 5px 10px; box-shadow: #afafaf -3px 5px 10px; }
 .ie6 .fd-menu, .ie7 .fd-menu { z-index: 999999; }
 
+.ie6 .ie8plusonly, .ie7 .ie8plusonly, .ie8 .ie8plusonly { display: none; }
 .ie6 .fd-menu, .ie7 .fd-menu, .ie8 .fd-menu { border: 1px solid #afafaf; }
 .ie6 .fd-menu a:hover, .ie7 .fd-menu a:hover, .ie8 .fd-menu a:hover { background: #5469f9; }
 
