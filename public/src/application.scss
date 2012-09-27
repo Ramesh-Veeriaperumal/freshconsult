@@ -6988,7 +6988,7 @@ a.mobile_switchBtn {
         width : 575px;
     }
     .field-item{
-        max-height : 49px;
+        @include min-height(50px);
     }
     .label{
         max-height: 18px;
