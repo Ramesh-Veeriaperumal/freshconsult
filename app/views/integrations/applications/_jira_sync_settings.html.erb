@@ -6,9 +6,12 @@
 	installed_app = Integrations::InstalledApplication.new if installed_app.blank?
 %>
 <table>
-	<tr><td colspan="2" width="40%" ><b>Sync Updates</b></td></tr>
+	<tr><td colspan="2" width="40%" >
+		<label><strong>Sync Updates</strong></label>
+		<div class="info-data">When a Freshdesk ticket is linked with JIRA issue, perform the below actions.<br></div>
+	</td></tr>
 	<tr><td>&nbsp;</td><td></td></tr>
-	<tr><td colspan="2" >When a Freshdesk ticket is linked with JIRA issue, perform the below actions.<br></td></tr>
+	<tr><td colspan="2" ></td></tr>
 	<tr><td>&nbsp;</td><td></td></tr>
 <!-- 	<tr>
 		<td>When issue status is updated in JIRA </td>
@@ -20,12 +23,12 @@
 	</tr>
 	<tr><td>&nbsp;</td><td></td></tr>
  -->	<tr>
-		<td>When ticket status is updated in Freshdesk </td>
+		<td><label for="configs_fd_status_sync" >When ticket status is updated in Freshdesk </label></td>
 		<td><%=select_tag "configs[fd_status_sync]", options_for_select(fd_status_sync_opts, installed_app.configs_fd_status_sync) %></td>
 	</tr>
 
 	<tr>
-		<td>When a comment is added in Freshdesk</td>
+		<td><label for="configs_fd_comment_sync" >When a comment is added in Freshdesk </label></td>
 		<td><%=select_tag "configs[fd_comment_sync]", options_for_select(fd_comment_sync_opts, installed_app.configs_fd_comment_sync) %></td>
 	</tr>
 </table>
