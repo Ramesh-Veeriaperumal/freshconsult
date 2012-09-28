@@ -631,6 +631,7 @@ en:
         success: "The Addon has been updated successfully!"
         error: "Error in configuring the Addon."
       not_installed: "This addon is not yet installed."
+      add_addon: "Add new custom application"
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"
@@ -2328,6 +2329,7 @@ en:
       label: "Custom Addon"
       desc: "You can add a custom widget to display any detail using your own custom script."
       helptext: "### Helptext goes here. ###"
+      small_help_text: "### Small Helptext goes here. ###"
       form:
         widget_title: "Addon Name"
         widget_script: "Widget code snippet"

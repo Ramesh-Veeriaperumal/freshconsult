@@ -1,5 +1,4 @@
 <%= content_tag (:h3, t('integrations.custom_application.label') + " " + t("settings"), :class => "title") %>
-<%= t(@application.description) %>
 <%form_for @application, :html => {:multipart => true, :id => "custom_application_install" } do |f| %>
   <%= render :partial => "custom_application_form", :locals => { :is_edit => false } %>
   <div class="button-container">
