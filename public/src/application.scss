@@ -5849,6 +5849,16 @@ a.close{
 	}
 }
 
+#jira_sync_settings {
+	td {
+		vertical-align:middle
+	}
+
+	select {
+		margin: 0px
+	}
+}
+
 .custom_app_preview_link {
 	margin-top:8px;
 	width: 300px;
