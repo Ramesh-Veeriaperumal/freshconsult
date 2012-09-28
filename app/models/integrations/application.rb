@@ -54,17 +54,17 @@ class Integrations::Application < ActiveRecord::Base
     example_app = Integrations::Application.new
     example_app.name = "custom_application"  
     example_app.display_name = "My CRM App"
-    example_app.description = "This is a sample application.  You can use the script of this application to understand how the custom widget works."
+    example_app.description = "This is a sample application.  You can use the script here to understand how the custom widget works."
     script = %{
-      <div id="capsule_widget" domain="freshdeskdemo.capsulecrm.com" title="Custom CRM App">
-        <div class="content"></div>
-      </div>
-      <script type="text/javascript">
-        CustomWidget.include_js("/javascripts/capsule_crm.js");
-        capsuleBundle={ t:"b43cff831b56cec58fa8cd95c21b47f5", reqId:"{{requester.id}}", 
-                        reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", 
-                        reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; 
-      </script>}
+<div id="capsule_widget" domain="freshdeskdemo.capsulecrm.com" title="My CRM App">
+  <div class="content"></div>
+</div>
+<script type="text/javascript">
+  CustomWidget.include_js("/javascripts/capsule_crm.js");
+  capsuleBundle={ t:"b43cff831b56cec58fa8cd95c21b47f5", reqId:"{{requester.id}}", 
+                  reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", 
+                  reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; 
+</script>}
     example_app.widgets.push Integrations::Widget.new(:script => script)
     # example_app.options = {
     #   :keys_order => [:name, :widget_script],

@@ -50,6 +50,10 @@ textarea {
    height: 100px;
    width: 99%;
    font-family:$blueprint-font-family;
+
+   &#application_script {
+   	height:300px;
+   }
 }
 
 input:focus { outline: none; }
@@ -566,6 +570,13 @@ li.nested_field{
 		   margin-left:-2px;
 		   clear:left;
 		}
+
+
+		/** Individual Height settings **/
+		.application-logo-custom_app {
+			height:60px;
+		}
+
 		.logo.info-data{
 	      padding:3px;
 	   }	   

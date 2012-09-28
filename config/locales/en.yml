@@ -2105,7 +2105,7 @@ en:
   application:
     new: Create New Application
     desc: Integrate with other Apps to make your Freshdesk experience more awesome.
-    title: Addons & Integration
+    title: Applications & Integrations
     disabled: Disabled
     enabled: Enabled
     configure: Configure
@@ -2326,10 +2326,10 @@ en:
       name: "Name"
       description: "Description"
       script: "Script"
-      label: "Custom Addon"
+      label: "Custom Application"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helptext: "### Helptext goes here. ###"
-      small_help_text: "### Small Helptext goes here. ###"
+      helptext: "<h4>Custom Application Help</h4><p><br/> You can develop your own custom widget using html,css and javascript.</br></br>To create the custom application, enter the name of your new application and a short description about it.</br>Enter your code under ‘Script’.  You can refer to our solutions page to learn more about the script.</br></br>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages."
+      small_help_text: "You can develop your own custom widget using html,css and javascript."
       form:
         widget_title: "Addon Name"
         widget_script: "Widget code snippet"
