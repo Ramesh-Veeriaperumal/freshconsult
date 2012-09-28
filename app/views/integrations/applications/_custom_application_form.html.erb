@@ -2,7 +2,14 @@
   <div class="sidepanel helpcard">
     <%= t("integrations.custom_application.helptext", :full_domain => current_account.full_domain) %>
   </div>
-  <div>Preview <%=link_to "Refresh", "#", :class => "preview_link", :preview_page=>"ticket" %></div><div id="preview" class=""></div>
+  <div id="sample_preview" class="hide">
+    <div class="titlebar">
+      <a class="preview_link" href="#">Refresh</a>
+      Custom Addon Preview
+    </div>
+    <div id="preview" class=""></div>
+  </div>
+
 <%- end %>
   <%widget = @application.widgets.first 
   disp_in_pages = widget.display_in_pages_option || {}%>
@@ -31,18 +38,24 @@
             <%= text_area_tag "application[script]", widget.script%>
           </li>
           <li class="field">
+
+            <div class="custom_app_preview_link">
+              <%=link_to "Show Preview", "#", :class => "toggle_preview", 
+                    "data-toggled-text" => "Hide Preview", "data-toggled-class" => "active", 
+                    "data-default-text" => "Show Preview", 'data-default-class' => "" %>
+              <span class="hide"> <br />This addon will appear in the sidebar</span>
+            </div>
             <label class="checkwrapper">
               <%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", 
                       disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>
                   Show the widget in ticket view page. 
-                  | <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"ticket" %>
             </label>
             <label class="checkwrapper">
               <%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", 
               disp_in_pages.include?('contacts_show_page_side_bar')%>
               Show the widget in contact view page. 
-              | <%=link_to "Preview", "#", :class => "preview_link", :preview_page=>"contact" %>
             </label>
+            
           </li>
         </ul>
       </div>
@@ -64,5 +77,20 @@
         success: function(msg){ 
         }
       }); 
+  });
+
+  jQuery('.toggle_preview').click(function(ev) {
+    ev.preventDefault();
+    var sample_preview = jQuery('#sample_preview');
+    sample_preview.toggleClass('hide');
+    jQuery('.custom_app_preview_link span').toggleClass('hide');
+    var elem = jQuery(this);
+    if (sample_preview.hasClass('hide')) {
+      elem.text(elem.data('default-text')).removeClass(elem.data('toggled-class')).addClass(elem.data('default-class'));
+    } else {
+      elem.text(elem.data('toggled-text')).removeClass(elem.data('default-class')).addClass(elem.data('toggled-class'));
+
+      jQuery('.preview_link').trigger('click');
+    }
   }); 
 <%end%>

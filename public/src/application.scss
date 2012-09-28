@@ -5837,6 +5837,76 @@ a.close{
 	}
 }
 
+.custom_app_preview_link {
+	margin-top:8px;
+	width: 300px;
+	float: right;
+	text-align: right;
+
+	.toggle_preview {
+		background: #FFF;
+		border: solid 1px #c9c9c9;
+		@include box-shadow(#c2c2c2 0 0 2px);
+		@include corners(5px);
+		padding: 5px 10px 7px;
+		color: #333;
+		display: inline-block;
+		margin-bottom:5px;
+
+		&.active {
+			background-image: inline-image("integrations/custom_app_preview_title_bar.gif");
+		}
+
+		&:after {
+			content: ">";
+			font-size:1.2em;
+			font-weight:bold;
+			display:inline-block;
+			margin-left: 10px;
+		}
+	}
+
+	span {
+		color:#AAA;
+	}
+}
+
+#sample_preview {
+	background:#FFF;
+	border: solid 1px #c9c9c9;
+	@include box-shadow(#c2c2c2 0 0 6px);
+	margin: 0px 10px 10px 0px;
+	.titlebar {
+		font-weight:bold;
+		background-image: inline-image("integrations/custom_app_preview_title_bar.gif");
+		padding: 10px 5px 10px 15px;
+		border-bottom: solid 1px #c9c9c9;
+		font-size:13px;
+		.preview_link {
+			float:right;
+			width:60px;
+			background-image: inline-image("integrations/refresh_preview.png");
+			background-position:right;
+			background-repeat:no-repeat;
+			padding: 10px 30px 10px 5px;
+			text-align:right;
+			color:#AAA;
+			margin-top:-10px;
+			font-weight:normal;
+		}
+	}
+
+	#preview {
+		padding:5px;
+
+		.sidepanel {
+			border: none;
+		}
+	}
+}
+
+
+
 
 .crm_contact_widget {
 	.content { width:auto; }
