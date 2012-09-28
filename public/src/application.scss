@@ -5828,7 +5828,7 @@ a.close{
 #integrations-list {
 	display:block;
 	overflow: hidden;
-	margin: 0 -20px;
+	margin: 20px -20px 0;
 
 	.search {
 		position: relative;
@@ -5841,6 +5841,11 @@ a.close{
 
 	.tabs {
 		margin-bottom: 10px;
+		padding: 2px 9px 0 20px
+	}
+
+	.new_custom_app {
+		margin-right:10px;
 	}
 }
 
