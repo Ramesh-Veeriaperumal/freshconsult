@@ -233,7 +233,7 @@ module Helpdesk::TicketsHelper
       end
 
     else
-      if( ticket.ticket_states.resolved_at < ticket.due_by )
+      if( ticket.ticket_states.resolved_at_dirty < ticket.due_by )
         t('resolved_on_time')
       else
         t('resolved_late')
@@ -294,11 +294,11 @@ module Helpdesk::TicketsHelper
     status = ticket.status
     case status
       when RESOLVED
-        return {:title => "#{status_name}", :method => "resolved_at"}
+        return {:title => "#{status_name}", :method => "resolved_at_dirty"}
       when PENDING
         return {:title =>  "#{status_name}", :method => "pending_since"}
       when CLOSED
-        return {:title => "#{status_name}", :method => "closed_at"}
+        return {:title => "#{status_name}", :method => "closed_at_dirty"}
       else
         return {:title => "#{status_name}", :method => "status_updated_at"}
     end

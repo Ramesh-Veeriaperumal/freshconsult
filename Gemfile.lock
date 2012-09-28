@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
-  revision: f01e5f76a990e3d13f76952896495f9c260853c0
+  revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
   specs:
     deadlock_retry (1.2.0)
 
