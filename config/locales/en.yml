@@ -2336,7 +2336,7 @@ en:
         create_n_enable: "Create and Enable"
     logmein:
       label: "LogMeIn Rescue"
-      desc: "Provide remote support to your customers using LogMeIn Rescue"
+      desc: "Provide instant remote support to your customers and employees with LogMeIn Rescue"
       helptext: "<h4>LogMeIn Rescue Integration Help</h4><p><br/> To integrate LogMeIn Rescue with Freshdesk, enter your LogMeIn Rescue CompanyID and SSO password and click on Update. <br/>Once enabled, LogMeIn Rescue widget can be found in ticket details page. <br/><br/>Use the  &quot;Launch Technician Console&quot; to launch the technician console directly from the Freshdesk Widget. <br/>Now you can generate a pincode and share the instructions with the requester to continue the support in LogMeIn Rescue. <br/><br/> <b>Note:</b> The agent's email should match LogMeIn Rescue's technician SSO ID. To set your SSO ID go to Admin Center -> Technician Name -> Organization -> SSOID"
       note:
         header: "Your LogMeIn Rescue Session details"
