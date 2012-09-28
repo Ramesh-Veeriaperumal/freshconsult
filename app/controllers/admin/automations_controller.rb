@@ -15,7 +15,7 @@ class Admin::AutomationsController < Admin::AdminController
   def create
     @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
     @va_rule.match_type ||= :all
-    set_nested_fields_data @va_rule.action_data
+    set_nested_fields_data @va_rule.action_data if @va_rule.action_data
     if @va_rule.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default redirect_url
