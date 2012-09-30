@@ -11,6 +11,7 @@ module MailAutolink
     
     include ActionView::Helpers::TextHelper
     include ActionView::Helpers::TagHelper
+    include ActionView::Helpers::UrlHelper
         
     def deliver_with_autolink!(mail=@mail)
       #Does mail contain parts?

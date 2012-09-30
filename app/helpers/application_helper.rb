@@ -582,6 +582,10 @@ module ApplicationHelper
       format.js
     end
   end
+
+  def email_regex
+    Helpdesk::Ticket::VALID_EMAIL_REGEX.source
+  end  
    
   private
     def solutions_tab
