@@ -3143,9 +3143,10 @@ div.addReminder{
 			font-size:14px;
 			display:block;
 			margin:2px 0px 0px 0px;
-			padding:0px 0px 0px 10px;
+			padding:0px 5px;
+			width: 245px;
 		}
-		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); }
+		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); box-shadow:none; }
 		label.overlabel{
 			margin:2px 5px 4px 10px;
 			padding:0px;
@@ -3154,6 +3155,16 @@ div.addReminder{
 		}
 	}
 } 
+
+.tab-pane {
+	div.addReminder{
+		form {
+			input.text {
+				width: 185px;
+			}
+		}
+	}	
+}
 
 
 
@@ -5032,6 +5043,7 @@ a.close{
 }
 .customers-toolbar{
 	float:left;
+	width: 400px;
 	input{
 		float:left;
 		margin-top: 10px;
