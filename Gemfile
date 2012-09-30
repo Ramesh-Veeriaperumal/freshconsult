@@ -65,16 +65,18 @@ gem "insensitive_hash", "0.2.3"
 
 gem "SystemTimer", "1.2.3" 
 gem "redis","2.2.2"
-gem "resque"
+gem "resque","1.22.0"
 gem 'resque-scheduler', :require => 'resque_scheduler'
 gem 'resque_mailer', "1.0.1"
 gem 'resque-status'
 gem 'resque-retry'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
-gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
+gem 'rforce'
+gem 'after_commit', "~> 1.0.10"
 
 gem 'memcache-client', '1.8.5'
+gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 
 group :development do
    gem "rspec", "1.3.1"
@@ -82,7 +84,7 @@ group :development do
    gem "rspec-rails", "1.3.3"
    gem "factory_girl", "1.2.3"  
    gem "mongrel"
-   gem "compass"
+   gem "compass-rails"
 end
 
 

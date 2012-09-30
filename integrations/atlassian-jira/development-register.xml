@@ -1,0 +1,48 @@
+<remote-app key="nava-hw" name="Nava Hello World" version="1" icon-url="http://atlassian.com/favicon.ico"
+            display-url="http://61.12.112.69">
+  <vendor name="Nava" url="http://61.12.112.69" />
+  <description> Invokes remote app when an issues is updated. </description>
+  <web-hook event="issue_updated" url="/integrations/jira_issue/notify/issue_updated"/>
+  <web-hook event="issue_work_started" url="/integrations/jira_issue/notify/issue_work_started"/>
+  <web-hook event="issue_reopened" url="/integrations/jira_issue/notify/issue_reopened"/>
+  <web-hook event="issue_resolved" url="/integrations/jira_issue/notify/issue_resolved"/>
+  <web-hook event="issue_closed" url="/integrations/jira_issue/notify/issue_closed"/>
+  <web-hook event="issue_commented" url="/integrations/jira_issue/notify/issue_commented"/>
+  <web-hook event="issue_comment_edited" url="/integrations/jira_issue/notify/issue_comment_edited"/>
+
+  <web-hook event="issue_worklog_updated" url="/integrations/jira_issue/notify/issue_worklog_updated"/>
+
+  <web-hook event="remote_app_started" url="/integrations/jira_issue/notify/remote_app_started" />
+</remote-app>
+
+<!--
+  <oauth
+    request-token-url="/oauth/request-token"
+    authorize-url="/oauth/authorize"
+    access-token-url="/oauth/access-token">
+    <public-key>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzzGc3srJY5i/DsRju0aXO7JV80SC13FhitjknoY89/V04bsruV2W1Yq7h00HVwmzCG5jkNyKFb8JPCI+NRpnZpJbGlkQ33UBoB/A4BzTVMt2Dkns2R9LgBsKbbDjUs/5ZUpG20z0Izza02iaNPO9JORYFSSn8QXIVPoZG3FVj2QIDAQAB</public-key>
+  </oauth>
+
+<xs:enumeration value="issue_worklog_deleted"/>
+<xs:enumeration value="remote_app_started"/>
+<xs:enumeration value="issue_generic_event"/>
+<xs:enumeration value="remoteapps_upgraded"/>
+<xs:enumeration value="issue_worklog_updated"/>
+<xs:enumeration value="issue_closed"/>
+<xs:enumeration value="issue_deleted"/>
+<xs:enumeration value="issue_updated"/>
+<xs:enumeration value="server_upgraded"/>
+<xs:enumeration value="remote_app_stopped"/>
+<xs:enumeration value="remote_app_start_failed"/>
+<xs:enumeration value="issue_work_logged"/>
+<xs:enumeration value="issue_moved"/>
+<xs:enumeration value="issue_created"/>
+<xs:enumeration value="issue_comment_edited"/>
+<xs:enumeration value="issue_work_started"/>
+<xs:enumeration value="issue_assigned"/>
+<xs:enumeration value="issue_work_stopped"/>
+<xs:enumeration value="issue_commented"/>
+<xs:enumeration value="issue_resolved"/>
+<xs:enumeration value="issue_reopened"/>
+<xs:enumeration value="remote_app_installed"/>
+-->

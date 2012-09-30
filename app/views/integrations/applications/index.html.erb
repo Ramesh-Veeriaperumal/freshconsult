@@ -1,19 +1,43 @@
+<%# javascript_include_tag  '/javascripts/frameworks/list.min.js' %>
 <% content_for :sidebar do -%><%-end %>
+<%# link_to image_tag("symbols/add.png"), new_integrations_application_path, :class => "button custom-tip-bottom floatr", :title => t("application.add_addon") %>
 <h3 class="title"><%=t('application.title')%></h3>
 <div class="intro"><%=t('application.desc')%></div>
-<ul class="table-list">
-	<% @applications.each do |application| %>
-	
-	   <%next if (!feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest' or application.name == 'workflow_max'))%>
-	  	<li>
+
+<div id="integrations-list">
+
+	<div class="request-well">
+		<ul class="tabs">
+			<li class="active first">
+				<a data-show="app-native" data-hide="app-custom" href="#">Native Integrations</a>
+			</li>
+			<li>
+				<a data-hide="app-native" data-show="app-custom" href="#">Custom Widgets</a>
+			</li>
+		</ul>
+	</div>
+	<div class="app-custom clearfix">
+		<%= link_to "New Custom Widget", new_integrations_application_path, 
+					:class => "uiButton new_custom_app floatr" %>
+	</div>
+	<!-- <input class="search floatr" placeholder="Search Integrations"/> -->
+	<ul class="table-list">
+		<% disp_header = 0
+			no_custom_app = true
+			@applications.each do |application| %>
+			<%next if (!feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest' or application.name == 'workflow_max'))%>
+
+			<li class="app-<%= application.system_app? ? "native" : "custom" %>">
 				<div class="application">
-					<div class="logo application-logo-<%= application.name %>"></div>
+					<div class="logo application-logo-<%= application.system_app? ? application.name : "custom_app" %>"></div>
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
+
+				  if application.system_app? # System Applications
 					  if i_app_index.nil?
 					  	#use direct_install option in applications to install the application directly from the "Enable" in applications menu.
 					  	if application[:options][:direct_install].blank? %>
-					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  	<% else 
 					  		if application[:options][:oauth_url].blank? %>
 					  			<!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
@@ -26,7 +50,7 @@
 		  	    		
 					  <%else
 						if application[:options][:direct_install].blank? %>
-			  	    		<%= link_to image_tag("symbols/setting.png"), configure_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
+			  	    		<%= link_to image_tag("symbols/setting.png"), edit_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
 			  	    	<% end %>
 			  	    	<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 					  <%end%>
@@ -35,11 +59,55 @@
 				  <%if i_app_index.nil? or !application[:options][:direct_install].blank?%>
 					  <%= content_tag(:h2, t(application.display_name)) %>
 					<%else%>
-					  <%= content_tag(:h2, link_to(t(application.display_name),configure_integrations_installed_application_path(@installed_applications[i_app_index]), :title => t("application.configure_addon") )) %>
+					  <%= content_tag(:h2, link_to(t(application.display_name),edit_integrations_installed_application_path(@installed_applications[i_app_index]), :title => t("application.configure_addon") )) %>
 					<%end%>
 					<div class="info-data"><%= t(application.description) %></div>
+
+				<%else # Custom Applications
+					no_custom_app = false%>
+
+				    <%= link_to image_tag("symbols/delete-inactive.png"), application, :confirm => 'Are you sure?', :method => :delete, :class => "button custom-tip-bottom", :title => t('delete') %>
+	    			<%= link_to image_tag("symbols/setting.png"), edit_integrations_application_path(application), :class => "button custom-tip-bottom", :title => t("application.configure_custom_addon") %>		
+					  <%if i_app_index.nil?%>
+				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+				  	<%else%>
+	  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
+	  	    	<%end%>
+					</div>
+					<div class="col-center">
+						<%= content_tag(:h2, link_to(application.display_name, edit_integrations_application_path(application), :title => t("application.configure_addon") )) %>
+						<div class="info-data"><%= application.system_app? ? t(application.description) : application.description%></div>
+			  <% end %>
 				</div>
 			</div>
 	 	</li>
 	<% end %>
-</ul>
+	</ul>
+	<%if no_custom_app%>
+		<div class="app-custom list-noinfo">
+			You do not have any custom widgets.
+			<br />
+			<%= link_to "Add new custom widget", new_integrations_application_path %>
+		</div>
+	<%end%>
+</div>
+<script>
+	var options = {
+		valueNames: [ 'info-data' ],
+		listClass: [ 'table-list' ]
+	};
+
+	//var integrationsList = new List('integrations-list', options);
+
+	jQuery(document).ready(function() {
+		jQuery('#integrations-list .tabs a').click(function(ev) {
+			ev.preventDefault();
+			jQuery('#integrations-list .' + jQuery(this).data('hide')).hide();
+			jQuery('#integrations-list .' + jQuery(this).data('show')).show();
+
+			jQuery('#integrations-list .tabs li').removeClass('active');
+			jQuery(this).parent().addClass('active');
+		});
+		jQuery('#integrations-list .tabs a').first().click();
+	})
+</script>

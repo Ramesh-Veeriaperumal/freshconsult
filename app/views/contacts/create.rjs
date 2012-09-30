@@ -1,0 +1,24 @@
+page << "jQuery('#errorExplanation').hide();"
+page << "jQuery('#errorMessages').hide();"
+#submit is success
+if @user.errors.empty?
+  show_ajax_flash(page)
+  page << "active_dialog.dialog('close');"
+  page << "jQuery('#helpdesk_ticket_email').val('#{@user.name_email}')"
+else
+  #email exists
+  if @existing_user
+    page.replace_html :errorExplanation, "#{t('agent.contact_exists',:existing_email => @existing_user.email, :use_email => "#{link_to t('agent.use_email'), '#', :id => 'populate_requestor_button'}")}"
+    page << "jQuery('#errorExplanation').show();"
+    
+    #Script for populate requestor
+    page << "jQuery('#populate_requestor_button').click(function(){
+                jQuery('#helpdesk_ticket_email').val('#{@existing_user.name_email}');
+                active_dialog.dialog('close'); 
+             });"
+  #display validation error messages              
+  else
+    page.replace_html :errorMessages, "#{error_messages_for :user}"
+    page << "jQuery('#errorMessages').show();"
+  end
+end

@@ -58,6 +58,7 @@ class User < ActiveRecord::Base
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   
+  named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
   named_scope :visible, :conditions => { :deleted => false }

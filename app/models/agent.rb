@@ -9,7 +9,7 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   
-  attr_accessible :signature, :user_id , :ticket_permission, :occasional
+  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional
   
   
   has_many :agent_groups ,:class_name => 'AgentGroup', :through => :user , :foreign_key =>'user_id', :source =>'agents'
@@ -48,9 +48,13 @@ def group_ticket_permission
   ticket_permission == PERMISSION_KEYS_BY_TOKEN[:group_tickets]
 end
 
- def set_default_ticket_permission
-   self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:all_tickets] if self.ticket_permission.blank?
- end
+def set_default_ticket_permission
+  self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:all_tickets] if self.ticket_permission.blank?
+end
+
+def signature_value
+  self.signature_html || (RedCloth.new(self.signature).to_html unless @signature.blank?)
+end
 
   named_scope :list , lambda {{ :include => :user , :order => :name }}                                                   
 

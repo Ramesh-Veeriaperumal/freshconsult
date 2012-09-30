@@ -69,6 +69,7 @@ class AgentsController < ApplicationController
   end
 
   def edit    
+    #@agent.signature_html ||= @agent.signature_value
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }

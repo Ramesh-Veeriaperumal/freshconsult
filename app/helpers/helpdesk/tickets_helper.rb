@@ -5,6 +5,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::NoteActions
   include RedisKeys
+  include Integrations::AppsUtil
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
@@ -220,7 +221,6 @@ module Helpdesk::TicketsHelper
 
   def sla_status(ticket)
     if( ticket.active? )
-
       unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
         if(Time.now > ticket.due_by )
           t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
@@ -233,7 +233,6 @@ module Helpdesk::TicketsHelper
       end
 
     else
-
       if( ticket.ticket_states.resolved_at_dirty < ticket.due_by )
         t('resolved_on_time')
       else
@@ -272,7 +271,7 @@ module Helpdesk::TicketsHelper
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
-        default_reply = (signature.blank?)? "<p/><br/><div>#{reply_email_template}</div>" : "<p/><br/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
+        default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+

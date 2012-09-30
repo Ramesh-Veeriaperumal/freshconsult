@@ -9,7 +9,7 @@
 		<% if @topic.new_record? %>
 			<%= form.text_area  :body_html, :class=>"mceEditor", :id => 'topic_body' %>
 		<% else %>
-			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class=>"mceEditor"%>
+			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
 		<% end %>
 	</li>
 	<% if admin? and not @topic.new_record? %>

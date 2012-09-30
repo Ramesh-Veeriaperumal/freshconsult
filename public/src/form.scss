@@ -11,7 +11,7 @@ label{
    font-size:1.4em;
 }
 input[type=text], select, input.text { 
-   width: 93%;
+   width: 99%;
    margin:0 0 3px 0;
    color:#3f3f3f;
    padding:3px;
@@ -50,6 +50,10 @@ textarea {
    height: 100px;
    width: 99%;
    font-family:$blueprint-font-family;
+
+   &#application_script {
+   	height:300px;
+   }
 }
 
 input:focus { outline: none; }
@@ -261,8 +265,11 @@ a.addchoice:hover{
 	li{
 		padding:8px 2% 8px 2%; 
 		margin:0;
-		@include float-left;
+ 		float: left;
 		width: 96%;
+		&.hide{
+			display: none;
+		}
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
@@ -563,6 +570,13 @@ li.nested_field{
 		   margin-left:-2px;
 		   clear:left;
 		}
+
+
+		/** Individual Height settings **/
+		.application-logo-custom_app {
+			height:60px;
+		}
+
 		.logo.info-data{
 	      padding:3px;
 	   }	   
@@ -1413,7 +1427,7 @@ table.summary-report{
 	.absolute-button-container{
 		position:absolute;
 		bottom:5px;
-		width:88%;
+		width:97%;
 	}
 
 	.ui-form{
@@ -1998,14 +2012,12 @@ ul.ui-form .inputs-list{
 
 .new_ticket_cc_button{
 	float:right;
-	margin-top:-25px;
-	width:5.5%;
-	a{
-		text-decoration:underline;
-		&:hover{
-			text-decoration:none;
-		}
-	}
+	margin-top:5px;
+}
+
+.add_requester_button { 
+	float: left; 
+	margin-top: 5px;
 }
 
 #cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{
@@ -2027,6 +2039,17 @@ ul.ui-form .inputs-list{
 			label{
 				font: 13px "Helvetica Neue", sans-serif;
 			}
+		}
+		input[type=text], input.text { 
+		   width: 93%;
+		}
+		div.color{
+			input{
+				width: 220px;
+			}
+		}
+		select{
+			width: auto;
 		}
 		.add-email{
 			margin-left: 210px;
@@ -2129,13 +2152,16 @@ ul.ui-form .inputs-list{
 	}
 }
 #cc_emails_sec .multi_value_field {
-	width:93%;
+	width:99%;
 	padding-left:5px;
 	padding-right:5px;
 	border-color:#C6C6C6;
 	@include box-shadow(#DFDFDF 1px 1px 2px inset);
 	@include border-radius(5px);
 }
+
+#cc_emails_sec { padding-top: 30px;}
+
 .companies_select{
 	select{ float:left; }
 	.customSelect{ width:550px; }
@@ -2420,4 +2446,9 @@ input[type="text"].number{
     	margin-bottom: 18px;
     	color:#666666;	
     }
+}
+
+// for Integrations
+.field.custom_app_preview {
+	margin-top: -14px;
 }
