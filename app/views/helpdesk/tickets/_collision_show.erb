@@ -56,8 +56,8 @@
     
     jQuery(document).ready(function() {   
      
-      var socket = io.connect('<%= node_url %>', {secure : <%=current_account.ssl_enabled?%>}); 
- 
+      //var socket = io.connect('<%= node_url %>', {secure : <%=current_account.ssl_enabled?%>}); 
+      var socket = io.connect('<%= node_url %>'); 
       socket.on('connect', function() {
           //console.log('Connected to node server...');         
           //console.log(JSON.stringify(init_params));
