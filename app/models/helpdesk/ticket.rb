@@ -596,6 +596,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_field_aliases
     return ff_aliases if flexifield
+    return [] unless account
     fields_def = FlexifieldDef.first(:include => [:flexifield_def_entries], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] )
     fields_def.ff_aliases
