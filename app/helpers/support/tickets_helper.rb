@@ -17,8 +17,5 @@ module Support::TicketsHelper
     current_portal.ticket_fields(:customer_visible).each { |field| visible_fields.push(field.name) }
     visible_fields
   end
-  
-  def email_regex
-    Helpdesk::Ticket::VALID_EMAIL_REGEX.source
-  end  
+
 end
