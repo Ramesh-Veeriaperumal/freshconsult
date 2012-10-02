@@ -3,7 +3,7 @@
 development:
   adapter: mysql
   encoding: utf8
-  database: node
+  database: agent_collision
   username: root
   password: 
 

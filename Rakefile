@@ -11,3 +11,4 @@ require 'tasks/rails'
 require 'thinking_sphinx/tasks'
 require 'thinking_sphinx/deltas/delayed_delta/tasks'
 require "resque/tasks"
+require 'resque_scheduler/tasks'

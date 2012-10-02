@@ -3,8 +3,8 @@ module Gamification
     module Badges
       
       BADGES = [
-        { :name => "Support hero", :classname => "badges-call", :id => 1 },
-        { :name => "Explorer", :classname => "badges-elephant", :id => 2 },
+        { :name => "Support hero", :classname => "badges-a-call", :id => 1 },
+        { :name => "Explorer", :classname => "badges-a-elephant", :id => 2 },
         { :name => "Social supporter", :classname => "badges-fb", :id => 3 },
         { :name => "Zeus", :classname => "badges-fcr", :id => 4 },
         { :name => "Commentor", :classname => "badges-forum", :id => 5 },

@@ -1,0 +1,10 @@
+ticket=current_account.tickets.last
+liquid_objects = {"ticket" => ticket, "requester" => ticket.requester}
+
+widget = Integrations::Widget.new(:script=>params["application_script"])
+widget_code = widget_script(nil, widget, liquid_objects)
+page.replace_html 'preview', %{
+        <div class="sidepanel">
+          #{widget_code}
+        </div>
+}

@@ -72,6 +72,7 @@ class ContactsController < ApplicationController
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
         format.widget { render :action => :show}
+        format.js
       end
     else
       check_email_exist
@@ -79,8 +80,14 @@ class ContactsController < ApplicationController
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
         format.widget { render :action => :show}
+        format.js
       end
     end
+  end
+
+  def hover_card
+    @user = current_account.all_users.find(params[:id])    
+    render :partial => "hover_card"
   end
   
   def build_and_save

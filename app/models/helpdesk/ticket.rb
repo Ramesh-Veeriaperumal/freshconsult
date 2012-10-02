@@ -10,6 +10,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
+  include BusinessRulesObserver
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
   include RedisKeys
@@ -27,7 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   unhtml_it :description
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :disable_observer
   
   before_validation :populate_requester, :set_default_values
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
@@ -38,23 +39,28 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
   
   after_create :refresh_display_id, :save_custom_field, :update_content_ids, :pass_thro_biz_rules,  
-      :create_initial_activity, :support_score_on_create
+      :create_initial_activity
+  before_save :update_ticket_changes
+  after_commit_on_create :support_score_on_create, :process_quests
+  after_commit_on_update :support_score_on_update, :process_quests
 
   before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-       :stop_timesheet_timers, :support_score_on_update, :publish_to_update_channel
-  after_save :process_quests
+       :stop_timesheet_timers, :fire_update_event, :publish_to_update_channel
   
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
-  
+
   belongs_to :email_config
   belongs_to :group
  
   belongs_to :responder,
-    :class_name => 'User'
+    :class_name => 'User',
+    :conditions => ['users.user_role not in (?,?)',User::USER_ROLES_KEYS_BY_TOKEN[:customer],
+    User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]
 
   belongs_to :requester,
     :class_name => 'User'
+  
 
   belongs_to :sphinx_requester,
     :class_name => 'User',
@@ -118,6 +124,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
+  delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
@@ -242,7 +249,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
-    
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -589,6 +595,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
 
+  def custom_field_aliases
+    return ff_aliases if flexifield
+    return [] unless account
+    fields_def = FlexifieldDef.first(:include => [:flexifield_def_entries], 
+      :conditions => ['account_id=? AND module=?',account_id,'Ticket'] )
+    fields_def.ff_aliases
+  end
+
   def ticket_id_delimiter
     delimiter = account.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
@@ -742,7 +756,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def respond_to?(attribute)
     super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
-      ticket_states.respond_to?(attribute)
+      ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def schema_less_attributes(attribute, args)
@@ -752,32 +766,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
+  def custom_field_attribute attribute, args    
+    logger.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
+    
+    load_flexifield if custom_field.nil?
+    return custom_field[attribute] unless  attribute.to_s.include?("=")
+      
+    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
+    field = attribute.to_s.chomp("=")
+    args = args.first if !args.blank? && args.is_a?(Array) 
+    self.ff_def = ff_def_id
+    custom_field[field] = args
+  end
+
   def method_missing(method, *args, &block)
     begin
       super
     rescue NoMethodError => e
-      logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+      logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
 
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
-
-      load_flexifield if custom_field.nil?
-      custom_field.symbolize_keys!
-      
-      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("=").to_sym)
-        logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
-        
-        ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
-        field = method.to_s.chomp("=")
-        logger.debug "field is #{field}"
-        self.ff_def = ff_def_id
-        self.set_ff_value field, args
-        save
-        return
-      end
-      
-      raise e unless custom_field.has_key?(method)
-      custom_field[method]
+      return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))
+      raise e
     end
   end
 
@@ -864,11 +875,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       requester.customer.nil? ? "No company" : requester.customer.name
     end
     
-    def resolved_at
-      return ticket_states.closed_at if closed?
-      ticket_states.resolved_at 
-    end
-    
     def priority_name
       PRIORITY_NAMES_BY_KEY[priority]
     end
@@ -908,7 +914,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
- 
   def can_access?(user)
     if user.agent.blank?
       return true if self.requester_id==user.id
@@ -1014,11 +1019,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def support_score_on_update
       return unless gamification_feature?(account)
 
-      if ((active? && !@old_ticket.active?) or (deleted_changed? && deleted?))
+      if (reopened_now? or (@ticket_changes.key?(:deleted) && deleted?))
         Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
                 :account_id => account_id,
                 :remove_score => true })
-      elsif !active? && @old_ticket.active?
+      elsif resolved_now?
         add_support_score
       end
     end    
@@ -1029,6 +1034,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
                 :fcr =>  ticket_states.first_call_resolution?,
                 :resolved_at_time => ticket_states.resolved_at,
                 :remove_score => false }) unless ticket_states.resolved_at.nil?
+    end
+
+    def update_ticket_changes
+      @ticket_changes = self.changes.clone
+      @ticket_changes.symbolize_keys!
     end
     
     #Temporary move of quest processing from observer - Shan
@@ -1055,12 +1065,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   	end
 
   	def resolved_now?
-  		status_changed? && ((resolved? && status_was != CLOSED) || 
-  		  (closed? && status_was != RESOLVED))
+      @ticket_changes.key?(:status) && ((resolved? && @ticket_changes[:status][0] != CLOSED) || 
+            (closed? && @ticket_changes[:status][0] != RESOLVED))
   	end
 
   	def reopened_now?
-  		status_changed? && (active? && [RESOLVED, CLOSED].include?(status_was))
+      @ticket_changes.key?(:status) && (active? && 
+                      [RESOLVED, CLOSED].include?(@ticket_changes[:status][0]))
   	end
     #Quest processing ends here..
 
@@ -1130,13 +1141,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.save unless schema_less_ticket.changed.empty?
     end
 
-  def publish_to_update_channel
-    channel = "tickets:#{self.account.id}:#{self.id}"
-    agent_name = User.current ? User.current.name : ""
-    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name}
-    client_count = publish_to_channel(channel, message)
-    RAILS_DEFAULT_LOGGER.debug "Message : #{message} Received by #{client_count} clients from channel : #{channel}"
-  end
+    def publish_to_update_channel
+      channel = "tickets:#{self.account.id}:#{self.id}"
+      agent_name = User.current ? User.current.name : ""
+      message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name}
+      client_count = publish_to_channel(channel, message)
+      RAILS_DEFAULT_LOGGER.debug "Message : #{message} Received by #{client_count} clients from channel : #{channel}"
+    end
 
+    def fire_update_event
+      fire_event(:update) unless disable_observer
+    end
 end
-  

@@ -2,7 +2,8 @@
 	<% installed_app = Integrations::InstalledApplication.find(:first, :include=>:application,:conditions => {:applications => {:name => "google_analytics"}, :account_id => current_account})  
 		app_config = installed_app[:configs][:inputs] unless installed_app.blank?
 	%>
-	<% unless app_config.blank? || app_config[current_portal.id.to_s].blank? || app_config[current_portal.id.to_s]['account_number'].blank? %>
+	<% 
+	unless app_config.blank? || app_config[current_portal.id.to_s].blank? || app_config[current_portal.id.to_s]['account_number'].blank? %>
 		<!-- google analytices starts here -->
 		<script type="text/javascript">
 		var _gaq = _gaq || [];

@@ -26,7 +26,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
               A request to change your password has been made.<br /><br />
               To reset your password, click on the link below:<br />
               <a href="{{password_reset_url}}">Click here to reset the password.</a> <br /><br />
-              If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us, if you continue to face any problems.<br /><br />
+              If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us,if you continue to face any problems.<br /><br />
               Regards,<br />{{helpdesk_name}}',
     :requester_subject_template => "{{ticket.portal_name}} password reset instructions",
     :agent_subject_template => "{{ticket.portal_name}} password reset instructions"

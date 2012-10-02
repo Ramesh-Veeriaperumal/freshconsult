@@ -311,6 +311,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         })
         fieldSetObj.items.items[0].setOptions(reply_emails).show();
         fieldSetObj.items.items[0].setValue(this.ticket.selected_reply_email);
+        fieldSetObj.items.items[12].setValue(this.ticket.selected_reply_email);
         if(reply_emails.length === 1) 
             fieldSetObj.items.items[0].setHidden(true);
 

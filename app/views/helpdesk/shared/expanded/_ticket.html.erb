@@ -44,9 +44,9 @@
   </td>
   <td class="assign hideForList">
 	  	<ul>
-	  		<li class="quick-action ajax-menu" title="Change Agent" 
-	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
-	  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
+	  		<li class="quick-action dynamic-menu" title="Change Agent" 
+	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="agent"  
+	  			data-options="#ticket_agents" >
 
 	  			<label><%=t('ticket.assigned_agent')%>: </label>
 				<% if ticket.freshness == :new %>
@@ -68,7 +68,7 @@
   </td>
   <td class="hideForDetails">
   	<div class="quick-action ajax-menu" 
-  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
+  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="agent"  
   			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
   		<span class = "result">
   	<% if ticket.freshness == :new %>

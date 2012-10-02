@@ -174,6 +174,14 @@ module ApplicationHelper
       content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
     end
   end
+
+  def show_contact_hovercard(user, options=nil)
+    if current_user.can_view_all_tickets?
+      link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
+    else
+      link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
+    end
+  end
   
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
@@ -309,7 +317,7 @@ module ApplicationHelper
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
-    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options[:expiry]) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
   end
 
   def user_avatar_with_expiry( user, expiry = 300)
@@ -392,15 +400,18 @@ module ApplicationHelper
       return ""
     else
       widget = installed_app.application.widgets[0]
-      # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
-      replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
-      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+      widget_script(installed_app, widget, liquid_objs)
     end
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "")
-    
+  def widget_script(installed_app, widget, liquid_objs)
+    replace_objs = liquid_objs || {}
+    # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+    replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, "application" => installed_app.application}) unless installed_app.blank?# Application name based liquid obj values.
+    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+  end
+
+  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
@@ -432,7 +443,7 @@ module ApplicationHelper
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
-        rendered_partial = (render :partial => field[:partial])
+        rendered_partial = (render :partial => field[:partial], :locals => {:installed_app=>installed_app, :f=>form})
         element = "#{label} #{rendered_partial}"
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
@@ -454,10 +465,14 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
-        element = add_cc_field_tag element ,field unless is_edit
+        unless is_edit
+          element += add_requester_field 
+          element = add_cc_field_tag element, field
+        end
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
-        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit)
+        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
+        element += add_name_field unless is_edit
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -491,6 +506,15 @@ module ApplicationHelper
        element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
     end
     return element
+  end
+  
+  def add_requester_field
+    content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
+  end
+  
+  def add_name_field
+    content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
+                :id => "name_field", :class => "hide") unless current_user
   end
 
   # The field_value(init value) for the nested field should be in the the following format
@@ -558,6 +582,10 @@ module ApplicationHelper
       format.js
     end
   end
+
+  def email_regex
+    Helpdesk::Ticket::VALID_EMAIL_REGEX.source
+  end  
    
   private
     def solutions_tab

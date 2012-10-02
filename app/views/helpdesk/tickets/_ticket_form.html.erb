@@ -12,8 +12,7 @@
         end
         field_value.merge!({:category_val => @item.get_ff_value(field.name)})
       end
-    end
-    unless params[:topic_id].nil? && !field.is_default_field?
+    elsif field.is_default_field? or !params[:topic_id].blank?
       field_value = @item[field.field_name]
     end
     field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{field.name}") : field.label

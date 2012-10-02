@@ -101,20 +101,19 @@ JiraWidget.prototype= {
 		if(jiraBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
 				app_name:"Jira",
-				anchor:"jira_widget",
 				domain:jiraBundle.domain,
 				application_id:jiraBundle.application_id,
 				username:jiraBundle.username, 
 				use_server_password: true,
-				login_content: null,
-				application_content: function(){
+				login_html: null,
+				application_html: function(){
 					if (jiraBundle.remote_integratable_id) {
 						return jiraWidget.JIRA_ISSUE.evaluate({});
 					} else {
 						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject.replace(/"/g,"&quot;")});
 					}
 				},
-				application_resources:init_reqs
+				init_requests:init_reqs
 			});
 		}
 
@@ -326,9 +325,10 @@ JiraWidget.prototype= {
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.displayIssue.bind(this)
 			}];		
-		jiraWidget.freshdeskWidget.options.application_content = this.displayIssueContent 
-		jiraWidget.freshdeskWidget.options.application_resources = init_reqs;
+		jiraWidget.freshdeskWidget.options.application_html = this.displayIssueContent 
+		jiraWidget.freshdeskWidget.options.init_requests = init_reqs;
 		jiraWidget.freshdeskWidget.display();
+		jiraWidget.freshdeskWidget.call_init_requests();
 
 		//Show loading
 		this.showSpinner();
@@ -343,9 +343,10 @@ JiraWidget.prototype= {
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.loadProject.bind(this)
 			}];
-		jiraWidget.freshdeskWidget.options.application_content = this.displayFormContent;
-		jiraWidget.freshdeskWidget.options.application_resources = init_reqs;
+		jiraWidget.freshdeskWidget.options.application_html = this.displayFormContent;
+		jiraWidget.freshdeskWidget.options.init_requests = init_reqs;
 		jiraWidget.freshdeskWidget.display();
+		jiraWidget.freshdeskWidget.call_init_requests();
 		
 		jQuery('#jira-issue-summary').val(jiraBundle.ticketSubject);
 
@@ -353,16 +354,15 @@ JiraWidget.prototype= {
 	},
 
 	displayLinkWidget:function(){
-		jiraWidget.freshdeskWidget.options.application_content = this.displayLinkContent;
-		jiraWidget.freshdeskWidget.options.application_resources = null;
+		jiraWidget.freshdeskWidget.options.application_html = this.displayLinkContent;
+		jiraWidget.freshdeskWidget.options.init_requests = null;
 		jiraWidget.freshdeskWidget.display();
 
 	},
 
 	displayParentWidget:function(){
-
-		jiraWidget.freshdeskWidget.options.application_content = this.displayParentContent;
-		jiraWidget.freshdeskWidget.options.application_resources = null;
+		jiraWidget.freshdeskWidget.options.application_html = this.displayParentContent;
+		jiraWidget.freshdeskWidget.options.init_requests = null;
 		jiraWidget.freshdeskWidget.display();
 	},
 
@@ -478,23 +478,23 @@ JiraWidget.prototype= {
 	unlinkJiraIssue:function(){
 		if (jiraBundle.integrated_resource_id) {
 			this.showSpinner();
+			ticketData = "";
 			if(jiraWidget.ticketData){
 				linkedTicket = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
-				ticketData = "";
 				fdTickets = jiraWidget.ticketData.split("\n");
 				for (var i=0; i < fdTickets.length; i++){
 					if (fdTickets[i].trim() != '' && fdTickets[i] != linkedTicket) {
 						ticketData += fdTickets[i] + "\n";
 					}
 				}
-				reqData = {
+			}
+			reqData = {
 				"domain":jiraBundle.domain,
 				"remoteKey":jiraWidget.unlinkId,
 				"ticketData":ticketData,
 				"application_id": jiraBundle.application_id,
 				"integrated_resource[id]":jiraBundle.integrated_resource_id
-				}; 
-			}
+			}; 
 			new Ajax.Request("/integrations/jira_issue/unlink", {
 				asynchronous: true,
 				method: "put",
