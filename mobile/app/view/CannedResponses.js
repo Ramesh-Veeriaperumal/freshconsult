@@ -11,7 +11,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
         var msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
             ticket_id = msgFormContainer.ticket_id,
             opts  = {
-                url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
+                url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id
             };
         FD.Util.getJSON(opts,this.populateMessage,this);
     },

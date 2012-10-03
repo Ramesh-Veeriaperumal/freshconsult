@@ -214,7 +214,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
+      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
         ticket.skip_notification = true
       end
     end
@@ -293,9 +293,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       content_id_hash = {}
      
       Integer(params[:attachments]).times do |i|
-        created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+        if content_ids["attachment#{i+1}"]
+          description = "content_id"
+        end
+        created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id,:description => description)
         file_name = created_attachment.content_file_name
-        content_id_hash[file_name] = content_ids["attachment#{i+1}"] if content_ids["attachment#{i+1}"]
+        if content_ids["attachment#{i+1}"]
+          content_id_hash[file_name] = content_ids["attachment#{i+1}"]
+          created_attachment.description = "content_id"
+        end
       end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
     end

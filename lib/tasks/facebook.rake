@@ -3,7 +3,7 @@ namespace :facebook do
   task :fetch => :environment do    
     puts "Facebook task initialized at #{Time.zone.now}"
     Account.active_accounts.each do |account|
-      Account.reset_current_account
+      account.make_current
       facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])    
       facebook_pages.each do |fan_page| 
         fb_sandbox do ### starts ####
@@ -19,6 +19,7 @@ namespace :facebook do
          end ### ends ####
      end
    end
+    Account.reset_current_account
     puts "Facebook task finished at #{Time.zone.now}"
   end
   
@@ -28,6 +29,12 @@ namespace :facebook do
   def fb_sandbox
       begin
         yield
+      rescue Koala::Facebook::APIError => e
+        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
+        puts e.to_s
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Errno::ECONNRESET => e
         puts e.to_s
         NewRelic::Agent.notice_error(e)
@@ -59,13 +66,11 @@ namespace :facebook do
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Exception => e
-        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
         puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue 
-        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
         puts e.to_s
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in facebook!"
       end

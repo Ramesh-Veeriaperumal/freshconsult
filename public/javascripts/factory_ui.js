@@ -41,6 +41,26 @@ window.FactoryUI = {
 		});
 		return jQuery(select);
 	},
+	optgroup: function(choices, _name, _className){
+		if(!choices) return;
+		var className   = _className	|| "dropdown",
+			name		= _name			|| "",
+			select		= jQuery("<select />")
+							.prop({ "name": name })
+							.addClass(className);
+		
+		choices.each(function(item){
+			var _optgroup = jQuery("<optgroup label='"+item[0]+"' />");
+			item[1].each(function(option){
+				jQuery( "<option />" )
+				.text( option[1] )				
+				.appendTo(_optgroup)
+				.get(0).value = option[0];
+			});
+			_optgroup.appendTo(select)			  
+		});
+		return jQuery(select);
+	},
 	paragraph: function(_placeholder, _name, _value, _className){
 		var className   = _className || "paragraph",
 			placeholder = _placeholder || "",

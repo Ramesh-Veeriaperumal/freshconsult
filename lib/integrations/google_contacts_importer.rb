@@ -77,9 +77,11 @@ class Integrations::GoogleContactsImporter
       # Enable notification before doing any other operations.
       EmailNotification.enable_notification(@google_account.account) 
       Rails.logger.info "last_sync_status #{sync_stats.inspect}"
-      @google_account.last_sync_status = sync_stats
-      @google_account.save! unless @google_account.new_record?
-      send_success_email(@google_account.last_sync_status, options) # Send email after saving the status into db.
+      unless @google_account.last_sync_status[:status] == :progress
+        @google_account.last_sync_status = sync_stats
+        @google_account.save! unless @google_account.new_record?
+        send_success_email(@google_account.last_sync_status, options) # Send email after saving the status into db.
+      end
     end
     Rails.logger.info "###### Completed sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
     return @google_account
@@ -95,7 +97,7 @@ class Integrations::GoogleContactsImporter
                         :conditions => ["updated_at > ? and helpdesk_tag_uses.tag_id=? and deleted=?", last_sync_time, sync_tag_id, false])
     end
     Rails.logger.debug "#{users.length} users in db has been fetched. #{@google_account.email}"
-    return users
+    users.blank? ? [] : users
   end
 
   private

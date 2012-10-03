@@ -1,0 +1,27 @@
+<% cache ("#{memcache_local_key}", :expires_in => 1.hour) do %>
+
+	<%= link_to "See all", agents_helpdesk_leaderboard_path(), :class => "action-right" %>
+	<h3 class="title"><%= t('reports.scoreboard_title_nav')%></h3>  	
+	<p class="intro">This Month</p>  	
+
+	<% list_empty = false %>
+
+	<% leaderboard.each do |score_list| %>
+		<% (score_list[0] || []).each do |score| %>
+		<div class="panel-row">
+			<%= user_avatar_with_expiry(score.user,3605) %>			
+			<div class="panel-content">
+				<div class="floatr trophy trophy-<%= score_list[1] %>-small"></div>
+				<h4 class="name"><%= link_to_agent(score.user) %></h4>
+				<p class="help-text"><%= t("gamification.leaderboard.#{score_list[1]}_trophie_label") %></p>
+			</div>
+		</div>
+		<% list_empty = true %>
+		<% end %>
+	<% end %>
+
+	<% unless list_empty %>
+		<script type="text/javascript">$('mini-leaderboard').hide()</script>
+	<% end %>
+
+<% end %>

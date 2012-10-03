@@ -1,0 +1,90 @@
+<% form_tag update_game_admin_gamification_path, :method => :put, :id => "scoreboard_ratings_form", :rel => "validate" do %>
+<ul class="ui-form">
+    <li>
+        <div class="section-title">
+            <h3>Award points</h3>
+        </div>
+        <div class="row">
+            <div class="span3">
+                <strong>
+                    When agent <br /> resolves a ticket:
+                </strong>
+            </div>        
+            <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
+                <%if scoreboard.resolution_speed < 100 %>
+                    <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                        <div class="span3">
+                            <label class="label-title"> <%= t(".#{scoreboard.resolution_name}") %> </label>
+                            <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
+                            <span class="info_data">Pts</span>
+                            <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
+                            <%= sb.hidden_field :id, :value => scoreboard.id %>
+                        </div>
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="row">
+            <div class="span3">
+                <strong>
+                    Bonus points for:
+                </strong>
+            </div>
+            <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
+                <%if scoreboard.resolution_speed > 100 %>
+                    <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                        <div class="span3"> 
+                            <label class="label-title"><%= t(".#{scoreboard.resolution_name}") %> </label>
+                            <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
+                            <span class="info_data">Pts</span>
+                            <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
+                            <%= sb.hidden_field :id, :value => scoreboard.id %>
+                        </div>
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+        <br />
+        <br />
+        <div class="section-title">
+            <h3><%= t('.title_levels')%></h3>
+            <p class="help-text">Set points to be acheived by an agent to reach a level </p>
+        </div>
+        <div class="row">
+            <% @scoreboard_levels.each_with_index do |level , index| %>
+                <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
+                <div class="span2">
+                    <label class="label-title"><%= level.name %></label>
+                    <%= sl.text_field :points, :value => level.points, :maxlength => "9", 
+                            :class => "number points required #{ 'level' if (index < 5) }" %></td>
+                    <%= sl.hidden_field :id, :value => level.id %>
+                </div>
+                <% end %>
+            <% end %>        
+        </div>
+        <br /><br />
+    </li>
+</ul>
+<div class="button-container">        
+    <a class="uiButton floatl" href="/admin/home">Go back to admin</a>
+    <%= submit_tag t('account.save'), :class => 'uiButton special' %>
+</div>
+<% end %>
+    
+<% content_for :onload_script do %>
+    jQuery.validator.addMethod("level", function(value, element, param) {
+    console.log(element);
+        _array = element.id.split("_");
+        _array[2] = parseInt(_array[2]) + 1;
+        next_val = parseInt(jQuery("#" + _array.join("_")).val());
+        current_val = parseInt(value);
+        
+        return (next_val > current_val);
+    }, "This should be less than its next level");
+
+    jQuery.validator.addClassRules("level", { level: true });
+
+<% end %>

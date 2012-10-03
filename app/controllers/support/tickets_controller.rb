@@ -1,6 +1,7 @@
 class Support::TicketsController < ApplicationController
 
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
+  helper SupportTicketControllerMethods
   include SupportTicketControllerMethods 
   include Support::TicketsHelper
   include ExportCsvUtil
@@ -9,6 +10,7 @@ class Support::TicketsController < ApplicationController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
+  before_filter :check_user_permission, :only => [:show]
   before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
   before_filter :load_item, :only =>[:update]
   before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
@@ -97,13 +99,13 @@ class Support::TicketsController < ApplicationController
        #        res["value"]  = status_id
        #        res["message"] = "Successfully updated"
        #        render :json => ActiveSupport::JSON.encode(res)
-       flash[:notice] = "Successfully updated"
+       flash[:notice] = I18n.t('ticket_close_success')
        mob_json[:success] = true
      else
        # res["success"] = false
        # res["message"] = "closing the ticket failed"
        # render :json => ActiveSupport::JSON.encode(res)      
-       flash[:notice] = "Closing the ticket failed"
+       flash[:notice] = I18n.t('ticket_close_failure')
        mob_json[:failure] = true
      end
      respond_to do |format|
@@ -154,6 +156,12 @@ class Support::TicketsController < ApplicationController
    
    def require_user_login
      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+   end
+
+   def check_user_permission
+     if current_user and current_user.agent?
+       return redirect_to helpdesk_ticket_url(:format => params[:format])
+     end
    end
   
 end

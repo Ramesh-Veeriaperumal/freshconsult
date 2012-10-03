@@ -41,10 +41,21 @@
 			  </h3>
 				<% first_post = @posts.first %>
 				<div class="description">
+					<% if permission?(:manage_forums) and feature?(:gamification) %>
+						<textarea id="agent-hovercard" style="display:none;">
+							<div class="contact_hover" style="min-height:50px;">
+							  <%= user_avatar(@topic.user) if @topic.user %>
+							  <%= content_tag :div, link_to(h(@topic.user), @topic.user), :class => "user_name" %>
+							  <% if @topic.user.agent? %>
+							  	<strong><%= content_tag :div, h(@topic.user.agent.level.name) unless @topic.user.agent.level.blank? %></strong>
+							  <% end %>
+							</div>
+						</textarea>
+            		<% end %>
 					<div class="user_details">
 						<%= user_avatar( @topic.user ) %>
-            <%=t('posted_by')%> <%= link_to_user @topic.user, :class => "user_name" %>
-						<div class="info">
+            			<%=t('posted_by')%> <%= link_to_user ( @topic.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard" ) %>
+            			<div class="info">
 						  <%= formated_date(@topic.created_at) %>
 						  <% if @forum.ideas? %>
     		    		<span class="mark_action">

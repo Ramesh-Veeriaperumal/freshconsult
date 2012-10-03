@@ -19,9 +19,7 @@ class Helpdesk::NotesController < ApplicationController
   end
   
   def create  
-    
-    build_attachments
-
+    build_attachments @item, :helpdesk_note
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -239,16 +237,6 @@ class Helpdesk::NotesController < ApplicationController
      end
   end
   
-   def validate_attachment_size
-    fetch_item_attachments if @item.fwd_email?
-    total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
-    if total_size > Helpdesk::Note::Max_Attachment_Size    
-      flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
-      redirect_to :back  
-    end
- end
- 
- 
   def validate_tweet tweet
    twitter_id = "@#{@parent.requester.twitter_id}" 
    return tweet if ( tweet[0,twitter_id.length] == twitter_id)
@@ -276,6 +264,10 @@ class Helpdesk::NotesController < ApplicationController
 
   def set_default_source
     @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
+  end
+
+  def after_restore_url
+    :back
   end
 
 end

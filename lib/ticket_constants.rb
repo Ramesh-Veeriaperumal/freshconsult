@@ -4,6 +4,8 @@ module TicketConstants
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
    
+  DATE_RANGE_CSV = 31
+
   SOURCES = [
     [ :email,      I18n.t('email'),            1 ],
     [ :portal,     I18n.t('portal_key'),       2 ],
@@ -54,7 +56,7 @@ module TicketConstants
     [ :group_id,            "Groups",   :dropdown],
     [ :source,              "Source",   :dropdown],
     [ :priority,            "Priority", :dropdown],
-    [ :due_by,              "Overdue",  :due_by],
+    [ :due_by,              "Due By",  :due_by],
     [ "helpdesk_tags.name", "Tags",     :dropdown],
     [ "users.customer_id",  "Customers", :dropdown],
     #[ :created_at,          "Created At", :created_at]

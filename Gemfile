@@ -37,7 +37,7 @@ gem "http_accept_language", "1.0.1"
 
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
-gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
+#gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
 
 gem "net-dns", "0.6.1"
 
@@ -54,8 +54,6 @@ gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.0.0"
 
-#gem "win32-open3", "0.3.2"
-
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
 gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
@@ -67,13 +65,17 @@ gem "insensitive_hash", "0.2.3"
 
 gem "SystemTimer", "1.2.3" 
 gem "redis","2.2.2"
-gem "resque"
+gem "resque","1.22.0"
 gem 'resque-scheduler', :require => 'resque_scheduler'
 gem 'resque_mailer', "1.0.1"
 gem 'resque-status'
 gem 'resque-retry'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
+gem 'rforce'
+gem 'after_commit', "~> 1.0.10"
+
+gem 'memcache-client', '1.8.5'
 
 group :development do
    gem "rspec", "1.3.1"
@@ -81,7 +83,7 @@ group :development do
    gem "rspec-rails", "1.3.3"
    gem "factory_girl", "1.2.3"  
    gem "mongrel"
-   gem "compass"
+   gem "compass-rails"
 end
 
 

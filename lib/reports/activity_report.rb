@@ -13,6 +13,7 @@ module Reports::ActivityReport
       tickets_count = group_tkts_by_columns({:column_name => column_name })
       tickets_hash = get_tickets_hash(tickets_count,column_name)
       self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_hash", tickets_hash)
+
     end
 
     count_of_resolved_tickets
@@ -48,7 +49,7 @@ module Reports::ActivityReport
       end
     end
     tickets_hash.store(RESOLVED,{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
-    @current_month_tot_tickets = tot_count
+    @current_month_tot_tickets = tot_count if (!column_name.to_s.match(/flexifields\..*/)) #this should n't be updated for flexifields.(used in report page to draw charts)
     tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
 
     
@@ -71,6 +72,7 @@ module Reports::ActivityReport
     
     tickets_hash
   end
+
 
 
 def get_nested_field_reports(column_name)
@@ -127,7 +129,9 @@ def get_nested_field_reports(column_name)
                 end
 
                 #Adding third level data. No check as the queried data is grouped by all 3 cols so data is unique.
+                next if(column_names.length == 2) #Last level can be left blank
                 value = data.send(column_names[2])
+                next if value.nil?
                   count = data.count
                   percentage = count.to_i/tot_count.to_i * 100
                   xaxis_arr.push(value)  
@@ -167,6 +171,7 @@ def get_total_data_count(nested_data)
       total_count = total_count + data.count.to_i
     end
   return total_count
+
 end
 
   def calculate_percentage_for_columns(tickets_hash,tkts_count)

@@ -1,11 +1,16 @@
 <% content_for :sidebar do -%>
-     <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
-  
+  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
+  <%= render :partial => "/integrations/widgets/helpdesk_tickets_show_side_bar_widget", :locals => {:ticket => @ticket, :user => @ticket.requester}%>
+
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
-<%- end %>
+  <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
 
+<%- end %>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
+<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 
 <div class="request-well">			
@@ -57,16 +62,11 @@
 
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
-  <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
 	var activeForm = null;
-
-	jQuery("#cnt-reply").bind("afterShow", function(ev){
-		console.log("Testing after show")
-	});
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
-			
+
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 
@@ -76,7 +76,16 @@
 				case 'cnt-reply':
 				case 'cnt-note':
 				case 'cnt-fwd':
-					insertIntoConversation("");
+					invokeRedactor(formid+"-body",formid);
+					jQuery('#'+formid+"-body").getEditor().focus();
+					if(jQuery.browser.mozilla){
+						jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
+					}
+					jQuery('#'+formid+"-body").getEditor().on('blur',function(){
+					jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
+					jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
+
+				});
 				break; 
 				case 'cnt-fb-post': 
 					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
@@ -98,51 +107,62 @@
         	.addClass("loading");
 
       	jQuery("#canned_response_list")
-        	.load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
+        	.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
           		jQuery("#canned_response_container")
             		.removeClass("loading");
         	})
       		.show();        
     }
 
-    function insetIntoBlankCaret(element_id, value){
-    	if(!$(element_id)) return 
+         
+		function insertIntoConversation(value,element_id){
+			note_area  = jQuery('#cnt-note');
+			reply_area = jQuery('#cnt-reply');
+			fwd_area = jQuery('#cnt-fwd')
+			tweet_area = jQuery('#cnt-tweet');
 
-    	currentEditItem = tinyMCE.get(element_id);
-    	currentEditItemCaret = currentEditItem.dom.select('span#caret_pos_holder')[0];
-		currentEditItem.selection.select(currentEditItemCaret);   
-		currentEditItem.dom.remove(currentEditItemCaret);
-		tinyMCE.execInstanceCommand(element_id, "mceInsertContent", false, value);
-	}
-    
-	function insertIntoConversation(value, element_id){
-		note_area  = jQuery('#cnt-note');
-		reply_area = jQuery('#cnt-reply');
-		fwd_area = jQuery('#cnt-fwd')
-		tweet_area = jQuery('#cnt-tweet');
-		if($(element_id)){
-			insetIntoBlankCaret(element_id, value);
+			if(element_id == undefined){
+				 if(reply_area.css('display')== 'block') {
+					 element_id = "cnt-reply-body";
+				}
+				else if (note_area.css('display') =='block'){
+					element_id = "cnt-note-body";
+				}
+			}
+			if(tweet_area.css("display") == 'block'){
+				get_short_url(value, function(bitly){
+						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
+						jQuery('#send-tweet-cnt-tweet-body')
+								.trigger("focus")
+								.trigger("keydown");
+				});			
+			}
+			if(jQuery(element_id)){
+		        	jQuery("#"+element_id).getEditor().focus();
+		       		jQuery("#"+element_id).insertHtml(value);
+			}        
+
+			return;
 		}
-		else if(note_area.css("display") == 'block'){               
-			insetIntoBlankCaret("add-note-cnt-note-body", value);
-		} 
-		else if(tweet_area.css("display") == 'block'){
-			get_short_url(value, function(bitly){
-					insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
-					jQuery('#send-tweet-cnt-tweet-body')
-							.trigger("focus")
-							.trigger("keydown");
-			});			
-		}
-		else{
-			if(reply_area.css("display") == 'none' && fwd_area.css("display") == 'none')
-				jQuery('#ReplyButton').trigger("click");
-    		
-    		var msg_body_id = reply_area.css("display") == 'none' ? "send-fwd-email-cnt-fwd" : "send-email-cnt-reply";
-			insetIntoBlankCaret(msg_body_id+"-body", value);
-		}		
-		return;
-  	function showHideEmailContainer(){
+
+		function getCannedResponse(ticket_id, ca_resp_id){
+			jQuery("#canned_response_container").addClass("loading")
+  			jQuery.ajax({	type: 'POST',
+  						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
+  						contentType: 'application/text',
+  						async: false,
+						success: function(data){		
+  									insertIntoConversation(data,activeTinyMce);
+
+  							    jQuery("#canned_response_list")
+  							      .removeClass("loading")
+  							      .hide(300);
+  								}
+  						});
+		return true;
+  	}
+
+	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
   			jQuery(".ccEmailMoreLink").text('');
@@ -156,35 +176,6 @@
   		}
   	}
 
-function validateMCEData(){
-	if(jQuery.browser.opera)
-		jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
-}
-	}
-		
-	function getCannedResponse(ticket_id, ca_resp_id){
-  		jQuery("#canned_response_container").addClass("loading")
-  		jQuery.ajax({	type: 'POST',
-  						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
-  						contentType: 'application/text',
-  						async: false,
-  						success: function(data){		
-  							elementId = jQuery("#canned_response_container").data("tinyMceId")
-
-  							insertIntoConversation(data, activeTinyMce);
-  							jQuery("#canned_response_list")
-  							    .removeClass("loading")
-  							    .hide(300);
-  							}
-  						});
-  		return true;
-  	}
-
-	function validateMCEData(){
-		if(jQuery.browser.opera)
-			jQuery('#HelpdeskReply textarea').val(tinyMCE.activeEditor.getContent());
-	}
-	
   <% end %>
 
 <% end %>
@@ -192,6 +183,8 @@ function validateMCEData(){
 <% content_for :onload_script do -%> 	
 	jQuery('#custom_ticket_form').validate();
 	<% unless @draft.nil? %>
-		jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
+	jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
+	var isDirty= false;
 	<% end %>
+	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 <%- end %>

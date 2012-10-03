@@ -43,7 +43,11 @@ module Reports::ChartGenerator
     
     pie_data = []
     sort_data.each do |key,tkt_hash|
-      pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     if (TicketConstants::SOURCE_NAMES_BY_KEY.has_key?(key))
+        pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
+     else
+        pie_data.push({:name=> key,:data =>[tkt_hash.to_f] })#//TODO need to do i18n for the key 
+      end
     end
     pie_data
   end
@@ -150,6 +154,7 @@ module Reports::ChartGenerator
   end 
   
 
+
 def gen_pareto_chart(chart_name,data_arr,xaxis_arr,column_width)
 return nil if data_arr.empty?
   Highchart.bar({
@@ -221,8 +226,8 @@ return nil if data_arr.empty?
   })
 end
 
-  def gen_single_stacked_bar_chart(value_arr,column_name)
 
+  def gen_single_stacked_bar_chart(value_arr,column_name)
     browser_data = gen_stacked_bar_data(value_arr,column_name)
     self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_single_stacked_bar_chart",
     Highchart.bar({
@@ -316,7 +321,7 @@ end
             :formatter => gauge_label_formatter,
             :color => '#000000',
             :style => {
-              :font => '14pt "Lucida Grande"'
+              :font => '14pt "Helvetica Neue"'
             }
           },
         }
@@ -436,7 +441,7 @@ end
  # format the tooltips
   def pie_tooltip_formatter  
    'function() {
-      return "<strong>" + this.point.name + "</strong>: " + this.y + "%";
+      return "<strong>" + this.point.name + "</strong>: " +  Math.round(this.percentage) + "%";
     }'
   end
   
@@ -458,7 +463,7 @@ end
  
  def  pie_label_formatter 
   "function() {
-      if (this.y > 5) return Math.round(this.percentage) + '<span style=\"font-size:7px\">%</span>' ;
+     if(this.percentage > 3) return Math.round(this.percentage) + '<span style=\"font-size:7px\">%</span>' ;
     }"
   end
 

@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
+  include Users::Activator
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -51,10 +52,13 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
+  has_many :support_scores, :dependent => :delete_all
+
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   
+  named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
   named_scope :visible, :conditions => { :deleted => false }
@@ -144,8 +148,8 @@ class User < ActiveRecord::Base
     has account_id, deleted
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    
-    set_property :delta => :delayed
+
+    #set_property :delta => :delayed
     set_property :field_weights => {
       :name         => 10,
       :email        => 10,
@@ -174,6 +178,7 @@ class User < ActiveRecord::Base
     self.address = params[:user][:address]
     self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
+    self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
     signup(portal)
   end
 
@@ -237,6 +242,10 @@ class User < ActiveRecord::Base
       :occasional => false  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
+
+  has_many :achieved_quests, :dependent => :delete_all
+
+  has_many :quests, :through => :achieved_quests
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' 
   
@@ -313,67 +322,6 @@ class User < ActiveRecord::Base
   def url_protocol
     account.ssl_enabled? ? 'https' : 'http'
   end
-
-  def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
-    portal ||= account.main_portal
-    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
-    reset_perishable_token!
-    
-    e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
-    if customer?
-      template = e_notification.requester_template
-      subj_template = e_notification.requester_subject_template
-      user_key = 'contact'
-    else
-      template = e_notification.agent_template
-      subj_template = e_notification.agent_subject_template
-    end
-    
-    UserNotifier.deliver_password_reset_instructions(self, 
-        :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)) , 
-          :subject => Liquid::Template.parse(subj_template).render ,:reply_email => reply_email)
-  end
-  
-  def deliver_activation_instructions!(portal, force_notification = false) #Need to refactor this.. Almost similar structure with the above one.
-    portal ||= account.main_portal
-    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
-    reset_perishable_token!
-
-    e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
-    if customer?
-      return unless e_notification.requester_notification? or force_notification
-      template = e_notification.requester_template
-      subj_template = e_notification.requester_subject_template
-      user_key = 'contact'
-    else
-      template = e_notification.agent_template
-      subj_template = e_notification.agent_subject_template
-    end
-    
-    UserNotifier.send_later(:deliver_user_activation, self, 
-        :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-        :subject => Liquid::Template.parse(subj_template).render , :reply_email => reply_email)
-  end
-  
-  def deliver_contact_activation(portal)
-    portal ||= account.main_portal
-    reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
-    unless active?
-      reset_perishable_token!
-  
-      e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
-      UserNotifier.send_later(:deliver_user_activation, self, 
-          :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
-          :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => reply_email)
-    end
-  end
-  
-  def deliver_account_admin_activation
-      UserNotifier.send_later(:deliver_account_admin_activation,self)
-  end
   
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
@@ -449,7 +397,7 @@ class User < ActiveRecord::Base
     !can_view_all_tickets?
   end
 
-    def to_xml(options = {})
+  def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
@@ -476,6 +424,24 @@ class User < ActiveRecord::Base
 
   def recent_tickets(limit = 5)
     tickets.newest(limit)
+  end
+
+  def available_quests
+    account.quests.available(self)
+  end
+
+  def achieved_quest(quest)
+    achieved_quests.find_by_quest_id(quest.id)
+  end
+
+  def badge_awarded_at(quest)
+    achieved_quest(quest).updated_at
+  end
+  
+  def make_customer
+    return if customer?
+    update_attribute(:user_role, USER_ROLES_KEYS_BY_TOKEN[:customer])
+    agent.destroy
   end
 
   protected

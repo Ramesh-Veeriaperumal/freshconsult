@@ -1,0 +1,100 @@
+<%= render :partial => "admin/quests/criteria_jsinit", :locals => { :filter_type => "quest" } %>
+
+<%= f.error_messages :object_name => 'quest' %>
+<div style="<%= 'display:none' unless @quest.name.blank? %>">
+	<h3 class="s-title">Quest type</h3>
+	<div class="form-section">		
+		<div class="row">
+			<% Quest::GAME_TYPES.each do |game_type| %>
+			<label class="s-label radio-label span2">
+				<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
+				<%= t(".#{game_type[0]}") %>
+			</label>
+			<% end %>
+		</div>
+	</div>
+</div>
+<div id="enablequest">
+	<div class="gamecriteria">
+		<h3 class="s-title">Quest objectives</h3>
+		<div class="ui-form gray-box-rounded">
+			<div id="questDOM"></div>
+			<div class="conditionset" id="filterDOM">
+				<div id="RuleList" class="rule_list"></div>
+				<fieldset class="empty_choice">
+		        	<p>No conditions present</p>
+		    	</fieldset>
+				<fieldset class="addchoice">
+		         	<p><%=t('dispatch.add_condition')%></p> 
+		         	<img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+		    	</fieldset>
+	    	</div>
+		</div>
+	</div>
+
+	<div class="gamereward">
+		<h3 class="s-title">Reward</h3>
+		<p class="help-text">On successful completion of a quest award a badge and bonus points</p>
+		<div class="form-section">
+			<div class="row">
+				<div class="span3">
+					<strong>Badge</strong><br />			
+					<%= f.hidden_field :badge_id, :class => "required text" %>					
+					<div class="select_badge hide">
+						<div id="selected-badge">
+							<%= content_tag :div, "", :class => "gamesettings-badges #{@badge_class[:classname]}" if @badge_class %>
+						</div>
+						<strong id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></strong>
+					</div>
+					<a href="javascript:void(0)" id="showbadges">
+						<%= (!@badge_class) ? "Pick a badge" : "Change" %>
+					</a>
+				</div>
+				<div class="span4">
+					<strong>Bonus points</strong><br />
+					<%= f.text_field :points, :class => "required points" %>
+				</div>
+			</div>
+		</div>
+		<div id="select-badge" class="badgelist hide badges_items">
+			<span class="seperator"></span>
+			<div class="row">
+				<% @available_badges.each do | badges | %>
+					<div class="span2 badge-set">
+						<%= content_tag :div, "", 
+									:class => "gamesettings-badges center-align #{badges[:classname]}", 
+									"data-class" => badges[:classname],
+									"data-name" => badges[:name],
+									"data-badge-id" => badges[:id] %>
+						<p class="aligncenter"><strong><%= badges[:name] %></strong></p>
+					</div>
+				<% end %>
+			</div>
+		</div>
+	</div>
+	<br />
+	<div class="gamename">
+		<h3 class="s-title">...and finally</h3>
+		<div class="form-section">
+			<%= f.text_field :name, :class => "required text", :placeholder => "Name your quest" %>
+			<%= f.text_area :description, :class => "mediumpara", :placeholder => "Brief about the quest" %>
+		</div>
+	</div>	
+</div>
+<div class="button-container">
+	<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
+	<%= link_to t('cancel_and_back'), { :action => 'index' }, :class => "uiButton floatl" %>
+	<div class="hide" id="save-button">
+		<input type="submit" class="uiButton special" value="Save quest" />
+	</div>
+</div>
+
+<% content_for :sidebar do %>
+	<div class="sidepanel helpcard">
+		<h4><%= t('admin.gamification.help_text.quest') %> </h4>
+		<p><%= t('admin.gamification.help_text.quest_form_info1') %> </p>
+		<p><%= t('admin.gamification.help_text.quest_form_info2') %> </p>
+		<p><%= t('admin.gamification.help_text.quest_form_info3') %> </p>
+		<p><%= t('admin.gamification.help_text.quest_form_info4') %> </p>
+	</div>
+<% end %> 

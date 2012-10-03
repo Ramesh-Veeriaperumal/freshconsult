@@ -1,7 +1,7 @@
 class Helpdesk::DashboardController < ApplicationController
 
   helper 'helpdesk/tickets' #by Shan temp
-  include Reports::ScoreboardReport
+  include Reports::GamificationReport
 
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_mobile, :only => [:index]
@@ -17,7 +17,7 @@ class Helpdesk::DashboardController < ApplicationController
       render(:partial => "ticket_note", :collection => @items)
     end
     #for leaderboard widget
-    @champions = list_of_champions()
+    # @champions = champions
   end
   
   def latest_activities
@@ -42,14 +42,4 @@ class Helpdesk::DashboardController < ApplicationController
         Helpdesk::Activity.freshest(current_account).permissible(current_user)
       end
     end
-
-    def silence_logging
-      @bak_log_level = logger.level 
-      logger.level = Logger::ERROR
-    end
-
-    def revoke_logging
-      logger.level = @bak_log_level 
-    end
-
 end

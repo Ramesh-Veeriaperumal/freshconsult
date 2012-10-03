@@ -1,17 +1,17 @@
-<%= tiny_mce_init %>
 <% form_for [@parent, @item], :html => { :id => "Edit_Note_#{@item.id}" } do |f| %>
 	<ul>
 		<li>
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
-			<%= f.text_area :body_html, :value => @item.body_html, :class => "mceEditor" %>
+			<%= f.text_area :body_html, :value => @item.body_html, :id =>"#{@item.id}-body" %>
 		</li>
 		<li class="button-container">
 			<%= submit_tag(t("update"), :class => "uiButton special") %>
-			<%= button_to_function(t('cancel'), "jQuery('#Edit_Note_#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>
+			<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>
 		</li>
 	</ul>
 <% end %>
 <% javascript_tag do %>
+ invokeRedactor('<%= "#{@item.id}-body" %>');
 	jQuery(document).ready(function(){
 		jQuery("#Edit_Note_<%= @item.id %>")
 			.validate();

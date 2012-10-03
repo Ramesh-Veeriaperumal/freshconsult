@@ -36,6 +36,7 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  logmein_source: LogMeIn Rescue
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -54,6 +55,7 @@ en:
     mobile: Mobile
     twitter_id: Twitter Id
     full_name: Full Name
+    name: Name
     secondary: secondary
     phone_no: Phone No
     address: Address
@@ -133,6 +135,9 @@ en:
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
+  confirm: Confirm
+  yes_password_reset: "Yes"
+  no_password_reset: "No"
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
@@ -147,6 +152,15 @@ en:
     popular: Popular
   payment_info: Payment information
   support:
+      shared:
+        survey_form:
+          survey_title: Please take a minute to rate our support
+          feedback_title: Also your good words and specific critique can help us better our support in the future
+          rated_on: You gave us this rating on %{rated_on}
+          change_of_mind: Changed your mind?
+          rate_again: Rate us again
+          submit: Submit
+          cancel: Cancel
       surveys:
           thanks_for_feedback: "We have received your feedback. Thank you very much."
           feedback_already_done: "You have already given feedback for this response."
@@ -161,7 +175,114 @@ en:
               neutral_info: Wish you were a little more happy.
               unhappy_info: We will ensure that we will take extra care the next time around.
               additional_info: Additionally, you could also share your experience working with us.
+  gamification:
+    levels:
+      beginner: Beginner
+      intermediate: Intermediate
+      professional: Professional
+      expert: Expert
+      master: Master
+      guru: Guru
+    notifications:
+      newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
+      achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
+    leaderboard:      
+      mvp_trophie_label: "Most Valuable Player"
+      mvp_trophie_info: "Agent with the most overall points this month"
+      sharpshooter_trophie_label: "Sharpshooter"
+      sharpshooter_trophie_info: "Agent with the highest First Call Resolution points this month"
+      speed_trophie_label: "Speed Racer"
+      speed_trophie_info: "Agent with the maximum points for fast resolution this month"
+      love_trophie_label: "Customer Wow Champion"
+      love_trophie_info: "Agent with the maximum Customer satisfaction points this month"
+
+      mvp_trophie_label_group: "Most Valuable Team"
+      mvp_trophie_info_group: "Group with the most overall points this month"
+      sharpshooter_trophie_label_group: "Sharpshooters"
+      sharpshooter_trophie_info_group: "Group with the highest First Call Resolution points this month"
+      speed_trophie_label_group: "Speed Racers"
+      speed_trophie_info_group: "Group with the maximum points for fast resolution this month"
+      love_trophie_label_group: "Customer Wow Champions"
+      love_trophie_info_group: "Group with the maximum Customer Satisfaction points this month"
+
+  quests:
+    delete: "Are you sure you want to delete this quest?"
+    inactive_quests: Inactive Quests
+    date: Date
+    satisfaction: Customer satisfaction rating
+    forums: Forums
+    forum_category: Category
+    solution_articles: Article 
+    solution_folder: Folder
+    fcr: Is first call resolution
+    customer_votes: Number of votes
+    solution_likes: Number of likes
+    true : True 
+    ticket_mand: Please populate number of resolved tickets.
+    solution_mand: Please populate number of Solutions.
+    forum_mand: Please populate number of Forums.
+    badge_mand: Please select a badge.
+    name_mand: Please provide Quest name.
+    js_ticket_txt: Resolve $$questvalue$$ tickets in a span of $$questtime$$ and matching these conditions.
+    js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ and matching these conditions.
+    js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
+    js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points. 
   admin:
+    quests:
+      index:
+        title: Quest
+        sideinfo1: Info 1
+        sideinfo2: Info 2
+        quest_title: Quests
+        new_quest: New Quest
+        quest_description: "Quests are Business-Specific goals that you create to challenge your agents to achieve!"
+      quest_form:
+        ticket: "Resolving <br /> <strong> Tickets </strong>"
+        solution: "Publishing <br /> <strong> Solutions </strong>"
+        forum: "Engage the <br /> <strong> Community </strong>"
+    gamification:
+      successfully_updated: Gamification settings has been successfully updated.
+      error_updated: Error while updating gamification settings.
+      help_text: 
+        why_game: "Points and levels"
+        why_game_info1: "Points are awarded to agents based on how fast they resolve the tickets assigned to them. There are also bonus points for first call resolution and satisfied customers. Agents also lose points for late resolution of tickets and for unhappy customers."
+        why_game_info2: "An agent can reach higher levels as he keeps getting more and more points, the set points to be achieved will be set by the Admin."
+        trophies_info1: "The agent will receive 4 trophies based on different criteria."
+        quest: "Quests"
+        quest_info1: "Quests represent performance goals that you set for agents, completing which they will be awarded badges of honour."
+        quest_info2: "All the Quests are ON by default. You may choose to switch OFF the ones you don’t want. If you want to add more quests or create quests specific to your goals, click on ‘New Quest’, and you can create brand new quests with the conditions you want."
+        quest_form_info1: "Choose the type of quest  to set for agents. It can be one of three <br /> a) resolving tickets,<br /> b) publishing solutions and <br /> c) contributing in forums."
+        quest_form_info2: "Once that is done, choose the quest criteria (what the agent has to do) and add the conditions, fulfilling which he will win the badge,"
+        quest_form_info3: "Choose the points the agent wins and the badge he will be awarded. Finally, name your quest and provide a small brief about it."
+        quest_form_info4: "Click on ‘Save Quest’ to save your settings."
+        creating_survey: "Creating your satisfaction survey:"
+        creating_survey_help: "The following steps let you collect feedback from your customers through a link in your response emails:<br>
+       1.Enable the Customer Satisfaction Surveys checkbox<br>
+       2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br>
+       <br>
+       <b>Choose which emails have the satisfaction survey link:</b><br>
+       You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
+       <br><br>
+       You can learn more about satisfaction surveys from our solutions page.     
+       </p>"
+      index:
+        title: Arcade Settings
+      gamification_settings:
+        enable_label: Agents Gamification
+        title_points_configuration: Points Configuration
+        title_ticket_points: Ticket Points
+        fast_resolution: Fast <span>(< 1 hr)</span>
+        ontime_resolution: On time <span>(Within SLA)</span>
+        late_resolution: Late <span>(Overdue)</span>
+        bonus_points: Bonus Points
+        firstcall_resolution: First Call Resolution
+        happy_customer: Happy Customer
+        unhappy_customer: Unhappy Customer
+        title_levels: Agent levels
+        info_levels: "Set points to be acheived by an agent to reach a level"
+        title_trophies: Trophies
+        new_quest: New Quest
+        quest_title: Quests
     surveys:
      successfully_updated: Customer Satisfaction settings has been successfully updated.
      error_updated: Error while updating survey settings.
@@ -195,20 +316,6 @@ en:
         enter_happy_text: Enter the happy text
         enter_neutral_text: Enter the neutral text
         enter_unhappy_text: Enter the unhappy text
-     scoreboard_ratings:
-        enable_scoreboard_label: Enable Support Scoreboard
-        about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
-        points_table_title: Support Scoreboard - Points Table
-        when_resolution_label: When resolution is
-        point_tobe_awarded_label: Points to be awarded
-        fast_resolution_label: Fast (< 1 hr)
-        ontime_resolution_label: On time (Within SLA)
-        late_resolution_label: Late (Overdue)
-        happy_customer_score_label: If the customer says they are "Happy" award %{happy_score} bonus points
-        first_call_resolution_label: First Call Resolution
-        when_customer_label: Bonus points when 
-        happy_customer_label: Happy Customer
-        unhappy_customer_label: Unhappy Customer     
     getting_started:
         send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
@@ -410,14 +517,12 @@ en:
         screen_name: Twitter account
         add_key: Add Search Query
         edit_key: Edit Search Query
-        
       change:
         edit_twitter :  Edit Twitter
         capture_mention: Convert public mentions as tickets       
         capture_dm: Convert direct messages as tickets
         screen_name: Screen Name
-        default_group : Default Group       
-        
+        default_group : Default Group 
     home:
       index: 
         group: Groups
@@ -426,6 +531,7 @@ en:
         title: Admin
         email-notifications: Email Notifications
         survey-settings: Customer Satisfaction Settings
+        gamification-settings: Arcade Settings
         rebranding: Helpdesk Rebranding
         account-settings: Account Settings
         customer-portal: Customer Portal
@@ -468,7 +574,6 @@ en:
         groups: Agents in group
         me_only: Me only
         response_name: Response title
-                
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -522,7 +627,7 @@ en:
       install:
         success: "The Addon has been enabled successfully!"
         error: "Error in enabling the Addon."
-      configure:
+      update:
         success: "The Addon has been updated successfully!"
         error: "Error in configuring the Addon."
       not_installed: "This addon is not yet installed."
@@ -616,6 +721,7 @@ en:
     contacts: 
       create: 
         success: The contact has been created successfully.
+      cancel: cancel
       info_select: Please select at least 1 user.
     customers:
       info_select: Please select at least 1 customer.
@@ -626,7 +732,8 @@ en:
       update: 
         success: Password successfully updated
         invalid_token: We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process.
-      email: 
+      email:
+        reset: "A reset mail with instructions has been sent to %{requester}."
         user_not_found: No user was found with that email address
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login: 
@@ -634,6 +741,7 @@ en:
       sso: 
         expected_params: "Expected params are name, email and hash which are not present "
       success: Login successful!
+      failed: Login was unsuccessful!
     email_notifications: 
       update: 
         success: Email notifications have been updated.
@@ -928,7 +1036,7 @@ en:
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
-  reset: Reset
+  reset_password_title: Reset Password
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
@@ -1057,10 +1165,12 @@ en:
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
+    contact_exists: A requester with email '%{existing_email}' already exists, %{use_email} 
     signature: Signature
     info3: Are you sure you want delete
     make_admin: Make this agent an admin
     view_user: View User
+    use_email: Use this email
     restore: restore
     add_signature: Add signature
     update: Update
@@ -1080,6 +1190,8 @@ en:
     occasional: Occasionally
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
+    password_reset_message: "Do you want to reset %{requester}'s password?"
+    password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
   account_admin: Account admin
   right: Right
   footer: 
@@ -1101,6 +1213,7 @@ en:
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
+  reset: Reset
   ticket_due_by_time: Due by
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
@@ -1126,6 +1239,7 @@ en:
     import_google_no: "No"
     import_google_yes: "Yes"
     quick_contact: Quick Contact
+    add_new_requester: Add New Requester
     tags: "Tags"
     tag_cloud: "Contact Tag Cloud"
     info3: Background information of %{nick_name}
@@ -1251,6 +1365,7 @@ en:
   sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Basic Reporting, Community Support.
   blossom_details: Everything in &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forums, Community &amp; Email Support.
   garden_details: Everything in &quot;Blossom&quot; Plan plus, Multiple Product Support, Advanced Reporting, Community, Email &amp; Phone Support
+  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification.
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
@@ -1271,6 +1386,7 @@ en:
   sprout_brief: Robust Email Helpdesk
   blossom_brief: Social Customer Support
   garden_brief: Multi Product Support
+  estate_brief: Enterprise Level Support
   begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
   favicon: Favicon
   is_expiring_today: is expiring today
@@ -1471,8 +1587,8 @@ en:
       send_and_resolve: Send and Resolve
       send: Send
       send_satisfaction_survey: Include satisfaction survey
-    facebook_form: 	  	
-      send_and_resolve: Send and Resolve	  	
+    facebook_form:
+      send_and_resolve: Send and Resolve
       send: Send
     reported_by: from %{requester}
     close_btn: Close
@@ -1498,6 +1614,7 @@ en:
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
+      ca_responses : Canned Responses
       insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
@@ -1582,6 +1699,11 @@ en:
   import_tickets: Tickets
   twelve: 12 Hours
   agent_info_title: Agent information
+  level_label: Level
+  next_level_info: +%{points} to become %{name}
+  no_level_achieved_label: No levels achieved yet.
+  no_badge_achieved_label: No Badges achieved yet.
+  badges_achieved_label: Badges achieved
   account: 
     name: Account Name
     cancel: Cancel and go back
@@ -1642,7 +1764,7 @@ en:
   tickets_were: tickets were
   undo: Undo
   total: "Total"
-  helpdesk:
+  helpdesk: 
     ticket_notifier:
         reply:
             happy: Awesome
@@ -1702,7 +1824,7 @@ en:
         removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
-      facebook_form:  	
+      facebook_form:
         title: "Reply to %{user}"
       history:
         recent_item: Recent Items
@@ -1885,6 +2007,10 @@ en:
     closed_at: Closed time
     from: From
     to: To
+    mail:
+      info: Your Ticket data will be sent to your email shortly!
+      subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
+      body: Please find the CSV file attached.
   date:
     ago: Ago
     from: From Now
@@ -1949,7 +2075,7 @@ en:
         product: Product
       edit:
         twitter_settings_for_msg: Twitter settings for
-  all_due: All 
+  all_due: Overdue 
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
@@ -2134,9 +2260,28 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+        jira_status_sync: "For any change in JIRA issue status %{dropdown}"
+        jira_comment_sync: "For any comment added in JIRA issue %{dropdown}"
+        do_nothing: "Do nothing."
+        add_note: "Add it as a private note."
+        send_reply: "Send it as reply to customer."
+        jira_status_sync_update_field: "Update Freshdesk status field."
+        jira_status_sync_update_customer: "Send reply to customer and update status field."
+        fd_status_sync: "For any change in Freshdesk status %{dropdown}"
+        fd_comment_sync: "For any comment added in Freshdesk %{dropdown}"
+        add_jira_comment: "Add it as a comment in JIRA."
+        update_jira_status: "Update JIRA status as well."
+    jira_settings:
+      none: "Do nothing."
+      add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
+      add_public_note_in_fd: "Add a public note in Freshdesk."
+      update_status_in_fd: "Update status in Freshdesk."
+      send_reply_in_fd: "Notify customer via email"
+      add_comment_in_jira: "Add a comment in JIRA"
+      update_jira_status: "Update JIRA status"
     salesforce:
       label: "Salesforce"
-      desc: "You can view contact information from Salesforce in Freshdesk."
+      desc: "You can view contact information from Salesforce crm in Freshdesk."
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
@@ -2177,6 +2322,36 @@ en:
         account_key: "Account Key"
         account_key_info: "Request your Account Key from Workflow Max support and paste the same here."
         widget_title: "Widget Title"
+    custom_application:
+      name: "Name"
+      description: "Description"
+      script: "Script"
+      label: "Custom Addon"
+      desc: "You can add a custom widget to display any detail using your own custom script."
+      helptext: "### Helptext goes here. ###"
+      form:
+        widget_title: "Addon Name"
+        widget_script: "Widget code snippet"
+        create_n_enable: "Create and Enable"
+    logmein:
+      label: "LogMeIn Rescue"
+      desc: "Provide remote support to your customers using LogMeIn Rescue"
+      helptext: "<h4>LogMeIn Rescue Integration Help</h4><p><br/> To integrate LogMeIn Rescue with Freshdesk, enter your LogMeIn Rescue CompanyID and SSO password and click on Update. <br/>Once enabled, LogMeIn Rescue widget can be found in ticket details page. <br/><br/>Use the  &quot;Launch Technician Console&quot; to launch the technician console directly from the Freshdesk Widget. <br/>Now you can generate a pincode and share the instructions with the requester to continue the support in LogMeIn Rescue. <br/><br/> <b>Note:</b> The agent's email should match LogMeIn Rescue's technician SSO ID. To set your SSO ID go to Admin Center -> Technician Name -> Organization -> SSOID"
+      note:
+        header: "Your LogMeIn Rescue Session details"
+        session_id: "Session ID"
+        tech_name: "Technician Name"
+        tech_email: "Technician Email"
+        platform: "End User Platform"
+        work_time: "Total Work Time(in seconds)"
+        chatlog: "Chat Log"
+        tech_notes: "Technician Notes"
+      form:
+        widget_title: "Widget Title"
+        company_id: "Company ID"
+        password: "SSO Password"
+        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Group -> Global Settings -> ASP.Net C# server side example "
+        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -2192,6 +2367,8 @@ en:
       customer_title_nav: "Customer Activity Report"
       surveys_title_nav: "Customer Satisfaction Report"
       scoreboard_title_nav: "Leaderboard"
+      scoreboard_group_title: "Group Leaderboard"
+      scoreboard_agent_title: "Agent Leaderboard"
       select_time_period: "Select Time period"
       generate_button: "Generate"
       pie_chart_title_prefix: "Tickets By "
@@ -2248,9 +2425,9 @@ en:
         list_content:
               rating_msg_none: nobody said %{rating}
               rating_msg_single: one said %{rating}
-              rating_msg_multiple: %{count} said %{rating}
+              rating_msg_multiple: "%{count} said %{rating}"
               rating_primary_msg_single: one customer said %{rating}
-              rating_primary_msg_multiple: %{count} customers said %{rating}
+              rating_primary_msg_multiple: "%{count} customers said %{rating}"
               happy: awesome
               neutral: just okay
               unhappy: not good
@@ -2263,9 +2440,10 @@ en:
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
-  bulk_update: "Bulk Update"
+  bulk_actions: "Bulk Actions"
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
+  select: "Select ..."
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"
@@ -2300,7 +2478,7 @@ en:
   unauthorized_msg: "Authorization failed"
   assuming_identity_user_does_not_exist_msg: "User you've tried to assume does not exist."
   assuming_identity_not_allowed_msg: "You are not allowed to assume this user."
-  identity_reverted_msg: "You have reverted your identify back to you."
+  identity_reverted_msg: "You have reverted your identity back to you."
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
@@ -2311,11 +2489,13 @@ en:
   status_name_validate_uniqueness_msg: " Status name has already been taken"
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   since: "Since"
+  for: "for"
   since_time: "Since %{time_words}"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
   fwd_to: "Forward"
   add_cc: Add Cc
+  add_new_requester: "Add new requester"
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
   use_reply_option: "Please use Reply option for sending an email to the requester"
@@ -2358,3 +2538,5 @@ en:
   draft: "Draft:"
   last_draft: "Your last draft"
   clear_draft_text: "Clear stored draft?"
+  ticket_close_success: Your ticket has been successfully closed.
+  ticket_close_failure: Closing the ticket failed.
