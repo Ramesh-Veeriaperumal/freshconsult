@@ -86,6 +86,7 @@
 					jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
 
 				});
+
 				break; 
 				case 'cnt-fb-post': 
 					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
@@ -162,7 +163,7 @@
 		return true;
   	}
 
-	function showHideEmailContainer(){
+  	function showHideEmailContainer(){
   		jQuery(".ccEmailMoreContainer").toggle();
   		if(jQuery(".ccEmailMoreContainer").css("display") == "inline"){
   			jQuery(".ccEmailMoreLink").text('');

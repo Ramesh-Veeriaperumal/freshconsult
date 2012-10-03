@@ -157,7 +157,7 @@ class Integrations::ObjectMapper
         ], 
         :update=>{:theirs_to_ours_handler=>:db_save}
       },
-      :add_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Note added in Freshdesk:\n {{body}}\n"}}]},
+      :add_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Note added by {{helpdesk_note.commenter.name}} in Freshdesk:\n {{helpdesk_note.body_text}}\n"}}]},
       :add_status_as_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Freshdesk ticket status changed to : {{helpdesk_ticket.status}}"}}]},
       :update_jira_status => {:map => [{:ours_to_theirs=>{:handler=>:map_field, :value=>"{{helpdesk_ticket.status}}", :mapping_values=>{
                       "Default"=>"Reopen Issue",
