@@ -1,4 +1,4 @@
-unless Account.current
+if Integrations::Application.count == 0
   # Populate Capsule CRM
   capsule_app = Integrations::Application.seed(:name) do |s|
     s.name = 'capsule_crm'

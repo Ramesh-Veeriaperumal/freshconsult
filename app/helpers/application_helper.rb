@@ -465,7 +465,7 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
-        unless is_edit
+        unless is_edit or params[:format] == 'widget'
           element += add_requester_field 
           element = add_cc_field_tag element, field
         end
@@ -582,7 +582,7 @@ module ApplicationHelper
       format.js
     end
   end
-  
+
   def email_regex
     Helpdesk::Ticket::VALID_EMAIL_REGEX.source
   end  

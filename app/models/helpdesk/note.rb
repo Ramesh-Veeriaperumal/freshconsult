@@ -139,7 +139,8 @@ class Helpdesk::Note < ActiveRecord::Base
   def to_liquid
     { 
       "commenter" => user,
-      "body"      => liquidize_body
+      "body"      => liquidize_body,
+      "body_text" => body
     }
   end
   
