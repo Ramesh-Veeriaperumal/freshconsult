@@ -6,7 +6,7 @@ oauth_options:
   google:
     site: https://www.google.com/
 
-development:
+defaults: &defaults
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzddB6NCYAJVslYxFc.rabGWq9hI7uRXIKqFvCm4IoVzHOtMEkwrHs7dwcLZa
   consumer_secret: 7977697105566556112
@@ -14,15 +14,17 @@ development:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
 
+development:
+ <<: *defaults
+
+slave:
+ <<: *defaults
+
+
 staging:
  salesforce:
-  #freshbugs tokens
-  consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzd2iOSIknPyJt6zA9J48lmi8mHKiUN9uAWjDon3nuxFvigIGrhxl.voS9amJ
-  consumer_secret: 9020749689711648741
-
-  #freshpo
-  #consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
-  #consumer_secret: 7527225363657893740
+  consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
+  consumer_secret: 7527225363657893740
  
  google:
   consumer_token: freshpo.com

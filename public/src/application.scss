@@ -6987,7 +6987,7 @@ a.mobile_switchBtn {
         width : 575px;
     }
     .field-item{
-        max-height : 49px;
+        @include min-height(50px);
     }
     .label{
         max-height: 18px;
@@ -7048,6 +7048,13 @@ a.mobile_switchBtn {
  		padding-left:0;
  		padding-right:0;
  	}
+}
+
+#reply-fields{
+	.field-item{
+		min-height: 0px;
+	}
+
 }
  
 /* end */

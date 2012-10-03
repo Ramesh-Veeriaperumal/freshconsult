@@ -28,7 +28,7 @@ class Logmein < ActiveRecord::Migration
         </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/logmein.js");
-        logmeinBundle={ticketId:"{{ticket.id}}", installed_app_id:"{{installed_app_id}}", agentId:"{{agent.id}}", accountId: "{{account_id}}", reqName:"{{requester.name}}", secret:"{{md5secret}}", pincode:"{{cache.pincode}}", pinTime:"{{cache.pintime}}", ssoId:"{{agent.email}}", companyId:"{{logmein.company_id}}", authcode:"{{logmein.authcode}}"} ;
+        logmeinBundle={ticketId:"{{ticket.raw_id}}", installed_app_id:"{{installed_app_id}}", agentId:"{{agent.id}}", accountId: "{{account_id}}", reqName:"{{requester.name}}", secret:"{{md5secret}}", pincode:"{{cache.pincode}}", pinTime:"{{cache.pintime}}", ssoId:"{{agent.email}}", companyId:"{{logmein.company_id}}", authcode:"{{logmein.authcode}}"} ;
        </script>}
 
     execute("INSERT INTO widgets(name, description, script, application_id) VALUES ('#{@widget_name}', '#{description}', '#{script}', #{app_id})")

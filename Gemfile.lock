@@ -271,9 +271,6 @@ GEM
       riddle (>= 1.2.2)
     thoughtbot-shoulda (2.10.2)
     tilt (1.3.3)
-    ts-delayed-delta (1.1.0)
-      delayed_job (>= 1.8.4)
-      thinking-sphinx (>= 1.3.6)
     tzinfo (0.3.26)
     uuid (2.3.5)
       macaddr (~> 1.0)
@@ -350,7 +347,6 @@ DEPENDENCIES
   thinking-sphinx (= 1.4.3)
   thoughtbot-shoulda (= 2.10.2)
   tiny_mce (= 0.1.9)!
-  ts-delayed-delta (= 1.1.0)
   twitter (= 2.1.1)!
   tzinfo
   zendesk-features
