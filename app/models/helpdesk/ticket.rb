@@ -248,6 +248,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
+    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
+
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
