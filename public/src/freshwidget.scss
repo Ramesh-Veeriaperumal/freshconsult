@@ -19,12 +19,23 @@
 	position:absolute;
 }
 
-
 .left a{ left:-2px; }
 .left a:hover{ left:0px; }
 
-.right{ right:-2px; }
-.right:hover{ right:0px; }
+.right{ 
+	right:-2px;
+	*right: 35px; /* IE 7 specific style */
+}
+.right:hover{ 
+	right:0px;
+	*right: 33px; /* IE 7 specific style */
+}
+.right{ 
+	right: 35px\0/IE8+9; /* IE 8 & 9 specific style */
+}
+.right:hover{ 
+	right:33px\0/IE8+9; /* IE 8 & 9 specific style */
+}
 
 .top{ top:-2px; }
 .top:hover{ top:0px; }
@@ -45,6 +56,7 @@
 	font-size:16px; 
 	text-decoration:none;
 	font-weight:bold;
+	outline:0;
 }
 
 .freshwidget-theme:hover{
@@ -61,6 +73,7 @@
 		white-space: nowrap;
 		_position:absolute;
 		_right:0px;
+		outline:0;
 	}
 	position:absolute;
 	display:block !important;
@@ -68,20 +81,25 @@
 	height:0px;
 	z-index:90000;
 	margin:0px;
+	outline:0;
+}
+
+.proxy-link{
+	position: absolute;
+	z-index: 10;
+	outline:0;
 }
 
 .left a.freshwidget-theme, .top a.freshwidget-theme{  border-top-width:0px; }
 .left a.freshwidget-theme{
-		@include rotate(-90deg, top left);
-		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	@include rotate(-90deg, top left);
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 .bottom a.freshwidget-theme, .right a.freshwidget-theme{  border-bottom-width:0px; }
 .right a.freshwidget-theme{
 	@include rotate;
 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
-
-
 
 /* Widget Form Style */ 
 
