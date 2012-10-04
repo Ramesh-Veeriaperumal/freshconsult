@@ -1,4 +1,4 @@
-development:
+defaults: &defaults
   servers: "localhost:11211"
   ttl: 1800
   readonly: false
@@ -15,3 +15,9 @@ development:
   raise_errors: true
   fast_hash: false
   fastest_hash: false
+
+development:
+  <<: *defaults
+slave:
+  <<: *defaults
+

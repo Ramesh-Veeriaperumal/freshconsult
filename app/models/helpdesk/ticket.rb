@@ -43,7 +43,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_create :support_score_on_create, :process_quests
   after_commit_on_update :support_score_on_update, :process_quests
 
-  before_update :assign_email_config, :load_ticket_status, :cache_old_model, :update_dueby
+  before_update :assign_email_config, :load_ticket_status, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
        :stop_timesheet_timers, :fire_update_event
   
@@ -248,6 +248,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
+    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
+
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -426,7 +428,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
     sla_detail = Helpdesk::SlaDetail.find(:first, :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
     
-    set_dueby_on_priority_change(sla_detail) if start_sla_timer.nil?  #unless (priority == @old_ticket.priority) 
+    set_dueby_on_priority_change(sla_detail) if start_sla_timer.nil?
     set_dueby_on_status_change(sla_detail) unless start_sla_timer.nil? 
     
     set_user_time_zone if User.current
@@ -518,18 +520,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
                      (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
   
-  def cache_old_model
-    @old_ticket = Helpdesk::Ticket.find id
-  end
-  
   def notify_on_update
     return if spam? || deleted?
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id != @old_ticket.group_id && group)
-    if (responder_id != @old_ticket.responder_id && responder && responder != User.current)
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id_changed? && group)
+    if (responder_id_changed? && responder && responder != User.current)
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
     end
     
-    if status != @old_ticket.status
+    if status_changed?
       return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
       return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
       #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == OPEN)
@@ -550,12 +548,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_ticket_states 
     
-    ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)    
-    if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)
+    ticket_states.assigned_at=Time.zone.now if (responder_id_changed? && responder)    
+    if (responder_id_changed? && responder_id_was.nil? && responder)
       ticket_states.first_assigned_at = Time.zone.now
     end
     
-    if status != @old_ticket.status
+    if status_changed?
       if (status == OPEN)
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
@@ -596,6 +594,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_field_aliases
     return ff_aliases if flexifield
+    return [] unless account
     fields_def = FlexifieldDef.first(:include => [:flexifield_def_entries], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] )
     fields_def.ff_aliases
@@ -878,7 +877,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def stop_timesheet_timers
-    if status != @old_ticket.status && (status == RESOLVED or status == CLOSED)
+    if status_changed? && (status == RESOLVED or status == CLOSED)
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
@@ -931,6 +930,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   private
   
+    def custom_field_aliases
+      return flexifield ? ff_aliases : account.flexi_field_defs.first.ff_aliases
+    end
+
     def update_content_ids
       header = self.header_info
       return if attachments.empty? or header.nil? or header[:content_ids].blank?
@@ -1003,7 +1006,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                                    'activities.tickets.assigned_to_nobody.short')
       else
         create_activity(User.current, 
-          @old_ticket.responder ? 'activities.tickets.reassigned.long' : 'activities.tickets.assigned.long', 
+          responder_id_was.nil? ? 'activities.tickets.assigned.long' : 'activities.tickets.reassigned.long', 
             {'eval_args' => {'responder_path' => ['responder_path', 
               {'id' => responder.id, 'name' => responder.name}]}}, 
             'activities.tickets.assigned.short')

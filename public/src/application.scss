@@ -18,20 +18,17 @@
 /* Sprite sheet creation for badges and trophies */
 /*Gamification-Trophy */
 @import "trophy/*.png";
+$trophy-sprite-dimensions:true;
+$trophy-layout:smart;
 @include all-trophy-sprites;
 
 /*Gamification-Badges */
+$badges-layout:smart;
+$badges-a-layout:smart;
 @import "badges/*.png";
+@import "badges-a/*.png";
 @include all-badges-sprites;
-
-
-/*@include font-face('Silkscreen',
-  font-files(
-    'slkscr.woff', woff,
-    'slkscr.ttf', ttf,
-    'slkscr.svg', svg),
-    'slkscr.eot');
-*/
+@include all-badges-a-sprites;
 
 @font-face {
     font-family: 'Silkscreen';
@@ -41,7 +38,6 @@
          url('/fonts/slkscr.svg#Silkscreen') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
 
 /* Bullet icon */ 
@@ -3143,9 +3139,10 @@ div.addReminder{
 			font-size:14px;
 			display:block;
 			margin:2px 0px 0px 0px;
-			padding:0px 0px 0px 10px;
+			padding:0px 5px;
+			width: 245px;
 		}
-		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); }
+		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); box-shadow:none; }
 		label.overlabel{
 			margin:2px 5px 4px 10px;
 			padding:0px;
@@ -3154,6 +3151,16 @@ div.addReminder{
 		}
 	}
 } 
+
+.tab-pane {
+	div.addReminder{
+		form {
+			input.text {
+				width: 185px;
+			}
+		}
+	}	
+}
 
 
 
@@ -4926,7 +4933,9 @@ a.close{
 	.link-item.active{
 	   color:#336699;
      font-weight:bold;
+
      /* @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom); */
+
 	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{
@@ -5032,6 +5041,7 @@ a.close{
 }
 .customers-toolbar{
 	float:left;
+	width: 400px;
 	input{
 		float:left;
 		margin-top: 10px;
@@ -5145,6 +5155,7 @@ a.close{
 			overflow-y:auto;
 			display:block;
 		}
+
 		.no_results {
 			text-align:center;
 			font-style:italic;
@@ -5155,6 +5166,7 @@ a.close{
 			background-repeat:no-repeat;
 			background-position: center;
 			padding:20px 10px;
+
 
 			a, li, .contents {
 				display:none;
@@ -5189,6 +5201,17 @@ a.close{
 			&:focus {
 				@include shadows(#999, 0, 0, 3px);
 				border-color: #999 !important;
+			}
+		}
+
+		.menu_search {
+			&.invisible {
+				height:0px;
+				margin-top:-1px;
+				margin-bottom:-1px;
+				padding:0px;
+				border:none;
+				position:absolute;
 			}
 		}
 
@@ -5924,9 +5947,6 @@ a.close{
 		}
 	}
 }
-
-
-
 
 .crm_contact_widget {
 	.content { width:auto; }
@@ -6840,9 +6860,12 @@ a.mobile_switchBtn {
 		line-height: 18px;
 	}
 	h4{
-		font-size:14px;		
+		font-size:13px;		
 		line-height:20px;
 		font-weight:bold;
+	}
+	h4.name{
+		@include ellipsis;
 	}
 	.panel-content{
 		padding-left:50px;
@@ -6854,7 +6877,7 @@ a.mobile_switchBtn {
 
 .admin-list .panel-row{ padding: 12px 0; }
 
-.panel-row.odd{
+.panel-row.odd, .lb-report .odd{
 	background-color: #f8f8f8;
 }
 
@@ -7085,3 +7108,17 @@ a.mobile_switchBtn {
     padding: 5px 3px 0px 5px;
     line-height: 20px;
 }
+
+.field-item{
+	display:inline;
+	float:left;
+	width:33%;
+	margin-bottom:12px; 
+	label{
+		font-size:13px;
+	} 
+	label.active{
+		font-weight:bold;
+	}
+}
+

@@ -4,3 +4,6 @@ defaults: &defaults
 
 development:
   <<: *defaults
+
+slave:
+  <<: *defaults
