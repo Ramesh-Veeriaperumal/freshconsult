@@ -5828,7 +5828,7 @@ a.close{
 #integrations-list {
 	display:block;
 	overflow: hidden;
-	margin: 0 -20px;
+	margin: 20px -20px 0;
 
 	.search {
 		position: relative;
@@ -5841,6 +5841,21 @@ a.close{
 
 	.tabs {
 		margin-bottom: 10px;
+		padding: 2px 9px 0 20px
+	}
+
+	.new_custom_app {
+		margin-right:10px;
+	}
+}
+
+#jira_sync_settings {
+	td {
+		vertical-align:middle
+	}
+
+	select {
+		margin: 0px
 	}
 }
 
@@ -5861,7 +5876,7 @@ a.close{
 		margin-bottom:5px;
 
 		&.active {
-			background-image: inline-image("integrations/custom_app_preview_title_bar.gif");
+			background: url(/images/integrations/custom_app_preview_title_bar.gif);
 		}
 
 		&:after {
@@ -5885,16 +5900,14 @@ a.close{
 	margin: 0px 10px 10px 0px;
 	.titlebar {
 		font-weight:bold;
-		background-image: inline-image("integrations/custom_app_preview_title_bar.gif");
+		background: url(/images/integrations/custom_app_preview_title_bar.gif);
 		padding: 10px 5px 10px 15px;
 		border-bottom: solid 1px #c9c9c9;
 		font-size:13px;
 		.preview_link {
 			float:right;
 			width:60px;
-			background-image: inline-image("integrations/refresh_preview.png");
-			background-position:right;
-			background-repeat:no-repeat;
+			background: url(/images/integrations/refresh_preview.png) right no-repeat;
 			padding: 10px 30px 10px 5px;
 			text-align:right;
 			color:#AAA;

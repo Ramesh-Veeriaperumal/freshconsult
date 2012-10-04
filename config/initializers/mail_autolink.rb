@@ -23,7 +23,7 @@ module MailAutolink
         auto_link_section(mail.parts)
       # if no parts and content is html then auto_link
       elsif(mail.content_type == "text/html")
-        mail.body = auto_link(mail.body)
+        mail.body = auto_link(mail.body, :link => :urls)
       end
       
       deliver_without_autolink!(mail)
@@ -33,7 +33,7 @@ module MailAutolink
       def auto_link_section(section)
         section.each do |sub_section|
           if(sub_section.content_type == "text/html" && sub_section.content_disposition != "attachment")
-            sub_section.body = auto_link(sub_section.body)
+            sub_section.body = auto_link(sub_section.body, :link => :urls)
           end
           auto_link_section(sub_section.parts) unless sub_section.parts.blank?
         end

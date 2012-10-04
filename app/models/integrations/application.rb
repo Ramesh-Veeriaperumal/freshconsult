@@ -53,10 +53,10 @@ class Integrations::Application < ActiveRecord::Base
   def self.example_app()
     example_app = Integrations::Application.new
     example_app.name = "custom_application"  
-    example_app.display_name = "My CRM App"
-    example_app.description = "This is a sample application.  You can use the script here to understand how the custom widget works."
+    example_app.display_name = "My CRM Widget"
+    example_app.description = "This is a sample widget.  You can use the script here to understand how the custom widget works."
     script = %{
-<div id="capsule_widget" domain="freshdeskdemo.capsulecrm.com" title="My CRM App">
+<div id="capsule_widget" domain="freshdeskdemo.capsulecrm.com" title="My CRM Widget">
   <div class="content"></div>
 </div>
 <script type="text/javascript">
