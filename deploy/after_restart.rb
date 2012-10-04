@@ -4,7 +4,7 @@ run "sudo monit -g dj_helpkit restart all"
 utility_name = "freshdesk_sphinx_delayed_jobs"
 
 freshdesk_utility = node['utility_instances'].find { |instance| instance['name'] == utility_name }
-utility_name = freshdesk_utility ? "freshdesk_utility" : utility_name
+utility_name = freshdesk_utility ? utility_name : "freshdesk_utility" 
 
 
 on_utilities(utility_name) do
