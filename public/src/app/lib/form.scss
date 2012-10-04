@@ -177,7 +177,7 @@ a.addchoice{
 	font-weight:bold;
 	@include link-colors(#333333, #336699, #333333, #333333, #333333);
 	display:block;
-	background-image:url('../images/add.png');
+	background-image:url('/images/add.png');
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 	background-color:#f2f2f2;
@@ -703,7 +703,7 @@ li.nested_field{
 				margin-right:20px; 
 				.close{
 					position:absolute;
-					background:url(../images/icons/btn_close_icon.png) no-repeat;
+					background:url(/images/icons/btn_close_icon.png) no-repeat;
 					width:18px;
 					height:18px;
 					right:6px;
@@ -746,7 +746,7 @@ input.time{
 		th{			
 			line-height:18px;	
 			font-weight:bold;
-			background-image:url(../images/overlay-button.png);
+			background-image:url(/images/overlay-button.png);
 			background-color:#f2f2f2;
 			background-repeat:repeat-x; 
 			span{
@@ -1132,7 +1132,7 @@ input.search{
     	top:5px;
     	width:28px;
     	height:28px;
-    	background:url("../images/close_delete.png") no-repeat center;
+    	background:url("/images/close_delete.png") no-repeat center;
     	z-index:999;
     }
     .ctrlHolder{
@@ -1927,84 +1927,6 @@ ul.ui-form .inputs-list{
   }
 }
 
-/* Classes copies from bootstrap */
-:-moz-placeholder { 
-  color: #999999;
-}
-::-webkit-input-placeholder {
-  color: #999999;
-}
-
-.row-fluid {
-  width: 100%;
-  *zoom: 1;
-}
-.row-fluid:before,
-.row-fluid:after {
-  display: table;
-  content: "";
-}
-.row-fluid:after {
-  clear: both;
-}
-.row-fluid > [class*="span"] {
-  float: left;
-  margin-left: 2.127659574%;
-}
-.row-fluid > [class*="span"]:first-child {
-  margin-left: 0;
-}
-.row-fluid > .span12 {
-  width: 99.99999998999999%;
-}
-.row-fluid > .span11 {
-  width: 91.489361693%;
-}
-.row-fluid > .span10 {
-  width: 82.97872339599999%;
-}
-.row-fluid > .span9 {
-  width: 74.468085099%;
-}
-.row-fluid > .span8 {
-  width: 65.95744680199999%;
-}
-.row-fluid > .span7 {
-  width: 57.446808505%;
-}
-.row-fluid > .span6 {
-  width: 48.93617020799999%;
-}
-.row-fluid > .span5 {
-  width: 40.425531911%;
-}
-.row-fluid > .span4 {
-  width: 31.914893614%;
-}
-.row-fluid > .span3 {
-  width: 23.404255317%;
-}
-.row-fluid > .span2 {
-  width: 14.89361702%;
-}
-.row-fluid > .span1 {
-  width: 6.382978723%;
-}
-
-.radio,
-.checkbox {
-  padding-left: 18px;
-}
-.radio input[type="radio"],
-.checkbox input[type="checkbox"] {
-  float: left;
-  margin-left: 0px;
-}
-
-.disabled{
-	color:#afafaf;
-}
-
 .required_star{
 	color: #d00;
 	font-size:16px;
@@ -2071,7 +1993,7 @@ ul.ui-form .inputs-list{
 					position: absolute;
 					left: 0px;
 					top: 4px;
-					background: url("../images/email_config_add.png") no-repeat;
+					background: url("/images/email_config_add.png") no-repeat;
 					width: 25px;
 					height: 25px;
 				}
@@ -2335,7 +2257,7 @@ input[type="text"].number{
 }
 
 #takescreen-btn{
-	background: #f3f3f3 url(../images/takescreenshot.png) no-repeat 10px 4px;
+	background: #f3f3f3 url(/images/takescreenshot.png) no-repeat 10px 4px;
 	padding: 5px 10px 5px 40px;
 	float: right;
 	border: 1px #ccc solid;

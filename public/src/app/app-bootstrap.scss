@@ -1342,7 +1342,7 @@ a.pill.help{
 	height:22px;
 	top:3px;
 	left:0px;
-	background:url("../images/animated/timer.gif") no-repeat center;
+	background:url("/images/animated/timer.gif") no-repeat center;
 	@include opacity(0.5);
 }
 
@@ -1442,4 +1442,244 @@ a.pill.help{
 
 .align-fix{
 	vertical-align: middle;
+}
+
+
+/* Variables.less
+ * Variables to customize the look and feel of Bootstrap
+ * ----------------------------------------------------- */
+/* Mixins.less
+ * Snippets of reusable CSS to develop faster and keep code readable
+ * ----------------------------------------------------------------- */
+/*
+ * Scaffolding
+ * Basic and global styles for generating a grid system, structural layout, and page templates
+ * ------------------------------------------------------------------------------------------- */
+
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
+.row {
+  zoom: 1;
+  margin-left: -20px;
+}
+.row:before, .row:after {
+  display: table;
+  content: "";
+  zoom: 1;
+}
+.row:after {
+  clear: both;
+}
+.row > [class*="span"] {
+  display: inline;
+  float: left;
+  margin-left: 20px;
+}
+.span1 {
+  width: 40px;
+}
+.span2 {
+  width: 100px;
+}
+.span3 {
+  width: 160px;
+}
+.span4 {
+  width: 220px;
+}
+.span5 {
+  width: 280px;
+}
+.span6 {
+  width: 340px;
+}
+.span7 {
+  width: 400px;
+}
+.span8 {
+  width: 460px;
+}
+.span9 {
+  width: 520px;
+}
+.span10 {
+  width: 580px;
+}
+.span11 {
+  width: 640px;
+}
+.span12 {
+  width: 700px;
+}
+.span13 {
+  width: 760px;
+}
+.span14 {
+  width: 820px;
+}
+.span15 {
+  width: 880px;
+}
+.span16 {
+  width: 940px;
+}
+.span17 {
+  width: 1000px;
+}
+.span18 {
+  width: 1060px;
+}
+.span19 {
+  width: 1120px;
+}
+.span20 {
+  width: 1180px;
+}
+.span21 {
+  width: 1240px;
+}
+.span22 {
+  width: 1300px;
+}
+.span23 {
+  width: 1360px;
+}
+.span24 {
+  width: 1420px;
+}
+.row > .offset1 {
+  margin-left: 80px;
+}
+.row > .offset2 {
+  margin-left: 140px;
+}
+.row > .offset3 {
+  margin-left: 200px;
+}
+.row > .offset4 {
+  margin-left: 260px;
+}
+.row > .offset5 {
+  margin-left: 320px;
+}
+.row > .offset6 {
+  margin-left: 380px;
+}
+.row > .offset7 {
+  margin-left: 440px;
+}
+.row > .offset8 {
+  margin-left: 500px;
+}
+.row > .offset9 {
+  margin-left: 560px;
+}
+.row > .offset10 {
+  margin-left: 620px;
+}
+.row > .offset11 {
+  margin-left: 680px;
+}
+.row > .offset12 {
+  margin-left: 740px;
+}
+.span-one-third {
+  width: 300px;
+}
+.span-two-thirds {
+  width: 620px;
+}
+.row > .offset-one-third {
+  margin-left: 340px;
+}
+.row > .offset-two-thirds {
+  margin-left: 660px;
+}
+
+/* Classes copies from bootstrap */
+:-moz-placeholder { 
+  color: #999999;
+}
+::-webkit-input-placeholder {
+  color: #999999;
+}
+
+.row-fluid {
+  width: 100%;
+  *zoom: 1;
+}
+.row-fluid:before,
+.row-fluid:after {
+  display: table;
+  content: "";
+}
+.row-fluid:after {
+  clear: both;
+}
+.row-fluid > [class*="span"] {
+  float: left;
+  margin-left: 2.127659574%;
+}
+.row-fluid > [class*="span"]:first-child {
+  margin-left: 0;
+}
+.row-fluid > .span12 {
+  width: 99.99999998999999%;
+}
+.row-fluid > .span11 {
+  width: 91.489361693%;
+}
+.row-fluid > .span10 {
+  width: 82.97872339599999%;
+}
+.row-fluid > .span9 {
+  width: 74.468085099%;
+}
+.row-fluid > .span8 {
+  width: 65.95744680199999%;
+}
+.row-fluid > .span7 {
+  width: 57.446808505%;
+}
+.row-fluid > .span6 {
+  width: 48.93617020799999%;
+}
+.row-fluid > .span5 {
+  width: 40.425531911%;
+}
+.row-fluid > .span4 {
+  width: 31.914893614%;
+}
+.row-fluid > .span3 {
+  width: 23.404255317%;
+}
+.row-fluid > .span2 {
+  width: 14.89361702%;
+}
+.row-fluid > .span1 {
+  width: 6.382978723%;
+}
+
+.radio,
+.checkbox {
+  padding-left: 18px;
+}
+.radio input[type="radio"],
+.checkbox input[type="checkbox"] {
+  float: left;
+  margin-left: 0px;
+}
+
+.disabled{
+  color:#afafaf;
 }
