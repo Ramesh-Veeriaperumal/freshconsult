@@ -2455,3 +2455,95 @@ input[type="text"].number{
 .field.custom_app_preview {
 	margin-top: -14px;
 }
+
+/* Update multiple tickets css start */
+.bulktickets{
+    .small_curve{
+        @include border-radius(5px);
+    }
+    .top_spacing{
+        margin-top : 10px;
+    }
+    select{
+        width : 150px;
+    }
+    .inline-field{
+        width: 575px;
+    }
+    .fields{
+        float :left;
+        margin-left : 0px ;
+        width : 575px;
+    }
+    .field-item{
+        @include min-height(50px);
+    }
+    .label{
+        max-height: 18px;
+    }
+    #bulkreplycheck{
+        margin-bottom:0;
+    }
+    #bulkreplyform{
+    	.ui-form{
+    	 min-height: 250px;
+    	}
+    }
+    .request_panel .ui-form li.inline-field div.fields, .request_panel .ui-form fieldset div.fields { margin-left: 0px; padding-top: 4px; position: relative; }
+    .request_panel { 
+    	padding : 0 0px 0px 0px; 
+    	border-spacing: 0px 0px;
+    }
+    .attachment-options { clear : both;}    
+    .request_panel .ui-form .request_form_options .insert-canned-response {
+        position: relative;
+        z-index: 1001;
+    }
+    .canned-response-menu{
+        right : -1px;
+        z-index : 1000;
+        top : -24px;
+    }
+    #update-fields
+    {
+        max-height : 132px;
+        overflow : auto;
+    }
+	.menu-item{
+        width : 350px;
+        a{
+        	padding-left:20px;
+        }
+    }
+}
+.button-container #loader{
+        height: 35px;
+        width: 33px;
+        float: left;
+        position: relative;
+        left: 390px;
+        top: -6px;
+    }
+.ui-widget-content {
+    .bulktickets li a{
+        color:#369 !important;
+    }
+}
+ 
+#cnt-reply-multiple{
+    .request_form_options{ z-index:1000; top:-25px; right:0; }
+    .slim-button { z-index : 1001;}
+ 	.ui-form li{
+ 		padding-left:0;
+ 		padding-right:0;
+ 	}
+}
+
+#reply-fields{
+	.field-item{
+		min-height: 0px;
+	}
+
+}
+ 
+/* end */
