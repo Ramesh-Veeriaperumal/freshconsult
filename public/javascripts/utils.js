@@ -175,7 +175,7 @@ function helpdesk_submit(url, method, params){
 function reply_multiple_submit( url, method, params){ 
   var form = $("replymultiple");
 
-  (params.concat($A($("tickets-expanded").elements["ids[]"])) || []).each(function(item){
+  (params.concat(jQuery('#tickets-expanded [name="ids[]"]').get()) || []).each(function(item){
     item = $(item);
 
     if(item.name == 'ids[]' && !item.checked) return;

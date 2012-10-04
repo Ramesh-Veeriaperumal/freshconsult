@@ -1,5 +1,7 @@
 <% unless @items.empty? %>
+<div id="ticket-list-body"><div id="tickets-expanded" class="detailed_view">
 	<%= render :partial => "/helpdesk/shared/tickets.html" %>
+</div></div>	
 <% else %>
 	<div class="list-noinfo">
 	  <%= t('wf.messages.no_tickets_for_user', :user_name => @user_name) %>

@@ -7,64 +7,62 @@ allow_debugging:        on
 
 stylesheets:
   print:
-    - public/stylesheets/print.css
+    - public/stylesheets/print/print.css
 
   common:
-    - public/stylesheets/reset.css
-    - public/stylesheets/layout.css
-    - public/stylesheets/defaults.css
-    - public/stylesheets/validation.css
-    - public/stylesheets/table.css
-    - public/stylesheets/autocomplete.css
-    - public/stylesheets/jquery-ui.css
-    - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/app/lib/defaults.css
+    - public/stylesheets/app/lib/layout.css
+    - public/stylesheets/app/lib/validation.css
+    - public/stylesheets/app/lib/table.css
+    - public/stylesheets/app/lib/autocomplete.css
+    - public/stylesheets/app/lib/jquery-ui.css
+    - public/stylesheets/app/lib/qtip.css
 
   app:
-    - public/stylesheets/application.css
-    - public/stylesheets/test.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css
-    - public/stylesheets/hacks.css
-    - public/stylesheets/ie.css
-    - public/stylesheets/satisfaction.css
+    - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/app-bootstrap.css
+    - public/stylesheets/app/lib/form.css
+    - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/satisfaction.css
+    - public/stylesheets/app/gamification.css
+    - public/stylesheets/app/lib/hacks.css
+    - public/stylesheets/app/lib/ie.css
 
   notifications:
-    - public/stylesheets/jquery.gritter.css
+    - public/stylesheets/app/lib/gritter.css
 
   widget:
-    - public/stylesheets/reset.css   
-    - public/stylesheets/defaults.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/ie.css 
+    - public/stylesheets/app/lib/defaults.css
+    - public/stylesheets/app/lib/form.css
+    - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/ie.css 
 
   freshwidget:
     - public/stylesheets/freshwidget.css
 
   gadget:
-    - public/stylesheets/reset.css
-    - public/stylesheets/layout.css
-    - public/stylesheets/defaults.css
-    - public/stylesheets/application.css
-    - public/stylesheets/test.css
-    - public/stylesheets/validation.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css    
-    - public/stylesheets/autocomplete.css
-    - public/stylesheets/jquery-ui.css
-    - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/ie.css
-    - public/stylesheets/gadget.css
+    - public/stylesheets/app/lib/defaults.css
+    - public/stylesheets/app/lib/layout.css    
+    - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/app-bootstrap.css
+    - public/stylesheets/app/lib/validation.css
+    - public/stylesheets/app/lib/form.css
+    - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/lib/autocomplete.css
+    - public/stylesheets/app/lib/jquery-ui.css
+    - public/stylesheets/app/lib/qtip.css
+    - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/lib/gadget.css
 
   subscription:
-    - public/stylesheets/bootstrap.css
-    - public/stylesheets/bootstrap-responsive.css
-    - public/stylesheets/subscription.css
+    - public/stylesheets/subscription/bootstrap.css
+    - public/stylesheets/subscription/bootstrap-responsive.css
+    - public/stylesheets/subscription/subscription.css
 
-  satisfaction:
-    - public/stylesheets/reports.css
+  reports:
+    - public/stylesheets/app/reports.css
 
   redactor:
     - public/stylesheets/redactor.css 
