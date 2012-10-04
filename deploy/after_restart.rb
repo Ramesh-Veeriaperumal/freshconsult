@@ -10,7 +10,7 @@ utility_name = freshdesk_utility ? utility_name : "freshdesk_utility"
 on_utilities(utility_name) do
   #1. Need to revisit this again. 2. blank? doesn't work in deploy hooks.
   sphinx_environment = node[:environment][:framework_env]
-  sphinx_environment = "slave" if !node['db_slaves'].nil? and !node['db_slaves'].blank?
+  sphinx_environment = "slave" if !node['db_slaves'].nil? and !node['db_slaves'].empty?
   if `ps aux | grep search[d]` == ""
     run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:configure"
     run "bundle exec RAILS_ENV=#{sphinx_environment} rake thinking_sphinx:index"
