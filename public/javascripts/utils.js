@@ -163,13 +163,31 @@ function helpdesk_submit(url, method, params){
       var field = new Element('input', {
                      type: 'hidden',
                      value: source.value
-                  });
+                   });
           field.name = source.name;
           field.value = source.value;
           form.appendChild(field);
    });
    form.action = url;
    form.submit();
+}
+
+function reply_multiple_submit( url, method, params){ 
+  var form = $("replymultiple");
+
+  (params.concat(jQuery('#tickets-expanded [name="ids[]"]').get()) || []).each(function(item){
+    item = $(item);
+
+    if(item.name == 'ids[]' && !item.checked) return;
+
+    form.appendChild(new Element('input', {
+      type: 'hidden',
+      value: item.value,
+      name: item.name
+    }));
+  });
+  form.action = url;
+  form.submit();
 }
 
 function setSelRange(inputEl, selStart, selEnd) { 

@@ -771,7 +771,12 @@ Redactor.prototype = {
 				}
 				else if(key === 37)	
 				{
-					e.preventDefault(); //Ctrl + left arrow
+					//Ctrl + left arrow
+					if(navigator.userAgent.indexOf('Firefox') > -1)
+					{
+						e.preventDefault();
+						this.getSelection().modify("move", "backward", "lineboundary");
+					}
 				}							
 			}	
 			

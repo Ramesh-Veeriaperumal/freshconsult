@@ -37,7 +37,7 @@ gem "http_accept_language", "1.0.1"
 
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
-gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
+#gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
 
 gem "net-dns", "0.6.1"
 
@@ -52,6 +52,7 @@ gem "zendesk-features", :require => "features"
 gem "sass", "3.1.1"
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
+gem "rpm_contrib", "~> 2.1.3"
 gem "newrelic_rpm","3.0.0"
 
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
