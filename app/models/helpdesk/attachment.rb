@@ -2,6 +2,14 @@ require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base
 
+  MIME_TYPE_MAPPING = {"ppt" => "application/vnd.ms-powerpoint",
+                       "doc" => "application/msword",
+                       "xls" => "application/vnd.ms-excel",
+                       "pdf" => "application/pdf",
+                       "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                       "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                       "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
+
   set_table_name "helpdesk_attachments"
   belongs_to_account
 
@@ -34,8 +42,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
    end
   
    def set_content_type
-    mime_content_type = File.extname(self.content_file_name).gsub('.','')
-    self.content_content_type = "application/pdf" if !mime_content_type.blank? and mime_content_type.eql?("pdf")
+    mime_content_type = lookup_by_extension(File.extname(self.content_file_name).gsub('.',''))
+    self.content_content_type = mime_content_type unless mime_content_type.blank? 
    end
 
    def set_content_dispositon
@@ -84,6 +92,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
   
   def set_random_secret
     self.random_secret = ActiveSupport::SecureRandom.hex(8)
+  end
+
+  def lookup_by_extension(extension)
+    MIME_TYPE_MAPPING[extension]
   end
   
 

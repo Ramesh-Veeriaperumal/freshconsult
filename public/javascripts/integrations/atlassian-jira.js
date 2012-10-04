@@ -478,23 +478,23 @@ JiraWidget.prototype= {
 	unlinkJiraIssue:function(){
 		if (jiraBundle.integrated_resource_id) {
 			this.showSpinner();
+			ticketData = "";
 			if(jiraWidget.ticketData){
 				linkedTicket = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
-				ticketData = "";
 				fdTickets = jiraWidget.ticketData.split("\n");
 				for (var i=0; i < fdTickets.length; i++){
 					if (fdTickets[i].trim() != '' && fdTickets[i] != linkedTicket) {
 						ticketData += fdTickets[i] + "\n";
 					}
 				}
-				reqData = {
+			}
+			reqData = {
 				"domain":jiraBundle.domain,
 				"remoteKey":jiraWidget.unlinkId,
 				"ticketData":ticketData,
 				"application_id": jiraBundle.application_id,
 				"integrated_resource[id]":jiraBundle.integrated_resource_id
-				}; 
-			}
+			}; 
 			new Ajax.Request("/integrations/jira_issue/unlink", {
 				asynchronous: true,
 				method: "put",

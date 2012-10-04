@@ -137,7 +137,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
     
     part "text/html" do |html|
-      html.body   render_message("send_cc_mail",:ticket => ticket, :body => ticket.body_html)
+      html.body   render_message("send_cc_email", :ticket => ticket, :body => ticket.body_html)
     end
     
     ticket.attachments.each do |a|
