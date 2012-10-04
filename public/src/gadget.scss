@@ -25,7 +25,19 @@ body#gcgadget {
 		margin: 0 25px;
 	}
 
-
+	.quick-action {
+		cursor: default;
+		label {
+			cursor: default;
+		}
+	}
+	.tickets ul li.quick-action{
+		&:hover, &.selected {
+			.result {
+				background: none;
+			}
+		}
+	}
 	#maxmin_tip {
 		position: absolute;
 		top:1px;

@@ -15,11 +15,9 @@
   position: absolute;
   top: 29px;
   left: 0;
-  -webkit-box-shadow: 0 4px 5px rgba(0,0,0,.15);
-  -moz-box-shadow   : 0 4px 5px rgba(0,0,0,.15);
-  -o-box-shadow     : 0 4px 5px rgba(0,0,0,.15);
-  box-shadow        : 0 4px 5px rgba(0,0,0,.15);
+  @include box-shadow(0 4px 5px rgba(0,0,0,.15));
   z-index: 999;
+  @include text-shadow(#ffffff 1px 1px 0);
 }
 /* @end */
 
@@ -141,7 +139,10 @@
   overflow: hidden;
   height: auto !important;
   height: 1%;
-  position: relative;
+  position: relative;  
+  @include border-radius(5px);
+  @include box-shadow(#dfdfdf 1px 1px 2px inset);
+  @include text-shadow(#ffffff 1px 1px 0);
 }
 .chzn-container-multi .chzn-choices li {
   float: left;
@@ -240,6 +241,7 @@
 .chzn-container .chzn-results .active-result {
   cursor: pointer;
   display: list-item;
+  @include text-shadow(#ffffff 1px 1px 0);
 }
 .chzn-container .chzn-results .highlighted {
   background-color: #3875d7;

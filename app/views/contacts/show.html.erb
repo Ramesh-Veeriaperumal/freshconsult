@@ -1,14 +1,7 @@
 <% content_for :sidebar do -%>
-  <% if is_application_installed?("capsule_crm") %>
-	  <div class="sidepanel">
-	    <% @liquid_objects = {"requester" => @user}%>
-	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects)%>
-	  </div>  
-	<% end %>
-
-  <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @user}%>
-
+  <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
+
 <div class="contact-box clearfix">
 		<div class="action_buttons">
 			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>

@@ -26,7 +26,8 @@ class Subscription < ActiveRecord::Base
   before_destroy :destroy_gateway_record
   before_validation :update_amount
   after_update :update_features,:send_invoice
-  
+  after_update :add_to_crm, :if => :free_customer?
+
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
@@ -472,5 +473,14 @@ class Subscription < ActiveRecord::Base
     meta_info[:description] = fetch_pro_rata_description if misc
     meta_info
   end
+
+  private
+    def free_customer?
+      (amount == 0 and active? ) || free?
+    end
+
+    def add_to_crm
+      Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+    end
 
  end

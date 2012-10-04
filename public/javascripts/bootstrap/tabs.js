@@ -46,6 +46,11 @@
     if ( /^#\w+/.test(href) ) {
       e.preventDefault()
 
+      // !BOOTSTRAP New change done so as to have a 
+      // location hash change without moveing the scroll down, 
+      // need to move this into new tabs during bootstrap 2 migration
+      window.location.hash = href
+
       if ( $this.parent('li').hasClass('active') ) {
         return
       }

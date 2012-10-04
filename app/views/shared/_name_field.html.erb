@@ -1,0 +1,26 @@
+<div>
+  <label for="name"><%= t('user.name') %></label>
+    <input class="text" id="name" name="helpdesk_ticket[name]" size="30" type="text" />
+</div>
+
+<% unless current_user%>
+  <% javascript_tag do %>
+    jQuery("#helpdesk_ticket_email").focusout(function(){
+      var ticket_email = jQuery("#helpdesk_ticket_email").val();
+      var valid_email = /^<%= email_regex %>$/;
+
+      if(valid_email.test(ticket_email)) {  
+        jQuery("#helpdesk_ticket_email").addClass("loading-right");
+        jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+ticket_email,
+          success: function(data){
+            jQuery("#helpdesk_ticket_email").removeClass("loading-right");
+            if(data.user_exists)
+              jQuery("#name_field").slideDown();
+            else
+              jQuery("#name_field").slideUp();              
+        }
+      });
+    } 
+  });
+  <% end %>
+<% end %>

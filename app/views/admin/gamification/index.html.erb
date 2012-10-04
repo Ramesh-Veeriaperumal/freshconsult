@@ -1,0 +1,39 @@
+<div class="floatr">
+	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
+			:rel => "toggle", 
+			"data-checked-label" => "enabled", 
+			"data-unchecked-label" => "disabled", 
+			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#scoreboard_elements').toggle();") %>
+</div>
+<h3 class="title"><%=t('.title')%></h3>
+
+<div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
+	<ul data-tabs="tabs" class="tabs admin-tabs">
+		<li class="active first">
+			<a id="points-tab" href="#points">Points</a>
+		</li>
+		<li>
+			<a id="quests-tab" href="#quests">Quests</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="points" class="tab-pane active">
+			<%= render :partial => "gamification_settings" %>
+		</div>			  
+		<div id="quests" class="tab-pane">
+			<%= render :partial => "/admin/quests/index" %>
+		</div>
+	</div>
+</div>
+
+<% javascript_tag do %>
+	jQuery('#points-tab, #quests-tab').bind("click", function(){
+		jQuery("#gamification-help .active").removeClass("active");
+		jQuery('#'+this.id+'-help').addClass('active');
+	});
+<% end %>
+
+<% content_for :sidebar do %>
+	<%= render :partial => "help_text" %>
+<%end%>
