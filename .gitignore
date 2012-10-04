@@ -17,3 +17,6 @@ config/slave.sphinx.conf
 config/database.yml
 config/sphinx.yml
 config/redis.yml
+public/stylesheets/app/*.css
+public/stylesheets/print/*.css
+public/stylesheets/portal/*.css
