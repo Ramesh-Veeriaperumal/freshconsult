@@ -51,6 +51,8 @@ module Gamification
 			end
 
 			def self.rollback_ticket_quests(ticket, old_resolv_time)
+				return unless ticket.responder
+				
 				ticket.responder.quests.ticket_quests.each do |quest|
 				badge_awarded_time = ticket.responder.badge_awarded_at(quest)
 

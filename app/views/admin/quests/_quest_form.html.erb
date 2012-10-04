@@ -40,7 +40,7 @@
 				<div class="span3">
 					<strong>Badge</strong><br />			
 					<%= f.hidden_field :badge_id, :class => "required text" %>					
-					<div class="select_badge">
+					<div class="select_badge hide">
 						<div id="selected-badge">
 							<%= content_tag :div, "", :class => "gamesettings-badges #{@badge_class[:classname]}" if @badge_class %>
 						</div>

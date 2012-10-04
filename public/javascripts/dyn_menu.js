@@ -78,10 +78,10 @@
 
 			initSearchBox(menuid);
 			// setFirstElementActive(menuid);
-			if (content_element.children().not('.seperator').length <= 10) {
-				$('#menu_' + menuid + ' .menu_search').addClass('invisible');
+			if (content_element.children().not('.seperator').length > 10) {
+				$('#menu_' + menuid ).addClass('hasSearch');
 			} else {
-				$('#menu_' + menuid + ' .menu_search').removeClass('invisible');
+				$('#menu_' + menuid).removeClass('hasSearch');
 			}
 
 			initElementHover(menuid);
@@ -104,9 +104,13 @@
 
 		var initSearchBox = function(menuid) {
 
-			var txt_box = $('<input>').attr('type','text').addClass('menu_search');
+			var txt_box_container = $('<div class="search_container"><input class="menu_search" type="text" placeholder="Search" /> </div>');
 
-			$('#menu_' + menuid ).prepend(txt_box);
+			$('#menu_' + menuid ).prepend(txt_box_container);
+			var no_results = $('<div class="no_results hide"> No matches found </div>');
+			$('#menu_' + menuid ).append(no_results);
+
+			var txt_box = $('#menu_' + menuid + ' .menu_search');
 			txt_box.bind('keydown, keypress', function(e){
 				if(e.keyCode == 13) 
 					return false;
@@ -137,11 +141,20 @@
 									$(this).removeClass('hide');
 								}
 							});
+							var searchlist 	= $('#menu_' + menuid + ' .contents a').not('.hide');
+							
+							if (searchlist.length == 0) {
+								$('#menu_' + menuid + ' .no_results').removeClass('hide');
+							} else {
+								$('#menu_' + menuid + ' .no_results').addClass('hide');
+							}
 						} else {
+							$('#menu_' + menuid + ' .no_results').addClass('hide');
 							content_element.children().removeClass('hide');
 							content_element.find('.seperator').removeClass('hide');
 							deselectActiveElement(menuid);
 						}
+						setFirstElementActive(menuid);
 					break;
 				}
 			});
@@ -211,6 +224,11 @@
 			position = Math.min((searchlist.size()-1), Math.max(0, position + offset)); 
 			currentactive = $(searchlist.get(position)).addClass("selected"); 
 
+			if (offset > 0 && position > 15 ) {
+				$('#menu_' + menuid + ' .contents').get(0).scrollTop += 20;
+			} else {
+				$('#menu_' + menuid + ' .contents').get(0).scrollTop -= 20;
+			}
 			$('#menu_' + menuid ).data('currentactive',currentactive);
 			$('#menu_' + menuid ).data('selection_position', position);
 		}

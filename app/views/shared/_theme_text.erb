@@ -7,6 +7,7 @@
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;
 	$tab_ctxt_color:	if(lightness($tab_color) > 50, black, white) !default;
 	$subtxt_color: if(lightness($background) > 50, #222, #EEE) !default;
+	$subtxt_hover_color: if(lightness($background) > 50, #000, #FFF) !default;
 	$alternate_txt_color: if(lightness($background) > 50, white, black) !default;
 	$alternate_bg_color: if(lightness($background) > 50, #666, #AAA) !default;
 
@@ -72,6 +73,10 @@
 
 	.ticket-leftcol .leftFilter .item, .drop-right {
 		color:$subtxt_color;	
+	}
+
+	.ticket-leftcol .leftFilter .item:hover span{
+		color:$subtxt_hover_color;
 	}
 
 	.drop-right:hover,  .view_filters .link-item .nav-trigger.selected,  .view_filters .link-item .nav-trigger:hover,  .drop-right.selected, .drop-right.selected *  {

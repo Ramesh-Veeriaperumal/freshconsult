@@ -170,7 +170,7 @@ class Account < ActiveRecord::Base
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
   
-  has_many :support_scores, :class_name => 'SupportScore'
+  has_many :support_scores, :class_name => 'SupportScore', :dependent => :delete_all
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 

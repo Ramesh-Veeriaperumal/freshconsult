@@ -233,7 +233,7 @@ module Helpdesk::TicketsHelper
       end
 
     else
-      if( ticket.ticket_states.resolved_at < ticket.due_by )
+      if( ticket.ticket_states.resolved_at_dirty < ticket.due_by )
         t('resolved_on_time')
       else
         t('resolved_late')
@@ -271,7 +271,7 @@ module Helpdesk::TicketsHelper
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).requester_template
       if(!requester_template.nil?)
         reply_email_template = Liquid::Template.parse(requester_template).render('ticket'=>ticket)
-        default_reply = (signature.blank?)? "<p/><br/><div>#{reply_email_template}</div>" : "<p/><br/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
+        default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
       end 
     end
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
@@ -294,11 +294,11 @@ module Helpdesk::TicketsHelper
     status = ticket.status
     case status
       when RESOLVED
-        return {:title => "#{status_name}", :method => "resolved_at"}
+        return {:title => "#{status_name}", :method => "resolved_at_dirty"}
       when PENDING
         return {:title =>  "#{status_name}", :method => "pending_since"}
       when CLOSED
-        return {:title => "#{status_name}", :method => "closed_at"}
+        return {:title => "#{status_name}", :method => "closed_at_dirty"}
       else
         return {:title => "#{status_name}", :method => "status_updated_at"}
     end

@@ -1,0 +1,236 @@
+/* Theme Colors and layout Defaults */
+/* Bullet icon */
+/* Priority Color Codes */
+/* Sprite variables used inside the sheet */
+/*
+ * Tables.less
+ * Tables for, you guessed it, tabular data
+ * ---------------------------------------- */
+/* line 7, ../../../src/app/lib/table.scss */
+.table-grid {
+  margin: 0px -10px; }
+  /* line 9, ../../../src/app/lib/table.scss */
+  .table-grid table {
+    width: 100%;
+    margin-bottom: 18px;
+    padding: 0;
+    font-size: 13px;
+    border-collapse: collapse; }
+  /* line 16, ../../../src/app/lib/table.scss */
+  .table-grid table th, .table-grid table td {
+    padding: 10px 10px 9px;
+    line-height: 18px;
+    text-align: left; }
+  /* line 21, ../../../src/app/lib/table.scss */
+  .table-grid table th {
+    padding-top: 9px;
+    font-weight: bold;
+    vertical-align: middle; }
+  /* line 26, ../../../src/app/lib/table.scss */
+  .table-grid table td {
+    vertical-align: top;
+    border-top: 1px solid #ddd; }
+  /* line 30, ../../../src/app/lib/table.scss */
+  .table-grid table tbody th {
+    border-top: 1px solid #ddd;
+    vertical-align: top; }
+  /* line 34, ../../../src/app/lib/table.scss */
+  .table-grid .condensed-table th, .table-grid .condensed-table td {
+    padding: 5px 5px 4px; }
+  /* line 37, ../../../src/app/lib/table.scss */
+  .table-grid .bordered-table {
+    border: 1px solid #ddd;
+    border-collapse: separate;
+    *border-collapse: collapse;
+    /* IE7, collapse table to remove spacing */
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px; }
+  /* line 47, ../../../src/app/lib/table.scss */
+  .table-grid .bordered-table th + th, .table-grid .bordered-table td + td, .table-grid .bordered-table th + td {
+    border-left: 1px solid #ddd; }
+  /* line 50, ../../../src/app/lib/table.scss */
+  .table-grid .bordered-table thead tr:first-child th:first-child, .table-grid .bordered-table tbody tr:first-child td:first-child {
+    -webkit-border-radius: 4px 0 0 0;
+    -moz-border-radius: 4px 0 0 0;
+    border-radius: 4px 0 0 0; }
+  /* line 55, ../../../src/app/lib/table.scss */
+  .table-grid .bordered-table thead tr:first-child th:last-child, .table-grid .bordered-table tbody tr:first-child td:last-child {
+    -webkit-border-radius: 0 4px 0 0;
+    -moz-border-radius: 0 4px 0 0;
+    border-radius: 0 4px 0 0; }
+  /* line 60, ../../../src/app/lib/table.scss */
+  .table-grid .bordered-table tbody tr:last-child td:first-child {
+    -webkit-border-radius: 0 0 0 4px;
+    -moz-border-radius: 0 0 0 4px;
+    border-radius: 0 0 0 4px; }
+  /* line 65, ../../../src/app/lib/table.scss */
+  .table-grid .bordered-table tbody tr:last-child td:last-child {
+    -webkit-border-radius: 0 0 4px 0;
+    -moz-border-radius: 0 0 4px 0;
+    border-radius: 0 0 4px 0; }
+  /* line 70, ../../../src/app/lib/table.scss */
+  .table-grid table .span1 {
+    width: 20px; }
+  /* line 73, ../../../src/app/lib/table.scss */
+  .table-grid table .span2 {
+    width: 60px; }
+  /* line 76, ../../../src/app/lib/table.scss */
+  .table-grid table .span3 {
+    width: 100px; }
+  /* line 79, ../../../src/app/lib/table.scss */
+  .table-grid table .span4 {
+    width: 140px; }
+  /* line 82, ../../../src/app/lib/table.scss */
+  .table-grid table .span5 {
+    width: 180px; }
+  /* line 85, ../../../src/app/lib/table.scss */
+  .table-grid table .span6 {
+    width: 220px; }
+  /* line 88, ../../../src/app/lib/table.scss */
+  .table-grid table .span7 {
+    width: 260px; }
+  /* line 91, ../../../src/app/lib/table.scss */
+  .table-grid table .span8 {
+    width: 300px; }
+  /* line 94, ../../../src/app/lib/table.scss */
+  .table-grid table .span9 {
+    width: 340px; }
+  /* line 97, ../../../src/app/lib/table.scss */
+  .table-grid table .span10 {
+    width: 380px; }
+  /* line 100, ../../../src/app/lib/table.scss */
+  .table-grid table .span11 {
+    width: 420px; }
+  /* line 103, ../../../src/app/lib/table.scss */
+  .table-grid table .span12 {
+    width: 460px; }
+  /* line 106, ../../../src/app/lib/table.scss */
+  .table-grid table .span13 {
+    width: 500px; }
+  /* line 109, ../../../src/app/lib/table.scss */
+  .table-grid table .span14 {
+    width: 540px; }
+  /* line 112, ../../../src/app/lib/table.scss */
+  .table-grid table .span15 {
+    width: 580px; }
+  /* line 115, ../../../src/app/lib/table.scss */
+  .table-grid table .span16 {
+    width: 620px; }
+  /* line 118, ../../../src/app/lib/table.scss */
+  .table-grid .zebra-striped tbody tr:nth-child(odd) td, .table-grid .zebra-striped tbody tr:nth-child(odd) th {
+    background-color: #f9f9f9; }
+  /* line 121, ../../../src/app/lib/table.scss */
+  .table-grid .zebra-striped tbody tr:hover td, .table-grid .zebra-striped tbody tr:hover th {
+    background-color: #f5f5f5; }
+  /* line 124, ../../../src/app/lib/table.scss */
+  .table-grid table .header {
+    cursor: pointer; }
+  /* line 127, ../../../src/app/lib/table.scss */
+  .table-grid table .header:after {
+    content: "";
+    float: right;
+    margin-top: 7px;
+    border-width: 0 4px 4px;
+    border-style: solid;
+    border-color: #000 transparent;
+    visibility: hidden; }
+  /* line 136, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp, .table-grid table .headerSortDown {
+    background-color: rgba(141, 192, 219, 0.25);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); }
+  /* line 140, ../../../src/app/lib/table.scss */
+  .table-grid table .header:hover:after {
+    visibility: visible; }
+  /* line 143, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortDown:after, .table-grid table .headerSortDown:hover:after {
+    visibility: visible;
+    filter: alpha(opacity=60);
+    -khtml-opacity: 0.6;
+    -moz-opacity: 0.6;
+    opacity: 0.6; }
+  /* line 150, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp:after {
+    border-bottom: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #000;
+    visibility: visible;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    filter: alpha(opacity=60);
+    -khtml-opacity: 0.6;
+    -moz-opacity: 0.6;
+    opacity: 0.6; }
+  /* line 164, ../../../src/app/lib/table.scss */
+  .table-grid table .blue {
+    color: #049cdb;
+    border-bottom-color: #049cdb; }
+  /* line 168, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp.blue, .table-grid table .headerSortDown.blue {
+    background-color: #ade6fe; }
+  /* line 171, ../../../src/app/lib/table.scss */
+  .table-grid table .green {
+    color: #46a546;
+    border-bottom-color: #46a546; }
+  /* line 175, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp.green, .table-grid table .headerSortDown.green {
+    background-color: #cdeacd; }
+  /* line 178, ../../../src/app/lib/table.scss */
+  .table-grid table .red {
+    color: #9d261d;
+    border-bottom-color: #9d261d; }
+  /* line 182, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp.red, .table-grid table .headerSortDown.red {
+    background-color: #f4c8c5; }
+  /* line 185, ../../../src/app/lib/table.scss */
+  .table-grid table .yellow {
+    color: #ffc40d;
+    border-bottom-color: #ffc40d; }
+  /* line 189, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp.yellow, .table-grid table .headerSortDown.yellow {
+    background-color: #fff6d9; }
+  /* line 192, ../../../src/app/lib/table.scss */
+  .table-grid table .orange {
+    color: #f89406;
+    border-bottom-color: #f89406; }
+  /* line 196, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp.orange, .table-grid table .headerSortDown.orange {
+    background-color: #fee9cc; }
+  /* line 199, ../../../src/app/lib/table.scss */
+  .table-grid table .purple {
+    color: #7a43b6;
+    border-bottom-color: #7a43b6; }
+  /* line 203, ../../../src/app/lib/table.scss */
+  .table-grid table .headerSortUp.purple, .table-grid table .headerSortDown.purple {
+    background-color: #e2d5f0; }
+
+/* line 209, ../../../src/app/lib/table.scss */
+.label {
+  padding: 1px 3px 2px;
+  font-size: 9.75px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background-color: #bfbfbf;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+
+/* line 221, ../../../src/app/lib/table.scss */
+.label.important {
+  background-color: #c43c35; }
+
+/* line 224, ../../../src/app/lib/table.scss */
+.label.warning {
+  background-color: #f89406; }
+
+/* line 227, ../../../src/app/lib/table.scss */
+.label.success {
+  background-color: #46a546; }
+
+/* line 230, ../../../src/app/lib/table.scss */
+.label.notice {
+  background-color: #4D769F; }

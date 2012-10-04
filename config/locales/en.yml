@@ -288,7 +288,7 @@ en:
         happy_customer: Happy Customer
         unhappy_customer: Unhappy Customer
         title_levels: Agent levels
-        info_levels: "Set points to be acheived by an agent to reach a level"
+        info_levels: "Set points to be achieved by an agent to reach a level"
         title_trophies: Trophies
         new_quest: New Quest
         quest_title: Quests
@@ -629,19 +629,19 @@ en:
     facebook:
       updated: Facebook setting has been updated 
     application:
-      already: "Addon is already installed."
+      already: "Integration is already installed."
       uninstall:
-        success: "The Addon has been disabled successfully!"
-        error: "Error in disabling the Addon."
+        success: "The integration has been disabled successfully!"
+        error: "Error in disabling the integration."
       install:
-        success: "The Addon has been enabled successfully!"
-        error: "Error in enabling the Addon."
+        success: "The integration has been enabled successfully!"
+        error: "Error in enabling the integration."
       update:
-        success: "The Addon has been updated successfully!"
-        error: "Error in configuring the Addon."
-      not_installed: "This addon is not yet installed."
+        success: "The integration has been updated successfully!"
+        error: "Error in configuring the integration."
+      not_installed: "This integration is not yet installed."
     filter:
-      delete_success: "View has been delete successfully!"
+      delete_success: "View has been deleted successfully!"
       save_success: "View has been saved successfully!"
     twitter: 
       updated: Twitter setting has been updated
@@ -1623,6 +1623,7 @@ en:
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
+      ca_responses : Canned Responses
       insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
@@ -2114,15 +2115,16 @@ en:
   application:
     new: Create New Application
     desc: Integrate with other Apps to make your Freshdesk experience more awesome.
-    title: Addons & Integration
+    title: Integrations
     disabled: Disabled
     enabled: Enabled
     configure: Configure
     enable: Enable
-    click_to_disable: Click to disable Addon
-    click_to_enable: Click to enable Addon    
-    confirm_disable: "Are you sure you want to disable this Addon?"
-    configure_addon: "Click to configure this Addon"
+    click_to_disable: Disable integration
+    click_to_enable: Enable integration    
+    confirm_disable: "Are you sure you want to disable this integration?"
+    configure_addon: "Configure this integration"
+    configure_custom_addon: "Configure this widget"
   home:
       mobile_index:
         email: Email
@@ -2335,17 +2337,20 @@ en:
       name: "Name"
       description: "Description"
       script: "Script"
-      label: "Custom Addon"
+      label: "Custom Widget"
+      new: "New Custom Widget"
+      edit: "Edit Custom Widget"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helptext: "### Helptext goes here. ###"
+      helptext: "<h4>Custom Widget Help</h4><p><br/> You can develop your own custom widget using html,css and javascript.</br></br>To create the custom widget, enter the name of your new widget and a short description about it.</br>Enter your code under ‘Script’.  You can refer to our solutions page to learn more about the script.</br></br>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages."
+      small_help_text: "You can develop your own custom widget using html,css and javascript."
       form:
-        widget_title: "Addon Name"
+        widget_title: "Widget Name"
         widget_script: "Widget code snippet"
         create_n_enable: "Create and Enable"
     logmein:
       label: "LogMeIn Rescue"
-      desc: "Provide remote support to your customers using LogMeIn Rescue"
-      helptext: "LogMeIn Rescue Helptext goes here"
+      desc: "Provide instant remote support to your customers and employees with LogMeIn Rescue"
+      helptext: "<h4>LogMeIn Rescue Integration Help</h4><p><br/> To integrate LogMeIn Rescue with Freshdesk, enter your LogMeIn Rescue CompanyID and SSO password and click on Update. <br/>Once enabled, LogMeIn Rescue widget can be found in ticket details page. <br/><br/>Use the  &quot;Launch Technician Console&quot; to launch the technician console directly from the Freshdesk Widget. <br/>Now you can generate a pincode and share the instructions with the requester to continue the support in LogMeIn Rescue. <br/><br/> <b>Note:</b> The agent's email should match LogMeIn Rescue's technician SSO ID. To set your SSO ID go to Admin Center -> Technician Name -> Organization -> SSOID"
       note:
         header: "Your LogMeIn Rescue Session details"
         session_id: "Session ID"
@@ -2359,8 +2364,8 @@ en:
         widget_title: "Widget Title"
         company_id: "Company ID"
         password: "SSO Password"
-        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Name -> Global Settings -> ASP.NET C# example "
-        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Name -> Global Settings -> Single Sign-On"
+        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Group -> Global Settings -> ASP.Net C# server side example "
+        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -2449,9 +2454,10 @@ en:
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
-  bulk_update: "Bulk Update"
+  bulk_actions: "Bulk Actions"
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
+  select: "Select ..."
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"
