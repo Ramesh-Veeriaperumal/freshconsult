@@ -6,6 +6,12 @@ GIT
       savon
       savon_model
 
+GIT
+  remote: git://github.com/freshdesk/deadlock_retry.git
+  revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
+  specs:
+    deadlock_retry (1.2.0)
+
 PATH
   remote: vendor/gems/classifier-1.3.1
   specs:
@@ -217,6 +223,8 @@ GEM
       builder (~> 3.0)
       oauth (~> 0.4)
     riddle (1.2.2)
+    rpm_contrib (2.1.3)
+      newrelic_rpm (>= 3.0.0)
     rspec (1.3.1)
     rspec-rails (1.3.3)
       rack (>= 1.0.0)
@@ -297,6 +305,7 @@ DEPENDENCIES
   braintree (= 2.10.0)
   classifier (= 1.3.1)!
   compass-rails
+  deadlock_retry!
   delayed_job (= 1.8.4)
   factory_girl (= 1.2.3)
   html2textile (~> 1.0.0.beta1)
@@ -331,6 +340,7 @@ DEPENDENCIES
   resque-status
   resque_mailer (= 1.0.1)
   rforce
+  rpm_contrib (~> 2.1.3)
   rspec (= 1.3.1)
   rspec-rails (= 1.3.3)
   ruby-debug (= 0.10.3)

@@ -277,7 +277,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def tags_join
-    " INNER JOIN `helpdesk_tag_uses` ON (`helpdesk_tickets`.`id` = `helpdesk_tag_uses`.`taggable_id` AND `helpdesk_tag_uses`.`taggable_type` = 'Helpdesk::Ticket') INNER JOIN `helpdesk_tags` ON (`helpdesk_tags`.`id` = `helpdesk_tag_uses`.`tag_id`)  "
+    " INNER JOIN `helpdesk_tag_uses` ON (`helpdesk_tickets`.`id` = `helpdesk_tag_uses`.`taggable_id` 
+                                        AND `helpdesk_tag_uses`.`taggable_type` = 'Helpdesk::Ticket') 
+      INNER JOIN `helpdesk_tags` ON (`helpdesk_tags`.`id` = `helpdesk_tag_uses`.`tag_id`)  "
   end
 
  def monitor_ships_join

@@ -56,8 +56,12 @@ class Helpdesk::AttachmentsController < ApplicationController
    end
    
 
-    def check_download_permission
-  
+    def check_download_permission      
+      access_denied unless can_download?      
+    end
+
+    def can_download?
+
       # Is the attachment on a note?
       #if @attachment.attachable.respond_to?(:notable)
       if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? @attachment.attachable_type
@@ -67,7 +71,8 @@ class Helpdesk::AttachmentsController < ApplicationController
   
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
-        return can_download?(ticket)
+        return (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
+          (current_user.client_manager?  && ticket.requester.customer == current_user.customer)))
   
       # Is the attachment on a solution  If so, it's always downloadable.
       
@@ -75,13 +80,8 @@ class Helpdesk::AttachmentsController < ApplicationController
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
         return true if permission?(:manage_users)
-      end 
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
-    end
+      end         
 
-    def can_download?(ticket)
-      current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-        (current_user.client_manager?  && ticket.requester.customer == current_user.customer))
     end
   
 end

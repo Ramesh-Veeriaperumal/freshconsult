@@ -16,5 +16,5 @@ class Integrations::Mapper::GenericMapper
     set_data
   end
 
-  LIQUID_CLASSES = {Helpdesk::Ticket => "helpdesk_ticket"}
+  LIQUID_CLASSES = {Helpdesk::Ticket => "helpdesk_ticket", Helpdesk::Note => "helpdesk_note"}
 end

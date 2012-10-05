@@ -79,9 +79,9 @@ var $J = jQuery.noConflict();
 
     $("[rel=remote-load]").livequery(function(){ 
       if(!document.getElementById('remote_loaded_dom_elements'))
-        $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body")
+        $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
 
-      $(this)
+        $(this)
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
           $(this).removeClass("loading-box");
