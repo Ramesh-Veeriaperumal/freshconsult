@@ -10,28 +10,36 @@ class CRM::Salesforce
 
   CUSTOMER_STATUS = { :free => "Free", :paid => "Customer" }
 
+  ACCOUNT_ATTR = { :accountId => :salesforce_id, :Type => :business_type }
+
   PAYMENT_ATTR = { :Name => :to_s, :Agents__c => :agents, :Plan__c => :plan_name, 
                    :Discount__c => :discount, :Amount => :amount }
 
-  def initialize
+	def initialize
     username = AppConfig['salesforce'][RAILS_ENV]['username']
     password = AppConfig['salesforce'][RAILS_ENV]['password']
     binding.login(username, password)
-  end
+	end
 
   def add_paid_customer_to_crm(payment)
-    #returned_value = sandbox(0){
-      salesforce_record = salesforce_id(payment)
-      add_data(salesforce_record, payment) unless salesforce_record.blank?   
-    #}
-    #FreshdeskErrorsMailer.deliver_error_in_crm!(payment) if returned_value == 0
+    returned_value = sandbox(0){
+      account_attr = account_attributes(payment)
+      payment_attr = payment_attributes(payment)
+      opportunity_attr = opportunity_attributes
+      record = payment_attr.merge(account_attr)
+      record = record.merge(opportunity_attr)
+      add_opportunity(record)
+      
+      response = binding.update('sObject {"xsi:type" => "Account"}' => 
+        { :id => record[:accountId] , :Customer_Status__c => CUSTOMER_STATUS[:paid] })
+    }
+
+    FreshdeskErrorsMailer.deliver_error_in_crm!(payment) if returned_value == 0
   end
 
   def add_free_customer_to_crm(subscription) 
-    salesforce_record = salesforce_id(subscription)
-    
     binding.update('sObject {"xsi:type" => "Account"}' => 
-        { :id => salesforce_record , :Customer_Status__c => CUSTOMER_STATUS[:free] }) unless salesforce_record.blank?
+        { :id => salesforce_id(subscription) , :Customer_Status__c => CUSTOMER_STATUS[:free] })
   end  
 
   private 
@@ -42,16 +50,8 @@ class CRM::Salesforce
       end
     end
 
-    def add_data(salesforce_record, payment)
-      account_attr = { :accountId => salesforce_record, :Type => business_type(payment) }
-      payment_attr = payment_attributes(payment)
-      opportunity_attr = opportunity_attributes
-      record = payment_attr.merge(account_attr)
-      record = record.merge(opportunity_attr)
-      add_opportunity(record)
-      
-      response = binding.update('sObject {"xsi:type" => "Account"}' => 
-        { :id => record[:accountId] , :Customer_Status__c => CUSTOMER_STATUS[:paid] })
+    def account_attributes(payment)
+      account_attr = ACCOUNT_ATTR.inject({}) { |h, (k, v)| h[k] = send(v, payment); h }
     end
 
     def payment_attributes(payment)                      
@@ -79,11 +79,9 @@ class CRM::Salesforce
       search_query = %(FIND {#{account.full_domain}} IN NAME FIELDS RETURNING Account(id))
       query = binding.search(:searchString => search_query)
       result = query.searchResponse.result
-
-      unless result.blank?
-        id = result.searchRecords.record.Id
-        (id.is_a?(Array))? id[0] : id
-      end
+      id = result.searchRecords.record.Id
+      
+      (id.is_a?(Array))? id[0] : id
     end
 
     def business_type(payment)
