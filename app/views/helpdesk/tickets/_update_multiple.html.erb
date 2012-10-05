@@ -65,8 +65,8 @@
  	function(){
 		active_dialog.dialog('close');
  	}); 
- 
- jQuery("#ticket_update_multiple_button").bind('click',  function(ev){
+
+  jQuery("#ticket_update_multiple_button").bind('click',  function(ev){
     jQuery(this).attr('disabled','disabled');
     jQuery('#ticket_cancel_multiple_button').attr('disabled','disabled');
     jQuery('#loader').removeClass("hide");
@@ -94,11 +94,14 @@
       if(jQuery(this).attr('for')=="addbulkreply")
       {
         jQuery("#bulkreplyform").slideDown();
+        jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus()
       }
     }
     else
     {
       jQuery(this).removeClass("active");
+      jQuery(this).parent().find('.level_2').slideUp();
+      jQuery(this).parent().find('.level_3').slideUp();
       if(jQuery(this).attr('for')=="addbulkreply")
         jQuery("#bulkreplyform").slideUp();
       jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');
@@ -123,3 +126,4 @@ function groupchange(value){
      });
    }
 <% end %>
+
