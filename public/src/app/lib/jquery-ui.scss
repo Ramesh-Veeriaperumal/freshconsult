@@ -66,7 +66,7 @@
 /* Interaction states
 ----------------------------------*/
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { 
-	border: 1px solid #d4d4d4; background-image:url(../images/overlay-button.png);
+	border: 1px solid #d4d4d4; background-image:url(/images/overlay-button.png);
 	background-color:#eeeeee;
 	background-repeat:repeat-x; font-weight: normal; color: #333333; 
 }
@@ -92,14 +92,14 @@
 ----------------------------------*/
 
 /* states and images */
-.ui-icon { width: 16px; height: 16px; background-image: url("../images/ui-icons_469bdd_256x240.png"); }
-.ui-widget-content .ui-icon {background-image: url("../images/ui-icons_469bdd_256x240.png"); }
-.ui-widget-header .ui-icon {background-image: url("../images/ui-icons_d8e7f3_256x240.png"); }
-.ui-state-default .ui-icon { background-image: url("../images/ui-icons_6da8d5_256x240.png"); }
-.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url("../images/ui-icons_217bc0_256x240.png"); }
-.ui-state-active .ui-icon {background-image: url("../images/ui-icons_f9bd01_256x240.png"); }
-.ui-state-highlight .ui-icon {background-image: url("../images/ui-icons_2e83ff_256x240.png"); }
-.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url("../images/ui-icons_cd0a0a_256x240.png"); }
+.ui-icon { width: 16px; height: 16px; background-image: url("/images/ui-icons_469bdd_256x240.png"); }
+.ui-widget-content .ui-icon {background-image: url("/images/ui-icons_469bdd_256x240.png"); }
+.ui-widget-header .ui-icon {background-image: url("/images/ui-icons_d8e7f3_256x240.png"); }
+.ui-state-default .ui-icon { background-image: url("/images/ui-icons_6da8d5_256x240.png"); }
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url("/images/ui-icons_217bc0_256x240.png"); }
+.ui-state-active .ui-icon {background-image: url("/images/ui-icons_f9bd01_256x240.png"); }
+.ui-state-highlight .ui-icon {background-image: url("/images/ui-icons_2e83ff_256x240.png"); }
+.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url("/images/ui-icons_cd0a0a_256x240.png"); }
 
 /* positioning */
 .ui-icon-carat-1-n { background-position: 0 0; }
@@ -300,7 +300,7 @@
    @include opacity(0.6);
 	background-color:black;
 }
-.ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url("../images/ui-bg_flat_0_aaaaaa_40x100.png") 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }/*
+.ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url("/images/ui-bg_flat_0_aaaaaa_40x100.png") 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }/*
  * jQuery UI Resizable 1.8.7
  *
  * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)

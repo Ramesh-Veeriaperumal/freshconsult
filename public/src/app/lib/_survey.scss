@@ -94,15 +94,15 @@
     }
 
     ul.survey-options li a.happy{
-        background-image: url(../images/portal/smiley-good.png);
+        background-image: url(/images/portal/smiley-good.png);
     }
 
     ul.survey-options li a.neutral{
-        background-image: url(../images/portal/smiley-neutral.png);
+        background-image: url(/images/portal/smiley-neutral.png);
     }
 
     ul.survey-options li a.unhappy{
-        background-image: url(../images/portal/smiley-bad.png);
+        background-image: url(/images/portal/smiley-bad.png);
     }
 
     span.happy, span.neutral, span.unhappy{
@@ -112,15 +112,15 @@
     }
 
      span.happy{
-        background: url(../images/portal/smiley-good.png) no-repeat;
+        background: url(/images/portal/smiley-good.png) no-repeat;
     }
 
     span.neutral{
-        background: url(../images/portal/smiley-neutral.png) no-repeat;
+        background: url(/images/portal/smiley-neutral.png) no-repeat;
     }
 
     span.unhappy{
-        background: url(../images/portal/smiley-bad.png) no-repeat;
+        background: url(/images/portal/smiley-bad.png) no-repeat;
     }
 
     .survey-comment{

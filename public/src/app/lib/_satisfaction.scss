@@ -1,5 +1,5 @@
 .top-title, .top-time, .topic-head, .box-title, .cote, .tab-text{
-	font-family:"Helvetica Neue", Arial, sans-serif;
+	font-family: $blueprint-font-family;
 	color: #303030;
 	font-weight:bold;
 	line-height:24px;
@@ -56,7 +56,7 @@
 }
 
 .happy-smily{
-	background: url("../images/happy-smily-tab.png") no-repeat;
+	background: url("/images/happy-smily-tab.png") no-repeat;
 	float: left;
 	padding-left:10px;
 	position: relative;
@@ -67,7 +67,7 @@
 }
 
 .neutral-smily{
-	background: url("../images/neutral-smily-tab.png") no-repeat;
+	background: url("/images/neutral-smily-tab.png") no-repeat;
 	float: left;
 	padding-left:10px;
 	position: relative;
@@ -78,7 +78,7 @@
 }
 
 .unhappy-smily{
-	background: url("../images/unhappy-smily-tab.png") no-repeat;
+	background: url("/images/unhappy-smily-tab.png") no-repeat;
 	float: left;
 	padding-left:10px;
 	position: relative;
@@ -136,7 +136,7 @@
 }
 
 .content-2-img{
-	background: url("../images/content-2-img.png") no-repeat;
+	background: url("/images/content-2-img.png") no-repeat;
 	width:39px;
 	height:39px;
 	display: block;
@@ -154,15 +154,15 @@
 }
 
 .happy-smily-small{
-	background: url("../images/happy-smily-small.png") no-repeat;
+	background: url("/images/happy-smily-small.png") no-repeat;
 }
 
 .unhappy-smily-small{
-	background: url("../images/unhappy-smily-small.png") no-repeat;
+	background: url("/images/unhappy-smily-small.png") no-repeat;
 }
 
 .neutral-smily-small{
-	background: url("../images/neutral-smily-small.png") no-repeat;
+	background: url("/images/neutral-smily-small.png") no-repeat;
 }
 
 .happy-smily-small, .unhappy-smily-small, .neutral-smily-small {
@@ -227,7 +227,7 @@
 .cote{
 	margin-top: 2px;
 	margin-left: 5px;
-	background: url("../images/cote-img.png") no-repeat;
+	background: url("/images/cote-img.png") no-repeat;
 	width:16px;
 	height:13px;
 	display: block;
