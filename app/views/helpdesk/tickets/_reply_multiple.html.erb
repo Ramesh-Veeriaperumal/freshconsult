@@ -13,10 +13,10 @@
         </div>
               
         <li class="inline-field">
-            <%= f.text_area :body_html, :value=>"", :id => "#{id}-#{cntid}-body"%>
-            <%= f.hidden_field :private, :value=>0 %>
-            <%= f.hidden_field :user_id, :value=>current_user && current_user.id %>
-            <%= f.hidden_field :source, :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
+            <%= f.text_area :body_html, :class => "required", :value=>"", :id => "#{id}-#{cntid}-body" %>
+            <%= f.hidden_field :private, :value=> 0 %>
+            <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>
+            <%= f.hidden_field :source, :value=> Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
             <div class="attachment-options" id="attachment-options-reply-multiple">
                 <% unless local_assigns[:no_attachments] %>
                 <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id =>id, :nsc_param => "helpdesk_note" } %>
@@ -29,11 +29,11 @@
 
  <!--<%= tiny_mce_init Helpdesk::SMALL_EDITOR %>-->
 
-
 <% javascript_tag do %>
- invokeRedactor('<%= "#{id}-#{cntid}-body" %>');
-   
-   jQuery('#ticket_cancel_multiple_button').click(
+
+    invokeRedactor('<%= "#{id}-#{cntid}-body" %>');
+    
+    jQuery('#ticket_cancel_multiple_button').click(
     function(){
         active_dialog.dialog('close');
     }); 
