@@ -767,7 +767,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     logger.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
     
     load_flexifield if custom_field.nil?
-    return custom_field[attribute] unless  attribute.to_s.include?("=")
+    return custom_field[attribute.to_s] unless  attribute.to_s.include?("=")
       
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
     field = attribute.to_s.chomp("=")
