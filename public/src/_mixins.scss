@@ -76,9 +76,11 @@
 	-moz-transform:rotate($degree); 
 	-moz-transform-origin: $location;
 	-webkit-transform: rotate($degree);
-	-webkit-transform-origin: $location;
-	-o-transform: rotate($degree);
+	-webkit-transform-origin: $location;  
+  -o-transform: rotate($degree);
 	-o-transform-origin: $location;
+  transform: rotate($degree);
+  transform-origin: $location;
 }
 
 @mixin text-formatting(){

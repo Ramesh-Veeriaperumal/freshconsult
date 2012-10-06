@@ -105,7 +105,10 @@
 			button.setAttribute('id', 'freshwidget-button');
 			button.style.display = 'none';
 			button.className = "freshwidget-button " + class_name;
-			
+
+			if(Browser.Version() <= 10)
+				button.className += " ie"+Browser.Version();
+					
 			link = document.createElement('a');
 			link.setAttribute('href', 'javascript:void(0)');
 			

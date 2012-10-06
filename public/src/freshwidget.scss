@@ -28,13 +28,13 @@
 }
 .right:hover{ 
 	right:0px;
-	*right: 33px; /* IE 7 specific style */
+	*right:33px; /* IE 7 specific style */
 }
-.right{ 
-	right: 35px\0/IE8+9; /* IE 8 & 9 specific style */
+.ie8.right, .ie9.right{ 
+	right:35px; /* IE 8 & 9 specific style */
 }
-.right:hover{ 
-	right:33px\0/IE8+9; /* IE 8 & 9 specific style */
+.ie8.right:hover, .ie9.right:hover{ 
+	right:33px; /* IE 8 & 9 specific style */
 }
 
 .top{ top:-2px; }
@@ -101,6 +101,15 @@
 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
+.left a.ie10{
+	-ms-transform: rotate(-90deg);
+	-ms-transform-origin: top left;
+}
+
+.right a.ie10{
+	-ms-transform: rotate(-90deg);
+	-ms-transform-origin: bottom left;
+}
 /* Widget Form Style */ 
 
 .freshwidget-dialog{
