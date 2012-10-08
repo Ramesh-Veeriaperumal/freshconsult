@@ -1,13 +1,8 @@
-require 'rpm_contrib/instrumentation/resque'
-
 class Resque::FreshdeskBase
-  extend Resque::Plugins::NewRelicInstrumentation
-  
   def self.before_enqueue_add_account_and_user(*args)
     args[0][:current_account_id] = Account.current.id if Account.current
     args[0][:current_user_id] = User.current.id if User.current
   end
-
   def self.before_perform_set_account_and_user(*args)
     Account.reset_current_account
     User.reset_current
