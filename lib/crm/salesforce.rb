@@ -76,7 +76,7 @@ class CRM::Salesforce
 
     def salesforce_id(object)
       account = object.respond_to?(:account) ? object.account : object
-      search_query = %(FIND {#{account.full_domain}} IN NAME FIELDS RETURNING Account(id))
+      search_query = %(FIND {"#{account.full_domain}"} IN NAME FIELDS RETURNING Account(id))
       query = binding.search(:searchString => search_query)
       result = query.searchResponse.result
 
