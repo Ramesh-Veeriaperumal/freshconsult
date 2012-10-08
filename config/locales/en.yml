@@ -512,6 +512,8 @@ en:
       primary_product_support_email: Primary Product Support Email
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
+      assign_product: "Assign product"
+      product_label_msg: "Product"
     canned_responses:
       ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
@@ -1038,6 +1040,9 @@ en:
     match_any: Match Any
     add_condition: Add new condition
     delete: "Are you sure you want to delete this rule?"
+    skip_notifications: "Skip New Ticket Email Notifications"
+    skip_notification_yes: "Yes"
+    skip_notification_no: "No"
   header_logo: Header Logo
   solutions:
     status:
