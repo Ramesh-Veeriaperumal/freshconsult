@@ -1,5 +1,4 @@
-@import "base";
-@import "mixins";  
+@import "app/lib/settings";
 
 .widget-ovelay{
 	@include opacity(0.5);
