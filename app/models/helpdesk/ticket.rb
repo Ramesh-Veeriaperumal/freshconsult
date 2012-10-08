@@ -30,6 +30,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :disable_observer
   
   before_validation :populate_requester, :set_default_values
+  
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
   has_many :attachments,
@@ -37,16 +38,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
   
-  after_create :refresh_display_id, :save_custom_field, :update_content_ids, :pass_thro_biz_rules,  
-      :create_initial_activity
-  before_save :update_ticket_changes
-  after_commit_on_create :support_score_on_create, :process_quests
-  after_commit_on_update :support_score_on_update, :process_quests
+  after_create :refresh_display_id
 
   before_update :assign_email_config, :load_ticket_status, :update_dueby
-  after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-       :stop_timesheet_timers, :fire_update_event
   
+  before_save :update_ticket_changes
+
+  after_save :save_custom_field
+
+  after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
+    :support_score_on_create, :process_quests
+  
+  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
+       :stop_timesheet_timers, :fire_update_event, :support_score_on_update, :process_quests
+
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   belongs_to :email_config
@@ -522,15 +527,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def notify_on_update
     return if spam? || deleted?
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id_changed? && group)
-    if (responder_id_changed? && responder && responder != User.current)
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@ticket_changes.key?(:group_id) && group)
+    if (@ticket_changes.key?(:responder_id) && responder && responder != User.current)
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
     end
     
-    if status_changed?
+    if @ticket_changes.key?(:status)
       return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
       return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
-      #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == OPEN)
     end
   end
   
@@ -548,12 +552,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_ticket_states 
     
-    ticket_states.assigned_at=Time.zone.now if (responder_id_changed? && responder)    
-    if (responder_id_changed? && responder_id_was.nil? && responder)
+    ticket_states.assigned_at=Time.zone.now if (@ticket_changes.key?(:responder_id) && responder)    
+    if (@ticket_changes.key?(:responder_id) && @ticket_changes[:responder_id][0].nil? && responder)
       ticket_states.first_assigned_at = Time.zone.now
     end
     
-    if status_changed?
+    if @ticket_changes.key?(:status)
       if (status == OPEN)
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
@@ -590,14 +594,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_fields = FlexifieldDef.all(:include => 
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
-  end
-
-  def custom_field_aliases
-    return ff_aliases if flexifield
-    return [] unless account
-    fields_def = FlexifieldDef.first(:include => [:flexifield_def_entries], 
-      :conditions => ['account_id=? AND module=?',account_id,'Ticket'] )
-    fields_def.ff_aliases
   end
 
   def ticket_id_delimiter
@@ -753,7 +749,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def respond_to?(attribute)
     super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
-      ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
+      ticket_states.respond_to?(attribute) || 
+      ![:to_ary].include?(attribute) && custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
+      
+      # Array.flatten calls respond_to?(:to_ary) for each object. In agent ticket summary report rails calls
+      # array's flatten method on query result array object. This was added to fix that.
   end
 
   def schema_less_attributes(attribute, args)
@@ -850,7 +850,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def update_activity
-    self.changed.each do |attr|
+    @ticket_changes.each_key do |attr|
       send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
     end
   end
@@ -877,7 +877,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def stop_timesheet_timers
-    if status_changed? && (status == RESOLVED or status == CLOSED)
+    if @ticket_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
@@ -938,14 +938,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       header = self.header_info
       return if attachments.empty? or header.nil? or header[:content_ids].blank?
       
+      description_updated = false
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
         self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+        description_updated = true
       end
 
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
       Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
-          if description_html_changed?
+          if description_updated
     end
 
     def create_source_activity
@@ -1006,7 +1008,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                                    'activities.tickets.assigned_to_nobody.short')
       else
         create_activity(User.current, 
-          responder_id_was.nil? ? 'activities.tickets.assigned.long' : 'activities.tickets.reassigned.long', 
+          @ticket_changes[:responder_id][0].nil? ? 'activities.tickets.assigned.long' : 'activities.tickets.reassigned.long', 
             {'eval_args' => {'responder_path' => ['responder_path', 
               {'id' => responder.id, 'name' => responder.name}]}}, 
             'activities.tickets.assigned.short')
@@ -1039,6 +1041,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def update_ticket_changes
       @ticket_changes = self.changes.clone
+      @ticket_changes.merge!(schema_less_ticket.changes.clone)
       @ticket_changes.symbolize_keys!
     end
     

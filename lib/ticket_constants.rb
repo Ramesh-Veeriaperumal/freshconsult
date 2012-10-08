@@ -103,7 +103,7 @@ module TicketConstants
     :group_id         => "create_group_activity",
     :deleted          => "create_deleted_activity",
     :responder_id     => "create_assigned_activity",
-    :email_config_id  => "create_product_activity",
+    :product_id       => "create_product_activity",
     :ticket_type      => "create_ticket_type_activity"
   }
   

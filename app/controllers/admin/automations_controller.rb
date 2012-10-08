@@ -91,6 +91,8 @@ class Admin::AutomationsController < Admin::AdminController
 
       groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
       groups << ([0, '{{ticket.group}}'])
+
+      @products = current_account.products.collect {|p| [p.id, p.name]}
       
       action_hash     = [
         { :name => -1, :value => "--- #{t('click_select_action')} ---" },
@@ -107,6 +109,8 @@ class Admin::AutomationsController < Admin::AdminController
           :domtype => 'dropdown', :choices => agents },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
           :choices => groups },
+        { :name => "product_id", :value => t('admin.products.assign_product'), :domtype => 'dropdown', 
+          :choices => @products },
         { :name => -1, :value => "------------------------------" },
         { :name => "send_email_to_group", :value => t('send_email_to_group'), 
           :domtype => 'email_select', :choices => groups },
