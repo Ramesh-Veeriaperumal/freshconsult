@@ -248,6 +248,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
+    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
+
     set_property :field_weights => {
       :display_id   => 10,
       :subject      => 10,
@@ -588,6 +590,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_fields = FlexifieldDef.all(:include => 
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
+  end
+
+  def custom_field_aliases
+    return ff_aliases if flexifield
+    return [] unless account
+    fields_def = FlexifieldDef.first(:include => [:flexifield_def_entries], 
+      :conditions => ['account_id=? AND module=?',account_id,'Ticket'] )
+    fields_def.ff_aliases
   end
 
   def ticket_id_delimiter

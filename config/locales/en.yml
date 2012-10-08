@@ -279,7 +279,7 @@ en:
         happy_customer: Happy Customer
         unhappy_customer: Unhappy Customer
         title_levels: Agent levels
-        info_levels: "Set points to be acheived by an agent to reach a level"
+        info_levels: "Set points to be achieved by an agent to reach a level"
         title_trophies: Trophies
         new_quest: New Quest
         quest_title: Quests
@@ -318,19 +318,46 @@ en:
         enter_unhappy_text: Enter the unhappy text
     getting_started:
         send_mail_content:
+            title: "Your forwarding email:"
+            info: "A copy of all incoming mails will be forwarded to:"
+            note: "<strong>Note:</strong> For Freshdesk to convert incoming emails to tickets you must configure the forwarding email in your mail server."
+            test_info1: If you think everything is good so far, try sending a test mail
+            button_title: Send Test Mail
+            button_again_title: ...or Send test mail again
+            button_sending: Sending...
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
-            send_test_mail_info2: (Learn How)
-            send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
-            send_test_mail_link_title: sending a test email
+            send_test_mail_info2: Learn How
+            send_test_mail_info3: If you think everything is good so far, try sending a test mail. <br>%{send_test_mail_link}
+            send_test_mail_link_title: Send test email
             send_test_mail_response1: We've sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
             send_test_mail_confirm_yes: Yes, i got it.
             send_test_mail_confirm_no: No, i can't see any ticket.
             send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
             send_test_mail_response_no1: There seems to be a problem ->
             send_test_mail_response_no2: Learn how
-            send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again. If you did not receive the email in your Inbox, please wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
-        
+            send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
         index:
+            congrats: Congratulations! Your “fresh” helpdesk is ready.
+            title_msg: Just fill in a few details to get started. (optional)
+            support_email_title: Support<br> e-mail
+            agents_title: Agents
+            rebrand_title: Logo <br>&amp; colors
+            social_title: Social
+            skip_link: Skip and go to your helpdesk
+            back_link: Back
+            next_link: Next
+            next_alt_link: Go to helpdesk
+            support_email_sub_title: Tell us your support e-mail.
+            support_email_sub_msg: Your support e-mail is required for the helpdesk to function properly.
+            save: Change
+            agents_sub_title: Invite your helpdesk agents
+            agents_title_info: Invite your agents to use Freshdesk, separate each agent with a comma
+            rebrand_sub_title: Logo &amp; colors
+            rebrand_header: Your helpdesk name and logo
+            helpdesk_preview: Helpdesk preview
+            social_sub_title: Go Social
+            social_info: Take Your Help Desk to Facebook, Twitter, your communities and just about everywhere your Customers go
+            social_add_account: Add Account
             config-support-email-address: "Configure your support email address"
             save-and-next: "Save and Go to next"
             send_verification_email: Send verification email
@@ -343,15 +370,11 @@ en:
             agent_title: Feeling lonely?
             agent_sub_title: Invite your team to Freshdesk
             agent_send_invite_label: Send Invites to agents
-            agent_invite_field_placeholder: Enter your team members email
-            social_title: Go Social?
-            social_sub_title: Start supporting customers on twitter and facebook
+            agent_invite_field_placeholder: Enter your team members email            
             social_twitter: Twitter
             social_twitter_add: Add Account
             social_facebook: Facebook
-            social_facebook_add: Add a Page
-            rebrand_title: Make it your own!
-            rebrand_sub_title: Rebrand Freshdesk with your logo & colors
+            social_facebook_add: Add a Page            
             rebrand_company_label: Company Name
             rebrand_company_field_placeholder: Enter your company name
             rebrand_paint_title: Paint your helpdesk
@@ -620,19 +643,19 @@ en:
     facebook:
       updated: Facebook setting has been updated 
     application:
-      already: "Addon is already installed."
+      already: "Integration is already installed."
       uninstall:
-        success: "The Addon has been disabled successfully!"
-        error: "Error in disabling the Addon."
+        success: "The integration has been disabled successfully!"
+        error: "Error in disabling the integration."
       install:
-        success: "The Addon has been enabled successfully!"
-        error: "Error in enabling the Addon."
+        success: "The integration has been enabled successfully!"
+        error: "Error in enabling the integration."
       update:
-        success: "The Addon has been updated successfully!"
-        error: "Error in configuring the Addon."
-      not_installed: "This addon is not yet installed."
+        success: "The integration has been updated successfully!"
+        error: "Error in configuring the integration."
+      not_installed: "This integration is not yet installed."
     filter:
-      delete_success: "View has been delete successfully!"
+      delete_success: "View has been deleted successfully!"
       save_success: "View has been saved successfully!"
     twitter: 
       updated: Twitter setting has been updated
@@ -2105,15 +2128,16 @@ en:
   application:
     new: Create New Application
     desc: Integrate with other Apps to make your Freshdesk experience more awesome.
-    title: Addons & Integration
+    title: Integrations
     disabled: Disabled
     enabled: Enabled
     configure: Configure
     enable: Enable
-    click_to_disable: Click to disable Addon
-    click_to_enable: Click to enable Addon    
-    confirm_disable: "Are you sure you want to disable this Addon?"
-    configure_addon: "Click to configure this Addon"
+    click_to_disable: Disable integration
+    click_to_enable: Enable integration    
+    confirm_disable: "Are you sure you want to disable this integration?"
+    configure_addon: "Configure this integration"
+    configure_custom_addon: "Configure this widget"
   home:
       mobile_index:
         email: Email
@@ -2326,16 +2350,19 @@ en:
       name: "Name"
       description: "Description"
       script: "Script"
-      label: "Custom Addon"
+      label: "Custom Widget"
+      new: "New Custom Widget"
+      edit: "Edit Custom Widget"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helptext: "### Helptext goes here. ###"
+      helptext: "<h4>Custom Widget Help</h4><p><br/> You can develop your own custom widget using html,css and javascript.</br></br>To create the custom widget, enter the name of your new widget and a short description about it.</br>Enter your code under ‘Script’.  You can refer to our solutions page to learn more about the script.</br></br>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages."
+      small_help_text: "You can develop your own custom widget using html,css and javascript."
       form:
-        widget_title: "Addon Name"
+        widget_title: "Widget Name"
         widget_script: "Widget code snippet"
         create_n_enable: "Create and Enable"
     logmein:
       label: "LogMeIn Rescue"
-      desc: "Provide remote support to your customers using LogMeIn Rescue"
+      desc: "Provide instant remote support to your customers and employees with LogMeIn Rescue"
       helptext: "<h4>LogMeIn Rescue Integration Help</h4><p><br/> To integrate LogMeIn Rescue with Freshdesk, enter your LogMeIn Rescue CompanyID and SSO password and click on Update. <br/>Once enabled, LogMeIn Rescue widget can be found in ticket details page. <br/><br/>Use the  &quot;Launch Technician Console&quot; to launch the technician console directly from the Freshdesk Widget. <br/>Now you can generate a pincode and share the instructions with the requester to continue the support in LogMeIn Rescue. <br/><br/> <b>Note:</b> The agent's email should match LogMeIn Rescue's technician SSO ID. To set your SSO ID go to Admin Center -> Technician Name -> Organization -> SSOID"
       note:
         header: "Your LogMeIn Rescue Session details"

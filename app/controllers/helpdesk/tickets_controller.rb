@@ -372,7 +372,7 @@ class Helpdesk::TicketsController < ApplicationController
     group_id = params[:id]
     blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
     @agents = current_account.agents.all(:include =>:user)
-    @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
+    @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id , :deleted => false } } ) unless group_id.nil?
     respond_to do |format|
       format.html {
         render :partial => "agent_groups", :locals =>{ :blank_value => blank_value }
