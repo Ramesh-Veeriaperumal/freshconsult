@@ -1,6 +1,6 @@
 module Gamification
 	module Quests
-		class ProcessTicketQuests < Resque::FreshdeskBase
+		class ProcessTicketQuests < Resque::Job
 			@queue = "gamificationQueue"
 
 			def self.perform(args)
