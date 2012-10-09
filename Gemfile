@@ -45,7 +45,7 @@ gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/s
 
 # This tinymce vendor plugin is update with the tinymce verion 3.4.7
 gem "tiny_mce", "0.1.9", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/tiny_mce-0.1.9"
-gem "jammit"
+gem "jammit", "0.6.5"
 gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
