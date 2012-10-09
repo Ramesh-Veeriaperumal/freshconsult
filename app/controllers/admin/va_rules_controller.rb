@@ -76,6 +76,8 @@ class Admin::VaRulesController < Admin::AutomationsController
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
         { :name => "source", :value => t('ticket.source'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => "product_id", :value => t('admin.products.product_label_msg'),
+          :domtype => 'dropdown', :choices => @products, :operatortype => "choicelist" },
         { :name => -1, :value => "------------------------------" },
         { :name => "contact_name", :value => t('contact_name'), :domtype => "text", 
           :operatortype => "text" },
@@ -90,7 +92,10 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
     
     def additional_actions
-      {}
+      skip_notifications = [[true,t('dispatch.skip_notification_yes')],[false,t('dispatch.skip_notification_no')]]
+
+      {17 => { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
+              :domtype => 'dropdown', :choices => skip_notifications }}
     end
     
     def additional_filters

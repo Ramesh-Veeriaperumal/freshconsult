@@ -46,4 +46,8 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
     def additional_filters
       STATE_FILTERS
     end
+
+    def additional_actions
+      {}
+    end
 end

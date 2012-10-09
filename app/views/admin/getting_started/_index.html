@@ -1,0 +1,224 @@
+
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Getting Started</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+	<!-- Mobile viewport optimized-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <%= include_stylesheets :getting_started  %>
+    <%= include_javascripts :getting_started  %>	
+    
+	 <!-- Favicons -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-touch-icon-114x114.png">
+</head>
+<body>
+<%= render :partial => "shared/colorpicker" %>
+<% javascript_tag do %>
+  jQuery(document).ready(function(){
+      GettingStarted.map("next_alt_link", "<%=t('.next_alt_link')%>");
+      GettingStarted.map("next_link", "<%=t('.next_link')%>");
+		GettingStarted.map("validating", "<%=t('.validating')%>");
+		GettingStarted.map("updating", "<%=t('.updating')%>");
+		GettingStarted.map("successfully_updated", "<%=t('.successfully_updated')%>");
+		GettingStarted.map("problem_updating", "<%=t('.problem_updating')%>");
+		GettingStarted.map("email_invalid", "<%=t('.email_invalid')%>");
+		GettingStarted.map("emails_invalid", "<%=t('.emails_invalid')%>");
+		GettingStarted.map("implement_changes", "<%=t('.implement_changes')%>");
+		GettingStarted.map("email_sent_success", "<%=t('.email_sent_success')%>");
+		GettingStarted.map("email_send_problem", "<%=t('.email_send_problem')%>");
+		GettingStarted.map("sending_test_mail_progress", "<%=t('.sending_test_mail_progress')%>");
+		GettingStarted.map("agent_limit_reached", "<%=t('.agent_limit_reached')%>");
+		GettingStarted.map("rebrand_header_empty", "<%=t('.rebrand_header_empty')%>");
+		GettingStarted.map("rebrand_tab_empty", "<%=t('.rebrand_tab_empty')%>");
+		GettingStarted.map("rebrand_bg_empty", "<%=t('.rebrand_bg_empty')%>");
+		GettingStarted.map("rebrand_header_invalid", "<%=t('.rebrand_header_invalid')%>");
+		GettingStarted.map("rebrand_tab_invalid", "<%=t('.rebrand_tab_invalid')%>");
+		GettingStarted.map("rebrand_bg_invalid", "<%=t('.rebrand_bg_invalid')%>");
+		GettingStarted.map("agent_email_sending", "<%=t('.agent_email_sending')%>");
+		GettingStarted.map("agent_email_required", "<%=t('.agent_email_required')%>");
+	});	
+<% end %>
+
+	<div class="wrapper">  
+		<div class="top-pattern">
+		</div>
+
+		<!--HEADER-->
+		<div class="getting-started-header">
+			<div class="header-left">
+				<h1><%=t('.congrats')%></h1>
+				<h2><%=t('.title_msg')%></h2>
+
+				<!-- Navigation Controls-->
+				<div id="nav-controls" class="navigation">
+					<a href="javascript:void(0);" class="circle active" data-translate="0" data-translate-arrow="0" id="slide1-1"><span><%=t('.support_email_title')%></span></a>
+					<a href="javascript:void(0);" class="circle" data-translate="-960px" data-translate-arrow="108px" id="slide1-2"><span><%=t('.agents_title')%></span></a>
+					
+					<a href="javascript:void(0);" class="circle" data-translate="-1920px" data-translate-arrow="213px" id="slide1-3"><span><%=t('.rebrand_title')%></span></a>
+
+					<a href="javascript:void(0);" class="circle" data-translate="-2880px" data-translate-arrow="320px" id="slide1-4"><span><%=t('.social_title')%></span></a>
+				</div>
+
+			</div>
+			<div class="header-right">
+				<a href="javascript:goto_helpdesk();" class="skip-link"><%=t('.skip_link')%></a>
+				<div class="controls">
+					<a href="javascript:void(0);" class="simple inactive" id="back"> <span class="back"></span> <span id="back_text"><%=t('.back_link')%></span> </a>
+					<a href="javascript:void(0);" class="simple active" id="next">  <span id="next_text"><%=t('.next_link')%></span> <span class="next"></span></a>
+				</div>	
+			</div>
+ 
+		</div>
+
+		<!--Slider-->
+		<div class="slider-wrap cf">
+			<div class="indicator-wrap cf">
+				<div id="indicator-arrow"></div>
+			</div>
+
+			<div class="slider cf">
+				<div id="content">
+
+				<!--Support Email-->
+				<% remote_form_for :email_config, @email_config, :url => admin_email_config_path(@email_config), :html => { :method => :put,:id =>"email_config"} do |f| %>
+					<div class="slide">
+
+						<div class="slide-left-panel">
+								<h4><%=t('.support_email_sub_title')%></h4>
+								<div class="textbox-note"><%=t('.support_email_sub_msg')%></div>
+								<div class="email-textbox">
+									<%= f.text_field :reply_email, :class => "required textbox-radius", :id => "reply_to_id", :style => "width: 75%", :onclick => "javascript:jQuery(this).removeClass('gs_error_highlight');" %>					
+									<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
+								</div>
+								<div id="email_config_box"> 
+									<input type="submit" id="email_config_submit" value="<%=t('.save')%>" class="submit-btn textbox-radius f-right">
+								</div>
+						</div>
+
+						<div class="slide-right-panel forward-mail-wrap">							
+							<div id="send_mail_content" class="gs_request">
+								<%= render :partial => "send_mail_content" %>
+							</div>
+						</div>
+					
+					</div>
+				<%end%>	
+
+					<!--Agents-->
+					<div class="slide">
+						<% remote_form_for @agent, :url => create_multiple_items_agents_path(), :html => { :method => :put,:id =>"agent_invite" } do |f| %>
+						<div class="slide-left-panel small-slide-left-panel">
+								<h4><%=t(".agents_sub_title")%></h4>
+								<div class="textbox-note"><%=t(".agents_title_info")%></div>
+								<div class="email-textbox">
+									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"></textarea>
+									<% javascript_tag do %>											
+				              			new Autocompleter.MultiValue("agents_invite_email", function(){}, [], {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
+				            	<% end %>
+									<div id="agent_box">
+										<input type="submit" value="<%=t('.send_invite')%>" class="submit-btn textbox-radius f-right" id="agent_invite_submit">
+									</div>
+								</div>
+						</div>
+						<%end%>
+					</div> 
+
+					<!--Logo & Colors-->
+					<div class="slide">
+						<% form_for :account, @account, :url => rebrand_admin_getting_started_path(), :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
+						<% f.fields_for :main_portal do |portal| %>
+						<div class="slide-left-panel">
+								<h4><%=t('.rebrand_sub_title')%></h4>
+								<div class="rebrand-label"><%=t('.rebrand_header')%></div>
+									
+								<div class="rebrand-textbox"><%= portal.text_field :name, :placeholder => t('.rebrand_company_field_placeholder'), :class=> "textbox-radius" %></div>
+
+								<%= render :partial => "/shared/gs_logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
+
+						</div>
+
+						<div class="slide-right-panel">
+							<h4><%=t('.helpdesk_preview')%></h4>
+
+							<div class="rebrand-colors-wrap">
+								<ul>
+									<li class="colorland-header" id="HeaderColorView"  style="background-color:<%=@account.main_portal.preferences[:header_color]%>;">
+										<div class="colorpicker"><input id="HeaderColor" type="color" class="color required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>" /></div>
+										<div class="colorland">
+											<span class="uploaded-logo-wrap"><img id="logo-preview" src="<%=get_logo%>"/></span>
+											<span class="uploaded-company-name" id="test_account_name"><%=@account.main_portal.name%></span>
+										</div>
+									</li>
+
+									<li class="colorland-body" id="TabColorView" style="background-color:<%=@account.main_portal.preferences[:tab_color]%>;">
+										<div class="colorpicker"><input type="color" maxlength="7" id="TabColor" class="color required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>" /></div>
+										<div class="colorland">
+										</div>
+									</li>
+
+									<li class="colorland-footer" id="BackgroundColorView"  style="background-color:<%=@account.main_portal.preferences[:bg_color]%>;">
+										<div class="colorpicker"><input type="color" maxlength="7" id="BackgroundColor" class="color required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" /></div>
+										<div class="colorland">
+										</div>
+									</li>
+
+								</ul>
+							</div>
+							<input type="button" id="ResetColors" value="<%=t('account.info3')%>" class="submit-btn textbox-radius">
+
+						</div>
+						<%end%><%end%>
+					</div>
+
+					<!--Social-->
+					<div class="slide">
+						<div class="slide-left-panel">
+								<h4><%=t('.social_sub_title')%></h4>
+								<div class="textbox-note"><%=t('.social_info')%></div>
+								
+								<div class="social"><a href="<%=@fb_client.authorize_url%>" class="facebook simple" target="_blank"><%=t('.social_add_account')%></a></div>
+								<div class="social"><a href="<%=@auth_redirect_url%>" class="twitter simple" target="_blank"><%=t('.social_add_account')%></a></div>
+						</div>
+
+					</div>
+
+
+				</div>
+				<div class="cf"></div>
+			</div>
+			<div class="cf"></div>
+		</div>
+
+		<!--note-->
+		<div class="note">
+			<strong>Note:<strong> You can change these details anytime by going to Admin tab
+		</div>
+
+
+  <% javascript_tag do %>
+	  jQuery(document).ready(function(){
+			jQuery("#reply_to_id").bind("change keyup", function(ev){
+	         if(this.value != ''){
+	           reply_email = construct_reply_url(this.value, "<%= current_account.full_domain %>");
+	           jQuery("#div_reply_email").text(reply_email);
+	           jQuery("#hidden_reply_to").val(reply_email);
+	           jQuery("#reply_email_1").text(this.value);
+	         }
+			});
+		});
+	<%- end %> 
+
+</body>
+</html>  
