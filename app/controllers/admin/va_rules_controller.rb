@@ -76,13 +76,14 @@ class Admin::VaRulesController < Admin::AutomationsController
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
         { :name => "source", :value => t('ticket.source'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
-        { :name => "product_id", :value => t('admin.products.product_label_msg'),
-          :domtype => 'dropdown', :choices => @products, :operatortype => "choicelist" },
         { :name => -1, :value => "------------------------------" },
         { :name => "contact_name", :value => t('contact_name'), :domtype => "text", 
           :operatortype => "text" },
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
           :operatortype => "text"}]
+
+      filter_hash.insert(11, { :name => "product_id", :value => t('admin.products.product_label_msg'),:domtype => 'dropdown', 
+        :choices => @products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
                                                    
       filter_hash = filter_hash + additional_filters
       add_custom_filters filter_hash
@@ -92,10 +93,15 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
     
     def additional_actions
-      skip_notifications = [[true,t('dispatch.skip_notification_yes')],[false,t('dispatch.skip_notification_no')]]
-
-      {17 => { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
-              :domtype => 'dropdown', :choices => skip_notifications }}
+      if current_account.features?(:multi_product)
+      { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
+          :domtype => 'dropdown', :choices => @products },
+        16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
+          :domtype => 'dropdown', :choices => SKIP_NOTIFICATIONS }}
+      else
+        {16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
+          :domtype => 'dropdown', :choices => SKIP_NOTIFICATIONS }}
+      end
     end
     
     def additional_filters

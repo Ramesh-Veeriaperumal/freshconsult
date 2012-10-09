@@ -18,6 +18,6 @@ config/database.yml
 config/sphinx.yml
 config/redis.yml
 public/stylesheets/app
-public/stylesheets/app/lib
+public/stylesheets/app/lib/*
 public/stylesheets/print
 public/stylesheets/portal

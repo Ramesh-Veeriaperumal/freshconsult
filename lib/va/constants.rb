@@ -32,5 +32,9 @@ module Va
       :less_than         =>  I18n.t('less_than'),
       :greater_than      =>  I18n.t('greater_than')
     }
+
+    SKIP_NOTIFICATIONS = [[true, I18n.t('dispatch.skip_notification_yes')],
+                         [false, I18n.t('dispatch.skip_notification_no')]]
+
   end
 end
