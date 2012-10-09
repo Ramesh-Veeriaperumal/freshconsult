@@ -160,6 +160,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/prototype.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/effects.js
     - public/javascripts/controls.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js

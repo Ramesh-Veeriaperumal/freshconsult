@@ -48,6 +48,11 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
     end
 
     def additional_actions
-      {}
+      if current_account.features?(:multi_product)
+        { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
+                :domtype => 'dropdown', :choices => @products } }
+      else
+        {}
+      end
     end
 end
