@@ -219,7 +219,7 @@
 						 
 						 sendMessage = setInterval(function() {
 						 	if (iframeLoaded) {
-							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, options.url);
+							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
 							 	clearInterval(sendMessage);
 						 	}else {
 						 		console.log('waiting for iframe to load');
