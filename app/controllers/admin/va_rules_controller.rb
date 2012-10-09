@@ -96,11 +96,9 @@ class Admin::VaRulesController < Admin::AutomationsController
       if current_account.features?(:multi_product)
       { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
           :domtype => 'dropdown', :choices => @products },
-        16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
-          :domtype => 'dropdown', :choices => SKIP_NOTIFICATIONS }}
+        16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
       else
-        {16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
-          :domtype => 'dropdown', :choices => SKIP_NOTIFICATIONS }}
+        {16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
       end
     end
     
