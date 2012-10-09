@@ -16,7 +16,7 @@ var Validate = {
 	   for(var e=0;e < emailArray.length;e++)
 	   {
 		
-		var email = emailArray[e];
+		var email = Validate.extract_email(emailArray[e]);
 		
 	    if(filter.test(email)){
 	        return true;
@@ -24,8 +24,12 @@ var Validate = {
 	    else{
 	        return false;
 	    }
-	
 	   }
+	},
+	extract_email:function(email){
+	 email_match = email.match(/<(.+?)>/);
+    if(email_match!=null){email = email_match[1];}
+    return email;
 	},
 	colorCode:function(val){
 		var colorCode = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
