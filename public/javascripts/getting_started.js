@@ -152,16 +152,21 @@ jQuery(document).ready(function(){
 		loadingDiv.show();
 		var agent_emails_ele = form.find("#agent_invite");
 		var agent_emails = "";
-		var invalid_emails_exist = false;
-		jQuery.each( jQuery('input:hidden[name="agents_invite_email[]"]', '#agent_invite'), function(index,obj){
-													var agent_email = jQuery(obj).val();
-													if(!Validate.email(agent_email)){
-														jQuery(obj).closest("li").addClass("error_bubble");														
-														invalid_emails_exist = true;
-													}
-													agent_emails = (agent_emails) ? agent_emails+"," : "";
-													agent_emails += agent_email;													
-												});		
+		var invalid_emails_exist = false;		
+		
+		jQuery.each( jQuery('input:text', '#agent_invite'), function(index,obj){
+ 				if(Validate.isEmpty(obj.name)){obj.name="agents_invite_email[]";}
+		});
+
+		jQuery.each( jQuery('input:[name="agents_invite_email[]"]', '#agent_invite'), function(index,obj){
+			var agent_email = jQuery(obj).val();
+			if(!Validate.isEmpty(agent_email) && !Validate.email(agent_email)){
+				jQuery(obj).closest("li").addClass("error_bubble");														
+				invalid_emails_exist = true;
+			}
+			agent_emails = (agent_emails) ? agent_emails+"," : "";
+			agent_emails += agent_email;													
+		});		
 		
 		if(Validate.isEmpty(agent_emails)){
 							Loading.updateStatus(statusBox,"failure",GettingStarted.translate("agent_email_required"));
