@@ -748,12 +748,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
+    return false if [:to_ary].include?(attribute.to_sym)    
+    # Array.flatten calls respond_to?(:to_ary) for each object.
+    #  Rails calls array's flatten method on query result's array object. This was added to fix that.
+
     super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
-      ticket_states.respond_to?(attribute) || 
-      ![:to_ary].include?(attribute) && custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
-      
-      # Array.flatten calls respond_to?(:to_ary) for each object. In agent ticket summary report rails calls
-      # array's flatten method on query result array object. This was added to fix that.
+      ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def schema_less_attributes(attribute, args)

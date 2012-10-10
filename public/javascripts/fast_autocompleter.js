@@ -335,11 +335,13 @@ Autocompleter.MultiValue = Class.create({
   },
   
   selectEntry: function() {
-    this.active = false;
-    var element = this.getCurrentEntry();
-    this.addEntry(element.choiceId, element.textContent || element.innerText, true);
-    this.searchField.clear();
-    this.searchField.focus();
+    try{
+      this.active = false;
+      var element = this.getCurrentEntry();
+      this.addEntry(element.choiceId, element.textContent || element.innerText, true);
+      this.searchField.clear();
+      this.searchField.focus();
+    }catch(e){ }
   },
 
   addEntry: function(id, title, skip_separatorRegEx) {

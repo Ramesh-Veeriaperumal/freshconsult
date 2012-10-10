@@ -109,8 +109,6 @@ class Admin::AutomationsController < Admin::AdminController
           :domtype => 'dropdown', :choices => agents },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
           :choices => groups },
-        { :name => "product_id", :value => t('admin.products.assign_product'), :domtype => 'dropdown', 
-          :choices => @products },
         { :name => -1, :value => "------------------------------" },
         { :name => "send_email_to_group", :value => t('send_email_to_group'), 
           :domtype => 'email_select', :choices => groups },
@@ -129,7 +127,10 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def additional_actions
-      {5, {:name => "add_comment"  , :value => t('add_note')      , :domtype => 'comment'}}
+      actions = {5 => {:name => "add_comment"  , :value => t('add_note')      , :domtype => 'comment'}}
+      actions[10] = { :name => "product_id", :value => t('admin.products.assign_product'),
+          :domtype => 'dropdown', :choices => @products } if current_account.features?(:multi_product)
+      actions
     end
     
     def add_custom_actions action_hash
