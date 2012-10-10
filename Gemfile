@@ -81,7 +81,8 @@ group :development,:test do
    #gem "thoughtbot-shoulda","2.10.2"
    #gem "rspec-rails", "1.3.3"
    gem "forgery","0.5.0"
-   gem "factory_girl", "1.2.3"  
+   gem "factory_girl", "1.2.3" 
+   gem "mongrel" 
 end
 
 group :assets do

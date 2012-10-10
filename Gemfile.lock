@@ -72,6 +72,7 @@ GEM
     braintree (2.10.0)
       builder
     builder (3.0.0)
+    cgi_multipart_eof_fix (2.5.0)
     chunky_png (1.2.6)
     closure-compiler (1.1.1)
     columnize (0.3.2)
@@ -82,6 +83,7 @@ GEM
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
     crack (0.1.8)
+    daemons (1.1.8)
     delayed_job (1.8.4)
     factory_girl (1.2.3)
     faraday (0.7.6)
@@ -89,8 +91,10 @@ GEM
       multipart-post (~> 1.1)
       rack (~> 1.1)
     fastercsv (1.5.4)
+    fastthread (1.0.7)
     forgery (0.5.0)
     fssm (0.2.9)
+    gem_plugin (0.2.3)
     git (1.2.5)
     gyoku (0.4.6)
       builder (>= 2.1.2)
@@ -129,6 +133,11 @@ GEM
     mime-types (1.16)
     mocha (0.11.4)
       metaclass (~> 0.0.1)
+    mongrel (1.1.5)
+      cgi_multipart_eof_fix (>= 2.4)
+      daemons (>= 1.0.3)
+      fastthread (>= 1.0.1)
+      gem_plugin (>= 0.2.3)
     multi_json (1.1.0)
     multipart-post (1.1.2)
     mysql (2.8.1)
@@ -303,6 +312,7 @@ DEPENDENCIES
   map-fields (= 1.0.0)
   marketo!
   memcache-client (= 1.8.5)
+  mongrel
   mysql
   net-dns (= 0.6.1)
   newrelic_rpm (= 3.0.0)
