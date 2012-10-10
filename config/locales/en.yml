@@ -512,7 +512,7 @@ en:
       primary_product_support_email: Primary Product Support Email
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
-      assign_product: "Assign product"
+      assign_product: "Assign Product"
       product_label_msg: "Product"
     canned_responses:
       ca_response:
