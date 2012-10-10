@@ -10,9 +10,8 @@ Factory.define :default_category, :parent => :solution_category do |u|
 end
 
 Factory.define :folder_category, :parent => :solution_category do |u|
- u.name "Random stuff"
+  u.name "Random stuff"
 end
-
 
 
 Factory.define :folder, :class => Solution::Folder do |p|
