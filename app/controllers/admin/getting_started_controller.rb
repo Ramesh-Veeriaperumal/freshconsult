@@ -18,7 +18,7 @@ class Admin::GettingStartedController < Admin::AdminController
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
     @account = current_account    
-    render :partial => "index"
+    render :layout => false
   end
   
   def delete_logo

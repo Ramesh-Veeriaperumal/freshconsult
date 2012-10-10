@@ -1,4 +1,6 @@
 var hideDelay=10000;
+var $J = jQuery.noConflict();
+
 var GettingStarted = {
 	i18n:{},
 	translate:function(key){
@@ -9,6 +11,7 @@ var GettingStarted = {
 	}
 };
 
+			
 var Validate = {	
 	email:function(emails){
 	   var emailArray = emails.split(",");
