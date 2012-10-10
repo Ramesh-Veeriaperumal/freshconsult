@@ -333,9 +333,9 @@ DEPENDENCIES
   rake (= 0.8.7)
   redis (= 2.2.2)
   resque (= 1.22.0)
-  resque-retry
+  resque-retry (= 0.2.2)
   resque-scheduler
-  resque-status
+  resque-status (= 0.3.0)
   resque_mailer (= 1.0.1)
   rforce
   rspec (= 1.3.1)

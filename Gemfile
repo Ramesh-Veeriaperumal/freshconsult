@@ -66,8 +66,8 @@ gem "redis","2.2.2"
 gem "resque","1.22.0"
 gem 'resque-scheduler', :require => 'resque_scheduler'
 gem 'resque_mailer', "1.0.1"
-gem 'resque-status'
-gem 'resque-retry'
+gem 'resque-status', "0.3.0"
+gem 'resque-retry', "0.2.2"
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
