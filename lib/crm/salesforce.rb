@@ -1,4 +1,4 @@
-class CRM::Salesforce
+class CRM::Salesforce < Resque::Job
   
   include ErrorHandle 
 

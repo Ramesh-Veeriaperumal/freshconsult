@@ -76,17 +76,19 @@ gem 'after_commit', "~> 1.0.10"
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 
-group :development do
-   gem "rspec", "1.3.1"
-   gem "thoughtbot-shoulda","2.10.2"
-   gem "rspec-rails", "1.3.3"
+group :development,:test do
+   #gem "rspec", "1.3.1"
+   #gem "thoughtbot-shoulda","2.10.2"
+   #gem "rspec-rails", "1.3.3"
+   gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3"  
-   gem "mongrel"   
 end
 
 group :assets do
 	gem "sass", "3.1.1"
 	gem "compass-rails"
 end
+
+
 
 

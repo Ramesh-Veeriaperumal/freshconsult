@@ -21,6 +21,7 @@ class Helpdesk::TicketsExport < Resque::FreshdeskBase
                    helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
                    helpdesk_tickets.account_id = helpdesk_ticket_states.account_id))
     csv_hash = export_params[:export_fields]
+    puts "$$$$$$$$$ csv_hash : #{csv_hash.inspect}"
     headers = csv_hash.keys.sort
     csv_string = FasterCSV.generate do |csv|
       csv << headers
