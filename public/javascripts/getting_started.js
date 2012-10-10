@@ -306,6 +306,19 @@ jQuery(document).ready(function(){
 	     		}	         
 	     }
 	});
+	   
+
+jQuery(document).bind('keydown', function(e)
+	{	
+	  if(e.keyCode == 9)
+     {		     			     		
+     		if((!e.shiftKey && jQuery(e.target).data("tab-ignore")==true) || 
+     				(e.shiftKey && jQuery(e.target).data("shift-tab-ignore")==true)){     			        				
+     				e.preventDefault();
+     				return false;
+     		}
+     }
+	});
 
 	jQuery("input.send-mail[type=button]").bind("click",function(e){
 					 SendTestMail.request(e.target);
@@ -352,19 +365,19 @@ function execPendingJob()
 }
 
 function update_image(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
+   if (input.files && input.files[0]) {
+       var reader = new FileReader();
 
-                reader.onload = function (e) {
-                    jQuery("div.custom-upload").css("background-image", 'url(' + e.target.result + ')');                    
-                    jQuery("div.custom-upload").css("background-size", '50px 50px');                    
-                    jQuery("#logo-preview").attr("src",e.target.result);
-                    rebrand();
-                }
+       reader.onload = function (e) {
+           jQuery("div.custom-upload").css("background-image", 'url(' + e.target.result + ')');                    
+           jQuery("div.custom-upload").css("background-size", '50px 50px');                    
+           jQuery("#logo-preview").attr("src",e.target.result);
+           rebrand();
+       }
 
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+       reader.readAsDataURL(input.files[0]);
+   }
+}
 
 function goto_helpdesk(){
 	execPendingJob();	

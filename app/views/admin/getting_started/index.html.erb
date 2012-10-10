@@ -101,11 +101,11 @@
 								<h4><%=t('.support_email_sub_title')%></h4>
 								<div class="textbox-note"><%=t('.support_email_sub_msg')%></div>
 								<div class="email-textbox">
-									<%= f.text_field :reply_email, :class => "required textbox-radius", :id => "reply_to_id", :style => "width: 75%", :onclick => "javascript:jQuery(this).removeClass('gs_error_highlight');" %>					
+									<input type="text" name="reply_email" class ="required textbox-radius" id="reply_to_id" style="width: 75%" onclick="javascript:jQuery(this).removeClass('gs_error_highlight');" value="<%=@email_config[:reply_email]%>" data-shift-tab-ignore="true">
 									<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
 								</div>
 								<div id="email_config_box"> 
-									<input type="submit" id="email_config_submit" value="<%=t('.save')%>" class="submit-btn textbox-radius f-right">
+									<input type="submit" id="email_config_submit" value="<%=t('.save')%>" class="submit-btn textbox-radius f-right" data-tab-ignore="true">
 								</div>
 						</div>
 
@@ -125,14 +125,14 @@
 								<h4><%=t(".agents_sub_title")%></h4>
 								<div class="textbox-note"><%=t(".agents_title_info")%></div>
 								<div class="email-textbox">
-									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"></textarea>
+									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"  data-shift-tab-ignore="true"></textarea>
 									<% javascript_tag do %>
 										try{
 				              				new Autocompleter.MultiValue("agents_invite_email", function(){ }, [], {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
 				              			}catch(e){}
 				            		<% end %>
 									<div id="agent_box">
-										<input type="submit" value="<%=t('.send_invite')%>" class="submit-btn textbox-radius f-right" id="agent_invite_submit">
+										<input type="submit" value="<%=t('.send_invite')%>" class="submit-btn textbox-radius f-right" id="agent_invite_submit" data-tab-ignore="true">
 									</div>
 								</div>
 						</div>
@@ -147,7 +147,9 @@
 								<h4><%=t('.rebrand_sub_title')%></h4>
 								<div class="rebrand-label"><%=t('.rebrand_header')%></div>
 									
-								<div class="rebrand-textbox"><%= portal.text_field :name, :placeholder => t('.rebrand_company_field_placeholder'), :class=> "textbox-radius" %></div>
+								<div class="rebrand-textbox">
+									<input type="text" name="account[main_portal_attributes][name]" value="<%=@account.main_portal[:name]%>" placeholder="<%=t('.rebrand_company_field_placeholder')%>" class="textbox-radius" data-shift-tab-ignore="true">
+								</div>
 
 								<%= render :partial => "/shared/gs_logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
 
@@ -180,7 +182,7 @@
 
 								</ul>
 							</div>
-							<input type="button" id="ResetColors" value="<%=t('account.info3')%>" class="submit-btn textbox-radius">
+							<input type="button" id="ResetColors" value="<%=t('account.info3')%>" class="submit-btn textbox-radius" data-tab-ignore="true">
 
 						</div>
 						<%end%><%end%>
