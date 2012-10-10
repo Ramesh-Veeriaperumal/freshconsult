@@ -1,3 +1,9 @@
+<div class="leftFilter" id="all-views-tmpl" style="display:none">
+  <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
+
+  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view_tooltip"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
+</div>
+  
   <%= will_filter_scripts_tag %>
     <h3 class="title"><%= t("tickets_filter.title") %></h3>
     <form id="FilterOptions" action="#">
@@ -140,4 +146,6 @@
         }
       }); 
   });
+  $J('#all-views').html($J('#all-views-tmpl').html());
+  $J('#all-views-tmpl').html('');
 </script>

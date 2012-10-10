@@ -1,7 +1,7 @@
 class Agent < ActiveRecord::Base
   
   include Notifications::MessageBroker
-  include MemcacheKeys
+  include Cache::Memcache::Agent
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id' , :dependent => :destroy 
 
@@ -57,14 +57,6 @@ end
   def next_level
     return unless points?
     user.account.scoreboard_levels.next_level_for_points(points).first
-  end
-
-  def clear_leaderboard_cache! #Refactor this code!
-    memcache_delete(MEMCACHE_LEADERBOARD_MINILIST)
-  end
-
-  def clear_available_quests_cache!
-    memcache_delete(MEMCACHE_AVAILABLE_QUEST_LIST)
   end
 
 protected

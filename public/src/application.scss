@@ -6861,3 +6861,15 @@ a.mobile_switchBtn {
     padding: 5px 3px 0px 5px;
     line-height: 20px;
 }
+
+
+.load-mask {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 9;
+	img{
+		position: relative;
+		top: 300px;
+	}
+}

@@ -335,6 +335,29 @@ var $J = jQuery.noConflict();
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }
+
+
+      $(document).pjax('a[data-pjax]',"#body-container",{
+          timeout: -1
+        }).bind('pjax:beforeSend',function(evnt,xhr,settings){
+          start_time = new Date();
+          var bHeight = $('#body-container').height(),
+              clkdLI = $(evnt.relatedTarget).parent();
+          $('ul.header-tabs li.active').removeClass('active');
+          clkdLI.addClass('active');
+          $('.load-mask').height(bHeight).show();
+          $('#body-container .wrapper').css('visibility','hidden');
+          return true;
+      }).bind('pjax:end',function(){
+        $('.load-mask').hide();
+        $('#body-container .wrapper').css('visibility','visible');
+        end_time = new Date();
+        setTimeout(function() {
+          $('#benchmarkresult').html('Finnally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
+        },10);
+        return true;
+      })
+
    });
  
 })(jQuery);

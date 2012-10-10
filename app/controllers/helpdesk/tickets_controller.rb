@@ -12,16 +12,18 @@ class Helpdesk::TicketsController < ApplicationController
   include RedisKeys
   include Helpdesk::AdjacentTickets
 
+
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :check_user , :only => [:show]
     
   before_filter { |c| c.requires_permission :manage_tickets }
 
-  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
+  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
+  before_filter :set_selected_tab
 
 
   layout :choose_layout 
@@ -63,8 +65,8 @@ class Helpdesk::TicketsController < ApplicationController
 
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     cookies.delete(:ticket_list_updated) 
-
-    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+    tkt = current_account.tickets.permissible(current_user)
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
 
     if @items.empty? && !params[:page].nil? && params[:page] != '1'
       params[:page] = '1'  
@@ -73,11 +75,14 @@ class Helpdesk::TicketsController < ApplicationController
 
     respond_to do |format|      
       format.html  do
-        @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+        # @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-        @show_options = show_options
+        # @show_options = show_options
         @current_view = @ticket_filter.id || @ticket_filter.name
-        @is_default_filter = (!is_num?(@template.current_filter))
+        #@is_default_filter = (!is_num?(@template.current_filter))
+        # if request.headers['X-PJAX']
+        #   render :layout => "maincontent"
+        # end
       end
       
       format.xml do
@@ -118,7 +123,17 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
+
   
+  def filter_options
+    @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
+    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+    @show_options = show_options
+    @is_default_filter = (!is_num?(@template.current_filter))
+    @current_view = @ticket_filter.id || @ticket_filter.name
+    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter }
+  end
+
   def latest_ticket_count    
     index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)       
     ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
@@ -413,6 +428,7 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "get_ticket_agents", :locals => {:ticket_id => @item.display_id}
   end
 
+
   def quick_assign
     if allowed_quick_assign_fields.include?(params[:assign])
       unless params[:assign] == 'agent'
@@ -567,7 +583,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def choose_layout 
-      layout_name = 'application'
+      layout_name = request.headers['X-PJAX'] ? 'maincontent' : 'application'
       case action_name
         when "print"
           layout_name = 'print'
@@ -605,6 +621,7 @@ class Helpdesk::TicketsController < ApplicationController
     @ticket_notes = @ticket.conversation
     reply_to_all_emails
   end
+
   
   private
   
@@ -665,7 +682,7 @@ class Helpdesk::TicketsController < ApplicationController
     def load_cached_ticket_filters
       if custom_filter?
         @cached_filter_data = get_cached_filters
-        
+
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
@@ -747,6 +764,11 @@ class Helpdesk::TicketsController < ApplicationController
   def draft_key
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
       :ticket_id => @ticket.id}
+  end
+
+
+  def set_selected_tab
+    @selected_tab = :tickets
   end
 
 end

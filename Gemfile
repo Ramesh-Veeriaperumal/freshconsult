@@ -76,6 +76,7 @@ gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 
 gem 'memcache-client', '1.8.5'
 
+
 group :development do
    gem "rspec", "1.3.1"
    gem "thoughtbot-shoulda","2.10.2"
@@ -83,6 +84,8 @@ group :development do
    gem "factory_girl", "1.2.3"  
    gem "mongrel"
    gem "compass"
+   gem "uniform_notifier", "1.0.0"
+   gem "bullet", "4.1.6"
 end
 
 

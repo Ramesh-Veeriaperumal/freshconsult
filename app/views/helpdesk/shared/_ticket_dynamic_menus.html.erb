@@ -1,5 +1,5 @@
 <div id="ticket_statuses" class="hide">
-	<% statuses = Helpdesk::TicketStatus.status_names(current_account)
+	<% statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account)
 	statuses.each do |status|
 		%>
 		<a data-status-id="<%= status.first %>" class="action_assign_status"><%=status.second%></a>

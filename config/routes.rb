@@ -225,7 +225,8 @@
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
-                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post }, 
+                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post,
+                                    :filter_options => :get }, 
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 

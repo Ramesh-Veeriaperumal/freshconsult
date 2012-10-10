@@ -3,7 +3,7 @@ module Helpdesk::QuestsHelper
 	include MemcacheKeys
 
 	def get_memcache_key
-		memcache_local_key(MEMCACHE_AVAILABLE_QUEST_LIST)
+		MemcacheKeys.memcache_local_key(AVAILABLE_QUEST_LIST)
 	end
 
 	def load_available_quests(limit=2)

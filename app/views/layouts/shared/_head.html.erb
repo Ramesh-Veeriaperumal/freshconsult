@@ -1,4 +1,9 @@
 <head>
+	<% if @debuging%>
+	<script type="text/javascript">
+    var t_pagestart=new Date().getTime();
+  </script>
+  <%end%>
   <meta charset="utf-8">
 	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
 	     Remove this if you use the .htaccess -->
@@ -12,8 +17,31 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
-	<%= include_stylesheets :freshdesk  %>
+	<%= include_stylesheets :app  %>
+	<%= include_stylesheets :common  %>
 	<%= render :partial => "shared/theme.css"  %>	
 	<%= include_javascripts :freshdesk  %>
 	<%= yield :head %>
 </head>
+
+<%if @debuging %>
+	<style>
+		#benchmarkresult{
+			width: 25%;
+			display: inline-block;
+			position: fixed;
+			z-index: 999;
+			background: #DFDFDF;
+			bottom: 10px;
+			right: 10px;
+			border: 1px solid gainsboro;
+			padding: 10px;
+			box-shadow: 2px 2px #AAA;
+			color: #333;
+			border-radius: 5px;
+		}
+	</style>
+	<div id="benchmarkresult">
+	</div>
+<%end%>
+

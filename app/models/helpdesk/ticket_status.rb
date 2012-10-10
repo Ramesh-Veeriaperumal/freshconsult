@@ -1,6 +1,7 @@
 class Helpdesk::TicketStatus < ActiveRecord::Base
   
   include Helpdesk::Ticketfields::TicketStatus
+  include Cache::Memcache::Helpdesk::TicketStatus
   
   set_table_name "helpdesk_ticket_statuses"
 
@@ -18,6 +19,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
            :conditions => 'helpdesk_tickets.account_id = #{account_id}'
            
   after_update :update_tickets_sla_on_status_change
+
+  after_destroy :clear_onhold_closed_statuses_cache, :clear_statuses_cache
+  after_save :clear_onhold_closed_statuses_cache, :clear_statuses_cache
   
   named_scope :visible, :conditions => {:deleted => false}
 
@@ -108,14 +112,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
    (status_id == PENDING)
   end
  
- def onhold?
+  def onhold?
    Helpdesk::TicketStatus.onhold_statuses(account).include?(status_id)
- end
- 
- def onhold_and_closed?
-   Helpdesk::TicketStatus.onhold_and_closed_statuses(account).include?(status_id)
- end
-  
+  end
+
+  def onhold_and_closed?
+   Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account).include?(status_id)
+  end
+
     def update_tickets_sla
       tkt_states = tickets.visible
       tkt_states.each do |t_s|
@@ -162,4 +166,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
         end
       end
     end
+
+  class << self
+    include Cache::Memcache::Helpdesk::TicketStatus
+  end
 end

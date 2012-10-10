@@ -3,6 +3,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   serialize :field_options
 
   include Helpdesk::Ticketfields::TicketStatus
+  include Cache::Memcache::Helpdesk::TicketField
   
   set_table_name "helpdesk_ticket_fields"
   attr_protected  :account_id
@@ -249,6 +250,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       return unless @choices
       if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
         picklist_values.clear
+        clear_picklist_cache
         @choices.each do |c| 
           if c.size > 2 && c[2].is_a?(Array)
             picklist_values.build({:value => c[0], :choices => c[2]})

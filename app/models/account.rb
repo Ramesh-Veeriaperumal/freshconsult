@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
+  include Cache::Memcache::Account
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash

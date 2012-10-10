@@ -3,7 +3,7 @@ module Helpdesk::LeaderboardHelper
 	include MemcacheKeys
 
 	def get_memcache_key
-		memcache_local_key(MEMCACHE_LEADERBOARD_MINILIST)
+		MemcacheKeys.memcache_local_key(LEADERBOARD_MINILIST)
 	end
 
 	def link_to_agent user

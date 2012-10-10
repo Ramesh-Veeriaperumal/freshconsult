@@ -2,7 +2,7 @@ class Quest < ActiveRecord::Base
   include Gamification::Quests::Constants
   include Gamification::Scoreboard::Constants
   include Gamification::Quests::Badges
-  include MemcacheKeys
+  include Cache::Memcache::Quest
   
   belongs_to_account
 
@@ -123,7 +123,7 @@ class Quest < ActiveRecord::Base
           :user => user,
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
           :account => account})
-    memcache_delete(MEMCACHE_AVAILABLE_QUEST_LIST,account,user)
+    clear_quests_cache([user])
   end
 
   def revoke!(user)
@@ -134,7 +134,7 @@ class Quest < ActiveRecord::Base
           :user => user,
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
           :account => account})
-    memcache_delete(MEMCACHE_AVAILABLE_QUEST_LIST,account,user)
+    clear_quests_cache([user])
   end
 
   def time_column
@@ -150,11 +150,6 @@ class Quest < ActiveRecord::Base
 
   private
 
-    def clear_quests_cache
-      account.agents.each do |agent|
-        memcache_delete(MEMCACHE_AVAILABLE_QUEST_LIST,account,agent.user)
-      end
-    end
 
     def modify_quest_data
       [filter_data, quest_data].each {|d| symbolize_data(d)}
