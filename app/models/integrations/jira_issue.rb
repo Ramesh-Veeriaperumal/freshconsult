@@ -5,10 +5,11 @@ require 'json'
 class Integrations::JiraIssue
 
 	def initialize(username, password, installed_app, domain)
-			@jira = Jira4R::JiraTool.new(2, domain)
-			@jira.login(username, password)
-            @installed_app = installed_app unless installed_app.blank?
-            Rails.logger.debug "Initialized jira object :: " + @jira.inspect
+		@jira = Jira4R::JiraTool.new(2, domain)
+    @jira.driver.options["protocol.http.ssl_config.verify_mode"] =  nil
+		@jira.login(username, password)
+    @installed_app = installed_app unless installed_app.blank?
+    Rails.logger.debug "Initialized jira object :: " + @jira.inspect
 	end
 
 	def create(params)
