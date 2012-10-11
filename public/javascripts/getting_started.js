@@ -266,7 +266,7 @@ jQuery(document).ready(function(){
 		if(activeSlide<=SLIDE_TO_FORM.length){						
 			setTimeout(function(){
 							jQuery(SLIDE_TO_FORM[activeSlide-1]+" :input:text:first").focus();
-	     			},100);			
+	     			},200);			
 		}
 	});	
 
