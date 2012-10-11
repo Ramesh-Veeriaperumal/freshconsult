@@ -210,4 +210,3 @@ javascripts:
     - public/javascripts/requestAnimFrame.js
     - public/javascripts/notifications.js
     - public/javascripts/application.js
-    - public/javascripts/sisyphus.js
