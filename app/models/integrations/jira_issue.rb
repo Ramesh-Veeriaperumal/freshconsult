@@ -42,10 +42,10 @@ class Integrations::JiraIssue
 	end
 
 	def update(params, resData = nil)
-        customId = customFieldChecker
-        if(customId)
+    customId = customFieldChecker
+    if(customId)
 			customField = Jira4R::V2::RemoteFieldValue.new
-            customField.id = customId
+      customField.id = customId
 			customField.values = params['ticketData']
 			resData = @jira.updateIssue(params['remoteKey'], [customField])	
 			Rails.logger.debug "Received response for updating a jira issue : #{resData.inspect}"
@@ -98,6 +98,7 @@ class Integrations::JiraIssue
   				return customField.id
   			end
   		end
+      return
   	end
 
     def customFieldChecker 
