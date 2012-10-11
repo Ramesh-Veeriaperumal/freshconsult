@@ -2,7 +2,7 @@ package_assets:         on          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
-javascript_compressor:  yui    # (yui, closure)
+javascript_compressor:  uglifier    # (yui, closure)
 allow_debugging:        on
 
 stylesheets:
@@ -177,6 +177,7 @@ javascripts:
     - public/javascripts/dragdrop.js
     - public/javascripts/controls.js
     - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
@@ -209,5 +210,4 @@ javascripts:
     - public/javascripts/requestAnimFrame.js
     - public/javascripts/notifications.js
     - public/javascripts/application.js
-    - public/javascripts/jquery.pjax.js
     - public/javascripts/sisyphus.js
