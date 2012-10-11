@@ -17,7 +17,7 @@
 	<% javascript_tag do -%>
 		 function respondWithSol(select, sol_id, url){	
 			if (select == "url"){
-				insertIntoConversation(url);
+				insertSuggestions(url);
 			}
 			else if(select == "none"){
 				return true;		
@@ -27,10 +27,41 @@
 			}
 		}
 
+	function insertSuggestions(value)
+	{
+		note_area  = jQuery('#cnt-note');
+		reply_area = jQuery('#cnt-reply');
+		if(reply_area.css('display')== 'block') {
+		 	element_id = "cnt-reply-body";
+		}
+		else if (note_area.css('display') =='block'){
+			element_id = "cnt-note-body";
+		}
+		if(jQuery(element_id)){
+        	jQuery("#"+element_id).getEditor().focus();
+			restoreCaretPosition(element_id);//method in ticket show page.
+       		jQuery("#"+element_id).insertHtml(value);
+		}  
+
+	}
+
+	//Method to restore the caret position when editor loses focus.[Suggest solutions]
+	function restoreCaretPosition(element_id){
+		range = document.getSelection().getRangeAt(0);
+		var range = document.createRange();
+		focusNode = jQuery('#'+element_id).data('focus_node');
+		focusOffSet = jQuery('#'+element_id).data('focus_node_offSet');
+		if(focusNode == undefined) return;
+		range.setStart(focusNode, focusOffSet);
+		range.setEnd(focusNode, focusOffSet);
+		document.getSelection().removeAllRanges();
+		document.getSelection().addRange(range);
+	}
+
     function handleSolutionDetail(sol_id){
       jQuery.ajax({	type: 'POST',
         url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
-        success: function(data){ insertIntoConversation(data); }
+        success: function(data){ insertSuggestions(data); }
       });
       return true;
     };

@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  has_many :support_scores
+  has_many :support_scores, :dependent => :delete_all
 
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
@@ -62,6 +62,7 @@ class User < ActiveRecord::Base
   after_save :clear_agent_list_cache, :if => :agent?
   after_destroy :clear_agent_list_cache, :if => :agent?
   
+  named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
   named_scope :visible, :conditions => { :deleted => false }
@@ -246,7 +247,7 @@ class User < ActiveRecord::Base
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
 
-  has_many :achieved_quests, :dependent => :destroy
+  has_many :achieved_quests, :dependent => :delete_all
 
   has_many :quests, :through => :achieved_quests
   
@@ -441,6 +442,12 @@ class User < ActiveRecord::Base
     achieved_quest(quest).updated_at
   end
   
+  def make_customer
+    return if customer?
+    update_attribute(:user_role, USER_ROLES_KEYS_BY_TOKEN[:customer])
+    agent.destroy
+  end
+
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?

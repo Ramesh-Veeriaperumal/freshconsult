@@ -119,11 +119,13 @@ javascripts:
     - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/*.js
+    - public/javascripts/dyn_menu.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
+    - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
   timesheet:
     - public/javascripts/timesheet.js
@@ -196,6 +198,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/session.js            
     - public/javascripts/bootstrap/*.js
+    - public/javascripts/dyn_menu.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js

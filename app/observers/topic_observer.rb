@@ -12,16 +12,16 @@ class TopicObserver < ActiveRecord::Observer
 		check_for_changing_forums(topic)
 	end
 
+	def before_save(topic)
+		topic_changes(topic)
+	end
+
 	def before_destroy(topic)
 		update_post_user_counts(topic)
 	end
 
-	def after_create(topic)
-		add_resque_job(topic) if gamification_feature?(topic.account)
-	end
-
-	def after_update(topic)
-		changed_topic_attributes = topic.changed & TOPIC_UPDATE_ATTRIBUTES
+	def after_commit(topic)
+		changed_topic_attributes = @topic_changes.keys & TOPIC_UPDATE_ATTRIBUTES
 		add_resque_job(topic) if gamification_feature?(topic.account) && changed_topic_attributes.any?
 	end
 
@@ -74,6 +74,10 @@ private
 
   def update_post_user_counts(topic)
       @voices = topic.voices.to_a
+  end
+
+  def topic_changes(topic)
+  	@topic_changes = topic.changes.clone
   end
 
 end

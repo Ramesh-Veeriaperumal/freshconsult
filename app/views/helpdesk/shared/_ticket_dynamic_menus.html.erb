@@ -2,7 +2,7 @@
 	<% statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account)
 	statuses.each do |status|
 		%>
-		<a data-status-id="<%= status.first %>" class="action_assign_status"><%=status.second%></a>
+		<a data-value="<%= status.first %>" class="action_assign" data-assign-action="status" tabindex = '99'><%=status.second%></a>
 		<%
 	end
 	%>
@@ -10,11 +10,25 @@
 <div id="ticket_priorities" class="hide">
 	<% 
 	priorities = TicketConstants::PRIORITY_NAMES_BY_KEY
-	
 	priorities.each do |priority_value, priority_name|
 		%>
-		<a data-priority-id="<%= priority_value %>" class="action_assign_priority"><%=priority_name %></a>
+		<a data-value="<%= priority_value %>" class="action_assign" data-assign-action="priority" tabindex = '99'><%=priority_name %></a>
 		<%
 	end
 	%>
+</div>
+<div id="ticket_agents" class="hide">
+	<a class="action_assign"  href=""
+	   data-assign-action="agent"
+	   data-value="<%= current_user.id %>" data-text="<%= current_user.name %>"  tabindex = '99'>Myself</a>
+
+	<a class="action_assign"  href="" tabindex = '99'
+	   data-assign-action="agent"
+	   data-value="-" data-text="-" >Nobody</a>
+
+	<span class="seperator"></span>
+	<% current_account.agents_from_cache.each do |agent| %>
+		<%= link_to h(agent.user.name), "", :class => 'action_assign', :tabindex => 99, 
+			'data-value' => agent.user.id, 'data-assign-action' => 'agent' unless agent.user_id == current_user.id %>
+  	<% end %>
 </div>

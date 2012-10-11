@@ -259,7 +259,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                                       :limit => per_page, :offset => (page - 1) * per_page,
                                       :conditions => all_conditions, :joins => all_joins)
       end
-      recs = model_class.paginate(:include => [:ticket_states,:ticket_status,:responder,{ :requester => :avatar }],
+
+      select = "helpdesk_tickets.* "
+      select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
+
+      recs = model_class.paginate(:select => "#{select}",
+                                  :include => [:ticket_states, :ticket_status, :responder, {:requester => :avatar}],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
       recs.wf_filter = self
@@ -271,9 +276,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins = joins
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
+    all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins
   end
-  
+
+  def tags_join
+    " INNER JOIN `helpdesk_tag_uses` ON (`helpdesk_tickets`.`id` = `helpdesk_tag_uses`.`taggable_id` 
+                                        AND `helpdesk_tag_uses`.`taggable_type` = 'Helpdesk::Ticket') 
+      INNER JOIN `helpdesk_tags` ON (`helpdesk_tags`.`id` = `helpdesk_tag_uses`.`tag_id`)  "
+  end
+
  def monitor_ships_join
    " INNER JOIN helpdesk_subscriptions ON helpdesk_subscriptions.ticket_id = helpdesk_tickets.id  "
  end

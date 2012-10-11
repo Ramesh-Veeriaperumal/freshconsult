@@ -1,6 +1,7 @@
  <script type="text/javascript">
 	jQuery(document).ready(function(ev){
         
+        invokeRedactor('<%= "user_binfo" %>','signature');
 		<% if @agent.user.admin? %>
 			 jQuery("#user_role_admin").prop('checked', true);
 	    <% elsif @agent.user.supervisor? %>
@@ -98,11 +99,11 @@
      	<% end %>
 		
 		<li>
-			<%= label(:agent, :signature, t('agent.signature')) %>
+			<%= label(:agent, :signature_html, t('agent.signature')) %>
 			<label class="overlabel" for="user_binfo">
-				<%=t('agent.add_signature')%>
+				
 			</label>
-			<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" ) %>			
+			<%= text_area(:agent, :signature_html , :class => "text", :id => "user_binfo" ) %>			
 			<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
 		</li>
 		<% unless( @agent.user.permission?(:manage_account) ) %>

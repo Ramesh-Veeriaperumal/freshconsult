@@ -18,20 +18,17 @@
 /* Sprite sheet creation for badges and trophies */
 /*Gamification-Trophy */
 @import "trophy/*.png";
+$trophy-sprite-dimensions:true;
+$trophy-layout:smart;
 @include all-trophy-sprites;
 
 /*Gamification-Badges */
+$badges-layout:smart;
+$badges-a-layout:smart;
 @import "badges/*.png";
+@import "badges-a/*.png";
 @include all-badges-sprites;
-
-
-/*@include font-face('Silkscreen',
-  font-files(
-    'slkscr.woff', woff,
-    'slkscr.ttf', ttf,
-    'slkscr.svg', svg),
-    'slkscr.eot');
-*/
+@include all-badges-a-sprites;
 
 @font-face {
     font-family: 'Silkscreen';
@@ -41,7 +38,6 @@
          url('/fonts/slkscr.svg#Silkscreen') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
 
 /* Bullet icon */ 
@@ -102,7 +98,7 @@ ul.activityfeed, ul.summary{
 ul.summary{
 	@include border-radius(6px);    
 	background:#fafafa; 
-	@include background-with-css2-fallback(linear-gradient(white, #fafafa));
+	/* @include background-with-css2-fallback(linear-gradient(white, #fafafa)); */
 	border:1px solid #efefef; 
 	margin-bottom:10px; 
 	li{ 
@@ -178,7 +174,7 @@ ul.activityfeed li{
 		margin:0px 0px 14px 0px;
 		color:#444;
 	}  
-	 h4{
+	h4{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
@@ -3143,9 +3139,10 @@ div.addReminder{
 			font-size:14px;
 			display:block;
 			margin:2px 0px 0px 0px;
-			padding:0px 0px 0px 10px;
+			padding:0px 5px;
+			width: 245px;
 		}
-		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); }
+		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); box-shadow:none; }
 		label.overlabel{
 			margin:2px 5px 4px 10px;
 			padding:0px;
@@ -3154,6 +3151,16 @@ div.addReminder{
 		}
 	}
 } 
+
+.tab-pane {
+	div.addReminder{
+		form {
+			input.text {
+				width: 185px;
+			}
+		}
+	}	
+}
 
 
 
@@ -3554,7 +3561,7 @@ div.addReminder{
          margin-top:3px;
          margin-left:-55px;         
          @include corners(5px);
-         border:1px solid #9a9a9a;
+         border:1px solid #CCC;
          height:45px;
          img{ 
             width:45px; height:45px;
@@ -3797,6 +3804,8 @@ div.addReminder{
 		text-align:center; 
 		img{
 		   max-width:130px;
+		   width: 90px;
+		   height:90px;
 		}
 	}
 	.info-highlight{
@@ -3950,6 +3959,12 @@ div.addReminder{
 				text-decoration:none;
 			}
 		}		
+
+		&:hover {
+			div.item_actions{
+				visibility: visible;
+			}
+		}
 		div.item_information{
 			@include clearfix;
 			float:left;
@@ -4084,6 +4099,12 @@ div.addReminder{
    	   margin-left:-130px;
    	   margin-top:0px;
 	   }
+
+		/** Individual Height settings **/
+		.application-logo-custom_app {
+			height:53px;
+		}
+		
 	   .item_info{
 	      font-size:18px;
 	      font-weight:bold;
@@ -4106,6 +4127,7 @@ div.addReminder{
 }
 
 @include all-application-logo-sprites;
+
 .deactivated{
    li{
 	   background:#f8f8f8;
@@ -4164,6 +4186,7 @@ div.addReminder{
 
 	#ticket-list {
 		@include corners(5px);
+		@include text-shadow(white 1px 1px 0px);
 		@include box-shadow(0 0 8px rgba(107,107,107,0.7));
 		border: #AAA solid 1px;
 
@@ -4829,7 +4852,7 @@ a.close{
       color:#333;
       font-size:16px;
       font-weight:normal;
-      padding:8px 8px 10px 8px;
+      padding:8px 8px 10px 0;
       margin:0;
    }
    h4.title{
@@ -4854,7 +4877,7 @@ a.close{
 			display:none;
       	}
 	   	.ff_item{
-			margin:0 6px 0;
+			margin:0 6px 0 0;
 			padding:4px 2px 10px;
 		}
 	   	.item{
@@ -4902,10 +4925,6 @@ a.close{
 		display:inline-block;
 		margin:8px 0 2px;
 
-		#view_manage_links {
-			display: inline-block;
-			zoom:1;
-		}
 	.link-item.active, a.link-item:hover{
      margin:0px -5px;
      padding-left:13px;
@@ -4914,7 +4933,9 @@ a.close{
 	.link-item.active{
 	   color:#336699;
      font-weight:bold;
-     @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+
+     /* @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom); */
+
 	   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{
@@ -4949,21 +4970,23 @@ a.close{
 			}
 
 		}
+	}   
+}
+
+.leftFilter {
+
+	#save_filter, #view_manage_links {
+		visibility: hidden;
+	}
+	#view_manage_links {
+		display: inline-block;
 	}
 
-
-   .leftFilter {
-
+	&:hover{
 		#save_filter, #view_manage_links {
-			visibility: hidden;
+			visibility: visible;
 		}
-		&:hover{
-			#save_filter, #view_manage_links {
-				visibility: visible;
-			}
-		}
-   }
-   
+	}
 }
 
 .scroll_fixed_options .leftFilter {
@@ -5018,6 +5041,7 @@ a.close{
 }
 .customers-toolbar{
 	float:left;
+	width: 400px;
 	input{
 		float:left;
 		margin-top: 10px;
@@ -5057,8 +5081,6 @@ a.close{
    background:#ffffff;
    padding:5px 0;
    z-index:999999;
-   max-height: 420px;
-   overflow-y:auto;
    @include min-width(250px);
    @include opacity(0.95);
    @include corners(5px);
@@ -5082,7 +5104,10 @@ a.close{
       }
       .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
-   a:hover{
+   a.hide {
+   	display:none;
+   }
+   a:hover, a.selected{
       color:#FFF;
       background: #999;
 	  @include text-shadow(none);
@@ -5099,8 +5124,7 @@ a.close{
 #tickets-expanded {
 	.fd-ajaxmenu {
 		width: auto;
-		min-width:135px;
-		padding:3px;
+		min-width:250px;
 		margin-top: 5px;
 		right:15px;
 		@include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 1px, 8px );
@@ -5111,7 +5135,14 @@ a.close{
 
 			&:hover {
 				@include text-shadow(none);
-				color:#FFF;
+				color:#333;
+   				background:#ffffff;
+
+   				&.selected {
+					color:#FFF;
+					background: #999;
+					@include text-shadow(none);
+   				}
 			}
 
 			.ticksymbol {
@@ -5119,14 +5150,68 @@ a.close{
 			}
 		}
 
+		.contents {
+			max-height: 400px;
+			overflow-y:auto;
+			display:block;
+		}
+
+		.no_results {
+			text-align:center;
+			font-style:italic;
+		}
+		
 		&.loading {
 			background-image:url('/images/loading.gif');
 			background-repeat:no-repeat;
 			background-position: center;
 			padding:20px 10px;
 
-			a, li {
+
+			a, li, .contents {
 				display:none;
+			}
+		}
+		&.hasSearch{
+			padding: 0;
+			&.loading {
+				padding: 20px 10px;
+				.search_container {
+					display:none;
+				}
+			}
+			.search_container {
+				display:block;
+			}
+		}
+		.search_container {
+			display:none;
+			margin: 0 0;
+			padding:3px 6px 0;
+			background:#EEE;
+			overflow:hidden;
+			@include border-radius(6px 6px 0 0);
+
+		}
+		.menu_search {
+			width: 86%;
+			padding: 5px 5%;
+			margin: 5px 1% 8px;
+
+			&:focus {
+				@include shadows(#999, 0, 0, 3px);
+				border-color: #999 !important;
+			}
+		}
+
+		.menu_search {
+			&.invisible {
+				height:0px;
+				margin-top:-1px;
+				margin-bottom:-1px;
+				padding:0px;
+				border:none;
+				position:absolute;
 			}
 		}
 
@@ -5143,6 +5228,22 @@ a.close{
 			right:98px;
 		    border-width:0 6px 6px;
 		    z-index:16000;
+		}
+
+		&.hasSearch:after {
+			content:"";
+			position:absolute;
+			border-style:solid;
+			border-color:#EEE transparent;
+
+		    display:block; 
+		    width:0;
+		    top:-5px;
+			bottom:auto;
+			left:auto;
+			right:99px;
+		    border-width:0 5px 5px;
+		    z-index:16001;
 		}
 		&:after {
 			content:"";
@@ -5319,7 +5420,7 @@ a.close{
           box-shadow: 0 1px 2px rgba(0,0,0,.1);
 }
 
-#timeentry_add {
+#timeentry_add, .timeentry_edit {
 	margin-bottom: 25px;
 	padding-left: 40px;
 	padding-right: 30px;
@@ -5638,7 +5739,6 @@ a.close{
 	.ui-form {
 		background:none;
 		border:none;
-
 		div.field {
 			float:left;
 			margin:5px 0;
@@ -5702,6 +5802,150 @@ a.close{
 		}
 	}
 
+}
+
+.remote_support{
+	.session_data{
+		text-align: center;
+		.pin_submit{
+			margin-top: 15px;
+		}
+		.tech_console{
+			margin-top: 5px;
+		}	
+	}
+	.active_header{
+		font-weight: bold;
+	}
+	.active_session_pin{
+		border: 1px solid #D4D4D4;
+		text-align: center;
+		margin-top: 5px;
+		border-radius: 4px;
+		-moz-border-radius: 4px;
+		padding: 15px 10px;
+		background-color: #FDF8D8;
+
+		.pincode{
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+	}
+	.resend{
+		margin-top: 5px;		
+	}
+	
+}
+
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right top no-repeat;
+}
+
+
+.error{
+	color: #F00;
+}
+
+
+#integrations-list {
+	display:block;
+	overflow: hidden;
+	margin: 20px -20px 0;
+
+	.search {
+		position: relative;
+		right:10px;
+		top: 0px;
+	}
+	ul.table-list {
+		margin: 15px 0 0 0;
+	}
+
+	.tabs {
+		margin-bottom: 10px;
+		padding: 2px 9px 0 20px
+	}
+
+	.new_custom_app {
+		margin-right:10px;
+	}
+}
+
+#jira_sync_settings {
+	td {
+		vertical-align:middle
+	}
+
+	select {
+		margin: 0px
+	}
+}
+
+.custom_app_preview_link {
+	margin-top:8px;
+	width: 300px;
+	float: right;
+	text-align: right;
+
+	.toggle_preview {
+		background: #FFF;
+		border: solid 1px #c9c9c9;
+		@include box-shadow(#c2c2c2 0 0 2px);
+		@include corners(5px);
+		padding: 5px 10px 7px;
+		color: #333;
+		display: inline-block;
+		margin-bottom:5px;
+
+		&.active {
+			background: url(/images/integrations/custom_app_preview_title_bar.gif);
+		}
+
+		&:after {
+			content: ">";
+			font-size:1.2em;
+			font-weight:bold;
+			display:inline-block;
+			margin-left: 10px;
+		}
+	}
+
+	span {
+		color:#AAA;
+	}
+}
+
+#sample_preview {
+	background:#FFF;
+	border: solid 1px #c9c9c9;
+	@include box-shadow(#c2c2c2 0 0 6px);
+	margin: 0px 10px 10px 0px;
+	.titlebar {
+		font-weight:bold;
+		background: url(/images/integrations/custom_app_preview_title_bar.gif);
+		padding: 10px 5px 10px 15px;
+		border-bottom: solid 1px #c9c9c9;
+		font-size:13px;
+		.preview_link {
+			float:right;
+			width:60px;
+			background: url(/images/integrations/refresh_preview.png) right no-repeat;
+			padding: 10px 30px 10px 5px;
+			text-align:right;
+			color:#AAA;
+			margin-top:-10px;
+			font-weight:normal;
+		}
+	}
+
+	#preview {
+		padding:5px;
+
+		.sidepanel {
+			border: none;
+		}
+	}
 }
 
 .crm_contact_widget {
@@ -6616,9 +6860,12 @@ a.mobile_switchBtn {
 		line-height: 18px;
 	}
 	h4{
-		font-size:14px;		
+		font-size:13px;		
 		line-height:20px;
 		font-weight:bold;
+	}
+	h4.name{
+		@include ellipsis;
 	}
 	.panel-content{
 		padding-left:50px;
@@ -6630,7 +6877,7 @@ a.mobile_switchBtn {
 
 .admin-list .panel-row{ padding: 12px 0; }
 
-.panel-row.odd{
+.panel-row.odd, .lb-report .odd{
 	background-color: #f8f8f8;
 }
 
@@ -6871,5 +7118,18 @@ a.mobile_switchBtn {
 	img{
 		position: relative;
 		top: 300px;
+	}
+}
+
+.field-item{
+	display:inline;
+	float:left;
+	width:33%;
+	margin-bottom:12px; 
+	label{
+		font-size:13px;
+	} 
+	label.active{
+		font-weight:bold;
 	}
 }

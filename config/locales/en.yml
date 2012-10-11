@@ -36,6 +36,7 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  logmein_source: LogMeIn Rescue
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -54,6 +55,7 @@ en:
     mobile: Mobile
     twitter_id: Twitter Id
     full_name: Full Name
+    name: Name
     secondary: secondary
     phone_no: Phone No
     address: Address
@@ -150,7 +152,6 @@ en:
     popular: Popular
   payment_info: Payment information
   support:
-      
       shared:
         survey_form:
           survey_title: Please take a minute to rate our support
@@ -278,7 +279,7 @@ en:
         happy_customer: Happy Customer
         unhappy_customer: Unhappy Customer
         title_levels: Agent levels
-        info_levels: "Set points to be acheived by an agent to reach a level"
+        info_levels: "Set points to be achieved by an agent to reach a level"
         title_trophies: Trophies
         new_quest: New Quest
         quest_title: Quests
@@ -619,19 +620,19 @@ en:
     facebook:
       updated: Facebook setting has been updated 
     application:
-      already: "Addon is already installed."
+      already: "Integration is already installed."
       uninstall:
-        success: "The Addon has been disabled successfully!"
-        error: "Error in disabling the Addon."
+        success: "The integration has been disabled successfully!"
+        error: "Error in disabling the integration."
       install:
-        success: "The Addon has been enabled successfully!"
-        error: "Error in enabling the Addon."
-      configure:
-        success: "The Addon has been updated successfully!"
-        error: "Error in configuring the Addon."
-      not_installed: "This addon is not yet installed."
+        success: "The integration has been enabled successfully!"
+        error: "Error in enabling the integration."
+      update:
+        success: "The integration has been updated successfully!"
+        error: "Error in configuring the integration."
+      not_installed: "This integration is not yet installed."
     filter:
-      delete_success: "View has been delete successfully!"
+      delete_success: "View has been deleted successfully!"
       save_success: "View has been saved successfully!"
     twitter: 
       updated: Twitter setting has been updated
@@ -720,6 +721,7 @@ en:
     contacts: 
       create: 
         success: The contact has been created successfully.
+      cancel: cancel
       info_select: Please select at least 1 user.
     customers:
       info_select: Please select at least 1 customer.
@@ -1163,10 +1165,12 @@ en:
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
+    contact_exists: A requester with email '%{existing_email}' already exists, %{use_email} 
     signature: Signature
     info3: Are you sure you want delete
     make_admin: Make this agent an admin
     view_user: View User
+    use_email: Use this email
     restore: restore
     add_signature: Add signature
     update: Update
@@ -1235,6 +1239,7 @@ en:
     import_google_no: "No"
     import_google_yes: "Yes"
     quick_contact: Quick Contact
+    add_new_requester: Add New Requester
     tags: "Tags"
     tag_cloud: "Contact Tag Cloud"
     info3: Background information of %{nick_name}
@@ -1609,6 +1614,7 @@ en:
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
+      ca_responses : Canned Responses
       insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
@@ -2099,15 +2105,16 @@ en:
   application:
     new: Create New Application
     desc: Integrate with other Apps to make your Freshdesk experience more awesome.
-    title: Addons & Integration
+    title: Integrations
     disabled: Disabled
     enabled: Enabled
     configure: Configure
     enable: Enable
-    click_to_disable: Click to disable Addon
-    click_to_enable: Click to enable Addon    
-    confirm_disable: "Are you sure you want to disable this Addon?"
-    configure_addon: "Click to configure this Addon"
+    click_to_disable: Disable integration
+    click_to_enable: Enable integration    
+    confirm_disable: "Are you sure you want to disable this integration?"
+    configure_addon: "Configure this integration"
+    configure_custom_addon: "Configure this widget"
   home:
       mobile_index:
         email: Email
@@ -2254,9 +2261,28 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+        jira_status_sync: "For any change in JIRA issue status %{dropdown}"
+        jira_comment_sync: "For any comment added in JIRA issue %{dropdown}"
+        do_nothing: "Do nothing."
+        add_note: "Add it as a private note."
+        send_reply: "Send it as reply to customer."
+        jira_status_sync_update_field: "Update Freshdesk status field."
+        jira_status_sync_update_customer: "Send reply to customer and update status field."
+        fd_status_sync: "For any change in Freshdesk status %{dropdown}"
+        fd_comment_sync: "For any comment added in Freshdesk %{dropdown}"
+        add_jira_comment: "Add it as a comment in JIRA."
+        update_jira_status: "Update JIRA status as well."
+    jira_settings:
+      none: "Do nothing."
+      add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
+      add_public_note_in_fd: "Add a public note in Freshdesk."
+      update_status_in_fd: "Update status in Freshdesk."
+      send_reply_in_fd: "Notify customer via email"
+      add_comment_in_jira: "Add a comment in JIRA"
+      update_jira_status: "Update JIRA status"
     salesforce:
       label: "Salesforce"
-      desc: "You can view contact information from Salesforce in Freshdesk."
+      desc: "You can view contact information from Salesforce crm in Freshdesk."
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
@@ -2297,6 +2323,39 @@ en:
         account_key: "Account Key"
         account_key_info: "Request your Account Key from Workflow Max support and paste the same here."
         widget_title: "Widget Title"
+    custom_application:
+      name: "Name"
+      description: "Description"
+      script: "Script"
+      label: "Custom Widget"
+      new: "New Custom Widget"
+      edit: "Edit Custom Widget"
+      desc: "You can add a custom widget to display any detail using your own custom script."
+      helptext: "<h4>Custom Widget Help</h4><p><br/> You can develop your own custom widget using html,css and javascript.</br></br>To create the custom widget, enter the name of your new widget and a short description about it.</br>Enter your code under ‘Script’.  You can refer to our solutions page to learn more about the script.</br></br>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages."
+      small_help_text: "You can develop your own custom widget using html,css and javascript."
+      form:
+        widget_title: "Widget Name"
+        widget_script: "Widget code snippet"
+        create_n_enable: "Create and Enable"
+    logmein:
+      label: "LogMeIn Rescue"
+      desc: "Provide instant remote support to your customers and employees with LogMeIn Rescue"
+      helptext: "<h4>LogMeIn Rescue Integration Help</h4><p><br/> To integrate LogMeIn Rescue with Freshdesk, enter your LogMeIn Rescue CompanyID and SSO password and click on Update. <br/>Once enabled, LogMeIn Rescue widget can be found in ticket details page. <br/><br/>Use the  &quot;Launch Technician Console&quot; to launch the technician console directly from the Freshdesk Widget. <br/>Now you can generate a pincode and share the instructions with the requester to continue the support in LogMeIn Rescue. <br/><br/> <b>Note:</b> The agent's email should match LogMeIn Rescue's technician SSO ID. To set your SSO ID go to Admin Center -> Technician Name -> Organization -> SSOID"
+      note:
+        header: "Your LogMeIn Rescue Session details"
+        session_id: "Session ID"
+        tech_name: "Technician Name"
+        tech_email: "Technician Email"
+        platform: "End User Platform"
+        work_time: "Total Work Time(in seconds)"
+        chatlog: "Chat Log"
+        tech_notes: "Technician Notes"
+      form:
+        widget_title: "Widget Title"
+        company_id: "Company ID"
+        password: "SSO Password"
+        logmein_company_info: "To get your Company ID go to Admin Center -> Technician Group -> Global Settings -> ASP.Net C# server side example "
+        logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -2385,9 +2444,10 @@ en:
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
-  bulk_update: "Bulk Update"
+  bulk_actions: "Bulk Actions"
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
+  select: "Select ..."
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"
@@ -2439,6 +2499,7 @@ en:
   ticket_cc_email_more: "more"
   fwd_to: "Forward"
   add_cc: Add Cc
+  add_new_requester: "Add new requester"
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
   use_reply_option: "Please use Reply option for sending an email to the requester"

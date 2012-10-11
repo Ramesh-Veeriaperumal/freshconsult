@@ -38,11 +38,11 @@
 
           $("#showbadges").live('click', function(ev) {
             $("#select-badge").dialog({  modal:true, width:'600px', height:'auto', position:'top',
-            title: "Select badges to Unlock", resizable: false, draggable: false});
+            title: "Select a badge", resizable: false, draggable: false});
           });
 
           $("#select-badge .gamesettings-badges").live('click', function(ev) {
-            $("#selected-badge").removeClass();
+            $("#selected-badge").parent().show();
             var badge_class = "gamesettings-badges " + $(this).data('class');
             $("#selected-badge").html("<div class='"+badge_class+"' />");
             $("#select-badge").dialog('close');

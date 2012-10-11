@@ -21,6 +21,11 @@
 	<%= include_stylesheets :common  %>
 	<%= render :partial => "shared/theme.css"  %>	
 	<%= include_javascripts :freshdesk  %>
+<script type="text/javascript">
+	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
+	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
+</script>	
+	<%= include_javascripts :custom_widget %>
 	<%= yield :head %>
 </head>
 

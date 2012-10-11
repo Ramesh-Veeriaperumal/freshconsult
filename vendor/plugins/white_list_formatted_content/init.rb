@@ -50,6 +50,9 @@ ActiveRecord::Base.class_eval do
     end
     
     def update_content # To do :: need to use changed_body_html?
-      self.body = Helpdesk::HTMLSanitizer.plain(body_html) if body_f_html_changed?
+      if body_f_html_changed?
+        #self.body_html = auto_link(self.body_html)
+        self.body = Helpdesk::HTMLSanitizer.plain(body_html) 
+      end
     end
 end

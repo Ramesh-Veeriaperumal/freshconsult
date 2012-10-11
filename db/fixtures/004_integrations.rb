@@ -1,4 +1,4 @@
-unless Account.current
+if Integrations::Application.count == 0
   # Populate Capsule CRM
   capsule_app = Integrations::Application.seed(:name) do |s|
     s.name = 'capsule_crm'
@@ -177,6 +177,37 @@ unless Account.current
         salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}" } ;
        </script>}
     s.application_id = salesforce_app.id
+  end
+
+  #LogMeIn
+
+  logmein_app = Integrations::Application.seed(:name) do |s|
+    s.name = "logmein"
+    s.display_name = "integrations.logmein.label"
+    s.description = "integrations.logmein.desc" 
+    s.listing_order = 10
+    s.options = {
+      :keys_order => [:title, :company_id, :password], 
+      :title => { :type => :text, :required => true, :label => "integrations.logmein.form.widget_title", :default_value => "LogMeIn Rescue"},
+      :company_id => { :type => :text, :required => true, :label => "integrations.logmein.form.company_id", :info => "integrations.logmein.form.logmein_company_info" },
+      :password => { :type => :password, :label => "integrations.logmein.form.password", :info => "integrations.logmein.form.logmein_sso_pwd_info" }
+    }
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "logmein_widget"
+    s.description = "logmein.widgets.logmein_widget.description"
+    s.script = %{
+      <div class="logmein-logo"><h3 class="title">{{logmein.title}} </h3></div>
+      <div id="logmein_widget">
+        <div class="content"></div>
+        <div class="error hide"></div>
+      </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/logmein.js");
+        logmeinBundle={ticketId:"{{ticket.id}}", installed_app_id:"{{installed_app_id}}", agentId:"{{agent.id}}", accountId: "{{account_id}}", reqName:"{{requester.name}}", secret:"{{md5secret}}", pincode:"{{cache.pincode}}", pinTime:"{{cache.pintime}}", ssoId:"{{agent.email}}", companyId:"{{logmein.company_id}}", authcode:"{{logmein.authcode}}"} ;
+      </script>}
+    s.application_id = logmein_app.id
   end
 
 

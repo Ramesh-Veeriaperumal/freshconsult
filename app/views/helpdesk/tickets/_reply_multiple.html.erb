@@ -1,0 +1,72 @@
+<div id="<%=cntid%>">
+<% form_for :helpdesk_note,   :html => {  :multipart => true, :id =>"replymultiple"} do |f|%>
+    
+    <ul class="ui-form dont-validate">
+        <div class="request_form_options">
+            <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", :onclick=>"show_canned_response()", :class => "slim-button insert-canned-response-reply-multiple", :id=>"canned_response_button")  %>
+            <div class="canned-response-menu hide" id="canned_response_container"> 
+              <div> 
+                 <h1><strong><%=t(:'ticket.canned_responses.ca_responses')%></strong></h1>
+              </div> 
+              <div id="canned_response_list"></div>
+            </div>
+        </div>
+              
+        <li class="inline-field">
+            <%= f.text_area :body_html, :class => "required", :value=>"", :id => "#{id}-#{cntid}-body" %>
+            <%= f.hidden_field :private, :value=> 0 %>
+            <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>
+            <%= f.hidden_field :source, :value=> Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
+            <div class="attachment-options" id="attachment-options-reply-multiple">
+                <% unless local_assigns[:no_attachments] %>
+                <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id =>id, :nsc_param => "helpdesk_note" } %>
+                <% end %>                
+            </div>
+        </li>
+    </ul>
+<% end %>
+</div>
+
+ <!--<%= tiny_mce_init Helpdesk::SMALL_EDITOR %>-->
+
+<% javascript_tag do %>
+
+    invokeRedactor('<%= "#{id}-#{cntid}-body" %>');
+    
+    jQuery('#ticket_cancel_multiple_button').click(
+    function(){
+        active_dialog.dialog('close');
+    }); 
+
+    function show_canned_response(){
+      var user_id=jQuery('#user_id').val();
+      jQuery("#canned_response_container")
+        .show().addClass("loading");
+      jQuery("#canned_response_list")
+        .load("/helpdesk/canned_responses/index/"+user_id, function(){
+                                jQuery("#canned_response_container")
+            .removeClass("loading");
+        })
+        .show();        
+    }
+
+    function getCannedResponse(ca_resp_id){
+      jQuery("#canned_response_container").addClass("loading")
+        jQuery.ajax({   type: 'POST',
+                        url: '/helpdesk/canned_responses/show/?ca_resp_id='+ca_resp_id,
+                        contentType: 'application/text',
+                        async: false,
+                        success: function(data){     
+                                    var msg_body_id =  "reply-multiple-cnt-reply-multiple"
+                                    jQuery("#"+msg_body_id+"-body").getEditor().focus();
+                                    if(!jQuery.browser.opera)
+                                        jQuery("#"+msg_body_id+"-body").insertHtml(data);
+                                    jQuery("#canned_response_list")
+                                            .removeClass("loading")
+                                            .hide(300);
+                                    }
+                    });
+        return true;
+    } 
+
+<% end %>

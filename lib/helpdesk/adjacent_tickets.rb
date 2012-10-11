@@ -71,7 +71,6 @@ module Helpdesk::AdjacentTickets
 			filter_params = criteria
 			if filter_params
 				return NO_ADJACENT_TICKET_FLAG if direction == :prev and (filter_params[:page].blank? or filter_params[:page] == 1)
-				filter_params = handle_tags(filter_params)
 				filter_params[:page] = new_page(filter_params,direction)
 				filter_params[:without_pagination] = true
 				filter_params[:select_fields] = "helpdesk_tickets.id, helpdesk_tickets.display_id"
@@ -95,8 +94,8 @@ module Helpdesk::AdjacentTickets
 				filter_params = get_key(cached_filters_key)
 				if filter_params
 					filter_params = JSON.parse(filter_params) 
-					filter_params[:data_hash] = JSON.parse(filter_params["data_hash"])
-					filter_params.symbolize_keys!      
+					filter_params["data_hash"] = JSON.parse(filter_params["data_hash"])
+					filter_params.symbolize_keys!
 
 					@ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
 					@ticket_filter = @ticket_filter.deserialize_from_params(filter_params)
@@ -108,7 +107,7 @@ module Helpdesk::AdjacentTickets
 						#If this is a number, if so consider as custom view
 						unless cookies[:filter_name].to_i.to_s != cookies[:filter_name]	
 							@ticket_filter = current_account.ticket_filters.find_by_id(cookies[:filter_name])
-							unless @ticket_filter.blank?
+							unless @ticket_filter.nil?
 								@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
 								filter_params.merge!(@ticket_filter.attributes["data"])
 							end
@@ -117,24 +116,6 @@ module Helpdesk::AdjacentTickets
 				end
 				filter_params
 			end
-		end
-
-		def handle_tags(filter_params)
-			return filter_params if filter_params[:data_hash].nil? 
-
-			action_hash = filter_params[:data_hash] || {}
-
-	    action_hash.each_with_index do |filter, index|
-	      next if filter["value"].nil? || !filter["condition"].eql?("helpdesk_tags.name")
-	      value = current_account.tickets.permissible(current_user).with_tag_names(filter["value"].split(",")).join(",")
-	      action_hash[index]={ "condition" => "helpdesk_tickets.id", "operator" => "is_in", "value" => value }
-	      break
-	    end
-
-	    filter_params[:data_hash] = action_hash
-
-	    filter_params
-	    
 		end
 
 		def new_page(filter_params, direction)
