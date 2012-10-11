@@ -1,4 +1,5 @@
-<% cache ("#{get_memcache_key}", :expires_in => 1.hour) do %>
+
+<% cache("#{get_memcache_key}", :expires_in => 1.hour) do %>
 
 	<% unless load_available_quests.empty? %>
 		<div id="quests-section">

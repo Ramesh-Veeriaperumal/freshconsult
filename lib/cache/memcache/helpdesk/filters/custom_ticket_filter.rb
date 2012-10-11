@@ -3,7 +3,7 @@ module Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   include MemcacheKeys
 
   def clear_cache
-    key = Helpdesk::Filters::CustomTicketFilter.user_filters_memcache_key
+    key = user_filters_memcache_key
     MemcacheKeys.delete_from_cache(key)
   end
 

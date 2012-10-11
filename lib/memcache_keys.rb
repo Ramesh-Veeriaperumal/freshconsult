@@ -69,7 +69,7 @@ module MemcacheKeys
 			cache_data = get_from_cache(key)
 			unless cache_data
 				Rails.logger.debug "Cache hit missed :::::: #{key}"
-				cache_data = block.call
+				#cache_data = block.call
 				#MemcacheKeys.cache(key, cache_data)
 				cache(key, (cache_data = block.call))
 			end

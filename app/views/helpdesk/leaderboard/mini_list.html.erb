@@ -1,4 +1,4 @@
-<% cache ("#{get_memcache_key}", :expires_in => 1.hour) do %>
+<% cache("#{get_memcache_key}", :expires_in => 1.hour) do %>
 
 	<%= link_to "See all", agents_helpdesk_leaderboard_path(), :class => "action-right" %>
 	<h3 class="title"><%= t('reports.scoreboard_title_nav')%></h3>  	
