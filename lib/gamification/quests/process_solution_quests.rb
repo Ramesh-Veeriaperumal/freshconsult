@@ -7,7 +7,7 @@ module Gamification
 				args.symbolize_keys!
 				id, account_id = args[:id], args[:account_id]
 				article = Solution::Article.find_by_id_and_account_id(id, account_id)
-				evaluate_solution_quests(article)
+				evaluate_solution_quests(article) unless article.blank?
 			end
 
 			def self.evaluate_solution_quests(article)

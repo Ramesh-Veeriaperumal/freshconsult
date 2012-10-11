@@ -7,7 +7,7 @@ module Gamification
 				args.symbolize_keys!
 				id, account_id = args[:id], args[:account_id]
 				post = Post.find_by_id_and_account_id(id, account_id)
-				evaluate_post_quests(post)
+				evaluate_post_quests(post) unless post.blank?
 			end
 
 			def self.evaluate_post_quests(post)

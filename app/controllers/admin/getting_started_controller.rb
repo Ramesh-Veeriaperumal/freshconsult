@@ -1,6 +1,8 @@
 class Admin::GettingStartedController < Admin::AdminController
   
   before_filter :build_twitter_item, :twitter_wrapper, :build_fb_item, :fb_client
+
+  helper Admin::GettingStartedHelper
   
   def index
     request_token = @wrapper.request_tokens   
@@ -15,12 +17,17 @@ class Admin::GettingStartedController < Admin::AdminController
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
-    @account = current_account
+    @account = current_account    
+    render :partial => "index"
   end
   
   def delete_logo
   	 current_account.main_portal.logo.destroy
  	   render :text => "success"
+  end
+
+  def rebrand
+    current_portal.update_attributes(params[:account][:main_portal_attributes])
   end
     
   protected

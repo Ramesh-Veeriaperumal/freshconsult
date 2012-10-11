@@ -260,7 +260,7 @@ Freshdesk.CRMWidget.prototype={
 		Freshdesk.CRMWidget.addMethods(Freshdesk.Widget.prototype); // Extend the Freshdesk.Widget
 		if(widgetOptions.domain) {
 			if(widgetOptions.reqEmail == ""){
-				this.alert_failure('Email not available for this requester. Please make sure a valid Email is set for this requester.');
+				this.handleInitFailure(widgetOptions, 'Email not available for this requester. Please make sure a valid Email is set for this requester.');
 			} else {
 				widgetOptions.integratable_impl = integratable_impl;
 				cnt_req = integratable_impl.get_contact_request();
@@ -272,8 +272,13 @@ Freshdesk.CRMWidget.prototype={
 				this.initialize(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
 			}
 		} else {
-			this.alert_failure('Domain name not configured. Try reinstalling '+this.options.app_name);
+			this.handleInitFailure(widgetOptions, 'Domain name not configured. Try reinstalling '+this.options.app_name);
 		}
+	},
+
+	handleInitFailure: function(widgetOptions, message){
+		this.initialize(widgetOptions);
+		this.alert_failure(message);
 	},
 
 	handleFailure:function(response) {
