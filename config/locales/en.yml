@@ -526,18 +526,17 @@ en:
     home:
       index: 
         group: Groups
-        day_pass: Day Pass Settings
+        day_pass: Day Passes
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
-        survey-settings: Customer Satisfaction Settings
-        gamification-settings: Arcade Settings
+        survey-settings: Customer Satisfaction
+        gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
-        account-settings: Account Settings
+        account-settings: Account
         customer-portal: Customer Portal
         canned-response: Canned Response
-        multi-product: Multi-Product Settings
-        everything_else: Everything else
+        multi-product: Multi-Product
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
@@ -548,15 +547,22 @@ en:
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
-        email-settings: Email Settings
-        everything_helpdesk: Everything Helpdesk
+        email-settings: Email Setup
+        everything: Everything
+        helpdesk: Helpdesk
+        else: else
+        settings: Settings
+        productivity: Productivity
+        portal: Portal
+        account: Account
+        customer: Customer
         canned-response: Canned Response
         multi-product: Multiple Products
-        twitter-setting: Twitter Settings
+        twitter-setting: Twitter
         survey: Survey Settings
-        facebook-setting: Facebook Settings
+        facebook-setting: Facebook
         security: Security
-        email_commands_setting: "Email Command Settings"
+        email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
       
     canned_responses:
