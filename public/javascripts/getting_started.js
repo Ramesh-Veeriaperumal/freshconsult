@@ -260,8 +260,15 @@ jQuery(document).ready(function(){
 			jQuery("a#back").addClass("inactive");
 		}
 		if(activeSlide==4){	jQuery("#next_text").text(GettingStarted.translate("next_alt_link")); }
-		else{jQuery("#next_text").text(GettingStarted.translate("next_link"));}		
-	});
+		else{jQuery("#next_text").text(GettingStarted.translate("next_link"));}
+
+		var SLIDE_TO_FORM = ["#email_config","#agent_invite","#rebrand"];
+		if(activeSlide<=SLIDE_TO_FORM.length){						
+			setTimeout(function(){
+							jQuery(SLIDE_TO_FORM[activeSlide-1]+" :input:text:first").focus();
+	     			},100);			
+		}
+	});	
 
 	jQuery("#next").click(function(ev) {
 		ev.preventDefault();		
@@ -327,6 +334,8 @@ jQuery(document).bind('keydown', function(e)
 	jQuery("input.change-logo-but[type=button]").bind("click",function(e){
 					 jQuery("input#account_main_portal_attributes_logo_attributes_content[type=file]").click();
 	});
+
+	jQuery("#slide1-"+activeSlide).trigger("click");
 
 });
 

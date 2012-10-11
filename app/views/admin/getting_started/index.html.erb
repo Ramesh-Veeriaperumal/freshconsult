@@ -126,11 +126,6 @@
 								<div class="textbox-note"><%=t(".agents_title_info")%></div>
 								<div class="email-textbox">
 									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"  data-shift-tab-ignore="true"></textarea>
-									<% javascript_tag do %>
-										try{
-				              				new Autocompleter.MultiValue("agents_invite_email", function(){ }, [], {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
-				              			}catch(e){}
-				            		<% end %>
 									<div id="agent_box">
 										<input type="submit" value="<%=t('.send_invite')%>" class="submit-btn textbox-radius f-right" id="agent_invite_submit" data-tab-ignore="true">
 									</div>
@@ -223,6 +218,12 @@
 	           jQuery("#reply_email_1").text(this.value);
 	         }
 			});
+
+			try{
+				      new Autocompleter.MultiValue("agents_invite_email", function(){ }, [], {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
+				}catch(e){}
+
+
 		});
 	<%- end %> 
 
