@@ -17,8 +17,8 @@ class Customer < ActiveRecord::Base
   
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
 
-  after_create :clear_cache
-  after_destroy :clear_cache
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
   
   #Sphinx configuration starts
   define_index do

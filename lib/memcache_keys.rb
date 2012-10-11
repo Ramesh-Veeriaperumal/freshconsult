@@ -1,5 +1,5 @@
 module MemcacheKeys
-	
+  
   LEADERBOARD_MINILIST = "HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
 
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
@@ -21,60 +21,52 @@ module MemcacheKeys
   ACCOUNT_STATUSES = "v1/ACCOUNT_STATUSES:%{account_id}"
 
   class << self
-		def memcache_local_key(key, account=Account.current, user=User.current)
-			key % {:account_id => account.id, :agent_type => agent_type(user) , :user_id => user.id}
-		end
 
-		def memcache_view_key(key, account=Account.current, user=User.current)
-			"views/#{memcache_local_key(key, account, user)}"
-		end
+    def newrelic_begin_rescue(&block)
+      begin
+        block.call
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end 
+    end
 
-		def memcache_delete(key, account=Account.current, user=User.current)
-			begin	
-				$memcache.delete(memcache_view_key(key, account, user))
-			rescue Exception => e
-				NewRelic::Agent.notice_error(e)
-			end	
-		end
+    def agent_type(user) #pass user as argument
+      user.can_view_all_tickets? ? "UNRESTRICTED" :  "RESTRICTED"
+    end
 
-		def agent_type(user) #pass user as argument
-			user.can_view_all_tickets? ? "UNRESTRICTED" :  "RESTRICTED"
-		end
+    def memcache_local_key(key, account=Account.current, user=User.current)
+      key % {:account_id => account.id, :agent_type => agent_type(user) , :user_id => user.id}
+    end
 
-		def get_from_cache(key)
-			begin
-				$memcache.get(key)
-			rescue Exception => e
-				NewRelic::Agent.notice_error(e)
-			end
-		end
+    def memcache_view_key(key, account=Account.current, user=User.current)
+      "views/#{memcache_local_key(key, account, user)}"
+    end
 
-		def cache(key,value)
-			begin
-				$memcache.set(key, value)
-			rescue Exception => e
-				NewRelic::Agent.notice_error(e)
-			end
-		end
+    def memcache_delete(key, account=Account.current, user=User.current)
+      newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) } 
+    end
 
-		def delete_from_cache(key)
-			begin
-				$memcache.delete(key)
-			rescue Exception => e
-				NewRelic::Agent.notice_error(e)
-			end
-		end
+    def get_from_cache(key)
+      newrelic_begin_rescue { $memcache.get(key) }
+    end
 
-		def fetch(key, &block)
-			cache_data = get_from_cache(key)
-			unless cache_data
-				Rails.logger.debug "Cache hit missed :::::: #{key}"
-				#cache_data = block.call
-				#MemcacheKeys.cache(key, cache_data)
-				cache(key, (cache_data = block.call))
-			end
+    def cache(key,value)
+      newrelic_begin_rescue { $memcache.set(key, value) }
+    end
 
-			cache_data
-		end
-	end
+    def delete_from_cache(key)
+      newrelic_begin_rescue { $memcache.delete(key) }
+    end
+
+    def fetch(key, &block)
+      cache_data = get_from_cache(key)
+      unless cache_data
+        Rails.logger.debug "Cache hit missed :::::: #{key}"
+        cache(key, (cache_data = block.call))
+      end
+
+      cache_data
+    end
+  end
+  
 end

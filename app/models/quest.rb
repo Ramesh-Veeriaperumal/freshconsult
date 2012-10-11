@@ -21,8 +21,9 @@ class Quest < ActiveRecord::Base
 
   before_save :modify_quest_data, :denormalize_filter_data
 
-  after_save :clear_quests_cache
-  after_destroy :clear_quests_cache
+  after_commit_on_create :clear_quests_cache
+  after_commit_on_update :clear_quests_cache
+  after_commit_on_destroy :clear_quests_cache
 
   named_scope :available, lambda{|user| {
     :conditions => [%(quests.id not in (select quest_id from achieved_quests 

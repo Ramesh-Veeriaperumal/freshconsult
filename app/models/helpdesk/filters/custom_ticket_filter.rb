@@ -43,8 +43,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   after_create :create_accesible
   after_update :save_accessible
 
-  after_create :clear_cache
-  after_destroy :clear_cache
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
    
   def create_accesible     
     self.accessible = Admin::UserAccess.new( {:account_id => account_id }.merge(self.visibility)  )

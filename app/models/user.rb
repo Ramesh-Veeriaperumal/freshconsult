@@ -59,8 +59,9 @@ class User < ActiveRecord::Base
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
 
-  after_save :clear_agent_list_cache, :if => :agent?
-  after_destroy :clear_agent_list_cache, :if => :agent?
+  after_commit_on_create :clear_agent_list_cache, :if => :agent?
+  after_commit_on_update :clear_agent_list_cache, :if => :agent?
+  after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   
   named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
