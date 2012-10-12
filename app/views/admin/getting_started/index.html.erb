@@ -100,7 +100,7 @@
 								<h4><%=t('.support_email_sub_title')%></h4>
 								<div class="textbox-note"><%=t('.support_email_sub_msg')%></div>
 								<div class="email-textbox">
-									<input type="text" name="reply_email" class ="required textbox-radius" id="reply_to_id" style="width: 75%" onclick="javascript:jQuery(this).removeClass('gs_error_highlight');" value="<%=@email_config[:reply_email]%>" data-shift-tab-ignore="true">
+									<input type="text" name="email_config[reply_email]" class ="required textbox-radius" id="reply_to_id" style="width: 75%" onclick="javascript:jQuery(this).removeClass('gs_error_highlight');" value="<%=@email_config[:reply_email]%>" data-shift-tab-ignore="true">
 									<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
 								</div>
 								<div id="email_config_box"> 
@@ -108,7 +108,7 @@
 								</div>
 						</div>
 
-						<div class="slide-right-panel forward-mail-wrap">							
+						<div class="slide-right-panel forward-mail-wrap">					
 							<div id="send_mail_content" class="gs_request">
 								<%= render :partial => "send_mail_content" %>
 							</div>
