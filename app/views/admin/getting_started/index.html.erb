@@ -25,8 +25,7 @@
 </head>
 <body>
 <%= render :partial => "shared/colorpicker" %>
-<% javascript_tag do %>
-  var $J = jQuery.noConflict();
+<% javascript_tag do %>  
   jQuery(document).ready(function(){
       GettingStarted.map("next_alt_link", "<%=t('.next_alt_link')%>");
       GettingStarted.map("next_link", "<%=t('.next_link')%>");
@@ -125,6 +124,25 @@
 								<div class="textbox-note"><%=t(".agents_title_info")%></div>
 								<div class="email-textbox">
 									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"  data-shift-tab-ignore="true"></textarea>
+									<% javascript_tag do %>
+											
+											 function agent_lookup(searchString, callback) { 
+                    							new Ajax.Request('<%= agent_autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                                              onSuccess: function(response) {
+                                                                var choices = $A();
+                                                                response.responseJSON.results.each(function(item){
+                                                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+                                                                });                                                
+                                                                callback(choices);
+                                                              } });
+                                                            }
+				                  var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {choices: 10});
+				                  var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
+                					 
+							   		new Autocompleter.MultiValue("agents_invite_email",  agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
+												
+									<%-end%>
 									<div id="agent_box">
 										<input type="submit" value="<%=t('.send_invite')%>" class="submit-btn textbox-radius f-right" id="agent_invite_submit" data-tab-ignore="true">
 									</div>
@@ -221,11 +239,7 @@
 	           jQuery("#hidden_reply_to").val(reply_email);
 	           jQuery("#reply_email_1").text(this.value);
 	         }
-			});
-
-			try{
-				      new Autocompleter.MultiValue("agents_invite_email", function(){ }, [], {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
-				}catch(e){}
+			});			
 
 		   /* PIE */
         if (window.PIE && (jQuery('html').hasClass('ie7') || jQuery('html').hasClass('ie8'))) {
