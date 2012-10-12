@@ -113,6 +113,8 @@ var Loading ={
 	}
   }
 
+var activeSlide = 1;
+
 jQuery(document).ready(function(){
 	jQuery("#ResetColors").click(function(){
 		jQuery("#HeaderColor").val("#252525").trigger("keyup");
@@ -244,8 +246,6 @@ jQuery(document).ready(function(){
 	  jQuery("#nav-controls [href="+window.location.hash+"]").trigger("click");
 	});
 
-	var activeSlide = 1; 
-
 	jQuery("#slide1-1, #slide1-2, #slide1-3, #slide1-4").click(function(ev) {
 		jQuery(this).siblings().removeClass("active");
 		jQuery(this).addClass("active");
@@ -285,15 +285,7 @@ jQuery(document).ready(function(){
 
 	jQuery('.colorpicker input[type=text]').change(function(ev) {
 		jQuery("#"+jQuery(this).attr("id")+"View").css("background-color",jQuery(this).val());
-	});	
-
-	jQuery('form#rebrand').change(function(ev){
-			IS_REBRAND_CHANGED = true;
-			trigger_rebrand();
-
-	})	
-
-	jQuery("form#rebrand").ajaxForm();	
+	});
 
 	jQuery("form#agent_invite").bind('keydown', function(e)
 	{		
@@ -333,9 +325,28 @@ jQuery(document).bind('keydown', function(e)
 
 	jQuery("input.change-logo-but[type=button]").bind("click",function(e){
 					 jQuery("input#account_main_portal_attributes_logo_attributes_content[type=file]").click();
-	});
+	});	
 
-	jQuery("#slide1-"+activeSlide).trigger("click");
+	if(jQuery.browser.msie){ 
+		jQuery("#rebrand_submit").css("visibility","visible"); 
+		jQuery("#rebrand_from_ie").val("true");		
+	}
+	else{
+		jQuery("#rebrand_from_ie").val("false");
+		jQuery("form#rebrand").ajaxForm({
+			success: function(data){
+				var content = data.match(/<pre>(.+?)<\/pre>/);
+	    		if(content!=null){
+	    			content = jQuery.parseJSON(content[1]);
+	    			if(content!=null){update_logo(content["logo"]);}
+				}
+			}
+	  });
+		jQuery('form#rebrand').change(function(ev){
+			IS_REBRAND_CHANGED = true;
+			trigger_rebrand();
+		});
+	}
 
 });
 
@@ -362,7 +373,7 @@ function rebrand(){
 		REBRAND_TIMEOUT = null;
 	}
 	IS_REBRAND_CHANGED = false;
-	IS_REBRAND_TIMEOUT_ALIVE = false;	
+	IS_REBRAND_TIMEOUT_ALIVE = false;
 }
 
 function execPendingJob()
@@ -386,6 +397,12 @@ function update_image(input) {
 
        reader.readAsDataURL(input.files[0]);
    }
+}
+
+function update_logo(url){
+	jQuery("div.custom-upload").css("background-image", 'url(' + url + ')');
+   jQuery("div.custom-upload").css("background-size", '50px 50px');
+   jQuery("#logo-preview").attr("src",url);
 }
 
 function goto_helpdesk(){
