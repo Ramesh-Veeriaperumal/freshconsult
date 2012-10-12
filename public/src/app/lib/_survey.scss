@@ -1,0 +1,210 @@
+.survey-form{
+        width: 98%;
+        margin: 5px 0;
+        padding: 0px 0px 10px 0px;
+        min-height: 50px;
+        background: #f1f1f1;
+        clear: both;
+        border: 4px #d5d5d5 solid;
+        -webkit-box-shadow: inset 0px 0px 5px #dfdfdf;
+           -moz-box-shadow: inset 0px 0px 5px #dfdfdf;
+            -ms-box-shadow: inset 0px 0px 5px #dfdfdf;
+                box-shadow: inset 0px 0px 5px #dfdfdf;
+    }
+
+    .clear{
+        clear: both;
+    }
+
+    .survey-form-left{
+        width: 260px;
+        float: left;
+    }
+    .survey-form-left h3{
+        font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #000;
+        padding: 19px 0px 10px 10px;
+        min-height: 30px;
+    }
+
+    .survey-form-right{
+        width: 530px;
+        float: left;
+    }
+
+    ul.survey-options{
+        width: 100%;
+        display: block;
+    }
+
+    ul.survey-options li{
+        float: left;
+        padding: 8px 0px 0px 0px;
+    }
+
+     .survey-form-close {
+    	ul.survey-options li a:hover, ul.survey-options li.active a{
+        		background-color: transparent;
+        		border: 0;
+        		height:30px;
+        		-webkit-box-shadow: inset 0px 0px 0px #ccc;
+            	-moz-box-shadow: inset 0px 0px 0px #ccc;
+              	-ms-box-shadow: inset 0px 0px 0px #ccc;
+                     	box-shadow: inset 0px 0px 0px #ccc;        
+    	}
+    }
+
+
+    ul.survey-options li a{
+        display: inline-block;
+        color: #333;
+        height: 30px;
+        padding: 10px 20px 0px 41px;
+        background-color: #f4f4f4;
+        border: 1px #e8e8e8 solid;
+        margin-right: 5px;
+        font-size: 14px;
+        background-repeat: no-repeat; 
+        background-position: 11px 8px;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+                border-radius: 3px;
+    }
+
+   	
+
+    ul.survey-options li a:hover{
+        background-color: #f9f9f9;
+    }    
+
+    ul.survey-options li.active a{
+        background-color: #a5a5a5;
+        color: #fff;
+        height: 30px;
+        border: 1px #a5a5a5 solid;
+        -webkit-box-shadow: inset 1px 1px 3px #7c7c7c;
+            -moz-box-shadow: inset 1px 1px 3px #7c7c7c;
+              -ms-box-shadow: inset 1px 1px 3px #7c7c7c;
+                     box-shadow: inset 1px 1px 3px #7c7c7c;
+        -webkit-border-radius: 3px ;
+           -moz-border-radius: 3px ;
+             -ms-border-radius: 3px ;
+                    border-radius: 3px ;
+    }
+
+    ul.survey-options li a.happy{
+        background-image: url(/images/portal/smiley-good.png);
+    }
+
+    ul.survey-options li a.neutral{
+        background-image: url(/images/portal/smiley-neutral.png);
+    }
+
+    ul.survey-options li a.unhappy{
+        background-image: url(/images/portal/smiley-bad.png);
+    }
+
+    span.happy, span.neutral, span.unhappy{
+         padding: 5px 20px 10px 30px;
+         margin: 4px 0px 0px 10px;
+         display: inline-block;
+    }
+
+     span.happy{
+        background: url(/images/portal/smiley-good.png) no-repeat;
+    }
+
+    span.neutral{
+        background: url(/images/portal/smiley-neutral.png) no-repeat;
+    }
+
+    span.unhappy{
+        background: url(/images/portal/smiley-bad.png) no-repeat;
+    }
+
+    .survey-comment{
+        display: none;
+        width: 559px;
+    }
+
+    .survey-form-right{
+        min-height: 50px;
+    }
+
+    .survey-form-right h4{
+        font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #000;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        clear: both;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .survey-comment textarea{
+        width: 500px;
+        height: 40px;
+        clear: both;
+    }
+
+    .survey-comment input[type="button"],.survey-comment input[type="submit"]{
+        width: 80px;
+        margin: 10px 10px 10px 0px;
+        text-transform: capitalize;
+        padding: 4px 0px 4px 0px;
+        display: inline-block;
+        border: 1px #8a8a8a solid;
+        color: #252525;
+        cursor: pointer;
+        text-shadow: 0px 1px 0px #fff;
+         font: normal 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+                border-radius: 3px;
+	background-color: #e8e8e8; // Old browsers
+	@include filter-gradient(#e8e8e8, #d9d9d9, vertical); // IE6-8
+	// IE9 SVG, needs conditional override of 'filter' to 'none'
+	$experimental-support-for-svg: true;
+	@include background-image(linear-gradient(top,  #e8e8e8 0%,#d9d9d9 100%));
+        
+    }
+
+    .survey-comment input[type="button"]:hover,.survey-comment input[type="submit"]:hover{
+        background: #e8e8e8;
+    }
+
+    .survey-comment input[type="button"]:active,.survey-comment input[type="submit"]:active{
+        
+	background-color: #ababab; // Old browsers
+	@include filter-gradient(#ababab, #646464, vertical); // IE6-8
+	$experimental-support-for-svg: true;
+	@include background-image(linear-gradient(top,  #ababab 0%,#646464 100%));
+             border-bottom: 1px #8a8a8a solid;
+             color: #fff;
+             text-shadow: 0px 1px 0px #333;
+        
+    }
+
+.close-comment{
+    width: 500px;
+    float: left;
+    margin-top: 10px;
+    padding: 5px 3px 0px 0px;
+    line-height: 20px;
+    border-right: 1px #c2c2c2 solid;
+}
+
+.close-comment span{
+    color: #777;
+}
+
+.rate-again{
+    width: 140px;
+    float: left;
+    border-left: 1px #fff solid;
+    margin-top: 10px;
+    padding: 5px 3px 0px 5px;
+    line-height: 20px;
+}

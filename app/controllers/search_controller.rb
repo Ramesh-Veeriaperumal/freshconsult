@@ -128,7 +128,7 @@ class SearchController < ApplicationController
                                                               :star => false,
                                                               :match_mode => :any,                                          
                                                               :page => params[:page], :per_page => 10                                          
-        elsif permission? :portal_request
+        elsif current_user && (permission? :portal_request)
           search_portal_for_logged_in_user
         end
         process_results

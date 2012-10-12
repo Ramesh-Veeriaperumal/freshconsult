@@ -29,8 +29,6 @@
             else
               helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '_custom_field' : '' }"+"_"+field.field_name
               element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('select'), :selected => t('select')},{:class => dom_type, :rel => "inputselectbox"})   
-
-              
             end
           %>  
   			  <%= content_tag :div, element, :class => "field-item #{cycle('clear', '', '') }" %>
@@ -55,22 +53,25 @@
 <div class="button-container">
   <div class="loading hide" id="loader">
   </div>
-  <%= button_to_function t('ticket_update_multiple_button'), "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', #{helpdesk_submit_options.to_json})", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
+  <%= button_to_function t('ticket_update_multiple_button'), "submitBulkUpdate()", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
   <%= button_to_function t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
 </div>
 </div>
 
 <% javascript_tag do %> 
- jQuery('#ticket_cancel_multiple_button').click(
- 	function(){
-		active_dialog.dialog('close');
- 	}); 
- 
- jQuery("#ticket_update_multiple_button").bind('click',  function(ev){
-    jQuery(this).attr('disabled','disabled');
-    jQuery('#ticket_cancel_multiple_button').attr('disabled','disabled');
-    jQuery('#loader').removeClass("hide");
-  });
+  
+  jQuery('#ticket_cancel_multiple_button').click(
+   	function(){
+  		active_dialog.dialog('close');
+   	}); 
+
+  function submitBulkUpdate(){
+    if(!$('addbulkreply').checked || jQuery("#reply-multiple-cnt-reply-multiple-body").valid()){
+      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', #{helpdesk_submit_options.to_json})" %>
+      jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
+      jQuery('#loader').removeClass("hide");
+    }
+  }
 
  jQuery("[rel=inputselectbox]").bind('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
@@ -94,11 +95,13 @@
       if(jQuery(this).attr('for')=="addbulkreply")
       {
         jQuery("#bulkreplyform").slideDown();
+        jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus()
       }
     }
     else
     {
       jQuery(this).removeClass("active");
+      jQuery(this).parent().find('.level_2, .level_3').slideUp();
       if(jQuery(this).attr('for')=="addbulkreply")
         jQuery("#bulkreplyform").slideUp();
       jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');
@@ -123,3 +126,4 @@ function groupchange(value){
      });
    }
 <% end %>
+

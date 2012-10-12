@@ -143,6 +143,10 @@ class Va::Action
       add_activity("Marked the ticket <b>#{act_on} </b> as spam")
     end
 
+    def skip_notification(act_on)
+      act_on.skip_notification = true
+    end
+
     def set_nested_fields(act_on)
       custom_ff_fields = act_on.custom_field || {}
 

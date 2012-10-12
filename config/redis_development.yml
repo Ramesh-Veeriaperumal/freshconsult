@@ -4,3 +4,9 @@ defaults: &defaults
 
 development:
   <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults

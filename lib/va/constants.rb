@@ -32,5 +32,6 @@ module Va
       :less_than         =>  I18n.t('less_than'),
       :greater_than      =>  I18n.t('greater_than')
     }
+
   end
 end

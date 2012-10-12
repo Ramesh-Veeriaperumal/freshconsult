@@ -32,6 +32,17 @@ crm:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
 
+salesforce:
+    development: 
+       username : "periyaswamy@freshdesk.com"
+       password : "peri123451Hy75VE4kSHmacLr3pljxiLjh"
+    production: 
+       username : "periyaswamy@freshdesk.com"
+       password : "peri123451Hy75VE4kSHmacLr3pljxiLjh"
+    staging:  
+       username : "periyaswamy@freshdesk.com"
+       password : "peri123451Hy75VE4kSHmacLr3pljxiLjh"
+
 marketo:
   development:
     access_key: "freshdesk1_239416885003D634EEFB51"

@@ -175,17 +175,20 @@ function helpdesk_submit(url, method, params){
 function reply_multiple_submit( url, method, params){ 
   var form = $("replymultiple");
 
-  (params.concat($A($("tickets-expanded").elements["ids[]"])) || []).each(function(item){
+  (params.concat(jQuery('#tickets-expanded [name="ids[]"]').get()) || []).each(function(item){
     item = $(item);
 
     if(item.name == 'ids[]' && !item.checked) return;
-
-    form.appendChild(new Element('input', {
-      type: 'hidden',
-      value: item.value,
-      name: item.name
-    }));
+    
+    var field = new Element('input', {
+                     type: 'hidden'
+                   });
+    field.name = item.name;
+    field.value = item.value;
+    form.appendChild(field);
+    
   });
+
   form.action = url;
   form.submit();
 }

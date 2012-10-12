@@ -11,7 +11,7 @@
 
       if(valid_email.test(ticket_email)) {  
         jQuery("#helpdesk_ticket_email").addClass("loading-right");
-        jQuery.ajax({ url: "check_email?v="+ticket_email,
+        jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+ticket_email,
           success: function(data){
             jQuery("#helpdesk_ticket_email").removeClass("loading-right");
             if(data.user_exists)
