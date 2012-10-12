@@ -28,6 +28,7 @@ class Admin::GettingStartedController < Admin::AdminController
 
   def rebrand
     current_portal.update_attributes(params[:account][:main_portal_attributes])
+    redirect_to admin_getting_started_index_path(:activeSlide => "3") if params["rebrand_from_ie"]=="true"
   end
     
   protected
