@@ -5,13 +5,13 @@ $helpdesk_color:#8296ad;
 $helpdesk_hover_color:#5f94cf;
 
 $HelpdeskProductivity_color:#519790;
-$HelpdeskProductivity_hover_color:#27766e;
+$HelpdeskProductivity_hover_color:#36645F;
 
 $CustomerPortal_color:#9f89af;
-$CustomerPortal_hover_color:#7436a1;
+$CustomerPortal_hover_color:#774687;
 
 $Account_color:#939393;
-$Account_hover_color:#766c6c;
+$Account_hover_color:#606060;
 	
 $hover_boxshadow_start: 0 0 0 0px;
 $hover_boxshadow_middle: 0 0 0 7px;
@@ -19,9 +19,6 @@ $hover_boxshadow_final: 0 0 0 5px;
 $animation_timing: .2s;
 
 /* Admin page common css*/
-.wrapper {
-	width:1200px;	
-}
 /*Admin page common css end */
 .admin {
 	padding:0px 0px 5px 0px;
@@ -36,7 +33,7 @@ $animation_timing: .2s;
 		}
 		span{
 			display:inline-block;
-			padding-top:5px;
+			padding-top:2px;
 		}
 	}
 	ul{
@@ -46,9 +43,9 @@ $animation_timing: .2s;
 			list-style:none;
 			li{
 				float:left;
-				padding: 3px 18px;
+				padding: 0px 18px;
 				position:relative;
-				@include min-height(135px);
+				@include min-height(130px);
 				a{
 					position:relative;
 					display:block;
@@ -116,7 +113,7 @@ $animation_timing: .2s;
 			}
 		}
 		h3.title{
-			margin-top:10px;
+			margin-top:15px;
 			border-color: $helpdesk_color;
 			span{
 				border-color:$helpdesk_color;
