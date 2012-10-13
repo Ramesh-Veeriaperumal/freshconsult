@@ -221,7 +221,7 @@ jQuery(document).ready(function(){
 
 	jQuery("#next").click(function(ev) {
 		ev.preventDefault();		
-		if(activeSlide==4){ goto_helpdesk();	}
+		if(activeSlide==4){ goto_helpdesk();	return;}
 		activeSlide = Math.min(4, activeSlide+1);
 		jQuery("#slide1-"+activeSlide).trigger("click");
 	});
@@ -284,7 +284,11 @@ jQuery(document).bind('keydown', function(e)
 	}
 	else{
 		jQuery("#rebrand_from_ie").val("false");
-		jQuery("form#rebrand").ajaxForm();
+		jQuery("form#rebrand").ajaxForm({
+				success:function(data){
+					if(REDIRECT_CALL){redirect_to_helpdesk();}
+				}
+		});
 
 		jQuery('form#rebrand').change(function(ev){
 			IS_REBRAND_CHANGED = true;
@@ -308,6 +312,7 @@ var rms=0;
 var IS_REBRAND_TIMEOUT_ALIVE = false;
 var REBRAND_TIMEOUT = null;
 var IS_REBRAND_CHANGED = false;
+var REDIRECT_CALL = false;
 function trigger_rebrand(millisecs){
 	
 	if(!validate_colorcode() || IS_REBRAND_TIMEOUT_ALIVE){
@@ -376,8 +381,11 @@ function execPendingJob()
 {
 	if(IS_REBRAND_CHANGED)
 	{
+		REDIRECT_CALL = true;		
 		rebrand();
-	}
+		return;
+	}	
+	redirect_to_helpdesk();
 }
 
 function update_image(input) {
@@ -402,6 +410,14 @@ function update_logo(url){
 }
 
 function goto_helpdesk(){
-	execPendingJob();	
+	jQuery("#next_text").text(GettingStarted.translate("next_please_wait"));
+	if(jQuery.browser.msie){
+		redirect_to_helpdesk();
+		return;
+	}
+	execPendingJob();
+}
+
+function redirect_to_helpdesk(){
 	window.location.href = "/helpdesk";
 }

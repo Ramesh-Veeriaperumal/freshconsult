@@ -347,6 +347,7 @@ en:
             back_link: Back
             next_link: Next
             next_alt_link: Go to helpdesk
+            next_please_wait: Please wait...
             support_email_sub_title: Tell us your support e-mail.
             support_email_sub_msg: Your support e-mail is required for the helpdesk to function properly.
             save: Change
