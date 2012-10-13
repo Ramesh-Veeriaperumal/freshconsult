@@ -124,20 +124,8 @@
 								<div class="textbox-note"><%=t(".agents_title_info")%></div>
 								<div class="email-textbox">
 									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"  data-shift-tab-ignore="true"></textarea>
-									<% javascript_tag do %>
-											
-											 function agent_lookup(searchString, callback) { 
-                    							new Ajax.Request('<%= agent_autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
-                                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
-                                                              onSuccess: function(response) {
-                                                                var choices = $A();
-                                                                response.responseJSON.results.each(function(item){
-                                                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
-                                                                });                                                
-                                                                callback(choices);
-                                                              } });
-                                                            }
-				                  var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {choices: 10});
+									<% javascript_tag do %>											 
+				                  var agent_cachedBackend = new Autocompleter.Cache(function(searchString, callback) {}, {choices: 10});
 				                  var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
                 					 
 							   		new Autocompleter.MultiValue("agents_invite_email",  agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
