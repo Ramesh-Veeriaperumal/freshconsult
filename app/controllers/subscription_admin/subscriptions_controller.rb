@@ -16,7 +16,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @free_customers = Subscription.free_customers
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
-    @customer_agent_count = Subscription.customers_agent_count - (Subscription.customers_free_agent_count + DUMMY_AGENTS)
+    @customer_agent_count = Subscription.paid_agent_count - DUMMY_AGENTS
     @subscriptions = search(params[:search])
     @subscriptions = @subscriptions.paginate( :page => params[:page], :per_page => 30)
   end
@@ -112,7 +112,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
  
       # data rows 
     Subscription.find_in_batches(:include => :account,:batch_size => 300,
-                                           :conditions => {:state => 'active'} ) do |subscriptions|
+                                           :conditions => [ "state != 'trial'"] ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account
         user = account.account_admin
