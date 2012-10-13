@@ -173,7 +173,7 @@
 							<div class="rebrand-colors-wrap">
 								<ul>
 									<li class="colorland-header" id="HeaderColorView"  style="background-color:<%=@account.main_portal.preferences[:header_color]%>;">
-										<div class="colorpicker"><input id="HeaderColor" type="color" class="color required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>" /></div>
+										<div class="colorpicker"><input id="HeaderColor" type="color" class="color required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>"/></div>
 										<div class="colorland">
 											<span class="uploaded-logo-wrap"><img id="logo-preview" src="<%=get_logo%>"/></span>
 											<span class="uploaded-company-name" id="test_account_name"><%=@account.main_portal.name%></span>
@@ -181,13 +181,13 @@
 									</li>
 
 									<li class="colorland-body" id="TabColorView" style="background-color:<%=@account.main_portal.preferences[:tab_color]%>;">
-										<div class="colorpicker"><input type="color" maxlength="7" id="TabColor" class="color required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>" /></div>
+										<div class="colorpicker"><input type="color" maxlength="7" id="TabColor" class="color required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>"/></div>
 										<div class="colorland">
 										</div>
 									</li>
 
 									<li class="colorland-footer" id="BackgroundColorView"  style="background-color:<%=@account.main_portal.preferences[:bg_color]%>;">
-										<div class="colorpicker"><input type="color" maxlength="7" id="BackgroundColor" class="color required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" /></div>
+										<div class="colorpicker"><input type="color" maxlength="7" id="BackgroundColor" class="color required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>"/></div>
 										<div class="colorland">
 										</div>
 									</li>
@@ -197,7 +197,7 @@
 							<input type="hidden" value="" name="rebrand_from_ie" id="rebrand_from_ie">
 							<input type="button" id="ResetColors" value="<%=t('account.info3')%>" class="submit-btn textbox-radius" data-tab-ignore="true">
 							<input type="submit" id="rebrand_submit" value="<%=t('.rebrand_submit_label')%>" class="submit-btn textbox-radius" data-tab-ignore="true" style="visibility:hidden;">
-
+							<div id="rebrand_box"></div>
 						</div>
 						<%end%><%end%>
 					</div>
@@ -257,7 +257,9 @@
         setTimeout(function(){                  
         				jQuery("#slide1-"+activeSlide).trigger("click");
         			}, 200);
-
+	     	<%unless params["error"].blank?%>	     			
+	     		  show_rebrand_error("<%=params["error"]%>")
+	     <%end%>
 		});	
 	<%- end %> 
 

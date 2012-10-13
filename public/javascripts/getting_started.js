@@ -162,7 +162,8 @@ jQuery(document).ready(function(){
 
 		jQuery.each( jQuery('input:[name="agents_invite_email[]"]', '#agent_invite'), function(index,obj){
 			var agent_email = jQuery(obj).val();
-			if(!Validate.isEmpty(agent_email) && !Validate.email(agent_email)){
+			if(Validate.isEmpty(agent_email)){return;}
+			if(!Validate.email(agent_email)){
 				jQuery(obj).closest("li").addClass("error_bubble");														
 				invalid_emails_exist = true;
 			}
@@ -185,58 +186,11 @@ jQuery(document).ready(function(){
 					
 			invalid_emails_exist = false;
 			loadingDiv.delay(hideDelay).hide(1);
+			setFormFocus()
 			event.stopPropagation();
 		    return false;
 		}		    
-	});
-
-	jQuery('input#rebrand_submit').click( function(event) {				
-		
-		var loadingDiv = jQuery("#rebrand_submit_status");
-		loadingDiv = (loadingDiv.length>0)? loadingDiv : Loading.getContainer("#rebrand_submit_status","#rebrand_box");
-		var statusBox = loadingDiv.find("#status_update");
-		
-		var form = jQuery('form#rebrand');
-		
-		
-		var header_color = form.find("#HeaderColor");
-		var tab_color = form.find("#TabColor");
-		var bg_color = form.find("#BackgroundColor");
-		
-								
-		if(!Validate.colorCode(header_color.val())){	
-			var errorMessage = Validate.isEmpty(header_color.val())?GettingStarted.translate("rebrand_header_empty"):GettingStarted.translate("rebrand_header_invalid");			
-			Loading.error(statusBox,errorMessage);
-			loadingDiv.show();
-			loadingDiv.delay(hideDelay).hide(1);
-			header_color.focus();
-			event.stopPropagation();
-			return false;
-		}
-		else if(!Validate.colorCode(tab_color.val())){
-			var errorMessage = Validate.isEmpty(tab_color.val())?GettingStarted.translate("rebrand_tab_empty"):GettingStarted.translate("rebrand_tab_invalid");			
-			Loading.error(statusBox,errorMessage);
-			loadingDiv.show();
-			loadingDiv.delay(hideDelay).hide(1);
-			tab_color.focus();
-			event.stopPropagation();
-			return false;
-		}
-		else if(!Validate.colorCode(bg_color.val())){
-			var errorMessage = Validate.isEmpty(bg_color.val())?GettingStarted.translate("rebrand_bg_empty"):GettingStarted.translate("rebrand_bg_invalid");
-			Loading.error(statusBox,errorMessage);
-			loadingDiv.show();
-			loadingDiv.delay(hideDelay).hide(1);
-			bg_color.focus();
-			event.stopPropagation();
-			return false;
-		}
-		
-		Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));		
-		loadingDiv.show();				
-		loadingDiv.delay(hideDelay).hide(1);		
-						
-	});
+	});	
 
 	jQuery('.custom-upload input[type=file]').change(function(){
 				    jQuery(this).next().find('input').val(jQuery(this).val());
@@ -262,12 +216,7 @@ jQuery(document).ready(function(){
 		if(activeSlide==4){	jQuery("#next_text").text(GettingStarted.translate("next_alt_link")); }
 		else{jQuery("#next_text").text(GettingStarted.translate("next_link"));}
 
-		var SLIDE_TO_FORM = ["#email_config","#agent_invite","#rebrand"];
-		if(activeSlide<=SLIDE_TO_FORM.length){						
-			setTimeout(function(){
-							jQuery(SLIDE_TO_FORM[activeSlide-1]+" :input:text:first").focus();
-	     			},200);			
-		}
+		setFormFocus();
 	});	
 
 	jQuery("#next").click(function(ev) {
@@ -279,6 +228,7 @@ jQuery(document).ready(function(){
 
 	jQuery("#back").click(function(ev) {
 		ev.preventDefault();		
+		if(activeSlide==1){return;}
 		activeSlide = Math.max(1, activeSlide-1);
 		jQuery("#slide1-"+activeSlide).trigger("click");
 	});
@@ -330,25 +280,29 @@ jQuery(document).bind('keydown', function(e)
 	if(jQuery.browser.msie){ 
 		jQuery("#rebrand_submit").css("visibility","visible"); 
 		jQuery("#rebrand_from_ie").val("true");		
+		jQuery('input#rebrand_submit').click( function(event) {	return validate_colorcode();} );
 	}
 	else{
 		jQuery("#rebrand_from_ie").val("false");
-		jQuery("form#rebrand").ajaxForm({
-			success: function(data){
-				var content = data.match(/<pre>(.+?)<\/pre>/);
-	    		if(content!=null){
-	    			content = jQuery.parseJSON(content[1]);
-	    			if(content!=null){update_logo(content["logo"]);}
-				}
-			}
-	  });
+		jQuery("form#rebrand").ajaxForm();
+
 		jQuery('form#rebrand').change(function(ev){
 			IS_REBRAND_CHANGED = true;
 			trigger_rebrand();
+
 		});
-	}
+	}	
 
 });
+
+function setFormFocus(){
+	var SLIDE_TO_FORM = ["#email_config","#agent_invite","#rebrand"];
+	if(activeSlide<=SLIDE_TO_FORM.length){						
+		setTimeout(function(){
+						jQuery(SLIDE_TO_FORM[activeSlide-1]+" :input:text:first").focus();
+     			},200);			
+	}
+}
 
 var rms=0;
 var IS_REBRAND_TIMEOUT_ALIVE = false;
@@ -356,7 +310,7 @@ var REBRAND_TIMEOUT = null;
 var IS_REBRAND_CHANGED = false;
 function trigger_rebrand(millisecs){
 	
-	if(IS_REBRAND_TIMEOUT_ALIVE){
+	if(!validate_colorcode() || IS_REBRAND_TIMEOUT_ALIVE){
 		return;
 	}	
 
@@ -366,14 +320,56 @@ function trigger_rebrand(millisecs){
 }
 
 function rebrand(){
-	jQuery("form#rebrand").submit();
-	
+	if(validate_colorcode()){
+		jQuery("form#rebrand").submit();
+	}
 	if(REBRAND_TIMEOUT){
 		clearTimeout(REBRAND_TIMEOUT);
 		REBRAND_TIMEOUT = null;
 	}
 	IS_REBRAND_CHANGED = false;
 	IS_REBRAND_TIMEOUT_ALIVE = false;
+}
+
+function validate_colorcode(){
+			
+			var form = jQuery('form#rebrand');
+			
+			
+			var header_color = form.find("#HeaderColor");
+			var tab_color = form.find("#TabColor");
+			var bg_color = form.find("#BackgroundColor");
+			
+			var errorMessage = "";							
+			if(!Validate.colorCode(header_color.val())){	
+				errorMessage = Validate.isEmpty(header_color.val())?GettingStarted.translate("rebrand_header_empty"):GettingStarted.translate("rebrand_header_invalid");							
+				header_color.focus();
+			}
+			else if(!Validate.colorCode(tab_color.val())){
+				errorMessage = Validate.isEmpty(tab_color.val())?GettingStarted.translate("rebrand_tab_empty"):GettingStarted.translate("rebrand_tab_invalid");							
+				tab_color.focus();
+			}
+			else if(!Validate.colorCode(bg_color.val())){
+				errorMessage = Validate.isEmpty(bg_color.val())?GettingStarted.translate("rebrand_bg_empty"):GettingStarted.translate("rebrand_bg_invalid");
+				bg_color.focus();
+			}
+
+			return show_rebrand_error(errorMessage);
+
+}
+
+function show_rebrand_error(errorMessage){
+	var loadingDiv = jQuery("#rebrand_submit_status");
+	loadingDiv = (loadingDiv.length>0)? loadingDiv : Loading.getContainer("rebrand_submit_status","#rebrand_box");
+	if(!Validate.isEmpty(errorMessage)){
+		var statusBox = loadingDiv.find("#status_update");
+		Loading.error(statusBox,errorMessage);
+		loadingDiv.show();				
+		loadingDiv.delay(hideDelay).hide(1);
+		return false;
+	}
+	loadingDiv.hide();
+	return true;
 }
 
 function execPendingJob()

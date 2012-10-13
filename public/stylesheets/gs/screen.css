@@ -931,7 +931,7 @@ input.submit-btn:active {
   vertical-align: middle;
 }
 
-#agent_invite_status{
+#agent_invite_status,#rebrand_submit_status{
   display:none;
 }
 
