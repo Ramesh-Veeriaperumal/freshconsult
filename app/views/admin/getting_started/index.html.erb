@@ -27,6 +27,7 @@
 <%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>  
   jQuery(document).ready(function(){
+  		GettingStarted.map("next_please_wait", "<%=t('.next_please_wait')%>");
       GettingStarted.map("next_alt_link", "<%=t('.next_alt_link')%>");
       GettingStarted.map("next_link", "<%=t('.next_link')%>");
 		GettingStarted.map("validating", "<%=t('.validating')%>");
