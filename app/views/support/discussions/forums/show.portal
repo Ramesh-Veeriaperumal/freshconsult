@@ -1,49 +1,51 @@
-<h1 class="page-title">{{ forum.name }}</h1>
-<p class="help-block ellipsis" title="{{forum.description}}">{{ forum.description }}</p>
-
-<div class="subnav">
-	{% if forum.users_can_start_topic %}
-		<div class="pull-right">
-			<a href="{{ forum.create_topic_url }}" class="btn btn-primary">Start a new topic</a>
+<section class="main">
+	<div class="content rounded-6 min-height-on-desktop">
+		<a href="{{ forum.create_topic_url }}" class="pull-right"><strong>Start a new topic</strong></a>
+		<div class="breadcrumb">
+			<a href="/">Home</a>
+			<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
 		</div>
-	{% endif %}
-	<ul class="nav nav-pills">
-	  {{ topics_filters }}
-	</ul>
-</div>
+		<div class="list-lead">
+			<i class="badge-{{forum.type_name}}"></i>
+			<a>{{ forum.name }} ({{ forum.topics | size }})</a>
+		</div>
+		<p class="intro ellipsis" title="{{forum.description}}">{{ forum.description }}</p>
 
-<div class="content-list">	
-	{% for topic in forum.topics %}
-	{% assign last_post_user = topic.last_post.user %}
-	<div class="content-row">
-		<div class="user-pic-thumb">
-			<img src="{{ last_post_user.profile_url }}" />
-		</div>		
-		{% if topic.stamp_type %}
-			<span class="pull-right label forum-stamp-type-{{topic.stamp_type}}">
-				{{ topic.stamp_name }}
-			</span>
-		{% endif %}
-		<h4 class="ellipsis">
-			<a title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
-		</h4>
-		<p class="help-text">
-			{% if topic.has_comments %}
-				Last reply {{ topic.last_post.created_on | distance_of_time_in_words_to_now }} by {{ last_post_user.name | bold }},
-				{{ topic.posts.size }} replies,
-			{% else %}
-				Posted {{ topic.created_on | distance_of_time_in_words_to_now }},
-			{% endif %}
+		{% comment %}
+		<div class="subnav">
+			<ul class="nav nav-pills">
+			  {{ topics_filters }}
+			</ul>
+		</div>
+		{% endcomment %}
 
-			{% case forum.type_name %}
-			{% when 'ideas' %}
-				idea shared by
-			{% endcase %}
-			{{ topic.user.name | bold }}
-		</p>
+		<div class="content-list">	
+			{% for topic in forum.topics %}
+			{% assign last_post_user = topic.last_post.user %}
+			<div class="content-row clearfix">
+				<div class="user-pic-thumb">
+					<img src="{{ last_post_user.profile_url }}" />
+				</div>		
+				{% if topic.stamp_type %}
+					<span class="pull-right label forum-stamp-type-{{topic.stamp_type}}">
+						{{ topic.stamp_name }}
+					</span>
+				{% endif %}
+				<div class="ellipsis">
+					<a title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
+				</div>
+				<p class="help-text">
+					posted by {{ topic.user.name | bold }}, {{ topic.created_on | human_date_time }},
+					{% if topic.has_comments %}
+						<a href="{{topic.last_post.url}}">Last reply</a>
+						by {{ last_post_user.name | bold }} {{ topic.last_post.created_on | human_date_time }}
+					{% endif %}
+				</p>
+			</div>
+			{% endfor %}	
+		</div>
 	</div>
-	{% endfor %}	
-</div>
+</section>
 
 {% comment %}
 
@@ -111,4 +113,3 @@
 
 {% endcomment %}
 	 
-	

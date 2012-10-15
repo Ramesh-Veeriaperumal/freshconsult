@@ -30,3 +30,16 @@
 .align-left{
   text-align:left;
 }
+
+.inline-block{
+	@include inline-block;
+}
+
+// Rounded options
+@include at-breakpoint($break-tablet){
+	.rounded-6{ @include border-radius(6px); }
+}
+// Ellipsis
+.ellipsis{
+	@include ellipsis;
+}

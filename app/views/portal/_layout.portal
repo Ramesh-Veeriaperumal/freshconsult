@@ -1,3 +1,37 @@
+<div class="page">
+	{{ header }}
+	
+	{% case page.type %}
+	{% when "portal_home" or "discussions_home" or "solution_home" %}
+		<section class="help-center content-form rounded-6">	
+			<div class="hc-search">
+				<div class="hc-search-c">
+					<h2>Help center</h2>
+					{{ search_portal }}				
+				</div>
+			</div>		
+			<div class="hc-nav">
+				<nav>
+					<a href="{{portal.new_ticket_path}}" class="new-ticket ellipsis">New Support Ticket</a>
+					<a href="#" class="check-status ellipsis">Check ticket status</a>
+					<span class="contact-info">{{ contact_info }}</span>
+				</nav>
+			</div>
+		</section>
+	{% endcase %}
+
+	{{ show_flash }}
+
+	<div class="c-wrapper">		
+		{{ content_for_layout }}
+		{{ content_for_sidebar }}
+	</div>
+
+	{{ footer }}
+</div>
+
+{% comment %}
+
 <header class="header">
 	<section class="wrapper">
 		{{ header }}  
@@ -21,7 +55,7 @@
 </header>
 <section id="support-portal" class="wrapper">
 	<div class="page-container">
-		{{ show_flash }}
+		
 		<div class="row-fluid">			
 	  		<div class="span9">
 	  			<div class="page-body">
@@ -43,3 +77,5 @@
 		{{ footer }}
 	</section>
 </footer>
+
+{% endcomment %}

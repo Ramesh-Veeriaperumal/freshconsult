@@ -47,4 +47,8 @@ class Portal::Page < ActiveRecord::Base
 		PAGE_BY_TOKEN[self.token]
 	end
 
+	def to_liquid
+	    PageDrop.new self
+	end
+
 end

@@ -34,7 +34,7 @@ stylesheets:
 
   portal:                
     - public/stylesheets/portal/portal.css
-    - public/stylesheets/portal/responsive.css 
+    # - public/stylesheets/portal/responsive.css 
 
   notifications:
     - public/stylesheets/app/lib/gritter.css

@@ -44,5 +44,12 @@ class Solution::ArticleDrop < BaseDrop
     source.art_type
   end
   
+  def folder
+    source.folder
+  end
+
+  def category
+    source.folder.category
+  end
   
 end

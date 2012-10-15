@@ -8,7 +8,7 @@
 
 // Make all forms have space below them
 form {
-  margin: 0 0 $baseLineHeight;
+  margin: 0 0;
 }
 
 fieldset {
@@ -79,7 +79,7 @@ input[type="tel"],
 input[type="color"],
 .uneditable-input {
   display: inline-block;
-  height: $baseLineHeight;
+  /*height: $baseLineHeight;*/
   padding: 4px;
   margin-bottom: 9px;
   font-size: $baseFontSize;
@@ -122,10 +122,10 @@ input[type="color"],
 
   // Focus state
   &:focus {
-    border-color: rgba(82,168,236,.8);
+    border-color: rgba($inputFocusRingColor, 0.8);
     outline: 0;
     outline: thin dotted \9; /* IE6-9 */
-    @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
+    @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba($inputFocusRingColor,.6)});
   }
 }
 
@@ -259,7 +259,7 @@ textarea[class*="span"],
 // GRID SIZING FOR INPUTS
 // ----------------------
 
-@include grid-input($gridColumnWidth, $gridGutterWidth);
+@include grid-input($column-width, $gutter-width);
 
 
 
@@ -540,6 +540,16 @@ select:focus:required:invalid {
 legend + .control-group {
   margin-top: $baseLineHeight;
   -webkit-margin-top-collapse: separate;
+}
+
+// Special inputs
+input.special{
+  @include border-radius(6px);
+  border-color: #8c8c8c;
+  font-size:16px;
+  margin-bottom: 0;
+  padding:6px 10px;
+  @include box-shadow(rgba(0, 0, 0, 0.3) 0 1px 2px inset);
 }
 
 // Horizontal-specific styles

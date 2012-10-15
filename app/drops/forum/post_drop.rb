@@ -2,10 +2,14 @@ class Forum::PostDrop < BaseDrop
   
   include ActionController::UrlWriter
   
-  liquid_attributes << :body << :body_html << :id
+  liquid_attributes << :body << :body_html
   
   def initialize(source)
     super source
+  end
+
+  def id
+    source.id
   end
 
   def created_on
@@ -14,6 +18,10 @@ class Forum::PostDrop < BaseDrop
 
   def user
   	source.user
+  end
+
+  def url
+    support_discussions_topic_path(source.topic, :anchor => "post-#{source.id}")
   end
   
 end

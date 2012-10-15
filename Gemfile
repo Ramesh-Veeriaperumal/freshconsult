@@ -86,6 +86,8 @@ group :development do
 end
 
 group :assets do
-	gem "sass", "3.1.1"
+	gem "sass", "3.2.0"
 	gem "compass-rails"
+	# Portal grid system is done using susy grids
+	gem "susy" 
 end

@@ -8,7 +8,7 @@ class HomeController < SupportController
   end
   
   def index
-    redirect_to MOBILE_URL and return if (current_user && mobile?)
+    # redirect_to MOBILE_URL and return if (current_user && mobile?)
     redirect_to helpdesk_dashboard_path if (current_user && current_user.permission?(:manage_tickets))
     redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
     
@@ -17,10 +17,10 @@ class HomeController < SupportController
       @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
     end
 
-    if params[:format] == "mobile"
-      @user_session = current_account.user_sessions.new
-      redirect_to login_path
-    end
+    # if params[:format] == "mobile"
+    #   @user_session = current_account.user_sessions.new
+    #   redirect_to login_path
+    # end
     
     @topics = recent_topics if allowed_in_portal?(:open_forums)
   end

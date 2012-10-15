@@ -1,0 +1,333 @@
+/* Default portal styles for freshdesk
+ * Add theme styles over these styles */
+
+// Core variables and mixins
+@import "lib/settings"; // Modify this for custom colors, font-sizes, etc
+@import "lib/mixins";
+@import "compass";
+
+// CSS Reset
+@import "lib/reset";
+
+// Grid system and page structure
+@import "lib/scaffolding";
+@import "lib/grid";
+@import "lib/layouts";
+
+// Base CSS
+@import "lib/type";
+@import "lib/code";
+@import "lib/forms";
+@import "lib/tables";
+
+// Components: common
+@import "lib/icons"; 
+@import "lib/dropdowns";
+@import "lib/wells";
+@import "lib/component-animations";
+@import "lib/close";
+
+// Components: Buttons & Alerts
+@import "lib/buttons";
+@import "lib/button-groups";
+@import "lib/alerts"; // Note: alerts share common CSS with buttons and thus have styles in buttons.scss
+
+// Components: Nav
+@import "lib/navs";
+@import "lib/breadcrumbs";
+@import "lib/pagination";
+@import "lib/pager";
+
+// Components: Popovers
+@import "lib/modals";
+@import "lib/tooltip";
+@import "lib/popovers";
+
+// Components: Misc
+@import "lib/labels";
+
+// Utility classes
+@import "lib/utilities"; // Has to be last to override when necessary
+
+// App styles
+@import "lib/header";
+
+
+.user-pic-thumb, .user-pic-normal{
+	@include float-left;
+	margin-right:10px;
+	margin-left:3px;
+	@include border-radius(3em);
+	border:2px solid #efefef;
+	img{ 
+		width:36px; height:36px; 
+		@include border-radius(3em);
+	}
+}
+.user-pic-normal img{ width:auto; height:auto; }
+
+.user-pic-original img{ 
+	@include float-left;
+	border:1px solid #e9e9e9; 
+	padding:4px; 
+	@include border-radius(3px); 
+}
+
+.ellipsis{
+	@include ellipsis;
+}
+
+/* Page styles */
+
+.page-container{
+  background:rgba(255, 255, 255, 0.4);
+  padding:15px;
+}
+.page-body, .footer-content{  
+  padding:22px 30px;
+}
+
+.page-body{ 
+  background:rgba(255, 255, 255, 0.9);
+  border:1px solid #ccc;
+  @include border-radius(6px);
+  @include min-height(500px); 
+}
+
+.footer{
+  background:rgba(255, 255, 255, 0.4);
+  border-top:1px solid rgba(0, 0, 0, 0.04);
+}
+
+.page-node{
+  padding-top:12px;
+}
+
+.page-search{
+  padding:0;
+  input{
+    font-size:16px;
+    height:30px;
+    width:98%;
+    padding:3px 7px;
+  }
+}
+
+.page-title{
+  font-weight: 200;
+}
+
+.collection, .clearfix{ @include pie-clearfix; }
+
+.collection{  
+  hr{
+    clear:both;
+    margin-bottom: 0;
+  }
+  .group{
+    width:47.6%;
+    float:left;
+    padding:12px 0;
+    margin-right:2.4%;
+  }
+  .group.odd{
+    clear:left;
+  }
+}
+
+.font-badge{  
+  @include border-radius(3em);
+  @include float-left;
+  color: #fff; 
+  background-color: $tab_color;
+  font-size: 32px; line-height: 50px;
+  width: 46px; height: 46px;
+  text-align: center;  
+  margin-left: -55px; 
+  @include box-shadow(rgba(0,0,0,0.1) 0 1px 5px inset);
+}
+
+.forum-group a{
+  position:relative;
+  color:black;
+  padding-left:55px;
+  display:block;  
+  @include min-height(50px);
+  h4{ 
+    font-size:16px; 
+    font-weight:500;
+  }
+  &:hover{ 
+    text-decoration:none; 
+    .font-icon{
+      background-color: lighten($tab_color, 5%);
+    }
+  }
+}
+
+.more-items{
+  text-transform: uppercase;  
+  font-weight: bold;
+  font-size:11px;
+}
+
+span.more-items{
+  color:#aaa;
+}
+
+.pill-right{
+  float:right;
+}
+
+.help-text{
+  color: #555;
+  font-weight: 300;
+  font-size: 13px;
+  padding: 3px 0;
+}
+
+.content-list{
+	margin-top: 4px;
+	.content-row{
+		padding:10px 6px 0 50px;
+		border-bottom:1px solid $grayLighter;
+    @include clearfix;
+    &:hover{
+      background-color: rgba(0, 0, 0, 0.01);
+    }
+	}
+  .font-badge{
+    color: #96B2B3;
+    background-color: #d7e8e9;    
+    font-size: 25px;
+    width:36px; height:36px;
+    letter-spacing: -2px;
+    line-height:37px;
+    margin-right: 10px;
+  }
+	.font-badge, .user-pic-thumb{ margin-left: -45px; }
+	.label{
+		margin:1px 1px 0 10px;
+	}
+  .description{
+    margin: 0;
+    color:#555;
+  }
+}
+
+.page-side-bar-left{
+  border-right:1px solid #f3f3f3;  
+  padding-right: 10px;
+  hr{ margin-right: -10px; }
+}
+
+.solution-folders{
+  margin-bottom:16px;  
+  .folder{ position: relative; }
+  .folder h4{ line-height: 28px; }
+  .folder a{ font-weight: 400; }
+  .folder.active a{ font-weight: 500; color:#333; }
+  .active:after{
+    content: "";
+    position: absolute;
+    width: 1px; height: 1px;
+    border: 6px solid transparent;
+    border-right-color: #f3f3f3;
+    right: -10px; top: 6px;
+  }
+  .folder.muted a, .article-count{ color: #999; font-weight: 200; }
+  .article-count{ 
+    float:right;
+    margin-top:4px;
+    margin-left:10px;
+  }
+}
+
+/* Forum based styles */
+.forum-details{
+	padding-left:70px;
+	margin:10px 0;
+	.user-pic-normal{ margin-left: -70px; }
+}
+
+
+/* Forum stamps */
+
+.forum-stamp-type-1{ background-color: #3EA9E0;}
+.forum-stamp-type-1:hover{ background-color: darken(#3EA9E0, 10%); }
+.forum-stamp-type-2{ background-color: #336600;}   
+.forum-stamp-type-2:hover{ background-color: darken(#336600, 10%); }
+.forum-stamp-type-3{ background-color: #993333;}
+.forum-stamp-type-3:hover{ background-color: darken(#993333, 10%); }
+
+
+/* For input sizes, make them display block */
+.multiple-inputs select,
+.multiple-inputs input[type=text] {
+  display: block;
+  margin-bottom: 9px;
+}
+
+/* Subnav */
+.subnav {
+  width: 100%;
+  height: 36px;
+  margin-top: 8px;
+  background-color: #eeeeee; /* Old browsers */
+  background-repeat: repeat-x; /* Repeat the gradient */
+  background-image: -moz-linear-gradient(top, #f5f5f5 0%, #eeeeee 100%); /* FF3.6+ */
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#eeeeee)); /* Chrome,Safari4+ */
+  background-image: -webkit-linear-gradient(top, #f5f5f5 0%,#eeeeee 100%); /* Chrome 10+,Safari 5.1+ */
+  background-image: -ms-linear-gradient(top, #f5f5f5 0%,#eeeeee 100%); /* IE10+ */
+  background-image: -o-linear-gradient(top, #f5f5f5 0%,#eeeeee 100%); /* Opera 11.10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
+  background-image: linear-gradient(top, #f5f5f5 0%,#eeeeee 100%); /* W3C */
+  border: 1px solid #dfdfdf;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+.subnav .nav {
+  margin-bottom: 0;
+}
+.subnav .nav > li > a {
+  margin: 0;  
+  padding-top:    11px;
+  padding-bottom: 11px;
+  border-left: 1px solid #f5f5f5;
+  border-right: 1px solid #e5e5e5;
+  -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+          border-radius: 0;
+}
+.subnav .nav > .active > a,
+.subnav .nav > .active > a:hover {
+  padding-left: 13px;
+  color: #777;
+  background-color: #e9e9e9;
+  border-right-color: #ddd;
+  border-left: 0;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0,0,0,.05);
+     -moz-box-shadow: inset 0 3px 5px rgba(0,0,0,.05);
+          box-shadow: inset 0 3px 5px rgba(0,0,0,.05);
+}
+.subnav .nav > .active > a .caret,
+.subnav .nav > .active > a:hover .caret {
+  border-top-color: #777;
+}
+.subnav .nav > li:first-child > a,
+.subnav .nav > li:first-child > a:hover {
+  border-left: 0;
+  padding-left: 12px;
+  -webkit-border-radius: 4px 0 0 4px;
+     -moz-border-radius: 4px 0 0 4px;
+          border-radius: 4px 0 0 4px;
+}
+.subnav .nav > li:last-child > a {
+  border-right: 0;
+}
+.subnav .dropdown-menu {
+  -webkit-border-radius: 0 0 4px 4px;
+     -moz-border-radius: 0 0 4px 4px;
+          border-radius: 0 0 4px 4px;
+}

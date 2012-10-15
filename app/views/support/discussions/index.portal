@@ -1,17 +1,73 @@
-{% for category in portal.forum_categories %}	
-	<h1 class="page-title">{{category.name}}</h1>	
-	<p class="help-text" title="{{category.description}}">{{category.description | truncate:250}}</p>
-	<div class="collection">
-	{% for forum in category.forums %}
-		<div class="group forum-group {% cycle 'odd', 'even' %}">
-			<a href="{{ forum.url }}">
-				<span class="font-badge icon-forum-{{forum.type_name}}"></span>
-				<h4>{{ forum.name }}</h4>
-				<div class="help-text" title="{{forum.description}}">{{forum.description | truncate:100}}</div>
-				<span class="more-items">{{ forum.topics.size }} topics</span>
-			</a>
-		</div>
-	{% endfor %}
+<section class="main">
+	<div class="content rounded-6 min-height-on-desktop">
+		<a href="{{portal.new_topic_path}}" class="post-question"><b>Start a new topic</b></a>
+		<h2>Community forums</h2>
+		{% for category in portal.forum_categories %}	
+			<div class="cs-s">
+				<h3>{{category.name}}</h3>
+				<div class="cs-g-c">
+				{% for forum in category.forums %}
+					<section class="cs-g topic-list">
+						<div class="list-lead">
+							<i class="badge-{{forum.type_name}}"></i>
+							<a href="{{forum.url}}">{{forum.name}} ({{ forum.topics | size }})</a>
+						</div>
+						<ul>
+							{% for topic in forum.topics %}
+							<li>
+								<div class="ellipsis">
+									<a href="{{topic.url}}">{{topic.title}}</a>
+								</div>
+								<p class="help-text">
+									posted by {{ topic.user.name }}, {{ topic.created_on | human_date_time }} <br />
+									{% if topic.has_comments %}
+										<a href="{{topic.last_post.url}}">Last reply</a>
+										by {{ topic.last_post.created_on | human_date_time }}
+									{% endif %}
+								</p>
+							</li>
+							{% endfor %}
+						</ul>
+						{% if forum.topics.size > 5 %}
+							<a href="#" class="see-more">See all {{ forum.topics | size }} topics</a>
+						{% endif %}
+					</section>
+				{% endfor %}
+				</div>
+			</div>
+		{% endfor %}
 	</div>
-	<hr />
-{% endfor %}
+</section>
+<section class="sidebar">
+	<div class="content rounded-6 min-height-on-desktop">
+		<div class="list-lead">Popular topics</div>
+		<p class="intro">Showing recently popular topics</p>
+		<section class="cs-g topic-list">
+			{{ portal.recent_topics }}
+			<ul>
+				<li>
+					<a href="#">Freshdesk - What's new in Freshdesk?</a>
+					<p class="help-text">
+						posted by laurence fishburne, 1 year ago <br />
+						<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+					</p>
+				</li>
+				<li>
+					<a href="#">Automatic refresh for the ticket page</a>
+					<p class="help-text">
+						posted by laurence fishburne, 1 year ago <br />
+						<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+					</p>
+				</li>
+				<li>
+					<a href="#">Create a ticket *without* an email address</a>
+					<p class="help-text">
+						posted by laurence fishburne, 1 year ago <br />
+						<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+					</p>
+				</li>
+			</ul>
+			<a href="#" class="see-more">See all 10 topics</a>
+		</section>
+	</div>
+</section>

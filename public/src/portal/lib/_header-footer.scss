@@ -1,0 +1,81 @@
+.banner{
+	background-color: $header_color;
+	padding: $content-padding;
+	border: 1px solid darken($header_color, 10%);
+	color: $header_text_color;
+	@include box-shadow( rgba(#fff, 0.7) 0 1px inset );		
+	@include clearfix;
+	border-bottom-color: rgba(#fff, 0.8);
+	@include text-shadow(rgba(#000, 0.9) -1px -1px 1px);
+	a{ color: inherit; font-size: 13px; }
+	a:hover{ color: inherit; }
+}
+
+.banner-nav{
+	font-size: 0.929em;	
+	a{ color: inherit; }
+}
+
+.page-tabs{
+	background-color: $tab_color;
+	color: #fff;
+	line-height: 35px;
+	@include clearfix;
+	a{ 
+		padding:0 15px; 
+		color:inherit; 
+		@include min-width(100px); 
+	}	
+	a:hover, a.active{
+		text-decoration: none;
+		background-color: $header_color;
+	}
+	a{ display: none; }
+	a.active{ display: block; }
+}
+
+@include at-breakpoint($break-tablet){
+	.banner{ @include border-top-radius(6px); }
+	.page-tabs{ 
+		@include border-bottom-radius(6px); 
+		a:first-child{ @include border-bottom-left-radius(6px); }
+		a{ display: block; float: left; border-right: 1px solid rgba(#fff, 0.8); text-align: center;  }
+	}
+}
+
+.logo{
+	@include float-left;
+	background: url("/images/portal/#{$logo-url}.png");
+	margin: -3px 10px 0 -5px;
+	width: 50px;
+	height: 50px;
+}
+
+footer{
+	background-color: $footer_color;
+	padding: $content-padding;
+	border: 1px solid darken($footer_color, 10%);
+	color: $footer_text_color;
+	text-align: center;
+	a{ color: inherit; margin:0 10px; }
+	a:hover{ color: inherit; }
+	a:before{ 
+		content: "";
+		position: absolute;
+		border: 3px solid fade-out(#fff, 0.6);
+		margin-left: -15px;
+    	margin-top: 7px;
+	}
+	a:first-child:before{
+		content: none;
+	}
+	a:last-child{
+		margin-right: 0;
+	}
+}
+
+.copyright{
+	padding: $content-padding;
+	text-align: center;
+	color: $gray;
+}

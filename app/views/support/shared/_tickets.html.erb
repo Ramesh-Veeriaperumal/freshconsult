@@ -23,7 +23,7 @@
 		</li>
 	<% end %>
 </ul>   
-<%= t("helpdesk.tickets.views.no_tickets") if @tickets.blank? %>
- <div class="toolbar">
-    <%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  
- </div>
+<p class="help-text"><%= t("helpdesk.tickets.views.no_tickets") if @tickets.blank? %></p>
+<div class="toolbar">
+	<%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  
+</div>

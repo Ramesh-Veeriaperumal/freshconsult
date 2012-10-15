@@ -13,11 +13,11 @@ class Forum::CategoryDrop < BaseDrop
   end
   
   def url
-    category_path(@source)
+    support_discussions_path
   end
   
   def forums
-    @forums ||= liquify(*@source.forums)
+    @forums ||= liquify(*@source.portal_forums)
   end
   
 end

@@ -1,8 +1,20 @@
-<div class="header-links">
-	<a href="{{portal.login_path}}">login</a>
-	<a href="{{portal.signup_path}}">Sign up</a>
-</div>
-<div class="brand">
-	<img src="{{portal.logo}}" />
-	<h2 class="logo_text">{{portal.name}}</h2>
-</div>
+<header class="banner">
+	<div class="banner-title">
+		<span class="logo"></span>
+		<h1 class="ellipsis">{{portal.name}}</h1>
+	</div>
+	<nav class="banner-nav">
+		Welcome, 		
+			<strong>Guest</strong> - 
+			<strong><a href="{{portal.login_path}}">Login</a></strong>
+			
+		<strong>{{current_user.name}}</strong>
+		<strong><a href="{{portal.login_path}}">Signout</a></strong>
+	</nav>
+</header>
+
+<nav class="page-tabs">
+	{% for tab in portal.tabs %}
+		<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+	{% endfor %}
+</nav>

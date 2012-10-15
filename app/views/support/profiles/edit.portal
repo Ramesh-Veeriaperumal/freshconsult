@@ -1,3 +1,6 @@
-<h1 class="page-title">Manage your profile</h1>
-<hr />
-{{ user_edit_form }}
+<section class="main">
+	<div class="content rounded-6 min-height-on-desktop">
+		<h2>Manage your profile</h2>
+		{{ user_edit_form }}
+	</div>
+</section>

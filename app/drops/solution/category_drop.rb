@@ -13,7 +13,7 @@ class Solution::CategoryDrop < BaseDrop
   end
   
   def url
-    solution_category_path(@source)
+    support_solution_path(@source)
   end
   
   def folders

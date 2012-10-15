@@ -6,6 +6,10 @@ class Support::DiscussionsController < SupportController
 		c.send(:set_portal_page, :discussions_home)
 	end
 
+	def index
+		@current_tab = "home"		
+	end
+
 	def show
 		@category = scoper.find_by_id(params[:id])
 	end	

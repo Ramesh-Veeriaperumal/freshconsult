@@ -3,16 +3,19 @@
 
 // Base
 .label {
-  padding: 1px 4px 2px;
-  font-size: $baseFontSize * .846;
-  font-weight: bold;
-  line-height: 13px; // ensure proper line-height if floated
+  padding: 1px 16px;
+  margin-top: -5px;
+  font-size: $baseFontSize;
+  font-family: $baseFontFamily;
+  line-height: $baseLineHeight; // ensure proper line-height if floated
+  font-weight: 500;
   color: $white;
   vertical-align: middle;
   white-space: nowrap;
   text-shadow: 0 -1px 0 rgba(0,0,0,.25);
   background-color: $grayLight;
   @include border-radius(3px);
+  @include inline-block;
 }
 
 // Hover state
@@ -22,8 +25,10 @@
 }
 
 // Colors
-.label-important        { background-color: $errorText; }
-.label-important:hover  { background-color: darken($errorText, 10%); }
+$colorPlanned: #007fd8;
+
+.label-planned        { background-color: $colorPlanned; }
+.label-planned:hover  { background-color: darken($colorPlanned, 10%); }
 
 .label-warning          { background-color: $orange; }
 .label-warning:hover    { background-color: darken($orange, 10%); }

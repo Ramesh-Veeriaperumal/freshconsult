@@ -58,6 +58,10 @@ class Support::Discussions::TopicsController < SupportController
         # authors of topics don't get counted towards total hits
         @topic.hit! unless logged_in? and @topic.user == current_user
         @page_title = @topic.title
+
+        @forum = @topic.forum
+        @forum_category = @forum.forum_category
+
         @posts = @topic.posts.paginate :page => params[:page]
         @post = Post.new
       end

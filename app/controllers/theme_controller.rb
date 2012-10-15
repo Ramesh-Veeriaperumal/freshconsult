@@ -7,7 +7,7 @@ class ThemeController < SupportController
 	def index
 		@theme_colors = @portal.preferences.map{ |k, p| (k != "logo_link") ? "$#{k}:#{p};" : "" }.join("")
 
-		@default_custom_css = render_to_string(:file => "#{Rails.root}/public/src/portal/portal.scss")
+		@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
 		if (!params[:preview].blank? && !current_user.blank?)
 			key = redis_key(":custom_css", current_portal.template[:id])
 			@custom_css = exists(key) ? get_key(key) : @portal.template.custom_css.to_s
@@ -16,7 +16,7 @@ class ThemeController < SupportController
 		end
 
 		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compressed)
-		_options[:load_paths] << "#{Rails.root}/public/src/portal"
+		_options[:load_paths] << "#{RAILS_ROOT}/public/src/portal"
 
 		engine = Sass::Engine.new(@theme_colors + @default_custom_css + @custom_css, _options)
 

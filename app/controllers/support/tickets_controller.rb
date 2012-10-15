@@ -4,6 +4,7 @@ class Support::TicketsController < SupportController
   include SupportTicketControllerMethods 
   include Support::TicketsHelper
   include ExportCsvUtil
+  include HelpdeskControllerMethods 
 
   before_filter { |c| c.requires_permission :portal_request }
   before_filter :only => [:new, :create] do |c| 
@@ -22,10 +23,15 @@ class Support::TicketsController < SupportController
     build_tickets
     @ticket_filters = render_to_string :partial => "/support/shared/filters"
     @tickets_list = render_to_string :partial => "/support/shared/tickets"        
-    respond_to do |format|
-      format.html
-      format.xml  { render :xml => @tickets.to_xml }
-    end
+    # respond_to do |format|
+    #   format.html
+    #   format.xml  { render :xml => @tickets.to_xml }
+    # end
+  end
+
+  def new
+    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
+    @request_form = render_to_string :partial => "/support/shared/request_form"  
   end
 
   def update

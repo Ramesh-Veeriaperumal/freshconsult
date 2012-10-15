@@ -1,51 +1,54 @@
-<div class="row-fluid">
-	<div class="span4">		
-		<section class="page-side-bar-left">
-			<div class="ellipsis"><a href="{{portal.solutions_home_path}}">&larr; Back to solutions home</a></div>
-			<hr />
-			<h3 class="lead">{{category.name}}</h3>
-			<section class="solution-folders">
-				{% for c_folder in category.folders %}
-					<div class="folder {% if c_folder == folder %} active {% endif %} {% if c_folder.articles == empty %} muted {% endif %}">
-						{% if c_folder.articles != empty %}
-							<span class="article-count">{{c_folder.articles.size}}</span>
-						{% endif %}	
-						<h4 class="ellipsis"><a href="{{c_folder.url}}">{{c_folder.name}}</a></h4>
+<section class="main content rounded-6 min-height-on-desktop">
+	<h2>{{ folder.name }}</h2>
+	<p class="intro">{{ folder.description }}</p>
+	<section class="article-list">
+		<ul>
+			{% for article in folder.articles %}
+				<li>
+					<div class="ellipsis"> 
+						<a href="{{article.url}}">{{article.title}}</a>
 					</div>
-				{% endfor %}	
-			</section>
-			<hr />
-		</section>
-	</div>
-	<div class="span8">
-		<div class="article-list">			
-			<div class="solution-group {% cycle 'odd', 'even' %}">				
-				<h1 title="{{folder.name}}" class="page-title">
-					{{folder.name | truncate: 60}}
-				</h1>
-				<p class="help-text">					
-					{{folder.description | truncate: 120}}			
+					<div class="description">
+						{{ article.body_plain || truncatewords:20 }}
+					</div>
+					<p class="help-text">{{ article.created_on }}</p>
+				</li>
+			{% endfor %}
+			{% if folder.articles == empty %}
+				<p class="lead">
+					~ Watch this space for articles regarding {{ folder.name }} ~
 				</p>
-				<div class="content-list">
-					{% for article in folder.articles %}
-						<div class="content-row">
-							<span class="font-badge icon-article"></span>
-							<h4 class="ellipsis"> 
-								<a href="{{article.url}}">{{article.title}}</a>
-							</h4>
-							<p class="description">
-								{{ article.body_plain || truncatewords:20 }}
-							</p>
-							<p class="help-text">{{ article.created_on }}</p>
-						</div>					
-					{% endfor %}
-					{% if folder.articles == empty %}
-						<p class="lead">
-							~ Watch this space for articles regarding {{ folder.name }} ~
-						</p>
+			{% endif %}
+		</ul>
+	</section>
+</section>
+
+<section class="sidebar content rounded-6 min-height-on-desktop">
+	{% for o_category in portal.solution_categories %}
+		<div class="cs-g-c">
+			{% for o_folder in o_category.folders %}
+				{% if o_folder.id != folder.id %}
+				<section class="cs-g article-list">
+					<div class="list-lead">
+						<a href="{{o_folder.url}}">{{o_folder.name}} ({{ o_folder.articles | size }})</a>
+					</div>
+					<ul>
+						{% for o_article in o_folder.articles limit:5 %}
+						<li>
+							<div class="ellipsis">
+								<a href="{{o_article.url}}" title="{{o_article.title}}">{{o_article.title}}</a>
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+					{% if o_folder.articles.size > 5 %}
+						<a href="{{ o_folder.url }}" class="see-more">
+							See all {{ o_folder.articles | size }} articles 
+						</a>	
 					{% endif %}
-				</div>
-			</div>
+				</section>
+				{% endif %}
+			{% endfor %}
 		</div>
-	</div>
-</div>
+	{% endfor %}
+</section>

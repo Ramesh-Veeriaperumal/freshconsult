@@ -1,25 +1,44 @@
-<h3 class="page-title">{{ topic.title }}</h3>
-<hr />
-<section class="forum-topic forum-details">	
-	<div class="user-pic-normal"><img src="{{ topic.first_post.user.profile_url }}" /></div>
-	<p class="help-text">
-		Posted by <strong>{{ topic.first_post.user.name }}</strong>
-		on {{ topic.first_post.created_on | long_day }}
-	</p>
-	<div>{{ topic.first_post.body_html }}</div>
-</section>
-<hr />
-<div class="align-right">
-	<a href="#" class="btn">I like this idea</a>
-	<a href="#" class="btn btn-primary">Reply to this topic</a>
+<div class="content rounded-6 min-height-on-desktop">
+	<a href="#" class="pull-right"><strong>Start a new topic</strong></a>
+	<div class="breadcrumb">
+		<a href="/">Home</a>
+		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
+		<a href="#">{{ forum.name }}</a>
+	</div>
+	
+	<section class="topic-header clearfix">
+		<h2 class="post-title">
+			<span class="label label-planned">Planned</span>
+			{{ topic.title }}
+		</h2>
+		<div class="post-actions">
+			<span class="topic-likes">
+				25 people liked this idea!
+				<i class="arrow-container"><i class="arrow"></i></i>
+			</span>
+			<a href="#" class="btn btn-primary">I like this idea</a>
+			<a href="#" class="btn btn-primary">Follow</a>
+		</div>
+	</section>
+
+	<section class="post-details">
+		<div class="user-pic-thumb"><img src="{{ topic.first_post.user.profile_url }}" /></div>
+		<div class="p-content">
+			<p class="p-info">
+				<strong>{{ topic.first_post.user.name }}</strong> started a topic {{ topic.first_post.created_on | human_date_time }}
+			</p>
+			<div class="p-desc">{{ topic.first_post.body_html }}</div>
+		</div>
+	</section>
+	{% for post in topic.posts offset:1 %}
+	<section class="post-details" id="post-{{post.id}}">	
+		<div class="user-pic-thumb"><img src="{{ post.user.profile_url }}" /></div>
+		<div class="p-content">
+			<p class="p-info">
+				<strong>{{ post.user.name }}</strong> said {{ post.created_on | human_date_time }}
+			</p>
+			<div class="p-desc">{{ post.body_html }}</div>
+		</div>
+	</section>
+	{% endfor %}
 </div>
-<h4>Comments</h4>
-<hr />
-{% for post in topic.posts offset:1 %}
-<section class="forum-details">	
-	<div class="user-pic-normal"><img src="{{ post.user.profile_url }}" /></div>
-	<p class="help-text"><strong>{{ post.user.name }}</strong> on {{ post.created_on | long_day }}</p>
-	<div>{{ post.body_html }}</div>
-</section>
-<hr />
-{% endfor %}

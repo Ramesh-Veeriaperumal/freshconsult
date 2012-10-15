@@ -1,74 +1,96 @@
-<div class="row-fluid">	
-	<div class="span4">
-		<section class="page-side-bar-left">
-			<div class="ellipsis"><a href="{{folder.url}}">&larr; Back to {{folder.name}}</a></div>
-			<hr />
-			<h3 class="lead">{{category.name}}</h3>
-			<section class="solution-folders">
-				{% for c_folder in category.folders %}
-					<div class="folder {% if c_folder == folder %} active {% endif %} {% if c_folder.articles == empty %} muted {% endif %}">
-						{% if c_folder.articles != empty %}
-							<span class="article-count">{{c_folder.articles.size}}</span>
-						{% endif %}	
-						<h4 class="ellipsis"><a href="{{c_folder.url}}">{{c_folder.name}}</a></h4>
-					</div>
-				{% endfor %}	
-			</section>
-			<hr />
-		</section>
+<section class="main content rounded-6 min-height-on-desktop">
+	<div class="breadcrumb">
+		<a href="{{ portal.solutions_home_path }}">Solution home</a>
+		<a href="{{ article.category.url }}">{{ article.category.name }}</a>
+		<a href="{{ article.folder.url }}">{{ article.folder.name }}</a>
 	</div>
-	<div class="span8">
-		<h2 class="page-title">{{ article.title }}</h2>
-		<p class="help-text">
-			Modified on: {{ article.modified_on }}
-		</p>
-		<div>
-			{% for tag in article.tags %}
-				<span class="label label-info">{{tag.name}}</span>
+	<h3>{{ article.title }}</h3>
+	<p class="intro">
+		Modified on: {{ article.modified_on }}
+	</p>
+	{% comment %}
+	<div>
+		{% for tag in article.tags %}
+			<span class="label label-info">{{tag.name}}</span>
+		{% endfor %}
+	</div>
+	{% endcomment %}
+
+	<article>
+		{{ article.body }}
+	</article>
+
+	<div>
+		<hr />
+		Was this answer helpful?
+		<a href="#"><b>YES</b></a>
+		<a href="#"><b>NO</b></a>
+	</div>	
+	{% comment %}
+	<li>  
+	  <div class="preview_img">
+	  	<% if attachment.image? %>
+	  		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
+		<% else %>
+			<% 
+				extname = attachment.content_file_name.split('.')[-1] 
+				extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
+			%>
+				
+			<%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
+		<% end %>
+	  </div>	
+	  <div class="name">
+	    <%= link_to truncate(attachment.content_file_name, 23), attachment, :popup => true %>
+	  </div>
+
+	  <div class="size">
+	    (<%= number_to_human_size attachment.content_file_size %>)
+		  <% if local_assigns[:show_delete] %>
+		    <span class="delete">
+		      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
+		    </span>
+		  <% end %>
+	  </div>  
+	</li>
+	 <ul class="attachment_list">
+	    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
+     </ul>
+	 <hr />
+	 <div id="article_voting">
+		<%= render :partial => "/solution/articles/voting", :object => @article %>
+	 </div>
+	 {% endcomment %}
+</section>
+
+<section class="sidebar content rounded-6 min-height-on-desktop">
+	{% for o_category in portal.solution_categories %}
+		<div class="cs-g-c">
+			{% for o_folder in o_category.folders %}
+				<section class="cs-g article-list">
+					<div class="list-lead">
+						<a href="{{o_folder.url}}">{{o_folder.name}} ({{ o_folder.articles | size }})</a>
+					</div>
+					<ul>
+						{% for o_article in o_folder.articles limit:5 %}							
+							<li>
+								<div class="ellipsis" title="{{o_article.title}}">
+									{% if o_article.id != article.id %}
+										<a href="{{o_article.url}}">{{o_article.title}}</a>
+									{% else %}
+										<div class="info-text"> {{o_article.title}} </div>
+									{% endif %}
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+					{% if o_folder.articles.size > 5 %}
+						<a href="{{ o_folder.url }}" class="see-more">
+							See all {{ o_folder.articles | size }} articles 
+						</a>	
+					{% endif %}
+				</section>
 			{% endfor %}
 		</div>
-		<hr />
-		{{ article.body }}
-
-		<div>
-			<img src='/images/thumb_up.png' style="position:relative;top:2px;" /> {{ article.thumbs_up }} <b>likes</b>, 
-			<img src='/images/thumb_down.png'  style="position:relative;top:6px;" /> {{ article.thumbs_down }} <b>dislikes</b>
-			For this article
-		</div>	
-		{% comment %}
-		<li>  
-		  <div class="preview_img">
-		  	<% if attachment.image? %>
-		  		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
-			<% else %>
-				<% 
-					extname = attachment.content_file_name.split('.')[-1] 
-					extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
-				%>
-					
-				<%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
-			<% end %>
-		  </div>	
-		  <div class="name">
-		    <%= link_to truncate(attachment.content_file_name, 23), attachment, :popup => true %>
-		  </div>
-
-		  <div class="size">
-		    (<%= number_to_human_size attachment.content_file_size %>)
-			  <% if local_assigns[:show_delete] %>
-			    <span class="delete">
-			      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
-			    </span>
-			  <% end %>
-		  </div>  
-		</li>
-		 <ul class="attachment_list">
-		    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
-	     </ul>
-		 <hr />
-		 <div id="article_voting">
-			<%= render :partial => "/solution/articles/voting", :object => @article %>
-		 </div>
-		 {% endcomment %}
-	</div> 
-</div>
+	{% endfor %}
+</section>

@@ -119,7 +119,7 @@ class Account < ActiveRecord::Base
   has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
   
   
-  has_many :portal_forums, :through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} 
+  has_many :portal_forums, :through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position" 
   has_many :portal_topics, :through => :portal_forums# , :order => 'replied_at desc', :limit => 5
   
   has_many :user_forums, :through => :forum_categories, :conditions =>['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] 

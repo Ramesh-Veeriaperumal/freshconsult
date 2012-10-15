@@ -18,11 +18,8 @@ config/slave.sphinx.conf
 config/database.yml
 config/sphinx.yml
 config/redis.yml
-<<<<<<< HEAD
 .sass-cache/
-=======
 public/stylesheets/app
 public/stylesheets/app/lib
 public/stylesheets/print
 public/stylesheets/portal
->>>>>>> origin/pre_staging

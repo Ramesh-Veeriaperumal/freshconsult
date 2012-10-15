@@ -13,15 +13,20 @@
 	<meta name="keywords" content="<%= page_keywords %>">
 
 	<meta name="viewport" content="width=device-width">  
-	<%#= include_stylesheets :portal %>
-	<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
+	<%= include_stylesheets :portal %>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
+	<!-- <link href="/theme.css" media="screen" rel="stylesheet" type="text/css"> -->
 
 	<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />
 	<script src="/javascripts/modernizr-2.5.3-respond-1.1.0.min.js"></script>
 </head>
 <body>
 
-	<%= render :partial => "portal/layout", :locals => { :dynamic_template => (current_portal.template.layout unless current_portal.template.blank?) } %>    
+	<% 	_template = (current_portal.template.layout || "") unless current_portal.template.blank?
+		concat render :partial => "portal/layout", 
+			   		  :locals => { :dynamic_template => _template } %>
+
+	<%#= render :partial => "portal/prototype" %>
 
 	<%= include_javascripts :portal %>
 	<script type="text/javascript">

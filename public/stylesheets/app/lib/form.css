@@ -10,10 +10,18 @@
 /* line 7, ../../../src/app/lib/form.scss */
 label {
   display: block;
-  padding: 5px 0;
-  font-size: 1.4em; }
+  color: #323232;
+  padding: 0 0 6px 0;
+  font-size: 15px; }
 
-/* line 12, ../../../src/app/lib/form.scss */
+/* line 14, ../../../src/app/lib/form.scss */
+.help-text {
+  font-size: 13px;
+  color: #888888;
+  display: block;
+  padding: 0 0 5px 0; }
+
+/* line 20, ../../../src/app/lib/form.scss */
 input[type=text], select, input.text {
   width: 99%;
   margin: 0 0 3px 0;
@@ -21,18 +29,18 @@ input[type=text], select, input.text {
   padding: 3px;
   font-size: 13px; }
 
-/* line 20, ../../../src/app/lib/form.scss */
+/* line 28, ../../../src/app/lib/form.scss */
 select {
   padding: 1px;
   font-size: 13px;
   font-weight: normal;
   width: auto; }
 
-/* line 27, ../../../src/app/lib/form.scss */
+/* line 35, ../../../src/app/lib/form.scss */
 .full {
   width: 100%; }
 
-/* line 36, ../../../src/app/lib/form.scss */
+/* line 44, ../../../src/app/lib/form.scss */
 input[disabled],
 textarea[disabled],
 input[readonly],
@@ -41,7 +49,7 @@ textarea[readonly] {
   background-color: #f5f5f5;
   border-color: #ddd;
   cursor: not-allowed; }
-  /* line 41, ../../../src/app/lib/form.scss */
+  /* line 49, ../../../src/app/lib/form.scss */
   input[disabled]:hover,
   textarea[disabled]:hover,
   input[readonly]:hover,
@@ -53,28 +61,37 @@ textarea[readonly] {
     -moz-box-shadow: none;
     box-shadow: none; }
 
-/* line 48, ../../../src/app/lib/form.scss */
+/* line 56, ../../../src/app/lib/form.scss */
 textarea {
   height: 100px;
   width: 99%;
+  overflow: auto;
+  font-size: 13px;
+  line-height: 18px;
+  resize: none;
+  padding: 3px;
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; }
-  /* line 53, ../../../src/app/lib/form.scss */
+  /* line 66, ../../../src/app/lib/form.scss */
   textarea#application_script {
     height: 300px; }
 
-/* line 58, ../../../src/app/lib/form.scss */
+/* line 71, ../../../src/app/lib/form.scss */
+textarea.auto {
+  height: auto !important; }
+
+/* line 76, ../../../src/app/lib/form.scss */
 input:focus {
   outline: none; }
 
-/* line 59, ../../../src/app/lib/form.scss */
+/* line 77, ../../../src/app/lib/form.scss */
 textarea, input {
   outline: none; }
 
-/* line 61, ../../../src/app/lib/form.scss */
+/* line 79, ../../../src/app/lib/form.scss */
 input.password {
   width: 240px; }
 
-/* line 65, ../../../src/app/lib/form.scss */
+/* line 83, ../../../src/app/lib/form.scss */
 input.text, input[type=text], textarea {
   border: 1px solid #C6C6C6;
   font-weight: 400;
@@ -88,79 +105,71 @@ input.text, input[type=text], textarea {
   -moz-box-shadow: #dfdfdf 1px 1px 2px inset;
   box-shadow: #dfdfdf 1px 1px 2px inset; }
 
-/* line 73, ../../../src/app/lib/form.scss */
+/* line 91, ../../../src/app/lib/form.scss */
 .search_bar input[type=text] {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none; }
 
-/* line 77, ../../../src/app/lib/form.scss */
+/* line 95, ../../../src/app/lib/form.scss */
 div.color {
   position: relative;
   padding-top: 0px; }
-  /* line 80, ../../../src/app/lib/form.scss */
+  /* line 98, ../../../src/app/lib/form.scss */
   div.color .mColorPickerTrigger {
     position: absolute;
     top: 3px;
     left: 230px; }
-  /* line 85, ../../../src/app/lib/form.scss */
+  /* line 103, ../../../src/app/lib/form.scss */
   div.color input {
     width: 220px;
     font-size: 16px;
     border: 1px solid #afafaf; }
-  /* line 90, ../../../src/app/lib/form.scss */
+  /* line 108, ../../../src/app/lib/form.scss */
   div.color span {
     display: inline; }
 
-/* line 95, ../../../src/app/lib/form.scss */
-textarea {
-  overflow: auto;
-  font-size: 13px;
-  line-height: 18px;
-  resize: none;
-  padding: 3px; }
-
-/* line 103, ../../../src/app/lib/form.scss */
+/* line 113, ../../../src/app/lib/form.scss */
 input.very_small {
   width: 200px; }
 
-/* line 107, ../../../src/app/lib/form.scss */
+/* line 117, ../../../src/app/lib/form.scss */
 input.portal_url {
   width: 220px; }
 
-/* line 111, ../../../src/app/lib/form.scss */
+/* line 121, ../../../src/app/lib/form.scss */
 textarea.smallpara {
   height: 50px; }
 
-/* line 116, ../../../src/app/lib/form.scss */
+/* line 126, ../../../src/app/lib/form.scss */
 :-moz-placeholder {
   color: #bfbfbf; }
 
-/* line 119, ../../../src/app/lib/form.scss */
+/* line 129, ../../../src/app/lib/form.scss */
 ::-webkit-input-placeholder {
   color: #bfbfbf; }
 
 /*input:focus, textarea:focus{ border-color:$tab_color !important; }
 input:focus, select:focus, textarea:focus{ @include shadows($tab_color, 0, 0, 3px);}*/
-/* line 126, ../../../src/app/lib/form.scss */
+/* line 136, ../../../src/app/lib/form.scss */
 #header_search {
   border: 0px; }
 
-/* line 130, ../../../src/app/lib/form.scss */
+/* line 140, ../../../src/app/lib/form.scss */
 input.disabled, select.disabled, textarea.disabled {
   background-color: #F0F0F0;
   border: 1px solid #cfcfcf;
   color: #777777 !important; }
 
-/* line 136, ../../../src/app/lib/form.scss */
+/* line 146, ../../../src/app/lib/form.scss */
 form table {
   width: 100%; }
 
-/* line 140, ../../../src/app/lib/form.scss */
+/* line 150, ../../../src/app/lib/form.scss */
 div.ui-form ul {
   padding: 0px; }
 
-/* line 144, ../../../src/app/lib/form.scss */
+/* line 154, ../../../src/app/lib/form.scss */
 div.ui-form ul, ul.ui-form {
   list-style: none;
   *zoom: 1;
@@ -176,7 +185,7 @@ div.ui-form ul, ul.ui-form {
     display: table;
     clear: both; }
 
-/* line 151, ../../../src/app/lib/form.scss */
+/* line 161, ../../../src/app/lib/form.scss */
 ul.ui-form .ui-form-inline {
   overflow: hidden;
   *zoom: 1;
@@ -188,11 +197,11 @@ ul.ui-form .ui-form-inline {
   border-width: 1px 0;
   padding: 0;
   margin: 0; }
-  /* line 156, ../../../src/app/lib/form.scss */
+  /* line 166, ../../../src/app/lib/form.scss */
   ul.ui-form .ui-form-inline li {
     padding-left: 0; }
 
-/* line 159, ../../../src/app/lib/form.scss */
+/* line 169, ../../../src/app/lib/form.scss */
 .ui-datepicker-trigger {
   background: url('/images/symbols-s6708faa735.png') 0 -689px no-repeat;
   border: 0;
@@ -202,7 +211,7 @@ ul.ui-form .ui-form-inline {
   height: 20px;
   text-indent: -9999px; }
 
-/* line 169, ../../../src/app/lib/form.scss */
+/* line 179, ../../../src/app/lib/form.scss */
 a.addchoice {
   padding: 5px;
   color: #999999;
@@ -231,11 +240,11 @@ a.addchoice {
   a.addchoice:active {
     color: #333333; }
 
-/* line 186, ../../../src/app/lib/form.scss */
+/* line 196, ../../../src/app/lib/form.scss */
 a.addchoice:hover {
   background-color: #e8e8e8; }
 
-/* line 191, ../../../src/app/lib/form.scss */
+/* line 201, ../../../src/app/lib/form.scss */
 .colsets fieldset {
   *zoom: 1;
   margin: 1px 0 0 0;
@@ -246,13 +255,13 @@ a.addchoice:hover {
     content: "";
     display: table;
     clear: both; }
-  /* line 196, ../../../src/app/lib/form.scss */
+  /* line 206, ../../../src/app/lib/form.scss */
   .colsets fieldset b {
     font-size: 11px; }
-  /* line 199, ../../../src/app/lib/form.scss */
+  /* line 209, ../../../src/app/lib/form.scss */
   .colsets fieldset .sort_handle {
     left: -6px; }
-  /* line 202, ../../../src/app/lib/form.scss */
+  /* line 212, ../../../src/app/lib/form.scss */
   .colsets fieldset .dropchoice, .colsets fieldset .tags {
     *zoom: 1;
     float: left;
@@ -264,20 +273,20 @@ a.addchoice:hover {
       content: "";
       display: table;
       clear: both; }
-    /* line 208, ../../../src/app/lib/form.scss */
+    /* line 218, ../../../src/app/lib/form.scss */
     .colsets fieldset .dropchoice input, .colsets fieldset .tags input {
       margin-right: 5px;
       width: 100%; }
-  /* line 213, ../../../src/app/lib/form.scss */
+  /* line 223, ../../../src/app/lib/form.scss */
   .colsets fieldset .tags {
     width: 50%;
     display: none; }
-  /* line 217, ../../../src/app/lib/form.scss */
+  /* line 227, ../../../src/app/lib/form.scss */
   .colsets fieldset img {
     float: left;
     margin: 5px 12px 0 5px;
     cursor: pointer; }
-  /* line 222, ../../../src/app/lib/form.scss */
+  /* line 232, ../../../src/app/lib/form.scss */
   .colsets fieldset .deleteChoice {
     float: left;
     margin: 5px 12px 0 5px;
@@ -285,10 +294,10 @@ a.addchoice:hover {
     background: url('/images/symbols-s6708faa735.png') 0 -368px no-repeat;
     width: 16px;
     height: 16px; }
-  /* line 229, ../../../src/app/lib/form.scss */
+  /* line 239, ../../../src/app/lib/form.scss */
   .colsets fieldset .deleteChoice.disabled {
     background: url('/images/symbols-s6708faa735.png') 0 -111px no-repeat; }
-/* line 233, ../../../src/app/lib/form.scss */
+/* line 243, ../../../src/app/lib/form.scss */
 .colsets a.addchoice {
   border: 0;
   background-color: transparent;
@@ -296,24 +305,24 @@ a.addchoice:hover {
   font-size: 12px;
   padding: 8px 10px 6px 63px; }
 
-/* line 242, ../../../src/app/lib/form.scss */
+/* line 252, ../../../src/app/lib/form.scss */
 .choicelist {
   overflow: hidden;
   *zoom: 1; }
-  /* line 244, ../../../src/app/lib/form.scss */
+  /* line 254, ../../../src/app/lib/form.scss */
   .choicelist label {
     font-size: 1.1em; }
-  /* line 247, ../../../src/app/lib/form.scss */
+  /* line 257, ../../../src/app/lib/form.scss */
   .choicelist label.radiolabel {
     font-size: 1em;
     float: left;
     padding: 0 5px 0 0;
     margin-right: 10px; }
-  /* line 253, ../../../src/app/lib/form.scss */
+  /* line 263, ../../../src/app/lib/form.scss */
   .choicelist input.radio {
     float: left; }
 
-/* line 259, ../../../src/app/lib/form.scss */
+/* line 269, ../../../src/app/lib/form.scss */
 .ui-form {
   padding: 6px 0 12px 0;
   position: relative;
@@ -326,57 +335,57 @@ a.addchoice:hover {
   /*li.dropdown, li.dropdown_blank{
      select{ margin-bottom:8px; }
   }*/ }
-  /* line 264, ../../../src/app/lib/form.scss */
+  /* line 274, ../../../src/app/lib/form.scss */
   .ui-form div.field-box {
     padding: 6px 2% 10px 2%;
     overflow: hidden;
     *zoom: 1; }
-  /* line 268, ../../../src/app/lib/form.scss */
+  /* line 278, ../../../src/app/lib/form.scss */
   .ui-form li {
     padding: 8px 2% 8px 2%;
     margin: 0;
     float: left;
     width: 96%; }
-    /* line 273, ../../../src/app/lib/form.scss */
+    /* line 283, ../../../src/app/lib/form.scss */
     .ui-form li.hide {
       display: none; }
-    /* line 276, ../../../src/app/lib/form.scss */
+    /* line 286, ../../../src/app/lib/form.scss */
     .ui-form li div.field-box {
       padding: 4px 0 8px 0; }
-  /* line 280, ../../../src/app/lib/form.scss */
+  /* line 290, ../../../src/app/lib/form.scss */
   .ui-form li.search-choice, .ui-form li.search-field {
     width: auto; }
-  /* line 283, ../../../src/app/lib/form.scss */
+  /* line 293, ../../../src/app/lib/form.scss */
   .ui-form .required.html_paragraph, .ui-form .ca_content_body {
     height: 250px; }
-  /* line 290, ../../../src/app/lib/form.scss */
+  /* line 300, ../../../src/app/lib/form.scss */
   .ui-form .hidden {
     display: none; }
-  /* line 293, ../../../src/app/lib/form.scss */
+  /* line 303, ../../../src/app/lib/form.scss */
   .ui-form li.dropdown, .ui-form li.small, .ui-form li.dropdown_blank, .ui-form li.number {
     width: 46%; }
-    /* line 295, ../../../src/app/lib/form.scss */
+    /* line 305, ../../../src/app/lib/form.scss */
     .ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input {
       width: auto; }
-  /* line 297, ../../../src/app/lib/form.scss */
+  /* line 307, ../../../src/app/lib/form.scss */
   .ui-form li.nestedfield, .ui-form li.nested_field {
     width: 46%; }
-  /* line 298, ../../../src/app/lib/form.scss */
+  /* line 308, ../../../src/app/lib/form.scss */
   .ui-form li.nestedfield select, .ui-form li.nested_field select {
     min-width: 35%;
     width: auto !important;
     width: 35%; }
-  /* line 303, ../../../src/app/lib/form.scss */
+  /* line 313, ../../../src/app/lib/form.scss */
   .ui-form div.checkbox, .ui-form label.checkbox {
     padding-bottom: 5px;
     padding-left: 18px;
     font-size: 1.1em;
     position: relative; }
-    /* line 308, ../../../src/app/lib/form.scss */
+    /* line 318, ../../../src/app/lib/form.scss */
     .ui-form div.checkbox input[type="checkbox"], .ui-form label.checkbox input[type="checkbox"] {
       float: left;
       margin-left: -18px; }
-  /* line 313, ../../../src/app/lib/form.scss */
+  /* line 323, ../../../src/app/lib/form.scss */
   .ui-form label, .ui-form li.checkbox {
     font-weight: normal;
     margin: 0;
@@ -384,117 +393,117 @@ a.addchoice:hover {
     color: #565656;
     font-size: 13px;
     font-weight: 400; }
-  /* line 323, ../../../src/app/lib/form.scss */
+  /* line 333, ../../../src/app/lib/form.scss */
   .ui-form label.label-title {
     margin-bottom: 5px;
     color: #333; }
-    /* line 326, ../../../src/app/lib/form.scss */
+    /* line 336, ../../../src/app/lib/form.scss */
     .ui-form label.label-title span {
       color: #999; }
-  /* line 331, ../../../src/app/lib/form.scss */
+  /* line 341, ../../../src/app/lib/form.scss */
   .ui-form label.overlabel {
     color: #999;
     margin-left: 7px;
     font-weight: 300;
     font-size: 14px; }
-  /* line 337, ../../../src/app/lib/form.scss */
+  /* line 347, ../../../src/app/lib/form.scss */
   .ui-form li.checkbox {
     overflow: hidden;
     *zoom: 1;
     padding-left: 18px; }
-    /* line 340, ../../../src/app/lib/form.scss */
+    /* line 350, ../../../src/app/lib/form.scss */
     .ui-form li.checkbox input {
       float: left;
       margin-right: 6px;
       margin-top: 4px;
       margin-left: 0; }
-    /* line 346, ../../../src/app/lib/form.scss */
+    /* line 356, ../../../src/app/lib/form.scss */
     .ui-form li.checkbox label {
       position: relative;
       font-size: 0.9em;
       top: -6px;
       left: 1px; }
-  /* line 354, ../../../src/app/lib/form.scss */
+  /* line 364, ../../../src/app/lib/form.scss */
   .ui-form .largefield label {
     font-size: 1.4em; }
-  /* line 357, ../../../src/app/lib/form.scss */
+  /* line 367, ../../../src/app/lib/form.scss */
   .ui-form .largefield input {
     font-size: 1.4em; }
-  /* line 362, ../../../src/app/lib/form.scss */
+  /* line 372, ../../../src/app/lib/form.scss */
   .ui-form .largelabel label {
     font-size: 1.8em;
     font-weight: 300; }
-  /* line 367, ../../../src/app/lib/form.scss */
+  /* line 377, ../../../src/app/lib/form.scss */
   .ui-form .check_box {
     overflow: hidden;
     *zoom: 1; }
-    /* line 369, ../../../src/app/lib/form.scss */
+    /* line 379, ../../../src/app/lib/form.scss */
     .ui-form .check_box label {
       float: left;
       font-size: 1.4em; }
-    /* line 373, ../../../src/app/lib/form.scss */
+    /* line 383, ../../../src/app/lib/form.scss */
     .ui-form .check_box input {
       float: left;
       margin: 5px; }
-  /* line 379, ../../../src/app/lib/form.scss */
+  /* line 389, ../../../src/app/lib/form.scss */
   .ui-form .seperator {
     margin-bottom: 0;
     padding: 1px; }
-  /* line 383, ../../../src/app/lib/form.scss */
+  /* line 393, ../../../src/app/lib/form.scss */
   .ui-form .inline_field {
     margin: 0 0 10px 10px; }
-    /* line 385, ../../../src/app/lib/form.scss */
+    /* line 395, ../../../src/app/lib/form.scss */
     .ui-form .inline_field input {
       width: 45%;
       margin: 0; }
-    /* line 389, ../../../src/app/lib/form.scss */
+    /* line 399, ../../../src/app/lib/form.scss */
     .ui-form .inline_field label {
       font-size: 1.2em; }
-  /* line 394, ../../../src/app/lib/form.scss */
+  /* line 404, ../../../src/app/lib/form.scss */
   .ui-form .inlineChecklist label {
     float: left;
     font-size: 1em;
     padding: 5px 16px 0 0; }
-  /* line 399, ../../../src/app/lib/form.scss */
+  /* line 409, ../../../src/app/lib/form.scss */
   .ui-form .inlineChecklist input {
     top: 0; }
-  /* line 404, ../../../src/app/lib/form.scss */
+  /* line 414, ../../../src/app/lib/form.scss */
   .ui-form .inline-radio {
     padding: 3px 0;
     font-size: 13px; }
-    /* line 405, ../../../src/app/lib/form.scss */
+    /* line 415, ../../../src/app/lib/form.scss */
     .ui-form .inline-radio input.radio {
       position: relative;
       top: -3px;
       margin-right: 4px; }
-    /* line 406, ../../../src/app/lib/form.scss */
+    /* line 416, ../../../src/app/lib/form.scss */
     .ui-form .inline-radio select {
       font-size: 12px;
       margin-top: 5px; }
-  /* line 410, ../../../src/app/lib/form.scss */
+  /* line 420, ../../../src/app/lib/form.scss */
   .ui-form li.textleft {
     overflow: hidden;
     *zoom: 1;
     position: relative; }
-    /* line 413, ../../../src/app/lib/form.scss */
+    /* line 423, ../../../src/app/lib/form.scss */
     .ui-form li.textleft label {
       position: absolute;
       left: 6px;
       top: 3px;
       width: 25%; }
-  /* line 420, ../../../src/app/lib/form.scss */
+  /* line 430, ../../../src/app/lib/form.scss */
   .ui-form fieldset.addchoice {
     padding: 0;
     font-size: 13px;
     font-weight: bold;
     cursor: pointer; }
-  /* line 426, ../../../src/app/lib/form.scss */
+  /* line 436, ../../../src/app/lib/form.scss */
   .ui-form fieldset.addchoice:hover {
     background: #efefef; }
-  /* line 429, ../../../src/app/lib/form.scss */
+  /* line 439, ../../../src/app/lib/form.scss */
   .ui-form .conditionset {
     margin: 8px 0 0; }
-    /* line 431, ../../../src/app/lib/form.scss */
+    /* line 441, ../../../src/app/lib/form.scss */
     .ui-form .conditionset fieldset {
       *zoom: 1;
       padding: 8px 0 8px 4px;
@@ -505,20 +514,20 @@ a.addchoice:hover {
         content: "";
         display: table;
         clear: both; }
-      /* line 437, ../../../src/app/lib/form.scss */
+      /* line 447, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset.addchoice {
         padding-left: 28px; }
-      /* line 439, ../../../src/app/lib/form.scss */
+      /* line 449, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset * {
         float: left;
         margin: 2px 4px; }
-      /* line 444, ../../../src/app/lib/form.scss */
+      /* line 454, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset .nested_field {
         clear: left; }
-      /* line 448, ../../../src/app/lib/form.scss */
+      /* line 458, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset label.error, .ui-form .conditionset fieldset label.warning {
         clear: left; }
-      /* line 451, ../../../src/app/lib/form.scss */
+      /* line 461, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset .add, .ui-form .conditionset fieldset .delete {
         position: absolute;
         margin: 0;
@@ -526,26 +535,26 @@ a.addchoice:hover {
         cursor: pointer;
         right: 10px;
         top: 10px; }
-      /* line 459, ../../../src/app/lib/form.scss */
+      /* line 469, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset .add {
         left: 6px; }
-      /* line 462, ../../../src/app/lib/form.scss */
+      /* line 472, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset div.controls {
         width: 95%; }
-      /* line 466, ../../../src/app/lib/form.scss */
+      /* line 476, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset input.text {
         width: 300px;
         font-size: 10pt; }
-      /* line 470, ../../../src/app/lib/form.scss */
+      /* line 480, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset textarea.paragraph {
         width: 400px; }
-      /* line 474, ../../../src/app/lib/form.scss */
+      /* line 484, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset div.s_comment {
         width: 520px; }
-        /* line 476, ../../../src/app/lib/form.scss */
+        /* line 486, ../../../src/app/lib/form.scss */
         .ui-form .conditionset fieldset div.s_comment .paragraph {
           width: 98%; }
-      /* line 480, ../../../src/app/lib/form.scss */
+      /* line 490, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset div.s_email {
         float: none;
         display: block;
@@ -553,21 +562,21 @@ a.addchoice:hover {
         padding: 4px;
         overflow: hidden;
         *zoom: 1; }
-        /* line 486, ../../../src/app/lib/form.scss */
+        /* line 496, ../../../src/app/lib/form.scss */
         .ui-form .conditionset fieldset div.s_email div {
           width: 100%;
           padding: 4px 0;
           font-size: 12px; }
-          /* line 490, ../../../src/app/lib/form.scss */
+          /* line 500, ../../../src/app/lib/form.scss */
           .ui-form .conditionset fieldset div.s_email div em {
             font-style: normal; }
-          /* line 493, ../../../src/app/lib/form.scss */
+          /* line 503, ../../../src/app/lib/form.scss */
           .ui-form .conditionset fieldset div.s_email div b {
             width: 180px; }
-          /* line 496, ../../../src/app/lib/form.scss */
+          /* line 506, ../../../src/app/lib/form.scss */
           .ui-form .conditionset fieldset div.s_email div input.text, .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
             width: 590px; }
-          /* line 499, ../../../src/app/lib/form.scss */
+          /* line 509, ../../../src/app/lib/form.scss */
           .ui-form .conditionset fieldset div.s_email div label.error {
             margin-left: 190px;
             width: 575px;
@@ -576,52 +585,52 @@ a.addchoice:hover {
             -ms-border-radius: 3px;
             -o-border-radius: 3px;
             border-radius: 3px; }
-          /* line 505, ../../../src/app/lib/form.scss */
+          /* line 515, ../../../src/app/lib/form.scss */
           .ui-form .conditionset fieldset div.s_email div .error {
             border-color: #ff9999; }
-          /* line 508, ../../../src/app/lib/form.scss */
+          /* line 518, ../../../src/app/lib/form.scss */
           .ui-form .conditionset fieldset div.s_email div a.l_placeholder {
             clear: left;
             margin-left: 190px;
             margin-top: 4px;
             font-size: 11px;
             text-decoration: none; }
-      /* line 518, ../../../src/app/lib/form.scss */
+      /* line 528, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset span {
         margin: 0;
         padding: 0; }
-      /* line 522, ../../../src/app/lib/form.scss */
+      /* line 532, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset span.sort_handle:hover {
         background-color: #fafafa; }
-      /* line 526, ../../../src/app/lib/form.scss */
+      /* line 536, ../../../src/app/lib/form.scss */
       .ui-form .conditionset fieldset label.checkbox {
         width: 100%;
         font-size: 13px; }
-    /* line 531, ../../../src/app/lib/form.scss */
+    /* line 541, ../../../src/app/lib/form.scss */
     .ui-form .conditionset div {
       margin: 0;
       padding: 0; }
 
-/* line 539, ../../../src/app/lib/form.scss */
+/* line 549, ../../../src/app/lib/form.scss */
 li.nested_field .level_2, li.nested_field .level_3 {
   border-left: 1px dotted #afafaf;
   padding-left: 10px;
   display: none; }
-/* line 544, ../../../src/app/lib/form.scss */
+/* line 554, ../../../src/app/lib/form.scss */
 li.nested_field select {
   min-width: 90%;
   width: auto !important;
   width: 90%; }
 
-/* line 549, ../../../src/app/lib/form.scss */
+/* line 559, ../../../src/app/lib/form.scss */
 .rtCnt .rtDetails li.nested_field .level_2 label, .rtCnt .rtDetails li.nested_field .level_3 label {
   font-weight: normal; }
 
-/* line 553, ../../../src/app/lib/form.scss */
+/* line 563, ../../../src/app/lib/form.scss */
 .threecol-form .item {
   float: left;
   width: 33%; }
-  /* line 556, ../../../src/app/lib/form.scss */
+  /* line 566, ../../../src/app/lib/form.scss */
   .threecol-form .item label {
     display: -moz-inline-stack;
     display: inline-block;
@@ -629,77 +638,77 @@ li.nested_field select {
     *vertical-align: auto;
     zoom: 1;
     *display: inline; }
-  /* line 559, ../../../src/app/lib/form.scss */
+  /* line 569, ../../../src/app/lib/form.scss */
   .threecol-form .item .level {
     margin-left: 20px; }
 
-/* line 564, ../../../src/app/lib/form.scss */
+/* line 574, ../../../src/app/lib/form.scss */
 .ui-form .inline-field {
   /*border-bottom:1px dotted #cfcfcf;*/
   padding-top: 8px; }
-  /* line 567, ../../../src/app/lib/form.scss */
+  /* line 577, ../../../src/app/lib/form.scss */
   .ui-form .inline-field .caption {
     float: left;
     /** Individual Height settings **/ }
-    /* line 569, ../../../src/app/lib/form.scss */
+    /* line 579, ../../../src/app/lib/form.scss */
     .ui-form .inline-field .caption .logo {
       float: left;
       height: 34px;
       width: 150px;
       margin-left: -2px;
       clear: left; }
-    /* line 579, ../../../src/app/lib/form.scss */
+    /* line 589, ../../../src/app/lib/form.scss */
     .ui-form .inline-field .caption .application-logo-custom_app {
       height: 60px; }
-    /* line 583, ../../../src/app/lib/form.scss */
+    /* line 593, ../../../src/app/lib/form.scss */
     .ui-form .inline-field .caption .logo.info-data {
       padding: 3px; }
-    /* line 586, ../../../src/app/lib/form.scss */
+    /* line 596, ../../../src/app/lib/form.scss */
     .ui-form .inline-field .caption h2.title {
       line-height: 28px;
       top: -8px;
       position: relative; }
-  /* line 592, ../../../src/app/lib/form.scss */
+  /* line 602, ../../../src/app/lib/form.scss */
   .ui-form .inline-field .rightalign {
     font-size: 13px;
     width: 195px;
     text-align: right; }
-  /* line 598, ../../../src/app/lib/form.scss */
+  /* line 608, ../../../src/app/lib/form.scss */
   .ui-form .inline-field div.fields {
     margin-left: 210px;
     clear: right;
     position: relative; }
-    /* line 602, ../../../src/app/lib/form.scss */
+    /* line 612, ../../../src/app/lib/form.scss */
     .ui-form .inline-field div.fields textarea.required {
       height: 200px; }
-    /* line 605, ../../../src/app/lib/form.scss */
+    /* line 615, ../../../src/app/lib/form.scss */
     .ui-form .inline-field div.fields label {
       font-size: 1.2em; }
-    /* line 608, ../../../src/app/lib/form.scss */
+    /* line 618, ../../../src/app/lib/form.scss */
     .ui-form .inline-field div.fields div.action_buttons {
       margin-top: 0; }
-    /* line 611, ../../../src/app/lib/form.scss */
+    /* line 621, ../../../src/app/lib/form.scss */
     .ui-form .inline-field div.fields span.seperator {
       margin: 6px 0; }
-    /* line 614, ../../../src/app/lib/form.scss */
+    /* line 624, ../../../src/app/lib/form.scss */
     .ui-form .inline-field div.fields .info-data {
       padding-bottom: 0; }
-    /* line 617, ../../../src/app/lib/form.scss */
+    /* line 627, ../../../src/app/lib/form.scss */
     .ui-form .inline-field div.fields div.fields {
       padding-top: 3px;
       margin-left: 160px; }
-  /* line 622, ../../../src/app/lib/form.scss */
+  /* line 632, ../../../src/app/lib/form.scss */
   .ui-form .inline-field span.seperator {
     border-style: solid;
     border-color: #efefef;
     margin-bottom: 10px; }
 
-/* line 629, ../../../src/app/lib/form.scss */
+/* line 639, ../../../src/app/lib/form.scss */
 .ui-login, .ui-signup {
   text-align: center;
   display: block;
   padding: 18px 0; }
-  /* line 633, ../../../src/app/lib/form.scss */
+  /* line 643, ../../../src/app/lib/form.scss */
   .ui-login .ui-form, .ui-signup .ui-form {
     background: none;
     border: 0;
@@ -714,32 +723,32 @@ li.nested_field select {
     padding: 25px;
     border: 1px solid #c2c2c2;
     background: #ffffff; }
-    /* line 643, ../../../src/app/lib/form.scss */
+    /* line 653, ../../../src/app/lib/form.scss */
     .ui-login .ui-form ul, .ui-signup .ui-form ul {
       margin: 0; }
-      /* line 645, ../../../src/app/lib/form.scss */
+      /* line 655, ../../../src/app/lib/form.scss */
       .ui-login .ui-form ul li, .ui-signup .ui-form ul li {
         border-bottom: 0;
         padding-top: 5px;
         padding-bottom: 5px; }
-        /* line 646, ../../../src/app/lib/form.scss */
+        /* line 656, ../../../src/app/lib/form.scss */
         .ui-login .ui-form ul li input.text, .ui-signup .ui-form ul li input.text {
           margin: 3px 0 5px 0;
           width: 320px; }
-      /* line 654, ../../../src/app/lib/form.scss */
+      /* line 664, ../../../src/app/lib/form.scss */
       .ui-login .ui-form ul .checkbox, .ui-signup .ui-form ul .checkbox {
         padding-left: 24px; }
 
-/* line 662, ../../../src/app/lib/form.scss */
+/* line 672, ../../../src/app/lib/form.scss */
 .business_hours td {
   vertical-align: top; }
-/* line 665, ../../../src/app/lib/form.scss */
+/* line 675, ../../../src/app/lib/form.scss */
 .business_hours td.borderleft {
   border-left: 1px solid #d8d8d8; }
-/* line 669, ../../../src/app/lib/form.scss */
+/* line 679, ../../../src/app/lib/form.scss */
 .business_hours .business_time div.specific_hours {
   padding: 16px 26px; }
-/* line 672, ../../../src/app/lib/form.scss */
+/* line 682, ../../../src/app/lib/form.scss */
 .business_hours .business_time div.timerange {
   *zoom: 1; }
   /* line 38, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
@@ -747,17 +756,17 @@ li.nested_field select {
     content: "";
     display: table;
     clear: both; }
-  /* line 674, ../../../src/app/lib/form.scss */
+  /* line 684, ../../../src/app/lib/form.scss */
   .business_hours .business_time div.timerange input, .business_hours .business_time div.timerange strong {
     float: left; }
-  /* line 677, ../../../src/app/lib/form.scss */
+  /* line 687, ../../../src/app/lib/form.scss */
   .business_hours .business_time div.timerange input {
     width: 80px; }
-  /* line 680, ../../../src/app/lib/form.scss */
+  /* line 690, ../../../src/app/lib/form.scss */
   .business_hours .business_time div.timerange strong {
     font-weight: normal;
     padding: 0 10px; }
-/* line 687, ../../../src/app/lib/form.scss */
+/* line 697, ../../../src/app/lib/form.scss */
 .business_hours .business_days label {
   display: -moz-inline-stack;
   display: inline-block;
@@ -766,10 +775,10 @@ li.nested_field select {
   zoom: 1;
   *display: inline;
   padding-right: 20px; }
-/* line 692, ../../../src/app/lib/form.scss */
+/* line 702, ../../../src/app/lib/form.scss */
 .business_hours .holidaylist {
   padding-left: 0; }
-  /* line 694, ../../../src/app/lib/form.scss */
+  /* line 704, ../../../src/app/lib/form.scss */
   .business_hours .holidaylist ul {
     color: #444444;
     overflow: hidden;
@@ -780,11 +789,11 @@ li.nested_field select {
     -moz-border-radius: 6px 6px 6px 6px;
     -webkit-border-radius: 6px 6px 6px 6px;
     border-radius: 6px 6px 6px 6px; }
-    /* line 701, ../../../src/app/lib/form.scss */
+    /* line 711, ../../../src/app/lib/form.scss */
     .business_hours .holidaylist ul li {
       position: relative;
       margin-right: 20px; }
-      /* line 704, ../../../src/app/lib/form.scss */
+      /* line 714, ../../../src/app/lib/form.scss */
       .business_hours .holidaylist ul li .close {
         position: absolute;
         background: url(/images/icons/btn_close_icon.png) no-repeat;
@@ -793,17 +802,17 @@ li.nested_field select {
         right: 6px;
         top: 0; }
 
-/* line 717, ../../../src/app/lib/form.scss */
+/* line 727, ../../../src/app/lib/form.scss */
 input.time {
   font-weight: normal;
   font-size: 12px; }
 
-/* line 723, ../../../src/app/lib/form.scss */
+/* line 733, ../../../src/app/lib/form.scss */
 .grid {
   border: 1px solid #cfcfcf;
   padding: 0;
   background: #f6f6f6; }
-  /* line 727, ../../../src/app/lib/form.scss */
+  /* line 737, ../../../src/app/lib/form.scss */
   .grid label.caption {
     font-size: 13px;
     padding: 8px 10px;
@@ -811,123 +820,123 @@ input.time {
     font-weight: bold;
     border-bottom: 1px solid #afafaf;
     color: #000000; }
-  /* line 735, ../../../src/app/lib/form.scss */
+  /* line 745, ../../../src/app/lib/form.scss */
   .grid .text {
     font-size: 1.0em; }
-  /* line 736, ../../../src/app/lib/form.scss */
+  /* line 746, ../../../src/app/lib/form.scss */
   .grid table {
     padding: 0;
     margin: 0;
     border: 0;
     font-size: 13px;
     border-bottom: 2px solid #cfcfcf; }
-    /* line 741, ../../../src/app/lib/form.scss */
+    /* line 751, ../../../src/app/lib/form.scss */
     .grid table th, .grid table td {
       padding: 8px 10px;
       vertical-align: top;
       border: 0; }
-    /* line 746, ../../../src/app/lib/form.scss */
+    /* line 756, ../../../src/app/lib/form.scss */
     .grid table th {
       line-height: 18px;
       font-weight: bold;
       background-image: url(/images/overlay-button.png);
       background-color: #f2f2f2;
       background-repeat: repeat-x; }
-      /* line 752, ../../../src/app/lib/form.scss */
+      /* line 762, ../../../src/app/lib/form.scss */
       .grid table th span {
         display: block; }
-    /* line 756, ../../../src/app/lib/form.scss */
+    /* line 766, ../../../src/app/lib/form.scss */
     .grid table td {
       background-color: #efefef;
       border-top: 1px solid #cfcfcf; }
-      /* line 757, ../../../src/app/lib/form.scss */
+      /* line 767, ../../../src/app/lib/form.scss */
       .grid table td label {
         color: #555555;
         font-weight: bold;
         font-size: 1em;
         padding: 8px 0 6px 0; }
-        /* line 762, ../../../src/app/lib/form.scss */
+        /* line 772, ../../../src/app/lib/form.scss */
         .grid table td label em {
           font-style: normal;
           font-weight: bold;
           text-transform: capitalize;
           color: #000000; }
-      /* line 771, ../../../src/app/lib/form.scss */
+      /* line 781, ../../../src/app/lib/form.scss */
       .grid table td .chzn-container {
         width: 96.8% !important; }
-      /* line 772, ../../../src/app/lib/form.scss */
+      /* line 782, ../../../src/app/lib/form.scss */
       .grid table td .chzn-drop {
         width: 100% !important; }
-      /* line 773, ../../../src/app/lib/form.scss */
+      /* line 783, ../../../src/app/lib/form.scss */
       .grid table td ul.chzn-choices li {
         width: auto; }
-      /* line 774, ../../../src/app/lib/form.scss */
+      /* line 784, ../../../src/app/lib/form.scss */
       .grid table td .search-field {
         min-width: 500px;
         width: auto !important;
         width: 500px; }
-      /* line 775, ../../../src/app/lib/form.scss */
+      /* line 785, ../../../src/app/lib/form.scss */
       .grid table td .search-field .default {
         width: 100% !important; }
-      /* line 776, ../../../src/app/lib/form.scss */
+      /* line 786, ../../../src/app/lib/form.scss */
       .grid table td ul.chzn-results li.active-result {
         float: none;
         display: block;
         width: 100%; }
-    /* line 779, ../../../src/app/lib/form.scss */
+    /* line 789, ../../../src/app/lib/form.scss */
     .grid table tr.even td {
       background-color: #f4f4f4; }
-    /* line 784, ../../../src/app/lib/form.scss */
+    /* line 794, ../../../src/app/lib/form.scss */
     .grid table .special_row td {
       padding: 0; }
-    /* line 787, ../../../src/app/lib/form.scss */
+    /* line 797, ../../../src/app/lib/form.scss */
     .grid table .special_row div {
       background: #fff;
       height: 20px;
       margin: 0 -1px; }
-  /* line 794, ../../../src/app/lib/form.scss */
+  /* line 804, ../../../src/app/lib/form.scss */
   .grid .olist {
     list-style: decimal; }
-  /* line 798, ../../../src/app/lib/form.scss */
+  /* line 808, ../../../src/app/lib/form.scss */
   .grid .grid_form td {
     border: 0;
     padding: 6px 10px 0 10px;
     background: #fafafa; }
-  /* line 803, ../../../src/app/lib/form.scss */
+  /* line 813, ../../../src/app/lib/form.scss */
   .grid .grid_form .button-container {
     text-align: right;
     padding: 0 10px 10px 0; }
 
-/* line 810, ../../../src/app/lib/form.scss */
+/* line 820, ../../../src/app/lib/form.scss */
 .sidepanel .ui-form {
   margin: 0px -16px;
   padding: 4px 10px; }
 
-/* line 815, ../../../src/app/lib/form.scss */
+/* line 825, ../../../src/app/lib/form.scss */
 .report {
   margin: 0 -5px; }
-  /* line 817, ../../../src/app/lib/form.scss */
+  /* line 827, ../../../src/app/lib/form.scss */
   .report table {
     border: 0; }
-    /* line 819, ../../../src/app/lib/form.scss */
+    /* line 829, ../../../src/app/lib/form.scss */
     .report table td {
       font-size: 12px;
       border-top-color: #f3f3f3; }
-    /* line 820, ../../../src/app/lib/form.scss */
+    /* line 830, ../../../src/app/lib/form.scss */
     .report table tr.odd td {
       background: #ffffff; }
-    /* line 823, ../../../src/app/lib/form.scss */
+    /* line 833, ../../../src/app/lib/form.scss */
     .report table tr.even td {
       background: #f8f8f8; }
-    /* line 826, ../../../src/app/lib/form.scss */
+    /* line 836, ../../../src/app/lib/form.scss */
     .report table .group_by_day_criteria {
       width: 15%; }
-    /* line 829, ../../../src/app/lib/form.scss */
+    /* line 839, ../../../src/app/lib/form.scss */
     .report table .hours {
       width: 10%;
       text-align: right; }
 
-/* line 837, ../../../src/app/lib/form.scss */
+/* line 847, ../../../src/app/lib/form.scss */
 .grid ul.row {
   list-style: none;
   margin: 0;
@@ -942,14 +951,14 @@ input.time {
     list-style-image: none;
     list-style-type: none;
     margin-left: 0; }
-  /* line 844, ../../../src/app/lib/form.scss */
+  /* line 854, ../../../src/app/lib/form.scss */
   .grid ul.row li.list {
     margin: 0;
     padding: 0;
     float: left;
     width: 33%; }
 
-/* line 853, ../../../src/app/lib/form.scss */
+/* line 863, ../../../src/app/lib/form.scss */
 span.sort_handle {
   position: relative;
   left: 0;
@@ -962,7 +971,7 @@ span.sort_handle {
   -webkit-border-radius: 5px 5px 5px 5px;
   border-radius: 5px 5px 5px 5px; }
 
-/* line 864, ../../../src/app/lib/form.scss */
+/* line 874, ../../../src/app/lib/form.scss */
 .ui-custom-fields, .ui-custom-form {
   list-style: none;
   margin: 0 0 0 0;
@@ -973,24 +982,24 @@ span.sort_handle {
     list-style-type: none;
     margin-left: 0; }
 
-/* line 870, ../../../src/app/lib/form.scss */
+/* line 880, ../../../src/app/lib/form.scss */
 .admin_form {
   overflow: hidden;
   *zoom: 1;
   background-color: #f3f3f3;
   padding: 8px 20px 0 20px;
   margin: 0 -20px; }
-  /* line 875, ../../../src/app/lib/form.scss */
+  /* line 885, ../../../src/app/lib/form.scss */
   .admin_form li {
     position: relative; }
-  /* line 878, ../../../src/app/lib/form.scss */
+  /* line 888, ../../../src/app/lib/form.scss */
   .admin_form h4.title {
     color: #555;
     font-weight: bold;
     margin: 0;
     padding: 8px 0 6px 0; }
 
-/* line 887, ../../../src/app/lib/form.scss */
+/* line 897, ../../../src/app/lib/form.scss */
 .button-container {
   overflow: hidden;
   *zoom: 1;
@@ -998,7 +1007,7 @@ span.sort_handle {
   padding: 1em 0em 1em 0;
   margin: -2px; }
 
-/* line 894, ../../../src/app/lib/form.scss */
+/* line 904, ../../../src/app/lib/form.scss */
 .email-notif-button-container {
   overflow: hidden;
   *zoom: 1;
@@ -1007,7 +1016,7 @@ span.sort_handle {
   background: #ffffff;
   margin: -2px; }
 
-/* line 902, ../../../src/app/lib/form.scss */
+/* line 912, ../../../src/app/lib/form.scss */
 .email-notif-button-container {
   overflow: hidden;
   *zoom: 1;
@@ -1016,11 +1025,11 @@ span.sort_handle {
   background: #ffffff;
   margin: -2px; }
 
-/* line 910, ../../../src/app/lib/form.scss */
+/* line 920, ../../../src/app/lib/form.scss */
 .ui-draggable-dragging {
   z-index: 99999; }
 
-/* line 914, ../../../src/app/lib/form.scss */
+/* line 924, ../../../src/app/lib/form.scss */
 .ui-custom-fields {
   display: block;
   margin-bottom: 10px;
@@ -1030,32 +1039,32 @@ span.sort_handle {
     content: "";
     display: table;
     clear: both; }
-  /* line 918, ../../../src/app/lib/form.scss */
+  /* line 928, ../../../src/app/lib/form.scss */
   .ui-custom-fields li {
     float: left;
     position: relative; }
-    /* line 921, ../../../src/app/lib/form.scss */
+    /* line 931, ../../../src/app/lib/form.scss */
     .ui-custom-fields li a {
       margin: 6px 6px 0 0;
       font-size: 13px; }
 
-/* line 928, ../../../src/app/lib/form.scss */
+/* line 938, ../../../src/app/lib/form.scss */
 .custom_form_outer .placeHolder {
   height: 50px !important;
   border: 1px solid #C2D7EF !important; }
 
-/* line 934, ../../../src/app/lib/form.scss */
+/* line 944, ../../../src/app/lib/form.scss */
 .ui-sortable-placeholder {
   background: #ffffff !important;
   visibility: visible !important;
   position: relative;
   z-index: 99; }
 
-/* line 941, ../../../src/app/lib/form.scss */
+/* line 951, ../../../src/app/lib/form.scss */
 .ui-custom-form {
   padding: 0 0 15px 0;
   position: relative; }
-  /* line 944, ../../../src/app/lib/form.scss */
+  /* line 954, ../../../src/app/lib/form.scss */
   .ui-custom-form li {
     *zoom: 1;
     position: relative;
@@ -1066,30 +1075,30 @@ span.sort_handle {
       content: "";
       display: table;
       clear: both; }
-    /* line 947, ../../../src/app/lib/form.scss */
+    /* line 957, ../../../src/app/lib/form.scss */
     .ui-custom-form li div {
       position: relative; }
-    /* line 950, ../../../src/app/lib/form.scss */
+    /* line 960, ../../../src/app/lib/form.scss */
     .ui-custom-form li input[type=text] {
       width: 90%; }
-  /* line 952, ../../../src/app/lib/form.scss */
+  /* line 962, ../../../src/app/lib/form.scss */
   .ui-custom-form .requester span {
     margin-left: 3px; }
-  /* line 955, ../../../src/app/lib/form.scss */
+  /* line 965, ../../../src/app/lib/form.scss */
   .ui-custom-form li:hover, .ui-custom-form li.hover, .ui-custom-form li.active {
     background: #ffffff;
     border-color: #dfdfdf; }
-    /* line 958, ../../../src/app/lib/form.scss */
+    /* line 968, ../../../src/app/lib/form.scss */
     .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel {
       display: block; }
-    /* line 961, ../../../src/app/lib/form.scss */
+    /* line 971, ../../../src/app/lib/form.scss */
     .ui-custom-form li:hover .action_panel, .ui-custom-form li.hover .action_panel, .ui-custom-form li.active .action_panel {
       visibility: visible; }
-  /* line 965, ../../../src/app/lib/form.scss */
+  /* line 975, ../../../src/app/lib/form.scss */
   .ui-custom-form li.active {
     border-style: solid; }
 
-/* line 970, ../../../src/app/lib/form.scss */
+/* line 980, ../../../src/app/lib/form.scss */
 .hint_drag {
   background: #fefedf;
   border: 1px solid #cccccc;
@@ -1097,30 +1106,30 @@ span.sort_handle {
   margin: 10px 18px;
   display: block; }
 
-/* line 979, ../../../src/app/lib/form.scss */
+/* line 989, ../../../src/app/lib/form.scss */
 .width400 {
   width: 400px; }
 
-/* line 983, ../../../src/app/lib/form.scss */
+/* line 993, ../../../src/app/lib/form.scss */
 .ui-login .ui-form {
   width: 350px; }
 
-/* line 987, ../../../src/app/lib/form.scss */
+/* line 997, ../../../src/app/lib/form.scss */
 .ui-signup .ui-form {
   width: 560px; }
 
-/* line 991, ../../../src/app/lib/form.scss */
+/* line 1001, ../../../src/app/lib/form.scss */
 .help_text {
   padding: 8px 0 4px 0; }
-  /* line 993, ../../../src/app/lib/form.scss */
+  /* line 1003, ../../../src/app/lib/form.scss */
   .help_text a {
     text-decoration: none;
     color: #336699; }
-  /* line 997, ../../../src/app/lib/form.scss */
+  /* line 1007, ../../../src/app/lib/form.scss */
   .help_text p {
     font-size: 13px; }
 
-/* line 1002, ../../../src/app/lib/form.scss */
+/* line 1012, ../../../src/app/lib/form.scss */
 .ui-widget-container, .ui-dialog {
   padding: 10px 20px;
   *zoom: 1;
@@ -1142,22 +1151,22 @@ span.sort_handle {
   _border: 1px solid #afafaf;
   _background: #ffffff;
   margin: 0; }
-  /* line 1010, ../../../src/app/lib/form.scss */
+  /* line 1020, ../../../src/app/lib/form.scss */
   .ui-widget-container .button-container, .ui-dialog .button-container {
     width: 96% !important;
     padding-right: 0 !important; }
 
-/* line 1016, ../../../src/app/lib/form.scss */
+/* line 1026, ../../../src/app/lib/form.scss */
 .ui-widget-container {
   margin: 10px 20px; }
 
-/* line 1020, ../../../src/app/lib/form.scss */
+/* line 1030, ../../../src/app/lib/form.scss */
 .ui-form-widget {
   padding: 15px;
   margin: 0 -15px !important;
   border: 1px solid #DFDFDF !important;
   background-color: rgba(244, 244, 244, 0.5) !important; }
-  /* line 1025, ../../../src/app/lib/form.scss */
+  /* line 1035, ../../../src/app/lib/form.scss */
   .ui-form-widget label {
     font-size: 1.2em; }
 
@@ -1170,18 +1179,18 @@ span.sort_handle {
  *
  * http://docs.jquery.com/UI/Dialog#theming
  */
-/* line 1039, ../../../src/app/lib/form.scss */
+/* line 1049, ../../../src/app/lib/form.scss */
 .ui-dialog {
   padding: 8px; }
 
-/* line 1040, ../../../src/app/lib/form.scss */
+/* line 1050, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-titlebar {
   padding: 0;
   position: relative;
   color: #333333;
   padding: 6px 8px 6px 8px; }
 
-/* line 1041, ../../../src/app/lib/form.scss */
+/* line 1051, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-title {
   float: left;
   margin: 0em;
@@ -1189,7 +1198,7 @@ span.sort_handle {
   font-size: 18px;
   font-weight: normal; }
 
-/* line 1042, ../../../src/app/lib/form.scss */
+/* line 1052, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-titlebar-close {
   position: absolute;
   right: 4px;
@@ -1199,36 +1208,36 @@ span.sort_handle {
   padding: 1px;
   height: 18px; }
 
-/* line 1043, ../../../src/app/lib/form.scss */
+/* line 1053, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-titlebar-close span {
   display: block;
   margin: 1px; }
 
-/* line 1044, ../../../src/app/lib/form.scss */
+/* line 1054, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus {
   background-color: #efefef; }
 
-/* line 1045, ../../../src/app/lib/form.scss */
+/* line 1055, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-content {
   position: relative;
   border: 0;
   padding: 0 0;
   zoom: 1;
   margin-bottom: 0; }
-  /* line 1047, ../../../src/app/lib/form.scss */
+  /* line 1057, ../../../src/app/lib/form.scss */
   .ui-dialog .ui-dialog-content .info-highlight {
     margin: 0 0 6px 0;
     font-size: 13px;
     padding: 10px 12px; }
-    /* line 1052, ../../../src/app/lib/form.scss */
+    /* line 1062, ../../../src/app/lib/form.scss */
     .ui-dialog .ui-dialog-content .info-highlight.error {
       color: #993333; }
-  /* line 1056, ../../../src/app/lib/form.scss */
+  /* line 1066, ../../../src/app/lib/form.scss */
   .ui-dialog .ui-dialog-content .ui-form {
     margin: 0 0;
     padding: 0 0; }
 
-/* line 1061, ../../../src/app/lib/form.scss */
+/* line 1071, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-buttonpane {
   text-align: left;
   border-width: 0 0 0 0;
@@ -1236,11 +1245,11 @@ span.sort_handle {
   margin: 0;
   padding: 0; }
 
-/* line 1062, ../../../src/app/lib/form.scss */
+/* line 1072, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
   float: right; }
 
-/* line 1063, ../../../src/app/lib/form.scss */
+/* line 1073, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-dialog-buttonpane button {
   margin: .5em 0 .5em 0;
   cursor: pointer;
@@ -1248,22 +1257,22 @@ span.sort_handle {
   -webkit-border-radius: 3px 3px 3px 3px;
   border-radius: 3px 3px 3px 3px; }
 
-/* line 1064, ../../../src/app/lib/form.scss */
+/* line 1074, ../../../src/app/lib/form.scss */
 .ui-dialog .ui-resizable-se {
   width: 14px;
   height: 14px;
   right: 3px;
   bottom: 3px; }
 
-/* line 1065, ../../../src/app/lib/form.scss */
+/* line 1075, ../../../src/app/lib/form.scss */
 .ui-draggable .ui-dialog-titlebar {
   cursor: move; }
 
-/* line 1067, ../../../src/app/lib/form.scss */
+/* line 1077, ../../../src/app/lib/form.scss */
 .requesteremail, .agentemail {
   height: 220px; }
 
-/* line 1071, ../../../src/app/lib/form.scss */
+/* line 1081, ../../../src/app/lib/form.scss */
 input.search {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -1277,20 +1286,20 @@ input.search {
   padding: 5px 7px;
   width: 425px; }
 
-/* line 1083, ../../../src/app/lib/form.scss */
+/* line 1093, ../../../src/app/lib/form.scss */
 .live_search {
   text-align: left;
   padding: 0 0 0 0;
   margin: 8px 0; }
-  /* line 1087, ../../../src/app/lib/form.scss */
+  /* line 1097, ../../../src/app/lib/form.scss */
   .live_search .loading {
     background-position: right !important; }
-  /* line 1090, ../../../src/app/lib/form.scss */
+  /* line 1100, ../../../src/app/lib/form.scss */
   .live_search .overlabel {
     padding: 0;
     font-size: 13px; }
 
-/* line 1096, ../../../src/app/lib/form.scss */
+/* line 1106, ../../../src/app/lib/form.scss */
 .sp_paragraph {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -1302,7 +1311,7 @@ input.search {
   margin-bottom: 8px;
   font-size: 18px; }
 
-/* line 1107, ../../../src/app/lib/form.scss */
+/* line 1117, ../../../src/app/lib/form.scss */
 .search-grey-box {
   overflow: hidden;
   *zoom: 1;
@@ -1310,25 +1319,25 @@ input.search {
   border-top: 1px solid #e2e2e2;
   padding: 6px 30px 6px 20px; }
 
-/* line 1116, ../../../src/app/lib/form.scss */
+/* line 1126, ../../../src/app/lib/form.scss */
 .sidepanel .close {
   right: 14px; }
 
-/* line 1119, ../../../src/app/lib/form.scss */
+/* line 1129, ../../../src/app/lib/form.scss */
 .ui-dialog-form {
   font-size: 80%; }
-  /* line 1121, ../../../src/app/lib/form.scss */
+  /* line 1131, ../../../src/app/lib/form.scss */
   .ui-dialog-form .info-data {
     padding-left: 18px;
     font-size: 1.2em;
     margin-top: -5px; }
-  /* line 1126, ../../../src/app/lib/form.scss */
+  /* line 1136, ../../../src/app/lib/form.scss */
   .ui-dialog-form .button-panel {
     padding: 8px 0; }
-  /* line 1127, ../../../src/app/lib/form.scss */
+  /* line 1137, ../../../src/app/lib/form.scss */
   .ui-dialog-form .primary {
     font-weight: bold; }
-  /* line 1128, ../../../src/app/lib/form.scss */
+  /* line 1138, ../../../src/app/lib/form.scss */
   .ui-dialog-form a.button-link {
     display: -moz-inline-stack;
     display: inline-block;
@@ -1339,7 +1348,7 @@ input.search {
     font-size: 13px;
     margin-top: 6px;
     margin-right: 3px; }
-  /* line 1129, ../../../src/app/lib/form.scss */
+  /* line 1139, ../../../src/app/lib/form.scss */
   .ui-dialog-form a.close {
     position: absolute;
     right: 5px;
@@ -1348,14 +1357,14 @@ input.search {
     height: 28px;
     background: url("/images/close_delete.png") no-repeat center;
     z-index: 999; }
-  /* line 1138, ../../../src/app/lib/form.scss */
+  /* line 1148, ../../../src/app/lib/form.scss */
   .ui-dialog-form .ctrlHolder {
     margin-bottom: 10px; }
-  /* line 1141, ../../../src/app/lib/form.scss */
+  /* line 1151, ../../../src/app/lib/form.scss */
   .ui-dialog-form textarea {
     height: auto; }
 
-/* line 1144, ../../../src/app/lib/form.scss */
+/* line 1154, ../../../src/app/lib/form.scss */
 .dialog-panel {
   position: absolute;
   width: 650px;
@@ -1374,23 +1383,23 @@ input.search {
   -o-border-radius: 4px;
   border-radius: 4px; }
 
-/* line 1157, ../../../src/app/lib/form.scss */
+/* line 1167, ../../../src/app/lib/form.scss */
 .border-top {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px dotted #cfcfcf; }
 
-/* line 1163, ../../../src/app/lib/form.scss */
+/* line 1173, ../../../src/app/lib/form.scss */
 .overlay-field {
   position: absolute;
   width: 100%;
   height: 100%;
   background: none; }
 
-/* line 1170, ../../../src/app/lib/form.scss */
+/* line 1180, ../../../src/app/lib/form.scss */
 .code-view {
   padding: 8px 20px; }
-  /* line 1172, ../../../src/app/lib/form.scss */
+  /* line 1182, ../../../src/app/lib/form.scss */
   .code-view textarea {
     border: 1px dotted #afafaf;
     display: block;
@@ -1400,12 +1409,12 @@ input.search {
     height: 160px;
     font-family: "courier"; }
 
-/* line 1182, ../../../src/app/lib/form.scss */
+/* line 1192, ../../../src/app/lib/form.scss */
 .small_select {
   font-size: 11px;
   width: 110px; }
 
-/* line 1187, ../../../src/app/lib/form.scss */
+/* line 1197, ../../../src/app/lib/form.scss */
 .due-date-dialog {
   position: absolute;
   left: 0;
@@ -1420,7 +1429,7 @@ input.search {
   *zoom: 1;
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE9E9E9');
   /* Fallback: */
-  background: #f5f5f5;
+  background: whitesmoke;
   /* CSS 3 plus vendor prefixes: */
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #e9e9e9));
   background-image: -webkit-linear-gradient(#f5f5f5, #e9e9e9);
@@ -1432,12 +1441,12 @@ input.search {
   border-radius: 4px 4px 4px 4px;
   padding: 8px 10px;
   border: 1px solid #e0e0e0; }
-  /* line 1200, ../../../src/app/lib/form.scss */
+  /* line 1210, ../../../src/app/lib/form.scss */
   .due-date-dialog .due-date-calender {
     *zoom: 1;
     filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE9E9E9');
     /* Fallback: */
-    background: #f5f5f5;
+    background: whitesmoke;
     /* CSS 3 plus vendor prefixes: */
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #e9e9e9));
     background-image: -webkit-linear-gradient(#f5f5f5, #e9e9e9);
@@ -1450,7 +1459,7 @@ input.search {
     -webkit-border-radius: 4px 4px 4px 4px;
     border-radius: 4px 4px 4px 4px;
     border: #e0e0e0 1px solid; }
-  /* line 1207, ../../../src/app/lib/form.scss */
+  /* line 1217, ../../../src/app/lib/form.scss */
   .due-date-dialog .right_pointer {
     background: url('/images/symbols-s6708faa735.png') 0 -831px no-repeat;
     position: absolute;
@@ -1458,81 +1467,81 @@ input.search {
     height: 18px;
     right: -10px;
     top: 10px; }
-  /* line 1214, ../../../src/app/lib/form.scss */
+  /* line 1224, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-inline {
     margin: 0 0 8px 0; }
-  /* line 1215, ../../../src/app/lib/form.scss */
+  /* line 1225, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-corner-all {
     -moz-border-radius: 0 0 0 0;
     -webkit-border-radius: 0 0 0 0;
     border-radius: 0 0 0 0; }
-  /* line 1216, ../../../src/app/lib/form.scss */
+  /* line 1226, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-widget-content, .due-date-dialog .ui-widget-header {
     background: none;
     border: 0; }
-  /* line 1217, ../../../src/app/lib/form.scss */
+  /* line 1227, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker .ui-datepicker-title select, .due-date-dialog .due-date-calender select, .due-date-dialog #due-date-options {
     font-size: 11px;
     width: auto;
     margin-right: 4px; }
-  /* line 1218, ../../../src/app/lib/form.scss */
+  /* line 1228, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-widget-content {
     font-size: 13px; }
-  /* line 1219, ../../../src/app/lib/form.scss */
+  /* line 1229, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-prev, .due-date-dialog .ui-datepicker-next {
     cursor: pointer; }
-  /* line 1220, ../../../src/app/lib/form.scss */
+  /* line 1230, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-prev:hover, .due-date-dialog .ui-datepicker-next:hover {
     background: #f4f4f4; }
-  /* line 1221, ../../../src/app/lib/form.scss */
+  /* line 1231, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-prev .ui-icon {
     background: url('/images/symbols-s6708faa735.png') 0 -945px no-repeat; }
-  /* line 1222, ../../../src/app/lib/form.scss */
+  /* line 1232, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-next .ui-icon {
     background: url('/images/symbols-s6708faa735.png') 0 -929px no-repeat; }
-  /* line 1223, ../../../src/app/lib/form.scss */
+  /* line 1233, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker th {
     font-weight: normal; }
-  /* line 1224, ../../../src/app/lib/form.scss */
+  /* line 1234, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-inline th, .due-date-dialog .ui-datepicker-inline td a {
     text-align: center;
     color: #333333; }
-  /* line 1225, ../../../src/app/lib/form.scss */
+  /* line 1235, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-inline td .ui-state-default {
     border: 0;
     background: none; }
-  /* line 1226, ../../../src/app/lib/form.scss */
+  /* line 1236, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-inline td .ui-state-default:hover {
     background-color: #ccdce5; }
-  /* line 1227, ../../../src/app/lib/form.scss */
+  /* line 1237, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-inline td .ui-priority-secondary {
     color: #888888; }
-  /* line 1228, ../../../src/app/lib/form.scss */
+  /* line 1238, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-inline td .ui-state-highlight {
     background: #FFFFCC;
     color: #333333; }
-  /* line 1229, ../../../src/app/lib/form.scss */
+  /* line 1239, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-datepicker-inline td .ui-state-active, .due-date-dialog .ui-datepicker-inline td .ui-state-active:hover {
     background: #3F3F3F;
     color: #ffffff; }
-  /* line 1230, ../../../src/app/lib/form.scss */
+  /* line 1240, ../../../src/app/lib/form.scss */
   .due-date-dialog .due-date-info p {
     text-align: center;
     font-size: 13px;
     margin: 0;
     padding: 6px 0; }
-  /* line 1237, ../../../src/app/lib/form.scss */
+  /* line 1247, ../../../src/app/lib/form.scss */
   .due-date-dialog .ui-widget-header {
     font-size: 14px;
     color: black; }
-  /* line 1241, ../../../src/app/lib/form.scss */
+  /* line 1251, ../../../src/app/lib/form.scss */
   .due-date-dialog .calender-buttons {
     position: relative;
     text-align: right;
     padding: 12px 5px 6px 5px;
     margin-top: 10px;
     border-top: 1px solid #e0e0e0; }
-    /* line 1247, ../../../src/app/lib/form.scss */
+    /* line 1257, ../../../src/app/lib/form.scss */
     .due-date-dialog .calender-buttons span.loading-item {
       width: 16px;
       height: 11px;
@@ -1543,14 +1552,14 @@ input.search {
       background-repeat: no-repeat;
       visibility: hidden;
       background-position: 0 0; }
-  /* line 1260, ../../../src/app/lib/form.scss */
+  /* line 1270, ../../../src/app/lib/form.scss */
   .due-date-dialog .saving-items .uiButton {
     visibility: hidden; }
-  /* line 1261, ../../../src/app/lib/form.scss */
+  /* line 1271, ../../../src/app/lib/form.scss */
   .due-date-dialog .saving-items span.loading-item {
     visibility: visible; }
 
-/* line 1265, ../../../src/app/lib/form.scss */
+/* line 1275, ../../../src/app/lib/form.scss */
 .transparent-overlay {
   position: absolute;
   top: 0;
@@ -1562,112 +1571,112 @@ input.search {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   opacity: 0; }
 
-/* line 1267, ../../../src/app/lib/form.scss */
+/* line 1277, ../../../src/app/lib/form.scss */
 .tabbed {
   padding-left: 20px; }
 
-/* line 1269, ../../../src/app/lib/form.scss */
+/* line 1279, ../../../src/app/lib/form.scss */
 table.summary {
   width: 100%; }
-  /* line 1271, ../../../src/app/lib/form.scss */
+  /* line 1281, ../../../src/app/lib/form.scss */
   table.summary td {
     padding: 8px 10px 2px 0; }
 
-/* line 1275, ../../../src/app/lib/form.scss */
+/* line 1285, ../../../src/app/lib/form.scss */
 table.summary-report {
   width: 100%;
   border: 1px solid #ececec;
   border-width: 1px 0;
   font-size: 13px; }
-  /* line 1280, ../../../src/app/lib/form.scss */
+  /* line 1290, ../../../src/app/lib/form.scss */
   table.summary-report td, table.summary-report th {
     padding: 8px 8px;
     width: 180px;
     border-bottom: 1px solid #eaeaea; }
-  /* line 1285, ../../../src/app/lib/form.scss */
+  /* line 1295, ../../../src/app/lib/form.scss */
   table.summary-report th {
     background: #ededed;
     font-weight: bold;
     color: #333333; }
-  /* line 1290, ../../../src/app/lib/form.scss */
+  /* line 1300, ../../../src/app/lib/form.scss */
   table.summary-report .sub-title {
     background: #f1f1f1;
     text-align: right;
     width: 280px;
     padding-right: 10px;
     text-transform: capitalize; }
-  /* line 1297, ../../../src/app/lib/form.scss */
+  /* line 1307, ../../../src/app/lib/form.scss */
   table.summary-report thead {
     margin: 0 0 0 0;
     color: #666666;
     border: 1px solid #f4f4e9;
     background-color: #fffbee; }
-    /* line 1302, ../../../src/app/lib/form.scss */
+    /* line 1312, ../../../src/app/lib/form.scss */
     table.summary-report thead td {
       text-align: center;
       font-weight: bold;
       padding: 12px 18px; }
 
-/* line 1312, ../../../src/app/lib/form.scss */
+/* line 1322, ../../../src/app/lib/form.scss */
 .email-settings {
   margin: 0 -20px 10px;
   padding: 0;
   border-top: 1px solid #e6e6e6;
   border-bottom: 1px solid #f4f4f4; }
-  /* line 1317, ../../../src/app/lib/form.scss */
+  /* line 1327, ../../../src/app/lib/form.scss */
   .email-settings label {
     font-size: 14px;
     color: #666666;
     display: block; }
-  /* line 1322, ../../../src/app/lib/form.scss */
+  /* line 1332, ../../../src/app/lib/form.scss */
   .email-settings .action_buttons {
     margin-top: 2px; }
-  /* line 1325, ../../../src/app/lib/form.scss */
+  /* line 1335, ../../../src/app/lib/form.scss */
   .email-settings .highlight {
     font-size: inherit;
     font-size: 15px; }
-  /* line 1329, ../../../src/app/lib/form.scss */
+  /* line 1339, ../../../src/app/lib/form.scss */
   .email-settings .info_data {
     font-size: 12px; }
-  /* line 1331, ../../../src/app/lib/form.scss */
+  /* line 1341, ../../../src/app/lib/form.scss */
   .email-settings div.email-item-default, .email-settings div.email-item {
     padding: 6px 22px 4px;
     background: #f6f6f6; }
-  /* line 1336, ../../../src/app/lib/form.scss */
+  /* line 1346, ../../../src/app/lib/form.scss */
   .email-settings div.email-item-default {
     padding-top: 10px;
     padding-bottom: 10px; }
-    /* line 1337, ../../../src/app/lib/form.scss */
+    /* line 1347, ../../../src/app/lib/form.scss */
     .email-settings div.email-item-default label {
       line-height: 20px; }
-    /* line 1342, ../../../src/app/lib/form.scss */
+    /* line 1352, ../../../src/app/lib/form.scss */
     .email-settings div.email-item-default .info_data {
       padding-top: 4px; }
-  /* line 1346, ../../../src/app/lib/form.scss */
+  /* line 1356, ../../../src/app/lib/form.scss */
   .email-settings div.email-item {
     border-top: 1px solid #ffffff;
     border-bottom: 1px solid #e8e8e8; }
-    /* line 1349, ../../../src/app/lib/form.scss */
+    /* line 1359, ../../../src/app/lib/form.scss */
     .email-settings div.email-item div.item {
       margin-bottom: 8px;
       font-size: 14px; }
-      /* line 1351, ../../../src/app/lib/form.scss */
+      /* line 1361, ../../../src/app/lib/form.scss */
       .email-settings div.email-item div.item label {
         font-size: 12px;
         padding-bottom: 2px; }
 
-/* line 1358, ../../../src/app/lib/form.scss */
+/* line 1368, ../../../src/app/lib/form.scss */
 .email-inactive .highlight {
   color: #777777 !important; }
 
-/* line 1364, ../../../src/app/lib/form.scss */
+/* line 1374, ../../../src/app/lib/form.scss */
 .email-settings-form table {
   width: 400px; }
-/* line 1365, ../../../src/app/lib/form.scss */
+/* line 1375, ../../../src/app/lib/form.scss */
 .email-settings-form td {
   padding: 6px 8px; }
 
-/* line 1368, ../../../src/app/lib/form.scss */
+/* line 1378, ../../../src/app/lib/form.scss */
 .inactive_email {
   padding: 2px 5px;
   margin-left: 15px;
@@ -1682,15 +1691,15 @@ table.summary-report {
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
   border-radius: 5px 5px 5px 5px; }
-  /* line 1380, ../../../src/app/lib/form.scss */
+  /* line 1390, ../../../src/app/lib/form.scss */
   .inactive_email a {
     font-size: 10px; }
 
-/* line 1386, ../../../src/app/lib/form.scss */
+/* line 1396, ../../../src/app/lib/form.scss */
 #primary-email-settings div.email-item-default, #primary-email-settings div.email-item {
   background-color: #f3fde5; }
 
-/* line 1391, ../../../src/app/lib/form.scss */
+/* line 1401, ../../../src/app/lib/form.scss */
 .highlight-textbox-info {
   font-size: 16px;
   color: #0078BD;
@@ -1701,7 +1710,7 @@ table.summary-report {
   padding: 5px 3px 4px 5px;
   height: 18px; }
 
-/* line 1402, ../../../src/app/lib/form.scss */
+/* line 1412, ../../../src/app/lib/form.scss */
 .email_info {
   border: 1px solid #cfcfcf;
   padding: 8px 12px;
@@ -1711,7 +1720,7 @@ table.summary-report {
   border-radius: 3px 3px 3px 3px;
   font-size: 14px; }
 
-/* line 1410, ../../../src/app/lib/form.scss */
+/* line 1420, ../../../src/app/lib/form.scss */
 .email-info {
   background-color: #fefce5;
   padding: 12px 22px;
@@ -1722,62 +1731,62 @@ table.summary-report {
   border: 1px solid #f4f4f4;
   margin-bottom: 10px; }
 
-/* line 1421, ../../../src/app/lib/form.scss */
+/* line 1431, ../../../src/app/lib/form.scss */
 .request_panel {
   padding: 0px 0px 10px 0px;
   margin: 0;
   border-spacing: 0px 10px;
   border-bottom: 1px solid #F3F3F3; }
-  /* line 1426, ../../../src/app/lib/form.scss */
+  /* line 1436, ../../../src/app/lib/form.scss */
   .request_panel .button-container {
     padding: 0px 30px 15px 30px;
     margin-top: 10px; }
-  /* line 1430, ../../../src/app/lib/form.scss */
+  /* line 1440, ../../../src/app/lib/form.scss */
   .request_panel .absolute-button-container {
     position: absolute;
     bottom: 5px;
     width: 97%; }
-  /* line 1436, ../../../src/app/lib/form.scss */
+  /* line 1446, ../../../src/app/lib/form.scss */
   .request_panel .ui-form {
     border: 0;
     background: none;
     margin: 0;
     padding: 0;
     /*li{ padding-left:0; padding-right:0; }*/ }
-    /* line 1439, ../../../src/app/lib/form.scss */
+    /* line 1449, ../../../src/app/lib/form.scss */
     .request_panel .ui-form .title {
       padding-bottom: 12px; }
-    /* line 1443, ../../../src/app/lib/form.scss */
+    /* line 1453, ../../../src/app/lib/form.scss */
     .request_panel .ui-form li.field {
       border: 0;
       padding: 0; }
-    /* line 1446, ../../../src/app/lib/form.scss */
+    /* line 1456, ../../../src/app/lib/form.scss */
     .request_panel .ui-form label, .request_panel .ui-form div.fields label {
       font-size: 13px;
       color: #333333; }
-    /* line 1450, ../../../src/app/lib/form.scss */
+    /* line 1460, ../../../src/app/lib/form.scss */
     .request_panel .ui-form div.field {
       width: 23%;
       float: left;
       margin-left: 2%; }
-    /* line 1455, ../../../src/app/lib/form.scss */
+    /* line 1465, ../../../src/app/lib/form.scss */
     .request_panel .ui-form div.field-35 {
       width: 33%;
       float: left;
       margin-left: 2%; }
-    /* line 1460, ../../../src/app/lib/form.scss */
+    /* line 1470, ../../../src/app/lib/form.scss */
     .request_panel .ui-form div.field.first {
       margin-left: 0; }
-    /* line 1462, ../../../src/app/lib/form.scss */
+    /* line 1472, ../../../src/app/lib/form.scss */
     .request_panel .ui-form label.overlabel {
       margin: 2px 8px;
       color: #888888;
       font-size: 12px; }
-    /* line 1467, ../../../src/app/lib/form.scss */
+    /* line 1477, ../../../src/app/lib/form.scss */
     .request_panel .ui-form fieldset {
       padding: 10px 0;
       position: relative; }
-    /* line 1471, ../../../src/app/lib/form.scss */
+    /* line 1481, ../../../src/app/lib/form.scss */
     .request_panel .ui-form fieldset.integration {
       margin-bottom: 10px;
       *zoom: 1;
@@ -1789,10 +1798,10 @@ table.summary-report {
         content: "";
         display: table;
         clear: both; }
-      /* line 1476, ../../../src/app/lib/form.scss */
+      /* line 1486, ../../../src/app/lib/form.scss */
       .request_panel .ui-form fieldset.integration .integration_container {
         padding: 20px 0 10px 80px; }
-      /* line 1480, ../../../src/app/lib/form.scss */
+      /* line 1490, ../../../src/app/lib/form.scss */
       .request_panel .ui-form fieldset.integration .app-logo {
         position: absolute;
         width: 64px;
@@ -1809,66 +1818,66 @@ table.summary-report {
         border-bottom-right-radius: 3px;
         border: 1px solid #e3e3e3;
         cursor: pointer; }
-        /* line 1492, ../../../src/app/lib/form.scss */
+        /* line 1502, ../../../src/app/lib/form.scss */
         .request_panel .ui-form fieldset.integration .app-logo input[type=checkbox] {
           position: absolute;
           right: 5px;
           top: 2px; }
-    /* line 1500, ../../../src/app/lib/form.scss */
+    /* line 1510, ../../../src/app/lib/form.scss */
     .request_panel .ui-form li.inline-field label.caption, .request_panel .ui-form fieldset label.caption {
       width: 80px; }
-    /* line 1503, ../../../src/app/lib/form.scss */
+    /* line 1513, ../../../src/app/lib/form.scss */
     .request_panel .ui-form li.inline-field div.fields, .request_panel .ui-form fieldset div.fields {
       margin-left: 10px;
       padding-top: 4px;
       position: relative;
       float: right;
       width: 85%; }
-      /* line 1509, ../../../src/app/lib/form.scss */
+      /* line 1519, ../../../src/app/lib/form.scss */
       .request_panel .ui-form li.inline-field div.fields .info-data, .request_panel .ui-form fieldset div.fields .info-data {
         margin-top: 8px; }
-    /* line 1513, ../../../src/app/lib/form.scss */
+    /* line 1523, ../../../src/app/lib/form.scss */
     .request_panel .ui-form li.inline-field input.text, .request_panel .ui-form li.inline-field textarea, .request_panel .ui-form fieldset input.text, .request_panel .ui-form fieldset textarea {
       width: 98%; }
-    /* line 1516, ../../../src/app/lib/form.scss */
+    /* line 1526, ../../../src/app/lib/form.scss */
     .request_panel .ui-form li.inline-field div.action_buttons, .request_panel .ui-form fieldset div.action_buttons {
       top: -6px;
       right: 5px; }
-    /* line 1521, ../../../src/app/lib/form.scss */
+    /* line 1531, ../../../src/app/lib/form.scss */
     .request_panel .ui-form .request_form_options {
       position: absolute;
       right: 30px;
       top: 6px; }
-      /* line 1525, ../../../src/app/lib/form.scss */
+      /* line 1535, ../../../src/app/lib/form.scss */
       .request_panel .ui-form .request_form_options .insert-canned-response {
         position: relative;
         z-index: 1001; }
 
-/* line 1533, ../../../src/app/lib/form.scss */
+/* line 1543, ../../../src/app/lib/form.scss */
 .note-forward-form {
   border-bottom: 0; }
 
-/* line 1534, ../../../src/app/lib/form.scss */
+/* line 1544, ../../../src/app/lib/form.scss */
 .note-forward-form .reply_box {
   margin: 10px 0 0; }
 
-/* line 1539, ../../../src/app/lib/form.scss */
+/* line 1549, ../../../src/app/lib/form.scss */
 table.vmiddle td {
   vertical-align: middle; }
 
-/* line 1544, ../../../src/app/lib/form.scss */
+/* line 1554, ../../../src/app/lib/form.scss */
 #Timesheet .request_panel .ui-form .title {
   margin-bottom: -10px; }
 
-/* line 1548, ../../../src/app/lib/form.scss */
+/* line 1558, ../../../src/app/lib/form.scss */
 .timeentry_edit {
   position: relative;
   padding-bottom: 50px; }
-  /* line 1551, ../../../src/app/lib/form.scss */
+  /* line 1561, ../../../src/app/lib/form.scss */
   .timeentry_edit .ui-form {
     position: static; }
 
-/* line 1556, ../../../src/app/lib/form.scss */
+/* line 1566, ../../../src/app/lib/form.scss */
 .nav_search {
   min-width: 260px;
   width: auto !important;
@@ -1876,7 +1885,7 @@ table.vmiddle td {
   height: 31px;
   position: relative;
   margin: 0 11px 0 6px; }
-  /* line 1561, ../../../src/app/lib/form.scss */
+  /* line 1571, ../../../src/app/lib/form.scss */
   .nav_search div.search_bar {
     height: 24px;
     -moz-border-radius: 12px 12px 12px 12px;
@@ -1886,7 +1895,7 @@ table.vmiddle td {
     opacity: 0.8;
     background: #ffffff;
     padding: 0 25px 0 5px; }
-    /* line 1567, ../../../src/app/lib/form.scss */
+    /* line 1577, ../../../src/app/lib/form.scss */
     .nav_search div.search_bar .searchIcon {
       position: absolute;
       right: 0px;
@@ -1897,17 +1906,17 @@ table.vmiddle td {
       background: url('/images/symbols-s6708faa735.png') 0 -561px;
       filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
       opacity: 0.6; }
-    /* line 1577, ../../../src/app/lib/form.scss */
+    /* line 1587, ../../../src/app/lib/form.scss */
     .nav_search div.search_bar label.overlabel, .nav_search div.search_bar input {
       top: 4px;
       left: 2px; }
-    /* line 1581, ../../../src/app/lib/form.scss */
+    /* line 1591, ../../../src/app/lib/form.scss */
     .nav_search div.search_bar label.overlabel {
       padding: 0;
       margin: 4px 6px;
       font-size: 13px;
       color: #777777; }
-    /* line 1587, ../../../src/app/lib/form.scss */
+    /* line 1597, ../../../src/app/lib/form.scss */
     .nav_search div.search_bar input {
       border: 0;
       position: relative;
@@ -1915,21 +1924,21 @@ table.vmiddle td {
       width: 100%;
       padding: 0;
       background: none; }
-    /* line 1595, ../../../src/app/lib/form.scss */
+    /* line 1605, ../../../src/app/lib/form.scss */
     .nav_search div.search_bar input:focus {
       -moz-box-shadow: white 0 0 0;
       -webkit-box-shadow: white 0 0 0;
       box-shadow: white 0 0 0; }
-  /* line 1597, ../../../src/app/lib/form.scss */
+  /* line 1607, ../../../src/app/lib/form.scss */
   .nav_search div.search_bar.active {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1; }
-    /* line 1599, ../../../src/app/lib/form.scss */
+    /* line 1609, ../../../src/app/lib/form.scss */
     .nav_search div.search_bar.active .searchIcon {
       filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
       opacity: 1; }
 
-/* line 1605, ../../../src/app/lib/form.scss */
+/* line 1615, ../../../src/app/lib/form.scss */
 .nav_right {
   overflow: hidden;
   *zoom: 1;
@@ -1938,11 +1947,11 @@ table.vmiddle td {
   margin: 1px 0 0 3px;
   float: right; }
 
-/* line 1613, ../../../src/app/lib/form.scss */
+/* line 1623, ../../../src/app/lib/form.scss */
 a.new_ticket, .nav_search {
   float: left; }
 
-/* line 1617, ../../../src/app/lib/form.scss */
+/* line 1627, ../../../src/app/lib/form.scss */
 a.new_ticket, .nav_search div.search_bar {
   border: 1px solid #67962d;
   -webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
@@ -1953,7 +1962,7 @@ a.new_ticket, .nav_search div.search_bar {
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px; }
 
-/* line 1624, ../../../src/app/lib/form.scss */
+/* line 1634, ../../../src/app/lib/form.scss */
 a.new_ticket {
   *zoom: 1;
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFEFEFE', endColorstr='#FFDFDFDF');
@@ -1977,7 +1986,7 @@ a.new_ticket {
   *vertical-align: auto;
   zoom: 1;
   *display: inline; }
-  /* line 1632, ../../../src/app/lib/form.scss */
+  /* line 1642, ../../../src/app/lib/form.scss */
   a.new_ticket span {
     position: absolute;
     left: 4px;
@@ -1986,7 +1995,7 @@ a.new_ticket {
     width: 16px;
     height: 16px; }
 
-/* line 1639, ../../../src/app/lib/form.scss */
+/* line 1649, ../../../src/app/lib/form.scss */
 a.new_ticket:hover {
   *zoom: 1;
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FF606C88', endColorstr='#FF3F4C6B');
@@ -2001,7 +2010,7 @@ a.new_ticket:hover {
   border-color: #606c88;
   color: #ffffff; }
 
-/* line 1645, ../../../src/app/lib/form.scss */
+/* line 1655, ../../../src/app/lib/form.scss */
 .item-right-actions {
   *zoom: 1;
   float: right;
@@ -2013,7 +2022,7 @@ a.new_ticket:hover {
     display: table;
     clear: both; }
 
-/* line 1652, ../../../src/app/lib/form.scss */
+/* line 1662, ../../../src/app/lib/form.scss */
 .menu-box {
   border: 1px solid #cecece;
   background-color: #ffffff;
@@ -2029,35 +2038,35 @@ a.new_ticket:hover {
   position: absolute;
   z-index: 99999;
   display: none; }
-  /* line 1663, ../../../src/app/lib/form.scss */
+  /* line 1673, ../../../src/app/lib/form.scss */
   .menu-box .menu-item {
     display: block; }
-    /* line 1665, ../../../src/app/lib/form.scss */
+    /* line 1675, ../../../src/app/lib/form.scss */
     .menu-box .menu-item a {
       display: block;
       padding: 4px 16px;
       text-decoration: none; }
-    /* line 1670, ../../../src/app/lib/form.scss */
+    /* line 1680, ../../../src/app/lib/form.scss */
     .menu-box .menu-item a:hover {
       background-color: #555555;
       color: #ffffff; }
 
-/* line 1678, ../../../src/app/lib/form.scss */
+/* line 1688, ../../../src/app/lib/form.scss */
 .nav-drop .nav-item-icon {
   overflow: hidden;
   *zoom: 1;
   float: left;
   border: 1px solid white; }
-  /* line 1682, ../../../src/app/lib/form.scss */
+  /* line 1692, ../../../src/app/lib/form.scss */
   .nav-drop .nav-item-icon span {
     width: 23px;
     height: 23px;
     margin: 0 3px;
     float: left; }
-  /* line 1688, ../../../src/app/lib/form.scss */
+  /* line 1698, ../../../src/app/lib/form.scss */
   .nav-drop .nav-item-icon .item-options {
     background: url('/images/symbols-s6708faa735.png') 0 -454px no-repeat; }
-/* line 1692, ../../../src/app/lib/form.scss */
+/* line 1702, ../../../src/app/lib/form.scss */
 .nav-drop .nav-item-icon:hover, .nav-drop a.selected {
   border: 1px solid #cdcdcd;
   *zoom: 1;
@@ -2071,7 +2080,7 @@ a.new_ticket:hover {
   background-image: -o-linear-gradient(#fbfdfc, #eaeaea);
   background-image: linear-gradient(#fbfdfc, #eaeaea); }
 
-/* line 1698, ../../../src/app/lib/form.scss */
+/* line 1708, ../../../src/app/lib/form.scss */
 .title-highlight {
   background-color: #7cb537;
   color: #ffffff;
@@ -2079,28 +2088,28 @@ a.new_ticket:hover {
   padding: 5px 12px;
   margin: 1px 0px; }
 
-/* line 1706, ../../../src/app/lib/form.scss */
+/* line 1716, ../../../src/app/lib/form.scss */
 .dialog-special {
   padding: 8px 0 5px 0;
   margin: 0 0;
   border: 1px solid #cfcfcf;
   background-color: #f4f4f4; }
-  /* line 1711, ../../../src/app/lib/form.scss */
+  /* line 1721, ../../../src/app/lib/form.scss */
   .dialog-special .content {
     padding: 6px 12px 4px 12px; }
-  /* line 1714, ../../../src/app/lib/form.scss */
+  /* line 1724, ../../../src/app/lib/form.scss */
   .dialog-special .button {
     font-size: 11px;
     margin: 0; }
-  /* line 1718, ../../../src/app/lib/form.scss */
+  /* line 1728, ../../../src/app/lib/form.scss */
   .dialog-special h4.title {
     font-weight: bold; }
-  /* line 1721, ../../../src/app/lib/form.scss */
+  /* line 1731, ../../../src/app/lib/form.scss */
   .dialog-special .pagination {
     margin: 6px 0 0 0;
     padding: 10px 6px;
     color: #666666; }
-    /* line 1725, ../../../src/app/lib/form.scss */
+    /* line 1735, ../../../src/app/lib/form.scss */
     .dialog-special .pagination a {
       color: #4d769f;
       font-weight: normal; }
@@ -2114,20 +2123,20 @@ a.new_ticket:hover {
       .dialog-special .pagination a:active {
         color: #4d769f; }
 
-/* line 1730, ../../../src/app/lib/form.scss */
+/* line 1740, ../../../src/app/lib/form.scss */
 #MergeTable td {
   padding: 3px 6px; }
-/* line 1733, ../../../src/app/lib/form.scss */
+/* line 1743, ../../../src/app/lib/form.scss */
 #MergeTable .left-area, #MergeTable .right-area {
   width: 50%; }
-/* line 1736, ../../../src/app/lib/form.scss */
+/* line 1746, ../../../src/app/lib/form.scss */
 #MergeTable .right-area {
   padding-left: 30px; }
-/* line 1739, ../../../src/app/lib/form.scss */
+/* line 1749, ../../../src/app/lib/form.scss */
 #MergeTable .or {
   margin: 0 0 0 0;
   border-left: 1px solid #dfdfdf; }
-  /* line 1742, ../../../src/app/lib/form.scss */
+  /* line 1752, ../../../src/app/lib/form.scss */
   #MergeTable .or span {
     font-size: 1em;
     color: #ffffff;
@@ -2143,30 +2152,30 @@ a.new_ticket:hover {
     margin-left: -25px;
     margin-top: 10px; }
 
-/* line 1760, ../../../src/app/lib/form.scss */
+/* line 1770, ../../../src/app/lib/form.scss */
 .ticket-simple-list {
   font-size: 13px;
   width: 100%; }
-  /* line 1763, ../../../src/app/lib/form.scss */
+  /* line 1773, ../../../src/app/lib/form.scss */
   .ticket-simple-list li {
     overflow: hidden;
     *zoom: 1;
     padding: 0 4px 5px 40px;
     position: relative; }
-    /* line 1767, ../../../src/app/lib/form.scss */
+    /* line 1777, ../../../src/app/lib/form.scss */
     .ticket-simple-list li .title {
       font-size: 13px;
       padding: 0 0 2px 0;
       font-weight: bold;
       display: block; }
-    /* line 1773, ../../../src/app/lib/form.scss */
+    /* line 1783, ../../../src/app/lib/form.scss */
     .ticket-simple-list li .ticket-id {
       font-weight: bold;
       float: left;
       padding-right: 4px;
       color: #666666;
       margin-left: -40px; }
-    /* line 1780, ../../../src/app/lib/form.scss */
+    /* line 1790, ../../../src/app/lib/form.scss */
     .ticket-simple-list li a {
       color: #4d769f;
       text-decoration: none; }
@@ -2179,17 +2188,17 @@ a.new_ticket:hover {
       /* line 27, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
       .ticket-simple-list li a:active {
         color: #4d769f; }
-    /* line 1784, ../../../src/app/lib/form.scss */
+    /* line 1794, ../../../src/app/lib/form.scss */
     .ticket-simple-list li textarea {
       font-size: 12px; }
 
-/* line 1789, ../../../src/app/lib/form.scss */
+/* line 1799, ../../../src/app/lib/form.scss */
 .canned-response-menu.loading {
   background-image: url("/images/load.gif");
   background-repeat: no-repeat;
   background-position: center 8px; }
 
-/* line 1794, ../../../src/app/lib/form.scss */
+/* line 1804, ../../../src/app/lib/form.scss */
 .canned-response-menu {
   border: 1px solid #cfcfcf;
   background-color: #ffffff;
@@ -2206,7 +2215,7 @@ a.new_ticket:hover {
   margin-top: 20px;
   z-index: 1000;
   text-align: left; }
-  /* line 1810, ../../../src/app/lib/form.scss */
+  /* line 1820, ../../../src/app/lib/form.scss */
   .canned-response-menu ul {
     border-top: 1px solid #efefef;
     position: relative;
@@ -2216,23 +2225,23 @@ a.new_ticket:hover {
     *zoom: 1;
     max-height: 300px;
     overflow: auto; }
-  /* line 1819, ../../../src/app/lib/form.scss */
+  /* line 1829, ../../../src/app/lib/form.scss */
   .canned-response-menu span.divider {
     position: absolute;
     height: 100%;
     border-left: 1px solid #efefef;
     left: 49%;
     width: 1px; }
-  /* line 1826, ../../../src/app/lib/form.scss */
+  /* line 1836, ../../../src/app/lib/form.scss */
   .canned-response-menu li {
     padding: 6px 8px 6px 24px;
     margin-left: 10px;
     position: relative; }
-    /* line 1830, ../../../src/app/lib/form.scss */
+    /* line 1840, ../../../src/app/lib/form.scss */
     .canned-response-menu li a {
       font-size: 13px;
       text-decoration: none; }
-    /* line 1834, ../../../src/app/lib/form.scss */
+    /* line 1844, ../../../src/app/lib/form.scss */
     .canned-response-menu li span.bullet {
       background: url('/images/symbols-s6708faa735.png') 0 -865px no-repeat;
       position: absolute;
@@ -2241,7 +2250,7 @@ a.new_ticket:hover {
       left: 0;
       top: 7px; }
 
-/* line 1845, ../../../src/app/lib/form.scss */
+/* line 1855, ../../../src/app/lib/form.scss */
 textarea.tweet {
   font-size: 14px;
   line-height: 22px;
@@ -2250,15 +2259,15 @@ textarea.tweet {
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px; }
 
-/* line 1852, ../../../src/app/lib/form.scss */
+/* line 1862, ../../../src/app/lib/form.scss */
 .ticket-simple-list label {
   font-size: 13px; }
 
-/* line 1856, ../../../src/app/lib/form.scss */
+/* line 1866, ../../../src/app/lib/form.scss */
 ul.ui-form .inputs-list {
   margin: -8px 0 20px; }
 
-/* line 1859, ../../../src/app/lib/form.scss */
+/* line 1869, ../../../src/app/lib/form.scss */
 .inputs-list {
   *zoom: 1;
   width: 100%; }
@@ -2268,13 +2277,13 @@ ul.ui-form .inputs-list {
     display: table;
     clear: both; }
 
-/* line 1863, ../../../src/app/lib/form.scss */
+/* line 1873, ../../../src/app/lib/form.scss */
 .inputs-list li {
   display: block;
   padding: 8px 0;
   width: 100%; }
 
-/* line 1868, ../../../src/app/lib/form.scss */
+/* line 1878, ../../../src/app/lib/form.scss */
 .inputs-list label {
   display: block;
   float: none;
@@ -2284,49 +2293,49 @@ ul.ui-form .inputs-list {
   line-height: 18px;
   text-align: left;
   white-space: normal; }
-  /* line 1877, ../../../src/app/lib/form.scss */
+  /* line 1887, ../../../src/app/lib/form.scss */
   .inputs-list label span {
     font-size: 13px; }
 
-/* line 1881, ../../../src/app/lib/form.scss */
+/* line 1891, ../../../src/app/lib/form.scss */
 .inputs-list label strong {
   color: #808080; }
 
-/* line 1884, ../../../src/app/lib/form.scss */
+/* line 1894, ../../../src/app/lib/form.scss */
 .inputs-list label small {
   font-size: 11px;
   font-weight: normal; }
 
-/* line 1888, ../../../src/app/lib/form.scss */
+/* line 1898, ../../../src/app/lib/form.scss */
 .inputs-list .inputs-list {
   margin-left: 25px;
   margin-bottom: 10px;
   padding-top: 0; }
 
-/* line 1893, ../../../src/app/lib/form.scss */
+/* line 1903, ../../../src/app/lib/form.scss */
 .inputs-list:first-child {
   padding-top: 6px; }
 
-/* line 1896, ../../../src/app/lib/form.scss */
+/* line 1906, ../../../src/app/lib/form.scss */
 .inputs-list li + li {
   padding-top: 2px; }
 
-/* line 1899, ../../../src/app/lib/form.scss */
+/* line 1909, ../../../src/app/lib/form.scss */
 .inputs-list input[type=radio], .inputs-list input[type=checkbox] {
   margin-bottom: 0;
   margin-left: -20px;
   float: left; }
 
-/* line 1905, ../../../src/app/lib/form.scss */
+/* line 1915, ../../../src/app/lib/form.scss */
 .nested-selectboxs {
   margin-bottom: 10px; }
-  /* line 1907, ../../../src/app/lib/form.scss */
+  /* line 1917, ../../../src/app/lib/form.scss */
   .nested-selectboxs li {
     position: relative; }
-  /* line 1910, ../../../src/app/lib/form.scss */
+  /* line 1920, ../../../src/app/lib/form.scss */
   .nested-selectboxs select {
     width: 100%; }
-  /* line 1913, ../../../src/app/lib/form.scss */
+  /* line 1923, ../../../src/app/lib/form.scss */
   .nested-selectboxs .connector {
     border: 1px solid #c1c1c1;
     border-width: 0 0 1px 1px;
@@ -2335,14 +2344,14 @@ ul.ui-form .inputs-list {
     width: 35px;
     left: -38px;
     top: -5px; }
-  /* line 1922, ../../../src/app/lib/form.scss */
+  /* line 1932, ../../../src/app/lib/form.scss */
   .nested-selectboxs .subcategory {
     margin-top: 27px; }
-  /* line 1925, ../../../src/app/lib/form.scss */
+  /* line 1935, ../../../src/app/lib/form.scss */
   .nested-selectboxs .item {
     margin-top: 54px; }
 
-/* line 1930, ../../../src/app/lib/form.scss */
+/* line 1940, ../../../src/app/lib/form.scss */
 .required_star {
   color: #d00;
   font-size: 16px;
@@ -2350,51 +2359,51 @@ ul.ui-form .inputs-list {
   position: relative;
   top: 4px; }
 
-/* line 1938, ../../../src/app/lib/form.scss */
+/* line 1948, ../../../src/app/lib/form.scss */
 .new_ticket_cc_button {
   float: right;
   margin-top: 5px; }
 
-/* line 1943, ../../../src/app/lib/form.scss */
+/* line 1953, ../../../src/app/lib/form.scss */
 .add_requester_button {
   float: left;
   margin-top: 5px; }
 
-/* line 1948, ../../../src/app/lib/form.scss */
+/* line 1958, ../../../src/app/lib/form.scss */
 #cc_emails_sec .chzn-container, #cc_emails_sec .search-field input {
   width: 94% !important; }
 
-/* line 1952, ../../../src/app/lib/form.scss */
+/* line 1962, ../../../src/app/lib/form.scss */
 #cc_emails_sec .chzn-drop {
   width: 100% !important; }
 
-/* line 1957, ../../../src/app/lib/form.scss */
+/* line 1967, ../../../src/app/lib/form.scss */
 .multi-product-add.ui-form {
   background-color: #fafafa; }
-  /* line 1959, ../../../src/app/lib/form.scss */
+  /* line 1969, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form div.inline-field {
     margin: 0 5px; }
-  /* line 1962, ../../../src/app/lib/form.scss */
+  /* line 1972, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form div.fields {
     padding-bottom: 15px; }
-    /* line 1964, ../../../src/app/lib/form.scss */
+    /* line 1974, ../../../src/app/lib/form.scss */
     .multi-product-add.ui-form div.fields label {
       font: 13px "Helvetica Neue", sans-serif; }
-  /* line 1968, ../../../src/app/lib/form.scss */
+  /* line 1978, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form input[type=text], .multi-product-add.ui-form input.text {
     width: 93%; }
-  /* line 1972, ../../../src/app/lib/form.scss */
+  /* line 1982, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form div.color input {
     width: 220px; }
-  /* line 1976, ../../../src/app/lib/form.scss */
+  /* line 1986, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form select {
     width: auto; }
-  /* line 1979, ../../../src/app/lib/form.scss */
+  /* line 1989, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form .add-email {
     margin-left: 210px;
     margin-top: -25px;
     padding-bottom: 34px; }
-    /* line 1983, ../../../src/app/lib/form.scss */
+    /* line 1993, ../../../src/app/lib/form.scss */
     .multi-product-add.ui-form .add-email a.add-email-icon {
       padding: 8px 8px 4px 35px;
       font-size: 14px;
@@ -2409,7 +2418,7 @@ ul.ui-form .inputs-list {
       *vertical-align: auto;
       zoom: 1;
       *display: inline; }
-      /* line 1992, ../../../src/app/lib/form.scss */
+      /* line 2002, ../../../src/app/lib/form.scss */
       .multi-product-add.ui-form .add-email a.add-email-icon span {
         position: absolute;
         left: 0px;
@@ -2417,25 +2426,25 @@ ul.ui-form .inputs-list {
         background: url("/images/email_config_add.png") no-repeat;
         width: 25px;
         height: 25px; }
-  /* line 2002, ../../../src/app/lib/form.scss */
+  /* line 2012, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form .configure-portal {
     text-align: center;
     background-color: #efefef;
     border-bottom: 1px solid #d1d1d1;
     border-top: 1px solid #d1d1d1;
     padding: 10px 0; }
-    /* line 2008, ../../../src/app/lib/form.scss */
+    /* line 2018, ../../../src/app/lib/form.scss */
     .multi-product-add.ui-form .configure-portal label {
       font-weight: 300;
       font-size: 1.3em;
       display: inline; }
-  /* line 2014, ../../../src/app/lib/form.scss */
+  /* line 2024, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form .big-seperator {
     border-bottom: 1px solid #dfdfdf;
     display: block;
     height: 1px;
     margin: 5px 0px 12px; }
-  /* line 2020, ../../../src/app/lib/form.scss */
+  /* line 2030, ../../../src/app/lib/form.scss */
   .multi-product-add.ui-form .configure-email-form {
     padding: 0 10px 12px 10px;
     margin-bottom: 11px;
@@ -2452,16 +2461,16 @@ ul.ui-form .inputs-list {
       content: "";
       display: table;
       clear: both; }
-    /* line 2029, ../../../src/app/lib/form.scss */
+    /* line 2039, ../../../src/app/lib/form.scss */
     .multi-product-add.ui-form .configure-email-form .column {
       float: left; }
-      /* line 2031, ../../../src/app/lib/form.scss */
+      /* line 2041, ../../../src/app/lib/form.scss */
       .multi-product-add.ui-form .configure-email-form .column.left-column {
         width: 50%; }
-        /* line 2033, ../../../src/app/lib/form.scss */
+        /* line 2043, ../../../src/app/lib/form.scss */
         .multi-product-add.ui-form .configure-email-form .column.left-column .text {
           font-weight: bold; }
-        /* line 2036, ../../../src/app/lib/form.scss */
+        /* line 2046, ../../../src/app/lib/form.scss */
         .multi-product-add.ui-form .configure-email-form .column.left-column span.text {
           white-space: pre-wrap;
           /* css-3 */
@@ -2473,20 +2482,20 @@ ul.ui-form .inputs-list {
           /* Opera 7 */
           word-wrap: break-word;
           /* Internet Explorer 5.5+ */ }
-      /* line 2040, ../../../src/app/lib/form.scss */
+      /* line 2050, ../../../src/app/lib/form.scss */
       .multi-product-add.ui-form .configure-email-form .column.right-column {
         width: 50%; }
-        /* line 2042, ../../../src/app/lib/form.scss */
+        /* line 2052, ../../../src/app/lib/form.scss */
         .multi-product-add.ui-form .configure-email-form .column.right-column input.checkbox {
           margin: 5px;
           float: left; }
-        /* line 2046, ../../../src/app/lib/form.scss */
+        /* line 2056, ../../../src/app/lib/form.scss */
         .multi-product-add.ui-form .configure-email-form .column.right-column .set_primary {
           padding-top: 27px; }
-        /* line 2049, ../../../src/app/lib/form.scss */
+        /* line 2059, ../../../src/app/lib/form.scss */
         .multi-product-add.ui-form .configure-email-form .column.right-column select {
           margin-top: 4px; }
-    /* line 2054, ../../../src/app/lib/form.scss */
+    /* line 2064, ../../../src/app/lib/form.scss */
     .multi-product-add.ui-form .configure-email-form .deleteChoice {
       cursor: pointer;
       background: url(/images/email_config_delete.png) no-repeat;
@@ -2494,18 +2503,18 @@ ul.ui-form .inputs-list {
       height: 25px;
       position: absolute;
       right: -28px; }
-      /* line 2061, ../../../src/app/lib/form.scss */
+      /* line 2071, ../../../src/app/lib/form.scss */
       .multi-product-add.ui-form .configure-email-form .deleteChoice.disabled {
         background: url(/images/email_config_delete_disabled.png) no-repeat; }
 
-/* line 2071, ../../../src/app/lib/form.scss */
+/* line 2081, ../../../src/app/lib/form.scss */
 .ui-form .portal-settings div.fields {
   padding-top: 4px; }
-  /* line 2073, ../../../src/app/lib/form.scss */
+  /* line 2083, ../../../src/app/lib/form.scss */
   .ui-form .portal-settings div.fields label {
     font-size: 14px; }
 
-/* line 2079, ../../../src/app/lib/form.scss */
+/* line 2089, ../../../src/app/lib/form.scss */
 #cc_emails_sec .multi_value_field {
   width: 99%;
   padding-left: 5px;
@@ -2520,50 +2529,50 @@ ul.ui-form .inputs-list {
   -o-border-radius: 5px;
   border-radius: 5px; }
 
-/* line 2088, ../../../src/app/lib/form.scss */
+/* line 2098, ../../../src/app/lib/form.scss */
 #cc_emails_sec {
   padding-top: 30px; }
 
-/* line 2091, ../../../src/app/lib/form.scss */
+/* line 2101, ../../../src/app/lib/form.scss */
 .companies_select select {
   float: left; }
-/* line 2092, ../../../src/app/lib/form.scss */
+/* line 2102, ../../../src/app/lib/form.scss */
 .companies_select .customSelect {
   width: 550px; }
-/* line 2093, ../../../src/app/lib/form.scss */
+/* line 2103, ../../../src/app/lib/form.scss */
 .companies_select .chzn-container {
   margin-left: 10px;
   margin-top: -5px; }
 
-/* line 2096, ../../../src/app/lib/form.scss */
+/* line 2106, ../../../src/app/lib/form.scss */
 #reset_password {
   padding: 8px; }
 
-/* line 2099, ../../../src/app/lib/form.scss */
+/* line 2109, ../../../src/app/lib/form.scss */
 #reset_pasword_body {
   padding-top: 6px; }
 
-/* line 2100, ../../../src/app/lib/form.scss */
+/* line 2110, ../../../src/app/lib/form.scss */
 #reset_password_buttons {
   margin-top: 35px; }
 
-/* line 2101, ../../../src/app/lib/form.scss */
+/* line 2111, ../../../src/app/lib/form.scss */
 #reset_password_template {
   display: none; }
 
 /* Reply-Draft Panel */
-/* line 2107, ../../../src/app/lib/form.scss */
+/* line 2117, ../../../src/app/lib/form.scss */
 #reply-draft {
   padding-top: 10px;
   float: right; }
 
-/* line 2113, ../../../src/app/lib/form.scss */
+/* line 2123, ../../../src/app/lib/form.scss */
 #draft-time {
   padding-top: 5px;
   float: right;
   clear: both; }
 
-/* line 2120, ../../../src/app/lib/form.scss */
+/* line 2130, ../../../src/app/lib/form.scss */
 .reply_box {
   background-color: #f9f9f9;
   margin: 0 10px;
@@ -2578,7 +2587,7 @@ ul.ui-form .inputs-list {
   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) inset;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) inset; }
 
-/* line 2129, ../../../src/app/lib/form.scss */
+/* line 2139, ../../../src/app/lib/form.scss */
 .sav {
   color: #ffffff;
   background-color: #bababa;
@@ -2597,7 +2606,7 @@ ul.ui-form .inputs-list {
   margin-left: 10px;
   cursor: default; }
 
-/* line 2138, ../../../src/app/lib/form.scss */
+/* line 2148, ../../../src/app/lib/form.scss */
 .close-img {
   padding: 0 5px 0 0;
   display: -moz-inline-stack;
@@ -2619,7 +2628,7 @@ ul.ui-form .inputs-list {
   width: 10px;
   z-index: 3;
   cursor: pointer; }
-  /* line 2149, ../../../src/app/lib/form.scss */
+  /* line 2159, ../../../src/app/lib/form.scss */
   .close-img span {
     position: absolute;
     height: 12px;
@@ -2628,99 +2637,99 @@ ul.ui-form .inputs-list {
     margin: 2px 0 0 1px; }
 
 @-moz-document url-prefix() {
-  /* line 2159, ../../../src/app/lib/form.scss */
+  /* line 2169, ../../../src/app/lib/form.scss */
   .close-img {
     height: 17px; }
-    /* line 2161, ../../../src/app/lib/form.scss */
+    /* line 2171, ../../../src/app/lib/form.scss */
     .close-img span {
       margin-top: 3px; } }
 
-/* line 2168, ../../../src/app/lib/form.scss */
+/* line 2178, ../../../src/app/lib/form.scss */
 .close-img:hover {
   background-color: #494949; }
 
-/* line 2173, ../../../src/app/lib/form.scss */
+/* line 2183, ../../../src/app/lib/form.scss */
 .notify {
   width: 82px;
   display: inline-block; }
 
-/* line 2178, ../../../src/app/lib/form.scss */
+/* line 2188, ../../../src/app/lib/form.scss */
 li.agents-field {
   margin-top: 20px; }
 
-/* line 2182, ../../../src/app/lib/form.scss */
+/* line 2192, ../../../src/app/lib/form.scss */
 #Pages.set-top {
   margin-top: -6px; }
 
-/* line 2188, ../../../src/app/lib/form.scss */
+/* line 2198, ../../../src/app/lib/form.scss */
 #exportFilter .ui-form h4.caption {
   padding: 7px 10px 7px 0px; }
-/* line 2192, ../../../src/app/lib/form.scss */
+/* line 2202, ../../../src/app/lib/form.scss */
 #exportFilter .ui-form div.fields {
   margin-left: 250px; }
-  /* line 2194, ../../../src/app/lib/form.scss */
+  /* line 2204, ../../../src/app/lib/form.scss */
   #exportFilter .ui-form div.fields div.fields {
     margin-left: 160px; }
 
-/* line 2201, ../../../src/app/lib/form.scss */
+/* line 2211, ../../../src/app/lib/form.scss */
 .admin-tabs {
   margin: 10px 0 0;
   z-index: 2;
   position: relative; }
-  /* line 2205, ../../../src/app/lib/form.scss */
+  /* line 2215, ../../../src/app/lib/form.scss */
   .admin-tabs > li > a, .admin-tabs {
     font-size: 14px;
     border-color: #E4E4E4; }
-  /* line 2206, ../../../src/app/lib/form.scss */
+  /* line 2216, ../../../src/app/lib/form.scss */
   .admin-tabs .active a, .admin-tabs .active a:hover {
     background-color: #f8f8f8;
     font-weight: bold;
     color: #333; }
 
-/* line 2213, ../../../src/app/lib/form.scss */
+/* line 2223, ../../../src/app/lib/form.scss */
 .right-title {
   float: right;
   font-weight: normal;
   font-size: 13px; }
 
-/* line 2219, ../../../src/app/lib/form.scss */
+/* line 2229, ../../../src/app/lib/form.scss */
 .s-title {
   font-size: 16px;
   margin: 10px 0 8px; }
 
-/* line 2220, ../../../src/app/lib/form.scss */
+/* line 2230, ../../../src/app/lib/form.scss */
 .s-label {
   font-size: 13px;
   margin: 0; }
 
-/* line 2221, ../../../src/app/lib/form.scss */
+/* line 2231, ../../../src/app/lib/form.scss */
 .section-title {
   margin: 0 0 16px; }
-  /* line 2223, ../../../src/app/lib/form.scss */
+  /* line 2233, ../../../src/app/lib/form.scss */
   .section-title h3 {
     margin: 0 0 6px;
     font-size: 16px;
     color: #000000; }
-  /* line 2224, ../../../src/app/lib/form.scss */
+  /* line 2234, ../../../src/app/lib/form.scss */
   .section-title .help-text {
     font-size: 13px; }
 
-/* line 2228, ../../../src/app/lib/form.scss */
+/* line 2238, ../../../src/app/lib/form.scss */
 .radio-label,
 .checkbox-label {
   padding-left: 20px; }
 
-/* line 2232, ../../../src/app/lib/form.scss */
+/* line 2242, ../../../src/app/lib/form.scss */
 .radio-label input[type="radio"],
 .checkbox-label input[type="checkbox"] {
   float: left;
   margin: 2px 7px 0 -20px; }
 
-/* line 2237, ../../../src/app/lib/form.scss */
+/* line 2247, ../../../src/app/lib/form.scss */
 h4.label-title {
   font-weight: bold; }
 
-/* line 2241, ../../../src/app/lib/form.scss */
+/* line 2251, ../../../src/app/lib/form.scss */
 .form-section {
   border: 1px solid #efefef;
   background-color: #f7f7f7;
@@ -2731,18 +2740,18 @@ h4.label-title {
   border-radius: 4px;
   padding: 10px; }
 
-/* line 2248, ../../../src/app/lib/form.scss */
+/* line 2258, ../../../src/app/lib/form.scss */
 input[type="text"].points {
   font-size: 16px;
   font-weight: bold;
   padding: 6px;
   width: 70px; }
 
-/* line 2255, ../../../src/app/lib/form.scss */
+/* line 2265, ../../../src/app/lib/form.scss */
 input[type="text"].number {
   width: 70px; }
 
-/* line 2259, ../../../src/app/lib/form.scss */
+/* line 2269, ../../../src/app/lib/form.scss */
 #takescreen-btn {
   background: #f3f3f3 url(/images/takescreenshot.png) no-repeat 10px 4px;
   padding: 5px 10px 5px 40px;
@@ -2760,12 +2769,12 @@ input[type="text"].number {
   -ms-box-shadow: inset 0px 0px 4px #ccc;
   box-shadow: inset 0px 0px 4px #ccc; }
 
-/* line 2272, ../../../src/app/lib/form.scss */
+/* line 2282, ../../../src/app/lib/form.scss */
 #takescreen-btn:hover {
   background-color: #fafafa;
   color: #444; }
 
-/* line 2277, ../../../src/app/lib/form.scss */
+/* line 2287, ../../../src/app/lib/form.scss */
 .screenshotpop {
   width: 200px;
   float: right;
@@ -2775,7 +2784,7 @@ input[type="text"].number {
   outline: 4px #595959 solid;
   background: #fff; }
 
-/* line 2287, ../../../src/app/lib/form.scss */
+/* line 2297, ../../../src/app/lib/form.scss */
 .closeBtn {
   font-size: 12px;
   float: right;
@@ -2784,7 +2793,7 @@ input[type="text"].number {
   z-index: 100;
   top: 27px; }
 
-/* line 2297, ../../../src/app/lib/form.scss */
+/* line 2307, ../../../src/app/lib/form.scss */
 .flash {
   width: 212px;
   position: absolute;
@@ -2803,86 +2812,86 @@ input[type="text"].number {
   animation-fill-mode: forwards; }
 
 @-webkit-keyframes flash {
-  /* line 2316, ../../../src/app/lib/form.scss */
+  /* line 2326, ../../../src/app/lib/form.scss */
   0%,25% {
     opacity: 0.7;
     background-color: #fff; }
 
-  /* line 2317, ../../../src/app/lib/form.scss */
+  /* line 2327, ../../../src/app/lib/form.scss */
   25%,50% {
     opacity: 1;
     background-color: #fff; }
 
-  /* line 2318, ../../../src/app/lib/form.scss */
+  /* line 2328, ../../../src/app/lib/form.scss */
   50%, 100% {
     opacity: 1;
     background-color: transparent; } }
 
 @-moz-keyframes flash {
-  /* line 2323, ../../../src/app/lib/form.scss */
+  /* line 2333, ../../../src/app/lib/form.scss */
   0%,25% {
     opacity: 0.7;
     background-color: #fff; }
 
-  /* line 2324, ../../../src/app/lib/form.scss */
+  /* line 2334, ../../../src/app/lib/form.scss */
   25%,50% {
     opacity: 1;
     background-color: #fff; }
 
-  /* line 2325, ../../../src/app/lib/form.scss */
+  /* line 2335, ../../../src/app/lib/form.scss */
   50%, 100% {
     opacity: 1;
     background-color: transparent; } }
 
 @-ms-keyframes flash {
-  /* line 2329, ../../../src/app/lib/form.scss */
+  /* line 2339, ../../../src/app/lib/form.scss */
   0%,25% {
     opacity: 0.7;
     background-color: #fff; }
 
-  /* line 2330, ../../../src/app/lib/form.scss */
+  /* line 2340, ../../../src/app/lib/form.scss */
   25%,50% {
     opacity: 1;
     background-color: #fff; }
 
-  /* line 2331, ../../../src/app/lib/form.scss */
+  /* line 2341, ../../../src/app/lib/form.scss */
   50%, 100% {
     opacity: 1;
     background-color: transparent; } }
 
 @keyframes flash {
-  /* line 2335, ../../../src/app/lib/form.scss */
+  /* line 2345, ../../../src/app/lib/form.scss */
   0%,25% {
     opacity: 0.7;
     background-color: #fff; }
 
-  /* line 2336, ../../../src/app/lib/form.scss */
+  /* line 2346, ../../../src/app/lib/form.scss */
   25%,50% {
     opacity: 1;
     background-color: #fff; }
 
-  /* line 2337, ../../../src/app/lib/form.scss */
+  /* line 2347, ../../../src/app/lib/form.scss */
   50%, 100% {
     opacity: 1;
     background-color: transparent; } }
 
-/* line 2341, ../../../src/app/lib/form.scss */
+/* line 2351, ../../../src/app/lib/form.scss */
 .ie8plusonly {
   position: relative; }
 
-/* line 2345, ../../../src/app/lib/form.scss */
+/* line 2355, ../../../src/app/lib/form.scss */
 .attachment {
   float: left;
   width: 250px;
   min-height: 100px; }
 
-/* line 2351, ../../../src/app/lib/form.scss */
+/* line 2361, ../../../src/app/lib/form.scss */
 .screenshot-wrap {
   float: right;
   width: 250px;
   min-height: 100px; }
 
-/* line 2357, ../../../src/app/lib/form.scss */
+/* line 2367, ../../../src/app/lib/form.scss */
 .grey-background {
   border: 1px solid #E4E4E4;
   background-color: #F8F8F8;
@@ -2893,95 +2902,95 @@ input[type="text"].number {
   -o-border-radius: 6px;
   border-radius: 6px; }
 
-/* line 2364, ../../../src/app/lib/form.scss */
+/* line 2374, ../../../src/app/lib/form.scss */
 .aracde-content {
   padding: 20px;
   margin-top: 60px; }
-  /* line 2367, ../../../src/app/lib/form.scss */
+  /* line 2377, ../../../src/app/lib/form.scss */
   .aracde-content h2 {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 16px; }
-  /* line 2368, ../../../src/app/lib/form.scss */
+  /* line 2378, ../../../src/app/lib/form.scss */
   .aracde-content p {
     font-size: 13px;
     line-height: 18px;
     margin-bottom: 18px;
     color: #666666; }
 
-/* line 2377, ../../../src/app/lib/form.scss */
+/* line 2387, ../../../src/app/lib/form.scss */
 .field.custom_app_preview {
   margin-top: -14px; }
 
 /* Update multiple tickets css start */
-/* line 2383, ../../../src/app/lib/form.scss */
+/* line 2393, ../../../src/app/lib/form.scss */
 .bulktickets .small_curve {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
   border-radius: 5px; }
-/* line 2386, ../../../src/app/lib/form.scss */
+/* line 2396, ../../../src/app/lib/form.scss */
 .bulktickets .top_spacing {
   margin-top: 10px; }
-/* line 2389, ../../../src/app/lib/form.scss */
+/* line 2399, ../../../src/app/lib/form.scss */
 .bulktickets select {
   width: 150px; }
-/* line 2392, ../../../src/app/lib/form.scss */
+/* line 2402, ../../../src/app/lib/form.scss */
 .bulktickets .inline-field {
   width: 575px; }
-/* line 2395, ../../../src/app/lib/form.scss */
+/* line 2405, ../../../src/app/lib/form.scss */
 .bulktickets .fields {
   float: left;
   margin-left: 0px;
   width: 575px; }
-/* line 2400, ../../../src/app/lib/form.scss */
+/* line 2410, ../../../src/app/lib/form.scss */
 .bulktickets .field-item {
   min-height: 50px;
   height: auto !important;
   height: 50px; }
-/* line 2403, ../../../src/app/lib/form.scss */
+/* line 2413, ../../../src/app/lib/form.scss */
 .bulktickets .label {
   max-height: 18px; }
-/* line 2406, ../../../src/app/lib/form.scss */
+/* line 2416, ../../../src/app/lib/form.scss */
 .bulktickets #bulkreplycheck {
   margin-bottom: 0; }
-/* line 2410, ../../../src/app/lib/form.scss */
+/* line 2420, ../../../src/app/lib/form.scss */
 .bulktickets #bulkreplyform .ui-form {
   min-height: 250px; }
-/* line 2414, ../../../src/app/lib/form.scss */
+/* line 2424, ../../../src/app/lib/form.scss */
 .bulktickets .request_panel .ui-form li.inline-field div.fields, .bulktickets .request_panel .ui-form fieldset div.fields {
   margin-left: 0px;
   padding-top: 4px;
   position: relative; }
-/* line 2415, ../../../src/app/lib/form.scss */
+/* line 2425, ../../../src/app/lib/form.scss */
 .bulktickets .request_panel {
   padding: 0 0px 0px 0px;
   border-spacing: 0px 0px; }
-/* line 2419, ../../../src/app/lib/form.scss */
+/* line 2429, ../../../src/app/lib/form.scss */
 .bulktickets .attachment-options {
   clear: both; }
-/* line 2420, ../../../src/app/lib/form.scss */
+/* line 2430, ../../../src/app/lib/form.scss */
 .bulktickets .request_panel .ui-form .request_form_options .insert-canned-response {
   position: relative;
   z-index: 1001; }
-/* line 2424, ../../../src/app/lib/form.scss */
+/* line 2434, ../../../src/app/lib/form.scss */
 .bulktickets .canned-response-menu {
   right: -1px;
   z-index: 1000;
   top: -24px; }
-/* line 2430, ../../../src/app/lib/form.scss */
+/* line 2440, ../../../src/app/lib/form.scss */
 .bulktickets #update-fields {
   max-height: 132px;
   overflow: auto; }
-/* line 2434, ../../../src/app/lib/form.scss */
+/* line 2444, ../../../src/app/lib/form.scss */
 .bulktickets .menu-item {
   width: 350px; }
-  /* line 2436, ../../../src/app/lib/form.scss */
+  /* line 2446, ../../../src/app/lib/form.scss */
   .bulktickets .menu-item a {
     padding-left: 20px; }
 
-/* line 2441, ../../../src/app/lib/form.scss */
+/* line 2451, ../../../src/app/lib/form.scss */
 .button-container #loader {
   height: 35px;
   width: 33px;
@@ -2990,24 +2999,24 @@ input[type="text"].number {
   left: 390px;
   top: -6px; }
 
-/* line 2450, ../../../src/app/lib/form.scss */
+/* line 2460, ../../../src/app/lib/form.scss */
 .ui-widget-content .bulktickets li a {
   color: #369 !important; }
 
-/* line 2456, ../../../src/app/lib/form.scss */
+/* line 2466, ../../../src/app/lib/form.scss */
 #cnt-reply-multiple .request_form_options {
   z-index: 1000;
   top: -25px;
   right: 0; }
-/* line 2457, ../../../src/app/lib/form.scss */
+/* line 2467, ../../../src/app/lib/form.scss */
 #cnt-reply-multiple .slim-button {
   z-index: 1001; }
-/* line 2458, ../../../src/app/lib/form.scss */
+/* line 2468, ../../../src/app/lib/form.scss */
 #cnt-reply-multiple .ui-form li {
   padding-left: 0;
   padding-right: 0; }
 
-/* line 2465, ../../../src/app/lib/form.scss */
+/* line 2475, ../../../src/app/lib/form.scss */
 #reply-fields .field-item {
   min-height: 0px; }
 

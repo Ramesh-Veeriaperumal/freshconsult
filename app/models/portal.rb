@@ -54,6 +54,10 @@ class Portal < ActiveRecord::Base
     main_portal ? account.forum_categories : (forum_category ? [forum_category] : [])
   end
   
+  def portal_forums
+    main_portal ? account.portal_forums : portal_forums
+  end
+
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope)
@@ -103,6 +107,10 @@ class Portal < ActiveRecord::Base
     fav_icon.content.url unless fav_icon.nil?
   end
   
+  def portal_page
+    self.template
+  end
+
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)

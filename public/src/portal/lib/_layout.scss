@@ -1,0 +1,71 @@
+// Container
+@include border-box-sizing;
+
+@include at-breakpoint($break-tablet){
+  /*.page{ @include susy-grid-background; }  */
+  .page{
+    @include container($total-columns);
+    margin-top: 10px;
+    margin-bottom: 10px;  
+    /*@include susy-grid-background;*/
+  }
+  .banner {    
+    .banner-title{ @include span-columns(7); }
+    .banner-nav{ 
+      @include span-columns(3 omega); 
+      margin-top: 13px;
+    }
+    nav{ text-align: right; }
+  }
+  .hc-search{ @include span-columns(8); }
+  .hc-nav{ 
+    @include span-columns(4 omega);    
+    nav{
+      @include border-right-radius(6px);
+      padding-left: 1.5em;
+    }
+    a, span{
+      @include reset-columns;
+      float: left;
+      clear: left;
+    }
+  }
+
+  footer{ margin-top: 10px; }
+  
+  @include layout(4) {
+    /*.content{ @include susy-grid-background; }*/
+    .cs-g{  @include span-columns(2); }
+    .cs-g:nth-child(even){ @include span-columns(2 omega); }
+  }
+  .post-actions{ 
+    text-align: right; 
+    float: right; 
+    margin: 5px 0 0 10px;
+  }
+
+  // Generic Grid classes
+  .row-fluid{ @include pie-clearfix; }
+  .span1{ @include span-columns(1); }
+  .span2{ @include span-columns(2); }
+  .span3{ @include span-columns(3); }
+  .span4{ @include span-columns(4); }
+  .span5{ @include span-columns(5); }
+  .span6{ @include span-columns(6); }
+  .span7{ @include span-columns(7); }
+  .span8{ @include span-columns(8); }
+  .span9{ @include span-columns(9); }
+  .span10{ @include span-columns(10); }
+  .span11{ @include span-columns(11); }
+  .span12{ @include span-columns(12); }
+  .omega{ @include omega; }
+}
+
+@include at-breakpoint($break-desktop){
+  .main{ @include span-columns(8); }
+  .sidebar{ 
+    @include span-columns(4 omega); 
+    .cs-g{  @include reset-columns; }
+  }
+  .min-height-on-desktop{ @include min-height(630px); }
+}

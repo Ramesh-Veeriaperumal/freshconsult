@@ -1,1 +1,8 @@
-<a href="http://www.freshdesk.com" target="_blank">Help Desk Software</a> by Freshdesk
+<footer class="rounded-6">
+	<a href="/">Help Center</a>
+	<a href="{{portal.solutions_home_path}}">Solutions</a>
+	<a href="{{portal.forums_home_path}}">Forums</a>
+</footer>
+<div class="copyright">
+	<a href="http://www.freshdesk.com" target="_blank">Help Desk software</a> by FreshDesk
+</div>

@@ -18,6 +18,17 @@ p {
   font-size: 20px;
   font-weight: 200;
   line-height: $baseLineHeight * 1.2;
+  color: $grayDark;
+}
+
+.list-lead{
+  font-size: 20px;
+  font-weight: 200;
+  line-height: $baseLineHeight * 1.2;
+  margin: $baseLineHeight / 3 0;
+  color: $gray; 
+  a{ color: inherit; }
+  a:hover{ color: inherit; }
 }
 
 // HEADINGS
@@ -49,8 +60,8 @@ h2 {
   }
 }
 h3 {
-  font-size: 18px;
-  line-height: $baseLineHeight * 1.5;
+  font-size: 20px;
+  line-height: $baseLineHeight * 1.9;
   small {
     font-size: 14px;
   }
@@ -83,7 +94,12 @@ h6 {
   line-height: 1;
 }
 
-
+// Heading sub-text
+.intro{
+  font-weight: 200;
+  margin-top: -6px;
+  color:#B2B2B2;
+}
 
 // LISTS
 // -----

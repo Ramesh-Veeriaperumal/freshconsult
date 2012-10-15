@@ -28,6 +28,10 @@ class PortalDrop < BaseDrop
     @new_topic_path ||= source.new_topic_path
   end
 
+  def forums_home_path
+    support_discussions_path
+  end
+
   def solutions_home_path
     @solutions_home_path ||= support_solutions_path
   end
@@ -47,19 +51,27 @@ class PortalDrop < BaseDrop
   def logo
     @portal_logo ||= !source.logo.blank? ? source.logo.content.url(:logo) : "/images/logo.png"
   end
-  
+
+  def forums
+    @forums ||= source.portal_forums
+  end
+
+  def google_login
+    link_to(image_tag("google.png", :alt => t(".sign_in_using_google")) + "label", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "btn") if Account.current.features? :google_signin
+  end
+
   private
     def load_tabs
       tabs = [  [ root_path,                :home,		    true ],
 					      [ support_solutions_path,   :solutions,	  true ],
 				        [ support_discussions_path, :forums, 	    true ],
-				        [ support_tickets_path,     :checkstatus, true ],
+				        [ support_tickets_path,     :tickets,     User.current ],
 				      	  company_tickets_tab ]
 
 			tabs.map do |s| 
 				next unless s[2]
 	      	#tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
-	      	TabDrop.new( :name => s[1].to_s, :url => s[0], :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")) )
+	      	TabDrop.new( :name => s[1].to_s, :url => s[0], :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s )
 		    end
     end
     

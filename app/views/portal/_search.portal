@@ -1,0 +1,31 @@
+<form class="hc-search-form rounded-6">
+	<input placeholder="Enter your search term here..." type="text" class="special hc-search-input" id="PageSearch">
+	<button class="hc-search-button btn btn-primary" type="button">SEARCH</button>
+</form>
+
+<div id="search_results" style="display:none;"></div>
+
+<script type="text/javascript">
+	callbackToPageSearch = function(string){
+								$.ajax({ 
+									url: "/search/content?search_key="+string, 
+									success: function(data){
+									 			$("#search_results").show();
+												$("#search_results").html(data);
+												$("#PageSearch").removeClass("loading");
+									}});
+								};
+				
+	$("#PageSearch").bind("keyup", function(ev){
+		var searchString = this.value.replace(/^\s+|\s+$/g, "");
+		if(searchString != '' && searchString.length > 1){
+			$(this).addClass("loading");
+			delay(function(){
+		    	callbackToPageSearch(searchString);
+			}, 200 ); 
+		}else{
+			$("#search_results").hide()
+			$(this).removeClass("loading");				
+		}
+	});
+</script>

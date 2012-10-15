@@ -203,7 +203,7 @@ body {
   background-color: transparent; }
 
 /* line 7, ../../../src/app/lib/defaults.scss */
-code, pre {
+code {
   padding: 0 3px 2px;
   font-family: Menlo, Monaco, "Courier New", monospace;
   font-size: 12px;
@@ -296,69 +296,80 @@ h3.title-band {
 h3.sub_title {
   font-size: 1.1em; }
 
-/* line 51, ../../../src/app/lib/defaults.scss */
+/* line 50, ../../../src/app/lib/defaults.scss */
+h6 {
+  font-size: 13px;
+  text-transform: uppercase;
+  line-height: 24px;
+  font-weight: bold; }
+
+/* line 52, ../../../src/app/lib/defaults.scss */
+.sub-title {
+  font-size: 18px; }
+
+/* line 53, ../../../src/app/lib/defaults.scss */
 .floatl {
   display: inline;
   float: left; }
 
-/* line 52, ../../../src/app/lib/defaults.scss */
+/* line 54, ../../../src/app/lib/defaults.scss */
 .floatr {
   display: inline;
   float: right; }
 
-/* line 53, ../../../src/app/lib/defaults.scss */
+/* line 55, ../../../src/app/lib/defaults.scss */
 .alignright {
   text-align: right; }
 
-/* line 54, ../../../src/app/lib/defaults.scss */
+/* line 56, ../../../src/app/lib/defaults.scss */
 .aligncenter {
   text-align: center; }
 
-/* line 55, ../../../src/app/lib/defaults.scss */
+/* line 57, ../../../src/app/lib/defaults.scss */
 .info_data, .info-data {
   color: #888888;
   font-size: 12px;
   line-height: 18px;
   padding-bottom: 6px; }
 
-/* line 62, ../../../src/app/lib/defaults.scss */
+/* line 64, ../../../src/app/lib/defaults.scss */
 .borderbottom {
   border-bottom: 1px dotted #EFEFEF; }
 
-/* line 66, ../../../src/app/lib/defaults.scss */
+/* line 68, ../../../src/app/lib/defaults.scss */
 table td {
   vertical-align: top; }
 
-/* line 70, ../../../src/app/lib/defaults.scss */
+/* line 72, ../../../src/app/lib/defaults.scss */
 .strikethrough {
   text-decoration: line-through; }
 
-/* line 74, ../../../src/app/lib/defaults.scss */
+/* line 76, ../../../src/app/lib/defaults.scss */
 input.auto {
   width: auto !important; }
 
-/* line 78, ../../../src/app/lib/defaults.scss */
+/* line 80, ../../../src/app/lib/defaults.scss */
 textarea.auto-height {
   height: auto !important; }
 
-/* line 82, ../../../src/app/lib/defaults.scss */
+/* line 84, ../../../src/app/lib/defaults.scss */
 .lowercase {
   text-transform: lowercase; }
 
-/* line 86, ../../../src/app/lib/defaults.scss */
+/* line 88, ../../../src/app/lib/defaults.scss */
 .center {
   text-align: center; }
 
-/* line 90, ../../../src/app/lib/defaults.scss */
+/* line 92, ../../../src/app/lib/defaults.scss */
 .padding {
   padding: 3px 6px; }
 
-/* line 94, ../../../src/app/lib/defaults.scss */
+/* line 96, ../../../src/app/lib/defaults.scss */
 label.error {
   color: #A90329;
   font-size: 13px; }
 
-/* line 99, ../../../src/app/lib/defaults.scss */
+/* line 101, ../../../src/app/lib/defaults.scss */
 .close-text {
   float: right;
   font-family: arial;
@@ -370,7 +381,7 @@ label.error {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
   opacity: 0.4; }
 
-/* line 109, ../../../src/app/lib/defaults.scss */
+/* line 111, ../../../src/app/lib/defaults.scss */
 .close-text:hover {
   color: #000000;
   text-decoration: none;
@@ -378,7 +389,7 @@ label.error {
   opacity: 0.6;
   cursor: pointer; }
 
-/* line 116, ../../../src/app/lib/defaults.scss */
+/* line 118, ../../../src/app/lib/defaults.scss */
 .alert {
   padding: 8px 14px;
   margin-top: 8px;
@@ -393,11 +404,11 @@ label.error {
   border-radius: 4px;
   position: relative; }
 
-/* line 126, ../../../src/app/lib/defaults.scss */
+/* line 128, ../../../src/app/lib/defaults.scss */
 .alert, .alert-heading {
   color: #c09853; }
 
-/* line 129, ../../../src/app/lib/defaults.scss */
+/* line 131, ../../../src/app/lib/defaults.scss */
 .alert .close-text {
   position: absolute;
   top: 2px;
@@ -405,57 +416,57 @@ label.error {
   line-height: 18px;
   font-weight: normal; }
 
-/* line 136, ../../../src/app/lib/defaults.scss */
+/* line 138, ../../../src/app/lib/defaults.scss */
 .alert-success {
   background-color: #dff0d8;
   border-color: #d6e9c6; }
 
-/* line 140, ../../../src/app/lib/defaults.scss */
+/* line 142, ../../../src/app/lib/defaults.scss */
 .alert-success, .alert-success .alert-heading {
   color: #468847; }
 
-/* line 143, ../../../src/app/lib/defaults.scss */
+/* line 145, ../../../src/app/lib/defaults.scss */
 .alert-danger, .alert-error {
   background-color: #f2dede;
   border-color: #eed3d7; }
 
-/* line 150, ../../../src/app/lib/defaults.scss */
+/* line 152, ../../../src/app/lib/defaults.scss */
 .alert-danger,
 .alert-error,
 .alert-danger .alert-heading,
 .alert-error .alert-heading {
   color: #b94a48; }
 
-/* line 153, ../../../src/app/lib/defaults.scss */
+/* line 155, ../../../src/app/lib/defaults.scss */
 .alert-info {
   background-color: #d9edf7;
   border-color: #bce8f1; }
 
-/* line 157, ../../../src/app/lib/defaults.scss */
+/* line 159, ../../../src/app/lib/defaults.scss */
 .alert-info, .alert-info .alert-heading {
   color: #2d6987; }
 
-/* line 160, ../../../src/app/lib/defaults.scss */
+/* line 162, ../../../src/app/lib/defaults.scss */
 .alert-block {
   padding-top: 14px;
   padding-bottom: 14px; }
 
-/* line 164, ../../../src/app/lib/defaults.scss */
+/* line 166, ../../../src/app/lib/defaults.scss */
 .alert-block > p, .alert-block > ul {
   margin-bottom: 0; }
 
-/* line 167, ../../../src/app/lib/defaults.scss */
+/* line 169, ../../../src/app/lib/defaults.scss */
 .alert-block p + p {
   margin-top: 5px; }
 
-/* line 171, ../../../src/app/lib/defaults.scss */
+/* line 173, ../../../src/app/lib/defaults.scss */
 .underline {
   text-decoration: underline; }
 
-/* line 175, ../../../src/app/lib/defaults.scss */
+/* line 177, ../../../src/app/lib/defaults.scss */
 .underline:hover {
   text-decoration: none; }
 
-/* line 179, ../../../src/app/lib/defaults.scss */
+/* line 181, ../../../src/app/lib/defaults.scss */
 .negtiveMargin {
   margin: 0 -20px -16px; }

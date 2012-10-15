@@ -1,42 +1,72 @@
-<h1 class="page-title">Help center</h2>
-<p class="lead">
-	Start typing a question and see answers in real time
-</p>
-{{ search_portal }}
-<hr />
-<h2>Solutions</h2>
-{% for category in portal.solution_categories %}
-	<h3>{{category.name}}</h4>				
-	<p>{{category.description | truncate}}</p>
-	<div class="collection">
-		{% for folder in category.folders %}
-			<div class="group solution-group {% cycle 'odd', 'even' %}">
-				<h4>{{folder.name}}</h4>
-				<p class="help-text">{{folder.description | truncate: 120}}</p>
-				<ul>
-					{% for article in folder.articles limit:3 %}
-					<li>
-						<a href="{{article.url}}">{{article.title}}</a>
-					</li>
+<section class="main">
+	<div class="content rounded-6 min-height-on-desktop">
+		<h2>Knowledge base</h2>
+		<div class="cs-s">
+			{% for category in portal.solution_categories %}
+				<h3>{{ category.name }}</h3>
+				<div class="cs-g-c">
+					{% for folder in category.folders %}
+						<section class="cs-g article-list">
+							<div class="list-lead">
+								<a href="{{folder.url}}">{{folder.name}} ({{ folder.articles | size }})</a>
+							</div>
+							<ul>
+								{% for article in folder.articles limit:5 %}
+								<li>
+									<div class="ellipsis">
+										<a href="{{article.url}}" title="{{article.title}}">{{article.title}}</a>
+									</div>
+								</li>
+								{% endfor %}
+							</ul>
+							{% if folder.articles.size > 5 %}
+								<a href="{{ folder.url }}" class="see-more">
+									See all {{ folder.articles | size }} articles 
+								</a>	
+							{% endif %}
+						</section>
 					{% endfor %}
-				</ul>			
-				<span class="more-items">{{ folder.articles.size | pluralize: 'article' }} </span>
-				{% if folder.articles.size > 3 %}
-					- <a href="{{ folder.url }}" class="more-items">View all</a>	
-				{% endif %}	
-			</div>
-		{% endfor %}
+				</div>
+			{% endfor %}
+		</div>
 	</div>
-{% endfor %}		
-<hr />
-{% comment %}
-<% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
-	<% unless @topics.empty? %> 
-		<%= content_tag( :h4, t('recent_forum_posts') ) %>  
-		<% @topics.each do |topic|  %>
-			<%= link_to topic.title, category_forum_topic_path(topic.forum.forum_category_id, topic.forum_id, topic.id) %> 
-			<p> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </p>
-		<% end %> 				
-	<% end %>
-<% end %>
-{% endcomment %}
+</section>
+<section class="sidebar">
+	<div class="content rounded-6 min-height-on-desktop">
+		<a href="#" class="post-question">Post a public question</a>
+		<h2>Community</h2>
+		<p class="intro">Showing recent updates</p>
+		<div class="cs-g-c">
+			{% for forum in portal.forums %}
+				<section class="cs-g topic-list">
+					<div class="list-lead">
+						<i class="badge-{{forum.type_name}}"></i>
+						<a href="{{forum.url}}">{{ forum.name }} ({{ forum.topics | size }})</a>
+					</div>
+					{% assign topic_count = 3 %}
+					{% if forloop.index < 3 %}
+						<ul>
+							{% for topic in forum.topics limit:topic_count %}
+							<li>
+								<div class="ellipsis">
+									<a href="{{topic.url}}" title="{{topic.title}}">{{topic.title}}</a>
+								</div>
+								<p class="help-text">
+									posted by {{ topic.user.name }}, {{ topic.created_on | human_date_time }} <br />
+									{% if topic.has_comments %}
+										<a href="{{topic.last_post.url}}">Last reply</a>
+										by {{ topic.last_post.created_on | human_date_time }}
+									{% endif %}
+								</p>
+							</li>
+							{% endfor %}
+						</ul>
+					{% endif %}
+					{% if forum.topics.size > topic_count %}
+						<a href="{{forum.url}}" class="see-more">See all {{ forum.topics | size }} topics</a>
+					{% endif %}
+				</section>
+			{% endfor %}
+		</div>
+	</div>
+</section>

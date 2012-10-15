@@ -1,0 +1,227 @@
+<div class="page">
+	<header class="banner">
+		<div class="banner-title">
+			<span class="logo"></span>
+			<h1 class="ellipsis">Starship support center</h1>
+		</div>
+		<nav class="banner-nav">
+			Welcome, 
+			<strong>Guest</strong> - 
+			<strong><a href="#">Login</a></strong>
+		</nav>
+	</header>
+	<div class="tab-border"></div>
+
+	<section class="help-center rounded-6">		
+		<div class="hc-search">
+			<div class="hc-search-c">
+				<h2>Help center</h2>
+				<div class="hc-search-form rounded-6">
+					  <input placeholder="Enter your search term here..." type="text" class="hc-search-input">
+					  <button class="hc-search-button btn btn-primary" type="button">SEARCH</button>
+				</div>
+			</div>
+		</div>		
+		<div class="hc-nav">
+			<nav>
+				<a href="#" class="new-ticket ellipsis">New Support Ticket</a>
+				<a href="#" class="check-status ellipsis">Check ticket status</a>
+				<span class="contact-info">1-800-123-4567</span>
+			</nav>
+		</div>
+	</section>	 
+
+	<div class="c-wrapper">
+		<section class="main">
+			<div class="content rounded-6 min-height-on-desktop">
+				<h2>Knowledge base</h2>
+				<div class="cs-s">
+					<h3>iPhone help</h3>
+					<div class="cs-g-c">
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Frequently refered (3)</a></div>
+							<ul>
+								<li><a href="#">When will my order arrive?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+							</ul>
+						</section>
+
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Nullam mollis lorem euismod vestibulum (23)</a></div>
+							<ul>
+								<li><a href="#">When will my order arrive?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+			      				<li><a href="#">Do you ship internationally?</a></li>
+			      				<li><a href="#">How much does shipping cost?</a></li>
+							</ul>
+							<a href="#" class="see-more">See all 23 topics</a>
+						</section>
+						
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Automation (6)</a></div>
+							<ul>
+								<li><a href="#">When will my order arrive?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+			      				<li><a href="#">Do you ship internationally?</a></li>
+			      				<li><a href="#">How much does shipping cost?</a></li>
+							</ul>
+							<a href="#" class="see-more">See all 6 topics</a>
+						</section>
+
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Agent dashboard (2)</a></div>
+							<ul>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+							</ul>
+						</section>
+
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Nullam Mollis Lorem Euismod Vestibulum (23)</a></div>
+							<ul>
+								<li><a href="#">When will my order arrive?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you ship internationally?</a></li>
+			      				<li><a href="#">How much does shipping cost?</a></li>
+							</ul>
+							<a href="#" class="see-more">See all 23 topics</a>
+						</section>
+
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Agent dashboard (30)</a></div>
+							<ul>
+								<li><a href="#">When will my order arrive?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+							</ul>
+							<a href="#" class="see-more">See all 30 topics</a>
+						</section>
+					</div>
+				</div>
+				<div class="cs-s">
+					<h3>iPhone apps help</h3>
+					<div class="cs-g-c">
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Venenatis Cras Purus Vestibulum Parturient (23)</a></div>
+							<ul>
+								<li><a href="#">When will my order arrive?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+			      				<li><a href="#">Do you ship internationally?</a></li>
+			      				<li><a href="#">How much does shipping cost?</a></li>
+							</ul>
+							<a href="#" class="see-more">See all 344 topics</a>
+						</section>
+
+						<section class="cs-g article-list">
+							<div class="list-lead"><a href="#">Agent dashboard (23)</a></div>
+							<ul>
+								<li><a href="#">When will my order arrive?</a></li>
+			      				<li><a href="#">Can you rush my order?</a></li>
+			      				<li><a href="#">Do you offer expedited ship methods?</a></li>
+			      				<li><a href="#">Do you ship internationally?</a></li>
+			      				<li><a href="#">How much does shipping cost?</a></li>
+							</ul>
+							<a href="#" class="see-more">See all 344 topics</a>
+						</section>
+					</div>
+				</div>
+
+			</div>
+		</section>
+		<section class="sidebar">
+			<div class="content rounded-6 min-height-on-desktop">
+				<a href="#" class="post-question">Post a public question</a>
+				<h2>Community</h2>
+				<p class="intro">Showing recent updates</p>
+				<section class="cs-g topic-list">
+					<div class="list-lead">
+						<i class="badge-announcement"></i>
+						<a href="#">Product updates (10)</a>
+					</div>
+					<ul>
+						<li>
+							<a href="#">Freshdesk - What's new in Freshdesk?</a>
+							<p class="help-text">
+								posted by laurence fishburne, 1 year ago <br />
+								<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+							</p>
+						</li>
+						<li>
+							<a href="#">Automatic refresh for the ticket page</a>
+							<p class="help-text">
+								posted by laurence fishburne, 1 year ago <br />
+								<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+							</p>
+						</li>
+						<li>
+							<a href="#">Create a ticket *without* an email address</a>
+							<p class="help-text">
+								posted by laurence fishburne, 1 year ago <br />
+								<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+							</p>
+						</li>
+					</ul>
+					<a href="#" class="see-more">See all 10 topics</a>
+				</section>
+
+				<section class="cs-g topic-list">
+					<div class="list-lead">
+						<i class="badge-idea"></i>
+						<a href="#">Feature requests (30)</a>
+					</div>
+					<ul>
+						<li>
+							<a href="#">Remove unnecessary email response</a>
+							<p class="help-text">
+								posted by laurence fishburne, 1 year ago <br />
+								<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+							</p>
+						</li>
+						<li>
+							<a href="#">Automatic refresh for the ticket page</a>
+							<p class="help-text">
+								posted by laurence fishburne, 1 year ago <br />
+								<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+							</p>
+						</li>
+						<li>
+							<a href="#">Create a ticket *without* an email address</a>
+							<p class="help-text">
+								posted by laurence fishburne, 1 year ago <br />
+								<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
+							</p>
+						</li>
+					</ul>
+					<a href="#" class="see-more">See all 30 topics</a>
+				</section>
+
+				<section class="cs-g topic-list">
+					<div class="list-lead">
+						<i class="badge-question"></i>
+						<a href="#">Tips & Tricks / Questions (5)</a>
+					</div>
+				</section>
+				<section class="cs-g topic-list">
+					<div class="list-lead">
+						<i class="badge-problem"></i>
+						<a href="#">Report Problems (6)</a>
+					</div>
+				</section>
+			</div>
+		</section>
+	</div>
+	<footer class="rounded-6">
+		<a href="">Help Center</a>
+		<a href="">Solutions</a>
+		<a href="">Forums</a>
+	</footer>
+	<div class="copyright">
+		Helpdesk software by FreshDesk
+	</div>
+</div>

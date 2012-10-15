@@ -48,15 +48,10 @@ html {
   max-width: 680px; }
 
 /* line 28, ../../../src/app/lib/layout.scss */
-#wrap {
-  margin-bottom: 0px;
-  text-align: center; }
-
-/* line 33, ../../../src/app/lib/layout.scss */
 #minwidthfix {
   width: 950px; }
 
-/* line 37, ../../../src/app/lib/layout.scss */
+/* line 32, ../../../src/app/lib/layout.scss */
 label.overlabel {
   color: #888888;
   position: absolute;
@@ -65,7 +60,7 @@ label.overlabel {
   z-index: 5;
   margin: 8px; }
 
-/* line 46, ../../../src/app/lib/layout.scss */
+/* line 41, ../../../src/app/lib/layout.scss */
 #inner {
   *zoom: 1;
   position: relative;
@@ -77,59 +72,59 @@ label.overlabel {
     content: "";
     display: table;
     clear: both; }
-  /* line 49, ../../../src/app/lib/layout.scss */
+  /* line 44, ../../../src/app/lib/layout.scss */
   #inner .leftcontent {
     float: left;
     width: 100%; }
-  /* line 56, ../../../src/app/lib/layout.scss */
+  /* line 51, ../../../src/app/lib/layout.scss */
   #inner .sidebar {
     width: 310px;
     float: right;
     margin-right: -310px; }
 
-/* line 63, ../../../src/app/lib/layout.scss */
+/* line 58, ../../../src/app/lib/layout.scss */
 .single #inner {
   padding-right: 0px; }
-  /* line 65, ../../../src/app/lib/layout.scss */
+  /* line 60, ../../../src/app/lib/layout.scss */
   .single #inner .sidebar {
     display: none; }
-  /* line 68, ../../../src/app/lib/layout.scss */
+  /* line 63, ../../../src/app/lib/layout.scss */
   .single #inner .leftcontent {
     margin-right: 0px;
     border-right: 0px; }
 
-/* line 74, ../../../src/app/lib/layout.scss */
+/* line 69, ../../../src/app/lib/layout.scss */
 .invert #inner {
   padding-right: 0px;
   padding-left: 200px;
   /* The width of the rail */ }
-  /* line 77, ../../../src/app/lib/layout.scss */
+  /* line 72, ../../../src/app/lib/layout.scss */
   .invert #inner .sidebar, .invert #inner .leftcontent {
     float: right; }
-  /* line 80, ../../../src/app/lib/layout.scss */
+  /* line 75, ../../../src/app/lib/layout.scss */
   .invert #inner .sidebar {
     margin-right: 0px;
     width: 200px;
     margin-left: -200px; }
 
-/* line 88, ../../../src/app/lib/layout.scss */
+/* line 83, ../../../src/app/lib/layout.scss */
 div.bg_white {
   background-color: #ffffff; }
 
-/* line 92, ../../../src/app/lib/layout.scss */
+/* line 87, ../../../src/app/lib/layout.scss */
 div.bg_pulp {
   background-color: #F3F1EC; }
 
-/* line 96, ../../../src/app/lib/layout.scss */
+/* line 91, ../../../src/app/lib/layout.scss */
 .twoCol_ltSidebar #inner {
   padding-right: 0px;
   padding-left: 310px;
   /* The width of the rail */ }
-  /* line 99, ../../../src/app/lib/layout.scss */
+  /* line 94, ../../../src/app/lib/layout.scss */
   .twoCol_ltSidebar #inner .sidebar {
     margin-right: 0px;
     margin-left: -310px; }
-  /* line 103, ../../../src/app/lib/layout.scss */
+  /* line 98, ../../../src/app/lib/layout.scss */
   .twoCol_ltSidebar #inner .leftcontent {
     margin-right: 0px;
     border-right: 0px;
@@ -139,7 +134,7 @@ div.bg_pulp {
     /* Hat tip to Ryan Brill */
     float: right; }
 
-/* line 112, ../../../src/app/lib/layout.scss */
+/* line 107, ../../../src/app/lib/layout.scss */
 .breadcrumb {
   padding: 4px 0px;
   margin: 8px 10px 3px 10px;
@@ -147,7 +142,7 @@ div.bg_pulp {
   *zoom: 1;
   color: #ffffff;
   font-size: 12px; }
-  /* line 118, ../../../src/app/lib/layout.scss */
+  /* line 113, ../../../src/app/lib/layout.scss */
   .breadcrumb a {
     color: white;
     text-decoration: none;
@@ -171,19 +166,20 @@ div.bg_pulp {
       color: white; }
 
 /* Header styles */
-/* line 130, ../../../src/app/lib/layout.scss */
+/* line 125, ../../../src/app/lib/layout.scss */
 .header {
   *zoom: 1;
   position: relative;
   padding: 5px 0px 0px 0px;
-  background: #2f3733; }
+  background: #2f3733;
+  color: #ffffff; }
   /* line 38, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
   .header:after {
     content: "";
     display: table;
     clear: both; }
 
-/* line 137, ../../../src/app/lib/layout.scss */
+/* line 133, ../../../src/app/lib/layout.scss */
 .brand {
   *zoom: 1;
   position: absolute;
@@ -196,18 +192,18 @@ div.bg_pulp {
     content: "";
     display: table;
     clear: both; }
-  /* line 144, ../../../src/app/lib/layout.scss */
+  /* line 140, ../../../src/app/lib/layout.scss */
   .brand a {
     text-decoration: none; }
-  /* line 145, ../../../src/app/lib/layout.scss */
+  /* line 141, ../../../src/app/lib/layout.scss */
   .brand .logo, .brand .logo_text {
     float: left;
     position: relative;
     z-index: 5; }
-  /* line 146, ../../../src/app/lib/layout.scss */
+  /* line 142, ../../../src/app/lib/layout.scss */
   .brand .logo {
     margin: 0px 0px 0px 2px; }
-  /* line 149, ../../../src/app/lib/layout.scss */
+  /* line 145, ../../../src/app/lib/layout.scss */
   .brand .logo_text {
     font-size: 1.6em;
     border-left: 1px solid rgba(255, 255, 255, 0.3);
@@ -216,28 +212,28 @@ div.bg_pulp {
     margin-left: 10px;
     margin-top: 13px; }
 
-/* line 159, ../../../src/app/lib/layout.scss */
+/* line 155, ../../../src/app/lib/layout.scss */
 .header_links {
   float: right;
   text-align: right;
   height: 46px;
   margin: 2px 12px; }
-  /* line 164, ../../../src/app/lib/layout.scss */
+  /* line 160, ../../../src/app/lib/layout.scss */
   .header_links a {
     padding: 0px 6px;
     color: #ffffff;
     text-decoration: none; }
-  /* line 169, ../../../src/app/lib/layout.scss */
+  /* line 165, ../../../src/app/lib/layout.scss */
   .header_links a:hover {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
     opacity: 0.9;
     color: #ffffff;
     text-decoration: none; }
-  /* line 174, ../../../src/app/lib/layout.scss */
+  /* line 170, ../../../src/app/lib/layout.scss */
   .header_links a.nav-trigger {
     padding: 0px 12px 0px 6px;
     font-weight: bold; }
-  /* line 178, ../../../src/app/lib/layout.scss */
+  /* line 174, ../../../src/app/lib/layout.scss */
   .header_links a.nav-trigger:before {
     content: "";
     position: absolute;
@@ -248,21 +244,21 @@ div.bg_pulp {
     right: 9px; }
 
 /* Header Tab styles */
-/* line 191, ../../../src/app/lib/layout.scss */
+/* line 187, ../../../src/app/lib/layout.scss */
 .top_nav_bg {
   background: #7cb537;
   -moz-box-shadow: inset 0px -1px 1px rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: inset 0px -1px 1px rgba(0, 0, 0, 0.2);
   box-shadow: inset 0px -1px 1px rgba(0, 0, 0, 0.2); }
 
-/* line 196, ../../../src/app/lib/layout.scss */
+/* line 192, ../../../src/app/lib/layout.scss */
 ul.header-tabs {
   list-style: none; }
-  /* line 198, ../../../src/app/lib/layout.scss */
+  /* line 194, ../../../src/app/lib/layout.scss */
   ul.header-tabs li {
     float: left;
     position: relative; }
-    /* line 201, ../../../src/app/lib/layout.scss */
+    /* line 197, ../../../src/app/lib/layout.scss */
     ul.header-tabs li span {
       background: none;
       height: 1px;
@@ -271,7 +267,7 @@ ul.header-tabs {
       position: relative;
       z-index: 1;
       margin-bottom: -2px; }
-    /* line 210, ../../../src/app/lib/layout.scss */
+    /* line 206, ../../../src/app/lib/layout.scss */
     ul.header-tabs li a {
       position: relative;
       z-index: 5;
@@ -283,14 +279,14 @@ ul.header-tabs {
       text-align: center;
       display: block;
       text-shadow: rgba(0, 0, 0, 0.1), 1px, 1px, 1px; }
-    /* line 222, ../../../src/app/lib/layout.scss */
+    /* line 218, ../../../src/app/lib/layout.scss */
     ul.header-tabs li a:hover {
       background: #95cb54;
       -moz-box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1);
       -webkit-box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1);
       box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1);
       color: #ffffff; }
-  /* line 228, ../../../src/app/lib/layout.scss */
+  /* line 224, ../../../src/app/lib/layout.scss */
   ul.header-tabs li.active a, ul.header-tabs li.active a:hover {
     border-color: #618e2b;
     background: #efefef;
@@ -302,6 +298,6 @@ ul.header-tabs {
     box-shadow: none; }
 
 /* Footer styles */
-/* line 239, ../../../src/app/lib/layout.scss */
+/* line 235, ../../../src/app/lib/layout.scss */
 .footerContent {
   padding: 4px 20px 20px; }

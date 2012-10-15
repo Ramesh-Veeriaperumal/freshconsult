@@ -1,0 +1,87 @@
+.help-center{
+	/*background-color: $page-lead-background;*/
+	/*border: $content-border;*/
+	@include clearfix;
+}
+
+// PORTAL BASED SEARCH CSS
+
+.hc-search-c{
+	/*padding: $content-padding-mobile;*/
+}
+
+.hc-search-form{
+	background-color: rgba(#e3e3e3, 0.5);
+	border:1px solid #cdcccc;
+	padding:4px;
+}
+
+.hc-search-button{
+	width: 10%;
+	line-height: $baseLineHeight * 1.2;
+	font-weight: 500;
+	text-indent: -99999px;
+	position: relative;	
+    &:before{
+    	content:"";
+    	@if lightness($btnPrimaryBackground) > 50{
+    		@extend .icon-search-dark;
+    	} @else {
+    		@extend .icon-search-light;
+    	}
+    	@include inline-block;
+		vertical-align: text-top;
+		position: absolute;
+		left: 50%;
+		margin-left: -11px;
+		margin-top: 1px;
+		text-indent: 0;
+    }
+}
+
+input.hc-search-input{
+	width:86%;	
+}
+
+.hc-nav	nav{
+	@include clearfix;
+	a{ 
+		font-weight: bold;
+	    &:hover{ 
+	    	text-decoration:none; 
+		    background-color: #eaeaea;
+		    @include border-radius(5px);
+		    box-shadow: 0 1px 2px #afafaf inset;
+		}
+	}
+	a, span{
+		padding: 3px 8px 3px 2px;
+		margin-bottom: 8px;
+		&:before{
+			content:"";
+			@include inline-block;
+			vertical-align: text-top;		
+			margin-right: 5px;
+			margin-top: -1px;
+		}
+	}
+}
+
+.new-ticket{ @include span-columns(2); }
+.new-ticket:before{ @extend .icon-new-ticket; }
+.check-status{ @include span-columns(2 omega); }
+.check-status:before{ @extend .icon-check-status; }
+.contact-info:before{ @extend .icon-phone; }
+
+
+@include at-breakpoint($break-tablet){	
+    input.hc-search-input{ width: 80.5%; }
+    .help-center{ margin-top: 10px; }
+    /*.hc-nav	nav{ padding: $content-padding; } */
+    .hc-search-button{ 
+      width: 18%; text-indent:0; 
+      margin-left: 0.5%;
+      &:before{ content:none; } 
+    }
+    /*.hc-search-c{ padding:$content-padding; }*/
+}

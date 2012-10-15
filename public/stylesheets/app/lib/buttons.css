@@ -681,14 +681,11 @@ div.action_buttons:hover {
     -ms-border-radius: 18px;
     -o-border-radius: 18px;
     border-radius: 18px;
-    -webkit-transition-property: -webkit-left;
-    -moz-transition-property: -moz-left;
-    -o-transition-property: -o-left;
+    -webkit-transition-property: left;
+    -moz-transition-property: left;
+    -o-transition-property: left;
     transition-property: left;
-    -webkit-transition-duration: 0.1s;
-    -moz-transition-duration: 0.1s;
-    -o-transition-duration: 0.1s;
-    transition-duration: 0.1s; }
+    /*@include transition-duration(0.1s);    */ }
   /* line 453, ../../../src/app/lib/buttons.scss */
   .toggle-button .toggle-handle {
     left: 50%; }
@@ -723,14 +720,8 @@ div.action_buttons:hover {
       -webkit-box-shadow: #f2f2f2 0 0 0 1px inset;
       -moz-box-shadow: #f2f2f2 0 0 0 1px inset;
       box-shadow: #f2f2f2 0 0 0 1px inset;
-      -webkit-transition-property: -webkit-margin;
-      -moz-transition-property: -moz-margin;
-      -o-transition-property: -o-margin;
-      transition-property: margin;
-      -webkit-transition-duration: 0.2s;
-      -moz-transition-duration: 0.2s;
-      -o-transition-duration: 0.2s;
-      transition-duration: 0.2s; }
+      /*@include transition-property(margin);
+      @include transition-duration(0.2s);*/ }
   /* line 470, ../../../src/app/lib/buttons.scss */
   .toggle-button:hover {
     color: #fff;

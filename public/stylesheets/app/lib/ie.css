@@ -35,7 +35,10 @@
 .ie6 .uniForm .textInput,
 .ie6 .uniForm .fileUpload,
 .ie6 .uniForm .selectInput,
-.ie6 .uniForm select, .ie7 .uniForm .textInput, .ie7 .uniForm .fileUpload, .ie7 .uniForm .selectInput, .ie7 .uniForm select {
+.ie6 .uniForm select, .ie7 .uniForm .textInput,
+.ie7 .uniForm .fileUpload,
+.ie7 .uniForm .selectInput,
+.ie7 .uniForm select {
   height: 24px; }
 /* line 43, ../../../src/app/lib/ie.scss */
 .ie6 .ui-form .attachment_list li, .ie7 .ui-form .attachment_list li {
