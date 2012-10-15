@@ -124,7 +124,7 @@ class Quest < ActiveRecord::Base
           :user => user,
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
           :account => account})
-    clear_quests_cache([user])
+    clear_quests_cache_for_user(user)
   end
 
   def revoke!(user)
@@ -135,7 +135,7 @@ class Quest < ActiveRecord::Base
           :user => user,
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
           :account => account})
-    clear_quests_cache([user])
+    clear_quests_cache_for_user(user)
   end
 
   def time_column

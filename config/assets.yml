@@ -28,6 +28,7 @@ stylesheets:
     - public/stylesheets/hacks.css
     - public/stylesheets/ie.css
     - public/stylesheets/satisfaction.css
+    - public/stylesheets/jquery.gritter.css
 
   notifications:
     - public/stylesheets/jquery.gritter.css
