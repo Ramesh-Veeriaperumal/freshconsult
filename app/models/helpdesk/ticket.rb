@@ -1142,11 +1142,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def publish_to_update_channel
-      channel = "tickets:#{self.account.id}:#{self.id}"
+      return unless account.features?(:agent_collision)
       agent_name = User.current ? User.current.name : ""
-      message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name}
-      client_count = publish_to_channel(channel, message)
-      RAILS_DEFAULT_LOGGER.debug "Message : #{message} Received by #{client_count} clients from channel : #{channel}"
+      message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
+      publish_to_channel("tickets:#{self.account.id}:#{self.id}", message)
     end
 
     def fire_update_event

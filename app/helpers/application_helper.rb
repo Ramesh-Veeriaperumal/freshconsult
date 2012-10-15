@@ -585,6 +585,12 @@ module ApplicationHelper
 
   def email_regex
     Helpdesk::Ticket::VALID_EMAIL_REGEX.source
+  end
+
+  def nodejs_url
+    nodejs_protocol = (current_account && current_account.ssl_enabled) ? "https" : "http"
+    nodejs_port = Rails.env.development? ? 4000 : (current_account.ssl_enabled ? 445 : 82)      
+    "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/node"
   end  
    
   private
