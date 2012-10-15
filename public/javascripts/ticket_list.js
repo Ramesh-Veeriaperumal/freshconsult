@@ -10,12 +10,15 @@ ticksymbol = "<span class='icon ticksymbol'></span>";
 priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 
 jQuery(document).ready(function() {
-	
+
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
 	jQuery(".ticket-description-tip").livequery(function () {
 		_self = jQuery(this);        
         var tipUrl = _self.data("tipUrl");
+        var ticket_id = _self.parent().parent().parent().data('ticket');
         _self.qtip({
+        	prerender: true,
+        	id: ticket_id,
 			position: { 
 				my: 'top left',
 				at: 'bottom  left',
@@ -85,6 +88,34 @@ jQuery(document).ready(function() {
 	
 // ---- END OF extract from /helpdesk/shared/_ticket_view.html.erb ----
 
+	//For Agent Collision data to appear in Ticket Tooltips.
+	updateWorkingAgents = function(ticket_id, data) {
+
+		console.log(data);
+		if (jQuery('#ui-tooltip-' + ticket_id + ' .working-agents').length == 0) {
+			working_agents = jQuery('<div />').addClass('working-agents');
+			jQuery('#ui-tooltip-' + ticket_id + '').append(working_agents);
+		}
+
+		working_agents = jQuery('#ui-tooltip-' + ticket_id + ' .working-agents');
+
+		var text = '';
+		if (data.length == 0){
+			jQuery('#ui-tooltip-' + ticket_id).removeClass('hasCollision');
+			working_agents.addClass('hide');
+		} else {
+			jQuery('#ui-tooltip-' + ticket_id).addClass('hasCollision');
+			working_agents.removeClass('hide');
+			if (data.length == 1) {
+				text = '<strong>' + data[0] + '</strong> is currently viewing.';
+			} else if (data.length == 2) {
+				text = '<strong>' + data[0] + '</strong> and <strong>' + data[1] + '</strong>  are currently viewing.';
+			} else if (data.length > 2)  {
+				text = '<strong>' + data[0] + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently viewing...';
+			}
+			working_agents.html(text);
+		}
+	}
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
 	// jQuery('.tickets tbody tr').live('click',function(ev) {

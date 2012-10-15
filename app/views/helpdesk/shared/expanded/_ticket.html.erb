@@ -13,7 +13,7 @@
 			<%if feature?(:agent_collision) %>
 				<div class="index-collision">
 					<div rel="view_collision" id="tickets:<%= current_account.id%>:viewers:<%= ticket.id%>" 
-							class="symbols-ac-viewingon-listview">
+							class="symbols-ac-viewingon-listview" data-display-id="<%= ticket.display_id%>" >
 						<span rel="viewing_count"></span>
 					</div>
 					<div rel="reply_collision" id="tickets:<%= current_account.id%>:replying:<%= ticket.id%>" 
