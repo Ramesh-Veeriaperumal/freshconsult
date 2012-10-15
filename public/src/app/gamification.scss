@@ -1,24 +1,25 @@
 @import "lib/settings";
 /* styles in here will be used in admin settings of arcade */
 
-/* Sprite sheet creation for trophies */
-/* Gamification-Trophy */
+/* Sprite sheet creation for badges and trophies */
+/*Gamification-Trophy */
 @import "trophy/*.png";
+$trophy-sprite-dimensions:true;
+$trophy-layout:smart;
 @include all-trophy-sprites;
 
-/* Gamification-Badges */
+/*Gamification-Badges */
+$badges-layout:smart;
+$badges-a-layout:smart;
 @import "badges/*.png";
+@import "badges-a/*.png";
 @include all-badges-sprites;
+@include all-badges-a-sprites;
 
 .trophy{
 	@include inline-block;
 	width: 50px;
 	height: 50px;
-}
-
-.trophy-mvp-small, .trophy-love-small, .trophy-sharpshooter-small, .trophy-speed-small{
-	height:40px;
-	width:40px;
 }
 
 .gamesettings .admin_list{
@@ -60,10 +61,14 @@
 	}
 }
 
+#selected-badge .gamesettings-badges{
+	@include inline-block;
+}
+
 #select-badge{
 	max-height:340px; 
 	overflow:auto;	
-	.gamesettings-badges{		
+	.gamesettings-badges{
 		margin: 0 auto;
 	}
 } 
@@ -111,11 +116,6 @@
 	margin: 10px 0;
 	font-size: 16px;
 	color: #666;
-}
-
-.gamesettings .points{
-    margin: 0;
-    padding: 0;
 }
 
 .gamesettings .points li{
