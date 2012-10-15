@@ -64,6 +64,9 @@ stylesheets:
   reports:
     - public/stylesheets/app/reports.css
 
+  report_print:
+    - public/stylesheets/print/report-print.css  
+
   redactor:
     - public/stylesheets/redactor.css
 
