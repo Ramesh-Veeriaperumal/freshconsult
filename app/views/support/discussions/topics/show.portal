@@ -7,6 +7,9 @@
 	</div>
 	
 	<section class="topic-header clearfix">
+		<b class="page-stamp page-stamp-{{forum.type_name}}">
+			<b class="icon-page-{{forum.type_name}}"></b>
+		</b>
 		<h2 class="post-title">
 			<span class="label label-planned">Planned</span>
 			{{ topic.title }}

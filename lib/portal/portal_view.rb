@@ -29,8 +29,10 @@ class PortalView
     template_key = 'dynamic_template'
 
     # Using dynamic_template if it is present else fetch from the render file
-    local_assigns[template_key.to_sym] ||= @view.instance_variable_get("@#{template_key}")
-
+    # local_assigns[template_key.to_sym] ||= @view.instance_variable_get("@#{template_key}")
+    # if(local_assigns[:header])
+      # puts "=========> #{@view.controller.inspect.split(",").join("\n")} "
+    # end
     # Getting the source for the current view 
     # will be either the actual file or local assigns/instance variable with the name 'dynamic_template'
     source = (local_assigns[template_key.to_sym].blank?) ?
@@ -49,17 +51,19 @@ class PortalView
     
     local_assigns = (template.respond_to?(:locals) ? template.locals : local_assigns) || {}
     
-    if content_for_layout = @view.instance_variable_get("@content_for_layout")
-      assigns['content_for_layout'] = content_for_layout
-    end
-
     # Mergin all local assigns to be passed into the liquid ref.
     # Removing dynamic template information, 
     # to avoid re-rendering of base information in view if it is used within the template
     assigns.merge!(local_assigns.stringify_keys) - PROTECTED_APP_VARIABLES
 
+    if content_for_layout = @view.instance_variable_get("@content_for_layout")
+      puts "======> #{@view.instance_variable_get("@page").inspect}"
+      assigns['content_for_layout'] = @view.instance_variable_get("@page").content || content_for_layout
+      assigns['content_for_layout'] = Liquid::Template.parse(assigns['content_for_layout']).render(assigns, :filters => [@view.controller.master_helper_module], :registers => {:action_view => @view, :controller => @view.controller})
+    end
+
     liquid = Liquid::Template.parse(source)
-    liquid.render(assigns, :filters => [@view.controller.master_helper_module], :registers => {:action_view => @view, :controller => @view.controller})    
+    liquid.render(assigns, :filters => [@view.controller.master_helper_module], :registers => {:action_view => @view, :controller => @view.controller})
   end
 
   def compilable?

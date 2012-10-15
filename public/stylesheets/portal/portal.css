@@ -1587,97 +1587,127 @@ input[type="submit"].btn {
     *padding-bottom: 1px; }
 
 /* Importing admin icons */
-/* line 154, portal/icon/*.png */
-.icon-sprite, .icon-article-list, .article-list li:before, .icon-check-status, .check-status:before, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:before, .icon-forum-i, .badge-ideas:before, .icon-forum-p, .badge-problems:before, .icon-forum-q, .badge-questions:before, .icon-new-ticket, .new-ticket:before, .icon-phone, .contact-info:before, .icon-search-dark, .icon-search-light, .hc-search-button:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-topic-list, .topic-list li:before {
-  background: url('/images/portal/icon-s6d4947281e.png') no-repeat; }
+/* line 194, portal/icon/*.png */
+.icon-sprite, .icon-article-list, .article-list li:before, .icon-check-status, .check-status:before, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:before, .icon-forum-i, .badge-ideas:before, .icon-forum-p, .badge-problems:before, .icon-forum-q, .badge-questions:before, .icon-new-ticket, .new-ticket:before, .icon-page-announcement, .icon-page-article, .icon-page-ideas, .icon-page-problems, .icon-page-questions, .icon-phone, .contact-info:before, .icon-search-dark, .icon-search-light, .hc-search-button:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-topic-list, .topic-list li:before {
+  background: url('/images/portal/icon-s333348941e.png') no-repeat; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-article-list, .article-list li:before {
-  background-position: 0 -180px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-check-status, .check-status:before {
-  background-position: 0 -200px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-dual-arrow, .see-more:before {
   background-position: 0 -280px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-check-status, .check-status:before {
+  background-position: 0 -300px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-dual-arrow, .see-more:before {
+  background-position: 0 -380px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-forum-a, .badge-announcement:before {
-  background-position: 0 -220px;
+  background-position: 0 -320px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-forum-i, .badge-ideas:before {
-  background-position: 0 -80px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-forum-p, .badge-problems:before {
-  background-position: 0 -240px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-forum-q, .badge-questions:before {
   background-position: 0 -140px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-forum-p, .badge-problems:before {
+  background-position: 0 -340px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-forum-q, .badge-questions:before {
+  background-position: 0 -240px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-new-ticket, .new-ticket:before {
-  background-position: 0 -100px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-phone, .contact-info:before {
-  background-position: 0 -260px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-search-dark {
-  background-position: 0 -40px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-search-light, .hc-search-button:before {
-  background-position: 0 -60px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-sign-in-facebook, .btn-facebook:before {
-  background-position: 0 -120px;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-sign-in-google, .btn-google:before {
-  background-position: 0 0;
-  height: 20px;
-  width: 20px; }
-
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-sign-in-twitter, .btn-twitter:before {
   background-position: 0 -160px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-topic-list, .topic-list li:before {
+.icon-page-announcement {
   background-position: 0 -20px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-page-article {
+  background-position: 0 -220px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-page-ideas {
+  background-position: 0 0;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-page-problems {
+  background-position: 0 -200px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-page-questions {
+  background-position: 0 -40px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-phone, .contact-info:before {
+  background-position: 0 -360px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-search-dark {
+  background-position: 0 -100px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-search-light, .hc-search-button:before {
+  background-position: 0 -120px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-sign-in-facebook, .btn-facebook:before {
+  background-position: 0 -180px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-sign-in-google, .btn-google:before {
+  background-position: 0 -60px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-sign-in-twitter, .btn-twitter:before {
+  background-position: 0 -260px;
+  height: 20px;
+  width: 20px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-topic-list, .topic-list li:before {
+  background-position: 0 -80px;
   height: 20px;
   width: 20px; }
 
@@ -1692,7 +1722,29 @@ input[type="submit"].btn {
   [class*=" icon-"]:last-child {
     *margin-left: 0; }
 
-/* line 30, ../../src/portal/lib/_sprites.scss */
+/* line 37, ../../src/portal/lib/_sprites.scss */
+.page-stamp {
+  display: none; }
+
+@media (min-width: 45em) {
+  /* line 39, ../../src/portal/lib/_sprites.scss */
+  .page-stamp {
+    position: absolute;
+    display: block;
+    width: 25px;
+    left: -6px;
+    margin-top: 5px;
+    padding: 4px 0 7px 2px; }
+    /* line 46, ../../src/portal/lib/_sprites.scss */
+    .page-stamp:after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      border: 3px solid transparent;
+      border-top-color: #6c6c6c;
+      border-right-color: #6c6c6c; } }
+/* line 58, ../../src/portal/lib/_sprites.scss */
 .badge-announcement, .badge-ideas, .badge-problems, .badge-questions {
   display: -moz-inline-stack;
   display: inline-block;
@@ -1709,7 +1761,7 @@ input[type="submit"].btn {
   height: 26px;
   margin-right: 3px;
   margin-top: -2px; }
-  /* line 37, ../../src/portal/lib/_sprites.scss */
+  /* line 65, ../../src/portal/lib/_sprites.scss */
   .badge-announcement:before, .badge-ideas:before, .badge-problems:before, .badge-questions:before {
     content: "";
     display: -moz-inline-stack;
@@ -1721,20 +1773,24 @@ input[type="submit"].btn {
     vertical-align: text-top;
     margin: 2px 4px; }
 
-/* line 45, ../../src/portal/lib/_sprites.scss */
-.badge-announcement {
+/* line 73, ../../src/portal/lib/_sprites.scss */
+.page-stamp-article {
+  background-color: #a249c5; }
+
+/* line 74, ../../src/portal/lib/_sprites.scss */
+.badge-announcement, .page-stamp-announcement {
   background-color: #008b00; }
 
-/* line 49, ../../src/portal/lib/_sprites.scss */
-.badge-ideas {
+/* line 75, ../../src/portal/lib/_sprites.scss */
+.badge-ideas, .page-stamp-ideas {
   background-color: #f4af1a; }
 
-/* line 53, ../../src/portal/lib/_sprites.scss */
-.badge-problems {
+/* line 76, ../../src/portal/lib/_sprites.scss */
+.badge-problems, .page-stamp-problems {
   background-color: #ff5959; }
 
-/* line 57, ../../src/portal/lib/_sprites.scss */
-.badge-questions {
+/* line 77, ../../src/portal/lib/_sprites.scss */
+.badge-questions, .page-stamp-questions {
   background-color: #00aad5; }
 
 /* line 6, ../../src/portal/lib/_dropdowns.scss */
@@ -3027,7 +3083,8 @@ input.hc-search-input {
 
 /* line 12, ../../src/portal/lib/_content.scss */
 .content {
-  background-color: rgba(255, 255, 255, 0.7); }
+  background-color: rgba(255, 255, 255, 0.7);
+  position: relative; }
 
 /* line 17, ../../src/portal/lib/_content.scss */
 .content-form {

@@ -4,7 +4,12 @@
 		<a href="{{ article.category.url }}">{{ article.category.name }}</a>
 		<a href="{{ article.folder.url }}">{{ article.folder.name }}</a>
 	</div>
-	<h3>{{ article.title }}</h3>
+
+	<b class="page-stamp page-stamp-article">
+		<b class="icon-page-article"></b>
+	</b>
+
+	<h2>{{ article.title }}</h2>
 	<p class="intro">
 		Modified on: {{ article.modified_on }}
 	</p>

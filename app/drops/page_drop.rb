@@ -12,8 +12,4 @@ class PageDrop < BaseDrop
     source.token.to_s
   end
 
-  def content
-  	source.content
-  end
-
 end
