@@ -66,38 +66,23 @@
         //console.log('Unable to connect Socket.IO', error_msg);
       //});
 
-      jQuery("li[rel=notice-popover]")      
-        .bind({ 
-          mouseenter: function(){  
-            if(this.className == "active")
-              jQuery(this).popover('show');
-          }, 
-          mouseleave: function(){
-            jQuery(this).popover('hide');
-          }
-        }).popover({
-            html: true,           
-            trigger: "manual",
-            content: function(){
-            container = "";
-            agents_viewing[jQuery(this).prop('id')].each(function(item){
-              container += "<div>" + item + "</div>";
-            });                         
-            return container;
-          },
-          template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
-        });
-
       function update_notification_ui(key){
         agents_viewing[key] =   agents_viewing[key].uniq();
+        console.log(key);
+        console.log(agents_viewing[key]);
+        if (agents_viewing[key].size() != 0) {
+          jQuery($(key)).show().addClass('view_collision');
+        } else {
+          jQuery($(key)).hide();
+        }
+
+        jQuery($(key)).find("span[rel=viewing_count]").html(agents_viewing[key].size());
         updateWorkingAgents(jQuery($(key)).data('display-id'),agents_viewing[key]); //Fn in ticket_list.js
-        jQuery($(key)).toggleClass("active", (agents_viewing[key].size() != 0)).effect("highlight", { color: "#fffff3" }, 400);
-        jQuery($(key)).find(".pill").html(agents_viewing[key].size());
       }
  
       function handle_agent_collision() {
         ticket_ids = [];
-        jQuery("li[rel=notice-popover]").each(function(){
+        jQuery("div[rel=view_collision]").each(function(){
           ticket_ids.push(jQuery(this).prop('id'));
         });
         if(ticket_ids.length > 0){
