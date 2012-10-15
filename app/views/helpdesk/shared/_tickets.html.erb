@@ -12,7 +12,11 @@
         <td><%= t('helpdesk.tickets.tabular_view.status') %></td>
         <td><%= t('helpdesk.tickets.tabular_view.priority') %></td>
       </tr>
-      <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @items %>
+      <!-- Write in sinlge line for template_liner to work..-->
+      <% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) 
+        for ticket in @items %>
+        <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :locals => { :ticket => ticket } , :inline => true %>
+      <% end %>
     </tbody>
   </table>
   <div class="toolbar" id="ticket-toolbar-bottom">

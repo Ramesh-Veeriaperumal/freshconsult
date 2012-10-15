@@ -247,7 +247,8 @@ function pjax(options) {
     }
 
     if (container.title) document.title = container.title
-    context.html(container.contents)
+    //context.html(container.contents)
+    context.empty().html(container.contents); // For removing the events and memroy leaks ... Pratheepv
 
     // Scroll to top by default
     if (typeof options.scrollTo === 'number')

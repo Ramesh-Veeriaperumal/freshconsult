@@ -211,17 +211,17 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket)
+  def subject_style(ticket,onhold_and_closed_statuses)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && !ticket.onhold_and_closed?
+    type = "new" if ticket.ticket_states.is_new? && !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id)
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
+    type = "overdue" if !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) && ticket.due_by < Time.now && ticket.active? 
     type
   end
 
-  def sla_status(ticket)
+  def sla_status(ticket,onhold_and_closed_statuses)
     if( ticket.active? )
-      unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
+      unless (onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) or ticket.ticket_status.deleted?)
         if(Time.now > ticket.due_by )
           t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         else
