@@ -132,6 +132,21 @@
 .ui-tooltip-ticket{
 	max-width: 650px !important;
 	margin-left:18px;
+
+	.working-agents {
+		position:relative;
+		margin: -25px 10px 0 0;
+		border-top: solid 1px #dadada;
+		background: url(/images/overlay/collision-view.png) no-repeat;
+		background-position: 0 5px;
+		padding: 2px 0 0 25px;
+		color: #666;
+
+		strong {
+			font-weight:normal;
+			color: #333;
+		}
+	}
 }
 
 .ui-tooltip-ticket .ui-tooltip-content{
@@ -143,6 +158,10 @@
 	background-color:#FFFDE1;
 	border-color:#d0cdaa;
 	margin-left:-14px; 
+}
+
+.ui-tooltip-ticket.hasCollision .ui-tooltip-content{
+	padding-bottom: 35px;
 }
 
 
