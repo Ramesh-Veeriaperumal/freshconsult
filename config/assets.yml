@@ -54,7 +54,7 @@ stylesheets:
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
     - public/stylesheets/app/lib/ie.css
-    - public/stylesheets/app/lib/gadget.css
+    - public/stylesheets/app/gadget.css
 
   subscription:
     - public/stylesheets/subscription/bootstrap.css
