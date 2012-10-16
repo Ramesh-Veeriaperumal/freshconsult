@@ -127,7 +127,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Social::FbPost',
     :dependent => :destroy
     
-  has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
+  has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
@@ -242,7 +242,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #Sphinx configuration starts
   define_index do
-       
+    
     indexes :display_id, :sortable => true
     indexes :subject, :sortable => true
     indexes description
@@ -254,6 +254,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
 
     where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
+
+    set_property :delta => FreshdeskSphinxDelta
 
     set_property :field_weights => {
       :display_id   => 10,
@@ -286,7 +288,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
   
-
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
@@ -929,7 +930,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   private
-  
+
+    def sphinx_data_changed?
+      description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
+    end
+
     def custom_field_aliases
       return flexifield ? ff_aliases : account.flexi_field_defs.first.ff_aliases
     end
@@ -1148,4 +1153,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def fire_update_event
       fire_event(:update) unless disable_observer
     end
+
 end
+
