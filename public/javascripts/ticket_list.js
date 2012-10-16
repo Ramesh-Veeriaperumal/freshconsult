@@ -89,32 +89,54 @@ jQuery(document).ready(function() {
 // ---- END OF extract from /helpdesk/shared/_ticket_view.html.erb ----
 
 	//For Agent Collision data to appear in Ticket Tooltips.
-	updateWorkingAgents = function(ticket_id, data) {
+	updateWorkingAgents = function(ticket_id, data, type) {
 
 		console.log(data);
 		if (jQuery('#ui-tooltip-' + ticket_id + ' .working-agents').length == 0) {
 			working_agents = jQuery('<div />').addClass('working-agents');
+			jQuery(working_agents).append(jQuery('<div rel="viewing_agents" />'));
+			jQuery(working_agents).append(jQuery('<div rel="replying_agents" />'));
 			jQuery('#ui-tooltip-' + ticket_id + '').append(working_agents);
 		}
 
 		working_agents = jQuery('#ui-tooltip-' + ticket_id + ' .working-agents');
-
 		var text = '';
-		if (data.length == 0){
-			jQuery('#ui-tooltip-' + ticket_id).removeClass('hasCollision');
-			working_agents.addClass('hide');
-		} else {
-			jQuery('#ui-tooltip-' + ticket_id).addClass('hasCollision');
-			working_agents.removeClass('hide');
-			if (data.length == 1) {
-				text = '<strong>' + data[0] + '</strong> is currently viewing.';
-			} else if (data.length == 2) {
-				text = '<strong>' + data[0] + '</strong> and <strong>' + data[1] + '</strong>  are currently viewing.';
-			} else if (data.length > 2)  {
-				text = '<strong>' + data[0] + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently viewing...';
+
+		if(type == "viewing") {
+			viewing_agents = jQuery(working_agents).find("div[rel=viewing_agents]");
+			if (data.length == 0){
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasCollision');
+				viewing_agents.addClass('hide');
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).addClass('hasCollision');
+				viewing_agents.removeClass('hide');
+				if (data.length == 1) {
+					text = '<strong>' + data[0] + '</strong> is currently viewing.';
+				} else if (data.length == 2) {
+					text = '<strong>' + data[0] + '</strong> and <strong>' + data[1] + '</strong>  are currently viewing.';
+				} else if (data.length > 2)  {
+					text = '<strong>' + data[0] + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently viewing.';
+				}
+				viewing_agents.html(text);
 			}
-			working_agents.html(text);
-		}
+		} else if(type == "replying") {
+			replying_agents = jQuery(working_agents).find("div[rel=replying_agents]");
+			if (data.length == 0){
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasCollision');
+				replying_agents.addClass('hide');
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).addClass('hasCollision');
+				replying_agents.removeClass('hide');
+				if (data.length == 1) {
+					text = '<strong>' + data[0] + '</strong> is currently replying...';
+				} else if (data.length == 2) {
+					text = '<strong>' + data[0] + '</strong> and <strong>' + data[1] + '</strong>  are currently replying...';
+				} else if (data.length > 2)  {
+					text = '<strong>' + data[0] + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently replying...';
+				}
+			}
+			replying_agents.html(text);
+		}		
 	}
 
 		//Clicking on the row (for ticket list only), the check box is toggled.

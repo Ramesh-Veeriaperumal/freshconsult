@@ -7,35 +7,51 @@
  
     var socket = null;
     var agents_viewing = {};
+    var agents_replying = {};
     var init_params = {};
     var current_user = "<%= escape_javascript(current_user.name) %>";
     var current_account_id = "<%=current_account.id%>";
 
     init_params.agent = current_user;
     init_params.account_id = <%= current_account.id%>;
-    init_params.ticket_viewers_key = 'tickets:'+current_account_id+':viewers:*';
     init_params.ticket_channel = 'tickets:'+current_account_id+':*';
-    init_params.source = "index";
     
     jQuery(document).ready(function() {
 
       socket = io.connect('<%= nodejs_url %>'); 
 
       socket.on('connect', function(){
-        socket.emit('set_params_for_index', init_params);
+        socket.emit('index_init', init_params);
         handle_agent_collision();
       });
 
-      socket.on('recieve_existing_viewers_for_index',function(_viewers) {
-        //console.log("In recieve_existing_viewers_for_index : "+_viewers);
-        agents_viewing = {};
+      socket.on('set_viewers_in_index',function set_viewers_in_index(_viewers) {
+        console.log("In set_viewers_in_index : "+_viewers);
         viewers = JSON.parse(_viewers);
-        //console.log("In recieve_existing_viewers_for_index viewers : "+viewers.toString());
+        agents_viewing = {};
+
+        console.log("In set_viewers_in_index agents : "+_viewers.toString());
         for (var key in viewers) {
           if (viewers.hasOwnProperty(key)) {  
             if($(key)){
               agents_viewing[key] = viewers[key].without(current_user);
-              update_notification_ui(key);
+              update_viewing_notification_ui(key, agents_viewing[key], 'viewing');
+            }  
+          }
+        }
+      });
+   
+      socket.on('set_replying_in_index',function set_replying_in_index(_replying) {
+        console.log("In set_replying_in_index : "+_replying);
+        replying = JSON.parse(_replying);
+        agents_replying = {};
+
+        //console.log("In set_replying_in_index agents : "+replying.toString());
+        for (var key in viewers) {
+          if (replying.hasOwnProperty(key)) {  
+            if($(key)){
+              agents_replying[key] = replying[key].without(current_user);
+              update_replying_notification_ui(key, agents_replying[key], 'replying');
             }  
           }
         }
@@ -43,30 +59,45 @@
    
       socket.on('message', function(_params){
         params = JSON.parse(_params);
-        key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
-        
-        if($(key)){
-          if(agents_viewing[key] == undefined){
-            agents_viewing[key] = [];
-            agents_viewing[key].push(params.agent);
-          }
-          switch(params.type){
-            case "connected":
+
+        if(params.type == "connected" || params.type == "disconnected"){
+          key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
+          if($(key)){
+            if(agents_viewing[key] == undefined){
+              agents_viewing[key] = [];
               agents_viewing[key].push(params.agent);
-              break;
-            case "disconnected":
-              agents_viewing[key] = agents_viewing[key].without(params.agent);
-              break;
-          }    
-          update_notification_ui(key);
+            }
+            switch(params.type){
+              case "connected":
+                agents_viewing[key].push(params.agent);
+                break;
+              case "disconnected":
+                agents_viewing[key] = agents_viewing[key].without(params.agent);
+                break;
+            }    
+            update_viewing_notification_ui(key, agents_viewing[key]);
+          }
+        } else {
+          key = 'tickets:'+current_account_id+':replying:'+params.ticket_id;
+          if($(key)){
+            if(agents_replying[key] == undefined){
+              agents_replying[key] = [];
+              agents_replying[key].push(params.agent);
+            }
+            switch(params.type){
+              case "agent_replyig":
+                agents_replying[key].push(params.agent);
+                break;
+              case "agent_replying_stopped":
+                agents_replying[key] = agents_replying[key].without(params.agent);
+                break;
+            }    
+            update_replying_notification_ui(key, agents_replying[key]);
+          }
         }
       });
    
-      //socket.socket.on('error', function (error_msg){
-        //console.log('Unable to connect Socket.IO', error_msg);
-      //});
-
-      function update_notification_ui(key){
+      function update_viewing_notification_ui(key, agents){
         agents_viewing[key] =   agents_viewing[key].uniq();
         console.log(key);
         console.log(agents_viewing[key]);
@@ -77,19 +108,45 @@
         }
 
         jQuery($(key)).find("span[rel=viewing_count]").html(agents_viewing[key].size());
-        updateWorkingAgents(jQuery($(key)).data('display-id'),agents_viewing[key]); //Fn in ticket_list.js
+        updateWorkingAgents(jQuery($(key)).data('display-id'),agents_viewing[key], "viewing"); //Fn in ticket_list.js
       }
  
+      function update_replying_notification_ui(key, agents){
+        agents_replying[key] =   agents_replying[key].uniq();
+        console.log(key);
+        console.log(agents_replying[key]);
+        if (agents_replying[key].size() != 0) {
+          jQuery($(key)).show().addClass('reply_collision');
+        } else {
+          jQuery($(key)).hide();
+        }
+
+        jQuery($(key)).find("span[rel=replying_count]").html(agents_replying[key].size());
+        updateWorkingAgents(jQuery($(key)).data('display-id'),agents_replying[key], "replying"); //Fn in ticket_list.js
+      }
+
       function handle_agent_collision() {
-        ticket_ids = [];
+        ticket_viewing_ids = [];
         jQuery("div[rel=view_collision]").each(function(){
-          ticket_ids.push(jQuery(this).prop('id'));
+          ticket_viewing_ids.push(jQuery(this).prop('id'));
         });
-        if(ticket_ids.length > 0){
+
+        ticket_replying_ids = [];
+        jQuery("div[rel=reply_collision]").each(function(){
+          ticket_replying_ids.push(jQuery(this).prop('id'));
+        });
+
+        if(ticket_viewing_ids.length > 0){
           params_ticket_ids = {};
-          params_ticket_ids.ticket_ids = ticket_ids;
+          params_ticket_ids.ticket_viewing_ids = ticket_viewing_ids;
           params_ticket_ids.account_id = current_account_id;
-          socket.emit('get_existing_viewers_for_index',params_ticket_ids);
+          socket.emit('get_viewers_for_index',params_ticket_ids);
+        }
+        if(ticket_viewing_ids.length > 0){
+          params_ticket_ids = {};
+          params_ticket_ids.ticket_replying_ids = ticket_replying_ids;
+          params_ticket_ids.account_id = current_account_id;
+          socket.emit('get_relpying_for_index',params_ticket_ids);
         }
       }  
 

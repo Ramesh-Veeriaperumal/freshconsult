@@ -1495,7 +1495,7 @@ a.pill.help{
   }
 }  
 
-.index_collision {
+.index-collision {
   display: inline-block;
   position: relative;
   top: -5px;
@@ -1505,6 +1505,7 @@ a.pill.help{
     height: 18px;
     width: 18px;
     position: relative;
+    display: inline-block;
 
     span{
       position: relative;
@@ -1516,6 +1517,7 @@ a.pill.help{
     height: 18px;
     width: 18px;
     position: relative;
+    display: inline-block;
 
     span{
       position: relative;
