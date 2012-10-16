@@ -1042,41 +1042,7 @@ h4.title{
 	}
 }
 
-ul.admin_icons{
-	@include clearfix;
-	list-style:none;
-	li{
-		float:left;
-		padding-right:10px;
-		position:relative;
-		@include min-height(120px);
-		a{
-			position:relative;
-			display:block;
-			padding:8px 0px 2px 0px;
-			text-align:center; 
-			text-decoration:none;
-			color:#3a3a3a;
-			width:100px;
-			img{ height:32px; width:32px; }
-			div{
-				@include wrap;
-				font-size:13px;
-				line-height:18px;
-				margin:6px 0px;
-				padding:1px 3px;
-				position:relative;
-			}
-			@include corners(6px);
-//       @include pie;
-		}
-		a:hover{
-			color:#000000;
-			background:#f2f2f2;
-			@include inset-shadows(rgba(0,0,0, 0.2), 0, 1px, 2px);	
-		}
-	}
-}
+
 @include all-admin-icon-sprites;
 
 .mark_action{ 
@@ -1292,15 +1258,6 @@ a.request_bt:hover{
 	font-weight:bold;		
 	text-align:center;		
 }
-
-.admin{
-	padding:0px 0px 10px 0px;
-	margin:0px 8px 10px 10px;
-	border-bottom:1px solid #ededed;
-	h3.title{
-		margin-bottom:16px;
-	}
-} 
 
 .guide_page{
 	padding:10px;
@@ -1951,7 +1908,7 @@ div.information_tip{
 	}
 	h3.title{
 		font-size:20px;
-		color:#888888px
+		color:#888888;
 	}
 	h4.title{
 		font-size:16px;

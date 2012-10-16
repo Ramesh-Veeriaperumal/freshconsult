@@ -91,4 +91,13 @@ class Helpdesk::TicketDrop < BaseDrop
 	  time.in_time_zone(user_time_zone)
 	end
 
+	def before_method(method)
+		if @source.respond_to?(method)
+			@source.send(method) 
+		elsif @source.respond_to?("#{method}_#{@source.account_id}")
+			@source.send("#{method}_#{@source.account_id}") 
+		else
+			super
+		end
+	end
 end
