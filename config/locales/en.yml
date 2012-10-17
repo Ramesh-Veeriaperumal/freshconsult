@@ -2371,6 +2371,7 @@ en:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
         create_n_enable: "Create and Enable"
+        insert_placeholder: "Insert Placeholder"
     logmein:
       label: "LogMeIn Rescue"
       desc: "Provide instant remote support to your customers and employees with LogMeIn Rescue"
