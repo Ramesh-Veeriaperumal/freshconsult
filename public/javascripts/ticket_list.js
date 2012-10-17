@@ -11,13 +11,15 @@ priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 
 jQuery(document).ready(function() {
 
+jQuery('body').append('<div id="agent_collision_container" class="hide"></div>');
+
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
 	jQuery(".ticket-description-tip").livequery(function () {
 		_self = jQuery(this);        
         var tipUrl = _self.data("tipUrl");
         var ticket_id = _self.parent().parent().parent().data('ticket');
         _self.qtip({
-        	prerender: true,
+        	prerender: false,
         	id: ticket_id,
 			position: { 
 				my: 'top left',
@@ -43,9 +45,73 @@ jQuery(document).ready(function() {
 				effect: function(offset) {
 					jQuery(this).show("fade", 200); // "this" refers to the tooltip
 				}
+          	},
+          	events: {
+          		show: function(event, api) {
+          			working_agents = jQuery('#working_agents_' + ticket_id);
+          			if (working_agents.length > 0) {
+          				working_agents = working_agents.detach();
+          				jQuery(api.elements.content).after(working_agents);
+
+          				if (!working_agents.find('[rel=viewing_agents]').hasClass('hide')) {
+          					jQuery(api.elements.content).parent().addClass('hasViewers');
+          				} 
+          				if (!working_agents.find('[rel=replying_agents]').hasClass('hide')) {
+          					jQuery(api.elements.content).parent().addClass('hasReplying');
+          				} 
+          			}
+          		},
+          		hide: function(event, api) {
+          			working_agents = jQuery(api.elements.content).parent().find('#working_agents_' + ticket_id);
+          			if (working_agents.length > 0) {
+          				working_agents = working_agents.detach();
+          				jQuery('#agent_collision_container').append(working_agents);
+          				jQuery(api.elements.content).parent().removeClass('hasViewers hasReplying');
+          			}
+          		}
           	}
         }); 
 	});
+
+	//For Agent Collision data to appear in Ticket Tooltips.
+	updateWorkingAgents = function(key,type) {
+		collision_dom = jQuery($(key));
+		ticket_id = jQuery($(key)).data('ticket-id');
+		var working_agents;
+		if (jQuery('#working_agents_' + ticket_id).length == 0) {
+			working_agents = jQuery('<div class="working-agents" id="working_agents_' + ticket_id + '" />');
+			jQuery(working_agents).append(jQuery('<div rel="viewing_agents" class="hide symbols-ac-viewingon-listview" />'));
+			jQuery(working_agents).append(jQuery('<div rel="replying_agents" class="hide symbols-ac-replyon-listview" />'));
+			jQuery('#agent_collision_container').append(working_agents);
+		}
+
+		working_agents = jQuery('#working_agents_' + ticket_id);
+
+
+		if(type == "viewing") {
+			viewing_agents = jQuery(working_agents).find("[rel=viewing_agents]");
+			if (collision_dom.find("[rel=viewing_agents_tip]").html() != ''){
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasViewers');
+				viewing_agents.removeClass('hide');
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).addClass('hasViewers');
+				viewing_agents.addClass('hide');
+			}
+			viewing_agents.html(collision_dom.find("[rel=viewing_agents_tip]").html());
+
+		} else if(type == "replying") {
+			replying_agents = jQuery(working_agents).find("[rel=replying_agents]");
+			if (collision_dom.find("[rel=replying_agents_tip]").html() != ''){
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasReplying');
+				replying_agents.removeClass('hide');
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).addClass('hasReplying');
+				replying_agents.addClass('hide');
+			}
+			replying_agents.html(collision_dom.find("[rel=replying_agents_tip]").html());
+
+		}		
+	}
         
      jQuery(".nav-trigger").showAsMenu();
 
@@ -88,65 +154,6 @@ jQuery(document).ready(function() {
 	
 // ---- END OF extract from /helpdesk/shared/_ticket_view.html.erb ----
 
-	//For Agent Collision data to appear in Ticket Tooltips.
-	updateWorkingAgents = function(ticket_id, data, type) {
-
-		console.log(data);
-		if (jQuery('#ui-tooltip-' + ticket_id + ' .working-agents').length == 0) {
-			working_agents = jQuery('<div />').addClass('working-agents');
-			jQuery(working_agents).append(jQuery('<div rel="viewing_agents" />'));
-			jQuery(working_agents).append(jQuery('<div rel="replying_agents" />'));
-			jQuery('#ui-tooltip-' + ticket_id + '').append(working_agents);
-		}
-
-		working_agents = jQuery('#ui-tooltip-' + ticket_id + ' .working-agents');
-		var text = '';
-
-		if(type == "viewing") {
-			viewing_agents = jQuery(working_agents).find("div[rel=viewing_agents]");
-			if (data.length == 0){
-				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasCollision');
-				viewing_agents.addClass('hide');
-			} else {
-				jQuery('#ui-tooltip-' + ticket_id).addClass('hasCollision');
-				viewing_agents.removeClass('hide');
-				if (data.length == 1) {
-					text = '<strong>' + data[0] + '</strong> is currently viewing.';
-				} else if (data.length == 2) {
-					text = '<strong>' + data[0] + '</strong> and <strong>' + data[1] + '</strong>  are currently viewing.';
-				} else if (data.length > 2)  {
-					text = '<strong>' + data[0] + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently viewing.';
-				}
-				viewing_agents.html(text);
-			}
-		} else if(type == "replying") {
-			replying_agents = jQuery(working_agents).find("div[rel=replying_agents]");
-			if (data.length == 0){
-				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasCollision');
-				replying_agents.addClass('hide');
-			} else {
-				jQuery('#ui-tooltip-' + ticket_id).addClass('hasCollision');
-				replying_agents.removeClass('hide');
-				if (data.length == 1) {
-					text = '<strong>' + data[0] + '</strong> is currently replying...';
-				} else if (data.length == 2) {
-					text = '<strong>' + data[0] + '</strong> and <strong>' + data[1] + '</strong>  are currently replying...';
-				} else if (data.length > 2)  {
-					text = '<strong>' + data[0] + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently replying...';
-				}
-			}
-			replying_agents.html(text);
-		}		
-	}
-
-		//Clicking on the row (for ticket list only), the check box is toggled.
-	// jQuery('.tickets tbody tr').live('click',function(ev) {
-	// 	if (! jQuery(ev.target).is('input[type=checkbox]') && ! jQuery(ev.target).is('a') && ! jQuery(ev.target).is('.quick-action')) {
-	// 		var checkbox = jQuery(this).find('input[type=checkbox]').first();
-	// 		checkbox.prop('checked',!checkbox.prop('checked'));
-	// 		checkbox.trigger('change');
-	// 	}
-	// });
 
     jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
         if (jQuery(this).prop('checked')) {

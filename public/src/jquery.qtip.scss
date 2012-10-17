@@ -135,16 +135,19 @@
 
 	.working-agents {
 		position: relative;
-		margin: -25px 10px 0 0;
+		margin: -30px 10px 0 0;
 		border-top: solid 1px #dadada;
-		background: url(/images/overlay/collision-view.png) no-repeat;
-		background-position: 0 5px;
-		padding: 2px 0 0 25px;
+		padding: 2px 0;
 		color: #666;
 
 		strong {
 			font-weight:normal;
 			color: #333;
+		}
+
+		div {
+			width: 100%;
+			padding: 5px 0 0 30px;
 		}
 	}
 }
@@ -160,8 +163,21 @@
 	margin-left:-14px; 
 }
 
-.ui-tooltip-ticket.hasCollision .ui-tooltip-content{
-	padding-bottom: 35px;
+.ui-tooltip-ticket.hasReplying, .ui-tooltip-ticket.hasViewers{
+	.ui-tooltip-content{
+		padding-bottom: 40px;
+	}
+
+}
+
+.ui-tooltip-ticket.hasReplying.hasViewers{
+	.ui-tooltip-content{
+		padding-bottom: 65px;
+	}
+
+	.working-agents {
+		margin:-55px 10px 0 0;
+	}
 }
 
 
