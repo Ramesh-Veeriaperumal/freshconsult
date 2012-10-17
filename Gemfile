@@ -86,7 +86,7 @@ group :development,:test do
 end
 
 group :assets do
-	gem "sass", "3.1.1"
+	gem "sass", "3.2.1"
 	gem "compass-rails"
 end
 

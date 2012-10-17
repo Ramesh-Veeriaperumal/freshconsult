@@ -86,7 +86,8 @@ Freshdesk.Widget.prototype={
 		}
 		else if(this.options.auth_type == 'OAuth'){
 			reqHeader = {Authorization:"OAuth " + this.options.oauth_token}
-		} 
+		}
+		else if(this.options.auth_type == 'NoAuth'){}
 		else {
 			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
 		}

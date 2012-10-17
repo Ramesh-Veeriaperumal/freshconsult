@@ -20,6 +20,7 @@ stylesheets:
 
   app:
     - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/admin.css
     - public/stylesheets/app/app-bootstrap.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css

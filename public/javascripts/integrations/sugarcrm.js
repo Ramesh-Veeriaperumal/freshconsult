@@ -125,7 +125,7 @@ SugarWidget.prototype= {
 	searchLeads:function(){
 		var entry_list_body = 'method=get_entry_list&input_type=JSON&response_type=JSON&rest_data={"session":"#{session}","module_name":"Leads","query":"#{email_query}","order_by":"", "offset":0,"select_fields":[],"link_name_to_fields_array":[],"max_results":"","deleted":0}';
 		sugarWidget.freshdeskWidget.request({
-			resource: "service/v4/rest.php",
+			rest_url: "service/v4/rest.php",
 			method:"post",	
 			body:entry_list_body.interpolate({session: Cookie.retrieve("sugar_session")||"", email_query: "leads.id in (SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address ='"+ sugarWidget.sugarBundle.reqEmail +"')"}),
 			content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
@@ -238,7 +238,7 @@ SugarWidget.prototype= {
 	get_sugar_session:function(callBack){
 		var session_body = 'method=login&input_type=JSON&response_type=JSON&rest_data={"user_auth" : {"user_name" : "#{username}", "password" : "#{password}", "version" : 4},"application": "freshdesk_sugarcrm"}';
 		sugarWidget.freshdeskWidget.request({
-				resource: "service/v4/rest.php",
+				rest_url: "service/v4/rest.php",
 				method:"post",
 				body:session_body.interpolate({username: sugarWidget.sugarBundle.username, password: sugarWidget.sugarBundle.password}),
 				content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
@@ -264,7 +264,7 @@ SugarWidget.prototype= {
 	get_sugar_contact:function(){
 		var entry_list_body = 'method=get_entry_list&input_type=JSON&response_type=JSON&rest_data={"session":"#{session}","module_name":"Contacts","query":"#{email_query}","order_by":"", "offset":0,"select_fields":[],"link_name_to_fields_array":[],"max_results":"","deleted":0}';
 		sugarWidget.freshdeskWidget.request({
-			resource: "service/v4/rest.php",
+			rest_url: "service/v4/rest.php",
 			method:"post",	
 			body:entry_list_body.interpolate({session: Cookie.retrieve("sugar_session")||"", email_query: "contacts.id in (SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address ='"+ sugarWidget.sugarBundle.reqEmail +"')"}),
 			content_type: "", //Sugar accepts a mix of key-value pairs and json data as an input param as given in the above session_body variable. so content_type will not be json.
