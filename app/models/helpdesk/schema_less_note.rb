@@ -3,6 +3,8 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	set_table_name "helpdesk_schema_less_notes"
 
 	alias_attribute :header_info, :text_nc01
+	alias_attribute :category, :int_nc01
+	alias_attribute :response_time_in_seconds, :int_nc02
 
 	serialize :to_emails
 	serialize :cc_emails
