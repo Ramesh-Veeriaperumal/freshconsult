@@ -1,18 +1,24 @@
 <% form_for @topic, :url => support_discussions_forum_topics_path(@forum), 
-					:html => { :multipart => true, :class => "form-horizontal" } do |form| -%>
+					:html => { :multipart => true, :rel => "validate", :class => "form-horizontal" } do |form| -%>
 <%= include_tiny_mce_if_needed %>
 <fieldset>
 	<div class="control-group">
 		<label class="control-label" for="topic_title"><%= t('topic.name') %>*</label>
 		<div class="controls">
-			<%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %>
+			<%= form.text_field :title, :class => "required text span8" ,:tabindex => 10 %>
 		</div>
 	</div> 
+	<div class="control-group">
+		<label class="control-label">Select a forum</label>
+		<div class="controls">
+			<%= select "forum_id", "", current_account.portal_forums.map{ |f| [f.name, f.id] } %>
+		</div>
+	</div>
 	<div class="control-group">
 		<label class="control-label" for="topic_body"><%= t('message') %></label>
 		<div class="controls">
 			<% if @topic.new_record? %>
-				<%= form.text_area  :body_html, :class => "mceEditor", :id => 'topic_body' %>
+				<%= form.text_area :body_html, :class => "mceEditor", :id => 'topic_body' %>
 			<% else %>
 				<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
 			<% end %>

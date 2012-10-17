@@ -314,8 +314,9 @@
 
   # Support Portal routes #
   map.namespace :support do |support|
-    support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-    support.resources :tickets , :collection => { :check_email => :get } do |ticket|
+    support.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
+
+    support.resources :tickets, :collection => { :check_email => :get } do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     

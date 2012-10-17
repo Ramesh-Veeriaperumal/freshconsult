@@ -179,129 +179,135 @@ p {
   /* line 31, ../../src/portal/lib/_type.scss */
   .list-lead a:hover {
     color: inherit; }
+  /* line 32, ../../src/portal/lib/_type.scss */
+  .list-lead b {
+    font-weight: 500; }
 
-/* line 37, ../../src/portal/lib/_type.scss */
+/* line 39, ../../src/portal/lib/_type.scss */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   font-family: "Open Sans Condensed", Helvetica, sans-serif;
   font-weight: bold;
   color: inherit;
   text-rendering: optimizelegibility; }
-  /* line 43, ../../src/portal/lib/_type.scss */
+  /* line 45, ../../src/portal/lib/_type.scss */
   h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
     font-weight: normal;
     color: #999999; }
 
-/* line 48, ../../src/portal/lib/_type.scss */
+/* line 50, ../../src/portal/lib/_type.scss */
 h1 {
   font-size: 30px;
   line-height: 40px; }
-  /* line 51, ../../src/portal/lib/_type.scss */
+  /* line 53, ../../src/portal/lib/_type.scss */
   h1 small {
     font-size: 18px; }
 
-/* line 55, ../../src/portal/lib/_type.scss */
+/* line 57, ../../src/portal/lib/_type.scss */
 h2 {
   font-size: 24px;
-  line-height: 40px; }
-  /* line 58, ../../src/portal/lib/_type.scss */
+  line-height: 32px; }
+  /* line 60, ../../src/portal/lib/_type.scss */
   h2 small {
     font-size: 18px; }
 
-/* line 62, ../../src/portal/lib/_type.scss */
+/* line 64, ../../src/portal/lib/_type.scss */
 h3 {
   font-size: 20px;
   line-height: 38px; }
-  /* line 65, ../../src/portal/lib/_type.scss */
+  /* line 67, ../../src/portal/lib/_type.scss */
   h3 small {
     font-size: 14px; }
 
-/* line 69, ../../src/portal/lib/_type.scss */
+/* line 71, ../../src/portal/lib/_type.scss */
 h4, h5, h6 {
   line-height: 20px; }
 
-/* line 72, ../../src/portal/lib/_type.scss */
+/* line 74, ../../src/portal/lib/_type.scss */
 h4 {
   font-size: 14px; }
-  /* line 74, ../../src/portal/lib/_type.scss */
+  /* line 76, ../../src/portal/lib/_type.scss */
   h4 small {
     font-size: 12px; }
 
-/* line 78, ../../src/portal/lib/_type.scss */
+/* line 80, ../../src/portal/lib/_type.scss */
 h5 {
   font-size: 12px; }
 
-/* line 81, ../../src/portal/lib/_type.scss */
+/* line 83, ../../src/portal/lib/_type.scss */
 h6 {
   font-size: 11px;
   color: #999999;
   text-transform: uppercase; }
 
-/* line 88, ../../src/portal/lib/_type.scss */
+/* line 90, ../../src/portal/lib/_type.scss */
 .page-header {
   padding-bottom: 19px;
   margin: 20px 0;
   border-bottom: 1px solid gainsboro; }
 
-/* line 93, ../../src/portal/lib/_type.scss */
+/* line 95, ../../src/portal/lib/_type.scss */
 .page-header h1 {
   line-height: 1; }
 
-/* line 98, ../../src/portal/lib/_type.scss */
+/* line 100, ../../src/portal/lib/_type.scss */
 .intro {
   font-weight: 200;
-  margin-top: -6px;
   color: #B2B2B2; }
 
-/* line 108, ../../src/portal/lib/_type.scss */
+@media (min-width: 45em) {
+  /* line 106, ../../src/portal/lib/_type.scss */
+  .intro {
+    margin-top: -3px; } }
+/* line 113, ../../src/portal/lib/_type.scss */
 ul, ol {
   padding: 0;
   margin: 0 0 10px 15px; }
 
-/* line 115, ../../src/portal/lib/_type.scss */
+/* line 120, ../../src/portal/lib/_type.scss */
 ul ul,
 ul ol,
 ol ol,
 ol ul {
   margin-bottom: 0; }
 
-/* line 118, ../../src/portal/lib/_type.scss */
+/* line 123, ../../src/portal/lib/_type.scss */
 ul {
   list-style: disc; }
 
-/* line 121, ../../src/portal/lib/_type.scss */
+/* line 126, ../../src/portal/lib/_type.scss */
 ol {
   list-style: decimal; }
 
-/* line 124, ../../src/portal/lib/_type.scss */
+/* line 129, ../../src/portal/lib/_type.scss */
 li {
   line-height: 20px; }
 
-/* line 128, ../../src/portal/lib/_type.scss */
+/* line 133, ../../src/portal/lib/_type.scss */
 ul.unstyled,
 ol.unstyled {
   margin-left: 0;
   list-style: none; }
 
-/* line 134, ../../src/portal/lib/_type.scss */
+/* line 139, ../../src/portal/lib/_type.scss */
 dl {
   margin-bottom: 20px; }
 
-/* line 138, ../../src/portal/lib/_type.scss */
+/* line 143, ../../src/portal/lib/_type.scss */
 dt,
 dd {
   line-height: 20px; }
 
-/* line 141, ../../src/portal/lib/_type.scss */
+/* line 146, ../../src/portal/lib/_type.scss */
 dt {
   font-weight: bold;
   line-height: 19px; }
 
-/* line 145, ../../src/portal/lib/_type.scss */
+/* line 150, ../../src/portal/lib/_type.scss */
 dd {
   margin-left: 10px; }
 
-/* line 150, ../../src/portal/lib/_type.scss */
+/* line 155, ../../src/portal/lib/_type.scss */
 .dl-horizontal dt {
   float: left;
   width: 120px;
@@ -310,89 +316,89 @@ dd {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap; }
-/* line 157, ../../src/portal/lib/_type.scss */
+/* line 162, ../../src/portal/lib/_type.scss */
 .dl-horizontal dd {
   margin-left: 130px; }
 
-/* line 166, ../../src/portal/lib/_type.scss */
+/* line 171, ../../src/portal/lib/_type.scss */
 hr {
-  margin: 20px 0;
+  margin: 15.38462px 0;
   border: 0;
   border-top: 1px solid gainsboro;
   border-bottom: 1px solid white; }
 
-/* line 174, ../../src/portal/lib/_type.scss */
+/* line 179, ../../src/portal/lib/_type.scss */
 strong {
   font-weight: bold; }
 
-/* line 177, ../../src/portal/lib/_type.scss */
+/* line 182, ../../src/portal/lib/_type.scss */
 em {
   font-style: italic; }
 
-/* line 180, ../../src/portal/lib/_type.scss */
+/* line 185, ../../src/portal/lib/_type.scss */
 .muted {
   color: #999999; }
 
-/* line 185, ../../src/portal/lib/_type.scss */
+/* line 190, ../../src/portal/lib/_type.scss */
 abbr[title] {
   cursor: help;
   border-bottom: 1px dotted #999999; }
 
-/* line 189, ../../src/portal/lib/_type.scss */
+/* line 194, ../../src/portal/lib/_type.scss */
 abbr.initialism {
   font-size: 90%;
   text-transform: uppercase; }
 
-/* line 195, ../../src/portal/lib/_type.scss */
+/* line 200, ../../src/portal/lib/_type.scss */
 blockquote {
   padding: 0 0 0 15px;
   margin: 0 0 20px;
   border-left: 5px solid gainsboro; }
-  /* line 199, ../../src/portal/lib/_type.scss */
+  /* line 204, ../../src/portal/lib/_type.scss */
   blockquote p {
     margin-bottom: 0;
     font-size: 16px;
     font-weight: 300;
     line-height: 25px; }
-  /* line 203, ../../src/portal/lib/_type.scss */
+  /* line 208, ../../src/portal/lib/_type.scss */
   blockquote small {
     display: block;
     line-height: 20px;
     color: #999999; }
-    /* line 207, ../../src/portal/lib/_type.scss */
+    /* line 212, ../../src/portal/lib/_type.scss */
     blockquote small:before {
       content: '\2014 \00A0'; }
-  /* line 213, ../../src/portal/lib/_type.scss */
+  /* line 218, ../../src/portal/lib/_type.scss */
   blockquote.pull-right {
     float: right;
     padding-right: 15px;
     padding-left: 0;
     border-right: 5px solid gainsboro;
     border-left: 0; }
-    /* line 220, ../../src/portal/lib/_type.scss */
+    /* line 225, ../../src/portal/lib/_type.scss */
     blockquote.pull-right p,
     blockquote.pull-right small {
       text-align: right; }
 
-/* line 230, ../../src/portal/lib/_type.scss */
+/* line 235, ../../src/portal/lib/_type.scss */
 q:before,
 q:after,
 blockquote:before,
 blockquote:after {
   content: ""; }
 
-/* line 235, ../../src/portal/lib/_type.scss */
+/* line 240, ../../src/portal/lib/_type.scss */
 address {
   display: block;
   margin-bottom: 20px;
   font-style: normal;
   line-height: 20px; }
 
-/* line 243, ../../src/portal/lib/_type.scss */
+/* line 248, ../../src/portal/lib/_type.scss */
 small {
   font-size: 100%; }
 
-/* line 246, ../../src/portal/lib/_type.scss */
+/* line 251, ../../src/portal/lib/_type.scss */
 cite {
   font-style: normal; }
 
@@ -553,7 +559,19 @@ a:hover {
     float: right;
     margin-right: 0; }
 
-  /* line 41, ../../src/portal/lib/_layout.scss */
+  /* line 43, ../../src/portal/lib/_layout.scss */
+  .cs-g-3 {
+    width: 30%;
+    float: left;
+    margin-right: 5%; }
+
+  /* line 44, ../../src/portal/lib/_layout.scss */
+  .cs-g-3:nth-child(3n+3) {
+    width: 30%;
+    float: right;
+    margin-right: 0; }
+
+  /* line 47, ../../src/portal/lib/_layout.scss */
   .post-actions {
     text-align: right;
     float: right;
@@ -565,101 +583,106 @@ a:hover {
     display: table;
     clear: both; }
 
-  /* line 49, ../../src/portal/lib/_layout.scss */
+  /* line 55, ../../src/portal/lib/_layout.scss */
   .span1 {
     width: 7.22892%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 50, ../../src/portal/lib/_layout.scss */
+  /* line 56, ../../src/portal/lib/_layout.scss */
   .span2 {
     width: 15.66265%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 51, ../../src/portal/lib/_layout.scss */
+  /* line 57, ../../src/portal/lib/_layout.scss */
   .span3 {
     width: 24.09639%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 52, ../../src/portal/lib/_layout.scss */
+  /* line 58, ../../src/portal/lib/_layout.scss */
   .span4 {
     width: 32.53012%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 53, ../../src/portal/lib/_layout.scss */
+  /* line 59, ../../src/portal/lib/_layout.scss */
   .span5 {
     width: 40.96386%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 54, ../../src/portal/lib/_layout.scss */
+  /* line 60, ../../src/portal/lib/_layout.scss */
   .span6 {
     width: 49.39759%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 55, ../../src/portal/lib/_layout.scss */
+  /* line 61, ../../src/portal/lib/_layout.scss */
   .span7 {
     width: 57.83133%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 56, ../../src/portal/lib/_layout.scss */
+  /* line 62, ../../src/portal/lib/_layout.scss */
   .span8 {
     width: 66.26506%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 57, ../../src/portal/lib/_layout.scss */
+  /* line 63, ../../src/portal/lib/_layout.scss */
   .span9 {
     width: 74.6988%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 58, ../../src/portal/lib/_layout.scss */
+  /* line 64, ../../src/portal/lib/_layout.scss */
   .span10 {
     width: 83.13253%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 59, ../../src/portal/lib/_layout.scss */
+  /* line 65, ../../src/portal/lib/_layout.scss */
   .span11 {
     width: 91.56627%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 60, ../../src/portal/lib/_layout.scss */
+  /* line 66, ../../src/portal/lib/_layout.scss */
   .span12 {
     width: 100%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 61, ../../src/portal/lib/_layout.scss */
+  /* line 67, ../../src/portal/lib/_layout.scss */
   .omega {
     float: right;
     margin-right: 0; } }
 @media (min-width: 60em) {
-  /* line 65, ../../src/portal/lib/_layout.scss */
+  /* line 71, ../../src/portal/lib/_layout.scss */
   .main {
     width: 66.26506%;
     float: left;
     margin-right: 1.20482%; }
 
-  /* line 66, ../../src/portal/lib/_layout.scss */
+  /* line 72, ../../src/portal/lib/_layout.scss */
   .sidebar {
     width: 32.53012%;
     float: right;
     margin-right: 0; }
-    /* line 68, ../../src/portal/lib/_layout.scss */
+    /* line 74, ../../src/portal/lib/_layout.scss */
     .sidebar .cs-g {
       float: none;
       width: auto;
       margin-right: auto; }
+    /* line 75, ../../src/portal/lib/_layout.scss */
+    .sidebar .cs-g-3 {
+      float: none;
+      width: auto;
+      margin-right: auto; }
 
-  /* line 70, ../../src/portal/lib/_layout.scss */
+  /* line 77, ../../src/portal/lib/_layout.scss */
   .min-height-on-desktop {
     min-height: 630px; } }
 /* line 10, ../../src/portal/lib/_forms.scss */
@@ -736,16 +759,15 @@ input[type="color"],
   line-height: 20px;
   color: #555555; }
 
-/* line 93, ../../src/portal/lib/_forms.scss */
-input,
-textarea {
-  width: 210px; }
+/* line 91, ../../src/portal/lib/_forms.scss */
+input, textarea {
+  width: 100%; }
 
-/* line 97, ../../src/portal/lib/_forms.scss */
+/* line 96, ../../src/portal/lib/_forms.scss */
 textarea {
   height: auto; }
 
-/* line 116, ../../src/portal/lib/_forms.scss */
+/* line 115, ../../src/portal/lib/_forms.scss */
 textarea,
 input[type="text"],
 input[type="password"],
@@ -776,7 +798,7 @@ input[type="color"],
   -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
   -o-transition: border linear 0.2s, box-shadow linear 0.2s;
   transition: border linear 0.2s, box-shadow linear 0.2s; }
-  /* line 124, ../../src/portal/lib/_forms.scss */
+  /* line 123, ../../src/portal/lib/_forms.scss */
   textarea:focus,
   input[type="text"]:focus,
   input[type="password"]:focus,
@@ -801,7 +823,7 @@ input[type="color"],
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6); }
 
-/* line 134, ../../src/portal/lib/_forms.scss */
+/* line 133, ../../src/portal/lib/_forms.scss */
 input[type="radio"],
 input[type="checkbox"] {
   margin: 3px 0;
@@ -810,7 +832,7 @@ input[type="checkbox"] {
   line-height: normal;
   cursor: pointer; }
 
-/* line 146, ../../src/portal/lib/_forms.scss */
+/* line 145, ../../src/portal/lib/_forms.scss */
 input[type="submit"],
 input[type="reset"],
 input[type="button"],
@@ -818,12 +840,12 @@ input[type="radio"],
 input[type="checkbox"] {
   width: auto; }
 
-/* line 151, ../../src/portal/lib/_forms.scss */
+/* line 150, ../../src/portal/lib/_forms.scss */
 .uneditable-textarea {
   width: auto;
   height: auto; }
 
-/* line 158, ../../src/portal/lib/_forms.scss */
+/* line 157, ../../src/portal/lib/_forms.scss */
 select,
 input[type="file"] {
   height: 28px;
@@ -832,17 +854,17 @@ input[type="file"] {
   /* For IE7, add top margin to align select with labels */
   line-height: 28px; }
 
-/* line 165, ../../src/portal/lib/_forms.scss */
+/* line 164, ../../src/portal/lib/_forms.scss */
 select {
   width: 220px;
   border: 1px solid #bbb; }
 
-/* line 172, ../../src/portal/lib/_forms.scss */
+/* line 171, ../../src/portal/lib/_forms.scss */
 select[multiple],
 select[size] {
   height: auto; }
 
-/* line 180, ../../src/portal/lib/_forms.scss */
+/* line 179, ../../src/portal/lib/_forms.scss */
 select:focus,
 input[type="file"]:focus,
 input[type="radio"]:focus,
@@ -851,24 +873,24 @@ input[type="checkbox"]:focus {
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px; }
 
-/* line 191, ../../src/portal/lib/_forms.scss */
+/* line 190, ../../src/portal/lib/_forms.scss */
 .radio,
 .checkbox {
   min-height: 18px;
   padding-left: 18px; }
 
-/* line 196, ../../src/portal/lib/_forms.scss */
+/* line 195, ../../src/portal/lib/_forms.scss */
 .radio input[type="radio"],
 .checkbox input[type="checkbox"] {
   float: left;
   margin-left: -18px; }
 
-/* line 203, ../../src/portal/lib/_forms.scss */
+/* line 202, ../../src/portal/lib/_forms.scss */
 .controls > .radio:first-child,
 .controls > .checkbox:first-child {
   padding-top: 5px; }
 
-/* line 210, ../../src/portal/lib/_forms.scss */
+/* line 209, ../../src/portal/lib/_forms.scss */
 .radio.inline,
 .checkbox.inline {
   display: inline-block;
@@ -876,36 +898,36 @@ input[type="checkbox"]:focus {
   margin-bottom: 0;
   vertical-align: middle; }
 
-/* line 217, ../../src/portal/lib/_forms.scss */
+/* line 216, ../../src/portal/lib/_forms.scss */
 .radio.inline + .radio.inline,
 .checkbox.inline + .checkbox.inline {
   margin-left: 10px; }
 
-/* line 227, ../../src/portal/lib/_forms.scss */
+/* line 226, ../../src/portal/lib/_forms.scss */
 .input-mini {
   width: 60px; }
 
-/* line 228, ../../src/portal/lib/_forms.scss */
+/* line 227, ../../src/portal/lib/_forms.scss */
 .input-small {
   width: 90px; }
 
-/* line 229, ../../src/portal/lib/_forms.scss */
+/* line 228, ../../src/portal/lib/_forms.scss */
 .input-medium {
   width: 150px; }
 
-/* line 230, ../../src/portal/lib/_forms.scss */
+/* line 229, ../../src/portal/lib/_forms.scss */
 .input-large {
   width: 210px; }
 
-/* line 231, ../../src/portal/lib/_forms.scss */
+/* line 230, ../../src/portal/lib/_forms.scss */
 .input-xlarge {
   width: 270px; }
 
-/* line 232, ../../src/portal/lib/_forms.scss */
+/* line 231, ../../src/portal/lib/_forms.scss */
 .input-xxlarge {
   width: 530px; }
 
-/* line 243, ../../src/portal/lib/_forms.scss */
+/* line 242, ../../src/portal/lib/_forms.scss */
 input[class*="span"],
 select[class*="span"],
 textarea[class*="span"],
@@ -917,7 +939,7 @@ textarea[class*="span"],
   float: none;
   margin-left: 0; }
 
-/* line 253, ../../src/portal/lib/_forms.scss */
+/* line 252, ../../src/portal/lib/_forms.scss */
 .input-append input[class*="span"],
 .input-append .uneditable-input[class*="span"],
 .input-prepend input[class*="span"],
@@ -926,37 +948,37 @@ textarea[class*="span"],
 .row-fluid .input-append [class*="span"] {
   display: inline-block; }
 
-/* line 237, ../../src/portal/lib/_mixins.scss */
+/* line 238, ../../src/portal/lib/_mixins.scss */
 input,
 textarea,
 .uneditable-input {
   margin-left: 0; }
 
-/* line 246, ../../src/portal/lib/_mixins.scss */
+/* line 247, ../../src/portal/lib/_mixins.scss */
 input.span4,
 textarea.span4,
 .uneditable-input.span4 {
   width: 260px; }
 
-/* line 246, ../../src/portal/lib/_mixins.scss */
+/* line 247, ../../src/portal/lib/_mixins.scss */
 input.span3,
 textarea.span3,
 .uneditable-input.span3 {
   width: 190px; }
 
-/* line 246, ../../src/portal/lib/_mixins.scss */
+/* line 247, ../../src/portal/lib/_mixins.scss */
 input.span2,
 textarea.span2,
 .uneditable-input.span2 {
   width: 120px; }
 
-/* line 246, ../../src/portal/lib/_mixins.scss */
+/* line 247, ../../src/portal/lib/_mixins.scss */
 input.span1,
 textarea.span1,
 .uneditable-input.span1 {
   width: 50px; }
 
-/* line 275, ../../src/portal/lib/_forms.scss */
+/* line 274, ../../src/portal/lib/_forms.scss */
 input[disabled],
 select[disabled],
 textarea[disabled],
@@ -967,19 +989,24 @@ textarea[readonly] {
   background-color: gainsboro;
   border-color: #ddd; }
 
-/* line 284, ../../src/portal/lib/_forms.scss */
+/* line 283, ../../src/portal/lib/_forms.scss */
 input[type="radio"][disabled],
 input[type="checkbox"][disabled],
 input[type="radio"][readonly],
 input[type="checkbox"][readonly] {
   background-color: transparent; }
 
-/* line 173, ../../src/portal/lib/_mixins.scss */
+/* line 292, ../../src/portal/lib/_forms.scss */
+div.error {
+  padding: 8px 0 0; }
+
+/* line 174, ../../src/portal/lib/_mixins.scss */
 .control-group.warning > label,
 .control-group.warning .help-block,
-.control-group.warning .help-inline {
+.control-group.warning .help-inline,
+.control-group.warning .error {
   color: #c09853; }
-/* line 181, ../../src/portal/lib/_mixins.scss */
+/* line 182, ../../src/portal/lib/_mixins.scss */
 .control-group.warning .checkbox,
 .control-group.warning .radio,
 .control-group.warning input,
@@ -987,7 +1014,7 @@ input[type="checkbox"][readonly] {
 .control-group.warning textarea {
   color: #c09853;
   border-color: #c09853; }
-  /* line 184, ../../src/portal/lib/_mixins.scss */
+  /* line 185, ../../src/portal/lib/_mixins.scss */
   .control-group.warning .checkbox:focus,
   .control-group.warning .radio:focus,
   .control-group.warning input:focus,
@@ -997,19 +1024,20 @@ input[type="checkbox"][readonly] {
     -webkit-box-shadow: 0 0 6px #dbc59e;
     -moz-box-shadow: 0 0 6px #dbc59e;
     box-shadow: 0 0 6px #dbc59e; }
-/* line 191, ../../src/portal/lib/_mixins.scss */
+/* line 192, ../../src/portal/lib/_mixins.scss */
 .control-group.warning .input-prepend .add-on,
 .control-group.warning .input-append .add-on {
   color: #c09853;
   background-color: #fcf8e3;
   border-color: #c09853; }
 
-/* line 173, ../../src/portal/lib/_mixins.scss */
+/* line 174, ../../src/portal/lib/_mixins.scss */
 .control-group.error > label,
 .control-group.error .help-block,
-.control-group.error .help-inline {
+.control-group.error .help-inline,
+.control-group.error .error {
   color: #b94a48; }
-/* line 181, ../../src/portal/lib/_mixins.scss */
+/* line 182, ../../src/portal/lib/_mixins.scss */
 .control-group.error .checkbox,
 .control-group.error .radio,
 .control-group.error input,
@@ -1017,7 +1045,7 @@ input[type="checkbox"][readonly] {
 .control-group.error textarea {
   color: #b94a48;
   border-color: #b94a48; }
-  /* line 184, ../../src/portal/lib/_mixins.scss */
+  /* line 185, ../../src/portal/lib/_mixins.scss */
   .control-group.error .checkbox:focus,
   .control-group.error .radio:focus,
   .control-group.error input:focus,
@@ -1027,19 +1055,20 @@ input[type="checkbox"][readonly] {
     -webkit-box-shadow: 0 0 6px #d59392;
     -moz-box-shadow: 0 0 6px #d59392;
     box-shadow: 0 0 6px #d59392; }
-/* line 191, ../../src/portal/lib/_mixins.scss */
+/* line 192, ../../src/portal/lib/_mixins.scss */
 .control-group.error .input-prepend .add-on,
 .control-group.error .input-append .add-on {
   color: #b94a48;
   background-color: #f2dede;
   border-color: #b94a48; }
 
-/* line 173, ../../src/portal/lib/_mixins.scss */
+/* line 174, ../../src/portal/lib/_mixins.scss */
 .control-group.success > label,
 .control-group.success .help-block,
-.control-group.success .help-inline {
+.control-group.success .help-inline,
+.control-group.success .error {
   color: #468847; }
-/* line 181, ../../src/portal/lib/_mixins.scss */
+/* line 182, ../../src/portal/lib/_mixins.scss */
 .control-group.success .checkbox,
 .control-group.success .radio,
 .control-group.success input,
@@ -1047,7 +1076,7 @@ input[type="checkbox"][readonly] {
 .control-group.success textarea {
   color: #468847;
   border-color: #468847; }
-  /* line 184, ../../src/portal/lib/_mixins.scss */
+  /* line 185, ../../src/portal/lib/_mixins.scss */
   .control-group.success .checkbox:focus,
   .control-group.success .radio:focus,
   .control-group.success input:focus,
@@ -1057,20 +1086,20 @@ input[type="checkbox"][readonly] {
     -webkit-box-shadow: 0 0 6px #7aba7b;
     -moz-box-shadow: 0 0 6px #7aba7b;
     box-shadow: 0 0 6px #7aba7b; }
-/* line 191, ../../src/portal/lib/_mixins.scss */
+/* line 192, ../../src/portal/lib/_mixins.scss */
 .control-group.success .input-prepend .add-on,
 .control-group.success .input-append .add-on {
   color: #468847;
   background-color: #dff0d8;
   border-color: #468847; }
 
-/* line 311, ../../src/portal/lib/_forms.scss */
+/* line 310, ../../src/portal/lib/_forms.scss */
 input:focus:required:invalid,
 textarea:focus:required:invalid,
 select:focus:required:invalid {
   color: #b94a48;
   border-color: #ee5f5b; }
-  /* line 314, ../../src/portal/lib/_forms.scss */
+  /* line 313, ../../src/portal/lib/_forms.scss */
   input:focus:required:invalid:focus,
   textarea:focus:required:invalid:focus,
   select:focus:required:invalid:focus {
@@ -1079,7 +1108,7 @@ select:focus:required:invalid {
     -moz-box-shadow: 0 0 6px #f8b9b7;
     box-shadow: 0 0 6px #f8b9b7; }
 
-/* line 325, ../../src/portal/lib/_forms.scss */
+/* line 324, ../../src/portal/lib/_forms.scss */
 .form-actions {
   padding: 19px 20px 20px;
   margin-top: 20px;
@@ -1095,7 +1124,7 @@ select:focus:required:invalid {
   .form-actions:after {
     clear: both; }
 
-/* line 335, ../../src/portal/lib/_forms.scss */
+/* line 334, ../../src/portal/lib/_forms.scss */
 .uneditable-input {
   overflow: hidden;
   white-space: nowrap;
@@ -1122,17 +1151,17 @@ input::-webkit-input-placeholder {
 [type="search"] {
   -webkit-appearance: textfield; }
 
-/* line 353, ../../src/portal/lib/_forms.scss */
+/* line 352, ../../src/portal/lib/_forms.scss */
 .help-block,
 .help-inline {
   color: #555555; }
 
-/* line 357, ../../src/portal/lib/_forms.scss */
+/* line 356, ../../src/portal/lib/_forms.scss */
 .help-block {
   display: block;
   margin-bottom: 10px; }
 
-/* line 362, ../../src/portal/lib/_forms.scss */
+/* line 361, ../../src/portal/lib/_forms.scss */
 .help-inline {
   display: inline-block;
   *display: inline;
@@ -1140,11 +1169,11 @@ input::-webkit-input-placeholder {
   vertical-align: middle;
   padding-left: 5px; }
 
-/* line 376, ../../src/portal/lib/_forms.scss */
+/* line 375, ../../src/portal/lib/_forms.scss */
 .input-prepend,
 .input-append {
   margin-bottom: 5px; }
-  /* line 380, ../../src/portal/lib/_forms.scss */
+  /* line 379, ../../src/portal/lib/_forms.scss */
   .input-prepend input,
   .input-prepend select,
   .input-prepend .uneditable-input,
@@ -1160,7 +1189,7 @@ input::-webkit-input-placeholder {
     -ms-border-radius: 0 3px 3px 0;
     -o-border-radius: 0 3px 3px 0;
     border-radius: 0 3px 3px 0; }
-    /* line 387, ../../src/portal/lib/_forms.scss */
+    /* line 386, ../../src/portal/lib/_forms.scss */
     .input-prepend input:focus,
     .input-prepend select:focus,
     .input-prepend .uneditable-input:focus,
@@ -1168,11 +1197,11 @@ input::-webkit-input-placeholder {
     .input-append select:focus,
     .input-append .uneditable-input:focus {
       z-index: 2; }
-  /* line 391, ../../src/portal/lib/_forms.scss */
+  /* line 390, ../../src/portal/lib/_forms.scss */
   .input-prepend .uneditable-input,
   .input-append .uneditable-input {
     border-left-color: #ccc; }
-  /* line 394, ../../src/portal/lib/_forms.scss */
+  /* line 393, ../../src/portal/lib/_forms.scss */
   .input-prepend .add-on,
   .input-append .add-on {
     display: inline-block;
@@ -1187,7 +1216,7 @@ input::-webkit-input-placeholder {
     vertical-align: middle;
     background-color: gainsboro;
     border: 1px solid #ccc; }
-  /* line 409, ../../src/portal/lib/_forms.scss */
+  /* line 408, ../../src/portal/lib/_forms.scss */
   .input-prepend .add-on,
   .input-prepend .btn,
   .input-append .add-on,
@@ -1198,17 +1227,17 @@ input::-webkit-input-placeholder {
     -ms-border-radius: 0;
     -o-border-radius: 0;
     border-radius: 0; }
-  /* line 413, ../../src/portal/lib/_forms.scss */
+  /* line 412, ../../src/portal/lib/_forms.scss */
   .input-prepend .active,
   .input-append .active {
     background-color: #00f4fc;
     border-color: #006063; }
 
-/* line 420, ../../src/portal/lib/_forms.scss */
+/* line 419, ../../src/portal/lib/_forms.scss */
 .input-prepend .add-on,
 .input-prepend .btn {
   margin-right: -1px; }
-/* line 424, ../../src/portal/lib/_forms.scss */
+/* line 423, ../../src/portal/lib/_forms.scss */
 .input-prepend .add-on:first-child,
 .input-prepend .btn:first-child {
   -webkit-border-radius: 3px 0 0 3px;
@@ -1217,7 +1246,7 @@ input::-webkit-input-placeholder {
   -o-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px; }
 
-/* line 431, ../../src/portal/lib/_forms.scss */
+/* line 430, ../../src/portal/lib/_forms.scss */
 .input-append input,
 .input-append select,
 .input-append .uneditable-input {
@@ -1226,11 +1255,11 @@ input::-webkit-input-placeholder {
   -ms-border-radius: 3px 0 0 3px;
   -o-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px; }
-/* line 434, ../../src/portal/lib/_forms.scss */
+/* line 433, ../../src/portal/lib/_forms.scss */
 .input-append .uneditable-input {
   border-right-color: #ccc;
   border-left-color: #eee; }
-/* line 439, ../../src/portal/lib/_forms.scss */
+/* line 438, ../../src/portal/lib/_forms.scss */
 .input-append .add-on:last-child,
 .input-append .btn:last-child {
   -webkit-border-radius: 0 3px 3px 0;
@@ -1239,7 +1268,7 @@ input::-webkit-input-placeholder {
   -o-border-radius: 0 3px 3px 0;
   border-radius: 0 3px 3px 0; }
 
-/* line 447, ../../src/portal/lib/_forms.scss */
+/* line 446, ../../src/portal/lib/_forms.scss */
 .input-prepend.input-append input,
 .input-prepend.input-append select,
 .input-prepend.input-append .uneditable-input {
@@ -1248,7 +1277,7 @@ input::-webkit-input-placeholder {
   -ms-border-radius: 0;
   -o-border-radius: 0;
   border-radius: 0; }
-/* line 451, ../../src/portal/lib/_forms.scss */
+/* line 450, ../../src/portal/lib/_forms.scss */
 .input-prepend.input-append .add-on:first-child,
 .input-prepend.input-append .btn:first-child {
   margin-right: -1px;
@@ -1257,7 +1286,7 @@ input::-webkit-input-placeholder {
   -ms-border-radius: 3px 0 0 3px;
   -o-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px; }
-/* line 456, ../../src/portal/lib/_forms.scss */
+/* line 455, ../../src/portal/lib/_forms.scss */
 .input-prepend.input-append .add-on:last-child,
 .input-prepend.input-append .btn:last-child {
   margin-left: -1px;
@@ -1267,7 +1296,7 @@ input::-webkit-input-placeholder {
   -o-border-radius: 0 3px 3px 0;
   border-radius: 0 3px 3px 0; }
 
-/* line 467, ../../src/portal/lib/_forms.scss */
+/* line 466, ../../src/portal/lib/_forms.scss */
 .search-query {
   padding-right: 14px;
   padding-right: 4px \9;
@@ -1281,7 +1310,7 @@ input::-webkit-input-placeholder {
   -o-border-radius: 14px;
   border-radius: 14px; }
 
-/* line 493, ../../src/portal/lib/_forms.scss */
+/* line 492, ../../src/portal/lib/_forms.scss */
 .form-search input,
 .form-search textarea,
 .form-search select,
@@ -1307,25 +1336,25 @@ input::-webkit-input-placeholder {
   *display: inline;
   *zoom: 1;
   margin-bottom: 0; }
-/* line 499, ../../src/portal/lib/_forms.scss */
+/* line 498, ../../src/portal/lib/_forms.scss */
 .form-search .hide,
 .form-inline .hide,
 .form-horizontal .hide {
   display: none; }
 
-/* line 504, ../../src/portal/lib/_forms.scss */
+/* line 503, ../../src/portal/lib/_forms.scss */
 .form-search label,
 .form-inline label {
   display: inline-block; }
 
-/* line 511, ../../src/portal/lib/_forms.scss */
+/* line 510, ../../src/portal/lib/_forms.scss */
 .form-search .input-append,
 .form-inline .input-append,
 .form-search .input-prepend,
 .form-inline .input-prepend {
   margin-bottom: 0; }
 
-/* line 518, ../../src/portal/lib/_forms.scss */
+/* line 517, ../../src/portal/lib/_forms.scss */
 .form-search .radio,
 .form-search .checkbox,
 .form-inline .radio,
@@ -1334,7 +1363,7 @@ input::-webkit-input-placeholder {
   margin-bottom: 0;
   vertical-align: middle; }
 
-/* line 527, ../../src/portal/lib/_forms.scss */
+/* line 526, ../../src/portal/lib/_forms.scss */
 .form-search .radio input[type="radio"],
 .form-search .checkbox input[type="checkbox"],
 .form-inline .radio input[type="radio"],
@@ -1343,16 +1372,16 @@ input::-webkit-input-placeholder {
   margin-right: 3px;
   margin-left: 0; }
 
-/* line 535, ../../src/portal/lib/_forms.scss */
+/* line 534, ../../src/portal/lib/_forms.scss */
 .control-group {
   margin-bottom: 10px; }
 
-/* line 540, ../../src/portal/lib/_forms.scss */
+/* line 539, ../../src/portal/lib/_forms.scss */
 legend + .control-group {
   margin-top: 20px;
   -webkit-margin-top-collapse: separate; }
 
-/* line 546, ../../src/portal/lib/_forms.scss */
+/* line 545, ../../src/portal/lib/_forms.scss */
 input.special {
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -1367,40 +1396,44 @@ input.special {
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px inset;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px inset; }
 
-/* line 560, ../../src/portal/lib/_forms.scss */
-.form-horizontal .control-group {
-  margin-bottom: 20px;
-  *zoom: 1; }
-  /* line 15, ../../src/portal/lib/_mixins.scss */
-  .form-horizontal .control-group:before, .form-horizontal .control-group:after {
-    display: table;
-    content: ""; }
-  /* line 19, ../../src/portal/lib/_mixins.scss */
-  .form-horizontal .control-group:after {
-    clear: both; }
-/* line 565, ../../src/portal/lib/_forms.scss */
-.form-horizontal .control-label {
-  float: left;
-  width: 140px;
-  padding-top: 5px;
-  text-align: right; }
-/* line 572, ../../src/portal/lib/_forms.scss */
-.form-horizontal .controls {
-  *display: inline-block;
-  *padding-left: 20px;
-  margin-left: 160px;
-  *margin-left: 0; }
-  /* line 579, ../../src/portal/lib/_forms.scss */
-  .form-horizontal .controls:first-child {
-    *padding-left: 160px; }
-/* line 584, ../../src/portal/lib/_forms.scss */
-.form-horizontal .help-block {
-  margin-top: 10px;
-  margin-bottom: 0; }
-/* line 589, ../../src/portal/lib/_forms.scss */
-.form-horizontal .form-actions {
-  padding-left: 160px; }
+@media (min-width: 60em) {
+  /* line 560, ../../src/portal/lib/_forms.scss */
+  .form-horizontal .control-group {
+    margin-bottom: 20px;
+    *zoom: 1; }
+    /* line 15, ../../src/portal/lib/_mixins.scss */
+    .form-horizontal .control-group:before, .form-horizontal .control-group:after {
+      display: table;
+      content: ""; }
+    /* line 19, ../../src/portal/lib/_mixins.scss */
+    .form-horizontal .control-group:after {
+      clear: both; }
+  /* line 565, ../../src/portal/lib/_forms.scss */
+  .form-horizontal .control-label {
+    float: left;
+    width: 140px;
+    padding-top: 5px;
+    text-align: right; }
+  /* line 572, ../../src/portal/lib/_forms.scss */
+  .form-horizontal .controls {
+    *display: inline-block;
+    *padding-left: 20px;
+    margin-left: 160px;
+    *margin-left: 0; }
+    /* line 579, ../../src/portal/lib/_forms.scss */
+    .form-horizontal .controls:first-child {
+      *padding-left: 160px; }
+  /* line 584, ../../src/portal/lib/_forms.scss */
+  .form-horizontal .help-block {
+    margin-top: 10px;
+    margin-bottom: 0; }
+  /* line 589, ../../src/portal/lib/_forms.scss */
+  .form-horizontal .form-actions {
+    padding-left: 160px; }
 
+  /* line 596, ../../src/portal/lib/_forms.scss */
+  input, textarea {
+    width: 210px; } }
 /* line 9, ../../src/portal/lib/_buttons.scss */
 .btn {
   display: inline-block;
@@ -1442,11 +1475,11 @@ input.special {
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); }
-  /* line 369, ../../src/portal/lib/_mixins.scss */
+  /* line 370, ../../src/portal/lib/_mixins.scss */
   .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] {
     background-color: #e6e6e6;
     *background-color: #d9d9d9; }
-  /* line 376, ../../src/portal/lib/_mixins.scss */
+  /* line 377, ../../src/portal/lib/_mixins.scss */
   .btn:active, .btn.active {
     background-color: #cccccc \9; }
   /* line 62, ../../src/portal/lib/_mixins.scss */
@@ -1552,11 +1585,11 @@ input.special {
   *background-color: #525151;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false); }
-  /* line 369, ../../src/portal/lib/_mixins.scss */
+  /* line 370, ../../src/portal/lib/_mixins.scss */
   .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
     background-color: #525151;
     *background-color: #454444; }
-  /* line 376, ../../src/portal/lib/_mixins.scss */
+  /* line 377, ../../src/portal/lib/_mixins.scss */
   .btn-primary:active, .btn-primary.active {
     background-color: #393737 \9; }
 
@@ -2799,7 +2832,7 @@ input[type="submit"].btn {
 /* line 1, ../../src/portal/lib/_header-footer.scss */
 .banner {
   background-color: #4c4b4b;
-  padding: 1.5em 2em;
+  padding: 1.8em 2.2em;
   border: 1px solid #323232;
   color: white;
   -webkit-box-shadow: rgba(255, 255, 255, 0.7) 0 1px inset;
@@ -2902,7 +2935,7 @@ input[type="submit"].btn {
 /* line 54, ../../src/portal/lib/_header-footer.scss */
 footer {
   background-color: #777777;
-  padding: 1.5em 2em;
+  padding: 1.8em 2.2em;
   border: 1px solid #5e5e5e;
   color: white;
   text-align: center; }
@@ -2929,7 +2962,7 @@ footer {
 
 /* line 77, ../../src/portal/lib/_header-footer.scss */
 .copyright {
-  padding: 1.5em 2em;
+  padding: 1.8em 2.2em;
   text-align: center;
   color: #555555; }
 
@@ -3279,21 +3312,13 @@ input.hc-search-input {
   position: relative;
   margin: 0 0 10px; }
 
-/* line 151, ../../src/portal/lib/_content.scss */
-p {
-  font-size: 12px; }
-
 @media (min-width: 45em) {
-  /* line 154, ../../src/portal/lib/_content.scss */
-  p {
-    font-size: 14px; }
-
-  /* line 155, ../../src/portal/lib/_content.scss */
+  /* line 152, ../../src/portal/lib/_content.scss */
   .content, .content-form {
-    padding: 1.5em 2em;
+    padding: 1.8em 2.2em;
     margin-top: 10px; }
 
-  /* line 159, ../../src/portal/lib/_content.scss */
+  /* line 156, ../../src/portal/lib/_content.scss */
   .p-content {
     margin-left: 65px;
     -webkit-border-radius: 5px;
@@ -3301,7 +3326,7 @@ p {
     -ms-border-radius: 5px;
     -o-border-radius: 5px;
     border-radius: 5px; }
-    /* line 162, ../../src/portal/lib/_content.scss */
+    /* line 159, ../../src/portal/lib/_content.scss */
     .p-content:before, .p-content:after {
       content: "";
       border: 8px solid transparent;
@@ -3312,7 +3337,7 @@ p {
       left: -16px;
       z-index: 1;
       top: 14px; }
-    /* line 173, ../../src/portal/lib/_content.scss */
+    /* line 170, ../../src/portal/lib/_content.scss */
     .p-content:after {
       border-right-color: #fafafa;
       border-width: 7px;
@@ -3320,10 +3345,25 @@ p {
       top: 15px;
       z-index: 2; }
 
-  /* line 182, ../../src/portal/lib/_content.scss */
+  /* line 179, ../../src/portal/lib/_content.scss */
   .post-details .user-pic-thumb {
     clear: none;
     margin: 0; } }
+/* Solution voting button */
+/* line 186, ../../src/portal/lib/_content.scss */
+.vote-up, .vote-down {
+  font-weight: bold;
+  margin-left: 10px; }
+  /* line 189, ../../src/portal/lib/_content.scss */
+  .vote-up:hover, .vote-down:hover {
+    text-decoration: none; }
+
+/* line 193, ../../src/portal/lib/_content.scss */
+.vote-down:before {
+  content: "-";
+  color: #e5e5e5;
+  margin-right: 10px; }
+
 /* line 2, ../../src/portal/lib/_login.scss */
 .alt-login-button h2 {
   margin-bottom: 25px; }

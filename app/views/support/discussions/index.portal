@@ -19,10 +19,10 @@
 									<a href="{{topic.url}}">{{topic.title}}</a>
 								</div>
 								<p class="help-text">
-									posted by {{ topic.user.name }}, {{ topic.created_on | human_date_time }} <br />
+									posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }} <br />
 									{% if topic.has_comments %}
 										<a href="{{topic.last_post.url}}">Last reply</a>
-										by {{ topic.last_post.created_on | human_date_time }}
+										by {{ topic.last_post.created_on | time_ago }}
 									{% endif %}
 								</p>
 							</li>

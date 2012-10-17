@@ -17,7 +17,7 @@ class Solution::ArticleDrop < BaseDrop
   end
 
   def modified_on
-    source.updated_at
+    source.updated_at.to_s(:short_day_with_time)
   end
   
   def created_on
@@ -51,5 +51,16 @@ class Solution::ArticleDrop < BaseDrop
   def category
     source.folder.category
   end
+
+  def thumbs_up_url
+    thumbs_up_support_solutions_article_path(source.id)
+  end
   
+  def thumbs_down_url
+    thumbs_down_support_solutions_article_path(source.id)
+  end
+
+  # def feedback_form
+  #   ActionView::Base.new(Rails::Configuration.new.view_path).render_to_string :partial => 
+  # end
 end

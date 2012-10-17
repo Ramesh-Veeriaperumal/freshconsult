@@ -38,6 +38,12 @@
     .cs-g{  @include span-columns(2); }
     .cs-g:nth-child(even){ @include span-columns(2 omega); }
   }
+
+  @include layout(3) {
+    .cs-g-3{  @include span-columns(1); }
+    .cs-g-3:nth-child(3n+3){ @include span-columns(1 omega); }
+  }
+
   .post-actions{ 
     text-align: right; 
     float: right; 
@@ -66,6 +72,7 @@
   .sidebar{ 
     @include span-columns(4 omega); 
     .cs-g{  @include reset-columns; }
+    .cs-g-3{  @include reset-columns; }
   }
   .min-height-on-desktop{ @include min-height(630px); }
 }

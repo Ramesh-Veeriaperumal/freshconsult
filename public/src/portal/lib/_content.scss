@@ -148,10 +148,7 @@
 	margin: 0 0 10px;
 }
 
-p{ font-size: 12px; }
-
 @include at-breakpoint($break-tablet){
-	p{ font-size: 14px; }
 	.content, .content-form{ 
 		padding: $content-padding; 
 		margin-top: 10px; 
@@ -183,4 +180,18 @@ p{ font-size: 12px; }
 		clear: none;
 		margin: 0;
 	}
+}
+
+/* Solution voting button */
+.vote-up, .vote-down{
+	font-weight: bold;
+	margin-left: 10px;
+	&:hover{
+		text-decoration: none;
+	}
+}
+.vote-down:before{
+	content: "-";
+	color: #e5e5e5;
+	margin-right: 10px;
 }

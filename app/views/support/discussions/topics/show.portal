@@ -28,7 +28,7 @@
 		<div class="user-pic-thumb"><img src="{{ topic.first_post.user.profile_url }}" /></div>
 		<div class="p-content">
 			<p class="p-info">
-				<strong>{{ topic.first_post.user.name }}</strong> started a topic {{ topic.first_post.created_on | human_date_time }}
+				<strong>{{ topic.first_post.user.name }}</strong> started a topic {{ topic.first_post.created_on | time_ago }}
 			</p>
 			<div class="p-desc">{{ topic.first_post.body_html }}</div>
 		</div>
@@ -38,7 +38,7 @@
 		<div class="user-pic-thumb"><img src="{{ post.user.profile_url }}" /></div>
 		<div class="p-content">
 			<p class="p-info">
-				<strong>{{ post.user.name }}</strong> said {{ post.created_on | human_date_time }}
+				<strong>{{ post.user.name }}</strong> said {{ post.created_on | time_ago }}
 			</p>
 			<div class="p-desc">{{ post.body_html }}</div>
 		</div>

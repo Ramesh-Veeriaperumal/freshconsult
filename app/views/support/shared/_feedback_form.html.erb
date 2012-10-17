@@ -1,28 +1,25 @@
+<% form_for :ticket, :url => create_ticket_support_solutions_article_path(@article.id), 
+            :html => {  :method => :post, 
+                        :rel => "validate",
+                        "data-remote" => true, 
+                        "data-update" => "vote-feedback-container",
+                        :class => "form-horizontal" } do |f| %>
 
-<h4 class="title">Can you please tell us how we can improve this article?</h4>
-<% form_for :ticket, :url => create_ticket_support_article_path, :html => { :method =>:post, :id => "feedback_form" }  do |f|    %>
   <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-  <%= hidden_field_tag "helpdesk_ticket[subject]", "Feedback for #{article.title}" %>
-  <ul class="ui-form">
-  <li>
-  <label id="requester-label">Your Email *</label>
-  <input type="text" id="helpdesk_ticket[email]" class="text required email" name="helpdesk_ticket[email]"></input>
-  </li> 
-  <li>
-  <label id="description-label">Comments</label>
-  <%= text_area_tag "helpdesk_ticket[description]" %>
-  </li>
- </ul>
-  <span class="seperator"></span>
-  <%= submit_tag 'Send Feedback', :class => "uiButton" -%> 
+  <%= hidden_field_tag "helpdesk_ticket[subject]", "Feedback for #{@article.title}" %>
+  <div class="control-group">
+    <label id="requester-label" for="helpdesk_ticket_email" class="control-label">Your Email *</label>
+    <div class="controls">
+      <input type="text" id="helpdesk_ticket_email" class="required email span8" name="helpdesk_ticket[email]" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label id="description-label" for="helpdesk_ticket_description" class="control-label">Comments</label>
+    <div class="controls">
+      <%= text_area_tag "helpdesk_ticket[description]", "", :rows => 5, :class => "span8" %>
+    </div>
+  </div>
+  <div class="form-actions">
+    <%= submit_tag 'Send feedback', :class => "btn btn-primary btn-toggle", "data-loading-text" => "Loading...", :id => "submit-feedback" -%> 
+  </div>
 <% end %>
- <% javascript_tag do %>
-  	jQuery("#feedback_form").validate({
-		submitHandler: function(form) {
-		   	jQuery(form).ajaxSubmit({success: showResponse});
-		}
-	});
-	function showResponse(response, status){
-		jQuery("#article_voting").html(response);
-	}
-  <% end %>

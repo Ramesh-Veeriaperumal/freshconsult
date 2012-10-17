@@ -61,7 +61,7 @@ stylesheets:
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
     - public/stylesheets/app/lib/ie.css
-    - public/stylesheets/app/lib/gadget.css
+    - public/stylesheets/app/gadget.css
 
   subscription:
     - public/stylesheets/subscription/bootstrap.css
@@ -126,7 +126,7 @@ javascripts:
     - public/javascripts/html2canvas.js
   fdwidget:
     - public/javascripts/prototype.js
-    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery-1.7.1.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/lib/nestedtree.js
@@ -139,7 +139,11 @@ javascripts:
   portal:
     - public/javascripts/jquery-1.7.2.js
     - public/javascripts/utils.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/bootstrap.js
+    - public/javascripts/portal.js
   getting_started:
     - public/javascripts/getting_started.js
   subscription:                    

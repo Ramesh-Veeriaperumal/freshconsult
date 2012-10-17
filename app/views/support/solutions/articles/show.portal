@@ -4,7 +4,6 @@
 		<a href="{{ article.category.url }}">{{ article.category.name }}</a>
 		<a href="{{ article.folder.url }}">{{ article.folder.name }}</a>
 	</div>
-
 	<b class="page-stamp page-stamp-article">
 		<b class="icon-page-article"></b>
 	</b>
@@ -13,6 +12,8 @@
 	<p class="intro">
 		Modified on: {{ article.modified_on }}
 	</p>
+
+	<hr />
 	{% comment %}
 	<div>
 		{% for tag in article.tags %}
@@ -21,16 +22,12 @@
 	</div>
 	{% endcomment %}
 
-	<article>
+	<article id="article-body">
 		{{ article.body }}
 	</article>
 
-	<div>
-		<hr />
-		Was this answer helpful?
-		<a href="#"><b>YES</b></a>
-		<a href="#"><b>NO</b></a>
-	</div>	
+	<hr />
+	
 	{% comment %}
 	<li>  
 	  <div class="preview_img">
@@ -48,54 +45,43 @@
 	  <div class="name">
 	    <%= link_to truncate(attachment.content_file_name, 23), attachment, :popup => true %>
 	  </div>
+	{% endcomment %}
+	
+	<p class="article-vote" id="voting-container">
+		Was this answer helpful?		
+		<a href="{{ article.thumbs_up_url }}" class="vote-up" data-remote data-method="put" data-update="voting-container" 
+			data-updated-with-message="Glad we could be helpful. Thanks for the feedback.">
+			YES
+		</a>
+		<a href="{{ article.thumbs_down_url }}" class="vote-down" data-remote data-method="put" 
+			data-hide-dom="voting-container" data-show-dom="vote-feedback-container" data-update="vote-feedback-form" >
+			NO
+		</a>
+	</p>
 
-	  <div class="size">
-	    (<%= number_to_human_size attachment.content_file_size %>)
-		  <% if local_assigns[:show_delete] %>
-		    <span class="delete">
-		      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
-		    </span>
-		  <% end %>
-	  </div>  
-	</li>
-	 <ul class="attachment_list">
-	    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
-     </ul>
-	 <hr />
-	 <div id="article_voting">
-		<%= render :partial => "/solution/articles/voting", :object => @article %>
-	 </div>
-	 {% endcomment %}
+	<div class="hide" id="vote-feedback-container">
+		<div class="lead">Can you please tell us how we can improve this article?</div>
+		<div id="vote-feedback-form"></div>
+	</div>	
 </section>
 
-<section class="sidebar content rounded-6 min-height-on-desktop">
-	{% for o_category in portal.solution_categories %}
-		<div class="cs-g-c">
-			{% for o_folder in o_category.folders %}
-				<section class="cs-g article-list">
-					<div class="list-lead">
-						<a href="{{o_folder.url}}">{{o_folder.name}} ({{ o_folder.articles | size }})</a>
-					</div>
-					<ul>
-						{% for o_article in o_folder.articles limit:5 %}							
-							<li>
-								<div class="ellipsis" title="{{o_article.title}}">
-									{% if o_article.id != article.id %}
-										<a href="{{o_article.url}}">{{o_article.title}}</a>
-									{% else %}
-										<div class="info-text"> {{o_article.title}} </div>
-									{% endif %}
-								</div>
-							</li>
-						{% endfor %}
-					</ul>
-					{% if o_folder.articles.size > 5 %}
-						<a href="{{ o_folder.url }}" class="see-more">
-							See all {{ o_folder.articles | size }} articles 
-						</a>	
+<section class="sidebar content rounded-6 min-height-on-desktop">	
+	<div class="cs-g-c">
+		<section class="article-list">
+			<div class="list-lead">
+			 	More articles in {{ article.folder.name }}
+			</div>
+			<ul>
+				{% for o_article in article.folder.articles %}
+					{% if article.id != o_article.id %}
+					<li class="cs-g-3">
+						<div class="ellipsis">
+							<a href="{{o_article.url}}" title="{{o_article.title}}">{{o_article.title}}</a>
+						</div>
+					</li>
 					{% endif %}
-				</section>
-			{% endfor %}
-		</div>
-	{% endfor %}
+				{% endfor %}
+			</ul>
+		</section>
+	</div>
 </section>

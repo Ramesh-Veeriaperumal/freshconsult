@@ -16,7 +16,7 @@ module SupportHelper
 		date_time.to_s :long_day_with_time
 	end
 
-	def human_date_time date_time 
+	def time_ago date_time 
 		"#{distance_of_time_in_words_to_now date_time} ago"
 	end
 

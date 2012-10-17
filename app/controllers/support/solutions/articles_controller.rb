@@ -29,35 +29,35 @@ class Support::Solutions::ArticlesController < SupportController
       format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
     end
+
     raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id) && (@article.folder.visible?(current_user))
- end
+  end
  
-  def thumbs_down
-    
+  def thumbs_down    
     @article = current_account.solution_articles.find(params[:id])
     @article.increment!(:thumbs_down)
    
     @ticket = Helpdesk::Ticket.new 
-     respond_to do |format|
-        format.html { render :partial => "/support/shared/feedback_form" ,:locals =>{ :ticket => @ticket,:article => @article }}
-        format.xml  { head 200}
-      end
-    
-    
+    respond_to do |format|
+      format.html { render :partial => "/support/shared/feedback_form", :locals => { :ticket => @ticket,:article => @article }} 
+      format.js
+    end 
   end
   
-   def thumbs_up
-     @article = current_account.solution_articles.find(params[:id])
-     @article.increment!(:thumbs_up)
-     respond_to do |format|
-        format.html { render :text => "Glad we could be helpful. Thanks for the feedback." }
-        format.xml  { head 200}
-      end
+  def thumbs_up
+    @article = current_account.solution_articles.find(params[:id])
+    @article.increment!(:thumbs_up)
+
+    respond_to do |format|
+      format.html { render :text => "Glad we could be helpful. Thanks for the feedback." }
+      format.js
+    end
   end
   
   def create_ticket
-    render :text => (create_the_ticket) ? "Thanks for the feedback. We will improve this article." : 
-                  "There is an error #{@ticket.errors}"
+    render :text => (create_the_ticket) ? 
+      "Thanks for the valuable feedback." : 
+      "There is an error #{@ticket.errors}"
   end
 
 end
