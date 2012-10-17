@@ -10,14 +10,14 @@ HarvestWidget.prototype= {
 		this.inline = loadInline;
 		var init_reqs = []
 		init_reqs = [null, {
-			resource: "daily",
+			rest_url: "daily",
 			content_type: "application/xml",
 			on_failure: harvestWidget.processFailure,
 			on_success: harvestWidget.loadDaily.bind(this)
 		}];
 		if (harvestBundle.remote_integratable_id) 
 			init_reqs[0] = {
-				resource: "daily/show/"+harvestBundle.remote_integratable_id,
+				rest_url: "daily/show/"+harvestBundle.remote_integratable_id,
 				content_type: "application/xml",
 				on_failure: function(evt){
 				},
@@ -173,7 +173,7 @@ HarvestWidget.prototype= {
 				"request[task_id]": $("harvest-timeentry-tasks").value,
 				"request[notes]": $("harvest-timeentry-notes").value,
 				"request[hours]": $("harvest-timeentry-hours").value,
-				resource: "daily/add",
+				rest_url: "daily/add",
 				content_type: "application/xml",
 				method: "post",
 				on_success: function(evt){
@@ -202,7 +202,7 @@ HarvestWidget.prototype= {
 	retrieveTimeEntry:function(resultCallback){
 		if (harvestBundle.remote_integratable_id) {
 			this.freshdeskWidget.request({
-				resource: "daily/show/"+harvestBundle.remote_integratable_id,
+				rest_url: "daily/show/"+harvestBundle.remote_integratable_id,
 				content_type: "application/xml",
 				on_success: harvestWidget.loadTimeEntry.bind(this),
 				on_failure: harvestWidget.processFailure
@@ -261,7 +261,7 @@ HarvestWidget.prototype= {
 			this.freshdeskWidget.request({
 				entity_name: "request",
 				"request[hours]": hours+"",
-				resource: "daily/update/"+remote_integratable_id,
+				rest_url: "daily/update/"+remote_integratable_id,
 				content_type: "application/xml",
 				method: "post",
 				on_success: function(evt){
@@ -284,7 +284,7 @@ HarvestWidget.prototype= {
 					"request[notes]": $("harvest-timeentry-notes").value,
 					"request[hours]": $("harvest-timeentry-hours").value,
 					"request[spent_at]": this.executed_date.toString("ddd, dd MMM yyyy"),
-					resource: "daily/update/"+harvestBundle.remote_integratable_id,
+					rest_url: "daily/update/"+harvestBundle.remote_integratable_id,
 					content_type: "application/xml",
 					method: "post",
 					on_success: function(evt){
@@ -302,7 +302,7 @@ HarvestWidget.prototype= {
 	deleteTimeEntryUsingIds:function(integrated_resource_id, remote_integratable_id, resultCallback){
 		if (remote_integratable_id) {
 			this.freshdeskWidget.request({
-				resource: "daily/delete/"+remote_integratable_id,
+				rest_url: "daily/delete/"+remote_integratable_id,
 				content_type: "application/xml",
 				method: "delete",
 				on_success: function(evt){

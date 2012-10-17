@@ -1,17 +1,21 @@
 @import "lib/settings";
 @import "lib/animations";
+@import "lib/sprites";
 
-$helpdesk_color:#8296ad;
-$helpdesk_hover_color:#5f94cf;
 
-$HelpdeskProductivity_color:#519790;
-$HelpdeskProductivity_hover_color:#36645F;
+@include all-admin-icon-sprites;
 
-$CustomerPortal_color:#9f89af;
-$CustomerPortal_hover_color:#774687;
+$helpdesk_color:#7baaa7;
+$helpdesk_hover_color:#4c9d99;
 
-$Account_color:#939393;
-$Account_hover_color:#606060;
+$HelpdeskProductivity_color:#8399b2;
+$HelpdeskProductivity_hover_color:#5279a6;
+
+$CustomerPortal_color:#a594b2;
+$CustomerPortal_hover_color:#866aa0;
+
+$Account_color:#a1a1a1;
+$Account_hover_color:#838383;
 	
 $hover_boxshadow_start: 0 0 0 0px;
 $hover_boxshadow_middle: 0 0 0 7px;
@@ -199,7 +203,6 @@ $animation_timing: .2s;
 		}
 	}
 }
-
 @include keyframes(helpdesk_beat) {
 	from {
 		@include box-shadow($hover_boxshadow_start $helpdesk_hover_color);

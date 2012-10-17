@@ -13,7 +13,7 @@ SalesforceWidget.prototype= {
 
 	get_contact_request: function() {
 		var sosl = encodeURIComponent("FIND {" + this.salesforceBundle.reqEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")");
-		return { resource: "services/data/v20.0/search?q="+sosl };
+		return { rest_url: "services/data/v20.0/search?q="+sosl };
 	},
 
 	parse_contact: function(resJson){
