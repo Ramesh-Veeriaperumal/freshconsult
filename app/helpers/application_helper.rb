@@ -523,7 +523,8 @@ module ApplicationHelper
     _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
-      :initValues => _field_values
+      :initValues => _field_values,
+      :disable_children => false
     }.merge!(_opt)
 
     _field.nested_levels.each do |l|       
