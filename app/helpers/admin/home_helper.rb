@@ -33,11 +33,11 @@ HTML
           ['/helpdesk/sla_policies',      'sla'                     ],  
           ['/admin/business_calendars',   'business-hours', feature?(:business_hours) ],
           ['/admin/products',             'multi-product',    feature?(:multi_product)  ],
+          ['/social/twitters',            'twitter-setting',feature?(:twitter) ],
+          ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ],
           ['/agents',                     'agent'                   ],
           ['/groups',                     'group'                   ],
           ['/admin/day_passes',           'day_pass', current_user.account_admin? ],
-          ['/social/twitters',            'twitter-setting',feature?(:twitter) ],
-          ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ],
       ]],
       [ [t(".helpdesk"),t(".productivity")], [ 
           ['/admin/va_rules',             'dispatcher'              ],
