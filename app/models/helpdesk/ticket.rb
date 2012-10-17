@@ -255,7 +255,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
 
-    set_property :delta => FreshdeskSphinxDelta
+    set_property :delta => Sphinx::TicketDelta
 
     set_property :field_weights => {
       :display_id   => 10,
