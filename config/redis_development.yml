@@ -7,3 +7,6 @@ development:
 
 slave:
   <<: *defaults
+
+test:
+  <<: *defaults

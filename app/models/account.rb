@@ -60,7 +60,7 @@ class Account < ActiveRecord::Base
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
                           logs projects itil marketing sales partners partner store channel reseller resellers online 
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab 
-                          productdemo resources)
+                          productdemo resources )
 
   #
   # Tell authlogic that we'll be scoping users by account

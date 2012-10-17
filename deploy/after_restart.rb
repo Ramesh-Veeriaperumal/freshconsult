@@ -6,7 +6,6 @@ utility_name = "freshdesk_sphinx_delayed_jobs"
 freshdesk_utility = node['utility_instances'].find { |instance| instance['name'] == utility_name }
 utility_name = freshdesk_utility ? utility_name : "freshdesk_utility" 
 
-
 on_utilities(utility_name) do
   #1. Need to revisit this again. 2. blank? doesn't work in deploy hooks.
   sphinx_environment = node[:environment][:framework_env]
@@ -20,6 +19,6 @@ on_utilities(utility_name) do
 end
 
 
-on_utilities("redis") do
+on_utilities(utility_name) do
 	run "sudo monit restart all -g helpkit_resque" 
 end

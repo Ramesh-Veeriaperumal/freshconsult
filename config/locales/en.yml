@@ -319,8 +319,8 @@ en:
     getting_started:
         send_mail_content:
             title: "Your forwarding email:"
-            info: "A copy of all incoming mails will be forwarded to:"
-            note: "<strong>Note:</strong> For Freshdesk to convert incoming emails to tickets you must configure the forwarding email in your mail server."
+            info: "You must forward a copy of your Support emails to the email address shown below:"
+            note: "<strong>Note:</strong> For FreshDesk to convert incoming emails to tickets you must configure an email forwarding rule in your mail server."
             test_info1: If you think everything is good so far, try sending a test mail
             button_title: Send Test Mail
             button_again_title: ...or Send test mail again
@@ -352,7 +352,7 @@ en:
             support_email_sub_msg: Your support e-mail is required for the helpdesk to function properly.
             save: Change
             agents_sub_title: Invite your helpdesk agents
-            agents_title_info: Invite your agents to use Freshdesk, separate each agent with a comma
+            agents_title_info: Invite your agents to use Freshdesk, separate each email address with a comma
             rebrand_sub_title: Logo &amp; colors
             rebrand_header: Your helpdesk name and logo
             helpdesk_preview: Helpdesk preview
@@ -552,18 +552,17 @@ en:
     home:
       index: 
         group: Groups
-        day_pass: Day Pass Settings
+        day_pass: Day Passes
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
-        survey-settings: Customer Satisfaction Settings
-        gamification-settings: Arcade Settings
+        survey-settings: Customer Satisfaction
+        gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
-        account-settings: Account Settings
+        account-settings: Account
         customer-portal: Customer Portal
         canned-response: Canned Response
-        multi-product: Multi-Product Settings
-        everything_else: Everything else
+        multi-product: Multi-Product
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
@@ -574,15 +573,22 @@ en:
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
-        email-settings: Email Settings
-        everything_helpdesk: Everything Helpdesk
+        email-settings: Email Setup
+        everything: Everything
+        helpdesk: Helpdesk
+        else: else
+        settings: Settings
+        productivity: Productivity
+        portal: Portal
+        account: Account
+        customer: Customer
         canned-response: Canned Response
         multi-product: Multiple Products
-        twitter-setting: Twitter Settings
+        twitter-setting: Twitter
         survey: Survey Settings
-        facebook-setting: Facebook Settings
+        facebook-setting: Facebook
         security: Security
-        email_commands_setting: "Email Command Settings"
+        email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
       
     canned_responses:
@@ -2366,6 +2372,7 @@ en:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
         create_n_enable: "Create and Enable"
+        insert_placeholder: "Insert Placeholder"
     logmein:
       label: "LogMeIn Rescue"
       desc: "Provide instant remote support to your customers and employees with LogMeIn Rescue"

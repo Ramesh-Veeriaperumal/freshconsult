@@ -20,6 +20,7 @@ stylesheets:
 
   app:
     - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/admin.css
     - public/stylesheets/app/app-bootstrap.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
@@ -54,7 +55,7 @@ stylesheets:
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
     - public/stylesheets/app/lib/ie.css
-    - public/stylesheets/app/lib/gadget.css
+    - public/stylesheets/app/gadget.css
 
   subscription:
     - public/stylesheets/subscription/bootstrap.css
@@ -63,6 +64,9 @@ stylesheets:
 
   reports:
     - public/stylesheets/app/reports.css
+
+  report_print:
+    - public/stylesheets/print/report-print.css  
 
   redactor:
     - public/stylesheets/redactor.css
@@ -157,8 +161,10 @@ javascripts:
     - public/javascripts/excanvas.js
   gs_defaults: 
     - public/javascripts/prototype.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/effects.js
-    - public/javascripts/controls.js    
+    - public/javascripts/controls.js
+    - public/javascripts/utils.js
   gs_frameworks:
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/hackz.js
