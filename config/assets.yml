@@ -55,7 +55,7 @@ stylesheets:
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
     - public/stylesheets/app/lib/ie.css
-    - public/stylesheets/app/lib/gadget.css
+    - public/stylesheets/app/gadget.css
 
   subscription:
     - public/stylesheets/subscription/bootstrap.css
@@ -64,6 +64,9 @@ stylesheets:
 
   reports:
     - public/stylesheets/app/reports.css
+
+  report_print:
+    - public/stylesheets/print/report-print.css  
 
   redactor:
     - public/stylesheets/redactor.css
@@ -156,16 +159,21 @@ javascripts:
     - public/javascripts/notifications.js
   excanvas:
     - public/javascripts/excanvas.js
-  getting_started:
-    - public/javascripts/jquery-1.7.1.min.js
-    - public/javascripts/frameworks/plugins/jquery.form.js
+  gs_defaults: 
     - public/javascripts/prototype.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/effects.js
     - public/javascripts/controls.js
     - public/javascripts/utils.js
+  gs_frameworks:
     - public/javascripts/fast_autocompleter.js
+    - public/javascripts/hackz.js
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
-    - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js      
+    - public/javascripts/utils.js
+  getting_started:        
     - public/javascripts/mColorPicker.min.js
     - public/javascripts/getting_started.js

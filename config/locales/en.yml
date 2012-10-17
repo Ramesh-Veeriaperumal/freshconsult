@@ -319,8 +319,8 @@ en:
     getting_started:
         send_mail_content:
             title: "Your forwarding email:"
-            info: "A copy of all incoming mails will be forwarded to:"
-            note: "<strong>Note:</strong> For Freshdesk to convert incoming emails to tickets you must configure the forwarding email in your mail server."
+            info: "You must forward a copy of your Support emails to the email address shown below:"
+            note: "<strong>Note:</strong> For FreshDesk to convert incoming emails to tickets you must configure an email forwarding rule in your mail server."
             test_info1: If you think everything is good so far, try sending a test mail
             button_title: Send Test Mail
             button_again_title: ...or Send test mail again
@@ -347,11 +347,12 @@ en:
             back_link: Back
             next_link: Next
             next_alt_link: Go to helpdesk
+            next_please_wait: Please wait...
             support_email_sub_title: Tell us your support e-mail.
             support_email_sub_msg: Your support e-mail is required for the helpdesk to function properly.
             save: Change
             agents_sub_title: Invite your helpdesk agents
-            agents_title_info: Invite your agents to use Freshdesk, separate each agent with a comma
+            agents_title_info: Invite your agents to use Freshdesk, separate each email address with a comma
             rebrand_sub_title: Logo &amp; colors
             rebrand_header: Your helpdesk name and logo
             helpdesk_preview: Helpdesk preview
