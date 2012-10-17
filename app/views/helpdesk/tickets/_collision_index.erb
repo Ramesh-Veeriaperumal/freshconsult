@@ -35,7 +35,7 @@
           if (viewers.hasOwnProperty(key)) {  
             if($(key)){
               agents_viewing[key] = viewers[key].without(current_user);
-              update_viewing_notification_ui(key, agents_viewing[key]);
+              update_viewing_notification_ui(key);
             }  
           }
         }
@@ -51,7 +51,7 @@
           if (replying.hasOwnProperty(key)) {  
             if($(key)){
               agents_replying[key] = replying[key].without(current_user);
-              update_replying_notification_ui(key, agents_replying[key]);
+              update_replying_notification_ui(key);
             }  
           }
         }
@@ -60,67 +60,62 @@
       socket.on('message', function(_params){
         params = JSON.parse(_params);
 
-        if(params.type == "connected" || params.type == "disconnected"){
-          key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
-          if($(key)){
-            if(agents_viewing[key] == undefined){
-              agents_viewing[key] = [];
-              agents_viewing[key].push(params.agent);
-            }
-            switch(params.type){
-              case "connected":
-                agents_viewing[key].push(params.agent);
-                break;
-              case "disconnected":
-                agents_viewing[key] = agents_viewing[key].without(params.agent);
-                break;
-            }    
-            update_viewing_notification_ui(key, agents_viewing[key]);
+        var viewer_key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
+        var replying_key = 'tickets:'+current_account_id+':replying:'+params.ticket_id;
+        
+        if($(viewer_key)){
+          if(agents_viewing[viewer_key] == undefined)
+            agents_viewing[viewer_key] = $A();
+
+          if(agents_replying[replying_key] == undefined){
+            agents_replying[replying_key] = $A();
           }
-        } else {
-          key = 'tickets:'+current_account_id+':replying:'+params.ticket_id;
-          if($(key)){
-            if(agents_replying[key] == undefined){
-              agents_replying[key] = [];
-              agents_replying[key].push(params.agent);
-            }
-            switch(params.type){
-              case "agent_replyig":
-                agents_replying[key].push(params.agent);
-                break;
-              case "agent_replying_stopped":
-                agents_replying[key] = agents_replying[key].without(params.agent);
-                break;
-            }    
-            update_replying_notification_ui(key, agents_replying[key]);
+          
+          switch(params.type){
+            case "connected":
+              agents_viewing[viewer_key].push(params.agent);
+              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+              break;
+            case "disconnected":
+              agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
+              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+              break;
+            case "agent_replying":
+              agents_replying[replying_key].push(params.agent);
+              agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
+              break;
+            case "agent_replying_stopped":
+              agents_viewing[viewer_key].push(params.agent);
+              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+              break;
           }
+          update_viewing_notification_ui(viewer_key);
+          update_replying_notification_ui(replying_key);
         }
       });
    
-      function update_viewing_notification_ui(key, agents){
-        agents_viewing[key] =   agents_viewing[key].uniq();
-        console.log(key);
-        console.log(agents_viewing[key]);
+      function update_viewing_notification_ui(key){
+        agents_viewing[key] = agents_viewing[key].uniq();
         if (agents_viewing[key].size() != 0) {
           jQuery($(key)).show().addClass('view_collision');
           jQuery($(key)).find("span[rel=viewing_agents_tip]").html(humanize_name_list(agents_viewing[key],"viewing"));
         } else {
           jQuery($(key)).hide();
-          jQuery($(key)).find("span[rel=viewing_agents_tip]").html();
+          jQuery($(key)).find("span[rel=viewing_agents_tip]").html("");
         }
 
         jQuery($(key)).find("span[rel=viewing_count]").html(agents_viewing[key].size());
         updateWorkingAgents(key,"viewing"); //Fn in ticket_list.js
       }
  
-      function update_replying_notification_ui(key, agents){
-        agents_replying[key] =   agents_replying[key].uniq();
+      function update_replying_notification_ui(key){
+        agents_replying[key] = agents_replying[key].uniq();
         if (agents_replying[key].size() != 0) {
           jQuery($(key)).show().addClass('reply_collision');
           jQuery($(key)).find("span[rel=replying_agents_tip]").html(humanize_name_list(agents_replying[key],"replying"));
         } else {
           jQuery($(key)).hide();
-          jQuery($(key)).find("span[rel=replying_agents_tip]").html();
+          jQuery($(key)).find("span[rel=replying_agents_tip]").html("");
         }
 
         jQuery($(key)).find("span[rel=replying_count]").html(agents_replying[key].size());
