@@ -97,11 +97,9 @@
       function update_viewing_notification_ui(key){
         agents_viewing[key] = agents_viewing[key].uniq();
         if (agents_viewing[key].size() != 0) {
-          jQuery($(key)).show().addClass('view_collision');
-          jQuery($(key)).find("span[rel=viewing_agents_tip]").html(humanize_name_list(agents_viewing[key],"viewing"));
+          jQuery($(key)).addClass('view_collision').find("span[rel=viewing_agents_tip]").html(humanize_name_list(agents_viewing[key],"viewing"));
         } else {
-          jQuery($(key)).hide();
-          jQuery($(key)).find("span[rel=viewing_agents_tip]").html("");
+          jQuery($(key)).removeClass('view_collision').find("span[rel=viewing_agents_tip]").html("");
         }
 
         jQuery($(key)).find("span[rel=viewing_count]").html(agents_viewing[key].size());
@@ -111,11 +109,9 @@
       function update_replying_notification_ui(key){
         agents_replying[key] = agents_replying[key].uniq();
         if (agents_replying[key].size() != 0) {
-          jQuery($(key)).show().addClass('reply_collision');
-          jQuery($(key)).find("span[rel=replying_agents_tip]").html(humanize_name_list(agents_replying[key],"replying"));
+          jQuery($(key)).addClass('reply_collision').find("span[rel=replying_agents_tip]").html(humanize_name_list(agents_replying[key],"replying"));
         } else {
-          jQuery($(key)).hide();
-          jQuery($(key)).find("span[rel=replying_agents_tip]").html("");
+          jQuery($(key)).removeClass('reply_collision').find("span[rel=replying_agents_tip]").html("");
         }
 
         jQuery($(key)).find("span[rel=replying_count]").html(agents_replying[key].size());

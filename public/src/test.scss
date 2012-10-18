@@ -1500,12 +1500,19 @@ a.pill.help{
   position: relative;
   top: -5px;
   padding-left: 22px;
+
+  [rel=view_collision], [rel=reply_collision] {
+    display:none;
+  }
+
+  [rel=view_collision].view_collision ,[rel=reply_collision].reply_collision {
+    display: inline-block;
+  }
   
   .view_collision, .reply_collision  {
     height: 18px;
     width: 18px;
     position: relative;
-    display: inline-block;
     padding-left: 25px;
 
     span{

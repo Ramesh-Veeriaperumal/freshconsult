@@ -53,12 +53,20 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
           				working_agents = working_agents.detach();
           				jQuery(api.elements.content).after(working_agents);
 
+          				show_working_agents = false;
           				if (!working_agents.find('[rel=viewing_agents]').hasClass('hide')) {
           					jQuery(api.elements.content).parent().addClass('hasViewers');
+          					show_working_agents = true;
           				} 
           				if (!working_agents.find('[rel=replying_agents]').hasClass('hide')) {
           					jQuery(api.elements.content).parent().addClass('hasReplying');
+          					show_working_agents = true;
           				} 
+          				if (show_working_agents) {
+          					jQuery('#working_agents_' + ticket_id).show();
+          				} else {
+          					jQuery('#working_agents_' + ticket_id).hide();
+          				}
           			}
           		},
           		hide: function(event, api) {
@@ -82,7 +90,13 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 			working_agents = jQuery('<div class="working-agents" id="working_agents_' + ticket_id + '" />');
 			jQuery(working_agents).append(jQuery('<div rel="viewing_agents" class="hide symbols-ac-viewingon-listview" />'));
 			jQuery(working_agents).append(jQuery('<div rel="replying_agents" class="hide symbols-ac-replyon-listview" />'));
-			jQuery('#agent_collision_container').append(working_agents);
+			var container;
+			if (jQuery('#ui-tooltip-' + ticket_id).length > 0) {
+				container = jQuery('#ui-tooltip-' + ticket_id);
+			} else {
+				container = jQuery('#agent_collision_container');
+			}
+			container.append(working_agents);
 		}
 
 		working_agents = jQuery('#working_agents_' + ticket_id);
@@ -91,10 +105,11 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		if(type == "viewing") {
 			viewing_agents = jQuery(working_agents).find("[rel=viewing_agents]");
 			if (collision_dom.find("[rel=viewing_agents_tip]").html() != ''){
-				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasViewers');
-				viewing_agents.removeClass('hide');
-			} else {
 				jQuery('#ui-tooltip-' + ticket_id).addClass('hasViewers');
+				viewing_agents.removeClass('hide');
+				jQuery('#working_agents_' + ticket_id).show();
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasViewers');
 				viewing_agents.addClass('hide');
 			}
 			viewing_agents.html(collision_dom.find("[rel=viewing_agents_tip]").html());
@@ -102,10 +117,11 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		} else if(type == "replying") {
 			replying_agents = jQuery(working_agents).find("[rel=replying_agents]");
 			if (collision_dom.find("[rel=replying_agents_tip]").html() != ''){
-				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasReplying');
-				replying_agents.removeClass('hide');
-			} else {
 				jQuery('#ui-tooltip-' + ticket_id).addClass('hasReplying');
+				replying_agents.removeClass('hide');
+				jQuery('#working_agents_' + ticket_id).show();
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasReplying');
 				replying_agents.addClass('hide');
 			}
 			replying_agents.html(collision_dom.find("[rel=replying_agents_tip]").html());

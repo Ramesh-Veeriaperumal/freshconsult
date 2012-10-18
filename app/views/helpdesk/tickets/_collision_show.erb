@@ -21,7 +21,7 @@
 <% javascript_tag do %>
     var agents = { viewing:[], replying:[] };
     var init_params = {};
-    var current_user = "<%= current_user.name %>";
+    var current_user = "<%= escape_javascript(current_user.name) %>";
     init_params.agent = current_user;
     init_params.account_id = <%= current_account.id%>;
     init_params.ticket_id = <%= @ticket.id %>;      
