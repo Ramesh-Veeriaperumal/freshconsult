@@ -1,37 +1,20 @@
 <% if survey_handle %>
-<div id="survey" style="display:table;width:100%;">
-	<h3 style="display:table-caption;"><%= survey_handle.survey.link_text %></div>
-	  <div style="display:table-row;font-size:14px;">
-		<div style="display:table-cell;text-align:center;padding:3px 3px 3px 6px;">
-			<div style="display:inline;float:left;">	
-				<a href="<%=survey_handle.survey_url(ticket, Survey::HAPPY)%>">
-					<img src='http://<%=ticket.portal_host%>/images/happy-smily-tab.png'>
-				</a>
-			</div>		
-			<div style="float:right;margin:15px 0 0 5px;font-size:16px;">
-				<%= link_to survey_handle.survey.happy_text, survey_handle.survey_url(ticket, Survey::HAPPY) %>
-			</div>
-		</div>
-		<div style="display:table-cell;padding:3px 3px 3px 6px;">
-			 <div style="display:inline;float:left;">	
-				<a href="<%=survey_handle.survey_url(ticket, Survey::NEUTRAL)%>">	
-					<img src='http://<%=ticket.portal_host%>/images/neutral-smily-tab.png'>
-				</a>	
-			 </div>
-			<div style="float:right;margin:15px 0 0 5px;font-size:16px;">
-				<%= link_to survey_handle.survey.neutral_text, survey_handle.survey_url(ticket, Survey::NEUTRAL) %>
-			</div>
-		</div>
-		<div style="display:table-cell;padding:3px 3px 3px 6px;">
-			<div style="display:inline;float:left;">
-				<a href="<%=survey_handle.survey_url(ticket, Survey::UNHAPPY)%>">
-					<img src='http://<%=ticket.portal_host%>/images/unhappy-smily-tab.png'>
-				</a>
-			</div>
-			<div style="float:right;margin:15px 0 0 5px;font-size:16px;">
-				<%= link_to survey_handle.survey.unhappy_text, survey_handle.survey_url(ticket, Survey::UNHAPPY) %>
-			</div>
-	  </div>
-   </div>
-</div>
+<span style="font-family: Arial, sans-serif; color: #333; font-size: 16px;font-weight:bold;"><%= survey_handle.survey.link_text %></span><br/>
+  <table cellspacing="5" cellpadding="0">
+        <tbody>
+          <tr>
+            <td bgcolor="#e7f8dc" style="border-radius: 50px; box-shadow:0px 0px 3px #ccc; margin-right: 10px;">
+             <a href="<%=survey_handle.survey_url(ticket, Survey::HAPPY)%>" style="display:inline-table; padding: 0px 10px; font-family: Arial, sans-serif;color: #377ce4; font-size: 16px; text-decoration: underline;">
+              <img src="http://<%=ticket.portal_host%>/images/happy-smily-tab.png"align="absmiddle" style="padding-right: 5px;"/><%= survey_handle.survey.happy_text %></a></td>
+
+             <td bgcolor="#fbf7e0" style="border-radius: 50px; box-shadow:0px 0px 3px #ccc; margin-right: 10px;">
+              <a href="<%=survey_handle.survey_url(ticket, Survey::NEUTRAL)%>" style="display:inline-table; padding: 0px 10px; font-family: Arial, sans-serif;color: #377ce4; font-size: 16px; text-decoration: underline;">
+               <img src="http://<%=ticket.portal_host%>images/neutral-smily-tab.png"align="absmiddle" style="padding-right: 5px;"/><%= survey_handle.survey.neutral_text %></a></td>
+
+              <td bgcolor="#fae4e2" style="border-radius: 50px;box-shadow: 0px 0px 3px #ccc; margin-right:10px;">
+               <a href="<%=survey_handle.survey_url(ticket, Survey::UNHAPPY)%>"style="display: inline-table;padding: 0px 10px; font-family: Arial,sans-serif; color: #377ce4; font-size: 16px; text-decoration:underline;">
+                <img src="http://<%=ticket.portal_host%>/images/unhappy-smily-tab.png" align="absmiddle" style="padding-right: 5px;"/><%= survey_handle.survey.unhappy_text %></a></td>
+          </tr>
+        </tbody>
+   </table>
 <% end %>
