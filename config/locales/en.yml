@@ -318,19 +318,47 @@ en:
         enter_unhappy_text: Enter the unhappy text
     getting_started:
         send_mail_content:
+            title: "Your forwarding email:"
+            info: "You must forward a copy of your Support emails to the email address shown below:"
+            note: "<strong>Note:</strong> For FreshDesk to convert incoming emails to tickets you must configure an email forwarding rule in your mail server."
+            test_info1: If you think everything is good so far, try sending a test mail
+            button_title: Send Test Mail
+            button_again_title: ...or Send test mail again
+            button_sending: Sending...
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
-            send_test_mail_info2: (Learn How)
-            send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
-            send_test_mail_link_title: sending a test email
+            send_test_mail_info2: Learn How
+            send_test_mail_info3: If you think everything is good so far, try sending a test mail. <br>%{send_test_mail_link}
+            send_test_mail_link_title: Send test email
             send_test_mail_response1: We've sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
             send_test_mail_confirm_yes: Yes, i got it.
             send_test_mail_confirm_no: No, i can't see any ticket.
             send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
             send_test_mail_response_no1: There seems to be a problem ->
             send_test_mail_response_no2: Learn how
-            send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again. If you did not receive the email in your Inbox, please wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
-        
+            send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
         index:
+            congrats: Congratulations! Your “fresh” helpdesk is ready.
+            title_msg: Just fill in a few details to get started. (optional)
+            support_email_title: Support<br> e-mail
+            agents_title: Agents
+            rebrand_title: Logo <br>&amp; colors
+            social_title: Social
+            skip_link: Skip and go to your helpdesk
+            back_link: Back
+            next_link: Next
+            next_alt_link: Go to helpdesk
+            next_please_wait: Please wait...
+            support_email_sub_title: Tell us your support e-mail.
+            support_email_sub_msg: Your support e-mail is required for the helpdesk to function properly.
+            save: Change
+            agents_sub_title: Invite your helpdesk agents
+            agents_title_info: Invite your agents to use Freshdesk, separate each email address with a comma
+            rebrand_sub_title: Logo &amp; colors
+            rebrand_header: Your helpdesk name and logo
+            helpdesk_preview: Helpdesk preview
+            social_sub_title: Go Social
+            social_info: Take Your Help Desk to Facebook, Twitter, your communities and just about everywhere your Customers go
+            social_add_account: Add Account
             config-support-email-address: "Configure your support email address"
             save-and-next: "Save and Go to next"
             send_verification_email: Send verification email
@@ -343,15 +371,11 @@ en:
             agent_title: Feeling lonely?
             agent_sub_title: Invite your team to Freshdesk
             agent_send_invite_label: Send Invites to agents
-            agent_invite_field_placeholder: Enter your team members email
-            social_title: Go Social?
-            social_sub_title: Start supporting customers on twitter and facebook
+            agent_invite_field_placeholder: Enter your team members email            
             social_twitter: Twitter
             social_twitter_add: Add Account
             social_facebook: Facebook
-            social_facebook_add: Add a Page
-            rebrand_title: Make it your own!
-            rebrand_sub_title: Rebrand Freshdesk with your logo & colors
+            social_facebook_add: Add a Page            
             rebrand_company_label: Company Name
             rebrand_company_field_placeholder: Enter your company name
             rebrand_paint_title: Paint your helpdesk
@@ -489,6 +513,8 @@ en:
       primary_product_support_email: Primary Product Support Email
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
+      assign_product: "Assign Product"
+      product_label_msg: "Product"
     canned_responses:
       ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
@@ -526,18 +552,17 @@ en:
     home:
       index: 
         group: Groups
-        day_pass: Day Pass Settings
+        day_pass: Day Passes
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
-        survey-settings: Customer Satisfaction Settings
-        gamification-settings: Arcade Settings
+        survey-settings: Customer Satisfaction
+        gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
-        account-settings: Account Settings
+        account-settings: Account
         customer-portal: Customer Portal
         canned-response: Canned Response
-        multi-product: Multi-Product Settings
-        everything_else: Everything else
+        multi-product: Multi-Product
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
@@ -548,15 +573,22 @@ en:
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
-        email-settings: Email Settings
-        everything_helpdesk: Everything Helpdesk
+        email-settings: Email Setup
+        everything: Everything
+        helpdesk: Helpdesk
+        else: else
+        settings: Settings
+        productivity: Productivity
+        portal: Portal
+        account: Account
+        customer: Customer
         canned-response: Canned Response
         multi-product: Multiple Products
-        twitter-setting: Twitter Settings
+        twitter-setting: Twitter
         survey: Survey Settings
-        facebook-setting: Facebook Settings
+        facebook-setting: Facebook
         security: Security
-        email_commands_setting: "Email Command Settings"
+        email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
       
     canned_responses:
@@ -1015,6 +1047,9 @@ en:
     match_any: Match Any
     add_condition: Add new condition
     delete: "Are you sure you want to delete this rule?"
+    skip_notifications: "Skip New Ticket Email Notifications"
+    skip_notification_yes: "Yes"
+    skip_notification_no: "No"
   header_logo: Header Logo
   solutions:
     status:
@@ -1614,6 +1649,7 @@ en:
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
+      ca_responses : Canned Responses
       insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
@@ -2336,6 +2372,7 @@ en:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
         create_n_enable: "Create and Enable"
+        insert_placeholder: "Insert Placeholder"
     logmein:
       label: "LogMeIn Rescue"
       desc: "Provide instant remote support to your customers and employees with LogMeIn Rescue"
@@ -2443,9 +2480,10 @@ en:
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
-  bulk_update: "Bulk Update"
+  bulk_actions: "Bulk Actions"
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
+  select: "Select ..."
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"

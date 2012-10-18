@@ -13,6 +13,9 @@ class PostObserver < ActiveRecord::Observer
 	def after_create(post)
 		update_cached_fields(post)
 		monitor_reply(post)
+	end
+
+	def after_commit_on_create(post)
 		if gamification_feature?(post.account)
 			return if (post.user.customer? or post.user_id == post.topic.user_id)
 			Resque.enqueue(Gamification::Quests::ProcessPostQuests, { :id => post.id, 
@@ -45,6 +48,6 @@ class PostObserver < ActiveRecord::Observer
       Forum.update_all ['posts_count = ?', Post.count(:id, :conditions => {:forum_id => post.forum_id})], ['id = ?', post.forum_id]
       User.update_posts_count(post.user_id)
       post.topic.update_cached_post_fields(post)
-  end
+  	end
 
 end

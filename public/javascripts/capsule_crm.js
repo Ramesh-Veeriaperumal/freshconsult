@@ -17,7 +17,7 @@ CapsuleWidget = {
             method: 'get',
             enable_resource_cache: resource.options.enable_resource_cache,
             content_type: 'application/json',
-            resource: 'api/party/' + escape(id)
+            rest_url: 'api/party/' + escape(id)
         });
         
         $('capsule-title').addClassName('paddingloading');
@@ -163,7 +163,7 @@ CapsuleWidget = {
             method: 'get',
             enable_resource_cache: resource.options.enable_resource_cache,
             content_type: 'application/json',
-            resource: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(theForm.q.value)
+            rest_url: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(theForm.q.value)
         });
 
         new Ajax.Request('/http_request_proxy/fetch', {
@@ -274,7 +274,7 @@ CapsuleWidget = {
             method: 'post',
             enable_resource_cache: resource.options.enable_resource_cache,
             content_type: 'application/xml',
-            resource: 'api/person',
+            rest_url: 'api/person',
             entity_name: 'person'
         });
 
@@ -321,7 +321,7 @@ CapsuleWidget = {
             method: 'post',
             enable_resource_cache: resource.options.enable_resource_cache,
             content_type: 'application/xml',
-            resource: 'api/party/' + escape(theForm.contactId.value) + '/history',
+            rest_url: 'api/party/' + escape(theForm.contactId.value) + '/history',
             entity_name: 'historyItem',
             'historyItem[note]': note
         });
@@ -361,7 +361,7 @@ capsuleResourceOptions = {
 		return content;
 	},
 	init_requests: [{
-		resource: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(CapsuleWidget.searchTerm()),
+		rest_url: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(CapsuleWidget.searchTerm()),
 		on_success: CapsuleWidget.processSearch,
 		on_failure: CapsuleWidget.processFailure
 	}]

@@ -83,14 +83,14 @@ JiraWidget.prototype= {
 		if(jiraBundle.remote_integratable_id)
 		{
 			init_reqs = [{
-				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
+				rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailureCreate,
 				on_success: jiraWidget.displayIssue.bind(this)
 			}];	
 		}  else {
 			init_reqs = [{
-				resource: "rest/api/latest/project",
+				rest_url: "rest/api/latest/project",
 				content_type: "application/json",
 				on_success: jiraWidget.loadProject.bind(this),
 				on_failure: jiraWidget.processFailure.bind(this)
@@ -320,7 +320,7 @@ JiraWidget.prototype= {
 
 	renderDisplayIssueWidget:function(){
 		init_reqs = [{
-				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
+				rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.displayIssue.bind(this)
@@ -338,7 +338,7 @@ JiraWidget.prototype= {
 	displayCreateWidget:function(){
 		this.hideSpinner();
 		init_reqs = [{
-				resource: "rest/api/latest/project",
+				rest_url: "rest/api/latest/project",
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.loadProject.bind(this)
@@ -390,7 +390,7 @@ JiraWidget.prototype= {
 		jiraWidget.linkIssueId = remoteKey;
 		jiraWidget.linkedTicket=""
 		this.freshdeskWidget.request({
-				resource: "rest/api/latest/issue/"+encodeURIComponent(remoteKey),
+				rest_url: "rest/api/latest/issue/"+encodeURIComponent(remoteKey),
 				content_type: "application/json",
 				on_success: jiraWidget.updateIssue.bind(this),
 				on_failure: jiraWidget.processFailure

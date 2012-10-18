@@ -12,7 +12,7 @@
 	  
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
 
-		<%= stylesheet_link_tag "widget", :media => "screen, projection" %>
+		<%= include_stylesheets :widget %>
 		<%= include_javascripts :fdwidget %>		
 		<!--[if IE]><%= include_javascripts :excanvas %><![endif]-->
 	  	<%= yield :head %>

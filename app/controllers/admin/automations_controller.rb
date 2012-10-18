@@ -91,6 +91,8 @@ class Admin::AutomationsController < Admin::AdminController
 
       groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
       groups << ([0, '{{ticket.group}}'])
+
+      @products = current_account.products.collect {|p| [p.id, p.name]}
       
       action_hash     = [
         { :name => -1, :value => "--- #{t('click_select_action')} ---" },
@@ -125,7 +127,10 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def additional_actions
-      {5, {:name => "add_comment"  , :value => t('add_note')      , :domtype => 'comment'}}
+      actions = {5 => {:name => "add_comment"  , :value => t('add_note')      , :domtype => 'comment'}}
+      actions[10] = { :name => "product_id", :value => t('admin.products.assign_product'),
+          :domtype => 'dropdown', :choices => @products } if current_account.features?(:multi_product)
+      actions
     end
     
     def add_custom_actions action_hash
