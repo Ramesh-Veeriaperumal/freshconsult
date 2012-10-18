@@ -7,12 +7,12 @@
               <div class="submit-btn-wrap">
                 <div class="gs_request">
                   <p class="forward-textbox-note"><%=t('.test_info1')%></p>
-                  <input type="button" value="<%=t('.button_title')%>" class="submit-btn textbox-radius f-right send-mail" data-test-url="<%=test_email_admin_email_config_path(@email_config)%>" data-progress="false" data-value="<%=t('.button_title')%>" data-loading="<%=t('.button_sending')%>">
+                  <input type="button" value="<%=t('.button_title')%>" class="submit-btn textbox-radius f-right send-mail" data-test-url="<%=test_email_admin_email_config_path(@email_config)%>" data-progress="false" data-value="<%=t('.button_title')%>" data-loading="<%=t('.button_sending')%>" data-tab-ignore="true">
                 </div>
                 <div class="gs_response">
                   <p class="forward-textbox-note">
                     <%=t('.send_test_mail_response1',:reply_email => @email_config.reply_email)%>
-                    <p class="yesno"><input type="button" onclick="javascript:SendTestMail.confirm('yes');" class="submit-btn textbox-radius" value="<%=t('.send_test_mail_confirm_yes')%>">&nbsp;<input type="button" onclick="javascript:SendTestMail.confirm('no');" class="submit-btn textbox-radius" value="<%=t('.send_test_mail_confirm_no')%>"></p>
+                    <p class="yesno"><input type="button" onclick="javascript:SendTestMail.confirm('yes');" class="submit-btn textbox-radius" value="<%=t('.send_test_mail_confirm_yes')%>" data-tab-ignore="true">&nbsp;<input type="button" onclick="javascript:SendTestMail.confirm('no');" class="submit-btn textbox-radius" value="<%=t('.send_test_mail_confirm_no')%>" data-tab-ignore="true"></p>
                   </p>
                 </div>  
                 <div class="gs_yes">
@@ -22,6 +22,6 @@
                   <p class="forward-textbox-note">
                     <%=t('.send_test_mail_response_no3', :to_email =>  @email_config.to_email, :reply_email => @email_config.reply_email) %>                    
                   </p>
-                  <input type="button" value="<%=t('.button_again_title')%>" class="submit-btn textbox-radius send-mail" data-test-url="<%=test_email_admin_email_config_path(@email_config)%>" data-progress="false" data-value="<%=t('.button_again_title')%>" data-loading="<%=t('.button_sending')%>">
+                  <input type="button" value="<%=t('.button_again_title')%>" class="submit-btn textbox-radius send-mail" data-test-url="<%=test_email_admin_email_config_path(@email_config)%>" data-progress="false" data-value="<%=t('.button_again_title')%>" data-loading="<%=t('.button_sending')%>" data-tab-ignore="true">
                 </div>                  
               </div>

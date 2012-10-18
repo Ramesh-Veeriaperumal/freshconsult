@@ -52,7 +52,7 @@ module AdminControllerMethods
          if password == 'X'
            username == ''
          else
-           username == 'freshdesk' && password == 'USD40$'
+           username == 'freshdesk' && password == '1M5MUSD40$'
         end
        end
      end

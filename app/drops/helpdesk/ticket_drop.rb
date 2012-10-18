@@ -92,10 +92,9 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def before_method(method)
-		if @source.respond_to?(method)
-			@source.send(method) 
-		elsif @source.respond_to?("#{method}_#{@source.account_id}")
-			@source.send("#{method}_#{@source.account_id}") 
+		custom_fields = @source.load_flexifield
+		if custom_fields["#{method}_#{@source.account_id}"]
+			custom_fields["#{method}_#{@source.account_id}"]
 		else
 			super
 		end

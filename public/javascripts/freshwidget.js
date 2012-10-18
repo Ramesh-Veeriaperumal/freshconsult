@@ -105,7 +105,10 @@
 			button.setAttribute('id', 'freshwidget-button');
 			button.style.display = 'none';
 			button.className = "freshwidget-button " + class_name;
-			
+
+			if(Browser.Version() <= 10)
+				button.className += " ie"+Browser.Version();
+					
 			link = document.createElement('a');
 			link.setAttribute('href', 'javascript:void(0)');
 			
@@ -216,7 +219,7 @@
 						 
 						 sendMessage = setInterval(function() {
 						 	if (iframeLoaded) {
-							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, options.url);
+							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
 							 	clearInterval(sendMessage);
 						 	}else {
 						 		console.log('waiting for iframe to load');

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120912174542) do
+ActiveRecord::Schema.define(:version => 20121016091809) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -863,6 +863,8 @@ ActiveRecord::Schema.define(:version => 20120912174542) do
     t.integer  "account_id",             :limit => 8
     t.datetime "status_updated_at"
     t.datetime "sla_timer_stopped_at"
+    t.integer  "outbound_count"
+    t.float    "avg_response_time"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"

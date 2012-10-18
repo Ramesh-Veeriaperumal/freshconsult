@@ -19,6 +19,6 @@ on_utilities(utility_name) do
 end
 
 
-on_utilities("redis") do
+on_utilities(utility_name) do
 	run "sudo monit restart all -g helpkit_resque" 
 end

@@ -261,6 +261,9 @@ var $J = jQuery.noConflict();
                 classes: 'ui-tooltip-rounded ui-tooltip-shadow'
              }
         });
+
+        if(window.location.hash != '')
+          $(window.location.hash + "-tab").trigger('click');
          
         menu_box_count = 0;
         fd_active_drop_box = null;
