@@ -55,6 +55,9 @@ class Helpdesk::TicketsController < ApplicationController
       format.xml do
         render :xml => @tickets.to_xml
       end
+      format.json do
+        render :json => @tickets.to_json
+      end
     end
   end
   
