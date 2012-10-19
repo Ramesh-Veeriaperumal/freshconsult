@@ -1,4 +1,5 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
+<div class='reply_box'>
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
     <%= f.error_messages %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
@@ -27,6 +28,7 @@
     </li>
     </ul> 
   <% end %>
+</div> 
 </div> 
 
 <% content_for :onload_script do %>
