@@ -8,9 +8,9 @@
       <li class="inline-field field">     
 	   <%= content_tag( :h4, t(".title", :user => @ticket.requester.name), :class => "title" ) %>  
         <label class="caption">From:</label>
-        <label class="fields">
+        <div class="fields">
         	<strong>&nbsp;<%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %></strong>
-        </label>
+        </div>
 	  </li>				
 	  <li class="inline-field field">
 	    <label class="caption"><%=@ticket.is_fb_message? ? "Reply" : "Comment:"%></label>
