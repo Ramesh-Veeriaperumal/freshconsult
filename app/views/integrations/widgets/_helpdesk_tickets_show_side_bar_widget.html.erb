@@ -1,7 +1,7 @@
-<% current_account.installed_applications.each{ |installed_app|
+<% @installed_apps_hash.each do |key,installed_app|
   app = installed_app.application
   unless app.blank?
-    app.widgets.each{ |widget|
+    app.widgets.each do |widget|
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
         ticket.load_flexifield
@@ -11,6 +11,6 @@
           <%=widget_code%>
         </div>
   <%  end
-    }
+    end
   end
-} %>
+end %>

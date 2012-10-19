@@ -76,6 +76,11 @@ end
     user.account.scoreboard_levels.next_level_for_points(points).first
   end
 
+def signature_htm
+  puts "#{self.signature_html}"
+  self.signature_html
+end
+
 protected
   
   def update_agents_level

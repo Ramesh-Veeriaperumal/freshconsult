@@ -117,13 +117,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::TicketStatus.statuses(account)
+         Helpdesk::TicketStatus.statuses_from_cache(account)
        when "default_ticket_type" then
-         picklist_values.collect { |c| [c.value, c.value] }
+         account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
        when "default_agent" then
-         account.agents(:include => :user).collect { |c| [c.user.name, c.user.id] }
+         account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
        when "default_group" then
-         account.groups.collect { |c| [c.name, c.id] }
+         account.groups_from_cache.collect { |c| [c.name, c.id] }
        when "default_product" then
          account.products.collect { |e| [e.name, e.id] }
        when "nested_field" then

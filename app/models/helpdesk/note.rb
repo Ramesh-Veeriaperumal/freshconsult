@@ -159,6 +159,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def respond_to?(attribute)
+    return false if [:to_ary].include? attribute.to_sym
     super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
   end
 

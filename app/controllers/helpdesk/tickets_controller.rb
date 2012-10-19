@@ -13,7 +13,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::AdjacentTickets
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :get_agents ]
-  before_filter :check_user , :only => [:show]
+  before_filter :check_user, :load_installed_apps, :only => [:show]
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
@@ -27,7 +27,9 @@ class Helpdesk::TicketsController < ApplicationController
   
 
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
+  skip_before_filter :load_item
+  alias :load_ticket :load_item
+  before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -585,11 +587,11 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_conversation_params
     @conv_id = params[:note_id]
-    @note = @ticket.notes.visible.find_by_id(@conv_id)
+    @note = @ticket.notes.visible.find_by_id(@conv_id) unless @conv_id.nil?
   end
 
   def load_reply_to_all_emails
-    @ticket_notes = @ticket.conversation
+    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note])
     reply_to_all_emails
   end
 
@@ -742,4 +744,7 @@ class Helpdesk::TicketsController < ApplicationController
     @selected_tab = :tickets
   end
 
+  def load_installed_apps
+    @installed_apps_hash = current_account.installed_apps_hash
+  end
 end

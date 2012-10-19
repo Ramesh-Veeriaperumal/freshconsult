@@ -45,7 +45,7 @@ module Helpdesk::TicketsHelper
                
     panels = content_tag :div, tabs.map{ |t| 
       if(tabs.first == t)
-        content_tag :div, (render :partial => "helpdesk/tickets/components/ticket", :object => @ticket), :class => "rtDetails tab-pane active #{t[2]}", :id => t[0]
+        content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
       else
         content_tag :div, content_tag(:div, "", :class => "loading-box"), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
@@ -55,7 +55,7 @@ module Helpdesk::TicketsHelper
   end
     
   def ticket_tabs
-    tabs = [['Pages',     t(".conversation"), @ticket.conversation_count],
+    tabs = [['Pages',     t(".conversation"), @ticket_notes.total_entries],
             ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
                                                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
                                                feature?(:timesheets)]]
@@ -244,7 +244,7 @@ module Helpdesk::TicketsHelper
   def bind_last_conv (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
-                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+                ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
       last_reply_time = last_conv.created_at
@@ -282,8 +282,8 @@ module Helpdesk::TicketsHelper
 
   def bind_last_reply (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    last_conv = (item.is_a? Helpdesk::Note) ? item : 
-                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+    # last_conv = (item.is_a? Helpdesk::Note) ? item : 
+                # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
     return ( get_key(key) || bind_last_conv(item, signature) )

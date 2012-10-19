@@ -20,9 +20,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
            
   after_update :update_tickets_sla_on_status_change
 
-  after_commit_on_destroy :clear_onhold_closed_statuses_cache, :clear_statuses_cache
-  after_commit_on_create :clear_onhold_closed_statuses_cache, :clear_statuses_cache
-  after_commit_on_update :clear_onhold_closed_statuses_cache, :clear_statuses_cache
+  after_commit_on_destroy :clear_statuses_cache
+  after_commit_on_create :clear_statuses_cache
+  after_commit_on_update :clear_statuses_cache
   
   named_scope :visible, :conditions => {:deleted => false}
 

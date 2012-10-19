@@ -111,11 +111,13 @@
             <%= @ticket.description_html %>
           </div>
         </div>      
-        <% unless @ticket.attachments.empty? %>
+        <% 
+          attachments = @ticket.attachments
+        unless attachments.length == 0 %>
           <span class="seperator"></span>
-          <h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
+          <h4><%= pluralize(attachments.length, t("attachment"), t("attachments")) %></h4>
           <ul class="attachment_list">
-            <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+            <%= render :partial => '/helpdesk/shared/attachment', :collection => attachments, :locals => {:show_delete => true, :url => [@item] } %>
           </ul>
         <% end %>
         <% unless @ticket.ticket_topic.nil? %>

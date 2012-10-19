@@ -1,7 +1,9 @@
-<% note_view_id = "note_view_"+note.id.to_s() %>
-<% notedetails  = "note_details_#{note.id.to_s()}" %>
-<% forward_note_id = "cnt-fwd-#{note.id.to_s()}" %>
-<% edit_id = "edit-#{note.id.to_s()}" %>
+<% note_view_id = "note_view_"+note.id.to_s() 
+ notedetails  = "note_details_#{note.id.to_s()}" 
+ forward_note_id = "cnt-fwd-#{note.id.to_s()}"
+ edit_id = "edit-#{note.id.to_s()}" 
+ notable_object = @ticket || @parent
+ %>
 <div id="<%= note_view_id %>" class="description count <%= cycle('stripe', '') %>">  
    	<a name="<%= "note#{note.id}" %>"></a>
    	<div class="conversation-sprite">
@@ -26,7 +28,7 @@
 	      <% if note.incoming %>
 	        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id }, :method => :post, :class => "slim-button tooltip", :title => t(".split_this_as_new_ticket"), :confirm => t(".split_ticket_confirm") if @item && !@item.fb_post %>
 	      <% end %>
-	      <%= link_to( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => t(".delete_note") ) if(note.user && note.user.agent?) %>   
+	      <%= link_to( "", helpdesk_ticket_helpdesk_note_path(notable_object, note), :method => :delete, :class => "close-button", :confirm => t(".delete_note") ) if(note.user && note.user.agent?) %>   
       <% end %>
     </div>
     <% if permission?(:manage_tickets) and feature?(:gamification)  %>
@@ -78,10 +80,10 @@
 	</div>
 
 	<%= content_tag :div, "", :id => "#{edit_id}", :class => "hide", :rel => "remote", 
-							"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note) %>
+							"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(notable_object, note) %>
     <%= content_tag :div, "", :id => forward_note_id, :class => "request_panel note-forward-form hide", :rel => "remote", 
 					"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
-												:id => note.notable.display_id, 
+												:id => notable_object.display_id, 
 												:note_id => note.id }) %>
 </div> 
 

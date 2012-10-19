@@ -272,6 +272,14 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def installed_apps_hash
+    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps.inject({}) do |result,installed_app|
+     result[installed_app.application.name.to_sym] = installed_app
+     result
+   end
+  end
+
   def self.reset_current_account
     Thread.current[:account] = nil
   end

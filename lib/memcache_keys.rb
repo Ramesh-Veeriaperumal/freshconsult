@@ -18,6 +18,8 @@ module MemcacheKeys
 
   ACCOUNT_ONHOLD_CLOSED_STATUSES = "v1/ACCOUNT_ONHOLD_CLOSED_STATUSES:%{account_id}"
 
+  ACCOUNT_STATUS_NAMES = "v1/ACCOUNT_STATUS_NAMES:%{account_id}"
+
   ACCOUNT_STATUSES = "v1/ACCOUNT_STATUSES:%{account_id}"
 
   class << self
