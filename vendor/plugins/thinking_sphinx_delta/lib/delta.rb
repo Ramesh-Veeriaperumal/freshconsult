@@ -32,7 +32,8 @@
           
           # Set the delta value for the model to be true.
           def toggle_delta
-            self.class.delta_object.toggle(self) if should_toggle_delta?
+            self.delta = false
+            self.class.delta_object.toggle(self) if should_toggle_delta? 
           end
           
           # Build the delta index for the related model. This won't be called
@@ -43,7 +44,8 @@
           end
           
           def should_toggle_delta?
-            self.new_record? || indexed_data_changed?
+            return self.import_id.nil? if self.new_record? 
+            indexed_data_changed?
           end
           
           def indexed_data_changed?
