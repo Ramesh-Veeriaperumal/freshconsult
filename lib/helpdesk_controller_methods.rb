@@ -31,6 +31,9 @@ module HelpdeskControllerMethods
       format.mobile {
         render :json => {:success => true,:item => @item}.to_json
       }
+      format.json { 
+        render :json => @item.to_json
+      }
     end
   end
 
