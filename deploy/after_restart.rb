@@ -1,5 +1,7 @@
 #To restart delayed_job workers..
-run "sudo monit -g dj_helpkit restart all"
+on_utilities("freshdesk_utility") do
+  run "sudo monit -g dj_helpkit restart all"
+end
 
 utility_name = "freshdesk_sphinx_delayed_jobs"
 
