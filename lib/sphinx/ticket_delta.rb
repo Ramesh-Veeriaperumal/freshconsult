@@ -11,7 +11,7 @@ class Sphinx::TicketDelta < ThinkingSphinx::Deltas::DefaultDelta
   			:model_name => "Helpdesk::Ticket"}) 
   		end
   	rescue
-  	 NewRelic::Agent.notice_error(ThinkingSphinx::SphinxError, {:custom_params => {:error => "Error in sphinx delta indexing" })
+  	 NewRelic::Agent.notice_error(ThinkingSphinx::SphinxError, {:custom_params => {:error => "Error in sphinx delta indexing" }})
    	end
   	ThinkingSphinx.updates_enabled = true
   end
