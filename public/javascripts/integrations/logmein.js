@@ -44,7 +44,7 @@ LogMeInWidget.prototype= {
 	getAuthcode: function(){
 		authcodeEndpoint = "API/requestAuthCodeSSO.aspx?ssoid=#{sso_id}&pwd={{password}}&company=#{company_id}";
 		this.freshdeskWidget.request({
-			resource: authcodeEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
+			rest_url: authcodeEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
 			on_failure: this.authcodeFailure.bind(this),
 			on_success: this.authcodeSuccess.bind(this)
 		});
@@ -54,7 +54,7 @@ LogMeInWidget.prototype= {
 	getTechConsole: function(){
 		techConsoleEndpoint = "SSO/GetLoginTicket.aspx?ssoid=#{sso_id}&Password={{password}}&CompanyID=#{company_id}";
 		this.freshdeskWidget.request({
-			resource: techConsoleEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
+			rest_url: techConsoleEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
 			on_failure: this.processFailure,
 			on_success: this.assignTechnicianTicket.bind(this)
 		});
@@ -68,7 +68,7 @@ LogMeInWidget.prototype= {
 		else{
 			pincodeEndpoint = "API/requestPINCode.aspx?cfield0=#{reqName}&tracking0=INTEGRATIONS_LOGMEIN:#{account}:#{ticket}:#{secret}&notechconsole=1&authcode=#{authcode}";
 			this.freshdeskWidget.request({
-				resource: pincodeEndpoint.interpolate({reqName: encodeURIComponent(logmeinBundle.reqName), account: logmeinBundle.accountId, ticket: logmeinBundle.ticketId, secret: logmeinBundle.secret, authcode: logmeinBundle.authcode}) ,
+				rest_url: pincodeEndpoint.interpolate({reqName: encodeURIComponent(logmeinBundle.reqName), account: logmeinBundle.accountId, ticket: logmeinBundle.ticketId, secret: logmeinBundle.secret, authcode: logmeinBundle.authcode}) ,
 				on_failure: this.processFailure,
 				on_success: this.processPincode.bind(this)
 			});	

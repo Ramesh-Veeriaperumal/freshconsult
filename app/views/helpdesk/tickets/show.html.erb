@@ -85,6 +85,12 @@
 					if(jQuery.browser.mozilla){
 						jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
 					}
+					jQuery('#'+formid+"-body").getEditor().on('blur',function(){
+					jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
+					jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
+
+				});
+
 				break; 
 				case 'cnt-fb-post': 
 					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
@@ -106,7 +112,7 @@
         	.addClass("loading");
 
       	jQuery("#canned_response_list")
-        	.load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
+        	.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
           		jQuery("#canned_response_container")
             		.removeClass("loading");
         	})
@@ -145,19 +151,20 @@
 		}
 
 		function getCannedResponse(ticket_id, ca_resp_id){
-  	  jQuery("#canned_response_container").addClass("loading")
-  		jQuery.ajax({	type: 'POST',
-  						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
+			jQuery("#canned_response_container").addClass("loading")
+  			jQuery.ajax({	type: 'POST',
+  						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
   						contentType: 'application/text',
   						async: false,
-  						success: function(data){		
+						success: function(data){		
   									insertIntoConversation(data,activeTinyMce);
+
   							    jQuery("#canned_response_list")
   							      .removeClass("loading")
   							      .hide(300);
   								}
   						});
-  		return true;
+		return true;
   	}
 
   	function showHideEmailContainer(){

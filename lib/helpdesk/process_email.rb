@@ -282,7 +282,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}, :email_config => email_config},portal)
       end
       user.make_current
       user

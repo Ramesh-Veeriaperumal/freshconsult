@@ -751,6 +751,14 @@ div#note-form-container ul li:first-child{
     color: #047;
 }
 
+.reply-multiple{
+     background: #fed;
+    padding: 10px;
+}
+
+.reply-multiple input[type=submit]{
+    color: #d30;
+}
 ul.note-actions {
     font-size: 0.8em;
     margin: 3px 0 0 0;

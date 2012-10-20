@@ -1,7 +1,7 @@
 require "open-uri"
 
 module HelpdeskControllerMethods
-  
+
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]   
@@ -10,7 +10,7 @@ module HelpdeskControllerMethods
   end
 
   def create
-    build_attachments
+    build_attachments @item, nscname
     if @item.save
       post_persist
     else
@@ -30,6 +30,9 @@ module HelpdeskControllerMethods
       format.js
       format.mobile {
         render :json => {:success => true,:item => @item}.to_json
+      }
+      format.json { 
+        render :json => @item.to_json
       }
     end
   end
@@ -190,13 +193,21 @@ protected
   def optionally_load_parent
     @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
   end
-  
-  def build_attachments
-    return unless @item.respond_to?(:attachments) 
-    (params[nscname][:attachments] || []).each do |a|
-      @item.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @item.account_id)
+
+  def build_attachments item, model_name
+    return unless item.respond_to?(:attachments) 
+    (params[model_name][:attachments] || []).each do |a|
+      item.attachments.build(:content => a[:resource], :description => a[:description], :account_id => item.account_id)
     end
-    
+  end
+
+  def validate_attachment_size 
+    fetch_item_attachments if @item.is_a? Helpdesk::Note and @item.fwd_email?
+    total_size = (params[:helpdesk_note][:attachments] || []).collect{|a| a[:resource].size}.sum
+    if total_size > Helpdesk::Note::Max_Attachment_Size    
+      flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
+      redirect_to :back  
+    end
   end
 
   def fetch_item_attachments
@@ -211,7 +222,7 @@ protected
           end
           a[:resource] = io
         end
-      rescue Exception => e
+        rescue Exception => e
         NewRelic::Agent.notice_error(e)
         Rails.logger.error("Error while fetching item attachments using ID")
       end

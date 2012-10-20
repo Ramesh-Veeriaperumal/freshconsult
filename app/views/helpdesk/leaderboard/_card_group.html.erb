@@ -1,0 +1,10 @@
+<div class="panel-row <%= cycle(' ', 'odd ') %>">
+	<%= content_tag :span, card_group_counter + 1, :class => "lb-number" if (card_type == :mvp) %> 
+	<div class="preview_pic" size_type="thumb">
+		<img alt="" src="/images/fillers/group_blank_thumb.gif">
+	</div>
+	<div class="panel-content">
+		<h4 class="name"><%= card_group.group.name %></h4>
+		<p class="help-text score"><%= card_group.tot_score %></p>
+	</div>
+</div>	

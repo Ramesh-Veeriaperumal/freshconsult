@@ -40,7 +40,7 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
   
   def self.customer_count
-   count(:conditions => {:state => ['active','free']})
+   count(:conditions => [ " state != 'trial' and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"])
  end
  
   def self.free_customers
@@ -54,9 +54,13 @@ class Subscription < ActiveRecord::Base
   def self.customers_free_agent_count
     sum(:free_agents, :conditions => { :state => ['active']})
   end
+
+  def self.paid_agent_count
+    sum('agent_limit - free_agents', :conditions => [ " state = 'active' and amount > 0.00 and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"]).to_i
+  end
  
   def self.monthly_revenue
-    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 "]).to_f
+    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"]).to_f
   end
 
   def set_discount_expiry

@@ -1,0 +1,15 @@
+/* Importing admin icons */
+@import "admin-icon/*.png";
+@import "application-logo/*.png";
+
+/* Google sync status icons */
+@import "sync-status/*.png";
+
+/*Report tab icons */
+@import "reports-icon/*.png";
+
+/*Ticket View icons */
+@import "ticket-view/*.png";
+
+/* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
+* These sprites are moved there so that they can be imported only if the feature is enabled */

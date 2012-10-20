@@ -311,6 +311,10 @@ module ApplicationHelper
       ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    # current_account.ticket_fields.custom_fields.each { |custom_field|
+    #   name = custom_field.name[0..custom_field.name.rindex('_')-1]
+    #   place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
+    # }
     place_holders
   end
   
@@ -465,7 +469,7 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
-        unless is_edit
+        unless is_edit or params[:format] == 'widget'
           element += add_requester_field 
           element = add_cc_field_tag element, field
         end
@@ -523,7 +527,8 @@ module ApplicationHelper
     _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
-      :initValues => _field_values
+      :initValues => _field_values,
+      :disable_children => false
     }.merge!(_opt)
 
     _field.nested_levels.each do |l|       

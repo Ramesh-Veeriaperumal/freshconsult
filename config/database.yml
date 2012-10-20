@@ -7,6 +7,13 @@ development:
   username: root
   password: 
 
+slave:
+  adapter: mysql
+  encoding: utf8
+  database: helpkit1
+  username: root
+  password:
+
 staging:
   adapter: mysql
   encoding: utf8
