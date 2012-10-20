@@ -17,6 +17,9 @@ on_utilities(utility_name) do
     run "bundle exec RAILS_ENV=#{sphinx_environment} rake thinking_sphinx:index"
     run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:start"
     #execute "monit reload"
+  else
+    #Just running the config to see everything is fine
+    run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:configure"
   end
 end
 
