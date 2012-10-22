@@ -118,6 +118,9 @@
         <%= hidden_field_tag :redirect_to %>
         <li class="inline-field field">
           <div class="attachment-options fields" id="attachment-options-reply">
+            <%if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
+              <div class="floatr fields survey_check"><%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %></div>
+            <%end%>
             <div class="reply-draft" id="reply-draft">
               <%= t("draft") %>
               <%= content_tag :div, t("saving_draft"), :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
@@ -125,10 +128,7 @@
             </div>
             <% unless local_assigns[:no_attachments] %>
             <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-            <% end %>
-            <%if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
-              <div class="floatr fields" style="top:-80px;"><%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %></div>
-            <%end%>
+            <% end %>            
           </div>            
         </li>
     </ul>
