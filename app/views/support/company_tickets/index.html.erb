@@ -39,7 +39,7 @@
 <% 
 filter_url = ['all','open_or_pending','resolved_or_closed'].include?(current_filter) ? "filter/#{current_filter}" : "requester/#{current_filter}"
 javascript_tag do %>
-  jQuery('.wf_order_type, .wf_order').live("click", function(ev){
+  jQuery('.wf_order_type, .wf_order').on("click", function(ev){
       ev.preventDefault();
       setCookie(this.className, this.getAttribute(this.className),'/support/');
       jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
