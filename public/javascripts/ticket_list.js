@@ -95,6 +95,7 @@ jQuery(document).ready(function() {
 	// 	}
 	// });
 
+		jQuery('.tickets tbody tr .check :checkbox').die();
     jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
         if (jQuery(this).prop('checked')) {
           jQuery(this).parent().parent().addClass('active');
@@ -108,6 +109,8 @@ jQuery(document).ready(function() {
 
 	bulkActionButtonsDisabled();
 	
+	//TODO. Need to remove this. Added because dynamic menus are dom manuplations instead of style.
+	jQuery('.action_assign').die();
 	// Quick Actions
 	jQuery('.action_assign').live("click", function(ev) {
 		ev.preventDefault();

@@ -104,10 +104,11 @@
       jQuery("#save_filter").show();
       jQuery("#delete_filter").hide();
     }
-    jQuery(".wf_order_type, .wf_order").live("click", function(ev){
+    jQuery(".wf_order_type, .wf_order").on("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
     });	
+    jQuery(".toolbar_pagination a, .toolbar_pagination_full a").die();
 		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
 			ev.preventDefault();
 			jQuery(document).scrollTop(0);
