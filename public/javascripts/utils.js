@@ -179,17 +179,13 @@ function reply_multiple_submit( url, method, params){
     item = $(item);
 
     if(item.name == 'ids[]' && !item.checked) return;
-    
-    if( item.value != "" ) 
-    {
-      var field = new Element('input', {
+
+    var field = new Element('input', {
                      type: 'hidden'
                    });
-
-      field.name = item.name;
-      field.value = item.value;
-      form.appendChild(field);
-    }
+    field.name = item.name;
+    field.value = item.value;
+    form.appendChild(field);
   });
   form.action = url;
   form.submit();
