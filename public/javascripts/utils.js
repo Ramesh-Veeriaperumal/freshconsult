@@ -180,15 +180,17 @@ function reply_multiple_submit( url, method, params){
 
     if(item.name == 'ids[]' && !item.checked) return;
     
-    var field = new Element('input', {
+    if( item.value != "" ) 
+    {
+      var field = new Element('input', {
                      type: 'hidden'
                    });
-    field.name = item.name;
-    field.value = item.value;
-    form.appendChild(field);
-    
-  });
 
+      field.name = item.name;
+      field.value = item.value;
+      form.appendChild(field);
+    }
+  });
   form.action = url;
   form.submit();
 }

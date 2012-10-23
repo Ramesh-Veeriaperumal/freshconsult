@@ -10,8 +10,8 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   before_filter :load_multiple_items, :validate_attachment_size, :only => :update_multiple
 
   def update_multiple
-    params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
-              params[nscname][:custom_field].nil?
+    # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
+    #           params[nscname][:custom_field].nil?
     reply_content = params[:helpdesk_note][:body_html]
     @items.each do |item|
       params[nscname].each do |key, value|
