@@ -23,7 +23,8 @@ module MailAutolink
         auto_link_section(mail.parts)
       # if no parts and content is html then auto_link
       elsif(mail.content_type == "text/html")
-        mail.body = auto_link(mail.body, :link => :urls)
+        autolinked_body = auto_link(mail.body, :link => :urls)
+        encode_body(mail, autolinked_body)
       end
       
       deliver_without_autolink!(mail)
@@ -33,9 +34,21 @@ module MailAutolink
       def auto_link_section(section)
         section.each do |sub_section|
           if(sub_section.content_type == "text/html" && sub_section.content_disposition != "attachment")
-            sub_section.body = auto_link(sub_section.body, :link => :urls)
+            autolinked_body = auto_link(sub_section.body, :link => :urls)
+            encode_body(sub_section, autolinked_body)
           end
           auto_link_section(sub_section.parts) unless sub_section.parts.blank?
+        end
+      end
+
+      def encode_body(part, autolinked_body)
+        case (part.transfer_encoding || "").downcase
+          when "base64" then
+            part.body = TMail::Base64.folding_encode(autolinked_body)
+          when "quoted-printable"
+            part.body = [normalize_new_lines(autolinked_body)].pack("M*")
+          else
+            part.body = autolinked_body
         end
       end
   end

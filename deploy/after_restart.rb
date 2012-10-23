@@ -15,7 +15,6 @@ on_utilities(utility_name) do
   run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:configure"
 
   if `ps aux | grep search[d]` == ""
-    #run "cd /data/helpkit/current && RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:configure"
     run "bundle exec RAILS_ENV=#{sphinx_environment} rake thinking_sphinx:index"
     run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:start"
     #execute "monit reload"
