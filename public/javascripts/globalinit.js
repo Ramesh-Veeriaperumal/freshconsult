@@ -148,6 +148,17 @@ var $J = jQuery.noConflict();
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
+      // - Tour My App 'Next' button change
+      $(".tourmyapp-toolbar .next_button").livequery(function(){ 
+        if($(this).text() == "Next »")
+           $(this).addClass('next_button_arrow').text('Next');
+      });
+
+      // - Tour My App 'slash' replaced by 'of'
+      $('.tourmyapp-step-index').livequery(function() { 
+        $(this).text($(this).text().replace('/',' of '));
+      });
+
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $("[rel=remote]").livequery(function(){
         $(this).bind("afterShow", function(ev){
@@ -288,6 +299,14 @@ var $J = jQuery.noConflict();
                 }
                 fd_active_drop_box = $(this);
             });
+            
+         $('[rel=guided-tour]').live('click',function(ev) {
+          ev.preventDefault();
+          try {
+            tour.run($(this).data('tour-id'),true);
+          } catch(e) { }
+        });
+
          
         $(".nav-drop li.menu-item a").bind("click", function(){
             hideMenuItem();

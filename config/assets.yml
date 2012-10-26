@@ -29,6 +29,7 @@ stylesheets:
     - public/stylesheets/app/gamification.css
     - public/stylesheets/app/lib/hacks.css
     - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/tourmyapp.css
 
   notifications:
     - public/stylesheets/app/lib/gritter.css

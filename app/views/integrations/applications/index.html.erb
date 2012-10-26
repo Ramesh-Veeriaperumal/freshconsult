@@ -1,5 +1,7 @@
 <%# javascript_include_tag  '/javascripts/frameworks/list.min.js' %>
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
 <%# link_to image_tag("symbols/add.png"), new_integrations_application_path, :class => "button custom-tip-bottom floatr", :title => t("application.add_addon") %>
 <h3 class="title"><%=t('application.title')%></h3>
 <div class="intro"><%=t('application.desc')%></div>
