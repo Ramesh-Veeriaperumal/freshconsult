@@ -2,7 +2,7 @@ class RakeTasks::Sla
   include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 
   def run
-  	NewRelic::Agent.manual_start :app_name => 'pussy_cat'
+  	NewRelic::Agent.manual_start 
     perform_action_with_newrelic_trace(:name => "RakeTasks::Sla", :category => "OtherTransaction/Rake") do
     	accounts = Account.active_accounts
       	accounts.each do |account|     
