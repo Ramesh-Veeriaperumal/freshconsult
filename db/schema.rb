@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121016091809) do
+ActiveRecord::Schema.define(:version => 20121020050335) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -863,7 +863,7 @@ ActiveRecord::Schema.define(:version => 20121016091809) do
     t.integer  "account_id",             :limit => 8
     t.datetime "status_updated_at"
     t.datetime "sla_timer_stopped_at"
-    t.integer  "outbound_count"
+    t.integer  "outbound_count",                      :default => 0
     t.float    "avg_response_time"
   end
 
@@ -1429,11 +1429,14 @@ ActiveRecord::Schema.define(:version => 20121016091809) do
     t.string   "address"
     t.datetime "deleted_at"
     t.boolean  "whitelisted",                      :default => false
+    t.string   "external_id"
+    t.string   "string_uc01"
+    t.text     "text_uc01"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>"20"}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
-  add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"

@@ -19,8 +19,8 @@ class Solution::CategoriesController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }
-      format.json  { render :json => @@categories.to_json(:except => [:account_id,:import_id],
-                                                          :include => fetch_folder_scope) }
+      format.json  { render :json => @categories.to_json(:except => [:account_id,:import_id],
+                                                         :include => fetch_folder_scope) }
     end
   end
 
