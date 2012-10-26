@@ -21,6 +21,8 @@ en:
     source: "Source"
     priority: "Priority"
     due_by: "Due By"
+    customers: "Customers"
+    tags: "Tags"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
