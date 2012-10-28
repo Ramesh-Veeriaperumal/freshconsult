@@ -46,7 +46,11 @@ ActiveRecord::Base.class_eval do
       elsif body.blank? && body_html.blank?
         self.body = self.body_html = "Not given."
       end
+      
       self.body_html = auto_link(Nokogiri::HTML(self.body_html).at_css("body").inner_html, :link => :urls)
+      text = Nokogiri::HTML(self.body_html)
+      text.xpath("//p").each { |div|  div.name= "div";}
+      self.body_html = text.inner_html
     end
     
     def update_content # To do :: need to use changed_body_html?

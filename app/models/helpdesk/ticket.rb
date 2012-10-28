@@ -38,7 +38,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
   
-  after_create :refresh_display_id #,:stop_sphinx_delta_for_create
+  after_create :refresh_display_id
 
   before_update :assign_email_config, :load_ticket_status, :update_dueby
   
@@ -255,7 +255,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
 
-    #set_property :delta => Sphinx::TicketDelta
+    set_property :delta => Sphinx::TicketDelta
 
     set_property :field_weights => {
       :display_id   => 10,
@@ -933,10 +933,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   private
 
-    def stop_sphinx_delta_for_create
-      ThinkingSphinx.updates_enabled = false
-    end
-
+    
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
     end
