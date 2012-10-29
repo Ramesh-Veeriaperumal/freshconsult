@@ -69,7 +69,7 @@
 				    <%= link_to image_tag("symbols/delete-inactive.png"), application, :confirm => 'Are you sure?', :method => :delete, :class => "button custom-tip-bottom", :title => t('delete') %>
 	    			<%= link_to image_tag("symbols/setting.png"), edit_integrations_application_path(application), :class => "button custom-tip-bottom", :title => t("application.configure_custom_addon") %>		
 					  <%if i_app_index.nil?%>
-				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", install_integrations_installed_application_path(application), :method=>:put, :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 				  	<%else%>
 	  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 	  	    	<%end%>
