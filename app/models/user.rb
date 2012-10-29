@@ -184,12 +184,14 @@ class User < ActiveRecord::Base
     self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
-    signup(portal)
+    return false unless save_without_session_maintenance
+    deliver_activation_instructions!(portal,false, params[:email_config]) if (!deleted and !email.blank?)
+    true
   end
 
   def signup(portal=nil)
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
+    deliver_activation_instructions!(portal,false) if (!deleted and !email.blank?)
     true
   end
 

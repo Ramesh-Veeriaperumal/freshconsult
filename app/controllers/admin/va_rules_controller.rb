@@ -81,6 +81,9 @@ class Admin::VaRulesController < Admin::AutomationsController
           :operatortype => "text" },
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
           :operatortype => "text"}]
+
+      filter_hash.insert(11, { :name => "product_id", :value => t('admin.products.product_label_msg'),:domtype => 'dropdown', 
+        :choices => @products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
                                                    
       filter_hash = filter_hash + additional_filters
       add_custom_filters filter_hash
@@ -90,7 +93,13 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
     
     def additional_actions
-      {}
+      if current_account.features?(:multi_product)
+      { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
+          :domtype => 'dropdown', :choices => @products },
+        16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
+      else
+        {16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
+      end
     end
     
     def additional_filters

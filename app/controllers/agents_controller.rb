@@ -104,7 +104,7 @@ class AgentsController < ApplicationController
   end
   
   def create_multiple_items
-    @agent_emails = params[:agents_invite_email].split(/,/)
+    @agent_emails = params[:agents_invite_email]
 
     @responseObj = {}
     if current_account.can_add_agents?(@agent_emails.length)

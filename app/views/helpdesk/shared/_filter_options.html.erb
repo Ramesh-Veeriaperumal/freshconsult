@@ -5,6 +5,7 @@
 </div>
   
   <%= will_filter_scripts_tag %>
+  <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h3 class="title"><%= t("tickets_filter.title") %></h3>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />
@@ -28,7 +29,7 @@
                                 :condition   => c_hash[:condition],
                                 :operator    => c_hash[:operator],
                                 :container   => container } do %>
-            <h4 class="title"><%= c_hash[:name] %></h4>
+            <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}") : c_hash[:name] %></h4>
             <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end 
@@ -94,7 +95,7 @@
 
 
     getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON())
+    <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());' unless special_case_views.include?(@current_view) %>
 
     jQuery(".filter_item").bind("change", function(){
       refresh_tickets();

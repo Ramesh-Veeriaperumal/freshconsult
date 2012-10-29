@@ -88,7 +88,7 @@
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
-    admin.resources :getting_started, :only => :index
+    admin.resources :getting_started, :collection => {:rebrand => :put}
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }

@@ -2,9 +2,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   include Integrations::AppsUtil
 
+  before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object 
   before_filter :check_jira_authenticity, :only => [:install, :update]
-  before_filter :strip_slash, :only => [:install, :update]
   
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
@@ -125,7 +125,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     end
 
     def strip_slash
-      params[:configs][:domain] = params[:configs][:domain][0..-2] if !(params[:configs].blank?) and !(params[:configs][:domain].blank?) and params[:configs][:domain].ends_with?('/')
+      params[:configs][:domain] = params[:configs][:domain][0..-2] if !params[:configs].blank? and !params[:configs][:domain].blank? and params[:configs][:domain].ends_with?('/')
     end
 
 end

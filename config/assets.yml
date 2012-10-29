@@ -7,86 +7,75 @@ allow_debugging:        on
 
 stylesheets:
   print:
-    - public/stylesheets/print.css
+    - public/stylesheets/print/print.css
 
   common:
-    - public/stylesheets/reset.css
-    - public/stylesheets/layout.css
-    - public/stylesheets/defaults.css
-    - public/stylesheets/validation.css
-    - public/stylesheets/table.css
-    - public/stylesheets/autocomplete.css
-    - public/stylesheets/jquery-ui.css
-    - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/app/lib/defaults.css
+    - public/stylesheets/app/lib/layout.css
+    - public/stylesheets/app/lib/validation.css
+    - public/stylesheets/app/lib/table.css
+    - public/stylesheets/app/lib/autocomplete.css
+    - public/stylesheets/app/lib/jquery-ui.css
+    - public/stylesheets/app/lib/qtip.css
 
   app:
-    - public/stylesheets/application.css
-    - public/stylesheets/test.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css
-    - public/stylesheets/hacks.css
-    - public/stylesheets/ie.css
-    - public/stylesheets/satisfaction.css
-    - public/stylesheets/jquery.gritter.css
+    - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/admin.css
+    - public/stylesheets/app/app-bootstrap.css
+    - public/stylesheets/app/lib/form.css
+    - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/satisfaction.css
+    - public/stylesheets/app/gamification.css
+    - public/stylesheets/app/lib/hacks.css
+    - public/stylesheets/app/lib/ie.css
 
   notifications:
-    - public/stylesheets/jquery.gritter.css
+    - public/stylesheets/app/lib/gritter.css
 
   widget:
-    - public/stylesheets/reset.css   
-    - public/stylesheets/defaults.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/ie.css 
+    - public/stylesheets/app/lib/defaults.css
+    - public/stylesheets/app/lib/form.css
+    - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/ie.css 
 
   freshwidget:
     - public/stylesheets/freshwidget.css
 
   gadget:
-    - public/stylesheets/reset.css
-    - public/stylesheets/layout.css
-    - public/stylesheets/defaults.css
-    - public/stylesheets/application.css
-    - public/stylesheets/test.css
-    - public/stylesheets/validation.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css    
-    - public/stylesheets/autocomplete.css
-    - public/stylesheets/jquery-ui.css
-    - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/ie.css
-    - public/stylesheets/gadget.css
+    - public/stylesheets/app/lib/defaults.css
+    - public/stylesheets/app/lib/layout.css    
+    - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/app-bootstrap.css
+    - public/stylesheets/app/lib/validation.css
+    - public/stylesheets/app/lib/form.css
+    - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/lib/autocomplete.css
+    - public/stylesheets/app/lib/jquery-ui.css
+    - public/stylesheets/app/lib/qtip.css
+    - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/gadget.css
 
   subscription:
-    - public/stylesheets/bootstrap.css
-    - public/stylesheets/bootstrap-responsive.css
-    - public/stylesheets/subscription.css
+    - public/stylesheets/subscription/bootstrap.css
+    - public/stylesheets/subscription/bootstrap-responsive.css
+    - public/stylesheets/subscription/subscription.css
 
-  satisfaction:
-    - public/stylesheets/reports.css
+  reports:
+    - public/stylesheets/app/reports.css
+
+  report_print:
+    - public/stylesheets/print/report-print.css  
 
   redactor:
-    - public/stylesheets/redactor.css 
-  freshdesk:
-    - public/stylesheets/reset.css
-    - public/stylesheets/layout.css
-    - public/stylesheets/defaults.css
-    - public/stylesheets/validation.css
-    - public/stylesheets/table.css
-    - public/stylesheets/autocomplete.css
-    - public/stylesheets/jquery-ui.css
-    - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/application.css
-    - public/stylesheets/test.css
-    - public/stylesheets/form.css
-    - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css
-    - public/stylesheets/hacks.css
-    - public/stylesheets/ie.css
-    - public/stylesheets/satisfaction.css
-    - public/stylesheets/jquery.gritter.css
+    - public/stylesheets/redactor.css
+
+  getting_started:
+    - public/stylesheets/gs/screen.css
+    - public/stylesheets/app/lib/autocomplete.css
+    - public/stylesheets/gs/ie.css
+    - public/stylesheets/gs/print.css
 
 javascripts:
   defaults:
@@ -145,9 +134,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/feedback_widget_form.js
   custom_widget:
-    - public/javascripts/custom_widget.js
-  getting_started:
-    - public/javascripts/getting_started.js
+    - public/javascripts/custom_widget.js  
   subscription:                    
     - public/javascripts/prototype.js  
     - public/javascripts/jquery-1.7.1.min.js
@@ -211,3 +198,21 @@ javascripts:
     - public/javascripts/requestAnimFrame.js
     - public/javascripts/notifications.js
     - public/javascripts/application.js
+  gs_defaults: 
+    - public/javascripts/prototype.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/effects.js
+    - public/javascripts/controls.js
+    - public/javascripts/utils.js
+  gs_frameworks:
+    - public/javascripts/fast_autocompleter.js
+    - public/javascripts/hackz.js
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js      
+    - public/javascripts/utils.js
+  getting_started:        
+    - public/javascripts/mColorPicker.min.js
+    - public/javascripts/getting_started.js

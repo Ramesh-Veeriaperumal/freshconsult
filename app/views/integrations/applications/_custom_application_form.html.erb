@@ -38,7 +38,7 @@
             <%= text_area_tag "application[script]", widget.script%>
           </li>
           <li class="field custom_app_preview">
-
+            <a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('integrations.custom_application.form.insert_placeholder') %> &raquo;</a>
             <div class="custom_app_preview_link">
               <%=link_to "Show Preview", "#", :class => "toggle_preview", 
                     "data-toggled-text" => "Hide Preview", "data-toggled-class" => "active", 
@@ -63,6 +63,9 @@
     </li>
   </ul>
 <%#<div id="capsule_widget" domain="freshdeskdemo.capsulecrm.com" title="Custom CRM App"><div class="content"></div></div><script type="text/javascript">CustomWidget.include_js("/javascripts/capsule_crm.js");capsuleBundle={ t:"b43cff831b56cec58fa8cd95c21b47f5", reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; </script>%>
+<% content_for :pagefixed do %>
+  <%= render :partial => "/shared/placeholder_help" %>
+<% end %>
 <% javascript_tag do %>
   jQuery('.preview_link').bind("click", function(ev){
       ev.preventDefault();
@@ -70,7 +73,7 @@
       preview_box.html("<div class='loading-box'>Generating Preview</div>"); 
       params = {"application_script": jQuery("#application_script").val()};
       jQuery.ajax({
-        url: "/integrations/applications/custom_widget_preview/"+this.getAttribute("preview_page"),
+        url: "/integrations/applications/custom_widget_preview/",
         type: "POST",
         data: params,
         dataType: "script",
@@ -93,4 +96,11 @@
       jQuery('.preview_link').trigger('click');
     }
   }); 
+
+  jQuery('.l_placeholder').bind("click", function(ev){
+      ev.preventDefault();
+      jQuery('#place-dialog').slideDown();  
+      jQuery('#application_script').focus();
+  });
+
 <%end%>
