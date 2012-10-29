@@ -186,7 +186,14 @@
 <% end %>
 
 <% content_for :onload_script do -%> 	
-	jQuery('#custom_ticket_form').validate();
+	validateOptions = {
+		onkeyup: false,
+		focusCleanup: true,
+		focusInvalid: false,
+		ignore:":not(:visible)"
+    };
+	jQuery('#custom_ticket_form').validate(validateOptions);
+	
 	<% unless @draft.nil? %>
 	jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
 	var isDirty= false;

@@ -1,4 +1,4 @@
-en: 
+en:
   enabled: "Enabled"
   disabled: "Disabled"
   tip_on: "Click to Enable"
@@ -13,6 +13,16 @@ en:
   date_title: "Date"
   status: "Status"
   preview: "Preview"
+  filter_options:
+    status: "Status"
+    responder_id: "Agents"
+    ticket_type: "Type"
+    group_id: "Groups"
+    source: "Source"
+    priority: "Priority"
+    due_by: "Due By"
+    customers: "Customers"
+    tags: "Tags"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
