@@ -13,15 +13,13 @@
 	<div id="ticket-toolbar" class="toolbar">
 	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" , :inline => true %>
 	</div>
-
-	<div id="recent_ticket_count" class='more-tweets'>
-	  1 new update
-	</div>
-
-	<% form_tag "", { :id => "tickets-expanded",  :method => :put } do %>
+	<form action id="tickets-expanded" method="post">
+		<div style="margin:0;padding:0;display:inline">
+			<input name="_method" type="hidden" value="put">
+		</div>
 	  <div id="ticket-list" class="detailed_view">
-	    <%= render :partial => "/helpdesk/shared/tickets" %>
+	    <%= render :partial => "/helpdesk/shared/tickets" , :inline => true %>
 	  </div>    
-	<% end %>
+	</form>
 </div></div>
 <%= render :partial => "/helpdesk/shared/ticket_dynamic_menus" , :inline => true %>

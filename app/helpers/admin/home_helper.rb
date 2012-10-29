@@ -3,7 +3,7 @@ module Admin::HomeHelper
   def admin_link(list_array)
     link_item = list_array.map do |pref|
                   next if !pref[2].nil? && !pref[2]
-                    link_content = image_tag( "/images/spacer.gif", :class => "admin-icon-#{ pref[1] }" ) +
+                    link_content = image_tag( "/images/spacer.gif", :class => "admin-icon-#{ pref[1] }" , :width => "32px", :height => "32px") +
                                    content_tag( :div, t(".#{pref[1]}") )
                     content_tag( :li, link_to( link_content, pref[0] ) )
                 end

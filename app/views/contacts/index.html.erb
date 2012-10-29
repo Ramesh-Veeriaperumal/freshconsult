@@ -38,7 +38,7 @@
 				<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") if contact != current_user and !contact.deleted? %>
 		  	</div>
 		  	<%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
-		  	<%= user_avatar( contact ) %>
+		  	<%= user_avatar( contact, :thumb, "preview_pic", {:width => "36px", :height => "36px" }) %>
 		  	<div class="item_information">
 	        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
 				<div class="info_data">

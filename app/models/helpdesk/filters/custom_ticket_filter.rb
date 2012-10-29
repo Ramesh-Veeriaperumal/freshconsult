@@ -266,10 +266,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       recs = model_class.paginate(:select => "#{select}",
                                   :include => [:ticket_states, :ticket_status, :responder, {:requester => :avatar}],
                                   :order => order_clause, :page => page, 
-                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
+                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
+                                  :total_entries => count_without_query)
       recs.wf_filter = self
       recs
     end
+  end
+
+  def count_without_query
+    # ActiveRecord::Base.connection.select_values('SELECT FOUND_ROWS() AS "TOTAL_ROWS"').pop
+    per_page.to_f*page.to_f+1
   end
   
   def get_joins(all_conditions)

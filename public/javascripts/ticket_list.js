@@ -107,7 +107,7 @@ jQuery(document).ready(function() {
         bulkActionButtonsDisabled();
     });
 
-	bulkActionButtonsDisabled();
+	//bulkActionButtonsDisabled();
 	
 	//TODO. Need to remove this. Added because dynamic menus are dom manuplations instead of style.
 	jQuery('.action_assign').die();
@@ -172,6 +172,9 @@ jQuery(document).ready(function() {
 	jQuery('#leftViewMenu a').click(function(ev) {
 		filter_opts_sisyphus.manuallyReleaseData();
 	});
+	
+	jQuery('.timeago').humaneDates();
+	setInterval(function(){ jQuery('.timeago').humaneDates(); }, 60000);
 });
 
 if (getCookie('ticket_list_updated') == "true") {
