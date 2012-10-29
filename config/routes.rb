@@ -283,6 +283,8 @@
     helpdesk.resources :sla_policies 
 
     helpdesk.resources :notifications, :only => :index
+
+    helpdesk.resources :commons 
     
   end
   
