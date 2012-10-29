@@ -33,7 +33,7 @@
 </section>
 <section class="sidebar">
 	<div class="content rounded-6 min-height-on-desktop">
-		<a href="#" class="post-question">Post a public question</a>
+		<a href="{{ portal.new_topic_path }}" class="post-question">Post a public question</a>
 		<h2>Community</h2>
 		<p class="intro">Showing recent updates</p>
 		<div class="cs-g-c">

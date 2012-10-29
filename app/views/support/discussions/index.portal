@@ -13,7 +13,7 @@
 							<a href="{{forum.url}}">{{forum.name}} ({{ forum.topics | size }})</a>
 						</div>
 						<ul>
-							{% for topic in forum.topics %}
+							{% for topic in forum.topics limit:5 %}
 							<li>
 								<div class="ellipsis">
 									<a href="{{topic.url}}">{{topic.title}}</a>
@@ -29,7 +29,7 @@
 							{% endfor %}
 						</ul>
 						{% if forum.topics.size > 5 %}
-							<a href="#" class="see-more">See all {{ forum.topics | size }} topics</a>
+							<a href="{{forum.url}}" class="see-more">See all {{ forum.topics | size }} topics</a>
 						{% endif %}
 					</section>
 				{% endfor %}

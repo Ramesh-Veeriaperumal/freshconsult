@@ -44,12 +44,6 @@
     .cs-g-3:nth-child(3n+3){ @include span-columns(1 omega); }
   }
 
-  .post-actions{ 
-    text-align: right; 
-    float: right; 
-    margin: 5px 0 0 10px;
-  }
-
   // Generic Grid classes
   .row-fluid{ @include pie-clearfix; }
   .span1{ @include span-columns(1); }

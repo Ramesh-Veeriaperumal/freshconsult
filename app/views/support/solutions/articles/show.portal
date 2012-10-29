@@ -28,29 +28,22 @@
 
 	<hr />
 	
-	{% comment %}
-	<li>  
-	  <div class="preview_img">
-	  	<% if attachment.image? %>
-	  		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
-		<% else %>
-			<% 
-				extname = attachment.content_file_name.split('.')[-1] 
-				extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
-			%>
-				
-			<%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
-		<% end %>
-	  </div>	
-	  <div class="name">
-	    <%= link_to truncate(attachment.content_file_name, 23), attachment, :popup => true %>
-	  </div>
-	{% endcomment %}
+	<div class="cs-g-c attachments" id="article-attachments">
+		{% for attachment in article.attachments %}
+			<div class="cs-g-3 attachment">
+				<img src="{{ attachment.thumbnail }}" class="file-thumbnail {% if attachment.image? %} file-image {% endif %} " />
+				<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">{{ attachment.filename }}</a>
+				<p class="help-text file-size">({{ attachment.size }})</p>
+			</div>
+		{% endfor %}
+	</div>
+
+	<hr />
 	
 	<p class="article-vote" id="voting-container">
 		Was this answer helpful?		
 		<a href="{{ article.thumbs_up_url }}" class="vote-up" data-remote data-method="put" data-update="voting-container" 
-			data-updated-with-message="Glad we could be helpful. Thanks for the feedback.">
+			data-update-with-message="Glad we could be helpful. Thanks for the feedback.">
 			YES
 		</a>
 		<a href="{{ article.thumbs_down_url }}" class="vote-down" data-remote data-method="put" 

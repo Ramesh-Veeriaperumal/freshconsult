@@ -1,0 +1,58 @@
+{{ 'due_in' | translate: "10 days" }}
+
+{% case topic.votes %}
+	{% when 1 %}
+		{% if topic.voted_by_current_user? %}
+			{% assign votePrefixText = 'You' %}
+		{% else %}
+			{% capture votePrefixText %} {{ topic.votes }} person {% endcapture %}
+		{% endif %}
+	{% when 2 %}
+		{% if topic.voted_by_current_user? %}
+			{% assign votePrefixText = 'You and 1 more' %}
+		{% else %}
+			{% assign votePrefixText = '2 people' }} %}						
+		{% endif %}
+	{% when 3 %}
+		{% if topic.voted_by_current_user? %}
+			{% capture votePrefixText %} You and {{topic.votes}} more {% endcapture %}
+		{% endif %}				
+{% endcase %}
+
+
+{% case topic.forum.type %}
+	{% when 1 %}
+		{% assign topicVoteSingular = 'has this question' %}
+		{% assign topicVotePlural = 'have this question' %}
+	{% when 2 %}
+		{% assign topicVoteSingular = 'has this problem' %}
+		{% assign topicVotePlural = 'have this problem' %}
+	{% when 3 %}
+		{% assign topicVoteSingular = 'likes this idea' %}
+		{% assign topicVotePlural = 'like this idea' %}
+{% endcase %}
+
+{% if topic.votes == 1 and topic.voted_by_current_user? == false %}
+	{% capture votetext %} {{ votePrefixText }} {{ topicVoteSingular }} {% endcapture %}
+{% else %}
+	{% capture votetext %} {{ votePrefixText }} {{ topicVotePlural }} {% endcapture %}
+{% endif %}
+
+<div id="vote-toolbar">
+{% if topic.votes > 0 %}
+	<span class="topic-likes">
+		{{ votetext }}
+		<i class="arrow"></i>
+	</span>
+{% endif %}
+
+{% if topic.voted_by_current_user? == false %}
+	<a href="{{ topic.like_url }}" data-remote data-method="put" data-update="vote-toolbar" class="btn btn-primary">
+		I have this question
+	</a>
+{% else %}
+	<a href="{{ topic.unlike_url }}" data-remote data-method="put" data-update="vote-toolbar" class="btn btn-primary">
+		Unlike
+	</a>
+{% endif %}
+</div>

@@ -52,8 +52,9 @@ class TopicsController < ApplicationController
         (session[:topics] ||= {})[@topic.id] = Time.now.utc if logged_in?
         # authors of topics don't get counted towards total hits
         @topic.hit! unless logged_in? and @topic.user == current_user
+        
         @posts = @topic.posts.paginate :page => params[:page]
-        @post   = Post.new
+        @post  = Post.new
       end
       format.xml do
         render :xml => @topic.to_xml(:include => :posts)

@@ -1,21 +1,32 @@
-<%= include_tiny_mce_if_needed %>
-<div id="reply" class="editbox" style="display:none;">
-	<div class="request_panel">
-	  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
-	  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page), :html => {:multipart => true} do |f| -%>
-		<h4 class="title"><%=t('topic.reply')%></h4>
-	  <ul class="note_form ui-form">
-	  	<li>
-        <%= f.text_area :body_html, :class => "mceEditor", :id => 'topic_body' %>
-	    </li>
-		<li>
-			<%= render :partial=> "/forum_shared/attachment_form" %>
-		</li>
-		<li class="alignright">
-	    <%= submit_tag t('save_reply'), :class => "uiButton", id => "post-submit-button"  %> 
-		  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "uiButton" %>
-		</li>
-	  </ul>
-	  <% end -%>
+<%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
+<% form_for @topic.posts.new, :url => support_discussions_topic_posts_path(@topic), 
+	:html => { :multipart => true, :rel => "validate" } do |f| -%>		
+	<div class="row-fluid">
+		<p class="span10">
+			<%= f.rich_editor :body_html, :height => 150 %>
+		</p>
 	</div>
-</div>
+	<div class="control-group">
+		<label class="control-label">Attach files</label>	
+		<% attach_id = attach_id || "post" %>
+		<div class="controls">
+			<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+			<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+			  <div id="<%=attach_id%>-attachments"></div>
+			</div>
+		</div>	
+					
+		<script id="file-list-template" type="text/x-jquery-tmpl">			
+		  <div class="item">
+		  	<span>
+		  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
+			</span>
+		  </div>
+		</script>
+	</div>
+	<br />
+	<p>
+		<%= submit_tag "Post comment", :class => "btn btn-primary btn-small", :id => "post-submit-button"  %> 
+		<%= link_to_function t('cancel'), "$('#new-post-form').hide(); $('#reply-form-proxy').show();", :class => "btn btn-small " %>
+	</p>
+<% end -%>

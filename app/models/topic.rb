@@ -7,6 +7,9 @@ class Topic < ActiveRecord::Base
   belongs_to :forum
   belongs_to :user
   belongs_to :last_post, :class_name => "Post", :foreign_key => 'last_post_id'
+
+  before_create :set_locked
+
   has_many :monitorships,:dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
@@ -111,6 +114,10 @@ class Topic < ActiveRecord::Base
   def views() hits end
 
   def paged?() posts_count > Post.per_page end
+
+  def set_locked
+    self.locked = false if self.locked.nil?
+  end
   
   def last_page
     [(posts_count.to_f / Post.per_page).ceil.to_i, 1].max

@@ -25,7 +25,8 @@ class UploadedImagesController < ApplicationController
   
     respond_to do |format|
       if @image.save
-        format.html
+        format.html { render :json => { :filelink => @image.content.url } }
+        format.json { render :json => { :filelink => @image.content.url } }
         format.xml  
          format.js do
            responds_to_parent do

@@ -1228,6 +1228,7 @@ en:
   ticket_resolved_at_time: Resolved at
   ticket_closed_at_time: Closed at
   next: Next
+  previous: Previous
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported
@@ -1308,6 +1309,34 @@ en:
   portal: 
     search: 
       placeholder: Search using a keyword or a full question
+    topic:
+      comments_closed: "Comments to this discussion are now closed!"
+      start_new_topic: "Start a new topic"
+    topic_vote:
+      you: 
+        one: "You"
+        other: "You and"
+      more: 
+        one: "1 other"
+        other: "%{count} others"
+      people:
+        one: "1 person"
+        other: "%{count} people"
+      ideas:
+        one: "likes this idea"
+        other: "like this idea"
+      problem:
+        one: "has this problem"
+        other: "have this problem"
+      howto:
+        one: "has this question"
+        other: "have this question"
+      ideas_button: "I like this idea"
+      problem_button: "I have this problem"
+      howto_button: "I have this question"
+      ideas_unlike_button: "Unlike"
+      problem_unlike_button: "I don't have this problem"
+      howto_unlike_button: "I don't have this question"
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}

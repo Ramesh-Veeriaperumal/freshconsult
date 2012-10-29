@@ -15,6 +15,7 @@ class ForumCategory < ActiveRecord::Base
   has_many :forums, :dependent => :destroy, :order => "position"
   has_many :customer_forums , :class_name => "CustomerForum", :through => :forums 
   has_many :portal_forums, :class_name => 'Forum', :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} , :order => "position" 
+  has_many :customer_editable_forums,  :class_name => "Forum", :conditions => ['forum_visibility = ? AND forum_type != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone], Forum::TYPE_KEYS_BY_TOKEN[:announce]], :order => "position" 
   has_many :user_forums, :class_name => 'Forum',:conditions => ['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] , :order => "position"
   has_many :portal_topics, :through => :portal_forums
   has_many :user_topics, :through => :user_forums

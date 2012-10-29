@@ -1,5 +1,4 @@
 <section class="main content rounded-6">
-	<h2>New topic</h2>
-	<hr />
+	<legend>Post a new topic</legend>
 	{{ topic_form }}
 </section>

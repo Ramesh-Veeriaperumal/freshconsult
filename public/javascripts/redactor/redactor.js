@@ -221,7 +221,7 @@ var Redactor = function(element, options)
 			'</div>' +
 			'<form id="redactorInsertImageForm" method="post" action="" enctype="multipart/form-data">' +
 				'<div id="redactor_tab1" class="redactor_tab">' +
-					'<input type="file" id="redactor_file" name="file" />' +
+					'<input type="file" id="redactor_file" name="image[uploaded_data]" />' +
 				'</div>' +
 				'<div id="redactor_tab2" class="redactor_tab" style="display: none;">' +
 					'<div id="redactor_image_box"></div>' +

@@ -24,6 +24,7 @@
 
 // Components: Misc
 @import "lib/breadcrumbs";
+@import "lib/pagination";
 @import "lib/labels";
 
 // Profile image styles
@@ -34,3 +35,6 @@
 @import "lib/page-lead";
 @import "lib/content";
 @import "lib/login";
+
+// Debug styles
+@import "lib/debug";

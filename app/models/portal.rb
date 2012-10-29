@@ -91,6 +91,10 @@ class Portal < ActiveRecord::Base
     new_support_ticket_path(:host => portal_url)
   end
 
+  def new_topic_path
+    new_support_discussions_topic_path(:host => portal_url)
+  end
+
   def host
     portal_url.blank? ? account.full_domain : portal_url
   end

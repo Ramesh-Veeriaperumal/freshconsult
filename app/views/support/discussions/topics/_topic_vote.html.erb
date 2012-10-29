@@ -1,0 +1,39 @@
+<% unless @forum.forum_type == 4 %>
+<span id="vote-toolbar">
+	<% 
+		t_likes = @topic.user_votes 
+		if(@topic.voted_by_user? current_user)
+			t_prefix = t("portal.topic_vote.you", :count => t_likes) + " "
+			t_middle = t("portal.topic_vote.more", :count => t_likes-1) unless t_likes == 1
+			t_suffix = t("portal.topic_vote.#{@forum.type_symbol}", :count => t_likes+1)
+		else
+			t_middle = t("portal.topic_vote.people", :count => t_likes)
+			t_suffix = t("portal.topic_vote.#{@forum.type_symbol}", :count => t_likes)
+		end
+	%>
+	<% if(t_likes > 0) %>
+		<span class="topic-likes">
+			<%= t_prefix %> 
+				<a href=""><%= t_middle %></a> 
+			<%= t_suffix %>
+			<i class="arrow"></i>
+		</span>
+	<% end %>
+		
+	<% unless(@topic.voted_by_user? current_user) %>
+		<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_button"),
+				like_support_discussions_topic_path(@topic), 
+				"data-remote" => true,
+				"data-method" => :put,
+				"data-update" => "vote-toolbar",
+				:class => "btn btn-small" %>
+	<% else %>
+		<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_unlike_button"),
+				unlike_support_discussions_topic_path(@topic),
+				"data-remote" => true,
+				"data-method" => :put,
+				"data-update" => "vote-toolbar",
+				:class => "btn btn-small" %>
+	<% end %>
+</span>
+<% end %>

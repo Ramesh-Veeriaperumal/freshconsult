@@ -328,10 +328,10 @@
 
     support.resources :discussions, :only => [:index, :show]
     support.namespace :discussions do |discussion|
-      discussion.resources :forums, :only => [:show] do |forum|
-        forum.resources :topics, :only => [:new, :create]
-      end 
-      discussion.resources :topics, :except => [:index, :new, :create]
+      discussion.resources :forums, :only => [:show]
+      discussion.resources :topics, :except => [:index], :member => { :like => :put, :unlike => :put, :toggle_monitor => :put } do |topic|
+        topic.resources :posts, :only => [:create, :edit, :update, :toggle_monitor], :member => { :toggle_answer => :put }
+      end
     end
 
     support.resources :solutions, :only => [:index, :show]

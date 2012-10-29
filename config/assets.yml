@@ -136,14 +136,21 @@ javascripts:
     - public/javascripts/feedback_widget_form.js
   custom_widget:
     - public/javascripts/custom_widget.js
-  portal:
+
+  head_scripts:
     - public/javascripts/jquery-1.7.2.js
+    - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
+
+  portal:
     - public/javascripts/utils.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/helpdesk/multifile.js
     - public/javascripts/bootstrap.js
     - public/javascripts/portal.js
+
   getting_started:
     - public/javascripts/getting_started.js
   subscription:                    

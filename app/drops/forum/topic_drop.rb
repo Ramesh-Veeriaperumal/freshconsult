@@ -8,6 +8,10 @@ class Forum::TopicDrop < BaseDrop
     super source
   end
 
+  def render_topic
+    default_context.inspect
+  end
+
   def stamp_name
   	source.stamp_name
   end
@@ -18,6 +22,10 @@ class Forum::TopicDrop < BaseDrop
 
   def user
   	source.user
+  end
+
+  def votes
+    source.user_votes
   end
 
   def created_on
@@ -47,5 +55,32 @@ class Forum::TopicDrop < BaseDrop
   def id
     source.id
   end
-  
+
+  def forum
+    source.forum
+  end
+
+  def voted_by_current_user?
+    source.voted_by_user? User.current
+  end
+
+  def like_url
+    like_support_discussions_topic_path(source)
+  end
+
+  def unlike_url
+    unlike_support_discussions_topic_path(source)
+  end
+
+  def toggle_follow_url
+    toggle_monitor_support_discussions_topic_path(source)
+  end
+
+  def attachments
+    source.posts.first.attachments
+  end
+    
+  def locked?
+    source.locked?
+  end
 end

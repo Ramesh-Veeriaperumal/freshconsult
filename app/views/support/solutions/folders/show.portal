@@ -6,9 +6,10 @@
 	<h2>{{ folder.name }}</h2>
 	<p class="intro">{{ folder.description }}</p>
 	<hr />
-	<section class="article-list">
+	{% paginate folder.articles by 5 %}
+	<section class="article-list content-list">		
 		<ul>
-			{% for article in folder.articles %}
+			{% for article in paginate.collection %}
 				<li>
 					<div class="ellipsis"> 
 						<a href="{{article.url}}">{{article.title}}</a>
@@ -24,8 +25,10 @@
 					~ Watch this space for articles regarding {{ folder.name }} ~
 				</p>
 			{% endif %}
-		</ul>
+		</ul>		
 	</section>
+	{{ paginate | default_pagination }}
+	{% endpaginate %}
 </section>
 
 <section class="sidebar content rounded-6 min-height-on-desktop">

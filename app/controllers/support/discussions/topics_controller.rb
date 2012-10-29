@@ -1,5 +1,5 @@
 class Support::Discussions::TopicsController < SupportController
-  before_filter :find_forum_and_topic, :only => :show
+  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor]
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
   end
@@ -22,6 +22,7 @@ class Support::Discussions::TopicsController < SupportController
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
   def check_user_permission
+
     if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
           flash[:notice] =  t(:'flash.general.access_denied')
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -37,14 +38,6 @@ class Support::Discussions::TopicsController < SupportController
       end
     end
   end
-
-  def new
-    set_portal_page :new_topic
-
-    @forum = forum_scoper.find(params[:forum_id])
-    @topic = @forum.topics.new
-    @topic_form = render_to_string :partial => "form"
-  end
   
   def show    
     set_portal_page :topic_view
@@ -59,8 +52,8 @@ class Support::Discussions::TopicsController < SupportController
         @topic.hit! unless logged_in? and @topic.user == current_user
         @page_title = @topic.title
 
-        @forum = @topic.forum
-        @forum_category = @forum.forum_category
+        @topic_voting = render_to_string :partial => "topic_vote", :object => @topic
+        @reply_form = render_to_string :partial => "reply_to_post"
 
         @posts = @topic.posts.paginate :page => params[:page]
         @post = Post.new
@@ -77,13 +70,22 @@ class Support::Discussions::TopicsController < SupportController
       end
     end
   end
+
+  def new
+    set_portal_page :new_topic
+
+    # @forum = forum_scoper.find(params[:forum_id])
+    @forum_options = current_portal.forum_categories.map{ |c| [c.name, c.customer_editable_forums.map{ |f| [f.name, f.id] } ] }
+    @topic = current_account.topics.new
+    @topic_form = render_to_string :partial => "form"
+  end
   
   def create
     topic_saved, post_saved = false, false
-    @forum = scoper.find(params[:forum_id])
+    # @forum = scoper.find(params[:forum_id])
     # this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
-      @topic  = @forum.topics.build(topic_param)
+      @topic  = current_account.topics.build(topic_param)
       assign_protected
       @post       = @topic.posts.build(post_param)
       @post.topic = @topic
@@ -92,24 +94,33 @@ class Support::Discussions::TopicsController < SupportController
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
       topic_saved = @topic.save if @post.valid?
-      post_saved = @post.save 
+      post_saved = @post.save
     end
+
+    puts "=====> Topic create"
     
     if topic_saved && post_saved
-      @topic.monitorships.create(:user_id => current_user.id,:active => true) if params[:monitor] 
+      @topic.monitorships.create(:user_id => current_user.id, :active => true) if params[:monitor] 
       create_attachments  
       respond_to do |format| 
-        format.html { redirect_to support_discussions_topic_path(@topic) }
-        format.xml  { render  :xml => @topic }
+        format.html { redirect_to support_discussions_topic_path(:id => @topic) }
+        format.xml  { render :xml => @topic }
       end
-  else
-   respond_to do |format|  
-      format.html { render :action => "new" }
-      format.xml  { render  :xml => @topic.errors }
-   end
+    else
+      respond_to do |format|  
+        format.html { redirect_to :back }
+        format.xml  { render :xml => @topic.errors }
+      end
     end
   end
   
+  def edit
+    set_portal_page :new_topic
+
+    @forum_options = current_portal.forum_categories.map{ |c| [c.name, c.customer_editable_forums.map{ |f| [f.name, f.id] } ] }
+    @topic_form = render_to_string :partial => "form"
+  end
+
   def update
     topic_saved, post_saved = false, false
     Topic.transaction do    
@@ -124,7 +135,7 @@ class Support::Discussions::TopicsController < SupportController
     if topic_saved && post_saved
       create_attachments
       respond_to do |format|
-        format.html { redirect_to category_forum_topic_path(@topic.forum.forum_category_id,@topic.forum_id, @topic) }
+        format.html { redirect_to support_discussions_topic_path(@topic) }
         format.xml  { head 200 }
       end
     else
@@ -142,6 +153,13 @@ class Support::Discussions::TopicsController < SupportController
       format.html { redirect_to  category_forum_path(@forum_category,@forum) }
       format.xml  { head 200 }
     end
+  end
+
+  def toggle_monitor
+    @monitorship = Monitorship.find_or_initialize_by_user_id_and_topic_id(current_user.id, params[:id])    
+    @monitorship.update_attribute(:active, !@monitorship.active)
+    
+    render :nothing => true
   end
   
    def update_stamp
@@ -163,21 +181,22 @@ class Support::Discussions::TopicsController < SupportController
  end
  
 
- def vote   
-  unless @topic.voted_by_user?(current_user)  
-    @vote = Vote.new(:vote => params[:vote] == "for")  
-    @vote.user_id = current_user.id  
-    @topic.votes << @vote
-    render :partial => "forum_shared/topic_vote", :object => @topic
-  end  
-end 
+  def like   
+    unless @topic.voted_by_user?(current_user)
+      @vote = Vote.new(:vote => params[:vote] == "for")  
+      @vote.user_id = current_user.id  
+      @topic.votes << @vote
+    end
+    load_topic
+    render :partial => "topic_vote", :object => @topic
+  end 
 
-def destroy_vote   
-   @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
-   @votes.first.destroy
-   render :partial => "forum_shared/topic_vote", :object => @topic
- 
-end  
+  def unlike   
+     @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
+     @votes.first.destroy
+     load_topic
+     render :partial => "topic_vote", :object => @topic
+  end  
 
 def update_lock
   @topic.locked = !@topic.locked
@@ -214,7 +233,7 @@ end
       @topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
     end
     
-    def find_forum_and_topic
+    def load_topic
       @topic = scoper.find_by_id(params[:id])
       @forum = @topic.forum
       @forum_category = @forum.forum_category
@@ -243,7 +262,7 @@ end
     end
   
     def post_param
-      param=  params[:topic].symbolize_keys
+      param =  params[:topic].symbolize_keys
       param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
       return param
     end

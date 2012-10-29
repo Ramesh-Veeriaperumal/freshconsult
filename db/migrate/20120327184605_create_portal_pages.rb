@@ -4,7 +4,7 @@ class CreatePortalPages < ActiveRecord::Migration
       t.integer :template_id, :limit => 8, :null => false
       t.integer :account_id, :limit => 8, :null => false
       t.integer :page_type, :null => false
-      t.text :content
+      t.text :content, :limit => 16777215
       t.timestamps
     end
   end

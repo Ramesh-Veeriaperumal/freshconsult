@@ -1,33 +1,39 @@
-<% form_for @topic, :url => support_discussions_forum_topics_path(@forum), 
+<% form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
+					:method => @topic.new_record? ? :post : :put,
 					:html => { :multipart => true, :rel => "validate", :class => "form-horizontal" } do |form| -%>
-<%= include_tiny_mce_if_needed %>
 <fieldset>
 	<div class="control-group">
-		<label class="control-label" for="topic_title"><%= t('topic.name') %>*</label>
+		<label class="control-label required" for="topic_title">
+			Topic title
+		</label>
 		<div class="controls">
-			<%= form.text_field :title, :class => "required text span8" ,:tabindex => 10 %>
+			<%= form.text_field :title, :class => "required text span12", :tabindex => 10 %>
 		</div>
-	</div> 
+	</div> 	
 	<div class="control-group">
-		<label class="control-label">Select a forum</label>
+		<label class="control-label" for="topic_body">
+			<%= t('message') %>
+		</label>
 		<div class="controls">
-			<%= select "forum_id", "", current_account.portal_forums.map{ |f| [f.name, f.id] } %>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="topic_body"><%= t('message') %></label>
-		<div class="controls">
-			<% if @topic.new_record? %>
-				<%= form.text_area :body_html, :class => "mceEditor", :id => 'topic_body' %>
-			<% else %>
-				<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
-			<% end %>
+			<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", :rows => 12 %>
 		</div>
 	</div>	
 	<div class="control-group">
+		<label class="control-label required">
+			Post topic in
+		</label>
+		<div class="controls">
+			<%= form.select :forum_id, grouped_options_for_select(@forum_options, @topic.forum_id), 
+				{ :include_blank => "--- Select a forum ---" }, { :class => "required" } %>
+		</div>
+	</div>
+	<div class="control-group">
 		<div class="controls">
 			<% if ["new"].include? params[:action] %>
-				<label class="checkbox" id="monitor-topic-lable"><%= check_box_tag 'monitor', '', true %> Monitor this topic</label>
+				<label class="checkbox" id="monitor-topic-lable">
+					<%= check_box_tag 'monitor', '', true, :class => "checkbox" %> 
+					Monitor this topic
+				</label>
 			<%end%>
 		</div>
 	</div>
@@ -40,11 +46,6 @@
 			  <div id="<%=attach_id%>-attachments"></div>
 			</div>
 		</div>	
-
-		<%# 
-		  The following is a template used by multifile.js to create rows in
-		  the attachments table.
-		 %>
 					
 		<script id="file-list-template" type="text/x-jquery-tmpl">			
 		  <div class="item">
@@ -71,4 +72,3 @@
 	<input type="submit" class="btn btn-primary" value="Submit" />		
 </div>
 <% end %>
-<%= javascript_include_tag "helpdesk/multifile.js" %>

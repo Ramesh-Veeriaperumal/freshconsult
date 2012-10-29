@@ -13,7 +13,8 @@ class SupportController < ApplicationController
   def set_portal_page page_type_token
     unless current_portal.template.blank?
       _page_id = Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[ page_type_token ]
-      @page = current_portal.template.pages.find_by_page_type( _page_id ) || current_portal.template.pages.new(:page_type => _page_id)
+      @page = current_portal.template.pages.find_by_page_type( _page_id ) || 
+                current_portal.template.pages.new(:page_type => _page_id)
       @dynamic_template = @page.content unless @page.content.blank?      
     end
 
@@ -46,7 +47,8 @@ class SupportController < ApplicationController
   	def set_liquid_variables
       Portal::Template::TEMPLATE_MAPPING.each_with_index do |t, t_i|
         unless t_i == 2
-          _content = render_to_string :partial => t[1], :locals => { :dynamic_template => (get_data_for_template(t[0]) || "") }
+          _content = render_to_string :partial => t[1], 
+                      :locals => { :dynamic_template => (get_data_for_template(t[0]) || "") }
           instance_variable_set "@#{t[0]}", _content
         end
       end

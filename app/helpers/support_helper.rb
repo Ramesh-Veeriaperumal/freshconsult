@@ -3,6 +3,8 @@ module SupportHelper
 	include ActionView::Helpers::DateHelper
 	include ActionView::Helpers::UrlHelper
 	
+	ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
+
 	# include ActionController::UrlWriter
     # default_url_options[:host] = Portal.current.portal_url
 
@@ -21,8 +23,94 @@ module SupportHelper
 	end
 
 	# rendering partial if its corresponding db_file is not available
-	def portal_render( local_file, db_file = "" )
+	def portal_render local_file, db_file = ""
 		# render_to_string :partial => local_file, :locals => { :dynamic_template => db_file }
+	end
+
+
+	# Pageination filter for generating the pagination links
+	def default_pagination(paginate, previous_label = "&laquo; #{I18n.t('previous')}", next_label = "#{I18n.t('next')} &raquo;")
+	    html = []
+	    if paginate['parts'].size > 0
+		    html << %(<div class="pagination"><ul>)
+		    if paginate['previous']
+		    	html << %(<li class="prev">#{link_to(previous_label, paginate['previous']['url'])}</li>)
+		    else
+		    	html << %(<li class="prev disabled"><a>#{previous_label}</a></li>)
+		    end
+
+		    for part in paginate['parts']
+		      if part['is_link']
+		        html << %(<li>#{link_to(part['title'], part['url'])}</li>)        
+		      elsif part['title'].to_i == paginate['current_page'].to_i
+		        html << %(<li class="disabled gap"><a>#{part['title']}</a></li>)        
+		      else
+		        html << %(<li class="active"><a>#{part['title']}</a></li>)
+		      end	      
+		    end
+
+		    if paginate['next']
+		    	html << %(<li class="next">#{link_to(next_label, paginate['next']['url'])}</li>)
+		    else
+		    	html << %(<li class="next disabled"><a>#{next_label}</a></li>)
+		   	end
+
+		    html << %(</ul></div>)
+		end		
+	    html.join(' ')
+	    # windowed_links
+	end
+
+	def windowed_links
+      prev = nil
+
+      visible_page_numbers(0, 100).inject [] do |links, n|
+        # detect gaps:
+        links << %(<a>&hellip;</a>) if prev and n > prev + 1
+        links << %(<a>#{n}</a>)
+        prev = n
+        links
+      end
+    end
+
+	def visible_page_numbers current_page, total_pages
+	    inner_window, outer_window = 4, 1
+	    window_from = current_page - inner_window
+	    window_to = current_page + inner_window
+	    
+	    # adjust lower or upper limit if other is out of bounds
+	    if window_to > total_pages
+	      window_from -= window_to - total_pages
+	      window_to = total_pages
+	    end
+	    if window_from < 1
+	      window_to += 1 - window_from
+	      window_from = 1
+	      window_to = total_pages if window_to > total_pages
+	    end
+	    
+	    visible   = (1..total_pages).to_a
+	    left_gap  = (2 + outer_window)...window_from
+	    right_gap = (window_to + 1)...(total_pages - outer_window)
+	    visible  -= left_gap.to_a  if left_gap.last - left_gap.first > 1
+	    visible  -= right_gap.to_a if right_gap.last - right_gap.first > 1
+
+	    visible    
+	  end
+
+	def follow_topic_button topic, follow_label = "Follow", unfollow_label = "Unfollow"
+		if User.current
+			_monitoring = !Monitorship.count(:id, 
+							:conditions => ['user_id = ? and topic_id = ? and active = ?', 
+							User.current.id, topic['id'], true]).zero?
+
+			link_to _monitoring ? unfollow_label : follow_label, topic['toggle_follow_url'], 
+				"data-remote" => true, "data-method" => :put, 
+				:class => "btn btn-small #{_monitoring ? 'active' : ''}",
+				"data-toggle" => "button",
+				"data-button-active-label" => unfollow_label, 
+				"data-button-inactive-label" => follow_label
+		end
 	end
 
 	# Applicaiton link helpers
@@ -41,6 +129,14 @@ module SupportHelper
 
 	def link_signup label
 		link_to(label, "/support/registration/new", :class => "btn btn-signup") if Account.current.features? :signup_link
+	end
+
+	# Topic specific filters
+
+	def voting topic
+		text = ""
+
+		# text << render(:partial => "/support/discussions/topics/topic_vote", :object => topic)
 	end
 
 	# def link_to_solutions label
@@ -95,6 +191,5 @@ module SupportHelper
 	    end
 	    content_tag :div, element, :class => dom_type + " control-group"
 	end
-
 
 end

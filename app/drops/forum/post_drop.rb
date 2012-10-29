@@ -23,5 +23,9 @@ class Forum::PostDrop < BaseDrop
   def url
     support_discussions_topic_path(source.topic, :anchor => "post-#{source.id}")
   end
+
+  def attachments
+    source.attachments
+  end
   
 end

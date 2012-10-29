@@ -1,47 +1,97 @@
 <div class="content rounded-6 min-height-on-desktop">
-	<a href="#" class="pull-right"><strong>Start a new topic</strong></a>
+	<a href="{{ portal.new_topic_path }}" class="pull-right">
+		<strong> {% translate topic.start_new_topic %}</strong>
+	</a>
 	<div class="breadcrumb">
 		<a href="/">Home</a>
 		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
-		<a href="#">{{ forum.name }}</a>
+		<a href="{{ forum.url }}">{{ forum.name }}</a>
 	</div>
 	
 	<section class="topic-header clearfix">
-		<b class="page-stamp page-stamp-{{forum.type_name}}">
-			<b class="icon-page-{{forum.type_name}}"></b>
+		<b class="page-stamp page-stamp-{{ forum.type_name }}">
+			<b class="icon-page-{{ forum.type_name }}"></b>
 		</b>
 		<h2 class="post-title">
-			<span class="label label-planned">Planned</span>
+			{% if topic.stamp_name %}
+				<span class="label label-{{ topic.stamp_name | downcase }}">
+					{{ topic.stamp_name }}
+				</span>
+			{% endif %}
 			{{ topic.title }}
 		</h2>
-		<div class="post-actions">
-			<span class="topic-likes">
-				25 people liked this idea!
-				<i class="arrow-container"><i class="arrow"></i></i>
-			</span>
-			<a href="#" class="btn btn-primary">I like this idea</a>
-			<a href="#" class="btn btn-primary">Follow</a>
+
+		<div class="post-actions" id="topic-toolbar">
+			{% snippet topic_vote %}
+
+			{{ topic | follow_topic_button }}
 		</div>
 	</section>
 
-	<section class="post-details">
-		<div class="user-pic-thumb"><img src="{{ topic.first_post.user.profile_url }}" /></div>
-		<div class="p-content">
-			<p class="p-info">
-				<strong>{{ topic.first_post.user.name }}</strong> started a topic {{ topic.first_post.created_on | time_ago }}
-			</p>
-			<div class="p-desc">{{ topic.first_post.body_html }}</div>
-		</div>
+	<section id="topic-comments">
+		{% for post in topic.posts %}
+			<section class="post-details {% if post.user.agent? %} post-agent-comment {% endif %}" id="post-{{post.id}}">
+				<div class="user-pic-thumb">
+					<img src="{{ post.user.profile_url }}" width="40px" height="40px" />
+				</div>
+				<div class="p-content">
+					<p class="p-info">
+						<strong>{{ post.user.name }}</strong> 
+						{% if forloop.first %}
+							started a topic {{ topic.first_post.created_on | time_ago }}
+						{% else %}
+							said {{ post.created_on | time_ago }}
+						{% endif %}
+					</p>
+					<div class="p-desc">
+						{{ post.body_html }}
+					</div>
+					{% if post.attachments.size > 0 %}
+					<hr />
+					<div class="cs-g-c attachments" id="post-{{post.id}}-attachments">
+						{% for attachment in post.attachments %}
+							<div class="cs-g-3 attachment">
+								<img src="{{ attachment.thumbnail }}" 
+									 class="file-thumbnail {% if attachment.image? %} file-image {% endif %}"
+									 width="50px" height="50px"  />
+								<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+									{{ attachment.filename }}
+								</a>
+								<div class="help-text file-size">
+									{{ attachment.size }}
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+					{% endif %}
+				</div>
+			</section>
+		{% endfor %}
 	</section>
-	{% for post in topic.posts offset:1 %}
-	<section class="post-details" id="post-{{post.id}}">	
-		<div class="user-pic-thumb"><img src="{{ post.user.profile_url }}" /></div>
-		<div class="p-content">
-			<p class="p-info">
-				<strong>{{ post.user.name }}</strong> said {{ post.created_on | time_ago }}
-			</p>
-			<div class="p-desc">{{ post.body_html }}</div>
-		</div>
-	</section>
-	{% endfor %}
+
+	{% if topic.locked? %}
+		<div class="p-content lead-small">
+			{% translate topic.comments_closed %} 
+		</section>
+	{% elsif current_user %}
+		<section id="reply-to-post" class="post-details">
+			{% if current_user %}
+			<div class="user-pic-thumb">
+				<img src="{{ current_user.profile_url }}" width="40px" height="40px" />
+			</div>
+			{% endif %}
+			<div class="p-content">
+				<input type="text" class="special span10" placeholder="Add comment" id="reply-form-proxy" 
+						onclick="$('#new-post-form').show(); $(this).hide(); $('#post_body_html').getEditor().focus()" />
+				<div id="new-post-form" class="hide">
+					{% snippet reply_to_post %}
+				</div>
+			</div>
+		</section>
+	{% else %}	
+		<div class="p-content lead-small">
+			<a href="{{ portal.login_path }}">Login</a> to post a comment
+		</section>		
+	{% endif %}
+
 </div>

@@ -1,8 +1,6 @@
 <div class="page">
 	{{ header }}
 	
-	{% case page.type %}
-	{% when "portal_home" or "discussions_home" or "solution_home" %}
 		<section class="help-center content-form rounded-6">	
 			<div class="hc-search">
 				<div class="hc-search-c">
@@ -18,7 +16,6 @@
 				</nav>
 			</div>
 		</section>
-	{% endcase %}
 
 	{{ show_flash }}
 

@@ -58,7 +58,7 @@ $monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace !defau
 
 $baseFontSize:          14px !default;
 $baseFontFamily:        $sansFontFamily !default;
-$baseLineHeight:        20px !default;
+$baseLineHeight:        $baseFontSize * 1.5625 !default;
 $altFontFamily:         $serifFontFamily !default;
 
 $headingsFontFamily:    'Open Sans Condensed', Helvetica, sans-serif !default; // empty to use BS default, $baseFontFamily

@@ -13,12 +13,12 @@
 	<meta name="keywords" content="<%= page_keywords %>">
 
 	<meta name="viewport" content="width=device-width">  
-	<%= include_stylesheets :portal %>
+	<%= include_stylesheets :portal, :redactor %>
 	<!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css'> -->
 	<!-- <link href="/theme.css" media="screen" rel="stylesheet" type="text/css"> -->
 
 	<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />
-	<script src="/javascripts/modernizr-2.5.3-respond-1.1.0.min.js"></script>
+	<%= include_javascripts :head_scripts %>
 </head>
 <body>
 
@@ -28,7 +28,8 @@
 
 	<%#= render :partial => "portal/prototype" %>
 
-	<%= include_javascripts :portal %>
+	<%= include_javascripts :portal, :redactor %>
+
 	<script type="text/javascript">
 		callbackToPageSearch = function(string){
 									$.ajax({ 
