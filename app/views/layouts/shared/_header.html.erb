@@ -2,7 +2,7 @@
   <div class="wrapper">
   <div class="brand">
     <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
-      <%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)) , :width => "74px", :height => "50px" %>
+      <%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)) %>
     <% end %>      
     <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
     <%= link_to_function("Switch to mobile version", 
