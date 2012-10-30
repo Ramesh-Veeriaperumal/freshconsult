@@ -114,7 +114,7 @@ function groupchange(value){
 	 blank_value = "No Change";
      jQuery.ajax({
        type:        'POST',
-       url: 		'/helpdesk/tickets/get_agents/'+this.value+'?blank_value=<%=t('select')%>',
+       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>',
        contentType: 'application/text',
        success:     function(data){
 

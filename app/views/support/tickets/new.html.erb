@@ -99,6 +99,23 @@
           });
 
           invokeRedactor('helpdesk_ticket_description_html');
+      
+      jQuery('#helpdesk_ticket_group_id')
+    .on("change", function(e){
+      console.log("testing this");
+      jQuery('#helpdesk_ticket_responder_id')
+              .html("<option value=''>...</option>");
+      jQuery.ajax({
+        type:        'POST',
+        url:         '/helpdesk/commons/group_agents/'+this.value,
+        contentType: 'application/text',
+        success:     function(data){
+                        jQuery('#helpdesk_ticket_responder_id')
+                          .html(data);
+                     }
+      });
+      });
+
       }); 
     })(jQuery);
   <% end %>
