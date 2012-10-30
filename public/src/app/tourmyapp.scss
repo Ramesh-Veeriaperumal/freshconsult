@@ -1,0 +1,135 @@
+/* This import applies a global reset to any page that imports this stylesheet.*/
+@import "lib/settings";
+
+#tourmyapp .tourmyapp {
+	background: url(/images/walkthru/pattern-bg.png);
+	border: 1px solid #666;
+	font-family: $blueprint-font-family;
+	width: 400px;
+	margin-top: -5px;
+	box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
+
+	.tourmyapp-title {
+		background: url(/images/walkthru/patten_green_top.jpg);
+		@include border-radius(5px 5px 0 0);
+		height: 40px;
+		box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+	}
+
+	.tourmyapp-close {
+		background: url(/images/walkthru/tour-close.png);
+		background-repeat: no-repeat;
+		background-position: 3px 0px;
+		margin: 14px 17px 0 0;
+
+	}
+
+	.tourmyapp-pointer-border {
+		border: none;
+		position:absolute;
+		background-repeat: no-repeat;
+	}
+
+	.tourmyapp-pointer-top {
+		height: 90px;
+		width: 170px;
+		left: 184px;
+
+	}
+
+	.tourmyapp-pointer-bottom {
+		height: 21px;
+		width: 26px;
+		left: 184px;
+
+	}
+
+	.tourmyapp-pointer-right, .tourmyapp-pointer-left {
+		margin-top:-4px;
+		height: 29px;
+		width: 26px;
+	}
+
+	.tourmyapp-pointer-bottom {
+		background-image: inline-image("walkthru/arrow_top.png");
+		top: -18px;
+	}
+
+	
+	.tourmyapp-pointer-right {
+		background-image: inline-image("walkthru/arrow_left.png");
+		left: -25px;
+		height: 32px;
+		width: 27px;
+		margin-top:-3px;
+	}
+
+	.tourmyapp-pointer-top {
+		background-image: inline-image("walkthru/arrow_bottom.png");
+		margin-top: -14px;
+	}
+
+	.tourmyapp-pointer-left {
+		background-image: inline-image("walkthru/arrow_right.png");
+		left: 387px;
+	}
+
+
+
+	.tourmyapp-pointer-fill {
+		display:none;
+	}
+
+    .tourmyapp-content, .tourmyapp-toolbar {
+		padding: 10px;
+		font-size: 13px;
+		line-height: 20px;
+		color: #333;
+
+		p {
+			margin: 0;
+		}
+	}
+
+	.tourmyapp-content {
+
+	    margin-top: -40px;
+	    
+        h3 {
+            background-image: inline-image("walkthru/touricon-white.png");
+			background-repeat: no-repeat;
+			background-position: -1px 0px;
+            color: #FFF;
+            font-size: 16px;
+            font-weight: bold;
+            padding:0 0 20px 29px;
+            margin: -1px 2px;
+            text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        p {
+        	padding: 0px 10px 0px 10px;
+        	margin-bottom: 10px;
+        }
+    }
+
+	.tourmyapp-step-index {
+		font-weight:normal;
+		font-size: 12px;
+	}
+	button {
+		@include corners(5px);
+		@include background-with-css2-fallback(linear-gradient(#338484, #166666));
+		border: solid 1px #005454;
+		padding: 5px 18px;
+		font-weight: normal;
+		font-size: 13px;
+		@include text-shadow(1px  0 0 #3a3a3a);
+		text-decoration: none;
+	}
+	.tourmyapp-branding {
+		display:none !important;
+	}
+}

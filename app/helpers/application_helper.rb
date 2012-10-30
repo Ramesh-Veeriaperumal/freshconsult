@@ -632,5 +632,11 @@ module ApplicationHelper
     tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
     tab || ""
   end
+
+  def tour_button(text, tour_id)
+    link_to (content_tag( :div, text, :class=> 'guided-tour-start') , '#', 
+              :rel => 'guided-tour',
+              "data-tour-id" => tour_id)
+  end
   
 end

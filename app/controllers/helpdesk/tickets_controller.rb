@@ -12,7 +12,8 @@ class Helpdesk::TicketsController < ApplicationController
   include RedisKeys
   include Helpdesk::AdjacentTickets
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :get_agents ]
+
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :check_user, :load_installed_apps, :only => [:show]
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
@@ -388,29 +389,6 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def get_agents #This doesn't belong here.. by Shan
-    group_id = params[:id]
-    blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
-    @agents = current_account.agents.all(:include =>:user)
-    @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id , :deleted => false } } ) unless group_id.nil?
-    respond_to do |format|
-      format.html {
-        render :partial => "agent_groups", :locals =>{ :blank_value => blank_value }
-      }
-      format.mobile {
-        json = "["; sep=""
-          @agents.each { |agent_group|
-            user = agent_group.user
-            #Removing the root node, so that it conforms to JSON REST API standards
-            # 8..-2 will remove "{user:" and the last "}"
-            json << sep + user.to_mob_json()[8..-2]; sep=","
-          }
-        render :json => json + "]"
-      }
-    end
-    
-  end
-
   def get_ticket_agents
     unless @item.blank?
       @agents = current_account.agents

@@ -125,6 +125,32 @@ ul.activityfeed li{
 	text-align:center;
 } 
 
+.guided-tour-start{
+    
+    border: 1px solid #CCC;
+    @include border-radius(15px);
+    height: auto;
+    padding: 6px 0px 7px 29px ;
+    background-image: inline-image("walkthru/touricon-teal.png");
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+	font-weight:bold;
+	display: block;
+}
+
+.guided-tour-start:hover{
+	border: 1px solid #666;
+}
+
+.next_button_arrow:after{
+	content:inline-image("walkthru/nav-arrow-right.png");
+	padding-left: 7px;
+}
+
+.next_button:hover{
+	cursor: pointer;
+}
+
 .sidepanel{
 	p{
 		font-size:1.1em; 
