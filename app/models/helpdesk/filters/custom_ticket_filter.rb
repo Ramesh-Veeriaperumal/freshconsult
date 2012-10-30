@@ -263,7 +263,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       select = "helpdesk_tickets.* "
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
 
-      recs = model_class.paginate(:select => "#{select}",
+      recs = model_class.paginate(:select => select,
                                   :include => [:ticket_states, :ticket_status, :responder, {:requester => :avatar}],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
