@@ -2,7 +2,7 @@
 <% unless installed_app.blank? %> 
 	<div id="logmein" class="sidepanel">
 		<%
-		 @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app[0].id, "requester" => user, "agent" => agent, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
+		 @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app.id, "requester" => user, "agent" => agent, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
 		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:logmein], "logmein_widget", @liquid_objects) 
 		%>
 		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>

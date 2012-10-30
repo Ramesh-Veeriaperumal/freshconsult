@@ -2,6 +2,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
+  include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   
   attr_accessor :query_hash 
   
@@ -41,6 +42,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                    
   after_create :create_accesible
   after_update :save_accessible
+
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
    
   def create_accesible     
     self.accessible = Admin::UserAccess.new( {:account_id => account_id }.merge(self.visibility)  )
@@ -55,9 +59,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     (accessible.all_agents?) or (accessible.only_me? and accessible.user_id == user.id) or (accessible.group_agents_visibility? and !user.agent_groups.find_by_group_id(accessible.group_id).nil?)
   end
   
-  def self.my_ticket_filters(user)
-    self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.account_id =  wf_filters.account_id AND acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :order => 'created_at desc', :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
-  end
   
   def self.edit_ticket_filters(user)
     self.find( :all, 
@@ -263,12 +264,18 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
 
       recs = model_class.paginate(:select => "#{select}",
-                                  :include => [:ticket_states, :ticket_status, :responder, :requester],
+                                  :include => [:ticket_states, :ticket_status, :responder, {:requester => :avatar}],
                                   :order => order_clause, :page => page, 
-                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
+                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
+                                  :total_entries => count_without_query)
       recs.wf_filter = self
       recs
     end
+  end
+
+  def count_without_query
+    # ActiveRecord::Base.connection.select_values('SELECT FOUND_ROWS() AS "TOTAL_ROWS"').pop
+    per_page.to_f*page.to_f+1
   end
   
   def get_joins(all_conditions)
@@ -333,5 +340,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def permissible_conditions(ticket, account, user)    
     return (" AND (helpdesk_tickets.account_id = #{account.id}) " << ticket.agent_permission_condition(user))   
   end
-  
+
+  class << self
+    include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
+  end
 end

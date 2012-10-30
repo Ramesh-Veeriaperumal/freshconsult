@@ -1,5 +1,6 @@
 class Customer < ActiveRecord::Base
   
+  include Cache::Memcache::Customer
   serialize :domains
     
   validates_presence_of :name,:account
@@ -15,6 +16,9 @@ class Customer < ActiveRecord::Base
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
   
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
+
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
   
   #Sphinx configuration starts
   define_index do
