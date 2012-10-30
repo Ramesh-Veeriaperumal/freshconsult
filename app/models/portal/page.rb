@@ -19,7 +19,7 @@ class Portal::Page < ActiveRecord::Base
 		[:article_list,       "Article list",                 7,   "support/solutions/folders/show.portal"],
 		[:article_view,       "Article view",                 8,   "support/solutions/articles/show.portal"],
 		[:submit_ticket,      "New ticket",                   9,   "support/tickets/new.portal"],
-		[:tickets_list,       "User or company tickets",      10,  "support/tickets/index.portal"],
+		[:ticket_list,        "User or company tickets",      10,  "support/tickets/index.portal"],
 		[:ticket_view,        "Ticket details",               11,  "support/tickets/show.portal"],
 		[:user_signup,        "New user signup",              12,  "support/registrations/new.portal"],
 		[:user_login,         "User login",                   13,  "support/new.portal"],

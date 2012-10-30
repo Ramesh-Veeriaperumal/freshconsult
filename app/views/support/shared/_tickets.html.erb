@@ -1,28 +1,29 @@
-<ul class="content-list">
+<section class="content-list">
 	<% @tickets.each do |ticket| %>
-		<li class="<%= cycle('odd', 'even') %>">
-			<div class="user-pic-thumb">
-				<%= user_avatar(ticket.requester) %>
-			</div>
-			<span class="pull-right label"><%= ticket.status_name %></span>
-		    <h4 class="ellipsis">
-		      	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", support_ticket_path(ticket), :title => truncate(ticket.description, 350, "...")) %> 
-		    </h4>
-				
-			<% content_tag :p, :class => "help-text" do %>
-				<% unless ticket.requester.nil? %>
-					<strong><%= h(ticket.requester.display_name) %></strong> via <%= ticket.source_name.downcase %>,
-			  		on <%= ticket.created_at.to_s(:long_day) %>
-			  		<%#= t("ticket.reported_on", :username => h(ticket.requester.display_name), :date => ticket.created_at.to_s(:long_day)) %>
-			  	<% end %>
-			  	<% unless ticket.freshness == :new %>
-			  		<br />
-			  		Assigned to: <strong><%= h(ticket.responder.display_name)%></strong>
-			  	<% end %>
+	<div class="content-row clearfix">
+		<div class="user-pic-thumb">
+			<%= user_avatar(ticket.requester) %>
+		</div>
+		<span class="pull-right label label-small"><%= ticket.status_name %></span>
+	    <div class="ellipsis">
+	      	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", support_ticket_path(ticket), :title => truncate(ticket.description, 350, "...")) %> 
+	    </div>
+			
+		<% content_tag :p, :class => "help-text" do %>
+			<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>
+				<%= t('ticket.portal_created_on', {:username => h(ticket.requester.display_name), :date => formated_date(ticket.created_at)}) %>
+			<% else %>
+				<%= t('ticket.portal_created_on_same_user', {:date => formated_date(ticket.created_at)}) %>
 			<% end %>
-		</li>
+
+			<% unless ticket.freshness == :new %>
+		       <%=t('ticket.assigned_agent')%>: <span class='emphasize'><%=h(ticket.responder.display_name)%></span>
+		    <% end %>
+		<% end %>
+	</div>
 	<% end %>
-</ul>   
+</section>
+
 <p class="help-text"><%= t("helpdesk.tickets.views.no_tickets") if @tickets.blank? %></p>
 <div class="toolbar">
 	<%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  

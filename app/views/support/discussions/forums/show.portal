@@ -1,59 +1,56 @@
-<section>
-	<div class="content rounded-6 min-height-on-desktop">		
-		<div class="breadcrumb">
-			<a href="/">Home</a>
-			<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
-		</div>		
-		<i class="page-stamp page-stamp-{{ forum.type_name }}">
-			<i class="icon-page-{{ forum.type_name }}"></i>
-		</i>
-		<a href="{{ portal.new_topic_path }}" class="pull-right btn">
-			<strong> {% translate topic.start_new_topic %}</strong>
-		</a>
-		<div class="list-lead">
-			{{ forum.name }} ({{ forum.topics | size }})			
-		</div>
-		<p class="intro ellipsis" title="{{forum.description}}">
-			{{ forum.description }}
-		</p>
-
-		{% comment %}
-		<div class="subnav">
-			<ul class="nav nav-pills">
-			  {{ snippet filters }}
-			</ul>
-		</div>
-		{% endcomment %}
-
-		{% paginate forum.topics by 10 %}
-			<div class="content-list">					
-				{% for topic in paginate.collection %}
-					{% assign last_post_user = topic.last_post.user %}
-					<div class="content-row clearfix">
-						<div class="user-pic-thumb">
-							<img src="{{ last_post_user.profile_url }}" width="50px" height="50px" />
-						</div>					
-						<div class="ellipsis">
-							{% if topic.stamp_type %}
-								<span class="pull-right-tablet label label-small label-{{topic.stamp_name | downcase}}">
-									{{ topic.stamp_name }}
-								</span>
-							{% endif %}
-							<a class="topic-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
-						</div>				
-						<div class="help-text">
-							Posted by {{ topic.user.name | bold }}, {{ topic.created_on | time_ago }}{% if topic.has_comments %}, 
-								<a href="{{topic.last_post.url}}">Last reply</a>
-								by {{ last_post_user.name | bold }} {{ topic.last_post.created_on | time_ago }}
-							{% endif %}
-						</div>
-					</div>
-				{% endfor %}
-			</div>			
-			{{ paginate | default_pagination }}
-		{% endpaginate %}
-
+<section class="content rounded-6 min-height-on-desktop">
+	<div class="breadcrumb">
+		<a href="/">Home</a>
+		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
+	</div>		
+	<i class="page-stamp page-stamp-{{ forum.type_name }}">
+		<i class="icon-page-{{ forum.type_name }}"></i>
+	</i>
+	<a href="{{ portal.new_topic_path }}" class="pull-right btn">
+		<strong> {% translate topic.start_new_topic %}</strong>
+	</a>
+	<div class="list-lead">
+		{{ forum.name }} ({{ forum.topics | size }})			
 	</div>
+	<p class="intro ellipsis" title="{{forum.description}}">
+		{{ forum.description }}
+	</p>
+
+	{% comment %}
+	<div class="subnav">
+		<ul class="nav nav-pills">
+		  {{ snippet filters }}
+		</ul>
+	</div>
+	{% endcomment %}
+
+	{% paginate forum.topics by 10 %}
+		<div class="content-list">					
+			{% for topic in paginate.collection %}
+				{% assign last_post_user = topic.last_post.user %}
+				<div class="content-row clearfix">
+					<div class="user-pic-thumb">
+						<img src="{{ last_post_user.profile_url }}" width="50px" height="50px" />
+					</div>					
+					<div class="ellipsis">
+						{% if topic.stamp_type %}
+							<span class="pull-right-tablet label label-small label-{{topic.stamp_name | downcase}}">
+								{{ topic.stamp_name }}
+							</span>
+						{% endif %}
+						<a class="topic-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
+					</div>				
+					<div class="help-text">
+						Posted by {{ topic.user.name | bold }}, {{ topic.created_on | time_ago }}{% if topic.has_comments %}, 
+							<a href="{{topic.last_post.url}}">Last reply</a>
+							by {{ last_post_user.name | bold }} {{ topic.last_post.created_on | time_ago }}
+						{% endif %}
+					</div>
+				</div>
+			{% endfor %}
+		</div>			
+		{{ paginate | default_pagination }}
+	{% endpaginate %}
 </section>
 
 {% comment %}

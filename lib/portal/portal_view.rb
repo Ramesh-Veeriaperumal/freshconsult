@@ -64,8 +64,9 @@ class PortalView
               end
 
     if content_for_layout = @view.instance_variable_get("@content_for_layout")
-      assigns['content_for_layout'] = @view.instance_variable_get("@page").content || content_for_layout
-      assigns['content_for_layout'] = Liquid::Template.parse(assigns['content_for_layout']).render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
+      #assigns['content_for_layout'] = @view.instance_variable_get("@page").content || content_for_layout
+      # assigns['content_for_layout'] = Liquid::Template.parse(assigns['content_for_layout']).render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
+      assigns['content_for_layout'] = content_for_layout
     end
 
     liquid = Liquid::Template.parse(source)

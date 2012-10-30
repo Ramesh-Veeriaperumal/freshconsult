@@ -15,18 +15,24 @@ class Support::TicketsController < SupportController
   before_filter :load_item, :only =>[:update]
   before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
   before_filter :set_date_filter ,    :only => [:export_csv]
+  
+  before_filter :only => :show do |c|
+    c.send(:set_portal_page, :ticket_view)
+  end
+
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def index
+    set_portal_page :ticket_list
     @page_title = t('helpdesk.tickets.views.all_tickets')
     build_tickets
     @ticket_filters = render_to_string :partial => "/support/shared/filters"
     @tickets_list = render_to_string :partial => "/support/shared/tickets"        
-    # respond_to do |format|
-    #   format.html
-    #   format.xml  { render :xml => @tickets.to_xml }
-    # end
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @tickets.to_xml }
+    end
   end
 
   def new
