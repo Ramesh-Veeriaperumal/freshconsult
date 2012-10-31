@@ -38,7 +38,7 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_protected :attachments, :notable_id
   
   before_create :validate_schema_less_note
-  before_save :update_category
+  before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states   
 
