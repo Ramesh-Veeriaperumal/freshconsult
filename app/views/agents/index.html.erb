@@ -1,4 +1,6 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
 <div class="clearfix">
 	<div class="floatr">
 		<%= link_to t('agent.new'), new_agent_path, :class => "uiButton special"  %>

@@ -1,0 +1,19 @@
+<div class="sidepanel">
+	<h3 class="title"><%=t('email_command_setting.helpcard.heading')%></h3>
+	<p><%=t('email_command_setting.helpcard.info1')%></p> 
+	<p><%=t('email_command_setting.helpcard.info2')%></p>
+	<p><%=t('email_command_setting.helpcard.info3')%></p> 
+
+	 <span class="seperator"></span>
+	 <p>
+	 <h4><%=t('ticket.available_commands')%></h4>
+	 <strong><%=t('status')%></strong> : <%=t('pending')%><br>
+	 <strong><%=t('ticket.priority')%></strong> : <%=t('medium')%><br>
+	 <strong><%=t('ticket.assigned_agent')%></strong>: John Robert<br>
+	 <strong><%=t('ticket_fields.fields.group')%></strong>: <%=t('sales')%><br>
+	 <strong><%=t('ticket.source')%></strong>: <%=t('email')%><br>
+	 <strong><%=t('ticket_fields.fields.product')%></strong>: <%=t('email_configs.freshdesk')%><br>
+	 <%= @email_content_custom_commands%>		 
+	</p>
+	<%= tour_button(t('email_command_setting.helpcard.tour'), '5017d45de13a46792b000015') %>
+</div>

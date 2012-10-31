@@ -1,3 +1,7 @@
+<% content_for :sidebar do %>
+ <%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
 <h3 class="title"><%=t('automations.new')%></h3>
 <% form_for :va_rule, @va_rule, :url => admin_automations_path, :html => { :method => :post , :id => "Automations" } do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>

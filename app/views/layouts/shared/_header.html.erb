@@ -24,7 +24,7 @@
 		<% if current_user then %>                        
 		<div class="profile_info" id="LoggedOptions">                          
 			<div class="info user clearfix">
-				<%= user_avatar current_user %>
+				<%= user_avatar(current_user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
 				<span><%= truncate(h(current_user.name), :length => 30) %></span>
 			</div>
 			<span class="seperator"></span>
@@ -79,9 +79,7 @@
 	</div>	
 </div>
 <% if feature?(:gamification) and current_user and current_user.agent? %>
-	<%= include_stylesheets :notifications %>
 	<% content_for :pagefixed do %>
-		<%= include_javascripts :notifications %>
 	  <% javascript_tag do %>
 	  	FD.Notifications.init({ 
 	  		pollInterval:300000
