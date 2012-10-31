@@ -30,6 +30,7 @@ stylesheets:
     - public/stylesheets/app/lib/hacks.css
     - public/stylesheets/app/lib/ie.css
     - public/stylesheets/app/tourmyapp.css
+    - public/stylesheets/app/lib/gritter.css
 
   notifications:
     - public/stylesheets/app/lib/gritter.css
