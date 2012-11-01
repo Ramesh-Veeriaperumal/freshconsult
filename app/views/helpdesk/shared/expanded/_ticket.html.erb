@@ -12,7 +12,7 @@
 	<div class="ticket_subject">
 		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
 			<a href="/helpdesk/tickets/<%=ticket.display_id%>" ><%=h(ticket.subject)%>
-					<span class = "ticket_id" ><%=h(ticket.display_id)%> </span>
+					<span class = "ticket_id" >#<%=h(ticket.display_id)%> </span>
 			</a>
 		</h3>
 		<% unless ticket.requester.nil? %>
