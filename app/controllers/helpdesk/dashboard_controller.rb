@@ -9,20 +9,15 @@ class Helpdesk::DashboardController < ApplicationController
   prepend_before_filter :silence_logging, :only => :latest_activities
   after_filter   :revoke_logging, :only => :latest_activities
   
-  before_filter :load_items, :only => [:activity_list]
-  before_filter :set_selected_tab
+  
 
   def index
-    if request.xhr? and !request.headers['X-PJAX']
-      load_items
+    @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10)
+    if request.xhr?
       render(:partial => "ticket_note", :collection => @items)
     end
     #for leaderboard widget
     # @champions = champions
-  end
-
-  def activity_list
-    render :partial => "activities"
   end
   
   def latest_activities
@@ -46,13 +41,5 @@ class Helpdesk::DashboardController < ApplicationController
       else
         Helpdesk::Activity.freshest(current_account).permissible(current_user)
       end
-    end
-  private
-    def load_items
-      @items = recent_activities(params[:activity_id]).paginate(:include => [ {:user => :avatar} ] , :page => params[:page], :per_page => 10)
-    end
-    
-    def set_selected_tab
-      @selected_tab = :dashboard
     end
 end

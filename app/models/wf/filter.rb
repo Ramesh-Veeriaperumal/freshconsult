@@ -29,7 +29,6 @@ class Wf::Filter < ActiveRecord::Base
   serialize   :data
   
   belongs_to :user
-  belongs_to_account
   
   attr_accessor :visibility 
   

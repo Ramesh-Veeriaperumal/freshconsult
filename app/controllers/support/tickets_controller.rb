@@ -15,7 +15,6 @@ class Support::TicketsController < ApplicationController
   before_filter :load_item, :only =>[:update]
   before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
   before_filter :set_date_filter ,    :only => [:export_csv]
-  before_filter :set_selected_tab
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -164,11 +163,5 @@ class Support::TicketsController < ApplicationController
        return redirect_to helpdesk_ticket_url(:format => params[:format])
      end
    end
-
-  private
-    def set_selected_tab
-      @selected_tab = :checkstatus
-    end
-
   
 end

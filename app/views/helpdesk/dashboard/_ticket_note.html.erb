@@ -1,5 +1,5 @@
 <li class="clearfix activity" id="<%=ticket_note.id%>"> 
-	<%= user_avatar( ticket_note.user,:thumb, "preview_pic" ,{ :width => "40px", :height => "40px" }) %>
+	<%= user_avatar( ticket_note.user ) %>
 	<%= Liquid::Template.parse(h t(ticket_note.description)).render(eval_activity_data(ticket_note.activity_data).merge(
 			'user_path' => show_contact_hovercard(ticket_note.user) ,
 			'notable_path' => link_to(h(ticket_note.notable), ticket_note.notable, :class => "notelink") )) %>     

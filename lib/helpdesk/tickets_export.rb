@@ -23,11 +23,9 @@ class Helpdesk::TicketsExport < Resque::FreshdeskBase
     csv_hash = export_params[:export_fields]
     puts "$$$$$$$$$ csv_hash : #{csv_hash.inspect}"
     headers = csv_hash.keys.sort
-    select = "helpdesk_tickets.* "
-    select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if sql_conditions[0].include?("helpdesk_tags.name")
     csv_string = FasterCSV.generate do |csv|
       csv << headers
-      Account.current.tickets.find_in_batches(:select => select,
+      Account.current.tickets.find_in_batches(:select => " DISTINCT(helpdesk_tickets.id) as 'unique_id', helpdesk_tickets.* ",
                                       :conditions => sql_conditions, 
                                       :include => [:ticket_states, :ticket_status, :flexifield,
                                                    :responder, :requester],

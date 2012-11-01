@@ -1,10 +1,6 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 @import "lib/settings";
-$walkthru-spacing: 40px;
-@import "walkthru/*.png";
-#tourmyapp {
-	z-index: 1000000 !important;
-}
+
 #tourmyapp .tourmyapp {
 	background: url(/images/walkthru/pattern-bg.png);
 	border: 1px solid #666;
@@ -57,13 +53,13 @@ $walkthru-spacing: 40px;
 	}
 
 	.tourmyapp-pointer-bottom {
-		@include walkthru-sprite(arrow_top);
+		background-image: inline-image("walkthru/arrow_top.png");
 		top: -18px;
 	}
 
 	
 	.tourmyapp-pointer-right {
-		@include walkthru-sprite(arrow_left);
+		background-image: inline-image("walkthru/arrow_left.png");
 		left: -25px;
 		height: 32px;
 		width: 27px;
@@ -71,12 +67,12 @@ $walkthru-spacing: 40px;
 	}
 
 	.tourmyapp-pointer-top {
-		@include walkthru-sprite(arrow_bottom);
+		background-image: inline-image("walkthru/arrow_bottom.png");
 		margin-top: -14px;
 	}
 
 	.tourmyapp-pointer-left {
-		@include walkthru-sprite(arrow_right);
+		background-image: inline-image("walkthru/arrow_right.png");
 		left: 387px;
 	}
 
@@ -102,7 +98,9 @@ $walkthru-spacing: 40px;
 	    margin-top: -40px;
 	    
         h3 {
-            @include walkthru-sprite(touricon-white);
+            background-image: inline-image("walkthru/touricon-white.png");
+			background-repeat: no-repeat;
+			background-position: -1px 0px;
             color: #FFF;
             font-size: 16px;
             font-weight: bold;
@@ -121,7 +119,6 @@ $walkthru-spacing: 40px;
 		font-weight:normal;
 		font-size: 12px;
 	}
-
 	button {
 		@include corners(5px);
 		@include background-with-css2-fallback(linear-gradient(#338484, #166666));
@@ -132,20 +129,7 @@ $walkthru-spacing: 40px;
 		@include text-shadow(1px  0 0 #3a3a3a);
 		text-decoration: none;
 	}
-
 	.tourmyapp-branding {
 		display:none !important;
-	}
-	
-	.next_button_arrow:after{
-		content: "";
-		background-image: url("/images/walkthru/nav-arrow-right.png");
-		background-repeat: no-repeat;
-		background-position: 5px 5px;
-		padding-left: 9px;
-	}
-
-	.next_button:hover{
-		cursor: pointer;
 	}
 }

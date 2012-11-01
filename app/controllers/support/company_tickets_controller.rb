@@ -13,7 +13,6 @@ class Support::CompanyTicketsController < ApplicationController
 
   before_filter :verify_permission
   before_filter :set_date_filter ,    :only => [:export_csv]
-  before_filter :set_selected_tab
   
   def index    
     @page_title = t('helpdesk.tickets.views.all_tickets')
@@ -101,10 +100,6 @@ class Support::CompanyTicketsController < ApplicationController
         #redirect_to Helpdesk::ACCESS_DENIED_ROUTE 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
       end
-    end
-  private
-    def set_selected_tab
-      @selected_tab = :"company_tickets"
     end
   
 end

@@ -1,9 +1,3 @@
-<div class="leftFilter" id="all-views-tmpl" style="display:none">
-  <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
-
-  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view_tooltip"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
-</div>
-  
   <%= will_filter_scripts_tag %>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h3 class="title"><%= t("tickets_filter.title") %></h3>
@@ -105,12 +99,10 @@
       jQuery("#save_filter").show();
       jQuery("#delete_filter").hide();
     }
-    jQuery(".wf_order_type, .wf_order").die();
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
     });	
-    jQuery(".toolbar_pagination a, .toolbar_pagination_full a").die();
 		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
 			ev.preventDefault();
 			jQuery(document).scrollTop(0);
@@ -149,9 +141,4 @@
         }
       }); 
   });
-  $J('#all-views').html($J('#all-views-tmpl').html());
-  $J('#all-views-tmpl').html('');
-  setTimeout(function(){
-    jQuery("#all-views a.dialog2").dialog2();
-  },50)
 </script>

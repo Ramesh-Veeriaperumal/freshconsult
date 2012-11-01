@@ -2,8 +2,6 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-
-  layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
   
   before_filter :reset_current_account, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]

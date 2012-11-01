@@ -1,7 +1,7 @@
 class Agent < ActiveRecord::Base
   
   include Notifications::MessageBroker
-  include Cache::Memcache::Agent
+  include Gamification::Scoreboard::Memcache #Need to refactor this!
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
@@ -76,10 +76,9 @@ end
     user.account.scoreboard_levels.next_level_for_points(points).first
   end
 
-def signature_htm
-  puts "#{self.signature_html}"
-  self.signature_html
-end
+  def clear_leaderboard_cache! #Refactor this code!
+    memcache_delete(user)
+  end
 
 protected
   

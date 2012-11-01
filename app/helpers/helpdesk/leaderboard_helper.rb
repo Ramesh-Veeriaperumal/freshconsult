@@ -1,10 +1,6 @@
 module Helpdesk::LeaderboardHelper
 		
-	include MemcacheKeys
-
-	def get_memcache_key
-		MemcacheKeys.memcache_local_key(LEADERBOARD_MINILIST)
-	end
+	include Gamification::Scoreboard::Memcache
 
 	def link_to_agent user
 		return(link_to user.name, user) if current_user && current_user.can_view_all_tickets?

@@ -3,7 +3,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
   serialize :field_options
 
   include Helpdesk::Ticketfields::TicketStatus
-  include Cache::Memcache::Helpdesk::TicketField
   
   set_table_name "helpdesk_ticket_fields"
   attr_protected  :account_id
@@ -117,13 +116,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::TicketStatus.statuses_from_cache(account)
+         Helpdesk::TicketStatus.statuses(account)
        when "default_ticket_type" then
-         account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
+         picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
-         account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+         account.agents(:include => :user).collect { |c| [c.user.name, c.user.id] }
        when "default_group" then
-         account.groups_from_cache.collect { |c| [c.name, c.id] }
+         account.groups.collect { |c| [c.name, c.id] }
        when "default_product" then
          account.products.collect { |e| [e.name, e.id] }
        when "nested_field" then
@@ -250,7 +249,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
       return unless @choices
       if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
         picklist_values.clear
-        clear_picklist_cache
         @choices.each do |c| 
           if c.size > 2 && c[2].is_a?(Array)
             picklist_values.build({:value => c[0], :choices => c[2]})

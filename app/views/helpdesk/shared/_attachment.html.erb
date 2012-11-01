@@ -12,7 +12,7 @@
 	<% end %>
   </div>	
   <div class="name">
-    <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), attachment, :popup => true %>
+    <%= link_to truncate(h(attachment.content_file_name), 23), attachment, :popup => true %>
   </div>
 
   <div class="size">

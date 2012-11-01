@@ -1,4 +1,3 @@
-
 <%- javascript_tag do -%>
   // Localizing js elements
 	date_lang = {
@@ -21,8 +20,8 @@
 	          years: "<%= t("date.years") %>"
 	};
 	
-  jQuery(document).ready(function() {
-		jQuery("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2();
+  $J(document).ready(function() {
+		$J("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2();
     <%= yield :onload_script -%>
   });
 <%- end -%>

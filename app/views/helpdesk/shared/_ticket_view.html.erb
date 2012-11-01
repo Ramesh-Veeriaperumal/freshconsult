@@ -1,25 +1,27 @@
-<div class="leftFilter" id="all-views" style="min-height:44px">
-  
+<div class="leftFilter" id="all-views">
+  <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
+
+  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view_tooltip"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
 </div>
 
 
 <div id="ticket-sub-toolbar">
-	<% unless @items.empty? %>
-  <%= render :partial => "/helpdesk/shared/ticket_sort" , :inline => true %>
-  <% end %>
+  <%= render :partial => "/helpdesk/shared/ticket_sort" unless @items.empty? %>
 </div>
 
 <div id="ticket-list-body"><div id="ticket-list-body-content">
 	<div id="ticket-toolbar" class="toolbar">
-	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" , :inline => true %>
+	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" %>
 	</div>
-	<form action id="tickets-expanded" method="post">
-		<div style="margin:0;padding:0;display:inline">
-			<input name="_method" type="hidden" value="put">
-		</div>
+
+	<div id="recent_ticket_count" class='more-tweets'>
+	  1 new update
+	</div>
+
+	<% form_tag "", { :id => "tickets-expanded",  :method => :put } do %>
 	  <div id="ticket-list" class="detailed_view">
-	    <%= render :partial => "/helpdesk/shared/tickets" , :inline => true %>
+	    <%= render :partial => "/helpdesk/shared/tickets" %>
 	  </div>    
-	</form>
+	<% end %>
 </div></div>
-<%= render :partial => "/helpdesk/shared/ticket_dynamic_menus" , :inline => true %>
+<%= render :partial => "/helpdesk/shared/ticket_dynamic_menus" %>

@@ -40,7 +40,6 @@
 </div>
 
 <% javascript_tag do %>
-  jQuery(".wf_order_type, .wf_order").die();
   jQuery('.wf_order_type, .wf_order').live("click", function(ev){
       ev.preventDefault();
       setCookie(this.className, this.getAttribute(this.className),'/support/');

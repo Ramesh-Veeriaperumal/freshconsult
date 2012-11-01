@@ -173,6 +173,12 @@ var $J = jQuery.noConflict();
       
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
+      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
+      validateOptions = {
+         onkeyup: false,
+         focusCleanup: true,
+         focusInvalid: false
+      };
 
       $(".form-tooltip").twipsy({ 
         live: true,
@@ -205,14 +211,6 @@ var $J = jQuery.noConflict();
         });
       });
 
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false,
-         ignore:":not(:visible)"
-      };
-      
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);
@@ -328,29 +326,6 @@ var $J = jQuery.noConflict();
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }
-
-
-      $(document).pjax('a[data-pjax]',"#body-container",{
-          timeout: -1
-        }).bind('pjax:beforeSend',function(evnt,xhr,settings){
-          start_time = new Date();
-          var bHeight = $('#body-container').height(),
-              clkdLI = $(evnt.relatedTarget).parent();
-          $('ul.header-tabs li.active').removeClass('active');
-          clkdLI.addClass('active');
-          $('.load-mask').height(bHeight).show();
-          $('#body-container .wrapper').css('visibility','hidden');
-          return true;
-      }).bind('pjax:end',function(){
-        $('.load-mask').hide();
-        $('#body-container .wrapper').css('visibility','visible');
-        end_time = new Date();
-        setTimeout(function() {
-          $('#benchmarkresult').html('Finnally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
-        },10);
-        return true;
-      })
-
    });
  
 })(jQuery);

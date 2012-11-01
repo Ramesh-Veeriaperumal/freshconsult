@@ -3,8 +3,9 @@ module Admin::HomeHelper
   def admin_link(list_array)
     link_item = list_array.map do |pref|
                   next if !pref[2].nil? && !pref[2]
+
                     link_content = <<HTML
-                    <div class="img-outer"><img width="32px" height="32px" src="/images/spacer.gif" class = "admin-icon-#{ pref[1] }" /></div>
+                    <div class="img-outer"><img src="/images/spacer.gif" class = "admin-icon-#{ pref[1] }" /></div>
                     <div class="admin-icon-text">#{t(".#{pref[1]}")}</div>
 HTML
                     content_tag( :li, link_to( link_content, pref[0] ) )

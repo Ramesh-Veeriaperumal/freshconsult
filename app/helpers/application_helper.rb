@@ -6,8 +6,6 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
 
-  include MemcacheKeys
-
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -77,8 +75,8 @@ module ApplicationHelper
     @page_keywords    
   end
 
-  def tab(title, url, cls = false, tab_name="")
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+  def tab(title, url, cls = false)
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => ( cls ? "active": "" ) )
   end
   
   def show_ajax_flash(page)
@@ -158,7 +156,7 @@ module ApplicationHelper
     navigation = tabs.map do |s| 
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ) 
+      tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
   end          
@@ -313,26 +311,21 @@ module ApplicationHelper
       ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
-    current_account.ticket_fields.custom_fields.each { |custom_field|
-      name = custom_field.name[0..custom_field.name.rindex('_')-1]
-      place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
-    }
+    # current_account.ticket_fields.custom_fields.each { |custom_field|
+    #   name = custom_field.name[0..custom_field.name.rindex('_')-1]
+    #   place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
+    # }
     place_holders
   end
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
-    img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
-    if options.include?(:width)  
-      img_tag_options[:width] = options.fetch(:width)
-      img_tag_options[:height] = options.fetch(:height)
-    end 
-    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
   end
 
   def user_avatar_with_expiry( user, expiry = 300)
-    user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
+    user_avatar(user,:thumb,"preview_pic",{:expiry => expiry})
   end
   
   def is_user_social( user, profile_size )
@@ -390,7 +383,7 @@ module ApplicationHelper
   
   def get_app_config(app_name)
     installed_app = get_app_details(app_name)
-    return installed_app.configs[:inputs] unless installed_app.blank?
+    return installed_app[0].configs[:inputs] unless installed_app.blank?
   end
 
   def is_application_installed?(app_name)
@@ -399,12 +392,14 @@ module ApplicationHelper
   end
 
   def get_app_details(app_name)
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
     return installed_app
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
+                  :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else

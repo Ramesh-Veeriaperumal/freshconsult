@@ -38,7 +38,7 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_protected :attachments, :notable_id
   
   before_create :validate_schema_less_note
-  before_save :load_schema_less_note, :update_category
+  before_save :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states   
 
@@ -180,7 +180,6 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def respond_to?(attribute)
-    return false if [:to_ary].include? attribute.to_sym
     super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
   end
 

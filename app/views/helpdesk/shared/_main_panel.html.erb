@@ -1,9 +1,9 @@
-<%= yield :main_panel_title %>
+ 	<%= yield :main_panel_title %>
 	
-<%= yield :main_panel_summary %>
+ 	<%= yield :main_panel_summary %>
 
-<%= yield :main_panel_toolbar %>
+  <%= yield :main_panel_toolbar %>
 	
-<%= content_tag('span', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar') if yield(:main_panel_selected_toolbar) %>	
+	<%= content_tag('span', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar') if yield(:main_panel_selected_toolbar) %>	
 
-<%= yield :main_panel_content %>
+	<%= yield :main_panel_content %>
