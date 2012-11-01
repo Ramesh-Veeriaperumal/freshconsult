@@ -13,11 +13,10 @@ on_utilities(utility_name) do
   sphinx_environment = node[:environment][:framework_env]
   #sphinx_environment = "slave" if !node['db_slaves'].nil? and !node['db_slaves'].empty?
 
-
   if `ps aux | grep search[d]` == ""
-    run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:configure"
     run "bundle exec RAILS_ENV=#{sphinx_environment} rake thinking_sphinx:index"
     run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:start"
+    run "RAILS_ENV=#{sphinx_environment} bundle exec rake thinking_sphinx:configure"
     #execute "monit reload"
   end
 end
