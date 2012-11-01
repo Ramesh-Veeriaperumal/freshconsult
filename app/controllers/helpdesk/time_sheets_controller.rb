@@ -4,7 +4,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
-  before_filter :load_installed_apps, :only => [:index]
+  before_filter :load_installed_apps, :only => [:index, :create, :edit, :update, :toggle_timer]
   
   def index
     unless @ticket.nil?
