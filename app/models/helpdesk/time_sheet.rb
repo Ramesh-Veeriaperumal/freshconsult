@@ -73,6 +73,13 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.time_spent = calculate_time_spent
      self.save
   end
+
+  def to_xml(options = {})
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    super(:builder => xml, :skip_instruct => true,:except => [:account_id])
+  end
   
   private
   

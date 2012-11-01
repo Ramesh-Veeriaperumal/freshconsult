@@ -2,12 +2,26 @@ class Helpdesk::TimeSheetsController < ApplicationController
   
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
-  before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ] 
+  before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
   
-  def index    
-    @time_sheet = @ticket.time_sheets
-    render :index, :layout => false
+  def index
+    unless @ticket.nil?
+      @time_sheets = @ticket.time_sheets  unless @ticket.nil?
+    else
+      get_time_sheets #Added for time_sheets API
+    end
+    respond_to do |format|
+      format.html do 
+        render :index, :layout => false
+      end
+      format.xml do
+        render :xml=>@time_sheets.to_xml()
+      end
+       format.json do
+        render :json=>@time_sheets.to_json()
+      end
+    end
   end
   
   def create
@@ -21,16 +35,36 @@ class Helpdesk::TimeSheetsController < ApplicationController
                                              :time_spent => get_time_in_second(hours_spent),
                                              :timer_running => hours_spent.blank?,
                                              :billable => true})
+    begin
     @time_entry = scoper.new(time_entry)
-    @time_entry.save
+    rescue Exception => exception
+      handle_save_error exception
+      return
+    end
+    if @time_entry.save
+      respond_to_format @time_entry
+    else
+      handle_save_error
+    end
   end
    
+  def show
+     respond_to_format @time_entry
+  end
+
   def update  
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
-    if @time_entry.update_attributes(time_entry)
-       
+    begin
+      if @time_entry.update_attributes(time_entry)
+        respond_to_format @time_entry
+      else
+        handle_update_error @time_entry
+      end
+    rescue Exception => exception
+      @time_entry.errors.add(:message,exception.message)
+      handle_update_error @time_entry
     end
   end 
   
@@ -41,6 +75,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
         update_running_timer @time_entry.user_id
         @time_entry.update_attributes({ :timer_running => true, :start_time => Time.zone.now })
      end
+     respond_to_format @time_entry
   end
   
   def time_sheets_for_ticket
@@ -53,6 +88,12 @@ class Helpdesk::TimeSheetsController < ApplicationController
      @ticket = current_account.tickets.find_by_display_id(params[:id])
      @items = @ticket.time_sheets.group_by(&:user) || [] 
      #need to render a new partial- u may iterate as--@items.each{|key,val| val.each{|t| puts t.note}}
+  end
+
+  def destroy
+    @time_entry.destroy
+    raise ActiveRecord::RecordNotFound if(@time_entry.blank?)
+    respond_to_format @time_entry
   end
 
 private
@@ -103,6 +144,50 @@ private
     to_time = to_time.to_time if to_time.respond_to?(:to_time)
     running_time =  ((to_time - from_time).abs).round 
     return (time_entry.time_spent + running_time)
+  end
+
+  def respond_to_format result
+     respond_to do |format|
+      format.js
+      format.html
+      format.xml do 
+        render :xml => result.to_xml and return 
+      end
+      format.json do
+        render :json => result.to_json and return 
+      end
+    end
+  end
+
+  #API Method
+  def get_time_sheets
+    # start date is set to the zero if nothing is specified similarly End date is set to current time.
+    start_date = (params[:start_date].blank?) ? 0: params[:start_date] 
+    end_date =  (params[:end_date].blank?) ? Time.zone.now.to_time : params[:end_date]
+    
+    #Customer/Contact/email name 
+    email = params[:email]
+    unless email.blank?
+      requester = current_account.all_users.find_by_email(email) 
+      unless requester.nil? 
+        params[:customer_id] = requester.customer_id if requester.customer?
+        params[:agent_id] = requester.agent.id if requester.agent?
+        Rails.logger.debug "Timesheets API::get_time_sheets:  params[:email] is a customer =>" +requester.customer?
+      end
+    end
+    customer_id = params[:customer_id] || [] 
+    unless params[:customer_name].blank?
+      customer = current_account.customers.find_by_name(params[:customer_name])
+      # raise ActiveRecord::RecordNotFound if(customer.blank?)#indication customer not found
+      customer_id = customer.id 
+    end
+    agent_id = params[:agent_id] || []
+
+    billable = (!params[:billable].blank? && !params[:billable].to_s.eql?("falsetrue")) ? [params[:billable].to_s.to_bool] : true
+
+    #customer_id and agent_id if passed null will return all data.  
+    Rails.logger.debug "Timesheets API::get_time_sheets: customer_id=> "+customer_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
+    @time_sheets = current_account.time_sheets.for_customers(customer_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
   end
 
 end

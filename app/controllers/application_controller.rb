@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale
 
   rescue_from ActionController::RoutingError, :with => :render_404
+  rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -84,6 +85,40 @@ class ApplicationController < ActionController::Base
     render :file => "#{Rails.root}/public/404.html", :status => :not_found
   end
   
+  def record_not_found (exception)
+    respond_to do |format|
+      format.html do
+        render :file => "#{Rails.root}/public/404.html", :status => :not_found
+      end
+      format.xml do 
+        result = {:error=>exception.message}
+        render :xml =>result.to_xml(:indent =>2,:root=> :errors),:status =>:not_found
+      end
+      format.json do 
+        render :json => {:errors =>{:error =>exception.message}}.to_json,:status => :not_found
+      end
+    end
+  end
+
+  def handle_save_error (exception)
+    respond_to do |format|
+      format.xml do 
+        result = {:error=>exception.message}
+        result.to_xml(:indent =>2,:root=> :errors)
+      end
+      format.json do
+       render :json => result.to_json
+      end
+    end
+  end
+
+  def handle_update_error (item)
+    respond_to do | format|
+      format.xml  { render :xml => item.errors.to_xml }
+      format.json { render :json => {:errors=>{:error =>item.errors}}.to_json }
+    end
+  end
+
   protected
     def silence_logging
       @bak_log_level = logger.level 
