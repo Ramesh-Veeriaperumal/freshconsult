@@ -14,6 +14,7 @@
 	<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
 	<%= include_stylesheets :common  %>
 	<%= include_stylesheets :app  %>
+	<%= include_stylesheets :tour_my_app %>	
 	<%= render :partial => "shared/theme.css"  %>
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
