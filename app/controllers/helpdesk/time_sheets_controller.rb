@@ -4,6 +4,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
+  before_filter :load_installed_apps, :only => [:index]
   
   def index
     unless @ticket.nil?
@@ -146,8 +147,9 @@ private
     return (time_entry.time_spent + running_time)
   end
 
+
   def respond_to_format result
-     respond_to do |format|
+    respond_to do |format|
       format.js
       format.html
       format.xml do 
@@ -188,6 +190,11 @@ private
     #customer_id and agent_id if passed null will return all data.  
     Rails.logger.debug "Timesheets API::get_time_sheets: customer_id=> "+customer_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
     @time_sheets = current_account.time_sheets.for_customers(customer_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
+
+  end
+
+  def load_installed_apps
+    @installed_apps_hash = current_account.installed_apps_hash
   end
 
 end
