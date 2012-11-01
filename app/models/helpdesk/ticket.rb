@@ -38,7 +38,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
   
-  after_create :refresh_display_id #,:stop_sphinx_delta_for_create
+  after_create :refresh_display_id
 
   before_update :assign_email_config, :load_ticket_status, :update_dueby
   
@@ -396,8 +396,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "[#{ticket_id_delimiter}#{display_id}]"
   end
 
-  def conversation(page = nil, no_of_records = 5)
-    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
+  def conversation(page = nil, no_of_records = 5, includes=[])
+    notes.visible.exclude_source('meta').newest_first.paginate(:include => includes ,:page => page, :per_page => no_of_records)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
@@ -933,10 +933,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   private
 
-    def stop_sphinx_delta_for_create
-      ThinkingSphinx.updates_enabled = false
-    end
-
+    
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
     end

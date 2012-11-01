@@ -32,7 +32,8 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   named_scope :activty_before, lambda { |account, activity_id|
     { :conditions => ["helpdesk_activities.account_id = ? and helpdesk_activities.id <= ?", account, activity_id], 
-      :order => "helpdesk_activities.id DESC"
+      :order => "helpdesk_activities.id DESC",
+      :include => [ :user => :avatar ]
     }
   }
 

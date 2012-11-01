@@ -4,8 +4,7 @@
     <% unless @items.total_entries == 0 %>
     <div class="offset">
       Showing 
-      <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b> of 
-      <b><%= @items.total_entries %></b>
+      <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b>
     </div>   
     <% end %>
   </div>
@@ -13,27 +12,34 @@
   <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
     <ul>             
        <% current_sort_name = "" %>
-       <% TicketsFilter::SORT_FIELD_OPTIONS.each do |sort_item| %>       
-         <% content_tag :li do %>
-           <% link_to "#", :class => "wf_order", :wf_order => sort_item[1] do %>                      
-             <% if( sort_item[1] == current_wf_order ) %>
-                <% current_sort_name = sort_item[0] %>
-                <%= content_tag(:span, "", :class => "icon ticksymbol") %>
-             <% end %>            
-             <%= sort_item[0] %>
-           <% end %>                  
-         <% end %>
+       <% TicketsFilter::SORT_FIELD_OPTIONS.each do |sort_item| %> 
+          <% wf_order = sort_item[1]
+            current_sort_name = sort_item[0] if wf_order == current_wf_order 
+          %>
+          <li>
+            <a class="wf_order" href="#" wf_order="<%=wf_order%>" >
+              <%if(sort_item[1] == current_wf_order) %>
+               <span class="icon ticksymbol"></span>
+               <%end%>
+              <%=sort_item[0]%>
+             </a>
+          </li>
        <% end %>
     </ul>
     <span class="seperator"></span>
     <ul>
       <% TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.each do |sort_order_item| %>
-        <% content_tag :li do %>
-          <% link_to "#", :class => "wf_order_type", :wf_order_type => sort_order_item[1] do %>
-            <%= content_tag(:span, "", :class => "icon ticksymbol") if( sort_order_item[1] == current_wf_order_type ) %>
-            <%= sort_order_item[0] %>
-          <% end %>
-        <% end %>
+        <% wf_order_type = sort_order_item[1]
+            current_sort_name = sort_order_item[0] if wf_order_type == current_wf_order 
+          %>
+          <li>
+            <a class="wf_order_type" href="#" wf_order_type="<%=wf_order_type%>" >
+              <%if(sort_order_item[1] == current_wf_order_type) %>
+               <span class="icon ticksymbol"></span>
+               <%end%>
+              <%=sort_order_item[0]%>
+             </a>
+          </li>
       <% end %>
     </ul>   
   </div>

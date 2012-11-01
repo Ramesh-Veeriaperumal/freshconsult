@@ -9,7 +9,7 @@ module Helpdesk::TicketsHelper
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ))
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), :"data-pjax" => "#body-container")
     else
       content_tag(:span, "", :class => "seperator")
     end  
@@ -45,7 +45,7 @@ module Helpdesk::TicketsHelper
                
     panels = content_tag :div, tabs.map{ |t| 
       if(tabs.first == t)
-        content_tag :div, (render :partial => "helpdesk/tickets/components/ticket", :object => @ticket), :class => "rtDetails tab-pane active #{t[2]}", :id => t[0]
+        content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
       else
         content_tag :div, content_tag(:div, "", :class => "loading-box"), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
@@ -55,7 +55,7 @@ module Helpdesk::TicketsHelper
   end
     
   def ticket_tabs
-    tabs = [['Pages',     t(".conversation"), @ticket.conversation_count],
+    tabs = [['Pages',     t(".conversation"), @ticket_notes.total_entries],
             ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
                                                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
                                                feature?(:timesheets)]]
@@ -211,17 +211,17 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket)
+  def subject_style(ticket,onhold_and_closed_statuses)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && !ticket.onhold_and_closed?
+    type = "new" if ticket.ticket_states.is_new? && !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id)
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
+    type = "overdue" if !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) && ticket.due_by < Time.now && ticket.active? 
     type
   end
 
-  def sla_status(ticket)
+  def sla_status(ticket,onhold_and_closed_statuses)
     if( ticket.active? )
-      unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
+      unless (onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) or ticket.ticket_status.deleted?)
         if(Time.now > ticket.due_by )
           t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         else
@@ -244,7 +244,7 @@ module Helpdesk::TicketsHelper
   def bind_last_conv (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
-                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+                ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
       last_reply_time = last_conv.created_at
@@ -282,8 +282,8 @@ module Helpdesk::TicketsHelper
 
   def bind_last_reply (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    last_conv = (item.is_a? Helpdesk::Note) ? item : 
-                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+    # last_conv = (item.is_a? Helpdesk::Note) ? item : 
+                # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
     return ( get_key(key) || bind_last_conv(item, signature) )

@@ -54,7 +54,6 @@
         <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field"%>
       <% end %>
   <% end %>
-  <% content_for :pagefixed do %>
   <% javascript_tag do %>
       jQuery('#<%=category_id%>')
         .nested_select_tag({
@@ -69,6 +68,5 @@
           item_id: '<%= sub_category_item_id %>',
           change_callback: refresh_tickets
         });
-    <% end %>
     <% end %>
 <%end%>

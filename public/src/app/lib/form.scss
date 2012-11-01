@@ -1152,6 +1152,11 @@ input.search{
 	border:1px solid #999999;
 	@include box-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
     @include border-radius(4px);
+    text-align:left;
+    label{
+    	padding:5px 0;
+   		font-size:1.4em;
+    }
 }
 
 .border-top{
