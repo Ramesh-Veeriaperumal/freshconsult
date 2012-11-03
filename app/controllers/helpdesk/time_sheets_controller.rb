@@ -6,6 +6,9 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
   before_filter :load_installed_apps, :only => [:index, :create, :edit, :update, :toggle_timer]
   
+
+  rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
+
   def index
     unless @ticket.nil?
       @time_sheets = @ticket.time_sheets  unless @ticket.nil?
@@ -36,16 +39,9 @@ class Helpdesk::TimeSheetsController < ApplicationController
                                              :time_spent => get_time_in_second(hours_spent),
                                              :timer_running => hours_spent.blank?,
                                              :billable => true})
-    begin
-    @time_entry = scoper.new(time_entry)
-    rescue Exception => exception
-      handle_save_error exception
-      return
-    end
+      @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save
       respond_to_format @time_entry
-    else
-      handle_save_error
     end
   end
    
@@ -57,16 +53,9 @@ class Helpdesk::TimeSheetsController < ApplicationController
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
-    begin
       if @time_entry.update_attributes(time_entry)
         respond_to_format @time_entry
-      else
-        handle_update_error @time_entry
       end
-    rescue Exception => exception
-      @time_entry.errors.add(:message,exception.message)
-      handle_update_error @time_entry
-    end
   end 
   
   def toggle_timer     

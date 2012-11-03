@@ -89,9 +89,6 @@ class ApplicationController < ActionController::Base
   
   def record_not_found (exception)
     respond_to do |format|
-      format.html do
-        render :file => "#{Rails.root}/public/404.html", :status => :not_found
-      end
       format.xml do 
         result = {:error=>exception.message}
         render :xml =>result.to_xml(:indent =>2,:root=> :errors),:status =>:not_found
@@ -102,22 +99,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def handle_save_error (exception)
-    respond_to do |format|
-      format.xml do 
-        result = {:error=>exception.message}
-        result.to_xml(:indent =>2,:root=> :errors)
-      end
-      format.json do
-       render :json => result.to_json
-      end
-    end
-  end
 
-  def handle_update_error (item)
+  def handle_error (error)
+    result = {:error => error.message}
     respond_to do | format|
-      format.xml  { render :xml => item.errors.to_xml }
-      format.json { render :json => {:errors=>{:error =>item.errors}}.to_json }
+      format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
+      format.json { render :json => {:errors =>result}.to_json and return } 
     end
   end
 
