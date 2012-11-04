@@ -594,7 +594,7 @@ module ApplicationHelper
 
   def nodejs_url
     nodejs_protocol = (current_account && current_account.ssl_enabled) ? "https" : "http"
-    nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 445 : 82)      
+    nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 500 : 82)      
     "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/node"
   end  
    
