@@ -18,7 +18,7 @@
     
     jQuery(document).ready(function() {
 
-      socket = io.connect('<%= nodejs_url %>'); 
+      socket = io.connect('<%= nodejs_url("collision") %>'); 
 
       socket.on('connect', function(){
         socket.emit('index_init', init_params);

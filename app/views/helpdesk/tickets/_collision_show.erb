@@ -56,7 +56,7 @@
     
     jQuery(document).ready(function() {   
      
-      var socket = io.connect('<%= nodejs_url %>'); 
+      var socket = io.connect('<%= nodejs_url("collision") %>'); 
       socket.on('connect', function() {
           //console.log('Connected to node server...');         
           //console.log(JSON.stringify(init_params));
