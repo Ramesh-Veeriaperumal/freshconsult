@@ -88,19 +88,23 @@ class ApplicationController < ActionController::Base
   end
   
   def record_not_found (exception)
+    Rails.logger.debug "Error  =>" + exception
+    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     respond_to do |format|
       format.xml do 
-        result = {:error=>exception.message}
+        result = {:error=>"Record Not Found"}
         render :xml =>result.to_xml(:indent =>2,:root=> :errors),:status =>:not_found
       end
       format.json do 
-        render :json => {:errors =>{:error =>exception.message}}.to_json,:status => :not_found
+        render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
       end
     end
   end
 
 
   def handle_error (error)
+    Rails.logger.debug "API::Error  =>" + error
+    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     result = {:error => error.message}
     respond_to do | format|
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }

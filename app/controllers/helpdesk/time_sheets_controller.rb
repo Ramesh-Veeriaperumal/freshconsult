@@ -40,7 +40,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
                                              :timer_running => hours_spent.blank?,
                                              :billable => true})
       @time_entry = scoper.new(time_entry)    #throws unknown attribute error
-    if @time_entry.save
+    if @time_entry.save!
       respond_to_format @time_entry
     end
   end
@@ -82,7 +82,6 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   def destroy
     @time_entry.destroy
-    raise ActiveRecord::RecordNotFound if(@time_entry.blank?)
     respond_to_format @time_entry
   end
 
