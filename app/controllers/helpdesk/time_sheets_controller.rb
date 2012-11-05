@@ -4,6 +4,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
+  before_filter :load_installed_apps, :only => [:index, :create, :edit, :update, :toggle_timer, :destroy]
   
   def index    
     @time_sheet = @ticket.time_sheets
@@ -103,6 +104,10 @@ private
     to_time = to_time.to_time if to_time.respond_to?(:to_time)
     running_time =  ((to_time - from_time).abs).round 
     return (time_entry.time_spent + running_time)
+  end
+
+  def load_installed_apps
+    @installed_apps_hash = current_account.installed_apps_hash
   end
 
 end

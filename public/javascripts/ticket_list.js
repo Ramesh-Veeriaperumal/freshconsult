@@ -171,6 +171,16 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 // ---- END OF extract from /helpdesk/shared/_ticket_view.html.erb ----
 
 
+		//Clicking on the row (for ticket list only), the check box is toggled.
+	// jQuery('.tickets tbody tr').live('click',function(ev) {
+	// 	if (! jQuery(ev.target).is('input[type=checkbox]') && ! jQuery(ev.target).is('a') && ! jQuery(ev.target).is('.quick-action')) {
+	// 		var checkbox = jQuery(this).find('input[type=checkbox]').first();
+	// 		checkbox.prop('checked',!checkbox.prop('checked'));
+	// 		checkbox.trigger('change');
+	// 	}
+	// });
+
+		jQuery('.tickets tbody tr .check :checkbox').die();
     jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
         if (jQuery(this).prop('checked')) {
           jQuery(this).parent().parent().addClass('active');
@@ -182,8 +192,10 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
         bulkActionButtonsDisabled();
     });
 
-	bulkActionButtonsDisabled();
+	//bulkActionButtonsDisabled();
 	
+	//TODO. Need to remove this. Added because dynamic menus are dom manuplations instead of style.
+	jQuery('.action_assign').die();
 	// Quick Actions
 	jQuery('.action_assign').live("click", function(ev) {
 		ev.preventDefault();
@@ -245,6 +257,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	jQuery('#leftViewMenu a').click(function(ev) {
 		filter_opts_sisyphus.manuallyReleaseData();
 	});
+	
 });
 
 if (getCookie('ticket_list_updated') == "true") {

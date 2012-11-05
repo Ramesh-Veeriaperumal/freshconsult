@@ -398,8 +398,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "[#{ticket_id_delimiter}#{display_id}]"
   end
 
-  def conversation(page = nil, no_of_records = 5)
-    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
+  def conversation(page = nil, no_of_records = 5, includes=[])
+    notes.visible.exclude_source('meta').newest_first.paginate(:include => includes ,:page => page, :per_page => no_of_records)
   end
 
   def conversation_count(page = nil, no_of_records = 5)

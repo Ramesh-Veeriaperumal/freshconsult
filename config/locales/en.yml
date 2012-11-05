@@ -12,6 +12,7 @@ en:
   paid_with: "Paid with"
   date_title: "Date"
   status: "Status"
+  sales: "Sales"
   preview: "Preview"
   filter_options:
     status: "Status"
@@ -421,6 +422,9 @@ en:
             agent_email_sending: Sending Invites...
             agent_email_required: Email ID required to send invite.
     day_passes:
+      helpnote:
+        title: Day Pass
+        info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they gets used up. 
       index:
         title: "Day Pass"
         current_balance: "You have %{balance} left!"
@@ -443,10 +447,12 @@ en:
         thankyou_info: "Message to be displayed after a user submits the ticket form"
     supervisor_rules:
       index:
-        help_title: Supervisor
         title: Supervisor - Rules
-        help_info_1: Use Supervisor to periodically check recent tickets and perform certain time-based activities like sending reminders to customers or escalating tickets or reassigning tickets etc.
-        help_info_2: For example - If a ticket is waiting for customer response for more than 24 hours send a reminder email to the customer or Automatically close a ticket that is in "Resolved" status for more than 48 hours.
+      helpnote:
+        tour: Help me create a new supervisor rule
+        help_title: Supervisor
+        help_info_1: The Supervisor performs actions on tickets that you specify based on time and event driven triggers. Use the Supervisor to periodically check recent tickets and perform actions like sending reminders to customers for pending tickets, or escalating overdue tickets to the right person in your team.
+        help_info_2: The Supervisor will run every hour and process tickets that have been updated within the past 30 days. Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
         help_info_3: Supervisor will run every hour and process tickets that have been updated within the past 30 days.
         help_info_4: Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
       new:
@@ -485,8 +491,11 @@ en:
         security_title: Security
     products:
       helpnote:
-        heading: Multiple Products
-        content: Multiple products helps you to provide product or brand specific support.
+        tour: Help me support multiple products
+        heading1: Multiple Products
+        content1: You can support multiple products with separate branded portals from a single Freshdesk account. Configure separate support emails for each product and automatically queue them in a specific group.
+        heading2: Configuring a separate portal for products
+        content2: If you choose to configure a separate branded portal for each product, you can provide a unique set of Knowledge Base articles and Forums for each brand.
       new: 
         title: New Product
       portal: 
@@ -600,11 +609,15 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
-      
     canned_responses:
       index:
         title: Canned responses
         new: Add Canned response
+      helpnote:
+        title: Canned responses
+        tour: Help me use canned responses
+        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
+        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
       new:
         title: Add Canned response        
         delete_confirm: Are you sure you want to delete this canned response?      
@@ -928,14 +941,19 @@ en:
   feedbackwidget_bgcolor: Background Color
   day: 1 Day
   current_plan: Current Plan
-  medium: Medium
+  medium: "Medium"
   suspended_plan_admin_info: Your account has been suspended please contact your account administrator %{email}!
   delete_confirm_scenario: Are you sure you want to delete this scenario?
   days: days
   basic_brief: For Small teams
   phone: Phone
   edit: Edit
-  accounts: 
+  accounts:
+    helpcard: 
+      title: Rebranding your support portal
+      tour: Help me rebrand my helpdesk
+      info1: You can completely customize your Freshdesk help desk for customers logging into your self-service portal as well as your agents. Rebrand the look and feel of your helpdesk with your logo and theme by uploading your logo and favicon, giving your help desk a name, and customizing your portal colors.
+      info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
     cancel: 
       changeplan_instead_of_cancel: Instead of canceling your account, perhaps you'd like to just switch your plan.
       intro: You are about to cancel your account.  This will <strong>permanently delete all your data</strong>.
@@ -1002,7 +1020,8 @@ en:
   automations: 
     new: New Scenario
     title: Scenario Automations
-    info1: Every helpdesk has a set of commonly recurring scenarios - Eg. Escalate to Level 2, Assign to QA, Forward to Sales Dept. etc. These scenarios usually involve performing multiple updates to the ticket
+    tour: Help me automate a common scenario
+    helptext: Scenario Automations let you carry out a bunch of updates to the ticket with a single click. They help you quickly handle recurring scenarios. For example, you could create a scenario to “Mark a Ticket as a Bug”, “Assign to the QA team” and send an email to the product manager so you can process customer reported bugs with a single click.
     available_placeholders: Placeholders
     info2: For example before assigning a ticket to QA you may want to set the ticket type as Bug, assign it to the QA group and email the QA manager about the new bug.
     info3: Scenario Automation allows you to automate these actions in a single click
@@ -1048,9 +1067,11 @@ en:
     info2: All Subscription related tickets will be assigned to Susan
     new_rule: New Rule
     info3: When should this rule be applied
-    info4: Dispatch'r will automatically dispatch a newly created support ticket based on the rules and actions defined
+    helpcard:
+      tour: Help me create a new Dispatch’r rule
+      info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
+      info2: Remember, the order of the Dispatch’r rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop. You can reorder the list of rules to have the most important rules on top.
     reorder: Reorder
-    info5: Remember, the order of the rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop
     add_new_action: Add new action
     dispatch_rules: Dispatch'r - Rules
     match_all: Match All
@@ -1086,6 +1107,7 @@ en:
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
   portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
+  show_me_how: Show me how
   topic:
     ideas_stamps:
       planned: Planned
@@ -1182,6 +1204,8 @@ en:
     info3: Send an Escalation email to
     info4: if a ticket remains un-assigned for more than
     info5: Are you sure
+    tour: Help me create a new agent group
+    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
     select_agents: Select Agents
     assigntime:
       half: 30 Minutes
@@ -1213,6 +1237,12 @@ en:
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email} 
     signature: Signature
     info3: Are you sure you want delete
+    helpcard:
+      tour: Help me add new agents
+      side_title: Adding Agents and Editing Details
+      info1: The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on “Edit”. You can add new agents by clicking on the “New Agent” button. 
+      info2: When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets.
+      info3: Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -1316,12 +1346,14 @@ en:
     edit: Edit SLA Policy
     select_policy: Select policy
     resolution_time: Resolution time
-    title: SLA Policy
     calendar_time: Calendar Hours
-    info1: "\tSLA Policy is a set of target response and resolution times based on ticket priority.It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc."
+    helpcard:
+      title: SLA Policy
+      tour: Help me create a new SLA policy
+      info1: "A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours, and also create automatic escalation rules to notify specific agents when an SLA rule is violated. "
+      info2: "Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket. You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package."
     override: Override
     title1: SLA Policies
-    info2: "Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
     response_time: Response time
     business_time: Business Hours
     info3: SLA Policy works in conjunction with Business Hours
@@ -1435,7 +1467,7 @@ en:
   begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
   favicon: Favicon
   is_expiring_today: is expiring today
-  feedbackwidget_help_para1: Collect feedback from your customers by adding a support tab to your website pages.
+  feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
   low: Low
   feedbackwidget_defaultbutton: Support
   agents: Agents
@@ -1472,7 +1504,13 @@ en:
     default_reply_template_info: Template will appear automatically for ALL agent replies, whenever they are responding to tickets
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requestor Notification
-    title: Email notifications
+    title: Email Notifications
+    helpcard:
+      tour1: Help me manage e-mail notifications
+      tour2: Help me customize the reply template
+      info1: You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email.
+      info2: Note that you can choose to disable notifications, and also create Dispatch’r or Supervisor rules to complement an event.
+      info3: You can also customize the email template for agent replies and even add dynamic content in replies using placeholders.
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
@@ -1488,8 +1526,9 @@ en:
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
     title: Email Settings
-    email: email 
+    email: E-mail 
     name: Name
+    freshdesk: Freshdesk
     edit: Edit
     info9: Assign to Group
     reply_emails: Reply Emails from Freshdesk
@@ -1510,12 +1549,18 @@ en:
     inactive_info1: All your support emails are still unverified, you must verify at least one support email
     info14: Any email sent to this address will be converted as a ticket
     info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
-    spf_info: While most of your emails will be delivered, to be on the safer side you must create an <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email.
+    spf_info: Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: Your support email
     unverified_info1: An email with the verification link has been sent to this email. Only after verification this support email will become active.
     inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
     info15: You must forward these emails to
-    info5: Reply emails from Freshdesk will automatically use your original support email ids as the From email address
+    helpcard:
+      tour1: Help me setup my support email
+      tour2: Help me configure multiple mailboxes
+      info5: Your default support email address is <a target="_blank" href="{{solution_url}}">support@demo.freshdesk.com</a>. Any email sent here gets automatically converted into a ticket that you can get working on.
+      info19: You can configure your Freshdesk account to use a support email in your own domain, like support@mycompany.com by forwarding emails from this address to <a target="_blank" href="{{solution_url}}">demo.freshdesk.com</a>. To create a new support email box, click “Edit” under global email settings.
+      info20: Using Multiple Mailboxes
+      info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to automatically assign emails from each mailbox to a specific group.
     primary_supp_email: Primary support email
     info16: Tickets will be assigned to
     info7: This is also your Reply-to address eg. support@yourcompany.com
@@ -1569,11 +1614,11 @@ en:
   back: Back
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
-    ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_words} ago </span>"
-    ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_words} ago </span>"
-    ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_words} ago </span>"
-    ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_words} ago </span>"
-    ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize'>%{time_words} ago </span>"
+    ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize'>%{time_ago} ago</span>"
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
@@ -1602,6 +1647,7 @@ en:
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash
     priority: Priority
+    available_commands: Available Commands
     to_do: Tickets To-Do
     activity: Activity
     sort_by: Sorted by
@@ -1749,6 +1795,12 @@ en:
   no_level_achieved_label: No levels achieved yet.
   no_badge_achieved_label: No Badges achieved yet.
   badges_achieved_label: Badges achieved
+  integration:
+    helpcard:
+      title1: Integrations
+      info1: Integrations in Freshdesk let you share data with third party applications and services that you use regularly. Freshdesk offers several native integrations out-of-the-box. To start using a native integration, click on the corresponding “Enable” button. 
+      title2: FreshPlug Widgets
+      info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with FreshPlugs. You can customize your FreshPlug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account: 
     name: Account Name
     cancel: Cancel and go back
@@ -1777,8 +1829,8 @@ en:
   business_hours: 
     holiday_name: Holiday name
     title: Business Hours
-    info1: Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours
-    info2: Holidays work exactly like Business hours. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)
+    info1: Setting up your business hours in Freshdesk allows you to have more control over your SLAs. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a high priority ticket at 4pm on Tuesday, with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11am on Wednesday.You can configure your SLAs to either respect or ignore business hours
+    info2: Holidays work exactly like business hours. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
     holiday_added: Holiday already added
     info3: Specific Working Hours
     info4: Working Days for your Helpdesk
@@ -2373,11 +2425,11 @@ en:
       description: "Description"
       script: "Script"
       label: "Custom Widget"
-      new: "New Custom Widget"
+      new: "New FreshPlug"
       edit: "Edit Custom Widget"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helptext: "<h4>Custom Widget Help</h4><p><br/> You can develop your own custom widget using html,css and javascript.</br></br>To create the custom widget, enter the name of your new widget and a short description about it.</br>Enter your code under ‘Script’.  You can refer to our solutions page to learn more about the script.</br></br>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages."
-      small_help_text: "You can develop your own custom widget using html,css and javascript."
+      helptext: "<h4>FreshPlugs</h4><p><br/> You can develop your own FreshPlug using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a FreshPlug, first give it a name and description. Then enter your code in the  ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about FreshPlugs."
+      small_help_text: "You can develop your own FreshPlug using HTML,CSS and JavaScript."
       form:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
@@ -2501,12 +2553,26 @@ en:
   email_commands_update_failed:  "Failed to update Email Command Settings."
   email_command_settings_heading: "Email Command Settings"
   email_command_settings_info: "Configure the delimeter used to identify and extract email commands from the mail"
+  email_command_setting:
+    helpcard:
+      heading: " Email Command Settings"
+      tour: Help me understand email commands
+      info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requestor, while the rest of the text will become a part of the conversation."
+      info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
+      info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: "To"
   email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Subject"
   email_command_preview_subject_value: "Support Ticket"
   unable_to_charge: "Unable to charge the card for the added agent!"
+  ticket_field:
+    helpcard:
+      tour: "Help me understand ticket fields"
+      title1: "Ticket Fields"
+      title2: "Dependent Fields"
+      info1: "The ticket form is the easiest way to capture all the data you need from the customer, even as they submit a ticket. For example, having the customer’s order ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Ticket Form in Freshdesk to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want."
+      info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
   default_category: "Default Category"
   default_category_description: "All emails sent to %{full_domain} will be stored here as drafts"
   default_folder: "Drafts"

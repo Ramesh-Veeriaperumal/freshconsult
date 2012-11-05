@@ -1,7 +1,7 @@
 class ReportsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_reports }
-  before_filter :report_list, :only => [ :index, :show ]
-  
+  before_filter :report_list,:set_selected_tab, :only => [ :index, :show ]
+
   include Reports::ConstructReport
   include Reports::ActivityReport
   
@@ -31,6 +31,10 @@ class ReportsController < ApplicationController
   
   def get_current_object
     
+  end
+
+  def set_selected_tab
+    @selected_tab = :reports
   end
   
 end

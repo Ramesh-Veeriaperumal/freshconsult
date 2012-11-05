@@ -3,20 +3,15 @@
 <% unless @items.empty? %>
   <table class="tickets" width="100%">	
     <tbody>
-      <tr class="headings hideForDetails">
-        <td class="priority-border"></td>
-        <td class="check"></td>
-        <td class="name"><%= t('helpdesk.tickets.tabular_view.title') %></td>
-        <td colspan="2"><%= t('helpdesk.tickets.tabular_view.posted') %></td>
-        <td><%= t('helpdesk.tickets.tabular_view.assigned') %></td>
-        <td><%= t('helpdesk.tickets.tabular_view.status') %></td>
-        <td><%= t('helpdesk.tickets.tabular_view.priority') %></td>
-      </tr>
-      <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @items %>
+      <!-- Write in sinlge line for template_liner to work..-->
+      <% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) 
+        for ticket in @items %>
+        <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :locals => { :ticket => ticket } , :inline => true %>
+      <% end %>
     </tbody>
   </table>
   <div class="toolbar" id="ticket-toolbar-bottom">
-    <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
+
   </div>
 <% else %>
 	<div class="list-noinfo">

@@ -1,0 +1,8 @@
+<% if @agents.blank? %>
+  <option value="">No agents in selected group</option>
+<% else %>
+  <option value=""><%= blank_value %></option>
+  <% @agents.each do |agent| %>
+	  <option value="<%=agent.user.id%>"><%=agent.user.name%></option>
+  <% end %>
+<% end %>
