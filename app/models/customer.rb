@@ -19,6 +19,7 @@ class Customer < ActiveRecord::Base
 
   after_commit_on_create :clear_cache
   after_commit_on_destroy :clear_cache
+  after_commit_on_update :clear_cache
   
   #Sphinx configuration starts
   define_index do

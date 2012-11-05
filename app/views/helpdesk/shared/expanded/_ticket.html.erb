@@ -19,7 +19,7 @@
 			<div class="info-data hideForList">
 				<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, 
 						:username => "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>", 
-						:time => ticket.ticket_states.send(ticket.ticket_states.current_state)) 
+						:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) 
 						%>
 				<div class="emphasize"><%= sla_status(ticket,@onhold_and_closed_statuses) %></div>
 			</div>

@@ -173,8 +173,6 @@ jQuery(document).ready(function() {
 		filter_opts_sisyphus.manuallyReleaseData();
 	});
 	
-	jQuery('.timeago').humaneDates();
-	setInterval(function(){ jQuery('.timeago').humaneDates(); }, 60000);
 });
 
 if (getCookie('ticket_list_updated') == "true") {

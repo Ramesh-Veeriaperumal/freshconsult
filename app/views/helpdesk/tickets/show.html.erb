@@ -197,5 +197,5 @@
 	var isDirty= false;
 	<% end %>
 	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
-	jQuery('#TicketProperties').trigger('afterShow');
+	setTimeout(function(){jQuery('#TicketProperties').trigger('afterShow')},50);
 <%- end %>
