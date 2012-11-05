@@ -12,9 +12,8 @@ class Helpdesk::TicketsController < ApplicationController
   include RedisKeys
   include Helpdesk::AdjacentTickets
 
-
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
-  before_filter :check_user, :load_installed_apps, :only => [:show]
+  before_filter :check_user, :load_installed_apps, :only => [:show, :forward_conv]
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
