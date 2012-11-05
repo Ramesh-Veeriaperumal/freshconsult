@@ -1614,11 +1614,11 @@ en:
   back: Back
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
-    ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize timeago' title='%{time}'>%{time}</span>"
-    ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize timeago' title='%{time}'>%{time}</span>"
-    ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize timeago' title='%{time}'>%{time}</span>"
-    ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize timeago' title='%{time}'>%{time}</span>"
-    ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize timeago' title='%{time}'>%{time}</span>"
+    ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize'>%{time_ago} ago</span>"
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
