@@ -160,7 +160,7 @@ private
     unless email.blank?
       requester = current_account.all_users.find_by_email(email) 
       unless requester.nil? 
-        params[:agent_id] = requester.agent.id if requester.agent?
+        params[:agent_id] = requester.agent.user_id if requester.agent?
         Rails.logger.debug "Timesheets API::get_time_sheets:  params[:email] is a agent =>" + (requester.agent?).to_s
       end
     end
