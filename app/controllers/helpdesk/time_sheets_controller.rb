@@ -155,29 +155,35 @@ private
     start_date = (params[:start_date].blank?) ? 0: params[:start_date] 
     end_date =  (params[:end_date].blank?) ? Time.zone.now.to_time : params[:end_date]
     
-    #Customer/Contact/email name 
+    #agent/email name 
     email = params[:email]
     unless email.blank?
       requester = current_account.all_users.find_by_email(email) 
       unless requester.nil? 
-        params[:customer_id] = requester.customer_id if requester.customer?
         params[:agent_id] = requester.agent.id if requester.agent?
-        Rails.logger.debug "Timesheets API::get_time_sheets:  params[:email] is a customer =>" +requester.customer?
+        Rails.logger.debug "Timesheets API::get_time_sheets:  params[:email] is a agent =>" + (requester.agent?).to_s
       end
     end
     customer_id = params[:customer_id] || [] 
     unless params[:customer_name].blank?
       customer = current_account.customers.find_by_name(params[:customer_name])
       # raise ActiveRecord::RecordNotFound if(customer.blank?)#indication customer not found
-      customer_id = customer.id 
+      customer_id = customer.id unless customer.nil?
     end
     agent_id = params[:agent_id] || []
 
     billable = (!params[:billable].blank? && !params[:billable].to_s.eql?("falsetrue")) ? [params[:billable].to_s.to_bool] : true
+    #search by contact
+    contact_email = params[:contact_email]
 
     #customer_id and agent_id if passed null will return all data.  
-    Rails.logger.debug "Timesheets API::get_time_sheets: customer_id=> "+customer_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
-    @time_sheets = current_account.time_sheets.for_customers(customer_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
+    unless contact_email.blank?
+      Rails.logger.debug "Timesheets API::get_time_sheets: contact_email=> "+contact_email +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
+      @time_sheets = current_account.time_sheets.for_contacts(contact_email).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
+    else
+      Rails.logger.debug "Timesheets API::get_time_sheets: customer_id=> "+customer_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
+      @time_sheets = current_account.time_sheets.for_customers(customer_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
+    end
 
   end
 
