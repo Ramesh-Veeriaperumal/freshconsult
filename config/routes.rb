@@ -258,7 +258,7 @@
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
     helpdesk.resources :canned_responses
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
-    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}, :collection => {:get_time_sheets => :post }    
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
