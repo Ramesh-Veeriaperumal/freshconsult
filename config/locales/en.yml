@@ -1935,6 +1935,7 @@ en:
         due_today: Due Today
         unassigned: Unassigned
         pending: Pending
+        on_hold: On Hold
     rebranding: 
       name: 
         info: This will be the help desk name that is shown in the header and mail notifications.
