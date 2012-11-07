@@ -3,7 +3,7 @@
 <div class="ticket-notifications">
    <ul>
     <li rel="notice-popover" id="notification" data-placement="right" title="Ticket updated">
-      <%= link_to "", helpdesk_ticket_path({:id=>@ticket.display_id, :page=> params[:page]}), :class => "symbols-ac-refreshon" %>
+      <%= link_to "", helpdesk_ticket_path(ticket.display_id), :class => "symbols-ac-refreshon" %>
     </li>
     <li rel="notice-popover" id="agents_replying" data-object="replying" data-placement="right" title="Currently replying">
       <a href="#" class="symbols-ac-replyon tooltip"></a>
@@ -56,7 +56,12 @@
     
     jQuery(document).ready(function() {   
      
-      var socket = io.connect('<%= nodejs_url("collision") %>'); 
+      var socket = io.connect('<%= nodejs_url("collision") %>');
+      
+      jQuery(document).bind('ticket_show', function(ev){
+        socket.disconnectSync();
+      });
+
       socket.on('connect', function() {
           //console.log('Connected to node server...');         
           //console.log(JSON.stringify(init_params));
@@ -92,7 +97,7 @@
             agents.viewing.push(params.agent);                
             agents.replying = agents.replying.without(params.agent);
           break;
-          case "edited":  
+          case "updated":  
             update_reload();
           break;
         }                      

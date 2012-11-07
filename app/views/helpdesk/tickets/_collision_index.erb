@@ -18,7 +18,10 @@
     
     jQuery(document).ready(function() {
 
-      socket = io.connect('<%= nodejs_url("collision") %>'); 
+      socket = io.connect('<%= nodejs_url("collision") %>');
+      jQuery(document).bind('ticket_list', function(ev){
+        socket.disconnectSync();
+      });
 
       socket.on('connect', function(){
         socket.emit('index_init', init_params);
