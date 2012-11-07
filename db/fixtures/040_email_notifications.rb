@@ -8,8 +8,8 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :agent_notification => true,
     :agent_template => '<p>Hi {{agent.name}},<br /><br />Your {{helpdesk_name}} account has been created.<br /><br />Click the url below to activate your account!<br /><br />{{activation_url}}<br /><br />If the above URL does not work try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.<br /><br />Regards,<br />{{helpdesk_name}}</p>',
     :requester_template => '<p>Hi {{contact.name}},<br /><br />A new {{helpdesk_name}} account has been created for you.<br /><br />Click the url below to activate your account and select a password!<br /><br />{{activation_url}}<br /><br />If the above URL does not work try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.<br/><br/>Regards,<br/>{{helpdesk_name}}</p>',
-    :requester_subject_template => "{{ticket.portal_name}} user activation",
-    :agent_subject_template => "{{ticket.portal_name}} user activation"
+    :requester_subject_template => "{{portal.name}} user activation",
+    :agent_subject_template => "{{portal.name}} user activation"
   },
   {
     :notification_type => EmailNotification::PASSWORD_RESET,
@@ -28,8 +28,8 @@ EmailNotification.seed_many(:account_id, :notification_type, [
               <a href="{{password_reset_url}}">Click here to reset the password.</a> <br /><br />
               If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us,if you continue to face any problems.<br /><br />
               Regards,<br />{{helpdesk_name}}',
-    :requester_subject_template => "{{ticket.portal_name}} password reset instructions",
-    :agent_subject_template => "{{ticket.portal_name}} password reset instructions"
+    :requester_subject_template => "{{portal.name}} password reset instructions",
+    :agent_subject_template => "{{portal.name}} password reset instructions"
   },
   { 
     :notification_type => EmailNotification::NEW_TICKET, 
