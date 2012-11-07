@@ -4,11 +4,12 @@ require 'will_paginate/collection'
 Array.class_eval do
   def paginate(options = {})
     raise ArgumentError, "parameter hash expected (got #{options.inspect})" unless Hash === options
-    
+    puts "Inside WillPaginate::Array::paginate"
     WillPaginate::Collection.create(
         options[:page] || 1,
         options[:per_page] || 30,
-        options[:total_entries] || self.length
+        options[:total_entries] || self.length,
+        options[:extra_offset] || 0
     ) { |pager|
       pager.replace self[pager.offset, pager.per_page].to_a
     }

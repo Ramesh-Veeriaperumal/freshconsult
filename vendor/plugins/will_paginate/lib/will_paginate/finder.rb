@@ -63,7 +63,9 @@ module WillPaginate
       # and +count+ calls.
       def paginate(*args, &block)
         options = args.pop
-        page, per_page, total_entries = wp_parse_options(options)
+        puts "All the options :: #{options.inspect}"
+        page, per_page, total_entries, extra_offset = wp_parse_options(options)
+        puts "extra_offset is #{extra_offset}"
         finder = (options[:finder] || 'find').to_s
 
         if finder == 'find'
@@ -72,15 +74,18 @@ module WillPaginate
           # :all is implicit
           args.unshift(:all) if args.empty?
         end
-
-        WillPaginate::Collection.create(page, per_page, total_entries) do |pager|
+        puts "Inside Finder::ClassMethods::paginate"
+        WillPaginate::Collection.create(page, per_page, total_entries, extra_offset) do |pager|
+          puts "Inside Finder::ClassMethods::paginate::collection_create"
           count_options = options.except :page, :per_page, :total_entries, :finder
-          find_options = count_options.except(:count).update(:offset => pager.offset, :limit => pager.per_page) 
+          find_options = count_options.except(:count, :extra_offset).update(:offset => pager.offset, :limit => pager.per_page) 
           
           args << find_options
           # @options_from_last_find = nil
+          puts "Finder Options :: #{find_options.inspect}"
+          puts "Just before pager.replace ::: "
           pager.replace send(finder, *args, &block)
-          
+          puts "Just AFTER pager.replace ::: "
           # magic counting for user convenience:
           pager.total_entries = wp_count(count_options, args, finder) unless pager.total_entries
         end
@@ -243,10 +248,12 @@ module WillPaginate
           raise ArgumentError, ':count and :total_entries are mutually exclusive'
         end
 
+        puts "Inside wp_parse_options"
         page     = options[:page] || 1
         per_page = options[:per_page] || self.per_page
         total    = options[:total_entries]
-        [page, per_page, total]
+        extra_offset    = options[:extra_offset] || 0
+        [page, per_page, total, extra_offset]
       end
 
     private

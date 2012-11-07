@@ -1,0 +1,85 @@
+<!--Fixed Starp-->
+<div class="fixedStrap">
+	<div id="firstchild">
+		<div class="controls">
+		<!--Pagination-->
+			<div class="pagination-link clearfix hide" id="adjacents">
+				<ul>
+					<li><a href="#" class="pagi-btn">Next<span class="arrow-next"></span></a></li>
+					<li><a href="#" class="pagi-btn"><span class="arrow-previous"></span>Previous</a></li>
+				</ul>
+			</div>
+			<!--Breadcrumb-->
+			<div class="bread-crumb-wrap clearfix">
+				<div class="bread-crumb">
+					<ul>
+						<li><%= link_to t('header.tabs.tickets'), helpdesk_tickets_path %></li>
+						<li>&raquo;</li>
+						<li>#<%=h(@ticket.display_id)%></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="controls clearfix">
+			<div class="control-left-outer">
+				<div class="control-left">
+					<div class="source-badge-wrap">
+						<a href="#" class='source <%= "priority-#{@ticket.priority_key} source-#{@ticket.source_name.to_s.downcase}" %>'></a>
+					</div>
+					<div class="commentbox-yellow">
+						<%= render :partial => 'helpdesk/tickets/show/status.html.erb' %>
+
+						<div class="ticket-subject">
+							<%= content_tag :h2, h(@ticket.subject), :class => "subject" %>
+							<div class="ticket-actions clearfix">
+								<ul>	
+
+									<% unless @ticket.deleted %>
+										<li><%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "ticket-btn email reply") unless @item.from_email.nil? %></li>
+										<li><%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
+											:id => "FwdButton", :class => "button forward reply") %></li>
+										<li><%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%></li>
+										<li><%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "ticket-btn facebook reply") if @item.requester && @item.is_facebook?%></li>
+										<li><%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "ticket-btn") %>	</li>
+									<% end %>
+									<li class="ticket-btn-dropdown">
+
+										<div class="btn-group">
+										  <button class="btn">
+										  	<span class="reply-inner"></span>Reply <span class="caret"></span>
+										  </button>
+										  <button class="btn dropdown-toggle" data-toggle="dropdown">
+										    <span class="caret"></span>
+										  </button>
+										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
+										    <li><a href="#">Action</a></li>
+											<li><a href="#">Another action</a></li>
+											<li><a href="#">Something else here</a></li>
+											<li class="divider"></li>
+											<li><a href="#">Separated link</a></li>
+										  </ul>
+										</div>
+										<!-- <div class="dropdown">
+											<button class="btn dropdown-toggle" data-toggle="dropdown" data-target="#"><span class="reply-inner"></span>Reply <span class="caret"></span></button>
+											<ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
+												<li><a href="#">Action</a></li>
+												<li><a href="#">Another action</a></li>
+												<li><a href="#">Something else here</a></li>
+												<li class="divider"></li>
+												<li><a href="#">Separated link</a></li>
+											</ul>
+										</div> -->
+									</li>
+									<li><a href="#" class="ticket-btn">Close</a></li>
+									<li><a href="#" class="ticket-btn">Delete</a></li>
+									<li><a href="#" class="ticket-btn">More...</a></li>
+								</ul>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

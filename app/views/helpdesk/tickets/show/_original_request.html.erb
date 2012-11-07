@@ -1,0 +1,18 @@
+<%= link_to user_avatar(@ticket.requester), @ticket.requester, :class => 'avatar-wrap' %>
+<div class="commentbox">
+	<div class="author-mail-detail">
+		<p><%= show_contact_hovercard(@ticket.requester) %> on <%= formated_date(@ticket.created_at) %> </p>
+		<div class="info"> 
+			<p>
+				<%= multiple_emails_container(@to_emails)  if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>
+				via <%= @ticket.source_name %>
+				<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %> 
+				<%= content_tag :span, t("helpdesk.tickets.show.meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
+			</p> 
+			<%= content_tag :p, multiple_emails_container(@ticket.cc_email_hash[:cc_emails]) unless @ticket.cc_email_hash.blank? %>
+      	</div> 
+	</div>
+	<div id="ticket_original_request" class="request_mail">
+    	<%= @ticket.description_html %>
+	</div>
+</div>

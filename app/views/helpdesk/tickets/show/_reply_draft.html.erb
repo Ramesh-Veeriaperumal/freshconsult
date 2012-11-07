@@ -1,0 +1,102 @@
+// Autosaving drafts
+var saving = 0;
+var first = 0;
+var savetime;
+var dontSave;
+var draftClearedFlag = <%= @draft.blank? %>;
+var replyEditor;
+ 
+function autosave(){
+  if(dontSave==0){
+  if(isDirty){
+    saving = 1;
+    var setval = replyEditor.getCode();
+    if(jQuery.trim(setval)!="")
+    {
+      jQuery("#reply-draft").show();
+      jQuery("#draft-save").text("<%= t('saving_draft') %>");
+      jQuery("#clear-draft").hide();
+      <%= remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :with => "'draft_data=' + encodeURIComponent(setval)" %>
+      savetime = new Date()
+      setTimeout(function(){
+        jQuery("#draft-save").text("<%= t('saved_draft') %>");
+        jQuery("#clear-draft").show();
+      },1000);
+      isDirty = false;
+    }
+  }
+}
+}
+ 
+function saveout(){
+  var setval=replyEditor.getCode();
+    if(setval!=""|| setval!=" ")
+    {
+      <%= remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :type => :synchronous, :with => "'draft_data=' + encodeURIComponent(setval)" %>
+    }
+}
+ 
+jQuery("#ReplyButton").bind('click', function(){
+  replyEditor = jQuery('#cnt-reply-body');
+  dontSave=0;
+  if(saving==0 && first!=1){
+    isDirty = false;
+    setInterval( function(){autosave();}, 30000);
+    if(!draftClearedFlag){
+      jQuery("#draft-save").text("<%= t('saved_draft') %>");
+      jQuery("#clear-draft").show();
+      jQuery("#reply-draft").show();
+    }else{
+      jQuery("#reply-draft").hide();
+    }
+  }
+  first = 1;
+});
+ 
+jQuery("#AddNoteButton").bind('click',function(){
+replyEditor = jQuery('#cnt-reply-body');
+autosave();dontSave=1;});
+ 
+jQuery("#FwdButton").bind('click',function(){
+  replyEditor = jQuery('#cnt-reply-body');autosave();dontSave=1;
+});
+ 
+jQuery(window).bind('beforeunload', function(){
+        if(dontSave==0){
+          if(isDirty)
+          {
+            saveout();
+          }
+        }
+    });
+ 
+jQuery("#draft-save").bind('mouseover',function timePop(){
+if(saving != 0){
+  jQuery("#draft-save").attr('title',humaneDate(savetime,new Date()));
+}
+});
+ 
+jQuery("#draft-save").bind('mouseout',function popOut(){
+  jQuery("#draft-save").attr('title','');
+}
+);
+
+// This has been moved as a on click event directly to the cancel button 
+// jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
+
+jQuery("#clear-draft").bind('click', function(){
+  var clear_conf=confirm("<%= t('clear_draft_text') %>");
+  if(clear_conf==true){
+    cleardraft();
+  }
+});
+
+
+function cleardraft(){
+  <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
+  var draftData = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
+  jQuery('#cnt-reply-body').setCode(draftData)
+  isDirty = false;
+  jQuery("#reply-draft").hide();
+  draftClearedFlag = true;
+}

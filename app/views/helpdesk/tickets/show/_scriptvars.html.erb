@@ -1,0 +1,8 @@
+<script type="text/javascript">
+TICKET_DETAILS_DATA = {
+	displayId			: "<%= escape_javascript(h(@ticket.display_id)) %>",
+	total_notes			: "<%= @ticket_notes_total %>",
+	notes_per_page		: 50,
+	notes_pagination_url: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes?v=2&page=" 
+};
+</script>

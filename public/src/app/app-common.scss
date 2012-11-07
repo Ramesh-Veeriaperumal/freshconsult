@@ -817,7 +817,12 @@ h4.title{
 	height:1px;
 	margin:5px 0px;
 }
-
+@include all-file-types-sprites;
+.attachment-type {
+	display:inline-block;
+	height: 20px;
+	width: 20px;
+}
 .attachment_list, .ui-form .attachment_list{
 	@include no-bullets;
 	color:#888987; 

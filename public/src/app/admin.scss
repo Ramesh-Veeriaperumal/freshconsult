@@ -200,6 +200,7 @@ $animation_timing: .2s;
 	}
 }
 
+/* Helpdesk Default Animation */
 @include keyframes(helpdesk_beat) {
 	from {
 		@include box-shadow($hover_boxshadow_start $helpdesk_hover_color);

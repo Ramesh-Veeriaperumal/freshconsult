@@ -1,0 +1,124 @@
+@import "settings";
+
+$default_modal_margin: 250px;
+$modal_top: 50px;
+$modal_body_max_height: 500px;
+$modal_heading_size: 22px;
+$modal_heading_color: #000;
+
+.modal.freshdialog.in.fade {
+	position: absolute;
+	top:$default_modal_margin + $modal_top;
+	border: solid 2px #4b4b4b;
+	background: #FFF;
+	padding: 15px;
+	@include box-shadow(rgba(0,0,0, 0.5) 0 10px 20px);
+	@include corners(5px);
+
+	.dialog-special {
+		background: none;
+		border: none;
+	}
+
+
+	.modal-header {
+		border-bottom: none;
+		@include vertical-gradient(#e8e8e8, #FFF);
+		margin: -14px -15px -15px;
+		padding:20px 30px;
+		@include corners(7px);
+
+		h3 {
+			font-size: $modal_heading_size;
+			color: $modal_heading_color;
+			font-weight: 300;
+			text-shadow: #FFF 1px 1px 0;
+		}
+
+		.close {
+			position: absolute;
+			margin-top:0;
+			top:19px;
+			left: -30px;
+			height: 28px;
+			width: 28px;
+			border: none;
+			padding: 8px;
+			border:none;
+			text-align:center;
+			cursor:pointer;
+			@include vertical-gradient(#4f4f4f, #646464);
+			@include border-radius(5px 0 0 5px);
+			@include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
+
+			@include hide-text();
+
+			&:focus, &:hover {
+				background:#4b4b4b;
+				left: -32px;
+				width: 31px;
+			}
+			&:before {
+				content: "x";
+				text-indent: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+				background: url(/images/dialog/icon-close.gif) no-repeat;
+				display:block;
+			}
+
+		}
+	}
+	.modal-body {
+		height:auto;
+		.loading-center {
+			height: 150px;
+		}
+	}
+
+	.uiButton {
+		background: #a6a6a6;
+		border: solid 1px #8a8a8a;
+		@include box-shadow(1px 0 0 #FFF);
+		@include vertical-gradient(#b2b2b2, #5a5a5a);
+		color:#FFF;
+
+		&:hover {
+			background: #5a5a5a;
+		}
+	}
+}
+
+.modal-backdrop {
+	background: url(/images/dialog/overlay.gif);
+}
+.ui-dialog.dialog3 {
+	
+	.ui-dialog-title {
+		color: #000;
+	}
+
+	.ui-dialog-titlebar-close {
+		background:#7b7b7b;
+		left:-43px;
+		top: 15px;
+		right:auto;
+		height: 8px;
+		width: 8px;
+		padding: 9px;
+		@include border-radius(5px 0 0 5px);
+		@include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
+		.ui-icon {
+			background:none;
+		}
+
+		
+		&:focus, &:hover {
+			background:#4b4b4b;
+		}
+	}
+}
+
+.ui-widget-overlay {
+	background: url(/images/dialog/overlay.gif);
+}

@@ -12,8 +12,9 @@ class Helpdesk::TicketsController < ApplicationController
   include RedisKeys
   include Helpdesk::AdjacentTickets
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :get_agents ]
-  before_filter :check_user , :only => [:show]
+  before_filter :set_mobile, :only => [:index, :show, :details, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
+  before_filter :select_show_page , :only => [:show, :details ]
+  before_filter :check_user , :only => [:show, :details ]
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
@@ -26,7 +27,7 @@ class Helpdesk::TicketsController < ApplicationController
   
 
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
+  before_filter :load_item, :verify_permission, :only => [:show, :details, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -34,9 +35,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ticket_status, :only => [:update]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
-  before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
+  before_filter :load_email_params, :only => [:show, :details, :reply_to_conv, :forward_conv]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv]
-  before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
+  before_filter :load_reply_to_all_emails, :only => [:show, :details, :reply_to_conv]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
 
@@ -197,6 +198,35 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
+
+  def details
+    @to_emails = @ticket.to_emails
+
+    @draft = get_key(draft_key)
+
+    @subscription = current_user && @item.subscriptions.find(
+      :first, 
+      :conditions => {:user_id => current_user.id})
+      
+    respond_to do |format|
+      format.html  {
+        @ticket_notes.reverse!
+        @ticket_notes_total = @ticket.conversation_count
+      }
+      format.atom
+      format.xml  { 
+        render :xml => @item.to_xml  
+      }
+      format.json {
+        render :json => @item.to_json
+      }
+      format.js
+      format.mobile {
+        render :json => @item.to_mob_json
+      }
+    end
+  end
+  
   def prevnext
     @previous_ticket = find_adjacent(:prev)
     @next_ticket = find_adjacent(:next)
@@ -215,11 +245,17 @@ class Helpdesk::TicketsController < ApplicationController
         format.mobile { 
           render :json => { :success => true, :item => @item }.to_json 
         }
+        format.json { 
+          render :json => { :success => true }.to_json 
+        }
       end
     else
       respond_to do |format|
         format.html { edit_error }
         format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
+        format.json { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
       end
@@ -719,6 +755,20 @@ class Helpdesk::TicketsController < ApplicationController
   def draft_key
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
       :ticket_id => @ticket.id}
+  end
+
+  def select_show_page
+    # return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'
+    # redirect_to url_for(:overwrite_params => { :action => 'show' }) if params[:action] == 'details'
+    # if switch_to_new_show?
+    #   return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'
+    # else
+    #   return redirect_to url_for(:overwrite_params => { :action => 'show' }) if params[:action] == 'details'
+    # end
+  end
+
+  def switch_to_new_show?
+    !cookies[:new_details_view].nil? && cookies[:new_details_view].eql?("true")
   end
 
 end

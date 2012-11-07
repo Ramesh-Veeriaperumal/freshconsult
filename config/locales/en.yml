@@ -46,6 +46,7 @@ en:
   resolved_late: Resolved late
   remove: Remove
   no_tags: No tags found.
+  show_recent: Show Recent
   user: 
     company: Company
     photo: Photo
@@ -1249,10 +1250,13 @@ en:
   done: Done
   reset: Reset
   ticket_due_by_time: Due by
+  ticket_past_due_by: Due %{time} ago
+  ticket_future_due_by: Due in %{time}
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
   ticket_closed_at_time: Closed at
   next: Next
+  previous: Previous
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported

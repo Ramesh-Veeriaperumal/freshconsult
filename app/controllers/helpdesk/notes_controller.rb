@@ -14,9 +14,14 @@ class Helpdesk::NotesController < ApplicationController
   def index
     @notes = @parent.conversation(params[:page])
     if request.xhr?
-      render(:partial => "helpdesk/tickets/note", :collection => @notes)
+      unless params[:v].blank? or params[:v] != '2'
+        render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
+      else
+        render(:partial => "helpdesk/tickets/note", :collection => @notes)
+      end
     end    
   end
+
   
   def create  
     build_attachments @item, :helpdesk_note

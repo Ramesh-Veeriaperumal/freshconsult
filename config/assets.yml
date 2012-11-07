@@ -17,6 +17,7 @@ stylesheets:
     - public/stylesheets/app/lib/autocomplete.css
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
+    - public/stylesheets/app/lib/dialog.css
 
   app:
     - public/stylesheets/app/app-common.css
@@ -25,6 +26,7 @@ stylesheets:
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
     - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/lib/select2.css    
     - public/stylesheets/app/satisfaction.css
     - public/stylesheets/app/gamification.css
     - public/stylesheets/app/lib/hacks.css
@@ -68,6 +70,9 @@ stylesheets:
   redactor:
     - public/stylesheets/redactor.css
 
+  tkt_details:
+    - public/stylesheets/app/tkt_details.css
+
   getting_started:
     - public/stylesheets/gs/screen.css
     - public/stylesheets/app/lib/autocomplete.css
@@ -85,6 +90,7 @@ javascripts:
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
@@ -107,6 +113,7 @@ javascripts:
   workspace: 
     - public/javascripts/bootstrap/*.js
     - public/javascripts/dyn_menu.js
+    - public/javascripts/dialog3.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js

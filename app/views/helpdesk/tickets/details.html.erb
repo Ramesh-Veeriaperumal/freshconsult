@@ -1,0 +1,27 @@
+<%= include_stylesheets :redactor  %>
+<%= include_stylesheets :tkt_details %>
+<%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
+<div class="tkt-wrapper">
+	<div class="tkt-wrapper-inner clearfix">
+
+		<%= render :partial => "helpdesk/tickets/show/info.html.erb" %>
+
+		<div id="tkt-inner" class="scollable_content">
+
+			<div class="tkt-sidebar" id="ticket_details_sidebar">
+				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %>  
+				<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
+				<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
+				<%= render :partial => "helpdesk/tickets/show/timesheet.html.erb" %> 
+			</div>
+			<!--content Left-->
+			<div class="leftcontent">
+				<%= render :partial => "helpdesk/tickets/show/conversations.html.erb" %> 
+				<%= render :partial => "helpdesk/tickets/show/new_conversation.html.erb" %> 
+			</div>
+		</div>
+	</div>
+</div>
+<%= javascript_include_tag  'bootstrap' %>
+<%= include_javascripts :redactor  %>
+<%= javascript_include_tag  'app/ticket_details' %>

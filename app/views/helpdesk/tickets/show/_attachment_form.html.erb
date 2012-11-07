@@ -1,0 +1,24 @@
+<% 
+	attach_id ||= "ticket" 
+	nsc_param = nsc_param || "helpdesk_ticket"
+%>
+
+<label>Attach a file</label>
+<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="<%=nsc_param%>[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+<div class="info-data">
+  <%=t('attachment_help_info')%>
+</div>
+<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+  <div id="<%=attach_id%>-attachments"></div>
+</div>
+<%# 
+  The following is a template used by multifile.js to create rows in
+  the attachments table.
+ %>
+<script id="file-list-template" type="text/x-jquery-tmpl">			
+  <div class="item">
+  	<span>
+  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;" inputId="${inputId}">remove</a>
+	  </span>
+  </div>
+</script>

@@ -395,8 +395,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "[#{ticket_id_delimiter}#{display_id}]"
   end
 
-  def conversation(page = nil, no_of_records = 5)
-    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
+  def conversation(page = nil, no_of_records = 50)
+    first_page_count = 3
+    if page.blank? or page.to_i == 1
+      puts "PAGINATION ::: For the first page"
+      return notes.visible.exclude_source('meta').newest_first.paginate(:page => 1, :per_page => first_page_count)
+    else
+      puts "PAGINATION ::: For the nth pages"
+      puts "Sending these options :: #{ {:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count}.inspect }"
+      return notes.visible.exclude_source('meta').newest_first.paginate(:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count)
+    end
   end
 
   def conversation_count(page = nil, no_of_records = 5)

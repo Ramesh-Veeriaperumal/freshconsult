@@ -115,6 +115,8 @@ module ApplicationHelper
           content_tag :div, value
         when "facebook" then
           auto_link("http://facebook.com/#{value}")
+        when "twitter" then
+          link_to("@#{value}" , "http://twitter.com/#{value}")
         when "link" then
           auto_link(value)
       end
@@ -481,7 +483,7 @@ module ApplicationHelper
         if (field.field_type == "default_status" and in_portal)
           element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
         else
-          element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+          element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
@@ -494,7 +496,7 @@ module ApplicationHelper
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
-    content_tag :li, element, :class => dom_type
+    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type }"
   end
 
   def add_cc_field_tag element , field    

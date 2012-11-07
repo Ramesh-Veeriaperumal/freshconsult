@@ -325,5 +325,30 @@ module Helpdesk::TicketsHelper
     end
     show_params
   end
+
+  def multiple_emails_container(emails)
+    html = ""
+    unless emails.blank?
+      if emails.length < 3
+        html << content_tag(:span, 
+                            "To: " + emails.collect{ |to_e| 
+                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
+                            }.join(", "), 
+                            :class => "") 
+      else
+        html << content_tag(:span, 
+                            "To: " + emails[0,2].collect{ |to_e| 
+                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
+                            }.join(", ") + 
+                            "<span class='toEmailMoreContainer hide'>,&nbsp;" + 
+                            emails[2,emails.length].collect{ |to_e| 
+                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
+                            }.join(", ") + 
+                            " </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{emails.length-2} " + 
+                            t('ticket_cc_email_more')+"</a>", :class => "")
+      end
+    end
+    html
+  end
   
 end

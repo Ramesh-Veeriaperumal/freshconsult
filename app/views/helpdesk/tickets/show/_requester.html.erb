@@ -1,0 +1,65 @@
+<div class="widget clearfix">
+	<div class="tkt-tabs-wrap">
+		<ul class="tkt-tabs">
+			<li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
+			<li><a href="#contact_info_capsulecrm" class="requester-info-sprite requester-info-capsulecrm"></a></li>
+			<li><a href="#contact_info_sugarcrm" class="requester-info-sprite requester-info-sugarcrm"></a></li>
+		</ul>
+	</div>
+	<% 
+	user = @ticket.requester 
+	contact = current_user.can_view_all_tickets? ? user : "javascript:void(0)"
+	%>
+	<div id="contact_info_default" class='requester_tab'>
+		<h3><%=t('ticket.requestor_info')%></h3>
+		<div class="requester-avatar-wrap">
+			<%= user_avatar(user, :medium)  %>
+		</div>
+
+		<div class="requester-details">
+			<p><%= link_to(h(user.name), contact, :class => "user_name") %></p>
+			<p><%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %></p>
+			<%= content_tag(:p, "Email: #{render_item(h(user.email), "link")}" ) unless user.email.blank? %>
+			<%= content_tag(:p, "Twitter: #{render_item(h(user.twitter_id),'twitter')}" ) unless user.twitter_id.blank? %>
+			<%= content_tag(:p, "Facebook: #{render_item(h(user.fb_profile_id), "facebook")}" ) unless user.fb_profile_id.blank? %>
+			<%= content_tag(:p, "Phone: #{h(user.phone)}" ) unless user.phone.blank? %>
+			<%= content_tag(:p, "Mobile: #{h(user.mobile)}" ) unless user.mobile.blank? %>
+			
+			<p class='more_details'><%= link_to('More details...', contact) %></p>
+		</div>
+	</div>
+	<div id="contact_info_sugarcrm" class='requester_tab'>
+		<h3>Sugar <%=t('ticket.requestor_info')%></h3>
+		<div class="requester-avatar-wrap">
+			<%= user_avatar(user, :medium)  %>
+		</div>
+
+		<div class="requester-details">
+			<p><%= link_to(h(user.name), contact, :class => "user_name") %></p>
+			<p><%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %></p>
+			<%= content_tag(:p, "Email: #{render_item(h(user.email), "link")}" ) unless user.email.blank? %>
+			<%= content_tag(:p, "Twitter: #{h(user.twitter_id)}" ) unless user.twitter_id.blank? %>
+			<%= content_tag(:p, "Facebook: #{render_item(h(user.fb_profile_id), "facebook")}" ) unless user.fb_profile_id.blank? %>
+			<%= content_tag(:p, "Phone: #{h(user.phone)}" ) unless user.phone.blank? %>
+			<%= content_tag(:p, "Mobile: #{h(user.mobile)}" ) unless user.mobile.blank? %>
+			<p><%= link_to('More details...', contact) %></p>
+		</div>
+	</div>
+	<div id="contact_info_capsulecrm" class='requester_tab'>
+		<h3>Capsule <%=t('ticket.requestor_info')%></h3>
+		<div class="requester-avatar-wrap">
+			<%= user_avatar(user, :medium)  %>
+		</div>
+
+		<div class="requester-details">
+			<p><%= link_to(h(user.name), contact, :class => "user_name") %></p>
+			<p><%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %></p>
+			<%= content_tag(:p, "Email: #{render_item(h(user.email), "link")}" ) unless user.email.blank? %>
+			<%= content_tag(:p, "Twitter: #{h(user.twitter_id)}" ) unless user.twitter_id.blank? %>
+			<%= content_tag(:p, "Facebook: #{render_item(h(user.fb_profile_id), "facebook")}" ) unless user.fb_profile_id.blank? %>
+			<%= content_tag(:p, "Phone: #{h(user.phone)}" ) unless user.phone.blank? %>
+			<%= content_tag(:p, "Mobile: #{h(user.mobile)}" ) unless user.mobile.blank? %>
+			<p><%= link_to('More details...', contact) %></p>
+		</div>
+	</div>
+</div>

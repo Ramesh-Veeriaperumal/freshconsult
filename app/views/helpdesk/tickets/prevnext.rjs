@@ -1,16 +1,25 @@
-content = ''
-unless @previous_ticket.blank? or  @previous_ticket == -1
-	content << link_to("<span></span>", "/helpdesk/tickets/#{@previous_ticket}", :class => 'prev_page', :rel => 'previous')
+
+next_link = 'javascript:void(0)'
+next_class = 'pagi-btn'
+if !@next_ticket.blank? and  @next_ticket != '-1'
+	next_link = "/helpdesk/tickets/#{@next_ticket}"
 else
-	content << '<span class="disabled prev_page"><span></span></span> '
+	next_class << " disabled"
 end
 
-unless @next_ticket.blank? or  @next_ticket == -1
-	content << link_to("<span></span>", "/helpdesk/tickets/#{@next_ticket}", :class => 'next_page', :rel => 'next')
+previous_link = 'javascript:void(0)'
+previous_class = 'pagi-btn'
+if !@previous_ticket.blank? and  @previous_ticket != '-1'
+	previous_link = "/helpdesk/tickets/#{@previous_ticket}"
 else
-	content << '<span class="disabled next_page"><span></span></span> '
+	previous_class << " disabled"
 end
-content << ''
+
+content = '<ul><li>'
+content << link_to("#{t('next')} <span class='arrow-next'></span>", next_link, :class => next_class , :rel => 'next')
+content << '</li><li>'
+content << link_to(" <span class='arrow-previous'></span> #{t('previous')} ",  previous_link, :class => previous_class , :rel => 'next')
+content << '</li></ul>'
 
 page.replace_html 'adjacents', content
 page << "jQuery('#adjacents').removeClass('hide');"
