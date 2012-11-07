@@ -1817,8 +1817,8 @@ a.new_ticket:hover{
 
    position:absolute;
    text-align: left;
-   margin-left: -300px;
-   margin-top: 20px;
+   margin-left: -360px;
+   margin-top: -75px;
    z-index:1000;
    text-align: left;
    
@@ -2437,9 +2437,9 @@ input[type="text"].number{
         z-index: 1001;
     }
     .canned-response-menu{
-        right : -1px;
+        right : 0;
         z-index : 1000;
-        top : -24px;
+        top : 100px;
     }
     #update-fields
     {
