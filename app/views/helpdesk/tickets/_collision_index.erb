@@ -1,0 +1,165 @@
+<%= javascript_include_tag "frameworks/socket.io"%>   
+
+<% content_for :pagefixed do %>
+  <% javascript_tag do %>
+ 
+  /********************************** node.js and socket implementation ****************************************/ 
+ 
+    var socket = null;
+    var agents_viewing = {};
+    var agents_replying = {};
+    var init_params = {};
+    var current_user = "<%= escape_javascript(current_user.name) %>";
+    var current_account_id = "<%=current_account.id%>";
+
+    init_params.agent = current_user;
+    init_params.account_id = <%= current_account.id%>;
+    init_params.ticket_channel = 'tickets:'+current_account_id+':*';
+    
+    jQuery(document).ready(function() {
+
+      socket = io.connect('<%= nodejs_url("collision") %>');
+      jQuery(document).bind('ticket_list', function(ev){
+        socket.disconnectSync();
+      });
+
+      socket.on('connect', function(){
+        socket.emit('index_init', init_params);
+        handle_agent_collision();
+      });
+
+      socket.on('set_viewers_in_index',function set_viewers_in_index(_viewers) {
+        console.log("In set_viewers_in_index : "+_viewers);
+        viewers = JSON.parse(_viewers);
+        agents_viewing = {};
+
+        console.log("In set_viewers_in_index agents : "+_viewers.toString());
+        for (var key in viewers) {
+          if (viewers.hasOwnProperty(key)) {  
+            if($(key)){
+              agents_viewing[key] = viewers[key].without(current_user);
+              update_viewing_notification_ui(key);
+            }  
+          }
+        }
+      });
+   
+      socket.on('set_replying_in_index',function set_replying_in_index(_replying) {
+        console.log("In set_replying_in_index : "+_replying);
+        replying = JSON.parse(_replying);
+        agents_replying = {};
+
+        console.log("In set_replying_in_index agents : "+replying.toString());
+        for (var key in replying) {
+          if (replying.hasOwnProperty(key)) {  
+            if($(key)){
+              agents_replying[key] = replying[key].without(current_user);
+              update_replying_notification_ui(key);
+            }  
+          }
+        }
+      });
+   
+      socket.on('message', function(_params){
+        params = JSON.parse(_params);
+
+        var viewer_key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
+        var replying_key = 'tickets:'+current_account_id+':replying:'+params.ticket_id;
+        
+        if($(viewer_key)){
+          if(agents_viewing[viewer_key] == undefined)
+            agents_viewing[viewer_key] = $A();
+
+          if(agents_replying[replying_key] == undefined){
+            agents_replying[replying_key] = $A();
+          }
+          
+          switch(params.type){
+            case "connected":
+              agents_viewing[viewer_key].push(params.agent);
+              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+              break;
+            case "disconnected":
+              agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
+              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+              break;
+            case "agent_replying":
+              agents_replying[replying_key].push(params.agent);
+              agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
+              break;
+            case "agent_replying_stopped":
+              agents_viewing[viewer_key].push(params.agent);
+              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+              break;
+          }
+          update_viewing_notification_ui(viewer_key);
+          update_replying_notification_ui(replying_key);
+        }
+      });
+   
+      function update_viewing_notification_ui(key){
+        agents_viewing[key] = agents_viewing[key].uniq();
+        if (agents_viewing[key].size() != 0) {
+          jQuery($(key)).addClass('view_collision').find("span[rel=viewing_agents_tip]").html(humanize_name_list(agents_viewing[key],"viewing"));
+        } else {
+          jQuery($(key)).removeClass('view_collision').find("span[rel=viewing_agents_tip]").html("");
+        }
+
+        jQuery($(key)).find("span[rel=viewing_count]").html(agents_viewing[key].size());
+        updateWorkingAgents(key,"viewing"); //Fn in ticket_list.js
+      }
+ 
+      function update_replying_notification_ui(key){
+        agents_replying[key] = agents_replying[key].uniq();
+        if (agents_replying[key].size() != 0) {
+          jQuery($(key)).addClass('reply_collision').find("span[rel=replying_agents_tip]").html(humanize_name_list(agents_replying[key],"replying"));
+        } else {
+          jQuery($(key)).removeClass('reply_collision').find("span[rel=replying_agents_tip]").html("");
+        }
+
+        jQuery($(key)).find("span[rel=replying_count]").html(agents_replying[key].size());
+        
+        updateWorkingAgents(key,"replying"); //Fn in ticket_list.js
+      }
+
+      function handle_agent_collision() {
+        ticket_viewing_ids = [];
+        jQuery("div[rel=view_collision]").each(function(){
+          ticket_viewing_ids.push(jQuery(this).prop('id'));
+        });
+
+        ticket_replying_ids = [];
+        jQuery("div[rel=reply_collision]").each(function(){
+          ticket_replying_ids.push(jQuery(this).prop('id'));
+        });
+
+        if(ticket_viewing_ids.length > 0){
+          params_ticket_ids = {};
+          params_ticket_ids.ticket_viewing_ids = ticket_viewing_ids;
+          params_ticket_ids.account_id = current_account_id;
+          socket.emit('get_viewers_for_index',params_ticket_ids);
+        }
+        if(ticket_replying_ids.length > 0){
+          params_ticket_ids = {};
+          params_ticket_ids.ticket_replying_ids = ticket_replying_ids;
+          params_ticket_ids.account_id = current_account_id;
+          socket.emit('get_replying_for_index',params_ticket_ids);
+        }
+      }
+
+      function humanize_name_list(data, action) {
+        var text = '';
+        if (data.length == 1) {
+          text = '<strong>' + data[0] + '</strong> is currently ' + action + '.';
+        } else if (data.length == 2) {
+          text = '<strong>' + data[0] + '</strong> and <strong>' + data[1] + '</strong>  are currently ' + action + '.';
+        } else if (data.length > 2)  {
+          text = '<strong>' + data[0] + '</strong> and <strong>' + (data.length - 1) + ' more </strong>  are currently ' + action + '.';
+        }
+
+        return text;
+      }  
+
+    });  
+  <% end %>
+<% end %>

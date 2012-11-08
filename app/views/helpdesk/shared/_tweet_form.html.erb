@@ -1,4 +1,4 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
+<div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
 <div class='reply_box'>
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
     <%= f.error_messages %>
@@ -32,7 +32,7 @@
 	   
 	   <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton" ) %>
 	   <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
-	   <%= button_to_function(t('cancel'), "jQuery('#cnt-tweet').slideUp()", :class => "uiButton" ) %>
+	   <%= button_to_function(t('cancel'), "jQuery('#cnt-tweet').slideUp().trigger('visibility');", :class => "uiButton" ) %>
     </li>
    </ul> 
   <% end %>

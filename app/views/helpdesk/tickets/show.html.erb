@@ -17,6 +17,7 @@
 	<%= ticket_tabs %>        
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
+			<span id="agent_replying_message_bottom" style="color:#048b00; font-size:12px;"></span>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
 			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
 				:id => "FwdButton", :class => "button forward reply") %>
@@ -68,12 +69,15 @@
 	var activeForm = null;
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
+			
+			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid)){
+				//!VISIBILITY a visibility trigger is done to inform node that an agent has stopped replying
+				jQuery("#"+activeForm.get(0).id).hide().trigger('visibility'); 
+			}
 
-			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
-				jQuery("#"+activeForm.get(0).id).hide();
+			//!VISIBILITY a visibility trigger is done to inform node that an agent is replying
+			activeForm = jQuery('#'+formid).show().trigger('visibility');
 
-
-			activeForm = jQuery('#'+formid).show();
 			switch(formid){
 				case 'cnt-reply':
 				case 'cnt-note':

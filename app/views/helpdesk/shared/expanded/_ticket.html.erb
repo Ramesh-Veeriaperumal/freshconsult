@@ -11,10 +11,23 @@
 	</span>
 	<div class="ticket_subject">
 		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
-			<a href="/helpdesk/tickets/<%=ticket.display_id%>" ><%=h(ticket.subject)%>
-					<span class = "ticket_id" >#<%=h(ticket.display_id)%> </span>
-			</a>
+			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket ) %>
+			<%if feature?(:agent_collision) %>
+				<div class="index-collision">
+					<div rel="view_collision" id="tickets:<%=current_account.id%>:viewers:<%=ticket.id%>"
+						class="symbols-ac-viewingon-listview" data-ticket-id="<%= ticket.display_id %>">
+						<span rel="viewing_count"></span>
+						<span rel="viewing_agents_tip" class="hide"></span>
+					</div>
+					<div rel="reply_collision" id="tickets:<%=current_account.id%>:replying:<%=ticket.id%>"
+						class="symbols-ac-replyon-listview"  data-ticket-id="<%= ticket.display_id %>">
+						<span rel="replying_count"></span>
+						<span rel="replying_agents_tip" class="hide"></span>
+					</div>
+				</div>
+			<% end %>
 		</h3>
+
 		<% unless ticket.requester.nil? %>
 			<div class="info-data hideForList">
 				<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, 

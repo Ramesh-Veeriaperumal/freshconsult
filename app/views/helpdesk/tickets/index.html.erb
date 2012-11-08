@@ -17,6 +17,7 @@
     jQuery('#ticket-leftFilter').trigger('afterShow');
   },50)*/
 <% end %>
+<%= render :partial => "collision_index" if feature?(:agent_collision) %>
 <% content_for :layoutType do -%>ticket_list<%- end %>
 <%= javascript_include_tag "sisyphus" %>
 <div class="containerFull">

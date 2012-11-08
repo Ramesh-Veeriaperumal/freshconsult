@@ -1,0 +1,146 @@
+<%= javascript_include_tag "frameworks/socket.io"%>   
+
+<div class="ticket-notifications">
+   <ul>
+    <li rel="notice-popover" id="notification" data-placement="right" title="Ticket updated">
+      <%= link_to "", helpdesk_ticket_path(ticket.display_id), :class => "symbols-ac-refreshon" %>
+    </li>
+    <li rel="notice-popover" id="agents_replying" data-object="replying" data-placement="right" title="Currently replying">
+      <a href="#" class="symbols-ac-replyon tooltip"></a>
+      <span class="pill"></span>
+    </li>
+    <li rel="notice-popover" id="agents_viewing" data-object="viewing" data-placement="right" title="Currently viewing">
+      <a href="#" class="symbols-ac-viewingon tooltip">
+        <span class="pill"></span>
+      </a>
+    </li>
+   </ul>
+</div>
+
+<% content_for :pagefixed do %>
+<% javascript_tag do %>
+    var agents = { viewing:[], replying:[] };
+    var init_params = {};
+    var current_user = "<%= escape_javascript(current_user.name) %>";
+    init_params.agent = current_user;
+    init_params.account_id = <%= current_account.id%>;
+    init_params.ticket_id = <%= @ticket.id %>;      
+    
+    function update_viewing(_agents) {
+      //console.log("Agents Viewing The Ticket : " + _agents);
+      agents.viewing = _agents.without(current_user);
+      if(agents.viewing.size()) update_notification_ui();
+    }
+
+    function update_replying(_agents) {   
+      //console.log("Agents Replying To The Ticket : " + _agents);
+      agents.replying = _agents.without(current_user);
+      agents.replying.each(function(item){
+        agents.viewing = agents.viewing.without(item);             
+      });
+      if(agents.replying.size()) update_notification_ui();
+    }            
+    
+    function update_reload(){
+      jQuery("#notification").addClass("active");
+    }                                     
+    
+    function update_notification_ui(){   
+      agents.viewing = agents.viewing.uniq();
+      agents.replying = agents.replying.uniq();
+      jQuery("#agents_viewing").toggleClass("active", (agents.viewing.size() != 0)).effect("highlight", { color: "#fffff3" }, 400);
+      jQuery("#agents_viewing .pill").html(agents.viewing.size());
+      jQuery("#agents_replying").toggleClass("active", (agents.replying.size() != 0)).effect("highlight", { color: "#fffff3"  }, 400);      
+      jQuery("#agents_replying .pill").html(agents.replying.size());
+    }
+    
+    jQuery(document).ready(function() {   
+     
+      var socket = io.connect('<%= nodejs_url("collision") %>');
+      
+      jQuery(document).bind('ticket_show', function(ev){
+        socket.disconnectSync();
+      });
+
+      socket.on('connect', function() {
+          //console.log('Connected to node server...');         
+          //console.log(JSON.stringify(init_params));
+          
+          socket.emit('set_params', init_params);      
+          socket.emit('get_exiting_viewers');
+          socket.emit('get_exiting_replying');
+      });
+
+      socket.socket.on('error', function (error_msg){
+        //console.log('Unable to connect Socket.IO', error_msg);
+      });
+ 
+      socket.on('message', function(_params){
+        //console.log("_params : "+_params);
+        params = JSON.parse(_params);
+                
+        //console.log("Message From : "+ params.agent + " , Type : "+params.type); 
+        
+        switch(params.type){
+          case "connected":
+            agents.viewing.push(params.agent);
+          break;
+          case "disconnected":
+            agents.replying = agents.replying.without(params.agent);  
+            agents.viewing = agents.viewing.without(params.agent);
+          break;
+          case "agent_replying":   
+            agents.viewing = agents.viewing.without(params.agent); 
+            agents.replying.push(params.agent);
+          break;
+          case "agent_replying_stopped":
+            agents.viewing.push(params.agent);                
+            agents.replying = agents.replying.without(params.agent);
+          break;
+          case "updated":  
+            update_reload();
+          break;
+        }                      
+        update_notification_ui();
+      });
+    
+      socket.on('recieve_existing_viewers', update_viewing); 
+      socket.on('recieve_existing_replying', update_replying);
+ 
+      jQuery('div[rel=emitter]').bind("visibility", function(ev){ 
+        if(jQuery(this).css("display") == "block")
+          socket.emit(jQuery(this).data("nodeName"));
+        else if(jQuery(this).css("display") == "none")
+          socket.emit(jQuery(this).data("nodeName")+"_stopped");
+      });        
+      
+      jQuery("li[rel=notice-popover]")      
+          .bind({ 
+            mouseenter: function(){  
+              if(this.className == "active")
+                jQuery(this).popover('show');
+            }, 
+            mouseleave: function(){
+              jQuery(this).popover('hide');
+            }
+          }).popover({
+            html: true,           
+            trigger: "manual",
+            content: function(){
+              container = "";
+              if(this.id != "notification"){
+                agents[jQuery(this).data("object")].each(function(item){
+                  container += "<div>" + item + "</div>";
+                });                         
+              }else{
+                container += "Click to refresh ticket...";
+              }
+              return container;
+            },
+            template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
+          });
+                    
+    });  
+    
+<% end %>
+<% end %>

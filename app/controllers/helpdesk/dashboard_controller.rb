@@ -49,7 +49,7 @@ class Helpdesk::DashboardController < ApplicationController
     end
   private
     def load_items
-      @items = recent_activities(params[:activity_id]).paginate(:include => [ {:user => :avatar} ] , :page => params[:page], :per_page => 10)
+      @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10)
     end
     
     def set_selected_tab
