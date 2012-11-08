@@ -33,6 +33,16 @@ class Helpdesk::TimeSheetsController < ApplicationController
     params[:time_entry].delete(:hours)
 
     update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
+    
+    #Added for API calls where user will not be knowing the id for ticket, instead provide only the display id.
+    if params[:time_entry][:ticket_id].blank? #this will be always present when called from portal's 'Add Time'
+      check_ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) unless params[:ticket_id].nil?
+      unless check_ticket.blank?
+        params[:time_entry][:ticket_id] = check_ticket.id
+      else
+          raise ActiveRecord::RecordNotFound
+      end
+    end
 
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
                                              :executed_at => Time.zone.now(),
