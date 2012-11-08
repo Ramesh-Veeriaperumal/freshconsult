@@ -5627,7 +5627,6 @@ a.close{
 				padding: 0 0 0 5%;
 			}
 		}
-
 	}
 
 	.uiButton[type=submit] {
@@ -5647,6 +5646,12 @@ a.close{
 	.external_link {
 		clear: both;
 	}
+
+	div.bottom_div{ 
+	  height: 1px; 
+	  border-bottom: 1px solid #e5e5e5; 
+	}
+
 }
 
 #jira_widget {
@@ -5886,7 +5891,11 @@ a.close{
 }
 
 .crm_contact_widget {
-	.content { width:auto; }
+	.content { width:auto;
+		div.field{
+			margin: 2px 0px;
+		}
+	}
 
 	.title {
 		overflow: hidden;
@@ -5904,11 +5913,26 @@ a.close{
 		padding:0 0 10px 35px;		
 	}
 
-	.salesforce-name {
+	.salesforce_widget-name {
 		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		padding:7px 0 10px 45px;  
+		background-position: right center;
+		padding:7px 0 10px 0px;  
 		min-height:30px;
  	}
+
+ 	.batchbook_widget-name {
+	  background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
+	  background-position: right center;
+	  padding: 7px 0 10px 0px;
+	  min-height: 30px;
+  	}
+
+ 	.highrise_widget-name {
+	  background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
+	  background-position: right center;
+	  padding: 7px 0 10px 0px;
+	  min-height: 30px;
+  	}
 
  	.error {
 		&.name, &.salesforce-name {
@@ -5924,23 +5948,56 @@ a.close{
 		color: #000;
 		font-size: 14px;
 	}
+	
+	div.contact-name{
+	  width: 210px;
+	}
+	
+	.contact-name > a{
+	  width: inherit;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+	  white-space: nowrap;
+	  display: inline-block;
+	}
 
+	.contact-location{ 
+	  font-size: 8pt; 
+	  margin-left: 5px; 
+	  color: #888; 
+	  font-weight: 300; 
+	} 
+	
+	
 	#contact-desig {
 		font-size: 11px;
 		font-weight: normal;
 	}
 
-	label {
-		font-size:10px;
-		color: #000;
-		font-weight:bold;
+	div.field {
+		label {
+			float: left;
+			height: inherit;
+			width: 65px;
+			font-size: 100%;
+			font-weight: bold; 
+			color: #333;
+			padding: 0px 0px;
+		}
+		div > span {
+			float: left;
+			width: 193px;
+
+			#contact-address{
+				display: table;
+			}
+		}
 	}
 
 	#crm-view {
 		float:right;
 		width: auto;
 	}
-
 
 	.contact-type{
 		font-size:9px;

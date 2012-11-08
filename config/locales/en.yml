@@ -2409,6 +2409,31 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    batchbook:
+      label: "Batchbook (Classic)"
+      helptext: "<h4>Batchbook Integration Help</h4><p><br/> You may access Batchbook contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
+      desc: "You can view contact information from Batchbook in Freshdesk."
+      form:
+        domain: "Batchbook Domain:"
+        domain_info: "For example, if your Batchbook URL is <strong>http://mycompany.batchbook.com/</strong> , enter <strong> mycompany </strong>. </span>" 
+        api_key: "API Key"
+        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook."
+        version:
+          label: "Version"
+          classic: "Classic"
+          new: "New"
+        version_info: "Version field lets you choose between <i>Batchbook Classic</i> and <i>Batchbook New</i>."
+        widget_title: "Widget Title"
+    highrise:
+      label: "Highrise"
+      helptext: "<h4>Highrise Integration Help</h4><p><br/> You may access Highrise contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
+      desc: "You can view contact information from Highrise in Freshdesk."
+      form:
+        domain: "Highrise Domain:"
+        domain_info: "For example, if your Highrise URL is <strong>http://mycompany.highrise.com/</strong> , enter <strong> mycompany </strong>. </span>" 
+        api_key: "API Key"
+        api_key_info: "Your Highrise API Key can be found by following the <i>Your Account</i> link in Highrise."
+        widget_title: "Widget Title"
     workflow_max:
       label: "Workflow Max"
       desc: "You can log time spent on tickets into your Workflow Max jobs and tasks."
