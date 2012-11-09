@@ -347,8 +347,8 @@ Freshdesk.CRMWidget.prototype={
 
 	VIEW_CONTACT:
 			'<span class="contact-type <%=(type ? "" : "hide")%>"><%=(type || "")%></span>' +
-			'<div class="title">' +
-				'<div class="<%=widget_name%>-name">' +
+			'<div class="title <%=widget_name%>_bg">' +
+				'<div class="name">' +
 					'<div id="contact-name" class="contact-name"><a title="<%=name%>" target="_blank" href="<%=url%>"><%=name%></a></div>' +
 				    '<div id="contact-desig"><%=(designation ? designation : ( company ? "Works" : "" ))%>' +
 					    '<span class="<%=(company ? "dummy" : "hide")%>"> at ' +
@@ -386,14 +386,14 @@ Freshdesk.CRMWidget.prototype={
 			'<div class="external_link"><a id="search-back" href="javascript:cw.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view" href="<%=url%>">View <span id="crm-contact-type"></span> on <%=app_name%></a></div>',
 
 	CONTACT_SEARCH_RESULTS:
-		'<div class="title">' +
-			'<div id="number-returned" class="<%=widget_name%>-name"> <%=resLength%> results returned for <%=requester%> </div>'+
+		'<div class="title <%=widget_name%>_bg">' +
+			'<div id="number-returned" class="name"> <%=resLength%> results returned for <%=requester%> </div>'+
 			'<div id="search-results"><%=resultsData%></div>'+
 		'</div>',
 
 	CONTACT_NA:
-		'<div class="title contact-na">' +
-			'<div class="<%=widget_name%>-name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
+		'<div class="title contact-na <%=widget_name%>_bg">' +
+			'<div class="name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
 		'</div>'
 };
 
