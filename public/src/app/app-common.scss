@@ -5906,33 +5906,33 @@ a.close{
 		&.contact-na {
 			border-bottom: none;
 		}
-	}
-
-	.name {
+		
+		.name{
+			padding: 7px 0 10px 0px;  
+			width: 218px;
+			min-height:30px;
+		}
+	
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
-		padding:0 0 10px 35px;		
 	}
 
-	.salesforce_widget-name {
+	/* div. added for higher specificity */
+	div.salesforce_widget_bg {
 		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		background-position: right center;
-		padding:7px 0 10px 0px;  
-		min-height:30px;
+		background-position: 223px 7px;
  	}
 
- 	.batchbook_widget-name {
-	  background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
-	  background-position: right center;
-	  padding: 7px 0 10px 0px;
-	  min-height: 30px;
+ 	div.batchbook_widget_bg {
+		background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
   	}
 
- 	.highrise_widget-name {
-	  background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
-	  background-position: right center;
-	  padding: 7px 0 10px 0px;
-	  min-height: 30px;
+ 	div.highrise_widget_bg {
+		background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
   	}
+
+	
 
  	.error {
 		&.name, &.salesforce-name {
