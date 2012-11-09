@@ -1,23 +1,27 @@
-<% unless @quests.empty? %>
-	<div id="quests-section">
-	  	<%= link_to "See all", helpdesk_quests_path, :class => "action-right" %>
-	  	<h3 class="title">Available Quests</h3>  
-	  	<div id="quests-container" class="panel-list">
-	  		<% @quests.each do |quest| %>
-		  		<div id="active-quest" class="panel-row row-fluid">
-					<div class="span2">
-						<div class="badges left <%=quest.badge[:classname]%>">
-							<%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? || quest.points == 0 %>
+
+<% cache("#{get_memcache_key}", :expires_in => 1.hour) do %>
+
+	<% unless load_available_quests.empty? %>
+		<div id="quests-section">
+		  	<%= link_to "See all", helpdesk_quests_path, :class => "action-right" %>
+		  	<h3 class="title">Available Quests</h3>  
+		  	<div id="quests-container" class="panel-list">
+		  		<% @quests.each do |quest| %>
+			  		<div id="active-quest" class="panel-row row-fluid">
+						<div class="span2">
+							<div class="badges left <%=quest.badge[:classname]%>">
+								<%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? || quest.points == 0 %>
+							</div>
+						</div>
+						<div class="span10">
+			  				<h4><%= quest.name %></h4>
+							<p class="help-text"><%= quest.description %></p>
 						</div>
 					</div>
-					<div class="span10">
-		  				<h4><%= quest.name %></h4>
-						<p class="help-text"><%= quest.description %></p>
-					</div>
-				</div>
-			<% end %>
-	  	</div>
-	</div>
-<% else %>
-	<script type="text/javascript">$('quests-section-container').hide()</script>
+				<% end %>
+		  	</div>
+		</div>
+	<% else %>
+		<script type="text/javascript">$('quests-section-container').hide()</script>
+	<% end %>
 <% end %>

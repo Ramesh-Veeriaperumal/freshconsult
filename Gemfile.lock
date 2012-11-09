@@ -12,6 +12,13 @@ GIT
   specs:
     deadlock_retry (1.2.0)
 
+GIT
+  remote: git://github.com/freshdesk/ruby-yui-compressor.git
+  revision: 8e1d110528c986cb5cd13487bded7a7449bdcd2e
+  specs:
+    yui-compressor (0.9.6)
+      POpen4 (>= 0.1.4)
+
 PATH
   remote: vendor/gems/classifier-1.3.1
   specs:
@@ -279,8 +286,6 @@ GEM
     wasabi (2.3.0)
       nokogiri (>= 1.4.0)
     xml-simple (1.0.15)
-    yui-compressor (0.9.6)
-      POpen4 (>= 0.1.4)
     zendesk-features (1.0.2)
 
 PLATFORMS
@@ -348,4 +353,5 @@ DEPENDENCIES
   tiny_mce (= 0.1.9)!
   twitter (= 2.1.1)!
   tzinfo
+  yui-compressor!
   zendesk-features

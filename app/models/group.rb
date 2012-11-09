@@ -1,5 +1,10 @@
 class Group < ActiveRecord::Base
   
+  include Cache::Memcache::Group
+
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
+
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   

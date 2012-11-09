@@ -5,6 +5,9 @@
 	var tour;
 	jQuery(document).ready(function() {
 	    tour = new TourMyApp("freshdesk");
+	    if (window.location.href.indexOf("freshpo.com") != -1) {
+    		tour.setOptions({"test_mode": true});
+  		}
 	    tour.start();
 	});
 	</script>
