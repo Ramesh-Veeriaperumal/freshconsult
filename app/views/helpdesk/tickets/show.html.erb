@@ -32,6 +32,25 @@
 	<div class="requestCnt request-conversation active tab-pane set-top" id="Pages">
 		<% unless @ticket.deleted %>
 		<div id="TicketForms">
+				<% javascript_tag do %> 
+				  function lookup(searchString, callback) { 
+				    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+				                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+				                                              onSuccess: function(response) {
+				                                                var choices = $A();
+				                                                response.responseJSON.results.each(function(item){
+				                  if(item.value == "") {
+				                    choices.push([item.id, item.id]);
+				                  } else {
+				                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+				                  } 
+				                                                });                                                
+				                                                callback(choices);
+				                                              } });
+				                                            }
+				  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+				  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+				<% end %>
 		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) unless @item.from_email.nil? %>
 
 		  	<div class="request_panel hide" id="cnt-fwd">
