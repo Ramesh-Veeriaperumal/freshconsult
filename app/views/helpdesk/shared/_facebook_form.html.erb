@@ -24,7 +24,7 @@
 	 <li class="button-container">
     	<%= submit_tag(t('ticket.facebook_form.send'), :class => "uiButton special" ) %>
     	<%= submit_tag(t('ticket.facebook_form.send_and_resolve'), :onclick => "jQuery('#fb_ticket_status').val('resolved');" , :class => "uiButton") %>
-		<%= button_to_function(t('cancel'), "jQuery('#cnt-fb-post').slideUp().trigger('visibility');", :class => "uiButton" ) %>
+		<%= button_to_function(t('cancel'), "jQuery('#cnt-fb-post').hide().trigger('visibility');", :class => "uiButton" ) %>
     </li>
     </ul> 
   <% end %>
