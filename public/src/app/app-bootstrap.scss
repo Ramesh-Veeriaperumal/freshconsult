@@ -1463,7 +1463,9 @@ a.pill.help{
   li.active span.pill{
     display:block;
   }
+  li.active a{ cursor:pointer; }
   a{ 
+    cursor: default;
     @include inline-block;
     width:24px;height:24px;  
     margin-left:5px;

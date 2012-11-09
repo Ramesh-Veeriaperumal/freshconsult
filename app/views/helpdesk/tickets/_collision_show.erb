@@ -3,7 +3,7 @@
 <div class="ticket-notifications">
    <ul>
     <li rel="notice-popover" id="notification" data-placement="right" title="Ticket updated">
-      <%= link_to "", helpdesk_ticket_path(ticket.display_id), :class => "symbols-ac-refreshon" %>
+      <a href="javascript:void(0)" class="symbols-ac-refreshon"></a>
     </li>
     <li rel="notice-popover" id="agents_replying" data-object="replying" data-placement="right" title="Currently replying">
       <a href="#" class="symbols-ac-replyon tooltip"></a>
@@ -24,7 +24,13 @@
     var current_user = "<%= escape_javascript(current_user.name) %>";
     init_params.agent = current_user;
     init_params.account_id = <%= current_account.id%>;
-    init_params.ticket_id = <%= @ticket.id %>;      
+    init_params.ticket_id = <%= @ticket.id %>;  
+
+    jQuery("#notification").bind("click", function(ev){
+      if(jQuery(this).hasClass("active")){
+        window.location = '<%= helpdesk_ticket_path(ticket.display_id) %>';
+      }
+    })
     
     function update_viewing(_agents) {
       //console.log("Agents Viewing The Ticket : " + _agents);
@@ -69,6 +75,10 @@
           socket.emit('set_params', init_params);      
           socket.emit('get_exiting_viewers');
           socket.emit('get_exiting_replying');
+
+          <% unless @draft.nil? %>
+            jQuery('#cnt-reply').trigger("visibility");
+          <% end %>
       });
 
       socket.socket.on('error', function (error_msg){
@@ -107,11 +117,9 @@
       socket.on('recieve_existing_viewers', update_viewing); 
       socket.on('recieve_existing_replying', update_replying);
  
-      jQuery('div[rel=emitter]').bind("visibility", function(ev){ 
-        if(jQuery(this).css("display") == "block")
-          socket.emit(jQuery(this).data("nodeName"));
-        else if(jQuery(this).css("display") == "none")
-          socket.emit(jQuery(this).data("nodeName")+"_stopped");
+      jQuery('div[rel=emitter]').bind("visibility", function(ev){
+        // Emitting a node message when agent is replying, forwarding or adding a note inside the ticket details page
+        socket.emit(jQuery(this).data("nodeName") + ((jQuery(this).css("display") == "block") ? "" : "_stopped") )
       });        
       
       jQuery("li[rel=notice-popover]")      

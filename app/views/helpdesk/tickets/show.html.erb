@@ -81,17 +81,19 @@
 			switch(formid){
 				case 'cnt-reply':
 				case 'cnt-note':
-				case 'cnt-fwd':
-					invokeRedactor(formid+"-body",formid);
-					jQuery('#'+formid+"-body").getEditor().focus();
-					if(jQuery.browser.mozilla){
-						jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
-					}
-					jQuery('#'+formid+"-body").getEditor().on('blur',function(){
-					jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
-					jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
-
-				});
+				case 'cnt-fwd':					
+						invokeRedactor(formid+"-body",formid);
+						jQuery('#'+formid+"-body").getEditor().focus();
+						if(jQuery.browser.mozilla){
+							jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
+						}
+						jQuery('#'+formid+"-body").getEditor().on('blur',function(){
+							try{
+								jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
+								jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
+							}catch(e){}
+						});
+					
 
 				break; 
 				case 'cnt-fb-post': 
@@ -197,8 +199,8 @@
 	jQuery('#custom_ticket_form').validate(validateOptions);
 	
 	<% unless @draft.nil? %>
-	jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
-	var isDirty= false;
+		jQuery("#ReplyButton").trigger('click');
+		var isDirty= false;
 	<% end %>
 	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 	setTimeout(function(){jQuery('#TicketProperties').trigger('afterShow')},50);
