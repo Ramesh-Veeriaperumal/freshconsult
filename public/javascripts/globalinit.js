@@ -340,11 +340,9 @@ var $J = jQuery.noConflict();
           clkdLI.addClass('active');
           $('.load-mask').height(bHeight).show();
           $('#body-container .wrapper').css('visibility','hidden');
-          
-          try {
-            $(document).trigger('ticket_list');
-            $(document).trigger('ticket_show');
-          } catch(e){}
+
+          $(document).trigger('ticket_list');
+          $(document).trigger('ticket_show');
           return true;
       }).bind('pjax:end',function(){
         $('.load-mask').hide();

@@ -1,4 +1,4 @@
 page.replace_html 'ticket-list', :partial => '/helpdesk/shared/tickets'
 page.replace_html 'ticket-sub-toolbar', :partial => '/helpdesk/shared/ticket_sort'
 page << "bulkActionButtonsDisabled();"
-page << "handle_agent_collision();"
+page << "handle_agent_collision();" if feature?(:agent_collision)
