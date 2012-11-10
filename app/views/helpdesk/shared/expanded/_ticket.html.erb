@@ -39,6 +39,9 @@
 		<% end %>
 	</div>
   </td>
+  <td class="ralign hideForList">
+		<%= "<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>" unless ticket_style.blank? %>
+	</td>
   <td class="source-icon hideForList">
 	<div class="status-source source-detailed-<%= ticket.source_name.to_s.downcase %> hideForList" 
   		title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"
