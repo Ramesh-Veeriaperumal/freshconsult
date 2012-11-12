@@ -18,6 +18,10 @@ class Topic < ActiveRecord::Base
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
+  has_many :activities, 
+    :class_name => 'Helpdesk::Activity', 
+    :as => 'notable',
+    :dependent => :delete_all
   named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
 
   named_scope :visible, lambda {|user| visiblity_options(user) }
@@ -145,6 +149,10 @@ class Topic < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+  end
+
+  def to_s
+    title
   end
 
 end

@@ -78,18 +78,21 @@ Freshdesk.Widget.prototype={
 		reqData.ssl_enabled = this.options.ssl_enabled;
 		reqData.accept_type = reqData.accept_type || reqData.content_type;
 		reqData.method = reqData.method || "get";
-		reqHeader = {}
+		reqHeader = reqData.reqHeader || {}
 		if(this.options.use_server_password) {
 			reqData.username = this.options.username
 			reqData.use_server_password = this.options.use_server_password
 			reqData.app_name = this.options.app_name.toLowerCase()
 		}
 		else if(this.options.auth_type == 'OAuth'){
-			reqHeader = {Authorization:"OAuth " + this.options.oauth_token}
-		}
+			reqHeader.Authorization = "OAuth " + this.options.oauth_token;
+		} 
 		else if(this.options.auth_type == 'NoAuth'){}
-		else {
-			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
+		else if(this.options.auth_type == 'UAuth'){
+			reqData.resource = reqData.resource + '&' + this.options.token_key_name + '=' + Base64.encode(this.options.username);
+		}
+		else{
+			reqHeader.Authorization = "Basic " + Base64.encode(this.options.username + ":" + this.options.password);
 		}
 		new Ajax.Request("/http_request_proxy/fetch",{
       asynchronous: true,
@@ -267,7 +270,8 @@ Freshdesk.CRMWidget.prototype={
 				cnt_req = integratable_impl.get_contact_request();
 				if(cnt_req) {
 					cnt_req.on_success = this.handleContactSuccess.bind(this);
-					if (widgetOptions.auth_type != 'OAuth') cnt_req.on_failure = this.handleFailure.bind(this);
+					if (widgetOptions.auth_type != 'OAuth' && integratable_impl.processFailure)
+						cnt_req.on_failure = this.handleFailure.bind(this);
 					widgetOptions.init_requests = [cnt_req];
 				}
 				this.initialize(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
@@ -288,6 +292,8 @@ Freshdesk.CRMWidget.prototype={
 
 	handleContactSuccess:function(response){
 		resJson = response.responseJSON;
+		if(resJson == null)
+			resJson = JSON.parse(response.responseText);
 		this.contacts = this.options.integratable_impl.parse_contact(resJson);
 		if (this.contacts.length > 0) {
 			if(this.contacts.length == 1){
@@ -303,73 +309,91 @@ Freshdesk.CRMWidget.prototype={
 	},
 
 	renderSearchResults:function(){
-		var salesforceResults="";
+		var crmResults="";
 		for(var i=0; i<this.contacts.length; i++){
-			salesforceResults += '<a href="javascript:cw.renderContactWidget(this.contacts[' + i + '])">'+this.contacts[i].name+'</a><br/>';
+			crmResults += '<a href="javascript:cw.renderContactWidget(this.contacts[' + i + '])">'+this.contacts[i].name+'</a><br/>';
 		}
-		var results_number = {resLength: this.contacts.length, requester: this.options.reqEmail, resultsData: salesforceResults};
+		var results_number = {resLength: this.contacts.length, requester: this.options.reqEmail, resultsData: crmResults};
 		this.renderSearchResultsWidget(results_number);
 	},
 
 	renderContactWidget:function(eval_params){
 		cw=this;
 		eval_params.app_name = this.options.app_name;
+		eval_params.widget_name = this.options.widget_name;
+		eval_params.type = eval_params.type?eval_params.type:"" ; // Required
+		eval_params.department = eval_params.department?eval_params.department:null;
+		eval_params.url = eval_params.url?eval_params.url:"#";
+		eval_params.address_type_span = eval_params.address_type_span || " ";
+		
+		
 		this.options.application_html = function(){ return _.template(cw.VIEW_CONTACT, eval_params);	} 
 		this.display();
-		jQuery("#"+this.options.widget_name+" .contact-type").show();
 	},
 
 	renderSearchResultsWidget:function(results_number){
 		cw=this;
+		results_number.widget_name = this.options.widget_name;
 		this.options.application_html = function(){ return _.template(cw.CONTACT_SEARCH_RESULTS, results_number);} 
 		this.display();
 	},
 
 	renderContactNa:function(){
 		cw=this;
+		cw.options.url = cw.options.url || "#";
 		this.options.application_html = function(){ return _.template(cw.CONTACT_NA, cw.options);} 
 		this.display();
 	},
 
 	VIEW_CONTACT:
-			'<span class="contact-type hide"><%=type%></span>' +
-			'<div class="title">' +
-				'<div class="salesforce-name">' +
-					'<div id="contact-name"><a target="_blank" href="<%=url%>"><%=name%></a></div>' +
-				    '<div id="contact-desig"><%=designation%></div>'+
+			'<span class="contact-type <%=(type ? "" : "hide")%>"><%=(type || "")%></span>' +
+			'<div class="title <%=widget_name%>_bg">' +
+				'<div class="name">' +
+					'<div id="contact-name" class="contact-name"><a title="<%=name%>" target="_blank" href="<%=url%>"><%=name%></a></div>' +
+				    '<div id="contact-desig"><%=(designation ? designation : ( company ? "Works" : "" ))%>' +
+					    '<span class="<%=(company ? "dummy" : "hide")%>"> at ' +
+					    	'<a href="<%=(company_url || "#")%>"><%=(company || "")%></a>' + 
+				    	'</span>' + 
+				    '</div>'+
 			    '</div>' + 
 		    '</div>' + 
-		    '<div class="field half_width">' +
+		    '<div class="field">' +
 		    	'<div id="crm-contact">' +
-				    '<label>Contact</label>' +
-				    '<span id="contact-address"><%=address%></span>' +
+				    '<label>Address</label>' +
+				    '<span id="contact-address"><%=address%><%=address_type_span%></span>' +
 			    '</div>'+	
-		    	'<div  id="crm-dept">' +
-				    '<label>Department</label>' +
-				    '<span id="contact-dept"><%=department%></span>' +
-			    '</div>'+	
-		    '</div>'+
-		    '<div class="field half_width">' +
+		    '</div>'+	
+		    '<div class="field">' +
 		    	'<div  id="crm-phone">' +
 				    '<label>Phone</label>' +
 				    '<span id="contact-phone"><%=phone%></span>'+
 			    '</div>' +
+		    '</div>' +
+		    '<div class="field">' +
 				'<div id="crm-mobile">' +
 				    '<label>Mobile</label>' +
 				    '<span id="contact-mobile"><%=mobile%></span>'+
 				'</div>' +
-			'</div>'+
-			'<div class="external_link"><a id="search-back" href="javascript:cw.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view" href="<%=url%>">View <span id="crm-contact-type"><%=type%></span> in <%=app_name%></a></div>',
+			'</div>' +
+		    '<div class="field <%=((department)? "" : "hide") %>">' +
+		    	'<div  id="crm-dept">' +
+				    '<label>Dept.</label>' +
+				    '<span id="contact-dept"><%=(department || "")%></span>' +
+			    '</div>' +	
+		    '</div>' +
+		    '<div class="field bottom_div">' +
+		    '</div>' +
+			'<div class="external_link"><a id="search-back" href="javascript:cw.renderSearchResults();"> &laquo; Back </a><a target="_blank" id="crm-view" href="<%=url%>">View <span id="crm-contact-type"></span> on <%=app_name%></a></div>',
 
 	CONTACT_SEARCH_RESULTS:
-		'<div class="title">' +
-			'<div id="number-returned" class="salesforce-name"> <%=resLength%> results returned for <%=requester%> </div>'+
+		'<div class="title <%=widget_name%>_bg">' +
+			'<div id="number-returned" class="name"> <%=resLength%> results returned for <%=requester%> </div>'+
 			'<div id="search-results"><%=resultsData%></div>'+
 		'</div>',
 
 	CONTACT_NA:
-		'<div class="title contact-na">' +
-			'<div class="salesforce-name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
+		'<div class="title contact-na <%=widget_name%>_bg">' +
+			'<div class="name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
 		'</div>'
 };
 

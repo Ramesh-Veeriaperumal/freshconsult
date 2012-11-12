@@ -20,7 +20,7 @@ class HttpRequestProxy
       domain = params[:domain]
       method = params[:method] || method
       ssl_enabled = params[:ssl_enabled]
-      rest_url = params[:rest_url]
+      resource = params[:resource]
       user = params[:username]
       pass = params[:password]
       entity_name = params[:entity_name]
@@ -38,8 +38,8 @@ class HttpRequestProxy
         http_s = ssl_enabled == "true"? "https":"http";
         domain = http_s+"://"+ domain
       end
-      rest_url = rest_url ? "/" + rest_url : ""
-      remote_url = domain + rest_url
+      resource = resource ? "/" + resource : ""
+      remote_url = domain + resource
       remote_url = Liquid::Template.parse(remote_url).render("password"=>params[:password])
 
       if auth_header.blank?
@@ -72,7 +72,7 @@ class HttpRequestProxy
     end
     response_type = accept_type if response_type.blank?
     begin
-      if accept_type == "application/json" && response_type != "application/json"
+      if accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
         response_body = proxy_response.parsed_response.to_json
         response_type = "application/json"
       end
