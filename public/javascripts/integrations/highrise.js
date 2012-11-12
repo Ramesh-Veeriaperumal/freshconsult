@@ -13,7 +13,7 @@ HighriseWidget.prototype= {
 
   get_contact_request: function(highrise_options) {
     email = this.highrise_options.reqEmail;
-    return {resource: "people/search.xml?criteria[email]=" + email };
+    return {rest_url: "people/search.xml?criteria[email]=" + email };
   },
 
   parse_contact: function(contactsJson){
