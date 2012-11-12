@@ -13,6 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include BusinessRulesObserver
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
+  include RedisKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
                             "header_info", "st_survey_rating"]
@@ -50,7 +51,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :support_score_on_create, :process_quests
   
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
-       :stop_timesheet_timers, :fire_update_event, :support_score_on_update, :process_quests
+    :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
+    :process_quests, :publish_to_update_channel
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
@@ -1151,6 +1153,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
         end
       end
       schema_less_ticket.save unless schema_less_ticket.changed.empty?
+    end
+
+    def publish_to_update_channel
+      return unless account.features?(:agent_collision)
+      agent_name = User.current ? User.current.name : ""
+      message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
+      publish_to_channel("tickets:#{self.account.id}:#{self.id}", message)
     end
 
     def fire_update_event

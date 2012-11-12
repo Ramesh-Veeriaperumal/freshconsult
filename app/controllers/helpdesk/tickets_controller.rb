@@ -12,7 +12,6 @@ class Helpdesk::TicketsController < ApplicationController
   include RedisKeys
   include Helpdesk::AdjacentTickets
 
-
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :check_user, :load_installed_apps, :only => [:show, :forward_conv]
   before_filter { |c| c.requires_permission :manage_tickets }
@@ -79,11 +78,11 @@ class Helpdesk::TicketsController < ApplicationController
     set_total_entries(params[:page] || 1, params[:per_page] || 30)
     respond_to do |format|      
       format.html  do
-        # @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+        @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-        # @show_options = show_options
+        @show_options = show_options
         @current_view = @ticket_filter.id || @ticket_filter.name
-        #@is_default_filter = (!is_num?(@template.current_filter))
+        @is_default_filter = (!is_num?(@template.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
         # end

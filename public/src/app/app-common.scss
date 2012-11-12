@@ -928,7 +928,7 @@ h4.title{
 	  	@include box-shadow(0 0 40px rgba(0, 0, 0, 0.05) inset);
 		margin:0px 78px 0px 0px;  
 		padding-top:5px; 
-		z-index:10; 
+		z-index:99; 
 		background-color:#ffffff;
 		border:1px solid #cfcfcf;
 		position:relative;
@@ -1058,6 +1058,7 @@ h4.title{
 		
 	}
 }
+
 
 
 @include all-admin-icon-sprites;
@@ -6905,6 +6906,18 @@ a.mobile_switchBtn {
 		min-height: 0px;
 	}
 
+}
+
+.page-notification{
+	display:none;
+	position:fixed;
+	bottom:1px;
+	left:1px;
+	z-index:4;
+	background-color:#FFF1A8;
+	border:1px solid #CCC;
+	color:#222;
+	padding:10px;
 }
  
 /* end */

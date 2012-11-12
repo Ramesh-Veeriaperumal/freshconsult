@@ -1,9 +1,47 @@
-<div class="leftFilter" id="all-views-tmpl" style="display:none">
-  <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
 
-  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view_tooltip"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
-</div>
-  
+  <script type="text/javascript">
+
+  function getFilterData(){
+    query_hash = $A(); 
+    jQuery("div.ff_item").map(function () {
+      condition = this.getAttribute("condition");
+      container = this.getAttribute("container");
+      operator  = this.getAttribute("operator");
+      _selector = 'input:checkbox:checked'; 
+      var value;
+          
+      if(container == "multi_select") _selector = 'option:selected';
+       
+      if(container == "nested_field") {         
+        value = jQuery(this).children('select').val();
+      } else {
+        value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
+      }
+                        
+      if(value && value.length && ((container != "nested_field") || ((container == "nested_field") && (value != -1)))){
+        query_hash.push({ 
+          condition : this.getAttribute("condition"), 
+          operator  : this.getAttribute("operator"),
+          value     : value.toString()
+        });
+      }
+    });
+    jQuery("#FilterOptions input[name=page]").val(1);
+  }
+
+  function refresh_tickets(){
+    jQuery("#save_filter").show();
+    jQuery("#delete_filter").hide();
+    if (!jQuery("#active_filter").hasClass('unsaved')) {
+      jQuery("#active_filter").text("<%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
+    }
+    jQuery("#leftViewMenu a.active").removeClass('active').children('span').remove();
+    jQuery("#FilterOptions input[name=filter_name]").val("");
+    jQuery(".view_filters .active").removeClass("active");
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
+  }
+  </script>
   <%= will_filter_scripts_tag %>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h3 class="title"><%= t("tickets_filter.title") %></h3>
@@ -36,47 +74,6 @@
         end %>
 <script type="text/javascript"> 
 	var query_hash  = $A();
-  
-  function getFilterData(){
-    query_hash = $A(); 
-    jQuery("div.ff_item").map(function () {
-      condition = this.getAttribute("condition");
-      container = this.getAttribute("container");
-      operator  = this.getAttribute("operator");
-      _selector = 'input:checkbox:checked'; 
-      var value;
-          
-      if(container == "multi_select") _selector = 'option:selected';
-       
-      if(container == "nested_field") {         
-        value = jQuery(this).children('select').val();
-      } else {
-        value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
-      }
-                        
-      if(value && value.length && ((container != "nested_field") || ((container == "nested_field") && (value != -1)))){
-        query_hash.push({ 
-          condition : this.getAttribute("condition"), 
-          operator  : this.getAttribute("operator"),
-          value     : value.toString()
-        });
-      }
-    });
-		jQuery("#FilterOptions input[name=page]").val(1);
-  }
-
-  function refresh_tickets(){
-    jQuery("#save_filter").show();
-    jQuery("#delete_filter").hide();
-    if (!jQuery("#active_filter").hasClass('unsaved')) {
-      jQuery("#active_filter").text("<%= t("tickets_filter.unsaved_view") %>").addClass('unsaved').animateHighlight(jQuery('body').css('backgroundColor'));
-    }
-    jQuery("#leftViewMenu a.active").removeClass('active').children('span').remove();
-    jQuery("#FilterOptions input[name=filter_name]").val("");
-    jQuery(".view_filters .active").removeClass("active");
-    getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
-  }
   
 	jQuery(document).ready(function(){
     
@@ -149,9 +146,4 @@
         }
       }); 
   });
-  $J('#all-views').html($J('#all-views-tmpl').html());
-  $J('#all-views-tmpl').html('');
-  setTimeout(function(){
-    jQuery("#all-views a.dialog2").dialog2();
-  },50)
 </script>

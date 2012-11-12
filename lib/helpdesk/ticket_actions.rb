@@ -84,7 +84,7 @@ module Helpdesk::TicketActions
       params[:later] = true
       Resque.enqueue(Helpdesk::TicketsExport, params)
       flash[:notice] = t("export_data.mail.info")
-      redirect_to :back
+      redirect_to helpdesk_tickets_path
     else
       csv_tickets_string = Helpdesk::TicketsExport.perform(params)
       send_data csv_tickets_string, 
