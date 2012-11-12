@@ -447,7 +447,8 @@ class User < ActiveRecord::Base
   
   def make_customer
     return if customer?
-    update_attribute(:user_role, USER_ROLES_KEYS_BY_TOKEN[:customer])
+    
+    update_attributes({:user_role => USER_ROLES_KEYS_BY_TOKEN[:customer], :deleted => false})
     agent.destroy
   end
 

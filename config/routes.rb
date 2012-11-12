@@ -30,6 +30,8 @@
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
+
+  map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'

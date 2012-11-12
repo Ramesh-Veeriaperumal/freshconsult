@@ -723,6 +723,7 @@ en:
       update: 
         success: Your account details have been updated.
     agents: 
+      to_contact: The agent has been successfully converted to a Contact
       delete: 
         not_allowed: You don't have access to delete it!
       create: 
@@ -774,6 +775,7 @@ en:
         failure: Unable to import from zendesk...please try again
         running: Currently one zendesk import is running. you may try later !!
     contacts: 
+      to_agent: The contact has been successfully converted to an Agent
       create: 
         success: The contact has been created successfully.
       cancel: cancel
@@ -1231,9 +1233,18 @@ en:
   agent: 
     new: New Agent
     edit: Edit Agent
+    showing: "Showing:"
+    status:
+      active: Active
+      deleted: Deleted
+    active:
+      no_agents: You have not added any agents to the list
+    deleted:
+      no_agents: You dont have any deleted agents
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
+    info4: Convert to a Contact
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email} 
     signature: Signature
     info3: Are you sure you want delete
@@ -1246,7 +1257,7 @@ en:
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
-    restore: restore
+    restore: Restore
     add_signature: Add signature
     update: Update
     permissions: Permissions
@@ -1307,7 +1318,7 @@ en:
     emailnotverified: Email has not been verified for this contact!
     showing: "Showing:"
     info1: Are you sure you want to delete this contact?
-    info2: Make this User an Agent
+    info2: Convert to an Agent
     send_activation: Send activation email
     import_csv: Import Customers from CSV
     import_google: Import from Google
