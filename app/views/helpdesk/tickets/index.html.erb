@@ -16,6 +16,7 @@
   /*setTimeout(function(){
     jQuery('#ticket-leftFilter').trigger('afterShow');
   },50)*/
+  jQuery.getScript('/helpdesk/tickets/full_paginate');
 <% end %>
 <%= render :partial => "collision_index" if feature?(:agent_collision) %>
 <% content_for :layoutType do -%>ticket_list<%- end %>

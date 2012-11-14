@@ -91,6 +91,13 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "Error  =>" + exception
     Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     respond_to do |format|
+      format.html {
+        unless @current_account
+          render("/errors/invalid_domain")
+        else
+          render_404
+        end
+      }
       format.xml do 
         result = {:error=>"Record Not Found"}
         render :xml =>result.to_xml(:indent =>2,:root=> :errors),:status =>:not_found
