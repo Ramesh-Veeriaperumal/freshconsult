@@ -149,7 +149,7 @@ var $J = jQuery.noConflict();
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
       // - Tour My App 'Next' button change
-      $(".tourmyapp-toolbar .next_button").livequery(function(){ 
+      $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
         if($(this).text() == "Next »")
            $(this).addClass('next_button_arrow').text('Next');
       });
