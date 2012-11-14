@@ -123,6 +123,7 @@ javascripts:
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
+    - public/javascripts/navsearch.js
   timesheet:
     - public/javascripts/timesheet.js
   freshwidget:
@@ -200,6 +201,7 @@ javascripts:
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
     - public/javascripts/globalinit.js
+    - public/javascripts/navsearch.js
     - public/javascripts/jquery.gritter/jquery.gritter.js
     - public/javascripts/requestAnimFrame.js
     - public/javascripts/notifications.js
