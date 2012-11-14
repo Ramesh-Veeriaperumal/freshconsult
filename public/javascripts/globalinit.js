@@ -329,6 +329,9 @@ var $J = jQuery.noConflict();
          try{ closeableFlash(flash); } catch(e){}
       }
 
+      if(jQuery.browser.opera){
+        jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
+      }
 
       $(document).pjax('a[data-pjax]',"#body-container",{
           timeout: -1
@@ -338,15 +341,18 @@ var $J = jQuery.noConflict();
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
           clkdLI.addClass('active');
-          $('.load-mask').height(bHeight).show();
-          $('#body-container .wrapper').css('visibility','hidden');
-
+          jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
+            jQuery('.top-loading-wrapper').removeClass('hide');
+          });
+          // $('#body-container .wrapper').css('visibility','hidden');
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
           return true;
       }).bind('pjax:end',function(){
-        $('.load-mask').hide();
-        $('#body-container .wrapper').css('visibility','visible');
+        //$('.load-mask').hide();
+        jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
+        jQuery('.top-loading-wrapper').addClass('hide','slow');
+        // $('#body-container .wrapper').css('visibility','visible');
         end_time = new Date();
         setTimeout(function() {
           $('#benchmarkresult').html('Finnally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
