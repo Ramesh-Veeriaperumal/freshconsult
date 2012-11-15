@@ -99,6 +99,5 @@
 	<% end %> 
 </div> 
 
-<% content_for :dialogs do -%>
-	<%= render :partial => "helpdesk/tickets/components/due_date", :locals => { :ticket => ticket }  %>
-<%- end %>
+<%= render :partial => "helpdesk/tickets/components/due_date", :locals => { :ticket => ticket }  %>
+

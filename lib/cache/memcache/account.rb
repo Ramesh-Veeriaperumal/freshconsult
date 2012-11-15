@@ -19,12 +19,12 @@ module Cache::Memcache::Account
 
   def tags_from_cache
     key = tags_memcache_key
-    MemcacheKeys.fetch(key) { self.tags }
+    MemcacheKeys.fetch(key) { self.tags.all }
   end
 
   def customers_from_cache
     key = customers_memcache_key
-    MemcacheKeys.fetch(key) { self.customers }
+    MemcacheKeys.fetch(key) { self.customers.all }
   end
 
   private

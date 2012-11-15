@@ -13,14 +13,17 @@
     jQuery("#assign-options").show();
     jQuery(this).hide();
   });
-  setTimeout(function(){
+  /*setTimeout(function(){
     jQuery('#ticket-leftFilter').trigger('afterShow');
-  },50)
+  },50)*/
 <% end %>
+<%= render :partial => "collision_index" if feature?(:agent_collision) %>
 <% content_for :layoutType do -%>ticket_list<%- end %>
+<%= javascript_include_tag "sisyphus" %>
 <div class="containerFull">
   <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != 'deleted' && @current_view != 'spam' && @current_view != 'monitored_by') ? 'block' : 'none' %>">
     <div id="ticket-leftFilter" rel="remote" class="leftFilter" data-remote-url="/helpdesk/tickets/filter_options" >   
+      <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
     </div>
   </div>
   <div id="rightCol" class="contentCol <%="hasRightCol" unless (@current_view == "deleted" or @current_view == "spam" or @current_view == "monitored_by") %>">
@@ -29,4 +32,3 @@
 </div>
 
 <%= javascript_include_tag "ticket_list" %>
-<%= javascript_include_tag "sisyphus" %>

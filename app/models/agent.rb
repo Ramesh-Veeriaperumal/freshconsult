@@ -81,6 +81,12 @@ def signature_htm
   self.signature_html
 end
 
+def self.filter(page, state = "active")
+  paginate :per_page => 30, :page => page,
+           :include => [ {:user => :avatar} ], 
+           :conditions => { :users => { :deleted  => !state.eql?("active") } }
+end
+
 protected
   
   def update_agents_level
