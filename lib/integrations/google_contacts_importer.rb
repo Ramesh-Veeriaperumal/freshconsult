@@ -77,11 +77,9 @@ class Integrations::GoogleContactsImporter
       # Enable notification before doing any other operations.
       EmailNotification.enable_notification(@google_account.account) 
       Rails.logger.info "last_sync_status #{sync_stats.inspect}"
-      unless @google_account.last_sync_status[:status] == :progress
-        @google_account.last_sync_status = sync_stats
-        @google_account.save! unless @google_account.new_record?
-        send_success_email(@google_account.last_sync_status, options) # Send email after saving the status into db.
-      end
+      @google_account.last_sync_status = sync_stats
+      @google_account.save! unless @google_account.new_record?
+      send_success_email(@google_account.last_sync_status, options) # Send email after saving the status into db.
     end
     Rails.logger.info "###### Completed sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
     return @google_account
