@@ -12,7 +12,7 @@ BatchbookWidget.prototype= {
 	},
 
 	get_contact_request: function() {
-		return {resource: "service/people.json?email=" + this.batchbookBundle.reqEmail};
+		return {rest_url: "service/people.json?email=" + this.batchbookBundle.reqEmail};
 	},	
 
 	parse_contact: function(resJson){

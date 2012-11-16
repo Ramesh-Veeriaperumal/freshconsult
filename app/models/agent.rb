@@ -1,5 +1,6 @@
 class Agent < ActiveRecord::Base
   
+  belongs_to_account
   include Notifications::MessageBroker
   include Cache::Memcache::Agent
 
@@ -33,6 +34,7 @@ class Agent < ActiveRecord::Base
   
   before_create :set_default_ticket_permission
   before_update :update_agents_level
+  before_create :set_account_id
 
   after_save  :update_agent_levelup
   after_update :publish_game_notifications
@@ -112,6 +114,10 @@ protected
     if level and ((points ? points : 0) < new_point)
       SupportScore.add_agent_levelup_score(user, new_point)
     end 
+  end
+
+  def set_account_id
+    account_id = user.account_id
   end
 
 end

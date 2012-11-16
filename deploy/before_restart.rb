@@ -4,5 +4,5 @@ run "sudo chmod 755 #{release_path}/script/runner"
 
 # Added a compilation of core css files used under public/src/app
 # All files in public/stylesheets/app will be ignored and cannot be checked in
-run "bundle exec compass compile -e production --force"
+run "bundle exec compass compile -e production"
 run "bundle exec jammit"

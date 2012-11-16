@@ -28,7 +28,8 @@
 
 	<span class="seperator"></span>
 	<% current_account.agents_from_cache.each do |agent| %>
-		<% data_assign_action ='agent' unless agent.user_id == current_user.id %>
-		<a href="#" class="action_assign" tabindex=99 data-value= "<%=agent.user.id%>" data-assign-action="<%=data_assign_action%>" ><%=h(agent.user.name)%></a>
+			<% unless agent.user_id == current_user.id %>
+				<a href="#" class="action_assign" tabindex=99 data-value= "<%=agent.user.id%>" data-assign-action="agent" ><%=h(agent.user.name)%></a>
+			<% end %>
   	<% end %>
 </div>
