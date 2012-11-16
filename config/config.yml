@@ -35,13 +35,13 @@ crm:
 salesforce:
     development: 
        username : "periyaswamy@freshdesk.com"
-       password : "peri123451Hy75VE4kSHmacLr3pljxiLjh"
+       password : "freshsales12345lPC9yohEA7x4MP9SlNLEGe8Tr"
     production: 
        username : "periyaswamy@freshdesk.com"
-       password : "peri123451Hy75VE4kSHmacLr3pljxiLjh"
+       password : "freshsales12345lPC9yohEA7x4MP9SlNLEGe8Tr"
     staging:  
        username : "periyaswamy@freshdesk.com"
-       password : "peri123451Hy75VE4kSHmacLr3pljxiLjh"
+       password : "freshsales12345lPC9yohEA7x4MP9SlNLEGe8Tr"
 
 marketo:
   development:
