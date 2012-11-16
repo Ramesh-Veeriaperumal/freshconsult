@@ -28,7 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   unhtml_it :description
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :disable_observer
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, :disable_observer
   
   before_validation :populate_requester, :set_default_values
   
@@ -472,10 +472,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def populate_requester #by Shan temp  
     portal =  self.product.portal if self.product
-    unless email.blank?
+    if email.present?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
-        @requester = account.all_users.find_by_email(email) unless email.nil?
+        @requester = account.all_users.find_by_email(email)
         if @requester.nil?
           @requester = account.users.new          
           @requester.signup!({:user => {
@@ -485,22 +485,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
         end        
         self.requester = @requester  if @requester.valid?
       end
-    else 
-      
-     unless twitter_id.blank?
-       logger.debug "twitter_handle :: #{twitter_id.inspect} "
-        if(requester_id.nil? or twitter_id.eql?(requester.twitter_id))
-          @requester = account.all_users.find_by_twitter_id(twitter_id)
-          if @requester.nil?
-            @requester = account.users.new          
-            @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
-            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer],:active => true, :email => nil}})
-          end        
-          self.requester = @requester
-        end
-      end 
-    end    
-    
+    elsif twitter_id.present?
+     logger.debug "twitter_handle :: #{twitter_id.inspect} "
+      if(requester_id.nil? or twitter_id.eql?(requester.twitter_id))
+        @requester = account.all_users.find_by_twitter_id(twitter_id)
+        if @requester.nil?
+          @requester = account.users.new
+          @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
+        end        
+        self.requester = @requester
+      end
+    elsif external_id.present?
+     logger.debug "external_id :: #{external_id.inspect} "
+      if(requester_id.nil? or external_id.eql?(requester.external_id))
+        @requester = account.all_users.find_by_external_id(external_id)
+        if @requester.nil?
+          @requester = account.users.new
+          @requester.signup!({:user => {:external_id =>external_id , :name => external_id ,
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
+        end        
+        self.requester = @requester
+      end
+    end
   end
   
   def autoreply     
