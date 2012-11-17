@@ -2411,13 +2411,13 @@ en:
         password: "Password"
     batchbook:
       label: "Batchbook (Classic)"
-      helptext: "<h4>Batchbook Integration Help</h4><p><br/> You may access Batchbook contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
-      desc: "You can view contact information from Batchbook in Freshdesk."
+      helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
+      desc: "Bring in contact information from your Batchbook account into Freshdesk"
       form:
         domain: "Batchbook Domain:"
         domain_info: "For example, if your Batchbook URL is <strong>http://mycompany.batchbook.com/</strong> , enter <strong> mycompany </strong>. </span>" 
         api_key: "API Key"
-        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook."
+        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook (Classic)."
         version:
           label: "Version"
           classic: "Classic"
@@ -2426,13 +2426,13 @@ en:
         widget_title: "Widget Title"
     highrise:
       label: "Highrise"
-      helptext: "<h4>Highrise Integration Help</h4><p><br/> You may access Highrise contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
-      desc: "You can view contact information from Highrise in Freshdesk."
+      helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
+      desc: "View contact information from Highrise CRM inside Freshdesk while resolving tickets."
       form:
         domain: "Highrise Domain:"
-        domain_info: "For example, if your Highrise URL is <strong>http://mycompany.highrise.com/</strong> , enter <strong> mycompany </strong>. </span>" 
+        domain_info: "For example, if your Highrise URL is <strong>http://mycompany.highrisehq.com/</strong> , enter <strong> mycompany </strong>. </span>" 
         api_key: "API Key"
-        api_key_info: "Your Highrise API Key can be found by following the <i>Your Account</i> link in Highrise."
+        api_key_info: "Your Highrise API Key can be found at Highrise. Please copy and paste the same here."
         widget_title: "Widget Title"
     workflow_max:
       label: "Workflow Max"
