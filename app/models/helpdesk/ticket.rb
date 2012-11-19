@@ -28,7 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   unhtml_it :description
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, :disable_observer
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, :requester_name, :meta_data, :disable_observer
   
   before_validation :populate_requester, :set_default_values
   
@@ -39,7 +39,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
   
-  after_create :refresh_display_id
+  after_create :refresh_display_id, :create_meta_note
 
   before_update :assign_email_config, :load_ticket_status, :update_dueby
   
@@ -320,7 +320,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def status_name
     Helpdesk::TicketStatus.translate_status_name(ticket_status)
   end
-  
+
+  def requester_status_name
+    Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name")
+  end
+
   def source_name
     SOURCE_NAMES_BY_KEY(source)
   end
@@ -469,7 +473,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.display_id = Helpdesk::Ticket.find_by_id(id).display_id #by Shan hack need to revisit about self as well.
     end
   end
-  
+
   def populate_requester #by Shan temp  
     portal =  self.product.portal if self.product
     if email.present?
@@ -477,13 +481,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
         if @requester.nil?
-          @requester = account.users.new          
+          @requester = account.users.new
           @requester.signup!({:user => {
             :email => self.email, 
             :name => (name || ''), 
             :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
-        end        
-        self.requester = @requester  if @requester.valid?
+        end
       end
     elsif twitter_id.present?
      logger.debug "twitter_handle :: #{twitter_id.inspect} "
@@ -493,23 +496,34 @@ class Helpdesk::Ticket < ActiveRecord::Base
           @requester = account.users.new
           @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
           :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
-        end        
-        self.requester = @requester
+        end
       end
-    elsif external_id.present?
+    elsif external_id.present? # Added for storing iOS user id from MobiHelp
      logger.debug "external_id :: #{external_id.inspect} "
       if(requester_id.nil? or external_id.eql?(requester.external_id))
         @requester = account.all_users.find_by_external_id(external_id)
         if @requester.nil?
           @requester = account.users.new
-          @requester.signup!({:user => {:external_id =>external_id , :name => external_id ,
+          @requester.signup!({:user => {:external_id =>external_id , :name => @requester_name || external_id,
           :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
-        end        
-        self.requester = @requester
+        end
       end
     end
+    self.requester = @requester
   end
-  
+
+  def create_meta_note
+    if meta_data.present?  # Added for storing metadata from MobiHelp
+      self.notes.create(
+        :body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n"),
+        :private => true,
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+        :account_id => self.account.id,
+        :user_id => self.requester.id
+      )
+    end
+  end
+
   def autoreply     
     return if spam? || deleted? || self.skip_notification?
     notify_by_email(EmailNotification::NEW_TICKET)
@@ -809,7 +823,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name,:priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
+    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
     if deep
       self.load_flexifield
       self[:notes] = self.notes
