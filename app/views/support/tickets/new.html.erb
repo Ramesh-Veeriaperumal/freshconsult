@@ -98,9 +98,17 @@
               }
           });
 
-          invokeRedactor('helpdesk_ticket_description_html');
-      
-      jQuery('#helpdesk_ticket_group_id')
+          invokeRedactor('helpdesk_ticket_description_html');      
+
+      }); 
+    })(jQuery);
+  <% end %>
+<% end %>
+
+ <% javascript_tag do %>
+    jQuery(document).ready(function(){  
+
+    jQuery('#helpdesk_ticket_group_id')
     .on("change", function(e){
       jQuery('#helpdesk_ticket_responder_id')
               .html("<option value=''>...</option>");
@@ -115,7 +123,8 @@
       });
       });
 
-      }); 
-    })(jQuery);
-  <% end %>
-<% end %>
+    }); 
+ <% end %>
+
+
+
