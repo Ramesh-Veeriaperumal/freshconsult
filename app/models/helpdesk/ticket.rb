@@ -479,7 +479,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if email.present?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
-        @requester = account.all_users.find_by_email(email)
+        @requester = account.all_users.find_by_email(email) unless email.nil?
         if @requester.nil?
           @requester = account.users.new
           @requester.signup!({:user => {
@@ -488,6 +488,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
         end
       end
+      self.requester = @requester  if @requester.valid?
     elsif twitter_id.present?
      logger.debug "twitter_handle :: #{twitter_id.inspect} "
       if(requester_id.nil? or twitter_id.eql?(requester.twitter_id))
@@ -498,6 +499,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
         end
       end
+      self.requester = @requester
     elsif external_id.present? # Added for storing iOS user id from MobiHelp
      logger.debug "external_id :: #{external_id.inspect} "
       if(requester_id.nil? or external_id.eql?(requester.external_id))
@@ -508,8 +510,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
         end
       end
+      self.requester = @requester
     end
-    self.requester = @requester
   end
 
   def create_meta_note
