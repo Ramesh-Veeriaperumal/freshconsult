@@ -75,7 +75,6 @@ class Helpdesk::TicketsController < ApplicationController
       params[:page] = '1'  
       @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
     end
-    set_total_entries(params[:page] || 1, params[:per_page] || 30)
     respond_to do |format|      
       format.html  do
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
@@ -188,7 +187,6 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    set_total_entries(params[:page] || 1, params[:per_page] || 30)
     render :partial => "custom_search"
   end
   
@@ -727,9 +725,5 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_installed_apps
     @installed_apps_hash = current_account.installed_apps_hash
-  end
-
-  def set_total_entries(page, per_page)
-    @items.total_entries = (per_page.to_f*(page.to_f-1))+@items.length if @items.length != per_page.to_i
   end
 end

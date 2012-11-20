@@ -6920,6 +6920,25 @@ a.mobile_switchBtn {
 	padding:10px;
 }
  
+
+a[rel="load-rjs"] {
+	float:right;
+	min-width:30px;
+	height: 14px;
+	padding-left: 5px;
+	font-weight:bold;
+	color: inherit;
+	&.fetching {
+		background-image: url("/images/ajax-loader-self.gif");
+	  background-repeat: no-repeat;
+	  background-position: center;
+	}
+	&.done {
+		cursor:default;
+		text-align:left;
+		color: inherit;
+	}
+}
 /* end */
 
 // !PATTERN TODO to be moved into mixins and cleaned up later
