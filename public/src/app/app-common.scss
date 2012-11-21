@@ -6923,7 +6923,7 @@ a.mobile_switchBtn {
 
 a[rel="load-rjs"] {
 	float:right;
-	min-width:25px;
+	min-width:30px;
 	height: 14px;
 	padding-left: 5px;
 	font-weight:bold;
@@ -6940,3 +6940,8 @@ a[rel="load-rjs"] {
 	}
 }
 /* end */
+
+// !PATTERN TODO to be moved into mixins and cleaned up later
+// CSS animation
+
+@import "../animate-custom";

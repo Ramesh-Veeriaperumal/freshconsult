@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121020050335) do
+ActiveRecord::Schema.define(:version => 20121109113720) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -123,7 +123,10 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.text     "signature_html"
     t.integer  "points",              :limit => 8
     t.integer  "scoreboard_level_id", :limit => 8
+    t.integer  "account_id",          :limit => 8
   end
+
+  add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
 
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8

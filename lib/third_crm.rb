@@ -52,6 +52,7 @@ class ThirdCRM
   def add_custom_field_data(account)
     subscription = account.subscription
     lead_custom_field = {}
+    lead_custom_field[:Freshdesk_Account_Id__c] = account.id
     lead_custom_field[:Account_Created_Date__c ] = account.created_at.to_s(:db) 
     lead_custom_field[:Account_Renewal_Date__c] = subscription.next_renewal_at.to_s(:db) 
     lead_custom_field[:Freshdesk_Domain_Name__c ] = account.full_domain  

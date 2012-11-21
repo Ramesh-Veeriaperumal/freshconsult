@@ -59,6 +59,7 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
+  after_update :update_admin_in_crm , :if => :account_admin_updated?
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
@@ -449,7 +450,8 @@ class User < ActiveRecord::Base
   
   def make_customer
     return if customer?
-    update_attribute(:user_role, USER_ROLES_KEYS_BY_TOKEN[:customer])
+    
+    update_attributes({:user_role => USER_ROLES_KEYS_BY_TOKEN[:customer], :deleted => false})
     agent.destroy
   end
 
@@ -496,4 +498,14 @@ class User < ActiveRecord::Base
     user = self.find(:first, :conditions => conditions)
     user
   end
+
+  private
+
+    def account_admin_updated?
+      user_role_changed? && account_admin?
+    end
+
+    def update_admin_in_crm
+      Resque.enqueue(CRM::AddToCRM::UpdateAdmin, self.id)
+    end
 end
