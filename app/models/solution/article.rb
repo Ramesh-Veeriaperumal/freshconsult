@@ -1,7 +1,7 @@
 
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
-  
+
   acts_as_list :scope => :folder
 
   belongs_to :folder, :class_name => 'Solution::Folder'

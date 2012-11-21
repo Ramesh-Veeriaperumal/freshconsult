@@ -19,7 +19,6 @@ class PopulateHighrise < ActiveRecord::Migration
         				:validator_type => "domain_validator"
         			}, 
         :api_key => { :type => :text, :required => true, :label => "integrations.highrise.form.api_key" },
-        #:password => { :type => :password, :label => "integrations.highrise.form.password", :encryption_type => "md5" }
     }.to_yaml
 
     execute("INSERT INTO applications(name, display_name, description, options, listing_order) VALUES ('#{@app_name}', '#{display_name}', '#{description}', '#{options}', '#{listing_order}')")
@@ -29,6 +28,7 @@ class PopulateHighrise < ActiveRecord::Migration
     puts "INSERTED HIGHRISE APP ID #{app_id}"
 
     # Add new widget under highrise app
+    widget_options = {'display_in_pages' => ["contacts_show_page_side_bar"]}.to_yaml
     description = "highrise.widgets.highrise_widget.description"
     script = %{
 
@@ -43,10 +43,12 @@ class PopulateHighrise < ActiveRecord::Migration
        </script>
 	}
 
-    execute("INSERT INTO widgets(name, description, script, application_id) VALUES ('#{@widget_name}', '#{description}', '#{script}', #{app_id})")
+    execute("INSERT INTO widgets(name, description, script, application_id, options) VALUES ('#{@widget_name}', '#{description}', '#{script}', #{app_id}, '#{widget_options}')")
 
   end
 
   def self.down
+    execute("DELETE FROM applications WHERE name='#{@app_name}'")
+    execute("DELETE FROM widgets WHERE name='#{@widget_name}'")
   end
 end
