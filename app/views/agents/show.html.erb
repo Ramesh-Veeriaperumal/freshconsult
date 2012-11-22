@@ -63,7 +63,7 @@ function setUserRole(){
 			<% if can_reset_password?(@agent) %>
 				<%= link_to_function t('reset_password_title'), "confirm_password()"%>
 			<%end%>
-			<% if @agent.user != current_user && !@agent.user.account_admin? %>
+			<% if can_destroy?(@agent) %>
 			<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put' %>
 			<% end %> 
 			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last"  %>

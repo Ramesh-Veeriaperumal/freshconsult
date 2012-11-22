@@ -2,14 +2,14 @@
 	<%= content_tag :h3, t(".title"),:class => "title" %>
 	<ul class="summary clearfix">  
 	  <li>
-	  	<a class="overdue" href="/helpdesk/tickets/filter/overdue">
+	  	<a class="overdue" href="/helpdesk/tickets/filter/overdue" data-pjax="#body-container">
 				<%= content_tag :span, t(".overdue") %>
 				<h4><%= filter_count(:overdue)%></h4>
 			</a>
 	  </li>
 	  <% if (filter_count(:open)) %>
 	  <li>
-	     <a href="/helpdesk/tickets/filter/open">
+	     <a href="/helpdesk/tickets/filter/open" data-pjax="#body-container">
 				<%= content_tag :span, t(".open") %>
 		   	<h4><%= filter_count(:open) %></h4>
 	     </a>
@@ -17,7 +17,7 @@
 	  <% end %>
 	  <% if (filter_count(:on_hold)) %>
 	  <li>
-	     <a href="/helpdesk/tickets/filter/on_hold">
+	     <a href="/helpdesk/tickets/filter/on_hold" data-pjax="#body-container">
 				<%= content_tag :span, t(".on_hold") %>
 		   	<h4><%= filter_count(:on_hold) %></h4>
 	     </a>
@@ -25,14 +25,14 @@
 	  <% end %>
 	  <% if (filter_count(:due_today)) %>
 	  <li>
-	    <a href="/helpdesk/tickets/filter/due_today">
+	    <a href="/helpdesk/tickets/filter/due_today" data-pjax="#body-container">
 			 <%= content_tag :span, t(".due_today") %>
 		   <h4><%= filter_count(:due_today)%></h4>
 		  </a>
 	  </li>
 	  <% end %>
 	  <li class="last">
-	      <a href="/helpdesk/tickets/filter/new">
+	      <a href="/helpdesk/tickets/filter/new" data-pjax="#body-container">
  				 <%= content_tag :span, t(".unassigned") %>
 			 <h4><%= filter_count(:new)%></h4>
 		  </a>

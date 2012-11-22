@@ -325,5 +325,62 @@ module Helpdesk::TicketsHelper
     end
     show_params
   end
-  
+
+  def visible_page_numbers(options,current_page,total_pages)
+    inner_window, outer_window = options[:inner_window].to_i, options[:outer_window].to_i
+    window_from = current_page - inner_window
+    window_to = current_page + inner_window
+    
+    # adjust lower or upper limit if other is out of bounds
+    if window_to > total_pages
+      window_from -= window_to - total_pages
+      window_to = total_pages
+    end
+    if window_from < 1
+      window_to += 1 - window_from
+      window_from = 1
+      window_to = total_pages if window_to > total_pages
+    end
+    
+    visible   = (1..total_pages).to_a
+    left_gap  = (2 + outer_window)...window_from
+    right_gap = (window_to + 1)...(total_pages - outer_window)
+    visible  -= left_gap.to_a  if left_gap.last - left_gap.first > 1
+    visible  -= right_gap.to_a if right_gap.last - right_gap.first > 1
+
+    visible
+  end
+
+  def ticket_pagination_html(options,full_pagination=false)
+    prev = 0
+    current_page = options[:current_page]
+    per_page = params[:per_page]
+    no_of_pages = options[:total_pages]
+    visible_pages = full_pagination ? visible_page_numbers(options,current_page,no_of_pages) : []
+    content = ""
+    content << "<div class='toolbar_pagination_full'>" if full_pagination
+    if current_page == 1
+      content << "<span class='disabled prev_page'>#{options[:previous_label]}</span>"
+    else
+      content << "<a class='prev_page' href='/helpdesk/tickets?page=#{(current_page-1)}'>#{options[:previous_label]}</a>"
+    end
+    visible_pages.each do |index|
+      # detect gaps:
+      content << '<span class="gap">&hellip;</span>' if prev and index > prev + 1
+      prev = index
+      if( index == current_page )
+        content << "<span class='current'>#{index}</span>"
+      else
+        content << "<a href='/helpdesk/tickets?page=#{index}' rel='next'>#{index}</a>"
+      end
+    end
+    if current_page == no_of_pages
+      content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
+    else
+      content << "<a href='/helpdesk/tickets?page=#{(current_page+1)}' class='next_page' rel='next'>#{options[:next_label]}</a>"
+    end
+    content << "</div>" if full_pagination
+    content
+  end
+
 end

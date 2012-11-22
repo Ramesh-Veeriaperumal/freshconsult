@@ -21,17 +21,12 @@
 	<%= include_stylesheets :common  %>
 	<%= include_stylesheets :tour_my_app %>	
 	<%= render :partial => "shared/theme.css"  %>
-	<!--[if lte IE 8 ]>
-		<%= include_javascripts :defaults  %>
-		<%= include_javascripts :frameworks %>
-		<%= include_javascripts :workspace %>
-		<%= include_javascripts :notifications %>
-	<![endif]-->
-
-	<!--[if (gte IE 9)|!(IE)]><!-->
-		<%= include_javascripts :freshdesk %>
-	<!--<![endif]-->
-
+	
+	<%= include_javascripts :defaults  %>
+	<%= include_javascripts :frameworks %>
+	<%= include_javascripts :workspace %>
+	<%= include_javascripts :notifications %>
+	
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';

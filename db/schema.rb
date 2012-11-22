@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121020050335) do
+ActiveRecord::Schema.define(:version => 20121110141455) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -123,7 +123,10 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.text     "signature_html"
     t.integer  "points",              :limit => 8
     t.integer  "scoreboard_level_id", :limit => 8
+    t.integer  "account_id",          :limit => 8
   end
+
+  add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
 
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8
@@ -154,6 +157,7 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "holiday_data"
+    t.integer  "version",                         :default => 1
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
@@ -619,7 +623,10 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.string   "value"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id",    :limit => 8
   end
+
+  add_index "helpdesk_picklist_values", ["account_id", "pickable_type", "pickable_id"], :name => "index_on_picklist_account_id_and_pickabke_type_and_pickable_id"
 
   create_table "helpdesk_reminders", :force => true do |t|
     t.string   "body"
@@ -834,6 +841,7 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.text     "field_options"
   end
 
+  add_index "helpdesk_ticket_fields", ["account_id", "field_type", "position"], :name => "index_tkt_flds_on_account_id_and_field_type_and_position"
   add_index "helpdesk_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_ticket_fields_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_ticket_issues", :force => true do |t|

@@ -76,6 +76,13 @@
 				</ul>				 
 			</div>			
 		</div>
+	</div>
+	<div class="animated top-loading-wrapper hide">
+		<div class="top-loading-strip">
+		</div>
+		<div class="loadingmsg">
+			<%=t('index_tooltip_loading_msg')%>
+		</div>
 	</div>	
 </div>
 <% if feature?(:gamification) and current_user and current_user.agent? %>
