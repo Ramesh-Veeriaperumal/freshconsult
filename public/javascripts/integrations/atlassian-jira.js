@@ -83,14 +83,14 @@ JiraWidget.prototype= {
 		if(jiraBundle.remote_integratable_id)
 		{
 			init_reqs = [{
-				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
+				rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailureCreate,
 				on_success: jiraWidget.displayIssue.bind(this)
 			}];	
 		}  else {
 			init_reqs = [{
-				resource: "rest/api/latest/project",
+				rest_url: "rest/api/latest/project",
 				content_type: "application/json",
 				on_success: jiraWidget.loadProject.bind(this),
 				on_failure: jiraWidget.processFailure.bind(this)
@@ -320,7 +320,7 @@ JiraWidget.prototype= {
 
 	renderDisplayIssueWidget:function(){
 		init_reqs = [{
-				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
+				rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.displayIssue.bind(this)
@@ -338,7 +338,7 @@ JiraWidget.prototype= {
 	displayCreateWidget:function(){
 		this.hideSpinner();
 		init_reqs = [{
-				resource: "rest/api/latest/project",
+				rest_url: "rest/api/latest/project",
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.loadProject.bind(this)
@@ -390,7 +390,7 @@ JiraWidget.prototype= {
 		jiraWidget.linkIssueId = remoteKey;
 		jiraWidget.linkedTicket=""
 		this.freshdeskWidget.request({
-				resource: "rest/api/latest/issue/"+encodeURIComponent(remoteKey),
+				rest_url: "rest/api/latest/issue/"+encodeURIComponent(remoteKey),
 				content_type: "application/json",
 				on_success: jiraWidget.updateIssue.bind(this),
 				on_failure: jiraWidget.processFailure
@@ -478,23 +478,23 @@ JiraWidget.prototype= {
 	unlinkJiraIssue:function(){
 		if (jiraBundle.integrated_resource_id) {
 			this.showSpinner();
+			ticketData = "";
 			if(jiraWidget.ticketData){
 				linkedTicket = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
-				ticketData = "";
 				fdTickets = jiraWidget.ticketData.split("\n");
 				for (var i=0; i < fdTickets.length; i++){
 					if (fdTickets[i].trim() != '' && fdTickets[i] != linkedTicket) {
 						ticketData += fdTickets[i] + "\n";
 					}
 				}
-				reqData = {
+			}
+			reqData = {
 				"domain":jiraBundle.domain,
 				"remoteKey":jiraWidget.unlinkId,
 				"ticketData":ticketData,
 				"application_id": jiraBundle.application_id,
 				"integrated_resource[id]":jiraBundle.integrated_resource_id
-				}; 
-			}
+			}; 
 			new Ajax.Request("/integrations/jira_issue/unlink", {
 				asynchronous: true,
 				method: "put",

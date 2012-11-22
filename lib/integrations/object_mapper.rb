@@ -3,7 +3,7 @@ class Integrations::ObjectMapper
 
   def map_it(account_id, mapper_name, data, convertion_type=:theirs_to_ours, stages = [:fetch, :map, :update])
     Rails.logger.debug "map_it #{mapper_name}, data #{data}, convertion_type: #{convertion_type}, stages: #{stages}"
-    mapper_config = MAPPER_CONFIGURATIONS[mapper_name.to_sym] || {}
+    mapper_config = Integrations::ObjectMapper::clone(MAPPER_CONFIGURATIONS[mapper_name.to_sym]) || {}
     if data.respond_to?(:account_id)
       data.account_id = account_id
     elsif data.is_a? Hash
@@ -13,7 +13,7 @@ class Integrations::ObjectMapper
     stages.each {|s| 
       config = mapper_config[s]
       self.send(s, data_hash, config, convertion_type) unless config.blank?
-      Rails.logger.debug ".... After #{s} for #{mapper_name}: data_hash #{data_hash} ...."
+      Rails.logger.debug "=========== After #{s} for #{mapper_name}: data_hash #{data_hash.inspect} =========="
     }
     data_hash[:to_entity]
   end
@@ -47,7 +47,6 @@ class Integrations::ObjectMapper
         to_meth = map_config[ftt[1].to_sym]
         convertion_config = map_config["#{convertion_type}".to_sym]
         set_data = from_entity
-        Rails.logger.debug  "ObjectMapper:: convertion_config #{convertion_config} set_data #{set_data}"
         if convertion_config.blank?
           unless from_meth.blank?
             if from_entity.class == Hash
@@ -64,7 +63,7 @@ class Integrations::ObjectMapper
           set_data = invoke_handler(handler, set_data, convertion_config)
         end
 
-        Rails.logger.debug  "ObjectMapper:: to_entity #{to_entity.inspect}, to_meth #{to_meth}, set_data #{set_data}"
+        Rails.logger.debug  "ObjectMapper::map to_entity #{to_entity.inspect}, to_meth #{to_meth}, set_data #{set_data.inspect}"
         if to_entity.class == Hash
           to_entity[to_meth] = set_data
         elsif !to_meth.nil? and to_entity.respond_to?(to_meth)
@@ -98,14 +97,12 @@ class Integrations::ObjectMapper
         :fetch => {:ours => {
             :handler=>:db_fetch,
             :entity=>Helpdesk::Note,
-            :using=>{:joins=>"INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=notable_id", 
-              :conditions=>["notable_type='Helpdesk::Ticket' and integrated_resources.remote_integratable_id=? and body like ?", "{{issue.key}}", "%{{comment.id}}%"]},
-            :find_or_initialize=>true
+            :create_if_empty=>true
           }
         },
         :map=>[
-          {:ours=>"body", :theirs_to_ours=>{:value=>"JIRA comment # {{comment.id}}:\n {{comment.body}}\n"}}, 
-          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author}}"]}}},
+          {:ours=>"body", :theirs_to_ours=>{:value=>"JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n"}}, 
+          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"account_admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author}}"]}}},
           {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>0}},
           {:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}},
           {:ours=>"notable", :theirs_to_ours=>{:handler=>:db_fetch, :entity=>Helpdesk::Ticket, 
@@ -120,13 +117,15 @@ class Integrations::ObjectMapper
   PRIVATE_NOTE_CONFIG = clone(generic_config)
 
   STATUS_AS_PRIVATE_NOTE_CONFIG = clone(generic_config)
-  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}. {% if comment.body %} JIRA comment:\n {{comment.body}} {% endif %}\n"
+  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}.\n"
+  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user}}"]}
 
   PUBLIC_NOTE_CONFIG = clone(generic_config)
   PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
   STATUS_AS_PUBLIC_NOTE_CONFIG = clone(generic_config)
-  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}. {% if comment.body %} JIRA comment:\n {{comment.body}} {% endif %}\n"
+  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}.\n"
+  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user}}"]}
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
   REPLY_CONFIG = clone(generic_config)
@@ -144,7 +143,7 @@ class Integrations::ObjectMapper
         :fetch => {:ours => {
             :handler=>:db_fetch,
             :entity=>Helpdesk::Ticket,
-            :using=>{:joins=>"INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id", 
+            :using=>{:select=>"helpdesk_tickets.*", :joins=>"INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id", 
             :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}
           }
         },
@@ -158,7 +157,7 @@ class Integrations::ObjectMapper
         ], 
         :update=>{:theirs_to_ours_handler=>:db_save}
       },
-      :add_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Note added in Freshdesk:\n {{body}}\n"}}]},
+      :add_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Note added by {{helpdesk_note.commenter.name}} in Freshdesk:\n {{helpdesk_note.body_text}}\n"}}]},
       :add_status_as_comment_in_jira => {:map => [{:ours_to_theirs=>{:value=>"Freshdesk ticket status changed to : {{helpdesk_ticket.status}}"}}]},
       :update_jira_status => {:map => [{:ours_to_theirs=>{:handler=>:map_field, :value=>"{{helpdesk_ticket.status}}", :mapping_values=>{
                       "Default"=>"Reopen Issue",

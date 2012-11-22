@@ -10,12 +10,17 @@ ticksymbol = "<span class='icon ticksymbol'></span>";
 priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 
 jQuery(document).ready(function() {
-	
+
+jQuery('body').append('<div id="agent_collision_container" class="hide"></div>');
+
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
 	jQuery(".ticket-description-tip").livequery(function () {
 		_self = jQuery(this);        
         var tipUrl = _self.data("tipUrl");
+        var ticket_id = _self.parent().parent().parent().data('ticket');
         _self.qtip({
+        	prerender: false,
+        	id: ticket_id,
 			position: { 
 				my: 'top left',
 				at: 'bottom  left',
@@ -40,9 +45,89 @@ jQuery(document).ready(function() {
 				effect: function(offset) {
 					jQuery(this).show("fade", 200); // "this" refers to the tooltip
 				}
+          	},
+          	events: {
+          		show: function(event, api) {
+          			working_agents = jQuery('#working_agents_' + ticket_id);
+          			if (working_agents.length > 0) {
+          				working_agents = working_agents.detach();
+          				jQuery(api.elements.content).after(working_agents);
+
+          				show_working_agents = false;
+          				if (!working_agents.find('[rel=viewing_agents]').hasClass('hide')) {
+          					jQuery(api.elements.content).parent().addClass('hasViewers');
+          					show_working_agents = true;
+          				} 
+          				if (!working_agents.find('[rel=replying_agents]').hasClass('hide')) {
+          					jQuery(api.elements.content).parent().addClass('hasReplying');
+          					show_working_agents = true;
+          				} 
+          				if (show_working_agents) {
+          					jQuery('#working_agents_' + ticket_id).show();
+          				} else {
+          					jQuery('#working_agents_' + ticket_id).hide();
+          				}
+          			}
+          		},
+          		hide: function(event, api) {
+          			working_agents = jQuery(api.elements.content).parent().find('#working_agents_' + ticket_id);
+          			if (working_agents.length > 0) {
+          				working_agents = working_agents.detach();
+          				jQuery('#agent_collision_container').append(working_agents);
+          				jQuery(api.elements.content).parent().removeClass('hasViewers hasReplying');
+          			}
+          		}
           	}
         }); 
 	});
+
+	//For Agent Collision data to appear in Ticket Tooltips.
+	updateWorkingAgents = function(key,type) {
+		collision_dom = jQuery($(key));
+		ticket_id = jQuery($(key)).data('ticket-id');
+		var working_agents;
+		if (jQuery('#working_agents_' + ticket_id).length == 0) {
+			working_agents = jQuery('<div class="working-agents" id="working_agents_' + ticket_id + '" />');
+			jQuery(working_agents).append(jQuery('<div rel="viewing_agents" class="hide symbols-ac-viewingon-listview" />'));
+			jQuery(working_agents).append(jQuery('<div rel="replying_agents" class="hide symbols-ac-replyon-listview" />'));
+			var container;
+			if (jQuery('#ui-tooltip-' + ticket_id).length > 0) {
+				container = jQuery('#ui-tooltip-' + ticket_id);
+			} else {
+				container = jQuery('#agent_collision_container');
+			}
+			container.append(working_agents);
+		}
+
+		working_agents = jQuery('#working_agents_' + ticket_id);
+
+
+		if(type == "viewing") {
+			viewing_agents = jQuery(working_agents).find("[rel=viewing_agents]");
+			if (collision_dom.find("[rel=viewing_agents_tip]").html() != ''){
+				jQuery('#ui-tooltip-' + ticket_id).addClass('hasViewers');
+				viewing_agents.removeClass('hide');
+				jQuery('#working_agents_' + ticket_id).show();
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasViewers');
+				viewing_agents.addClass('hide');
+			}
+			viewing_agents.html(collision_dom.find("[rel=viewing_agents_tip]").html());
+
+		} else if(type == "replying") {
+			replying_agents = jQuery(working_agents).find("[rel=replying_agents]");
+			if (collision_dom.find("[rel=replying_agents_tip]").html() != ''){
+				jQuery('#ui-tooltip-' + ticket_id).addClass('hasReplying');
+				replying_agents.removeClass('hide');
+				jQuery('#working_agents_' + ticket_id).show();
+			} else {
+				jQuery('#ui-tooltip-' + ticket_id).removeClass('hasReplying');
+				replying_agents.addClass('hide');
+			}
+			replying_agents.html(collision_dom.find("[rel=replying_agents_tip]").html());
+
+		}		
+	}
         
      jQuery(".nav-trigger").showAsMenu();
 
@@ -95,6 +180,7 @@ jQuery(document).ready(function() {
 	// 	}
 	// });
 
+		jQuery('.tickets tbody tr .check :checkbox').die();
     jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
         if (jQuery(this).prop('checked')) {
           jQuery(this).parent().parent().addClass('active');
@@ -106,106 +192,62 @@ jQuery(document).ready(function() {
         bulkActionButtonsDisabled();
     });
 
-	bulkActionButtonsDisabled();
+	//bulkActionButtonsDisabled();
 	
-	// Quick Actions	
-	// Assign Agent
-	jQuery('.action_assign_agent').live("click",function(ev) {
-		
+	//TODO. Need to remove this. Added because dynamic menus are dom manuplations instead of style.
+	jQuery('.action_assign').die();
+	// Quick Actions
+	jQuery('.action_assign').live("click", function(ev) {
 		ev.preventDefault();
+
 		selected_item = jQuery(this);
-		ticket_id = selected_item.data('ticket-id');
+
+		if (selected_item.hasClass('active')) {
+			hideActiveMenu();
+			return false;
+		}
+
+		full_menu = selected_item.parent().parent();
+		full_menu.addClass('loading');
+
+		ticket_id = full_menu.data('parent').data('object-id');
 		agent_user_id = selected_item.data('agent-id');
-		new_text = selected_item.text();
-
-		full_menu = selected_item.parent();
-		full_menu.addClass('loading');
-		jQuery.ajax( {
-			type: "POST",
-			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign: 'agent', value : agent_user_id, _method: 'put'},
-			success: function (data) {
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="assigned"] .result').animateHighlight();
-
-				full_menu.find('.ticksymbol').remove();
-				selected_item.prepend(ticksymbol);
-				selected_item.addClass('active').siblings().removeClass('active');
-				full_menu.removeClass('loading');
-
-				hideActiveMenu();
-			}
-		});
-	});
-
-	// Assign Status
-	jQuery('.action_assign_status').live("click",function(ev) {
-		
-		ev.preventDefault();
-		selected_item = jQuery(this);
-		new_text = selected_item.text();
-
-		full_menu = selected_item.parent();
-		full_menu.addClass('loading');
-
-		ticket_id = full_menu.data('parent').data('object-id');
-		new_status = selected_item.data('status-id');
+		assign_action = selected_item.data('assign-action');
+		new_value = selected_item.data('value');
+		new_text = selected_item.data('text') || selected_item.text();
 
 		jQuery.ajax( {
 			type: "POST",
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign:'status', disable_notification: ev.shiftKey, value : new_status, _method: 'put' },
+			data: {assign: assign_action, value : new_value, disable_notification: ev.shiftKey, _method: 'put'},
 			success: function (data) {
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="status"] .result').animateHighlight();
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').text(new_text);
+				jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').animateHighlight();
 
-				full_menu.find('.ticksymbol').remove();
-
-				jQuery('[data-ticket=' + ticket_id + ']').removeClass('ticket-status-4').removeClass('ticket-status-5');
-				if (new_status == 4 || new_status == 5) {
-					jQuery('[data-ticket=' + ticket_id + ']').addClass('ticket-status-' + new_status);
+				//Special Processing for Priority
+				if (assign_action == 'priority') {
+					priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
+					priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_value]);
 				}
-				selected_item.prepend(ticksymbol);
-				selected_item.addClass('active').siblings().removeClass('active');
-				full_menu.removeClass('loading');
-				hideActiveMenu();
-			}
-		});
-	});
 
-	// Assign Priority
-	jQuery('.action_assign_priority').live("click",function(ev) {
-		
-		ev.preventDefault();
-		selected_item = jQuery(this);
-		new_text = selected_item.text();
-
-		full_menu = selected_item.parent();
-		full_menu.addClass('loading');
-
-		ticket_id = full_menu.data('parent').data('object-id');
-		new_priority = selected_item.data('priority-id');
-
-		jQuery.ajax( {
-			type: "POST",
-			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
-			data: {assign:'priority', value : new_priority, _method: 'put'},
-			success: function (data) {
-				priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
-				priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_priority]);
-
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="priority"] .result').animateHighlight();
+				//Special Processing for Status
+				if (assign_action == 'status') {
+					jQuery('[data-ticket=' + ticket_id + ']').removeClass('ticket-status-4').removeClass('ticket-status-5');
+					if (new_value == 4 || new_value == 5) {
+						jQuery('[data-ticket=' + ticket_id + ']').addClass('ticket-status-' + new_value);
+					}
+				}
 
 				full_menu.find('.ticksymbol').remove();
 				selected_item.prepend(ticksymbol);
-
 				selected_item.addClass('active').siblings().removeClass('active');
 				full_menu.removeClass('loading');
 
 				hideActiveMenu();
 			}
 		});
+
+		return false;
 	});
 
 	jQuery('#leftViewMenu a[rel=default_filter]').click(function(ev) {
@@ -215,6 +257,7 @@ jQuery(document).ready(function() {
 	jQuery('#leftViewMenu a').click(function(ev) {
 		filter_opts_sisyphus.manuallyReleaseData();
 	});
+	
 });
 
 if (getCookie('ticket_list_updated') == "true") {
@@ -224,6 +267,6 @@ if (getCookie('ticket_list_updated') == "true") {
 		if (window.localStorage['is_unsaved_view']) {
 			jQuery("#active_filter").addClass('unsaved').text(TICKET_STRINGS['unsaved_view']);
 		}
-		setCookie('ticket_list_updated',false);	
+		setCookie('ticket_list_updated',true);
 	}
 }

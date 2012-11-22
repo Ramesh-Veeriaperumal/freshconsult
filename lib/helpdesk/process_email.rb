@@ -85,7 +85,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       email = parsed_email[:email]
 
       if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
-        emailregl = $1 
+        email = $1 
       end
 
 
@@ -214,7 +214,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
+      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
         ticket.skip_notification = true
       end
     end
@@ -282,7 +282,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}, :email_config => email_config},portal)
       end
       user.make_current
       user
@@ -293,9 +293,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       content_id_hash = {}
      
       Integer(params[:attachments]).times do |i|
-        created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+        if content_ids["attachment#{i+1}"]
+          description = "content_id"
+        end
+        created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], :account_id => ticket.account_id,:description => description)
         file_name = created_attachment.content_file_name
-        content_id_hash[file_name] = content_ids["attachment#{i+1}"] if content_ids["attachment#{i+1}"]
+        if content_ids["attachment#{i+1}"]
+          content_id_hash[file_name] = content_ids["attachment#{i+1}"]
+          created_attachment.description = "content_id"
+        end
       end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
     end

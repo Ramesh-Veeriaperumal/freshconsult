@@ -3,8 +3,8 @@ class Integrations::JiraWebhook
   attr_accessor :updated_entity_type, :notification_cause, :updated_time, :params
 
   def initialize(params)
-    self.parse_jira_webhook(params)
     self.params = params
+    self.parse_jira_webhook(params)
   end
 
   def parse_jira_webhook(params)
@@ -15,25 +15,27 @@ class Integrations::JiraWebhook
     parse_matches = /(issue)_(comment)?_?(.*)/.match(params["id"])
     unless(parse_matches.blank?)
       if(parse_matches[2].blank?) # Pure issue related change.
-        self.updated_entity_type = parse_matches[1]
-        self.notification_cause = parse_matches[3]
+        self.params["updated_entity_type"] = self.updated_entity_type = parse_matches[1]
+        self.params["notification_cause"] = self.notification_cause = parse_matches[3]
       else # Comment related change.
-        self.updated_entity_type = parse_matches[2]
-        self.notification_cause = parse_matches[3] == "ed"? "added" : parse_matches[3]
+        self.params["updated_entity_type"] = self.updated_entity_type = parse_matches[2]
+        self.params["notification_cause"] = self.notification_cause = parse_matches[3] == "ed"? "added" : parse_matches[3]
       end
     end
   end
 
   def update_local(installed_application)
-    notify_value = nil
+    notify_values = []
     if self.updated_entity_type == "comment" and (self.notification_cause == "added" || self.notification_cause == "edited")
-      notify_value = installed_application.configs_jira_comment_sync
+      notify_values.push installed_application.configs_jira_comment_sync
     elsif self.updated_entity_type == "issue" and self.notification_cause != "updated" # Any notification other than update notification will be propagated to Freshdesk.  Even if we encouter any non-status related notification the same status will be updated one more time in Freshdesk, which is ok.
-      notify_value = installed_application.configs_jira_status_sync
+      notify_values.push installed_application.configs_jira_status_sync
+      notify_values.push installed_application.configs_jira_comment_sync unless params["comment"].blank?
     end
-    Rails.logger.debug "update_local #{notification_cause}, #{updated_entity_type}, #{notify_value}, installed_application #{installed_application}"
+    Rails.logger.debug "update_local #{notification_cause}, #{updated_entity_type}, #{notify_values}, installed_application #{installed_application}"
     obj_mapper = Integrations::ObjectMapper.new
-    obj_mapper.map_it(installed_application.account_id, notify_value, self.params) unless notify_value.blank?
+    params["account_admin"] = installed_application.account.users.account_admin.first
+    notify_values.each { |notify_value| obj_mapper.map_it(installed_application.account_id, notify_value, self.params) }
   end
 end
 

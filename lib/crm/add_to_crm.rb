@@ -1,9 +1,66 @@
 class CRM::AddToCRM
-	@queue = "salesforceQueue"
+  QUEUE = "salesforceQueue"
+  
+  class Customer
+    # def initialize
+    #   @queue = QUEUE
+    # end
 
-	def self.perform(payment_id)
-	 payment = SubscriptionPayment.find(payment_id)
-	 crm = CRM::Salesforce.new
-	 crm.add_data_to_crm(payment) unless Rails.env.development?
-	end 
-end
+    def self.perform(item_id)
+      item = scoper.find(item_id)
+      crm = CRM::Salesforce.new
+      perform_job(crm, item)
+    end
+  end
+
+  class PaidCustomer < Customer
+    @queue = QUEUE
+
+    def self.scoper
+      SubscriptionPayment
+    end
+
+    def self.perform_job(crm, item)
+      crm.add_paid_customer_to_crm(item)
+    end
+  end
+
+  class FreeCustomer < Customer
+    @queue = QUEUE
+
+    def self.scoper
+      Subscription
+    end
+
+    def self.perform_job(crm, item)
+      crm.add_free_customer_to_crm(item)
+    end
+  end
+
+  class DeletedCustomer < Customer
+    @queue = QUEUE
+
+    def self.scoper
+      DeletedCustomers
+    end
+
+    def self.perform_job(crm, item)
+      crm.update_deleted_account_to_crm(item)
+    end
+  end
+
+  class UpdateAdmin < Customer
+    @queue = QUEUE
+
+    def self.scoper
+      User
+    end
+
+    def self.perform_job(crm, item)
+      crm.update_admin_info(item)
+    end
+  end
+
+ end
+
+

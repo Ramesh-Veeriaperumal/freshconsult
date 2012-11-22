@@ -35,6 +35,7 @@ module Helpdesk::Ticketfields::TicketStatus
       t_s = ticket_statuses.build() 
       t_s.attributes = attr
       t_s.account = account
+      t_s.insert_at(t_s.position)
     end
   end
 

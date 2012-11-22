@@ -1,31 +1,47 @@
-<% ticket_style = subject_style(ticket) %>
+<% ticket_style = subject_style(ticket,@onhold_and_closed_statuses) %>
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
   <td class="check">
-	<%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
+  	<input class="selector" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
   </td>
 
   <td class="name">
-	<span class="hideForList"><%= user_avatar(ticket.requester) %></span>
+	<span class="hideForList">
+		<%= user_avatar(ticket.requester,:thumb, "preview_pic" , { :width => "45px", :height => "45px" }) %>
+	</span>
 	<div class="ticket_subject">
 		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
-			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket ) %> 
-		</h3>
-		<% unless ticket.requester.nil? %>
-			<% content_tag :div, :class => "info-data hideForList" do %>
-			<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, :username => link_to("<span class='emphasize'>" + h(ticket.requester.display_name) + "</span>", ticket.requester, :class =>'user_name' ), :time_words => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
-				<div class="emphasize"><%= sla_status(ticket) %></div>
+			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket ) %>
+			<%if feature?(:agent_collision) %>
+				<div class="index-collision">
+					<div rel="view_collision" id="tickets:<%=current_account.id%>:viewers:<%=ticket.id%>"
+						class="symbols-ac-viewingon-listview" data-ticket-id="<%= ticket.display_id %>">
+						<span rel="viewing_count"></span>
+						<span rel="viewing_agents_tip" class="hide"></span>
+					</div>
+					<div rel="reply_collision" id="tickets:<%=current_account.id%>:replying:<%=ticket.id%>"
+						class="symbols-ac-replyon-listview"  data-ticket-id="<%= ticket.display_id %>">
+						<span rel="replying_count"></span>
+						<span rel="replying_agents_tip" class="hide"></span>
+					</div>
+				</div>
 			<% end %>
+		</h3>
+
+		<% unless ticket.requester.nil? %>
+			<div class="info-data hideForList">
+				<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, 
+						:username => "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>", 
+						:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) 
+						%>
+				<div class="emphasize"><%= sla_status(ticket,@onhold_and_closed_statuses) %></div>
+			</div>
 		<% end %>
 	</div>
   </td>
-  <td class="requester_info hideForDetails">
-  	<%= h(ticket.requester.display_name) %>
-  </td>
-  <td class="ticket_info hideForDetails"><%= t("helpdesk.tickets.tabular_view.time_ago", :time_in_words => time_ago_in_words(ticket.updated_at)) %></td>
   <td class="ralign hideForList">
-  	<%= "<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>" unless ticket_style.blank? %>
-  </td>
+		<%= "<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>" unless ticket_style.blank? %>
+	</td>
   <td class="source-icon hideForList">
 	<div class="status-source source-detailed-<%= ticket.source_name.to_s.downcase %> hideForList" 
   		title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"
@@ -33,15 +49,15 @@
   </td>
   <td class="assign hideForList">
 	  	<ul>
-	  		<li class="quick-action ajax-menu" title="Change Agent" 
-	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
-	  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
+	  		<li class="quick-action dynamic-menu" title="Change Agent" 
+	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="agent"  
+	  			data-options="#ticket_agents" >
 
 	  			<label><%=t('ticket.assigned_agent')%>: </label>
 				<% if ticket.freshness == :new %>
-					<%=content_tag :span, t('ticket.assigned_none'), :class => "result" %>
+					<span class="result"><%=t('ticket.assigned_none')%></span>
 				<% else %>
-					<%=content_tag :span, h(ticket.responder.display_name) , :class => "result" %>
+					<span class="result"><%=h(ticket.responder.display_name)%></span>
 				<% end %>
 			</li>
 
@@ -54,28 +70,5 @@
 				<span class="result"><%= h(ticket.priority_name) %></span>
 			</li>
 		</ul>
-  </td>
-  <td class="hideForDetails">
-  	<div class="quick-action ajax-menu" 
-  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="assigned"  
-  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
-  		<span class = "result">
-  	<% if ticket.freshness == :new %>
-		<%=t('ticket.assigned_none')%>
-	<% else %>
-		<%= h(ticket.responder.display_name) %>
-	<% end %>
-		</span>
-	</div>
-  </td>
-  <td class="hideForDetails">
-  	<div class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
-  		<span class = "result"><%= h(ticket.status_name) %></span>
-  	</div>
-  </td>
-  <td class="hideForDetails">
-  	<div  class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
-  		<span class="result"><%= h(ticket.priority_name) %></span>
-  	</div>
   </td>
 </tr>

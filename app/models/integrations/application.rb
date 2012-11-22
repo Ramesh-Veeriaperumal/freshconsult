@@ -53,22 +53,19 @@ class Integrations::Application < ActiveRecord::Base
   def self.example_app()
     example_app = Integrations::Application.new
     example_app.name = "custom_application"  
-    example_app.display_name = "My Test App"
-    example_app.description = "Description about this application."
+    example_app.display_name = "Sample CRM FreshPlug"
+    example_app.description = "This is a sample FreshPlug. You can use the script here to understand how FreshPlugs work."
     script = %{
-      <div id="custom_application_{{widget.id}}" title="Custom Widget">
-        <div class="content"></div>
-      </div>
-      <script type="text/javascript">
-        CustomWidget.include_js("/javascripts/integrations/custom_application.js");
-        custom_application_variables={
-          id:"{{widget.id}}", 
-          api_url:"https://api.freshdesk.com" , 
-          ticketId:"{{ticket.id}}", 
-          agentEmail:"{{agent.email}}", 
-          reqEmail:"{{requester.email}}"
-        };
-      </script>}
+
+<div id="sample_highrise_widget" title="Sample CRM FreshPlug">
+  <div class="content"></div>
+  <div class="error"></div>
+</div>
+<script type="text/javascript">
+  CustomWidget.include_js("/javascripts/integrations/sample_highrise.js");
+  sample_highrise_options={ domain:"freshdesk3.highrisehq.com", api_key:"c1ca9cc10f8f8a2a8ef422da49d67f51", 
+              reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqEmail:"{{requester.email}}"}; 
+</script>}
     example_app.widgets.push Integrations::Widget.new(:script => script)
     # example_app.options = {
     #   :keys_order => [:name, :widget_script],

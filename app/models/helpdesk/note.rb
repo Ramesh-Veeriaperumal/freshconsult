@@ -38,7 +38,9 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_protected :attachments, :notable_id
   
   before_create :validate_schema_less_note
-  after_create :save_response_time, :update_content_ids, :update_parent, :add_activity, :update_in_bound_count, :fire_create_event
+  before_save :load_schema_less_note, :update_category
+  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
+  after_commit_on_create :update_ticket_states   
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -71,6 +73,35 @@ class Helpdesk::Note < ActiveRecord::Base
   
   ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
 
+  TICKET_NOTE_SOURCE_MAPPING = { 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal] => SOURCE_KEYS_BY_TOKEN["email"] ,
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => SOURCE_KEYS_BY_TOKEN["twitter"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"]
+  }
+
+  CATEGORIES = {
+    :customer_response => 1,
+    :agent_private_response => 2,
+    :agent_public_response => 3,
+    :third_party_response => 4,
+    :meta_response => 5
+  }
+
+  CATEGORIES.keys.each { |c| named_scope c.to_s.pluralize, 
+    :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
+      ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
+    :conditions => { 'helpdesk_schema_less_notes' => { :int_nc01 => CATEGORIES[c]}}
+    }
+
+  named_scope :created_between, lambda { |start_time, end_time| 
+    {:conditions => ['helpdesk_notes.created_at >= ? and helpdesk_notes.created_at <= ?', 
+      start_time, end_time]}
+  }
+  
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
 
   validates_presence_of  :source, :notable_id
@@ -139,7 +170,8 @@ class Helpdesk::Note < ActiveRecord::Base
   def to_liquid
     { 
       "commenter" => user,
-      "body"      => liquidize_body
+      "body"      => liquidize_body,
+      "body_text" => body
     }
   end
   
@@ -158,22 +190,26 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def respond_to?(attribute)
+    return false if [:to_ary].include? attribute.to_sym
     super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
   end
 
-  protected
-    def save_response_time
-      if human_note_for_ticket?
-        ticket_state = notable.ticket_states   
-        if user.customer?  
-          ticket_state.requester_responded_at=Time.zone.now unless replied_by_third_party?
-        else
-          ticket_state.agent_responded_at=Time.zone.now unless private
-          ticket_state.first_response_time=Time.zone.now if ticket_state.first_response_time.nil? && !private
-        end  
-        ticket_state.save
-      end
+  def save_response_time
+    if human_note_for_ticket?
+      ticket_state = notable.ticket_states   
+      if user.customer?  
+        ticket_state.requester_responded_at = created_at unless replied_by_third_party?
+        ticket_state.inbound_count = notable.notes.visible.customer_responses.count+1
+      elsif !private
+        update_avg_response_time(ticket_state)
+        ticket_state.agent_responded_at = created_at
+        ticket_state.first_response_time ||= created_at
+      end  
+      ticket_state.save
     end
+  end
+
+  protected
 
     def update_content_ids
       header = self.header_info
@@ -211,13 +247,6 @@ class Helpdesk::Note < ActiveRecord::Base
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
       notable.save
-    end
-    
-    def update_in_bound_count
-     if incoming?
-      inbound_count = notable.notes.find(:all,:conditions => {:incoming => true}).count
-      notable.ticket_states.update_attribute(:inbound_count,inbound_count+=1)
-     end
     end
     
     def add_activity
@@ -282,7 +311,6 @@ class Helpdesk::Note < ActiveRecord::Base
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 
-
     # Replied by third pary to the forwarded email
     # Use this method only after checking human_note_for_ticket? and user.customer?
     def replied_by_third_party? 
@@ -309,4 +337,40 @@ class Helpdesk::Note < ActiveRecord::Base
     def fire_create_event
       fire_event(:create) unless disable_observer
     end
+
+    def update_category
+      schema_less_note.category = CATEGORIES[:meta_response]
+      return unless human_note_for_ticket?
+
+      if user.customer?
+        schema_less_note.category = replied_by_third_party? ? CATEGORIES[:third_party_response] : 
+          CATEGORIES[:customer_response]
+      else
+        schema_less_note.category = private? ? CATEGORIES[:agent_private_response] : 
+          CATEGORIES[:agent_public_response]
+      end
+    end 
+
+    def update_ticket_states
+      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private?
+    end
+
+    def update_avg_response_time(ticket_state)
+      if ticket_state.first_response_time.nil?
+        resp_time = created_at - notable.created_at
+      else
+        customer_resp = notable.notes.visible.customer_responses.
+          created_between(ticket_state.agent_responded_at,created_at).first(
+          :select => "helpdesk_notes.id,helpdesk_notes.created_at", 
+          :order => "helpdesk_notes.created_at ASC")
+        resp_time = created_at - customer_resp.created_at unless customer_resp.blank?
+      end
+      schema_less_note.update_attribute(:response_time_in_seconds, resp_time) unless resp_time.blank?
+
+      notable_values = notable.notes.visible.agent_public_responses.first(
+        :select => 'count(*) as outbounds, avg(helpdesk_schema_less_notes.int_nc02) as avg_resp_time')
+      ticket_state.outbound_count = notable_values.outbounds
+      ticket_state.avg_response_time = notable_values.avg_resp_time
+    end
+
 end

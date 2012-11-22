@@ -26,7 +26,8 @@ class Subscription < ActiveRecord::Base
   before_destroy :destroy_gateway_record
   before_validation :update_amount
   after_update :update_features,:send_invoice
-  
+  after_update :add_to_crm, :if => :free_customer?
+
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
@@ -39,7 +40,7 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
   
   def self.customer_count
-   count(:conditions => {:state => ['active','free']})
+   count(:conditions => [ " state != 'trial' and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"])
  end
  
   def self.free_customers
@@ -53,13 +54,17 @@ class Subscription < ActiveRecord::Base
   def self.customers_free_agent_count
     sum(:free_agents, :conditions => { :state => ['active']})
   end
+
+  def self.paid_agent_count
+    sum('agent_limit - free_agents', :conditions => [ " state = 'active' and amount > 0.00 and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"]).to_i
+  end
  
   def self.monthly_revenue
-    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 "]).to_f
+    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"]).to_f
   end
 
   def set_discount_expiry
-    self.discount_expires_at = discount.calculate_discount_expiry
+    self.discount_expires_at = discount.calculate_discount_expiry if discount
   end
   
   # This hash is used for validating the subscription when a plan
@@ -472,5 +477,14 @@ class Subscription < ActiveRecord::Base
     meta_info[:description] = fetch_pro_rata_description if misc
     meta_info
   end
+
+  private
+    def free_customer?
+      (amount == 0 and active? ) || free?
+    end
+
+    def add_to_crm
+      Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+    end
 
  end

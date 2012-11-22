@@ -2,8 +2,8 @@
 	<div class="transparent-overlay" id="due-date-overlay"></div>	
 	<div class="due-date-dialog" id="due-date-dialog" style="display:none;"> 
 		<span class="right_pointer"></span>
-		<% form_for ticket, :url => { :action => "change_due_by" }, :html => { :id => "DueDateForm", :method => "put" } do |f| %>
-			<%= content_tag :label, t(".when_is_it_due") %>
+		<% form_for ticket, :url => change_due_by_helpdesk_ticket_path(:id => ticket.display_id), :html => { :id => "DueDateForm", :method => "put" } do |f| %>
+			<%= content_tag :label, t(".when_is_it_due"), :class => "title" %>
 			<select name="due_date_options" id="due-date-options">
 				<option value="today"><%= t(".today") %></option>
 				<option value="tomorrow"><%= t(".tomorrow") %></option>		
@@ -43,7 +43,7 @@
 		<% end %>
    </div>
 </div>
-<% javascript_tag do %>
+<% javascript_tag do %>	
 	var ticket_created_on = new Date("<%= ticket.created_at.strftime("%B %e, %Y %H:%M") %>");
 	
 	function showHideDialog(showHide){
@@ -103,12 +103,12 @@
 			}
 		}
 		
-		$("#due-date-dialog")
+		/*$("#due-date-dialog")
 			.position({
 				of: $( "#due-by-time-parent" ),
 				my: "right top",
 				at: "left top"
-			});
+			});*/
 		
 		$("#edit-due-by-time").click(function(){
 				showHideDialog(true);

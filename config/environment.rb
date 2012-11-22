@@ -91,8 +91,6 @@ Rails::Initializer.run do |config|
   
   config.action_controller.allow_forgery_protection = false
   config.middleware.use 'ResqueWeb'
-
-  GC.enable_stats if defined?(GC) && GC.respond_to?(:enable_stats)
 end
 
 ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"

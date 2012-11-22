@@ -1,0 +1,56 @@
+<% form_remote_for @user, :url => contacts_path, :method => 'post', 
+          :html => { :id => "add_requester_form" } do |add_requester| %>
+  <div id="errorExplanation" class="errorExplanation" style="display:none;">
+  </div>
+  <div id="errorMessages" style="display:none;">
+  </div>
+  <ul class="ui-form">
+    <li>
+      <%= add_requester.label t('user.name') %>
+      <%= add_requester.text_field :name %>
+    </li>
+    <li>
+      <%= add_requester.label t('user.email') %>
+      <%= add_requester.text_field :email %>
+    </li>
+    <li>
+      <%= add_requester.label t('user.phone_no') %>
+      <%= add_requester.text_field :phone %>
+    </li>
+    <li>
+      <%= add_requester.label t('user.company') %>
+      <%= add_requester.text_field :customer %>
+      <div id="user_customer_choices" class="autocomplete"></div>
+    </li>
+  	<%= add_requester.hidden_field :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] %>
+  </ul>
+  <div class="button-container">
+    <%= add_requester.submit t('create'), :class => "uiButton small" %>
+    <%= link_to t('cancel'), "javascript:void(0);", :class => "uiButton small", :id => "cancel_button" %>
+  </div>
+<% end %>
+
+<% javascript_tag do %>
+  function lookup(searchString, callback) { 
+    new Ajax.Request('<%= autocomplete_contacts_path %>?v='+searchString, 
+                        { parameters: {name: searchString, rand: (new Date()).getTime()},
+                          onSuccess:  function(response) {
+                                        var choices = $A();
+                                        response.responseJSON.results
+                                          .each(function(item){
+                                            choices.push(item.value);
+                                          });                                             
+                                        callback(choices);
+                                      } });
+  }
+  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+  
+  new Autocompleter.Json("user_customer", "user_customer_choices", cachedLookup, {});
+
+  jQuery('#cancel_button').click( function(){
+    active_dialog.dialog('close');
+  });
+
+  jQuery('#user_name').focus();
+<%end%>

@@ -1,4 +1,4 @@
-unless Account.current
+if Integrations::Application.count == 0
   # Populate Capsule CRM
   capsule_app = Integrations::Application.seed(:name) do |s|
     s.name = 'capsule_crm'
@@ -47,6 +47,7 @@ unless Account.current
         CustomWidget.include_js("/javascripts/integrations/freshbooks.js");
         freshbooksBundle={ k:"{{freshbooks.api_key}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", freshbooksNote:"{{freshbooks.freshbooks_note | escape_html}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}"};
        </script>}
+    s.application_id = freshbooks_app.id
   end
   
   
@@ -174,8 +175,8 @@ unless Account.current
         </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/salesforce.js");
-        salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}" } ;
-       </script>}
+        salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", reqName:"{{requester.name}}"} ;
+      </script>}
     s.application_id = salesforce_app.id
   end
 

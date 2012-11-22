@@ -1,14 +1,12 @@
 
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
-  
+
   acts_as_list :scope => :folder
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
   belongs_to :account
-  
-  before_save :set_un_html_content
   
   has_many :attachments,
     :as => :attachable,
@@ -26,6 +24,8 @@ class Solution::Article < ActiveRecord::Base
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
+  has_many :support_scores, :as => :scorable, :dependent => :destroy
+  
   include Mobile::Actions::Article
 
   define_index do
@@ -39,19 +39,18 @@ class Solution::Article < ActiveRecord::Base
     has folder.visibility , :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    has folder.customer_folders(:customer_id), :as => :customer_ids
+    has folder.customer_folders(:customer_id), :as => :customer_ids,:type => :multi
 
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
 
-    set_property :delta => :delayed
+    #set_property :delta => :delayed
     set_property :field_weights => {
       :title        => 10,
       :description  => 6
     }
   end
 
-  after_create :create_activity
   attr_protected :account_id ,:attachments
   
   validates_presence_of :title, :description, :user_id , :account_id
@@ -89,14 +88,22 @@ class Solution::Article < ActiveRecord::Base
  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }    
  SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
  
- named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
-    
+  named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
+ 
+  named_scope :by_user, lambda { |user|
+      { :conditions => ["user_id = ?", user.id ] }
+  }
+
   def type_name
     TYPE_NAMES_BY_KEY[art_type]
   end
   
   def status_name
     STATUS_NAMES_BY_KEY[status]
+  end
+
+  def published?
+    status == STATUS_KEYS_BY_TOKEN[:published]
   end
   
   def to_param
@@ -131,19 +138,4 @@ class Solution::Article < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
  
-  private    
-    def create_activity
-      activities.create(
-        :description => 'activities.solutions.new_solution.long',
-        :short_descr => 'activities.solutions.new_solution.short',
-        :account => account,
-        :user => user,
-        :activity_data => {}
-      )
-    end
-  
-    def set_un_html_content        
-      self.desc_un_html = (self.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description.empty?
-    end
-    
 end

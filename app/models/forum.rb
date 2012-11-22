@@ -1,6 +1,14 @@
 class Forum < ActiveRecord::Base
   acts_as_list :scope => :forum_category
+  include ActionController::UrlWriter
+
+  has_many :activities, 
+    :class_name => 'Helpdesk::Activity', 
+    :as => 'notable',
+    :dependent => :delete_all
   
+  belongs_to_account
+
   TYPES = [
     [ :howto,    I18n.t("forum.types.howto"),    1 ],
     [ :ideas,    I18n.t("forum.types.ideas"),    2 ],
@@ -77,9 +85,9 @@ class Forum < ActiveRecord::Base
   format_attribute :description
   attr_protected :forum_category_id , :account_id
 
-  after_save :set_topic_delta_flag
+  # after_save :set_topic_delta_flag
   before_update :clear_customer_forums
-  
+  after_create :create_activity
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   
   
@@ -124,6 +132,11 @@ class Forum < ActiveRecord::Base
     find :all, options.update(:conditions => {:account_id => account}, :order => 'position')
   end
   
+  def self.forum_names(account)
+    forums = account.user_forums
+    forums.map{|forum| [forum.id, forum.name]}
+  end
+
   def type_name
     TYPE_NAMES_BY_KEY[forum_type]
   end
@@ -140,18 +153,41 @@ class Forum < ActiveRecord::Base
       user.customer  && customer_forums.map(&:customer_id).include?(user.customer.id))
   end
   
-  def set_topic_delta_flag
-    self.topics.each do |topic|
-      topic.delta = true
-      topic.save
-    end
-  end
+  # def set_topic_delta_flag
+  #   self.topics.each do |topic|
+  #     topic.delta = true
+  #     topic.save
+  #   end
+  # end
   
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+  end
+
+  def to_s
+    name
+  end
+
+  def create_activity
+    activities.create(
+      :description => 'activities.forums.new_forum.long',
+      :short_descr => 'activities.forums.new_forum.short',
+      :account => account,
+      :user => User.current,
+      :activity_data => { 
+                          :path => category_forum_path(forum_category_id, 
+                                    id), 
+                          'category_name' => forum_category.to_s, 
+                          :url_params => {
+                                           :category_id => forum_category_id, 
+                                           :forum_id => id,
+                                           :path_generator => 'category_forum_path'
+                                          } 
+                        }
+    )
   end
    
 end

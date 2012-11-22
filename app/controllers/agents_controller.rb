@@ -1,19 +1,27 @@
-class AgentsController < Admin::AdminController
+class AgentsController < ApplicationController
   include AgentsHelper
+  helper AgentsHelper
   
+  include Gamification::GamificationUtil
+
+  before_filter :authorized_to_manage_agents, :except => :show
+  before_filter :authorized_to_view_agents, :only => :show
+
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update,:destroy,:restore,:edit, :reset_password ]
+  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password ,:convert_to_contact ]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
-  before_filter :check_user_permission, :only => :destroy
+  before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
   before_filter :check_agent_limit, :only =>  :restore
+  before_filter :set_selected_tab
   
   def load_object
     @agent = scoper.find(params[:id])
+    @scoreboard_levels = current_account.scoreboard_levels.level_up_for @agent.level
   end
   
   def check_user_permission
-    if (@agent.user == current_user) || (@agent.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
+    unless can_destroy?(@agent)
       flash[:notice] = t(:'flash.agents.delete.not_allowed')
       redirect_to :back  
     end    
@@ -27,18 +35,11 @@ class AgentsController < Admin::AdminController
   end
     
   def index    
-    @agents = current_account.agents.list.paginate(:page => params[:page], :per_page => 30)
+    @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }
     end
-  end
-
-  def convert_to_user
-    user = current_account.all_users.first(:include=>:agent, :conditions=>["agents.id=?",params[:id]])
-    user.agent.delete
-    user.user_role=3
-    user.save!
   end
 
   def show    
@@ -54,6 +55,7 @@ class AgentsController < Admin::AdminController
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
+    @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
      respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agent }
@@ -61,6 +63,7 @@ class AgentsController < Admin::AdminController
   end
 
   def edit    
+    #@agent.signature_html ||= @agent.signature_value
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
@@ -78,7 +81,8 @@ class AgentsController < Admin::AdminController
     @agent = current_account.agents.new(params[nscname]) 
     #check_agent_limit
     if @user.signup!(:user => params[:user])       
-      @agent.user_id = @user.id      
+      @agent.user_id = @user.id
+      @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       if @agent.save
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
@@ -87,13 +91,14 @@ class AgentsController < Admin::AdminController
       end
     else       
         check_email_exist
-        @agent.user =@user       
+        @agent.user =@user
+        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")       
         render :action => :new        
     end    
   end
   
   def create_multiple_items
-    @agent_emails = params[:agents_invite_email].split(/,/)
+    @agent_emails = params[:agents_invite_email]
 
     @responseObj = {}
     if current_account.can_add_agents?(@agent_emails.length)
@@ -120,8 +125,10 @@ class AgentsController < Admin::AdminController
   def update
       @agent.occasional = params[:agent][:occasional]
       #check_agent_limit
+      @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
+      
       if @agent.update_attributes(params[nscname])            
-          @user = current_account.all_users.find(@agent.user_id)          
+          @user = current_account.all_users.find(@agent.user_id)
           if @user.update_attributes(params[:user])        
              flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
              redirect_to :action => 'index'
@@ -137,6 +144,13 @@ class AgentsController < Admin::AdminController
      
   end
 
+  def convert_to_contact
+      user = @agent.user
+      user.make_customer
+      flash[:notice] = t(:'flash.agents.to_contact')
+      redirect_to contact_path(user)
+  end
+  
   def destroy    
     if @agent.user.update_attribute(:deleted, true)    
        @restorable = true
@@ -190,5 +204,9 @@ class AgentsController < Admin::AdminController
     flash[:notice] = t('maximum_agents_msg')
     redirect_to :back 
    end
+  end
+
+  def set_selected_tab
+    @selected_tab = :admin
   end
 end

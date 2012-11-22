@@ -2,6 +2,14 @@ require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base
 
+  MIME_TYPE_MAPPING = {"ppt" => "application/vnd.ms-powerpoint",
+                       "doc" => "application/msword",
+                       "xls" => "application/vnd.ms-excel",
+                       "pdf" => "application/pdf",
+                       "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                       "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                       "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
+
   set_table_name "helpdesk_attachments"
   belongs_to_account
 
@@ -24,10 +32,18 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_post_process :image?
     #before_post_process :set_content_dispositon
     before_create :set_content_type
+
+   def s3_permissions
+    public_permissions? ? "public-read" : "private"
+   end
+
+   def public_permissions?
+    description and (description == "logo" || description == "fav_icon" || description == "public" || description == "content_id")
+   end
   
    def set_content_type
-    mime_content_type = File.extname(self.content_file_name).gsub('.','')
-    self.content_content_type = "application/pdf" if !mime_content_type.blank? and mime_content_type.eql?("pdf")
+    mime_content_type = lookup_by_extension(File.extname(self.content_file_name).gsub('.',''))
+    self.content_content_type = mime_content_type unless mime_content_type.blank? 
    end
 
    def set_content_dispositon
@@ -66,11 +82,20 @@ class Helpdesk::Attachment < ActiveRecord::Base
          xml.tag!("attachment_url",AWS::S3::S3Object.url_for(content.path,content.bucket_name,:expires_in => 300.seconds).gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
      end
    end
+
+  def expiring_url(style = "original",expiry = 300)
+    AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
+                                          :expires_in => expiry.to_i.seconds)
+  end
   
   private
   
   def set_random_secret
     self.random_secret = ActiveSupport::SecureRandom.hex(8)
+  end
+
+  def lookup_by_extension(extension)
+    MIME_TYPE_MAPPING[extension]
   end
   
 

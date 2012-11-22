@@ -1,1 +1,179 @@
-.widget-ovelay{filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=50);opacity:0.5;background-color:white}.freshwidget-container,.widget-ovelay{position:fixed;_position:absolute;left:0px;top:0px;width:100%;height:100%;z-index:90002}.freshwidget-container{position:absolute}.left a{left:-2px}.left a:hover{left:0px}.right{right:-2px}.right:hover{right:0px}.top{top:-2px}.top:hover{top:0px}.bottom{bottom:0px}.bottom a{bottom:-2px}.bottom a:hover{bottom:0px}.freshwidget-theme{-moz-box-shadow:rgba(0, 0, 0, 0.6) 0px 0px 3px;-webkit-box-shadow:rgba(0, 0, 0, 0.6) 0px 0px 3px;box-shadow:rgba(0, 0, 0, 0.6) 0px 0px 3px;text-shadow:rgba(0, 0, 0, 0.2) -1px -1px 1px;padding:6px 16px 8px 16px;background-color:#7eb600;border:2px solid #ffffff;color:#ffffff;font-size:16px;text-decoration:none;font-weight:bold}.freshwidget-theme:hover{color:#f3f3f3}.freshwidget-customimage{overflow:visible}.right .freshwidget-customimage{right:0px}.freshwidget-button{position:absolute;display:block !important;width:0px;height:0px;z-index:90000;margin:0px}.freshwidget-button a{position:fixed;white-space:nowrap;_position:absolute;_right:0px}.left a.freshwidget-theme,.top a.freshwidget-theme{border-top-width:0px}.left a.freshwidget-theme{-moz-transform:rotate(-90deg);-moz-transform-origin:top left;-webkit-transform:rotate(-90deg);-webkit-transform-origin:top left;-o-transform:rotate(-90deg);-o-transform-origin:top left;filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3)}.bottom a.freshwidget-theme,.right a.freshwidget-theme{border-bottom-width:0px}.right a.freshwidget-theme{-moz-transform:rotate(-90deg);-moz-transform-origin:bottom left;-webkit-transform:rotate(-90deg);-webkit-transform-origin:bottom left;-o-transform:rotate(-90deg);-o-transform-origin:bottom left;filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3)}.freshwidget-dialog{position:absolute;padding:8px 0px;left:50%;margin-left:-260px;top:100px;z-index:900010}.freshwidget-dialog iframe{width:612px;height:900px}.freshwidget-dialog .widget-close{position:absolute;right:5px;top:6px;width:28px;height:28px;cursor:pointer}
+/* Theme Colors and layout Defaults */
+/* Bullet icon */
+/* Priority Color Codes */
+/* Sprite variables used inside the sheet */
+/* line 3, ../src/freshwidget.scss */
+.widget-ovelay {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+  background-color: white; }
+
+/* line 8, ../src/freshwidget.scss */
+.freshwidget-container, .widget-ovelay {
+  position: fixed;
+  _position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 90002; }
+
+/* line 17, ../src/freshwidget.scss */
+.freshwidget-container {
+  position: absolute; }
+
+/* line 21, ../src/freshwidget.scss */
+.left a {
+  left: -2px; }
+
+/* line 22, ../src/freshwidget.scss */
+.left a:hover {
+  left: 0px; }
+
+/* line 24, ../src/freshwidget.scss */
+.right {
+  right: -2px;
+  *right: 35px;
+  /* IE 7 specific style */ }
+
+/* line 28, ../src/freshwidget.scss */
+.right:hover {
+  right: 0px;
+  *right: 33px;
+  /* IE 7 specific style */ }
+
+/* line 32, ../src/freshwidget.scss */
+.ie8.right, .ie9.right {
+  right: 35px;
+  /* IE 8 & 9 specific style */ }
+
+/* line 35, ../src/freshwidget.scss */
+.ie8.right:hover, .ie9.right:hover {
+  right: 33px;
+  /* IE 8 & 9 specific style */ }
+
+/* line 39, ../src/freshwidget.scss */
+.top {
+  top: -2px; }
+
+/* line 40, ../src/freshwidget.scss */
+.top:hover {
+  top: 0px; }
+
+/* line 42, ../src/freshwidget.scss */
+.bottom {
+  bottom: 0px; }
+  /* line 44, ../src/freshwidget.scss */
+  .bottom a {
+    bottom: -2px; }
+  /* line 45, ../src/freshwidget.scss */
+  .bottom a:hover {
+    bottom: 0px; }
+
+/* line 48, ../src/freshwidget.scss */
+.freshwidget-theme {
+  -moz-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
+  text-shadow: rgba(0, 0, 0, 0.2), -1px, -1px, 1px;
+  padding: 6px 16px 8px 16px;
+  background-color: #7eb600;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: bold;
+  outline: 0; }
+
+/* line 61, ../src/freshwidget.scss */
+.freshwidget-theme:hover {
+  color: #f3f3f3; }
+
+/* line 65, ../src/freshwidget.scss */
+.freshwidget-customimage {
+  overflow: visible; }
+
+/* line 67, ../src/freshwidget.scss */
+.right .freshwidget-customimage {
+  right: 0px; }
+
+/* line 69, ../src/freshwidget.scss */
+.freshwidget-button {
+  position: absolute;
+  display: block !important;
+  width: 0px;
+  height: 0px;
+  z-index: 90000;
+  margin: 0px;
+  outline: 0; }
+  /* line 70, ../src/freshwidget.scss */
+  .freshwidget-button a {
+    position: fixed;
+    white-space: nowrap;
+    _position: absolute;
+    _right: 0px;
+    outline: 0; }
+
+/* line 86, ../src/freshwidget.scss */
+.proxy-link {
+  position: absolute;
+  z-index: 10;
+  outline: 0; }
+
+/* line 92, ../src/freshwidget.scss */
+.left a.freshwidget-theme, .top a.freshwidget-theme {
+  border-top-width: 0px; }
+
+/* line 93, ../src/freshwidget.scss */
+.left a.freshwidget-theme {
+  -webkit-transform: perspective(top left) rotate(-90deg);
+  -moz-transform: perspective(top left) rotate(-90deg);
+  -ms-transform: perspective(top left) rotate(-90deg);
+  -o-transform: perspective(top left) rotate(-90deg);
+  transform: perspective(top left) rotate(-90deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
+
+/* line 97, ../src/freshwidget.scss */
+.bottom a.freshwidget-theme, .right a.freshwidget-theme {
+  border-bottom-width: 0px; }
+
+/* line 98, ../src/freshwidget.scss */
+.right a.freshwidget-theme {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
+
+/* line 103, ../src/freshwidget.scss */
+.left a.ie10 {
+  -ms-transform: rotate(-90deg);
+  -ms-transform-origin: top left; }
+
+/* line 108, ../src/freshwidget.scss */
+.right a.ie10 {
+  -ms-transform: rotate(-90deg);
+  -ms-transform-origin: bottom left; }
+
+/* Widget Form Style */
+/* line 114, ../src/freshwidget.scss */
+.freshwidget-dialog {
+  position: absolute;
+  padding: 8px 0px;
+  left: 50%;
+  margin-left: -260px;
+  top: 100px;
+  z-index: 900010; }
+  /* line 122, ../src/freshwidget.scss */
+  .freshwidget-dialog iframe {
+    width: 612px;
+    height: 900px; }
+  /* line 127, ../src/freshwidget.scss */
+  .freshwidget-dialog .widget-close {
+    position: absolute;
+    right: 5px;
+    top: 6px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer; }

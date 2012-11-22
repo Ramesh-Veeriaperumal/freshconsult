@@ -1,39 +1,8 @@
 class Admin::VaRulesController < Admin::AutomationsController
+  include Va::Constants
   
   skip_before_filter :check_automation_feature
   before_filter :set_filter_data, :only => [ :create, :update ]
-  
-  OPERATOR_TYPES = {
-    :email       => [ "is", "is_not", "contains", "does_not_contain" ],
-    :text        => [ "is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with" ],
-    :checkbox    => [ "selected", "not_selected" ],
-    :choicelist  => [ "is", "is_not" ],
-    :number      => [ "is", "is_not" ],
-    :hours       => [ "is", "greater_than", "less_than" ],
-    :nestedlist  => [ "is" ]
-  }
-  
-  CF_OPERATOR_TYPES = {
-    "custom_dropdown" => "choicelist",
-    "custom_checkbox" => "checkbox",
-    "custom_number"   => "number",
-    "nested_field"    => "nestedlist",
-  }
-
-  OPERATOR_LIST =  {
-    :is                =>  I18n.t('is'),
-    :is_not            =>  I18n.t('is_not'),
-    :contains          =>  I18n.t('contains'),
-    :does_not_contain  =>  I18n.t('does_not_contain'),
-    :starts_with       =>  I18n.t('starts_with'),
-    :ends_with         =>  I18n.t('ends_with'),
-    :between           =>  I18n.t('between'),
-    :between_range     =>  I18n.t('between_range'),
-    :selected          =>  I18n.t('selected'),
-    :not_selected      =>  I18n.t('not_selected'),
-    :less_than         =>  I18n.t('less_than'),
-    :greater_than      =>  I18n.t('greater_than')
-  }
   
   def index
     @inactive_rules = all_scoper.disabled
@@ -112,6 +81,9 @@ class Admin::VaRulesController < Admin::AutomationsController
           :operatortype => "text" },
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
           :operatortype => "text"}]
+
+      filter_hash.insert(11, { :name => "product_id", :value => t('admin.products.product_label_msg'),:domtype => 'dropdown', 
+        :choices => @products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
                                                    
       filter_hash = filter_hash + additional_filters
       add_custom_filters filter_hash
@@ -121,7 +93,13 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
     
     def additional_actions
-      {}
+      if current_account.features?(:multi_product)
+      { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
+          :domtype => 'dropdown', :choices => @products },
+        16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
+      else
+        {16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
+      end
     end
     
     def additional_filters

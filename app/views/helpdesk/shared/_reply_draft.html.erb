@@ -40,7 +40,7 @@ jQuery("#ReplyButton").bind('click', function(){
   replyEditor = jQuery('#cnt-reply-body');
   dontSave=0;
   if(saving==0 && first!=1){
-     isDirty = false;
+    isDirty = false;
     setInterval( function(){autosave();}, 30000);
     if(!draftClearedFlag){
       jQuery("#draft-save").text("<%= t('saved_draft') %>");
@@ -80,8 +80,10 @@ jQuery("#draft-save").bind('mouseout',function popOut(){
   jQuery("#draft-save").attr('title','');
 }
 );
- 
-jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
+
+// This has been moved as a on click event directly to the cancel button 
+// jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
+
 jQuery("#clear-draft").bind('click', function(){
   var clear_conf=confirm("<%= t('clear_draft_text') %>");
   if(clear_conf==true){
@@ -90,12 +92,11 @@ jQuery("#clear-draft").bind('click', function(){
 });
 
 
-  function cleardraft(){
-      <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
-      jQuery('#cnt-reply-body').setCode("");
-      var draftData = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
-      jQuery('#cnt-reply-body').setCode(draftData)
-      istDirty = false;
-      jQuery("#reply-draft").hide();
-      draftClearedFlag = true;
-  }
+function cleardraft(){
+  <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
+  var draftData = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
+  jQuery('#cnt-reply-body').setCode(draftData)
+  isDirty = false;
+  jQuery("#reply-draft").hide();
+  draftClearedFlag = true;
+}

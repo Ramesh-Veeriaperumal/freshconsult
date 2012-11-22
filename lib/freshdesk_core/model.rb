@@ -1,6 +1,8 @@
 module FreshdeskCore::Model
 
     MODEL_DEPENDENCIES = { :account => [{:dependant => :account_admin, :method => :destroy},
+                                        {:dependant => :products, :method => :destroy_all},
+                                        {:dependant => :portals, :method => :destroy_all},
     									{:dependant => :all_email_configs, :method => :destroy_all},
     									{:dependant => :features, :method => :destroy_all},
     									{:dependant => :flexi_field_defs, :method => :destroy_all},
@@ -30,12 +32,14 @@ module FreshdeskCore::Model
     									{:dependant => :tweets, :method => :destroy_all},
     									{:dependant => :survey, :method => :destroy},
     									{:dependant => :scoreboard_ratings, :method => :destroy_all},
+                      {:dependant => :scoreboard_levels, :method => :destroy_all},
     									{:dependant => :survey_handles, :method => :destroy_all},
     									{:dependant => :day_pass_config, :method => :destroy},
     									{:dependant => :day_pass_usages, :method => :destroy_all},
     									{:dependant => :day_pass_purchases, :method => :destroy_all},
     									{:dependant => :data_import, :method => :destroy},
-    									{:dependant => :tags, :method => :destroy_all}
+    									{:dependant => :tags, :method => :destroy_all},
+                      {:dependant => :all_quests, :method => :destroy_all}
     	] }
 
 	def perform_destroy(obj)

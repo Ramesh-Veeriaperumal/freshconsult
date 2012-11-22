@@ -1,0 +1,49 @@
+@import "lib/settings";
+@import "lib/reset";
+
+body { 
+	color: #333; 
+	font:12px $blueprint-font-family; background-color: transparent;
+	background:$background; 
+	min-width:$blueprint-liquid-container-min-width+20; 
+	-webkit-font-smoothing: antialiased;
+}
+
+h2{ 
+	font-size: 2em;
+	font-weight: bold;
+	line-height: 2em;
+}
+
+a{ color: #336699; }
+a:hover{ color: darken(#336699, 10%); }
+
+.wrapper{
+	@include container;
+	@include pie-clearfix;
+	overflow:visible;
+	position: relative;
+	text-align: left;
+}
+ 
+#wrap{
+	margin-bottom:0px;
+	text-align:center;
+} 
+
+.no-helpdesk{
+	background-color:#ffffff;	
+	border:1px solid darken($background, 15%);	
+	margin:50px auto;
+	padding:18px 20px 30px 20px;
+	text-align:center;
+	max-width:700px; 
+	@include border-radius(10px);
+}
+
+.no-helpdesk p{
+	font-size:20px; 
+	line-height:1.5em; 
+	margin:0px;
+	text-align:center;
+} 

@@ -1,0 +1,64 @@
+<div class="floatr">
+	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
+			:rel => "toggle", 
+			"data-checked-label" => "enabled", 
+			"data-unchecked-label" => "disabled", 
+			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
+</div>
+<h3 class="title"><%=t('.title')%></h3>
+
+<div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
+	<ul data-tabs="tabs" class="tabs admin-tabs">
+		<li class="active first">
+			<a id="points-tab" href="#points">Points</a>
+		</li>
+		<li>
+			<a id="quests-tab" href="#quests">Quests</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="points" class="tab-pane active">
+			<%= render :partial => "gamification_settings" %>
+		</div>			  
+		<div id="quests" class="tab-pane">
+			<%= render :partial => "/admin/quests/index" %>
+		</div>
+	</div>
+</div>
+
+<div class="grey-background clearfix" id="gamification-intro" <% if feature?(:gamification_enable) %>style="display:none"<%end%>>	
+	<div class="aracde-content">
+		<%= image_tag '/images/helpimages/arcade-admin-page.png' %>
+		<h2>What is Freshdesk Arcade?</h2>
+		<p>
+			Now every support ticket that flows in is a chance for agents to score. What’s even cooler - you get to award bonus points to your support team based on what is most important to you. Like shooting out answers super fast, getting the solution right the first time, and winning awesome satisfaction ratings from customers. 
+		</p>
+		<p>
+			Follow your support teams’ progress with the leaderboard right off the dashboard. And award special trophies to the top scorers for being the Speed Racer, Sharp Shooter, Customer Wow Champ, and best of all, your Most Valuable Player of the month.
+		</p>
+		<p>	
+			<a href="http://www.youtube.com/watch?v=bi6Md5K2nsY" target="_blank">Check out the video</a>
+			<br />
+			<a href="javascript: jQuery('#gamification_enable').trigger('click'); " class="uiButton special floatr">
+				Enable freshdesk arcade
+			</a>
+		</p>
+		<p>			
+			<a target="_blank" href="https://support.freshdesk.com/solution/categories/4/folders/59789/articles/27148-gamification">
+				Learn more about the arcade
+			</a>
+		</p>
+	</div>
+</div>
+
+<% javascript_tag do %>
+	jQuery('#points-tab, #quests-tab').bind("click", function(){
+		jQuery("#gamification-help .active").removeClass("active");
+		jQuery('#'+this.id+'-help').addClass('active');
+	});
+<% end %>
+
+<% content_for :sidebar do %>
+	<%= render :partial => "help_text" %>
+<%end%>

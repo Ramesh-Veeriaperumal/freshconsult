@@ -5,70 +5,17 @@ var $J = jQuery.noConflict();
  
 (function($){
    // Global Jquery Plugin initialisation
-   // $.fn.qtip.baseIndex = 10000;
- 
-   // Tweet custom class
-   $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
-   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
-   $.validator.addClassRules("tweet", { tweet: 140 });
-   $.validator.addClassRules("facebook", { tweet: 8000 });
-   $.validator.addMethod("notEqual", function(value, element, param) {
-      return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
-    }, "This element should not be equal to");
-
-   $.validator.addMethod("multiemail", function(value, element) {
-       if (this.optional(element)) // return true on optional element
-         return true;
-       var emails = value.split( new RegExp( "\\s*,\\s*", "gi" ) );
-       valid = true;
-       $.each(emails, function(i, email){            
-          valid=/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(email);                     
-          if(!valid) return false
-       });
-       return valid;
-   }, 'One or more email addresses are invalid.');
-   $.validator.addClassRules("multiemail", { multiemail: true });
- 
-   $.validator.addMethod("hours", function(value, element) {
-       hours = normalizeHours(value);
-       element.value = hours;       
-       return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
-   }, 'Please enter a valid hours.');
-   $.validator.addClassRules("hours", { hours: true });
-  
-  
-  //Domain Name Validator 
-   $.validator.addMethod("domain_validator", function(value, element) {
-       if (this.optional(element)) // return true on optional element
-         return true;
-        if (value.length == 0) { return true; }       
-      if(/((http|https|ftp):\/\/)\w+/.test(value))
-      valid = false;
-      else if(/\w+[\-]\w+/.test(value))
-      valid = true;
-        else if((/\W\w*/.test(value))) {
-        valid = false;
-        }
-        else valid = true;
-        if(/_+\w*/.test(value))
-        valid = false;               
-       return valid;
-   }, 'Invalid URL format');
-   $.validator.addClassRules("domain_validator", { domain_validator: true });
-   
-   //URL Validator
-   $.validator.addClassRules("url_validator", { url : true });
-   
+   // $.fn.qtip.baseIndex = 10000;   
        
-	// App initialisation  
-	$(document).ready(function() {
-		var widgetPopup = null;
+  // App initialisation  
+  $(document).ready(function() {
+    var widgetPopup = null;
     var hoverPopup =  false;
     var hidePopoverTimer;
 
-		$("body").click(function(ev){
-			hideWidgetPopup(ev);
-		});
+    $("body").click(function(ev){
+      hideWidgetPopup(ev);
+    });
 
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
@@ -88,20 +35,20 @@ var $J = jQuery.noConflict();
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
-		
-		$("a[rel=popover]")
-			.popover({ 
-				delayOut: 300,
-				trigger: 'manual',
-				offset: 5,
-				html: true,
-				reloadContent: false,
-				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-				content: function(){
-					return $("#" + $(this).attr("data-widget-container")).html();
-				}
-			});
-		
+    
+    $("a[rel=popover]")
+      .popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).html();
+        }
+      });
+    
     $("a[rel=widget-popover]")
       .popover({ 
         delayOut: 300,
@@ -130,11 +77,25 @@ var $J = jQuery.noConflict();
       }); 
     });
 
+    $("[rel=hover-popover]").livequery(function(){ 
+       $(this).popover({ 
+         delayOut: 300,
+         trigger: 'manual',
+         offset: 5,
+         html: true,
+         reloadContent: false,
+         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+         content: function(){
+           return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
+         }
+        }); 
+      });
+
     $("[rel=remote-load]").livequery(function(){ 
       if(!document.getElementById('remote_loaded_dom_elements'))
-        $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body")
+        $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
 
-      $(this)
+        $(this)
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
           $(this).removeClass("loading-box");
@@ -150,17 +111,26 @@ var $J = jQuery.noConflict();
       }).live('mouseleave',function(ev) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
       });
-		$("a[rel=widget-popover]").live("click", function(e){
-				e.preventDefault();
-				e.stopPropagation(); 
+
+      $("[rel=hover-popover]").live('mouseenter',function(ev) {
+        ev.preventDefault();
+        hideWidgetPopup(ev);
+        widgetPopup = $(this).popover('show');
+        hoverPopup = true;
+      }).live('mouseleave',function(ev) {
+          hidePopoverTimer = setTimeout(function() { widgetPopup.popover('hide'); hoverPopup = false;},1000);
+      });
+
+    $("a[rel=widget-popover]").live("click", function(e){
+        e.preventDefault();
+        e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-				$('[rel=widget-popover],[rel=contact-hover]').each(function(){
-					$(this).popover('hide');
-				});
- 				widgetPopup = $(this).popover('show');
-			});
-
+        $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
+          $(this).popover('hide');
+        });
+        widgetPopup = $(this).popover('show');
+      });
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
@@ -175,8 +145,19 @@ var $J = jQuery.noConflict();
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
 
-      $('.quick-action.ajax-menu').livequery(function() { $(this).showAsAjaxMenu();});
-      $('.quick-action.dynamic-menu').livequery(function() { $(this).showPreloadedMenu();});
+      $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
+      $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
+
+      // - Tour My App 'Next' button change
+      $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
+        if($(this).text() == "Next »")
+           $(this).addClass('next_button_arrow').text('Next');
+      });
+
+      // - Tour My App 'slash' replaced by 'of'
+      $('.tourmyapp-step-index').livequery(function() { 
+        $(this).text($(this).text().replace('/',' of '));
+      });
 
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $("[rel=remote]").livequery(function(){
@@ -192,12 +173,6 @@ var $J = jQuery.noConflict();
       
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false
-      };
 
       $(".form-tooltip").twipsy({ 
         live: true,
@@ -229,19 +204,15 @@ var $J = jQuery.noConflict();
           
         });
       });
+
+      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
+      validateOptions = {
+         onkeyup: false,
+         focusCleanup: true,
+         focusInvalid: false,
+         ignore:":not(:visible)"
+      };
       
-      $(".admin_list li")
-         .hover(
-            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-         );
-
-      $(".content_list li")
-         .hover(
-            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-         );
-
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);
@@ -303,6 +274,9 @@ var $J = jQuery.noConflict();
                 classes: 'ui-tooltip-rounded ui-tooltip-shadow'
              }
         });
+
+        if(window.location.hash != '')
+          $(window.location.hash + "-tab").trigger('click');
          
         menu_box_count = 0;
         fd_active_drop_box = null;
@@ -327,6 +301,14 @@ var $J = jQuery.noConflict();
                 }
                 fd_active_drop_box = $(this);
             });
+            
+         $('[rel=guided-tour]').live('click',function(ev) {
+          ev.preventDefault();
+          try {
+            tour.run($(this).data('tour-id'),true);
+          } catch(e) { }
+        });
+
          
         $(".nav-drop li.menu-item a").bind("click", function(){
             hideMenuItem();
@@ -346,6 +328,38 @@ var $J = jQuery.noConflict();
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }
+
+      if(jQuery.browser.opera){
+        jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
+      }
+
+      $(document).pjax('a[data-pjax]',"#body-container",{
+          timeout: -1
+        }).bind('pjax:beforeSend',function(evnt,xhr,settings){
+          start_time = new Date();
+          var bHeight = $('#body-container').height(),
+              clkdLI = $(evnt.relatedTarget).parent();
+          $('ul.header-tabs li.active').removeClass('active');
+          clkdLI.addClass('active');
+          jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
+            jQuery('.top-loading-wrapper').removeClass('hide');
+          });
+          // $('#body-container .wrapper').css('visibility','hidden');
+          $(document).trigger('ticket_list');
+          $(document).trigger('ticket_show');
+          return true;
+      }).bind('pjax:end',function(){
+        //$('.load-mask').hide();
+        jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
+        jQuery('.top-loading-wrapper').addClass('hide','slow');
+        // $('#body-container .wrapper').css('visibility','visible');
+        end_time = new Date();
+        setTimeout(function() {
+          $('#benchmarkresult').html('Finnally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
+        },10);
+        return true;
+      })
+
    });
  
 })(jQuery);

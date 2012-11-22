@@ -12,8 +12,8 @@ SalesforceWidget.prototype= {
 	},
 
 	get_contact_request: function() {
-		var sosl = encodeURIComponent("FIND {" + this.salesforceBundle.reqEmail + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")");
-		return { resource: "services/data/v20.0/search?q="+sosl };
+		var sosl = encodeURIComponent("FIND {" + this.salesforceBundle.reqEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")");
+		return { rest_url: "services/data/v20.0/search?q="+sosl };
 	},
 
 	parse_contact: function(resJson){
@@ -42,7 +42,7 @@ SalesforceWidget.prototype= {
 			var cDept = (department) ? department : "N/A" ;
 			var cAddress = (address) ? address : "N/A";
 			var cType = contact.attributes.type;
-			contacts.push({name: fullName, designation: desig, phone: cPhone, mobile: cMobile, department: cDept, address: cAddress, type: cType, url: cLink});
+			contacts.push({name: fullName, designation: desig, company: null, company_url: null, phone: cPhone, mobile: cMobile, department: cDept, address: cAddress, type: cType, url: cLink});
 		});
 		return contacts;
 	},

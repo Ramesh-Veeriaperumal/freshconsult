@@ -303,7 +303,7 @@ FD.Util = {
         };
         if(group_id){
             FD.Util.getJSON({
-                url:'/helpdesk/tickets/get_agents/'+group_id
+                url:'/helpdesk/commons/group_agents/'+group_id
             },callBack,this,false);
         }
         else {

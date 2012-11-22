@@ -1,7 +1,7 @@
 <li>  
   <div class="preview_img">
   	<% if attachment.image? %>
-  		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
+  		<%= image_tag(attachment.expiring_url(:thumb), :class => "image")  %>
 	<% else %>
 		<% 
 			extname = attachment.content_file_name.split('.')[-1] 
@@ -12,7 +12,7 @@
 	<% end %>
   </div>	
   <div class="name">
-    <%= link_to truncate(h(attachment.content_file_name), 23), attachment, :popup => true %>
+    <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), attachment, :popup => true %>
   </div>
 
   <div class="size">

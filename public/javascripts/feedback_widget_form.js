@@ -68,7 +68,7 @@ function onchecked(){
 		screenshot_flag=0;
 		jQuery('#takescreen-btn').hide();
 		
-		if(!jQuery.browser.msie)
+		if(!jQuery.browser.msie && !jQuery.browser.opera)
 			jQuery('.flash').show();
 
 		jQuery('.closeBtn').show();

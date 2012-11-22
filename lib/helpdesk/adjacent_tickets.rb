@@ -71,10 +71,9 @@ module Helpdesk::AdjacentTickets
 			filter_params = criteria
 			if filter_params
 				return NO_ADJACENT_TICKET_FLAG if direction == :prev and (filter_params[:page].blank? or filter_params[:page] == 1)
-
 				filter_params[:page] = new_page(filter_params,direction)
 				filter_params[:without_pagination] = true
-				filter_params[:select_fields] = "helpesk_tickets.id, helpesk_tickets.display_id"
+				filter_params[:select_fields] = "helpdesk_tickets.id, helpdesk_tickets.display_id"
 
 				tickets = current_account.tickets.permissible(current_user).filter(
 					:params => filter_params, 
@@ -95,11 +94,12 @@ module Helpdesk::AdjacentTickets
 				filter_params = get_key(cached_filters_key)
 				if filter_params
 					filter_params = JSON.parse(filter_params) 
-					filter_params.symbolize_keys!      
+					filter_params["data_hash"] = JSON.parse(filter_params["data_hash"])
+					filter_params.symbolize_keys!
 
 					@ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
 					@ticket_filter = @ticket_filter.deserialize_from_params(filter_params)
-					@ticket_filter.query_hash = JSON.parse(filter_params[:data_hash]) unless filter_params[:data_hash].blank?
+					@ticket_filter.query_hash = filter_params[:data_hash] unless filter_params[:data_hash].blank?
 
 				else
 					unless cookies[:filter_name].blank?
@@ -107,8 +107,10 @@ module Helpdesk::AdjacentTickets
 						#If this is a number, if so consider as custom view
 						unless cookies[:filter_name].to_i.to_s != cookies[:filter_name]	
 							@ticket_filter = current_account.ticket_filters.find_by_id(cookies[:filter_name])
-							@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
-							filter_params.merge!(@ticket_filter.attributes["data"])
+							unless @ticket_filter.nil?
+								@ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+								filter_params.merge!(@ticket_filter.attributes["data"])
+							end
 						end
 					end
 				end
@@ -127,7 +129,7 @@ module Helpdesk::AdjacentTickets
 			current = send("new_page_" + direction.to_s , filter_params, current)
 
 			end_page[direction] = current
-			set_key(adjacent_meta_key, end_page.to_json, 1.day.to_i)
+			set_key(adjacent_meta_key, end_page.to_json, 3600)
 			current
 		end
 

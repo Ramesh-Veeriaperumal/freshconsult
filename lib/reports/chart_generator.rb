@@ -321,7 +321,7 @@ end
             :formatter => gauge_label_formatter,
             :color => '#000000',
             :style => {
-              :font => '14pt "Lucida Grande"'
+              :font => '14pt "Helvetica Neue"'
             }
           },
         }
