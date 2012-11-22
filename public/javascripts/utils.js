@@ -3,6 +3,12 @@
  * Genric core utility class for the application
  */
 
+if (typeof console === "undefined" || typeof console.log === "undefined") {
+    console = { };
+    console.log = function() {
+    };
+}
+
 function log(entry) {
   if (console) {
     console.log(entry);
@@ -179,16 +185,14 @@ function reply_multiple_submit( url, method, params){
     item = $(item);
 
     if(item.name == 'ids[]' && !item.checked) return;
-    
+
     var field = new Element('input', {
                      type: 'hidden'
                    });
     field.name = item.name;
     field.value = item.value;
     form.appendChild(field);
-    
   });
-
   form.action = url;
   form.submit();
 }

@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
   include Users::Activator
+  include Cache::Memcache::User
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -57,6 +58,10 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
+
+  after_commit_on_create :clear_agent_list_cache, :if => :agent?
+  after_commit_on_update :clear_agent_list_cache, :if => :agent?
+  after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   
   named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
@@ -179,12 +184,14 @@ class User < ActiveRecord::Base
     self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
-    signup(portal)
+    return false unless save_without_session_maintenance
+    deliver_activation_instructions!(portal,false, params[:email_config]) if (!deleted and !email.blank?)
+    true
   end
 
   def signup(portal=nil)
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
+    deliver_activation_instructions!(portal,false) if (!deleted and !email.blank?)
     true
   end
 

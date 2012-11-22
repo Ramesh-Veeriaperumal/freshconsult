@@ -1,4 +1,10 @@
 class Helpdesk::Tag < ActiveRecord::Base
+  
+  include Cache::Memcache::Helpdesk::Tag
+
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
+
   set_table_name "helpdesk_tags"
   
   belongs_to :account

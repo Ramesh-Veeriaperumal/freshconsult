@@ -1,4 +1,6 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do %>
+	<%= render :partial => "helpnote" %>
+<% end %>
 <div class="floatr">
 		<%= link_to t('.new'), new_admin_canned_response_path, :class => "uiButton"  %>
 </div>

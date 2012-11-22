@@ -29,7 +29,7 @@ jQuery('#helpdesk_ticket_description_html').redactor({ focus: false, autoresize:
               .html("<option value=''>...</option>");
       jQuery.ajax({
         type:        'POST',
-        url: 		     '/helpdesk/tickets/get_agents/'+this.value,
+        url: 		     '/helpdesk/commons/group_agents/'+this.value,
         contentType: 'application/text',
         success:     function(data){
                         jQuery('#helpdesk_ticket_responder_id')

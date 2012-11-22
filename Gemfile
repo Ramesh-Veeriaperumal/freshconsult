@@ -45,13 +45,13 @@ gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/s
 
 # This tinymce vendor plugin is update with the tinymce verion 3.4.7
 gem "tiny_mce", "0.1.9", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/tiny_mce-0.1.9"
-gem "jammit"
+gem "jammit", "0.6.5"
+gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
-#gem "rpm_contrib", "~> 2.1.3"
-gem "newrelic_rpm","3.4.2.1"
+gem "newrelic_rpm","3.0.0"
 
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
 gem "sanitize", "2.0.3"
@@ -67,8 +67,8 @@ gem "redis","2.2.2"
 gem "resque","1.22.0"
 gem 'resque-scheduler', :require => 'resque_scheduler'
 gem 'resque_mailer', "1.0.1"
-gem 'resque-status'
-gem 'resque-retry'
+gem 'resque-status', "0.3.0"
+gem 'resque-retry', "0.2.2"
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
@@ -77,16 +77,17 @@ gem 'after_commit', "~> 1.0.10"
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 
-group :development do
-   gem "rspec", "1.3.1"
-   gem "thoughtbot-shoulda","2.10.2"
-   gem "rspec-rails", "1.3.3"
-   gem "factory_girl", "1.2.3"  
-   gem "mongrel"   
+group :development,:test do
+   #gem "rspec", "1.3.1"
+   #gem "thoughtbot-shoulda","2.10.2"
+   #gem "rspec-rails", "1.3.3"
+   gem "forgery","0.5.0"
+   gem "factory_girl", "1.2.3" 
+   gem "mongrel" 
 end
 
 group :assets do
-	gem "sass", "3.2.0"
+	gem "sass", "3.2.1"
 	gem "compass-rails"
 	# Portal grid system is done using susy grids
 	gem "susy" 

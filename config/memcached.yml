@@ -20,4 +20,8 @@ development:
   <<: *defaults
 slave:
   <<: *defaults
+test:
+  <<: *defaults
+
+
 

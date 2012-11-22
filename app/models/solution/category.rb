@@ -4,12 +4,13 @@ require RAILS_ROOT+'/app/models/solution/folder.rb'
 #So, temporarily put the 'require' here. Shan
 
 class Solution::Category < ActiveRecord::Base
+
+  set_table_name "solution_categories"
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id
   
    belongs_to :account
-   set_table_name "solution_categories"
    
    has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
    has_many :public_folders, :class_name =>'Solution::Folder' ,  :order => "position", 

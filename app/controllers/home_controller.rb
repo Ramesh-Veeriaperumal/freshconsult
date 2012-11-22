@@ -2,7 +2,7 @@ class HomeController < SupportController
 	
  	before_filter { @hash_of_additional_params = { :format => "html" } }  
  	before_filter :set_portal_variables
-  before_filter :set_content_scope, :set_mobile
+  before_filter :set_content_scope, :set_mobile, :set_selected_tab
   before_filter :only => :index do |c|
     c.send(:set_portal_page, :portal_home)
   end
@@ -23,10 +23,6 @@ class HomeController < SupportController
     end
     
   end
-
-  def liquid_list
-    
-  end
  
   protected
   
@@ -41,8 +37,13 @@ class HomeController < SupportController
             current_portal.forum_category.topics.visible(current_user).newest(5) : [])
     end
     
-    def set_portal_variables
-      @portal_template = current_portal.template
-    end                     
-    
+    # def set_portal_variables
+    #   @portal_template = current_portal.template
+    # end
+
+  private
+    # def set_selected_tab
+    #   @selected_tab = :home
+    # end
+
 end

@@ -13,6 +13,7 @@ class Support::TicketsController < SupportController
   before_filter :check_user_permission, :only => [:show]
   before_filter :require_user_login, :only => [:index, :filter, :close_ticket, :update]
   before_filter :load_item, :only =>[:update]
+
   before_filter :set_mobile, :only => [:filter, :show, :update, :close_ticket]
   before_filter :set_date_filter, :only => [:export_csv]
   
@@ -189,5 +190,6 @@ class Support::TicketsController < SupportController
         return redirect_to helpdesk_ticket_url(:format => params[:format])
       end
     end
+
   
 end

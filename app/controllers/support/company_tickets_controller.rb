@@ -105,5 +105,9 @@ class Support::CompanyTicketsController < SupportController
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
       end
     end
+  private
+    def set_selected_tab
+      @selected_tab = :"company_tickets"
+    end
   
 end

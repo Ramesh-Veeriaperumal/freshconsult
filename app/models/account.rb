@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
+  include Cache::Memcache::Account
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
@@ -60,7 +61,8 @@ class Account < ActiveRecord::Base
   RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
                           logs projects itil marketing sales partners partner store channel reseller resellers online 
-                          contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab )
+                          contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab 
+                          productdemo resources )
 
   #
   # Tell authlogic that we'll be scoping users by account
@@ -261,7 +263,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false}
+    :personalized_email_replies => false, :agent_collision => false}
     
   
   has_features do
@@ -272,6 +274,14 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def installed_apps_hash
+    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps.inject({}) do |result,installed_app|
+     result[installed_app.application.name.to_sym] = installed_app
+     result
+   end
+  end
+
   def self.reset_current_account
     Thread.current[:account] = nil
   end

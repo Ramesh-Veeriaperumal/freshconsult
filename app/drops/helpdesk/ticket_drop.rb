@@ -120,4 +120,12 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.freshness
 	end
 
+	def before_method(method)
+		custom_fields = @source.load_flexifield
+		if custom_fields["#{method}_#{@source.account_id}"]
+			custom_fields["#{method}_#{@source.account_id}"]
+		else
+			super
+		end
+	end
 end

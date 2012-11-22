@@ -16,7 +16,9 @@
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
-  map.resources :customers ,:member => {:quick => :post}
+  map.resources :customers ,:member => {:quick => :post} do |customer|
+     customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
+   end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
   map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put}
@@ -26,8 +28,9 @@
   
   map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put}
-  
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
+      agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
+  end
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
@@ -88,7 +91,7 @@
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
-    admin.resources :getting_started, :only => :index
+    admin.resources :getting_started, :collection => {:rebrand => :put}
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
@@ -230,7 +233,8 @@
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
-                                    :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post},  
+                                    :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
+                                    :filter_options => :get, :full_paginate => :get },  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -258,7 +262,7 @@
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
     helpdesk.resources :canned_responses
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
-    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }    
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
@@ -287,6 +291,8 @@
     helpdesk.resources :sla_policies 
 
     helpdesk.resources :notifications, :only => :index
+
+    helpdesk.resources :commons 
     
   end
   

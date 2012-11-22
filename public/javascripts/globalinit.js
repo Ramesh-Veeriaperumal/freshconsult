@@ -7,15 +7,15 @@ var $J = jQuery.noConflict();
    // Global Jquery Plugin initialisation
    // $.fn.qtip.baseIndex = 10000;   
        
-	// App initialisation  
-	$(document).ready(function() {
-		var widgetPopup = null;
+  // App initialisation  
+  $(document).ready(function() {
+    var widgetPopup = null;
     var hoverPopup =  false;
     var hidePopoverTimer;
 
-		$("body").click(function(ev){
-			hideWidgetPopup(ev);
-		});
+    $("body").click(function(ev){
+      hideWidgetPopup(ev);
+    });
 
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
@@ -35,20 +35,20 @@ var $J = jQuery.noConflict();
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
-		
-		$("a[rel=popover]")
-			.popover({ 
-				delayOut: 300,
-				trigger: 'manual',
-				offset: 5,
-				html: true,
-				reloadContent: false,
-				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-				content: function(){
-					return $("#" + $(this).attr("data-widget-container")).html();
-				}
-			});
-		
+    
+    $("a[rel=popover]")
+      .popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).html();
+        }
+      });
+    
     $("a[rel=widget-popover]")
       .popover({ 
         delayOut: 300,
@@ -77,6 +77,20 @@ var $J = jQuery.noConflict();
       }); 
     });
 
+    $("[rel=hover-popover]").livequery(function(){ 
+       $(this).popover({ 
+         delayOut: 300,
+         trigger: 'manual',
+         offset: 5,
+         html: true,
+         reloadContent: false,
+         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+         content: function(){
+           return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
+         }
+        }); 
+      });
+
     $("[rel=remote-load]").livequery(function(){ 
       if(!document.getElementById('remote_loaded_dom_elements'))
         $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
@@ -97,17 +111,26 @@ var $J = jQuery.noConflict();
       }).live('mouseleave',function(ev) {
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
       });
-		$("a[rel=widget-popover]").live("click", function(e){
-				e.preventDefault();
-				e.stopPropagation(); 
+
+      $("[rel=hover-popover]").live('mouseenter',function(ev) {
+        ev.preventDefault();
+        hideWidgetPopup(ev);
+        widgetPopup = $(this).popover('show');
+        hoverPopup = true;
+      }).live('mouseleave',function(ev) {
+          hidePopoverTimer = setTimeout(function() { widgetPopup.popover('hide'); hoverPopup = false;},1000);
+      });
+
+    $("a[rel=widget-popover]").live("click", function(e){
+        e.preventDefault();
+        e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-				$('[rel=widget-popover],[rel=contact-hover]').each(function(){
-					$(this).popover('hide');
-				});
- 				widgetPopup = $(this).popover('show');
-			});
-
+        $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
+          $(this).popover('hide');
+        });
+        widgetPopup = $(this).popover('show');
+      });
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
@@ -125,6 +148,17 @@ var $J = jQuery.noConflict();
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
+      // - Tour My App 'Next' button change
+      $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
+        if($(this).text() == "Next »")
+           $(this).addClass('next_button_arrow').text('Next');
+      });
+
+      // - Tour My App 'slash' replaced by 'of'
+      $('.tourmyapp-step-index').livequery(function() { 
+        $(this).text($(this).text().replace('/',' of '));
+      });
+
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $("[rel=remote]").livequery(function(){
         $(this).bind("afterShow", function(ev){
@@ -139,12 +173,6 @@ var $J = jQuery.noConflict();
       
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false
-      };
 
       $(".form-tooltip").twipsy({ 
         live: true,
@@ -177,6 +205,14 @@ var $J = jQuery.noConflict();
         });
       });
 
+      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
+      validateOptions = {
+         onkeyup: false,
+         focusCleanup: true,
+         focusInvalid: false,
+         ignore:":not(:visible)"
+      };
+      
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);
@@ -238,6 +274,9 @@ var $J = jQuery.noConflict();
                 classes: 'ui-tooltip-rounded ui-tooltip-shadow'
              }
         });
+
+        if(window.location.hash != '')
+          $(window.location.hash + "-tab").trigger('click');
          
         menu_box_count = 0;
         fd_active_drop_box = null;
@@ -262,6 +301,14 @@ var $J = jQuery.noConflict();
                 }
                 fd_active_drop_box = $(this);
             });
+            
+         $('[rel=guided-tour]').live('click',function(ev) {
+          ev.preventDefault();
+          try {
+            tour.run($(this).data('tour-id'),true);
+          } catch(e) { }
+        });
+
          
         $(".nav-drop li.menu-item a").bind("click", function(){
             hideMenuItem();
@@ -281,6 +328,38 @@ var $J = jQuery.noConflict();
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }
+
+      if(jQuery.browser.opera){
+        jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
+      }
+
+      $(document).pjax('a[data-pjax]',"#body-container",{
+          timeout: -1
+        }).bind('pjax:beforeSend',function(evnt,xhr,settings){
+          start_time = new Date();
+          var bHeight = $('#body-container').height(),
+              clkdLI = $(evnt.relatedTarget).parent();
+          $('ul.header-tabs li.active').removeClass('active');
+          clkdLI.addClass('active');
+          jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
+            jQuery('.top-loading-wrapper').removeClass('hide');
+          });
+          // $('#body-container .wrapper').css('visibility','hidden');
+          $(document).trigger('ticket_list');
+          $(document).trigger('ticket_show');
+          return true;
+      }).bind('pjax:end',function(){
+        //$('.load-mask').hide();
+        jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
+        jQuery('.top-loading-wrapper').addClass('hide','slow');
+        // $('#body-container .wrapper').css('visibility','visible');
+        end_time = new Date();
+        setTimeout(function() {
+          $('#benchmarkresult').html('Finnally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
+        },10);
+        return true;
+      })
+
    });
  
 })(jQuery);

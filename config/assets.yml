@@ -20,6 +20,7 @@ stylesheets:
 
   app:
     - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/admin.css
     - public/stylesheets/app/app-bootstrap.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
@@ -35,6 +36,10 @@ stylesheets:
   portal:                
     - public/stylesheets/portal/portal.css
     # - public/stylesheets/portal/responsive.css 
+
+  tour_my_app:
+    - public/stylesheets/app/tourmyapp.css
+    - public/stylesheets/app/lib/gritter.css
 
   notifications:
     - public/stylesheets/app/lib/gritter.css
@@ -71,8 +76,17 @@ stylesheets:
   reports:
     - public/stylesheets/app/reports.css
 
+  report_print:
+    - public/stylesheets/print/report-print.css  
+
   redactor:
-    - public/stylesheets/redactor.css 
+    - public/stylesheets/redactor.css
+
+  getting_started:
+    - public/stylesheets/gs/screen.css
+    - public/stylesheets/app/lib/autocomplete.css
+    - public/stylesheets/gs/ie.css
+    - public/stylesheets/gs/print.css
 
 javascripts:
   defaults:
@@ -82,7 +96,8 @@ javascripts:
     - public/javascripts/controls.js
     - public/javascripts/application.js
   frameworks:
-    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
@@ -102,12 +117,15 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/socket.io.js
+
   # Code editor for portal cms
   codemirror:
     - public/javascripts/codemirror/*.js
 
   visitor:
-    - public/javascripts/frameworks/session.js            
+    - public/javascripts/frameworks/session.js
+
   workspace: 
     - public/javascripts/bootstrap/*.js
     - public/javascripts/dyn_menu.js
@@ -118,6 +136,7 @@ javascripts:
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
+    - public/javascripts/navsearch.js
   timesheet:
     - public/javascripts/timesheet.js
   freshwidget:
@@ -134,6 +153,7 @@ javascripts:
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/feedback_widget_form.js
+
   custom_widget:
     - public/javascripts/custom_widget.js
 
@@ -155,6 +175,7 @@ javascripts:
 
   getting_started:
     - public/javascripts/getting_started.js
+
   subscription:                    
     - public/javascripts/prototype.js
     - public/javascripts/jquery-1.7.2.js
@@ -179,3 +200,61 @@ javascripts:
     - public/javascripts/notifications.js
   excanvas:
     - public/javascripts/excanvas.js
+  freshdesk:
+    - public/javascripts/prototype.js
+    - public/javascripts/effects.js
+    - public/javascripts/dragdrop.js
+    - public/javascripts/controls.js
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery.pjax.js
+    - public/javascripts/frameworks/sprintf.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
+    - public/javascripts/frameworks/plugins/jquery.cookie.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.noblecount.js
+    - public/javascripts/frameworks/plugins/jquery.overlabel.js
+    - public/javascripts/frameworks/plugins/jquery.pageless.js
+    - public/javascripts/frameworks/plugins/jquery.qtip.js
+    - public/javascripts/frameworks/plugins/jquery.tinymce.js
+    - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
+    - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/frameworks/plugins/jquery.itoggle.js
+    - public/javascripts/frameworks/plugins/jquery.ui.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/hackz.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/session.js            
+    - public/javascripts/bootstrap/*.js
+    - public/javascripts/dyn_menu.js
+    - public/javascripts/utils.js
+    - public/javascripts/fast_autocompleter.js    
+    - public/javascripts/humane.js
+    - public/javascripts/factory_ui.js
+    - public/javascripts/lib/json2.js
+    - public/javascripts/globalinit.js
+    - public/javascripts/navsearch.js
+    - public/javascripts/jquery.gritter/jquery.gritter.js
+    - public/javascripts/requestAnimFrame.js
+    - public/javascripts/notifications.js
+    - public/javascripts/application.js
+  gs_defaults: 
+    - public/javascripts/prototype.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/effects.js
+    - public/javascripts/controls.js
+    - public/javascripts/utils.js
+  gs_frameworks:
+    - public/javascripts/fast_autocompleter.js
+    - public/javascripts/hackz.js
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js      
+    - public/javascripts/utils.js
+  getting_started:        
+    - public/javascripts/mColorPicker.min.js
+    - public/javascripts/getting_started.js

@@ -41,7 +41,7 @@ class ThirdCRM
   def add_contact(account)
     account_admin = account.account_admin
     lead_contact = {}
-    lead_contact[:FirstName] = account_admin.name
+    lead_contact[:LastName] = account_admin.name
     lead_contact[:Phone] = account_admin.phone
     lead_contact[:Email ] = account_admin.email
     lead_contact[:Company ] = account.name
@@ -57,7 +57,7 @@ class ThirdCRM
     lead_custom_field[:Freshdesk_Domain_Name__c ] = account.full_domain  
     lead_custom_field[:Plan__c ] = subscription.subscription_plan.name 
     lead_custom_field[:Amount__c] = subscription.amount 
-    lead_custom_field[:Lifepoint] = subscription.state
+    lead_custom_field[:Customer_Status__c] = subscription.state
     lead_custom_field
   end
   

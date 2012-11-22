@@ -1,7 +1,9 @@
 <% content_for :head do %>
   <style> html {  height:auto; overflow-y:visible; } </style>
 <% end %>
-<% content_for :sidebar do %><% end %>
+<% content_for :sidebar do %>
+<%= render :partial => "helpnote" %>
+<% end %>
 <%= content_tag(:h3, t(".title"), :class => "title") %> 
 
 <% form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
