@@ -8,6 +8,10 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :topic
   
+  has_many :activities, 
+    :class_name => 'Helpdesk::Activity', 
+    :as => 'notable'
+
   named_scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
 
