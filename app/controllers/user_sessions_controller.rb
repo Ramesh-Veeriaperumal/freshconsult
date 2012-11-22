@@ -35,7 +35,7 @@ include RedisKeys
         @current_user.active = true
         saved = @current_user.save
       else
-        @current_user.update_attributes(:name => params[:name])
+        @current_user.update_attributes(:name => params[:name], :active=> true) if current_account.sso_enabled?
       end
       
       @user_session = @current_user.account.user_sessions.new(@current_user)
