@@ -72,7 +72,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       on_status_change_bhrs(ticket, ticket.due_by)
   end
 
-  def calculate_frDue_by_on_status_change(ticket)
+  def calculate_frDue_by_time_on_status_change(ticket)
     override_bhrs ? on_status_change_override_bhrs(ticket,ticket.frDueBy) :
       on_status_change_bhrs(ticket, ticket.frDueBy)
   end
