@@ -137,7 +137,10 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
+
+  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
+  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
 
   has_many :facebook_pages, :class_name =>'Social::FacebookPage' 

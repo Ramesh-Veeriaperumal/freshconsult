@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121020050335) do
+ActiveRecord::Schema.define(:version => 20121109120525) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -75,9 +75,10 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "content_html", :limit => 2147483647
+    t.integer  "folder_id",    :limit => 8
   end
 
-  add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
+  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"folder_id"=>nil, "account_id"=>nil, "title"=>"20"}
 
   create_table "admin_data_imports", :force => true do |t|
     t.string   "import_type"
@@ -157,6 +158,16 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
+
+  create_table "ca_folders", :force => true do |t|
+    t.string   "name"
+    t.boolean  "is_default",              :default => false
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -437,6 +448,7 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
 
   add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
+  add_index "flexifields", ["flexifield_set_id", "account_id"], :name => "index_flexifields_on_flexifield_set_id_and_account_id"
   add_index "flexifields", ["id"], :name => "flexifields_id"
 
   create_table "forum_categories", :force => true do |t|
@@ -535,7 +547,7 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_type"=>"14", "account_id"=>nil, "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -1435,7 +1447,7 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
-  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>"20"}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"

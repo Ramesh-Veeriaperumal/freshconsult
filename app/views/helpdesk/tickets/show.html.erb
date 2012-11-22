@@ -6,7 +6,6 @@
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
   <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
-
 <%- end %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
@@ -58,18 +57,10 @@
 		  	</div>
 
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) if @item.requester && @item.is_twitter?%>
-			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) if @item.requester && @item.is_facebook? %>
-			<% content_for :pagefixed do %> 
-				<div class="canned-response-menu hide" id="canned_response_container"> 
-				  <div>
-				    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
-				  </div>
-				  <div id="canned_response_list"></div>
-				</div>
-			<% end %>
-		</div>
-		<% end %> 
+			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			</div>
+			<%= link_to( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "/helpdesk/canned_responses/index/#{@ticket.id}", "data-ajax-dialog" => true, "data-width" => "650", :id => "canned_response_show", :title => "Canned Responses", :class => "hide insert-canned-response" ) %> 
 		<% unless @ticket_notes.blank? %>
 			<%= render :partial => 'note', :collection => @ticket_notes %>
 			<%= will_paginate @ticket_notes %>
@@ -85,46 +76,46 @@
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
 	<% javascript_tag do %>
-	var activeForm = null;
-	swapEmailNote = function(formid, link){  
-			jQuery("#PagesTab").click();
-			
-			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid)){
-				//!VISIBILITY a visibility trigger is done to inform node that an agent has stopped replying
-				jQuery("#"+activeForm.get(0).id).hide().trigger('visibility'); 
+		var activeForm = null;
+		swapEmailNote = function(formid, link){  
+				jQuery("#PagesTab").click();
+				
+				if((activeForm != null) && (jQuery(activeForm).get(0).id != formid)){
+					//!VISIBILITY a visibility trigger is done to inform node that an agent has stopped replying
+					jQuery("#"+activeForm.get(0).id).hide().trigger('visibility'); 
+				}
+
+				//!VISIBILITY a visibility trigger is done to inform node that an agent is replying
+				activeForm = jQuery('#'+formid).show().trigger('visibility');
+
+				switch(formid){
+					case 'cnt-reply':
+					case 'cnt-note':
+					case 'cnt-fwd':					
+							invokeRedactor(formid+"-body",formid);
+							jQuery('#'+formid+"-body").getEditor().focus();
+							if(jQuery.browser.mozilla){
+								jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
+							}
+							jQuery('#'+formid+"-body").getEditor().on('blur',function(){
+								try{
+									jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
+									jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
+								}catch(e){}
+							});
+						
+
+					break; 
+					case 'cnt-fb-post': 
+						setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
+					break;
+					case 'cnt-tweet' : 
+						setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
+					break;
+				}
 			}
 
-			//!VISIBILITY a visibility trigger is done to inform node that an agent is replying
-			activeForm = jQuery('#'+formid).show().trigger('visibility');
-
-			switch(formid){
-				case 'cnt-reply':
-				case 'cnt-note':
-				case 'cnt-fwd':					
-						invokeRedactor(formid+"-body",formid);
-						jQuery('#'+formid+"-body").getEditor().focus();
-						if(jQuery.browser.mozilla){
-							jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
-						}
-						jQuery('#'+formid+"-body").getEditor().on('blur',function(){
-							try{
-								jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
-								jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
-							}catch(e){}
-						});
-					
-
-				break; 
-				case 'cnt-fb-post': 
-					setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
-				break;
-				case 'cnt-tweet' : 
-					setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
-				break;
-			}
-		}
-
-	var activeTinyMce = null;
+		var activeTinyMce = null;
     function show_canned_response(button, ticket_id){
       	jQuery("#canned_response_container").css(jQuery(button).offset());
 
@@ -146,7 +137,7 @@
 		function insertIntoConversation(value,element_id){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
-			fwd_area = jQuery('#cnt-fwd')
+			fwd_area = jQuery('#cnt-fwd');
 			tweet_area = jQuery('#cnt-tweet');
 
 			if(element_id == undefined){
@@ -155,6 +146,9 @@
 				}
 				else if (note_area.css('display') =='block'){
 					element_id = "cnt-note-body";
+				}
+				else if (fwd_area.css('display') =='block'){
+					element_id = "cnt-fwd-body";
 				}
 			}
 			if(tweet_area.css("display") == 'block'){
@@ -165,6 +159,7 @@
 								.trigger("keydown");
 				});			
 			}
+
 			if(jQuery(element_id)){
 		        	jQuery("#"+element_id).getEditor().focus();
 		       		jQuery("#"+element_id).insertHtml(value);
@@ -173,18 +168,19 @@
 			return;
 		}
 
-		function getCannedResponse(ticket_id, ca_resp_id){
+		function getCannedResponse(ticket_id, ca_resp_id, element) {
 			jQuery("#canned_response_container").addClass("loading")
+			jQuery(element).addClass("response-loading");
   			jQuery.ajax({	type: 'POST',
   						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
   						contentType: 'application/text',
   						async: false,
-						success: function(data){		
-  									insertIntoConversation(data,activeTinyMce);
+						success: function(data){	
+  									insertIntoConversation(data);
+  									jQuery(element).removeClass("response-loading");
+  									jQuery(element).qtip('hide');
+  									jQuery('.ui-icon-closethick').trigger('click');
 
-  							    jQuery("#canned_response_list")
-  							      .removeClass("loading")
-  							      .hide(300);
   								}
   						});
 		return true;
@@ -203,10 +199,9 @@
   			jQuery(".toEmailMoreLink").text('');
   		}
   	}
-
-  <% end %>
-
+	<% end %>
 <% end %>
+
 
 <% content_for :onload_script do -%> 	
 	validateOptions = {
@@ -224,3 +219,4 @@
 	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 	setTimeout(function(){jQuery('#TicketProperties').trigger('afterShow')},50);
 <%- end %>
+<% end %>

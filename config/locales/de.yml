@@ -300,10 +300,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Sind Sie sicher, dass Sie diese Musterantwort löschen möchten?"
-      new: 
-        title: "Standardantwort hinzufügen        "
       edit: 
         title: "Standardantwort bearbeiten"
+    responses:
+      new: 
+        title: "Standardantwort hinzufügen        "
       form: 
         groups: "Techniker in der Gruppe"
         response_name: "Titel der Antwort"

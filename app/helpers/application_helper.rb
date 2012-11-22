@@ -88,8 +88,8 @@ module ApplicationHelper
     flash.discard
   end
 
-  def each_or_message(partial, collection, message)
-    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "list-noinfo")
+  def each_or_message(partial, collection, message, locals = {})
+    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
   end
   
   def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
@@ -132,13 +132,13 @@ module ApplicationHelper
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets) ],
-      ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
-      ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
+      ['/helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
+      ['/helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    (current_user && current_user.can_view_all_tickets?)],
-      ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
+      ['/support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/reports',            :reports,      permission?(:manage_reports) ],
       ['/admin/home',         :admin,        permission?(:manage_users)],
       company_tickets_tab
@@ -606,7 +606,7 @@ module ApplicationHelper
   private
     def solutions_tab
       if current_portal.main_portal?
-        ['solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+        ['/solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
       elsif current_portal.solution_category
         [solution_category_path(current_portal.solution_category), :solutions, 
               allowed_in_portal?(:open_solutions)]

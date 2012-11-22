@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "¿Está seguro de que desea eliminar esta respuesta enlatada?"
-      new: 
-        title: "Agregar respuesta tipo        "
       edit: 
         title: "Editar respuesta tipo"
+    responses:
+      new: 
+        title: "Agregar respuesta tipo        "
       form: 
         groups: "Los agentes del grupo"
         response_name: "Título de la respuesta"

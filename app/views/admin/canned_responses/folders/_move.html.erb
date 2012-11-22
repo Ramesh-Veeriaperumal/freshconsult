@@ -1,0 +1,8 @@
+<div class="dialog-special center">
+<%= select_tag "move_folder_id", %(<option value="0">#{t('canned_folders.select_folder')}</option>)+options_from_collection_for_select(@ca_res_folders, 'id', 'name') %>
+</div>
+<div class="button-container">
+<%= link_to_function t('canned_folders.move'), "canned_response_submit('#{update_folder_admin_canned_responses_folder_responses_path(@ca_res_folder)}', 'put', ['move_folder_id'])", :class => "uiButton", :id => "mo-link", :role => "button" %>
+
+<a class="uiButton" id="cancel-move" role="button"><%= t('cancel') %></a>
+</div>

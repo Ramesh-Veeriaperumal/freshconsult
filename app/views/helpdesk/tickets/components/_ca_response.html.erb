@@ -1,8 +1,10 @@
-<li class="menu-item">
-  <span class="bullet"></span>
- <% if @ticket %>
-  <%= link_to_function ca_response.title, "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
- <% else %>
-  <%= link_to_function ca_response.title, "getCannedResponse('#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
- <% end %>
+<li class="close-dialog">
+	<% if @ticket
+			title = truncate(Liquid::Template.parse(ca_response.content_html).render('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name), :length => 200)
+			function = "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}', this)"
+	  else
+	  	title = truncate(h(ca_response.content_html), :length => 200)
+	  	function = "getCannedResponse('#{ca_response.id}', this)"
+	  end %>
+  <%= link_to_function "<span id='resp-icon'></span><span id='resp-text'>"+ca_response.title+"</span>", function, :class => "custom-tip-left", "data-tip-classes" => 'ui-tooltip-response',  :title => title, "data-response" => ca_response.id %>
 </li>

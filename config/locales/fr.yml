@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Êtes-vous sûr de vouloir supprimer cette réponse enregistrée ?"
-      new: 
-        title: "Ajouter une réponse type        "
       edit: 
         title: "Modifier la réponse type"
+    responses:
+      new: 
+        title: "Ajouter une réponse type        "
       form: 
         groups: "Agents du groupe"
         response_name: "Intitulé"

@@ -3,6 +3,7 @@
 <%= include_javascripts :redactor  %>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <% javascript_tag do %>
+
 jQuery(document).ready(function(){
 	invokeRedactor('ca-content');
   if ('<%=@ca_response.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
@@ -38,7 +39,7 @@ function toggleGroup(access_id)
 <% end %> 
 
 
-<%= f.error_messages :object_name => 'canned_response' %>
+<%= f.error_messages :object_name => 'canned_response_response' %>
 <ul class="ui-form">
 	<li>
     		<%= f.label(:title, t('.response_name')) %>
@@ -51,9 +52,14 @@ function toggleGroup(access_id)
 			</label>
    		<%= f.text_area :content_html, :class => "ca_content_body", :id => 'ca-content' %>		
 	</li>
+	<li class="folder-pane">
+    	<%= label_tag(:new_folder_id, t('canned_folders.folder'), :class => "caption") %>
+    	<%= select_tag(:new_folder_id, options_from_collection_for_select(@ca_res_folders, 'id', 'name', 
+    		@folder.id)) %>	
+	</li>
 	<li class="inline-field">
 	<% f.fields_for :visibility do |access| %>
-		<div>			
+			
 			<label class="caption"><%=t('.available_for')%>:</label>
 			<div class="fields inline-radio">
 				<div class="inline-radio">
@@ -73,14 +79,12 @@ function toggleGroup(access_id)
 			    </div>
 				</div>
 			</div>
-		</div>			   
- 	 	
 	<%end%>
 	</li>
 </ul>
 <div class="button-container">
-	<%= submit_tag t('save'), :class => "uiButton", :id => "canned_submit" %>	      	
-	<%= link_to(t('cancel'), admin_canned_responses_path , :class => "uiButton" ) %>
+	<%= f.submit t('save'), :class => "uiButton" %>	      	
+	<%= link_to(t('cancel'), :back , :class => "uiButton" ) %>
 </div>
 
 <% content_for :pagefixed do %>

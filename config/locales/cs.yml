@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Opravdu chcete smazat tuto předem připravenou odpověď?"
-      new: 
-        title: "Přidat předpřipravenou odpověď        "
       edit: 
         title: "Upravit předpřipravenou odpověď"
+    responses:
+      new: 
+        title: "Přidat předpřipravenou odpověď        "
       form: 
         groups: "Agenti ve skupině"
         response_name: "Název odpovědi"

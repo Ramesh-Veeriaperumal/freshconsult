@@ -1,0 +1,9 @@
+<li>
+	<% url = "#{helpdesk_ca_folder_url(ca_res_folder.id)}" 
+	@ticket? ticket = @ticket.id : ticket = "bulk" %>
+
+	<%= link_to_function(truncate(h(ca_res_folder.name), :length => 25, :omission => "...")+
+	" (#{current_account.canned_responses.count(:conditions => {:folder_id => ca_res_folder.id})}) ", 
+	"fetchResponses('#{url}?ticket_id=#{ticket}', '#folder-#{ca_res_folder.id}')", 
+	:class => "item_info", :id => "folder-#{ca_res_folder.id}", "data-folder" => "#{ca_res_folder.id}") %>
+</li>

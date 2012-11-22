@@ -1,3 +1,5 @@
+<div id="bulkcontent">
+<div id="bulkfull">
 <div class="bulktickets" id="bulktickets">
 <div class="dialog-special small_curve " id="update-fields">
   <div class="content clearfix scrollbar">
@@ -32,8 +34,8 @@
 	   <%end%>
   </div>
 </div>
-<div class="dialog-special small_curve top_spacing" id="reply-fields">
-  <div class="content clearfix">
+<div class="dialog-special small_curve" id="reply-fields">
+  <div id="content-bulk" class="content clearfix">
     <div class="field-item" id="bulkreplycheck">
       <label for="addbulkreply" rel="inputcheckbox">
         <input id="addbulkreply" type="checkbox" name="Add Bulk Reply" value="addbulkreply" /> Add Bulk Reply
@@ -51,6 +53,13 @@
   <%= button_to_function t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
 </div>
 </div>
+<div id="bulk-response-group" class="hide">
+  <a id="no-response">&laquo; <%= t('canned_folders.back_to_bulk') %></a>
+  <div id="bulk_canned_response_holder"> 
+  </div> 
+</div>
+</div>
+</div>
 
 <% javascript_tag do %> 
   
@@ -59,6 +68,8 @@
   		active_dialog.dialog('close');
    	}); 
 
+  jQuery('#no-response').hide();
+
   function submitBulkUpdate(){
     if(!$('addbulkreply').checked || jQuery("#reply-multiple-cnt-reply-multiple-body").valid()){
       <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )" %>
@@ -66,6 +77,15 @@
       jQuery('#loader').removeClass("hide");
     }
   }
+
+  jQuery('#no-response').bind('click', function(){
+    jQuery('#bulkcontent').css('height','auto');
+    jQuery('#bulktickets').animate({marginLeft: '+=688px'}, 300, function() {
+      jQuery('#bulk-response-group').addClass('hide');
+    });
+    jQuery('#no-response').toggle('fast');
+    jQuery('#clear-search').trigger('click');
+});
 
  jQuery("[rel=inputselectbox]").bind('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
@@ -90,7 +110,7 @@
       {
         jQuery("#bulkreplyform").slideDown();
         jQuery("#bulkreplyform textarea").attr("disabled", false);
-        jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus()
+        jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus();
       }
     }
     else
@@ -103,9 +123,8 @@
         jQuery("#bulkreplyform textarea").attr("disabled", true);
       }
       jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');
-    }
-
-  });
+      }
+    });
 
 function groupchange(value){
     this.value = value;
@@ -123,4 +142,9 @@ function groupchange(value){
                     }
      });
    }
+
+jQuery('.ui-icon-closethick').bind('click', function(){
+  if(!jQuery('#no-response').is(':hidden'))
+    jQuery('#no-response').click();
+});
 <% end %>

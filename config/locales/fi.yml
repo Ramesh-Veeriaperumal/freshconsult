@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Haluatko varmasti poistaa tämän tallennetun vastauksen?"
-      new: 
-        title: "Lisää tallennettu vastaus        "
       edit: 
         title: "Muokkaa tallennettua vastausta"
+    responses:
+      new: 
+        title: "Lisää tallennettu vastaus        "
       form: 
         groups: "Ryhmässä olevat asiakaspalvelijat"
         response_name: "Vastaukset otsikko"

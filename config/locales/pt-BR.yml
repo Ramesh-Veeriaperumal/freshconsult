@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Tem certeza de que deseja excluir esta resposta padronizada?"
-      new: 
-        title: "Adicionar resposta padronizada        "
       edit: 
         title: "Editar resposta padronizada"
+    responses:
+      new: 
+        title: "Adicionar resposta padronizada        "
       form: 
         groups: "Agentes no grupo"
         response_name: "Título da resposta"

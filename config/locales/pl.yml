@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Czy na pewno chcesz usunąć ten szablon odpowiedzi?"
-      new: 
-        title: "Dodaj szablon odpowiedzi        "
       edit: 
         title: "Edytuj szablon odpowiedzi"
+    responses:
+      new: 
+        title: "Dodaj szablon odpowiedzi        "
       form: 
         groups: "Agentów w grupie"
         response_name: "Tytuł odpowiedzi"

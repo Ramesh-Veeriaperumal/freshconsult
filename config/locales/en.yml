@@ -535,21 +535,33 @@ en:
       assign_product: "Assign Product"
       product_label_msg: "Product"
     canned_responses:
-      ca_response:
-        delete_confirm: Are you sure you want to delete this canned response?
-      new: 
-        title: Add Canned response        
-      edit: 
-        title: Edit Canned response
-      form: 
-        groups: Agents in group
-        response_name: Response title
-        all_agents: All agents
-        me_only: Me only
-        available_for: Available for
+      helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      folders:
+        helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      responses:
+        edit: 
+          title: Edit Canned response
+        new: 
+          title: Add Canned response   
+        form: 
+          groups: Agents in group
+          response_name: Response title
+          all_agents: All agents
+          me_only: Myself
+          available_for: Available for
       index: 
         new: Add Canned response
         title: Canned responses
+    ca_response:
+      delete_confirm: Are you sure you want to delete this canned response?
     twitters:
       index:
         new: Add Twitter account
@@ -601,7 +613,7 @@ en:
         portal: Portal
         account: Account
         customer: Customer
-        canned-response: Canned Response
+        canned-response: Canned Responses
         multi-product: Multiple Products
         twitter-setting: Twitter
         survey: Survey Settings
@@ -609,26 +621,6 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
-    canned_responses:
-      index:
-        title: Canned responses
-        new: Add Canned response
-      helpnote:
-        title: Canned responses
-        tour: Help me use canned responses
-        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
-        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      new:
-        title: Add Canned response        
-        delete_confirm: Are you sure you want to delete this canned response?      
-      edit: 
-        title: Edit Canned response
-      form:
-        available_for: Available for
-        all_agents: All agents
-        groups: Agents in group
-        me_only: Me only
-        response_name: Response title
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -2679,6 +2671,38 @@ en:
   saving_draft: "Saving..."
   draft: "Draft:"
   last_draft: "Your last draft"
-  clear_draft_text: "Clear stored draft?"
+  clear_draft_text: "Are you sure you want to clear saved draft?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
+  canned_folders:
+    new: "Folder name"
+    move: "Move"
+    title: "Canned Response Folders"
+    no_response: "No responses in this folder"
+    new_response: "New Canned Response"
+    responses: "Canned Responses"
+    viewing: "Folder: "
+    create: "Create Folder"
+    edit: " Rename"
+    delete: " Delete"
+    delete_confirmation: "Delete folder with all its contents ??"
+    move: "Move"
+    del: "Delete"
+    folder: "Folder"
+    recently: "Recently used..."
+    pick: "Pick a canned response"
+    search: "Search canned responses"
+    back_to_bulk: "Back to Bulk Reply"
+    folder_created: "Canned Response Folder was successfully created."
+    no_edit: "Default folder cannot be changed !!"
+    updated: "Canned Response Folder has been updated successfully !!"
+    deleted: "Canned Response Folder has been deleted successfully."
+    no_folders: "No Canned Responses"
+    folder_update: "Selected responses have been moved to the folder: {{folder_name}}"
+    update: "Canned Response was successfully updated."
+    created: "Canned Response was successfully created."
+    delete_multiple: "The selected canned responses were deleted!!"
+    no_delete: "Default folder cannot be deleted!!"
+    create_new: "Create New"
+    no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
+    select_folder: "Select Folder"

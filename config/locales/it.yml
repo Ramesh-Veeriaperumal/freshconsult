@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Eliminare questa risposta predefinita?"
-      new: 
-        title: "Aggiungi risposte registrate        "
       edit: 
         title: "Modifica risposte registrate"
+    responses:
+      new: 
+        title: "Aggiungi risposte registrate        "
       form: 
         groups: "Agenti in gruppi"
         response_name: "Titolo risposta"

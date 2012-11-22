@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Är du säker på att du vill radera detta avvisade svar?"
-      new: 
-        title: "Lägg till avvisat svar        "
       edit: 
         title: "Redigera avvisat svar"
+    responses:
+      new: 
+        title: "Lägg till avvisat svar        "
       form: 
         groups: "Agenter i gruppen"
         response_name: "Svarsrubrik"

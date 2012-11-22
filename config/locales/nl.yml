@@ -303,10 +303,11 @@
     canned_responses:
       ca_response:
         delete_confirm: "Weet u zeker dat u dit standaardantwoord wilt verwijderen?"
-      new: 
-        title: "Standaardantwoord toevoegen        "
       edit: 
         title: "Standaardantwoord bewerken"
+    responses:
+      new: 
+        title: "Standaardantwoord toevoegen        "
       form: 
         groups: "Medewerkers in groep"
         response_name: "Titel reactie"

@@ -96,7 +96,11 @@
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
     admin.resources :portal, :only => [ :index, :update ]
-    admin.resources :canned_responses
+    admin.namespace :canned_responses do |ca_response|
+      ca_response.resources :folders do |folder|
+        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
+      end
+    end
     admin.resources :products
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
@@ -256,7 +260,8 @@
 
     helpdesk.resources :notes
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
-    helpdesk.resources :canned_responses
+    helpdesk.resources :ca_folders
+    helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 
