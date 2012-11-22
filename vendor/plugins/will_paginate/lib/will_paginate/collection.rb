@@ -47,8 +47,6 @@ module WillPaginate
     # is best to do lazy counting; in other words, count *conditionally* after
     # populating the collection using the +replace+ method.
     def initialize(page, per_page, total = nil, extra_offset = 0)
-      puts "This is called inside WillPaginate::Collection::initialize"
-      puts "extra_offset is #{extra_offset}"
       @current_page = page.to_i
       raise InvalidPage.new(page, @current_page) if @current_page < 1
       @per_page = per_page.to_i
@@ -85,8 +83,6 @@ module WillPaginate
     # The Array#paginate API has since then changed, but this still serves as a
     # fine example of WillPaginate::Collection usage.
     def self.create(page, per_page, total = nil, extra_offset = 0, &block)
-      puts "self.create inside WillPaginate::Collection ------- "
-      puts "extra_offset is #{extra_offset}"
       pager = new(page, per_page, total, extra_offset)
       yield pager
       pager
@@ -104,9 +100,6 @@ module WillPaginate
     # the offset is 30. This property is useful if you want to render ordinals
     # side by side with records in the view: simply start with offset + 1.
     def offset
-      puts "Inside offset method"
-      puts "extra_offset is #{extra_offset}"
-      puts "offset calculated to be :: #{ (((current_page - 1) * per_page) + extra_offset.to_f) } "
       ((current_page - 1) * per_page) + extra_offset.to_f
     end
 

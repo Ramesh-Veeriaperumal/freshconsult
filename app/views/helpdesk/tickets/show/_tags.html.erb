@@ -1,0 +1,5 @@
+<li class="field">
+	<label for="ticket_tags"><%=t('tag.title')%></label>
+	<input type="hidden" rel="tagger" 
+			name="helpdesk[tags]" value= "<%= @ticket.tags.collect{|tag| tag.name}.join(',') %>" />
+</li>

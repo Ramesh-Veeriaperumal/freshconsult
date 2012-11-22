@@ -48,15 +48,22 @@ Helpdesk.Multifile = {
         jQuery("#"+container).show();
 		
         var target = jQuery("#"+jQuery(oldInput).attr('fileList'));
-        target.prepend(jQuery.tmpl(this.template, {
-                name: jQuery(oldInput).val(),
+        target.append(jQuery.tmpl(this.template, {
+                name: jQuery(oldInput).val().replace(/^.*[\\\/]/, ''),
                 inputId: jQuery(oldInput).attr('id')
             }));
+        jQuery("#"+container + ' label i').text(target.children().length);
     },
     remove: function(link){
 		try{
+            var fileInput = jQuery('#'+jQuery(link).attr('inputId'));
+            var target = jQuery("#"+jQuery(fileInput).attr('fileList'));
+            var container = jQuery(fileInput).attr('fileContainer');
+
 			jQuery('#'+jQuery(link).attr('inputId')).remove();
             jQuery(link).parents("div:first").remove();
+
+            jQuery("#"+container + ' label i').text(target.children().length);
 		}catch(e){
 			alert(e);
 		}

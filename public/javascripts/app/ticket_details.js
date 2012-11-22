@@ -1,4 +1,91 @@
 (function($) {
+// Initialisation
+TICKET_DETAILS_DATA['updating_properties'] = false;
+$('#helpdesk_ticket_submit').hide();
+//Ticket Properties Update Ajax Function
+var ticket_update_timeout;
+var tmp_count = 0;
+
+
+//Agents updation on Group Change.
+
+
+var dontAjaxUpdate = false;
+var deferredTicketUpdate = function(timeout) {
+    timeout = timeout || 3000;
+    if (typeof(ticket_update_timeout) != 'undefined') {
+        clearTimeout(ticket_update_timeout);
+    }
+
+    if ($('#custom_ticket_form').valid()) {
+        ticket_update_timeout = setTimeout(function() {
+            $('#custom_ticket_form').submit();
+        },3000);
+    }
+
+}
+
+
+showHideEmailContainer = function(){
+    $(".ccEmailMoreContainer").toggle();
+    if($(".ccEmailMoreContainer").css("display") == "inline"){
+        $(".ccEmailMoreLink").text('');
+    }
+}
+
+showHideToEmailContainer = function(){
+    $(".toEmailMoreContainer").toggle();
+    if($(".toEmailMoreContainer").css("display") == "inline"){
+        $(".toEmailMoreLink").text('');
+    }
+}
+
+changeStatusToResolved = function() {
+    $('#helpdesk_ticket_status option').prop('selected', false);
+    $('#helpdesk_ticket_status option[value=4]').prop('selected', true);
+    dontAjaxUpdate = true;
+    $('#helpdesk_ticket_status').trigger('change');
+}
+
+
+$('#helpdesk_ticket_group_id').bind("change", function(e){
+    $('#TicketProperties .default_agent')
+        .addClass('loading-right');
+
+    $.ajax({type: 'POST',
+        url: '/helpdesk/tickets/get_agents/'+this.value,
+        contentType: 'application/text',
+        success: function(data){
+            $('#TicketProperties .default_agent select')
+                .html(data)
+                .trigger('change');
+
+            $('#TicketProperties .default_agent').removeClass('loading-right');
+          }
+    });
+});
+changeAggentList = function(group_id)
+{
+    console.log('changeAggentList');
+}
+
+function dueDateSelected(date){
+new Date(date);
+}
+
+var fetchLatestNotes = function() {
+    $.ajax({
+        url: TICKET_DETAILS_DATA['fetch_notes_url'],
+        type: 'GET',
+        data: {last_note: TICKET_DETAILS_DATA['last_note_id']},
+        success: function(response) {
+            $('#all_notes').append(response);
+            console.log('completed');
+            console.log('Last Note: ' + TICKET_DETAILS_DATA['last_note_id']);
+        }
+    });
+}
+
 $(document).ready(function() {
     $('ul.tkt-tabs').each(function(){
         // For each set of tabs, we want to keep track of
@@ -37,25 +124,138 @@ $(document).ready(function() {
         return "<i class='priority_block priority_color_" + item.id + "'></i>" + item.text; 
     }
 
+    var escapePriority = function (markup) {
+        if (markup && typeof(markup) === "string") {
+            return markup.replace(/&/g, "&amp;");
+        }
+        return markup;
+    }
+    var defaultSelect2Format = function(item) {
+        return item.text.escapeHTML(); 
+    }
+
+    var formatTag = function(item) {
+        return item.value;
+    }
+
     $("select").data('placeholder','');
-    $("select.dropdown, select.dropdown_blank, select.nested_field").livequery(function(){
+    $("select.dropdown, select.dropdown_blank, select.nested_field, #reply_email_id, select.select2").livequery(function(){
         if (this.id == 'helpdesk_ticket_priority') {
             $(this).select2({
-                width: 'element',
                 formatSelection: formatPriority,
-                formatResult: formatPriority
+                formatResult: formatPriority,
+                escapeMarkup: escapePriority,
+                specialFormatting: true,
+                minimumResultsForSearch: 5,
             });
         } else {
             $(this).select2({
-                width: 'element'
+                minimumResultsForSearch: 5
             }); 
         }
     });
 
+    $('[rel=tagger]').livequery(function() {
+        $(this).select2({
+            tags: TICKET_DETAILS_DATA['tag_list'],
+            tokenSeparators: [','],
+        });
+    })
+
+    $("[rel=autocomplete_emails]").livequery(function(){
+        $(this).select2({
+            tokenSeparators: [','],
+            tags: function() {
+                console.log(this)
+            },
+            minimumInputLength: 1,
+            ajax: {
+                url: '/helpdesk/authorizations/autocomplete',
+                dataType: 'json',
+                data: function(term, page) {
+                    return {
+                        v: term
+                    };
+                },
+                results: function (response, page) {
+                    console.log(response);
+                    return response;
+                }
+            },
+
+            formatSelection: formatEmailNames,
+            formatResult: formatEmailNames
+        })
+    });
+
+    //For Clearing Bcc, Cc email list and hiding those containers
+
+    $('[rel=toggle_email_container]').live('click',function(ev) {
+        ev.preventDefault();
+        var container = $('#' + $(this).data('container'));
+        var select = $('#' + $(this).data('container') + ' select');
+
+        container.toggle();
+        if (container.is(':visible')) {
+            $('#' + $(this).data('toggle-button')).hide();
+        } else {
+            $('#' + $(this).data('toggle-button')).show();
+        }
+
+        if (typeof($(this).data('clear')) != 'undefined' && $(this).data('clear') == true) {
+            container.find('li.choice').remove();
+            $('#' + $(this).data('toggle-checkbox')).prop('checked', false);
+            $('#' + $(this).data('toggle-button')).show();
+        } else {
+            $('#' + $(this).data('toggle-checkbox')).prop('checked', true);
+        }
+    });
+
+    //Loading Ticket Activities
+    $("#TicketForms form").live('submit', function(ev) {
+        ev.preventDefault();
+        jQuery(this).ajaxSubmit({
+            dataType: 'xml',
+            beforeSubmit: function(values, form) {
+                var format = $('<input type="hidden" name="format" value="xml" />');
+                $(form).append(format);
+            },
+            success: function(response) {
+                fetchLatestNotes();
+            }
+        });
+    });
+
+    $('[rel=TicketReplyPlaceholder]').live('click', function(ev) {
+        ev.preventDefault();
+        $(this).hide();
+        $('#ReplyButton').click();
+    })
+    // $('.cc_fields label').live('click',function() {
+    //     $('#' + $(this).attr('for')).select2('focus');
+    // });
+
+// jQuery('a[rel=cc_button_<%=cntid%>]').click(function(ev){
+// ev.preventDefault();
+// jQuery(jQuery(this).data("parent")).toggle();
+// jQuery(this).trigger("textChange");
+
+// }).bind("textChange", function(ev){
+// _condition = (jQuery(jQuery(this).data("parent")).css("display") != "none");
+// jQuery(this).text( _condition ? jQuery(this).data("hideText") : jQuery(this).data("showText")); 
+// jQuery(jQuery(this).data("input")).prop("checked", _condition);
+// });
+
+// jQuery('[rel=cc_div]').bind("cc_visibility", function(eo){
+// _condition = (jQuery(this).find("input[type=hidden]").size() > 0)
+// jQuery(jQuery(this).data("parent")).toggle(_condition);
+// jQuery(jQuery(this).data("button")).trigger("textChange");
+// }).trigger('cc_visibility');
 
     //   Copied from Old Show Page
     var activeForm = null;
-    swapEmailNote = function(formid, link){  
+    swapEmailNote = function(formid, link){
+        $('[rel=TicketReplyPlaceholder]').hide();
         jQuery("#PagesTab").click();
 
         if((activeForm != null) && ($(activeForm).get(0).id != formid))
@@ -154,21 +354,6 @@ $(document).ready(function() {
         return true;
     }
 
-    function showHideEmailContainer(){
-        $(".ccEmailMoreContainer").toggle();
-        if($(".ccEmailMoreContainer").css("display") == "inline"){
-            $(".ccEmailMoreLink").text('');
-        }
-    }
-
-    function showHideToEmailContainer(){
-        $(".toEmailMoreContainer").toggle();
-        if($(".toEmailMoreContainer").css("display") == "inline"){
-            $(".toEmailMoreLink").text('');
-        }
-    }
-
-
     //  End of Old Show page copy
 
 	// -----   START OF TICKET BAR FIXED TOP ------ //
@@ -190,33 +375,27 @@ $(document).ready(function() {
     });
     // -----   END OF TICKET BAR FIXED TOP ------ //
 
-    $('#helpdesk_ticket_submit').hide();
-    //Ticket Properties Update Ajax Function
-    var ticket_update_timeout;
-    var tmp_count = 0;
-
-
-    var deferredTicketUpdate = function(timeout) {
-        timeout = timeout || 3000;
-        clearTimeout(ticket_update_timeout);
-        ticket_update_timeout = setTimeout(function() {
-            if ($('#custom_ticket_form').valid()) {
-                $('#custom_ticket_form').submit();
-            }
-        },3000);
-    }
 
     $('#custom_ticket_form').on('change',function(ev) {
-        console.log(ev.target);
-        if (ev.target.id == 'helpdesk_ticket_group_id' || $(ev.target).hasClass('nested_field')) {
-            return true;
-            //Avoiding Updates firing for changes to Group Field
+        if (!dontAjaxUpdate) 
+        {
+            $('#helpdesk_ticket_submit').show();
+            TICKET_DETAILS_DATA['updating_properties'] = true;
+            var submit_timeout = 1500;
+            if (ev.target.id == 'helpdesk_ticket_group_id') {
+                return true;
+                //Avoiding Updates firing for changes to Group Field
+                //This will be fired after the Agents are loaded.
+            }
+            deferredTicketUpdate(submit_timeout);
         }
-        deferredTicketUpdate();
+        dontAjaxUpdate = false;
     } );
 
     $('#custom_ticket_form').on('submit', function(ev) {
         ev.preventDefault(); 
+        var submit = $('#helpdesk_ticket_submit');
+        submit.val(submit.data('saving-text')).prop('disabled',true);
         var tkt_form = $('#custom_ticket_form');
         $.ajax({
             type: 'POST',
@@ -224,10 +403,15 @@ $(document).ready(function() {
             data: tkt_form.serialize(),
             dataType: 'json',
             success: function(response) {
-                console.log('Success');
-                console.log(response);
+                TICKET_DETAILS_DATA['updating_properties'] = false;
+                submit.val(submit.data('saved-text'))
+                    .prop('disabled',true)
+                    .hide('highlight',1500, function() {
+                        submit.val(submit.data('default-text')).prop('disabled',false);
+                    });
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                submit.text(submit.data('default-text')).prop('disabled',false);
                 console.log('Errors');
                 console.log(jqXHR);
                 console.log(textStatus);
@@ -235,6 +419,35 @@ $(document).ready(function() {
             }
         });
     });
+
+
+    // Capturing the Unload and making sure everything is fine, before we let the 
+    window.onbeforeunload = function(e) {
+        var messages = [];
+        if ($('#custom_ticket_form .error:input').length > 0 ) {
+            messages.push('There are errors in the form.');
+        }
+        console.log("TICKET_DETAILS_DATA['updating_properties'] : " + TICKET_DETAILS_DATA['updating_properties']);
+        if (TICKET_DETAILS_DATA['updating_properties']) {
+            messages.push('Unsaved changes in the form');
+        }
+
+        console.log('unload');
+        if (messages.length > 0) {
+            var msg = '';
+            messages.forEach(function(str) {
+                msg += str + "\n";
+            });
+            console.log(msg);
+            e = e || window.event;
+            if (e) {
+                e.returnValue = msg;
+            }
+
+            return msg;
+        }
+    };
+
 
 
     //ScrollTo the latest conversation
@@ -253,11 +466,6 @@ $(document).ready(function() {
             var remaining_notes = TICKET_DETAILS_DATA['total_notes'] - loaded_items;
             $('#show_more [rel=count-total-remaining]').text(TICKET_DETAILS_DATA['total_notes'] - loaded_items);
             
-            if (remaining_notes > TICKET_DETAILS_DATA['notes_per_page']) {
-                $('#show_more [rel=count-in-next-page]').text(TICKET_DETAILS_DATA['notes_per_page']);    
-            } else {
-                $('#show_more .commentbox').text('Show the remaining activities');
-            }
             $('#show_more').removeClass('hide');
             return true;
         } else {

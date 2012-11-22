@@ -236,6 +236,8 @@ class Helpdesk::TicketsController < ApplicationController
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_attributes(params[nscname])
+
+      update_tags
       #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
       respond_to do |format|
         format.html { 
@@ -757,8 +759,49 @@ class Helpdesk::TicketsController < ApplicationController
       :ticket_id => @ticket.id}
   end
 
+
+  def update_tags
+    new_tag_list= params[:helpdesk][:tags].split(",").map { |tag| tag.strip}
+    old_tag_list = @item.tags.map{|tag| tag.name}
+
+    add_ticket_tags( new_tag_list.select {|tag| !old_tag_list.include?(tag) })
+    #Choosing the ones that are not in the old list.
+
+    remove_ticket_tags(old_tag_list.select {|tag| !new_tag_list.include?(tag) }) 
+    #Choosing the ones that are in the old list and not in the new ones.
+
+  end
+
+  def add_ticket_tags(tags_to_be_added)
+
+    begin
+      tags_to_be_added.each do |tag_string|
+        tag = Helpdesk::Tag.find_by_name_and_account_id(tag_string, current_account) || Helpdesk::Tag.new(:name => tag_string, :account_id => current_account.id)
+        @item.tags << tag
+      end
+    rescue ActiveRecord::RecordInvalid => e
+    end
+
+  end
+
+  def remove_ticket_tags(tags_to_be_removed)
+
+    tags = current_account.tags.find_all_by_name(tags_to_be_removed)  
+    unless tags.blank?
+
+      # Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type().destroy is not working - Hencing trying a different route.
+      tag_uses = Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type(@item.id, tags.map{ |tag| tag.id } ,"Helpdesk::Ticket" ).collect(&:id)
+      Helpdesk::TagUse.destroy tag_uses
+
+      #Decrementing Tag Uses Count (on multiple items)
+      Helpdesk::Tag.update_all("tag_uses_count = tag_uses_count -1", {:id => tags.collect(&:id)})
+
+    end
+
+  end
+
   def select_show_page
-    # return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'
+    return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'
     # redirect_to url_for(:overwrite_params => { :action => 'show' }) if params[:action] == 'details'
     # if switch_to_new_show?
     #   return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'

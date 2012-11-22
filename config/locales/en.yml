@@ -1918,6 +1918,27 @@ en:
         linked_ticket: This ticket is linked to the forum
         conversation: Conversation 
         timesheet: Time Sheet
+        reply_form:
+          title: Reply to
+          cc: Cc
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+        forward_form:
+          cc: Cc
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+        tweet_form:
+          title: "Reply to %{user}"
+        facebook_form:
+          title: "Reply to %{user}"
+        history:
+          recent_item: Recent Items
       view_ticket:
         meta: meta
         linked_ticket: This ticket is linked to the forum
@@ -2577,7 +2598,7 @@ en:
   conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
   saved_draft: "Saved"
   saving_draft: "Saving..."
-  draft: "Draft:"
+  draft: "Draft"
   last_draft: "Your last draft"
   clear_draft_text: "Clear stored draft?"
   ticket_close_success: Your ticket has been successfully closed.

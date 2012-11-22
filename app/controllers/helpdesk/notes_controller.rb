@@ -22,6 +22,11 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
 
+  def since
+    @notes = @parent.notes.newest_first.since(params[:last_note])
+    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
+  end
+
   
   def create  
     build_attachments @item, :helpdesk_note

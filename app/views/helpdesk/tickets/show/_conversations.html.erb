@@ -7,12 +7,11 @@
 	<li class="conversation">
 		<a href="" class="avatar-wrap avatar-wrap-collapse"><p><span class='count_number' rel='count-total-remaining'>95</span><span rel='count_more'>more</span></p></a>
 		<a href="" class="commentbox commentbox-black">
-			<div><%= t('show_recent') %> <span rel="count-in-next-page">50</span> <span rel="display-type"><%=t('ticket.activities') %></span></div>
+			<div>Show more</div>
 		</a>
 	</li>
 </ol>
 <ol class="conversation_thread" id="all_notes">
-	<% puts "@ticket_notes :: #{@ticket_notes.inspect}" %>
 	<% unless @ticket_notes.blank? %>
 		<%= render :partial => "helpdesk/tickets/show/note.html.erb", :collection => @ticket_notes %>
 	<% end %>

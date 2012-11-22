@@ -457,13 +457,14 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, altered_choices = nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
+    choices = altered_choices || field.choices
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
@@ -482,11 +483,14 @@ module ApplicationHelper
       when "dropdown" then
         if (field.field_type == "default_status" and in_portal)
           element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
+        elsif (['default_priority','default_source','default_status'].include?(field.field_type) )
+          element = label + select(object_name, field_name, choices, {:selected => field_value},{:class => element_class}) 
+          #Just avoiding the include_blank here.
         else
-          element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value},{:class => element_class})
+          element = label + select(object_name, field_name, choices, {:include_blank => "...", :selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
-        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + select(object_name, field_name, choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "nested_field" then
         element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
@@ -496,7 +500,7 @@ module ApplicationHelper
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
-    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type }"
+    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
   end
 
   def add_cc_field_tag element , field    

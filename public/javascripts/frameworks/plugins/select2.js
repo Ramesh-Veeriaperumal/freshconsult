@@ -313,6 +313,7 @@
                             return;
                         }
                         // TODO 3.0 - replace query.page with query so users have access to term, page, etc.
+                        
                         var results = options.results(data, query.page);
                         query.callback(results);
                     }
@@ -812,8 +813,6 @@
         monitorSource: function () {
             this.opts.element.bind("change.select2", this.bind(function (e) {
                 if (this.opts.element.data("select2-change-triggered") !== true) {
-                    console.log(e);
-                    console.log(this.opts.element);
                     this.initSelection();
                 }
             }));
@@ -1697,7 +1696,11 @@
             container.empty();
             formatted=this.opts.formatSelection(data, container);
             if (formatted !== undefined) {
+              if (typeof(this.opts.specialFormatting) != undefined && this.opts.specialFormatting){
                 container.append(this.opts.escapeMarkup(formatted));
+              } else {
+                container.append(this.opts.escapeMarkup(formatted.escapeHTML()));
+              }
             }
 
             this.selection.removeClass("select2-default");
@@ -2077,7 +2080,8 @@
                 formatted;
 
             formatted=this.opts.formatSelection(data, choice);
-            choice.find("div").replaceWith("<div>"+this.opts.escapeMarkup(formatted)+"</div>");
+            var fomattedChoice = (typeof(this.opts.specialFormatting) != undefined && this.opts.specialFormatting) ? formatted : formatted.escapeHTML();
+            choice.find("div").replaceWith("<div>"+this.opts.escapeMarkup(fomattedChoice)+"</div>");
             choice.find(".select2-search-choice-close")
                 .bind("mousedown", killEvent)
                 .bind("click dblclick", this.bind(function (e) {
@@ -2357,7 +2361,7 @@
         dropdownCssClass: "",
         formatResult: function(result, container, query) {
             var markup=[];
-            markMatch(result.text, query.term, markup);
+            markMatch(result.text.escapeHTML(), query.term, markup);
             return markup.join("");
         },
         formatSelection: function (data, container) {
@@ -2381,7 +2385,7 @@
         tokenizer: defaultTokenizer,
         escapeMarkup: function (markup) {
             if (markup && typeof(markup) === "string") {
-                return markup.replace(/&/g, "&amp;");
+                // return markup.replace(/&/g, "&amp;");
             }
             return markup;
         },

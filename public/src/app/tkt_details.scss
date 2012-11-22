@@ -321,17 +321,21 @@ p strong{
 
 
 }
-.redactor{
+
+.pseudo_reply {
+	height: 15px;
+	background: #FFF;
+	padding: 25px;
+	font-size: 13px;
+	color: #999;
+	border-radius: 5px;
+	cursor: pointer;
+}
+.conversation_thread.redactor{
+	border:none;
 	margin-bottom: 30px;
 	margin-top: -21px;
-	-webkit-box-shadow: 0px 0px 0px #fff;
-  	   -moz-box-shadow: 0px 0px 0px #fff;
-        -ms-box-shadow: 0px 0px 0px #fff;
-            box-shadow: 0px 0px 0px #fff;
-            .commentbox{
-            	width: 85%;
-            	float: right;
-            }
+	@include box-shadow(none);
 
     .avatar-wrap:before{
     	left: 200px;
@@ -340,7 +344,382 @@ p strong{
     	background: #000;
     }
 
-}   
+    .commentbox {
+    	padding: 15px;
+    	min-height: 60px;
+    }
+
+    .form_title {
+    	font-size: 13px;
+    }
+
+    #TicketForms .ui-form {
+    	border: solid 1px #CCC;
+		@include corners(5px);
+		margin: 20px 0 10px;
+		background: #fdfdfd;
+    }
+
+    .request_panel {
+    	border: none;
+    	overflow:hidden;
+    }
+
+    .ui-form .inline-field {
+    	$message_window_bg_color: #FDFDFD;
+
+    	background: $message_window_bg_color;
+    	border-bottom: solid 1px #F3F3F3;
+    	padding: 5px 10px;
+    	@include border-radius(6px 6px 0 0);
+    	float: none;
+    	width: auto;
+		clear: both;
+
+    	label {
+    		float: none;
+    		display: inline-block;
+    		width: auto;
+    		font-weight: bold;
+    		margin-right: 15px;
+
+    	}
+
+    	input[type=text] {
+    		border: none;
+    		@include box-shadow(none);
+
+    		&:focus {
+    			border: none;
+    		}
+    	}
+
+    	.attachments-wrap {
+
+			display: block;
+
+			i {
+				font-style: normal;
+			}
+
+    	}
+
+    	&.cc_fields {
+    		overflow: hidden;
+    		label {
+				float:left;
+				width: 50px;
+				position:relative;
+				z-index:2;
+    		}
+
+    		.clear_emails {
+    			float:right;
+    			width: 30px;
+    			padding: 5px 15px;
+    			z-index: 2;
+    			position:relative;
+    		}
+    		.email_container {
+    			width: 100%;
+				float: right;
+				padding: 0 60px;
+				margin-top: -25px;
+				display: inline-block;
+				zoom: 1;
+				vertical-align: top;
+				@include box-sizing(border-box);
+				ul.multi_value_field {
+					border: none;
+					background: none;
+
+					li.choice {
+						background: rgba(240,240,240,0.3);
+						border: solid 1px #EEE;
+						padding: 2px 4px 3px 12px;
+					}
+				}
+			}
+
+    		.select2-container {
+    			width: 100%;
+				float: right;
+				padding: 0 60px;
+				position: relative;
+				top: -25px;
+				.select2-choices {
+					border: 1px $message_window_bg_color solid;
+					background: $message_window_bg_color;					
+				}
+    			.select2-choice, .select2-search-choice {
+    				float: none;
+    				width: auto;
+    				display: inline-block;
+    			}
+
+    		}
+
+
+    		input[type=text] {
+	    		display: inline-block;
+	    		width: 100%;
+	    		float: none;
+    		}
+    	}
+
+    	&.checkbox{
+    		overflow: hidden;
+    		label {
+				display:inline-block;
+				zoom: 1;
+				width: 100%;
+				position: static;
+    		}
+    		input[type=checkbox] {
+    			float: none;
+    		}
+    	}
+    	&.notify_agent{
+    		overflow: hidden;
+    		border: none;
+    		label {
+				display:inline-block;
+				zoom: 1;
+				width: 100px;
+				z-index:2;
+    		}
+
+    		.email_container {
+    			
+				display: inline-block;
+				zoom: 1;
+				vertical-align: top;
+				padding: 0 0 0 110px;
+				margin-top: -25px;
+				@include box-sizing(border-box);
+				ul.multi_value_field {
+					border: none;
+					background: none;
+
+					li.choice {
+						background: rgba(240,240,240,0.3);
+						border: solid 1px #EEE;
+						padding: 2px 4px 3px 12px;
+					}
+				}
+			}
+
+    		.select2-container {
+				.select2-choices {
+					border: 1px $message_window_bg_color solid;
+					background: $message_window_bg_color;					
+				}
+    			.select2-choice, .select2-search-choice {
+    				float: none;
+    				width: auto;
+    				display: inline-block;
+    			}
+
+    		}
+
+
+    		input[type=text] {
+	    		display: inline-block;
+	    		width: 100%;
+	    		float: none;
+    		}
+    	}
+    	.redactor_box {
+    		border: none;
+    	}
+
+    	.redactor_toolbar {
+    		background: none;
+    		border: none;
+    	}
+
+    	&.continous {
+    		border: none;
+    	}
+
+    	&.clearField {
+    		background: #FFF;
+    	}
+
+    	&.attachment-options {
+    		float:none;
+    		width: auto;
+
+    		padding: 0 10px;
+    		margin-bottom: -10px;
+
+    		label {
+    			float: left;
+    			width: 130px;
+    			margin: 10px 15px 0 0;
+    		}
+
+    		.file-types-def {
+    			padding: 3px;
+    			background: none;
+    		}
+    	}
+
+    }
+
+	.uiButton {
+		background: #e7e7e7;
+		border: solid 1px #ccc;
+		@include box-shadow(1px 0 3px rgba(0,0,0,0.04));
+		@include text-shadow(1px 0 0px #FFF);
+		@include vertical-gradient(#FFF, #e7e7e7);
+		color:#333;
+		font-weight: normal;
+
+		&.special {
+			background: #262626;
+			border: solid 1px #3a3a3a;
+			@include text-shadow(-1px 0 0px #000);
+			@include vertical-gradient(#4f4f4f, #262626);
+			color: #FFF;
+
+			&:hover {
+				border: solid 1px #4D4D4D;
+			}
+		}
+
+		&:hover {
+			border: solid 1px #999;
+		}
+	}
+
+    .request_panel .ui-form .request_form_options  {
+    	position: static;
+    	float: right;
+    	margin: 5px 0;
+    	width: 100px;
+    	text-align: right;
+    	a {
+    		margin: 10px;
+    		padding: 5px;
+    	}
+    }
+
+    #reply-draft {
+    	float: left;
+    	padding-top: 5px;
+
+    	.sav {
+    		background: #ededed;
+    		@include border-radius(0 4px 4px 0);
+    		color: #333;
+    		float:left;
+    		margin:0;
+    		padding: 3px 7px;
+    	}
+
+    	&.saving {
+    		.sav {
+    			@include corners(4px);
+    		}
+    	}
+
+    	.close-img {
+    		background: #b3b3b3;
+    		margin:0 1px 0 0;
+    		padding: 2px 7px 2px 3px;
+    		float:left;
+    		@include border-radius(4px 0 0 4px);
+    	}
+    }
+
+    #s2id_reply_email_id {
+    	&.select2-container {
+	    	.select2-choice {
+	    		background: none;
+	    		border-color: #FFF;
+	    	}
+
+	    	&:hover .select2-choice {
+			    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+			    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+			    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+			    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
+			    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+			    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
+			    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+			    border: 1px solid #aaa;
+			    outline: none;
+
+			    //Copied from Select2
+	    	}
+	    }
+
+	    &.select2-container-active .select2-choice {
+	    	background-color: #fff;
+		    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+		    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
+		    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+		    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
+		    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+	    	border: 1px solid #5897fb;
+			    //Copied from Select2
+
+	    }
+
+	    &.select2-container-active.select2-dropdown-open .select2-choice {
+	    	background-color: #fff;
+		    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+		    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
+		    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+		    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
+		    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+	    	border: 1px solid #AAA;
+			//Copied from Select2
+
+	    }
+    }
+    .email_fields {
+
+    }
+
+
+	.hidden_upload {
+		display: inline-block;
+		width: 200px;
+		margin: 0 10px;
+		div {
+			cursor: pointer;
+			color: #1272de;
+			width: 200px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			-webkit-text-overflow: ellipsis;
+			top: 16px;
+			position:relative;
+
+		}
+
+		span {
+			color: #434343;
+		}
+
+		input[type=file] {
+			height: 17px;
+			width: 200px;
+			position:relative;
+			@include opacity(0);
+		}
+		
+	}   
+
+}
+
 
 ol.conversation_thread{
 	padding: 0px 10px 10px 10px;
@@ -368,6 +747,10 @@ ol.conversation_thread{
 		background-image:url('/images/ajax-loader.gif');
 		background-repeat:no-repeat;
 		background-position: center;
+
+		p {
+			display: none;
+		}
 	}
 
 
@@ -493,7 +876,7 @@ ol.conversation_thread{
 			border: none;
 		}
 		overflow:hidden;
-		li{
+		li.field{
 			width: 100%;
 			float: left;
 			padding: 0 0 5px;
@@ -524,17 +907,41 @@ ol.conversation_thread{
 				padding: 10px 5px 5px;
 			}
 
-			.customSelect, select, input[type=text]{
+			.customSelect, select, input.text, input.number{
 				width: 310px;
 				color: #333;
 				@include box-shadow(0 1px 5px rgba(0,0,0,.15));
 				border: 1px solid #ccc;
 			}
 
+			.select2-container{ width: 310px; }
+
+			.select2-container-multi .select2-choices .select2-search-choice {
+				float: none;
+				display: inline-block;
+				width: auto;
+			}
+
 			input[type=text] {
 				width: 297px;
 			}
+
+			&.nested_field{
+				.level_2, .level_3 {
+					select, .select2-container {
+						width: 297px;
+					}
+				}
+			}
+
+			&.loading-right {
+				.select2-container {
+					display:none;
+				}
+			}
 		}
+
+
 
 		li.default_source, li.default_status, li.default_ticket_type, li.default_priority{
 			width: 50%;
@@ -542,7 +949,7 @@ ol.conversation_thread{
 			padding-bottom: 5px;
 			clear:none;
 			min-height: 60px;
-			.customSelect, select{
+			.customSelect, select, .select2-container{
 				width: 152px;
 			}
 			input[type=text]{
@@ -709,64 +1116,6 @@ ol.conversation_thread{
 			text-align: left;
 		}
 	}
-
-	.attachments-wrap{
-
-		color: #333333;
-		span{
-			margin-right: 10px;
-			b{
-				color: #999999;
-			}
-		}
-		h5{
-			font-size: 12px;
-			color: #1272de;
-			font-weight: bold;
-
-		}
-
-		.attachment-type {
-			margin: 0;
-			padding: 3px 0 3px 25px;
-			width: auto;
-			height: 14px;
-		}
-
-		.attachment-close{
-			background: url(/images/ticket-details/attachment-close.png) no-repeat;
-			display: inline-block;
-			width: 7px;
-			height: 7px;
-			margin-right: 10px;
-		}
-
-		ul{
-			margin-top: 10px;
-		}
-
-		li{
-			background: #fbf8f2;
-			border: 1px #e8e8e8 solid;
-			@include border-radius(4px);
-			padding: 5px 10px;
-			color: #1272de;
-			font-size: 12px;
-			margin-right: 5px;
-			float: left;
-			min-height: 20px;
-			height:auto !important;
-			width: auto;
-			min-width: 100px;
-			span{
-				color: #999999;
-			}
-			img{
-				vertical-align: middle;
-			}
-		}
-
-	}
 }
 
 .commentbox-gray{
@@ -851,6 +1200,73 @@ ol.conversation_thread{
 	   -moz-transition: all 0.5s ease;
 	    -ms-transition: all 0.5s ease;
 			transition: all 0.5s ease;
+}
+
+.attachments-wrap{
+
+	.attachments-container {
+		display: inline;
+	}
+
+	.attachment_list {
+		display: inline;
+	}
+
+	color: #333333;
+	span{
+		margin-right: 10px;
+		b{
+			color: #999999;
+		}
+	}
+	h5{
+		font-size: 12px;
+		color: #1272de;
+		font-weight: bold;
+
+	}
+
+	.attachment-type {
+		margin: 0;
+		padding: 3px 0 3px 25px;
+		width: auto;
+		height: 14px;
+	}
+
+	.attachment-close{
+		background: url(/images/ticket-details/attachment-close.png) no-repeat;
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		margin-right: 10px;
+	}
+
+	ul{
+		margin-top: 10px;
+	}
+
+	li, div.item{
+		background: #fbf8f2;
+		border: 1px #e8e8e8 solid;
+		@include border-radius(4px);
+		padding: 5px 10px;
+		color: #1272de;
+		font-size: 12px;
+		margin: 5px;
+		display: inline-block;
+		float: none;
+		min-height: 20px;
+		height:auto !important;
+		width: auto;
+		min-width: 100px;
+		span{
+			color: #999999;
+		}
+		img{
+			vertical-align: middle;
+		}
+	}
+
 }
 
 label.custom-select {
@@ -1153,5 +1569,3 @@ label.custom-select {
 .drop-yellow{
 	background-color: yellow;
 }
-
-
