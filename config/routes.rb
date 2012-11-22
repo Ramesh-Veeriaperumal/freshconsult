@@ -316,7 +316,7 @@
   map.namespace :support do |support|
     support.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
 
-    support.resources :tickets, :collection => { :check_email => :get } do |ticket|
+    support.resources :tickets, :collection => { :check_email => :get, :configure_export => :get, :filter => :get } do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     
@@ -325,6 +325,7 @@
 
     support.resource :registration, :only => [:new]        
     support.resource :profile, :only => [:edit, :update]
+    support.resources :search, :only => :index, :member => { :suggest => :get }
 
     support.resources :discussions, :only => [:index, :show]
     support.namespace :discussions do |discussion|

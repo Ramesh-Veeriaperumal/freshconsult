@@ -4,10 +4,9 @@ module SupportHelper
 	include ActionView::Helpers::UrlHelper
 	
 	ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
-
-	# include ActionController::UrlWriter
-    # default_url_options[:host] = Portal.current.portal_url
-
+	
+	# WillPaginate::ViewHelpers.pagination_options[:renderer] = 'BootstrapPaginationRenderer'
+	
 	# Forum based helpers 
 	# Have to move these into their respective pages
 	def bold content
@@ -27,6 +26,42 @@ module SupportHelper
 		# render_to_string :partial => local_file, :locals => { :dynamic_template => db_file }
 	end
 
+	# Top page login, signup and user welcome information
+	def welcome_navigation portal
+		output = []
+		
+		# Showing welcome text before login link		
+		output << %(<div class="welcome"> #{ t('header.welcome') })
+
+		# Showing logged in user name or displaying as Guest
+		output << %(<b>#{ portal['user'] || t('header.guest') }</b> </div> )
+
+		# Showing portal login link or signout link based on user logged in condition 
+		if portal['user']			
+			output << %(<b><a href="#{ portal['logout_path'] }">#{ t('header.signout') }</a></b>)
+		else
+			output << %(<b><a href="#{ portal['login_path'] }">#{ t('header.login') }</a></b>)
+			# Showing signup url based on customer portal settings feature
+			output << %(or <b><a href="#{ portal['signup_path'] }">#{ t('signup') }</a></b>) if portal['can_signup_feature?']
+		end
+
+		output.join(" ")
+	end
+
+
+	# Ticket info for list view
+	def default_info(ticket)
+		output = []
+		unless ticket.requester.nil? or User.current.eql?(ticket.requester)
+			output << %(#{I18n.t('ticket.portal_created_on', { :username => h(ticket.requester.name), :date => ticket.created_on })})
+		else
+			output << %(#{I18n.t('ticket.portal_created_on_same_user', { :date => ticket.created_on })})
+		end
+
+		output << %(#{I18n.t('ticket.assigned_agent')}: <span class='emphasize'> #{ticket.agent.name}</span>) unless ticket.agent.blank?
+		
+		output.join(" ")
+	end
 
 	# Pageination filter for generating the pagination links
 	def default_pagination(paginate, previous_label = "&laquo; #{I18n.t('previous')}", next_label = "#{I18n.t('next')} &raquo;")
@@ -126,11 +161,7 @@ module SupportHelper
 	def login_via_facebook label
 		link_to(label, "/sso/facebook", :class => "btn btn-facebook") if Account.current.features? :facebook_signin
 	end
-
-	def link_signup label
-		link_to(label, "/support/registration/new", :class => "btn btn-signup") if Account.current.features? :signup_link
-	end
-
+	
 	# Topic specific filters
 
 	def voting topic
@@ -150,46 +181,54 @@ module SupportHelper
 	# end
 
 	# Portal new ticket form
-	def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
-	    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-	    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-	    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
-	    field_name      = (field_name.blank?) ? field.field_name : field_name
-	    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
-	    label = label_tag object_name+"_"+field.field_name, field_label, :class => "control-label"
-	    case dom_type
-	      when "requester" then
-	        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
-	        unless is_edit or params[:format] == 'widget'
-	          element += add_requester_field 
-	          element = add_cc_field_tag element, field
-	        end
-	      when "email" then
-	        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
-	        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
-	        element += add_name_field unless is_edit
-	      when "text", "number" then
-	        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
-	      when "paragraph" then
-	        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
-	      when "dropdown" then
-	        if (field.field_type == "default_status" and in_portal)
-	          element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
-	        else
-	          element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
-	        end
-	      when "dropdown_blank" then
-	        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
-	      when "nested_field" then
-	        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
-	      when "hidden" then
-	        element = hidden_field(object_name , field_name , :value => field_value)
-	      when "checkbox" then
-	        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
-	      when "html_paragraph" then
-	        element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
-	    end
-	    content_tag :div, element, :class => dom_type + " control-group"
-	end
+	# def construct_portal_ticket_element(form, field)
+	# 	output = []
+	# 	output << %(<div class="control-group">)
+	# 	output << %(</div>)
+	# 	case field.dom_type
+	# 		# when "requester" then
+	# 		# 	output << content_tag(:div, render(:partial => "requester_field", :locals => { :object_name => object_name, :field => field }))
+	# 		# 	# output << add_cc_field_tag(field) if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
+	# 		# 	# output << add_name_field unless is_edit
+	# 		when "text", "number" then
+	# 			output << form.text_field(field.name)
+	# 		# when "paragraph" then
+	# 		# 	output << form.text_area(object_name, field_name, :class => element_class, :value => field_value)
+	# 		when "dropdown", "dropdown_blank" then
+	# 			form.select field.name, field.choices
+	# 			# if (field.field_type == "default_status" and in_portal)
+	# 			#   output << select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
+	# 			# else
+	# 			#   output << select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+	# 			# end
+	# 		# when "dropdown_blank" then
+	# 		# 	output << select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+	# 		# when "nested_field" then
+	# 		# 	output << nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
+	# 		# when "hidden" then
+	# 		# 	output << hidden_field(object_name , field_name , :value => field_value)
+	# 		# when "checkbox" then
+	# 		# 	output << content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
+	# 		when "html_paragraph" then
+	# 			output << form.rich_editor(field.name)
+	# 		end
+
+
+	    # dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
+	    # element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+	    # field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
+	    # field_name      = (field_name.blank?) ? field.field_name : field_name
+	    # object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+	    
+	 #    output = []
+	 #    output << %(<div class="control-group">)
+	 #    output << label_tag("#{object_name}_#{field.field_name}", field_label, :class => "control-label")
+	 #    output << %(<div class="controls">)
+	 
+
+		# output << %(</div></div>)
+	 #    # content_tag :div, element, :class => dom_type
+	 #    output.join(" ")
+	# end
 
 end

@@ -10,21 +10,22 @@ class Portal::Page < ActiveRecord::Base
   
 	#!PORTALCSS Need to move this somewhere by venom
 	PAGE_TYPES = [
-		[:portal_home,        "Portal home",                  1,   "home/index.portal"],    
-		[:discussions_home,   "Discussions home",             2,   "support/discussions/index.portal"],
-		[:topic_list,         "Topic list",                   3,   "support/discussions/forums/show.portal"],
-		[:topic_view,         "Topic view",                   4,   "support/discussions/topics/show.portal"],
-		[:new_topic,          "New topic",                    5,   "support/discussions/topics/new.portal"],
-		[:solution_home,      "Solutions home",               6,   "support/solutions/index.portal"],
-		[:article_list,       "Article list",                 7,   "support/solutions/folders/show.portal"],
-		[:article_view,       "Article view",                 8,   "support/solutions/articles/show.portal"],
-		[:submit_ticket,      "New ticket",                   9,   "support/tickets/new.portal"],
-		[:ticket_list,        "User or company tickets",      10,  "support/tickets/index.portal"],
-		[:ticket_view,        "Ticket details",               11,  "support/tickets/show.portal"],
-		[:user_signup,        "New user signup",              12,  "support/registrations/new.portal"],
-		[:user_login,         "User login",                   13,  "support/new.portal"],
-		[:profile_edit,       "User profile",                 14,  "support/profiles/edit.portal"],
-		[:forgot_password,    "Forgot password",              15,  "support/registrations/forgot_password.portal"]
+		[:portal_home,        	"Portal home",                  1,   "home/index.portal"],    
+		[:discussions_home,   	"Discussions home",             2,   "support/discussions/index.portal"],
+		[:topic_list,         	"Topic list",                   3,   "support/discussions/forums/show.portal"],
+		[:topic_view,         	"Topic view",                   4,   "support/discussions/topics/show.portal"],
+		[:new_topic,          	"New topic",                    5,   "support/discussions/topics/new.portal"],
+		[:solution_home,      	"Solutions home",               6,   "support/solutions/index.portal"],
+		[:article_list,       	"Article list",                 7,   "support/solutions/folders/show.portal"],
+		[:article_view,       	"Article view",                 8,   "support/solutions/articles/show.portal"],
+		[:submit_ticket,      	"New ticket",                   9,   "support/tickets/new.portal"],
+		[:ticket_list,        	"User specific tickets",        10,  "support/tickets/index.portal"],
+		[:ticket_view,        	"Ticket details",               12,  "support/tickets/show.portal"],
+		[:user_signup,        	"New user signup",              13,  "support/registrations/new.portal"],
+		[:user_login,         	"User login",                   14,  "support/new.portal"],
+		[:profile_edit,       	"User profile",                 15,  "support/profiles/edit.portal"],
+		[:forgot_password,    	"Forgot password",              16,  "support/registrations/forgot_password.portal"],
+		[:search,    		  	"Search",             		  	17,  "support/search/index"]
 	]
 
 	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[1], i[2]] }

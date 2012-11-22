@@ -1,3 +1,4 @@
 <section class="content main rounded-6">
-  {{request_form}}
+	<h3 class="heading">{% translate ticket.submit_ticket_title %}</h3>
+  	{% snippet request_form %}
 </section>

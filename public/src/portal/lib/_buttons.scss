@@ -19,6 +19,8 @@
   text-shadow: $btnShadowColor;
   vertical-align: middle;
   cursor: pointer;
+  position: relative;
+  z-index: 1;
   @include buttonBackground($btnBackground, $btnBackgroundHighlight);
   border: 1px solid $btnBorder;
   *border: 0; // Remove the border to prevent IE7's black border on input:focus
@@ -65,7 +67,6 @@
   @include opacity(65);
   @include box-shadow(none);
 }
-
 
 // Button Sizes
 // --------------------------------------------------

@@ -77,7 +77,6 @@ class Support::Discussions::TopicsController < SupportController
     # @forum = forum_scoper.find(params[:forum_id])
     @forum_options = current_portal.forum_categories.map{ |c| [c.name, c.customer_editable_forums.map{ |f| [f.name, f.id] } ] }
     @topic = current_account.topics.new
-    @topic_form = render_to_string :partial => "form"
   end
   
   def create
@@ -90,14 +89,11 @@ class Support::Discussions::TopicsController < SupportController
       @post       = @topic.posts.build(post_param)
       @post.topic = @topic
       @post.user  = current_user
-      @post.account_id = current_account.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
       topic_saved = @topic.save if @post.valid?
       post_saved = @post.save
     end
-
-    puts "=====> Topic create"
     
     if topic_saved && post_saved
       @topic.monitorships.create(:user_id => current_user.id, :active => true) if params[:monitor] 

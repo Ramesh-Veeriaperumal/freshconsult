@@ -48,7 +48,7 @@
   z-index: $zindexDropdown;
   display: none; // none by default, but block on "open" of the menu
   float: left;
-  min-width: 160px;
+  min-width: 195px;
   padding: 4px 0;
   margin: 1px 0 0; // override default ul
   list-style: none;
@@ -71,13 +71,13 @@
 
   // Dividers (basically an hr) within the dropdown
   .divider {
-    @include nav-divider();
+    @include nav-divider(#efefef, #efefef);
   }
 
   // Links within the dropdown menu
   a {
     display: block;
-    padding: 3px 15px;
+    padding: 3px 24px;
     clear: both;
     font-weight: normal;
     line-height: $baseLineHeight;
@@ -88,12 +88,21 @@
 
 // Hover state
 // -----------
-.dropdown-menu li > a:hover,
-.dropdown-menu .active > a,
-.dropdown-menu .active > a:hover {
+.dropdown-menu li > a:hover {
   color: $dropdownLinkColorHover;
   text-decoration: none;
   background-color: $dropdownLinkBackgroundHover;
+}
+
+.dropdown-menu .active > a,
+.dropdown-menu .active > a:hover {
+  &:before{ 
+    content:"";
+    position: absolute;
+    vertical-align: text-top;
+    margin-left: -20px;
+    @extend .icon-dd-tick-dark; 
+  }
 }
 
 // Open state for the dropdown

@@ -1,0 +1,38 @@
+<div class="results">
+	<% unless @total_results == 0 %>
+		<div class="list-lead"><%= "Displaying #{pluralize(@total_results, "result")} for \"#{@search_key}\"" %></div>
+	<% end %>
+	<% unless @searched_articles.nil? or @searched_articles.empty? %>
+		<div class="article-list">
+			<ul>
+			<% @searched_articles.each do |article| %>
+				<li>
+					<%= link_to(article.excerpts.title, support_solutions_article_path(article)) %>
+					<span class="label label-small label-light"><%= article.folder.name %></span> 
+				</li>
+			<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<% unless @searched_topics.nil? or @searched_topics.empty? %>
+		<div class="topic-list">
+			<ul>
+			<% @searched_topics.each do |topic| %>
+				<li>
+					<%= link_to(topic.excerpts.title, support_discussions_topic_path(topic)) %>
+					<span class="label label-small label-light"><%= topic.forum.name %></span>
+				</li>
+			<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<% if @total_results == 10 %>
+		<%= link_to("See more results for \"#{@search_key}\"", "/search?search_key=#{@search_key}", :class => "see-more") %>
+	<% end %>
+
+	<% if @total_results == 0 %>
+		<div class="list-lead"><%= "No results found for \"#{@search_key}\"" %></div>
+	<% end %>
+</div>

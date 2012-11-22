@@ -12,25 +12,11 @@
   .banner {    
     .banner-title{ @include span-columns(7); }
     .banner-nav{ 
-      @include span-columns(3 omega); 
-      margin-top: 13px;
+      @include span-columns(3 omega);
     }
     nav{ text-align: right; }
   }
-  .hc-search{ @include span-columns(8); }
-  .hc-nav{ 
-    @include span-columns(4 omega);    
-    nav{
-      @include border-right-radius(6px);
-      padding-left: 1.5em;
-    }
-    a, span{
-      @include reset-columns;
-      float: left;
-      clear: left;
-    }
-  }
-
+  
   footer{ margin-top: 10px; }
   
   @include layout(4) {

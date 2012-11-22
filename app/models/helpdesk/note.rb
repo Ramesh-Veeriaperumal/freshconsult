@@ -76,7 +76,7 @@ class Helpdesk::Note < ActiveRecord::Base
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
-
+  
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]
   end
@@ -137,11 +137,12 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def to_liquid
-    { 
-      "commenter" => user,
-      "body"      => liquidize_body,
-      "body_text" => body
-    }
+    # { 
+    #   "commenter" => user,
+    #   "body"      => liquidize_body,
+    #   "body_text" => body
+    # }
+    Helpdesk::NoteDrop.new self
   end
   
   def to_xml(options = {})
@@ -268,6 +269,7 @@ class Helpdesk::Note < ActiveRecord::Base
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
     end
+
     
   private
     def human_note_for_ticket?

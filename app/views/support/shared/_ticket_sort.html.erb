@@ -1,43 +1,31 @@
-<div class="sort-bar">
-  <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
-    <ul>             
+<div class="dropdown">
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">         
        <% current_sort_name = "" %>
        <% sort_fields = []
-          if is_portal
             vfs = visible_fields
             TicketsFilter::SORT_FIELD_OPTIONS.each { |field| sort_fields.push(field) if vfs.include?(field[1].to_s) }
-          else
-            sort_fields = TicketsFilter::SORT_FIELD_OPTIONS
-          end
        %>
        <% sort_fields.each do |sort_item| %>       
-         <% content_tag :li do %>
+         <% content_tag :li, :class => (( sort_item[1] == current_wf_order ) ? "active" : "" ) do %>
            <% link_to "#", :class => "wf_order", :wf_order => sort_item[1] do %>                      
              <% if( sort_item[1] == current_wf_order ) %>
                 <% current_sort_name = sort_item[0] %>
-                <%= content_tag(:span, "", :class => "icon ticksymbol") %>
              <% end %>            
-             <%= sort_item[0] %>
+                <%= sort_item[0] %>
            <% end %>                  
          <% end %>
        <% end %>
-    </ul>
-    <span class="seperator"></span>
-    <ul>
+      <li class="divider"></li>
       <% TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.each do |sort_order_item| %>
-        <% content_tag :li do %>
+        <% content_tag :li, :class => (( sort_order_item[1] == current_wf_order_type ) ? "active" : "" ) do %>
           <% link_to "#", :class => "wf_order_type", :wf_order_type => sort_order_item[1] do %>
-            <%= content_tag(:span, "", :class => "icon ticksymbol") if( sort_order_item[1] == current_wf_order_type ) %>
             <%= sort_order_item[0] %>
           <% end %>
         <% end %>
       <% end %>
-    </ul>   
-  </div>
-  <a class="drop-right nav-trigger" href="#" menuid="#SortMenu">
-    <%= t('ticket.sort_by') %> <b><%= current_sort_name.blank? ? sort_fields.first[0] : current_sort_name %></b>
-  </a>
+    </ul>
+    <a class="dropdown-toggle help-text" data-toggle="dropdown" href="#">
+      <%= t('ticket.sort_by') %> <b><%= current_sort_name || sort_fields.first[0] %></b>
+      <b class="caret"></b>
+    </a>
 </div>
-  <% javascript_tag do %>
-    jQuery(".nav-trigger").showAsMenu(); 
-  <% end %>

@@ -17,12 +17,11 @@ class HomeController < SupportController
       @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
     end
 
-    # if params[:format] == "mobile"
-    #   @user_session = current_account.user_sessions.new
-    #   redirect_to login_path
-    # end
+    if params[:format] == "mobile"
+      @user_session = current_account.user_sessions.new
+      redirect_to login_path
+    end
     
-    @topics = recent_topics if allowed_in_portal?(:open_forums)
   end
 
   def liquid_list

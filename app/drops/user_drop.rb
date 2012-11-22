@@ -18,7 +18,7 @@ class UserDrop < BaseDrop
 		@company_name ||= @source.customer.name if @source.customer
 	end
 
-	def agent?
+	def is_agent?
 		source.agent?
 	end
 

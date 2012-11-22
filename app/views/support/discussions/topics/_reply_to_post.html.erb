@@ -25,8 +25,8 @@
 		</script>
 	</div>
 	<br />
-	<p>
-		<%= submit_tag "Post comment", :class => "btn btn-primary btn-small", :id => "post-submit-button"  %> 
-		<%= link_to_function t('cancel'), "$('#new-post-form').hide(); $('#reply-form-proxy').show();", :class => "btn btn-small " %>
-	</p>
+	<div>
+		<%= submit_tag "Post comment", :class => "btn btn-primary", :id => "post-submit-button"  %> 
+		<a href="#" data-hide-dom="#new-post-form" data-show-dom="#reply-form-proxy" class="btn"><%= t('cancel') %></a>
+	</div>
 <% end -%>

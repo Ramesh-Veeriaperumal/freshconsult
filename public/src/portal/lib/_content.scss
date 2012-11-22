@@ -1,6 +1,4 @@
-.c-wrapper{
-	@include pie-clearfix;
-}
+.c-wrapper, .cs-g-c{ @include pie-clearfix; }
 
 .content, .content-form{
 	border: $content-border;
@@ -14,9 +12,7 @@
 	position: relative;
 }
 
-.content-form{
-	background-color: $page-form-background;
-}
+.content-form{ background-color: $page-form-background; }
 
 .cs-s{
 	border-top:1px solid $orange;
@@ -27,43 +23,28 @@
 	}
 }
 
-.cs-g-c{ @include clearfix; }
-
-.article-list, .topic-list{	
-	ul{ margin-bottom: 0; }
+.article-list, .topic-list{		
+	margin-bottom: 20px;
+	ul{ margin-bottom: 0; margin-left: 0 }
 	li{
 		list-style: none;	
 		position: relative;
 		margin-bottom: 6px;
+		padding-left: 30px;
 		&:before{
+			left: 0;
 			content:"";
 			position: absolute;			
 			vertical-align: text-top;
 		}
 	}
 }
-.article-list{
-	margin-bottom: 13px;
-	ul{ margin-left: 22px; }
-	li:before{
-		left: -22px;
-		@extend .icon-article-list;
-	} 
-}
+.article-list li:before{ @extend .icon-article-list; }
+.topic-list li:before{ @extend .icon-topic-list; }
 
-.topic-list{
-	margin-bottom: 20px;
-	ul{ margin-left: 34px; }
-	li:before{	
-		@extend .icon-topic-list;
-		left: -32px;
-		margin-top: 1px;
-	}
-	.see-more:before{ margin-right: 14px; }
-}
-
-.post-question{
+.start-topic{
 	float:right;
+	font-weight: bold;
 	margin-top: 8px;
 }
 
@@ -74,18 +55,20 @@
 		@include inline-block;
 		vertical-align: text-top;
 		@extend .icon-dual-arrow;
+		margin-right: 8px;
 	}
 }
 
 .help-text, .p-info, .info-text, .list-noinfo{
 	color: $helpTextColor;	
+	font-weight: 200;
 	line-height: $baseLineHeight / 1.1;
 }
 
-.info-text{ font-weight: 200; }
 .help-text{	font-size: 12px;  }
 .p-info strong{ color: $grayDark; }
 .list-noinfo{ text-align: center; }
+
 /* Forum and ticket details style */
 .post-title{ float: left; }
 
@@ -112,7 +95,7 @@
 	}
 }
 
-.post-details{
+.user-comment{
 	margin:20px 0;
 	.user-pic-thumb{
 		border: 1px solid #E6E6E6;
@@ -128,9 +111,11 @@
 	border: 1px solid #ebebeb;	
 	position: relative;	
 	margin: 0 0 10px;
+	/* To handle the paragraph tags coming in from redactor */
+	p{ margin: 0; }
 }
 
-.post-agent-comment .p-content{
+.comment-by-agent .p-content{
 	background-color:#fffdf8;
 	border-color:#cccccc;
 	@include box-shadow(rgba(0, 0, 0, 0.05) 0 3px 3px);
@@ -141,28 +126,32 @@
 	padding: 15px 0 5px;
 }
 
-.content-list{
-	border-bottom:1px solid #f3f3f3;
+.c-list{
+	border-bottom: 1px solid #f3f3f3;	
 	margin-bottom: 12px;
+	margin-top: 5px;
+	margin-bottom: 1em;
 }
 
-.content-row{
-	padding-top:12px;
-	padding-bottom:12px;
+.c-row{
+	@include pie-clearfix;
+	padding:10px 0;
 	border-top:1px solid #f3f3f3;
-	padding-left: 75px;
+  	.help-text{ font-size: 0.96em; }
+  	&:hover{ background-color:rgba(#f1efec, 0.3); }
+}
+
+.c-user-thumb{
+	padding-left: 55px;
   	.user-pic-thumb {
-  		padding: 2px;
-  		margin-left: -55px;
+		margin-left: -53px;
   		img{ width: 35px; height: 35px; }
   	}
-  	.topic-link{ 
-  		font-size: 1.16em; 
-  		font-weight: 200;
-  	}
-  	.help-text{ 
-  		font-size: 0.96em; 
-  	}
+}
+
+.c-link{ 
+	font-size: 1.16em; 
+	font-weight: 200;
 }
 
 /* Solution voting button */
@@ -210,7 +199,7 @@
 	    @include border-radius(5px);
 	}
 
-	.post-details .user-pic-thumb{
+	.user-comment .user-pic-thumb{
 	   	&:before, &:after{
 			content: "";
 			border: 8px solid transparent;
@@ -231,7 +220,7 @@
 	    }
 	}
 
-	.post-agent-comment .user-pic-thumb{
+	.comment-by-agent .user-pic-thumb{
 		&:before{ border-right-color:#cccccc; }
 		&:after{ border-right-color:#fffdf8; }
 	}
@@ -243,15 +232,23 @@
 	    padding: 5px 0 0 10px;
 	}
 
-	.post-details .user-pic-thumb{
+	.user-comment .user-pic-thumb{
 		clear: none;
 		margin: 0;
 	}
 
-	.content-row{
-		margin:0 -2em;
-		padding-right: 1em;
-		&:hover{ background-color: rgba(0, 0, 0, 0.01); }
+	.c-list{ margin-left: -$content-padding-side; margin-right: -$content-padding-side; }
+	.c-row{	padding-right: 1em;	}
+	.c-user-thumb{ 
+		padding-left: 70px; 
+		.user-pic-thumb{ padding: 2px; }
 	}
+}
 
+/* Loading content */
+.loading-box{
+	background-image:url('/images/load.gif');
+	background-repeat:no-repeat;
+	background-position:center center;
+	height:100px;
 }

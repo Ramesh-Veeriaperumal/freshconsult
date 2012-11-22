@@ -1,4 +1,6 @@
 <section class="main content rounded-6">
-	<legend>Post a new topic</legend>
-	{{ topic_form }}
+	<div class="cs-s">
+	<h3 class="heading">{% translate topic.new %}</h3>
+	{% snippet form %}
+	</div>
 </section>

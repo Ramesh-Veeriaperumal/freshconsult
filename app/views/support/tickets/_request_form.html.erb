@@ -1,0 +1,96 @@
+<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, :class => "ticket-form" } do |f| %>
+  <%= f.error_messages %>
+  <% current_portal.customer_editable_ticket_fields.each do |field| %>    
+      <%= construct_ticket_element :helpdesk_ticket, field, 
+                                   field.label_in_portal,
+                                   field.dom_type, 
+                                   field.required_in_portal, 
+                                   (field.dom_type == "requester") ? @ticket.email : (field.is_default_field?) ? @ticket.send(field.field_name) : (@ticket.custom_field) ? @ticket.custom_field[field.field_name] : "", 
+                                   "",
+                                   true %>
+  <% end %>
+  <%#= render :partial=>"/helpdesk/shared/attachment_form"  %>    
+  <% if feature?(:captcha) && !logged_in? %>
+    <div class="control-group">
+        <%= content_tag ( :label, t('ticket.verify_human') ) %>
+        <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+    </div>
+  <% end %>
+  <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+  <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+
+  <div class="form-actions">
+		<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>		
+		<%= link_to t("cancel"), :back, :class => "btn" %>
+	</div>
+<% end %>
+
+<% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+  <% javascript_tag do %>
+    var showTooltip = function(elm, data) {
+      jQuery(elm).qtip({
+          style: {
+            classes:'ui-tooltip-light ui-tooltip-rounded ui-tooltip-shadow ui-solution-suggest',
+            tip: {
+              width: 8,
+              height: 15
+            }
+          },
+          content: {
+            text: '<%= t('auto_suggest_solutions.info') %>' + data,
+          },
+          position: { 
+            type: 'absolute',
+            my: 'left top',
+            at: 'right center',
+            adjust: {
+              x: 40,
+              y: -15          }
+          },
+          show: {
+            event: 'false'
+          },
+          hide: {
+            event: false
+          }
+        });
+    };
+
+    (function($){
+      jQuery(document).ready(function(){  
+        callbackToSolutionSearch = function(string){
+          jQuery.ajax({ url: "/search/widget_solutions?search_key="+string, 
+            success: function(data){
+                var data_available = jQuery(data).find("a").length;
+                if( data_available )
+                {
+                  showTooltip(jQuery("#helpdesk_ticket_subject"), data);
+                  jQuery("#helpdesk_ticket_subject").qtip("show");
+                }
+                else{
+                  jQuery("#helpdesk_ticket_subject").qtip("hide");
+                }
+                jQuery("#helpdesk_ticket_subject").removeClass("loading-right");
+              }
+            });
+          }
+        
+          jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
+              var searchString = this.value.replace(/^\s+|\s+$/g, "");
+              if(searchString != '' && searchString.length > 1){
+                jQuery(this).addClass("loading-right");
+                delay(function(){
+                  callbackToSolutionSearch(searchString);
+                }, 200 ); 
+              }
+              else{
+                jQuery(this).qtip("hide");
+                jQuery(this).removeClass("loading-right");        
+              }
+          });
+
+          invokeRedactor('helpdesk_ticket_description_html');
+      }); 
+    })(jQuery);
+  <% end %>
+<% end %>

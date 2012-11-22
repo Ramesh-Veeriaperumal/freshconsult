@@ -1,68 +1,25 @@
-<h1 class="page-title">{{ page_title }}</h1>
-{{ ticket_filters }}
-{{ tickets_list }}
-{% comment %}
-<% content_for :sidebar do -%>
-	<div class="sidepanel">
-		<h4 class="title"><%= current_user.customer.name %></h4>
-		<ul class="ui-list_with_icon">
-			<li><%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/company_tickets" ) %></li>
-			<li><%= link_to(t('helpdesk.tickets.views.open_or_pending'),"/support/company_tickets/filter/open_or_pending" ) %></li>
-			<li><%= link_to(t('helpdesk.tickets.views.resolved_or_closed') ,"/support/company_tickets/filter/resolved_or_closed" ) %></li>
-		</ul>
-
-<% content_for :layoutType do -%>ticket_list<%- end %>
-
-  <div class="ssportal_filters" id="all-views">
-    <div class="view_filters">  
-      <div class="link-item">
-        <a href="/helpdesk/tickets" class="drop-right nav-trigger " id="active_filter" menuid="#leftViewMenu">
-          <%= @page_title %>
-        </a>
+<section class="content min-height-on-desktop rounded-6 ticket-page">
+  {{ ticket_filters }}  
+  {{ tickets_list }}
+  {% comment %}
+  {% paginate tickets by 10 %}
+  <div id="ticket-list" class="ticket-list">
+    {% for ticket in paginate.collection %}
+      <div class="ticket-row">
+        <div class="status-source sources-detailed-{{ ticket.source_name | downcase }}"></div>
+        <span class="label-status label label-small">{{ ticket.status }}</span>
+        <div class="ticket-brief">
+          <div class="ellipsis">
+            <a href="{{ ticket.portal_url }}" class="ticket-link">
+              {{ ticket.subject }} #{{ ticket.id }}
+            </a>
+          </div>
+          <p>{{ ticket | default_info }}</p>
+        </div>
       </div>
-      <div class="fd-menu" id="leftViewMenu">
-        <%= fd_menu_link(t('helpdesk.tickets.views.all_tickets'), "/support/company_tickets", (current_filter == 'all' or current_filter.blank?) ) %>      
-        <%= fd_menu_link(t('open_tickets'),"/support/company_tickets/filter/open_or_pending", (current_filter == 'open_or_pending') ) %>     
-        <%= fd_menu_link(t('resolved_tickets') ,"/support/company_tickets/filter/resolved_or_closed", (current_filter == 'resolved_or_closed') ) %>
-
-		<% unless current_user.customer.users.empty? %>
-			<span class="seperator"></span>
-			<h4 class="title">Tickets by</h4>
-			<% current_user.customer.users.each do |contact|%>
-				<%= fd_menu_link(" - " +contact.name ,"/support/company_tickets/requester/#{contact.id}", (current_filter.to_s == contact.id.to_s)  ) %>
-			<% end %>
-		<% end %>
-      </div>
-    </div>
+    {% endfor %}
+    {{ paginate | default_pagination }}
   </div>
-<div class="ticket-list-group">
-  <%= link_to("Export", { :action => "configure_export", :a=>params[:action], :i=>params[:id] }, :class => "ssp_export dialog2", :title => "Export to CSV", "data-width" => "650" ) unless @tickets.empty? %>
-
-	<div id="ticket-sub-toolbar">
-	  <%@items = @tickets%>
-	  <%= render :partial => "/support/shared/ticket_sort", :locals=>{:is_portal=>true} unless @tickets.empty? %>
-	</div>
-
-	<div id="ticket-list">
-		<%= render :partial => "/support/shared/ticket_list_view"  %>
-	</div>
-</div>
-
-<% 
-filter_url = ['all','open_or_pending','resolved_or_closed'].include?(current_filter) ? "filter/#{current_filter}" : "requester/#{current_filter}"
-javascript_tag do %>
-  jQuery('.wf_order_type, .wf_order').live("click", function(ev){
-      ev.preventDefault();
-      setCookie(this.className, this.getAttribute(this.className),'/support/');
-      jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
-      jQuery.ajax({
-        url: "/support/company_tickets/<%=filter_url%>?partial=true",
-        type: "POST",
-        dataType: "script",
-        success: function(msg){ 
-        }
-      }); 
-    jQuery(this).hide();  
-  }); 
-<%end%>
-{% endcomment %}
+  {% endpaginate %}
+  {% endcomment %}
+</section>

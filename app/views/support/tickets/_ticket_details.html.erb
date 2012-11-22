@@ -1,0 +1,17 @@
+<h3 class="light">Ticket details</h4>
+<% current_portal.ticket_fields(:customer_visible).each do |field| %>
+	<% if(field.visible_in_view_form?) %>
+	<% 
+	  field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+	  dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+	  if(field.field_type == "nested_field")
+	  	field_value = {}
+	  	field.nested_levels.each do |ff|
+	  		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
+	  	end
+	  	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
+	  end
+	%>
+	<%= construct_ticket_text_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
+	<% end %>
+<% end %>

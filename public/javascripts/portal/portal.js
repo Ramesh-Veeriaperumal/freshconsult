@@ -1,6 +1,9 @@
 /*
  * @author venom
+ * Portal common page scripts
  */
+
+jQuery.noConflict()
  
 !function( $ ) {
 
@@ -28,14 +31,18 @@
 					"_method" : $(this).data("method")
 				}
 
+			// A data-loading-box will show a loading box in the specified container
+			$(_o_data.loadingBox||"").html("<div class='loading-box'></div>")
+
 			$.ajax({
 				type: 'POST',
 				url: this.href,
 				data: _post_data,
+				dataType: _o_data.responseType || "html",
 				success: function(data){					
-					$((_o_data.showDom||"").sanitize_ids()).show()
-					$((_o_data.hideDom||"").sanitize_ids()).hide()
-					$("#"+_o_data.update).html(_o_data.updateWithMessage || data)	
+					$(_o_data.showDom||"").show()
+					$(_o_data.hideDom||"").hide()
+					$(_o_data.update||"").html(_o_data.updateWithMessage || data)	
 
 					// Resetting the submit button to its default state
 					_self.button("reset")
@@ -46,16 +53,32 @@
 			})
 		})
 
+		// Data api for onclick showing dom elements
+		$("a[data-show-dom]").live("click", function(ev){
+			ev.preventDefault()
+			if($(this).data("remote")) return
+
+			$($(this).data("showDom")||"").show()
+		})
+
+		// Data api for onclick hiding dom elements
+		$("a[data-show-dom]").live("click", function(ev){
+			ev.preventDefault()
+			if($(this).data("remote")) return
+
+			$($(this).data("hideDom")||"").hide()
+		})
+
 		// Form validation any form append to the dom will be tested via live query and then be validated via jquery
 		$("form[rel=validate]").livequery(function(ev){
-			$("form[rel=validate]").validate({
+			$(this).validate({
 				highlight: function(element, errorClass) {
 					// Applying bootstraps error class on the container of the error element
-					$(element).parent().parent().addClass(errorClass);
+					$(element).parent().parent().addClass(errorClass+"-group")
 				},
 				unhighlight: function(element, errorClass) {
 					// Removed bootstraps error class from the container of the error element
-					$(element).parent().parent().removeClass(errorClass);
+					$(element).parent().parent().removeClass(errorClass+"-group")
 				},
 				errorElement: "div", // Adding div as the error container to highlight it in red
 					submitHandler: function(form, btn) {

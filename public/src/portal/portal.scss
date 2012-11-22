@@ -20,12 +20,15 @@
 
 @import "lib/dropdowns";
 @import "lib/navs";
-@import "lib/tickets";
 
 // Components: Misc
 @import "lib/breadcrumbs";
 @import "lib/pagination";
 @import "lib/labels";
+@import "lib/modals";
+@import "lib/component-animations";
+@import "lib/close";
+@import "lib/alerts";
 
 // Profile image styles
 @import "lib/profile";
@@ -35,6 +38,14 @@
 @import "lib/page-lead";
 @import "lib/content";
 @import "lib/login";
+@import "lib/search";
+
+// Date picker
+@import "lib/jquery-ui";
+
+// !PORTALCSS Existing styles from app
+// Need to be optimised
+@import "lib/ticket";
 
 // Debug styles
 @import "lib/debug";

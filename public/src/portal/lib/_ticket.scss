@@ -1,0 +1,72 @@
+@import "sources/*.png";
+$sources-sprite-dimensions: true;
+$sources-layout:smart;
+$sources-sprite-dimensions:true;
+@include all-sources-sprites;
+
+.ticket-filters{
+	margin-top:3px;
+	left:-2px;
+}
+
+.c-ticket-row{ 
+	padding-left:30px; 
+	.status-source{ 
+		float:left;
+		margin-left:-45px;
+	}
+}
+
+.label-status{ background-color:rgba(#0c8519, 0.6);  margin-bottom:5px; }
+.ticket-toolbar{ 
+	position: relative; z-index: 1; 
+	a{ font-weight: bold; }
+}
+.ticket-link{ font-size:1.06em; }
+
+.widget{
+	border-top: 1px solid #afafaf;
+	margin-top: 20px;
+}
+
+#ticket-sort{ margin-right: 20px; }
+#user-list-dropdown .dropdown-menu{ 
+	max-height: 300px;
+	overflow: auto;
+}
+
+.name_label{ font-weight: bold; }
+
+.ticket-form{ 
+	select,
+	textarea,
+	input[type="text"],
+	input[type="password"],
+	input[type="datetime"],
+	input[type="datetime-local"],
+	input[type="date"],
+	input[type="month"],
+	input[type="time"],
+	input[type="week"],
+	input[type="number"],
+	input[type="email"],
+	input[type="url"],
+	input[type="search"],
+	input[type="tel"],
+	input[type="color"],
+	.uneditable-input{
+		width: 100%;
+	}
+}
+
+/* Media styles for tablet and above */
+@include at-breakpoint($break-tablet){
+	.label-status{ float:right; background-color:#0c8519; }
+	.c-ticket-row{ padding:8px $content-padding-side 8px 55px; }
+	.ticket-brief{ padding-top: 7px; }
+	.label-status{ margin-top:6px; }
+	@include layout(7) {
+		.ticket-main{ @include span-columns(5); }
+		.ticket-sidebar{ @include span-columns(2 omega); }
+	}
+}

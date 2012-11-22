@@ -1,7 +1,0 @@
-<section class="main">
-	<div class="content rounded-6 min-height-on-desktop">
-		<h3>Showing tickets</h3>
-		{{ ticket_filters }}
-		{{ tickets_list }}
-	</div>
-</section>

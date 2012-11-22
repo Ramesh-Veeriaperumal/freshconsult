@@ -3,10 +3,14 @@ class Helpdesk::TicketDrop < BaseDrop
 	include ActionController::UrlWriter
 	include TicketConstants
 
-	liquid_attributes << :subject << :requester << :group << :ticket_type
+	liquid_attributes << :requester << :group << :ticket_type
 
 	def initialize(source)
 		super source
+	end
+
+	def subject
+		h(@source.subject)
 	end
 
 	def id
@@ -29,6 +33,10 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.description
 	end
 
+	def requester
+		@source.requester
+	end
+
 	def agent
 		@source.responder
 	end
@@ -47,6 +55,10 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	def source
 		SOURCE_NAMES_BY_KEY[@source.source]
+	end
+
+	def source_name
+		@source.source_name
 	end
 
 	def tags
@@ -81,14 +93,31 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.liquidize_comment(@source.latest_public_comment)
 	end
 
+	def public_comments
+		# source.notes.public.exclude_source('meta').newest_first
+		@source.public_notes.exclude_source('meta')
+	end
+
 	def satisfaction_survey		
 		Survey.satisfaction_survey_html(@source)
 	end
 
 	def in_user_time_zone(time)
-	  return time unless User.current
-	  user_time_zone = User.current.time_zone 
-	  time.in_time_zone(user_time_zone)
+		return time unless User.current
+		user_time_zone = User.current.time_zone 
+		time.in_time_zone(user_time_zone)
+	end
+
+	def created_on
+		@source.created_at
+	end
+
+	def modified_on
+		@source.updated_at
+	end
+
+	def freshness
+		@source.freshness
 	end
 
 end

@@ -1,9 +1,9 @@
 <section class="main">
 	<div class="content rounded-6 min-height-on-desktop">
-		<h2>Knowledge base</h2>
+		<h2 class="heading">Knowledge base</h2>
 		<div class="cs-s">
 			{% for category in portal.solution_categories %}
-				<h3>{{ category.name }}</h3>
+				<h3 class="heading">{{ category.name }}</h3>
 				<div class="cs-g-c">
 					{% for folder in category.folders %}
 						<section class="cs-g article-list">

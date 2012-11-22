@@ -1,9 +1,9 @@
 <section class="main">
 	<div class="content rounded-6 min-height-on-desktop">
-		<h2>Knowledge base</h2>
+		<h2 class="heading">Knowledge base</h2>
 		<div class="cs-s">
 			{% for category in portal.solution_categories %}
-				<h3>{{ category.name }}</h3>
+				<h3 class="heading">{{ category.name }}</h3>
 				<div class="cs-g-c">
 					{% for folder in category.folders %}
 						<section class="cs-g article-list">
@@ -33,8 +33,10 @@
 </section>
 <section class="sidebar">
 	<div class="content rounded-6 min-height-on-desktop">
-		<a href="{{ portal.new_topic_path }}" class="post-question">Post a public question</a>
-		<h2>Community</h2>
+		<a href="{{portal.new_topic_path}}" class="start-topic">
+			{% translate portal.topic.start_new_topic %}
+		</a>
+		<h2 class="heading">Community</h2>
 		<p class="intro">Showing recent updates</p>
 		<div class="cs-g-c">
 			{% for forum in portal.forums %}
@@ -60,10 +62,10 @@
 								</p>
 							</li>
 							{% endfor %}
-						</ul>
-					{% endif %}
-					{% if forum.topics.size > topic_count %}
-						<a href="{{forum.url}}" class="see-more">See all {{ forum.topics | size }} topics</a>
+						</ul>						
+						{% if forum.topics.size > topic_count %}
+							<a href="{{forum.url}}" class="see-more">See all {{ forum.topics | size }} topics</a>
+						{% endif %}
 					{% endif %}
 				</section>
 			{% endfor %}

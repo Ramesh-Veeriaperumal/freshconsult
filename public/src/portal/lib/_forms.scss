@@ -42,7 +42,7 @@ input,
 button,
 select,
 textarea {
-  @include font-shorthand($baseFontSize, normal, $baseLineHeight); // Set size, weight, line-height here
+  @include font-shorthand($baseFontSize, normal, $baseFontSize * 1.2 ); // Set size, weight, line-height here
 }
 input,
 button,
@@ -87,9 +87,35 @@ input[type="color"],
   color: $gray;
 }
 
+select{
+  font-size: $baseFontSize * 0.9;
+}
+
 // Setting max input view for mobile devices
 input, textarea {
   width: 100%;
+}
+
+.ticket-sidebar{
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"],
+  .uneditable-input{
+    width:100%;
+  }
 }
 
 // Reset height since textareas have rows
@@ -128,6 +154,12 @@ input[type="color"],
   }
 }
 
+// Nested field-tabbed
+.checkbox.nested-child{
+  padding-left: 40px;
+}
+
+
 // Position radios and checkboxes better
 input[type="radio"],
 input[type="checkbox"] {
@@ -152,9 +184,13 @@ input[type="checkbox"] {
   height: auto;
 }
 
+input[type="file"]{
+  line-height: 0;
+}
+
 // Set the height of select and file controls to match text inputs
-select,
-input[type="file"] {
+select
+/*, input[type="file"]*/ {
   height: 28px; /* In IE7, the height of the select element cannot be changed by height, only font-size */
   *margin-top: 4px; /* For IE7, add top margin to align select with labels */
   line-height: 28px;
@@ -291,20 +327,20 @@ input[type="checkbox"][readonly] {
 // Warning
 div.error{ padding: 8px 0 0; }
 
-.control-group.warning {
+.control-group.warning-group {
   @include formFieldState($warningText, $warningText, $warningBackground);
 }
 // Error
-.control-group.error {
+.control-group.error-group {
   @include formFieldState($errorText, $errorText, $errorBackground);
 }
 // Success
-.control-group.success {
+.control-group.success-group {
   @include formFieldState($successText, $successText, $successBackground);
 }
 
 // HTML5 invalid states
-// Shares styles with the .control-group.error above
+// Shares styles with the .control-group.error-group above
 input:focus:required:invalid,
 textarea:focus:required:invalid,
 select:focus:required:invalid {

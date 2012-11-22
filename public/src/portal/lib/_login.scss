@@ -1,10 +1,7 @@
-.alt-login-button{	
-	h2{ margin-bottom:25px; }
-	.btn{
-		text-align:left;
-		display:block;
-		margin:12px 0;
-	}
+.alt-login-button .btn{
+	text-align:left;
+	display:block;
+	margin:$baseLineHeight 0;
 } 
 
 .login-form input.special{
@@ -50,5 +47,6 @@
 	}	
 }
 @include at-breakpoint($break-desktop){
-	.login-container{ margin-bottom: 200px; }
+	#login-box, #signup-box{ @include min-height(275px); }
+	#login-box{ margin-bottom: 200px; }
 }

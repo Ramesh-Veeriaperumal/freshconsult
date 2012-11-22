@@ -1,4 +1,4 @@
-package_assets:         on          # (on, off, always)
+package_assets:         on      # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
@@ -137,19 +137,21 @@ javascripts:
   custom_widget:
     - public/javascripts/custom_widget.js
 
-  head_scripts:
-    - public/javascripts/jquery-1.7.2.js
+  portal_head:
+    # - public/javascripts/prototype.js
+    - public/javascripts/portal/jquery-1.8.2.js    
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
 
-  portal:
-    - public/javascripts/utils.js
+  portal_bottom:
+    # - public/javascripts/utils.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/helpdesk/multifile.js
-    - public/javascripts/bootstrap.js
-    - public/javascripts/portal.js
+    - public/javascripts/portal/jquery-ui-1.9.1.custom.js
+    - public/javascripts/portal/bootstrap.js
+    - public/javascripts/portal/portal.js
 
   getting_started:
     - public/javascripts/getting_started.js

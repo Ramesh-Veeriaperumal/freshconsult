@@ -1,0 +1,16 @@
+<div class="content rounded-6 min-height-desktop">
+	<div class="breadcrumb">
+		<a href="/">Home</a>
+		<% unless @total_results == 0 %>
+			<span><%= "Search results for for \"#{@search_key}\"" %></span>
+		<% end %>
+	</div>
+
+	<%= render :partial => "results" %>
+	
+	<%= will_paginate @items unless @items.blank? %>
+
+	<% if @total_results == 0 %>
+		<div class="list-lead"><%= "No results found for \"#{@search_key}\"" %></div>
+	<% end %>
+</div>

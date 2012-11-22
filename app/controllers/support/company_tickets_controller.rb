@@ -12,17 +12,18 @@ class Support::CompanyTicketsController < SupportController
   before_filter :set_mobile, :only => [:index, :filter]
 
   before_filter :verify_permission
-  before_filter :set_date_filter ,    :only => [:export_csv]
+  before_filter :set_date_filter, :only => [:export_csv]
   
   def index    
-    @page_title = t('helpdesk.tickets.views.all_tickets') + " inside " + current_user.customer.name
+    set_portal_page :company_ticket_list
+    @page_title = t('helpdesk.tickets.views.all_tickets') # + " inside " + current_user.customer.name
     build_tickets
     @ticket_filters = render_to_string :partial => "/support/shared/filters"
-    @tickets_list = render_to_string :partial => "/support/shared/tickets"    
+    @tickets_list = render_to_string :partial => "/support/shared/ticket_list_view"    
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }
-    end    
+    end
   end
   
   def filter
@@ -52,7 +53,8 @@ class Support::CompanyTicketsController < SupportController
     end
   end
   
-  def requester    
+  def requester
+    set_portal_page :company_ticket_list
     @requested_by = params[:id]
     @page_title = "Tickets by #{current_account.users.find_by_id(@requested_by).name}"
     build_tickets
@@ -86,9 +88,9 @@ class Support::CompanyTicketsController < SupportController
   
     def build_tickets
       date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? ticket_scope.tickets : ticket_scope.tickets.created_at_inside(params[:start_date], params[:end_date])
-       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, date_added_ticket_scope)
-       @tickets = @tickets.paginate(:page => params[:page], :per_page => params[:wf_per_page] || 10, :order=> "#{current_wf_order} #{current_wf_order_type}") 
-       @tickets ||= []    
+      @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, date_added_ticket_scope)
+      @tickets = @tickets.paginate(:page => params[:page], :per_page => params[:wf_per_page] || 10, :order => "#{current_wf_order} #{current_wf_order_type}") 
+      @tickets ||= []    
     end
   
     def ticket_scope

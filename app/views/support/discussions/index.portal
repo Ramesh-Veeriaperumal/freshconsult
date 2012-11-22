@@ -1,10 +1,14 @@
 <section class="main">
 	<div class="content rounded-6 min-height-on-desktop">
-		<a href="{{portal.new_topic_path}}" class="post-question"><b>Start a new topic</b></a>
-		<h2>Community forums</h2>
+		
+		<a href="{{portal.new_topic_path}}" class="start-topic">
+			{% translate portal.topic.start_new_topic %}
+		</a>
+
+		<h2 class="heading">Community forums</h2>
 		{% for category in portal.forum_categories %}	
 			<div class="cs-s">
-				<h3>{{category.name}}</h3>
+				<h3 class="heading">{{category.name}}</h3>
 				<div class="cs-g-c">
 				{% for forum in category.forums %}
 					<section class="cs-g topic-list">

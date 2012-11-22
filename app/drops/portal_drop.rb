@@ -35,6 +35,10 @@ class PortalDrop < BaseDrop
   def solutions_home_path
     @solutions_home_path ||= support_solutions_path
   end
+
+  def can_signup_feature? 
+    Account.current.features? :signup_link
+  end
   
   def tabs
     @tabs ||= load_tabs
@@ -56,8 +60,20 @@ class PortalDrop < BaseDrop
     @forums ||= source.portal_forums
   end
 
+  def user
+    @current_user ||= User.current
+  end
+
   def google_login
     link_to(image_tag("google.png", :alt => t(".sign_in_using_google")) + "label", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "btn") if Account.current.features? :google_signin
+  end
+
+  def contact_info
+    @contact_info ||= source.preferences[:contact_info]
+  end
+
+  def ticket_export_url
+    @ticket_export_url ||= configure_export_support_tickets_path
   end
 
   private
@@ -65,8 +81,8 @@ class PortalDrop < BaseDrop
       tabs = [  [ root_path,                :home,		    true ],
 					      [ support_solutions_path,   :solutions,	  true ],
 				        [ support_discussions_path, :forums, 	    true ],
-				        [ support_tickets_path,     :tickets,     User.current ],
-				      	  company_tickets_tab ]
+				        [ support_tickets_path,     :tickets,     User.current ]]
+				      	  # company_tickets_tab ]
 
 			tabs.map do |s| 
 				next unless s[2]

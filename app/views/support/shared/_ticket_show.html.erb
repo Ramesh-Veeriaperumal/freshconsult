@@ -58,7 +58,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 		jQuery("#cc_emails").trigger("liszt:updated");
 	});
 <%- end %>
-<section class="content rounded-6 min-height-on-desktop">
+
 
 	<section class="main">
 		<% if @ticket.deleted %>
@@ -257,7 +257,6 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 	<%end%>
 </section>
 	
-</section>
  <% javascript_tag do %>
  	jQuery("#add_cc_form").validate();
  <% end %>

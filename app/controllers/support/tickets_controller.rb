@@ -11,24 +11,21 @@ class Support::TicketsController < SupportController
     c.check_portal_scope :anonymous_tickets
   end
   before_filter :check_user_permission, :only => [:show]
-  before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
+  before_filter :require_user_login, :only => [:index, :filter, :close_ticket, :update]
   before_filter :load_item, :only =>[:update]
-  before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
-  before_filter :set_date_filter ,    :only => [:export_csv]
+  before_filter :set_mobile, :only => [:filter, :show, :update, :close_ticket]
+  before_filter :set_date_filter, :only => [:export_csv]
   
   before_filter :only => :show do |c|
     c.send(:set_portal_page, :ticket_view)
   end
 
-
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def index
     set_portal_page :ticket_list
-    @page_title = t('helpdesk.tickets.views.all_tickets')
     build_tickets
-    @ticket_filters = render_to_string :partial => "/support/shared/filters"
-    @tickets_list = render_to_string :partial => "/support/shared/tickets"        
+    @page_title = t("helpdesk.tickets.views.#{@current_filter}")
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }
@@ -36,8 +33,8 @@ class Support::TicketsController < SupportController
   end
 
   def new
+    set_portal_page :submit_ticket
     @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
-    @request_form = render_to_string :partial => "/support/shared/request_form"  
   end
 
   def update
@@ -54,17 +51,15 @@ class Support::TicketsController < SupportController
     end
   end
 
-  def filter   
+  def filter
+    set_portal_page :ticket_list
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
+    @requested_by = params[:requested_by].presence
+
     build_tickets
     respond_to do |format|
-      format.html {
-        if params[:partial].blank?
-          render :index
-        else
-          render :partial => "/support/shared/ticket_list"
-        end
-      }
+      format.html { render :partial => "ticket_list" }
+      format.js
       format.mobile {
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
@@ -86,7 +81,9 @@ class Support::TicketsController < SupportController
   end
 
   def configure_export
-    render :partial => "helpdesk/tickets/configure_export", :locals => {:csv_headers => export_fields(true)}
+    @csv_headers = export_fields(true)
+    render :layout => false
+    # render :partial => "helpdesk/tickets/configure_export", :locals => {:csv_headers => export_fields(true)}
   end
   
   def export_csv
@@ -155,26 +152,42 @@ class Support::TicketsController < SupportController
       @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
       @item || raise(ActiveRecord::RecordNotFound)      
     end
+
     def redirect_url
       current_user ? support_ticket_url(@ticket) : root_path
     end
   
     def build_tickets
-      ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? current_user.tickets : current_user.tickets.created_at_inside(params[:start_date], params[:end_date])
-    @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope)
-    per_page = mobile? ? 30 : params[:wf_per_page] || 10
-     @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, :order=> "#{current_wf_order} #{current_wf_order_type}") 
-    @tickets ||= []
-   end
-   
-   def require_user_login
-     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
-   end
+      @company = current_user.customer.presence
 
-   def check_user_permission
-     if current_user and current_user.agent?
-       return redirect_to helpdesk_ticket_url(:format => params[:format])
-     end
-   end
+      date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? 
+          ticket_scope.tickets : 
+          ticket_scope.tickets.created_at_inside(params[:start_date], params[:end_date])
+
+      @tickets = TicketsFilter.filter(current_filter, current_user, date_added_ticket_scope)
+      per_page = mobile? ? 30 : params[:wf_per_page] || 10
+      @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, 
+          :order => "#{current_wf_order} #{current_wf_order_type}") 
+
+      @tickets ||= []
+    end
+
+    def ticket_scope
+      if current_user.client_manager?
+        @requested_item = current_account.users.find_by_id(@requested_by) || current_user.customer
+      else
+        current_user
+      end
+    end
+   
+    def require_user_login
+      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+    end
+
+    def check_user_permission
+      if current_user and current_user.agent?
+        return redirect_to helpdesk_ticket_url(:format => params[:format])
+      end
+    end
   
 end

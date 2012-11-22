@@ -26,7 +26,6 @@
 .label-small{
   font-size: 10px;
   line-height: 16px;
-  @include border-radius(16px);
   text-transform: uppercase;
   font-weight: normal;
   padding: 0 7px;
@@ -49,3 +48,12 @@ $colorPlanned: #007fd8;
 
 .label-inverse             { background-color: $grayDark; }
 .label-inverse:hover       { background-color: darken($grayDark, 10%); }
+
+.label-light           { background-color: #eee; color:#afafaf; @include text-shadow(none); }
+.label-light:hover     { background-color: darken(#eee, 3%); color:#afafaf; @include text-shadow(none); }
+
+@include at-breakpoint($break-tablet){
+  .label{ 
+    @include border-radius(16px); 
+  }
+}

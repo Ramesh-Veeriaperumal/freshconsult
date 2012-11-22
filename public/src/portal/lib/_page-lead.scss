@@ -1,69 +1,57 @@
 .help-center{
-	/*background-color: $page-lead-background;*/
-	/*border: $content-border;*/
+	background-color: $page-lead-background;
+	padding: $content-padding-mobile;	
+	border: 1px solid darken($page-lead-background, 10%);
 	@include clearfix;
 }
 
 // PORTAL BASED SEARCH CSS
 
-.hc-search-c{
-	/*padding: $content-padding-mobile;*/
-}
+.hc-search{	position: relative; }
 
 .hc-search-form{
-	background-color: rgba(#e3e3e3, 0.5);
+	background-color: rgba(#e3e3e3, 0.3);
 	border:1px solid #cdcccc;
-	padding:4px;
+	padding:5px;
+	@include border-radius(6px);
+	@include pie-clearfix;
 }
 
-.hc-search-button{
-	width: 10%;
-	line-height: $baseLineHeight * 1.2;
-	font-weight: 500;
-	text-indent: -99999px;
-	position: relative;	
-    &:before{
-    	content:"";
-    	@if lightness($btnPrimaryBackground) > 50{
-    		@extend .icon-search-dark;
-    	} @else {
-    		@extend .icon-search-light;
-    	}
-    	@include inline-block;
-		vertical-align: text-top;
-		position: absolute;
-		left: 50%;
-		margin-left: -11px;
-		margin-top: 1px;
-		text-indent: 0;
-    }
+.hc-search-form.active{
+	@include box-shadow(#aaaaaa 0 6px 10px);
+	@include border-radius(6px 6px 0 0);
 }
 
-input.hc-search-input{
-	width:86%;	
+@include layout(12) {
+	.hc-search-input{ @include span-columns(10); }
+	.hc-search-button{ @include span-columns(2 omega); }
 }
 
-.hc-nav	nav{
-	@include clearfix;
-	a{ 
-		font-weight: bold;
-	    &:hover{ 
-	    	text-decoration:none; 
-		    background-color: #eaeaea;
-		    @include border-radius(5px);
-		    box-shadow: 0 1px 2px #afafaf inset;
-		}
-	}
-	a, span{
-		padding: 3px 8px 3px 2px;
-		margin-bottom: 8px;
-		&:before{
-			content:"";
-			@include inline-block;
-			vertical-align: text-top;		
-			margin-right: 5px;
-			margin-top: -1px;
-		}
+.hc-search-input input, .hc-search-button .btn{	height: 35px; }
+.hc-search-input input{	width: 100%; }
+.hc-search-button .btn{
+	width: 100%;
+	text-transform: uppercase;
+	padding: 5px;
+	font-size: 12px;
+}
+
+@include mobile-icon(icon-search, $btnPrimaryBackground);
+
+.hc-nav	nav{ @include clearfix;	}
+.new-ticket, .check-status{ font-weight: bold; }
+.new-ticket, .check-status, .contact-info{ 	
+	padding: 3px 8px 3px 2px;
+	margin-bottom: 3px;
+    &:hover{ text-decoration:none; }
+	&:before{
+		content:"";
+		@include inline-block;
+		vertical-align: text-top;		
+		margin-right: 5px;
+		@include border-radius(2em);
+		margin-top: -1px;
+		background-color: #696767;
 	}
 }
 
@@ -71,17 +59,28 @@ input.hc-search-input{
 .new-ticket:before{ @extend .icon-new-ticket; }
 .check-status{ @include span-columns(2 omega); }
 .check-status:before{ @extend .icon-check-status; }
-.contact-info:before{ @extend .icon-phone; }
+.contact-info:before{ @extend .icon-phone; margin-right: 8px; }
 
+@include at-breakpoint($break-tablet){
+    .help-center{ margin-top: 10px; padding: $page-lead-padding; }
+	
+	.hc-search{ @include span-columns(8); }
+	.hc-nav{ @include span-columns(4 omega); }
 
-@include at-breakpoint($break-tablet){	
-    input.hc-search-input{ width: 80.5%; }
-    .help-center{ margin-top: 10px; }
-    /*.hc-nav	nav{ padding: $content-padding; } */
-    .hc-search-button{ 
-      width: 18%; text-indent:0; 
-      margin-left: 0.5%;
-      &:before{ content:none; } 
-    }
-    /*.hc-search-c{ padding:$content-padding; }*/
+	.hc-nav{
+		a, span{
+			@include reset-columns;
+			float: left;
+			clear: left;
+		}
+		nav{ 
+			margin-left: $grid-padding/2;
+			padding-left: 1.5em;
+			border-left: 1px solid darken($page-lead-background, 10%); 
+		}
+	}
+}
+
+@include at-breakpoint($break-desktop){
+   .hc-search-button .btn{ font-size: $baseFontSize; } 
 }

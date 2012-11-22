@@ -853,6 +853,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def support_path
+    support_tickets_path(:host => portal_url)
+  end
    
    def group_name
       group.nil? ? "No Group" : group.name

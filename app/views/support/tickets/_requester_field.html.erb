@@ -1,0 +1,65 @@
+<%= text_field(object_name, field.name) %>
+<% javascript_tag do -%>
+
+	jQuery('#add_cc_btn').bind("click", function(ev){
+		ev.preventDefault();
+		jQuery("#cc_emails_sec").toggle();
+		jQuery("#cc_emails").val("");
+		jQuery("#cc_emails").trigger("liszt:updated");
+	});
+ 	function lookup(searchString, callback) { 
+        new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                                  { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                                  onSuccess: function(response) {
+                                                    var choices = $A();
+                                                    response.responseJSON.results.each(function(item){
+													  if(item.value == "") {
+													  	choices.push([item.id, item.id]);
+													  } else {
+														choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+													  }	
+                                                    });                                                
+                                                    callback(choices);
+                                                  } });
+                                                }
+	var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+	var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+<%- end %>
+
+<div class="new_ticket_cc_button">
+	&nbsp;<a href="#" class="align-right" id="add_cc_btn">Add cc</a>
+</div>
+<div id="cc_emails_sec" class="hide">
+	<label for="ticket_cc_list">Cc:</label>
+	<% javascript_tag do -%>
+        new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(),{frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+	<%- end %>
+    <input type="text" id="cc_emails" name="cc_emails" />
+</div>
+
+<div>
+  <label for="name"><%= t('user.name') %></label>
+    <input class="text" id="name" name="helpdesk_ticket[name]" size="30" type="text" />
+</div>
+
+<% unless current_user%>
+  <% javascript_tag do %>
+    jQuery("#helpdesk_ticket_email").focusout(function(){
+      var ticket_email = jQuery("#helpdesk_ticket_email").val();
+      var valid_email = /^<%= email_regex %>$/;
+
+      if(valid_email.test(ticket_email)) {  
+        jQuery("#helpdesk_ticket_email").addClass("loading-right");
+        jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+ticket_email,
+          success: function(data){
+            jQuery("#helpdesk_ticket_email").removeClass("loading-right");
+            if(data.user_exists)
+              jQuery("#name_field").slideDown();
+            else
+              jQuery("#name_field").slideUp();              
+        }
+      });
+    } 
+  });
+  <% end %>
+<% end %>

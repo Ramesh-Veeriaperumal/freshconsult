@@ -5,6 +5,8 @@
 // GLOBAL VALUES
 // --------------------------------------------------
 
+// Application mode is either debug if its in developement mode
+$app-debug-mode: 		false !default; 
 
 // Grays
 // -------------------------
@@ -65,6 +67,13 @@ $headingsFontFamily:    'Open Sans Condensed', Helvetica, sans-serif !default; /
 $headingsFontWeight:    bold !default;    // instead of browser default, bold
 $headingsColor:         inherit !default; // empty to use BS default, $textColor
 
+// Date picker & jQuery UI widget setting
+// --------------------------------------------------
+$widgetHeaderColor: 	#eee !default;
+$widgetHeaderTextColor: #333 !default;
+
+$widgetBackground: 		$white !default;
+
 // Input placeholder text color
 // -------------------------
 $placeholderText:         #b2b2b2 !default;
@@ -90,7 +99,7 @@ $dropdownBackground:            $white !default;
 $dropdownBorder:                rgba(0,0,0,.2) !default;
 $dropdownLinkColor:             $grayDark !default;
 $dropdownLinkColorHover:        $white !default;
-$dropdownLinkBackgroundHover:   $linkColor !default;
+$dropdownLinkBackgroundHover:   #999 !default;
 
 // Form states and alerts
 // -------------------------
@@ -179,10 +188,15 @@ $container-width: 	1140px;
 // --------------------------------------------------
 
 $content-padding-mobile: 1em;
-$content-padding: 1.8em 2.2em;
+$content-padding-side: 2.2em;
+$content-padding: 1.8em $content-padding-side;
+
+$header-padding: 0.9em 1.6em;
+
 $content-border: 1px solid $grayLighter;
 
+$page-lead-padding: 1em 2.2em;
 $page-lead-background: rgba(#f9f9f9, 0.6);
-$page-background: rgba($white, 0.7);
+$page-background: rgba($white, 0.8);
 $page-form-background: rgba(#f4f4f4, 0.9);
 

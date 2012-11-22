@@ -16,7 +16,7 @@ class SearchController < ApplicationController
   
   def suggest
     search
-    render :partial => '/search/navsearch_items'    
+    render :partial => '/search/navsearch_items'
   end
   
   def content
@@ -24,6 +24,13 @@ class SearchController < ApplicationController
     render :nothing => true and return if to_search.empty?
       
     search_content to_search
+  end
+
+  def portal
+    to_search = content_classes
+    render :nothing => true and return if to_search.empty?
+      
+    search_content to_search, '/portal/search_autocomplete'
   end
   
   def solutions
@@ -61,7 +68,7 @@ class SearchController < ApplicationController
     end
     
     
-    def search_content(f_classes)
+    def search_content(f_classes, output_file = '/search/search_results')
       s_options = { :account_id => current_account.id }      
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
       s_options.merge!({:visible => 1, :company => 1})
@@ -85,7 +92,7 @@ class SearchController < ApplicationController
       end
       
       respond_to do |format|
-        format.html { render :partial => '/search/search_results'  }
+        format.html { render :partial => output_file }
         format.xml  { 
         api_xml = []
         api_xml = @searched_articles.to_xml  if ['Solution::Article'].include? f_classes.first.name and !@searched_articles.nil?

@@ -7,7 +7,7 @@
 		<i class="icon-page-{{ forum.type_name }}"></i>
 	</i>
 	<a href="{{ portal.new_topic_path }}" class="pull-right btn">
-		<strong> {% translate topic.start_new_topic %}</strong>
+		<strong> {% translate portal.topic.start_new_topic %}</strong>
 	</a>
 	<div class="list-lead">
 		{{ forum.name }} ({{ forum.topics | size }})			
@@ -25,20 +25,20 @@
 	{% endcomment %}
 
 	{% paginate forum.topics by 10 %}
-		<div class="content-list">					
+		<div class="c-list" id="forum-topic-list">					
 			{% for topic in paginate.collection %}
 				{% assign last_post_user = topic.last_post.user %}
-				<div class="content-row clearfix">
+				<div class="c-row c-user-thumb">
 					<div class="user-pic-thumb">
 						<img src="{{ last_post_user.profile_url }}" width="50px" height="50px" />
-					</div>					
+					</div>	
+					{% if topic.stamp_type %}
+						<span class="pull-right-tablet label label-small label-{{topic.stamp_name | downcase}}">
+							{{ topic.stamp_name }}
+						</span>
+					{% endif %}
 					<div class="ellipsis">
-						{% if topic.stamp_type %}
-							<span class="pull-right-tablet label label-small label-{{topic.stamp_name | downcase}}">
-								{{ topic.stamp_name }}
-							</span>
-						{% endif %}
-						<a class="topic-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
+						<a class="c-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
 					</div>				
 					<div class="help-text">
 						Posted by {{ topic.user.name | bold }}, {{ topic.created_on | time_ago }}{% if topic.has_comments %}, 

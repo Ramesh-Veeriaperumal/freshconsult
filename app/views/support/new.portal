@@ -1,22 +1,26 @@
-<section class="content-form rounded-6 main login-container">
+<section id="login-box" class="content-form rounded-6 main">
 	<div class="login-form">
-		<h2>Login to the support portal</h2>
+		<h2 class="heading">Login to the support portal</h2>
 		<p>Enter the login details you gave when you registered with us. </p>
 		{{login_form}}
 	</div>
 	<div class="alt-login-button">
-		<h2>...or login using</h2>
+		<h2 class="heading">...or login using</h2>
 		{{ "Google" | login_via_google }}
 		{{ "Facebook" | login_via_facebook }}
 		{{ "Twitter" | login_via_twitter }}
 	</div>
 </section>
-<section class="content-form rounded-6 sidebar">
-	<h2>Sign up</h2>
-	<p>
-		{{ "Sign up with us" | link_signup }}
-	</p>
-	<p class="info-text">
-		This registration gets you full access to our support desk and community. You'll be able to read all our support articles, as well as ask questions in our community forum and comment on our documentation. 
-	</p>
-</section>
+{% if portal.can_signup_feature? %}
+	<section id="signup-box" class="content-form rounded-6 sidebar">
+		<h2 class="heading">{% translate signup %}</h2>
+		<p>
+			<a href="{{ portal.signup_path }}" class="btn btn-signup">
+				{% translate signup_up_with_us %}
+			</a>
+		</p>
+		<p class="info-text">
+			{% translate signup_help_information %}
+		</p>
+	</section>
+{% endif %}

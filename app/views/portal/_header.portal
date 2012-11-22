@@ -1,15 +1,10 @@
 <header class="banner">
 	<div class="banner-title">
 		<span class="logo"></span>
-		<h1 class="ellipsis">{{portal.name}}</h1>
+		<h1 class="ellipsis heading">{{portal.name}}</h1>
 	</div>
 	<nav class="banner-nav">
-		Welcome, 		
-			<strong>Guest</strong> - 
-			<strong><a href="{{portal.login_path}}">Login</a></strong>
-			
-		<strong>{{current_user.name}}</strong>
-		<strong><a href="{{portal.login_path}}">Signout</a></strong>
+		{{ portal | welcome_navigation }}		
 	</nav>
 </header>
 

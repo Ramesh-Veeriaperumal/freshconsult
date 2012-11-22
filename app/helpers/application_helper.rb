@@ -124,7 +124,25 @@ module ApplicationHelper
   def fd_menu_link(text, url, is_active)
     text << "<span class='icon ticksymbol'></span>" if is_active
     class_name = is_active ? "active" : ""
-    link_to(text, url, :class => class_name)
+    link_to(text, url, :class => class_name, :tabindex => "-1")
+  end
+
+  def dropdown_menu(list, options = {})
+    return if list.blank?
+    output = ""
+    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    
+    list.each do |item|
+      unless item.blank?
+        if item[0] == :divider
+          output << %(<li class="divider"></li>)
+        else
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+        end
+      end
+    end
+    output << %(</ul>)
+    output.html_safe
   end
 
   def navigation_tabs
@@ -559,7 +577,7 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless display_tag?(element,field,field_value)
+    element unless display_tag?(element,field,field_value)
   end
 
   def display_tag?(element, field, field_value)

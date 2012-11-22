@@ -39,8 +39,10 @@ class SupportController < ApplicationController
         @current_tab = "forums"
       elsif [ :solution_home, :article_list, :article_view ].include?(token)
         @current_tab = "solutions"
-      elsif [ :tickets_list, :ticket_view ].include?(token)
+      elsif [ :ticket_list, :ticket_view ].include?(token)
         @current_tab = "tickets"
+      elsif [ :company_ticket_list ].include?(token)
+        @current_tab = "company_tickets"
       end
     end
 

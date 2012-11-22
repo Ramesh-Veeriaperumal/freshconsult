@@ -16,6 +16,7 @@ en:
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
+  myself: "Myself"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
@@ -24,8 +25,10 @@ en:
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
-  signup: sign up
+  signup: "Sign up"
   signup_title: "Sign up to %{current_portal}"
+  signup_up_with_us: "Sign up with us"
+  signup_help_information: "This registration gets you full access to our support desk and community. You'll be able to read all our support articles, as well as ask questions in our community forum and comment on our documentation. "
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   add_note: Add Note
@@ -1025,6 +1028,12 @@ en:
     add_condition: Add new condition
     delete: "Are you sure you want to delete this rule?"
   header_logo: Header Logo
+  feedback:
+      title: "Was this answer helpful?"
+      up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
+      upvote: "Yes"
+      downvote: "No"
+      down_vote_form_title: "Can you please tell us how we can improve this article?"
   solutions:
     status:
       draft: Draft
@@ -1056,7 +1065,7 @@ en:
       implemented: Implemented
       nottaken: Not Taken
     name: Topic Name
-    new: New Topic
+    new: Post a new topic
     open: Re-open this Discussion
     edit: Edit Topic
     close: Close this Discussion
@@ -1436,8 +1445,13 @@ en:
     welcome: Welcome
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
-    login: login
+    login: "Login"
+    guest: "Guest"
+    signout: "Sign out"
     assumed_text: "You are viewing as"
+    help_center: "Help center"
+    new_support_ticket: "New support ticket"
+    check_ticket_status: "Check ticket status"
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -1449,8 +1463,7 @@ en:
       tickets: Tickets
       home: Home
       company_tickets: Company Tickets
-      social: Social
-    signout: Sign out
+      social: Social    
     search: Search
   agent_adds_comment: Agent adds comment to Ticket
   portal_customizer_anon_tickets: Anybody can submit a ticket
@@ -1745,7 +1758,7 @@ en:
   account: 
     name: Account Name
     cancel: Cancel and go back   
-    customize_portal: "Customize portal"
+    customize_portal: "Helpdesk rebranding"
     page_colors: 
       title: Page colors
       background: Background
@@ -1943,8 +1956,8 @@ en:
         my_resolved: My Resolved Tickets
         new_my_open: New & My Open Tickets
         this_view: this view
-        all_tickets: All Tickets
-        all: All Tickets
+        all_tickets: All tickets
+        all: All tickets
         new_and_my_open: New & My Open Tickets
         open: Open tickets
         closed: Closed Tickets
@@ -1998,10 +2011,14 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
+    raised_by: "Tickets raised by"
+    everyone_in_company: "Everyone in %{company_name}"
     sort_fields:
       due_by: Due by time
       date_created: Date Created
       last_modified: Last Modified
+      created_at: Date Created
+      updated_at: Last Modified 
       priority: Priority
       status: Status
       asc: Ascending

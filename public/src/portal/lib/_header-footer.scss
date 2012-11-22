@@ -1,6 +1,6 @@
 .banner{
 	background-color: $header_color;
-	padding: $content-padding;
+	padding: $header-padding;
 	border: 1px solid darken($header_color, 10%);
 	color: $header_text_color;
 	@include box-shadow( rgba(#fff, 0.7) 0 1px inset );		
@@ -12,7 +12,12 @@
 }
 
 .banner-nav{
-	font-size: 0.929em;	
+	font-size: 0.929em;
+	line-height: 1.3em;
+	.welcome{ 
+		display: inline-block;
+		&:after{ content:" - "; }
+	}
 	a{ color: inherit; }
 }
 
@@ -36,6 +41,13 @@
 
 @include at-breakpoint($break-tablet){
 	.banner{ @include border-top-radius(6px); }
+	.banner-nav { 
+		margin-top: 5px;
+		.welcome{ 
+			display: block;
+			&:after{ content:none; }
+		}
+	}
 	.page-tabs{ 
 		@include border-bottom-radius(6px); 
 		a:first-child{ @include border-bottom-left-radius(6px); }
