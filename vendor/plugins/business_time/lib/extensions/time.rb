@@ -18,7 +18,7 @@ class Time
     # workday.
     def beginning_of_workday(day)
       time = workday?(day) ? BusinessCalendar.config.beginning_of_workday(day.wday) : "0:00:00"
-      format(time,day)
+      time_with_format(time, day)
     end
 
     # True if this time is on a workday (between 00:00:00 and 23:59:59), even if

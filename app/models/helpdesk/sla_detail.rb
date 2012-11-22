@@ -80,19 +80,19 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   private
 
     def business_time(sla_time, created_time)
-     fact = sla_time.div(86400) 
-     fact > 0 ?  fact.business_days.after(created_time) : sla_time.div(60).business_minute.after(created_time)
+      fact = sla_time.div(86400)
+      (fact > 0) ?  fact.business_days.after(created_time) : sla_time.div(60).business_minute.after(created_time)
     end
 
     def on_status_change_override_bhrs(ticket, ticket_attr)
-     elapsed_time = Time.zone.now - ticket.ticket_states.sla_timer_stopped_at  
-     ticket_attr + elapsed_time if Ticket.due_by >ticket.ticket_states.sla_timer_stopped_at
+      elapsed_time = Time.zone.now - ticket.ticket_states.sla_timer_stopped_at  
+      ticket_attr + elapsed_time if Ticket.due_by > ticket.ticket_states.sla_timer_stopped_at
     end
 
     def on_status_change_bhrs(ticket, ticket_attr)
-     bhrs_during_elapsed_time =  Time.parse(ticket.ticket_states.sla_timer_stopped_at.to_s).business_time_until(
-      Time.zone.now)
-     bhrs_during_elapsed_time.div(60).business_minute.after(ticket_attr) if ticket_attr > 
+      bhrs_during_elapsed_time =  Time.parse(ticket.ticket_states.sla_timer_stopped_at.to_s).business_time_until(
+        Time.zone.now)
+      bhrs_during_elapsed_time.div(60).business_minute.after(ticket_attr) if ticket_attr > 
       ticket.ticket_states.sla_timer_stopped_at
     end 
 end
