@@ -1,6 +1,7 @@
 class PostObserver < ActiveRecord::Observer
 
 	include Gamification::GamificationUtil
+	include ActionController::UrlWriter
 
 	def before_create(post)
 		post.forum_id = post.topic.forum_id 

@@ -46,5 +46,9 @@ class Post < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
+
+  def to_s
+    topic.title
+  end
   
 end

@@ -30,12 +30,14 @@ include RedisKeys
   def sso_login
     if params[:hash] == gen_hash_from_params_hash
       @current_user = current_account.users.find_by_email(params[:email])  
-      unless @current_user
+      if !@current_user
         @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
         @current_user.active = true
         saved = @current_user.save
-      else
-        @current_user.update_attributes(:name => params[:name])
+      elsif current_account.sso_enabled?
+        @current_user.name =  params[:name]
+        @current_user.active = true
+        saved = @current_user.save
       end
       
       @user_session = @current_user.account.user_sessions.new(@current_user)

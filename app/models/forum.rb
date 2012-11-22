@@ -7,6 +7,8 @@ class Forum < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity', 
     :as => 'notable'
   
+  belongs_to_account
+
   TYPES = [
     [ :howto,    I18n.t("forum.types.howto"),    1 ],
     [ :ideas,    I18n.t("forum.types.ideas"),    2 ],

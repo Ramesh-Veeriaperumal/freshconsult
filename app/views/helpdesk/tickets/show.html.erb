@@ -17,7 +17,8 @@
 	<%= ticket_tabs %>        
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
+			<span id="agent_replying_message_bottom" style="color:#048b00; font-size:12px;"></span>
+			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
 			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
 				:id => "FwdButton", :class => "button forward reply") %>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
@@ -29,16 +30,36 @@
 </div>		
 <div class="tab-content">
 	<div class="requestCnt request-conversation active tab-pane set-top" id="Pages">
+		<% unless @ticket.deleted %>
 		<div id="TicketForms">
-		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) %>
+				<% javascript_tag do %> 
+				  function lookup(searchString, callback) { 
+				    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+				                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+				                                              onSuccess: function(response) {
+				                                                var choices = $A();
+				                                                response.responseJSON.results.each(function(item){
+				                  if(item.value == "") {
+				                    choices.push([item.id, item.id]);
+				                  } else {
+				                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+				                  } 
+				                                                });                                                
+				                                                callback(choices);
+				                                              } });
+				                                            }
+				  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+				  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+				<% end %>
+		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
 
 		  	<div class="request_panel hide" id="cnt-fwd">
 				<%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>
 		  	</div>
 
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) if @item.requester && @item.is_twitter?%>
+			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) if @item.requester && @item.is_facebook? %>
 			<% content_for :pagefixed do %> 
 				<div class="canned-response-menu hide" id="canned_response_container"> 
 				  <div>
@@ -47,7 +68,8 @@
 				  <div id="canned_response_list"></div>
 				</div>
 			<% end %>
-		</div> 
+		</div>
+		<% end %> 
 		<% unless @ticket_notes.blank? %>
 			<%= render :partial => 'note', :collection => @ticket_notes %>
 			<%= will_paginate @ticket_notes %>
@@ -66,26 +88,31 @@
 	var activeForm = null;
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
+			
+			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid)){
+				//!VISIBILITY a visibility trigger is done to inform node that an agent has stopped replying
+				jQuery("#"+activeForm.get(0).id).hide().trigger('visibility'); 
+			}
 
-			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
-				jQuery("#"+activeForm.get(0).id).hide();
+			//!VISIBILITY a visibility trigger is done to inform node that an agent is replying
+			activeForm = jQuery('#'+formid).show().trigger('visibility');
 
-
-			activeForm = jQuery('#'+formid).show();
 			switch(formid){
 				case 'cnt-reply':
 				case 'cnt-note':
-				case 'cnt-fwd':
-					invokeRedactor(formid+"-body",formid);
-					jQuery('#'+formid+"-body").getEditor().focus();
-					if(jQuery.browser.mozilla){
-						jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
-					}
-					jQuery('#'+formid+"-body").getEditor().on('blur',function(){
-					jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
-					jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
-
-				});
+				case 'cnt-fwd':					
+						invokeRedactor(formid+"-body",formid);
+						jQuery('#'+formid+"-body").getEditor().focus();
+						if(jQuery.browser.mozilla){
+							jQuery('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
+						}
+						jQuery('#'+formid+"-body").getEditor().on('blur',function(){
+							try{
+								jQuery('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
+								jQuery('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
+							}catch(e){}
+						});
+					
 
 				break; 
 				case 'cnt-fb-post': 
@@ -191,8 +218,9 @@
 	jQuery('#custom_ticket_form').validate(validateOptions);
 	
 	<% unless @draft.nil? %>
-	jQuery(window).load(function(){jQuery("#ReplyButton").trigger('click');});
-	var isDirty= false;
+		jQuery("#ReplyButton").trigger('click');
+		var isDirty= false;
 	<% end %>
 	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
+	setTimeout(function(){jQuery('#TicketProperties').trigger('afterShow')},50);
 <%- end %>

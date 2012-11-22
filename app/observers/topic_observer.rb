@@ -1,7 +1,8 @@
 class TopicObserver < ActiveRecord::Observer
 
 	include Gamification::GamificationUtil
-
+  include ActionController::UrlWriter
+  
 	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
 
 	def before_create(topic)

@@ -3,6 +3,12 @@
  * Genric core utility class for the application
  */
 
+if (typeof console === "undefined" || typeof console.log === "undefined") {
+    console = { };
+    console.log = function() {
+    };
+}
+
 function log(entry) {
   if (console) {
     console.log(entry);
