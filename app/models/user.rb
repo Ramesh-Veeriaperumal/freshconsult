@@ -64,6 +64,8 @@ class User < ActiveRecord::Base
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
+  after_commit_on_update :clear_agent_list_cache, :if => :user_role_updated?
+  before_update :bakcup_user_changes
   
   named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
@@ -507,5 +509,14 @@ class User < ActiveRecord::Base
 
     def update_admin_in_crm
       Resque.enqueue(CRM::AddToCRM::UpdateAdmin, self.id)
+    end
+
+    def bakcup_user_changes
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+    def user_role_updated?
+      @all_changes.has_key?(:user_role)
     end
 end
