@@ -20,50 +20,52 @@ module BusinessTime
         after_time = after_time + 1.hour
 
         # Ignore hours before opening and after closing
-        if (after_time > Time.end_of_workday(after_time))
-          after_time = after_time + off_hours
+        if(after_time > Time.end_of_workday(after_time - 1.hour)) #Subracting 1 hr to satisfy the edge cases - Abhinav
+          after_time = after_time + off_hours_till_next_day(after_time)
         end
 
         # Ignore weekends and holidays
         while !Time.workday?(after_time)
-          after_time = after_time + 1.day
+          after_time = Time.beginning_of_workday(after_time + 1.day)
         end
       end
+
       after_time
     end
 
     def before(time)
-      before_time = Time.roll_forward(time)
+      before_time = Time.roll_backward(time)
       # Step through the hours, skipping over non-business hours
       @hours.times do
         before_time = before_time - 1.hour
 
         # Ignore hours before opening and after closing
-        if (before_time < Time.beginning_of_workday(before_time))
-          before_time = before_time - off_hours
+        if(before_time < Time.beginning_of_workday(before_time + 1.hour)) #Adding 1 hr to satisfy the edge cases - Abhinav
+          before_time = before_time - off_hours_from_previous_day(before_time)
         end
 
         # Ignore weekends and holidays
         while !Time.workday?(before_time)
-          before_time = before_time - 1.day
+          before_time =  Time.beginning_of_workday(before_time - 1.day)
         end
       end
+
       before_time
     end
 
     private
-
-    def off_hours
-      return @gap if @gap
-      if Time.zone
-        gap_end = Time.zone.parse(BusinessCalendar.config.beginning_of_workday)
-        gap_begin = (Time.zone.parse(BusinessCalendar.config.end_of_workday)-1.day)
-      else
-        gap_end = Time.parse(BusinessCalendar.config.beginning_of_workday)
-        gap_begin = (Time.parse(BusinessCalendar.config.end_of_workday) - 1.day)
+    
+      def off_hours_till_next_day(time)  
+        gap_begin =  Time.end_of_workday(time - 1.hour)
+        gap_end = Time.beginning_of_workday(Time.roll_forward(time))
+        gap_end - gap_begin
       end
-      @gap = gap_end - gap_begin
-    end
-  end
 
+      def off_hours_from_previous_day(time)
+        gap_end =  Time.beginning_of_workday(time + 1.hour)
+        gap_begin = Time.end_of_workday(Time.roll_backward(time))
+        gap_end - gap_begin
+      end
+    
+  end
 end

@@ -424,18 +424,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     set_user_time_zone if User.current
     logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
- 
-  def get_business_time time
-    fact = time.div(86400) 
-    (fact > 0) ? (business_time*fact) : time
-  end
-
-  def business_time
-    logger.debug "business time is called"
-    start_time = Time.parse(self.account.business_calendar.beginning_of_workday)
-    end_time = Time.parse(self.account.business_calendar.end_of_workday)
-    return (end_time - start_time)
-  end
 
   def set_account_time_zone  
     self.account.make_current
@@ -1028,34 +1016,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       end
       email
-  end
- 
+  end 
+
   def set_dueby_on_priority_change(sla_detail)
-    createdTime = created_at || Time.zone.now
-    if sla_detail.override_bhrs      
-      self.due_by = createdTime + sla_detail.resolution_time.seconds      
-      self.frDueBy = createdTime + sla_detail.response_time.seconds       
-    else      
-      self.due_by = get_business_time(sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
-      self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
-    end
+      created_time = created_at || Time.zone.now
+      self.due_by = sla_detail.calculate_due_by_time(self,created_time)      
+      self.frDueBy = sla_detail.calculate_frDue_by_time(self,created_time) 
   end
 
   def set_dueby_on_status_change(sla_detail)
-    unless (ticket_status.stop_sla_timer or ticket_states.sla_timer_stopped_at.nil?) 
-      if sla_detail.override_bhrs 
-        elapsed_time = Time.zone.now - ticket_states.sla_timer_stopped_at  
-        new_due_by = self.due_by + elapsed_time
-        new_frDueBy = self.frDueBy + elapsed_time
-      
-        self.due_by = new_due_by if self.due_by > ticket_states.sla_timer_stopped_at
-        self.frDueBy = new_frDueBy if self.frDueBy > ticket_states.sla_timer_stopped_at
-      else
-        bhrs_during_elapsed_time =  Time.parse(ticket_states.sla_timer_stopped_at.to_s).business_time_until(Time.zone.now)
-        
-        self.due_by = bhrs_during_elapsed_time.div(60).business_minute.after(self.due_by) if self.due_by > ticket_states.sla_timer_stopped_at      
-        self.frDueBy =  bhrs_during_elapsed_time.div(60).business_minute.after(self.frDueBy) if self.frDueBy > ticket_states.sla_timer_stopped_at
-      end
+    unless (ticket_status.stop_sla_timer or ticket_states.sla_timer_stopped_at.nil?)
+      self.due_by = sla_detail.calculate_due_by_time_on_status_change(self)      
+      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self) 
     end
   end
 

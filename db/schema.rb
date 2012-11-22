@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(:version => 20120905113000) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "holiday_data"
+    t.integer  "version",                         :default => 1
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
