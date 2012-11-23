@@ -1929,6 +1929,8 @@ en:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"
       tickets_update: "%{tickets} updated"
+      tickets_update_with_errors: "%{tickets} updated, but there are issues that need your attention."
+      sending_failure : "Failure in sending reply to the following tickets : "
       assigned_to_you: "%{tickets} assigned to you"
       removed_from_spam: "%{tickets} removed from the spam folder."
       closing_the_ticket_failed: Closing the ticket failed
