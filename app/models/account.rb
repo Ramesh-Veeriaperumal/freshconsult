@@ -571,6 +571,7 @@ class Account < ActiveRecord::Base
       self.user.build_agent()
       self.user.agent.account = self
       self.user.save
+      User.current = self.user
       
     end
     
