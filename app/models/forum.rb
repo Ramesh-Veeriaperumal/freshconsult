@@ -4,8 +4,7 @@ class Forum < ActiveRecord::Base
 
   has_many :activities, 
     :class_name => 'Helpdesk::Activity', 
-    :as => 'notable',
-    :dependent => :delete_all
+    :as => 'notable'
   
   belongs_to_account
 
@@ -87,7 +86,14 @@ class Forum < ActiveRecord::Base
 
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums
-  after_create :create_activity
+  
+  def after_create 
+    create_activity('new_forum')
+  end
+
+  def after_destroy 
+    create_activity('delete_forum')
+  end
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   
   
@@ -171,10 +177,10 @@ class Forum < ActiveRecord::Base
     name
   end
 
-  def create_activity
+  def create_activity(type)
     activities.create(
-      :description => 'activities.forums.new_forum.long',
-      :short_descr => 'activities.forums.new_forum.short',
+      :description => "activities.forums.#{type}.long",
+      :short_descr => "activities.forums.#{type}.short",
       :account => account,
       :user => User.current,
       :activity_data => { 
@@ -185,7 +191,8 @@ class Forum < ActiveRecord::Base
                                            :category_id => forum_category_id, 
                                            :forum_id => id,
                                            :path_generator => 'category_forum_path'
-                                          } 
+                                          },
+                          :title => to_s
                         }
     )
   end

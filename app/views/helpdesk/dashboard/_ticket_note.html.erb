@@ -2,7 +2,7 @@
 	<%= user_avatar( ticket_note.user,:thumb, "preview_pic" ,{ :width => "40px", :height => "40px" }) %>
 	<%= Liquid::Template.parse(h t(ticket_note.description)).render(eval_activity_data(ticket_note.activity_data).merge(
 			'user_path' => show_contact_hovercard(ticket_note.user) ,   
-			'notable_path' => link_to(h(ticket_note.notable), find_activity_url(ticket_note), :class => "notelink") )) %>      
+			'notable_path' => (ticket_note.notable.nil? ?  ticket_note.activity_data[:title] : link_to(h(ticket_note.notable), find_activity_url(ticket_note), :class => "notelink")) )) %>      
 
 	<%= content_tag :div,  "", :class => "activity_time", :title => ticket_note.created_at.strftime("%a, %d %b %Y %H:%M:%S %z")  %>
 </li>

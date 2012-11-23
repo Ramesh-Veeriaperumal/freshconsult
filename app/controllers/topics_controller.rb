@@ -1,4 +1,7 @@
 class TopicsController < ApplicationController
+
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
   before_filter :find_forum_and_topic, :except => :index 
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
@@ -240,7 +243,11 @@ end
       end
     end
 
-    
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.topic.page_not_found')
+      redirect_to categories_path
+    end
+
 #    def authorized?
 #      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
 #    end
