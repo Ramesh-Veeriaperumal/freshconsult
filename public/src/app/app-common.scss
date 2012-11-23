@@ -775,6 +775,14 @@ h4.title{
 						width:93%;
 					}
 				}
+				.freshSkin table.mceLayout {
+					border: 1px solid #C9C9C9;
+					padding: 4px;
+				}
+				.freshSkin tr.mceLast {
+					border: 1px solid #C9C9C9;
+					padding: 4px;
+				}
 			}
 			.min_height{
 				@include min-height(100px);
@@ -6931,7 +6939,6 @@ a.mobile_switchBtn {
 	color:#222;
 	padding:10px;
 }
- 
 
 a[rel="load-rjs"] {
 	float:right;

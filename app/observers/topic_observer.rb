@@ -31,11 +31,12 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
   def after_create(topic)
-    create_activity(topic)
+    create_activity(topic, 'new_topic')
   end
 
 	def after_destroy(topic)
 		update_forum_counter_cache(topic)
+    create_activity(topic, 'delete_topic')
 	end
 
 	def add_resque_job(topic)
@@ -85,10 +86,10 @@ private
   	@topic_changes = topic.changes.clone
   end
 
-  def create_activity(topic)
+  def create_activity(topic, type)
     topic.activities.create(
-      :description   => 'activities.forums.new_topic.long',
-      :short_descr   => 'activities.forums.new_topic.short',
+      :description => "activities.forums.#{type}.long",
+      :short_descr => "activities.forums.#{type}.short",
       :account       => topic.account,
       :user          => topic.user,
       :activity_data => { 
@@ -100,10 +101,11 @@ private
                                             :forum_id => topic.forum_id, 
                                             :topic_id => topic.id,
                                             :path_generator => 'category_forum_topic_path'
-                                          } 
+                                          },
+                          :title        => topic.to_s
                         }
     )
   end
-
+  
 end
 

@@ -819,6 +819,14 @@ en:
         success: The %{human_name} has been created.
       update: 
         success: The %{human_name} has been updated.
+    post:
+      page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
+    topic:
+      page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
+    forum:
+      page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
+    forum_category:
+      page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
   agent_closes_tkt: Agent closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
@@ -859,16 +867,28 @@ en:
     forums:
       new_forum_category:
         short: "{{user_path}} created a new forum category"
-        long: "{{user_path}} created a new forum category {{notable_path}}"
+        long: "{{user_path}} created a new forum category '{{notable_path}}'"
       new_forum:
         short: "{{user_path}} created a new forum"
-        long: "{{user_path}} created a new forum {{notable_path}} under {{category_name}}"
+        long: "{{user_path}} created a new forum '{{notable_path}}' under '{{category_name}}'"
       new_topic: 
         short: "{{user_path}} created a new topic"
-        long: "{{user_path}} created a new topic {{notable_path}} in {{forum_name}}" 
+        long: "{{user_path}} created a new topic '{{notable_path}}' in '{{forum_name}}'" 
       new_post: 
         short: "{{user_path}} created a new post"
-        long: "{{user_path}} posted in {{notable_path}}"
+        long: "{{user_path}} posted in '{{notable_path}}'"
+      delete_forum_category:
+        short: "{{user_path}} deleted a forum category"
+        long: "{{user_path}} deleted the forum category '{{notable_path}}'"
+      delete_forum:
+        short: "{{user_path}} deleted a forum"
+        long: "{{user_path}} deleted the forum '{{notable_path}}' under '{{category_name}}'"
+      delete_topic: 
+        short: "{{user_path}} deleted a topic"
+        long: "{{user_path}} deleted the topic '{{notable_path}}' in '{{forum_name}}'" 
+      delete_post: 
+        short: "{{user_path}} deleted a new post"
+        long: "{{user_path}} has deleted a post from '{{notable_path}}'"
     tickets: 
       assigned_to_nobody: 
         short: Assigned to 'Nobody' by {{user_path}}
@@ -1438,6 +1458,8 @@ en:
     folder: Folder
     meta: Meta tags for search engine
     meta_title: Title_tag
+    meta_keywords: Meta Keywords
+    meta_description: Meta Description
     meta_keywords: Keywords
     meta_description: Description
     title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
