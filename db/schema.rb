@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121110141455) do
+ActiveRecord::Schema.define(:version => 20121123135130) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1119,6 +1119,8 @@ ActiveRecord::Schema.define(:version => 20121110141455) do
     t.string   "thread_id"
   end
 
+  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>"15"}
+
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",       :limit => 8
     t.integer  "tweetable_id",   :limit => 8
@@ -1128,6 +1130,8 @@ ActiveRecord::Schema.define(:version => 20121110141455) do
     t.integer  "account_id"
     t.string   "tweet_type",                  :default => "mention"
   end
+
+  add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"account_id"=>nil, "tweetable_id"=>nil, "tweetable_type"=>"15"}
 
   create_table "social_twitter_handles", :force => true do |t|
     t.integer  "twitter_user_id",           :limit => 8
