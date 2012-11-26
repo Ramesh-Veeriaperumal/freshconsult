@@ -1,0 +1,2458 @@
+ru-RU:
+  meta:
+     language_name: 'Russian'
+  account: 
+    active_since: "Активен с"
+    cancel: "Отменить и вернуться"
+    helpdesk_url: "URL портала поддержки"
+    info1: "Вы можете использовать это поле для настройки меппинга домена Freshdesk"
+    info2: "Прежде чем чем использовать это поле, убедитесь, что создали запись CNAME DN в файле DNS Zone, чтобы назначить support.mycompanyname.com на %{full_domain}. Обратитесь за помощью в настройке к вебмастеру или администратору сервера. "
+    info3: "Вернуть цвета по-умолчанию"
+    info4: "Следующий идентификационный номер талона будет обозначаться этим числом (оно должно быть больше, чем для предшествующего идентификационного номера). Оно влияет на идентификационные номера последующих талонов."
+    language: Язык
+    name: "Название аккаунта"
+    page_colors: 
+      background: Фон
+      header: Заголовок
+      tab_color: "Цвет вкладки"
+      title: "Цвета страницы"
+    rebrand: "Изменить внешний вид"
+    save: Сохранить
+    time_zone: "Временная зона"
+  account_admin: "Администратор аккаунта"
+  account_admin_updated: "Администратор аккаунта обновлен"
+  accounts: 
+    billing: 
+      begin_subscription: Подписаться…
+      begin_subscription_info: "мгновенная активация подписки и снятие оплаты с карты."
+      billing: Оплата
+      save_billing_information: "Сохранить платежную информацию"
+      save_billing_information_info: "сохранение информации о плане и счете. Мы снимем оплату с карты и активируем подписку сразу по окончании пробного периода."
+      update_billing_info: "Изменить платежную информацию"
+    cancel: 
+      cancel_account: "Приостановить аккаунт Freshdesk"
+      change_your_plan: "Измените тарифный план"
+      changeplan_instead_of_cancel: "Вместо приостановки аккаунта, может быть, вы бы хотели поменять тарифный план."
+      confirm_and_cancel_my_account: "Я подтверждаю, что я хочу отменить свой аккаунт и удалить все данные в нем..."
+      delete_my_account: "Удалить аккаунт"
+      goback: "&#x2190; Назад к настройкам аккаунта"
+      intro: "Вы хотите отменить аккаунт. Это приведет к  <strong>необратимому удалению всех ваших данных</strong>."
+      warning_message: "Совершив данную операцию, вы потеряете доступ к своим данным. Вы уверены, что хотите продолжить?"
+      you_must_confirm: "Вы должны подтвердить отмену аккаунта"
+    show: 
+      account_settings: "Настройки аккаунта"
+      export_data: "Экспорт данных"
+      export_data_text: "Сгенерировать XML со всей доступной информацией и отправить по email"
+      export_now: Экспортировать
+  activate: Активировать
+  activate_account: "Активируйте ваш аккаунт"
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: "%{attribute} %{message}"
+      messages: 
+        accepted: "должно быть подтверждено"
+        blank: "не может быть пустым"
+        confirmation: "не совпадает"
+        empty: "поле не может быть пустым"
+        equal_to: "значение должно быть равным %{count}"
+        even: "должно быть четным"
+        exclusion: занято
+        greater_than: "должно быть больше, чем %{count}"
+        greater_than_or_equal_to: "должно быть большим или равным %{count}"
+        inclusion: "не включено в перечень"
+        invalid: неверно
+        less_than: "должно быть меньше, чем %{count}"
+        less_than_or_equal_to: "должно быть меньшим или равным %{count}"
+        not_a_number: "не число"
+        not_an_integer: "должно быть целым числом"
+        odd: "должно быть нечетным"
+        record_invalid: "Ошибка подтверждения: %{errors}"
+        too_long: "слишком большое значение (максимум %{count} знаков)"
+        too_short: "слишком короткое значение (минимум %{count} знаков)"
+        wrong_length: "неверная длина (должно быть %{count} знаков)"
+      template: 
+        body: "Есть проблемы со следующими полями:"
+        one: "1 ошибка этой %{model} не позволяет произвести сохранение"
+        other: "%{count} ошибок этой %{model} не позволяют произвести сохранение"
+  activities: 
+    solutions: 
+      new_solution: 
+        long: "{{user_path}} создал новое решение {{notable_path}}"
+        short: "{{user_path}} создал новое решение"
+    tickets: 
+      assigned: 
+        long: "{{user_path}} назначил заявку {{notable_path}} агенту {{responder_path}}"
+        short: "Назначено {{responder_path}} пользователем {{user_path}}"
+      assigned_to_nobody: 
+        long: "{{user_path}} назначил заявку {{notable_path}} 'Никому'"
+        short: "Назначено 'Никому' пользователем {{user_path}}"
+      conversation: 
+        in_email: 
+          long: "{{user_path}} отправил {{email_response_path}} по заявке {{notable_path}}"
+          short: "{{user_path}} отправить на {{email_response_path}}"
+        note: 
+          long: "{{user_path}} добавил {{comment_path}} к заявке {{notable_path}}"
+          short: "{{user_path}} добавил {{comment_path}}"
+        out_email: 
+          long: "{{user_path}} отправил {{reply_path}} по заявке {{notable_path}}"
+          private: 
+            long: "Талон {{notable_path}} был {{fwd_path}} в {{to_emails}} пользователем {{user_path}}"
+            short: "{{user_path}}  {{fwd_path}} талон в {{to_emails}}"
+          short: "{{user_path}} отправил {{reply_path}}"
+        twitter: 
+          long: "{{user_path}} добавил {{twitter_path}} к талону {{notable_path}}"
+          short: "{{user_path}} добавил {{twitter_path}}"
+      deleted: 
+        long: "{{user_path}} удалил заявку {{notable_path}}"
+        short: "{{user_path}} удалил талон"
+      execute_scenario: 
+        long: "{{user_path}} выполнил сценарий '{{scenario_name}}' на {{notable_path}}"
+        short: "{{user_path}} выполнил сценарий '{{scenario_name}}"
+      group_change: 
+        long: "{{user_path}} изменил группу {{notable_path}} на {{group_name}}"
+        short: "{{user_path}} изменил группу на {{group_name}}"
+      group_change_none: 
+        long: "{{user_path}} изменил группу {{notable_path}} на 'нет'"
+        short: "{{user_path}} изменил группу на  'нет'"
+      new_ticket: 
+        long: "{{user_path}} отправил новую заявку {{notable_path}}"
+        short: "{{user_path}} отправил заявку"
+      priority_change: 
+        long: "{{user_path}} сменил приоритет заявки {{notable_path}} на {{priority_name}}"
+        short: "{{user_path}} сменил приоритет на {{priority_name}}"
+      product_change: 
+        long: "{{user_path}} изменил продукт {{notable_path}} на {{product_name}}"
+        short: "{{user_path}} изменил продукт на {{product_name}}"
+      product_change_none: 
+        long: "{{user_path}} изменил продукт {{notable_path}} на 'нет'"
+        short: "{{user_path}} изменил продукт на 'none'"
+      reassigned: 
+        long: "{{user_path}} переназначил заявку {{notable_path}} агенту {{responder_path}}"
+      restored: 
+        long: "{{user_path}} восстановил заявку {{notable_path}}"
+        short: "{{user_path}} восстановил заявку"
+      source_change: 
+        long: "{{user_path}} изменил источник талона  {{notable_path}} на {{source_name}}"
+        short: "{{user_path}} изменил источник на {{source_name}}"
+      status_change: 
+        long: "{{user_path}} изменил статус заявки с {{notable_path}} на {{status_name}}"
+        short: "{{user_path}} изменил статус на {{status_name}}"
+      ticket_merge: 
+        long: "{{user_path}} объединил заявку {{notable_path}} с {{merge_ticket_path}}"
+        short: "{{user_path}} объединил заявку {{notable_path}} с {{merge_ticket_path}}"
+      ticket_split: 
+        long: "{{user_path}} разбил заявку {{notable_path}} из {{split_ticket_path}}"
+        short: "{{user_path}} разбил заявку {{notable_path}} из {{split_ticket_path}}"
+      ticket_type_change: 
+        long: "{{user_path}} изменил тип заявки {{notable_path}} на {{ticket_type}}"
+        short: "{{user_path}} изменил тип талона на {{ticket_type}}"
+      timesheet: 
+        new: 
+          long: "{{user_path}} добавил {{timesheet_path}} для талона {{notable_path}}"
+          short: "{{user_path}} добавил {{timesheet_path}}"
+        timer_started: 
+          long: "{{user_path}} установил таймер {{timesheet_path}} для талона {{notable_path}}"
+          short: "{{user_path}} установил таймер для  {{timesheet_path}}"
+        timer_stopped: 
+          long: "{{user_path}} остановил таймер {{timesheet_path}} для талона {{notable_path}}"
+          short: "{{user_path}} остановил таймер для {{timesheet_path}}"
+  add_a_topic: "Создать тему"
+  add_cc: "Добавить Cc"
+  add_holiday: "Добавить выходной"
+  add_new_email: "Добавить новый email"
+  add_new_forum: "добавить новый форум"
+  add_new_requester: "Добавить нового заявителя "
+  add_note: "Добавить заметку"
+  add_tags: "Добавить тег(и)"
+  add_to_do: "Добавить цель"
+  admin: 
+    automations: 
+      edit: 
+        title: "Редактировать сценарий"
+    canned_responses: 
+      edit: 
+        title: "Редактировать шаблон ответа"
+      form: 
+        all_agents: "Все агенты"
+        available_for: "Доступно для"
+        groups: "Агенты в группе"
+        me_only: "Только мне"
+        response_name: "Заголовок ответа"
+      index: 
+        new: "Добавить шаблон ответа"
+        title: "Шаблоны ответов"
+      new: 
+        delete_confirm: "Вы уверены что хотите удалить этот шаблон ответа?"
+        title: "Добавить шаблон ответа"
+    day_passes: 
+      index: 
+        add_confirm: "С вашей банковской карты будет снята оплата"
+        auto_recharge: Автоплатеж
+        buy_now: "Купить сейчас"
+        buy_pass: "Купить больше пропусков"
+        current_balance: "Ваш баланс %{balance}!"
+        day_pass_history: "История платежей"
+        day_pass_pack: "%{quantity} наборов дневных пропусков (%{currency}%{amount})"
+        day_passes: "Прошло дней"
+        daypass_quantity: "%{quantity} дневных пропусков"
+        helptext: "Количество ваших дневных пропусков автоматически восполнится, когда их останется 2. "
+        no_of_day_passes: "Кол-во дневных пропусков"
+        order: "Заказ #"
+        recharge_quantity: "Количество восполнения: "
+        title: "Дневной пропуск"
+    gamification: 
+      error_updated: "Ошибка обновления геймифицированных настроек."
+      gamification_settings: 
+        bonus_points: "Бонусные очки"
+        enable_label: "Геймификация агентов"
+        fast_resolution: "Быстро <span>(< 1 hr)</span>"
+        firstcall_resolution: "Решение при первом обращении"
+        happy_customer: "Счастливый клиент"
+        info_levels: "Установить количество очков, которые агенту необходимо набрать для достижения определенного уровня"
+        late_resolution: "Поздно <span>(Задержка)</span>"
+        new_quest: "Новый квест"
+        ontime_resolution: "Вовремя <span>(В рамках SLA)</span>"
+        quest_title: Квесты
+        title_levels: "Уровни агентов"
+        title_points_configuration: "Конфигурация очков"
+        title_ticket_points: "Очки за талоны"
+        title_trophies: Награды
+        unhappy_customer: "Недовольный клиент"
+      help_text: 
+        creating_survey: "Создание анкеты оценки удовлетворенности клиента:"
+        creating_survey_help: "Следующие шаги позволят вам получить отзывы от ваших клиентов через ссылку по E-mail: <br>1.Создание флажка Анкеты оценки удовлетворенности клиентов<br> 2. Составьте текст для оценки удовлетворенности клиента. Текст по умолчанию выглядит так: &ldquo; Пожалуйста, оцените качество оказанной нами поддержки.&rdquo;<br> <br> <b>Выберите, в каких письмах будет ссылка на анкету:</b><br> Вы можете выбрать, отправлять ли ссылку клиенту в каждом письме или только в самом последнем. <br><br> Более подробную информацию об анкете оценки удовлетворенности клиента можно получить в разделе Решения.      </p>"
+        quest: Соревнования
+        quest_form_info1: "Выберите тип соревнования для агентов из трех возможных: <br /> a) решение талонов,<br /> b) публикация решений и <br /> c) поддержка на форумах."
+        quest_form_info2: "Выбрав тип соревнования, настройте его критерии (что нужно сделать агенту) и добавьте условия, выполнив которые он получит победный жетон,"
+        quest_form_info3: "Установите количество очков, необходимых для победного жетона. Наконец, придумайте название для соревнования и составьте для него небольшое описание."
+        quest_form_info4: "Чтобы сохранить настройки, нажмите \"Сохранить соревнование\"."
+        quest_info1: "Соревнование отображает производственные цели, которые вы ставите перед агентами, и за достижение этих целей агентам вручаются награды. "
+        quest_info2: "Все соревнования ВКЛЮЧЕНЫ по умолчанию. Вы можете ВЫКЛЮЧИТЬ некоторые из них, если сочтете нужным. Если вы хотите добавить больше соревнований, связанных с вашими конкретными целями, нажмите на опцию \"Новое соревнование\", где вы можете создать соревнования с теми условиями, которые вам нужны."
+        trophies_info1: "В зависимости от различных критериев, агент может получить четыре награды."
+        why_game: "Очки и уровни"
+        why_game_info1: "Очки назначаются агенту в зависимости от того, как быстро он решит талоны, назначенные ему. За решение при первом обращении и удовлетворенных клиентов полагаются бонусные очки. За задержку решения талона и за недовольных клиентов агенты теряют очки."
+        why_game_info2: "Агент может достигать более высоких уровней, если получает все больше очков. Рубеж очков для перехода на новые уровни устанавливается Администратором. "
+      index: 
+        title: "Аркадные настройки"
+      successfully_updated: "Настройки геймификации успешно обновлены. "
+    getting_started: 
+      index: 
+        admin_sub_title: "Не забудьте ознакомиться с секретными настройками, которые вы можете изменить во вкладке \"%{admin_tab}\""
+        admin_title: "Все хорошо?"
+        agent_email_exist: "Этот email уже зарегистрирован"
+        agent_email_partial: "Отчасти успешно."
+        agent_email_required: "Email ID требуется для отправки приглашения"
+        agent_email_sending: "Отсылаются приглашения..."
+        agent_email_taken: "Следующие письма уже выбраны: <br> %{emails}"
+        agent_invite_field_placeholder: "Введите электронные адреса членов своей команды"
+        agent_invite_multi_info: "Ставьте между ними запятую ( , )"
+        agent_limit_reached: "Вы исчерпали лимит агентов"
+        agent_send_invite_label: "Отправьте Приглашения агентам"
+        agent_sub_title: "Пригласите вашу команду на Freshdesk"
+        agent_title: "Вам одиноко?"
+        agents_sub_title: "Пригласите ваших агентов техподдержки"
+        agents_title: Агенты
+        agents_title_info: "Пригласите ваших агентов для использования Freshdesk, разделите все email-адреса запятыми"
+        back_link: Назад
+        config-support-email-address: "Настройте ваш email-адрес техподдержки"
+        congrats: "Поздравляем! Ваша \"свежая\" техподдержка готова."
+        email_config_field_title: "Ваш email-адрес техподдержки"
+        email_config_sub_title: "Позвольте Freshdesk обрабатывать ваши письма поддержки!"
+        email_config_title: "Какой ваш email техподдержки?"
+        email_invalid: "Ваш email неверный, проверьте, пожалуйста, правильность."
+        email_send_problem: "Проблема с отправкой сообщения."
+        email_sent_success: "Email успешно отправлен."
+        emails_invalid: "Один или несколько ваших email неверны."
+        helpdesk_preview: "Предпросмотр техподдержки"
+        implement_changes: "Применение изменений..."
+        next_alt_link: "Перейте к техподдержке"
+        next_link: Далее
+        next_please_wait: "Пожалуйста, подождите..."
+        problem_updating: "Проблема при обновлении, пожалуйста, попробуйте снова."
+        product_link_label: "Перейти в вашу техподдержку >>"
+        rebrand_bg_empty: "Требуется указать цвет фона."
+        rebrand_bg_invalid: "Цвет фона неверный."
+        rebrand_color_background: Фон
+        rebrand_color_header: Заголовок
+        rebrand_color_tabs: Табы
+        rebrand_company_field_placeholder: "Введите назавание вашей компании"
+        rebrand_company_label: "Название компании"
+        rebrand_header: "Ваш заголовок техподдержки и логотип"
+        rebrand_header_empty: "Необходим цвет шапки."
+        rebrand_header_invalid: "Цвет шапки неверный."
+        rebrand_paint_title: "Раскрасьте вашу техподдержку"
+        rebrand_submit_label: Забрендировать
+        rebrand_tab_empty: "Необходим цвет табов"
+        rebrand_tab_invalid: "Код цвета вкладки неправильный"
+        rebrand_title: "Цвета <br>&amp; логотипа"
+        save: Изменить
+        save-and-next: "Сохранить и перейти к следующему"
+        send_invite: "Выслать пришлашение"
+        send_verification_email: "Отправить email для верификации"
+        sending_test_mail_progress: "Отправка тестового письма, пожалуйста, подождите..."
+        skip_link: "Пропустить и перейти в техподдержку"
+        social_add_account: "Добавить аккаунт"
+        social_facebook: Facebook
+        social_facebook_add: "Добавить страницу"
+        social_info: "Используйте Help Desk на Facebook, Twitter, в сообществах и других сайтах, где проводят время ваши клиенты"
+        social_title: "Go Social?"
+        social_twitter: Twitter
+        social_twitter_add: "Добавить аккаунт"
+        sub_title: "Это поможет вам освоиться"
+        successfully_sent: "Успешно отправлено."
+        successfully_updated: "Успешно обновлено"
+        support_email_sub_msg: "Для налаженной работы вашей службы поддержки необходимо отправлять письма о поддержке."
+        support_email_sub_title: "Укажите нам ваш email техподдержки."
+        support_email_title: "Email<br> техподдержкт"
+        title: "Круто! Похоже, ваша техподдержка готова"
+        title_msg: "Просто заполните некоторую информацию для начала. (не обязательно)"
+        updating: Обновление...
+        validating: Валидация...
+      send_mail_content: 
+        button_again_title: "... или отправить тестовое сообщение снова"
+        button_sending: Отправка...
+        button_title: "Отправить тестовое письмо"
+        info: "Копию этого письма нужно направить следующим адрессатам:"
+        note: "<strong>Примечание:</strong>: для того чтобы сконвертировать входящие письма в талоны, нужно изменить конфигурацию перенаправления писем на почтовом сервере."
+        send_test_mail_confirm_no: "Нет, я не вижу ни одной заявки"
+        send_test_mail_confirm_yes: "Да, я понял."
+        send_test_mail_info1: "Убедитесь, что вы настроили переадресацию ваших email на <b> %{to_email} </b>."
+        send_test_mail_info2: "(Узнайте как)"
+        send_test_mail_info3: "Если вы уверены, что все работает нормально, попробуйте отправить тестовое письмо.  <br>%{send_test_mail_link}"
+        send_test_mail_link_title: "sending a test email"
+        send_test_mail_response1: "Мы отправили тестовое письмо на <b><span id=reply_email_1>%{reply_email}</span></b>.  Если все настроено правильно, вы увидите <a href=\"/helpdesk/tickets\" target=\"_blank\">новый талон</a> во вкладке талонов."
+        send_test_mail_response_no1: "Похоже, возникла проблема"
+        send_test_mail_response_no2: "Узнайте как"
+        send_test_mail_response_no3: "<strong> Вот отстой! Похоже у нас проблема!</strong>{<br>Если вы не получили письмо, подождите пару минут. Если письмо все еще не пришло, <a href=\"https://support.freshdesk.com/\" target=\"_blank\">свяжитесь с нами</a>."
+        send_test_mail_response_yes: "Поздравляем! Процедура соединения email техподдержки с вашим порталом прошла успешно. Удачи!"
+        test_info1: "Если вы чувствуете, что все хорошо, попробуйте отправить тестовое письмо"
+        title: "Ваше перенаправленное письмо:"
+    home: 
+      index: 
+        account: Аккаунт
+        agent: Агенты
+        billing: "Тарифы и оплата"
+        business-hours: "Рабочие часы"
+        canned-response: "Шаблоны ответов"
+        customer: Клиент
+        customer-portal: "Портал для клиентов"
+        day_pass: "Day Pass Settings"
+        dispatcher: Диспетчер
+        else: иначе
+        email-notifications: "Email уведомления"
+        email-settings: "Email Settings"
+        email_commands_setting: "Email Command Settings"
+        everything: "Все   "
+        feedback: "Виджет обратной связи"
+        gamification-settings: Аракада
+        group: Группы
+        helpdesk: Техподдержка
+        import: "Импортировать данные с Zendesk"
+        integrations: Интеграции
+        multi-product: "Несколько продуктов"
+        portal: Портал
+        productivity: Продуктивность
+        rebranding: "Ребрендинг техподдержки"
+        remote-authentication: "Удаленная авторизация"
+        scenario: "Автоматизация сценириев"
+        security: Безопасность
+        settings: Настройки
+        supervisor: Супервайзер
+        survey: "Настройки опросов"
+        survey-settings: "Customer Satisfaction Settings"
+        ticket-fields: "Поля заявок"
+    products: 
+      add_another_email: "Добавить другой email"
+      assign_product: "Назначить продукт"
+      edit: 
+        title: "Редактировать продукт"
+      form: 
+        configure_email: "Настроить email"
+        configure_seperate_portal: "Настроить разные порталы для этого продукта"
+        enable_product_portal: "Включить портал для продукта"
+        enter_support_email_id: "Ваше письмо о поддержке"
+        forwarding_email_info: "Электронный адрес вашего перенаправленного письма:"
+        product_name: "Название продукта"
+        product_support_emails: "Письма поддержки продукта"
+      helpnote: 
+        content: "Использование нескольких продуктов позволяет воспользоваться поддержкой, ориентированной на продукт или на бренд."
+        heading: "Несколько продуктов"
+      index: 
+        add_product: "Добавить продукт"
+        title: Продукты
+      new: 
+        title: "Новый продукт"
+      portal: 
+        cname_configure_info: "Прежде чем чем использовать это поле, убедитесь, что создали запись CNAME DN в файле DNS Zone, чтобы назначить  <strong>help.<b id=\"domain_info_name\">ИмяМоейКомпании</b>.com</strong> для %{full_domain}.  Обратитесь за помощью в настройке к вебмастеру или администратору сервера. "
+        portal_language: "Язык портала"
+        portal_language_info: "Для клиентов, посещающих ваш портал, этот язык будет установлен по умолчанию "
+        portal_name: "Имя портала"
+        portal_name_info: "Название будет отображаться рядом с логотипом в верхней части портала вашего продукта"
+        portal_rebranding: "Ребрендинг портала"
+        portal_settings: "Настройки портала"
+        portal_url: "URL портала"
+        select_forum_category: "Выберите категорию форума..."
+        select_solution_category: "Выберите категорию решения..."
+        top_level_forum: "Категория форума топ-уровня"
+        top_level_forum_info: "К своему продукту вы можете привязать категорию форума. Все остальные форумы не будут отображаться у пользователя при просмотре вкладки с форумами на портале продукта. "
+        top_level_solution: "Категория решений топ-уровня"
+        top_level_solution_info: "К своему продукту вы можете привязать категорию решения. Все остальные решения не будут отображаться у пользователя при просмотре вкладки с решениями на портале продукта. "
+      primary_email_required: "Должен иметься хотя бы один первичный адрес E-mail"
+      primary_product_support_email: "Основной email техподдержки для продукта"
+      product: 
+        delete: "Вы уверены, что хотите удалить этот продукт?"
+        email_not_verified: "Email не подтвержден"
+      product_label_msg: Продукт
+    quests: 
+      index: 
+        new_quest: "Новый квест"
+        quest_description: "Соревнования - это бизнес-ориентированные цели, которые вы задаете своим агентам!"
+        quest_title: Соревнования
+        sideinfo1: "Инфо 1"
+        sideinfo2: "Инфо 2"
+      quest_form: 
+        forum: "Войти в  <br /> <strong> Сообщество </strong>"
+        solution: "Публикация <br /> <strong> Решений </strong>"
+        ticket: "Решение <br /> <strong> талонов </strong>"
+    security: 
+      index: 
+        click_to_disable: "Нажмите чтобы выключить SSL"
+        click_to_enable: "Нажмите чтобы включить SSL"
+        customer_portal_ssl_warning: "Поскольку конфигурация URL службы поддержки настроена под вашу учетную запись, вы будете перенаправлены на "
+        disabled: Выключено
+        enable_SSL: "Включить SSL"
+        enable_SSL_anon: "SSL позволяет шифровать данные между порталом"
+        enable_sso: "Включите единую точку доступа"
+        enable_sso_info: "Единая точка доступа позволяет вам использовать собственное приложение или централизованный сервер (например, активную директорию Майкрософт) для аутентификации агентов и клиентов, избавляя их от необходимости вводить отдельный логин и парль на Freshdesk."
+        enabled: Включено
+        multiple_product_ssl_warning: "При конфигурации нескольких продуктов SSL-сертификат не используется."
+        remote_authentication: "Удаленная авторизация"
+        remote_login_url: "URL удаленного входа"
+        remote_login_url_info: "На этот URL Freshdesk будет перенаправлять пользователей для аутентификации при попытке получить доступ к Freshdesk. "
+        remote_logout_url: "URL удаленного выхода"
+        remote_logout_url_info: "На этот URL Freshdesk будет перенаправлять пользователей, в случае, если они выходят из системы Freshdesk. "
+        security_title: Безопасность
+        shared_secret: "Общий секретный ключ"
+        shared_secret_info: "Скопируйте этот токен и храните его в безопасном месте. Он необходим для удаленной аутентификации. Это ваш общий с Freshdesk секрет."
+    shared: 
+      filter_jsinit: 
+        body: Тело
+        insert_placeholder: "Вставить метку"
+        not_selected: "Не выбрано"
+        selected: Выбранные
+        to: Кому
+    supervisor_rules: 
+      edit: 
+        title: "Супервайзер - Редактировать правило"
+      index: 
+        help_info_1: "Используйте Супервайзер для переодической проверки текущих талонов и настройки периодических операций: отправка напоминания, отмена или переназначение талона."
+        help_info_2: "Например, если талон ожидает ответа клиента больше суток, ему на электронную почту отправляется напоминание, или если талон имеет статус \"Решен\" более 48 часов, то он закрывается."
+        help_info_3: "Супервайзер работает каждый час и обрабатывает талоны, которые обновлялись в течение последних 30 дней. "
+        help_info_4: "Правила обрабатываются Супервайзером последовательно, поэтому очень важно учитывать очередность правил. Одно правило может повлечь определенные действия и активировать другие правила. "
+        help_title: Супервайзер
+        title: "Супервайзер - Правила"
+      new: 
+        title: "Супервайзер - Новое правило"
+    surveys: 
+      error_updated: "Ошибка при обновлении настроек опроса"
+      helptext: "<p><b>Why enable satisfaction surveys?</b> <br> Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction. <br><br> <b>Creating your satisfaction survey:</b><br> The following steps let you collect feedback from your customers through a link in your response emails:<br> 1.Enable the Customer Satisfaction Surveys checkbox<br> 2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br> <br> <b>Choose which emails have the satisfaction survey link:</b><br> You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved. <br><br> You can learn more about satisfaction surveys from our solutions page. </p>"
+      index: 
+        title: "Настройки анкеты клиента"
+      satisfaction_settings: 
+        enable_label: "Анкеты оценки удовлетворенности клиента"
+        enter_happy_text: "Ввести радостный текст"
+        enter_neutral_text: "Ввести нейтральный текст"
+        enter_unhappy_text: "Ввести недовольный текст"
+        link_text_info: "Этот текст будет отображаться под вашей подписью внизу электронного письма вашему клиенту"
+        link_text_input: "Поделитесь своими впечатлениями о качестве нашей поддержки."
+        link_text_label: "Текст ссылки на анкету оценки удовлетворенности клиента"
+        send_while_option1: "Все письма отправлены клиенту"
+        send_while_option2: "Письма отправляются после того, как талон \"Решен\"."
+        send_while_option3: "Письма отправляются после того,  как талон \"Закрыт\"."
+        send_while_option4: "Позволяет агентам добавлять ссылки на анкету клиента на определенные адреса. "
+        send_while_title: "Выберите, в каких письмах будет ссылка на анкету оценки удовлетворенности клиента"
+      successfully_updated: "Настройки Анкеты клиента успешно обновлены."
+    twitters: 
+      change: 
+        capture_dm: "Конвертировать прямые сообщения в талоны"
+        capture_mention: "Конвертировать публичные упоминания в талоны"
+        default_group: "Группа по умолчанию"
+        edit_twitter: "Редактировать Twitter"
+        screen_name: "Отображаемое имя"
+      index: 
+        add_search: "Добавить поиск"
+        new: "Добавить аккаунт Twitter"
+        search_keys: "Ключ поиска"
+        title: "Twitter аккаунты"
+      search: 
+        add_key: "Добавить поисковый запрос"
+        edit_key: "Редактировать поисковый запрос"
+        name: "Отображаемое имя"
+        screen_name: "Twitter аккаунт"
+        search_key: "Поисковый запрос"
+    widget_config: 
+      index: 
+        thankyou_default: "Спасибо за ваше сообщение"
+        thankyou_info: "Сообщение, которое появляется при заполнении формы пользователем"
+        thankyou_label: "Отправить сообщение"
+  agent: 
+    add_signature: "Добавить подпись"
+    admin: Администратор
+    admin_info: "Может выполнять все задачи Администратора"
+    contact_exists: "Заявитель с адресом '%{existing_email}' уже существует, %{use_email}"
+    day_pass_expired: "Ваш дневной пропус истек, войдите в систему, чтобы получить новый дневной пропуск."
+    edit: "Редактировать агента"
+    full_time: "Полный доступ"
+    global: "Агент (Полный доступ)"
+    global_info: "Может просматривать все талоны в службе поддержки"
+    group: "Агент (групповой доступ)"
+    group_info: "Может просматривать талоны своей группы и талоны, назначенные ее участникам"
+    individual: "Агент (ограниченный доступ)"
+    individual_info: "Может просматривать только те талоны, которые назначены ему"
+    info1: "Этот агент удален"
+    info2: "Email уже зарегистрирован"
+    info3: "Вы действительно хотите удалить"
+    insufficient_day_pass: "Невозможно предоставить дневной пропуск, обратитесь к администратору."
+    make_admin: "Сделать этого агента администратором"
+    new: "Новый агент"
+    occasional: Случайный
+    occasional_description: "Этот агент будет получать доступ к порталу поддержки"
+    password_reset_message: "Хотите поменять пароль %{requester}?"
+    password_reset_note: "Примечание : письмо с инструкциями о смене пароля будет отправлено %{requester}"
+    permissions: "Права доступа"
+    restore: восстановить
+    signature: Подпись
+    supervisor: Супервайзер
+    supervisor_info: "Может просматривать талоны Службы поддержки и получать доступ к Отчетам (без привелегий администратора)"
+    title: Агенты
+    update: Обновить
+    use_email: "Использвать этот email"
+  agent_adds_comment: "Агент добавляет комментарий к талону"
+  agent_assigned_info: "У этого агента нет открытых или ожидающих талонов"
+  agent_assigned_title: "Недавно назначенные талоны (Открытые &amp; Ожидающие)"
+  agent_closes_tkt: "Агент закрывает талон"
+  agent_deleted_message: "Этот агент удален"
+  agent_emailnotverified: "Emal не подтвержден для этого агента!"
+  agent_info_title: "Информация о сотруднике"
+  agent_solves_tkt: "Агент решил эту заявку"
+  agent_working_on_this_ticket: "Агент работает с талоном"
+  agents: Агенты
+  align_to: "Привязать к "
+  all_due: All
+  already_overdue: "Задержка на %{time_words}"
+  always: Всегда
+  amount: Сумма
+  amount_for_annual: "$%{amount} в год"
+  amount_per_month: "$%{amount} %{period}"
+  answered: Отвечено
+  application: 
+    click_to_disable: "Click to disable Addon"
+    click_to_enable: "Click to enable Addon"
+    configure: "Конфигурация  "
+    configure_addon: "Click to configure this Addon"
+    configure_custom_addon: "Конфигурация виджета"
+    confirm_disable: "Are you sure you want to disable this Addon?"
+    desc: "Чтобы работа с Freshdesk приносила больше удовольствия, интегрируйте систему с другими приложениями."
+    disabled: Выключено
+    enable: Подключить
+    enabled: Включено
+    new: "Создать новое приложение"
+    title: "Addons & Integration"
+  apply: Применить
+  asked_on: "Запрошено "
+  assign: Назначить
+  assigned_to: Назначить
+  assume_identity_button: "Допустить идентификацию"
+  assumed_identity_msg: "Вы идентифицировали себя как %{user_name}"
+  assuming_identity_not_allowed_msg: "Вы не можете идентифицировать себя в качестве этого пользователя."
+  assuming_identity_user_does_not_exist_msg: "Пользователя, которым вы себя идентифицируете, не существует. "
+  at: на
+  attach_files: "Присоединить файлы"
+  attachment: Вложение
+  attachment_help_info: "Размер вложения не должен превышать15мб"
+  attachments: Вложения
+  auto_suggest_solutions: 
+    info: "<b>Возможно, на ваш вопрос уже есть ответ.</b><br/>Проверьте здесь."
+  automations: 
+    available_placeholders: Метки
+    info1: "В каждой системе поддержки есть периодически повторяющиеся сценарии,  например, Передать на Уровень 2, Назначить отделу ___,  Переслать в Отдел продаж. Выполенение этих сценариев обычно означает внесение в заявку ряда изменений"
+    info2: "Например, перед передачей талона в службу контроля качества, можно установить тип талона \"Ошибка\", передать его группе контроля качества и написать письмо менеджеру группы о новой ошибке. "
+    info3: "Автоматические сценарии позволяют вам воспроизводить эти действия одним щелчком мышки"
+    info4: "Выберите метки из предложенных ниже, которые будут вкладываться в содержание письма и конвертироваться в необходимые данные"
+    info5: "Назначить QA"
+    info6: "Отметить талон как ошибку и переназначить его отделу контроля качества"
+    info7: "Действие для выполнения"
+    info8: "Добавить новое действие"
+    new: "Новый сценарий"
+    reorder: Перезаказать
+    title: "Автоматизация сценириев"
+  awaiting_your_reply: "От вас ждут ответа"
+  back: Назад
+  back_plans_billing: "Назад к тарифам и оплате"
+  back_to_admin: "Ждем вашего ответа"
+  badges_achieved_label: "Получены жетоны"
+  basic_brief: "Для небольших команд"
+  basic_details: "Отправить письмо с Политикой по реагированию, Правилами диспетчера, SLA, Базой знаний, порталом самообслуживания, меппингом домена, поддержкой сообщества."
+  bcc_email_updated_failure_msg: "Не удалось обновить письмо со скрытой копией"
+  bcc_email_updated_success_msg: "Письмо со скрытой копией успешно обновлено"
+  bcc_emails_key: ", скрытая копия : %{bcc_emails}"
+  bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
+  begin_subscription_confirm: "С вашей кредитной карты будет списано $%{cost}\\nи ваша подписка будет возобновлена немедленно.\\n\\n\\nПродолжить?"
+  being_processed: "Идет обработка"
+  between: Между
+  between_range: Диапазон
+  billed_amount_annually: "Вам будет начисляться $%{amount} ежегодно"
+  billed_amount_per_month: "Вам будет начисляться $%{amount} в %{period}"
+  billed_monthly: "Выставлять счет ежемесячно"
+  billing_info: "Информация о подписке"
+  billing_info_update: "Информация о вашем счете обновлена"
+  block_users: "Хотите ли вы также блокировать контакт(ы)?"
+  blossom_brief: "Социальная поддержка клиента"
+  blossom_details: "Все в &quot;Sprout&quot; Plan plus, Поддержка Twitter, Поддержка Facebook, форумы, сообщества &amp; поддержка по E-mail."
+  bottom: Дно
+  bulk_actions: "Эффект наполнения"
+  business_hours: 
+    helpdesk_hours: "Часы работы службы поддержки"
+    holiday_added: "Праздники уже включены"
+    holiday_list: "Ежегодный список праздников"
+    holiday_name: "Название праздника"
+    holidays: Праздники
+    info1: "Назначение приемных часов в Freshdesk позволит вам лучше контролировать выполенение условий SLA. Например, если служба поддержки работает с 9 до 6, пять дней в неделю, и клиент присылает вам талон с высоким приоритетом, реализация которого рассчитана на 4 часа, во вторник в 4 часа дня, то крайний срок выполнения задания будет 11 часов утра среды. В своем соглашении об уровне услуг вы можете как применять нормированный рабочий график, так и игнорировать его. "
+    info2: "С выходными все устроено так же, как и с приемными часами. Если ваша служба поддержки работает с 9 до 6, пять дней в неделю, и запрос со сроком выполнения в сутки приходит вам в 8 вечера в пятницу, то крайний срок его выполнения - вторник, 9 утра (а не 8 часов вечера субботы)."
+    info3: "Определенные рабочие часы"
+    info4: "Рабочие дни вашей службы поддержки"
+    info5: "При подготовке соглашения об уровне сервиса (SLA) для талона праздники не учитываются"
+    title: "Время работы"
+  cancel: Отмена
+  cancel_and_back: "Отменить и вернуться"
+  cancel_my_account: "Удалить мой аккаунт"
+  card_number: "Номер карты"
+  card_process: "Спасибо за оплату. Ваш Freshdesk аккаунт активен!"
+  category: 
+    edit: "Редактировать категорию"
+    new: "Новая категория"
+  category_edit_not_allowed: "Эта категория не может быть изменена"
+  cc_emails_key: ", cc : %{cc_emails}"
+  cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
+  change: Изменить
+  change_deleted_status_msg: "Смените статус, потому что ваш старый статус удален. "
+  change_details_anytime: "Информация или планы подписки можно изменить в любое время."
+  change_free_plan: "Измените свой Свободный план"
+  change_my_password: "Поменять пароль"
+  change_my_plan: "Выбрать этот тариф"
+  change_plan: "Сменить тариф"
+  change_plan_info: "Вы можете поменять тариф в любое время, следующая дата платежа: %{date}."
+  change_to_free_info: "Понижение тарифного плана приведет к утрате функционала и данным. Вы действительно хотите перейти на более дешевый тариф?"
+  chat: Чат
+  choose_free_plan: "Измените свой Свободный %{plan}"
+  choose_plan: "Выберите тариф"
+  clear_draft_text: "Очистить сохраненные планы?"
+  click_select_action: "Нажмите \"Выбрать действие\""
+  click_to_change_sort_order: "Нажмите для изменения порядка сортировки"
+  click_to_select_filter: "Нажмите \"Выбрать фильтр\""
+  close: Закрыть
+  closed: Закрытые
+  comments: Комментарии
+  companies: 
+    active: 
+      no_companies: "У вас нет компаний в списке"
+      no_companies_with_letter: "Нет компаний на букву '%{alphabet}'"
+  company: 
+    edit: "Редактировать компанию"
+    info1: "Вы действительно хотите удалить эту компанию?"
+    info2: "Имя домена для компании"
+    info4: "Добавить заметку о %{name}"
+    info5: "Добавляйте конкретизирующие заметки к каждой компании. Например: \"С этой компанией мы ведем переговоры по договору на 100 тысяч\"."
+    info6: "Пользователи в %{name}"
+    info7: "Работниками этой компании не создано ни одной заявки"
+    info8: "Дополнительная информация о компании, например адрес, телефон, веб-сайт и т. д."
+    info9: "Freshdesk автоматически привяжет контакты этой компании, если в идентификаторах писем содержатся их адреса"
+    name: "Название компании"
+    new: "Новая компания"
+    notes: Примечания
+    quick_company: "Быстрая компания"
+    title: Компании
+  company_name: "Название компании"
+  confirm: Подтвердить
+  connect_ticket: "Ссылка на заявку"
+  contact_name: "Имя контакта"
+  contacts: 
+    active: 
+      no_contacts: "Вы не добавили в список ни одного контакта"
+      no_contacts_with_letter: "У вас нет активных контактов на букву '%{alphabet}'"
+    add_new_requester: "Добавить нового заявителя "
+    deleted: 
+      no_contacts: "У вас не сохранено ни одного контакта"
+      no_contacts_with_letter: "У вас нет удаленных контактов на букву '%{alphabet}'"
+    deleted_message: "Этот контакт удален"
+    edit: "Редактировать контакт"
+    edit_contact: "Редактировать контакт"
+    emailnotverified: "Email не подтвержден для этого контакта"
+    form_placeholder: 
+      description: "Добавьте уточняющие примечания к этому контакту. Например: \"Фанат Лос-Анджелес Лейкерс\"."
+    import_csv: "Имортировать клиентов из CSV"
+    import_google: "Импортировать из Google"
+    import_google_no: Нет
+    import_google_yes: Да
+    info1: "Вы уверены, что хотите удалить этот контакт?"
+    info2: "Сделать этого пользователя агентом"
+    info3: "Справочная информация о  %{nick_name}"
+    info4: "Последние заявки от %{nick_name}"
+    info5: "Пользователь пока не создал ни одного талона"
+    info6: "Добавить заметки относящиеся к этому контакту"
+    new: "Новый контакт"
+    quick_contact: "Быстрый контакт"
+    restore: Восстановить
+    role: 
+      info: "Может видеть все талоны этой компании"
+    save_changes: Сохранить
+    send_activation: "Отправить email для активации"
+    showing: "Показано: "
+    status: 
+      active: Активен
+      deleted: Удален
+    tag_cloud: "Облако тегов контактов"
+    tags: Теги
+    title: Контакты
+    working: Обработка
+  contains: Содержит
+  continue_using_free: "Продолжить использовать Freshdesk как "
+  conv_contacts_info: "%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
+  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  conversation: Переписка
+  country: Страна
+  create: Создать
+  created_on: Создан
+  credit_card: "Карта файла"
+  credit_card_info: "Информация о банковской карте"
+  current_plan: "Текущий план"
+  current_plan_details: "План %{plan_name} рассчитан на %{agent_limit} агентов"
+  customers: Клиенты
+  date: 
+    ago: Назад
+    day: День
+    days: дней
+    from: "В дальнейшем"
+    hour: час
+    hours: Часы
+    minute: Минута
+    minutes: Минуты
+    month: Месяц
+    months: Месяцы
+    now: "Только что"
+    second: Секунда
+    seconds: Секунд
+    week: Неделя
+    weeks: Недели
+    year: Год
+    years: Годы
+  date_title: Дата
+  day: "1 день"
+  days: дней
+  deactivate: Деактивировать
+  default_category: "Категория по-умолчанию"
+  default_category_description: "Все письма, отправленные %{full_domain}, будут храниться здесь как черновики"
+  default_folder: Черновики
+  default_folder_description: "Все письма, отправленные %{full_domain}, будут храниться здесь как черновики"
+  default_reply_template: "Шаблон ответа агенту"
+  delete: Удалить
+  delete_confirm_scenario: "Вы действительно хотите удалить этот сценарий?"
+  delete_reminder: "Удалить это напоминание?"
+  delete_the_ticket: "Удалить заявку"
+  delete_topic_msg: "Удалить этот топик навсегда"
+  description: Описание
+  disabled: Выключено
+  dispatch: 
+    act_to_perform: "Действие для выполнения"
+    add_condition: "Добавить новое решение"
+    add_new_action: "Добавить новое действие"
+    add_new_choice: "Добавить новый выбор"
+    delete: "Вы действительно хотите удалить это правило?"
+    dispatch_rules: "Диспетчер - Правила"
+    edit: "Диспетчер - Редактировать правило"
+    inactive_rules: "Неактивные правила"
+    info1: "Заявки, связанные с подпиской"
+    info2: "Все заявки, связанные с подпиской, будут назначены Susan"
+    info3: "Когда это правило должно быть применено"
+    info4: "Диспетчер автоматически сортирует новые заявки на основе правил и действий, которые вы определяете"
+    info5: "Помните, порядок правил важен. Для каждой входящей заявки Диспетчер запускает первое подходящее правило и останавливается."
+    match_all: "Искать все"
+    match_any: "Искать любое"
+    new: "Диспетчер - Новое правило"
+    new_rule: "Новое правило"
+    reorder: Перезаказать
+    rule_name: "Имя правила"
+    skip_notification_no: Нет
+    skip_notification_yes: Да
+    skip_notifications: "Пропускать уведомления о сообщениях с новыми талонами"
+    title: Диспетчер
+  does_not_contain: "Не содержит"
+  done: Готово
+  draft: "Черновик:"
+  due_in: "Будет выполнен через %{time_words}"
+  due_next_eight: "Следующие 8 часов"
+  due_today: Сегодня
+  due_tomo: Завтра
+  edit_agent: "Редактировать агента"
+  edit_email: "Редактировать email"
+  edit_forum_category: "Редактировать категорию форума"
+  eight: "8 часов"
+  email: Email
+  email_command_del_info_data: "Подсказка: придумайте уникальный разделитель из комбинации минимум трех букв (рекомендуется исользовать особые буквы),  которые не будут конфликтовать со значениями, указанными в письмах. "
+  email_command_delimeter_label: "Разделитель команд почты"
+  email_command_delimeter_length_error_msg: "Впишите в разделитель не менее трех букв"
+  email_command_preview_subject: Тема
+  email_command_preview_subject_value: "Талон поддержки"
+  email_command_preview_to_email: Кому
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  email_command_settings_heading: "Настройки команд почты"
+  email_command_settings_info: "Настройте разделитель, используемый для идентификации и извлечения команд почты из писем"
+  email_commands_update_failed: "Не удалось обновить настройки команд почты."
+  email_commands_update_success: "Настройки команд почты успешно обновлены."
+  email_configs: 
+    Personalized_email_replies: "Использовать имена агентов в личных ответах?"
+    Personalized_email_replies_info: "Если ДА, то в ответном письме агенту будет имя агента и отправителя (в поле адрес будет указан адрес вашей поддержки). Например '%{current_user_name} &lt;%{current_account_domain}&gt;'."
+    Personalized_email_replies_message: "Ваши настройки успешно сохранены."
+    Personalized_email_replies_no: Нет
+    Personalized_email_replies_yes: Да
+    add_supp_emails: "Дополнительные email-адреса техподдержки"
+    assign_to_product_info: "Если вы хотите привязать письмо к новому продукту, то сначала <a href='{{products_path}}'> добавьте продукт </a>"
+    assign_to_product_msg: "Привязать письмо поддержки к продукту"
+    bcc_email: "Bcc адрес"
+    bcc_text: Bcc
+    change_this: Изменить
+    delete: "Вы действительно хотите удалить этот email?"
+    email: email
+    email_added_succ_msg: "Email добавлен"
+    forwarding_email: "Пересылка письма"
+    global_support_emails: "Почта глобальной поддержки"
+    group: Группа
+    help_link_info: "Для детальной информации прочитайте нашу статью о настройках почты…"
+    inactive_info1: "Все ваши письма поддержки до сих пор не подтверждены. Подтвердите хотя бы одно из них. "
+    inactive_info2: "До тех пор для ответа на письма будет использоваться письмо по умолчанию  \"%{default_email}\". "
+    info1: "Ваши пользователи отправляют письма в службу поддержки на"
+    info10: "Новые талоны к этому письму в службу поддержки будут автоматически привязаны к группе"
+    info11: "Список всех адресов поддержки"
+    info12: "Добавить новый электронный адрес"
+    info13: "Электронный адрес вашей поддержки"
+    info14: "Любое письмо, отправленное на этот адрес, будет сконвертировано в талон"
+    info15: "Вы должны перенаправить эти письма на"
+    info16: "Талоны будут назначены для"
+    info17: "Этот адрес будет автоматически включен в поле \"скрытая копия\" для всех переговоров по талонам"
+    info18: "Адрес, автоматически добавляемый в скрытую копию письма, добавляется при ответе на талон"
+    info2: "Необходимо перенаправлять свои письма в поддержку на собственный уникальный адрес"
+    info3: "Freshdesk перехватывает эти письма и конвертирует их в талоны"
+    info4: "<strong>Замечание:</strong> Если у вас есть несколько email адресов для поддержки нескольких продуктов, <a href='{{products_path}}'>вы можете добавить их здесь</a>."
+    info5: "В ответах Freshdesk, как и в исходящих письмах, будут использоваться ваши оригинальные идентификаторы писем в поддержку."
+    info7: "Также это ваш обратный адрес. Например: support@yourcompany.com"
+    info8: "Переслать эти письма на"
+    info9: "Назначить группе"
+    make_primary: "Сделать главным"
+    mark_as_primary_msg: "Вы уверены, что хотите сделать это письмо в поддержку основным?"
+    name: Название
+    name_info_msg: "Название письма, которое будет использоваться в ответе на талоны"
+    new_support_email: "Новое письмо в поддержку"
+    primary_supp_email: "Основное письмо в поддержку"
+    primary_supp_email_tool_tip: "Основное письмо в поддержку"
+    remove_msg: "Вы уверены, что хотите удалить это письмо?"
+    reply_email: "Ваше письмо о поддержке"
+    reply_emails: "Ответить на письма от Freshdesk"
+    secondary_supp_email_tool_tip: "Сделать это письмо основным"
+    send_verification_email: "Подтвердить снова"
+    spf_info: "Все ваши письма дойдут до адресата, но для большей безопасности создайте  <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">запись в инфраструктуре политики отправителей (SPF) </a> в файле зоны DNS, если используете почту в рамках собственного домена. Это улучшит качество доставки писем. "
+    supp_email_add: "Адрес письма поддержки"
+    support_email: "Письмо поддержки"
+    support_email_exists: "Письмо поддержки уже существует"
+    title: "Настройки почты"
+    unverified: "Письмо не подтверждено"
+    unverified_info1: "Письмо со ссылкой подтверждения отправлено на этот почтовый ящик. Письмо поддержки станет активным только после подтверждения."
+  email_notifications: 
+    agent_notification: "Уведомление агента"
+    customize_email: "Настроить Email"
+    default_reply_template_info: "Шаблон для всех агентских ответов появится автоматически после того, как они ответят на талоны"
+    default_reply_template_title: "Шаблон ответа агенту"
+    do_not_delete_ticket_id_from_subject: "Для того чтобы ответы клиентов отмечались как обсуждения талонов, в теме письма должна постоянно присутствовать метка талона"
+    edit_reply_template: "Настроить шаблон"
+    event: Событие
+    insert_placeholder: "Вставьте разделители"
+    modify_agent_template: "Изменить шаблон Email уведомлений агента"
+    modify_requester_template: "Изменить шаблон Email уведомлений пользователя"
+    requestor_notification: "Уведомление пользователя"
+    subject: Тема
+    title: "Email уведомления"
+  email_notifications_agent_selection_msg: "Выберите агента для уведомления"
+  enabled: Включено
+  ends_with: Заканчивается
+  enter_billing_for_free: "Пожалуйста, укажите данные кредитной карты перед  выбором платного тарифа"
+  enter_message: "Введите текст сообщения"
+  enter_payment: "Введите информацию об оплаты"
+  enter_payment_details_to_add: "Чтобы добавить больше агентов, введите информацию об оплате"
+  error_in_plan: "Ошибка изменения плана"
+  errors: 
+    actions_empty: "Действия не могут быть пустыми"
+    conditions_empty: "Условия должны быть заполнены"
+  errors_in_payment: "С вашей оплатой возникли ошибки:"
+  errors_in_payment_info: "С вашей информацией об оплате возникли ошибки:"
+  errors_in_plan_change: "Обнаружена ошибка при выборе:"
+  errors_in_your_address: "С вашим адресом возникли ошибки:"
+  estate_brief: "Поддержка корпоративного уровня"
+  estate_details: "Все в &quot;Garden&quot; Plan plus, Геймификация"
+  example: пример
+  expires: Истекает
+  export_data: 
+    closed_at: "Время закрытия"
+    created_at: "Время создания"
+    custom_filter: "Установить дату"
+    export_to_csv: "Экспорт в CSV"
+    field_select_title: "Выберите поля для экспорта"
+    filter_label_agent: "Фильтр талонов по:"
+    filter_label_customer: "Фильтр талонов, созданных "
+    from: "С "
+    info: "Экспортировать текущую информацию о талонах в CSV-файл"
+    mail: 
+      body: "CSV-файл находится в приложении. "
+      info: "Информация о вашем талоне будет отправлена в ближайшее время!"
+      subject: "Экспорт талонов - %{filter} - ( %{start_date} до %{end_date} )"
+    no_fields_selected: "Чтобы продолжить, проверьте хотя бы одно поле ниже."
+    resolved_at: "Сохраненное время"
+    seven_days: "Последние 7 дней"
+    thirt_days: "Последние 30 дней"
+    to: Кому
+    twenty_four: "Со вчерашнего дня"
+  export_data_successfull: "Данные вашей службы техподдержки будут отправлены по почте в ближайшее время!"
+  f_request: "Предложение по функционалу"
+  facebook: 
+    deleted: "Страница facebook %{facebook_page} удалена"
+    not_authorized: "Вы не авторизовались на Facebook"
+  facebook_source: Facebook
+  failure: Ошибка…
+  fav_delete_msg: "Вы уверены, что хотите удалить эту fav-иконку? "
+  favicon: Favicon
+  feedbackwidget_bgcolor: "Цвет фона"
+  feedbackwidget_btcustomize: "Настройка кнопок"
+  feedbackwidget_custom_image: "Введите адрес картинки"
+  feedbackwidget_custom_image_info: "При использовании собственного изображения размер и цвет текста не изменяется."
+  feedbackwidget_defaultbutton: Поддержка
+  feedbackwidget_defaulttitle: "Справка &amp; Поддержка"
+  feedbackwidget_embed_code: "Встроенный код виджета"
+  feedbackwidget_embed_code_intro: "Скопируйте код, представленный ниже, и вставьте его в любом месте на сайте, поставив перед ним тэг &lt;/body&gt; в html-шаблоне вашего сайта или на любой другой странице, где вы хотели бы поместить виджет Freshdesk."
+  feedbackwidget_form_title: "Заголовок в форме виджета"
+  feedbackwidget_formcustomize: "Настройки формы"
+  feedbackwidget_help_para1: "Получайте отзывы от клиентов, добавив на сайт вкладку поддержки."
+  feedbackwidget_help_para2: "Настраиваемая вкладка открывается в форме поддержки талона"
+  feedbackwidget_help_title: "Виджет отзывов"
+  feedbackwidget_intro: "Настройте свой виджет и воспользуйтесь предпросмотром в реальном в ремени"
+  feedbackwidget_offset_info: "На небольшом расстоянии слева или поверх экрана (пиксели) - в зависимости от настроек - будет расположена кнопка виджета. "
+  feedbackwidget_offset_label: "Со сдвигом на"
+  feedbackwidget_position: Положение
+  feedbackwidget_text: Текст
+  feedbackwidget_title: "Настройки виджета"
+  first_name: Имя
+  first_response_sla: "Нарушение SLA при первом обращении"
+  flash: 
+    account: 
+      update: 
+        success: "Данные вашего аккаунта обновлены."
+    agents: 
+      create: 
+        success: "Агент был создан и инструкции по активации высланы на %{email}!"
+      delete: 
+        not_allowed: "Вы не имеете доступа чтобы удалить это"
+    application: 
+      already: "Addon is already installed."
+      install: 
+        error: "Error in enabling the Addon."
+        success: "The Addon has been enabled successfully!"
+      not_installed: "This addon is not yet installed."
+      uninstall: 
+        error: "Error in disabling the Addon."
+        success: "The Addon has been disabled successfully!"
+      update: 
+        error: "Ошибка настройки интеграции"
+        success: "Интеграция успешно обновлена!"
+    business_hours: 
+      update: 
+        failure: "Не удалось обновить Рабочие часы"
+        success: "Рабочие часы обновлены"
+    contacts: 
+      cancel: отменить
+      create: 
+        success: "Контакт успешно создан."
+      info_select: "Выберите хотя бы одного пользователя."
+    contacts_import: 
+      failure: "Попробуйте еще раз"
+      no_file: "Пожалуйста загрузите файл"
+      success: "%{created_count} контактов было импортировано и %{updated_count} существующих контактов обновлено!"
+    custom_fields: 
+      update: 
+        failure: "При обновлении полей заявки произошла ошибка"
+        success: "Поля заявки были обновлены"
+    customers: 
+      info_select: "Выберите хотя бы одного клиента."
+    data_import: 
+      zendesk: 
+        failure: "Невозможно импортировать данные с zendesk…, повторите попытку"
+        no_contact: "Невозможно соединится с zendesk. Пожалуйста проверьте логин и пароль zendesk и повторите попытку"
+        running: "Импорт в zendesk уже запущен. Повторите попытку позже"
+        success: "Импорт данных уже запущен. По его окончании вы получите уведомление по E-mail. Процесс импортирования может занять несколько минут в зависимости от объема ваших данных"
+    daypass: 
+      failed: "Ошибка при добавлении дневных пропусков"
+      success: "%{quantity} дневных пропусков успешно добавлено в вашу учетную запись"
+    email_notifications: 
+      update: 
+        success: "Email уведомления обновлены."
+    email_settings: 
+      activation: 
+        already_activated: "%{reply_email} был уже активирован!"
+        invalid_code: "Неверный код активации!"
+        success: "%{reply_email} активирован!"
+      make_primary: 
+        success: "<b>%{reply_email}</b> теперь ваша основная поддержка по электронной почте!"
+      send_activation: 
+        success: "Email с подтверждением был отправлен на %{reply_email}!"
+    facebook: 
+      updated: "Настройки Facebook обновлены"
+    filter: 
+      delete_success: "View has been delete successfully!"
+      save_success: "Обзор успшно сохранен!"
+    g_app: 
+      authentication_failed: "Ошибка входа в аккаунт"
+      authentication_success: "Аутентификация завершена"
+      no_subdomain: "Введенный вами адрес не является поддоменом. Попробуйте еще раз"
+      user_deleted: "Пользователь удален!"
+    general: 
+      access_denied: "Вы не имеете доступа к этой странице!"
+      create: 
+        failure: "Невозможно сохранить %{human_name}"
+        success: "Пользователь %{human_name} был создан."
+      destroy: 
+        failure: "%{human_name} не может быть удален"
+        success: "%{human_name} удален."
+      insufficient_privilege: 
+        admin: "У вас нет достаточных привилегий, чтобы изменить это. Пожалуйста, войдите как Администратор ..!!"
+      login_not_needed: "Вы должны быть не авторизованы для доступа к этой странице"
+      need_login: "Вы должны быть авторизаваны для доступа к этой странице."
+      restore: 
+        failure: "%{human_name} не может быть восстановлен"
+      update: 
+        success: "Пользователь %{human_name} был обновлен."
+    gmail_gadgets: 
+      account_not_associated: "Ваша учетная запись Gmail еще не привязана к учетной записи Freshdesk. Пройдите по ссылке навигации, чтобы привязать ее."
+      agent_missing: "Вы не являетесь Агентом Freshdesk. Измените статус пользователя на статус агента и повторите попытку. "
+      agent_not_active: "Ваш адрес на Freshdesk удален или деактивирован. Активируйте его и повторите попытку. "
+      gmail_request_unverified: "Неверная подпись Gmail. Войдите в почту и повторите попытку."
+      kvp_missing: "Неверная аутентификация. Откройте почту и повторите попытку. "
+      unknown_error: "Неизвестная ошибка сервера. Свяжитесь с техподдержкой. "
+      user_missing: "Вашей почты нет на Freshdesk. Добавьте агента с вашей почтой и повторите попытку."
+      viewer_id_not_sent_by_gmail: "Неверный запрос Gmail. Войдите и повторите попытку."
+    login: 
+      failed: "Неверный логин!"
+      sso: 
+        expected_params: "Ожидаемые параметры Имя, Email и Хеш не были представлены"
+      success: "Вы успешно вошли"
+      verify_credentials: "Невозможно войти. Пожалуйста проверьте логин и пароль"
+    not_allowed_in_demo_site: "Демо-сайт не имеет данного доступа"
+    password_resets: 
+      email: 
+        reset: "Письмо с инструкциями по перезагрузке отправлено %{requester}."
+        success: "Инструкции по сбросу вашего пароля были отправлены вам на email. Пожалуйста, проверьте почту."
+        user_not_found: "Не найдено ни одного пользователя с таким email адресом"
+      update: 
+        invalid_token: "Мы сожалеем, но мы не могли найти Вашу учетную запись. Если у вас возникли вопросы, попробуйте скопировать и вставить URL из электронной почты в адресную строку браузера или перезапустите процесс восстановления пароля"
+        success: "Пароль успешно обновлен"
+    portal: 
+      tickets: 
+        create: 
+          success: "Ваша заявка создана и копия была отправлена вам на email."
+    portal_settings: 
+      update: 
+        success: "Настройки были обновлены"
+    profile: 
+      api_key: 
+        reset_failure: "Ошибка обновления API-ключа."
+        reset_success: "API-ключ успешно обновлен."
+      change_password: 
+        failure: "Не удалось сменить пароль, проверьте ваш текущий пароль"
+        success: "Пароль успешно изменен. Пожалуйста, войдите снова"
+      update: 
+        success: "Ваш профиль обновлен"
+    solutions: 
+      remove_tag: 
+        success: "Тег был удален из Решения"
+    sso: 
+      update: 
+        success: "Данные вашего аккаунта обновлены."
+    tickets: 
+      empty_spam: 
+        success: "Все заявки в папке спам были удалены."
+      empty_trash: 
+        success: "Все заявки в корзине удалены."
+      merge: 
+        success: "Заявка была успешно объединена"
+        wrong_ticket_id: "Пожалуйста введите правильный номер заявки"
+      monitor: 
+        start: "Теперь вы просматриваете эту заявку"
+        stop: "Вы более не просматриваете эту заявку"
+      notes: 
+        create: 
+          failure: "Произошла ошибка при добавления примечания к вашему запросу. Попробуйте еще раз."
+          success: "Примечание добавлено к вашей заявке."
+      reply: 
+        success: "Ответ отправлен"
+      timesheet: 
+        timer_stopped: "таймеры талонов остановлены"
+    to_dos: 
+      complete: 
+        success: "To-Do помечено как выполненное."
+    twitter: 
+      updated: "Настройки Twitter обновлены"
+  folder: 
+    add_folder: "Добавить папку"
+    edit: "Редактировать папку"
+    info1: "Вы действительно хотите удалить эту папку?"
+  folder_edit_not_allowed: "Эту папку невозможно изменить"
+  footer: 
+    by_freshdesk: Freshdesk
+    helpdesk_software: "ПО техподдержки"
+  forgot_password: "Забыл пароль"
+  forgot_password_intro: "Заполните форму ниже и инструкции для сброса пароля будут отправлены вам на Email"
+  formatting_help: "Помощь по форматированию"
+  forum: 
+    confim_msg1: "Вы действительно хотите удалить этот форум?"
+    edit: "Редактировать форум"
+    new: "Новый форум"
+    start_topic: "Создать тему"
+    title: Форумы
+    types: 
+      announce: Объявление
+      howto: Вопросы
+      ideas: Идеи
+      problem: Проблемы
+    verb: 
+      announcement: Анонсировано
+      ideas: "Идея предложена"
+      problems: "Сообщил о проблеме"
+      questions: "Вопрос задал"
+    visibility: 
+      agents: Агенты
+      all: Все
+      anyone: Все
+      logged_users: "Вошедшие пользователи"
+      select_company: "Выбрать компании"
+  forum_confirm_msg1: "Вы уверены, что хотите удалить эту категорию?"
+  forum_key: Форум
+  forum_shared: 
+    post: 
+      answer: "Ответ "
+      delete_post: "Удалить пост"
+      delete_post_confirm: "Удалить этот пост? Вы уверены?"
+      edit_post: "Настроить пост"
+      mark_answer: "Отметить это как ответ"
+      post_accepted_as_a_good_answer: "Этот пост принят как хороший ответ в данной теме"
+      posted_on: "%{user_name} в %{post_date}"
+      unmark_answer: "Снять отметку ответа"
+    topic_vote: 
+      howto: 
+        vote_button: "Я задал этот вопрос"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} человек</a> задал этот вопрос"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} человек </a> задали этот вопрос"
+        vote_info_include_1: "Вы задали этот вопрос"
+        vote_info_include_2: "Вы и <a id='users-voted' href='#' title='See who have this'> %{vote} человека </a> задали этот вопрос"
+        voted_users_widget_title: "Пользователи с тем же вопросом"
+      ideas: 
+        vote_button: "Мне нравится эта идея"
+        vote_info_1: "<a id='users-voted' href='#' title='See who likes this'> %{vote} человеку</a> нравится эта идея"
+        vote_info_2: "<a id='users-voted' href='#' title='See who like this'> %{vote} людям </a> нравится эта идея"
+        vote_info_include_1: "Вам нравится эта идея"
+        vote_info_include_2: "Вам и  <a id='users-voted' href='#' title='See who like this'> %{vote} людям</a> нравится эта идея"
+        voted_users_widget_title: "Люди, которым нравится эта идея"
+      problem: 
+        vote_button: "У меня такая же проблема"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} человек</a> имеет ту же проблему"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} человек </a> имеют ту же проблему"
+        vote_info_include_1: "У вас та же проблема"
+        vote_info_include_2: "У вас и <a id='users-voted' href='#' title='See who have this'> %{vote} человек</a> та же проблема"
+        voted_users_widget_title: "Пользователи с той же самой проблемой"
+  forums: 
+    form: 
+      type: "Тип форума"
+      visibility: "Видимость форума"
+      visible_to: "Видно "
+    search: 
+      placeholder: "Искать %{name}"
+    search_all: 
+      placeholder: "Искать по всем темам"
+  forums_order: 
+    overview: "Общая информация"
+    popular: Популярные
+    recent: Недавние
+  forward: "Переслать  "
+  forwarded_email: "Перенаправленные письма"
+  forwarded_to: "Перенаправленные  "
+  four: "4 часа"
+  from_email: "С адреса"
+  fwd_success_msg: "Талон успешно перенаправлен"
+  fwd_to: "Переслать  "
+  gamification: 
+    leaderboard: 
+      love_trophie_info: "Агент с максимальным количеством очков за удовлетворенных клиентов"
+      love_trophie_info_group: "Группа с максимальным количеством очков за удовлетворенных клиентов"
+      love_trophie_label: "Чемпион по удивлению клиентов"
+      love_trophie_label_group: "Чемпионы по удивлению клиентов"
+      mvp_trophie_info: "Агент с максимальным количеством очков за месяц"
+      mvp_trophie_info_group: "Группа с максимальным количеством очков за месяц"
+      mvp_trophie_label: "Самый ценный игрок"
+      mvp_trophie_label_group: "Самая ценная команда"
+      sharpshooter_trophie_info: "Агент, получивший наибольшее число очков за решение проблемы при первом обращении в текущем месяце"
+      sharpshooter_trophie_info_group: "Группа, получившая наибольшее число очков за решение проблемы при первом обращении в текущем месяце"
+      sharpshooter_trophie_label: Снайпер
+      sharpshooter_trophie_label_group: Снайперы
+      speed_trophie_info: "Агент с максимальным количеством очков за самое быстрое решение проблемы в текущем месяце"
+      speed_trophie_info_group: "Группа с максимальным количеством очков за самое быстрое решение проблемы в текущем месяце"
+      speed_trophie_label: Гонщик
+      speed_trophie_label_group: Гонщики
+    levels: 
+      beginner: Новичок
+      expert: Эксперт
+      guru: Гуру
+      intermediate: Средний
+      master: Мастер
+      professional: Профессионал
+    notifications: 
+      achieved_quest: "<b> Урррраа! </b><br/> Вы достигли <b>%{name}</b>."
+      newlevel: "<b> Урррраа! </b><br/> Теперь вы <b>%{name}</b>."
+  garden_brief: "Мультипродуктовая поддержка"
+  garden_details: "Все в &quot;Blossom&quot; Plan plus, Мультипродуктовая поддержка, Продвинутые отчеты, Сообщество, E-mail &amp; Поддержка по телефону"
+  go_back_admin: "Вернуться в админку"
+  greater_than: "Больше чем"
+  group: 
+    assigntime: 
+      day: "1 день"
+      eight: "8 часов"
+      four: "4 часа"
+      half: "30 минут"
+      one: "1 час"
+      threeday: "3 дня"
+      two: "12 часов"
+      twoday: "2 дня"
+    edit: "Редактировать группу"
+    info1: "Агенты в этой группе"
+    info2: "В этой группе нет агентов"
+    info3: "Отправить письмо об эскалации"
+    info4: "если талон остается неназначенным более"
+    info5: "Вы уверены"
+    name: "Название Группы"
+    new: "Новая группа"
+    select_agents: "Выбрать Агентов"
+    title: Группы
+  half: "30 минут"
+  header: 
+    assumed_text: "Вы просматриваете как"
+    login: войти
+    new_ticket: "Новая заявка"
+    search: Поиск
+    signout: Выйти
+    submit_a_ticket: "Создать заявку"
+    tabs: 
+      checkstatus: "Проверьте статус заявки"
+      company_tickets: "Заявки компании"
+      customers: Клиенты
+      forums: Форумы
+      home: Главная
+      reports: Отчеты
+      social: Общественный
+      solutions: Решения
+      tickets: Заявки
+  header_logo: "Верхний лого"
+  helpdesk: 
+    dashboard: 
+      index: 
+        todo_title: Напоминания
+      summary: 
+        due_today: "На сегодня"
+        open: Открытые
+        overdue: Просроченные
+        title: "Всего заявок"
+        unassigned: "Не назначенные"
+    flash: 
+      assigned_reassigned: "%{type} к %{username}"
+      assigned_to_you: "%{tickets} назначено вам"
+      assignedto: "%{tickets} назначено %{username}."
+      closing_the_ticket_failed: "Закрытие заявки произошло с ошибкой"
+      flagged_spam: "%{tickets} помечено как спам. %{undo}"
+      flagged_unspam: "%{tickets} удалены из папки спам"
+      removed_from_spam: "%{tickets} удалены из папки спам"
+      tickets_closed: "%{tickets} закрытые"
+      tickets_update: "%{tickets} обновлены"
+    merge: 
+      confirm_merge: 
+        confirm_and_merge: "Подтвердить и объединить"
+        source_merge_description: "Данная заявка была закрыта и совмещена с заявкой %{ticket_id}."
+        source_ticket_close_info: "Данная заявка будет закрыта со следующим примечанием"
+        target_merge_description1: "Заявка %{ticket_id} %{ticket_subject} была совмещена с этим заданием"
+        target_merge_description2: "Описание в заявке %{ticket_id}"
+        target_ticket_updated_info: "Данная заявка будет обновлена со слеледющим примечанием и все обсуждения будут удалены"
+        will_be_merged_into: "Будет объединена с..."
+      merge: 
+        enter_ticket_id: "Введите номер заявки"
+        merge: Объединить
+        merge_into: "Объединить в?"
+        other_tickets: "Другие заявки от %{requester}"
+    rebranding: 
+      name: 
+        info: "Это будет название справочной службы, которая отображается в заголовке сайта и уведомлениях через почту."
+    shared: 
+      facebook_form: 
+        title: "Ответить пользователю %{user}"
+      forward_form: 
+        cc: Копия
+        removecc: "Удалить копию"
+      history: 
+        recent_item: "Недавние документы"
+      reply_form: 
+        addcc: "Добавить CC"
+        cc: Копия
+        removecc: "Удалить CC"
+        title: "Ответить  %{email}"
+      tweet_form: 
+        title: "Ответить пользователю %{user}"
+    tags: 
+      index: 
+        title: Тэги
+    ticket_created_on_n_by: "от %{requester} в %{date_time}"
+    ticket_notifier: 
+      reply: 
+        happy: Отлично
+        neutral: Неплохо
+        unhappy: "Не очень хорошо"
+    tickets: 
+      close_notice: 
+        ticket_has_been_cloased: "Заявка была закрыта."
+        view_ticket: "Просмотреть заявку"
+      components: 
+        due_date: 
+          due: Время
+          earlier_date_and_time: "Пожалуйста, укажите дату и время, которые позже, чем дата и время создания заявки"
+          next_week: "Следующая неделя"
+          set_date_time: "Установить дата у время"
+          specific_date: "Особая дата/время"
+          this_week: "Эта неделя"
+          today: Сегодня
+          tomorrow: Завтра
+          when_is_it_due: Когда?
+        scenarios: 
+          execute_this_scenario: "Выполнить сценарий"
+      customview: 
+        new: 
+          give_a_name: "Дайте название данному обзору"
+          visible_to: "Обзор видим для"
+      execute_scenario_notice: 
+        actions_performed: "Выполняемые действия"
+        execute_the_scenario: "Выполнить сценарий <b>%{rule_name}</b>"
+        view_details: "посмотреть детали"
+      friendly_status: 
+        customer_responded: "Ответившие клиенты"
+        elapsed: "Время ожидания"
+        new: Новый
+        overdue: Задержка
+        resolved: Решено
+      no_email_found: "Пользователь с электронной почтой %{email} не доступен в этой системе"
+      note: 
+        attachment_size: 
+          exceed: "Ошибка! Ваш файл превышает 15МБ. Пожалуйста выберите файл меньшего размера."
+        delete_note: "Удалить это из обсуждения талона?"
+        inbound_email: "Входящие письма"
+        outbound_email: "Исходящее письмо"
+        posted_on: "%{user_name} в %{note_date}"
+        private_note: "Приватная запись"
+        public_note: "Общедоступная запись"
+        split_this_as_new_ticket: "Оформить как отдельный талон"
+        split_ticket_confirm: "Отделить эту заметку и оформить ее как отдельный талон?"
+      overlay_fwd_time: "перенаправлено %{time_in_words} назад"
+      overlay_note_time: "заметка добавлена %{time_in_words} назад"
+      overlay_reply_time: "ответ отправлен %{time_in_words} назад"
+      save_and_close_notice: 
+        ticket_saved_and_closed: "талон создан и закрыт."
+        view_ticket: "Просмотреть заявку"
+      show: 
+        conversation: Обсуждение
+        linked_ticket: "Эта заявка связана с форумом"
+        meta: мета
+        timesheet: Расписание
+      tabular_view: 
+        assigned: Назначено
+        posted: Опубликовано
+        priority: Приоритет
+        sla: Срок
+        status: Статус
+        time_ago: "%{time_in_words} назад"
+      view_ticket: 
+        conversation: Обсуждение
+        linked_ticket: "Этот талон привязан к форуму"
+        meta: мета
+        timesheet: Расписание
+      views: 
+        all: "Все талоны"
+        all_tickets: "Все талоны"
+        closed: "Закрытые заявки"
+        deleted: Корзина
+        due_today: "Заявки на сеодня"
+        monitored_by: "Заявки, контроллируемые мной"
+        my_all: "Все мои заявки"
+        my_closed: "Мои закрытые заявки"
+        my_due_today: "Мои заявки на сегодня"
+        my_on_hold: "Мои ожидающие заявки"
+        my_open: "Мои открытые заявки"
+        my_overdue: "Мои просроченные заявки"
+        my_resolved: "Мои решённые заявки"
+        new: "Новые заявки"
+        new_and_my_open: "Новые и Мои открытые талоны"
+        new_my_open: "Новые и Мои открытые талоны"
+        no_tickets: "У вас нет талонов в текущем обзоре"
+        on_hold: "Ожидающие заявки"
+        open: "Открытые талоны"
+        open_or_pending: "Открытые или Ожидающие"
+        overdue: "Просроченные заявки"
+        resolved: "Решеные заявки"
+        resolved_or_closed: "Решенные или Закрытые"
+        select: "Выберите вид..."
+        spam: Спам
+        tags: "Метки на заявки"
+        this_view: "этот обзор"
+        tickets_by: "Заявки от"
+        tickets_twitter: "Заявки через twitter"
+    time_sheets: 
+      agent: Агент
+      billing_type: "Тип счета"
+      customer: Клиент
+      executed_at: Дата
+      form: 
+        agent: Агент
+        hours: Часы
+      group_by: Группа
+      hours: Часы
+      index: 
+        no_timeentry: "Для данного талона не указано время"
+      new: 
+        title: "Новая запись времени"
+      report: 
+        no_timeentry: "Нет доступных данных"
+        total: Всего
+      ticket: Заявка
+      time_entry: 
+        toggle_timer_false: "Остановить таймер"
+        toggle_timer_true: "Запустить таймер"
+  helpdesk_title: "Служба поддержки"
+  high: Высокий
+  home: 
+    mobile_index: 
+      email: E-mail
+      forgot: "Забыли пароль?"
+      login: Логин
+      password: Пароль
+      remember: "Запомнить меня на этом компьютере"
+      sign_in_using: "Войти с помощью"
+      sign_in_using_google: "Войти с помощью учетной записи Google"
+  how_to: Вопрос
+  identity_reverted_error_msg: "Извините, ваши пользовательские данные не найдены"
+  identity_reverted_msg: "You have reverted your identify back to you."
+  import: Импорт
+  import_added_newly: "Вновь добавленные"
+  import_articles: "Статьи о решениях"
+  import_data: "Импортированная дата"
+  import_example_title: "Это пример CSV-файла"
+  import_forum: Форумы
+  import_groups: Группы
+  import_ignore_first_row: "Игнорировать верхнюю строчку (заголовки)"
+  import_note_info: "Поля в вашем csv-файле могут идти в произвольном порядке. Просто убедитесь, что первый ряд содержит заголовки (Имя, E-mail и т.д.) Единственное требуемое поле - E-mail. "
+  import_org_companies: "Организации &rarr;  Компании"
+  import_solution_article: "Преобразовать статью форума в решение"
+  import_solution_article_info: "Примечание: комментарии форума не сохраняются"
+  import_step1_info: "Выберите CSV файл и нажмите импорт"
+  import_step2_info: "Сопоставьте поля CSV с полями базы данных и импортируйте."
+  import_ticket_group: "Группа &amp; задач"
+  import_tickets: Заявки
+  import_topics: Темы
+  import_updated: Обновлено
+  import_user_notification: "Отправить письмо активации пользователя во время импорта"
+  import_user_org: "Пользователи &amp; Организации"
+  import_user_org_text: "Все пользователи &amp; Организации вашей учетоной записи zendesk будут импортированы в текущую учетную запись Freshdesk как \"Контакты и Компании\""
+  import_users_contacts: "Пользователи &rarr; Контакты "
+  import_warning_info: "Письмо с инструкциями по активации будет отправлено каждому контакту после успешного импорта. Если письмо уже есть в базе данных, мы обновим его аттрибуты, такие как Имя, Компания и др."
+  import_zendesk_summary: "Итоги импорта из zendesk"
+  import_zendesk_summary_info: "Данные Zendesk успешно импортированы"
+  import_zendesk_title: "Импорт из zendesk"
+  incident: Проблема
+  index_tooltip_loading_msg: Загрузка…
+  integrations: 
+    capsule: 
+      desc: "Вы можете посмотреть информацию о Контактах из Капсулы CRM на Freshdesk. Эту информацию можно получить на странице деталей талонов и странице деталей контактов. "
+      form: 
+        api_key: "API-ключ  "
+        api_key_info: "Чтобы получить уникальный API-ключ, войдите в учетную запись капсулы CRM и пройдите по ссылке <br /> <b>“Пользователь -> Мои настройки”</b> (В правом верхнем углу страницы).<br /> Нажмите <b>“Токен API-аутентификации”</b>, и, чтобы получить уникальный API-ключ,<br /> вставьте его в поле сверху."
+        bcc_drop_box_mail: "Адрес почтового ящика"
+        bcc_drop_box_mail_info: "Вы можете настроить уникальный адрес почтового ящика в <b>“Настройки -> Почтовый ящик”</b>.<br /> (В правом верхнем углу страницы).<br /> Скопируйте адрес электронного ящика в поле наверху. <br /> Freshdesk будет автоматически добавлять этот адрес в поле скрытой копии при отправке ответов на талоны"
+        domain: Домен
+        domain_info: "Вставьте просто адрес, без https. Например: example.capsulecrm.com"
+        widget_title: "Заголовок виджета"
+      label: "Капсула CRM"
+    capsule_crm: 
+      helptext: "<h4>Перейдите из капсулы в Freshdesk</h4><p><br/> Вы можете создать ссылку на Капсулу CRM, чтобы росматривать талоны во  Freshdesk.</p> <p> Для этого перейдите по ссылке <br /><b>Настройки -> Изменить поле -> Для частных лиц и организаций</b></p><p> Нажмите \"Добавить новую...\" и выберите <b>\"Готовая ссылка\"</b></p> <p>Скопируйте URl в точности, как указано ниже, и вставьте его в Капсулу CRM как определение ссылки <span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+      label: "Капсула CRM"
+    custom_application: 
+      desc: "Используя собственный скрипт, вы можете добавить собственный виджет для отображения любой информации."
+      description: Описание
+      edit: "Изменить собственный виджет"
+      form: 
+        create_n_enable: "Создать и запустить"
+        insert_placeholder: "Вставить метку"
+        widget_script: "Фрагмент кода виджета"
+        widget_title: "Название виджета"
+      helptext: "<h4>Справка собственного виджета</h4><p><br/> Вы можете создать собственный виджет в html,css и javascript.</br></br> Чтобы создать собственный виджет, введите имя нового виджета и краткое описание. </br>Введите код под надписью \"Скрипт\". Чтобы узнать больше о скриптах, обратитесь к странице решений. </br></br>Нажмите <b>‘Показать превью’,</b> чтобы посмотреть, как будет выглядеть виджет на страницах контактов и талонов."
+      label: "Собственный виджет"
+      name: Название
+      new: "Новый собственный виджет"
+      script: Скрипт
+      small_help_text: "Вы можете создать собственный виджет в html, css и javascript."
+    freshbooks: 
+      desc: "Вы можете вести учет времени, потраченного на талоны, в проектах и задачах Freshdesk. "
+      form: 
+        api_key: "Токен аутентификации"
+        api_url: "API URL"
+        api_url_info: "Введите полный URL API. Например: https://example.freshbooks.com/api/2.1/xml-in"
+        freshbooks_note: "Текст примечаний"
+        freshbooks_note_info: "Этот текст будет отображаться внизу примечания и будет содержать информацию о потраченном времени"
+        widget_title: "Заголовок виджета"
+      helptext: "<h4>Помощь в интеграции Freshbooks </h4><p><br/> Чтобы интегрировать Freshbooks в Freshdesk, для начала получите токен API и аутентификации для Freshbooks. <br/><br/> Зайдите в свою учетную запись Freshbooks, выберите <b> вкладку Люди</b> и перейдите во <b> вкладку персонала и исполнителей</b>. Нажмите <b>Редактировать</b> в админке. Здесь вы найдете URL API и токен аутентификации.<br/><br/> В Freshdesk нажмите на талон и перейдите во вкладку Расписания. Здесь вы можете добавить запись учета времени на Freshbooks."
+      label: Freshbooks
+    google_analytics: 
+      account_number: "Введите идентификатор трекинга"
+      desc: "Отслеживайте статистику посетителей своего портала поддержки с помощью Google Analytics. "
+      domain: Домен
+      form: 
+        copy_settings: "Используйте указанный выше идентификатор трекинга для всех порталов"
+        tracking_id: "Идентификатор трекинга для"
+        tracking_id_example: "Например: UA-123456-1"
+      helptext: "<h4>Помощь в интеграции в Google Analytics</h4><p><br/> Чтобы интегрировать Google Analytics в Freshdesk, рекомендуется создать страницу в учетной записи вашей компании на Google Analytics. <br/><br/>Для этого войдите в учетную запись Google Analytics, откройте вкладку Администратора и выберите нужную учетную запись. Нажмите <b>'Новая страница'</b>. Во вкладке '<b>URL вебсайта'</b> введите URL своего сайта поддержки и щелкните <b>'Создать страницу'</b>. Затем щелкните по странице, которую вы только что создали, и перед вами появится <b>'Идентификатор страницы'</b> под ее названием. Скопируйте его в Настройки Google Analytics на Freshdesk.</p>"
+      inline_help: "Введите идентификатор трекинга для"
+      label: "Google Analytics"
+      portal: Портал
+    google_contacts: 
+      MERGE_LATEST: "Слить контакты Freshdesk и Google (приоритет более новой информации)"
+      MERGE_LOCAL: "Слить контакты Freshdesk и Google (приоритет Freshdesk)"
+      MERGE_LOCAL_small: "Слить (приоритет Freshdesk)"
+      MERGE_REMOTE: "Слить контакты Google и Freshdesk (приоритет Google)"
+      MERGE_REMOTE_small: "Слить (приоритет Google)"
+      OVERWRITE_LOCAL: "Экспортировать контакты и обновления Freshdesk в контакты Google"
+      OVERWRITE_LOCAL_small: "Экспорт "
+      OVERWRITE_REMOTE: "Импортировать контакты и обновления Google в контакты Freshdesk"
+      OVERWRITE_REMOTE_small: Импорт
+      account: Аккаунт
+      account_not_configured: "Неправильная конфигурация Google. Повторите попытку позже."
+      already_exist: "Конфигурация этой почты уже выполнена. Вы не можете добавить этот адрес еще раз. "
+      delete: Удалить
+      delete_action: 
+        error: "Ошибка при удалении учетной записи Google"
+        success: "Аккаунт Google успешно удален"
+      desc: "Время от времени синхронизируйте контакты Google и Freshdesk"
+      edit_app: Обновить
+      edit_form: 
+        edit_app_title: "Изменить настройки синхронизации контактов Google"
+        import_group: "Выбрать группы для импорта (необязательно)"
+        import_title: "Настройки импорта контактов Google"
+        install_title: "Настройки синхронизации контактов Google"
+        mail_box_detail: "Синхронизировать с"
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/> <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/> A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
+      email: E-mail
+      enable_integration: "Автоматическая синхронизация по завершении импорта (ежедневно)"
+      fetch_problem: "Ошибка извлечения контактов Google"
+      form: 
+        account_not_configured: "<br/>Конфигурация учетной записью Google не выполнена. Нажмите '%{action}', чтобы выполнить конфигурацию с новой учетной записью Google.<br/><br/>"
+        sync_type: "Тип синхронизации"
+        sync_type_info: "Как вы хотите синхронизировать контакты Google и Freshdesk?"
+      group: "Название группы синхронизации"
+      helptext: "<h4>Помощь в настройке синхронизации контактов Google</h4><p><br/> Нажмите <b>‘Синхронизировать новую учетную запись’,</b> чтобы добавить новую учетную запись Google для синхронизации. При запросе разрешите Freshdesk доступ к контактам Google (введите логин и пароль Google по требованию) .<br/><br/> Вы можете удалить свою учетную запись, если больше не желаете проводить с ней синхронизацию. <br/><br/><b>Note:</b> Перед синхронизацией рекомендуется создать резервную копию контактов Google. "
+      import: Импорт
+      import_complete: "Единовременный импорт завершен"
+      import_later_success: "Импорт контактов Google успешно начат. Вы можете посмотреть статус импорта на странице настроек. "
+      import_problem: "Ошибка импорта контактов Google."
+      import_success: "Successfully imported Google contacts. Status: %{added} Added, %{updated} Updated and %{deleted} Deleted."
+      import_success_no_stats: "Импорт контактов Google успешно завершен. "
+      info1: "Используя этот механизм синхронизации с несколькими учетными записями, Google позволяет передать контакты Freshdesk всем этим учетным записям. Если вы не хотите синхронизировать контакты с Google, можете оставить учетную запись пустой. "
+      install: "Импортировать и активировать"
+      internal_error: "Произошла внутренняя ошибка. Свяжитесь с поддержкой."
+      label: "Синхронизация контактов Google"
+      last_sync_status: "Статус последней синхронизации"
+      not_yet_synced: "Синхронизация не началась"
+      overwrite_existing_user: "Перезаписать существующую контактную информацию на Freshdesk"
+      sync_group_info: "Для синхронизации контактов Gmail в вашей учетной записи будет создана новая группа контактов <strong>%{group_name}</strong>."
+      sync_status: 
+        added: добавлено
+        deleted: удалено
+        freshdesk: "Статус импортированных контактов на Freshdesk"
+        google: "Статус экспортированных контактов в Google"
+        modified: изменено
+      sync_type: "Как синхронизировать?"
+      syncing_in_progress: "Идет синхронизация"
+      update_action: 
+        also: Еще
+        error: "Ошибка обновления учетной записи Google"
+        success: "Учетная запись Google успешно добавлена"
+    harvest: 
+      desc: "Вы можете вести учет времени, потраченного на талоны, в проектах и задачах Harvest. "
+      form: 
+        domain: Домен
+        domain_info: "Введите домен без https. Например: example.harvestapp.com"
+        harvest_note: "Текст примечаний"
+        harvest_note_info: "Этот текст будет отображаться внизу примечания и будет содержать информацию о потраченном времени"
+        widget_title: "Заголовок виджета"
+      helptext: "<h4>Помощь в интеграции Harvest</h4><p><br/> Чтобы интегрировать Harvest в Freshdesk, введите свое <b>Доменное имя</b> и щелкните Разрешить.<br/><br/> Нажмите на талон, чтобы перейти к  <b>Вкладке расписания</b>. Далее вы можете ввести для Harvest <b>Имя пользователя </b> и <b>Пароль</b>, чтобы войти в систему. Теперь вы можете назначить учет потраченного времени для Harvest.<br/><br/> Примечание: вы можете щелкнуть <b>Запомнить меня</b>, чтобы не нужно было каждый раз вводить данные для Harvest. "
+      label: Harvest
+    jira: 
+      desc: "Конвертировать талоны в задачи, которые могут обрабатываться в JIRA."
+      form: 
+        add_jira_comment: "Добавить как комментарий в JIRA"
+        add_note: "Добавить как личное примечание"
+        do_nothing: "Не делать ничего"
+        domain: Домен
+        domain_info: "Введите полный URL учетной записи JIRA, включая https/http. Например: https://example.atlassian.net. <br /><span class='italics'> Примечание: модификации JIRA должны быть выложены в Интернет. </span>"
+        fd_comment_sync: "Для комментария, добавленного на Freshdesk  %{dropdown}"
+        fd_status_sync: "Для изменения статуса Freshdesk %{dropdown}"
+        jira_comment_sync: "Для комментария, добавленного по задаче JIRA  %{dropdown}"
+        jira_note: "Текст описания"
+        jira_note_info: "Этот текст будет добавлен в описание задачи JIRA"
+        jira_status_sync: "Для изменения статуса JIRA %{dropdown}"
+        jira_status_sync_update_customer: "Отправьте ответ клиенту и обновите поле статуса"
+        jira_status_sync_update_field: "Обновите поле статуса Freshdesk"
+        password: Пароль
+        send_reply: "Отправьте ответ клиенту. "
+        update_jira_status: "Также обновите статус JIRA."
+        username: "Имя пользователя"
+        widget_title: "Заголовок виджета"
+      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/> To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/> To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
+      label: "Atlassian JIRA"
+    jira_settings: 
+      add_comment_in_jira: "Добавить комментарий в JIRA"
+      add_private_note_in_fd: "Добавить личное примечание на Freshdesk и уведомить агента."
+      add_public_note_in_fd: "Добавить публичное примечание на Freshdesk."
+      none: "Не делать ничего"
+      send_reply_in_fd: "Известить клиента по E-mail"
+      update_jira_status: "Обновить статус JIRA"
+      update_status_in_fd: "Обновить статус Freshdesk"
+    logmein: 
+      desc: "Предоставьте мгновенную удаленную поддержку своим клиентам и работникам с помощью LogMeIn Rescue"
+      form: 
+        logmein_company_info: "Чтобы получить идентификатор компании, перейдите в меню Центр администратора -> Техническая группа -> Глобальные настройки -> ASP.Net C# пример сервера "
+        logmein_sso_pwd_info: "Чтобы создат SSO-пароль, пройдите в меню Центр администрации -> Техническая группа -> Глобальные настройки -> Единая регистрация -> новый SSO-пароль"
+        password: SSO-пароль
+        widget_title: "Заголовок виджета"
+      helptext: "<h4>Помощь с интнеграцией LogMeIn Rescue</h4><p><br/> Чтобы интегрировать LogMeIn Rescue с Freshdesk, введите идентификатор вашей компании в LogMeIn Rescue и SSO-пароль и нажмите Обновить.  <br/>После подключения виджет LogMeIn Rescue будет доступен на странице информации о талоне. <br/><br/>Используйте  &quot;Запуск технической консоли&quot;, чтобы запустить техническую консоль напрямую из виджета Freshdesk. <br/>Теперь вы можете создать пинкод и передавать инструкции заявителю для продолжения оказания поддержки в in LogMeIn Rescue. <br/><br/> <b>Примечание:</b> почта агента должна совпадать с SSO-идентификатором cотрудника LogMeIn. Чтобы настроить SSO-идентификатор, пройдите по ссылке Центр администратора -> Имя специалиста -> Организация -> SSOID"
+      label: "LogMeIn Rescue"
+      note: 
+        chatlog: "Журнал чата"
+        header: "Информация о вашем сеансе LogMeIn Rescue"
+        platform: "Платформа конечного пользователя"
+        session_id: "Идентификатор сеанса"
+        tech_email: "Почта специалиста"
+        tech_name: "Имя специалиста"
+        tech_notes: "Примечания специалиста"
+        work_time: "Общее время работы (в секундах)"
+    salesforce: 
+      desc: "You can view contact information from Salesforce in Freshdesk."
+      form: 
+        salesforce_settings: "Настройки отдела продаж"
+      label: "Одтел продаж"
+    sugarcrm: 
+      desc: "Вы можете посмотреть контактную информацию через SugarCRM на Freshdesk"
+      form: 
+        domain: "URL учетной записи SugarCRM"
+        domain_info: "Например, если адрес URL SugarCRM - <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , введите <strong> http://mycompany.xyz/sugar </strong><br /><br /> Примечание: установленная на машине версия SugarCRM должна иметь доступ к Интернету. </span>"
+        password: Пароль
+        username: "Имя пользователя"
+        widget_title: "Заголовок виджета"
+      helptext: "<h4>Помощь в интеграции Sugar CRM </h4><p><br/> Вы можете получить доступ к контактной информации CRM на странице талона и контактов Freshdesk. <br /><br /> Здесь вы получите доступ к следующим данным: имя, должность, компания, отдел, контактный адрес, номера телефонов. <br /><br /> Помните ,что функция поиска связана с адресами электронной почты. Если на электронный адрес приходится несколько контактов, то все они будут отображены на странице в виде списка. "
+      label: SugarCRM
+    workflow_max: 
+      desc: "Вы можете вести учет времени, потраченного на талоны, в проектах и задачах Workflow Max."
+      form: 
+        account_key: "Ключ учетной записи"
+        account_key_info: "Запросите ключ учетной записи у поддержки Workflow Max и вставьте его сюда."
+        api_key: API-ключ
+        api_key_info: "Запросите API-ключ у поддержки Workflow Max и вставьте его сюда."
+        widget_title: "Заголовок виджета"
+        workflow_max_note: "Прикрепленные примечания"
+        workflow_max_note_info: "Этот текст будет отображаться внизу примечания и будет содержать информацию о потраченном времени"
+      helptext: "<h4>Помощь в интеграции Workflow Max</h4><p><br/> Чтобы интегрировать сервис учета рабочего времени Workflow Max в Freshdesk, получите ключ учетной записи и API-ключ у<a href='mailto:support@workflowmax.com'>Поддержки WorkflowMax </a>. Введите эти ключи в специальные поля, чтобы произвести интеграцию. <br/><br/> После интеграции нажмите на любой талон и откройте вкладку Расписания. Здесь вы можете установить учет времени Workflow Max для персонала, проекта и задачи."
+      label: "Workflow Max"
+  is_expiring_today: "истекает сегодня"
+  is_not: "не "
+  last_draft: "Ваш последний черновик"
+  last_name: Фамилия
+  latest_ticket: "новое обновление"
+  latest_tickets: "новые обновления"
+  lead: Ведущее
+  left: Остаток
+  less_than: "Меньше чем"
+  level_label: Уровень
+  linkback_info: "Вы можете настроить ссылку обратной связи, которая будет появляться у клиента при нажатии на логотип сверху"
+  linkback_overlabel: "URL обратной ссылки"
+  loading: 
+    activities: "Загрузить больше услуг"
+    items: "Загрузить больше товаров"
+  logmein_source: "LogMeIn Rescue"
+  logo: Лого
+  logo_delete_msg: "Вы уверены, что хотите удалить этот логотип?"
+  low: Низкий
+  mark_as_spam: "Отметить как спам"
+  maximum_agents_admin_msg: "Вы достигли максимального числа штатных агентов, которое позволяет ваша подписка. Удалите агента или <a href='/subscription/plans'>обновите свою учетную запись,</a> чтобы добавить нового агента. Если вам нужен временный агент, вы можете добавить его ниже."
+  maximum_agents_msg: "Вы достигли максимального уровня агентов, который позволяет ваша подписка. Удалите агента или свяжитесь с администратором учетной записи, чтобы обновить вашу учетную запись. Если вам нужен временный агент, его можно добавить ниже. "
+  medium: Средний
+  message: Сообщение
+  mobile: 
+    home: 
+      login: Войти
+      remember: "Запомнить меня  "
+      sign_in_error: "Неверный адрес или пароль"
+      sign_in_using: "…или войти с помощью"
+  name: Название
+  never: Никогда
+  new_ticket_created: "Создан новый талон"
+  next_charge_amount: "%{type} стоимость:"
+  next_charge_date: "Ваш следующий платеж будет осуществлен:"
+  next_level_info: "  +%{points}, чтобы стать %{name}"
+  no_badge_achieved_label: "Вы пока не получили ни одного жетона"
+  no_change: "Без изменений"
+  no_date_to_display: "Нет доступных данных"
+  no_forum_category: "В этой категории нет форумов"
+  no_level_achieved_label: "Вы пока не достигли ни одного уровня"
+  no_message: 
+    canned_responses: "Нет доступных шаблонов ответов"
+    products: "Вы не создали ни одного продукта"
+  no_password_reset: "Нет  "
+  no_tags: "Тэги не найдены."
+  no_topics_text: "На этом форуме нет тем"
+  no_twitter_handle: "Настройте хотя бы одну учетную запись Twitter"
+  non_covered_feature_error: "Ваш текущий план Freshdesk не предусматривает эту функцию."
+  not_eligible_for_free_plan: "Не рекомендуется выбирать Свободный план"
+  not_selected: "Не выбрано"
+  notified_to: "Известить  "
+  ok: Ок
+  on_hold: Ожидание
+  one: "1 час"
+  onemonth: "1 месяц"
+  oneweek: "1 неделя"
+  open: Открытые
+  open_tickets: "Открытые талоны"
+  or: или
+  paid_with: "Оплачено с помощью"
+  password: Пароль
+  password_reset_email: "Письмо со сбросом пароля"
+  payment_info: "Информация о платежах"
+  phone: Телефон
+  plan_amount: "за агента в месяц"
+  plan_info_update: "Тарифный план был изменен"
+  plan_is_selected: "На вашей учетной записи активирован план %{plan}"
+  plans_billing: "Тарифы и оплата"
+  portal: 
+    search: 
+      placeholder: "Искать по ключевым словам или целому вопросу"
+  portal_captcha: "Сделайте заполнение captcha обязательным при передаче талона без входа в систему"
+  portal_captcha_anon: "Подключите эту опцию, если хотите, чтобы пользователи предоставляли талоны без captcha"
+  portal_customizer_anon_for_f: "Подключите эту опцию, если хотите, чтобы клиенты могли войти в систему, используя логин и пароль Facebook"
+  portal_customizer_anon_for_g: "Подключите эту опцию, если хотите, чтобы клиенты могли войти в систему, используя логин и пароль Google"
+  portal_customizer_anon_for_i: "Отключите эту опцию, если хотите спрятать вкладку \"Форумы\" на публичном портале клиентов."
+  portal_customizer_anon_for_t: "Подключите эту опцию, если хотите, чтобы клиенты могли войти в систему, используя логин и пароль Twitter"
+  portal_customizer_anon_tickets: "Кто угодно может создать заявку"
+  portal_customizer_anon_tickets_i: "Отключите эту опцию, если хотите, чтобы клиенты должны были войти в систему, чтобы передать талон."
+  portal_customizer_auto_suggest_solutions: "Подключите эту опцию, если хотите предложить существующие решения при создании пользователем нового талона."
+  portal_customizer_facebook_signin: "Разрешить пользователям входить в систему через Facebook"
+  portal_customizer_google_signin: "Разрешить пользователям входить в систему через Google"
+  portal_customizer_open_forums: "Все могут просматривать форумы"
+  portal_customizer_open_sol_i: "Отключите эту опцию, если хотите спрятать вкладку \"Решения\" на публичном портале клиентов."
+  portal_customizer_open_solutions: "Все могут просматривать публичные решения"
+  portal_customizer_option_auto_suggest_solutions: "Автоматически предлагать решения при создании пользователем талона"
+  portal_customizer_option_for_i: "Отключите эту опцию, если хотите, чтобы пользователи входили в систему, прежде чем просматривать решения"
+  portal_customizer_option_forums: "Пользователи могут просматривать Форумы без входа в систему"
+  portal_customizer_option_sol_i: "Отключите данную опцию, если хотите, чтобы пользователи входили в систему, прежде чем просматривать решения."
+  portal_customizer_option_solutions: "Пользователи могут просматривать публичные решения без входа в систему"
+  portal_customizer_option_tickets: "Пользователи могут оформить талон без входа в систему"
+  portal_customizer_option_tickets_i: "Отключите эту опцию, если хотите, чтобы пользователи входили в систему, прежде чем оформить талон."
+  portal_customizer_title: "Настроить публичный пользовательский портал"
+  portal_customizer_twitter_signin: "Разрешить пользователям входить в систему через Twitter"
+  portal_key: Портал
+  portal_signup: "Разрешить пользователям входить с пользовательского портала"
+  portal_signup_anon: "Подключите данную опцию, если хотите, чтобы пользователи могли входить и создавать собственные учетные записи. Это позволит им входить в систему и участвовать в обсуждениях на форуме, голосовать за идеи и др."
+  premium_brief: "Высший технический уровень"
+  premium_details: "Все в &quot;Pro&quot; Plan plus, Поддержка нескольких проектов,  Поддержка в нескольких часовых поясах, сообщества, электронные адреса &amp; Поддержка по телефону"
+  preview: Предпросмотр
+  pro_brief: "Для более крупных команд"
+  pro_details: "Все в &quot;Basic&quot; Plan plus, Автоматизация сценариев, специализированные клиентские SLA, Рабочие часы, Форумы, Сообщества &amp; Поддержка по Email."
+  problem: "Проблема  "
+  proceed_now: |-
+      
+      Proceed now?
+  profile: 
+    api_key: 
+      reset: "Сбросить API-ключ"
+      reset_warning: "При сбросе API-ключа все приложения, использующие его, перестанут работать. Вы уверены, что хотите продолжить?"
+      title: "Ваш API ключ"
+    change_password: "Изменить пароль"
+    confirm_password: "Подтвердить пароль"
+    current_password: "Текущий пароль"
+    edit: "Редактировать профиль"
+    new_password: "новый пароль"
+  quests: 
+    badge_mand: "Выберите жетон"
+    customer_votes: "Количество голосов"
+    date: Дата
+    delete: "Вы уверены, что хотите удалить это соревнование?"
+    fcr: "Решение при первом обращении"
+    forum_category: Категория
+    forum_mand: "Укажите количество форумов"
+    forums: Форумы
+    inactive_quests: "Неактивные соревнования"
+    js_forum_txt: "$$questmode$$ $$questvalue$$ - эти темы на форумах учитываются за временной промежуток $$questtime$$ и соответствуют этим условиям."
+    js_quest_txt: "При успешном выступлении на соревновании вы можете открыть жетоны $$badgename$$ и бонусные баллы $$questpoints$$."
+    js_solution_txt: "Создайте статью базы знаний на $$questvalue$$ за промежуток времени $$questtime$$ и соответствующую этим условиям."
+    js_ticket_txt: "Решите талоны на $questvalue$$ за промежуток времени $$questtime$$ в соответствии с этими условиями."
+    name_mand: "Дайте название соревнованию"
+    satisfaction: "Рейтинг удовлетворенности клиентов"
+    solution_articles: Статья
+    solution_folder: Папка
+    solution_likes: "Количество лайков"
+    solution_mand: "Укажите количество решений"
+    ticket_mand: "Укажите количество решенных талонов"
+  recent_activities: "Недавние действия"
+  recent_activity: "Последняя активность"
+  recent_forum_posts: "Недавние сообщения на форумах"
+  referral: "Дополнительные сведения"
+  remove: Удалить
+  reorder: Перезаказать
+  replies: ответы
+  reply: ответить
+  reply_topic: "Ответить на тему"
+  reports: 
+    customer_activity_title: "Отчет о деятельности"
+    customer_title: "Отчет о действиях клиента"
+    customer_title_nav: "Отчет о действиях клиента"
+    date_ranges: 
+      custom: "Диапазон дат"
+      last_30_days: "Последние 30 дней"
+      last_7_days: "Последние 7 дней"
+      last_90_days: "Последние 90 дней"
+      today: Сегодня
+      yesterday: Вчера
+    generate_button: Создать
+    helpdesk_activity_title: "Отчет о деятельности службы поддержки"
+    helpdesk_title: "Отчет о деятельности службы поддержки"
+    helpdesk_title_nav: "Отчет о деятельности службы поддержки"
+    pie_chart_title_prefix: "Талоны по"
+    satisfaction_title: "Отчет об удовлетворенности"
+    scoreboard_agent_title: "Лучшие результаты агентов"
+    scoreboard_group_title: "Лучшие результаты групп"
+    scoreboard_reports: 
+      champions_title: Чемпионы
+      sharpshooter_title: Снайперы
+    scoreboard_title_nav: "Лучшие результаты"
+    select_customer: "Выбрать клиента"
+    select_options: "Перепосты от"
+    select_time_period: "Выбрать период времени"
+    summary: 
+      fcr: "Решение при первом обращении"
+      open_tickets: "Открытые талоны"
+      pending_tickets: "Ожидающие талоны"
+      received_tickets: "Полученные талоны"
+      resolved_tickets: "Решенные талоны"
+      sla_compliance: "Соответствие SLA"
+      title: "Общие сведения о талонах"
+      total_tickets: "Всего талонов"
+    summary_report: 
+      avg_1st_response_time: "Среднее время решения при первом обращении"
+      back_to_reports: "Вернуться к отчетам"
+      fcr_count: "Решение при первом обращении"
+      fcr_percent: "% РПО"
+      helptext: "Статистика вычисляется исходя из числа решенных талонов. <br /> Талоны, решенные в рамках SLA, высчитываются как &quot;Решенные в срок&quot;. <br /> В столбце &quot;Решение при первом обращении&quot; отображены талоны, решенные при первом обращении.<br /> &quot;Средниее время решения при первом обращении&quot; показывает временной промежуток между созданием талона и первым ответом агента на него. "
+      on_time_resolution: "Решение в срок"
+      on_time_resolution_percent: "% РВС"
+      show_report: "Показать отчет"
+      tickets_resolved: "Решено талонов"
+    survey_reports: 
+      back_to: "Вернуться к режиму списка"
+      feedbacks: 
+        in_response_to: "  -- В ответ на "
+      index: 
+        agent_list_loading: "Извлечение списка агента"
+      list: 
+        no_feedback: "За это время никаких отзывов не получено"
+      list_content: 
+        happy: круто
+        neutral: неплохо
+        rating_msg_multiple: "%{count} сказали %{rating}"
+        rating_msg_none: "никто не сказал %{rating}"
+        rating_msg_single: "один сказал %{rating}"
+        rating_primary_msg_multiple: "%{count} клиентов сказали %{rating}"
+        rating_primary_msg_single: "один клиент сказал %{rating}"
+        unhappy: "так себе"
+      sidebar: 
+        filter_by: "Обзор удовлетворенности"
+        from: "С "
+        helptext: "<b>Зачем нужен Отчет удовлетворенности клиента?</b><p>Отчет удовлетворенности клиента дает вам представление о качестве услуг, предоставляемых вашими агентами.<br> Отчет помогает понять коэффицент радости ваших клиентов, представленный в процентном соотношении (радостный, нейтральный или недовольный) для каждого агента поддержки.<br><br><b> Что еще можно сделать? </b><br><p style='margin-left:15px;'> 1.Установить фильтр для результатов отчетов для агентов, групп или компаний<br> 2.Просмотреть отчеты за определенный период </p></p>"
+        to: Кому
+        view_report_date: "Посмотреть отчеты за"
+    surveys_title_nav: "Отчет об удовлетворенности клиента"
+    tab_heading: Отчеты
+    tickets_by: "Талоны по"
+    timeline_chart_title: "Полученные и решенные талоны"
+    timesheet_reports: 
+      index: 
+        from: "С "
+        select_agent: "Выберите агента"
+        select_billable: "Выбрать оплачивыемый/неоплачиваемый"
+        select_customer: "Выбрать клиента"
+        title: "Отчет о расписании"
+        to: Кому
+        view_between: "Посмотреть отчет за период"
+  requester_reopens: "Заявитель заново открыл талон"
+  requester_replies: "Заявитель ответил на талон"
+  reset: "Сбросить  "
+  reset_my_password: "Сбросить пароль"
+  reset_password_title: "Сбросить пароль"
+  resolution_time_sla: "Нарушение временных рамок решения SLA"
+  resolved: Решено
+  resolved_late: "Задержка решения"
+  resolved_on_time: "Решение в срок"
+  resolved_tickets: "Решенные талоны"
+  revert_identity_link_msg: "Вернуть идентификацию"
+  right: Правильно
+  save_and_close: "Сохранить и закрыть"
+  save_and_create: "Сохранить и создать еще"
+  save_and_new: "Сохр. и создать новый"
+  save_changes: "Сохранить изменения"
+  save_reply: "Сохранить ответ"
+  save_this_view: Сохр.
+  save_this_view_tooltip: "Сохранить обзор"
+  saved_draft: Сохранено
+  saving_draft: Сохраняется…
+  scenario_label: "Метка сценария"
+  search: 
+    no_results_msg: "Ничего не найдено"
+  security_code: "Защитный код"
+  select: "Выбрать …"
+  select_a_plan: "Выбрать план"
+  select_a_plan_gain_access: "Выберите план внизу для восстановления доступа к аккаунту"
+  select_another_plan: "Выбрать другой план"
+  select_free_plan: "Выбрать Свободный план"
+  selected: Выбранные
+  send_email_to_agent: "Отправить Email агенту"
+  send_email_to_group: "Отправить Email группе"
+  send_email_to_requester: "Отправить E-mail заявителю"
+  set_password: "Установить пароль"
+  set_priority_as: "Установить приоритет как"
+  set_status_as: "Установить статус как"
+  set_type_as: "Установить тип как"
+  settings: "настройки   "
+  show_quoted_text: "Показать процитированный текст"
+  sign_in_info: "Вы зашли как"
+  signup: подписаться
+  signup_complete_activate_info: "Добро пожаловать! Мы отправили вам электронное письмо со ссылкой, пройдя по которой, вы сможете создать пароль и активировать свою учетную запись."
+  signup_title: "Зарегистрироваться на %{current_portal}"
+  since: "Начиная с"
+  since_time: "Начиная с %{time_words}"
+  sla_policy: 
+    business_time: "Часы работы"
+    calendar_time: "Календарные дни"
+    edit: "Редактировать политику SLA"
+    escalate_to: "Увеличить до"
+    info1: "Политика SLA - это набор принципов решения и времени решения проблем, исходя из приоритета талона. Составление соглашения на основе приоритета - лучшая современная практика. Политика SLA может быть довольно простой, например: \"Талоны с высоким приоритетом должны быть решены за два часа\" и т.д."
+    info2: "Freshdesk использует политику SLA для определения \"срока\" талонов. Вы можете использовать политику по умолчанию для всех своих клиентов, но если у вас есть особые клиенты, требующие более быстрого реагирования и решения, вы можете создать специальные положения политики SLA для таких клиентов."
+    info3: "Политика SLA привязывается к рабочему времени"
+    new: "Новая политика SLA"
+    override: Отклонить
+    resolution_time: "Время решения"
+    response_time: "Время реагирования"
+    select_policy: "Выбрать политику"
+    sla_targets: "Цели SLA"
+    tickets_with: "Талоны с"
+    title: "Политика SLA"
+    title1: "Политики SLA"
+  social: 
+    facebook_pages: 
+      enable_facebook_page: 
+        associate: "Выберите страницы на Facebook, которые хотите привязать к службе технической поддержки"
+        no_page_info: "Ой! Похоже, что у вас нет страницы на Facebook. <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>Создайте такую страницу и запустите службу поддержки!..</a>"
+      engage_info: 
+        add_facebook: "Добавить страницу на Facebook"
+        associate_account: "Привяжите страницу на Facebook к <b> %{account_name} </b> и отвечайте клиентам со своей страницы, когда они оставляют комментарии у вас на стене."
+        engage_customers: "Взаимодействуйте с клиентами напрямую через Facebook."
+        title: "Добавьте свои страницы на Facebook."
+      form: 
+        company_posts: "Импортировать <strong>\"Сообщения компании\"</strong> как талоны"
+        company_posts_info: "Freshdesk сконвертирует все сообщения компании на этой странице Facebook в талоны"
+        direct_messages: "Импортировать <strong>\"Прямые сообщения\"</strong> как талоны"
+        direct_messages_info: "Freshdesk сконвертирует все сообщения на этой странице Facebook в талоны. Если вы осуществляете это впервые,  <a href='{{reauth_url}}'>повторно авторизируйтесь на Facebook</a>"
+        message_thread_time: "Время ветки сообщений"
+        message_thread_time_info: "Максимальное время для учета сообщений от одного и того же пользователя в ветке сообщений"
+        product: Продукт
+        visitor_posts: "Импортировать <strong>\"Сообщения посетителей\"</strong> как талоны"
+        visitor_posts_info: "Freshdesk сконвертирует все сообщения посетителей этой страницы Facebook в талоны."
+      index: 
+        reauth_required: "Требуется повторная авторизация"
+        reauthorize: "Повторная авторизация"
+        title: "Страницы на Facebook"
+    twitter_handles: 
+      edit: 
+        twitter_settings_for_msg: "Настройки  Twitter для"
+      form: 
+        capture_dm_info: "Freshdesk автоматически сконвертирует все прямые сообщения на эту учетную запись Twitter в талоны"
+        capture_dm_msg: "Конвертировать <strong>\"прямые сообщения\"</strong> в талоны"
+        capture_mentions_info: "Freshdesk автоматически сконвертирует все @упоминания этой учетной записи Twitter в талоны"
+        capture_mentions_msg: "Конвертировать <strong>\"@Упоминания\"</strong> в талоны"
+        dm_time_info: "Максимальное время для учета сообщений от одного и того же пользователя в ветке сообщений"
+        dm_time_msg: "Время ветки прямых сообщений"
+        info_data: "Помогает быстро отслеживать результаты поиска Twitter, связанные с вашим продуктом/брэндом/услугой.<br /> <strong>Примечание:</strong> вы можете добавить несколько ключевых слов, разделив их запятыми."
+        product: Продукт
+        search_keywords: "Ключевые слова поиска"
+      index: 
+        remove_handle_msg: "Вы уверены, что хотите удалить эту учетную запись Twitter?"
+        title: "Учетные записи Twitter"
+      signin_info: 
+        add_twitter: "Добавить учетную запись Twitter"
+        associate_account: "Привяжите учетную запись Twitter к <b>  %{product_name} </b> и отвечайте клиентам твитами или сообщениями с Freshdesk."
+        engage_customers: "Взаимодействуйте с клиентами напрямую через Twitter."
+        title: "Войти с помощью Twitter"
+  solution: 
+    add: "Добавить решение"
+    add_new_solution: "Добавить новое решение"
+    edit: "Редактировать решение"
+    folder: Папка
+    folders: 
+      folder_form: 
+        visible_to: "Видно "
+      new: 
+        new_folder: "Новая папка"
+    info1: "Решения на Freshdesk - ваша база знаний"
+    info10: "Приватно (Показывается  только агентам)"
+    info2: "Решения могут быть <b>публичными</b> или <b>приватными</b>. Публичные решения видны в разделе Портал и появляются в результатах поиска"
+    info3: "Приватные решения видны и используются только агентами для внутреннего обмена знаниями"
+    info4: "Решения имеют трех-уровневую архитектуру - <b>Категория --> Папка--> Статья</b>"
+    info5: "Решения могут быть  двух типов - <b>Временные</b> или <b>Постоянные</b> решения"
+    info6: "У решения может быть статус <b>Черновик</b>, пока вы работаете над ним, и его можно сменить на статус  <b>Опубликовано</b> после окончания работы и проверки. "
+    info7: "В этой папке нет решений"
+    info8: "Вы действительно хотите удалить это решение?"
+    info9: "Публичный (будет опубликован для самообслуживания)"
+    no_solutions_info: "В этой папке нет решений"
+    status: "Статус решения"
+    title: Решения
+    type: "Тип решения"
+    visibility: Видимость
+  solution_category: 
+    edit: "Редактировать категорию решений"
+    info1: "Вы действительно хотите удалить эту категорию?"
+    info2: "Нет папок в этой категории"
+    name: "Название категории"
+    new: "Новая категория решений"
+    save_and_create: "Сохранить и создать новую"
+  solutions: 
+    search: 
+      placeholder: "Искать %{name}"
+    search_all: 
+      placeholder: "Поиск по всем решениям"
+    status: 
+      draft: Проект
+      published: Опубликовано
+    types: 
+      permanent: Постоянный
+      workaround: "Временное решение"
+    visibility: 
+      agents: Агенты
+      all: Все
+      anyone: Все
+      logged_in_users: "Вошедшие пользователи"
+      select_company: "Выбрать компании"
+  special_beta_offer: "Специальное предложение для учетных записей бета"
+  sprout_brief: "Надежная служба поддержки по E-mail"
+  sprout_details: "Управление реагированием по E-mail, вся автоматизация, политика SLA по умолчанию, база знаний, портал самообслуживания, меппинг домена, базовые отчеты, поддержка сообщества"
+  start_typing_a_question: "Начните писать ваш вопрос и посмотрите ответы в реальном времени"
+  starts_with: "Начинается с "
+  state: Состояние
+  status: Статус
+  status_cust_disp_name_uniqueness_msg: "Такое название статуса уже занято"
+  status_deleted: "Статус удален"
+  status_name_validate_presence_msg: "Название статуса не может быть пустым"
+  status_name_validate_uniqueness_msg: "Такое имя статуса уже занято"
+  step1: "Шаг 1"
+  step2: "Шаг 2"
+  subject_or_description: "Тема или описание"
+  submit: подтвердить
+  subscription: 
+    error: 
+      lesser_agents: "У вашей учетной записи Freshdesk сейчас есть %{agent_count} агентов, вы не можете подписаться на меньшее число агентов. Удалите нескольких агентов и повторите попытку. "
+  subscription_plan: 
+    billing_cycle: 
+      annual: "Раз в год"
+      monthly: Месячный
+      quarterly: Ежеквартально
+      sixmonth: Полгода
+  success: Успешно
+  support: 
+    shared: 
+      survey_form: 
+        cancel: Отменить
+        change_of_mind: Передумали?
+        feedback_title: "Ваши пожелания и критика помогут нам улучшить качество поддержки в будущем."
+        rate_again: "Оцените нас еще раз"
+        rated_on: "Вы дали нам оценку %{rated_on}"
+        submit: Отправить
+        survey_title: "Потратьте минуту и оцените нашу поддержку"
+    surveys: 
+      feedback_already_done: "Вы уже оставили отзыв по этому вопросу"
+      new: 
+        additional_info: "Кроме того, вы можете поделиться своим опытом, работая с нами."
+        feedback_info: "Ваш отзыв очень важен для нас."
+        feedback_optional: "Отзыв оставлять необязательно"
+        happy_info: "Нам было приятно вас обслуживать, и мы очень рады, что вы довольны качеством обслуживания"
+        neutral_info: "Жаль, что вы не так рады"
+        sorry: "Приносим извинения за доставленные неудобства"
+        thanks: "Большое спасибо, что оценили нас!"
+        thanks_info: "Спасибо, что нашли время оценить качество обслуживания."
+        unhappy_info: "В следующий раз мы обязательно проявим больше внимания."
+      thanks_for_feedback: "Мы получили ваш отзыв. Большое спасибо."
+  suspended_plan_admin_info: "Ваша учетная запись была заблокирована, пожалуйста, свяжитесь с администратором %{email}!"
+  suspended_plan_info: "Ваша учетная запись временно заблокирована. Выберите план, чтобы продолжить."
+  switch_heading: "Переключить агента"
+  swith_agent_msg: "Переключить на другого агента"
+  tag: 
+    title: Тэги
+  this_ticket_has_been_closed: "Этот талон уже Закрыт"
+  this_ticket_has_been_deleted: "Этот тикет был удален"
+  this_ticket_has_been_resolved: "Этот талон уже Решен"
+  threeday: "3 дня"
+  threemonth: "3 месяца"
+  ticket: 
+    activities: Активность
+    activity: Активность
+    add_note: "Добавить заметку"
+    add_time: "Добавить время"
+    agent_notify: "добавил примечание и хочет, чтобы вы с ним ознакомились."
+    agent_responded_at: "Часов с момента ответа агента"
+    assign_to_agent: "Назначить агенту"
+    assigned_agent: Агент
+    assigned_at: "Время с назначения"
+    assigned_none: "-"
+    assigned_to: Назначено
+    canned_responses: 
+      ca_responses: "Частые ответы"
+      insert_ca_resp_tip: "Вставить шаблон ответа"
+      insert_ca_response: "Шаблоны ответов"
+    close_btn: Закрыть
+    close_btn_title: "Закрыть заявку"
+    closed_at: "Часов с момента закрытия"
+    convert_ticket_title: "Конвертировать в талон"
+    create_ticket_title: "Создать талон"
+    created_at: "Часов с момента создания"
+    created_on: "Создана в %{time}"
+    delete_btn: Удалить
+    delete_btn_title: "Поместить эту заявку в корзину"
+    due_by: "Просроченное время по заявке"
+    due_by_time: "Ко времени"
+    edit: "Редактировать заявку"
+    execute_scenario: "Выполнить сценарий"
+    export: "Экспорт "
+    facebook_form: 
+      send_and_resolve: "Отправить и решить"
+    first_assigned_at: "Время с первого назначения"
+    first_response_due: "Время с первого ответа"
+    flag_spam: "Отметить как спам"
+    group: Группа
+    ham_btn_title: "Это не спам"
+    inbound_count: "Число запросов взаимодействия"
+    integrations: 
+      jira: 
+        tooltip: "Посмотреть привязанную задачу JIRA"
+    merge_btn: Объединить
+    monitor_btn_title: "Следить за этой заявкой"
+    note_content: "Содержание примечания"
+    note_form: 
+      add_and_resolve: "Добавить и решить"
+      form_title: "Добавить заметку"
+      notify_agents: "Известить агентов"
+      private_note: "Это личное примечание, не показывайте его заявителю"
+    opened_at: "Часов с открытия"
+    pending_since: "Часов в ожидании"
+    pick_up: Взять
+    portal_created_on: "Создано <span class='emphasize'>%{username}</span>  <span class='emphasize'>%{date}</span>"
+    portal_created_on_same_user: "Создано <span class='emphasize'>%{date}</span>"
+    priority: Приоритет
+    properties: "Свойства заявки"
+    recent_tickets: "Последние заявки"
+    reply_form: 
+      form_title: "Ответить на обсуждение"
+      post_to_linked_forum: "Сообщение связано с форумом"
+      reply_email_id: "Отправить ответ со следующего E-mail"
+      send_and_resolve: "Отправить и решить"
+      send_satisfaction_survey: "Включить отчет об удовлетворенности"
+    reply_to: Ответ
+    reported_by: "от %{requester}"
+    reported_from_source: "Отправлено через %{source}"
+    reported_on: "от %{username}, последнее обновление: %{date}"
+    requester: Обратился
+    requester_responded_at: "Часов с ответа обратившегося"
+    requestor_info: "Информация о заявителе"
+    resolved_at: "Часов с момента решения"
+    restore_btn: "Восстановить заявку"
+    restore_btn_title: "Восстановить эту заявку"
+    select_to_agent: "Выберите агента"
+    singular: Заявка
+    sort_by: "Сортировать по"
+    source: Источник
+    spam_btn_title: "Отметить как спам"
+    split_ticket: Разделить
+    status: Статус
+    stop_monitor_btn_title: "Не следить за этой заявкой"
+    subject: Тема
+    submit_ticket: Отправить
+    submit_ticket_title: "Создать заявку"
+    suggest_solutions: "Предложить решение"
+    suggested_solutions: 
+      insert_content: "Вставить контент"
+      insert_content_tip: "Вставьте решение в Ответ или Заметку"
+      insert_url: "Вставить URL"
+      insert_url_tip: "Вставьте ссылку на решение в Ответ или Заметку"
+      no_result: "Решений не найдено"
+      title: "Предлагаемые решения"
+    tags: 
+      add_tag: "Добавить тег:"
+      create_success: "Тег добавлен"
+      destroy_success: "Тег был удален из заявки"
+      no_match: "Совпадений нет. Нажмите enter для создания тега."
+    thanks: "Спасибо за отправку отзыва"
+    ticket_list_status_agent_responded_at: "От: %{username}, Агент ответил: <span class='emphasize'>%{time_ago} назад </span>"
+    ticket_list_status_closed_at: "От: %{username}, Закрыто: <span class='emphasize'>%{time_ago} назад </span>"
+    ticket_list_status_created_at: "От: %{username}, Создано: <span class='emphasize'>%{time_ago} назад </span>"
+    ticket_list_status_requester_responded_at: "От: %{username}, Клиент ответил: <span class='emphasize'>%{time_ago} назад </span>"
+    ticket_list_status_resolved_at: "От: %{username}, Решено: <span class='emphasize'>%{time_ago} назад </span>"
+    ticket_url: "URL талона"
+    to_do: "Заявки To-Do"
+    tweet_form: 
+      tweet_and_resolve: "Твитнуть и решить"
+      user_not_following: "Этот пользователь не является вашим читателем в Twitter"
+    tweets: Твиты
+    type: Тип
+    unassigned: "Не назначенные"
+    unflag_spam: "Не спам"
+    verify_human: "Для того чтобы проверить что вы являетесь человеком введите предложенные буквы"
+  ticket_cancel_multiple_button: Отмена
+  ticket_cc_email_more: еще
+  ticket_close_failure: "Не удалось закрыть талон."
+  ticket_close_success: "Ваш талон успешно закрыт."
+  ticket_closed_at_time: "Закрыто в "
+  ticket_due_by_time: "Ко времени"
+  ticket_fields: 
+    confirm_delete: "Вы уверены, что хотите удалить это поле?"
+    fields: 
+      agent: Агент
+      description: Описание
+      group: Группа
+      priority: Приоритет
+      product: Продукт
+      requester: Обратился
+      source: Источник
+      status: Статус
+      subject: Тема
+      ticket_type: Тип
+    first_choice: "Первый выбор"
+    formfield_props: 
+      add_new_choice: "Добавить новый выбор"
+      agent_info1: "Поле не может быть пустым при отправке талона"
+      agent_info2: "Поле не может быть пустым при закрытии талона"
+      agent_mandatory_closure: "Требуется при закрытии талона"
+      agent_mandatory_submission: "Требуется при отправке талона"
+      behavior: Поведение
+      cc_any_email: "Может отправить копию на любой электронный адрес"
+      cc_company_contacts: "Может отправить копию только на адреса компании"
+      choices: Выборы
+      customer_edit: "Клиент может редактировать"
+      customer_info1: "Поле не может быть пустым при отправке талона онлайн"
+      customer_mandatory: "Требуется при отправке талона"
+      customer_visible: "Отображается для клиента"
+      delete_field: "Удалить поле"
+      description: Описание
+      display_cc_field: "Показать поле копии"
+      display_to_customer: "Отображать сообщение для клиента"
+      dropdown_choices: "Выпадающие списки для выбора"
+      dropdown_items_edit: "Выпадающие элементы - редактировать вид"
+      dropdown_items_preview: "Выпадающие элементы - предпросмотр"
+      field_label_agents: "Ярлык поля для агентов"
+      field_label_customer: "Ярлык поля для клиентов"
+      for_agents: "Для агентов"
+      for_customer: "Для клиентов"
+      form_title: "Свойства поля"
+      label: "Ярлык поля"
+      label_in_portal: "Ярлык на портале"
+      label_in_portal_info: "Ярлык, отображаемый на вашем портале самообслуживания"
+      level1: "Уровень 1"
+      level2: "Уровень 2"
+      level3: "Уровень 3"
+      nested_label: "Ярлыки, вложенные в поле"
+      nestedfield_helptext: "Используйте свободную форму ниже, чтобы добавить или редактировать элементы для выпадающих элементов, нажимая кнопку вкладки один или два раза. Мы конвертируем их в выпадающие элементы в виде оттиска. Будьте внимательны.  <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Узнать больше</a>"
+      nestedfield_helptext_preview: "Это \"Предпросмотр\" образцов выпадающих элементов. Используйте свободную форму, чтобы \"Редактировать вид\" этих элементов."
+      sla_timer: "Таймер SLA"
+      status_choices: "Выборы статуса"
+    index: 
+      add_custom_field: "Добавить собственное поле"
+      checkbox: Флажок
+      customize_form: "Найстройте форму \"Новый талон\""
+      drag_drop_intro: "Перетащите любой тип поля в форму \"Новий талон\" для того, чтобы задать новое собственное поле"
+      dropdown: Выпадание
+      nestedfield: "Подчиненное поле"
+      number: Количество
+      paragraph: "Простой текст"
+      save: "Сохранить поля талона"
+      single_line: "Текст одной строкой"
+      title: "Поля талона"
+    no_choice_message: "Должен быть хотя бы один действующий выбор"
+    second_choice: "Второй выбор"
+    untitled: "Без названия"
+  ticket_pending_since_time: "Ожидает с"
+  ticket_resolved_at_time: "Решено в"
+  ticket_update_multiple_button: Обновить
+  ticket_was: "заявка была"
+  tickets_filter: 
+    sort_fields: 
+      asc: "Подъем "
+      date_created: "Дата создана"
+      desc: Спуск
+      due_by: "Ко времени"
+      last_modified: "Последнее редактирование"
+      priority: Приоритет
+      status: Статус
+    title: "Фильтр талонов"
+    unsaved_view: "Вид без названия"
+  tickets_were: "талоны были"
+  tip_off: "Щелкните, чтобы отменить"
+  tip_on: "Щелкните, чтобы активировать"
+  title: Заголовок
+  tkt_assigned_to_agent: "Заявка назначена агенту"
+  tkt_assigned_to_group: "Талон назначен группе"
+  tkt_unattended_in_grp: "Талон снят с группы"
+  to_email: "Отправить письмо"
+  top: Топ
+  topic: 
+    close: "Закрыть дискуссию"
+    edit: "Редактировать тему"
+    ideas_stamps: 
+      implemented: Выполнено
+      nottaken: "Не принято"
+      planned: Запланировано
+    msg1: "Комментарии закрыты для этой статьи"
+    name: "Название темы"
+    new: "Новая тема"
+    open: "Открыть дискуссию заново"
+    post: "Отправить тему"
+    reply: "Ответить в эту тему"
+    sticky: Прикрепить
+  topics: 
+    last_reply: "Последний ответ %{post_time} назад от %{user_link}"
+    posted_at: "Отправлен %{post_time} назад"
+    show: 
+      mark_this_idea_as: "Отметить эту идею как"
+  total: Всего
+  total_price: "Полная стоимость"
+  trial_expired_on: "Ваш ознакомительный период истекает"
+  twelve: "12 часов"
+  twitter: 
+    associate_twitter: "Привяжите учетную запись Twitter к службе поддержки, чтобы осуществлять поддержку клиентов через Twitter"
+    deleted: "Twitter аккаунт @%{twitter_screen_name} удален."
+    error_sending: "Ошибка при отправке твита! Twitter может быть временно недоступен. Попробуйте еще раз."
+    not_authorized: "Вы не авторизованы в Twitter"
+    sent: "Твит успешно отправлен"
+    success_signin: "Учетная запись @%{twitter_screen_name} успешно привязана к %{helpdesk}."
+    ticket_save: "Твит успешно переконвертирован в талон"
+    tkt_err_save: "Невозможно конвертировать твит в талон, потому что он уже переконвертирован"
+    user_exists: "Учетная запись Twitter уже привязана к другому продукту."
+    usr_not_thr: "Пользователь отсутствует."
+  twitter_source: Twitter
+  two: "2 часа"
+  twoday: "2 дня"
+  twoweek: "2 недели"
+  unable_to_charge: "Невозможно снять средства с карты для добавленного агента!"
+  unauthorized_msg: "Ошибка авторизации"
+  undelete: Восстановить
+  undo: Отменить
+  update: Обновить
+  update_and_login: "Изменить и войти"
+  update_multiple_tickets: "Изменить несколько заявок"
+  updated_on: "%{user_name} обновил %{note_date}"
+  upgrade_trial: "Обновите свою бесплатную версию!"
+  urgent: Срочно
+  use_reply_option: "Воспользуйтесь опцией ответа, чтобы отправить письмо заявителю"
+  user: 
+    address: Адрес
+    back_info: "Внутренняя информация"
+    company: Компания
+    email: Email
+    full_name: "Имя и фамилия"
+    info1: "Для пользовательского профиля лучше подойдет изображение, имеющее одинаковую высоту и ширину."
+    name: Название
+    phone_no: Телефон
+    photo: Фотография
+    secondary: дополнительно
+    title: Заголовок
+    twitter_id: "Twitter Id"
+    work: Работа
+  user_activation_email: "Письмо активации пользователя"
+  user_activation_message_sent: "Пользователь создан, инструкции активации отправлены %{user_email}!"
+  user_block: Да
+  user_sessions: 
+    new: 
+      email: Email
+      forgot: "Забыли пароль?"
+      help: Помощь
+      login: Логин
+      password: Пароль
+      remember: "Запомнить меня на этом компьютере"
+      sign_in_using: Войти
+      sign_in_using_google: "Войти с помощью учетной записи Google"
+  username: "Имя пользователя"
+  users: 
+    activations: 
+      code_expired: "Ваш код активации истек!"
+      send_invite_success: "Письмо с активацией отправлено!"
+      success: "Ваш аккаунт активирован."
+  users_blocked_message: "Следующие контакты (%{users}) заблокированы"
+  validate_fwd_to_email_msg: "Пожалуйста, введите корректный email"
+  waiting_on_customer: "Ожидание клиента"
+  waiting_on_third_party: "Ожидание третьей стороны"
+  warning: ПРЕДУПРЕЖДЕНИЕ
+  wf: 
+    filter: 
+      index: 
+        back: "&larr; Вернуться к заявкам"
+        no_custom_view: "Нет доступных созданных обзоров"
+        title: "Управление созданными обзорами"
+      view: 
+        delete: "Вы уверены, что хотите удалить этот обзор?"
+    messages: 
+      no_tickets_for_user: "Открытых талонов для пользователя %{user_name} нет."
+      no_tickets_in_view: "У вас нет талонов в текущем обзоре %{view_name}."
+      no_tickets_subtext: "Посмотреть %{view_1} или %{view_2}"
+      no_tickets_subtext_single: "Посмотреть %{view_1}"
+  what_is_cvv: "Что такое cvv?"
+  widgets: 
+    contact_widget: 
+      description: "Отобразить контакт или опцию, чтобы добавить контакт в капсулу."
+  will_expire_in: истекает
+  working: Обработка
+  wrong_portal: 
+    content_not_available: "То, что вы ищите более недоступно."
+    title: "Не доступно."
+  yes_password_reset: Да
+  your_email_address: "Ваш email адрес"
+  your_trial_account: "Ваш пробный аккаунт"
+  zendesk_backup: "Файл резервной копии"
+  zendesk_backup_info: "Выберите файл резервной копии Zendesk, скачанной с zendesk"
+  zendesk_credentials: "Информация о Zendesk"
+  zendesk_url: "Zendesk URL"
+  zendesk_url_info: "например:- http://acme.zendesk.com"
+  zip: Индекс

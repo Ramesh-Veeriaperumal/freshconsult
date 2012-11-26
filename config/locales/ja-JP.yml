@@ -1,0 +1,2519 @@
+ja-JP: 
+  account: 
+    active_since: 〜以来有効
+    cancel: キャンセルして戻る
+    helpdesk_name: ヘルプデスク名
+    helpdesk_url: ヘルプデスクURLリンク
+    info1: このフィールドを使って、Freshdeskのカスタム・ドメインマッピングを設定できます
+    info2: "support.mycompanyname.comを%{full_domain}に向けるようにDNS ZoneファイルにCNAME DNSレコードを作成してから、このフィールドを使用してください。設定方法について詳しく知りたい場合は、webマスターまたはサーバー管理人にお問い合わせください。"
+    info3: デフォルトの色にリセットする
+    info4: "次のチケットIDカウンターはこの数字から始まります(最後に作成されたチケットIDより大きい番号になっているはずです)。 これは、以後作成されるチケットに適用されます。"
+    language: 言語
+    name: アカウント名
+    page_colors: 
+      background: 背景
+      header: ヘッダー
+      tab_color: タブ色
+      title: ページ色
+    rebrand: ヘルプデスクを再ブランド化する
+    save: 変更を保存する
+    time_zone: タイムゾーン
+  account_admin: アカウント管理
+  account_admin_updated: アカウント管理が更新されました！
+  accounts: 
+    billing: 
+      begin_subscription: すぐに申込みを開始する…
+      begin_subscription_info: クレジットカードへのご請求をし、直ちに申し込みを開始します。
+      billing: ご利用明細
+      save_billing_information: 請求明細に関する情報を保存する
+      save_billing_information_info: "\"プランおよびご利用明細\"に関する情報を保存します。お客様のクレジットカードにお支払いを請求し、トライアル期間が終了してから申込みを開始します。"
+      update_billing_info: ご利用明細に関する情報を更新する
+    cancel: 
+      cancel_account: Freshdeskアカウントをキャンセルする
+      change_your_plan: プランの変更
+      changeplan_instead_of_cancel: アカウントをキャンセルせず、プランの変更もご検討下さい。
+      confirm_and_cancel_my_account: アカウントをキャンセルし、データを全て削除することを確定します…
+      delete_my_account: アカウントを削除する
+      goback: "&#x2190; アカウント設定に戻る"
+      intro: アカウントをキャンセルします。キャンセルすると、<strong>全てのデータが確定的に削除されます。</strong>。
+      warning_message: 一度行うと、データをアクセスできなくなりますので、慎重にご検討下さい。
+      you_must_confirm: キャンセルを確定して下さい
+    show: 
+      account_settings: アカウント設定
+      export_data: データをエクスポートする
+      export_data_text: ヘルプデスクに関する全てのデータをXMLに生成して、メールで送信する
+      export_now: 今すぐエクスポートする
+  activate: 有効化
+  activate_account: アカウントを有効にする
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: "%{attribute}%{message}"
+      messages: 
+        accepted: 承諾が必要
+        blank: 空欄にご記入下さい
+        confirmation: 確定内容と一致しません
+        empty: 空にして下さい
+        equal_to: "%{count}と同等でなければなりません"
+        even: 偶数でなければなりません
+        exclusion: 予約済み
+        greater_than: "%{count}より多くなければなりません"
+        greater_than_or_equal_to: "%{count}と同等"
+        inclusion: はリストに含まれていません
+        invalid: は無効です
+        less_than: "%{count}より少なくなければなりません"
+        less_than_or_equal_to: "%{count}より少ないまたは同等でなければなりません"
+        not_a_number: は番号ではありません
+        not_an_integer: 整数でなければなりません
+        odd: 奇数でなければなりません
+        record_invalid: "認証に失敗しました: %{errors}"
+        too_long: "長すぎます（上限は%{count}文字です）"
+        too_short: "短すぎます（下限は%{count}文字です）"
+        wrong_length: "長さが違います（%{count}文字でなければなりません）"
+      template: 
+        body: 次の項目で問題が発生しました：
+        one: "1つのエラーが発生したため、%{model}が保存できませんでした"
+        other: "%{count}つのエラーが発生したため、%{model}が保存できませんでした"
+  activities: 
+    solutions: 
+      new_solution: 
+        long: "{{user_path}} が新しいソリューション{{notable_path}}を作成しました"
+        short: "{{user_path}} が新しいソリューションを作成しました"
+    tickets: 
+      assigned: 
+        long: "{{user_path}} がチケット {{notable_path}} を {{responder_path}}に割り当てました"
+        short: "{{responder_path}}により {{user_path}}に割り当てられました"
+      assigned_to_nobody: 
+        long: "{{user_path}} がチケット {{notable_path}} を'空'に割り当てました"
+        short: "{{user_path}}により\"空\"に割り当てられました"
+      conversation: 
+        in_email: 
+          long: "{{user_path}}は{{email_response_path}} をチケット{{notable_path}}に送りました"
+          short: "{{user_path}} は {{email_response_path}}を送りました"
+        note: 
+          long: "{{user_path}}は　{{comment_path}}をチケット{{notable_path}}に追加しました"
+          short: "{{user_path}} は{{comment_path}}を追加しました"
+        out_email: 
+          long: "{{user_path}} は{{reply_path}} をチケット {{notable_path}}に送りました"
+          private: 
+            long: "チケット{{notable_path}} は{{user_path}}によって{{to_emails}} に{{fwd_path}}されました"
+            short: "{{user_path}}はチケットを{{to_emails}}に{{fwd_path}}しました。"
+          short: "{{user_path}}は{{reply_path}}を送りました"
+        twitter: 
+          long: "{{user_path}}は{{twitter_path}}をチケット{{notable_path}}に追加しました"
+          short: "{{user_path}}は{{twitter_path}}を追加しました"
+      deleted: 
+        long: "{{user_path}}はチケット{{notable_path}}を削除しました"
+        short: "{{user_path}}はこのチケットを削除しました"
+      execute_scenario: 
+        long: "{{user_path}}がしシナリオ'{{scenario_name}}'を{{notable_path}}で実行しました。"
+        short: "{{user_path}} executed the scenario '{{scenario_name}}"
+      group_change: 
+        long: "{{user_path}} changed the group of {{notable_path}} to {{group_name}}"
+        short: "{{user_path}} changed the group to {{group_name}}"
+      group_change_none: 
+        long: "{{user_path}} changed the group of {{notable_path}} to 'none'"
+        short: "{{user_path}} changed the group to 'none'"
+      new_ticket: 
+        long: "{{user_path}} submitted a new ticket {{notable_path}}"
+        short: "{{user_path}} submitted the ticket"
+      priority_change: 
+        long: "{{user_path}} changed the ticket priority of {{notable_path}} to {{priority_name}}"
+        short: "{{user_path}} changed the priority to {{priority_name}}"
+      product_change: 
+        long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
+        short: "{{user_path}} changed the product to {{product_name}}"
+      product_change_none: 
+        long: "{{user_path}} changed the product of {{notable_path}} to 'none'"
+        short: "{{user_path}} changed the product to 'none'"
+      reassigned: 
+        long: "{{user_path}} reassigned the ticket {{notable_path}} to {{responder_path}}"
+      restored: 
+        long: "{{user_path}} has restored the ticket {{notable_path}}"
+        short: "{{user_path}} has restored this ticket"
+      source_change: 
+        long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
+        short: "{{user_path}} changed the source to {{source_name}}"
+      status_change: 
+        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
+        short: "{{user_path}} changed the status to {{status_name}}"
+      ticket_merge: 
+        long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
+        short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
+      ticket_split: 
+        long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+        short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+      ticket_type_change: 
+        long: "{{user_path}} changed the ticket type of {{notable_path}} to {{ticket_type}}"
+        short: "{{user_path}} changed the ticket type to {{ticket_type}}"
+      timesheet: 
+        new: 
+          long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
+          short: "{{user_path}} added a {{timesheet_path}}"
+        timer_started: 
+          long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          short: "{{user_path}} started timer on  {{timesheet_path}}"
+        timer_stopped: 
+          long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          short: "{{user_path}} stopped timer on  {{timesheet_path}}"
+  add: 追加
+  add_a_topic: トピックを始める
+  add_cc: Ccを追加する
+  add_holiday: 祝日を追加する
+  add_new_email: 新しいメールを追加する
+  add_new_forum: 新しいフォーラムを追加する
+  add_new_requester: 新しいリクエスターを追加する
+  add_note: メモの追加
+  add_tags: タグの追加
+  add_to_do: やることリストに追加
+  admin: 
+    automations: 
+      edit: 
+        title: シナリオを編集
+    canned_responses: 
+      edit: 
+        title: 自動返信の定型文を編集する
+      form: 
+        all_agents: 全てのエージェント
+        available_for: が使用できます
+        groups: グループのエージェント
+        me_only: 自分だけ
+        response_name: 返信の題名
+      index: 
+        new: 定型文返信を追加する
+        title: 定型文返信
+      new: 
+        delete_confirm: この定型文返信を削除しますか？
+        title: 定型文返信を追加する
+    day_passes: 
+      index: 
+        add_confirm: クレジットカードにお支払い請求を致します
+        auto_recharge: 自動追加請求
+        buy_now: 今すぐ買う
+        buy_pass: パスをもっと買う
+        current_balance: "残っているのは %{balance} です！"
+        day_pass_history: 購入履歴
+        day_pass_pack: "%{quantity} デイパス・パック(%{currency}%{amount})"
+        day_passes: デイパス
+        daypass_quantity: "%{quantity}デイパス"
+        helptext: 残りの日数が２日になると、デイパスは自動的に更新されます。
+        no_of_day_passes: デイパスの数
+        order: 注文番号
+        recharge_quantity: 更新量：
+        title: デイパス
+    gamification: 
+      error_updated: ゲーミフィケーション設定を更新中にエラーが発生しました。
+      gamification_settings: 
+        bonus_points: ボーナスポイント
+        enable_label: エージェントのゲーミフィケーション
+        fast_resolution: "早い <span>(< 1 hr)</span>"
+        firstcall_resolution: ファーストコール解消
+        happy_customer: 満足なカスタマー
+        info_levels: エージェントがレベルに達成するためのポイント数を設定する
+        late_resolution: 遅い<span>(Overdue)</span>
+        new_quest: 新しいクエスト
+        ontime_resolution: "ちょうど良い <span>(Within SLA)</span>"
+        quest_title: クエスト
+        title_levels: エージェントレベル
+        title_points_configuration: ポイント設定
+        title_ticket_points: チケットポイント
+        title_trophies: トロフィー
+        unhappy_customer: 不満なカスタマー
+      help_text: 
+        creating_survey: 満足度アンケートの作成について：
+        creating_survey_help: "返信メール内に掲載されるリンクを通して、カスタマーのフィードバックを収集することができます:<br> 1.カスタマー満足度アンケートのチェックボックスを有効にする<br> 2.満足度アンケートリンクのテキストを選択する。既定のテキストは次の通りです&ldquo;我々のサポートサービスに関するご感想をお聞かせください.&rdquo;<br> <br> <b>満足度アンケートのリンクを掲載するメールを選択する</b>}<br> 満足度アンケートへのリンクを、カスタマー宛ての全てのメールに掲載するか、チケット解消後の最後のメールにのみ掲載するかを選ぶことができます。<br><br> 満足度アンケートの詳細については、ソリューションズページを開いてください。  </p>"
+        quest: クエスト
+        quest_form_info1: "エージェントに設定するクエストの種類を選んでください。次の３つのうちのどれかに設定できます<br /> a) チケットの解消、<br /> b) ソリューションの公開、そして <br />} c) フォーラムへの書き込み。"
+        quest_form_info2: それが終了したら、クエストのクライテリア（エージェントの目的）を選択し、バッジ獲得のための条件を追加してください。
+        quest_form_info3: エージェントが獲得できる点数とバッジを選んでください。最後に、クエストに名前をつけて簡単な説明文を加えてください。
+        quest_form_info4: 「クエストを保存する」をクリックして設定内容を保存してください。
+        quest_info1: クエストはエージェントに与えるパフォーマンス目標を象徴しており、これを達成するとエージェントはバッジを獲得できます。
+        quest_info2: 全てのクエストはデフォルトで有効化されます。必要ないものは無効化してください。クエストの追加やより具体的達成目標に即したクエスト野作成については、「新しいクエスト」をクリックし、新しい内容のクエストを作成することができます。
+        trophies_info1: エージェントは異なるクライテリアを基準に４つのトロフィーを得ることができます。
+        why_game: ポイントとレベル
+        why_game_info1: エージェントはどれだけ早く割り当てられたチケットを解消できるかに応じてポイントを付与されます。ファーストコール解消と満足したカスタマーの数で、ボーナスポイントを稼ぐこともできます。エージェントは遅いチケット解消や不満なカスタマーの数で失点もします。
+        why_game_info2: エージェントは点を稼げば稼ぐほど高いレベルに到達でき、目指すべき得点数の設定は管理人ができます。
+      index: 
+        title: アーケード設定
+      successfully_updated: ゲーミフィケーション設定は更新されました。
+    getting_started: 
+      index: 
+        admin_sub_title: "\"%{admin_tab}\" タブからカスタマイズできる様々な機能についても是非ご確認ください"
+        admin_title: 調子は良好ですか？
+        agent_email_exist: メールアドレスは既に使用されています。
+        agent_email_partial: 部分的に成功しました。
+        agent_email_required: 招待状を送るためにはメールIDが必要です。
+        agent_email_sending: 招待状の送信中…
+        agent_email_taken: "次のメールアドレスは既に使用されています:<br> %{emails}"
+        agent_invite_field_placeholder: チームメンバーのメールアドレスを入力してください
+        agent_invite_multi_info: "コンマ( , )を使うことでメールアドレスを追加できます。"
+        agent_limit_reached: エージェントの上限を超過しました
+        agent_send_invite_label: エージェントに招待状を送信する
+        agent_sub_title: Freshdeskにチームを招待する
+        agent_title: 寂しいですか？
+        agents_sub_title: ヘルプデスクのエージェントを招待する
+        agents_title: エージェント
+        agents_title_info: "エージェントをFreshdeskへ招待できます、メールアドレスの間にコンマ（,)を挟んで区別してください。"
+        back_link: 戻る
+        config-support-email-address: サポートメールアドレスを設定する
+        congrats: おめでとうございます！"fresh"（フレッシュ）なヘルプデスクの使用準備が完了しました。
+        email_config_field_title: サポートメールアドレス
+        email_config_sub_title: Freshdeskがサポートメールを管理致します！
+        email_config_title: サポートメールアドレスは何ですか？
+        email_invalid: メールが無効です、確認して下さい。
+        email_send_problem: メールの送信中に問題が発生しました。
+        email_sent_success: メールは送信されました。
+        emails_invalid: 少なくとも１つのメールアドレスが無効です。
+        helpdesk_preview: ヘルプデスクのプレビュー
+        implement_changes: 変化の適用中…
+        next_alt_link: ヘルプデスクにいく
+        next_link: 次
+        next_please_wait: 少々お待ちください…
+        problem_updating: 更新に失敗しました、また試してください。
+        product_link_label: ヘルプデスクにジャンプ移動する>>
+        rebrand_bg_empty: 背景のカラーコードが必要です。
+        rebrand_bg_invalid: 背景のカラーコードは無効です。
+        rebrand_color_background: 背景
+        rebrand_color_header: ヘッダー
+        rebrand_color_tabs: タブ
+        rebrand_company_field_placeholder: 企業名をご記入下さい
+        rebrand_company_label: 企業名
+        rebrand_header: ヘルプデスク名とロゴ
+        rebrand_header_empty: ヘッダーのカラーコードが必要です。
+        rebrand_header_invalid: ヘッダーのカラーコードは無効です。
+        rebrand_paint_title: ヘルプデスクに色をつける
+        rebrand_sub_title: "ロゴ &amp; 色"
+        rebrand_submit_label: 再ブランド
+        rebrand_tab_empty: タブのカラーコードが必要です。
+        rebrand_tab_invalid: タブのカラーコードが無効です。
+        rebrand_title: "ロゴ <br>&amp; 色"
+        save: 変化
+        save-and-next: 保存して次に進む
+        send_invite: 招待状を送る
+        send_verification_email: 認証メールを送信する
+        sending_test_mail_progress: テストメールを送信中です、お待ちください…
+        skip_link: スキップしてヘルプデスクに進む
+        social_add_account: アカウントを追加する
+        social_facebook: Facebook
+        social_facebook_add: ページを追加する
+        social_info: ヘルプデスクをFacebook、Twitter、その他コミュニティなどカスタマーが集う様々な場所と連携しましょう
+        social_sub_title: ソーシャルネットワークと接続する
+        social_twitter: Twitter
+        social_twitter_add: アカウントを追加する
+        sub_title: 初めての方に便利な手順をご用意しました
+        successfully_sent: 送信に成功しました。
+        successfully_updated: 更新に成功しました。
+        support_email_sub_msg: ヘルプデスクが正しく機能するためには、サポートメールアドレスが必要です。
+        support_email_sub_title: サポートメールアドレスを教えてください。
+        support_email_title: "サポート<br> メールアドレス"
+        title: 素晴らしい！ヘルプデスクの使用準備が完了したようです…
+        title_msg: 開始するには以下の詳細について入力してください。（任意）
+        updating: 更新中…
+        validating: 有効化中…
+      send_mail_content: 
+        button_again_title: …またはテストメールを再送信する
+        button_sending: 送信中…
+        button_title: テストメールを送信する
+        info: サポートメールのコピーを以下のメールアドレスに転送しなければなりません：
+        note: "<strong>注意:</strong> FreshDeskが受信メールをチケットに変換するためには、メールサーバー上で転送設定をしなければなりません。"
+        send_test_mail_confirm_no: いいえ、チケットが見当たりません。
+        send_test_mail_confirm_yes: はい、ありました。
+        send_test_mail_info1: "メールが<b> %{to_email} </b>に転送されるよう設定されていることを確認してください。"
+        send_test_mail_info2: 詳しく知りたい
+        send_test_mail_info3: "順調そうである場合は、テストメールを送信してみてください。<br>%{send_test_mail_link}"
+        send_test_mail_link_title: テストメールを送信する
+        send_test_mail_response1: "テストメールを<b><span id=reply_email_1>%{reply_email}</span>{</b>に送信しました。もし成功すれば、 <a href=\"/helpdesk/tickets\" target=\"_blank\">新しいチケットt</a> がチケットビューに表示されます。"
+        send_test_mail_response_no1: "問題が発生したようです ->"
+        send_test_mail_response_no2: 詳しく知りたい
+        send_test_mail_response_no3: "<strong>残念！問題が発生したようです！</strong><br>受信ボックスにメールが届いていない場合は、数分待ってください。それでも問題が解消されない場合は、<a href=\"https://support.freshdesk.com/\" target=\"_blank\">お問い合わせください</a>。"
+        send_test_mail_response_yes: おめでとうございます！サポートメールとヘルプデスクポータルの接続に成功しました。ハッピーサポーティング!!!
+        test_info1: 順調そうである場合は、テストメールを送信してみてください。
+        title: 転送先メールアドレス：
+    home: 
+      index: 
+        account: アカウント
+        account-settings: アカウント
+        agent: エージェント
+        billing: プラン＆ご利用明細
+        business-hours: 勤務時間
+        canned-response: 定型文返信
+        customer: カスタマー
+        customer-portal: カスタマーポータル
+        day_pass: デイパス
+        dispatcher: Dispatch'r
+        else: 他
+        email-notifications: お知らせメール
+        email-settings: メールセットアップ
+        email_commands_setting: メールコマンド
+        everything: 全て
+        facebook-setting: Facebook
+        feedback: フィードバック・ウィジェット
+        gamification-settings: アーケード
+        group: グループ
+        helpdesk: ヘルプデスク
+        import: Zendeskからデータをインポートする
+        integrations: 統合
+        multi-product: 複数プロダクト
+        portal: ポータル
+        productivity: 効率
+        rebranding: ヘルプデスク　再ブランディング
+        remote-authentication: 遠隔認証
+        scenario: シナリオオートメーション
+        security: セキュリティ
+        settings: 設定
+        sla: SLAポリシー
+        supervisor: 監督
+        survey: アンケート設定
+        survey-settings: カスタマー満足度
+        ticket-fields: チケットフィールド
+        title: 管理
+        twitter-setting: Twitter
+    products: 
+      add_another_email: メールを追加する
+      assign_product: プロダクトを割り当てる
+      edit: 
+        title: プロダクトを編集する
+      form: 
+        configure_email: メールを設定する
+        configure_seperate_portal: このプロダクトのために別個ポータルを設定する
+        enable_product_portal: プロダクトポータルを有効にする
+        enter_support_email_id: サポートメール
+        forwarding_email_info: 転送用メールアドレス：
+        product_name: プロダクト名
+        product_support_emails: プロダクトサポートメール
+      helpnote: 
+        content: 複数プロダクトは商品や具体的ブランドの提供に役立ちます。
+        heading: 複数プロダクト
+      index: 
+        add_product: プロダクトを追加する
+        title: プロダクト
+      new: 
+        title: 新しいプロダクト
+      portal: 
+        cname_configure_info: "このフィールドを使用する前に、CNAME DNSレコードがDNSゾーンファイルの中に作成し、<strong>ヘルプを<b id=\"domain_info_name\">mycompanyname</b>.com</strong>から %{full_domain}へ誘導するよう設定してあることを確認してください。正しい設定方法について詳しく知りたい場合は、ウェブマスター又はサーバー管理人にお問い合わせください。"
+        portal_language: ポータル言語
+        portal_language_info: カスタマーがポータルを訪れた際の既定言語に設定されます。
+        portal_name: ポータル名
+        portal_name_info: プロダクトポータルのヘッダーロゴの隣に名前が表示されます。
+        portal_rebranding: ポータル再ブランディング
+        portal_settings: ポータル設定
+        portal_url: ポータルURLリンク
+        select_forum_category: フォーラムカテゴリーを選択してください
+        select_solution_category: ソリューションカテゴリーを選択してください…
+        top_level_forum: トップレベル・フォーラムカテゴリー
+        top_level_forum_info: フォーラムカテゴリーをこのプロダクトと関連づけることができます。このプロダクトポータルのフォーラムタブを閲覧する際、他のフォーラムはカスタマーには表示されません。
+        top_level_solution: トップレベル・ソリューションカテゴリー
+        top_level_solution_info: ソリューションカテゴリーをこのプロダクトと関連づけることができます。このプロダクトポータルのソリューションタブを閲覧する際、他のフォーラムはカスタマーには表示されません。
+      primary_email_required: 少なくとも１つの主なメールアドレスがなければなりません
+      primary_product_support_email: 主なプロダクトサポートメール
+      product: 
+        delete: このプロダクトを削除しますか？
+        email_not_verified: メールが認証されませんでした
+      product_label_msg: プロダクト
+    quests: 
+      index: 
+        new_quest: 新しいクエスト
+        quest_description: クエストは、エージェントに課題として与えるビジネスに即した内容の達成目標です！
+        quest_title: クエスト
+        sideinfo1: 情報１
+        sideinfo2: 情報２
+        title: クエスト
+      quest_form: 
+        forum: " <br /> <strong> コミュニティy </strong>を巻き込む"
+        solution: " <br /> <strong> ソリューション</strong>を公開する"
+        ticket: " <br /> <strong> チケット</strong>を解消する"
+    security: 
+      index: 
+        click_to_disable: SSLを無効にする
+        click_to_enable: SSLを有効にする
+        customer_portal_ssl_warning: カスタム・ヘルプデスクのリンクがアカウント用に設定されているため、ここへ飛びます：
+        disabled: 無効化
+        enable_SSL: SSLを有効にする
+        enable_SSL_anon: SSLはfreshdeskポータルから転送されたデータを暗号化することができます
+        enable_sso: "Single Sign Onを有効にする"
+        enable_sso_info: "Single Sign Onは独自のアプリケーションまたは中央化されたサーバー (例えばMS Active Directory)を使用して、エージェントやカスタマーが別個ユーザー名とパスワードを入力しなくてもFreshdeskをアクセスできるよう、認証することができます。"
+        enabled: 有効
+        multiple_product_ssl_warning: SSLは複数プロダクトが設定された場合、適用することができません
+        remote_authentication: 遠隔認証
+        remote_login_url: 遠隔ログインのURLリンク
+        remote_login_url_info: Freshdeskをアクセスするためにユーザーが認証のために移動するURLリンクです。
+        remote_logout_url: 遠隔ログアウトURLリンク
+        remote_logout_url_info: ユーザーがFreshdeskログアウト・リンクをクリックした際に移動するURLリンクです。
+        security_title: セキュリティ
+        shared_secret: 共有鍵
+        shared_secret_info: このトークンをコピーして大切に保管してください。遠隔認証を行う際に必要となります。これはFreshdeskとの間の共有鍵です。
+    shared: 
+      filter_jsinit: 
+        body: ボディー
+        insert_placeholder: プレースホルダーを挿入する
+        not_selected: 選択されていません
+        selected: 選択済み
+        to: へ
+    supervisor_rules: 
+      edit: 
+        title: "監督 - ルールを編集する"
+      index: 
+        help_info_1: 最新のチケットや、カスタマーへのリマインダー送信・チケットの上昇・チケットの再割当など時間ベースで行うアクティビティなどを定期的にチェックするためには、監督機能を使用してください。
+        help_info_2: 例えば、チケットがカスタマーの返信を２４時間待ちきった場合は、カスタマーにリマインダーメールを送信したり、チケットが48時間以上「解消済み」ステータスである場合は自動的にチケットをクローズするなどができます。
+        help_info_3: 監督機能は毎時起動し、直近30日に更新されたチケットを処理します。
+        help_info_4: 監督機能のルールは、設定された優先順位に従って順次処理されます。ルールの適用によって別のルールが発生する場合もあります。
+        help_title: 監督
+        title: "監督機能 - ルール"
+      new: 
+        title: "監督機能 - 新しいルール"
+    surveys: 
+      error_updated: アンケート設定を更新中にエラーが発生しました。
+      helptext: |-
+          <p><b>なぜ満足度アンケートを有効にすると良いの?</b> <br>
+          満足度アンケートを使うと、返信メール内に掲載されるリンクを通して、カスタマーのフィードバックを直接収集することができます。<br><br> <b>満足度アンケートの作成について</b><br> <b>次のステップを実行すると、カスタマーのフィードバックを直接回収するためのアンケートリンクを返信メールに掲載することができます：<br>1.カスタマー満足度アンケートのチェックボックスを有効にする<br> 2.満足度アンケートリンクのテキストを選択する。既定のテキストは次の通りです&ldquo;我々のサポートサービスに関するご感想をお聞かせください.&rdquo;<br> <br> {<b>}満足度アンケートのリンクを掲載するメールを選択する</b>}<br> 満足度アンケートへのリンクを、カスタマー宛ての全てのメールに掲載するか、チケット解消後の最後のメールにのみ掲載するかを選ぶことができます。<br><br> 満足度アンケートの詳細については、ソリューションズページを開いてください。  </p>
+      index: 
+        title: カスタマー満足度設定
+      satisfaction_settings: 
+        enable_label: カスタマー満足度アンケート
+        enter_happy_text: 喜ぶ内容のテキストを入力する
+        enter_neutral_text: 中立的内容のテキストを入力する
+        enter_unhappy_text: 悲しがる内容のテキストを入力する
+        link_text_info: このテキストは、カスタマーに送信されるメールの最後のシグネチャーの下に表示されます
+        link_text_input: サポート体験についてのご感想をお聞かせください
+        link_text_label: 満足度アンケートリンクテキスト
+        send_while_option1: カスタマーに送信される全てのメール
+        send_while_option2: チケットが解消された後のメール
+        send_while_option3: チケットがクローズされた後のメール
+        send_while_option4: エージェントが特定のメールにアンケートリンクを掲載できるようにする
+        send_while_title: 満足度アンケートリンクを掲載するメールを選択する
+      successfully_updated: 満足度アンケート設定が更新されました。
+    twitters: 
+      change: 
+        capture_dm: ダイレクトメッセージをチケットに変換する
+        capture_mention: 公開メンションをチケットに変換する
+        default_group: デフォルトグループ
+        edit_twitter: Twitterを編集する
+        screen_name: スクリーン名
+      index: 
+        add_search: 検索機能を追加する
+        new: Twitterアカウントを追加する
+        search_keys: 検索キーを追加する
+        title: Twitterアカウント
+      search: 
+        add_key: 検索クエリーを追加する
+        edit_key: 検索クエリーを編集する
+        name: 名前の検索
+        screen_name: Twitterアカウント
+        search_key: 検索クエリー
+    widget_config: 
+      index: 
+        thankyou_default: フィードバックをありがとうございます
+        thankyou_info: チケットフォームをユーザーが提出したあとに表示されるメッセージ
+        thankyou_label: メッセージを提出する
+  agent: 
+    add_signature: シグネチャーを追加する
+    admin: 管理人
+    admin_info: 管理タスクを全て実行できる
+    contact_exists: "メールアドレス'%{existing_email}'を使用するリクエスターは既に存在します、%{use_email}"
+    day_pass_expired: デイパスの期限が切れました、ログインして新しいデイパスを取得してください
+    edit: エージェントを編集する
+    full_time: フルタイム
+    global: エージェント（グローバルアクセス）
+    global_info: ヘルプデスクのチケットを全て閲覧できる
+    group: エージェント（グループアクセス）
+    group_info: グループ内のチケットや割り当てられたチケットを閲覧できる
+    individual: エージェント（制限的アクセス）
+    individual_info: 割り当てられたチケットのみ閲覧できる
+    info1: これは削除されたエージェントです
+    info2: このメールアドレスは既に使用されています
+    info3: 本当に削除しますか
+    insufficient_day_pass: デイパスが見当たりません、管理人にお問い合わせください
+    make_admin: このエージェントを管理人に指定する
+    new: 新しいエージェント
+    occasional: 時々
+    occasional_description: このエージェントはサポートポータルを評価します
+    password_reset_message: "%{requester}のパスワードをリセットしますか？"
+    password_reset_note: "注意：手順が掲載されたリセットメールが%{requester}に送信されます"
+    permissions: 許可
+    restore: 復元
+    signature: シグネチャー
+    supervisor: 監督
+    supervisor_info: ヘルプデスク内の全てのチケットを閲覧でき、レポートにアクセスできる（管理人特権はなし）
+    title: エージェント
+    update: 更新
+    use_email: このメールアドレスを使用する
+    view_user: ユーザーを閲覧する
+  agent_adds_comment: コメントをチケットに追加する
+  agent_assigned_info: このエージェント用のオープンまたは保留中チケットはありません
+  agent_assigned_title: "新しく割り当てられたチケット (Open &amp; Pending)"
+  agent_closes_tkt: チケットをエージェントがクローズします
+  agent_deleted_message: これは削除されたエージェントです
+  agent_emailnotverified: このメールは、このエージェントのために認証されていません！
+  agent_info_title: エージェント情報
+  agent_solves_tkt: エージェントはチケットを解消します
+  agent_working_on_this_ticket: このチケットの作業をしているエージェント
+  agents: エージェント
+  align_to: に平行させる
+  all_due: 締め切り超過
+  already_overdue: "%{time_words}締め切り超過"
+  always: いつも
+  amount: 量
+  amount_for_annual: "$%{amount}年次"
+  amount_per_month: "$%{amount}%{period}"
+  answered: 回答済み
+  application: 
+    click_to_disable: 統合を無効にする
+    click_to_enable: 統合を有効にする
+    configure: 設定
+    configure_addon: 統合を設定する
+    configure_custom_addon: ウィジェットを設定する
+    confirm_disable: この統合を無効にしますか？
+    desc: 他のアプリケーションと統合することで、Freshdeskをより満喫しましょう。
+    disabled: 無効化
+    enable: 有効にする
+    enabled: 有効
+    new: 新しいアプリケーションを作成する
+    title: 統合
+  apply: 適用
+  asked_on: 質問済み
+  assign: 割り当て
+  assigned_to: に割り当て
+  assume_identity_button: アイデンティティになりすます
+  assumed_identity_msg: "%{user_name}としてのアイデンティティになりすましました。"
+  assuming_identity_not_allowed_msg: このユーザーになりすますことはできません。
+  assuming_identity_user_does_not_exist_msg: なりすまそうとしたユーザーは存在しません。
+  at: で
+  attach_files: ファイルを添付する
+  attachment: 添付ファイル
+  attachment_help_info: 添付ファイルは15MBまで添付できます
+  attachments: 添付ファイル
+  auto_suggest_solutions: 
+    info: <b>この質問に対する答えは既に存在するかもしれません。</b><br/>合致するものがあるかチェックしてください。
+  automations: 
+    available_placeholders: プレースホルダー
+    info1: "ヘルプデスクには頻出シナリオがあります - 例）レベル２への上昇、QAに割り当てる、セールズ部門に転送するなど。これらのシナリオでは、チケットに複数の更新を加えなければならない場合があります"
+    info2: 例えば、QAにチケットを割り当てる前に、チケットの種類をバグに設定し、QAグループに割り当ててQAマネージャーに新しいバグについてメールで報告する必要があるかもしれません。
+    info3: シナリオオートメーションでは、これらのシナリオを１回のクリックで自動的に実行するよう設定できます。
+    info4: メールの内容に付加するプレースホルダーを以下より選択すると、適したデータに変換されます。
+    info5: QAに割り当てる
+    info6: チケットをバグに指定して、QAに割り当てる
+    info7: 実行するアクション
+    info8: 新しいアクションを追加する
+    new: 新しいシナリオ
+    reorder: 再注文する
+    title: シナリオオートメーション
+  awaiting_your_reply: あなたの返信待ち
+  back: 戻る
+  back_plans_billing: プランに戻る&amp;
+  back_to_admin: 管理に戻る
+  badges_achieved_label: 獲得されたバッジ
+  basic_brief: 小規模チーム用
+  basic_details: メール返信管理、Dispatch'rルール、デフォルトSLAポリシー、ナレッジベース、セルフサービスポータル、ドメインマッピング、コミュニティサポート
+  bcc_email_updated_failure_msg: Bccメールの更新に失敗しました
+  bcc_email_updated_success_msg: Bccメールを更新しました
+  bcc_emails_key: "、bcc:%{bcc_emails}"
+  bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
+  begin_subscription_confirm: "クレジットカードに$%{cost}\\nの支払い請求がなされ、申込みがすぐに開始します。\\n\\n実行しますか？"
+  being_processed: 処理中
+  between: 間
+  between_range: 幅の間
+  billed_amount_annually: "毎年$%{amount}の支払い請求がなされます"
+  billed_amount_per_month: "%{period}X%{amount}の支払い請求がなされます"
+  billed_monthly: 毎月の支払い請求
+  billing_info: 申込み情報
+  billing_info_update: 支払い請求の内容が更新されました。
+  block_users: 連絡先もブロックしますか？
+  blossom_brief: ソーシャルカスタマーサポート
+  blossom_details: "&quot;Sprout&quot; プランプラス, Twitter サポート, Facebookサポート, フォーラム、コミュニティ、&amp; メールサポートの全て"
+  bottom: 最後
+  bulk_actions: バルク・アクション
+  business_hours: 
+    helpdesk_hours: ヘルプデスク使用可能時間
+    holiday_added: 祝日は既に追加されました
+    holiday_list: 一年の祝日リスト
+    holiday_name: 祝日名
+    holidays: 祝日
+    info1: Freshdeskに勤務時間を設定すると、SLAsをより自由にコントロールできるようになります。例えば、ヘルプデスクが月曜日-金曜日の9AMから6PMに勤務していて、カスタマーが高優先度チケットを火曜日の4PMに送信し、そのチケットの目SLA標解消時間は４時間だったとします。この場合、チケットは水曜日11AMまでと締め切りが設定されます。SLAsを勤務時間に即して適用するようにも、無視するようにも設定できます。
+    info2: 祝日も勤務時間と同様に機能します。例えば、ヘルプデスクが月曜日-金曜日の9AM-6PMに勤務していて、カスタマーが高優先度のチケットを金曜日の8PMに送信し、そのチケットのSLA目標解消時間は２４時間だったとします。その場合、チケットの締め切りは火曜日9AMと設定されます（土曜日8PMではなく）。
+    info3: 具体的な勤務時間
+    info4: ヘルプデスクの勤務時間
+    info5: SLA計算中に設定された祝日は無視します
+    title: 勤務時間
+  cancel: キャンセル
+  cancel_and_back: キャンセルして戻る
+  cancel_my_account: アカウントをキャンセルする
+  card_number: カード番号
+  card_process: お支払い頂き、ありがとうございます。Freshdeskアカウントが有効になりました！
+  category: 
+    edit: カテゴリーを編集する
+    new: 新しいカテゴリー
+  category_edit_not_allowed: このカテゴリーは編集できません
+  cc_emails_key: "、cc:%{cc_emails}"
+  cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
+  change: 変化
+  change_deleted_status_msg: 現在のステータスが削除されたため、ステータスを変更してください
+  change_details_anytime: 申込み内容の詳細やプランはいつでも変更できます
+  change_free_plan: 無料プランを変更する
+  change_my_password: パスワードを変更する
+  change_my_plan: このプランを選択する…
+  change_plan: プランを変更する
+  change_plan_info: "プランはいつでも変更できます、次のお支払い請求日は%{date}です。"
+  change_to_free_info: プランのレベルを下げると、使用できる機能が減り、データの一部が失われます。本当にレベルを下げますか？
+  chat: チャット
+  choose_free_plan: "無料%{plan}を選択する"
+  choose_plan: プランを選択する
+  clear_draft_text: 蓄積された下書きを消しますか？
+  click_select_action: クリックしてアクションを選択する
+  click_to_change_sort_order: クリックして注文の変更・並び替えをする
+  click_to_select_filter: クリックしてフィルターを選択する
+  close: クローズ
+  closed: クローズ
+  comments: コメント
+  companies: 
+    active: 
+      no_companies: このリストに追加された会社はありません
+      no_companies_with_letter: "アルファベット「%{alphabet}」が含まれる会社はありません"
+  company: 
+    edit: 会社を編集する
+    info1: この会社を削除しますか？
+    info2: 会社用のドメイン名
+    info4: "%{name}についてのメモを追加する"
+    info5: この会社に関する具体的なメモを追加する。例）この会社と100kの商談を交渉中
+    info6: "%{name}の中の人"
+    info7: この会社の社員によって作成されたチケットはありません
+    info8: 住所、電話番号、ホームページなどこの会社に関する詳しい情報
+    info9: メールIDがこれらのドメインを含む場合、Freshdeskは自動的にこの会社を連絡先と関連づけます。
+    name: 会社名
+    new: 当たらし会社
+    notes: メモ
+    quick_company: 速い会社
+    title: 会社
+  company_name: 企業名
+  confirm: 確定
+  connect_ticket: チケットへのリンク
+  contact_name: 連絡先名
+  contacts: 
+    active: 
+      no_contacts: リストに追加された連絡先はありません。
+      no_contacts_with_letter: "「%{alphabet}」を含む有効な連絡先はありません"
+    add_new_requester: 新しいリクエスターを追加する
+    deleted: 
+      no_contacts: 復元する連絡先はありません。
+      no_contacts_with_letter: "「%{alphabet}」を含む削除された連絡先はありません"
+    deleted_message: 削除された連絡先です
+    edit: 連絡先を編集する
+    edit_contact: 連絡先を編集する
+    emailnotverified: この連絡先用にメールが認証されていません！
+    form_placeholder: 
+      description: "この連絡先に関する具体的なメモを追加する。例）LA Lakersのファン　など"
+    import_csv: CSVよりカスタマーをインポートする
+    import_google: Googleよりインポートする
+    import_google_no: いいえ
+    import_google_yes: はい
+    info1: この連絡先を削除しますか？
+    info2: このユーザーをエージェントに指定する
+    info3: "%{nick_name}に関する背景情報"
+    info4: "%{nick_name}からの新しいチケット"
+    info5: このユーザーは今までに作成したチケットはありません
+    info6: この連絡先に関する具体的なメモを追加する
+    new: 新しい連絡先
+    quick_contact: 速い連絡先
+    restore: 復元
+    role: 
+      info: この会社からのチケットを全て閲覧できる
+    save_changes: 変更を保存する
+    send_activation: 有効化に関するメールを送信する
+    showing: 表示：
+    status: 
+      active: 有効
+      deleted: 削除
+    tag_cloud: 連絡先タグクラウド
+    tags: タグ
+    title: 連絡先
+    working: 有効
+  contains: 含む
+  continue_using_free: Freshdeskを次のように使い続ける：
+  conv_contacts_info: "%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
+  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  conversation: 会話
+  country: 国
+  create: 作成
+  created_on: 作成日：
+  credit_card: ファイルのカード
+  credit_card_info: クレジットカード情報
+  current_plan: 現在のプラン
+  current_plan_details: "%{agent_limit}エージェント付きの%{plan_name}プラン"
+  customers: カスタマー
+  date: 
+    ago: 前
+    day: 日
+    days: 日
+    from: 今から
+    hour: 時間
+    hours: 時間
+    minute: 分
+    minutes: 分
+    month: 月
+    months: 月
+    now: たった今
+    second: 秒
+    seconds: 秒
+    week: 週
+    weeks: 週
+    year: 年
+    years: 年
+  date_title: 月日
+  day: １日
+  days: 日
+  deactivate: 無効にする
+  default_category: デフォルトカテゴリー
+  default_category_description: "%{full_domain}に送信された全てのメールがここで下書きとして蓄積されます"
+  default_folder: 下書き
+  default_folder_description: "%{full_domain}に送信された全てのメールがここで下書きとして蓄積されます"
+  default_reply_template: エージェント返信定型文
+  delete: 削除
+  delete_confirm_scenario: 本当にこのシナリオを削除しますか？
+  delete_reminder: やることリストを削除しますか？
+  delete_the_ticket: チケットを削除する
+  delete_topic_msg: このトピックを確定的に削除する
+  description: 詳細
+  disabled: 無効化
+  dispatch: 
+    act_to_perform: 実行するアクション
+    add_condition: 新しい条件を追加する
+    add_new_action: 新しいアクションを追加する
+    add_new_choice: 新しい選択肢を追加する
+    delete: 本当にこのルールを削除しますか？
+    dispatch_rules: "Dispatch'r - ルール"
+    edit: "Dispatch'r　- ルールを編集する"
+    inactive_rules: アクティブでないルール
+    info1: 申込みに関するチケット
+    info2: 申込みに関する全てのチケットはスーザンに割り当てられます
+    info3: このルールはいつ適用しますか
+    info4: Dispatch'rは新しく作成されたサポートチケットを、ルールと認定されたアクションに基づいて、自動的に発想します
+    info5: ルールの順位が重要であることに注意してください。受信されるチケットについて、Dispatch'rは最初にマッチするルールを実行して停止します
+    match_all: 全てをマッチする
+    match_any: どれでもマッチする
+    new: "Dispatch'r　- 新しいルール"
+    new_rule: 新しいルール
+    reorder: 再注文する
+    rule_name: ルール名
+    skip_notification_no: いいえ
+    skip_notification_yes: はい
+    skip_notifications: 新しいチケットのメールによるお知らせをスキップする
+    title: Dispatch'r
+  does_not_contain: 含みません
+  done: 終了
+  draft: 下書き：
+  due_in: "あと%{time_words}で締め切り"
+  due_next_eight: 次の８時間
+  due_today: 今日
+  due_tomo: 明日
+  edit: 編集
+  edit_agent: エージェントを編集する
+  edit_email: メールを編集
+  edit_forum_category: フォーラムカテゴリーの編集
+  eight: ８時間
+  email: メール
+  email_command_del_info_data: コツ-　少なくとも3つのキャラクター（スペシャルキャラクターの使用が推奨されます）を使用した、特化したデミリターコンビネーションを選択すると、普通のメール返信に左右されなくなります。
+  email_command_delimeter_label: メールコマンドデミリター
+  email_command_delimeter_length_error_msg: デミリターのためのキャラクターを少なくとも３つ提示してください
+  email_command_preview_subject: 題目
+  email_command_preview_subject_value: サポートチケット
+  email_command_preview_to_email: へ
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  email_command_settings_heading: メールコマンド設定
+  email_command_settings_info: メールからメールコマンドを特定、抽出するために使用されるデミリターを設定する
+  email_commands_update_failed: メールコマンド設定の更新に失敗しました
+  email_commands_update_success: メールコマンド設定を更新しました。
+  email_configs: 
+    Personalized_email_replies: パーソナル・メール返信にエージェント名を使用しますか？
+    Personalized_email_replies_info: "もし使用するなら、エージェントからの返信には、送信者名にエージェントの名前が表示されます（メールアドレスはサポートメールアドレスのままです）。例）'%{current_user_name} &lt;%{current_account_domain}&gt;'."
+    Personalized_email_replies_message: 設定は保存されました。
+    Personalized_email_replies_no: いいえ
+    Personalized_email_replies_yes: はい
+    add_bcc_text: Bccを追加する
+    add_supp_emails: サポートメールを追加する
+    assign_to_product_info: "新しいプロダクトへのリンクをメールに掲載したい場合は、まず<a href='{{products_path}}'>プロダクトを追加してください </a>"
+    assign_to_product_msg: プロダクトのリンクをサポートメールに載せる
+    bcc_email: Bccアドレス
+    bcc_text: Bcc
+    change_this: 変更する
+    delete: 本当にこのメールを削除しますか？
+    edit: 編集
+    email: メール
+    email_added_succ_msg: このメールは追加されました
+    forwarding_email: メールの転送
+    global_support_emails: グローバルサポートメール
+    group: グループ
+    help_link_info: 詳細については、メール設定に関する記事をご参照ください
+    inactive_info1: 全てのサポートメールはまだ認証されていません、少なくとも１つのサポートメールを認証しなければなりません
+    inactive_info2: "それまでは、デフォルトメール \"%{default_email}\" が送信先メールアドレスとして使用されます。"
+    info1: ユーザーはサポートメールを次へ送信します：
+    info10: このサポートメールへの新しいチケットは自動的にグループに割り当てられます
+    info11: 全てのサポートメールアドレスをリスト化する
+    info12: 新しいメールアドレスを追加する
+    info13: あなたのサポートメールアドレスは
+    info14: このアドレスに送信された全てのメールはチケットに変換されます
+    info15: このメールを次へ転送してください：
+    info16: チケットは次に割り当てられます：
+    info17: チケットに関する連絡については、自動的にこのメールアドレスがBccフィールドに追加されます
+    info18: 自動bccアドレスはチケット返信に含まれます
+    info2: 独自のメールアドレスにサポートメールを転送しなければなりません
+    info3: Freshdeskはそれらのメールを取得し、チケットに変換します
+    info4: "<strong>注意:</strong> 複数のプロダクトに対して複数のメールアドレスを設定している場合は、 <a href='{{products_path}}'>ここで追加できます</a>。"
+    info5: Freshdeskからの返信メールは、自動的に元のサポートメールIDを送信者とします。
+    info7: これは返信先メールアドレスにもなります。例）support@yourcompany.com
+    info8: メールを転送する：
+    info9: グループに割り当てる
+    make_primary: 主なものに設定する
+    mark_as_primary_msg: これを主なサポートメールに設定しますか？
+    name: 名前
+    name_info_msg: チケット返信に使用されるメールの名前
+    new_support_email: 新しいサポートメール
+    primary_supp_email: 主なサポートメール
+    primary_supp_email_tool_tip: 主なサポートメール
+    remove_msg: 本当にこのメールを削除しますか？
+    reply_email: サポートメール
+    reply_emails: Freshdeskからの返信メール
+    secondary_supp_email_tool_tip: 主なメールにする
+    send_verification_email: 最認証する
+    set_bcc_email_text: Bccメールを自動化する
+    spf_info: "ほとんどのメールは to be on the safer side you must create an <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email."
+    supp_email_add: サポートメールアドレス
+    support_email: サポートメール
+    support_email_exists: サポートメールは既に存在します
+    title: メール設定
+    unverified: メールが認証されませんでした
+    unverified_info1: 認証リンクを載せたメールをこのメールアドレスに送信しました。認証が終了したら、サポートメールが有効になります。
+  email_notifications: 
+    agent_notification: エージェントお知らせ
+    customize_email: メールをカスタマイズする
+    default_reply_template_info: エージェントがチケットに対応する際、全てのエージェント返信にテンプレートが自動的に表示されます。
+    default_reply_template_title: エージェント返信定型文
+    do_not_delete_ticket_id_from_subject: カスタマーの返信をチケットに関するやりとりと特定するためには、チケットIDプレースホルダーを題名から削除しないでください。
+    edit_reply_template: テンプレートを編集する
+    event: イベント
+    insert_placeholder: イベントプレースホルダー
+    modify_agent_template: エージェントメールテンプレートを変更する
+    modify_requester_template: リクエスターメールテンプレートを変更する
+    requestor_notification: リクエスター注文
+    subject: 題目
+    title: メールお知らせ
+  email_notifications_agent_selection_msg: お知らせを送るエージェントを選択する
+  enabled: 有効
+  ends_with: で終わる
+  enter_billing_for_free: 有料プランを選択する前に、クレジットカードに関する情報を入力してください
+  enter_message: メッセージを入力してください
+  enter_payment: お支払い情報を入力してください…
+  enter_payment_details_to_add: エージェントを追加するには、お支払い情報を入力してください
+  error_in_plan: プランの変更中にエラーが発生しました
+  errors: 
+    actions_empty: アクションを空欄にすることはできません
+    conditions_empty: 条件を空欄にすることはできません
+  errors_in_payment: お支払い中に発生したエラー：
+  errors_in_payment_info: お支払い情報に関して発生したエラー：
+  errors_in_plan_change: 変更に伴って発生したエラー：
+  errors_in_your_address: アドレスに関して発生したエラー：
+  estate_brief: 企業レベルサポート
+  estate_details: "&quot;Garden&quot; プランプラス、ゲーミフィケーションの中身全て"
+  example: 例
+  expires: 期限切れ
+  export_data: 
+    closed_at: クローズされた時間
+    created_at: 作成された時間
+    custom_filter: 日程を設定する
+    export_to_csv: CSVにエクスポートする
+    field_select_title: エクスポートするファイルを選択する
+    filter_label_agent: チケットをフィルターする：
+    filter_label_customer: 〜で作成されたチケットをフィルターする
+    from: より
+    info: CSVファイルに、現在のビュー内にあるチケット情報をエクスポートする
+    mail: 
+      body: 添付されたCSVファイルを確認してください
+      info: チケット情報が間もなくメールとして送信されます！
+      subject: "チケットをエクスポートする - %{filter} - ( %{start_date} から %{end_date} )"
+    no_fields_selected: 次のフィールドのうち少なくとも１つにチェックを入れなければ進めません。
+    resolved_at: 解消された時間
+    seven_days: 直近７日間
+    thirt_days: 直近３０日間
+    to: へ
+    twenty_four: 昨日から
+  export_data_successfull: 間もなくヘルプデスクに関するデータがメールとして送信されます！
+  f_request: リクエストをフィーチャーする
+  facebook: 
+    deleted: "Facebookページ%{facebook_page}は削除されました。"
+    not_authorized: Facebookによる認証に失敗しました。
+  facebook_source: Facebook
+  failure: エラー…
+  fav_delete_msg: 本当にこのファビコン（favicon)を削除しますか？
+  favicon: ファビこん（favicon)
+  feedbackwidget_bgcolor: 背景カラー
+  feedbackwidget_btcustomize: ボタンのカスタマイズ
+  feedbackwidget_custom_image: カスタム・イメージURL
+  feedbackwidget_custom_image_info: カスタムイメージを使用する場合、カラーやテキストに関する設定は適用されません。
+  feedbackwidget_defaultbutton: サポート
+  feedbackwidget_defaulttitle: "ヘプル &amp; サポート"
+  feedbackwidget_embed_code: ウィジェット挿入コード
+  feedbackwidget_embed_code_intro: "以下のコードをコピーペースとして、サイトのhtmlテンプレートページや全てのページなどFreshdeskウィジェットを埋め込みたい全てのページの&lt;/body&gt; タグの前に挿入してください。"
+  feedbackwidget_form_title: ウィジェットフォーム題名
+  feedbackwidget_formcustomize: カスタマイズより
+  feedbackwidget_help_para1: ご所有のホームページにサポートタブを掲載することで、カスタマーのフィードバックを回収しましょう。
+  feedbackwidget_help_para2: カスタマイズも可能なそのタブを開くと、サポートチケットフォーラムがひらきます。
+  feedbackwidget_help_title: フィードバック・ウィジェット
+  feedbackwidget_intro: 以下にてFreshdeskウィジェットをカスタマイズすると、リアルタイムプレビューを表示します。
+  feedbackwidget_offset_info: ウィジェットボタンの、画面の上辺と左辺からの距離(pixels)の差異となります（左揃いの場合。アラインメントを変更することもできます）。
+  feedbackwidget_offset_label: 差異は
+  feedbackwidget_position: ポジション
+  feedbackwidget_text: テキスト
+  feedbackwidget_title: ウィジェット設定
+  first_name: 名
+  first_response_sla: ファーストレスポンスSLA違反
+  flash: 
+    account: 
+      update: 
+        success: アカウント詳細が更新されました。
+    agents: 
+      create: 
+        success: "エージェントが作成され、有効化メールが%{email}に送信されました！"
+      delete: 
+        not_allowed: 削除する権限がありません！
+    application: 
+      already: 統合は既にインストール済みです。
+      install: 
+        error: 統合の有効化中にエラーが発生しました。
+        success: 統合が有効になりました！
+      not_installed: 統合はまだインストールされていません。
+      uninstall: 
+        error: 統合の無効化中にエラーが発生しました。
+        success: 統合は無効になりました！
+      update: 
+        error: 統合の設定中にエラーが発生しました。
+        success: 統合は更新されました！
+    business_hours: 
+      update: 
+        failure: 勤務時間の更新に失敗しました。
+        success: 勤務時間は更新されました！
+    contacts: 
+      cancel: キャンセル
+      create: 
+        success: 連絡先は作成されました。
+      info_select: 少なくとも１人のユーザーを選択してください。
+    contacts_import: 
+      failure: また試してください
+      no_file: ファイルをアップロードしてください
+      success: "連絡先%{created_count} は新しくインポートされ、 既存の連絡先%{updated_count} は更新されました！"
+    custom_fields: 
+      update: 
+        failure: チケットフィールドの更新に失敗しました。
+        success: チケットフィールドは更新されました。
+    customers: 
+      info_select: 少なくとも1人のカスタマーを選択してください。
+    data_import: 
+      zendesk: 
+        failure: Zendeskからインポートできません…また試してください
+        no_contact: Zendeskに問い合わせることができません。Zendeskの証明書を認証してから再度試してください！
+        running: Zendeskのインポートが１件処理中です。時間をおいてから再度試してください！
+        success: データインポートを開始しました。完了した時に完了メールが送信されます。インポート処理は、データの量によっては数分かかる場合があります
+    daypass: 
+      failed: デイパスの追加中にエラーが発生しました。
+      success: "%{quantity}のデイパスがアカウントに追加されました。"
+    email_notifications: 
+      update: 
+        success: メールによるお知らせが更新されました。
+    email_settings: 
+      activation: 
+        already_activated: "%{reply_email}は既に有効になっています！"
+        invalid_code: 有効化コードは無効です！
+        success: "%{reply_email}は有効になりました！"
+      make_primary: 
+        success: "<b>%{reply_email}</b> は主なサポートメールに設定されました！"
+      send_activation: 
+        success: "%{reply_email}に認証メールが送信されました！"
+    facebook: 
+      updated: Facebook設定が更新されました
+    filter: 
+      delete_success: ビューが削除されました！
+      save_success: ビューが保存されました！
+    g_app: 
+      authentication_failed: 認証に失敗
+      authentication_success: 認証は完了
+      no_subdomain: このようなサブドメインは存在しません。また試してください。
+      user_deleted: ユーザーは削除されました！
+    general: 
+      access_denied: このページを閲覧する権限がありません！
+      create: 
+        failure: "%{human_name}の保存に失敗"
+        success: "%{human_name}が作成されました。"
+      destroy: 
+        failure: "%{human_name}を削除できません。"
+        success: "%{human_name}は削除されました。"
+      insufficient_privilege: 
+        admin: 変更をする権限がありません。管理人としてログインしてください！
+      login_not_needed: このページをアクセスするためにはログアウトしてください
+      need_login: このページをアクセスするにはログインしてください
+      restore: 
+        failure: "%{human_name}の復元に失敗しました"
+      update: 
+        success: "%{human_name}は更新されました。"
+    gmail_gadgets: 
+      account_not_associated: ご利用のGoogleアカウントはFershdeskアカウントとまだ連携されていません。ナビゲーションリンクを開いて、まずは連携させてください。
+      agent_missing: Freshdesk内ではエージェントではありません。ユーザーをエージェントに変換してから再度試してください。
+      agent_not_active: Freshdesk内ではメールが削除または無効化された可能性があります。有効にしてから再度試してください。
+      gmail_request_unverified: Gmailシグネチャーが違います。ログインしてから再度試してください。
+      kvp_missing: 認証に失敗しました。メールを再度開いて試してみてください。
+      unknown_error: 認証されていないサーバーに関するエラー。サポートにお問い合わせください。
+      user_missing: Freshdesk内ではメールが存在しません。ご利用のメールを持つエージェントを追加してから再度試してください。
+      viewer_id_not_sent_by_gmail: Gmailリクエストが違います。ログインしてから再度試してください。
+    login: 
+      failed: ログインに失敗しました！
+      sso: 
+        expected_params: 想定されるパラメータ（param)は、名前、メールアドレス、そしてまだ入力されていないハッシュ
+      success: ログインできました！
+      verify_credentials: ログインできませんでした。証明書の認証を行ってください
+    not_allowed_in_demo_site: デモサイトではアクセスできません！
+    password_resets: 
+      email: 
+        reset: "リセットの手順を載せたメールが%{requester}に送信されました。"
+        success: パスワードのリセットに関する手順がメールで送信されました。ご確認ください。
+        user_not_found: このメールアドレスを利用するユーザーは見つかりませんでした。
+      update: 
+        invalid_token: アカウントが見つかりません。メールに掲載されたURLをブラウザーにコピーペーストする、あるいはパスワードのリセット手順を最初からやり直してみてください。
+        success: パスワードは更新されました
+    portal: 
+      tickets: 
+        create: 
+          success: チケットが作成され、ご利用のメールアドレスにチケットのコピーが送信されました。
+    portal_settings: 
+      update: 
+        success: カスタマーポータル設定は更新されました。
+    profile: 
+      api_key: 
+        reset_failure: APキーの再設定中にエラーが発生しました
+        reset_success: APIキーは再設定されました。
+      change_password: 
+        failure: パスワードを変更できませんでした、現在のパスワードをチェックしてください
+        success: パスワードは更新されました。ログインし直してください。
+      update: 
+        success: プロフィールは更新されました。
+    solutions: 
+      remove_tag: 
+        success: このソリューションからタグは削除されました
+    sso: 
+      update: 
+        success: アカウント詳細が更新されました。
+    tickets: 
+      empty_spam: 
+        success: スパムフォルダー内のチケットは全て削除されました。
+      empty_trash: 
+        success: ゴミ箱内のチケットは全て削除されました。
+      merge: 
+        success: チケットはマージされました
+        wrong_ticket_id: 有効なチケットIDを入力してください
+      monitor: 
+        start: このチケットを管理しています
+        stop: このチケットはもう管理していません
+      notes: 
+        create: 
+          failure: チケットへのメモ追加に失敗しました。また試してください。
+          success: メモはチケットに追加されました。
+      reply: 
+        success: 返信は送信されました。
+      timesheet: 
+        timer_stopped: チケットタイマーは停止されました
+    to_dos: 
+      complete: 
+        success: やることリストは完了したと指定されました。
+    twitter: 
+      updated: Twitter設定は更新されました
+  folder: 
+    add_folder: フォルダーを追加する
+    edit: フォルダーを編集する
+    info1: このフォルダーを削除しますか？
+  folder_edit_not_allowed: このフォルダーは変更できません
+  footer: 
+    by_freshdesk: Freshdeskによる
+    helpdesk_software: ヘルプデスクソフトウェア
+  for: のための
+  forgot_password: パスワードを忘れました
+  forgot_password_intro: 以下のフォームを入力すると、パスワード再設定の手順をメールで送信されます
+  formatting_help: フォーマットに関するヘルプ
+  forum: 
+    confim_msg1: 本当にこのフォーラムを削除しますか？
+    edit: フォーラムを編集する
+    new: 新しいフォーラム
+    start_topic: トピックを始める
+    title: フォーラム
+    types: 
+      announce: アナウンス
+      howto: 質問
+      ideas: アイディア
+      problem: 問題
+    verb: 
+      announcement: 〜によるアナウンス
+      ideas: 〜によるアイディア共有
+      problems: 〜による問題報告
+      questions: 〜による質問
+    visibility: 
+      agents: エージェント
+      all: 全て
+      anyone: 全員
+      logged_users: ログイン中のユーザー
+      select_company: 会社を選択する
+  forum_confirm_msg1: 本当にこのカテゴリーを削除しますか？
+  forum_key: フォーラム
+  forum_shared: 
+    post: 
+      answer: 答え
+      delete_post: 書き込みを削除する
+      delete_post_confirm: 本当に書き込みを削除しますか？
+      edit_post: 書き込みを編集する
+      mark_answer: これを良い返事としてマークする
+      post_accepted_as_a_good_answer: この書き込みは、トピックに対する良い返事としてマークされました
+      posted_on: "%{post_date}に%{user_name}によって"
+      unmark_answer: 良い返事マークを外す
+    topic_vote: 
+      howto: 
+        vote_button: 私はこの質問を抱いています
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote}人</a> がこの質問を抱いています"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} 人</a> がこの質問を抱いています"
+        vote_info_include_1: あなたはこの質問を有しています
+        vote_info_include_2: "あなたと <a id='users-voted' href='#' title='See who have this'> %{vote}人</a>がこの質問を抱いています"
+        voted_users_widget_title: この質問を共有する人々
+      ideas: 
+        vote_button: このアイディアを気に入りました
+        vote_info_1: "<a id='users-voted' href='#' title='See who likes this'> %{vote} 人</a> はこのアイディアにイイネ！と言っています"
+        vote_info_2: "<a id='users-voted' href='#' title='See who like this'> %{vote} 人</a> がアイディアについてイイネ！と言っています"
+        vote_info_include_1: あなたはこのアイディアを気に入りました
+        vote_info_include_2: "あなたと<a id='users-voted' href='#' title='See who like this'> %{vote} 人</a> がアイディアにイイネ！と言っています"
+        voted_users_widget_title: このアイディアにイイネ！と言っている人々
+      problem: 
+        vote_button: 私はこの問題を有しています
+        vote_info_1: "<a id='users-voted' href='#' title='イイネと言った人々を閲覧する'>%{vote} この人</a> はこの問題を有しています"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} 人</a> がこの問題を有しています"
+        vote_info_include_1: あなたはこの問題を有しています
+        vote_info_include_2: "あなたと <a id='users-voted' href='#' title='See who have this'> %{vote} 人</a> がこの問題を有しています"
+        voted_users_widget_title: この問題を有する人々
+      unlike: イイネ！を取り消す
+  forums: 
+    form: 
+      type: フォーラム種類
+      visibility: フォーラム表示度
+      visible_to: 閲覧可能者
+    search: 
+      placeholder: "検索 %{name}"
+    search_all: 
+      placeholder: 全てのトピックを検索する
+  forums_order: 
+    overview: オーバービュー
+    popular: 人気
+    recent: 最近
+  forward: 転送
+  forwarded_email: 転送されたメール
+  forwarded_to: 転送先
+  four: 4時間
+  free_account: 無料アカウント
+  from_email: メールから
+  fwd_success_msg: このチケットは転送されました
+  fwd_to: 転送
+  gamification: 
+    leaderboard: 
+      love_trophie_info: カスタマー満足度ポイントが今月最も高かったエージェント
+      love_trophie_info_group: カスタマー満足度ポイントが今月最も高かったグループ
+      love_trophie_label: カスタマーWowチャンピオン
+      love_trophie_label_group: カスタマーWowチャンピオン
+      mvp_trophie_info: 総得点が今月最も高かったエージェント
+      mvp_trophie_info_group: 総得点が今月最も高かったグループ
+      mvp_trophie_label: MVP
+      mvp_trophie_label_group: MVT
+      sharpshooter_trophie_info: ファーストコール解消ポイントが今月最も高かったエージェント
+      sharpshooter_trophie_info_group: ファーストコール解消ポイントが今月最も高かったグループ
+      sharpshooter_trophie_label: シャープシューター
+      sharpshooter_trophie_label_group: シャープシューター
+      speed_trophie_info: スピード解消ポイントについて今月満点だったエージェント
+      speed_trophie_info_group: スピード解消ポイントについて今月満点だったグループ
+      speed_trophie_label: スピードレーサー
+      speed_trophie_label_group: スピードレーサー
+    levels: 
+      beginner: ビギナー
+      expert: エキスパート
+      guru: 名人
+      intermediate: 中級者
+      master: マスター
+      professional: プロ
+    notifications: 
+      achieved_quest: "<b> バンザイ！</b><br/> あなたは<b>%{name}</b>を獲得しました。"
+      newlevel: "<b> バンザイ！</b><br/> あなたは<b>%{name}</b>になりました。"
+  garden_brief: 複数プロダクトサポート
+  garden_details: "&quot;Blossom&quotの中身全て;プランプラス、複数プロダクトサポート、上級レポーティング、コミュニティメール &amp; 電話サポート"
+  go_back_admin: 管理に戻る
+  greater_than: より大きい
+  group: 
+    assigntime: 
+      day: １日
+      eight: ８時間
+      four: 4時間
+      half: 30分
+      one: 1時間
+      threeday: 3日
+      two: 12時間
+      twoday: 2日
+    edit: グループを編集する
+    info1: グループのエージェント
+    info2: このグループにはエージェントは居ません
+    info3: 〜に上昇メールを送信する
+    info4: もしチケットが〜以上割り当てられていなかったら
+    info5: 本当に？
+    name: グループ名
+    new: 新しいグループ
+    select_agents: エージェントを選ぶ
+    title: グループ
+  half: 30分
+  header: 
+    assumed_text: 閲覧してるのは：
+    login: ログインする
+    new_ticket: 新しいチケット
+    search: 検索
+    signout: サインアウトする
+    submit_a_ticket: チケットを提出する
+    tabs: 
+      admin: 管理
+      checkstatus: チケットステータスをチェックする
+      company_tickets: 企業チケット
+      customers: カスタマー
+      dashboard: ダッシュボード
+      forums: フォーラム
+      home: ホーム
+      reports: レポート
+      solutions: ソリューション
+      tickets: チケット
+    welcome: ようこそ
+  header_logo: ヘッダーロゴ
+  helpdesk: 
+    dashboard: 
+      index: 
+        todo_title: チェックリスト
+      summary: 
+        due_today: 今日が締め切りのもの
+        open: オープン
+        overdue: 締め切り超過
+        pending: 保留中
+        title: チケット概要
+        unassigned: 割り振り前のもの
+    flash: 
+      assigned_reassigned: "%{username}へ%{type}"
+      assigned_to_you: "%{tickets}があなたへ割り振られています"
+      assignedto: "%{username}へ%{tickets}が割り振られています。"
+      closing_the_ticket_failed: チケットのクローズに失敗しました
+      flagged_spam: "%{tickets}がスパムとして認定されました。%{undo}"
+      flagged_unspam: "%{tickets}がスパムフォルダーから外されました。"
+      removed_from_spam: "%{tickets}がスパムフォルダーから外されました。"
+      tickets_closed: "%{tickets}がクローズされました。"
+      tickets_update: "%{tickets}が更新されました"
+    merge: 
+      confirm_merge: 
+        confirm_and_merge: 確定してマージする
+        source_merge_description: "このチケットはクローズされ、%{ticket_id}にマージされました。"
+        source_ticket_close_info: このチケットは、次のメモによってクローズされます
+        target_merge_description1: "チケット%{ticket_id}%{ticket_subject}はこのリクエストとマージされました"
+        target_merge_description2: "チケット%{ticket_id}内の詳細"
+        target_ticket_updated_info: このチケットは次のメモを付して更新され、全てのやりとりは削除されます。
+        will_be_merged_into: 次のものとマージされます…
+      merge: 
+        enter_ticket_id: チケットIDを入力してください
+        merge: マージ
+        merge_into: マージしますか？
+        other_tickets: "%{requester}によってレポートされた他のチケット"
+    rebranding: 
+      name: 
+        info: これがメールのヘッダーやお知らせに表示されるヘルプデスク名になります。
+    shared: 
+      facebook_form: 
+        title: "%{user}に返信する"
+      forward_form: 
+        addbcc: Bccを追加する
+        addcc: Ccを追加する
+        bcc: Bcc
+        cc: Cc
+        removebcc: Bccを削除する
+        removecc: Ccを削除する
+      history: 
+        recent_item: 新しいアイテム
+      reply_form: 
+        addbcc: Bccを追加する
+        addcc: Ccを追加する
+        bcc: Bcc
+        cc: Cc
+        removebcc: Bccを削除する
+        removecc: Ccを削除する
+        title: "%{email}に返信する"
+      tweet_form: 
+        title: "%{user}に返信する"
+    tags: 
+      index: 
+        title: タグ
+    ticket_created_on_n_by: "%{date_time}の%{requester}による"
+    ticket_notifier: 
+      reply: 
+        happy: 最高
+        neutral: 良い
+        unhappy: あまり良くない
+    tickets: 
+      close_notice: 
+        ticket_has_been_cloased: このチケットはクローズされました。
+        view_ticket: チケットを表示する
+      components: 
+        due_date: 
+          due: 締め切り
+          earlier_date_and_time: チケットの作成された日時より新しい日時にして下さい
+          next_week: 来週
+          set_date_time: 日時を設定する
+          specific_date: 詳しい日時…
+          this_week: 今週
+          today: 今日
+          tomorrow: 明日
+          when_is_it_due: 締め切りはいつ？
+        scenarios: 
+          execute_this_scenario: このシナリオを実行する
+      customview: 
+        new: 
+          give_a_name: このビューに名前を付ける
+          visible_to: このビューが見れるのは
+      execute_scenario_notice: 
+        actions_performed: 実行されたアクション
+        execute_the_scenario: "シナリオ<b>%{rule_name}</b>を実行する"
+        view_details: 詳細を閲覧する
+      friendly_status: 
+        customer_responded: カスタマーは返信済み
+        elapsed: 返信の期限
+        new: 新しい
+        overdue: 締め切り超過
+        resolved: 解決済み
+      no_email_found: "メール%{email}を持つユーザーはシステム上に存在しません。"
+      note: 
+        attachment_size: 
+          exceed: 転付ファイルが15MBを超えています。より小さいファイルを転付して下さい。
+        delete_note: チケットのやり取りから削除しますか？
+        edit_note: メモを編集する
+        inbound_email: 受信メール
+        outbound_email: 送信メール
+        posted_on: "%{note_date}の%{user_name}"
+        private_note: 非公開メモ
+        public_note: 公開メモ
+        split_this_as_new_ticket: 新しいチケットとしてスプリットする
+        split_ticket_confirm: このメモをスプリットして新しいチケットにしますか？
+      overlay_fwd_time: "%{time_in_words} 前に転送済み"
+      overlay_note_time: "%{time_in_words}前にメモ追加"
+      overlay_reply_time: "%{time_in_words} 前に返信済み"
+      save_and_close_notice: 
+        ticket_saved_and_closed: このチケットは作成されてクローズされました。
+        view_ticket: チケットを表示する
+      show: 
+        conversation: 会話
+        linked_ticket: このチケットはフォーラムと連携されています
+        meta: メタ
+        timesheet: タイムシート
+      tabular_view: 
+        assigned: 割り当て
+        posted: 書き込み
+        priority: 優先順位
+        sla: 締め切りは
+        status: ステータス
+        time_ago: "%{time_in_words} 前"
+        title: 題名
+      view_ticket: 
+        conversation: 会話
+        linked_ticket: このチケットはフォーラムと連携されています
+        meta: メタ
+        timesheet: タイムシート
+      views: 
+        all: 全てのチケット
+        all_tickets: 全てのチケット
+        closed: クローズされたチケット
+        deleted: ゴミ箱
+        due_today: 今日までのチケット
+        monitored_by: 管理中のチケット
+        my_all: 全てのチケット
+        my_closed: 私のクローズされたチケット
+        my_due_today: 私のチケットで今日までのもの
+        my_on_hold: 私のチケットで保留中のもの
+        my_open: 私のオープンなチケット
+        my_overdue: 私のチケットで期限を超過したもの
+        my_resolved: 私の解消されたチケット
+        new: 新しいチケット
+        new_and_my_open: 新しい＆私のオープンなチケット
+        new_my_open: 新しい＆私のオープンなチケット
+        no_tickets: 現在のビューの中にはチケットはありません
+        on_hold: 保留中のチケット
+        open: オープンなチケット
+        open_or_pending: オープンまたは保留中
+        overdue: 期限を超過したチケット
+        resolved: 解消されたチケット
+        resolved_or_closed: 解消済み又はクローズ
+        select: ビューを選択する…
+        spam: スパム
+        tags: タグごとのチケット
+        this_view: このビュー
+        tickets_by: によるチケット
+        tickets_twitter: twitterによるチケット
+    time_sheets: 
+      agent: エージェント
+      billing_type: メモ
+      customer: カスタマー
+      executed_at: 月日
+      form: 
+        agent: エージェント
+        hours: 時間
+        note: お支払い種類
+      group_by: によるグループ
+      hours: 時間
+      index: 
+        no_timeentry: このチケットにはログされたエントリーがありません
+      new: 
+        title: 新しいエントリー時間
+      note: お支払い種類
+      report: 
+        no_timeentry: データがありません
+        total: 合計
+      ticket: チケット
+      time_entry: 
+        toggle_timer_false: タイマーを止める
+        toggle_timer_true: タイマーを開始する
+  helpdesk_title: ヘルプデスク
+  high: 高
+  home: 
+    mobile_index: 
+      email: メール
+      forgot: パスワードを忘れましたか？
+      help: ヘルプ
+      login: ログイン
+      password: パスワード
+      remember: このコンピューターでは記録してください
+      sign_in_using: 次を使用してサインイン：
+      sign_in_using_google: Googleアカウントを使ってサインイン
+  how_to: 質問
+  identity_reverted_error_msg: 元のユーザーが見つかりませんでした。
+  identity_reverted_msg: アイデンティティを元の自分のものに戻しました。
+  import: インポート
+  import_added_newly: 新しく追加
+  import_articles: ソリューション項目
+  import_data: インポートされたデータ
+  import_example_title: 次がCSVファイルの例です
+  import_forum: フォーラム
+  import_groups: グループ
+  import_ignore_first_row: "一行目の{headings}を無視する"
+  import_note_info: "CSVファイルのフィールドの順番は問いません。但し、一行目はヘッダーに関する情報を含むようにしてください（例　名前、メールアドレス etc)。必須のフィールドはメールに関するものだけです。"
+  import_org_companies: "団体 &rarr; 企業"
+  import_solution_article: 項目フォーラムをソリューションに変換する
+  import_solution_article_info: 注意：フォーラムコメントは保存されません
+  import_step1_info: CSVファイルを選択してインポートをクリックしてください
+  import_step2_info: 次のCSVフィールドを、データベースフィールドでマッピングしてからインポートしてください。
+  import_ticket_group: "チケット &amp; グループ"
+  import_tickets: チケット
+  import_topics: トピック
+  import_updated: 更新済み
+  import_user_notification: インポートしながらユーザーに有効化に関するメールを送信する
+  import_user_org: "ユーザー &amp; 団体"
+  import_user_org_text: "Zendeskアカウント内の全てのユーザー&amp; 団体は現在のFreshdeskアカウント内の「連絡先＆企業」としてインポートされます"
+  import_users_contacts: "ユーザー &rarr; 連絡先"
+  import_warning_info: インポートが成功すると、全ての連絡先に有効化に関する手順をメールで送信されます。もしメールが既にデータベース内に存在するなら、名前や会社名などの情報を更新します。
+  import_zendesk_summary: Zendesk概要からインポートする
+  import_zendesk_summary_info: Zendeskデータはインポートされました
+  import_zendesk_title: Zendeskからインポートする
+  incident: 事件
+  index_tooltip_loading_msg: ロード中…
+  integrations: 
+    capsule: 
+      desc: Freshdesk内のキャプセルCRMから連絡先に関する情報を閲覧することができます。この情報はチケット詳細ページや連絡先詳細ページからもアクセスできます。
+      form: 
+        api_key: APIキー
+        api_key_info: "独自のAPIキーを取得するには、キャプセルCRMアカウントにログインして、<br /> <b>“ユーザー　-> My Preferences”</b>へ移動してください。（これは画面の右上にあります。）<br /> 次に<b>“API Authentication Token”</b>をクリックして、APIキーを取得してください。<br /> キーをコピーして上のテキストフィールド内にペーストしてください。"
+        bcc_drop_box_mail: メールドロップボックズアドレス
+        bcc_drop_box_mail_info: "カプセルドロップボックスメールはr <b>“Settings -> Mail Drop Box”</b>内にあります。<br /> (画面の右上にあります。)<br /> メールアドレスをコピーして上のテキストフィールド内にペーストしてください。 <br /> チケットに返信する時、Freshdeskは自動的にこのメールアドレスをBccフィールドに追加します。"
+        domain: ドメイン
+        domain_info: httpsを付けずにドメインのみを入力してください　例）example.capsulecrm.com
+        widget_title: ウィジェット題名
+      label: キャプセルCRM
+    capsule_crm: 
+      helptext: "{<h4>キャプセルからFreshdeskにリンクを戻す</h4><p>{<br/>キャプ競るCRM内にリンクを作成し、連絡先のチケットをFreshdesk内で閲覧できるようにできます。</p> <p>このように設定するためには、<br /><b>設定 -> カスタムフィールド -> 人&団体用</b>へと進んでください。</p><p> 次に、「…を追加」をクリックして<b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+      label: キャプセルCRM
+    custom_application: 
+      desc: カスタムのスクリプトを使用して、表示させたい詳細を追加するなどカスタムウィジェットを追加することもできます。
+      description: 詳細
+      edit: カスタムウィジェットを編集する
+      form: 
+        create_n_enable: 作成して有効にする
+        insert_placeholder: プレースホルダーを挿入する
+        widget_script: ウィジェットコードの一部
+        widget_title: ウィジェット名
+      helptext: "<h4>カスタムウィジェットヘルプ</h4><p><br/>html, css, javascriptなどを津s下って、カスタムのウィジェットを作成することができます。</br></br>カスタムウィジェットを作成するには、新しいウィジェットの名前と短い紹介文を入力してください。</br> 「スクリプト」の部分に、コードを入力して下さい。スクリプトについての詳細については、ソリューションズページをご参照ください。.</br>}</br><b>プレビューを表示する</b> をクリックすると、チケットと連絡先ページで表示されるウィジェットのプレビューを見ることができます。"
+      label: カスタムウィジェット
+      name: 名前
+      new: 新しいカスタムウィジェット
+      script: スクリプト
+      small_help_text: html、css、javascriptを使ってカスタムのウィジェットを作成することができます。
+    freshbooks: 
+      desc: Freshbook上のプロジェクトやタスクに、チケットに使用した時間を記録することができます。
+      form: 
+        api_key: 認証トークン
+        api_url: "API URL"
+        api_url_info: "httpsも含めたAPI URLを入力してください。例）https://example.freshbooks.com/api/2.1/xml-in"
+        freshbooks_note: メモテキスト
+        freshbooks_note_info: このテキストはメモの最後に、使用された時間のログと共に付け加えられます。
+        widget_title: ウィジェット題名
+      helptext: "<h4>Freshbooks統合ヘルプ</h4><p>{<br/>FreshbooksをFreshdeskと統合するには、FreshbooksのAPIと認証トークンを取得する必要があります。<br/><br/>Freshbooksアカウントにログインし、 <b>People tab</b> をクリックして、<b>Staff and Contractors subtab</b>を開きます。次に、管理ページ内の <b>編集</b> をクリックします。 API URLと認証トークンがそこにあります。<br/><br/>Freshdesk内では、チケットをクリックしてタイムシートタブを開きます。タイムトラッキングエントリーをFreshbookに追加できるようになります。"
+      label: Freshbooks
+    google_analytics: 
+      account_number: トラッキングIDを入力してください
+      desc: "Google Analyticsを使用して、サポートポータル上で訪問者ステータスの管理をする"
+      domain: ドメイン
+      form: 
+        copy_settings: 上記のトラッキングIDを全てのポータルで使用できます
+        tracking_id: 〜のためのトラッキングID
+        tracking_id_example: "Eg: UA-123456-1"
+      helptext: "<h4>Google Analytics 統合ヘルプ</h4><p>{<br/> Google AnalyticsをFreshdeskと統合するには、Google ANalytics内の企業アカウントの中に専門のプロパティを作成することが推奨されています。<br/><br/>プロパティを作成するには、Google Analyticsアカウントにログインし、管理タブを開いて希望するアカウントを選択します。次に、 <b>'New Property'</b>を選択して作成してください。'<b>Website URL'</b>, 内に、サポートポータルのURLリンクを入力し、<b>'Create Property'</b>をクリックします。そうすると、新しく作成されたプロパティをクリックすると、プロパティ名の下に<b>'Property ID'</b> が表示されるようになるはずです。これをコピーし、Freshdesk内のGoogle Analytics 設定にコピー＆ペーストしてください。</p>"
+      inline_help: 次のためのトラッキングイDを入力する：
+      label: "Google Analytics"
+      portal: ポータル
+    google_contacts: 
+      MERGE_LATEST: FreshdeskとGoogle連絡先をマージする（最新の更新が優先されます）
+      MERGE_LOCAL: FreshdeskとGoogle連絡先をマージする（Freshdeskが優先されます）
+      MERGE_LOCAL_small: マージ（Freshdesk優先）
+      MERGE_REMOTE: GoogleとFreshdesk連絡先をマージする（Google優先）
+      MERGE_REMOTE_small: マージ（Google優先）
+      OVERWRITE_LOCAL: Freshdeskの連絡先と更新内容をGoogle連絡先にエクスポートする
+      OVERWRITE_LOCAL_small: エクスポート
+      OVERWRITE_REMOTE: Google連絡先と更新内容をFreshdesk連絡先にインポートする
+      OVERWRITE_REMOTE_small: インポート
+      account: アカウント
+      account_not_configured: Googleアカウントが正しく設定されていません。また試してください。
+      add_more: 当たらしアカウントを同期する
+      already_exist: このメールは既に設定されています。同じメールを追加することはできません。
+      delete: 削除
+      delete_action: 
+        error: Googleアカウントの削除中にエラーが発生しました。
+        success: Googleアカウントを削除しました。
+      desc: GoogleとFreshdeskの連絡先を定期的に同期する
+      edit: 編集
+      edit_app: 更新
+      edit_form: 
+        edit_app_title: Google連絡先の同期設定を編集する
+        import_group: インポートするグループを選択する（任意）
+        import_title: Google連絡先インポート設定
+        install_title: GOogle連絡先同期設定
+        mail_box_detail: 〜と同期
+      edit_helptext: "<h4>Google連絡先同期ヘルプ</h4><p><br/> <b>インポートするグループを選択する（任意）</b> <br/> Google同期の設定と同時に、ここに掲載された既存のグループの連絡先を任意でインポートすることもできます。Freshdeskにインポートしたい連絡先のあるグループを選択してください。<br/><br/>  <b>同期設定</b><br/> この設定は、FreshdeskとGoogleの連絡先間の同期を管理します。指定された <b>'同期タグ'</b> を付されたFreshdesk連絡先は、Googleと同期されます。また、Googleよりインポートされた連絡先についても、 <b>'同期タグ'</b>が付されます。<br/><br/> Googleの連絡先と同期するために、ここに記載された特別なグループが作成されます。初めての同期以降は、全ての連絡先がこのグループに追加され、Freshdeskに同期され直します。逆も同様です。"
+      email: メール
+      enable_integration: インポートが完了したら、自動的に同期を開始する（一日一回）。
+      fetch_problem: Google連絡先を取得する上で問題が発生しました。
+      form: 
+        account_not_configured: "<br/>Googleアカウント設定がまだされていません。%{action}をクリックし、新しいアカウントとGoogleを設定してください。<br/><br/>"
+        sync_type: 同期種類
+        sync_type_info: GoogleとFreshdesk間の連絡先をどのように同期しますか？
+      group: グループ名を同期する
+      helptext: "{<h4>Google連絡先同期セットアップヘルプ</h4><p><br/>まず<b>‘新しいアカウントを同期する’</b>をクリックして、同期したい新しいGoogleアカウントを追加してください。許可を求められたら、FreshdeskがGoogle連絡先を使用できるよう許可してください（Googleユーザー名＆パスワードを入力してください）。<br/>{<br/>同期を停止したい場合は、アカウントを削除することもできます。<br/><br/><b>注意：</b> 同期を開始する前に、Google連絡先のバックアップを取得することが推奨されています。"
+      import: インポート
+      import_complete: 一度限りのインポートが完了しました。
+      import_later_success: Google連絡先のインポートが開始されました。インポートステータスを設定ページ自体で確認することができます。
+      import_problem: Google連絡先のインポート中に問題が発生しました。
+      import_success: |-
+          Google連絡先が同期されました。
+          ステータス：%{added}追加、%{updated}更新、そして%{deleted}の削除。
+      import_success_no_stats: Google連絡先がインポートされました。
+      info1: 複数のGoogleアカウントにわたって同じ同期タグを使用すると、全てのアカウントをFershdesk連絡先と共有するようにできます。もしGoogleと同期したい連絡先がない場合は、空欄にしてください。
+      install: インポート＆アクティブにする
+      internal_error: 内部エラーが発生しました。サポートにお問い合わせください。
+      label: Google連絡先同期
+      last_sync: 最後の同期
+      last_sync_status: 最後の同期ステータス
+      last_sync_time: 最後の同期時間
+      no_status: N/A
+      not_yet_synced: 同期は開始されていません
+      overwrite_existing_user: 既存のFreshdesk連絡先に上書きする
+      sync_group_info: "新しい連絡先グループ<strong>%{group_name}</strong>が、連絡先を同期するためにGmailアカウント内に作成されます。"
+      sync_status: 
+        added: 追加済み
+        deleted: 削除済み
+        freshdesk: Freshdesk内のインポート連絡先のステータス
+        google: Google内のエクスポートされた連絡先のステータス
+        modified: 変更済み
+      sync_type: どう同期するか？
+      syncing_in_progress: 同期中
+      tag: 同期設定
+      tag_label: 同期タグ
+      update_action: 
+        also: また
+        error: Googleアカウント更新中にエラーが発生しました。
+        success: Googleアカウントの追加に成功しました。
+    harvest: 
+      desc: チケットに使用された時間をHarvestプロジェクトやタスク内に記録することができます。
+      form: 
+        domain: ドメイン
+        domain_info: httpsを含まず、ドメインのみを入力してください。例）example.harvestapp.com
+        harvest_note: メモテキスト
+        harvest_note_info: このテキストはメモの最後に、使用された時間のログと共に付け加えられます。
+        widget_title: ウィジェット題名
+      helptext: "<h4>Harvest統合ヘルプ</h4><p><br/>HarvestをFreshdeskと統合するには、 <b>ドメイン名</b>} を入力して、有効にするをクリックしてうください。<br/>{<br/>チケットをクリックし、<b>タイムシートタブ</b>}.を開いてください。Harvest<b>ユーザー名</b> と<b>パスワード</b>を入力し、ログインできます。Harvestに時タイムトラッキングログを追加できます。<br/><br/>メモ：<b>Remember me</b>をクリックすることで、毎回Harvestの認証内容を入力する手間を省くことがdけいます。"
+      label: Harvest
+    jira: 
+      desc: チケットをJIRAでトラックできるイシューに変換する
+      form: 
+        add_jira_comment: JIRAのコメントとして追加する
+        add_note: 非公開メモとして追加する。
+        do_nothing: 何もしない。
+        domain: ドメイン
+        domain_info: "httpやhttpsを含んだJIRA URL全体を入力してください。例） https://example.atlassian.net. <br /><span class='italics'> 注意：JIRAのオンプレミスバリエーションを全てインターネットに公開しなければなりません。 </span>"
+        fd_comment_sync: "Freshdesk%{dropdown}に追加された全てのコメント用"
+        fd_status_sync: "Freshdeskステータス%{dropdown}に加えられたあらゆる変化用"
+        jira_comment_sync: "JIRAイシュー%{dropdown}に追加された全てのコメント用"
+        jira_note: 詳細説明テキスト
+        jira_note_info: このテキストはJIRAのイシュー説明文に追加されます。
+        jira_status_sync: "JIRAイシューステータス%{dropdown}に加えられた全ての変更用"
+        jira_status_sync_update_customer: カスタマーに返信を送信し、ステータスフィールドを更新する
+        jira_status_sync_update_field: Freshdeskのステータスフィールドを更新する
+        password: パスワード
+        send_reply: カスタマーにリプライとして送信する
+        update_jira_status: JIRAステータスも加えて更新する
+        username: ユーザー名
+        widget_title: ウィジェット題名
+      helptext: "<h4>JIRA I統合ヘルプ</h4><p><br/>FreshdeskとJIRAを統合するためには、JIRA管理人ユーザー名とパスワードをん入力してください。統合はJIRA4.2から最新のバージョン5までの全てのオンプレミスバリエーションをサポートします。<br/><br/>イシューまたはリンクを、Freshdeskの既存のイシューから作成するためには、チケットページに進んで、<img src='/images/ticket-icon/jira.png'/><br/><br/>をクリックしてください。JIRAにリンクされたFreshdeskチケットの詳細を閲覧し、またはFreshdeskでJIRAイシューの詳細を閲覧するためには、JIRA管理人はフリーテキストカスタムフィールドを作成することが推奨されています。このフィールドは、名前を以下に例示されたように、&quot;Freshdesk Tickets&quotとすることが推奨されています。<br/><br/>JIRAアカウントにログオンし、<b>Administration</b>をクリックし、<b>Issues</b> -> <b>Fields</b>と進んで<b>Add Custom Field</b>をクリックします。 <b>Create Custom Field</b>画面で、,  <b> Free Text Field </b>を選択し、 <b>Next</b>をクリックします。そして、<b>&quot;Freshdesk Tickets&quot;</b>をフィールド名に入力し、終了します。 <b>Associate field to Screens</b> ページ内で、全てのチェックボックスにチェックを入れ、'Update'を選択してください。<br/><br/>"
+      label: "Atlassian JIRA"
+    jira_settings: 
+      add_comment_in_jira: JIRAにコメントを追加する
+      add_private_note_in_fd: Freshdeskに非公メモを追加してエージェントにお知らせする。
+      add_public_note_in_fd: Freshdeskに公開メモを追加する。
+      none: 何もしない。
+      send_reply_in_fd: メールでカスタマーに知らせる
+      update_jira_status: JIRAステータスを更新する
+      update_status_in_fd: Freshdeskのステータスを更新する。
+    logmein: 
+      desc: "LogMein Rescueを使用して、カスタマーや従業員に遠隔サポートを早急に提供する"
+      form: 
+        company_id: 企業ID
+        logmein_company_info: "企業IDを取得するには、管理センター -> 技術者グループ ->グローバル設定 -> ASP.NET C# サーバーサイド例　にアクセスしてください"
+        logmein_sso_pwd_info: "SSOパスワードを設定するには、管理センター -> 技術者グループ ->グローバル設定 ->シングルサインオン -> 新しいSSOパスワード　にアクセスしてください"
+        password: SSOパスワード
+        widget_title: ウィジェット題名
+      helptext: "<h4>LogMeIn Rescue 統合ヘルプ</h4><p><br/> LogMeIn Rescue をFreshdeskと統合するには、, LogMeIn Rescue 企業ID とSSOパスワードを入力して、更新するをクリックしてください。<br/>有効になると、LogMeIn Rescue ウィジェットがチケット詳細ページに表示されるようになります。<br/><br/>&quot;Launch Technician Console&quotを使用して、技術者コンソールを直接Freshdeskウィジェットから起動できるようになります。 <br/>そうすると、PINコードを作成し、リクエスターに手順をシェアすることで、LogMeIn Rescueによるサポートを継続dけいます。<br/><br/> <b>注意:</b> エージェントのメールアドレスはLogMeIn Rescueの技術者SSO IDと一致しなければなりません。SSO IDを設定するには、管理センター -> 技術者名 -> 団体 -> SSO ID　にアクセスしてください。"
+      label: "LogMeIn Rescue"
+      note: 
+        chatlog: チャットログ
+        header: "LogMein Rescueセッションに関する詳細"
+        platform: エンドユーザープラットフォーム
+        session_id: セッションID
+        tech_email: 技術者のメールアドレス
+        tech_name: 技術者名
+        tech_notes: 技術者めも
+        work_time: 技術者のワークタイム（秒）
+    salesforce: 
+      desc: "Freshdesk内のSalesforce crmを通して、連絡先に関する情報を閲覧することができます。"
+      form: 
+        salesforce_settings: Salesforce設定
+      label: Salesforce
+    sugarcrm: 
+      desc: Freshdesk内のSugarCRMを通して連絡先に関する情報を閲覧することができます。
+      form: 
+        domain: "SugarCRM アカウントURL"
+        domain_info: "例えば、もしSugarCRMのURLが<strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong>なら、 <strong> http://mycompany.xyz/sugar </strong><br /><br />と入力してください。メモ： SugarCRMのオンプレミスバリエーションは全てインターネットに接続していなければなりません。 </span>"
+        password: パスワード
+        username: ユーザー名
+        widget_title: ウィジェット題名
+      helptext: "<h4>Sugar CRM 統合ヘルプ</h4><p><br/> Freshdeskのチケット＆連絡先ページから、SUgarCRMの連絡先情報をアクセスすることがdけいます。 <br /><br /> 次のデータにアクセスすることができます：名前、肩書き、会社、部署、連絡先アドレス、電話番号＆携帯電話番号。<br /><br />メールアドレスに基づいて検索できることに注意してください。もし同じメールアドレスを使用する連絡先が複数ある場合は、全てリストとして表示されます。"
+      label: SugarCRM
+    workflow_max: 
+      desc: "チケットに使用した時間をWorkflow Max のジョブとタスクに記録することができます。"
+      form: 
+        account_key: アカウントキー
+        account_key_info: "Workflow Maxサポートからアカウントキーを取得して、同じものをここにペーストしてください。"
+        api_key: APIキー
+        api_key_info: "Workflow MaxサポートからAPIキーを取得して、同じものをここにペーストしてください。"
+        widget_title: ウィジェット題名
+        workflow_max_note: 付け加えるためのメモテキスト
+        workflow_max_note_info: このテキストはメモの最後に、使用された時間のログと共に付け加えられます。
+      helptext: "<h4>Workflow Max 統合ヘルプ</h4><p><br/> Workflow MaxタイムトラッキングをFreshdeskと統合するには、 <a href='mailto:support@workflowmax.com'>WorkflowMax Support</a>からアカウントキーとAPIキーを取得しなければなりません。指定されたフィールドにキーを入力して統合を終了してください。  <br/><br/>統合が完了したら、チケットにクリックしてタイムシートタブに進んでください。ここでスタッフ、ジョブ、タスクを選択し、タイムエントリーをWorkflow Maxに追加することができます。"
+      label: "Workflow Max"
+  is: は
+  is_expiring_today: 今日期限切れになります
+  is_not: では
+  last: 最後
+  last_draft: 最後の下書き
+  last_name: 名字
+  latest_ticket: 新しい更新
+  latest_tickets: 当たらし更新
+  lead: リード
+  left: 左
+  less_than: より少ない
+  level_label: レベル
+  linkback_info: カスタマーがヘッダーロゴをクリックした時に自分のホームページにリンクバックするよう設定することもできます。
+  linkback_overlabel: ヘッダーロゴ
+  loading: 
+    activities: アクティビティをロード中
+    items: アイテムをロード中
+  logmein_source: "LogMeIn Rescue"
+  logo: ロゴ
+  logo_delete_msg: このロゴを削除しますか？
+  low: 低い
+  mark_as_spam: スパムとしてマークする
+  maximum_agents_admin_msg: "申込み内容によるエージェント数上限に達しました。フルタイムエージェントを減らすか、 <a href='/subscription/plans'>アカウントをアップグレード</a>してエージェントを追加してください。もしフルタイムでないエージェントが必要ならば、以下にて一つ追加することができます。"
+  maximum_agents_msg: 申込み内容によるエージェント数上限に達しました。既存のエージェントを減らすか、アカウント管理人に問い合わせてアカウントをアップグレードしなければなりません。もしフルタイムでないエージェントが必要ならば、以下にて一つ追加することができます。
+  medium: 中
+  message: メッセージ
+  meta: 
+    language_name: 'Japanese'
+  mobile: 
+    home: 
+      login: サインイン
+      remember: ログイン情報を記録する
+      sign_in_error: メールアドレスまたはパスワードが間違っています。
+      sign_in_using: …又はサインインする
+  name: 名前
+  never: 絶対にしない
+  new_ticket_created: 新しいチケットが作成されました
+  next: 次
+  next_charge_amount: "%{type}の値段:"
+  next_charge_date: 次の支払いが処理されるのは：
+  next_level_info: "あと+%{points}を取得すれば %{name}になれる"
+  no_badge_achieved_label: まだバッジを獲得していません
+  no_change: 変更なし
+  no_date_to_display: 表示するデータがありません
+  no_forum_category: このカテゴリーにフォーラムはありません
+  no_level_achieved_label: 達成されたレベルがありません。
+  no_message: 
+    canned_responses: 定型文返信はありません。
+    products: まだプロダクトを作成していません。
+  no_password_reset: いいえ
+  no_tags: タグが見つかりません。
+  no_topics_text: このフォーラムにトピックはありません
+  no_twitter_handle: 最低でも１つのtwitterアカウントを構成して下さい
+  non_covered_feature_error: 現在のFreshdeskプランではこの機能はご使用頂けません
+  not_eligible_for_free_plan: 無料プランを選択する権限がありません
+  not_selected: 選択されていません
+  note: メモ：
+  notified_to: にお知らせ
+  ok: Ok
+  on_hold: 保留中
+  one: 1時間
+  onemonth: １ヶ月
+  oneweek: １週間
+  open: オープン
+  open_tickets: オープンチケット
+  or: 又は
+  paid_with: によって支払い
+  password: パスワード
+  password_reset_email: パスワード再設定メール
+  payment_info: 支払い情報
+  pending: 保留中
+  phone: 電話
+  plan_amount: エージェント/月毎
+  plan_info_update: プランが変更されました。
+  plan_is_selected: "%{plan}プランの無料アカウントが有効になりました"
+  plans_billing: プラン＆ご利用明細
+  portal: 
+    search: 
+      placeholder: キーワード又は質問で検索する
+  portal_captcha: ログインせずにチケットを提出する際、キャプチャ(captcha)の使用を強制化する
+  portal_captcha_anon: ユーザーがキャプチャ(captcha)を使用してチケットを提出しなければならないように設定するには、この機能を有効にして下さい。
+  portal_customizer_anon_for_f: カスタマーがFacebookのユーザー名とパスワードを使用してサインインできるようにするためには、この機能を有効にして下さい。
+  portal_customizer_anon_for_g: カスタマーがGoogleアカウントのユーザー名とパスワードを使用してサインインできるようにするためには、この機能を有効にして下さい。
+  portal_customizer_anon_for_i: 公開のカスタマーポータルで「フォーラム」タブを表示しないためには、この機能を無効にして下さい。
+  portal_customizer_anon_for_t: カスタマーがTwitterのユーザー名とパスワードを使用してサインインできるようにするためには、この機能を有効にしてください。
+  portal_customizer_anon_tickets: 誰でもチケットを提出できます
+  portal_customizer_anon_tickets_i: ユーザーがサインインしなければチケットを提出できないよう設定するには、この機能を無効にしてください。
+  portal_customizer_auto_suggest_solutions: ユーザーが新しいチケットを作成する際、既存のソリューションを提案したい場合は、この機能を有効にしてください。
+  portal_customizer_facebook_signin: ユーザーがFacebookを使用してサインインできるようにする
+  portal_customizer_google_signin: ユーザーがGoogleアカウントを使用してサインインできるようにする
+  portal_customizer_open_forums: 誰でもフォーラムを見ることができます
+  portal_customizer_open_sol_i: 公開のカスタマーポータルで「ソリューション」タブを表示しないためには、この機能を無効にして下さい。
+  portal_customizer_open_solutions: 誰でも公開ソリューションを見ることができます
+  portal_customizer_option_auto_suggest_solutions: ユーザーが新しいチケットを作成する際、自動的にソリューションを提案する
+  portal_customizer_option_for_i: ユーザーがログインしなければソリューションを見ることができないよう設定するためには、この機能を無効にしてください
+  portal_customizer_option_forums: ユーザーはログインせずにフォーラムを見ることができます
+  portal_customizer_option_sol_i: ユーザーがログインしなければソリューションを見ることができないよう設定するためには、この機能を無効にしてください
+  portal_customizer_option_solutions: ユーザーはログインせずに公開ソリューションを見ることができます
+  portal_customizer_option_tickets: ユーザーはログインせずにチケットを提出できます
+  portal_customizer_option_tickets_i: ユーザーがログインしなければチケットを提出できないよう設定するためには、この機能を無効にしてください
+  portal_customizer_title: 公開カスタマーポータルをカスタマイズする
+  portal_customizer_twitter_signin: ユーザーがTwitterを使用してサインインできるようにする
+  portal_key: ポータル
+  portal_signup: ユーザーがカスタマーポータルからサインアップできるようにする
+  portal_signup_anon: ユーザーがサインアップして自分のユーザーアカウントを作成できるようにするには、この機能を有効にしてください。有効にすると、ユーザーはログインしてフォーラムに参加したり、投票したりできるようになります。
+  posted_by: による書き込み
+  premium_brief: 売上高
+  premium_details: "&quot; プロ&quotの中身; プラン・プラス,複数商品サポート, 複数タイムゾーンサポート, コミュニティ,メール &amp; 電話サポート"
+  preview: プレビュー
+  pro_brief: より大きいチーム用
+  pro_details: "&quot;ベーシック&quotの中身; プラン・プラス、シナリオ・オートメーション、カスタマーに特化したSLA、勤務時間機能、フォーラム、コミュニティ&amp; メールサポート。"
+  problem: 問題
+  proceed_now: |-
+      
+      
+      進みますか？
+  profile: 
+    api_key: 
+      reset: APIキーをリセットする
+      reset_warning: APIキーをリセットすると、リセット前のキーを使用したアプリケーションが全て機能しなくなります。リセットを実行しますか？
+      title: APIキー
+    change_password: パスワードを変更する
+    confirm_password: パスワードを確定する
+    current_password: 現在のパスワード
+    edit: プロフィールを編集する
+    new_password: 新しいパスワード
+  quests: 
+    badge_mand: 新しいバッジを選択してください。
+    customer_votes: 票数
+    date: 月日
+    delete: このクエストを削除しますか？
+    fcr: によるファーストコール解消
+    forum_category: カテゴリー
+    forum_mand: フォーラム数をポピュレートしてください
+    forums: フォーラム
+    inactive_quests: アクティブでないクエスト
+    js_forum_txt: "$$questtime$$内にこれら条件に合致するよう$$questmode$$ $$questvalue$$ フォーラムに書き込んでください。"
+    js_quest_txt: "クエストを無事クリアできると、$$badgename$$ バッジと$$questpoints$$ ボーナスポイントを解除してください。"
+    js_solution_txt: "$$questtime$$ 内に$$questvalue$$ナレッジベースの項目をこれらの条件に合致するように作成してください。"
+    js_ticket_txt: " $$questtime$&内に  $$questvalue$$チケットをこれらの条件に合致するように解決する。"
+    name_mand: クエスト名を入力してください。
+    satisfaction: カスタマー満足度
+    solution_articles: 項目
+    solution_folder: フォルダー
+    solution_likes: イイネ！の数
+    solution_mand: ソリューション数をポピュレートしてください。
+    ticket_mand: 解決されたチケットの数をポピュレートしてください。
+  recent_activities: 最近のアクティビティ
+  recent_activity: 最近のアクティビティ
+  recent_forum_posts: 最近のフォーラム書き込み
+  referral: 紹介クレジット
+  remove: 削除する
+  reorder: 再注文する
+  replied_to: へ返信
+  replies: 返信
+  reply: 返信
+  reply_topic: トピックに返信する
+  reports: 
+    customer_activity_title: 活動報告
+    customer_title: カスタマー活動報告
+    customer_title_nav: カスタマー活動報告
+    date_ranges: 
+      custom: 日程範囲
+      last_30_days: 直近の３０日
+      last_7_days: 直近の７日
+      last_90_days: 直近の９０日
+      today: 今日
+      yesterday: 昨日
+    generate_button: 生成する
+    helpdesk_activity_title: ヘルプデスク活動報告
+    helpdesk_title: ヘルプデスク活動報告
+    helpdesk_title_nav: ヘルプデスク活動報告
+    pie_chart_title_prefix: によるチケット
+    satisfaction_title: 満足度レポート
+    scoreboard_agent_title: エージェント・リーダーボード
+    scoreboard_group_title: グループ・リーダーボード
+    scoreboard_reports: 
+      champions_title: チャンピオン
+      sharpshooter_title: シャープシューター
+    scoreboard_title_nav: リーダーボード
+    select_customer: カスタマーを選択する
+    select_options: によるレポート
+    select_time_period: 時間を選択する
+    summary: 
+      fcr: ファーストコール解消
+      open_tickets: オープンチケット
+      pending_tickets: 保留中のチケット
+      received_tickets: 受け付けたチケット
+      resolved_tickets: 解消されたチケット
+      sla_compliance: SLAコンプライアンス
+      title: チケット概要
+      total_tickets: チケット合計
+    summary_report: 
+      avg_1st_response_time: 平均のファーストレスポンス時間
+      back_to_reports: レポートへ戻る
+      fcr_count: ファーストコンタクト解消
+      fcr_percent: "FCR %"
+      helptext: "レポートに計算されている数字は、解消されたチケット数を反映しています。 <br /> SLA内で解消されたチケットは、 &quot;On Time Resolution&quot;としてまとめられます。<br /> &quot;ファーストコンタクト解消&quot;欄は、最初の返信のうちに解消されたチケットを表示しています。<br /> &quot;平均ファーストレスポンス時間&quot; は、チケットが作成された時間とエージェントが最初に返信した時間の差異を示しています。"
+      on_time_resolution: 間に合った解消
+      on_time_resolution_percent: "OTR %"
+      show_report: レポートを表示する
+      tickets_resolved: 解消されたチケット
+    survey_reports: 
+      back_to: リスト表示へ戻る
+      feedbacks: 
+        in_response_to: に対する反応
+      index: 
+        agent_list_loading: エージェントリストを起動する
+      list: 
+        no_feedback: まだフィードバックがありません。
+      list_content: 
+        happy: 最高
+        neutral: まぁまぁ
+        rating_msg_multiple: "%{rating}を%{count}する"
+        rating_msg_none: "%{rating}と言った人はいません"
+        rating_msg_single: "%{rating}と言った人が一人います"
+        rating_primary_msg_multiple: "%{count}人のカスタマーが%{rating}と言いました"
+        rating_primary_msg_single: "%{rating}と言った人が一人います"
+        unhappy: あまり良くない
+      sidebar: 
+        filter_by: 満足度ビュー
+        from: より
+        helptext: "<b>なぜカスタマー満足度レポートを使用すると良いの?</b><p>カスタマー満足度レポートを使うと、カスタマーサポートエージェントのサービスの質を一目で知ることができます。<br>レポートを通して、パーセンテージバリュー（嬉しい、普通、嬉しくない）で表示されるカスタマーの満足度を知ることもできます。<br><br>{<b>他にも何ができますか？</b><br><p style='margin-left:15px;'>1.レポート結果をエージェント、グループまたは企業ごとにフィルターする<br>2.特定の期間に限定してレポートを表示させる</p>}</p>"
+        to: へ
+        view_report_date: の間のレポートを見る
+    surveys_title_nav: カスタマー満足度レポート
+    tab_heading: レポート
+    tickets_by: によるチケット
+    timeline_chart_title: "受け付けたチケット vs　解消済み"
+    timesheet_reports: 
+      index: 
+        from: より
+        select_agent: エージェントを選択する
+        select_billable: 請求可能/請求不可能を選択する
+        select_customer: カスタマーを選択する
+        title: タイムシート・レポート
+        to: へ
+        view_between: の間のレポートを見る
+  requester_reopens: リクエスターはチケットを再オープンします
+  requester_replies: リクエスターはチケットに返信します
+  reset: リセットする
+  reset_my_password: パスワードをリセットする
+  reset_password_title: パスワードをリセットする
+  resolution_time_sla: 解消時間SLA違反
+  resolved: 解決済み
+  resolved_late: 遅延した解消
+  resolved_on_time: 間に合った解消
+  resolved_tickets: 解消されたチケット
+  revert_identity_link_msg: アイデンティティを戻す
+  right: 正しい
+  save: 保存
+  save_and_close: 保存して閉じる
+  save_and_create: 保存してもう一つ作成する
+  save_and_new: 保存して新しい
+  save_changes: 変更を保存する
+  save_reply: 返信を保存する
+  save_this_view: 保存
+  save_this_view_tooltip: ビューを保存する
+  saved_draft: 保存済み
+  saving_draft: 保存中…
+  scenario_label: シナリオ名
+  search: 
+    no_results_msg: 見つかりませんでした
+  security_code: セキュリティーコード
+  select: 選択…
+  select_a_plan: プランを選択する
+  select_a_plan_gain_access: アカウントに最接続するためには、以下のプランから選択してください
+  select_another_plan: 別のプランを選択する
+  select_free_plan: 無料プランを選択する
+  selected: 選択済み
+  send_email_to_agent: エージェントにメールを送る
+  send_email_to_group: グループにメールを送る
+  send_email_to_requester: リクエスターにメールを返信する
+  set_password: パスワードを設定する
+  set_priority_as: 優先度を〜と設定する
+  set_status_as: ステータスを〜と設定する
+  set_type_as: 種類を〜と設定する
+  settings: 設定
+  show_quoted_text: 選択されたテキストを表示する
+  sign_in_info: 次のようにサインインされます：
+  signup: サインアップ
+  signup_complete_activate_info: ようこそ！パスワード設定とアカウント有効化をするためのURLリンクを、メールで送信しました。
+  signup_title: "%{current_portal}にサインアップする"
+  since: 以来
+  since_time: "%{time_words}以来"
+  sla_policy: 
+    business_time: 勤務時間
+    calendar_time: カレンダー時間
+    edit: SLAポリシーを編集する
+    escalate_to: 次へ上昇：
+    info1: SLAポリシーとは、チケット優先順位に応じて決められた目標返信時間や解消時間です。サービスレベルを優先順位を基準に設定することは、業界で使用されている最も良い方法です。SLAポリシーは、「高優先順位のチケットは２時間以内で解消する」など単純なものにもできます。
+    info2: FreshdeskはSLAポリシーを使用し、チケットの期限を確定します。全てのカスタマーについてデフォルトのSLAポリシーを設定することもできますが、もしより速い返信と解消を求められる特別なカスタマーを設定したい場合は、カスタマーに特化した特別なSLAポリシーを作成することもできます。
+    info3: SLAポリシーは勤務時間に対応して機能します。
+    new: 新しいSLAポリシー
+    override: 無視する
+    resolution_time: 解消時間
+    response_time: 返信時間
+    select_policy: ポリシーを選択する
+    sla_targets: SLAターゲット
+    tickets_with: を含むチケット
+    title: SLAポリシー
+    title1: SLAポリシー
+  social: 
+    facebook_pages: 
+      enable_facebook_page: 
+        associate: ヘルプデスクと関連づけたいFacebookページを選択してください。
+        no_page_info: "Facebookアカウントがないようです！ <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>アカウントを作成してサポートを始めてみましょう！</a>"
+      engage_info: 
+        add_facebook: Facebookページを追加する
+        associate_account: "Facebookページを <b> %{account_name} </b>と関連づけ、カスタマーからのコメントへの返事やウォールへの書き込みをfreshdesk内から行えます。"
+        engage_customers: Facebookを通してカスタマーと直に接しましょう
+        title: Facebookページを追加する
+      form: 
+        company_posts: "<strong>\"会社の書き込み\"</strong> をチケットとしてインポートする"
+        company_posts_info: このFacebookページに掲載されている会社の書き込みを全てFreshdeskのチケットに変換します。
+        direct_messages: <strong>"ダイレクトメッセージ"</strong>をチケットとしてインポートする
+        direct_messages_info: "このFacebookページに掲載されているダイレクトメッセージを全てFreshdeskのチケットに変換します。この機能を初めて起動する場合、 <a href='{{reauth_url}}'>Facebookで再認証</a>する必要があるかもしれません"
+        message_thread_time: メッセージスレッド時間
+        message_thread_time_info: 同じユーザーによるメッセージをスレッド済みと検討できる時間の上限
+        product: プロダクト
+        visitor_posts: "t <strong>\"訪問者に寄る書き込み\"</strong> をチケットとしてインポートする"
+        visitor_posts_info: このFacebookページに掲載されている訪問者による書き込みを全てFreshdeskのチケットに変換します
+      index: 
+        reauth_required: 再認証が必要
+        reauthorize: 再認証する
+        title: Facebookページ
+    twitter_handles: 
+      edit: 
+        twitter_settings_for_msg: のためのTwitter設定
+      form: 
+        capture_dm_info: このtwitterアカウントに対するダイレクトメッセージを全て自動的にFreshdeskチケットに変換します
+        capture_dm_msg: " <strong>\"ダイレクトメッセージ\"</strong> をチケットとして取り込む"
+        capture_mentions_info: このtwitterアカウントに対する@メンションを全て自動的にFreshdeskチケットに変換します
+        capture_mentions_msg: "<strong>\"@メンション\"</strong> をチケットとして取り込む"
+        dm_time_info: 同じユーザーによるダイレクトメッセージをスレッド済みと検討できる時間の上限
+        dm_time_msg: DM（ダイレクトメッセージ）スレッド時間
+        info_data: "商品/ブランド/サービスに関するTwitter検索を素早く管理できるよう手助けします。<br /> <strong>注意：</strong> 間に点を挟むことで複数のキーワードを追加することができます。"
+        product: プロダクト
+        search_keywords: 検索キーワード
+      index: 
+        remove_handle_msg: このtwitterアカウントを削除しますか？
+        title: Twitterアカウント
+      signin_info: 
+        add_twitter: Twiterアカウントを追加する
+        associate_account: "<b>  %{product_name} </b>にtwitterアカウントを関連づけ、Freshdesk内からカスタマーに対してツイート又はメッセージを送信できます。"
+        engage_customers: Twitterを通してカスタマーと直に接しましょう
+        title: twitterを使ってサインインする
+  solution: 
+    add: ソリューションを追加する
+    add_new_solution: 新しいソリューションを追加する
+    edit: ソリューションを編集する
+    folder: フォルダー
+    folders: 
+      folder_form: 
+        visible_to: 閲覧可能者
+      new: 
+        new_folder: 新しいフォルダー
+    info1: Freshdeskのソリューションはナレッジ・ベースです
+    info10: 非公開（エージェントのみ閲覧可）
+    info2: "ソリューションは<b>公開</b>または<b>非公開</b>に設定できます。 公開のソリューションは、セルフサービスポータルおよび検索結果に表示されます"
+    info3: 非公開ソリューションとは、内部情報の交換用に使えるエージェント限定のソリューションです
+    info4: "ソリューションは３段階の上下関係にあります- <b>カテゴリー -->フォルダー -->項目</b>"
+    info5: "ソリューションは２種類に分類できます-<b>ワークアラウンド（応急処置）</b>または <b>パーマネント（固定的処置）</b>のソリューション"
+    info6: "作業中のソリューションは<b>下書き</b> ステータスに、作成が終了したものは<b>公開</b> ステータスに設定できます"
+    info7: このフォルダーにソリューションはありません
+    info8: このソリューションを削除しますか？
+    info9: 公開（セルフサービスにも表示されます）
+    no_solutions_info: このフォルダーにソリューションはありません
+    status: ソリューション・ステータス
+    title: ソリューション
+    type: ソリューション種類
+    visibility: 公開度
+  solution_category: 
+    edit: ソリューションのカテゴリーを編集する
+    info1: 本当にこのカテゴリーを削除しますか？
+    info2: このカテゴリーにフォルダーはありません
+    name: カテゴリー名
+    new: 新しいソリューションカテゴリー
+    save_and_create: 保存してもう一つ作成する
+  solutions: 
+    search: 
+      placeholder: "検索 %{name}"
+    search_all: 
+      placeholder: 全てのソリューションを検索する
+    status: 
+      draft: 下書き
+      published: 公開
+    types: 
+      permanent: パーマネント
+      workaround: ワークアラウンド
+    visibility: 
+      agents: エージェント
+      all: 全て
+      anyone: 全員
+      logged_in_users: ログイン中のユーザー
+      select_company: 会社を選択する
+  special_beta_offer: ベータアカウント用のスペシャルオファー
+  sprout_brief: ロバスト・メール・ヘルプデスク
+  sprout_details: メール返信管理、全てのオートメーション、デフォルトSLAポリシー、ナレッジー・ベース、セルフサービスポータル、ドメインマッピング、ベーシックレポーティング機能、コミュニティサポート
+  start_typing_a_question: 質問を打ち始めると、リアルタイムで返答を見ることができます
+  starts_with: で始まる
+  state: ステータス
+  status: ステータス
+  status_cust_disp_name_uniqueness_msg: ステータスカスタマー表示名は既に使用されています
+  status_deleted: ステータス削除済み
+  status_name_validate_presence_msg: ステータス名は空欄にできません
+  status_name_validate_uniqueness_msg: ステータス名は既に使用されています
+  step1: ステップ１
+  step2: ステップ２
+  subject_or_description: 主題または詳細
+  submit: 提出
+  subscription: 
+    error: 
+      lesser_agents: "このfreshdeskアカウントは現在%{agent_count}エージェントとつながっていますが、エージェントをこれ以上減らすことはできません。いくつかエージェントを削除してから試してみてください"
+  subscription_plan: 
+    billing_cycle: 
+      annual: 年次
+      monthly: 月次
+      quarterly: 四半期
+      sixmonth: 半期
+  success: 成功
+  support: 
+    shared: 
+      survey_form: 
+        cancel: キャンセル
+        change_of_mind: 変更しますか？
+        feedback_title: ご感想や詳しい評価は我々の更なるサポート向上に役立ちます
+        rate_again: また評価する
+        rated_on: "%{rated_on}でこのような評価を頂きました"
+        submit: 提出する
+        survey_title: サービスの評価にご協力ください
+    surveys: 
+      feedback_already_done: この返信に対するフィードバックを既に提出済みです
+      new: 
+        additional_info: また、このサービスをご使用された経験をシェアすることもできます。
+        feedback_info: ご協力頂き、誠にありがとうございます。
+        feedback_optional: フィードバックは任意で提出できます
+        happy_info: 我々のサービスにご満足頂き、大変光栄です
+        neutral_info: もう少し満足して頂ければ幸いでした
+        send: 送信
+        sorry: ご迷惑をおかけし、申し訳ございませんでした。
+        thanks: 評価にご協力頂き、誠にありがとうございます！
+        thanks_info: 我々のサービスの評価にご協力頂き、誠にありがとうございました。
+        unhappy_info: 次回はより慎重にご対応できますよう、細心の注意を払います。
+      thanks_for_feedback: フィードバックを受信しました。誠にありがとうございます。
+  suspended_plan_admin_info: "アカウントが停止されました、管理人アカウント%{email}をご連絡ください！"
+  suspended_plan_info: アカウントが停止されました、実行するにはプランを選択してください！
+  switch_heading: エージェントを変更する
+  swith_agent_msg: 別のエージェントに変更する
+  tag: 
+    title: タグ
+  this_ticket_has_been_closed: このチケットはクローズされました
+  this_ticket_has_been_deleted: このチケットは削除されました
+  this_ticket_has_been_resolved: このチケットは解消されました
+  threeday: 3日
+  threemonth: ３ヶ月
+  ticket: 
+    activities: アクティビティ
+    activity: アクティビティ
+    add_note: メモを追加する
+    add_time: 時間を追加する
+    agent_notify: が見て頂きたいメモを追加したようです
+    agent_responded_at: エージェントが返信してからの経過時間
+    assign_to_agent: エージェントに割り当てる
+    assigned_agent: エージェント
+    assigned_at: 割り当てられてからの経過時間
+    assigned_none: "-"
+    assigned_to: に割り当て
+    canned_responses: 
+      ca_responses: 定型文
+      insert_ca_resp_tip: 定型文を挿入する
+      insert_ca_response: 定型文返信
+    close_btn: クローズ
+    close_btn_title: このチケットをクローズする
+    closed_at: クローズされてからの経過時間
+    convert_ticket_title: チケットに変換する
+    create_ticket_title: チケットを作成する
+    created_at: 作成されてからの経過時間
+    created_on: "%{time}に作成"
+    delete_btn: 削除
+    delete_btn_title: このチケットをゴミ箱へ移動する
+    due_by: チケットが制限時間を超過してからの経過時間
+    due_by_time: 締め切り
+    edit: チケットを編集する
+    edit_btn: 編集
+    execute_scenario: シナリオを実行する
+    export: エクスポート
+    facebook_form: 
+      send: 送信
+      send_and_resolve: 送信して解消する
+    first_assigned_at: 初めて割り当てられてからの経過時間
+    first_response_due: 最初のレスポンスの締め切りを超過してからの時間経過
+    flag_spam: スパムと指定する
+    group: グループ
+    ham_btn_title: これはスパムではありません
+    inbound_count: リクエスターとの接触回数
+    integrations: 
+      jira: 
+        tooltip: 関連づけられたJIRA課題を見る
+    merge_btn: マージ
+    monitor_btn_title: このチケットを管理する
+    note_content: メモの中身
+    note_form: 
+      add_and_resolve: 追加して解消する
+      form_title: メモを追加する
+      notify_agents: エージェントに報告する
+      private_note: これは非公開メモです、リクエスターに表示しないでください
+    opened_at: リオープンされてからの経過時間
+    pending_since: 保留中にされてからの経過時間
+    pick_up: ピックアップ
+    portal_created_on: "<span class='emphasize'>%{username}</span>によって<span class='emphasize'>%{date}</span>に作成"
+    portal_created_on_same_user: "<span class='emphasize'>%{date}</span>に作成"
+    priority: 優先順位
+    properties: チケットプロパティ
+    recent_tickets: 最近のチケット
+    reply_form: 
+      form_title: 会話に返信する
+      post_to_linked_forum: リンクされたフォーラムに書き込む
+      reply_email_id: 次のメールIDから返事を送信する
+      send: 送信
+      send_and_resolve: 送信して解消する
+      send_satisfaction_survey: 満足度アンケートを含む
+    reply_to: 返信
+    reported_by: "%{requester}より"
+    reported_from_source: "%{source}より報告"
+    reported_on: "%{username}より、最新の更新日：%{date}"
+    requester: リクエスター
+    requester_responded_at: リクエスターが返信してからの経過時間
+    requestor_info: リクエスターの関連情報
+    resolved_at: 解消されてからの経過時間
+    restore_btn: このチケットを復元する
+    restore_btn_title: このチケットをゴミ箱から復元する
+    select_to_agent: エージェントを選択する
+    singular: チケット
+    sort_by: により分類
+    source: ソース
+    spam_btn_title: スパムと指定する
+    split_ticket: 分割
+    status: ステータス
+    stop_monitor_btn_title: このチケットの管理を停止する
+    subject: 題目
+    submit_ticket: 提出する
+    submit_ticket_title: チケットを提出する
+    suggest_solutions: ソリューションを提案する
+    suggested_solutions: 
+      insert_content: 内容を挿入する
+      insert_content_tip: 返信又はメモにソリューション項目を挿入する
+      insert_url: URLリンクを挿入する
+      insert_url_tip: ソリューションのURLリンクを返信又はメモに挿入する
+      no_result: ソリューションがありません
+      title: 提案されたソリューション
+    tags: 
+      add_tag: タグを追加する：
+      create_success: タグが追加されました
+      destroy_success: このチケットからタグが削除されました
+      no_match: 合致するものがありません。タグを作成するにはEnterキーを押してください
+    thanks: フィードバックのご提出、誠にありがとうございます
+    ticket_list_status_agent_responded_at: "送信者：%{username}, 返信したエージェント: <span class='emphasize'>%{time_ago} ago </span>"
+    ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago </span>"
+    ticket_list_status_created_at: "送信者：%{username}, 作成者: <span class='emphasize'>%{time_ago} 前 </span>"
+    ticket_list_status_requester_responded_at: "送信者： %{username}, Customer responded: <span class='emphasize'>%{time_ago} 前 </span>"
+    ticket_list_status_resolved_at: "送信者： %{username}, 解消者: <span class='emphasize'>%{time_ago} 前 </span>"
+    ticket_url: チケットのURLリンク
+    to_do: チケットのやることリスト
+    tweet_form: 
+      tweet_and_resolve: ツィートして解消する
+      user_not_following: このユーザーはあなたのTwitterアカウントをフォローしていません
+    tweets: ツイート
+    type: 種類
+    unassigned: 割り振り前のもの
+    unflag_spam: スパムではありません
+    verify_human: 人間による入力であることを証明するために、無作為に表示されている文字を打ち込んでください
+  ticket_cancel_multiple_button: キャンセル
+  ticket_cc_email_more: もっと
+  ticket_close_failure: チケットのクローズに失敗しました。
+  ticket_close_success: チケットのクローズに成功しました。
+  ticket_closed_at_time: 〜にクローズされました
+  ticket_due_by_time: 〜まで
+  ticket_fields: 
+    confirm_delete: このフィールドを削除しますか？
+    fields: 
+      agent: エージェント
+      description: 詳細
+      group: グループ
+      priority: 優先順位
+      product: プロダクト
+      requester: リクエスター
+      source: ソース
+      status: ステータス
+      subject: 題目
+      ticket_type: 種類
+    first_choice: 第一希望
+    formfield_props: 
+      add_new_choice: 新しい希望を追加する
+      agent_info1: チケットを提出する際にこのフィールドを空欄にすることはできません
+      agent_info2: チケットをクローズする際にフィールドを空欄にすることはできません
+      agent_mandatory_closure: チケットをクローズする際に必要です
+      agent_mandatory_submission: フォームの提出の際に必要です
+      behavior: 動向
+      cc_any_email: どのメールアドレスにもCC可能
+      cc_company_contacts: 会社内の連絡先にのみCC可能
+      choices: 選択肢
+      customer_edit: カスタマーも編集可能
+      customer_info1: チケットをオンラインで提出する際にフィールドを空欄にすることはできません
+      customer_mandatory: フォームの提出の際に必要です
+      customer_visible: カスタマーに表示
+      delete_field: フィールドを削除する
+      description: 詳細
+      display_cc_field: CCフィールドを表示する
+      display_to_customer: カスタマーにメッセージを表示する
+      dropdown_choices: ドロップダウンの選択肢
+      dropdown_items_edit: ドロップダウンのアイテムー表示を編集する
+      dropdown_items_preview: ドロップダウンのアイテムープレビュー
+      field_label_agents: エージェント用のフィールド名
+      field_label_customer: カスタマー用のフィールド名
+      for_agents: エージェント用
+      for_customer: カスタマー用
+      form_title: フィールドプロパティ
+      label: フィールドラベル
+      label_in_portal: ポータルのフィールド
+      label_in_portal_info: セルフサービスポータルに表示されてるフィールドラベル
+      level1: レベル１
+      level2: レベル２
+      level3: レベル３
+      nested_label: 入り子のフィールドラベル
+      nestedfield_helptext: "ドロップダウンリストに含むアイテムを追加・編集するには、以下のフリーフォーム・テキストエリアを使用し、アイテムを字下げするためにはTabキーを１回または２回押してください。字下げに応じてドロップダウンが変換されるので、注意してください。 <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>詳細</a> "
+      nestedfield_helptext_preview: ドロップダウンリストに含まれるアイテムの「プレビュー」です。アイテムを編集する場合は、「表示の編集」内のフリーフォーム・テキストエリアを使用してください。
+      sla_timer: SLAタイマー
+      status_choices: ステータスの選択肢
+    index: 
+      add_custom_field: カスタムのフィールドを追加する
+      checkbox: チェックボックス
+      customize_form: 「新しいチケット」のフォームをカスタマイズする
+      drag_drop_intro: 以下の「新しいチケット」フォームにフィールドをドラッグ・ドロップして、新しいフィールドを追加できます。
+      dropdown: ドロップダウン
+      nestedfield: 依存するフィールド
+      number: 番号
+      paragraph: パラグラフ・テキスト
+      save: チケットフィールドを保存する
+      single_line: 単文テキスト
+      title: チケットフィールド
+    no_choice_message: 少なくとも１つの有効な選択肢が存在する必要があります
+    second_choice: 第二希望
+    untitled: 無題
+  ticket_pending_since_time: 〜以来保留中
+  ticket_resolved_at_time: 〜に解消
+  ticket_update_multiple_button: 更新
+  ticket_was: チケットは
+  tickets_filter: 
+    sort_fields: 
+      asc: 上昇中
+      date_created: 作成日付
+      desc: 下降中
+      due_by: 締め切り
+      last_modified: 最終更新日
+      priority: 優先順位
+      status: ステータス
+    title: チケットフィルター
+    unsaved_view: 無題のビュー
+  tickets_were: チケットは
+  tip_off: クリックして無効にする
+  tip_on: クリックして有効にする
+  title: 題名
+  tkt_assigned_to_agent: エージェントに割り当てられたチケット
+  tkt_assigned_to_group: グループに割り当てられたチケット
+  tkt_unattended_in_grp: グループで管理されていないチケット
+  to: へ
+  to_do: やることリスト
+  to_email: メールへ
+  top: トップ
+  topic: 
+    close: ディスカッションを終了する
+    edit: トピックを編集する
+    ideas_stamps: 
+      implemented: 開始
+      nottaken: 取得前
+      planned: 計画済み
+    locked: ロック
+    msg1: トピック用のコメント募集は終了しました
+    name: トピック名
+    new: 新しいトピック
+    open: このディスカッションを再開する
+    post: トピックを掲載する
+    reply: このトピックに返信する
+    sticky: スティッキー
+  topics: 
+    last_reply: "最後の返信は%{user_link}による%{post_time}前"
+    posted_at: "%{post_time}前に掲載"
+    show: 
+      mark_this_idea_as: このアイディアを〜とマークする
+  total: 合計
+  total_price: 合計価格
+  trial_expired_on: トライアルの期限は〜に切れました
+  twelve: 12時間
+  twitter: 
+    associate_twitter: ヘルプデスクにTwitterアカウントを関連づけ、Twitterを通してカスタマーサポートを始めましょう。
+    deleted: "Twitterアカウント@%{twitter_screen_name}は削除されました。"
+    error_sending: ツィート送信中にエラーが発生しました！Twitterが復旧中である可能性があります。また後で試してください。
+    not_authorized: Twitterの認証を得られませんでした
+    sent: ツィートが送信されました
+    success_signin: "%{helpdesk}と@%{twitter_screen_name} の関連付けに成功しました。"
+    ticket_save: チケットのツイート変換に成功しました
+    tkt_err_save: チケットをツイートに変換できないか、既に変換済みです
+    user_exists: Twitterアカウントが既に他の商品と関連づけられています。
+    usr_not_thr: ユーザーが見つかりません。
+  twitter_source: Twitter
+  two: 2時間
+  twoday: 2日
+  twoweek: 2週間
+  unable_to_charge: 追加されたエージェントのクレジットカードに支払い請求ができませんでした！
+  unauthorized_msg: 承認に失敗しました！
+  undelete: 復元
+  undo: 元に戻す
+  update: 更新
+  update_and_login: 更新してログインする
+  update_multiple_tickets: ユーザーの複数チケット
+  updated_on: "%{user_name}が%{note_date}に更新"
+  upgrade_trial: トライアル版からアップグレードしよう！
+  urgent: 緊急
+  use_reply_option: リクエスターにメールを送信するには、返信オプションを使用してください
+  user: 
+    address: 住所
+    back_info: 詳細情報
+    company: 企業名
+    email: メール
+    full_name: 氏名
+    info1: プロフィール画像、できれば画像の縦と横の長さが同じであるもの
+    mobile: モバイル
+    name: 名前
+    phone_no: 電話番号
+    photo: 写真
+    secondary: 第二
+    title: 題名
+    twitter_id: TwitterのID
+    work: ワーク
+  user_activation_email: ユーザー有効化メール
+  user_activation_message_sent: "ユーザーが作成され、有効化の方法が%{user_email}に送信されました！"
+  user_block: はい
+  user_sessions: 
+    new: 
+      email: メール
+      forgot: パスワードを忘れましたか？
+      help: ヘルプ
+      login: ログイン
+      password: パスワード
+      remember: このコンピューターでは記録してください
+      sign_in_using: サインイン
+      sign_in_using_google: Googleアカウントを使ってサインイン
+  username: ユーザー名
+  users: 
+    activations: 
+      code_expired: 有効化コードの期限が切れました！
+      send_invite_success: 有効化に関するメールが送信されました！
+      success: お客様のアカウントは有効化されました。
+  users_blocked_message: "次の連絡先（%{users})はブロックされました"
+  validate_fwd_to_email_msg: 有効なメールアドレスを入力して下さい
+  waiting_on_customer: カスタマー待ち
+  waiting_on_third_party: 第三者待ち
+  warning: 警告
+  wf: 
+    filter: 
+      index: 
+        back: "&larr; チケットに戻る"
+        no_custom_view: カスタムビューはありません！
+        title: カスタムビューを管理する
+      view: 
+        delete: このビューを削除しますか？
+    messages: 
+      no_tickets_for_user: "%{user_name}が閲覧できるオープンチケットはありません。"
+      no_tickets_in_view: "%{view_name}にチケットはありません。"
+      no_tickets_subtext: " %{view_1} または%{view_2}を表示する"
+      no_tickets_subtext_single: " %{view_1}を表示する"
+  what_is_cvv: cvvとは何ですか？
+  widgets: 
+    contact_widget: 
+      description: カプセルに連絡先を追加するには、連絡先またはオプションを表示してください
+  will_expire_in: 〜は期限切れになります
+  working: 有効
+  wrong_portal: 
+    content_not_available: お探しのコンテンツはこのポータルにはありません。
+    title: ご利用できません！
+  yes_password_reset: はい
+  your_email_address: お客様のメールアドレス
+  your_trial_account: お客様のトライアル・アカウント
+  zendesk_backup: バックアップファイル
+  zendesk_backup_info: ZendeskよりダウンロードされたZendeskバックアップファイルを選択する
+  zendesk_credentials: Zendesk証明書
+  zendesk_url: ZendeskURL
+  zendesk_url_info: "e.g:- http://acme.zendesk.com"
+  zip: Zip
