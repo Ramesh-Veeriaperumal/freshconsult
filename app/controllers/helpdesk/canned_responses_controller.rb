@@ -20,6 +20,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
     @id_data = ActiveSupport::JSON.decode params[:ids]
     @ticket = current_account.tickets.find(params[:ticket_id].to_i) unless params[:ticket_id].blank?
     @ca_responses = @id_data.collect {|id| scoper.find(:all, :conditions => { :id => @id_data }).detect {|resp| resp.id == id}}
+    @ca_responses.delete_if { |x| x == nil }
     respond_to do |format|
       format.html
       format.js { 
@@ -29,7 +30,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
 
   def search
-    @ca_responses = scoper.find(:all, 
+    @ca_responses = scoper.accessible_for(current_user).find(:all, 
       :conditions => ["title like ? ", "%#{params[:search_string]}%"])
     respond_to do |format|
       format.html

@@ -210,6 +210,10 @@ function canned_response_submit(url, method, params){
     {
       alert('Please select a valid folder!!');
     }
+    else if(field.value == folder_id)
+    {
+      alert('Cannot move to the same folder!!!');
+    }
     else
     {
       form.appendChild(field);

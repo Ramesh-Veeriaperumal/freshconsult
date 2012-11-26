@@ -22,6 +22,7 @@
 
   if (jQuery('#fold-list .small-list-left').children().hasClass('list-noinfo'))
   {
+    localStorage.removeItem('local_ca_response')
     jQuery('#response_dialog').addClass('no_folders');
   }
 

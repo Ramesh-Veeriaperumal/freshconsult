@@ -2678,7 +2678,7 @@ en:
     new: "Folder name"
     move: "Move"
     title: "Canned Response Folders"
-    no_response: "No responses in this folder"
+    no_response: "No responses"
     new_response: "New Canned Response"
     responses: "Canned Responses"
     viewing: "Folder: "
