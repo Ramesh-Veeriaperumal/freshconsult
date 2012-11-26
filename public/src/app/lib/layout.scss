@@ -3,6 +3,16 @@
 // This import applies a global reset to any page that imports this stylesheet.
 html {  height:100%; overflow-y:scroll; }
 
+@include at-breakpoint($break-tablet){
+  // Generic Grid classes
+  .row-fluid{ @include pie-clearfix; }
+  @for $i from 1 through 12 {
+  	.span#{$i}{ @include span-columns($i); }	
+  	.row-last-omega .span#{$i}:last-child{ @include omega; }
+  }
+  .omega{ @include omega; }
+}
+
 .wrapper{
 	@include container;
 	@include pie-clearfix;

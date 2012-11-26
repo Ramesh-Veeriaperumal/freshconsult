@@ -6,10 +6,16 @@
 	@include box-shadow( rgba(#fff, 0.7) 0 1px inset );		
 	@include clearfix;
 	border-bottom-color: rgba(#fff, 0.8);
-	@include text-shadow(rgba(#000, 0.9) -1px -1px 1px);
+	
+	@if(lightness($header_color) < 50){
+		@include text-shadow(rgba(#000, 0.9) -1px -1px 1px);
+	}
+	
 	a{ color: inherit; font-size: 13px; }
 	a:hover{ color: inherit; }
 }
+
+.banner-title .heading{ color: inherit; }
 
 .banner-nav{
 	font-size: 0.929em;
@@ -33,7 +39,8 @@
 	}	
 	a:hover, a.active{
 		text-decoration: none;
-		background-color: $header_color;
+		background-color: $tab_hover_color;
+		color: $tab_hover_text_color;
 	}
 	a{ display: none; }
 	a.active{ display: block; }

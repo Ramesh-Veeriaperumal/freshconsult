@@ -2,7 +2,7 @@
 @import "reset";
 
 // This import applies a global reset to any page that imports this stylesheet.
-body {	font:12px $blueprint-font-family; background-color: transparent; }
+body {	font:13px $blueprint-font-family; background-color: transparent; }
  
 code {
   padding: 0 3px 2px;
@@ -60,6 +60,10 @@ h6{ font-size:13px; text-transform:uppercase; line-height:24px; font-weight:bold
 	line-height:18px;
 	padding-bottom:6px;
 } 
+
+.light{
+  font-weight: 300;
+}
 
 .borderbottom{
 	border-bottom:1px dotted #EFEFEF;
@@ -181,3 +185,5 @@ label.error{
 .negtiveMargin{
 	margin:0 -20px -16px;
 }
+
+

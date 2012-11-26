@@ -1,7 +1,7 @@
 .help-center{
-	background-color: $page-lead-background;
+	background-color: $help_center_color;
 	padding: $content-padding-mobile;	
-	border: 1px solid darken($page-lead-background, 10%);
+	border: 1px solid darken($help_center_color, 10%);
 	@include clearfix;
 }
 
@@ -76,7 +76,7 @@
 		nav{ 
 			margin-left: $grid-padding/2;
 			padding-left: 1.5em;
-			border-left: 1px solid darken($page-lead-background, 10%); 
+			border-left: 1px solid darken($help_center_color, 10%); 
 		}
 	}
 }

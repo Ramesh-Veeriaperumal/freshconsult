@@ -1002,13 +1002,13 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
   end
 
   create_table "portal_templates", :force => true do |t|
-    t.integer  "portal_id",    :limit => 8,          :null => false
     t.integer  "account_id",   :limit => 8,          :null => false
+    t.integer  "portal_id",    :limit => 8,          :null => false
+    t.text     "preferences"
     t.text     "header"
     t.text     "footer"
-    t.text     "custom_css",   :limit => 2147483647
-    t.text     "layout"
-    t.text     "contact_info"
+    t.text     "custom_css",   :limit => 16777215
+    t.text     "layout",       :limit => 16777215
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"

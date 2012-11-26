@@ -1,8 +1,10 @@
 <%= form.error_messages %>
 <%= form.hidden_field :page_type %>
+<h3 class="title">
+	<span class="light">Editing:</span> <%= @portal_page.name %>
+</h3>
 <p>
-	<%= form.label @portal_page.name %>
-	<%= form.code_editor :content %>
+	<%= form.code_editor :content, :height => "400px" %>
 </p>
 <br />
 <div class="well">

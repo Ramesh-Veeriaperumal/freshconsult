@@ -145,7 +145,7 @@ javascripts:
     - public/javascripts/html2canvas.js
   fdwidget:
     - public/javascripts/prototype.js
-    - public/javascripts/jquery-1.7.1.js
+    - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/lib/nestedtree.js
@@ -178,7 +178,7 @@ javascripts:
 
   subscription:                    
     - public/javascripts/prototype.js
-    - public/javascripts/jquery-1.7.2.js
+    - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
   conditional:
     - public/javascripts/autosuggest.js    
@@ -242,10 +242,10 @@ javascripts:
     - public/javascripts/application.js
   gs_defaults: 
     - public/javascripts/prototype.js
-    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    # - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/effects.js
     - public/javascripts/controls.js
-    - public/javascripts/utils.js
+    # - public/javascripts/utils.js
   gs_frameworks:
     - public/javascripts/fast_autocompleter.js
     - public/javascripts/hackz.js
@@ -256,5 +256,5 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js      
     - public/javascripts/utils.js
   getting_started:        
-    - public/javascripts/mColorPicker.min.js
+    # - public/javascripts/mColorPicker.min.js
     - public/javascripts/getting_started.js

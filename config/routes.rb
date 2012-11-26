@@ -98,8 +98,8 @@
     admin.resources :canned_responses
     admin.resources :products
     admin.resources :portal, :only => [ :index, :update ] do |portal|
-      portal.resources :templates, :controller => 'portal_templates' do |template|
-        template.resources :pages, :controller => 'portal_pages'
+      portal.resource :template do |template|
+        template.resources :pages, :member => { :edit_by_page_type => :get }
       end
     end
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }

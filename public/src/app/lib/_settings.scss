@@ -1,6 +1,7 @@
 // Here is where you can define your constants for your application and to configure the blueprint framework.
 // Feel free to delete these if you want keep the defaults:
 @import "mixins";
+@import "susy";
 
 $blueprint-liquid-grid-columns: 24;
 $blueprint-liquid-grid-width: 3.167%;
@@ -47,6 +48,25 @@ $TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 6px;
 $priority-default-alpha: 1;
 $priority-hover-alpha: 1;
 
+// GRID SYSTEM FOR SUSY
+// --------------------------------------------------
+
+$total-columns: 4;
+$column-width: 60px;
+$gutter-width: 10px;
+$grid-padding: 10px;
+
+$container-style: magic;
+
+$media-mobile: 		0 30em;
+$break-tablet:		45em 12;
+$break-desktop:		60em 12;
+$break-large:		75em 16;
+
+$container-width: 	1140px; 
+
+// Sprite sheet creation
+// --------------------------------------------------
 /* Sprite variables used inside the sheet */
 $symbol: sprite-map("symbols/*.png");
 $ticketicon: sprite-map("ticket-icon/*.png");

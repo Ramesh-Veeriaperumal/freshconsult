@@ -155,7 +155,7 @@ en:
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
-  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
+  basic_details: "Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support."
   choose_plan: Choose Plan
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
@@ -250,7 +250,47 @@ en:
     js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ and matching these conditions.
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
+  portal_pages:
+    groups:
+      general: "General pages"
+      solutions: "Solutions"
+      discussions: "Discussions"
+      tickets: "Tickets"
+    pages:
+      portal_home: "Portal home"     
+      user_signup: "New user signup"
+      user_login: "Login page"
+      forgot_password: "Forgot password"
+      profile_edit: "User profile"
+      search: "Search results"
+      solution_home: "Solutions home"
+      article_list: "Article list"
+      article_view: "Article view"
+      discussions_home: "Discussions home"
+      topic_list: "Topic list"
+      topic_view: "Topic view"
+      new_topic: "New topic"
+      submit_ticket: "New ticket"
+      ticket_list: "User specific tickets"
+      ticket_view: "Ticket details"
   admin:
+    portal_settings:
+      simple:
+        header_color: "Header"
+        bg_color: "Page"
+        footer_color: "Footer"
+        help_center_color: "Help center"
+        btn_primary_background: "Primary action button"
+        btn_background: "Secondary action button"
+        tab_color: "Background"
+        tab_hover_color: "Active tab"
+        baseFontFamily: "Base font"
+        textColor: "Base color"
+        headingsFontFamily: "Heading font"
+        headingsColor: "Heading color"
+        linkColor: "Link text"
+        linkColorHover: "Link text hover"
+        inputFocusRingColor: "On focus border color"
     quests:
       index:
         title: Quest

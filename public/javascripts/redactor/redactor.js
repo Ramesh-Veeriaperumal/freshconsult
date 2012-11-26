@@ -2648,7 +2648,7 @@ Redactor.prototype = {
 			link = '#' + $('#redactor_link_anchor').val();
 			text = $('#redactor_link_anchor_text').val();
 		}			
-
+		console.log('<a href="' + link + '" target="' + target + '">' +  text + '</a>&nbsp;');
 		this._insertLink('<a href="' + link + '" target="' + target + '">' +  text + '</a>&nbsp;', $.trim(text), link, target);
 
 	},

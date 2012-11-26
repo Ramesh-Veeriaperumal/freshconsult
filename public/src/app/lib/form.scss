@@ -97,17 +97,21 @@ div.color{
 	padding-top:0px;
 	.mColorPickerTrigger{ 
 		position:absolute;
-		top:3px;
-		left:230px;
+		top:4px;
+		left:100px;
 	}
 	input{
-		width:220px;
-		font-size:16px;
-		border:1px solid #afafaf;
+		width:110px;
+		font-size:14px;
+		border:1px solid #AFAFAF;
+		border-right-width: 10px;
+		border-right-color: #AFAFAF;
+		color: #777;
+		text-transform: uppercase;
+		padding: 6px 8px;
+		@include box-shadow(#AFAFAF 1px 0px 1px);
 	}
-	span{
-		display:inline;
-	}
+	span{ display:inline; }
 }
 
 input.very_small{
@@ -1986,21 +1990,9 @@ ul.ui-form .inputs-list{
 		}
 		div.fields{
 			padding-bottom: 15px;
-			label{
-				font: 13px "Helvetica Neue", sans-serif;
-			}
 		}
-		input[type=text], input.text { 
-		   width: 93%;
-		}
-		div.color{
-			input{
-				width: 220px;
-			}
-		}
-		select{
-			width: auto;
-		}
+		input.text { width: 93%; } 
+		select{ width: auto; }
 		.add-email{
 			margin-left: 210px;
 			margin-top: -25px;
@@ -2486,11 +2478,33 @@ input[type="text"].number{
  	}
 }
 
-#reply-fields{
-	.field-item{
-		min-height: 0px;
-	}
-
+#reply-fields .field-item{
+	min-height: 0px;
 }
  
 /* end */
+
+#portal-simple-template-options{
+	h3.title{ padding:5px 0px 15px; }
+	.config_item { 
+		@include min-height(80px); 
+		label{ margin-bottom: 8px; }
+	}
+	.chzn-container-single .chzn-single{
+		height: 30px; line-height: 30px;
+	}
+	.chzn-container-single .chzn-single div{
+		right: 3px;
+		top: 2px;
+	}
+	.chzn-container-single .chzn-search { display: none; }
+}
+
+.customize-pages{
+	h5{ font-weight: bold; color: #b5b5b5; }
+	.portal-pages-list{
+		margin:5px 0 15px;
+		li a{ color:#333333; }
+		li{ line-height: 24px; }
+	}
+}

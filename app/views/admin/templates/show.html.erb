@@ -1,0 +1,113 @@
+<%= include_stylesheets :codemirror %>
+<%= include_javascripts :codemirror %>
+<% content_for :sidebar do %><% end %> 
+<%= render :partial => "shared/colorpicker" %>
+
+<a href="#" class="pull-right btn primary large">Publish changes</a>
+<h3 class="sub-title">Portal template customization</h3>
+<br />
+<div class="clearfix">
+  <ul data-tabs="tabs" class="tabs">    
+    <li class="active">      
+      <a href="#simple-template-options" data-toggle="tab">Color &amp; font</a>
+    </li>
+    <li>
+      <a id="custom-css-tab" href="#custom-css">Stylesheet</a>
+    </li>    
+    <li>
+      <a id="layout-tab" href="#template" data-toggle="tab">Layout &amp; pages</a>
+    </li>
+  </ul>        
+  
+    <div class="tab-content">
+      <div class="tab-pane active" id="simple-template-options">        
+        <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
+      </div>
+
+    	<div class="tab-pane" id="custom-css">		
+        <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
+      	<h3 class="title">Custom stylesheet</h3>
+      	<p class="help-text">
+          Add or overwrite freshdesk default styles with your own custom css.
+        </p>
+      	<%= f.code_editor :custom_css, :value => @default_custom_css, :mode => "css" %>            
+        <br />
+          <div class="well">
+            <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+            <%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
+          </div>
+        <% end -%>
+    	</div>
+
+
+      <div class="tab-pane" id="template">
+        <ul data-tabs="tabs" class="pills">
+          <li class="active">
+            <a id="layout-tab" href="#layout" code-refresh-id="portal_template_layout">
+              Portal layout
+            </a>
+          </li>
+          <li>
+            <a id="portal-pages-tab" href="#pages">Portal pages</a> 
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="layout">
+            <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
+              <%= f.error_messages %>
+              <label>Header</label>  
+              <p class="help-text">Change the header area of your support portal</p>
+              <%= f.code_editor :header, :height => "150px" %>          
+              <br />
+              <label>Footer</label>
+              <p class="help-text">Change the footer area of your support portal</p>  
+              <%= f.code_editor :footer, :height => "80px" %>
+              <br />
+              <label>Page layout</label>
+              <p class="help-text">Customize the entire layout of your support portal</p> 
+              <%= f.code_editor :layout %>  
+              <br />
+              <div class="well">
+                <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+                <%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
+              </div>     
+            <% end %>
+          </div>
+          <div class="tab-pane" id="pages">
+            <div>
+              <h2 class="title light">Portal pages</h2>
+              <p class="help-text">
+                Here you will be able to customize body area of individual pages
+              </p>
+            </div>
+            <br />
+            <div class="row-fluid">
+              <div class="span2">
+                <%= render :partial => "portal_pages", :object => @portal_pages %>
+              </div>
+              <div class="span10 omega">
+                <div id="Customizepage"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+
+<% content_for :onload_script do %>
+  jQuery("#custom-css-tab, #layout-tab").bind("click", function(){
+    var _link = jQuery(this)
+    setTimeout(function(){
+      jQuery.each(jQuery(_link.attr('href')).find("textarea").get(), function(i, item){
+        if(item.id)
+          window.code_mirrors[item.id].refresh()
+      });
+    }, 50)
+  });
+
+  jQuery("#portal-pages-tab").live("click", function(ev){
+    if(jQuery("#Customizepage").html() == "")
+      jQuery("#PortalPageList a").first().trigger("click");
+  });
+<% end %>

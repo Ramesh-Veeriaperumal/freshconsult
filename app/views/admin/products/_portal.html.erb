@@ -76,22 +76,33 @@
     <span class="seperator"></span>  
     <%= render :partial => "/shared/fav_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
     <span class="seperator"></span>
-
-    <label><%= content_tag(:strong, t('account.page_colors.title') ) %></label>
+    <div class="fields">
+      <%= link_to "Advanced style and layout customization", 
+                  admin_portal_template_path( @product.portal ), :class => "btn primary" %> 
+    </div>
+    <label class="caption"><%= content_tag(:strong, t('account.page_colors.title') ) %></label>
+    <div class="fields">
       <% portal.fields_for :preferences do |p| %>
-        <%= p.label :header_color, t('account.page_colors.header'), :class => "caption" %>
-        <div class="color fields">
-          <input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="product[portal_attributes][preferences][header_color]" value="<%=portal_pref(@product.portal, :header_color)%>" data-hex="true" />
-  			</div>
-        <%= p.label :header_color_tab, t('account.page_colors.tab_color'), :class => "caption" %>
-        <div class="color fields">
-          <input type="color" maxlength="7" id="TabColor" class="color_field required" name="product[portal_attributes][preferences][tab_color]" value="<%=portal_pref(@product.portal, :tab_color)%>" data-hex="true" /> 
+        <div class="span4">
+          <%= p.label :header_color, t('account.page_colors.header') %>
+          <div class="color">
+            <input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="product[portal_attributes][preferences][header_color]" value="<%=portal_pref(@product.portal, :header_color)%>" data-hex="true" />
+          </div>
         </div>
-        <%= p.label :bg_color, t('account.page_colors.background'), :class => "caption" %></td>
-        <div class="color fields"> 
-          <input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="product[portal_attributes][preferences][bg_color]" value="<%=portal_pref(@product.portal, :bg_color)%>" data-hex="true" />
-          <div><a href="javascript:void(0)" class="slim-button" id="ResetColors"><%=t('account.info3')%> </a></div>
+        <div class="span4">
+          <%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
+          <div class="color">
+            <input type="color" maxlength="7" id="TabColor" class="color_field required" name="product[portal_attributes][preferences][tab_color]" value="<%=portal_pref(@product.portal, :tab_color)%>" data-hex="true" />
+          </div>
         </div>
+        <div class="span4 omega">
+          <%= p.label :bg_color, t('account.page_colors.background') %>
+          <div class="color">
+            <input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="product[portal_attributes][preferences][bg_color]" value="<%=portal_pref(@product.portal, :bg_color)%>" data-hex="true" />
+          </div>
+        </div>
+        <div><a href="javascript:void(0)" class="slim-button" id="ResetColors"><%=t('account.info3')%> </a></div>
       <% end %>
+    </div>
   </div>
 </div>

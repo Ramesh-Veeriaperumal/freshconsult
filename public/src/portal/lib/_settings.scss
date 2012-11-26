@@ -43,10 +43,17 @@ $header_text_color: 	if(lightness($header_color) > 50, black, white) !default;
 $tab_color:				$green !default;
 $tab_text_color: 		if(lightness($tab_color) > 50, black, white) !default;
 
-$footer_color: 			#777 !default;
+$tab_hover_color: 		$header_color !default;
+$tab_hover_text_color: 	if(lightness($tab_hover_color) > 50, black, white) !default;
+
+$footer_color: 			#777777 !default;
 $footer_text_color: 	if(lightness($footer_color) > 50, black, white) !default;
 
 $logo-url: 				if(lightness($header_color) > 50, "logo-color", "logo-white") !default;
+
+$help_center_color: 	rgba(#f9f9f9, 0.6) !default;
+$page-background: 		rgba($white, 0.8) !default;
+$page-form-background: 	rgba(#f4f4f4, 0.9) !default;
 
 // Links
 // -------------------------
@@ -121,32 +128,18 @@ $infoBorder:              darken(adjust-hue($infoBackground, -10), 7%) !default;
 
 // Buttons
 // -------------------------
-$btnBackground:                     #fff !default;
-$btnBackgroundHighlight:            darken($btnBackground, 10%) !default;
-$btnBorder:                         #c4c0c0 !default;
-$btnTextColor:						if(lightness($btnBackground) > 50, $grayDark, white) !default;
-$btnShadowColor: 					if(lightness($btnBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25)) !default;
+$btn_background: 					$white !default;
+$btnBackground:                     $btn_background;
+$btnBackgroundHighlight:            darken($btnBackground, 10%);
+$btnBorder:                         #c4c0c0;
+$btnTextColor:						if(lightness($btnBackground) > 50, $grayDark, white);
+$btnShadowColor: 					if(lightness($btnBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
 
-$btnPrimaryBackground:              #6c6a6a !default;
-$btnPrimaryBackgroundHighlight:     darken($btnPrimaryBackground, 10%) !default;
+$btn_primary_background:			#6c6a6a !default;
+$btnPrimaryBackground:              $btn_primary_background;
+$btnPrimaryBackgroundHighlight:     darken($btnPrimaryBackground, 10%);
 $btnPrimaryTextColor:				if(lightness($btnPrimaryBackground) > 50, $grayDark, white) !default;
-$btnPrimaryShadowColor: 			if(lightness($btnPrimaryBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25)) !default;
-
-
-/*$btnInfoBackground:                 #5bc0de !default;
-$btnInfoBackgroundHighlight:        #2f96b4 !default;
-
-$btnSuccessBackground:              #62c462 !default;
-$btnSuccessBackgroundHighlight:     #51a351 !default;
-
-$btnWarningBackground:              lighten($orange, 15%) !default;
-$btnWarningBackgroundHighlight:     $orange !default;
-
-$btnDangerBackground:               #ee5f5b !default;
-$btnDangerBackgroundHighlight:      #bd362f !default;
-
-$btnInverseBackground:              $gray !default;
-$btnInverseBackgroundHighlight:     $grayDarker !default;*/
+$btnPrimaryShadowColor: 			if(lightness($btnPrimaryBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
 
 // COMPONENT VARIABLES
 // --------------------------------------------------
@@ -164,11 +157,6 @@ $zindexModal:             1050 !default;
 
 // GRID SYSTEM FOR SUSY
 // --------------------------------------------------
-
-/*$total-columns  : 12;
-$column-width   : 6.12em;
-$gutter-width   : 0.718em;
-$grid-padding   : $gutter-width;*/
 
 $total-columns: 4;
 $column-width: 60px;
@@ -196,7 +184,3 @@ $header-padding: 0.9em 1.6em;
 $content-border: 1px solid $grayLighter;
 
 $page-lead-padding: 1em 2.2em;
-$page-lead-background: rgba(#f9f9f9, 0.6);
-$page-background: rgba($white, 0.8);
-$page-form-background: rgba(#f4f4f4, 0.9);
-

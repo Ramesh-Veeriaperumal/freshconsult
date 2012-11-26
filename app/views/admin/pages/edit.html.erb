@@ -1,0 +1,7 @@
+<% form_for :portal_page, @portal_page, 
+    			:url => (@portal_page.new_record? ? 
+    						admin_portal_template_pages_path( :id => @portal_page.id ) : 
+    						admin_portal_template_page_path( :id => @portal_page.id )),
+    			:html => { :method => (@portal_page.new_record? ? :post : :put) } do |form| %>
+	<%= render :partial => 'form', :object => form %>	
+<% end %>

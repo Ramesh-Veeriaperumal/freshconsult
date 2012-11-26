@@ -12,7 +12,6 @@ class Portal::Tags::Translate < Liquid::Tag
   def render(context)
     # Direct translation key being set for portal translation.
     # User will be able to use keys directly from our local key file
-    puts "=====> #{@translate_key}"
     context.registers[:controller].send(:t, "#{@translate_key}", @attributes)
   end
 

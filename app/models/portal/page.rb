@@ -8,36 +8,55 @@ class Portal::Page < ActiveRecord::Base
 
 	before_create { |page| page.account ||= Account.current }
   
-	#!PORTALCSS Need to move this somewhere by venom
+	#!PORTALCSS Need to move these constances to lib
+
+	# Editable pages of the portal
+	# Page id keys are added [2] as part of the array obj. itself 
+	# so that it can be uniq even if the obj gets reorganized at a later period
 	PAGE_TYPES = [
-		[:portal_home,        	"Portal home",                  1,   "home/index.portal"],    
-		[:discussions_home,   	"Discussions home",             2,   "support/discussions/index.portal"],
-		[:topic_list,         	"Topic list",                   3,   "support/discussions/forums/show.portal"],
-		[:topic_view,         	"Topic view",                   4,   "support/discussions/topics/show.portal"],
-		[:new_topic,          	"New topic",                    5,   "support/discussions/topics/new.portal"],
-		[:solution_home,      	"Solutions home",               6,   "support/solutions/index.portal"],
-		[:article_list,       	"Article list",                 7,   "support/solutions/folders/show.portal"],
-		[:article_view,       	"Article view",                 8,   "support/solutions/articles/show.portal"],
-		[:submit_ticket,      	"New ticket",                   9,   "support/tickets/new.portal"],
-		[:ticket_list,        	"User specific tickets",        10,  "support/tickets/index.portal"],
-		[:ticket_view,        	"Ticket details",               12,  "support/tickets/show.portal"],
-		[:user_signup,        	"New user signup",              13,  "support/registrations/new.portal"],
-		[:user_login,         	"User login",                   14,  "support/new.portal"],
-		[:profile_edit,       	"User profile",                 15,  "support/profiles/edit.portal"],
-		[:forgot_password,    	"Forgot password",              16,  "support/registrations/forgot_password.portal"],
-		[:search,    		  	"Search",             		  	17,  "support/search/index"]
+		# General pages
+		[:portal_home,        	1,  "home/index.portal"],    
+		[:user_signup,        	2,  "support/registrations/new.portal"],
+		[:user_login,         	3,  "support/new.portal"],
+		[:forgot_password,    	4,  "support/registrations/forgot_password.portal"],
+		[:profile_edit,       	5,  "support/profiles/edit.portal"],
+		[:search,    		  	6,  "support/search/index"],
+
+		# Solution pages
+		[:solution_home,      	7,   "support/solutions/index.portal"],
+		[:article_list,       	8,   "support/solutions/folders/show.portal"],
+		[:article_view,       	9,   "support/solutions/articles/show.portal"],
+
+		# Discussion or Forum pages
+		[:discussions_home,   	10,  "support/discussions/index.portal"],
+		[:topic_list,         	11,  "support/discussions/forums/show.portal"],
+		[:topic_view,         	12,  "support/discussions/topics/show.portal"],
+		[:new_topic,          	13,  "support/discussions/topics/new.portal"],
+		
+		# Ticket pages
+		[:submit_ticket,      	14,  "support/tickets/new.portal"],
+		[:ticket_list,        	15,  "support/tickets/index.portal"],
+		[:ticket_view,        	16,  "support/tickets/show.portal"]
 	]
 
-	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[1], i[2]] }
-	
-	PAGE_TYPE_NAME_BY_KEY 	= Hash[*PAGE_TYPES.map { |i| [i[2], i[1]] }.flatten]
-	PAGE_TYPE_TOKEN_BY_KEY	= Hash[*PAGE_TYPES.map { |i| [i[2], i[0]] }.flatten]
-	PAGE_TYPE_KEY_BY_TOKEN 	= Hash[*PAGE_TYPES.map { |i| [i[0], i[2]] }.flatten]
-	PAGE_TYPE_NAME_BY_TOKEN = Hash[*PAGE_TYPES.map { |i| [i[1], i[2]] }.flatten]
-	PAGE_BY_TOKEN 			= Hash[*PAGE_TYPES.map { |i| [i[0], i[3]] }.flatten]
+	# Manually organizing them as groups to avoid direct db save dependency
+	PAGE_GROUPS = [
+		{ :general 		=> [:portal_home, :user_signup, :user_login, :forgot_password, :profile_edit, :search] },
+		{ :solutions 	=> [:solution_home, :article_list, :article_view] }, 
+		{ :discussions 	=> [:discussions_home, :topic_list, :topic_view, :new_topic] },
+		{ :tickets 		=> [:submit_ticket, :ticket_list, :ticket_view] }
+	]
+
+	# Helper constants for access of PAGE_TYPES
+	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[0], i[1]] }	
+	# PAGE_TYPE_NAME_BY_KEY 	= Hash[*PAGE_TYPES.map { |i| [i[2], i[1]] }.flatten]
+	PAGE_TYPE_TOKEN_BY_KEY	= Hash[*PAGE_TYPES.map { |i| [i[1], i[0]] }.flatten]
+	PAGE_TYPE_KEY_BY_TOKEN 	= Hash[*PAGE_TYPES.map { |i| [i[0], i[1]] }.flatten]
+	# PAGE_TYPE_NAME_BY_TOKEN = Hash[*PAGE_TYPES.map { |i| [i[1], i[2]] }.flatten]
+	PAGE_FILE_BY_TOKEN 		= Hash[*PAGE_TYPES.map { |i| [i[0], i[2]] }.flatten]
   
 	def name
-		PAGE_TYPE_NAME_BY_KEY[self.page_type]
+		I18n.t("portal_pages.pages.#{self.token}")
 	end
 
 	def token
@@ -45,8 +64,12 @@ class Portal::Page < ActiveRecord::Base
 	end
 	
 	def default_page
-		PAGE_BY_TOKEN[self.token]
+		PAGE_FILE_BY_TOKEN[self.token]
 	end
+
+	def to_param
+    	page_type
+  	end 
 
 	def to_liquid
 	    PageDrop.new self
