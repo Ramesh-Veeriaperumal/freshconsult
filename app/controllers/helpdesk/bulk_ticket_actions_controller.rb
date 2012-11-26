@@ -15,15 +15,22 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
     #           params[nscname][:custom_field].nil?
     reply_content = params[:helpdesk_note][:body_html]
+    failed_tickets = []
     @items.each do |ticket|
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
-      reply_multiple reply_content, ticket
       ticket.save
+      begin
+        reply_multiple reply_content, ticket
+      rescue Exception => e
+        failed_tickets.push(ticket)
+        NewRelic::Agent.notice_error(e)
+        Rails.logger.error("Error while sending reply")
+      end
     end
-    flash[:notice] = render_to_string(:inline => t("helpdesk.flash.tickets_update", 
-      :tickets => get_updated_ticket_count ))
+    flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 
+                                      :locals => { :failed_tickets => failed_tickets, :get_updated_ticket_count => get_updated_ticket_count })
     redirect_to helpdesk_tickets_path
   end
 
