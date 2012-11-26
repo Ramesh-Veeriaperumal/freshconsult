@@ -11,6 +11,7 @@
 
 ActiveRecord::Schema.define(:version => 20121109120525) do
 
+
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -124,7 +125,10 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.text     "signature_html"
     t.integer  "points",              :limit => 8
     t.integer  "scoreboard_level_id", :limit => 8
+    t.integer  "account_id",          :limit => 8
   end
+
+  add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
 
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8

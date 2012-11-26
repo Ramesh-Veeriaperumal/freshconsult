@@ -572,7 +572,9 @@ class Account < ActiveRecord::Base
       self.user.account = self
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
+      self.user.agent.account = self
       self.user.save
+      User.current = self.user
       
     end
     

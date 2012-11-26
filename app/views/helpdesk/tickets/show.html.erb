@@ -17,7 +17,7 @@
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
 			<span id="agent_replying_message_bottom" style="color:#048b00; font-size:12px;"></span>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
+			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
 			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
 				:id => "FwdButton", :class => "button forward reply") %>
 			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
@@ -50,7 +50,7 @@
 				  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
 				  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 				<% end %>
-		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) unless @item.from_email.nil? %>
+		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
 
 		  	<div class="request_panel hide" id="cnt-fwd">
 				<%= render(:partial => '/helpdesk/shared/forward_form', :locals => { :id => 'send-fwd-email', :cntid => 'cnt-fwd', :note => [@ticket, Helpdesk::Note.new(:private => true)], :conv_id => nil }) %>

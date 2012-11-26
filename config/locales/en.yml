@@ -47,6 +47,7 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  mobi_help: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Working
   attachment: Attachment
@@ -715,6 +716,7 @@ en:
       update: 
         success: Your account details have been updated.
     agents: 
+      to_contact: The agent has been successfully converted to a Contact
       delete: 
         not_allowed: You don't have access to delete it!
       create: 
@@ -766,6 +768,7 @@ en:
         failure: Unable to import from zendesk...please try again
         running: Currently one zendesk import is running. you may try later !!
     contacts: 
+      to_agent: The contact has been successfully converted to an Agent
       create: 
         success: The contact has been created successfully.
       cancel: cancel
@@ -808,6 +811,14 @@ en:
         success: The %{human_name} has been created.
       update: 
         success: The %{human_name} has been updated.
+    post:
+      page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
+    topic:
+      page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
+    forum:
+      page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
+    forum_category:
+      page_not_found: "This forum category could not be found. It might have been deleted or the URL mistyped."
   agent_closes_tkt: Agent closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your email shortly!
@@ -843,8 +854,33 @@ en:
   activities: 
     solutions: 
       new_solution: 
-        short: "{{user_path}} created the new solution"
+        short: "{{user_path}} created a new solution"
         long: "{{user_path}} created a new solution {{notable_path}}"
+    forums:
+      new_forum_category:
+        short: "{{user_path}} created a new forum category"
+        long: "{{user_path}} created a new forum category '{{notable_path}}'"
+      new_forum:
+        short: "{{user_path}} created a new forum"
+        long: "{{user_path}} created a new forum '{{notable_path}}' under '{{category_name}}'"
+      new_topic: 
+        short: "{{user_path}} created a new topic"
+        long: "{{user_path}} created a new topic '{{notable_path}}' in '{{forum_name}}'" 
+      new_post: 
+        short: "{{user_path}} created a new post"
+        long: "{{user_path}} posted in '{{notable_path}}'"
+      delete_forum_category:
+        short: "{{user_path}} deleted a forum category"
+        long: "{{user_path}} deleted the forum category '{{notable_path}}'"
+      delete_forum:
+        short: "{{user_path}} deleted a forum"
+        long: "{{user_path}} deleted the forum '{{notable_path}}' under '{{category_name}}'"
+      delete_topic: 
+        short: "{{user_path}} deleted a topic"
+        long: "{{user_path}} deleted the topic '{{notable_path}}' in '{{forum_name}}'" 
+      delete_post: 
+        short: "{{user_path}} deleted a new post"
+        long: "{{user_path}} has deleted a post from '{{notable_path}}'"
     tickets: 
       assigned_to_nobody: 
         short: Assigned to 'Nobody' by {{user_path}}
@@ -1223,9 +1259,18 @@ en:
   agent: 
     new: New Agent
     edit: Edit Agent
+    showing: "Showing:"
+    status:
+      active: Active
+      deleted: Deleted
+    active:
+      no_agents: You have not added any agents to the list
+    deleted:
+      no_agents: You dont have any deleted agents
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
+    info4: Convert to a Contact
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email} 
     signature: Signature
     info3: Are you sure you want delete
@@ -1238,7 +1283,7 @@ en:
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
-    restore: restore
+    restore: Restore
     add_signature: Add signature
     update: Update
     permissions: Permissions
@@ -1299,7 +1344,7 @@ en:
     emailnotverified: Email has not been verified for this contact!
     showing: "Showing:"
     info1: Are you sure you want to delete this contact?
-    info2: Make this User an Agent
+    info2: Convert to an Agent
     send_activation: Send activation email
     import_csv: Import Customers from CSV
     import_google: Import from Google
@@ -1403,6 +1448,16 @@ en:
     status: Solution Status
     info8: Are you sure you want to delete this solution?
     folder: Folder
+    meta: Meta tags for search engine
+    meta_title: Title_tag
+    meta_keywords: Meta Keywords
+    meta_description: Meta Description
+    meta_keywords: Keywords
+    meta_description: Description
+    title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
+    description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
+    char_count: characters
+    keywords_message: Seperate keyword with commas
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   save: Save
@@ -1889,6 +1944,8 @@ en:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"
       tickets_update: "%{tickets} updated"
+      tickets_update_with_errors: "%{tickets} updated, but there are issues that need your attention."
+      sending_failure : "Failure in sending reply to the following tickets : "
       assigned_to_you: "%{tickets} assigned to you"
       removed_from_spam: "%{tickets} removed from the spam folder."
       closing_the_ticket_failed: Closing the ticket failed
@@ -2403,13 +2460,13 @@ en:
         password: "Password"
     batchbook:
       label: "Batchbook (Classic)"
-      helptext: "<h4>Batchbook Integration Help</h4><p><br/> You may access Batchbook contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
-      desc: "You can view contact information from Batchbook in Freshdesk."
+      helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
+      desc: "Bring in contact information from your Batchbook account into Freshdesk"
       form:
         domain: "Batchbook Domain:"
         domain_info: "For example, if your Batchbook URL is <strong>http://mycompany.batchbook.com/</strong> , enter <strong> mycompany </strong>. </span>" 
         api_key: "API Key"
-        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook."
+        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook (Classic)."
         version:
           label: "Version"
           classic: "Classic"
@@ -2418,13 +2475,13 @@ en:
         widget_title: "Widget Title"
     highrise:
       label: "Highrise"
-      helptext: "<h4>Highrise Integration Help</h4><p><br/> You may access Highrise contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
-      desc: "You can view contact information from Highrise in Freshdesk."
+      helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
+      desc: "View contact information from Highrise CRM inside Freshdesk while resolving tickets."
       form:
         domain: "Highrise Domain:"
-        domain_info: "For example, if your Highrise URL is <strong>http://mycompany.highrise.com/</strong> , enter <strong> mycompany </strong>. </span>" 
+        domain_info: "For example, if your Highrise URL is <strong>http://mycompany.highrisehq.com/</strong> , enter <strong> mycompany </strong>. </span>" 
         api_key: "API Key"
-        api_key_info: "Your Highrise API Key can be found by following the <i>Your Account</i> link in Highrise."
+        api_key_info: "Your Highrise API Key can be found at Highrise. Please copy and paste the same here."
         widget_title: "Widget Title"
     workflow_max:
       label: "Workflow Max"

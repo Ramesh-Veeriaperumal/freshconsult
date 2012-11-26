@@ -4,6 +4,11 @@ module AgentsHelper
     content_tag(:div, fetch_upgrade_error_msg,:class => "errorExplanation") if current_account.reached_agent_limit?
   end
   
+
+  def can_destroy?(agent)
+     (agent.user != current_user) && (!agent.user.account_admin?)
+  end
+
   def fetch_upgrade_error_msg
     if permission?(:manage_account)
       t('maximum_agents_admin_msg')
