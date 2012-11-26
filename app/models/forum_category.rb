@@ -23,14 +23,20 @@ class ForumCategory < ActiveRecord::Base
   has_many :topics , :through => :forums
   has_many :activities, 
     :class_name => 'Helpdesk::Activity', 
-    :as => 'notable',
-    :dependent => :delete_all
+    :as => 'notable'
 
   attr_accessible :name,:description , :import_id
   belongs_to :account
   
   acts_as_list :scope => :account  
-  after_create :create_activity
+  
+  def after_create 
+    create_activity('new_forum_category')
+  end
+  
+  def after_destroy 
+    create_activity('delete_forum_category')
+  end
 
   # retrieves forums ordered by position
   def self.find_ordered(account, options = {})
@@ -55,10 +61,10 @@ class ForumCategory < ActiveRecord::Base
     name
   end
 
-  def create_activity
+  def create_activity(type)
     activities.create(
-      :description => 'activities.forums.new_forum_category.long',
-      :short_descr => 'activities.forums.new_forum_category.short',
+      :description => "activities.forums.#{type}.long",
+      :short_descr => "activities.forums.#{type}.short",
       :account => account,
       :user => User.current,
       :activity_data => { 
@@ -66,7 +72,8 @@ class ForumCategory < ActiveRecord::Base
                           :url_params => {
                                            :category_id => id,
                                            :path_generator => 'category_path'
-                                          } 
+                                          },
+                          :title => to_s
                         }
     )
   end

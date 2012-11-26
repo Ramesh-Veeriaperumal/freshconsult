@@ -14,7 +14,9 @@ class PostObserver < ActiveRecord::Observer
 	def after_create(post)
 		update_cached_fields(post)
 		monitor_reply(post)
-		create_activity(post)
+		unless post.topic.last_post_id.nil?
+			create_activity(post, 'new_post')
+		end
 	end
 
 	def after_commit_on_create(post)
@@ -27,6 +29,7 @@ class PostObserver < ActiveRecord::Observer
 
 	def after_destroy(post)
 		update_cached_fields(post)
+		create_activity(post, 'delete_post')
 	end
 
 	def monitor_reply(post)
@@ -52,25 +55,24 @@ class PostObserver < ActiveRecord::Observer
       post.topic.update_cached_post_fields(post)
   	end
 
-	def create_activity(post)
-		unless post.topic.last_post_id.nil?
-			post.activities.create(
-				:description 	=> 'activities.forums.new_post.long',
-				:short_descr 	=> 'activities.forums.new_post.short',
-				:account 		=> post.account,
-				:user 			=> post.user,
-				:activity_data 	=> { 
-									 :path => category_forum_topic_path(post.forum.forum_category_id, 
-											 post.forum_id, post.topic_id),
-									 :url_params => {
-													 :category_id => post.forum.forum_category_id, 
-													 :forum_id => post.forum_id, 
-													 :topic_id => post.topic_id,
-													 :path_generator => 'category_forum_topic_path'
-													} 
-									} 
-			)
-		end
+	def create_activity(post, type)
+		post.activities.create(
+			:description => "activities.forums.#{type}.long",
+			:short_descr => "activities.forums.#{type}.short",
+			:account 		=> post.account,
+			:user 			=> post.user,
+			:activity_data 	=> { 
+								 :path => category_forum_topic_path(post.forum.forum_category_id, 
+										 post.forum_id, post.topic_id),
+								 :url_params => {
+												 :category_id => post.forum.forum_category_id, 
+												 :forum_id => post.forum_id, 
+												 :topic_id => post.topic_id,
+												 :path_generator => 'category_forum_topic_path'
+												},
+								 :title => post.to_s
+								} 
+		)
 	end
 
 end

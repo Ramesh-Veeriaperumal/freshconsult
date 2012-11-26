@@ -51,6 +51,7 @@
       <input type="hidden" name="wf_order" value="<%= current_wf_order %>" />
       <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
   		<input type="hidden" name="page" value="1" />
+      <input type="hidden" name="total_entries" value="0">
     </form>
       <% @show_options.each_with_index do |c_hash, i| %> 
         <%
@@ -111,6 +112,8 @@
 		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
 			ev.preventDefault();
 			jQuery(document).scrollTop(0);
+      count = +jQuery('#ticket_list_count').html();
+      jQuery("#FilterOptions input[name=total_entries]").val(count);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
 		});	
 
@@ -125,25 +128,26 @@
     if (supports_html5_storage()) {
       window.localStorage['is_unsaved_view'] = false;
     } 
-     jQuery.ajax({
-        url: "/helpdesk/tickets/custom_search",
-        type: "POST",
-        dataType: "script",
-        data: jQuery(this).serializeArray(),
-        success: function(script){ 
-          if (supports_html5_storage()) {
-            window.localStorage['is_unsaved_view'] = jQuery("#active_filter").hasClass('unsaved');
-            window.localStorage['updated_ticket_list'] = script;
-            setCookie('ticket_list_updated',true);
-          }
-
-          if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
-            jQuery('#export_tickets').hide();
-          } else {
-            jQuery('#export_tickets').show();
-          } 
-
+    jQuery.ajax({
+      url: "/helpdesk/tickets/custom_search",
+      type: "POST",
+      dataType: "script",
+      data: jQuery(this).serializeArray(),
+      success: function(script){ 
+        jQuery("#FilterOptions input[name=total_entries]").val(0);
+        if (supports_html5_storage()) {
+          window.localStorage['is_unsaved_view'] = jQuery("#active_filter").hasClass('unsaved');
+          window.localStorage['updated_ticket_list'] = script;
+          setCookie('ticket_list_updated',true);
         }
-      }); 
+
+        if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+          jQuery('#export_tickets').hide();
+        } else {
+          jQuery('#export_tickets').show();
+        } 
+
+      }
+    }); 
   });
 </script>

@@ -1,15 +1,15 @@
 # Add workday and weekday concepts to the Time class
 class Time
   class << self
-
     # Gives the time at the end of the workday, assuming that this time falls on a
     # workday.
     # Note: It pretends that this day is a workday whether or not it really is a
     # workday.
+
     def end_of_workday(day)
-      format = "%B %d %Y #{BusinessCalendar.config.end_of_workday}"
-      Time.zone ? Time.zone.parse(day.strftime(format)) :
-          Time.parse(day.strftime(format))
+      time = workday?(day) ? BusinessCalendar.config.end_of_workday(day.wday) : "0:00:00"
+      time_with_format(time, day)
+      
     end
 
     # Gives the time at the beginning of the workday, assuming that this time
@@ -17,9 +17,8 @@ class Time
     # Note: It pretends that this day is a workday whether or not it really is a
     # workday.
     def beginning_of_workday(day)
-      format = "%B %d %Y #{BusinessCalendar.config.beginning_of_workday}"
-      Time.zone ? Time.zone.parse(day.strftime(format)) :
-          Time.parse(day.strftime(format))
+      time = workday?(day) ? BusinessCalendar.config.beginning_of_workday(day.wday) : "0:00:00"
+      time_with_format(time, day)
     end
 
     # True if this time is on a workday (between 00:00:00 and 23:59:59), even if
@@ -47,24 +46,47 @@ class Time
     # Rolls forward to the next beginning_of_workday
     # when the time is outside of business hours
     def roll_forward(time)
-
       if (Time.before_business_hours?(time) || !Time.workday?(time))
         next_business_time = Time.beginning_of_workday(time)
       elsif Time.after_business_hours?(time)
-        next_business_time = Time.beginning_of_workday(time) + 1.day
+        next_business_time = Time.beginning_of_workday(time + 1.day)
       else
         next_business_time = time.clone
       end
 
       while !Time.workday?(next_business_time)
-        next_business_time += 1.day
+        next_business_time = Time.beginning_of_workday(next_business_time + 1.day)
       end
-
+      
       next_business_time
     end
 
+    def roll_backward(time)
+      if Time.after_business_hours?(time) || !Time.workday?(time)
+        previous_business_time = Time.end_of_workday(time)
+      elsif Time.before_business_hours?(time)
+         previous_business_time = Time.end_of_workday(time-1.day)
+      else
+        previous_business_time = time.clone
+      end
+
+      while !Time.workday?(previous_business_time)
+        previous_business_time = Time.end_of_workday(previous_business_time - 1.day)
+      end
+
+      previous_business_time
+    end
+
+    private
+
+     def time_with_format(time, day)
+      format = "%B %d %Y #{time}"
+        Time.zone ? Time.zone.parse(day.strftime(format)) :
+          Time.parse(day.strftime(format))
+     end
   end
 end
+
 
 class Time
 
@@ -91,13 +113,23 @@ class Time
       return result *= direction
     end
     
+ 
     # Both times are in different dates
-    result = Time.parse(time_a.strftime('%Y-%m-%d ') + BusinessCalendar.config.end_of_workday) - time_a   # First day
-    result += time_b - Time.parse(time_b.strftime('%Y-%m-%d ') + BusinessCalendar.config.beginning_of_workday) # Last day
+
+    result = Time::parse(time_a.strftime('%Y-%m-%d ') + 
+        BusinessCalendar.config.end_of_workday(time_a.wday)) - time_a   # First day
+    result += time_b - Time::parse(time_b.strftime('%Y-%m-%d  ') + 
+        BusinessCalendar.config.beginning_of_workday(time_b.wday)) # Last day
+
+    time_b = Time.end_of_workday(Time.roll_backward(time_b-1.day)) #To preceed the time_b since last day is calculated - Abhinav
+    # # All days in between
+    while(time_b.to_date > time_a.to_date)
+      time_a = Time::roll_forward(time_a+1.day)
+      duration_of_working_day = Time::end_of_workday(time_a) - Time::beginning_of_workday(time_a)
+      result += duration_of_working_day  
+    end
     
-    # All days in between
-    duration_of_working_day = Time.parse(BusinessCalendar.config.end_of_workday) - Time.parse(BusinessCalendar.config.beginning_of_workday)
-    result += (time_a.to_date.business_days_until(time_b.to_date) - 1) * duration_of_working_day
+    
     
     # Make sure that sign is correct
     result *= direction

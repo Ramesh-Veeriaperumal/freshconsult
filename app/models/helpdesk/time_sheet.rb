@@ -89,6 +89,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       self[:customer_name] = self.customer_name
       self[:contact_email] = ticket.requester.email
       options[:except] = [:account_id,:ticket_id,:time_spent]
+      options[:root] =:time_entry
     end
     json_str = super options
     json_str
@@ -98,7 +99,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    super(:builder => xml, :skip_instruct => true,:except => [:account_id,:ticket_id,:time_spent]) do |xml|
+    super(:builder => xml, :skip_instruct => true,:dasherize=>false,:except => [:account_id,:ticket_id,:time_spent],:root=>:time_entry) do |xml|
       xml.tag!(:ticket_id,ticket.display_id)
       xml.tag!(:agent_name,agent_name)
       xml.tag!(:time_spent,sprintf( "%0.02f", self.time_spent/3600)) # converting to hours as in UI

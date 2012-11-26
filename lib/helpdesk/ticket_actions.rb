@@ -280,4 +280,19 @@ module Helpdesk::TicketActions
     @user = current_account.users.new
     render :partial => "contacts/add_requester_form"
   end
+
+  def full_paginate
+    total_entries = params[:total_entries]
+    if(total_entries.blank? || total_entries.to_i == 0)
+      load_cached_ticket_filters
+      load_ticket_filter
+      @ticket_filter.deserialize_from_params(params)
+      joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+      options = { :joins => joins, :conditions => @ticket_filter.sql_conditions, :select => :id}
+      options[:distinct] = true if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+      total_entries = current_account.tickets.permissible(current_user).count(options)
+    end
+    @ticket_count = total_entries.to_i
+  end
+
 end

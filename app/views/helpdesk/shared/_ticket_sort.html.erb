@@ -1,10 +1,13 @@
 <div class="sort-bar toolbar">
   <div class="page_info">
-    <%= will_paginate @items, :page_links => false, :class => "toolbar_pagination", :previous_label => "<span></span>", :next_label => "<span></span>" %>  
+    <div class="toolbar_pagination" id="ticket_pagination">
+    </div>
     <% unless @items.total_entries == 0 %>
     <div class="offset">
       Showing 
       <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b>
+        of
+        <a rel="load-rjs" href="javscript:void(0)" id="ticket_list_count"><img src="/images/pageCountLoad.gif"><img src="/images/pageCountLoad1.gif"></a>
     </div>   
     <% end %>
   </div>

@@ -14,7 +14,8 @@ Helpdesk::SlaDetail.seed_many(:sla_policy_id, :priority, [
       :priority => 1,      
       :response_time => 86400,
       :resolution_time => 259200,
-      :override_bhrs => false
+      :override_bhrs => false,
+      :account_id => account.id
   },
   
   {   
@@ -23,7 +24,8 @@ Helpdesk::SlaDetail.seed_many(:sla_policy_id, :priority, [
       :priority => 2,
       :response_time => 28800,
       :resolution_time => 86400,
-      :override_bhrs => false
+      :override_bhrs => false,
+      :account_id => account.id
   },
   
   {   
@@ -32,7 +34,8 @@ Helpdesk::SlaDetail.seed_many(:sla_policy_id, :priority, [
       :priority => 3,
       :response_time => 14400,
       :resolution_time => 43200,
-      :override_bhrs => false
+      :override_bhrs => false,
+      :account_id => account.id
   },
   
   {   
@@ -41,6 +44,7 @@ Helpdesk::SlaDetail.seed_many(:sla_policy_id, :priority, [
       :priority => 4,
       :response_time => 3600,
       :resolution_time => 14400,
-      :override_bhrs => false
+      :override_bhrs => false,
+      :account_id => account.id
   }
 ])
