@@ -3916,7 +3916,7 @@ div.addReminder{
 			a:hover{
 				text-decoration:none;
 			}
-		}		
+		}
 
 		&:hover {
 			div.item_actions{
@@ -3926,7 +3926,7 @@ div.addReminder{
 		div.item_information{
 			@include clearfix;
 			float:left;
-			width:70%;
+			width:55%;
 			.info_data{
 				padding:2px 2px;
 				font-size:12px;
@@ -4998,6 +4998,7 @@ a.close{
 	border-bottom:1px solid #dfdfdf;
 }
 .customers-toolbar{
+	padding: 10px 0 0 0 ;
 	float:left;
 	width: 400px;
 	input{
@@ -5007,7 +5008,7 @@ a.close{
 	}
 	.bulk-action{
 		float:left;
-		display:none;
+		margin-top : -8px;
 		a{
 			&.uiButton{
 				margin-right: 4px;
@@ -6960,7 +6961,171 @@ a[rel="load-rjs"] {
 }
 /* end */
 
+
 // !PATTERN TODO to be moved into mixins and cleaned up later
 // CSS animation
 
 @import "../animate-custom";
+
+/* customers page CSS start */
+
+#customers-toolbar [disabled] {
+		opacity: .4;
+		cursor: default;
+		box-shadow: none;
+		background: #F5F5F5;
+		border-color: #DDD;
+		color: #3F3F3F;
+		&:hover {
+			background: #F5F5F5;
+			color: #3F3F3F;
+		}
+}
+
+#customers-page{
+
+	.bulk-action{
+		margin-left: 9px;
+	}
+
+	.customer_status_tab{
+		margin-left: 37px;
+	}
+
+	.btn{
+		color: #333;
+		font-weight: bold;
+		text-decoration: none;
+		display: inline-block;
+		vertical-align: middle;
+		zoom: 1;
+		font-size: 100%;
+		line-height: 130%;
+		cursor: pointer;
+		white-space: nowrap;
+		text-align: center;
+		overflow: hidden;
+		padding: 4px 8px;
+		margin: 2px;
+		font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;
+		border-radius: 4px;
+		box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0;
+		background-image: url(/images/overlay-button.png?1319804108);
+		background-color: #F8F8F8;
+		border: 1px solid #CFCFCF;
+		position: relative;
+		&:hover{
+			background: #EEE;
+		}
+	}
+
+	#tickets-expanded{
+		.content_list{
+			margin-top: -1px;
+		}
+	}
+	.customers-toolbar{
+		margin: 0 -10px;
+		.uiButton{
+			margin-top: 5px;
+		}
+		input{
+			margin-top: 14px;
+			margin-left: 1px;
+		}
+		.bulk-action{
+			margin-top: 0px;
+		}
+	}
+
+	#users_form_wrapper{
+		margin : 0 -20px;
+	}
+
+	.contacts_loader {
+		height : 25px;
+		width : 106px;
+		/*margin : 2px;*/
+		float : left;
+	}
+
+	.contacts_loader img{
+		float : right;
+		margin-right: 53px;
+	}
+
+	.hover{
+		border: 2px solid #B3B3B3;
+		box-shadow:  #ECEAE9 0px 0px 4px 0px;;
+	}
+
+	.button-success{
+		background-image:url('paper.gif')
+	}
+
+	.user_actions{
+
+		opacity: 0;
+
+		.symbol-done-tick{
+			display: inline-block;
+			vertical-align: middle;
+			zoom: 1;
+			width: 16px;
+			height: 15px;
+			margin-left: 0px;
+		}
+		.acheived-text{
+			margin-left: 5px;
+		}
+	}
+
+	#tickets-expanded{
+		.selector-box{
+			width : 40px;
+			padding: 6px 8px;
+			input{
+				margin-left: 15px;
+			}
+		}
+		.name{
+			//width: 200px;
+			padding-left: 0px;
+		}
+		.small{
+			font-size: 75%;
+			a{
+				font-size: inherit;
+			}
+		}
+
+	}
+	#customers-select-all{
+		margin-left: 15px;
+	}
+
+	div.item_information{
+		width: 55%;
+	}
+}
+
+#contacts_import{	
+	margin-right: 10px;
+}
+
+.opacity-element{
+	filter: alpha(opacity=100);
+    opacity: 1 !important;
+    -webkit-transition: all .9s ease;
+       -moz-transition: all .9s ease;
+        -ms-transition: all .9s ease;
+       		transition: all .9s ease;
+}
+
+.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+    background-color:#fbfbfb;        
+}
+
+/*end*/
+
+ 

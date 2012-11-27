@@ -1,0 +1,66 @@
+<tr>
+	<td class="selector-box">
+		<%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+	</td>
+	<td class="name">
+		<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom", :rel => "contact-hover", :title => contact.id, "data-contact-id" => contact.id, "data-contact-url" => hover_card_contact_path(contact), "data-placement" => "topRight" ) %>
+	</td>
+	<td>
+		<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
+	</td>
+	<td>
+		<div class="user_actions" align="right">
+			<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact} , :method => 'put', :class => "btn") if contact.deleted? %>
+			<%= link_to(t('contacts.activation'), send_invite_activation_path(contact), "data-method" => 'put', :class => "btn send-activation", "data-loading-text" =>t('admin.getting_started.index.next_please_wait'), "data-complete-text" => 
+				t('users.activations.sent')) if !contact.active? and !contact.deleted %>
+			<%= link_to(t('edit'), edit_contact_path(contact), :class => "btn") if !contact.deleted? %>
+			<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "btn") if contact != current_user and !contact.deleted? %>
+		</div>
+	</td>
+</tr>
+<!--tr>
+	<td class="selector-box"><%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %></td>
+	
+	<td class="name"><%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom", :rel => "contact-hover", :title => contact.id, "data-contact-id" => contact.id, "data-contact-url" => hover_card_contact_path(contact), "data-placement" => "topRight" ) %></td>
+	<td><%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %></td>
+	
+	<td>
+		<div class="user_actions" align="right">
+			<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact} , :method => 'put', :class => "btn") if contact.deleted? %>
+			<%= link_to(t('contacts.activation'), send_invite_activation_path(contact), "data-method" => 'put', :class => "btn send-activation", "data-loading-text" =>t('admin.getting_started.index.next_please_wait'), "data-complete-text" => 
+				t('users.activations.sent')) if !contact.active? and !contact.deleted %>
+			<%= link_to(t('edit'), edit_contact_path(contact), :class => "btn") if !contact.deleted? %>
+			<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "btn") if contact != current_user and !contact.deleted? %>
+		</div>
+	</td>
+</tr-->
+<!-- <li class="<%= cycle('stripe', '') %>">
+		  	<div class="item_actions">
+				<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact} , :method => 'put', :class => "button") if contact.deleted? %>
+				<%= link_to(t('contacts.activation'), {:controller => "activations", :action => "send_invite", :id => contact} , :method => 'put', :class => "button") if !contact.active? and !contact.deleted %>
+				<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") if !contact.deleted? %>
+				<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") if contact != current_user and !contact.deleted? %>
+			</div>
+		  	<%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+		  	<%= user_avatar( contact, :thumb, "preview_pic", {:width => "36px", :height => "36px" }) %>
+		  	<div class="item_information">
+	        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom", :rel => "contact-hover", :title => contact.id, "data-contact-id" => contact.id, "data-contact-url" => hover_card_contact_path(contact) ) %>
+				<div class="info_data">
+					<% unless contact.job_title.blank? %>
+			  			<b><%= h contact.job_title %></b>
+					<% else %>
+						<% unless contact.customer.blank? %>
+					   		<%=t('contacts.working')%>
+						<% end %> 
+					<% end %>
+					<% unless contact.customer.blank? %>
+					   <%= link_to(h(contact.customer.name), contact.customer)  %>
+					<% end %> 
+				</div>
+				<div class="info_data">
+					<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
+					<%= content_tag (:span, "#{h(contact.phone)}") unless contact.phone.blank? %>
+				</div>
+		 	</div>
+	    </li>		 -->
+	<!-- </ul>  -->

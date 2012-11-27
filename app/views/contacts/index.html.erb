@@ -1,4 +1,5 @@
-<% content_for :sidebar do %>
+<div id="customers-page">
+	<% content_for :sidebar do %>
 	<div class="sidepanel">
 		<h3 class="title"><%=t('contacts.quick_contact')%></h3>	
 		<% form_tag :url  => contacts_path, :method =>:post do %>
@@ -19,62 +20,44 @@
 			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
 		</ul>
 	  <div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
-		<% end %>
+	<% end %>
 	</div>
 	<div id="contact_tag_cloud" class="sidepanel">
 	<h3 class="title"><%=t('contacts.tag_cloud')%></h3>
 		<%= render :partial => "/helpdesk/tags/tag_cloud", :object => @tags %>
 	</div>
-<%end%>
-<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
-<% form_tag "", { :id => "tickets-expanded", :method => :put } do %>
-<% if @contacts.length > 0 %>
-	<ul id="users" class="content_list">	  
-	  <% @contacts.each do |contact| %>
-	    <li class="<%= cycle('stripe', '') %>">
-		  	<div class="item_actions">
-				<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact} , :method => 'put', :class => "button") if contact.deleted? %>
-				<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") if !contact.deleted? %>
-				<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") if contact != current_user and !contact.deleted? %>
-		  	</div>
-		  	<%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
-		  	<%= user_avatar( contact, :thumb, "preview_pic", {:width => "36px", :height => "36px" }) %>
-		  	<div class="item_information">
-	        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
-				<div class="info_data">
-					<% unless contact.job_title.blank? %>
-			  			<b><%= h contact.job_title %></b>
-					<% else %>
-						<% unless contact.customer.blank? %>
-					   		<%=t('contacts.working')%>
-						<% end %> 
-					<% end %>
-					<% unless contact.customer.blank? %>
-					   at <%= link_to(h(contact.customer.name), contact.customer)  %>
-					<% end %> 
-				</div>
-				<div class="info_data">
-					<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
-					<%= content_tag (:span, "#{h(contact.phone)}") unless contact.phone.blank? %>
-				</div>
-		 	</div>
-	    </li>		
-	  <% end %>	 
-	</ul> 
+	<%end%>
+	<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
+	<div id="users_form_wrapper">
+	<% form_tag "", { :id => "tickets-expanded", :method => :put } do %>
+	<table class="table table-striped" id="users-table">
+		<% if @contacts.present? %>
+		<%= render :partial => "contact", :collection => @contacts %> 
+	</table>
 	<div class="negtiveMargin">  
 		<%= will_paginate @contacts %> 
 	</div>
-<% else %>
+	<% else %>
 	<div class="big-info">
 		<div class="no-info-text">
 			<% if params[:state].blank? or params[:state].eql?('active') %>
 				<%= t('contacts.active.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
-				<%= t('contacts.active.no_contacts') if params[:letter].blank? %>
-			<% else %>
+				<% if params[:letter].blank? %>
+					<%= t('contacts.active.no_contacts') %><br />
+					<span class="small">Create a <a href= "/contacts/new" >new contact</a></span>
+				<% end %>
+			<% elsif params[:state].eql?('deleted') %>
 			   <%= t('contacts.deleted.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
 				<%= t('contacts.deleted.no_contacts') if params[:letter].blank? %>
+			<% else %>
+				<%= t('contacts.inactive.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+				<%= t('contacts.inactive.no_contacts') if params[:letter].blank? %>
 			<% end %>
 		</div>
 	</div>
-<% end %>
-<% end %>
+	<% end %>
+	<% end %>
+	</div>
+</div>
+<!--script> -->
+
