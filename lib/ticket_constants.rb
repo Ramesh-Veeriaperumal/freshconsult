@@ -12,8 +12,9 @@ module TicketConstants
     [ :phone,      I18n.t('phone'),            3 ],
     [ :forum,      I18n.t('forum_key'),        4 ],
     [ :twitter,    I18n.t('twitter_source'),   5 ],
-    [ :facebook,   I18n.t('facebook_source'),         6 ],
-    [ :chat,       I18n.t('chat'),             7 ]    
+    [ :facebook,   I18n.t('facebook_source'),  6 ],
+    [ :chat,       I18n.t('chat'),             7 ],
+    [ :mobi_help,  I18n.t('mobi_help'),        8 ]
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }

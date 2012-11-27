@@ -3424,6 +3424,10 @@ div.addReminder{
 		   			background-image: url('/images/sources/detailed_forum.png');
 		   			background-repeat: no-repeat;
 		   		}
+		   		&.source-detailed-mobihelp {
+		   			background-image: url('/images/sources/detailed_mobihelp.png');
+		   			background-repeat: no-repeat;
+		   		}
 		   }
 
 		   &.assign {
@@ -6935,7 +6939,6 @@ a.mobile_switchBtn {
 	color:#222;
 	padding:10px;
 }
- 
 
 a[rel="load-rjs"] {
 	float:right;
