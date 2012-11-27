@@ -814,6 +814,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def to_json(options = {}, deep=true)
     options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
+    unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
+      options[:only] = [:display_id,:subject,:deleted]
+      json_str = super options
+      return json_str
+    end
     if deep
       self.load_flexifield
       self[:notes] = self.notes
@@ -830,7 +835,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
+
+    unless options[:basic].blank? #to give only the basic properties[basic prop set from 
+      return super(:builder =>xml,:skip_instruct => true,:only =>[:display_id,:subject,:deleted],
+          :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
+    end
+    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id], 
+      :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
           begin

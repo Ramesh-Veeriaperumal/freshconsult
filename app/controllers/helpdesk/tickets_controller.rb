@@ -237,12 +237,24 @@ class Helpdesk::TicketsController < ApplicationController
         format.mobile { 
           render :json => { :success => true, :item => @item }.to_json 
         }
+        format.xml { 
+          render :xml => @item.to_xml({:basic => true})
+        }
+        format.json { 
+          render :json => @item.to_json({:basic => true}) 
+        }
       end
     else
       respond_to do |format|
         format.html { edit_error }
+        format.json {
+          render :json => {:failure => true,:errors => edit_error}.to_json
+        }
         format.mobile { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
+        format.xml {
+          render :xml =>{:failure => true, :errors=>edit_error}
         }
       end
     end
@@ -256,11 +268,19 @@ class Helpdesk::TicketsController < ApplicationController
       :inline => t("helpdesk.flash.assignedto", :tickets => get_updated_ticket_count, 
                                                 :username => user.name ))
 
-    if user === current_user && @items.size == 1
-      redirect_to helpdesk_ticket_path(@items.first)
-    else
-      redirect_to :back
+
+    respond_to do |format|
+      format.html {
+        if user === current_user && @items.size == 1
+          redirect_to helpdesk_ticket_path(@items.first)
+        else
+          redirect_to :back
+        end
+      }
+      format.xml { render :xml => @items.to_xml({:basic=>true}) }
+      format.json { render :json => @items.to_json({:basic=>true}) }
     end
+
   end
   
   def close_multiple
@@ -268,17 +288,28 @@ class Helpdesk::TicketsController < ApplicationController
     @items.each do |item|
       item.update_attributes(:status => status_id)
     end
-    
-    flash[:notice] = render_to_string(
-        :inline => t("helpdesk.flash.tickets_closed", :tickets => get_updated_ticket_count ))
-    redirect_to :back
+
+    respond_to do |format|    
+      format.html {
+        flash[:notice] = render_to_string(
+            :inline => t("helpdesk.flash.tickets_closed", :tickets => get_updated_ticket_count ))
+          redirect_to :back
+        }
+        format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
+        format.json {  render :json =>@items.to_json({:basic=>true}) }
+
+    end
   end
  
   def pick_tickets
     assign_ticket current_user
     flash[:notice] = render_to_string(
         :inline => t("helpdesk.flash.assigned_to_you", :tickets => get_updated_ticket_count ))
-    redirect_to :back
+    respond_to do |format|
+      format.html{ redirect_to :back }
+      format.xml { render :xml => @items.to_xml({:basic=>true}) }
+      format.json { render :json=>@items.to_json({:basic=>true}) }
+    end
   end
   
   def execute_scenario 
@@ -295,6 +326,8 @@ class Helpdesk::TicketsController < ApplicationController
                                       :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
         redirect_to :back 
       }
+      format.xml { render :xml => @item, :status=>:success }
+      format.json { render :json => @item, :status=>:success }  
       format.js
       format.mobile { 
         render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
