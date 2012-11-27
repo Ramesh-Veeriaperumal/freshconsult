@@ -56,6 +56,6 @@ class SubscriptionPayment < ActiveRecord::Base
   def to_s
     return meta_info[:description] if misc
     name = "Freshdesk #{plan_name} #{renewal_type} subscription for #{agents} Agents 
-           (with #{free_agents} free agents)"          
+           (with #{free_agents} free agent(s)"          
   end
 end
