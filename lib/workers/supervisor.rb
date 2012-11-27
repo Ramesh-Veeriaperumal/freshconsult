@@ -29,9 +29,12 @@ class Workers::Supervisor
           rule.trigger_actions ticket
           ticket.save!
         end
-      rescue => exc
+      rescue Exception => e
+        puts "something is wrong: #{e.message}"
+      rescue
+        puts "something went wrong"
       end
+      Account.reset_current_account
     end
-    Account.reset_current_account 
   end
 end
