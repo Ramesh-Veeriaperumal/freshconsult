@@ -26,9 +26,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
 
+  def self.trashed_condition(input)
+    { "condition" => 
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}", 
+      "operator" => "is", "value" => input}
+  end
+
+
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
-                      "deleted" =>  [spam_condition(false),deleted_condition(true)],
+                      "deleted" =>  [deleted_condition(true),trashed_condition(false)],
                       "overdue" =>  [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},spam_condition(false),deleted_condition(false) ],
                       "pending" => [{ "condition" => "status", "operator" => "is_in", "value" => PENDING},spam_condition(false),deleted_condition(false)],
                       "open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},spam_condition(false),deleted_condition(false)],
@@ -91,6 +98,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
+      defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
       defs[:requester_id] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => :requester_id, :container => :dropdown})  # Added for email based custom view, which will be used in integrations.
       defs[:"helpdesk_tickets.id"] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_tickets.id", :container => :dropdown})
       defs
@@ -158,6 +166,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     if !params[:filter_name].eql?("spam") and !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
+      action_hash.push({ "condition" => "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}", "operator" => "is", "value" => false})
     end
 
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
@@ -281,9 +290,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def get_joins(all_conditions)
     all_joins = joins
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
+    all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins
+  end
+
+  def schema_less_join
+    " INNER JOIN helpdesk_schema_less_tickets ON helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id 
+                                      AND helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id "
   end
 
   def tags_join

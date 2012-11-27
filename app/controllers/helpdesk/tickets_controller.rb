@@ -26,7 +26,9 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
 
-  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
+  before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
+    :close_multiple ,:pick_tickets, :delete_forever ]  
+  
   skip_before_filter :load_item
   alias :load_ticket :load_item
   before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
@@ -387,8 +389,23 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def delete_forever
+    ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on 
+      st.ticket_id= t.id and st.account_id=#{current_account.id} 
+      set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where 
+      t.id in (#{@items.map(&:id).join(',')}) and t.account_id=#{current_account.id}")    
+    Resque.enqueue(Workers::ClearTrash, current_account.id)
+    flash[:notice] = render_to_string(
+        :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
+    redirect_to :back
+  end
+
   def empty_trash
-    Helpdesk::Ticket.destroy_all(:deleted => true)
+    ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets
+     st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
+       set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 
+       where t.deleted=1 and t.account_id=#{current_account.id}")
+    Resque.enqueue(Workers::ClearTrash, current_account.id)
     flash[:notice] = t(:'flash.tickets.empty_trash.success')
     redirect_to :back
   end

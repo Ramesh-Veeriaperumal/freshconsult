@@ -754,7 +754,9 @@ en:
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
       empty_trash: 
-        success: All tickets in the trash folder were deleted.
+        success: The trash was emptied.
+      delete_forever:
+        success: %{tickets} deleted.
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1762,6 +1764,8 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
     flag_spam: Flag Spam
+    delete_forever: Delete Forever
+    empty_trash: Empty Trash
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export
