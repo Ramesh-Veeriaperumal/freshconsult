@@ -149,7 +149,7 @@ var $J = jQuery.noConflict();
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
       // - Tour My App 'Next' button change
-      $(".tourmyapp-toolbar .next_button").livequery(function(){ 
+      $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
         if($(this).text() == "Next »")
            $(this).addClass('next_button_arrow').text('Next');
       });
@@ -357,6 +357,8 @@ var $J = jQuery.noConflict();
         setTimeout(function() {
           $('#benchmarkresult').html('Finnally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
         },10);
+        //clearing the pageless of previous page.
+        jQuery(window).unbind('.pageless');
         return true;
       })
 

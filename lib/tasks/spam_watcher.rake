@@ -25,7 +25,7 @@ def check_for_slave_db
  @db_to_connect = Rails.configuration.database_configuration.keys.include?(DB_SLAVE) ? DB_SLAVE :  Rails.env
 end
 
-def execute(query_str)
+def execute_sql_on_slave(query_str)
   ActiveRecord::Base.establish_connection(@db_to_connect).connection.select_values(query_str)
 end
 
@@ -55,7 +55,7 @@ def check_for_tickets_spam(table,column_name, threshold)
     between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}'  and id > 4300000
     group by #{column_name} having total > #{threshold}
   eos
-  requesters = execute(query_str)
+  requesters = execute_sql_on_slave(query_str)
   puts query_str
   deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
   
@@ -86,7 +86,7 @@ def check_for_notes_spam(table,column_name, threshold)
     between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 3500000
     group by #{column_name} having total > #{threshold}
   eos
-  requesters = execute(query_str)
+  requesters = execute_sql_on_slave(query_str)
   puts query_str
   deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
 end

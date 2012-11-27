@@ -15,23 +15,19 @@
 		
 	<!--  Mobile viewport optimized: j.mp/bplateviewport -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-	<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
+	<% cache(["v1","portal","fav_ico",current_portal]) do %>
+		<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
+	<%end%>
 	<%= include_stylesheets :app  %>
 	<%= include_stylesheets :common  %>
 	<%= include_stylesheets :tour_my_app %>	
 	<%= render :partial => "shared/theme.css"  %>
-	<!--[if lte IE 8 ]>
-		<%= include_javascripts :defaults  %>
-		<%= include_javascripts :frameworks %>
-		<%= include_javascripts :workspace %>
-		<%= include_javascripts :notifications %>
-	<![endif]-->
-
-	<!--[if (gte IE 9)|!(IE)]><!-->
-		<%= include_javascripts :freshdesk %>
-	<!--<![endif]-->
-
+	
+	<%= include_javascripts :defaults  %>
+	<%= include_javascripts :frameworks %>
+	<%= include_javascripts :workspace %>
+	<%= include_javascripts :notifications %>
+	
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';

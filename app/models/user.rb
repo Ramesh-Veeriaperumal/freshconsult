@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
   has_many :tag_uses,
     :as => :taggable,
@@ -63,6 +64,8 @@ class User < ActiveRecord::Base
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
+  after_commit_on_update :clear_agent_list_cache, :if => :user_role_updated?
+  before_update :bakcup_user_changes
   
   named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
@@ -98,7 +101,7 @@ class User < ActiveRecord::Base
   end
   
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and (external_id.blank? || !email.blank?)
   end
 
   def add_tag(tag)
@@ -140,7 +143,7 @@ class User < ActiveRecord::Base
 
   attr_accessor :import
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
-                  :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
+                  :twitter_id, :external_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
                   :deleted , :fb_profile_id , :language, :address
 
   #Sphinx configuration starts
@@ -173,6 +176,7 @@ class User < ActiveRecord::Base
     self.mobile = params[:user][:mobile]
     self.second_email = params[:user][:second_email]
     self.twitter_id = params[:user][:twitter_id]
+    self.external_id = params[:user][:external_id]
     self.description = params[:user][:description]
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
@@ -223,7 +227,7 @@ class User < ActiveRecord::Base
   end
 
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank?
+    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank? && self.external_id.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model
@@ -382,7 +386,7 @@ class User < ActiveRecord::Base
   end
   
   def get_info
-    (email) || (twitter_id)
+    (email) || (twitter_id) || (external_id)
   end
   
   def twitter_style_id
@@ -411,7 +415,7 @@ class User < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
-                                                              :user_role,:fb_profile_id,:language,:address]) 
+                                                              :user_role,:fb_profile_id,:external_id,:language,:address]) 
   end
   
   def company_name
@@ -425,7 +429,7 @@ class User < ActiveRecord::Base
   def to_mob_json
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
-      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
+      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id, :external_id ]
     }
     to_json options
   end
@@ -505,5 +509,14 @@ class User < ActiveRecord::Base
 
     def update_admin_in_crm
       Resque.enqueue(CRM::AddToCRM::UpdateAdmin, self.id)
+    end
+
+    def bakcup_user_changes
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+    def user_role_updated?
+      @all_changes.has_key?(:user_role)
     end
 end
