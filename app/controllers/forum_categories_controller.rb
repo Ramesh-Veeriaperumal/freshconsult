@@ -68,6 +68,9 @@ class ForumCategoriesController < ApplicationController
           render :action => 'show'
         end
       end
+      wants.xml { render :xml =>@result}
+      wants.json { render :json =>@result}
+
     end
   end  
     

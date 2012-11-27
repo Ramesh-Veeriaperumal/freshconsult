@@ -76,7 +76,8 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|
       if @folder.save
         format.html { redirect_to redirect_to_url }
-        format.xml  { render :xml => @folder, :status => :created, :location => @folder }
+        format.xml  { render :xml => @folder, :status => :created }
+        format.json  { render :json => @folder, :status => :created }     
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
@@ -95,7 +96,8 @@ class Solution::FoldersController < ApplicationController
      
        if @folder.update_attributes(params[nscname])       
           format.html { redirect_to redirect_to_url }
-          format.xml  { render :xml => @folder, :status => :created, :location => @folder }     
+          format.xml  { render :xml => @folder, :status => :success } 
+          format.json  { render :json => @folder, :status => :success }     
        else
           format.html { render :action => "edit" }
           format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
@@ -115,6 +117,7 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to redirect_to_url }
       format.xml  { head :ok }
+      format.json  { head :ok }
     end
     
   end
