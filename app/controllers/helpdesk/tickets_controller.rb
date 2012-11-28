@@ -250,13 +250,14 @@ class Helpdesk::TicketsController < ApplicationController
       respond_to do |format|
         format.html { edit_error }
         format.json {
-          render :json => {:failure => true,:errors => edit_error}.to_json
+          result = {:errors=>@item.errors.full_messages }
+          render :json => result.to_json
         }
         format.mobile { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
         format.xml {
-          render :xml =>{:failure => true, :errors=>edit_error}
+          render :xml =>@item.errors
         }
       end
     end
