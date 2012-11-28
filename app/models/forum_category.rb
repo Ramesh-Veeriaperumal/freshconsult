@@ -21,6 +21,7 @@ class ForumCategory < ActiveRecord::Base
   has_many :portal_topics, :through => :portal_forums
   has_many :user_topics, :through => :user_forums
   has_many :topics , :through => :forums
+
   has_many :activities, 
     :class_name => 'Helpdesk::Activity', 
     :as => 'notable'

@@ -87,7 +87,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
     def on_status_change_override_bhrs(ticket, ticket_attr)
       elapsed_time = Time.zone.now - ticket.ticket_states.sla_timer_stopped_at  
-      ticket_attr + elapsed_time if Ticket.due_by > ticket.ticket_states.sla_timer_stopped_at
+      ticket_attr + elapsed_time if ticket.due_by > ticket.ticket_states.sla_timer_stopped_at
     end
 
     def on_status_change_bhrs(ticket, ticket_attr)

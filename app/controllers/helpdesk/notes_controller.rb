@@ -149,7 +149,7 @@ class Helpdesk::NotesController < ApplicationController
       if @item.fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
         flash[:notice] = t(:'fwd_success_msg')
-      else        
+      elsif @item.to_emails.present? or @item.cc_emails.present? or @item.bcc_emails.present?
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
                 :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
         flash[:notice] = t(:'flash.tickets.reply.success')
