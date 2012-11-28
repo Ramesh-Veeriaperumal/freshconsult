@@ -1,6 +1,6 @@
 class Workers::Supervisor
   extend Resque::Plugins::Retry
-  @queue = 'Supervisor_worker'
+  @queue = 'supervisor_worker'
 
   @retry_limit = 3
   @retry_delay = 60*2
