@@ -96,9 +96,11 @@ class BusinessCalendar < ActiveRecord::Base
   private 
 
     def valid_working_hours?
-      weekdays.each do |n|
-        errors.add_to_base("Enter a valid Time") if (Time.zone.parse(beginning_of_workday(n))  >
-           Time.zone.parse(end_of_workday(n)))
+      if (version != 1)
+        weekdays.each do |n|
+          errors.add_to_base("Enter a valid Time") if (Time.zone.parse(beginning_of_workday(n))  >
+             Time.zone.parse(end_of_workday(n)))
+        end
       end
     end
 
