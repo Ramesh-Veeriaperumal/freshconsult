@@ -284,7 +284,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
-  validates_inclusion_of :priority, :in =>PRIORITIES.map!{ |priority| priority[2] }, :message=>"should be a valid priority" #for api
+  validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
   #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
