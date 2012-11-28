@@ -1,0 +1,121 @@
+@import "../app/lib/settings";
+.lead {
+  margin-bottom: 20px;
+  font-size: 21px;
+  font-weight: 200;
+  line-height: 30px;
+}
+
+small {
+  font-size: 85%;
+}
+
+strong {
+  font-weight: bold;
+}
+
+.muted {
+  color: #999999;
+}
+.page-header {
+  padding-bottom: 9px;
+  margin: 20px 0 30px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.topbar .dropdown-menu a, .dropdown-menu a {
+  @include text-shadow(0 0 0 #fff);
+  }
+.cust_list_table{
+  font-size: 14px;
+  .open .menu, .dropdown.open .menu, .open .dropdown-toggle, .dropdown.open .dropdown-toggle{
+    border: 0 solid transparent;
+    background: none;
+    color: inherit;
+  }
+    .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+        background-color:#fbfbfb;        
+    }
+    .pagination ul > li > a:hover, .pagination ul > .active > a, .pagination ul > .active > span {
+        background-color: #7f7f7f;
+        border-color:#7f7f7f;
+        color:#fff;
+    }
+    .pagination ul > li > a:hover{
+      background-color:#c6c6c6;
+      border-color:#c6c6c6;
+    }
+    .tabs{
+      margin-right: -20px;
+      margin-left: -20px;
+      padding-right: 20px;
+      padding-left:20px;
+    }
+}
+.pagination ul > li > a:hover{ 
+        .arrow-up {
+            border-bottom-color: #fff;
+        }
+        .arrow-right {
+            border-left-color: #fff;
+        }         
+        .arrow-down {
+            border-top-color: #fff;
+        }
+        .arrow-left {
+            border-right-color: #fff;
+        }    
+}
+.arrow-right,
+.arrow-left,
+.arrow-up,
+.arrow-down {
+  /*
+   * In Internet Explorer, The"border-style: dashed" will never be
+   * rendered unless "(width * 5) >= border-width" is true.
+   * Since "width" is set to "0", the "dashed-border" remains
+   * invisible to the user, which renders the border just like how
+   * "border-color: transparent" renders.
+   */
+  border-style: dashed;
+  padding:0;
+  border-color: transparent;
+  border-width: 0.7em;
+  display: -moz-inline-box;
+  display: inline-block;
+  /* Use font-size to control the size of the arrow. */
+  font-size:9px;
+  height: 0;
+  line-height: 0;
+  position: relative;
+  vertical-align: middle;
+  width: 0;
+}
+
+.arrow-up {
+  border-bottom-width: 1em;
+  border-bottom-style: solid;
+  border-bottom-color: #666;
+  bottom: 0.25em;
+}
+
+.arrow-right {
+  border-left-width: 1em;
+  border-left-style: solid;
+  border-left-color: #666;
+  left: 0.35em;
+}
+                    
+.arrow-down {
+  border-top-width: 1em;
+  border-top-style: solid;
+  border-top-color: #666;
+  top: 0.25em;
+}
+
+.arrow-left {
+  border-right-width: 1em;
+  border-right-style: solid;
+  border-right-color: #666;
+  right: 0.35em;
+}

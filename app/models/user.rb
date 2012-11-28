@@ -379,8 +379,8 @@ class User < ActiveRecord::Base
     day_pass_usages.on_the_day(start_time).first
   end
   
-  def self.filter(letter, page, state = "active")
-    paginate :per_page => 50, :page => page,
+  def self.filter(letter, page, state = "active", per_page = 2)
+    paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
              :order => 'name'
   end

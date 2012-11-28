@@ -46,114 +46,154 @@
 	  <%else%>		
 	   	<%= error_messages_for :user %> 
 	 <%end%>
-     
- 	<ul class="ui-form">
-		<li>
-			<%= label(:user, :name, t('user.full_name') ) %>
-			<%= text_field(:user, :name, :class => "text", :value => @agent.user.name )  %>
-		</li>	
-		<li>
-			<%= label(:user, :email, t('user.email')) %>
-			<!--label class="overlabel" for="email_primary">Primary</label-->
-			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" , :value => @agent.user.email) %>
-						
-		</li>	
-		<li>
-			<%= label(:user, :job_title, t('user.title')) %>
-			<%= text_field(:user, :job_title, :class => "text", :value => @agent.user.job_title ) %>
-		</li>
-		<li class="small">
-			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
-			<div>
-				<label class="overlabel" for="phone_work"><%=t('user.work')%></label>
-				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => @agent.user.phone ) %> 
-			</div>
-			<div>
-				<label class="overlabel" for="phone_mobile"><%=t('user.mobile')%></label>
-				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => @agent.user.mobile  ) %>
-			</div>
-		</li> 
-		<li>
-			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
-		</li>
-		<% if gamification_feature?(current_account) %>
-			<li>
-				<%= label(:agent , :scoreboard_level_id, t('level_label'))%>
-				<%= select(:agent, :scoreboard_level_id, 
-					options_from_collection_for_select(@scoreboard_levels, "id", "name", @agent.level ? @agent.level.id : "-1")) %>
-			</li>
-		<% end %>
-
-		<% if feature?(:multi_timezone) %>
-			<li> 
-				<%= label(:user , :time_zone,t('account.time_zone')) %>			
-				<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
-			</li>
-		<% end %>
-		
-	    <% if feature?(:multi_language) %>
+     <div class="row-fluid agent_edit">
+     	<div class="span3">
+     		<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
+     	</div>
+     	<div class="span9">
+     		<ul class="clearfix unstyled">
+     			<li>
+     				<p class="lead">
+						Agent Information
+					</p>
+     			</li>
+     			<li>
+					<%= label(:user, :name, t('user.full_name'), :class => "control-label span2" ) %>
+					<div class="span10">
+						<%= text_field(:user, :name, :class => "text span10", :value => @agent.user.name , :placeholder => "Agent Name")  %>
+					</div>
+				</li>	
 				<li>
-					<%= label(:user, :language, t('account.language')) %>
-					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym() })%>
-				</li>
-     	<% end %>
-		
-		<li>
-			<%= label(:agent, :signature_html, t('agent.signature')) %>
-			<label class="overlabel" for="user_binfo">
-				
-			</label>
-			<%= text_area(:agent, :signature_html , :class => "text", :id => "user_binfo" ) %>			
-			<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
-		</li>
-		<% unless( @agent.user.permission?(:manage_account) ) %>
-		<li>
-			<h3 class="title border"><%=t('agent.permissions')%></h3>
-			<ul>
-				<div id="admin_ticket_permission">
+					<%= label(:user, :email, t('user.email'), :class => "control-label span2" ) %>
+					<div class="span10">
+						<%= text_field(:user, :email, :class => "text required email span8", :id => "email_primary" , :value => @agent.user.email, :placeholder => "Email") %>
+					</div>
+				</li>	
 				<li>
-					<%= radio_button( :agent ,:ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"user_role_admin"}) %>
-					<%=t('agent.admin')%> - <%= content_tag( :span, t('agent.admin_info'), :class => "info-data" ) %>
+					<%= label(:user, :job_title, t('user.title'), :class => "control-label span2" ) %>
+					<div class="span10">
+						<%= text_field(:user, :job_title, :class => "text span8", :value => @agent.user.job_title, :placeholder => "Email") %>
+					</div>
 				</li>
-				</div>
-				<div id="supervisor_ticket_permission">
+				<li>
+					<%= label(:user, :phone, "#{t('user.phone_no')}.", :class => "control-label span2" ) %>
+					<div class="span10">
+						<select class="span3"><options></option><%=t('user.work')%><option><%=t('user.mobile')%></option></select>
+						<%= text_field(:user, :phone, :class => "text span7", :id => "phone_work", :value => @agent.user.phone ) %> 
+						<div class="offset3">
+					</div>
+				</li>
+				<li>
+					<div class="span10 offset2">
+						<select class="span3"><options></option><%=t('user.work')%><option>Work</option><option>Home</option></select>
+						<%= text_field(:user, :mobile, :class => "text span7", :id => "phone_mobile" ,:value => @agent.user.mobile) %>
+						<div class="offset3">
+					</div>
+				</li>
+				<li>
+					<a class="span10 offset2">Add another phone</a>
+				</li>
+			<% if gamification_feature?(current_account) %>
+				<li>
+					<%= label(:agent , :scoreboard_level_id, t('level_label'), :class => "span2")%>
+					<div class="span10">
+						<%= select(:agent, :scoreboard_level_id, 
+							options_from_collection_for_select(@scoreboard_levels, "id", "name", @agent.level ? @agent.level.id : "-1") ) %>
+					</div>
+				</li>
+			<% end %>
+			<% if feature?(:multi_timezone) %>
+				<li> 
+					<%= label(:user , :time_zone,t('account.time_zone'), :class => "span2") %>			
+					<div class="span10">
+						<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
+					</div>
+				</li>
+			<% end %>
+		    <% if feature?(:multi_language) %>
 					<li>
-					<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"user_role_supervisor"}) %> 
-					<%=t('agent.supervisor')%> - <%= content_tag( :span, t('agent.supervisor_info'), :class => "info-data" ) %>		
+						<%= label(:user, :language, t('account.language'), :class => "span2") %>
+						<div class="span10">
+							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "span7"})%>
+						</div>
 					</li>
-				</div>
-				<div id="agent_ticket_permission">
-				
+	     	<% end %>
 				<li>
-					<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets"}) %> 
-					<%=t('agent.global')%> - <%= content_tag( :span, t('agent.global_info'), :class => "info-data" ) %> 
-					
+					<div class="span2">
+						<%= label(:agent, :signature_html, t('agent.signature')) %>
+						<small class="muted"> Accepts HTML </small>
+					</div>
+					<div class="span10">
+					<%= text_area(:agent, :signature_html , :class => "text span11", :cols => "40", :rows => "5", :id => "user_binfo" ) %>			
+					<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
+					</div>
 				</li>
+				<% unless( @agent.user.permission?(:manage_account) ) %>
+				<li class="seperator"></li>
 				<li>
-					 <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets"}) %> 
-					 <%=t('agent.group')%> - <%= content_tag( :span, t('agent.group_info'), :class => "info-data" ) %>
+					<p class="lead">
+						<%=t('agent.permissions')%>
+					</p>
 				</li>
-				<li>
-					 <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets"}) %> 
-					 <%=t('agent.individual')%> - <%= content_tag( :span, t('agent.individual_info'), :class => "info-data" ) %>
+				<li class="clearfix">
+					<%= label(:agent, :signature_html, "Agent Type", :class => "span2") %>
+					<div class="span10">
+							<div class="span6">
+							<div class="span1">
+							<%= radio_button 'agent', 'occasional', 'false', :checked => !agents_exceeded?(@agent), :disabled => full_time_disabled?(@agent) %> 
+							</div>
+							<div class="span11">
+								<strong><%= t('agent.full_time') %></strong>
+								<br />3 Agent seats available
+							</div>
+						</div>
+						<div class="span6">
+							<div class="span1">
+								<%= radio_button 'agent', 'occasional', 'true',:checked => agents_exceeded?(@agent) %> 
+							</div>
+							<div class="span11">
+								<strong><%= t('agent.occasional') %></strong><br />
+								5 Day pass available
+							</div>
+						</div>
+					</div>
 				</li>
-				</div>
-				
-				 <%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
-				
-				
-			</ul>
-			
-		</li>
-		<% end %>
-		
-		<li>
-			<%= label(:agent, :occasional, t('agent.occasional_description')) %>
-			<br><%= radio_button 'agent', 'occasional', 'false', :checked => !agents_exceeded?(@agent), :disabled => full_time_disabled?(@agent) %> <%= t('agent.full_time') %>
-			<%= radio_button 'agent', 'occasional', 'true',:checked => agents_exceeded?(@agent) %> <%= t('agent.occasional') %>
-		</li>
-				
-		<li class="seperator"></li>
-	</ul>	 	
+				<li class="agent-role">
+					<%= label(:agent, :signature_html, "Agent Role", :class => "span2") %>
+					<div class="span10">
+						<ul class="unstyled">
+							<li>
+									<%= radio_button( :agent ,:ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"user_role_admin"}) %>
+									<%= label( :agent, :ticket_permission, t('agent.admin')) %>
+									<small class="muted"> <%= content_tag( :span, t('agent.admin_info')) %></small>
+							</li>
+							<li>
+									<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"user_role_supervisor"}) %> 
+									<%= label( :agent, :ticket_permission, t('agent.supervisor')) %>
+									<small class="muted"> <%= content_tag( :span, t('agent.supervisor_info'), :class => "info-data" ) %></small>
+							</li>
+							<li>
+								<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets"}) %> 
+									<%= label( :agent, :ticket_permission, t('agent.global')) %>
+									<small class="muted"> <%= content_tag( :span, t('agent.global_info'), :class => "info-data" ) %> </small>
+							</li>
+							<li>
+								 	<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets"}) %> 
+								 	<%= label( :agent, :ticket_permission, t('agent.group')) %>
+								 	<small><%= content_tag( :span, t('agent.group_info'), :class => "info-data" ) %></small>
+							</li>
+							<li>
+								 	<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets"}) %> 
+								 	<%= label( :agent, :ticket_permission, t('agent.individual')) %>
+								 	<small><%= content_tag( :span, t('agent.individual_info'), :class => "info-data" ) %>
+							</li>
+				 			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
+						</ul>
+					</div>
+				</li>
+				<% end %>
+     		</ul>
+     	</div>
+     </div>	 	
  
 <% end %>

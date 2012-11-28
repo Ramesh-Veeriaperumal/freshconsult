@@ -1,6 +1,5 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 @import "lib/settings";
-
 @import "lib/sprites";
 @import "lib/font";
 
@@ -7113,6 +7112,7 @@ a[rel="load-rjs"] {
 	margin-right: 10px;
 }
 
+// !PATTERN TODO move this animation into the animation-css file
 .opacity-element{
 	filter: alpha(opacity=100);
     opacity: 1 !important;
@@ -7128,4 +7128,93 @@ a[rel="load-rjs"] {
 
 /*end*/
 
- 
+.cust_list_table{
+     margin:0 auto;
+}
+.cust_list_table_body{
+    border:1px solid #eeeeee;
+    background:#f9f9f9;
+    padding:8px 0 8px 0;
+    @include border-radius(5px);
+    table{
+        background:#fff;
+    	margin:0;
+    }
+    .pagination{
+        border-top:1px solid #eee;      
+        margin:0px;  
+        padding:10px; 
+        line-height:0;    
+    }
+    .cust-list-avatar 
+    {
+    	div.preview_pic{
+    	border: 2px solid #CCC;
+		@include border-radius(100%);
+		width: 45px;
+		height: 45px;
+		}
+    	img{
+	        width:45px;
+	        height:45px;  
+			@include border-radius(100%);     
+    	}
+    }
+    .btn-mini{
+        background-image:none;
+        background-color:#fdfdfd; 
+        &:hover{
+          background-color:#f1f1f1;  
+        }        
+    }
+	table{
+		border-bottom: 1px solid #DDD;
+	    tr td
+	    {
+	    	width:22%; 
+	    	vertical-align: middle;
+		    &:first-child{
+		        width:6%;
+		    }
+		    &:last-child{
+		        width:9%;
+		    }
+		}
+	}
+}
+.agent_edit{
+	label{
+		font-weight:bold;
+		margin-bottom:0px;
+		font-size:13px;
+		margin-top:5px;
+	}
+	.avatar-controls{
+		color:#999;
+		text-align: center;
+		margin-top:10px;
+		margin-bottom:5px;
+	}
+	.profile_pic{
+		img{
+			width:160px;
+		}
+	}
+	.seperator{
+		padding-top:40px;
+		margin-left:0;
+		@include box-shadow(0px 1px 0px #fff);
+		width:100%;
+		clear:both;
+	}
+	.agent-role{
+		margin-top:30px;
+		li{
+			margin-bottom:15px;
+		}
+		input[type="radio"]{
+			float: left;
+			margin-right: 10px;
+		}
+	}
+}
