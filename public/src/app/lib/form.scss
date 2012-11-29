@@ -554,9 +554,6 @@ li.nested_field{
 .threecol-form .item{
 	float:left;
 	width:33%;
-	label{	
-		@include inline-block;
-	}
 	.level{
 		margin-left:20px;
 	}
