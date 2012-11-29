@@ -24,6 +24,7 @@ class Topic < ActiveRecord::Base
   has_many :activities, 
     :class_name => 'Helpdesk::Activity', 
     :as => 'notable'
+
   named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
 
   named_scope :visible, lambda {|user| visiblity_options(user) }

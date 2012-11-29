@@ -17,6 +17,17 @@ class Helpdesk::NotesController < ApplicationController
     @notes = @parent.conversation(params[:page])
     if request.xhr?
       render(:partial => "helpdesk/tickets/note", :collection => @notes)
+    else 
+      options = {}
+      options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
+      respond_to do |format|
+        format.xml do
+         render :xml => @notes.to_xml(options) 
+        end
+        format.json do
+          render :json => @notes.to_json(options)
+        end
+      end
     end    
   end
   
@@ -138,7 +149,7 @@ class Helpdesk::NotesController < ApplicationController
       if @item.fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
         flash[:notice] = t(:'fwd_success_msg')
-      else        
+      elsif @item.to_emails.present? or @item.cc_emails.present? or @item.bcc_emails.present?
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
                 :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
         flash[:notice] = t(:'flash.tickets.reply.success')

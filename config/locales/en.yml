@@ -47,6 +47,7 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  mobi_help: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Working
   attachment: Attachment
@@ -754,7 +755,9 @@ en:
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
       empty_trash: 
-        success: All tickets in the trash folder were deleted.
+        success: The trash was emptied.
+      delete_forever:
+        success: %{tickets} deleted.
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1495,7 +1498,7 @@ en:
   sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Basic Reporting, Community Support.
   blossom_details: Everything in &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forums, Community &amp; Email Support.
   garden_details: Everything in &quot;Blossom&quot; Plan plus, Multiple Product Support, Advanced Reporting, Community, Email &amp; Phone Support
-  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification.
+  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification and Agent Collision.
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
@@ -1763,6 +1766,8 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
     flag_spam: Flag Spam
+    delete_forever: Delete Forever
+    empty_trash: Empty Trash
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export

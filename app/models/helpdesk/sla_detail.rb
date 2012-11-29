@@ -1,9 +1,10 @@
 class Helpdesk::SlaDetail < ActiveRecord::Base
   set_table_name "helpdesk_sla_details" 
-
+  
+  belongs_to_account
   belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"
   has_one :account , :through => :sla_policy 
-    
+  before_create :set_account_id
   RESPONSETIME = [
     [ :half,    I18n.t('half'),  1800 ], 
     [ :one,      I18n.t('one'),      3600 ], 
@@ -86,7 +87,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
     def on_status_change_override_bhrs(ticket, ticket_attr)
       elapsed_time = Time.zone.now - ticket.ticket_states.sla_timer_stopped_at  
-      ticket_attr + elapsed_time if Ticket.due_by > ticket.ticket_states.sla_timer_stopped_at
+      ticket_attr + elapsed_time if ticket.due_by > ticket.ticket_states.sla_timer_stopped_at
     end
 
     def on_status_change_bhrs(ticket, ticket_attr)
@@ -95,4 +96,9 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       bhrs_during_elapsed_time.div(60).business_minute.after(ticket_attr) if ticket_attr > 
       ticket.ticket_states.sla_timer_stopped_at
     end 
+
+    def set_account_id
+      self.account_id = sla_policy.account_id
+    end
+    
 end

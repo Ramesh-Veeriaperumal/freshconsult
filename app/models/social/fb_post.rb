@@ -3,7 +3,7 @@ class Social::FbPost < ActiveRecord::Base
   set_table_name "social_fb_posts"
   
   belongs_to :postable, :polymorphic => true
-  belongs_to :account
+  belongs_to_account
   belongs_to :facebook_page , :class_name => 'Social::FacebookPage'
   
   attr_protected :postable_id
