@@ -532,8 +532,8 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			if(key == campaignId){
 				for(i=0; i<activities[key].length; i++){
 					if(this.app != "constantcontact")
-						activities[key][i].time = (activities[key][i].time && activities[key][i].time != "") ? this.formatDate(activities[key][i].time) :  "";
-					activity += _.template(this.CampaignActivity, {action: activities[key][i].type, action_time: activities[key][i].time, action_url: activities[key][i].link || ""});
+						activities_time = (activities[key][i].time && activities[key][i].time != "") ? this.formatDate(activities[key][i].time) :  "";
+					activity += _.template(this.CampaignActivity, {action: activities[key][i].type, action_time: activities_time, action_url: activities[key][i].link || ""});
 				}
 			}
 		}

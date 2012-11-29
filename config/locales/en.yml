@@ -2562,7 +2562,7 @@ en:
     icontact:
       label: "iContact"
       desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a href=&quot;https://app.icontact.com/icp/core/externallogin&quot;>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
+      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
       form:
         app_id: "Application ID"
         username: "iContact Username"
