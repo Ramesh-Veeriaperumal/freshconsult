@@ -26,7 +26,7 @@ module FormBuilders
       output << %( jQuery("##{id}").codemirror(#{_javascript_options.to_json}) )
       output << %( </script> )
 
-      output.join(' ')  
+      output.join(' ')
     end
 
     def field_name(label, index = nil)

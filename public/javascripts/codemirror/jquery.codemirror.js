@@ -13,51 +13,44 @@
 	* ============================== */
 
 	var Codemirror = function (element, options) {
-		this.init(element, options)		
+		this.$element = $(element)
+		this.options = $.extend({}, $.fn.codemirror.defaults, options, this.$element.data())
+
+		if(this.options['editFullscreen']){
+			this.options['extraKeys'] = {
+		        "F11": function(cm) {
+		        	jQuery(cm.getTextArea()).codemirror("showFullscreen")
+		        }
+		    ,   "Esc": function(cm) {
+		        	jQuery(cm.getTextArea()).codemirror("hideFullscreen")
+		        }
+		    }
+		}
+
+		this.$editor = CodeMirror.fromTextArea(element, this.options)
+		this.$editor.getScrollerElement().style.height = this.options['height'] || ""
+		this.$editor.refresh()
+		
+		if(this.options['editFullscreen']){
+			var _fullscreen = $("<i class='cm-fullscreen'></i>")
+									.on("click", function(ev){
+										$(element).codemirror("toggleFullscreen")
+									})
+
+			$(this.$editor.getWrapperElement()).prepend(_fullscreen)
+		}
 	}
 
 	Codemirror.prototype = {
-		
-		constructor: Codemirror
 
-	, 	init: function (element, options) {
-			this.$element = $(element)
-			this.options = $.extend({}, $.fn.codemirror.defaults, options, this.$element.data())
-
-			if(this.options['editFullscreen']){
-				this.options['extraKeys'] = {
-			        "F11": function(cm) {
-			        	$(cm.getTextArea()).codemirror("showFullscreen")
-			        },
-			        "Esc": function(cm) {
-			        	$(cm.getTextArea()).codemirror("hideFullscreen")
-			        }
-			    }
-			}
-
-			this.$editor = CodeMirror.fromTextArea(element, this.options)
-			this.$editor.getScrollerElement().style.height = this.options['height'] || ""
-			this.$editor.refresh()
-			
-			if(this.options['editFullscreen']){
-				var _fullscreen = $("<i class='cm-fullscreen'></i>")
-										.on("click", function(ev){
-											$(element).codemirror("toggleFullscreen")
-										})
-
-				$(this.$editor.getWrapperElement()).prepend(_fullscreen)
-			}
-            
-		}
-	,	editor: function(){
+		editor: function(){
 			return this.$editor
 		}
 	,  	resizeInFullscreen: function(){
-			var _h1 = $("#cm-fs-wrapper h3").height(), 
-				_h2 = $("#cm-fs-actions").height(),
+			var _h1 = $("#cm-fs-wrapper h3").height(),
 				_h3 = $("#cm-fs-wrapper").height()
 
-			this.$editor.getScrollerElement().style.height = (_h3 - (_h1 + _h2)) + "px"
+			this.$editor.getScrollerElement().style.height = (_h3 - (_h1 + 65)) + "px"
 		}
 	,	buildFullscreen: function(cm){
 			var wrap = cm.getWrapperElement(), 
@@ -105,7 +98,7 @@
 
 				document.documentElement.style.overflow = "hidden"
 			}
-			this.refresh()
+			cm.refresh()
 			cm.focus()
 		}
 	,	hideFullscreen: function(){
@@ -123,7 +116,8 @@
 				$(document).data("fs-codemirror", false)
 			}
 
-			this.refresh();
+			cm.refresh()
+			cm.focus()
 		}
 	,	toggleFullscreen: function(){
 			if(jQuery(this.$editor.getWrapperElement()).data("fullscreen"))
@@ -146,6 +140,7 @@
 			, options = typeof option == 'object' && option
 
 			if (!data) $this.data('codemirror', (data = new Codemirror(this, options)))
+
 			if (typeof option == 'string') data[option]()
 
 		})
@@ -160,14 +155,7 @@
       	editFullscreen 	: true      	
 	}
 
-
 	$.fn.codemirror.Constructor = Codemirror
-
-
-	/* CODE MIRROR DATA-API
-	* ============== */
-
-	// $(document).on('click.alert.data-api', dismiss, Alert.prototype.close)
 
 	// !PORTALCSS Code mirror scripts to be moved into seperate codemirror util file
 	$(document).ready(function(){

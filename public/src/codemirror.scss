@@ -180,31 +180,24 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   top: 0;
   left: 0;
   height: 100%;
-  background-color: white;
+  background-color: #fafafa;
   z-index: 999999;
   width: 100%;
   h3{
     font-size: 24px;
     padding: 5px 38px;
   }
-  #cm-fs-editor, #cm-fs-actions, #cm-fs-actions .cm-well, .CodeMirror-fullscreen{    
+  #cm-fs-editor, #cm-fs-actions, .CodeMirror-fullscreen{    
     position: absolute;
     width: 100%;
   }
   #cm-fs-editor{
     height: 100%;
   }
-  #cm-fs-actions{    
+  #cm-fs-actions{
     bottom: 0;
-    height: 65px;
     z-index: 10;
-    .cm-well{
-      background-color: whiteSmoke;
-      bottom: 0;
-      padding: 10px 35px;
-      height: 55px;
-      @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.05));
-    }
+    .cm-well{ margin: 10px 20px; }
   }
 }
 /* Code mirror full screen mode */
@@ -245,7 +238,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   }
 
   .CodeMirror-gutter {
-    background-color: #f8f8f8;
+    background-color: #fafafa;
     padding-left: 8px;
     margin-right: 4px;
     @include border-left-radius(6px);
@@ -257,8 +250,9 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   }
 
   .CodeMirror-gutter-text {
-    color:#BEBEC5;
-    & pre:after{ content:"."; }
+    color:#d8d8d8;
+    @include min-width(28px);
+    padding-right: 8px; 
   }  
 
   span.cm-keyword {color: #708;}
