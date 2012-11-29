@@ -30,11 +30,14 @@
       	<p class="help-text">
           Add or overwrite freshdesk default styles with your own custom css.
         </p>
-      	<%= f.code_editor :custom_css, :value => @default_custom_css, :mode => "css" %>            
+      	<%= f.code_editor :custom_css, 
+                      :value => @default_custom_css, :mode => "css", 
+                      "data-fullscreen-title" => "<span class='light'>Editing</span> Custom stylesheet",
+                      "data-fullscreen-actions" => "custom-css-actions" %>            
         <br />
-          <div class="well">
-            <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
-            <%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
+          <div class="well" id="custom-css-actions">
+            <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank" %>
+            <%= submit_tag "Save changes", :class => "btn" %>
           </div>
         <% end -%>
     	</div>
@@ -58,19 +61,26 @@
               <%= f.error_messages %>
               <label>Header</label>  
               <p class="help-text">Change the header area of your support portal</p>
-              <%= f.code_editor :header, :height => "150px" %>          
+
+              <%= f.code_editor :header, :height => "150px",
+                    "data-fullscreen-title" => "<span class='light'>Editing</span> Header",
+                    "data-fullscreen-actions" => "layout-actions" %>          
               <br />
               <label>Footer</label>
               <p class="help-text">Change the footer area of your support portal</p>  
-              <%= f.code_editor :footer, :height => "80px" %>
+              <%= f.code_editor :footer, :height => "80px",
+                    "data-fullscreen-title" => "<span class='light'>Editing</span> Footer",
+                    "data-fullscreen-actions" => "layout-actions" %>
               <br />
               <label>Page layout</label>
               <p class="help-text">Customize the entire layout of your support portal</p> 
-              <%= f.code_editor :layout %>  
+              <%= f.code_editor :layout,
+                    "data-fullscreen-title" => "<span class='light'>Editing</span> Page layout",
+                    "data-fullscreen-actions" => "layout-actions" %>  
               <br />
-              <div class="well">
-                <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
-                <%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
+              <div class="well" id="layout-actions">
+                <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank" %>
+                <%= submit_tag "Save changes", :class => "btn" %>
               </div>     
             <% end %>
           </div>
@@ -100,8 +110,7 @@
     var _link = jQuery(this)
     setTimeout(function(){
       jQuery.each(jQuery(_link.attr('href')).find("textarea").get(), function(i, item){
-        if(item.id)
-          window.code_mirrors[item.id].refresh()
+        jQuery(item).codemirror("refresh")
       });
     }, 50)
   });
@@ -110,4 +119,5 @@
     if(jQuery("#Customizepage").html() == "")
       jQuery("#PortalPageList a").first().trigger("click");
   });
+  
 <% end %>

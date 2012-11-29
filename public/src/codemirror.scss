@@ -174,12 +174,70 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 }
 
+/* Fullscreen wrapper styles */
+#cm-fs-wrapper{
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: white;
+  z-index: 999999;
+  width: 100%;
+  h3{
+    font-size: 24px;
+    padding: 5px 38px;
+  }
+  #cm-fs-editor, #cm-fs-actions, #cm-fs-actions .cm-well, .CodeMirror-fullscreen{    
+    position: absolute;
+    width: 100%;
+  }
+  #cm-fs-editor{
+    height: 100%;
+  }
+  #cm-fs-actions{    
+    bottom: 0;
+    height: 65px;
+    z-index: 10;
+    .cm-well{
+      background-color: whiteSmoke;
+      bottom: 0;
+      padding: 10px 35px;
+      height: 55px;
+      @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.05));
+    }
+  }
+}
+/* Code mirror full screen mode */
+.CodeMirror-fullscreen {
+  top: 0; left: 0;
+  height: 100%;
+  overflow: auto;
+  .cm-s-textmate{ 
+    @include border-radius(0);
+    .CodeMirror-gutter { @include border-left-radius(0); }
+  }
+}
+
+/* Codemirror fullscreen styles */
+.cm-fullscreen{
+  position: absolute;
+  width: 21px; height: 21px;
+  z-index: 999;
+  right: 5px;
+  top: 5px;
+  @include opacity(0.5);
+  cursor: pointer;
+  background: url('/images/codemirror/fullscreen.png') no-repeat #ffffff;
+}
+
 /** Textmate Style Theme **/
 .cm-s-textmate{
   line-height: 1.3em;
   font-size: 12px;
   border:1px solid #E1E1E8;
-
+  background-color: #ffffff;
+  @include border-radius(6px);
+  @include box-shadow(rgba(0, 0, 0, 0.1) 1px 2px 2px inset);
 
   .CodeMirror-matchhighlight{
     @include box-shadow(#888 0 0 1px inset);
@@ -190,6 +248,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
     background-color: #f8f8f8;
     padding-left: 8px;
     margin-right: 4px;
+    @include border-left-radius(6px);
+    @include box-shadow(rgba(0, 0, 0, 0.1) 1px 0px 2px);
   }
 
   .activeline {

@@ -4,10 +4,12 @@
 	<span class="light">Editing:</span> <%= @portal_page.name %>
 </h3>
 <p>
-	<%= form.code_editor :content, :height => "400px" %>
+	<%= form.code_editor :content, :height => "400px",
+			"data-fullscreen-title" => "<span class='light'>Editing</span> #{@portal_page.name}",
+            "data-fullscreen-actions" => "portal-page-actions" %>
 </p>
 <br />
-<div class="well">
+<div class="well" id="portal-page-actions">
 	<%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr" %>
 	<%= submit_tag "Save changes", :class => "btn" %>
 </div>

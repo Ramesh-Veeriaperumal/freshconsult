@@ -4,11 +4,6 @@ module FormBuilders
     include ActionView::Helpers::FormTagHelper
 
     CODEMIRROR_DEFAULTS = {
-      :lineNumbers => true,
-      :mode      => "liquid", 
-      :theme     => 'textmate',
-      :tabMode   => "indent",
-      :gutter    => true
     }
 
     def code_editor(method, options = {})     
@@ -18,24 +13,20 @@ module FormBuilders
 
     def code_editor_tag(name, content = nil, options = {})      
       id = options[:id] = options[:id] || field_id( name )
-      
-      (set_height = "window.code_mirrors['#{id}'].getScrollerElement().style.height = '#{options[:height]}'") if options[:height].present?
-        
+
       content = options[:value] if options[:value].present?
-      # puts "===> #{options[:value]}"
 
-      _javascript_options = CODEMIRROR_DEFAULTS.merge(options).to_json
+      _javascript_options = CODEMIRROR_DEFAULTS.merge(options)
 
-      output = <<HTML
-#{text_area_tag(name, content, options)}
-<script type="text/javascript">
-if (window['code_mirrors'] === undefined) window.code_mirrors = {}
-window.code_mirrors['#{id}'] = CodeMirror.fromTextArea(document.getElementById('#{id}'), #{_javascript_options})
-#{set_height || ""}
-window.code_mirrors['#{id}'].refresh()
-</script>
-HTML
-      output.html_safe  
+      output = []
+      # Returning a text area with codemirror details
+      output << %( #{text_area_tag(name, content, options)} )
+      # jQuery function call to wrap the codemirror editor 
+      output << %( <script type="text/javascript"> )
+      output << %( jQuery("##{id}").codemirror(#{_javascript_options.to_json}) )
+      output << %( </script> )
+
+      output.join(' ')  
     end
 
     def field_name(label, index = nil)
