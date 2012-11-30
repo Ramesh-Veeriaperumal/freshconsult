@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
+  include Cache::Memcache::Account
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
@@ -261,7 +262,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false}
+    :personalized_email_replies => false, :agent_collision => false}
     
   
   has_features do
@@ -272,6 +273,14 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def installed_apps_hash
+    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps.inject({}) do |result,installed_app|
+     result[installed_app.application.name.to_sym] = installed_app
+     result
+   end
+  end
+
   def self.reset_current_account
     Thread.current[:account] = nil
   end
@@ -560,7 +569,9 @@ class Account < ActiveRecord::Base
       self.user.account = self
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
+      self.user.agent.account = self
       self.user.save
+      User.current = self.user
       
     end
     

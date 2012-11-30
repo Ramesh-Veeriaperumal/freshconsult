@@ -72,7 +72,7 @@ class HttpRequestProxy
     end
     response_type = accept_type if response_type.blank?
     begin
-      if accept_type == "application/json" && response_type != "application/json"
+      if accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
         response_body = proxy_response.parsed_response.to_json
         response_type = "application/json"
       end

@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_filter :set_content_scope, :set_mobile
+  before_filter :set_content_scope, :set_mobile, :set_selected_tab
   
   def index
     redirect_to MOBILE_URL and return if (current_user && mobile?)
@@ -30,6 +30,10 @@ class HomeController < ApplicationController
       current_portal.main_portal? ? current_account.topics.visible(current_user).newest(5) : 
         (current_portal.forum_category ? 
             current_portal.forum_category.topics.visible(current_user).newest(5) : [])
+    end
+  private
+    def set_selected_tab
+      @selected_tab = :home
     end
   
 end

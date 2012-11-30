@@ -8,6 +8,7 @@ module Helpdesk::TicketModelExtension
       {:label => "Status",    :value => "status_name", :selected => true},
       {:label => "Priority", :value => "priority_name", :selected => false},
       {:label => "Source", :value => "source_name", :selected => false},
+      {:label => "Type", :value => "ticket_type", :selected => false},
       {:label => "Customer", :value => "customer_name", :selected => false},
       {:label => "Requester", :value => "requester_info", :selected => true},
       {:label => "Agent", :value => "responder_name", :selected => false},

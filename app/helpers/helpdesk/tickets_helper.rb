@@ -9,7 +9,7 @@ module Helpdesk::TicketsHelper
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ))
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), :"data-pjax" => "#body-container")
     else
       content_tag(:span, "", :class => "seperator")
     end  
@@ -45,7 +45,7 @@ module Helpdesk::TicketsHelper
                
     panels = content_tag :div, tabs.map{ |t| 
       if(tabs.first == t)
-        content_tag :div, (render :partial => "helpdesk/tickets/components/ticket", :object => @ticket), :class => "rtDetails tab-pane active #{t[2]}", :id => t[0]
+        content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
       else
         content_tag :div, content_tag(:div, "", :class => "loading-box"), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
@@ -55,7 +55,7 @@ module Helpdesk::TicketsHelper
   end
     
   def ticket_tabs
-    tabs = [['Pages',     t(".conversation"), @ticket.conversation_count],
+    tabs = [['Pages',     t(".conversation"), @ticket_notes.total_entries],
             ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
                                                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
                                                feature?(:timesheets)]]
@@ -211,17 +211,17 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket)
+  def subject_style(ticket,onhold_and_closed_statuses)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && !ticket.onhold_and_closed?
+    type = "new" if ticket.ticket_states.is_new? && !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id)
     type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if !ticket.onhold_and_closed? && ticket.due_by < Time.now && ticket.active? 
+    type = "overdue" if !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) && ticket.due_by < Time.now && ticket.active? 
     type
   end
 
-  def sla_status(ticket)
+  def sla_status(ticket,onhold_and_closed_statuses)
     if( ticket.active? )
-      unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)
+      unless (onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) or ticket.ticket_status.deleted?)
         if(Time.now > ticket.due_by )
           t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         else
@@ -244,7 +244,7 @@ module Helpdesk::TicketsHelper
   def bind_last_conv (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
-                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+                ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)
     if (last_conv.is_a? Helpdesk::Ticket)
       last_reply_by = (last_conv.requester.name || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
       last_reply_time = last_conv.created_at
@@ -282,8 +282,8 @@ module Helpdesk::TicketsHelper
 
   def bind_last_reply (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    last_conv = (item.is_a? Helpdesk::Note) ? item : 
-                ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
+    # last_conv = (item.is_a? Helpdesk::Note) ? item : 
+                # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
     return ( get_key(key) || bind_last_conv(item, signature) )
@@ -325,5 +325,62 @@ module Helpdesk::TicketsHelper
     end
     show_params
   end
-  
+
+  def visible_page_numbers(options,current_page,total_pages)
+    inner_window, outer_window = options[:inner_window].to_i, options[:outer_window].to_i
+    window_from = current_page - inner_window
+    window_to = current_page + inner_window
+    
+    # adjust lower or upper limit if other is out of bounds
+    if window_to > total_pages
+      window_from -= window_to - total_pages
+      window_to = total_pages
+    end
+    if window_from < 1
+      window_to += 1 - window_from
+      window_from = 1
+      window_to = total_pages if window_to > total_pages
+    end
+    
+    visible   = (1..total_pages).to_a
+    left_gap  = (2 + outer_window)...window_from
+    right_gap = (window_to + 1)...(total_pages - outer_window)
+    visible  -= left_gap.to_a  if left_gap.last - left_gap.first > 1
+    visible  -= right_gap.to_a if right_gap.last - right_gap.first > 1
+
+    visible
+  end
+
+  def ticket_pagination_html(options,full_pagination=false)
+    prev = 0
+    current_page = options[:current_page]
+    per_page = params[:per_page]
+    no_of_pages = options[:total_pages]
+    visible_pages = full_pagination ? visible_page_numbers(options,current_page,no_of_pages) : []
+    content = ""
+    content << "<div class='toolbar_pagination_full'>" if full_pagination
+    if current_page == 1
+      content << "<span class='disabled prev_page'>#{options[:previous_label]}</span>"
+    else
+      content << "<a class='prev_page' href='/helpdesk/tickets?page=#{(current_page-1)}'>#{options[:previous_label]}</a>"
+    end
+    visible_pages.each do |index|
+      # detect gaps:
+      content << '<span class="gap">&hellip;</span>' if prev and index > prev + 1
+      prev = index
+      if( index == current_page )
+        content << "<span class='current'>#{index}</span>"
+      else
+        content << "<a href='/helpdesk/tickets?page=#{index}' rel='next'>#{index}</a>"
+      end
+    end
+    if current_page == no_of_pages
+      content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
+    else
+      content << "<a href='/helpdesk/tickets?page=#{(current_page+1)}' class='next_page' rel='next'>#{options[:next_label]}</a>"
+    end
+    content << "</div>" if full_pagination
+    content
+  end
+
 end
