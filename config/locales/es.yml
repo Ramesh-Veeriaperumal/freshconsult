@@ -82,30 +82,30 @@ es:
         short: "{{user_path}} creó la nueva solución"
     tickets: 
       assigned: 
-        long: "{{user_path}} asignó el tiquete {{notable_path}} a {{responder_path}}"
+        long: "{{user_path}} asignó el ticket {{notable_path}} a {{responder_path}}"
         short: "Asignado a {{responder_path}} por {{user_path}}"
       assigned_to_nobody: 
-        long: "{{user_path}} asignó el tiquete {{notable_path}} a 'Nadie'"
+        long: "{{user_path}} asignó el ticket {{notable_path}} a 'Nadie'"
         short: "Asignado a 'Nadie' por {{user_path}}"
       conversation: 
         in_email: 
-          long: "{{user_path}} envió un(a) {{email_response_path}} al tiquete {{notable_path}}"
+          long: "{{user_path}} envió un(a) {{email_response_path}} al ticket {{notable_path}}"
           short: "{{user_path}} envió un(a) {{email_response_path}}"
         note: 
-          long: "{{user_path}} agregó un(a) {{comment_path}} al tiquete {{notable_path}}"
+          long: "{{user_path}} agregó un(a) {{comment_path}} al ticket {{notable_path}}"
           short: "{{user_path}} agregó un(a) {{comment_path}}"
         out_email: 
-          long: "{{user_path}} envió un(a) {{reply_path}} al tiquete {{notable_path}}"
+          long: "{{user_path}} envió un(a) {{reply_path}} al ticket {{notable_path}}"
           private: 
             long: "El ticket {{notable_path}} ha sido {{fwd_path}} a {{to_emails}} por {{user_path}}"
             short: "{{user_path}} ha {{fwd_path}} el ticket a {{to_emails}}"
           short: "{{user_path}} envió un(a) {{reply_path}}"
         twitter: 
-          long: "{{user_path}} agregó un {{twitter_path}} al tiquete {{notable_path}}"
+          long: "{{user_path}} agregó un {{twitter_path}} al ticket {{notable_path}}"
           short: "{{user_path}} agregó un {{twitter_path}}"
       deleted: 
-        long: "{{user_path}} borró el tiquete {{notable_path}}"
-        short: "{{user_path}} borró este tiquete"
+        long: "{{user_path}} borró el ticket {{notable_path}}"
+        short: "{{user_path}} borró este ticket"
       execute_scenario: 
         long: "{{user_path}} ejecutó el escenario '{{scenario_name}}' en {{notable_path}}"
         short: "{{user_path}} ejecutó el escenario '{{scenario_name}}"
@@ -116,10 +116,10 @@ es:
         long: "{{user_path}} cambió el grupo de {{notable_path}} a 'ninguno'"
         short: "{{user_path}} cambió el grupo a 'ninguno'"
       new_ticket: 
-        long: "{{user_path}} abrió el tiquete nuevo {{notable_path}}"
-        short: "{{user_path}} abrió el tiquete"
+        long: "{{user_path}} abrió el ticket nuevo {{notable_path}}"
+        short: "{{user_path}} abrió el ticket"
       priority_change: 
-        long: "{{user_path}} cambió la prioridad del tiquete de {{notable_path}} a {{priority_name}}"
+        long: "{{user_path}} cambió la prioridad del ticket de {{notable_path}} a {{priority_name}}"
         short: "{{user_path}} cambió la prioridad a {{priority_name}}"
       product_change: 
         long: "{{user_path}} cambió el producto de {{notable_path}} a {{product_name}}"
@@ -128,34 +128,34 @@ es:
         long: "{{user_path}} cambió el producto de {{notable_path}} a 'ninguno'"
         short: "{{user_path}} cambió el producto a 'ninguno'"
       reassigned: 
-        long: "{{user_path}} reasignó el tiquete {{notable_path}} a {{responder_path}}"
+        long: "{{user_path}} reasignó el ticket {{notable_path}} a {{responder_path}}"
       restored: 
-        long: "{{user_path}} ha restaurado el tique {{notable_path}}"
-        short: "{{user_path}} restableció este tique"
+        long: "{{user_path}} ha restaurado el ticket {{notable_path}}"
+        short: "{{user_path}} restableció este ticket"
       source_change: 
-        long: "{{user_path}} cambió el origen del tiquete de {{notable_path}} a {{source_name}}"
+        long: "{{user_path}} cambió el origen del ticket de {{notable_path}} a {{source_name}}"
         short: "{{user_path}} cambió el origen a {{source_name}}"
       status_change: 
-        long: "{{user_path}} cambió el estado del tiquete {{notable_path}} a {{status_name}}"
+        long: "{{user_path}} cambió el estado del ticket {{notable_path}} a {{status_name}}"
         short: "{{user_path}} cambió el estado a {{status_name}}"
       ticket_merge: 
-        long: "{{user_path}} combinó el tiquete {{notable_path}} con {{merge_ticket_path}}"
-        short: "{{user_path}} combinó el tiquete {{notable_path}} con {{merge_ticket_path}} "
+        long: "{{user_path}} combinó el ticket {{notable_path}} con {{merge_ticket_path}}"
+        short: "{{user_path}} combinó el ticket {{notable_path}} con {{merge_ticket_path}} "
       ticket_split: 
-        long: "{{user_path}} dividió el tiquete {{notable_path}} desde {{split_ticket_path}}"
-        short: "{{user_path}} dividió el tiquete {{notable_path}} desde {{split_ticket_path}}"
+        long: "{{user_path}} dividió el ticket {{notable_path}} desde {{split_ticket_path}}"
+        short: "{{user_path}} dividió el ticket {{notable_path}} desde {{split_ticket_path}}"
       ticket_type_change: 
-        long: "{{user_path}} cambió el tipo de tiquete de {{notable_path}} a {{ticket_type}}"
-        short: "{{user_path}} cambió el tipo de tiquete a {{ticket_type}}"
+        long: "{{user_path}} cambió el tipo de ticket de {{notable_path}} a {{ticket_type}}"
+        short: "{{user_path}} cambió el tipo de ticket a {{ticket_type}}"
       timesheet: 
         new: 
-          long: "{{user_path}} añadió un(a) {{timesheet_path}} al tique {{notable_path}}"
+          long: "{{user_path}} añadió un(a) {{timesheet_path}} al ticket {{notable_path}}"
           short: "{{user_path}} agregó un(a) {{timesheet_path}}"
         timer_started: 
-          long: "{{user_path}} inició un temporizador el {{timesheet_path}} al tique {{notable_path}}"
+          long: "{{user_path}} inició un temporizador el {{timesheet_path}} al ticket {{notable_path}}"
           short: "{{user_path}} inició el temporizador el {{timesheet_path}}"
         timer_stopped: 
-          long: "{{user_path}} detuvo un temporizador el {{timesheet_path}} al tique {{notable_path}}"
+          long: "{{user_path}} detuvo un temporizador el {{timesheet_path}} al ticket {{notable_path}}"
           short: "{{user_path}} detuvo el temporizador el {{timesheet_path}}"
   add: Añadir
   add_a_topic: "Comenzar un tema"
@@ -358,7 +358,7 @@ es:
         supervisor: Supervisor
         survey: "Configuraciones de encuesta"
         survey-settings: "Customer Satisfaction Settings"
-        ticket-fields: "Campos del tiquete"
+        ticket-fields: "Campos del ticket"
         title: Admin
     products: 
       add_another_email: "Agregar otro correo"
@@ -446,8 +446,8 @@ es:
         title: "Supervisor - Editar regla"
       index: 
         help_info_1: "Use el supervisor para revisar periódicamente los tickets recientes y para realizar ciertas tareas periódicas como enviar recordatorios a los clientes, escalar tickets, reasignar tickets, etc."
-        help_info_2: "Por ejemplo - Si un tiquete está esperando respuesta del cliente por más de 24 horas enviar un recordatorio por correo al cliente o cerrar automáticamente un tiquete que se encuentra en estado \"Solucionado\" por más de 48 horas."
-        help_info_3: "El supervisor se ejecutará a cada hora y procesará los tiques que se han actualizado en los últimos 30 días."
+        help_info_2: "Por ejemplo - Si un ticket está esperando respuesta del cliente por más de 24 horas enviar un recordatorio por correo al cliente o cerrar automáticamente un ticket que se encuentra en estado \"Solucionado\" por más de 48 horas."
+        help_info_3: "El supervisor se ejecutará a cada hora y procesará los tickets que se han actualizado en los últimos 30 días."
         help_info_4: "Las reglas de supervisor se procesan secuencialmente, por lo cual el orden de estas reglas es importante. Una regla puede ejecutar acciones que disparen reglas subsecuentes."
         help_title: Supervisor
         title: "Supervisor - Reglas"
@@ -493,7 +493,7 @@ es:
     widget_config: 
       index: 
         thankyou_default: "Gracias por sus comentarios"
-        thankyou_info: "El mensaje se mostrará después de que un usuario envíe el formulario del tique"
+        thankyou_info: "El mensaje se mostrará después de que un usuario envíe el formulario del ticket"
         thankyou_label: "Enviar mensaje"
   agent: 
     add_signature: "Agregar Firma"
@@ -504,11 +504,11 @@ es:
     edit: "Editar agente"
     full_time: "Tiempo completo"
     global: "Agente (acceso global)"
-    global_info: "Puede ver todos los tiques en la mesa de ayuda"
+    global_info: "Puede ver todos los tickets en la mesa de ayuda"
     group: "Agente (acceso grupal) "
-    group_info: "Puede ver los tiques en sus grupos y los tiques asignados a él"
+    group_info: "Puede ver los tickets en sus grupos y los tickets asignados a él"
     individual: "Agente (acceso restringido)"
-    individual_info: "Sólo puede ver los tiques asignados a ellos"
+    individual_info: "Sólo puede ver los tickets asignados a ellos"
     info1: "Este es un agente eliminado"
     info2: "El correo electrónico ya se ha tomado"
     info3: "¿Está seguro de que desea eliminar"
@@ -523,20 +523,20 @@ es:
     restore: restaurar
     signature: Firma
     supervisor: Supervisor
-    supervisor_info: "Puede ver todos los tiques en la mesa de ayuda y acceder a los informes (sin privilegios de administrador)"
+    supervisor_info: "Puede ver todos los tickets en la mesa de ayuda y acceder a los informes (sin privilegios de administrador)"
     title: Agentes
     update: Actualizar
     use_email: "Usar este correo"
     view_user: "Ver usuario"
-  agent_adds_comment: "El agente agrega un comentario al tiquete"
-  agent_assigned_info: "No hay tickets abiertos y pendientes para este agente"
-  agent_assigned_title: "Tickets asignados recientemente (abiertos y pendientes)"
-  agent_closes_tkt: "El Agente cierra el tiquete"
+  agent_adds_comment: "El agente agrega un comentario al ticket"
+  agent_assigned_info: "No hay tickets abierto y pendientes para este agente"
+  agent_assigned_title: "Tickets asignados recientemente (abierto y pendientes)"
+  agent_closes_tkt: "El Agente cierra el ticket"
   agent_deleted_message: "Este es un agente no vigente"
   agent_emailnotverified: "El correo de este agente no se ha verificado!"
   agent_info_title: "Información del agente"
-  agent_solves_tkt: "El Agente solucionó el tiquete"
-  agent_working_on_this_ticket: "Agente que trabaja en este tique"
+  agent_solves_tkt: "El Agente solucionó el ticket"
+  agent_working_on_this_ticket: "Agente que trabaja en este ticket"
   agents: Agentes
   align_to: "Alinear a"
   all_due: All
@@ -573,12 +573,12 @@ es:
     info: "<b>Sabes que? Podríamos tener ya una respuesta a tu pregunta.</b><br/>Comprueba si alguna de estas coincide."
   automations: 
     available_placeholders: "Marcadores disponibles"
-    info1: "Todas  las mesas de ayuda tienen un conjunto de escenarios comunes y recurrentes - p.e.: Escalar al nivel 2, Assignar a QA, Reenviar a Ventas, etc. Estos escenarios usualmente involucran la ejecución de múltiples actualizaciones al tiquete."
-    info2: "Pro ejemplo antes de asignar un tiquete a QA ud podría querer tipificar el tiquet como un bug, asignarlo al grupo de QA y enviarle un mensaje al gerente de QA sobre el nuevo bug."
+    info1: "Todas  las mesas de ayuda tienen un conjunto de escenarios comunes y recurrentes - p.e.: Escalar al nivel 2, Assignar a QA, Reenviar a Ventas, etc. Estos escenarios usualmente involucran la ejecución de múltiples actualizaciones al ticket."
+    info2: "Pro ejemplo antes de asignar un ticket a QA ud podría querer tipificar el ticket como un bug, asignarlo al grupo de QA y enviarle un mensaje al gerente de QA sobre el nuevo bug."
     info3: "Scenario Automations allow you to automate these actions to a single click"
     info4: "Seleccione los marcadores a continuación para anexar al contenido del correo electrónico y se convertirán en los datos adecuados"
     info5: "Asignar a QA"
-    info6: "Marque el tique como un error y asígnelo a CC"
+    info6: "Marque el ticket como un error y asígnelo a CC"
     info7: "Acciones que deben realizarse"
     info8: "Añadir nueva acción"
     new: "Nueva situación"
@@ -657,7 +657,7 @@ es:
     info4: "Añadir una nota acerca de %{name}"
     info5: "Añada notas específicas con respecto a esta empresa, por ejemplo, estamos negociando un acuerdo de 100.000 con esta empresa"
     info6: "Personas en %{name}"
-    info7: "No se han creado tiques por las personas en esta empresa"
+    info7: "No se han creado tickets por las personas en esta empresa"
     info8: "Más información con respecto a esta empresa, como dirección, número de teléfono, sitio web, etc."
     info9: "Freshdesk asociará automáticamente los contactos con esta empresa si las ID de correo electrónico contienen estos dominios"
     name: "Nombre de la empresa"
@@ -747,7 +747,7 @@ es:
   delete: Eliminar
   delete_confirm_scenario: "Está seguro de borrar este escenario?"
   delete_reminder: "Borrar esta tarea?"
-  delete_the_ticket: "Eliminar el tique"
+  delete_the_ticket: "Eliminar el ticket"
   delete_topic_msg: "Eliminar este tema para siempre"
   description: Descripción
   disabled: Deshabilitado
@@ -760,11 +760,11 @@ es:
     dispatch_rules: "Despachador - Reglas"
     edit: "Despachador - Editar regla"
     inactive_rules: "Reglas inactivas"
-    info1: "Tiques relacionados con suscripciones"
-    info2: "Todos los tiques relacionados con suscripciones se asignarán a Susan"
+    info1: "Tickets relacionados con suscripciones"
+    info2: "Todos los tickets relacionados con suscripciones se asignarán a Susan"
     info3: "Cuándo debe aplicarse esta regla"
-    info4: "El despachador despachará automáticamente un tique de asistencia recién creado según las reglas y las acciones definidas"
-    info5: "Recuerde, el orden de las reglas es importante. Para cada tique entrante, el despachador ejecutará la primera regla y se detendrá"
+    info4: "El despachador despachará automáticamente un ticket de asistencia recién creado según las reglas y las acciones definidas"
+    info5: "Recuerde, el orden de las reglas es importante. Para cada ticket entrante, el despachador ejecutará la primera regla y se detendrá"
     match_all: "Coincidir con todo"
     new: "Despachador - Nueva regla"
     new_rule: "Nueva regla"
@@ -819,16 +819,16 @@ es:
     inactive_info1: "Todos sus correos de soporte están sin verificar, debe verificar por lo menos un correo de soporte."
     inactive_info2: "Hasta tanto, se usará el correo por defecto \"%{default_email}\" como dirección de respuesta."
     info1: "Sus usuarios envían los correos electrónicos de asistencia a"
-    info10: "Los nuevos tiques para este correo electrónico de asistencia se asignarán automáticamente a un grupo"
+    info10: "Los nuevos tickets para este correo electrónico de asistencia se asignarán automáticamente a un grupo"
     info12: "Añadir otra dirección de correo electrónico"
     info13: "Su dirección de correo electrónico de asistencia es"
-    info14: "Un correo electrónico enviado a esta dirección se convertirá como un tique"
+    info14: "Un correo electrónico enviado a esta dirección se convertirá como un ticket"
     info15: "Debe reenviar estos correos electrónicos a"
-    info16: "Los tiques se asignarán a"
+    info16: "Los tickets se asignarán a"
     info17: "Esta dirección de correo electrónico se incluirá automáticamente en el campo BCC para todas las comunicaciones de tickets"
-    info18: "Dirección BCC incluida automáticamente en las respuestas de los tiques "
+    info18: "Dirección BCC incluida automáticamente en las respuestas de los tickets "
     info2: "Debe reenviar sus correos electrónicos de asistencia a su dirección de correo electrónico única."
-    info3: "Freshdesk recopilará esos correos electrónicos y los convertirá en tiques"
+    info3: "Freshdesk recopilará esos correos electrónicos y los convertirá en tickets"
     info4: "<strong>NOTA:</strong> si tiene múltiples direcciones de correo electrónico para prestar asistencia a múltiples productos, <a href='{{products_path}}'>puede añadirlos aquí</a>."
     info5: "Los correos electrónicos de respuesta desde Freshdesk utilizarán automáticamente las ID originales del correo electrónico de asistencia original como la dirección de correo electrónico Desde"
     info7: "Esta también es una dirección de respuesta, p. ej. support@yourcompany.com"
@@ -923,7 +923,7 @@ es:
   feedbackwidget_form_title: "Título de la forma del botón"
   feedbackwidget_formcustomize: "Personalización de la forma"
   feedbackwidget_help_para1: "Capture la opinión de sus clientes agregando un botón de soporte a su sitio en la web."
-  feedbackwidget_help_para2: "Tabulador personalizable que abre un formulario de tiquete de soporte"
+  feedbackwidget_help_para2: "Tabulador personalizable que abre un formulario de ticket de soporte"
   feedbackwidget_help_title: "Botón de contacto"
   feedbackwidget_intro: "Personalice su botón de freshdesk y tenga una vista previa inmediata."
   feedbackwidget_offset_info: "El desplazamiento será la distancia desde el botón hasta el borde izquierdo o superior de la pantalla, basado en la alineación escogida."
@@ -969,8 +969,8 @@ es:
       success: "Se importaron %{created_count} nuevos contactos y se actualizaron %{updated_count} contactos existentes!"
     custom_fields: 
       update: 
-        failure: "Falló la actualización de campos del tiquete."
-        success: "Se actualizaron correctamente los campos del tiquete."
+        failure: "Falló la actualización de campos del ticket."
+        success: "Se actualizaron correctamente los campos del ticket."
     customers: 
       info_select: "Por favor seleciona al menos 1 cliente."
     data_import: 
@@ -1047,7 +1047,7 @@ es:
     portal: 
       tickets: 
         create: 
-          success: "Se creó su tiquete y una copia del mismo se envió a su correo."
+          success: "Se creó su ticket y una copia del mismo se envió a su correo."
     portal_settings: 
       update: 
         success: "Se actualizaron las configuraciones del portal del cliente."
@@ -1072,19 +1072,19 @@ es:
       empty_trash: 
         success: "Se borraron todos los tickets de la papelera."
       merge: 
-        success: "El tiquete se combinó exitosamente."
-        wrong_ticket_id: "Por favor digite un ID de tiquete"
+        success: "El ticket se combinó exitosamente."
+        wrong_ticket_id: "Por favor digite un ID de ticket"
       monitor: 
-        start: "Usted ahora está monitoreando este tiquete."
-        stop: "Usted no monitoreará más este tiquete."
+        start: "Usted ahora está monitoreando este ticket."
+        stop: "Usted no monitoreará más este ticket."
       notes: 
         create: 
-          failure: "Se presentó un problema al agregar la nota a su tiquete. Por favor inténtelo de nuevo."
-          success: "Se agregó la nuta a su tiquete."
+          failure: "Se presentó un problema al agregar la nota a su ticket. Por favor inténtelo de nuevo."
+          success: "Se agregó la nuta a su ticket."
       reply: 
         success: "Se ha enviado la respuesta."
       timesheet: 
-        timer_stopped: "los temporizadores de tiques se han detenido"
+        timer_stopped: "los temporizadores de tickets se han detenido"
     to_dos: 
       complete: 
         success: "La tarea por hacer se marcó como completada."
@@ -1217,7 +1217,7 @@ es:
     info1: "Los agentes en este grupo"
     info2: "No hay agentes en este grupo"
     info3: "Envíenos un correo electrónico de derivación a"
-    info4: "si un tique sigue sin asignarse durante más de"
+    info4: "si un ticket sigue sin asignarse durante más de"
     info5: "¿Está seguro?"
     name: "Nombre del grupo"
     new: "Nuevo grupo"
@@ -1227,13 +1227,13 @@ es:
   header: 
     assumed_text: "Está viendo como"
     login: Conectar
-    new_ticket: "Nuevo tiquete"
+    new_ticket: "Nuevo ticket"
     search: Buscar
     signout: "Cerrar sesión"
-    submit_a_ticket: "Enviar un tiquete"
+    submit_a_ticket: "Enviar un ticket"
     tabs: 
       admin: Admin
-      checkstatus: "Verificar el estado de su tiquete"
+      checkstatus: "Verificar el estado de su ticket"
       company_tickets: "Tickets de la empresa"
       customers: Clientes
       dashboard: "Tablero de mando"
@@ -1249,7 +1249,7 @@ es:
     dashboard: 
       summary: 
         due_today: "Vencidos hoy"
-        open: Abiertos
+        open: Abierto
         overdue: Atrasado
         pending: Pendiente
         title: "Resumen de tickets"
@@ -1258,7 +1258,7 @@ es:
       assigned_reassigned: "%{type} a %{username}"
       assigned_to_you: "%{tickets} asignados a usted"
       assignedto: "%{tickets} asignados a %{username}."
-      closing_the_ticket_failed: "Falló el cierre del tiquete"
+      closing_the_ticket_failed: "Falló el cierre del ticket"
       flagged_spam: "%{tickets} etiquetados como basura. %{undo}"
       flagged_unspam: "%{tickets} eliminados de la carpeta de basura."
       removed_from_spam: "%{tickets} eliminados de la carpeta de basura."
@@ -1267,14 +1267,14 @@ es:
     merge: 
       confirm_merge: 
         confirm_and_merge: "Confirmar y combinar"
-        source_merge_description: "Este tiquete está cerrado y combinado en el tiquete %{ticket_id}."
-        source_ticket_close_info: "Este tiquete se cerrará con la siguiente nota"
-        target_merge_description1: "El tiquete %{ticket_id} %{ticket_subject} está combinado con esta solicitud"
-        target_merge_description2: "Descripción en el tiquete %{ticket_id}"
-        target_ticket_updated_info: "Este tiquete se actualizará con la siguiente nota y se moverán todas las conversaciones"
+        source_merge_description: "Este ticket está cerrado y combinado en el ticket %{ticket_id}."
+        source_ticket_close_info: "Este ticket se cerrará con la siguiente nota"
+        target_merge_description1: "El ticket %{ticket_id} %{ticket_subject} está combinado con esta solicitud"
+        target_merge_description2: "Descripción en el ticket %{ticket_id}"
+        target_ticket_updated_info: "Este ticket se actualizará con la siguiente nota y se moverán todas las conversaciones"
         will_be_merged_into: "Se combinará con..."
       merge: 
-        enter_ticket_id: "Digite un ID de tiquete"
+        enter_ticket_id: "Digite un ID de ticket"
         merge: Combinar
         merge_into: "Combinar en?"
         other_tickets: "Otros tickets reportados por %{requester}"
@@ -1312,11 +1312,11 @@ es:
     tickets: 
       close_notice: 
         ticket_has_been_cloased: "El ticket se ha cerrado"
-        view_ticket: "Ver tiquete"
+        view_ticket: "Ver ticket"
       components: 
         due_date: 
           due: Vence
-          earlier_date_and_time: "Por favor establezca una fecha & hora más reciente que la fecha y hora de creación del tiquete"
+          earlier_date_and_time: "Por favor establezca una fecha & hora más reciente que la fecha y hora de creación del ticket"
           next_week: "Próxima semana"
           set_date_time: "Establezca Fecha/hora"
           specific_date: "Fecha/hora específica..."
@@ -1350,17 +1350,17 @@ es:
         posted_on: "%{user_name} el %{note_date}"
         private_note: "Nota privada"
         public_note: "Nota pública"
-        split_this_as_new_ticket: "Dividir como nuevo tique"
-        split_ticket_confirm: "¿Desea dividir esta nota y crearla como nuevo tique?"
+        split_this_as_new_ticket: "Dividir como nuevo ticket"
+        split_ticket_confirm: "¿Desea dividir esta nota y crearla como nuevo ticket?"
       overlay_fwd_time: " Enviado, hace %{time_in_words}"
       overlay_note_time: " nota añadida, hace %{time_in_words}"
       overlay_reply_time: " respondido, hace %{time_in_words}"
       save_and_close_notice: 
-        ticket_saved_and_closed: "El tique se ha creado y cerrado."
-        view_ticket: "Ver tique"
+        ticket_saved_and_closed: "El ticket se ha creado y cerrado."
+        view_ticket: "Ver ticket"
       show: 
         conversation: "Conversación "
-        linked_ticket: "Este tiquete está vinculado al foro"
+        linked_ticket: "Este ticket está vinculado al foro"
         timesheet: "Hoja de tiempo"
       tabular_view: 
         assigned: Asignado
@@ -1371,11 +1371,11 @@ es:
         title: Título
       view_ticket: 
         conversation: "Conversación "
-        linked_ticket: "Este tique está vinculado al foro"
+        linked_ticket: "Este ticket está vinculado al foro"
         timesheet: "Hoja de tiempo"
       views: 
         all: "Todos los tickets"
-        all_tickets: "Todos los tiques"
+        all_tickets: "Todos los tickets"
         closed: "Tickets cerrados"
         deleted: Papelera
         due_today: "Tickets que vencen hoy"
@@ -1384,22 +1384,22 @@ es:
         my_closed: "Mis tickets cerrados"
         my_due_today: "Mis tickets que vencen hoy"
         my_on_hold: "Mis tickets en espera"
-        my_open: "Mis tickets abiertos"
+        my_open: "Mis tickets abierto"
         my_overdue: "Mis tickets atrasados"
         my_resolved: "Mis tickets resueltos"
         new: "Tickets nuevos"
-        new_and_my_open: "Nuevos y Mis tickets abiertos"
-        new_my_open: "Nuevos y mis tiquets abiertos"
-        no_tickets: "No tiene ningún tique en la vista actual"
+        new_and_my_open: "Nuevos y Mis tickets abierto"
+        new_my_open: "Nuevos y mis tickets abierto"
+        no_tickets: "No tiene ningún ticket en la vista actual"
         on_hold: "Tickets en espera"
-        open: "Tiques abiertos"
+        open: "Ttickets abierto"
         open_or_pending: "Abierto o pendiente"
         overdue: "Tickets atrasados"
         resolved: "Tickets resueltos"
         resolved_or_closed: "Resuelto o cerrado"
         select: "Seleccione la vista..."
         spam: Basura
-        tags: "Etiquetas por tiquete"
+        tags: "Etiquetas por ticket"
         this_view: "esta vista"
         tickets_by: "Tickets por"
         tickets_twitter: "Tickets mediante Twitter"
@@ -1415,14 +1415,14 @@ es:
       group_by: "Agrupar por"
       hours: Horas
       index: 
-        no_timeentry: "No existen entradas de tiempo para este tique"
+        no_timeentry: "No existen entradas de tiempo para este ticket"
       new: 
         title: "Nueva entrada de tiempo"
       note: Nota
       report: 
         no_timeentry: "No hay datos disponibles"
         total: Total
-      ticket: Tique
+      ticket: Ticket
       time_entry: 
         toggle_timer_false: "Detener temporizador"
         toggle_timer_true: "Iniciar temporizador"
@@ -1470,12 +1470,12 @@ es:
   index_tooltip_loading_msg: Cargando...
   integrations: 
     capsule: 
-      desc: "Puede ver la Información de contacto desde Capsule CRM en Freshdesk. Puede acceder a esta información en la página Detalles de los tiques y la página de Detalles de contacto."
+      desc: "Puede ver la Información de contacto desde Capsule CRM en Freshdesk. Puede acceder a esta información en la página Detalles de los tickets y la página de Detalles de contacto."
       form: 
         api_key: "Clave API"
         api_key_info: "Para obtener su clave API única, inicie sesión en su cuenta de Capsule CRM y vaya a <br /> <b>&quot;Usuario -> Mis preferencias&quot;</b>. (Puede encontrarlo en la esquina superior derecha de la página).<br /> Haga clic en <b>“Clave de autenticación API”</b> para obtener la clave de autenticación API única.<br /> Copie la clave y péguela en el campo de texto anterior."
         bcc_drop_box_mail: "Dirección de correo de Drop Box"
-        bcc_drop_box_mail_info: "Puede encontrar su dirección de correo electrónico de DropBox única de Capsule en <b>“Configuración -> Correo de DropBox”</b>.<br /> (Puede encontrarlo en la esquina superior derecha de la página).<br /> Copie la dirección de correo electrónico y péguela en el campo de texto anterior. <br /> Freshdesk añadirá automáticamente esta dirección de correo electrónico al campo Bcc al responder a un tique"
+        bcc_drop_box_mail_info: "Puede encontrar su dirección de correo electrónico de DropBox única de Capsule en <b>“Configuración -> Correo de DropBox”</b>.<br /> (Puede encontrarlo en la esquina superior derecha de la página).<br /> Copie la dirección de correo electrónico y péguela en el campo de texto anterior. <br /> Freshdesk añadirá automáticamente esta dirección de correo electrónico al campo Bcc al responder a un ticket"
         domain: Dominio
         domain_info: "Sólo proporcione el dominio sin https. Ej.: ejemplo.capsulecrm.com"
         widget_title: "Título del widget"
@@ -1497,7 +1497,7 @@ es:
       script: Script
       small_help_text: "Puedes desarrollar tu propio widget usando html,css y javascript."
     freshbooks: 
-      desc: "Puede registrar el tiempo invertido en los tiques en sus proyectos y tareas de Freshbooks."
+      desc: "Puede registrar el tiempo invertido en los tickets en sus proyectos y tareas de Freshbooks."
       form: 
         api_key: "Clave de autenticación"
         api_url: "URL de la API"
@@ -1580,7 +1580,7 @@ es:
         error: "Se produjo un error al actualizar la cuenta de Google."
         success: "La cuenta de Google se actualizó correctamente."
     harvest: 
-      desc: "Puede registrar el tiempo invertido en los tiques en sus proyectos y tareas de Harvest."
+      desc: "Puede registrar el tiempo invertido en los tickets en sus proyectos y tareas de Harvest."
       form: 
         domain: Dominio
         domain_info: "Proporcione el dominio solo sin https. Ej.: ejemplo.harvestapp.com"
@@ -1693,7 +1693,7 @@ es:
       sign_in_using: "...o entra usando"
   name: Nombre
   never: Nunca
-  new_ticket_created: "Nuevo tiquete creado"
+  new_ticket_created: "Nuevo ticket creado"
   next_charge_amount: "%{type} costo:"
   next_charge_date: "Su sieguiente pago se procesará el:"
   next_level_info: "+%{points} para ser %{name}"
@@ -1717,8 +1717,8 @@ es:
   one: "1 Hora"
   onemonth: "1 mes"
   oneweek: "1 semana"
-  open: Abiertos
-  open_tickets: "Tickets Abiertos"
+  open: Abierto
+  open_tickets: "Tickets Abierto"
   or: o
   paid_with: "Pagado con"
   password: Contraseña
@@ -1733,14 +1733,14 @@ es:
   portal: 
     search: 
       placeholder: "Búsqueda usando una llave o una pregunta completa"
-  portal_captcha: "Hacer que captcha sea obligatorio al enviar un tique sin iniciar sesión"
-  portal_captcha_anon: "Deshabilite esta característica si desea que los usuarios envíen un tiques sin captcha"
+  portal_captcha: "Hacer que captcha sea obligatorio al enviar un ticket sin iniciar sesión"
+  portal_captcha_anon: "Deshabilite esta característica si desea que los usuarios envíen un tickets sin captcha"
   portal_customizer_anon_for_f: "Activa esta caracteristica si quieres que tus clientes sean capaces de entrar usando su nombre y clave de Facebook."
   portal_customizer_anon_for_g: "Active esta función si quiere que sus clientes puedan conectarse usando su usuario y contraseña de Google"
   portal_customizer_anon_for_i: "Apague esta función si desea ocultar el tabulador de \"Foros\" en el portal público de clientes"
   portal_customizer_anon_for_t: "Active esta función si quiere que sus clientes puedan conectarse usando su usuario y contraseña de Twitter "
-  portal_customizer_anon_tickets: "Cualquiera puede crear un tiquete"
-  portal_customizer_anon_tickets_i: "Apague esta característica, si desea que sus usuarios deban conectarse antes de enviar un tiquete."
+  portal_customizer_anon_tickets: "Cualquiera puede crear un ticket"
+  portal_customizer_anon_tickets_i: "Apague esta característica, si desea que sus usuarios deban conectarse antes de enviar un ticket."
   portal_customizer_auto_suggest_solutions: "Activa esta caracteristica si quieres sugerir soluciones existentes cuando un usuario cree un nuevo ticket."
   portal_customizer_facebook_signin: "Permitir a los usuarios entrar usando Facebook"
   portal_customizer_google_signin: "Permitir a los usuarios inscribirse mediante Google"
@@ -1752,8 +1752,8 @@ es:
   portal_customizer_option_forums: "Los usuarios pueden ver los Foros sin conectarse"
   portal_customizer_option_sol_i: "Apague esta característica si quiere que los usuarios se conecten para poder ver las soluciones"
   portal_customizer_option_solutions: "Los usuarios pueden ver las soluciones públicas sin conectarse"
-  portal_customizer_option_tickets: "Los usuarios pueden crear un tiquete in conectarse"
-  portal_customizer_option_tickets_i: "Apague esta característica si quiere obligar a los usuarios a conectarse antes de enviar un tiquete"
+  portal_customizer_option_tickets: "Los usuarios pueden crear un ticket in conectarse"
+  portal_customizer_option_tickets_i: "Apague esta característica si quiere obligar a los usuarios a conectarse antes de enviar un ticket"
   portal_customizer_title: "Personalizar su portal público del cliente"
   portal_customizer_twitter_signin: "Permitir a los usuarios isncribirse mediante Twitter"
   portal_key: Portal
@@ -1819,7 +1819,7 @@ es:
     helpdesk_activity_title: "Informe de actividad de Helpdesk "
     helpdesk_title: "Informe de actividad de Helpdesk "
     helpdesk_title_nav: "Informe de actividad de Helpdesk "
-    pie_chart_title_prefix: "Tiques por "
+    pie_chart_title_prefix: "Tickets por "
     satisfaction_title: "Informe de Satisfacción"
     scoreboard_agent_title: "Agente Lider"
     scoreboard_group_title: "Grupo Lider"
@@ -1831,13 +1831,13 @@ es:
     select_time_period: "Seleccionar el periodo de tiempo"
     summary: 
       fcr: "Solución a la primera llamada"
-      open_tickets: "Tiques abiertos"
-      pending_tickets: "Tiques pendientes"
+      open_tickets: "Tickets abierto"
+      pending_tickets: "Tickets pendientes"
       received_tickets: "Tickets recibidos"
-      resolved_tickets: "Tiques solucionados"
+      resolved_tickets: "Tickets solucionados"
       sla_compliance: "Cumplimiento del SLA"
-      title: "Resumen de tiques"
-      total_tickets: "Tiques totales"
+      title: "Resumen de tickets"
+      total_tickets: "Tickets totales"
     summary_report: 
       avg_1st_response_time: "Tiempo medio de primera respuesta"
       back_to_reports: "Volver a Reportes"
@@ -1868,8 +1868,8 @@ es:
         view_report_date: "Vista de informe durante"
     surveys_title_nav: "Informe de Satisfacción del Cliente"
     tab_heading: Reportes
-    tickets_by: "Tiques por"
-    timeline_chart_title: "Tiques recibidos en comparación con solucionados"
+    tickets_by: "Tt]ickets por"
+    timeline_chart_title: "Tickets recibidos en comparación con solucionados"
     timesheet_reports: 
       index: 
         from: De
@@ -1879,8 +1879,8 @@ es:
         title: "Informe de la hoja de tiempo"
         to: Para
         view_between: "Ver informe entre"
-  requester_reopens: "El solicitante reabrió el tiquete"
-  requester_replies: "Respuestas del solicitante al tiquete"
+  requester_reopens: "El solicitante reabrió el ticket"
+  requester_replies: "Respuestas del solicitante al ticket"
   reset_my_password: "Restablecer mi contraseña "
   reset_password_title: "Resetear Contraseña"
   resolution_time_sla: "Violación al ANS de tiempo de solución"
@@ -1928,7 +1928,7 @@ es:
     calendar_time: "Horas calendario"
     edit: "Editar política de SLA"
     escalate_to: "Escalar a"
-    info1: "	La política de SLA es un conjunto de tiempos de respuesta y resolución objetivo basados en la prioridad de los tiques. Es una buena práctica de la industria para establecer niveles de servicio basados en prioridad. Su política de SLA podría ser tan simple como decir &quot;Los tiques de alta prioridad deben resolverse en 2 horas&quot;, etc."
+    info1: "	La política de SLA es un conjunto de tiempos de respuesta y resolución objetivo basados en la prioridad de los tickets. Es una buena práctica de la industria para establecer niveles de servicio basados en prioridad. Su política de SLA podría ser tan simple como decir &quot;Los tickets de alta prioridad deben resolverse en 2 horas&quot;, etc."
     info2: "Freshdesk utiliza la política de SLA para determinar la hora de “vencimiento” de tickets. Puede tener una política de SLA predeterminada para todos sus clientes, pero si tiene un cliente especial que necesita unos tiempos de respuesta y resolución más rápidos, siempre puede crear una política de SLA especial para ese cliente."
     info3: "La política de SLA funciona en conjunto con el horario laboral"
     new: "Nueva política de SLA"
@@ -1951,15 +1951,15 @@ es:
         engage_customers: "Haga participar a sus clientes directamente desde Facebook"
         title: "Añada sus páginas de Facebook"
       form: 
-        company_posts: "Importar <strong>&quot;Publicaciones de la empresa&quot;</strong> como tique"
-        company_posts_info: "Freshdesk convertirá todas las publicaciones de la empresa en esta página de Facebook como tiques."
+        company_posts: "Importar <strong>&quot;Publicaciones de la empresa&quot;</strong> como ticket"
+        company_posts_info: "Freshdesk convertirá todas las publicaciones de la empresa en esta página de Facebook como tickets."
         direct_messages: "Importar <strong>&quot;Mensajes directos&quot;</strong> como tickets"
         direct_messages_info: "Freshdesk convertirá todos los mensajes directos en esta página de Facebook como tickets. Si está habilitando esto por primera vez, es posible que necesite <a href='{{reauth_url}}'>Volver a autorizar con Facebook</a>"
         message_thread_time: "Hora de la cadena de mensajes"
         message_thread_time_info: "El tiempo máximo para considerar los mensajes del mismo usuario como en la cadena  "
         product: "Producto     "
-        visitor_posts: "Importar <strong>&quot;Publicaciones de visitantes&quot;</strong> como tique"
-        visitor_posts_info: "Freshdesk convertirá todas las publicaciones de los visitantes en esta página de Facebook como tiques."
+        visitor_posts: "Importar <strong>&quot;Publicaciones de visitantes&quot;</strong> como ticket"
+        visitor_posts_info: "Freshdesk convertirá todas las publicaciones de los visitantes en esta página de Facebook como tickets."
       index: 
         reauth_required: "Reautorización obligatoria"
         reauthorize: "Volver a autorizar"
@@ -2079,7 +2079,7 @@ es:
   switch_heading: "Cambiar agente"
   swith_agent_msg: "Cambiar a otro agente"
   this_ticket_has_been_closed: "El ticket ha sido cerrado"
-  this_ticket_has_been_deleted: "El tiquete ha sido borrado"
+  this_ticket_has_been_deleted: "El ticket ha sido borrado"
   this_ticket_has_been_resolved: "El ticket ha sido Resuelto"
   threeday: "3 Días"
   threemonth: "3 mes"
@@ -2099,14 +2099,14 @@ es:
       insert_ca_resp_tip: "Insertar esta respuesta tipo"
       insert_ca_response: "Respuesta tipo"
     close_btn: Cerrar
-    close_btn_title: "Cerrar este tiquete"
+    close_btn_title: "Cerrar este ticket"
     closed_at: "Horas de cerrado"
-    convert_ticket_title: "Convertir como un tique"
-    create_ticket_title: "Crear un nuevo tique"
+    convert_ticket_title: "Convertir como un ticket"
+    create_ticket_title: "Crear un nuevo ticket"
     created_at: "Horas desde creado"
     created_on: "Creado a las %{time}"
     delete_btn: Eliminar
-    delete_btn_title: "Enviar este tiquete a la papelera"
+    delete_btn_title: "Enviar este ticket a la papelera"
     due_by: "Horas desde demorado"
     due_by_time: "Vencido por tiempo"
     edit: "Edit Ticket"
@@ -2125,7 +2125,7 @@ es:
       jira: 
         tooltip: "Ver el problema JIRA asociado"
     merge_btn: Combinar
-    monitor_btn_title: "Monitorear este tiquete"
+    monitor_btn_title: "Monitorear este ticket"
     note_content: "Contenido de la nota"
     note_form: 
       add_and_resolve: "Añadir y resolver"
@@ -2136,8 +2136,8 @@ es:
     pending_since: "Horas desde pendiente"
     pick_up: Recoger
     priority: Prioridad
-    properties: "Propiedades del tique"
-    recent_tickets: "Tiques recientes"
+    properties: "Propiedades del ticket"
+    recent_tickets: "Tickets recientes"
     reply_form: 
       form_title: "Responder a la conversación"
       post_to_linked_forum: "Publicar en el foro vinculado"
@@ -2153,19 +2153,19 @@ es:
     requester_responded_at: "Horas desde que el solicitante respondió"
     requestor_info: "Información del solicitante"
     resolved_at: "Horas desde solucionado"
-    restore_btn: "Recuperar este tiquete"
-    restore_btn_title: "Recuperar este tiquete desde la papelera"
+    restore_btn: "Recuperar este ticket"
+    restore_btn_title: "Recuperar este ticket desde la papelera"
     select_to_agent: "Seleccione un agente"
-    singular: Tique
+    singular: Ticket
     sort_by: "Ordenar por"
     source: Fuente
     spam_btn_title: "Marcar como basura"
     split_ticket: Dividir
     status: Estado
-    stop_monitor_btn_title: "Dejar de monitorear este tiquete"
+    stop_monitor_btn_title: "Dejar de monitorear este ticket"
     subject: Asunto
     submit_ticket: "Enviar "
-    submit_ticket_title: "Enviar un tiquete"
+    submit_ticket_title: "Enviar un ticket"
     suggest_solutions: "Sugerir soluciones"
     suggested_solutions: 
       insert_content: "Insertar contenido"
@@ -2176,11 +2176,11 @@ es:
       title: "Soluciones sugeridas"
     tags: 
       create_success: "Se agregó la etiqueta"
-      destroy_success: "Se eliminó la etiqueta de este tiquete"
+      destroy_success: "Se eliminó la etiqueta de este ticket"
       no_match: "No hay concordancias. Presione enter para crear la etiqueta."
     thanks: "Gracias por enviarnos su opinión"
-    ticket_url: "URL del tique"
-    to_do: "Tiques para hacer"
+    ticket_url: "URL del ticket"
+    to_do: "Tickets para hacer"
     tweet_form: 
       tweet_and_resolve: "Tweet y resolver"
       user_not_following: "Este usuario no está siguiendo su cuenta de Twitter"
@@ -2210,8 +2210,8 @@ es:
     first_choice: "Primera opción"
     formfield_props: 
       add_new_choice: "Agregar nueva opción"
-      agent_info1: "El campo no puede estar en blanco cuando envía el tiquete"
-      agent_info2: "El campo no puede estar en blanco cuando cierra el tiquete"
+      agent_info1: "El campo no puede estar en blanco cuando envía el ticket"
+      agent_info2: "El campo no puede estar en blanco cuando cierra el ticket"
       agent_mandatory_closure: "Obligatorio para cerrar"
       agent_mandatory_submission: "Obligatorio para envío"
       behavior: Comportamiento
@@ -2219,7 +2219,7 @@ es:
       cc_company_contacts: "Puede Poner en CC solo contactos de la compañia"
       choices: Opciones
       customer_edit: "Puede editar el campo"
-      customer_info1: "El campo no puede estar en blanco cuando envía el tiquete en línea."
+      customer_info1: "El campo no puede estar en blanco cuando envía el ticket en línea."
       customer_mandatory: "Obligatorio para enviar el ticket"
       customer_visible: "Visible a Clientes"
       delete_field: "Campo borrado"
@@ -2243,8 +2243,8 @@ es:
       status_choices: "Opciones de Estado"
     index: 
       add_custom_field: "Agregar campo personalizado"
-      customize_form: "Personalizar su formulario de \"Nuevo tiquete\""
-      drag_drop_intro: "Para agregar un nuevo campo personalizado arrastre y suelte cualquier tipo de campo en la forma de \"Nuevo tiquete\" de abajo"
+      customize_form: "Personalizar su formulario de \"Nuevo ticket\""
+      drag_drop_intro: "Para agregar un nuevo campo personalizado arrastre y suelte cualquier tipo de campo en la forma de \"Nuevo ticket\" de abajo"
       dropdown: "Menú desplegable"
       nestedfield: "Campo dependiente"
       number: Número
@@ -2258,7 +2258,7 @@ es:
   ticket_pending_since_time: "Pendiente desde"
   ticket_resolved_at_time: "Resuelto a las"
   ticket_update_multiple_button: Actualizar
-  ticket_was: "El tiquete fué"
+  ticket_was: "El ticketfué"
   tickets_filter: 
     sort_fields: 
       asc: Ascendente
@@ -2274,9 +2274,9 @@ es:
   tip_off: "Haga clic para deshabilitar"
   tip_on: "Haga clic para habilitar"
   title: Título
-  tkt_assigned_to_agent: "Tiquete asignado al agente"
-  tkt_assigned_to_group: "Tiquete asignado al grupo"
-  tkt_unattended_in_grp: "Tiquete sin atender en el grupo"
+  tkt_assigned_to_agent: "Ticket asignado al agente"
+  tkt_assigned_to_group: "Ticket asignado al grupo"
+  tkt_unattended_in_grp: "Ticket sin atender en el grupo"
   to: para
   to_do: Tareas
   to_email: "Al correo"
@@ -2311,8 +2311,8 @@ es:
     not_authorized: "Ud no ha sido autorizado por Twitter"
     sent: "Trino enviado exitosamente"
     success_signin: "Se asoció exitosamente a @%{twitter_screen_name} con %{helpdesk}."
-    ticket_save: "El trino se convirtió exitosamente en tiquete"
-    tkt_err_save: "No fué posible convertir el trino en tiquete, o ya se había convertido"
+    ticket_save: "El trino se convirtió exitosamente en ticket"
+    tkt_err_save: "No fué posible convertir el trino en ticket, o ya se había convertido"
     user_exists: "Esta cuenta de Twitter ya está asociada a otro producto"
     usr_not_thr: "El usuario no existe aquí"
   twitter_source: Twitter
@@ -2325,7 +2325,7 @@ es:
   undo: Deshacer
   update: Actualizar
   update_and_login: "Actualizar y conectar"
-  update_multiple_tickets: "Actualizar múltiples tiques"
+  update_multiple_tickets: "Actualizar múltiples tickets"
   updated_on: "%{user_name} actualizado el %{note_date}"
   upgrade_trial: "Actualice su prueba!"
   urgent: Urgente
@@ -2371,14 +2371,14 @@ es:
   wf: 
     filter: 
       index: 
-        back: "&larr; Volver a los tiques"
+        back: "&larr; Volver a los tickets"
         no_custom_view: "No hay vistas personalizadas disponibles."
         title: "Gestionar las vistas personalizadas"
       view: 
         delete: "¿Está seguro de que desea eliminar esta vista?"
     messages: 
-      no_tickets_for_user: "No hay tiques abiertos para que %{user_name} vea."
-      no_tickets_in_view: "No tiene ningún tique en %{view_name}."
+      no_tickets_for_user: "No hay tickets abierto para que %{user_name} vea."
+      no_tickets_in_view: "No tiene ningún ticket en %{view_name}."
       no_tickets_subtext: "Ver %{view_1} o %{view_2}"
       no_tickets_subtext_single: "Ver %{view_1}"
   what_is_cvv: "Qué es cw?"
