@@ -47,6 +47,6 @@
 	}	
 }
 @include at-breakpoint($break-desktop){
-	#login-box, #signup-box{ @include min-height(275px); }
-	#login-box{ margin-bottom: 200px; }
+	#login-container, #signup-container{ @include min-height(275px); }
+	#login-container{ margin-bottom: 200px; }
 }

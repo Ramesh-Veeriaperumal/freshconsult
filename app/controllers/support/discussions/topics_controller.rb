@@ -81,10 +81,10 @@ class Support::Discussions::TopicsController < SupportController
   
   def create
     topic_saved, post_saved = false, false
-    # @forum = scoper.find(params[:forum_id])
+    @forum = forum_scoper.find(params[:topic][:forum_id])
     # this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
-      @topic  = current_account.topics.build(topic_param)
+      @topic  = @forum.topics.build(topic_param)
       assign_protected
       @post       = @topic.posts.build(post_param)
       @post.topic = @topic
@@ -104,7 +104,10 @@ class Support::Discussions::TopicsController < SupportController
       end
     else
       respond_to do |format|  
-        format.html { redirect_to :back }
+        format.html { 
+          set_portal_page :new_topic
+          render :new 
+        }
         format.xml  { render :xml => @topic.errors }
       end
     end

@@ -13,7 +13,7 @@
         <i class="caret"></i>
       </a>
     </span>
-    <% if current_user.client_manager? %>
+    <% if @filter_users.present? %>
       <span class="dropdown" id="user-list-dropdown">  
         <a class="dropdown-toggle help-text" data-toggle="dropdown" href="#">
           <%= I18n.t("tickets_filter.raised_by") %> <b><%= raised_by %></b>

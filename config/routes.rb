@@ -329,7 +329,8 @@
     support.ticket_add_cc "/support/ticket/:id/add_cc", :controller => 'tickets', :action => 'add_cc'
     support.resources :company_tickets
 
-    support.resource :registration, :only => [:new]        
+    support.resource :signup, :only => [:show, :create]
+
     support.resource :profile, :only => [:edit, :update]
     support.resources :search, :only => :index, :member => { :suggest => :get }
 
@@ -347,8 +348,9 @@
       solution.resources :articles, :only => [:show, :index], :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
     end
 
-    support.resources :minimal_tickets
-    support.resources :registrations
+    # !PORTALCSS TODO to be removed later if its not really used
+    # support.resources :minimal_tickets
+    # support.resources :registrations
     
     support.portal_survey '/surveys/:ticket_id', :controller => 'surveys', :action => 'create_for_portal'
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'

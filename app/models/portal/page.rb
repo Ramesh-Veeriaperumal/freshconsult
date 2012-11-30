@@ -16,32 +16,31 @@ class Portal::Page < ActiveRecord::Base
 	PAGE_TYPES = [
 		# General pages
 		[:portal_home,        	1,  "home/index.portal"],    
-		[:user_signup,        	2,  "support/registrations/new.portal"],
+		[:user_signup,        	2,  "support/signup/show.portal"],
 		[:user_login,         	3,  "support/new.portal"],
-		[:forgot_password,    	4,  "support/registrations/forgot_password.portal"],
-		[:profile_edit,       	5,  "support/profiles/edit.portal"],
-		[:search,    		  	6,  "support/search/index"],
+		[:profile_edit,       	4,  "support/profiles/edit.portal"],
+		[:search,    		  	5,  "support/search/index"],
 
 		# Solution pages
-		[:solution_home,      	7,   "support/solutions/index.portal"],
-		[:article_list,       	8,   "support/solutions/folders/show.portal"],
-		[:article_view,       	9,   "support/solutions/articles/show.portal"],
+		[:solution_home,      	6,   "support/solutions/index.portal"],
+		[:article_list,       	7,   "support/solutions/folders/show.portal"],
+		[:article_view,       	8,   "support/solutions/articles/show.portal"],
 
 		# Discussion or Forum pages
-		[:discussions_home,   	10,  "support/discussions/index.portal"],
-		[:topic_list,         	11,  "support/discussions/forums/show.portal"],
-		[:topic_view,         	12,  "support/discussions/topics/show.portal"],
-		[:new_topic,          	13,  "support/discussions/topics/new.portal"],
+		[:discussions_home,   	9,  "support/discussions/index.portal"],
+		[:topic_list,         	10,  "support/discussions/forums/show.portal"],
+		[:topic_view,         	11,  "support/discussions/topics/show.portal"],
+		[:new_topic,          	12,  "support/discussions/topics/new.portal"],
 		
 		# Ticket pages
-		[:submit_ticket,      	14,  "support/tickets/new.portal"],
-		[:ticket_list,        	15,  "support/tickets/index.portal"],
-		[:ticket_view,        	16,  "support/tickets/show.portal"]
+		[:submit_ticket,      	13,  "support/tickets/new.portal"],
+		[:ticket_list,        	14,  "support/tickets/index.portal"],
+		[:ticket_view,        	15,  "support/tickets/show.portal"]
 	]
 
 	# Manually organizing them as groups to avoid direct db save dependency
 	PAGE_GROUPS = [
-		{ :general 		=> [:portal_home, :user_signup, :user_login, :forgot_password, :profile_edit, :search] },
+		{ :general 		=> [:portal_home, :user_signup, :user_login, :profile_edit, :search] },
 		{ :solutions 	=> [:solution_home, :article_list, :article_view] }, 
 		{ :discussions 	=> [:discussions_home, :topic_list, :topic_view, :new_topic] },
 		{ :tickets 		=> [:submit_ticket, :ticket_list, :ticket_view] }

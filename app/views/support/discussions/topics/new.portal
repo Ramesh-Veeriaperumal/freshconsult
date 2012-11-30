@@ -1,6 +1,4 @@
-<section class="main content rounded-6">
-	<div class="cs-s">
+<section class="main content rounded-6">	
 	<h3 class="heading">{% translate topic.new %}</h3>
 	{% snippet form %}
-	</div>
 </section>

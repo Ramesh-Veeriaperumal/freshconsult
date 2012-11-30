@@ -519,7 +519,7 @@ select:focus:required:invalid {
 
 .form-search,
 .form-inline,
-.form-horizontal {
+.form-portal {
   input,
   textarea,
   select,
@@ -536,6 +536,9 @@ select:focus:required:invalid {
     display: none;
   }
 }
+
+.form-portal{ margin-top: 10px; }
+
 .form-search label,
 .form-inline label {
   display: inline-block;
@@ -592,7 +595,7 @@ input.special{
 // --------------------------
 @include at-breakpoint($break-desktop){
 
-  .form-horizontal {
+  .form-portal {
     // Increase spacing between groups
     .control-group {
       margin-bottom: $baseLineHeight;
@@ -603,7 +606,6 @@ input.special{
       float: left;
       width: 140px;
       padding-top: 5px;
-      text-align: right;
     }
     // Move over all input controls and content
     .controls {

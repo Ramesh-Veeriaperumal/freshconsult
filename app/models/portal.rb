@@ -84,7 +84,7 @@ class Portal < ActiveRecord::Base
   end
   
   def signup_path
-    new_support_registration_path(:host => portal_url)
+    support_signup_path(:host => portal_url)
   end
   
   def new_ticket_path

@@ -8,19 +8,19 @@
 <br />
 <div class="clearfix">
   <ul data-tabs="tabs" class="tabs">    
-    <li>      
+    <li class="active">      
       <a href="#simple-template-options" data-toggle="tab">Color &amp; font</a>
     </li>
     <li>
       <a id="custom-css-tab" href="#custom-css" data-code-refresh="#portal_template_custom_css">Stylesheet</a>
     </li>    
-    <li class="active">
+    <li>
       <a id="layout-tab" href="#template" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout">Layout &amp; pages</a>
     </li>
   </ul>        
   
     <div class="tab-content">
-      <div class="tab-pane" id="simple-template-options">        
+      <div class="tab-pane active" id="simple-template-options">        
         <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
       </div>
 
@@ -43,7 +43,7 @@
     	</div>
 
 
-      <div class="tab-pane active" id="template">
+      <div class="tab-pane" id="template">
         <ul data-tabs="tabs" class="pills">
           <li class="active">
             <a id="layout-tab" href="#layout" code-refresh-id="portal_template_layout">
@@ -107,7 +107,9 @@
 
 <% content_for :onload_script do %>
   jQuery("#custom-css-tab, #layout-tab").bind("click", function(){
-    jQuery(jQuery(this).data("codeRefresh")).codemirror("refresh")
+    setTimeout(function(){
+      jQuery(jQuery(this).data("codeRefresh")).codemirror("refresh")
+    }, 100)    
   });
 
   jQuery("#portal-pages-tab").live("click", function(ev){

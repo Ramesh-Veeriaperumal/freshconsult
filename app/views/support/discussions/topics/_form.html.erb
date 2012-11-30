@@ -1,6 +1,7 @@
 <% form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
 					:method => @topic.new_record? ? :post : :put,
-					:html => { :multipart => true, :rel => "validate", :class => "form-horizontal" } do |form| -%>
+					:html => { :multipart => true, :rel => "validate", :class => "form-portal" } do |form| -%>
+<%= form.error_messages %>					
 <fieldset>
 	<div class="control-group">
 		<label class="control-label required" for="topic_title">

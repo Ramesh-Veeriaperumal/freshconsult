@@ -6,8 +6,7 @@ class SupportController < ApplicationController
 
   def new
     set_portal_page :user_login
-    @user_session = current_account.user_sessions.new   
-    @login_form = render_to_string :partial => "login"
+    @user_session = current_account.user_sessions.new 
   end
  
   def set_portal_page page_type_token

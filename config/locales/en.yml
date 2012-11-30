@@ -14,6 +14,7 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  captcha_verify_message: "Captcha verification failed, try again!"
   filter_options:
     status: "Status"
     responder_id: "Agents"
@@ -984,7 +985,7 @@ en:
         long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
-  your_email_address: Your email address
+  your_email_address: Your e-mail address
   username: Username
   reply: reply
   is_not: Is not
@@ -1206,7 +1207,7 @@ en:
         inclusion: is not included in the list
       full_messages: 
         format: "%{attribute} %{message}"
-      template: 
+      template:
         body: "There were problems with the following fields:"
         one: 1 error prohibited this %{model} from being saved
         other: "%{count} errors prohibited this %{model} from being saved"

@@ -12,7 +12,7 @@
 		<b class="page-stamp page-stamp-{{ forum.type_name }}">
 			<b class="icon-page-{{ forum.type_name }}"></b>
 		</b>
-		<h2 class="post-title">
+		<h2 class="post-title heading">
 			{% if topic.stamp_name %}
 				<span class="label label-{{ topic.stamp_name | downcase }}">
 					{{ topic.stamp_name }}

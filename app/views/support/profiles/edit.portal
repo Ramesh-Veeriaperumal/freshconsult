@@ -1,6 +1,6 @@
 <section class="main">
 	<div class="content rounded-6 min-height-on-desktop">
-		<h2>Manage your profile</h2>
+		<h3 class="heading">Manage your profile</h3>
 		{{ user_edit_form }}
 	</div>
 </section>

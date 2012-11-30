@@ -132,7 +132,7 @@ include RedisKeys
         flash[:error] = I18n.t("mobile.home.sign_in_error")
         redirect_to root_url
       else 
-        render :action => :new
+        redirect_to support_login_path
       end
     end
   end

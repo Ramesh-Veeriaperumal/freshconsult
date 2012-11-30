@@ -1353,13 +1353,13 @@ input::-webkit-input-placeholder {
 .form-inline .uneditable-input,
 .form-inline .input-prepend,
 .form-inline .input-append,
-.form-horizontal input,
-.form-horizontal textarea,
-.form-horizontal select,
-.form-horizontal .help-inline,
-.form-horizontal .uneditable-input,
-.form-horizontal .input-prepend,
-.form-horizontal .input-append {
+.form-portal input,
+.form-portal textarea,
+.form-portal select,
+.form-portal .help-inline,
+.form-portal .uneditable-input,
+.form-portal .input-prepend,
+.form-portal .input-append {
   display: inline-block;
   *display: inline;
   *zoom: 1;
@@ -1367,22 +1367,26 @@ input::-webkit-input-placeholder {
 /* line 535, ../../src/portal/lib/_forms.scss */
 .form-search .hide,
 .form-inline .hide,
-.form-horizontal .hide {
+.form-portal .hide {
   display: none; }
 
 /* line 540, ../../src/portal/lib/_forms.scss */
+.form-portal {
+  margin-top: 10px; }
+
+/* line 543, ../../src/portal/lib/_forms.scss */
 .form-search label,
 .form-inline label {
   display: inline-block; }
 
-/* line 547, ../../src/portal/lib/_forms.scss */
+/* line 550, ../../src/portal/lib/_forms.scss */
 .form-search .input-append,
 .form-inline .input-append,
 .form-search .input-prepend,
 .form-inline .input-prepend {
   margin-bottom: 0; }
 
-/* line 554, ../../src/portal/lib/_forms.scss */
+/* line 557, ../../src/portal/lib/_forms.scss */
 .form-search .radio,
 .form-search .checkbox,
 .form-inline .radio,
@@ -1391,7 +1395,7 @@ input::-webkit-input-placeholder {
   margin-bottom: 0;
   vertical-align: middle; }
 
-/* line 563, ../../src/portal/lib/_forms.scss */
+/* line 566, ../../src/portal/lib/_forms.scss */
 .form-search .radio input[type="radio"],
 .form-search .checkbox input[type="checkbox"],
 .form-inline .radio input[type="radio"],
@@ -1400,16 +1404,16 @@ input::-webkit-input-placeholder {
   margin-right: 3px;
   margin-left: 0; }
 
-/* line 571, ../../src/portal/lib/_forms.scss */
+/* line 574, ../../src/portal/lib/_forms.scss */
 .control-group {
   margin-bottom: 10.9375px; }
 
-/* line 576, ../../src/portal/lib/_forms.scss */
+/* line 579, ../../src/portal/lib/_forms.scss */
 legend + .control-group {
   margin-top: 21.875px;
   -webkit-margin-top-collapse: separate; }
 
-/* line 582, ../../src/portal/lib/_forms.scss */
+/* line 585, ../../src/portal/lib/_forms.scss */
 input.special {
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -1425,44 +1429,43 @@ input.special {
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px inset; }
 
 @media (min-width: 60em) {
-  /* line 597, ../../src/portal/lib/_forms.scss */
-  .form-horizontal .control-group {
+  /* line 600, ../../src/portal/lib/_forms.scss */
+  .form-portal .control-group {
     margin-bottom: 21.875px;
     *zoom: 1; }
     /* line 15, ../../src/portal/lib/_mixins.scss */
-    .form-horizontal .control-group:before, .form-horizontal .control-group:after {
+    .form-portal .control-group:before, .form-portal .control-group:after {
       display: table;
       content: ""; }
     /* line 19, ../../src/portal/lib/_mixins.scss */
-    .form-horizontal .control-group:after {
+    .form-portal .control-group:after {
       clear: both; }
-  /* line 602, ../../src/portal/lib/_forms.scss */
-  .form-horizontal .control-label {
+  /* line 605, ../../src/portal/lib/_forms.scss */
+  .form-portal .control-label {
     float: left;
     width: 140px;
-    padding-top: 5px;
-    text-align: right; }
-  /* line 609, ../../src/portal/lib/_forms.scss */
-  .form-horizontal .controls {
+    padding-top: 5px; }
+  /* line 611, ../../src/portal/lib/_forms.scss */
+  .form-portal .controls {
     *display: inline-block;
     *padding-left: 20px;
     margin-left: 160px;
     *margin-left: 0; }
-    /* line 616, ../../src/portal/lib/_forms.scss */
-    .form-horizontal .controls:first-child {
+    /* line 618, ../../src/portal/lib/_forms.scss */
+    .form-portal .controls:first-child {
       *padding-left: 160px; }
-  /* line 621, ../../src/portal/lib/_forms.scss */
-  .form-horizontal .help-block {
+  /* line 623, ../../src/portal/lib/_forms.scss */
+  .form-portal .help-block {
     margin-top: 10.9375px;
     margin-bottom: 0; }
-  /* line 626, ../../src/portal/lib/_forms.scss */
-  .form-horizontal .form-actions {
+  /* line 628, ../../src/portal/lib/_forms.scss */
+  .form-portal .form-actions {
     padding-left: 160px; }
 
-  /* line 633, ../../src/portal/lib/_forms.scss */
+  /* line 635, ../../src/portal/lib/_forms.scss */
   input, textarea {
     width: 210px; } }
-/* line 638, ../../src/portal/lib/_forms.scss */
+/* line 640, ../../src/portal/lib/_forms.scss */
 label.required:after {
   content: "*";
   color: #d00;
@@ -1830,8 +1833,9 @@ input[type="submit"].btn {
     display: block;
     width: 26px;
     left: -6px;
-    padding: 4px 0 5px 2px; }
-    /* line 45, ../../src/portal/lib/_sprites.scss */
+    padding: 4px 0 5px 2px;
+    margin-top: 5px; }
+    /* line 46, ../../src/portal/lib/_sprites.scss */
     .page-stamp:after {
       content: "";
       position: absolute;
@@ -1840,7 +1844,7 @@ input[type="submit"].btn {
       border: 3px solid transparent;
       border-top-color: #6c6c6c;
       border-right-color: #6c6c6c; } }
-/* line 57, ../../src/portal/lib/_sprites.scss */
+/* line 58, ../../src/portal/lib/_sprites.scss */
 .badge-announcement, .badge-ideas, .badge-problems, .badge-questions {
   display: -moz-inline-stack;
   display: inline-block;
@@ -1857,7 +1861,7 @@ input[type="submit"].btn {
   height: 26px;
   margin-right: 3px;
   margin-top: -2px; }
-  /* line 64, ../../src/portal/lib/_sprites.scss */
+  /* line 65, ../../src/portal/lib/_sprites.scss */
   .badge-announcement:before, .badge-ideas:before, .badge-problems:before, .badge-questions:before {
     content: "";
     display: -moz-inline-stack;
@@ -1869,23 +1873,23 @@ input[type="submit"].btn {
     vertical-align: text-top;
     margin: 2px 4px; }
 
-/* line 72, ../../src/portal/lib/_sprites.scss */
+/* line 73, ../../src/portal/lib/_sprites.scss */
 .page-stamp-article {
   background-color: #a249c5; }
 
-/* line 73, ../../src/portal/lib/_sprites.scss */
+/* line 74, ../../src/portal/lib/_sprites.scss */
 .badge-announcement, .page-stamp-announcement {
   background-color: #008b00; }
 
-/* line 74, ../../src/portal/lib/_sprites.scss */
+/* line 75, ../../src/portal/lib/_sprites.scss */
 .badge-ideas, .page-stamp-ideas {
   background-color: #f4af1a; }
 
-/* line 75, ../../src/portal/lib/_sprites.scss */
+/* line 76, ../../src/portal/lib/_sprites.scss */
 .badge-problems, .page-stamp-problems {
   background-color: #ff5959; }
 
-/* line 76, ../../src/portal/lib/_sprites.scss */
+/* line 77, ../../src/portal/lib/_sprites.scss */
 .badge-questions, .page-stamp-questions {
   background-color: #00aad5; }
 
@@ -2947,7 +2951,7 @@ button.close {
   -webkit-appearance: none; }
 
 /* line 5, ../../src/portal/lib/_alerts.scss */
-.alert {
+.alert, .errorExplanation {
   padding: 8px 35px 8px 14px;
   margin-bottom: 21.875px;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -2965,42 +2969,47 @@ button.close {
   color: inherit; }
 
 /* line 19, ../../src/portal/lib/_alerts.scss */
+.errorExplanation h2 {
+  font-size: 1em; }
+
+/* line 23, ../../src/portal/lib/_alerts.scss */
 .alert .close {
   position: relative;
   top: -2px;
   right: -21px;
   line-height: 18px; }
 
-/* line 29, ../../src/portal/lib/_alerts.scss */
+/* line 33, ../../src/portal/lib/_alerts.scss */
 .alert-success {
   background-color: #dff0d8;
   border-color: #d6e9c6;
   color: #468847; }
 
-/* line 35, ../../src/portal/lib/_alerts.scss */
+/* line 40, ../../src/portal/lib/_alerts.scss */
 .alert-danger,
-.alert-error {
+.alert-error,
+.errorExplanation {
   background-color: #f2dede;
   border-color: #eed3d7;
   color: #b94a48; }
 
-/* line 40, ../../src/portal/lib/_alerts.scss */
+/* line 45, ../../src/portal/lib/_alerts.scss */
 .alert-info {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #3a87ad; }
 
-/* line 48, ../../src/portal/lib/_alerts.scss */
+/* line 53, ../../src/portal/lib/_alerts.scss */
 .alert-block {
   padding-top: 14px;
   padding-bottom: 14px; }
 
-/* line 53, ../../src/portal/lib/_alerts.scss */
+/* line 58, ../../src/portal/lib/_alerts.scss */
 .alert-block > p,
 .alert-block > ul {
   margin-bottom: 0; }
 
-/* line 56, ../../src/portal/lib/_alerts.scss */
+/* line 61, ../../src/portal/lib/_alerts.scss */
 .alert-block p + p {
   margin-top: 5px; }
 
@@ -3458,13 +3467,12 @@ footer {
 /* line 45, ../../src/portal/lib/_content.scss */
 .start-topic {
   float: right;
-  font-weight: bold;
-  margin-top: 8px; }
+  font-weight: bold; }
 
-/* line 51, ../../src/portal/lib/_content.scss */
+/* line 50, ../../src/portal/lib/_content.scss */
 .see-more {
   color: rgba(4, 156, 219, 0.5); }
-  /* line 53, ../../src/portal/lib/_content.scss */
+  /* line 52, ../../src/portal/lib/_content.scss */
   .see-more:before {
     content: "";
     display: -moz-inline-stack;
@@ -3476,30 +3484,30 @@ footer {
     vertical-align: text-top;
     margin-right: 8px; }
 
-/* line 62, ../../src/portal/lib/_content.scss */
+/* line 61, ../../src/portal/lib/_content.scss */
 .help-text, .p-info, .info-text, .list-noinfo {
   color: #999999;
   font-weight: 200;
   line-height: 19.88636px; }
 
-/* line 68, ../../src/portal/lib/_content.scss */
+/* line 67, ../../src/portal/lib/_content.scss */
 .help-text {
   font-size: 12px; }
 
-/* line 69, ../../src/portal/lib/_content.scss */
+/* line 68, ../../src/portal/lib/_content.scss */
 .p-info strong {
   color: #333333; }
 
-/* line 70, ../../src/portal/lib/_content.scss */
+/* line 69, ../../src/portal/lib/_content.scss */
 .list-noinfo {
   text-align: center; }
 
 /* Forum and ticket details style */
-/* line 73, ../../src/portal/lib/_content.scss */
+/* line 72, ../../src/portal/lib/_content.scss */
 .post-title {
   float: left; }
 
-/* line 75, ../../src/portal/lib/_content.scss */
+/* line 74, ../../src/portal/lib/_content.scss */
 .topic-likes {
   background-color: #fff8c7;
   border: 1px solid #ecd095;
@@ -3522,23 +3530,23 @@ footer {
   -webkit-box-shadow: 0 0 7px #ecd095;
   -moz-box-shadow: 0 0 7px #ecd095;
   box-shadow: 0 0 7px #ecd095; }
-  /* line 90, ../../src/portal/lib/_content.scss */
+  /* line 89, ../../src/portal/lib/_content.scss */
   .topic-likes .arrow {
     position: absolute;
     top: -5px;
     right: -19px; }
 
-/* line 98, ../../src/portal/lib/_content.scss */
+/* line 97, ../../src/portal/lib/_content.scss */
 .user-comment {
   margin: 20px 0; }
-  /* line 100, ../../src/portal/lib/_content.scss */
+  /* line 99, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb {
     border: 1px solid #E6E6E6;
     clear: right;
     margin: -12px 6px -18px 12px;
     z-index: 3; }
 
-/* line 108, ../../src/portal/lib/_content.scss */
+/* line 107, ../../src/portal/lib/_content.scss */
 .p-content {
   background-color: #fafafa;
   padding: 10px 15px;
@@ -3546,11 +3554,11 @@ footer {
   position: relative;
   margin: 0 0 10px;
   /* To handle the paragraph tags coming in from redactor */ }
-  /* line 115, ../../src/portal/lib/_content.scss */
+  /* line 114, ../../src/portal/lib/_content.scss */
   .p-content p {
     margin: 0; }
 
-/* line 118, ../../src/portal/lib/_content.scss */
+/* line 117, ../../src/portal/lib/_content.scss */
 .comment-by-agent .p-content {
   background-color: #fffdf8;
   border-color: #cccccc;
@@ -3558,19 +3566,19 @@ footer {
   -moz-box-shadow: rgba(0, 0, 0, 0.05) 0 3px 3px;
   box-shadow: rgba(0, 0, 0, 0.05) 0 3px 3px; }
 
-/* line 124, ../../src/portal/lib/_content.scss */
+/* line 123, ../../src/portal/lib/_content.scss */
 .post-actions {
   clear: left;
   padding: 15px 0 5px; }
 
-/* line 129, ../../src/portal/lib/_content.scss */
+/* line 128, ../../src/portal/lib/_content.scss */
 .c-list {
   border-bottom: 1px solid #f3f3f3;
   margin-bottom: 12px;
   margin-top: 5px;
   margin-bottom: 1em; }
 
-/* line 136, ../../src/portal/lib/_content.scss */
+/* line 135, ../../src/portal/lib/_content.scss */
 .c-row {
   *zoom: 1;
   padding: 10px 0;
@@ -3580,46 +3588,46 @@ footer {
     content: "";
     display: table;
     clear: both; }
-  /* line 140, ../../src/portal/lib/_content.scss */
+  /* line 139, ../../src/portal/lib/_content.scss */
   .c-row .help-text {
     font-size: 0.96em; }
-  /* line 141, ../../src/portal/lib/_content.scss */
+  /* line 140, ../../src/portal/lib/_content.scss */
   .c-row:hover {
     background-color: rgba(241, 239, 236, 0.3); }
 
-/* line 144, ../../src/portal/lib/_content.scss */
+/* line 143, ../../src/portal/lib/_content.scss */
 .c-user-thumb {
   padding-left: 55px; }
-  /* line 146, ../../src/portal/lib/_content.scss */
+  /* line 145, ../../src/portal/lib/_content.scss */
   .c-user-thumb .user-pic-thumb {
     margin-left: -53px; }
-    /* line 148, ../../src/portal/lib/_content.scss */
+    /* line 147, ../../src/portal/lib/_content.scss */
     .c-user-thumb .user-pic-thumb img {
       width: 35px;
       height: 35px; }
 
-/* line 152, ../../src/portal/lib/_content.scss */
+/* line 151, ../../src/portal/lib/_content.scss */
 .c-link {
   font-size: 1.16em;
   font-weight: 200; }
 
 /* Solution voting button */
-/* line 158, ../../src/portal/lib/_content.scss */
+/* line 157, ../../src/portal/lib/_content.scss */
 .vote-up, .vote-down {
   font-weight: bold;
   margin-left: 10px; }
-  /* line 161, ../../src/portal/lib/_content.scss */
+  /* line 160, ../../src/portal/lib/_content.scss */
   .vote-up:hover, .vote-down:hover {
     text-decoration: none; }
 
-/* line 165, ../../src/portal/lib/_content.scss */
+/* line 164, ../../src/portal/lib/_content.scss */
 .vote-down:before {
   content: "-";
   color: #e5e5e5;
   margin-right: 10px; }
 
 /* File attachment based styles */
-/* line 172, ../../src/portal/lib/_content.scss */
+/* line 171, ../../src/portal/lib/_content.scss */
 .attachment {
   *zoom: 1;
   margin-bottom: 15px; }
@@ -3630,17 +3638,17 @@ footer {
   /* line 19, ../../src/portal/lib/_mixins.scss */
   .attachment:after {
     clear: both; }
-  /* line 175, ../../src/portal/lib/_content.scss */
+  /* line 174, ../../src/portal/lib/_content.scss */
   .attachment a {
     display: block; }
-  /* line 176, ../../src/portal/lib/_content.scss */
+  /* line 175, ../../src/portal/lib/_content.scss */
   .attachment .file-thumbnail {
     float: left;
     margin-right: 10px;
     margin-top: 2px;
     width: 30px;
     height: 32px; }
-  /* line 183, ../../src/portal/lib/_content.scss */
+  /* line 182, ../../src/portal/lib/_content.scss */
   .attachment .file-image {
     border: 1px solid #afafaf;
     width: 50px;
@@ -3648,12 +3656,12 @@ footer {
 
 /* Media styles for tablet and above */
 @media (min-width: 45em) {
-  /* line 193, ../../src/portal/lib/_content.scss */
+  /* line 192, ../../src/portal/lib/_content.scss */
   .content, .content-form {
     padding: 1.8em 2.2em;
     margin-top: 10px; }
 
-  /* line 197, ../../src/portal/lib/_content.scss */
+  /* line 196, ../../src/portal/lib/_content.scss */
   .p-content {
     margin-left: 65px;
     -webkit-border-radius: 5px;
@@ -3662,7 +3670,7 @@ footer {
     -o-border-radius: 5px;
     border-radius: 5px; }
 
-  /* line 203, ../../src/portal/lib/_content.scss */
+  /* line 202, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb:before, .user-comment .user-pic-thumb:after {
     content: "";
     border: 8px solid transparent;
@@ -3673,7 +3681,7 @@ footer {
     right: -18px;
     z-index: 1;
     top: 14px; }
-  /* line 214, ../../src/portal/lib/_content.scss */
+  /* line 213, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb:after {
     border-right-color: #fafafa;
     border-width: 7px;
@@ -3681,42 +3689,42 @@ footer {
     top: 15px;
     z-index: 2; }
 
-  /* line 224, ../../src/portal/lib/_content.scss */
+  /* line 223, ../../src/portal/lib/_content.scss */
   .comment-by-agent .user-pic-thumb:before {
     border-right-color: #cccccc; }
-  /* line 225, ../../src/portal/lib/_content.scss */
+  /* line 224, ../../src/portal/lib/_content.scss */
   .comment-by-agent .user-pic-thumb:after {
     border-right-color: #fffdf8; }
 
-  /* line 228, ../../src/portal/lib/_content.scss */
+  /* line 227, ../../src/portal/lib/_content.scss */
   .post-actions {
     text-align: right;
     clear: none;
     float: right;
     padding: 5px 0 0 10px; }
 
-  /* line 235, ../../src/portal/lib/_content.scss */
+  /* line 234, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb {
     clear: none;
     margin: 0; }
 
-  /* line 240, ../../src/portal/lib/_content.scss */
+  /* line 239, ../../src/portal/lib/_content.scss */
   .c-list {
     margin-left: -2.2em;
     margin-right: -2.2em; }
 
-  /* line 241, ../../src/portal/lib/_content.scss */
+  /* line 240, ../../src/portal/lib/_content.scss */
   .c-row {
     padding-right: 1em; }
 
-  /* line 242, ../../src/portal/lib/_content.scss */
+  /* line 241, ../../src/portal/lib/_content.scss */
   .c-user-thumb {
     padding-left: 70px; }
-    /* line 244, ../../src/portal/lib/_content.scss */
+    /* line 243, ../../src/portal/lib/_content.scss */
     .c-user-thumb .user-pic-thumb {
       padding: 2px; } }
 /* Loading content */
-/* line 249, ../../src/portal/lib/_content.scss */
+/* line 248, ../../src/portal/lib/_content.scss */
 .loading-box {
   background-image: url("/images/load.gif");
   background-repeat: no-repeat;
@@ -3790,11 +3798,11 @@ footer {
     box-shadow: white 1px 0 0; } }
 @media (min-width: 60em) {
   /* line 50, ../../src/portal/lib/_login.scss */
-  #login-box, #signup-box {
+  #login-container, #signup-container {
     min-height: 275px; }
 
   /* line 51, ../../src/portal/lib/_login.scss */
-  #login-box {
+  #login-container {
     margin-bottom: 200px; } }
 /* line 1, ../../src/portal/lib/_search.scss */
 #search-autocomplete {

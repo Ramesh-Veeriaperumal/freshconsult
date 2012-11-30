@@ -54,7 +54,7 @@ jQuery.noConflict()
 		})
 
 		// Data api for onclick showing dom elements
-		$("a[data-show-dom]").live("click", function(ev){
+		$("a[data-show-dom], button[data-show-dom]").live("click", function(ev){
 			ev.preventDefault()
 			if($(this).data("remote")) return
 
@@ -62,11 +62,19 @@ jQuery.noConflict()
 		})
 
 		// Data api for onclick hiding dom elements
-		$("a[data-show-dom]").live("click", function(ev){
+		$("a[data-hide-dom], button[data-hide-dom]").live("click", function(ev){
 			ev.preventDefault()
 			if($(this).data("remote")) return
 
 			$($(this).data("hideDom")||"").hide()
+		})
+
+		// Data api for onclick toggle of dom elements
+		$("a[data-toggle-dom], button[data-toggle-dom]").live("click", function(ev){
+			ev.preventDefault()
+			if($(this).data("remote")) return
+
+			$($(this).data("toggleDom")||"").toggle()
 		})
 
 		// Form validation any form append to the dom will be tested via live query and then be validated via jquery

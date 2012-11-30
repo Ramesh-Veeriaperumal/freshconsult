@@ -26,7 +26,7 @@ class Support::TicketsController < SupportController
   def index
     set_portal_page :ticket_list
     build_tickets
-    @page_title = t("helpdesk.tickets.views.#{@current_filter}")
+    @page_title = t("helpdesk.tickets.views.#{@current_filter}")    
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }
@@ -55,8 +55,6 @@ class Support::TicketsController < SupportController
   def filter
     set_portal_page :ticket_list
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
-    @requested_by = params[:requested_by].presence
-
     build_tickets
     respond_to do |format|
       format.html { render :partial => "ticket_list" }
@@ -160,6 +158,9 @@ class Support::TicketsController < SupportController
   
     def build_tickets
       @company = current_user.customer.presence
+      @filter_users = current_user.customer.users if current_user.client_manager?
+      @requested_by = current_requested_by
+      puts "===> #{@requested_by}"
 
       date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? 
           ticket_scope.tickets : 
@@ -175,9 +176,13 @@ class Support::TicketsController < SupportController
 
     def ticket_scope
       if current_user.client_manager?
-        @requested_item = current_account.users.find_by_id(@requested_by) || current_user.customer
+        if @requested_by.to_i == 0
+          current_user.customer
+        else
+          @requested_item = current_account.users.find_by_id(@requested_by)
+        end
       else
-        current_user
+        @requested_item = current_user
       end
     end
    

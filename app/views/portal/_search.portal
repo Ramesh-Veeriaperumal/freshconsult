@@ -99,10 +99,10 @@ jQuery(document).ready(function(){
 					default:
 						searchString = this.value.replace(/^\s+|\s+$/g, "");
 						if(searchString != '' && searchString.length > 1 && currentString != searchString){
-							delay(function(){
+							// delay(function(){
 						      callbackToSearch(searchString);
 						      currentString = searchString;
-						    }, 100 ); 
+						    // }, 100 ); 
 						}else{
 							jQuery("#search-autocomplete").hide();		
 							jQuery("#hc-search-form").removeClass("active");		

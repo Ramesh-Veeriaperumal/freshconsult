@@ -16,6 +16,11 @@ module Support::TicketsHelper
     @current_wf_order_type ||= set_cookie :wf_order_type, "desc"
   end
 
+  def current_requested_by
+    session[:requested_by] = params[:requested_by].presence || session[:requested_by].presence || 0
+  end
+
+  # Will set a cookie until the browser cache is cleared
   def set_cookie type, default_value
     cookies[type] = (params[type] ? params[type] : ( (!cookies[type].blank?) ? cookies[type] : default_value )).to_sym
   end
@@ -41,9 +46,12 @@ module Support::TicketsHelper
 
   def user_list
     dropdown_menu [
-      [t("tickets_filter.everyone_in_company", :company_name => @company.name), filter_support_tickets_path, @requested_by.blank?],
-      [t("myself"), filter_support_tickets_path(:requested_by => current_user.id), (@requested_by.to_i == current_user.id)],
-      [:divider]].concat(current_user.customer.users.map{ 
+      [t("tickets_filter.everyone_in_company", :company_name => @company.name), 
+                    filter_support_tickets_path(:requested_by => 0), 
+                    (@requested_by.to_i == 0)],
+      [t("myself"), filter_support_tickets_path(:requested_by => current_user.id), 
+                    (@requested_by.to_i == current_user.id)],
+      [:divider]].concat(@filter_users.map{ 
                     |x| [ x.name, 
                           filter_support_tickets_path(:requested_by => x.id), 
                           (@requested_by.to_i == x.id) ] unless( current_user.id == x.id )
@@ -51,7 +59,7 @@ module Support::TicketsHelper
   end
 
   def raised_by
-    if @requested_by.blank?
+    if @requested_by.to_i == 0
       t("tickets_filter.everyone_in_company", :company_name => @company.name)
     else
       @requested_item.name
@@ -64,14 +72,14 @@ module Support::TicketsHelper
     vfs = visible_fields
     sort_fields = TicketsFilter::SORT_FIELD_OPTIONS.map { |field|
                       [ field[0], 
-                        filter_support_tickets_path(:wf_order => field[1], :requested_by => @requested_by),
+                        filter_support_tickets_path(:wf_order => field[1]),
                         (field[1] == @current_wf_order) ] if vfs.include?(field[1].to_s)
                   }.push([:divider]) # Adding a divider that will show up under the sort list
 
     # Preping the ascending & decending orders for bootstrap dropdown as and array
     sort_order = TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.map{ |so| 
                       [ so[0], 
-                        filter_support_tickets_path(:wf_order_type => so[1], :requested_by => @requested_by), 
+                        filter_support_tickets_path(:wf_order_type => so[1]), 
                         (so[1] == @current_wf_order_type)] 
                   } 
 
