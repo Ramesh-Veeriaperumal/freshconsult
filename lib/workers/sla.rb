@@ -1,6 +1,6 @@
 class Workers::Sla 
   extend Resque::Plugins::Retry
-  @queue = 'SLA_worker'
+  @queue = 'sla_worker'
 
   @retry_limit = 3
   @retry_delay = 60*2

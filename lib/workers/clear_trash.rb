@@ -3,7 +3,7 @@ class Workers::ClearTrash
   @retry_limit = 3
 
   @retry_delay = 60*2
-  @queue = 'Clear_trash_worker'
+  @queue = 'clear_trash_worker'
 
   def self.perform(account_id)
     begin

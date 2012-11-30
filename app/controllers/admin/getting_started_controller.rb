@@ -25,6 +25,7 @@ class Admin::GettingStartedController < Admin::AdminController
   
   def delete_logo
   	 current_account.main_portal.logo.destroy
+     current_account.main_portal.touch
  	   render :text => "success"
   end
 
@@ -36,6 +37,7 @@ class Admin::GettingStartedController < Admin::AdminController
     end
 
     current_portal.update_attributes(params[:account][:main_portal_attributes]) if @error.blank?
+    current_portal.touch
     redirect_params = {:activeSlide => "3"}
     redirect_params[:error] = @error unless @error.blank?
     redirect_to admin_getting_started_index_path(redirect_params) if params["rebrand_from_ie"]=="true"
