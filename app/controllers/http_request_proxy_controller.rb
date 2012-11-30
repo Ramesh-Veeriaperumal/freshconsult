@@ -10,12 +10,18 @@ class HttpRequestProxyController < ApplicationController
 
   private
     def populate_server_password
-      if !params[:use_server_password].blank? and params[:use_server_password] == 'true'
+      if params[:use_server_password].present?
         installed_app = current_account.installed_applications.with_name(params[:app_name]).first
-        params[:password] = URI.escape(installed_app.configsdecrypt_password)
+        if params[:app_name] == "icontact"
+          config = File.join(Rails.root, 'config', 'integrations_config.yml')
+          key_hash = (YAML::load_file config)["icontact"]
+          params[:custom_auth_header] = {"API-Version" => "2.0", "API-AppId" => key_hash["app_id"] , "API-Username" => installed_app.configs_username, "API-Password" => URI.escape(installed_app.configsdecrypt_password)}
+        else
+          params[:password] = URI.escape(installed_app.configsdecrypt_password)  
+        end
       end
     end
-  
+
     def authenticated_agent_check
       render :status => 401 if current_user.blank? || current_user.agent.blank?
     end

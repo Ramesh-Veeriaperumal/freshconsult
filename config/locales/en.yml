@@ -1357,6 +1357,7 @@ en:
     info2: Convert to an Agent
     send_activation: Send activation email
     import_csv: Import Customers from CSV
+    export_csv: Export to CSV
     import_google: Import from Google
     import_google_no: "No"
     import_google_yes: "Yes"
@@ -2150,6 +2151,8 @@ en:
     actions_empty: "Actions can't be empty"
   export_data:
     info: Export ticket information available in the current view to a CSV file.
+    contact_info: Export active contacts to a CSV file.
+    select_header: "Select fields to export"
     filter_label_customer: "Filter tickets created in"
     filter_label_agent: "Filter tickets by:"
     field_select_title: Select fields to export
@@ -2539,6 +2542,33 @@ en:
         password: "SSO Password"
         logmein_company_info: "To get your Company ID go to Admin Center -> Technician Group -> Global Settings -> ASP.Net C# server side example "
         logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
+    mailchimp:
+      label: "MailChimp"
+      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      helptext: "<h4>MailChimp Integration Help</h4>"
+    constantcontact:
+      label: "Constant Contact"
+      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      helptext: "<h4>ConstantContact Integration Help</h4>"
+    campaignmonitor:
+      label: "Campaign Monitor"
+      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      helptext: "<h4>Campaign Monitor Integration Help</h4>"
+      form:
+        api_key: "API Key"
+        api_key_info: "Get your API Key from Account Settings"
+        client_id: "Client ID"
+        client_id_info: "To get your Client ID, follow the instructions given in http://www.campaignmonitor.com/api/getting-started/#clientid"
+    icontact:
+      label: "iContact"
+      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
+      form:
+        app_id: "Application ID"
+        username: "iContact Username"
+        api_password: "API Password"
+        api_url: "API URL"
+        api_url_info: "To get your API URL, go to https://app.icontact.com/icp/core/externallogin and copy the API URL from &quot;Account Information&quot; section. "
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
