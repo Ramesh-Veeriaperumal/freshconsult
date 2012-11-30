@@ -130,6 +130,8 @@ class Account < ActiveRecord::Base
   has_many :topics
   has_many :posts
 
+  has_many :portal_folders , :class_name =>'Solution::Folder' , :conditions =>{:visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position" 
+
  
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'

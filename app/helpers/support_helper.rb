@@ -3,7 +3,7 @@ module SupportHelper
 	include ActionView::Helpers::DateHelper
 	include ActionView::Helpers::UrlHelper
 	
-	ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder	
+	# ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
 	
 	# WillPaginate::ViewHelpers.pagination_options[:renderer] = 'BootstrapPaginationRenderer'
 	

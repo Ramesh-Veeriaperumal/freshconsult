@@ -3,6 +3,7 @@ class ThemeController < SupportController
 
 	caches_page :index
 	skip_before_filter :set_liquid_variables
+	before_filter :set_theme_colors, :set_custom_scss
 
 	# Precautionary settings override
 	ALLOWED_THEME_OPTIONS = %w( bg_color header_color help_center_color footer_color 
@@ -13,22 +14,10 @@ class ThemeController < SupportController
 
 	def index		
 		@portal.build_template.save if @portal.template.blank? 
-
-		@theme_colors = (@portal.template.preferences || []).map{ |k, p| (ALLOWED_THEME_OPTIONS.include? k) ? "$#{k}:#{p};" : "" }.join("")
-
-		@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
-		if (!params[:preview].blank? && !current_user.blank?)
-			key = redis_key(":custom_css", current_portal.template[:id])
-			@custom_css = exists(key) ? get_key(key) : @portal.template.custom_css.to_s
-		else
-			@custom_css = (@portal.template.present?) ? @portal.template.custom_css.to_s : ""
-		end
-		
-
 		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compact)
 		_options[:load_paths] << "#{RAILS_ROOT}/public/src/portal"
 
-		engine = Sass::Engine.new(@theme_colors + @default_custom_css + @custom_css, _options)
+		engine = Sass::Engine.new("#{@theme_colors} #{@default_custom_css}", _options)
 
 		@output_css = engine.render
 
@@ -45,6 +34,32 @@ class ThemeController < SupportController
                         :template_id=> template_id, 
                         :user_id => current_user.id
                       }
+    end
+
+    def get_preferences
+    	unless session[:preview_button].blank?
+    		rkey = redis_key(:preferences,@portal.template.id)
+				rdata = get_key(rkey)
+				rdata = JSON.parse(rdata) unless rdata.blank?
+    	end
+    	rdata || @portal.template.preferences || []
+    end
+
+    def get_custom_scss
+    	unless session[:preview_button].blank?
+	    	rkey = redis_key(:custom_css,@portal.template.id)
+				rdata = get_key(rkey)
+			end
+			rdata || @portal.template.custom_css.to_s || ""
+    end
+
+    def set_theme_colors
+    	@theme_colors = get_preferences.map{ |k, p| (ALLOWED_THEME_OPTIONS.include? k.to_s) ? "$#{k}:#{p};" : "" }.join("")
+    end
+
+    def set_custom_scss	
+    	@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
+    	@default_custom_css = "#{@default_custom_css}\r\n #{get_custom_scss}"
     end
 
 end

@@ -275,8 +275,15 @@ var $J = jQuery.noConflict();
              }
         });
 
-        if(window.location.hash != '')
-          $(window.location.hash + "-tab").trigger('click');
+        if(window.location.hash != '') {
+          hash = window.location.hash.split('#');
+          window.location.hash.substr(1).split('#').each(function(value,index){
+            setTimeout(function(){
+              jQuery('#'+value + "-tab").trigger('click');
+            },(index+1)*10)
+          })
+        }
+          
          
         menu_box_count = 0;
         fd_active_drop_box = null;
