@@ -6944,9 +6944,10 @@ a[rel="load-rjs"] {
 	float:right;
 	min-width:30px;
 	height: 14px;
-	padding-left: 5px;
+	padding-left: 6px;
 	font-weight:bold;
 	color: inherit;
+	text-align:center;
 	&.fetching {
 		background-image: url("/images/ajax-loader-self.gif");
 	  background-repeat: no-repeat;
