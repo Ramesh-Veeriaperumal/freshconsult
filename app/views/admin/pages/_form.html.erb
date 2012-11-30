@@ -1,5 +1,10 @@
 <%= form.error_messages %>
 <%= form.hidden_field :page_type %>
+<% 
+soft_reset_url = "javascript:void(0)"
+soft_reset_url =  admin_portal_template_page_soft_reset_path( :page_id => params[:id], 
+										:page_type => @portal_page.page_type) if @fromRedis
+%>
 <h3 class="title">
 	<span class="light">Editing:</span> <%= @portal_page.name %>
 </h3>
@@ -9,7 +14,8 @@
             "data-fullscreen-actions" => "portal-page-actions" %>
 </p>
 <br />
-<div class="well" id="portal-page-actions">
-	<%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr" %>
-	<%= submit_tag "Save changes", :class => "btn" %>
+<div class="well">
+	<%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+  <%= submit_tag "Draft", :name => 'save_button',:class => "btn floatr", :disable_with => "Please wait..." %>
+  <%= link_to "Discard", soft_reset_url, :class => "btn #{!@fromRedis&& 'disabled'}", :disabled => !@fromRedis %>
 </div>

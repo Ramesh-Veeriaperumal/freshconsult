@@ -74,7 +74,15 @@
 
     <br />
     <div class="well">
-      <%= submit_tag "Save changes", :class => "btn", :disable_with => "Please wait..." %>
+      <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+      <%= submit_tag "Draft", :name => 'save_button',:class => "btn floatr", :disable_with => "Please wait..." %>
+      <% 
+        soft_reset_url = "javascript:void(0)"
+        soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "preferences") if @preferences_from_redis
+      %>
+      <%= link_to "Discard", soft_reset_url, 
+          :class => "btn #{!@preferences_from_redis && 'disabled'}", 
+          :disabled => !@preferences_from_redis%>
     </div>
   <% end %>
 </div>

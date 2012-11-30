@@ -10,7 +10,9 @@
 				<%= link_to_remote t("portal_pages.pages.#{page}"),
 					:url => edit_admin_portal_template_page_path(
 								:id => page_id, 
-								:portal_id => @portal.id ), 
+								:portal_id => @portal.id,
+								:page_type => page_id,
+								:page_group => key), 
 					:method => :get, 
 					:update => "Customizepage" %>
 			</li>

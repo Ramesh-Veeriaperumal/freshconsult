@@ -4,8 +4,8 @@ class UserSession < Authlogic::Session::Base
   params_key :k
   single_access_allowed_request_types :any
 
-  after_create :remove_portal_preview_keys
-  before_destroy :remove_portal_preview_keys
+  # after_create :remove_portal_preview_keys
+  # before_destroy :remove_portal_preview_keys
 
   after_save :set_node_session
   before_destroy :delete_node_session
@@ -29,10 +29,10 @@ class UserSession < Authlogic::Session::Base
     end
   end
 
-  private
-    def remove_portal_preview_keys
-      portal_preview_keys = array_of_keys(PORTAL_PREVIEW_PREFIX % {:account_id => self.attempted_record.account_id, 
-          :user_id => self.attempted_record.id})
-      portal_preview_keys.each { |key| remove_key(key) } 
-    end
+  # private
+  #   def remove_portal_preview_keys
+  #     portal_preview_keys = array_of_keys(PORTAL_PREVIEW_PREFIX % {:account_id => self.attempted_record.account_id, 
+  #         :user_id => self.attempted_record.id})
+  #     portal_preview_keys.each { |key| remove_key(key) } 
+  #   end
 end

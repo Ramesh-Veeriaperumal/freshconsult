@@ -2,29 +2,32 @@
 <%= include_javascripts :codemirror %>
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
-
-<a href="#" class="pull-right btn primary large">Publish changes</a>
+<a href="<%=admin_portal_template_publish_path%>" class="pull-right btn primary large">Publish changes</a>
+<a href="<%=admin_portal_template_restore_to_default_path%>" class="pull-right btn large marginr10">Reset to Default</a>
 <h3 class="sub-title">Portal template customization</h3>
+<div class="hide">
+  <a href="#" id="portal-preview-url"></a>
+</div>
 <br />
 <div class="clearfix">
   <ul data-tabs="tabs" class="tabs">    
     <li class="active">      
-      <a href="#simple-template-options" data-toggle="tab">Color &amp; font</a>
+      <a href="#preferences" data-toggle="tab" id="preferences-tab">Color &amp; font</a>
     </li>
     <li>
-      <a id="custom-css-tab" href="#custom-css">Stylesheet</a>
+      <a id="custom_css-tab" href="#custom_css">Stylesheet</a>
     </li>    
     <li>
-      <a id="layout-tab" href="#template" data-toggle="tab">Layout &amp; pages</a>
+      <a id="header-tab" href="#header" data-toggle="tab">Layout &amp; pages</a>
     </li>
   </ul>        
   
     <div class="tab-content">
-      <div class="tab-pane active" id="simple-template-options">        
+      <div class="tab-pane active" id="preferences">        
         <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
       </div>
 
-    	<div class="tab-pane" id="custom-css">		
+    	<div class="tab-pane" id="custom_css">		
         <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
       	<h3 class="title">Custom stylesheet</h3>
       	<p class="help-text">
@@ -35,15 +38,20 @@
                       "data-fullscreen-title" => "<span class='light'>Editing</span> Custom stylesheet",
                       "data-fullscreen-actions" => "custom-css-actions" %>            
         <br />
-          <div class="well" id="custom-css-actions">
-            <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank" %>
-            <%= submit_tag "Save changes", :class => "btn" %>
+          <div class="well">
+            <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+            <%= submit_tag "Draft", :name => 'save_button',:class => "btn floatr", :disable_with => "Please wait..." %>
+            <% 
+              soft_reset_url = "javascript:void(0)"
+              soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "custom_css") if @custom_css_from_redis
+            %>
+            <%= link_to "Discard", soft_reset_url, :class => "btn #{!@custom_css_from_redis&& 'disabled'}" %>
           </div>
         <% end -%>
     	</div>
 
 
-      <div class="tab-pane" id="template">
+      <div class="tab-pane" id="header">
         <ul data-tabs="tabs" class="pills">
           <li class="active">
             <a id="layout-tab" href="#layout" code-refresh-id="portal_template_layout">
@@ -51,7 +59,7 @@
             </a>
           </li>
           <li>
-            <a id="portal-pages-tab" href="#pages">Portal pages</a> 
+            <a id="pages-tab" href="#pages">Portal pages</a> 
           </li>
         </ul>
 
@@ -78,9 +86,16 @@
                     "data-fullscreen-title" => "<span class='light'>Editing</span> Page layout",
                     "data-fullscreen-actions" => "layout-actions" %>  
               <br />
-              <div class="well" id="layout-actions">
-                <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank" %>
-                <%= submit_tag "Save changes", :class => "btn" %>
+              <div class="well">
+                <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
+                <%= submit_tag "Draft", :name => 'save_button',:class => "btn floatr", :disable_with => "Please wait..." %>
+                <% 
+                  soft_reset_url = "javascript:void(0)"
+                  data_from_redis = @header_from_redis || @footer_from_redis || @layout_from_redis
+                  soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "header:footer:layout") if data_from_redis
+                %>
+
+                <%= link_to "Discard", soft_reset_url, :class => "btn #{!data_from_redis&& 'disabled'}" %>
               </div>     
             <% end %>
           </div>
@@ -115,7 +130,7 @@
     }, 50)
   });
 
-  jQuery("#portal-pages-tab").live("click", function(ev){
+  jQuery("#pages-tab").live("click", function(ev){
     if(jQuery("#Customizepage").html() == "")
       jQuery("#PortalPageList a").first().trigger("click");
   });

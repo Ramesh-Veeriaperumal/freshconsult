@@ -97,9 +97,14 @@
     admin.resources :data_export, :collection => {:export => :any }
     admin.resources :canned_responses
     admin.resources :products
-    admin.resources :portal, :only => [ :index, :update ] do |portal|
-      portal.resource :template do |template|
-        template.resources :pages, :member => { :edit_by_page_type => :get }
+    admin.resources :portal, :only => [ :index, :update] do |portal|
+      portal.resource :template, :collection => { :show =>:get, :update => :put} do |template|
+        template.soft_reset '/soft_reset/:portal_template', :controller => 'templates', :action => :soft_reset
+        template.restore_to_default '/restore_to_default', :controller => 'templates', :action => :restore_to_default
+        template.publish '/publish', :controller => 'templates', :action => :publish
+        template.resources :pages, :member => { :edit_by_page_type => :get } do |page|
+          page.soft_reset '/soft_reset/:page_type', :controller => 'pages', :action => :soft_reset
+        end
       end
     end
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
