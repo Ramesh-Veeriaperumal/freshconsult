@@ -43,6 +43,10 @@ class Time
       time > end_of_workday(time)
     end
 
+    def working_hours?(time)
+      (time >= beginning_of_workday(time)) and (time <= end_of_workday(time))
+    end
+
     # Rolls forward to the next beginning_of_workday
     # when the time is outside of business hours
     def roll_forward(time)
