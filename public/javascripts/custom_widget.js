@@ -337,6 +337,18 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		}
 	},
 
+	addUser: function () {
+		jQuery('#' + this.options.widget_name + ' .lists-load').siblings().hide();
+		jQuery('#' + this.options.widget_name + ' .lists-load').prepend("<hr/>").slideDown("slow");
+		if(this.app == "icontact") {
+			this.options.integratable_impl.addContact();
+		}
+		else{
+			this.getAllLists();
+			this.exportFlag = true;
+		}
+	},
+
 	exportUser: function(){
 		var obj = this; var export_contact = {};
 		this.renderTemplate(_.template(this.Export, {name: this.options.reqName, email: this.options.reqEmail, appname: this.options.app_name}));
@@ -347,21 +359,9 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		this.renderUser(export_contact);
 	},
 
-	addUser: function(){
-		jQuery('#' + this.options.widget_name + ' .lists-load').siblings().hide();
-		jQuery('#' + this.options.widget_name + ' .lists-load').prepend("<hr/>").slideDown("slow");
-		if(this.app == "icontact")
-			this.options.integratable_impl.addContact();
-		else{
-			this.getAllLists();
-			this.export = true;
-		}
-			
-	},
-
 	newSubscribe: function(){
 		var subscribed = [];
-		if (jQuery('#' + this.options.widget_name + ' .lists input:checked').length == 0){
+		if(jQuery('#' + this.options.widget_name + ' .lists input:checked').length == 0){
 			this.processFailure("Please select a mailing list to proceed");
 		}else{
 			jQuery(this.error_element).addClass('hide');
@@ -370,7 +370,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			if(obj.mc_subscribe_lists.indexOf($(this).id) < 0)
 		  	subscribed.push($(this).id);
 			});
-			this.export = false;
+			this.exportFlag = false;
 			jQuery('#' + this.options.widget_name + ' .lists-load').hide();
 			jQuery('#' + this.options.widget_name).addClass('loading-center');
 			
@@ -445,33 +445,6 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		}
 	},
 
-	handleLists: function(response){
-		var all_lists = ""; var obj = this;
-		var lists = this.options.integratable_impl.handleLists(response);
-		if(lists.length > 0){
-			for(i=0; i<lists.length; i++){
-				all_lists += _.template(this.UserLists, {listId: lists[i].listId, listTitle: lists[i].name});
-			}
-			if(this.export){
-				this.renderTemplate(_.template(this.NewLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .lists-load')[0]);
-				jQuery('#' + this.options.widget_name + ' .lists-submit').click(function(ev){
-					ev.preventDefault(); obj.newSubscribe();
-				});
-				jQuery('#' + this.options.widget_name + ' .lists-load').removeClass('loading-center').prepend("<hr/>");
-			}
-			else{
-				this.renderTemplate(_.template(this.MailingLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .emailLists')[0]);
-				jQuery('#' + this.options.widget_name + ' .lists-submit').click(function(ev){
-					ev.preventDefault(); obj.manageLists();
-				});
-				this.getSubscribedLists();
-			}
-		}
-		else{
-			this.handleEmptyLists();
-		}
-	},
-
 	handleEmptyLists: function(){
 		this.listsTmpl = _.template(this.EmptyData, {type: "mailing lists", contact: "the linked " + this.options.app_name + " account"});
 		jQuery('#' + this.options.widget_name + ' .emailLists').html(this.listsTmpl);
@@ -495,6 +468,33 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		this.listsTmpl = jQuery('#' + this.options.widget_name + ' .lists-load')[0];
 		jQuery('#' + this.options.widget_name + ' .lists-load').removeClass('hide');
 		jQuery('#' + this.options.widget_name + ' .emailLists').removeClass('loading-center');
+	},
+
+	handleLists: function(response){
+		var all_lists = ""; var obj = this;
+		var lists = this.options.integratable_impl.handleLists(response);
+		if(lists.length > 0){
+			for(i=0; i<lists.length; i++){
+				all_lists += _.template(this.UserLists, {listId: lists[i].listId, listTitle: lists[i].name});
+			}
+			if(this.exportFlag){
+				this.renderTemplate(_.template(this.NewLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .lists-load')[0]);
+				jQuery('#' + this.options.widget_name + ' .lists-submit').click(function(ev){
+					ev.preventDefault(); obj.newSubscribe();
+				});
+				jQuery('#' + this.options.widget_name + ' .lists-load').removeClass('loading-center').prepend("<hr/>");
+			}
+			else{
+				this.renderTemplate(_.template(this.MailingLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .emailLists')[0]);
+				jQuery('#' + this.options.widget_name + ' .lists-submit').click(function(ev){
+					ev.preventDefault(); obj.manageLists();
+				});
+				this.getSubscribedLists();
+			}
+		}
+		else{
+			this.handleEmptyLists();
+		}
 	},
 
 	bindShowActivity: function(activities){
@@ -523,7 +523,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		return new Date(activity_time).strftime("%a, %d %b %Y, %r");
 	},
 
-	getCampaignActivity: function(campaignId, activities){
+		getCampaignActivity: function(campaignId, activities){
 		var activity = "";
 		if(this.campaigns[campaignId].send_time){
 			activity = _.template(this.CampaignActivity, {action: "Sent", action_time: this.formatDate(this.campaigns[campaignId].send_time), action_url: ""});
@@ -726,7 +726,6 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		this.display(element);
 	},
 
-	
 	Title: '<div class="email_marketing">'+
 						'<div class="contact_title">'+
 							'<div class="<%=app%>-modal-logo"> <h3 class="fname"><%=contact.name%></h3></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/").replace(/[T|Z]/g, " ")).strftime("%a, %d %b %Y"))) : "" %></div>'+
