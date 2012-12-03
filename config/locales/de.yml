@@ -331,35 +331,35 @@ de:
     home: 
       index: 
         account: Konto
-        account-settings: "Nastavení účtu"
+        account-settings: "Kontoeinstellungen"
         agent: Techniker
         billing: "Tarife & Zahlung"
         business-hours: Gesch&auml;ftszeigen
         canned-response: Standardantworten
         customer: Kunde
         customer-portal: Kundenportal
-        dispatcher: Dispečer
+        dispatcher: "Dispatch'r"
         else: anderes
-        email-notifications: "Emailové upozornění"
-        email-settings: "Nastavení emailu"
+        email-notifications: "E-Mail-Benachrichtigungen"
+        email-settings: "E-Mail-Einstellungen"
         email_commands_setting: E-Mail-Befehlseinstellungen
         everything: Alles
         feedback: Feedback-Widget
         gamification-settings: Arcade
         group: Gruppen
         helpdesk: Helpdesk
-        import: "Importovat data ze Zendesku"
+        import: "Daten aus Zendesk importieren"
         integrations: Integrationen
         multi-product: Multi-Produkt-Einstellungen
         portal: Portal
         productivity: Produktivität
-        rebranding: "Rebrandování Helpdesku"
+        rebranding: "Helpdesk-Rebranding"
         remote-authentication: "Remote Authentifizierung"
         scenario: Szenario-Automatisierungen
         security: Sicherheit
         settings: Einstellungen
         sla: "SLA Richtlinien"
-        supervisor: Vedoucí
+        supervisor: "Supervisor"
         survey: Umfrageeinstellungen
         survey-settings: "Customer Satisfaction Settings"
         ticket-fields: Ticketfelder
@@ -1272,7 +1272,7 @@ de:
       reports: Berichte
       social: Sociální
       solutions: Lösungen
-      tickets: Události
+      tickets: Tickets
     welcome: Willkommen
   header_logo: Header-Logo
   helpdesk: 
