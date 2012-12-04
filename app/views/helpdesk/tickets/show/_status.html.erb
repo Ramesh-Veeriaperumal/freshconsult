@@ -4,7 +4,7 @@
 	<p>
 		
 		<%=t( @ticket.due_by > Time.now() ? 'ticket_future_due_by' : 'ticket_past_due_by',
-				 {:time => distance_of_time_in_words(Time.now(), @ticket.due_by)}) %><br />
+				 {:time => distance_of_time_in_words(Time.now(), @ticket.due_by)}) %>
 		on <a id="edit-due-by-time" 
 					data-placement="topRight" 
 					href="#" 
@@ -23,7 +23,7 @@
 		</h4>
 	<% end %>
 	<p>
-		<%= t('since') %> <%= distance_of_time_in_words(Time.now(), @ticket.due_by) %> <br />
+		<%= t('since') %> <%= distance_of_time_in_words(Time.now(), @ticket.due_by) %> 
 		from <%= formated_date(@ticket.ticket_states.send(status_changed_time_value_hash(@ticket)[:method])) %>
 	</p>
 <% end %>

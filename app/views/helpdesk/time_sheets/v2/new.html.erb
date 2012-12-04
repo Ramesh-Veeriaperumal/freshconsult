@@ -1,0 +1,32 @@
+<% content_tag :div, :id => "timeentry_add" do %>
+  
+
+  <!-- Empty form for Start Timer - All the fields will be hidden. -->
+  <% form_remote_for :time_entry, 
+                   :url => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                   :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) return false;',
+                   :html => { :id => "add_new_timer", :class => "ui-form" } do |f| %>
+    <%= hidden_field(:time_entry, :ticket_id , { :value => @ticket.id }  )%>
+    <%= f.hidden_field :user_id, :value => current_user.id %>
+    <%= f.hidden_field :billable, :value => 1 %>
+    <div class="button-container absolute-button-container">
+       <%= link_to t('.start_timer') , "#", :class => "submit uiButton special", "data-loading-text" => "Starting Timer...", :id => "new_time_submit" %>
+    </div>
+  <% end %>
+  <hr />
+  <!-- Proper form for Start Timer - The required fields will be visible. -->
+  <% form_remote_for :time_entry, 
+                   :url => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                   :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) return false;',
+                   :html => { :id => "add_new_time_entry", :class => "ui-form" } do |f| %>
+    <%= hidden_field(:time_entry, :ticket_id , { :value => @ticket.id }  )%>
+    <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => { :type => :new } %>
+    <div class="button-container absolute-button-container">
+       <%= link_to t('save') , "#", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
+       <%= link_to t('cancel'), "", :class => "uiButton", :rel => "close-modal" %>
+    </div>
+  <% end %>
+  <div id="timeentry_apps_add" class="ui-form">   
+    <%= render :partial => "integration" %>
+  </div>
+<% end %>

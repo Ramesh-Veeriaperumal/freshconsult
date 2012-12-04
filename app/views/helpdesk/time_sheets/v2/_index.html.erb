@@ -1,0 +1,18 @@
+<h3>
+	Time Tracked
+	<div class="tracked_time">
+		<span class="time" id="timeentry_timer_total"><%= @ticket.time_tracked %></span>
+		<span class="time_unit">Hrs </span>
+	</div>
+</h3>
+<div id="timesheetlist">
+	<%= each_or_message "helpdesk/time_sheets/v2/time_entry", @ticket.time_sheets, t(".no_timeentry") %>
+</div>
+<div class="new_timer">
+	<a href="<%= new_helpdesk_ticket_helpdesk_time_sheet_path(@ticket) %>" title="Add Time Entry" data-activate="dialog" data-width="400">Add Time Entry</a>
+</div>
+<% javascript_tag do -%>
+   totalTime("#timesheetlist .time", "#timeentry_timer_total");
+   jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
+<% end %>
+<%= include_javascripts :timesheet_v2 %>

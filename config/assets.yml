@@ -123,6 +123,8 @@ javascripts:
     - public/javascripts/globalinit.js
   timesheet:
     - public/javascripts/timesheet.js
+  timesheet_v2:
+    - public/javascripts/timesheet_v2.js
   freshwidget:
     - public/javascripts/freshwidget.js
   html2canvas:

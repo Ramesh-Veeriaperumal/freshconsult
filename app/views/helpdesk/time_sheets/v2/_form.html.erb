@@ -1,0 +1,26 @@
+<div class="agent full_width">
+	<label><%= t('.agent')%>:</label>
+	<%= form.collection_select( :user_id, current_account.users.technicians.visible, :id, :name, { :selected => current_user.id }, {:class => "select2"}) %>
+</div>
+<div class="one_third">
+	<div>
+		<label><%= t('.hours')%></label>
+		<%= form.text_field(:hours, { :size => 6, :class => "auto number", :autocomplete => "off" } ) %>
+	</div>
+	<div>
+		<label class="billing_hours">
+			<%= form.check_box(:billable) %>
+			<%= t('.billing_hours')%>
+		</label>	
+	</div>
+</div>
+<div class="two_third">
+	<label><%= t('.note')%></label>
+	<%= form.text_area(:note, { :rows => 2, :class => "paragraph auto-height" })%>
+</div>
+<div class="full_width executed_at">
+	<label> on </label>
+	<%= form.text_field :executed_at, 
+						:value => (type == :new ? Time.zone.now.strftime("%m/%d/%Y") : edit.executed_at.strftime("%m/%d/%Y")), 
+						:size => 10, :class => "auto executed_at datepicker" %>    	    
+</div>

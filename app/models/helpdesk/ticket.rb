@@ -411,6 +411,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
     notes.visible.exclude_source('meta').size
   end
 
+  def all_activities(page = 1, no_of_records = 50)
+    first_page_count = 3
+    if page.blank? or page.to_i == 1
+      return activities.newest_first.paginate(:page => 1, :per_page => first_page_count)
+    else
+      return activities.newest_first.paginate(:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count)
+    end
+  end
+
+  def activities_count
+    activities.size - 1 #Omitting the Ticket Creation activity
+  end
+
+  def time_tracked
+    time_spent = 0
+    time_sheets.each do |entry|
+      time_spent += entry.time_spent
+    end
+    sprintf( "%0.02f", time_spent/3600)
+  end
+
   def train(category)
     self[:trained] = true
     self[:spam] = (category == :spam)

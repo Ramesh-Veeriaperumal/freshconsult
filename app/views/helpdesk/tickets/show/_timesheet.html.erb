@@ -1,15 +1,6 @@
-<div class="widget time-tracked">
-	<h3>Time Tracked<span>8:30 Hrs</span></h3>
-	<div class="time-tracked-details">
-		<div class="requester-avatar-wrap"><img src="/images/ticket-view/avatar.jpg" class="requester-avatar"/></div>
-		<div class="requester-details">
-			<h4>James T. Kirk<span>3:00 Hrs</span></h4>
-			<p>Splunk like web interface for your server log files. It supports 
-				searching (using grep) as well.<p>
-			<p><span>on May 7, 2012</span></p>
-		</div>
-	</div>
-
+<div class="widget time-tracked" id="TimesheetTab" data-remote="/helpdesk/tickets/components/<%= @ticket.display_id %>/timesheet">
+	<h3>Time Tracked<span><%= @ticket.time_tracked %></span></h3>
+	<div id="time_entries" class='hide'></div>
 	<div class="time-tracked-details">
 		<div class="requester-avatar-wrap"><img src="/images/ticket-view/avatar.jpg" class="requester-avatar"/></div>
 		<div class="requester-details">

@@ -4,6 +4,12 @@ module Helpdesk::TimeSheetsHelper
       page.replace "timeentry_#{timeentry_cleared.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => timeentry_cleared
     end
   end
+
+  def clear_view_timers_v2(page, timeentry, timeentry_cleared)
+    if !timeentry.nil? && !timeentry_cleared.nil? && (timeentry.ticket_id == timeentry_cleared.ticket_id)
+      page.replace "timeentry_#{timeentry_cleared.id}", :partial => "/helpdesk/time_sheets/v2/time_entry", :object => timeentry_cleared
+    end
+  end
   
   def renderTimesheetIntegratedApps( liquid_values ) 
     integrated_apps.map do |app|

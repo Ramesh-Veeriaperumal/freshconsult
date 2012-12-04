@@ -11,6 +11,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Ticketfields::TicketStatus
   include RedisKeys
   include Helpdesk::AdjacentTickets
+  include Helpdesk::Activities
 
   before_filter :set_mobile, :only => [:index, :show, :details, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :select_show_page , :only => [:show, :details ]
@@ -27,7 +28,7 @@ class Helpdesk::TicketsController < ApplicationController
   
 
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item, :verify_permission, :only => [:show, :details, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
+  before_filter :load_item, :verify_permission, :only => [:show, :details, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities]
 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -521,6 +522,11 @@ class Helpdesk::TicketsController < ApplicationController
     render :nothing => true
   end
 
+  def activities
+    @activities = stacked_activities(@item.all_activities(params[:page]).reverse)
+    render :partial => "activities"
+  end
+
   protected
   
     def item_url
@@ -789,7 +795,7 @@ class Helpdesk::TicketsController < ApplicationController
     tags = current_account.tags.find_all_by_name(tags_to_be_removed)  
     unless tags.blank?
 
-      # Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type().destroy is not working - Hencing trying a different route.
+      # Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type().destroy is not working - Hence trying a different route.
       tag_uses = Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type(@item.id, tags.map{ |tag| tag.id } ,"Helpdesk::Ticket" ).collect(&:id)
       Helpdesk::TagUse.destroy tag_uses
 
@@ -811,7 +817,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def switch_to_new_show?
-    !cookies[:new_details_view].nil? && cookies[:new_details_view].eql?("true")
+    cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
   end
 
 end

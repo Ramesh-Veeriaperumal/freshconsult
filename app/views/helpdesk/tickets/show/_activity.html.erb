@@ -1,0 +1,90 @@
+<%
+puts "activity :: #{activity.inspect}"
+puts ""
+puts "Important Type :: #{activity[:important_type].inspect}"
+
+note = activity[:is_note] ? activity[:stack].first.note : nil
+%>
+<li class="conversation activity <%= 'hide' if activity[:important_type] == 'new_ticket' %>">
+	<%= link_to user_avatar(activity[:user]), activity[:user], :class => 'avatar-wrap'  if activity[:user] %>
+	<div class="commentbox <%= 'commentbox-gray' if activity[:user].blank? or activity[:user].agent? %>">
+	<% if note.present? %>
+		<%= content_tag(:span, "", :class => "comment-lock") if note.private_note? %>
+		<div class="author-mail-detail">
+			<%= t("helpdesk.tickets.note.posted_on", :user_name => link_to_user(activity[:user], :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" ), :note_date => formated_date(note.created_at) ) %>
+		</div>
+		<%  if permission?(:manage_tickets)
+			conv_info = conversation_info(note) %>
+			<div class="author-mail-detail"><p>
+			<%= content_tag :span, truncate(conv_info, :length => 100), 
+					:rel => "hover-popover", 
+					"data-placement" => "below",
+					"data-content" => conv_info.length > 100 ? conversation_popover_details(note) : "" %>
+			</p></div>
+		<% end %>
+		<div class="details">
+			<div class="request_mail">
+				<% 
+			       	notes = note.body_html		       
+			       	notes = "<span class='"+note.survey_remark.survey_result.get_small_img_class+"' style='float:left;margin-top:-11px;'></span>"+notes unless note.survey_remark.nil?
+				%>			
+				<%= notes %>
+			</div>
+		</div>
+		<% unless note.attachments.empty? %>
+			<span class="seperator"></span>
+			<div class="attachments-wrap clearfix">
+				<h5><strong><%= pluralize(note.attachments.size, t('attachment'), t('attachments'))%></strong></h5>
+				<ul class="attachment_list">
+				    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+				</ul>
+			</div>
+		<% end %>
+	<% else %>
+		<div class="tag">
+			<%= t('activities.tag.' + activity[:important_type]) %>
+		</div>
+		<div class="author-mail-detail">
+			<%= t("helpdesk.tickets.note.posted_on", :user_name => link_to_user(activity[:user], :class => "user_name" ), :note_date => formated_date(activity[:time]) ) %>
+		</div>
+		<div class="details">
+			<% 	stack = activity[:stack].map{ |act| 
+												Liquid::Template.parse(
+														t(act.short_descr.chomp('.short') + '.without_user')
+														).render(eval_activity_data(act.activity_data).merge(
+															'user_path' => link_to(act[:user] ,act[:user]),
+															'notable_path' => link_to(h(act.notable), act.notable) )
+														) 
+											}
+				puts "Stack :: #{stack.inspect}"
+				puts "stack.map{|act| act.gsub(t('activities.action_verb'), '')} "
+				puts "#{t('activities.action_verb')} "
+				puts "#{stack.map{|act| act.gsub(t('activities.action_verb'), '')}}"
+			%>
+			<%=  stack.size > 1 ? t('activities.action_verb').capitalize + stack.map{|act| act.gsub(t('activities.action_verb'), '')}.to_sentence : stack.first %>
+		</div>
+	<% end %>
+	</div>
+
+    <% if  note.present? and permission?(:manage_tickets) and feature?(:gamification)  %>
+	<textarea id="<%= "agent-hovercard_#{note.id}" %>" style="display:none;">
+		<div class="contact_hover" style="min-height:50px;">	
+		  <%= user_avatar(activity[:user]) if activity[:user].agent? %>
+		  <%= content_tag :div, link_to(h(activity[:user]), activity[:user]), :class => "user_name" %>
+		  <% if feature?(:gamification) %>
+		  		<% if activity[:user].agent? %>
+		  			<strong><%= content_tag :div, h(activity[:user].agent.level.name) unless activity[:user].agent.level.blank? %></strong>
+		  		<% end %>
+		  <% end %>
+          <%= content_tag :div, h(activity[:user].email), :class => "user_email" unless activity[:user].email.blank?  %>
+          <div class="clearfix"></div>
+          <%= content_tag :div, h(activity[:user].phone), :class => "user_phone" unless activity[:user].phone.blank?  %>
+          <%= content_tag :div, h(activity[:user].mobile), :class => "user_mobile" unless activity[:user].mobile.blank?  %>
+		</div>
+	</textarea>
+	<% end %>
+	<script type="text/javascript">
+		if (typeof(TICKET_DETAILS_DATA['last_activity']) == 'undefined' || TICKET_DETAILS_DATA['last_activity'] < <%= activity[:stack].first.id %>)
+			TICKET_DETAILS_DATA['last_activity'] = <%= activity[:stack].first.id %>;
+	</script>
+</li>

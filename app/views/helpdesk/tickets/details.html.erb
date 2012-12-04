@@ -1,7 +1,7 @@
 <%= include_stylesheets :redactor  %>
 <%= include_stylesheets :tkt_details %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
-<div class="tkt-wrapper" data-showing='notes'>
+<div class="tkt-wrapper ticket_show" data-showing='notes'>
 	<div class="tkt-wrapper-inner clearfix">
 
 		<%= render :partial => "helpdesk/tickets/show/info.html.erb" %>
@@ -12,10 +12,27 @@
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %>  
 				<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
 				<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
-				<%= render :partial => "helpdesk/tickets/show/timesheet.html.erb" %> 
+				<% if feature?(:timesheets) %>
+				<div class="widget time-tracked" id="TimesheetTab" data-remote="/helpdesk/tickets/<%= @ticket.display_id %>/components/timesheetss">
+					<%= render :partial => "helpdesk/time_sheets/v2/index" %>
+				</div>
+				<% end %>
 			</div>
 			<!--content Left-->
 			<div class="leftcontent">
+				<ol class="conversation_thread" id="original_request">
+					<li class="conversation">
+						<%= render :partial => "helpdesk/tickets/show/original_request.html.erb" %> 
+					</li>
+				</ol>
+				<ol class="conversation_thread hide" id="show_more">
+					<li class="conversation">
+						<a href="" class="avatar-wrap avatar-wrap-collapse"><p><span class='count_number' rel='count-total-remaining'></span><span rel='count_more'>more</span></p></a>
+						<a href="" class="commentbox commentbox-black">
+							<div>Show more</div>
+						</a>
+					</li>
+				</ol>
 				<%= render :partial => "helpdesk/tickets/show/conversations.html.erb" %> 
 				<%= render :partial => "helpdesk/tickets/show/new_conversation.html.erb" %> 
 			</div>

@@ -826,6 +826,37 @@ en:
   from_email: From Email
   feedbackwidget_custom_image: Custom image URL
   activities: 
+    action_verb: 'updated'
+    tag:
+      solutions: "New Solution"
+      assigned_to_nobody: "Agent Unassigned"
+      reassigned: "Agent Reassigned"
+      assigned: "Agent Assigned"
+      priority_change: "::Priority value::"
+      new_ticket: "New Ticket"
+      conversation:
+        out_email: 
+          default: "Agent Replied"
+          private: "Ticket Forwarded"
+        in_email: "Customer Responded"
+        note: "New Note"
+        twitter: "Tweet"
+      timesheet:
+        new: "Time logged"
+        timer_started: "Timer Started"
+        timer_stopped: "Timer Stopped"
+      execute_scenario: "Scenario Executed"
+      ticket_merge: "Ticket Merged"
+      ticket_split: "Ticket Splitted"
+      status_change: "::Status Value ::"
+      deleted: "Ticket Deleted"
+      restored: "Ticket Restored"
+      product_change: "Product Updated"
+      product_change_none: "Product Updated"
+      ticket_type_change: "Ticket Type"
+      group_change: "Agent Group Changed"
+      group_change_none: "Agent Group Changed"
+      source_change: "Ticket Source"
     solutions: 
       new_solution: 
         short: "{{user_path}} created the new solution"
@@ -834,11 +865,14 @@ en:
       assigned_to_nobody: 
         short: Assigned to 'Nobody' by {{user_path}}
         long: "{{user_path}} assigned the ticket {{notable_path}} to 'Nobody'"
+        without_user: assigned to <strong>'Nobody'</strong>
       reassigned: 
         long: "{{user_path}} reassigned the ticket {{notable_path}} to {{responder_path}}"
+        without_user: "reassigned the ticket <strong>{{responder_path}}</strong>"
       priority_change: 
-        short: "{{user_path}} changed the priority to {{priority_name}}"
-        long: "{{user_path}} changed the ticket priority of {{notable_path}} to {{priority_name}}"
+        short: "{{user_path}} changed priority to {{priority_name}}"
+        long: "{{user_path}} changed ticket priority of {{notable_path}} to {{priority_name}}"
+        without_user: "updated ticket priority to <strong>{{priority_name}}</strong>"
       new_ticket: 
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
@@ -862,17 +896,22 @@ en:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
           long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
+          without_user: "added a {{timesheet_path}}"
         timer_started:
           short: "{{user_path}} started timer on  {{timesheet_path}}"
+          without_user: "started timer on  {{timesheet_path}}"
           long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
         timer_stopped:
           short: "{{user_path}} stopped timer on  {{timesheet_path}}"
+          without_user: "stopped timer on  {{timesheet_path}}"
           long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
       assigned: 
         short: Assigned to {{responder_path}} by {{user_path}}
+        without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
       execute_scenario: 
         short: "{{user_path}} executed the scenario '{{scenario_name}}"
+        without_user: "executed the scenario <strong>'{{scenario_name}}"
         long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
@@ -881,8 +920,9 @@ en:
         short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
         long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
       status_change: 
-        short: "{{user_path}} changed the status to {{status_name}}"
-        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
+        short: "{{user_path}} updated status to {{status_name}}"
+        without_user: "updated status to <strong>{{status_name}}</strong>"
+        long: "{{user_path}} updated ticket status of {{notable_path}} to {{status_name}}"
       deleted:
         short: "{{user_path}} has deleted this ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
@@ -890,23 +930,29 @@ en:
         short: "{{user_path}} has restored this ticket"
         long: "{{user_path}} has restored the ticket {{notable_path}}"
       product_change:
-        short: "{{user_path}} changed the product to {{product_name}}"
-        long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
+        short: "{{user_path}} updated product to {{product_name}}"
+        without_user: "updated product to <strong>{{product_name}}</strong>"
+        long: "{{user_path}} updated product of {{notable_path}} to {{product_name}}"
       product_change_none: 
-        short: "{{user_path}} changed the product to 'none'"
-        long: "{{user_path}} changed the product of {{notable_path}} to 'none'"
+        short: "{{user_path}} updated product to 'none'"
+        without_user: "updated product to <strong>'none'"
+        long: "{{user_path}} updated product of {{notable_path}} to 'none'"
       ticket_type_change:
-        short: "{{user_path}} changed the ticket type to {{ticket_type}}"
-        long: "{{user_path}} changed the ticket type of {{notable_path}} to {{ticket_type}}"
+        short: "{{user_path}} updated ticket type to {{ticket_type}}"
+        without_user: "updated ticket type to <strong>{{ticket_type}}</strong>"
+        long: "{{user_path}} updated ticket type of {{notable_path}} to {{ticket_type}}"
       group_change:
-        short: "{{user_path}} changed the group to {{group_name}}"
-        long: "{{user_path}} changed the group of {{notable_path}} to {{group_name}}"
+        short: "{{user_path}} updated group to {{group_name}}"
+        without_user: "updated group to <strong>{{group_name}}</strong>"
+        long: "{{user_path}} updated group of {{notable_path}} to {{group_name}}"
       group_change_none: 
-        short: "{{user_path}} changed the group to 'none'"
-        long: "{{user_path}} changed the group of {{notable_path}} to 'none'"
+        short: "{{user_path}} updated group to 'none'"
+        without_user: "updated group to <strong>'none'</strong>"
+        long: "{{user_path}} updated group of {{notable_path}} to 'none'"
       source_change:
-        short: "{{user_path}} changed the source to {{source_name}}"
-        long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
+        short: "{{user_path}} updated source to {{source_name}}"
+        without_user: "updated source to <strong>{{source_name}}</strong>"
+        long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your email address
@@ -1831,6 +1877,32 @@ en:
         agent: Agent
         hours: Hours
         note: Note
+      v2:
+        index:
+          no_timeentry: "No time entry logged for this ticket"
+        time_entry:
+          toggle_timer_true: "Start timer"
+          toggle_timer_false: "Stop timer"
+        new:
+          title: "New time entry"
+          start_timer: "Start Timer"
+        ticket: Ticket
+        customer: Customer
+        executed_at: Date
+        hours: Hours
+        agent: Agent
+        note: Note
+        billing_type: Billing Type
+        group_by: Group By
+        report:
+          no_timeentry: "No data available"
+          total: Total
+        form:
+          agent: Agent
+          hours: Hours
+          billing_hours: Billable
+          note: Note
+          on: on
     tags:
       index:
         title: Tags

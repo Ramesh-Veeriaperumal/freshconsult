@@ -128,13 +128,26 @@ p strong{
 			        box-shadow: -4px 0px 0px #f0f0f0;
 
 			h2{
-				font-size: 18px;
+				font-size: 26px;
 				color: #333;
 				text-shadow: 0px 1px 0px #fff;
-				line-height: 20px;
-				width: 100%;
+				line-height: 30px;
+				font-weight: 300;
+				height: 30px;
 				overflow: hidden;
 				word-break: break-all;
+				margin: 0 -10px;
+				padding: 0 10px;
+
+				&:hover {
+					min-height: 30px;
+					background: #f8f4e9;
+					overflow: visible;
+					height: auto;
+					z-index: 13;
+					position: relative;
+					border-radius: 5px;
+				}
 
 				span{
 					color: #666666;
@@ -211,13 +224,11 @@ p strong{
 		}
 
 		.open-box{
-			background-color: #fdfcf8;
+			background-color: #FFF;
 			float: right;
 			width: 308px;
-			padding: 4px 0px;
-			margin-top: 4px;
+			padding: 10px 0px;
 			@include border-radius(4px, 4px);
-			border: 1px #e8daa0 solid;
 			h4{
 				font-size: 18px;
 				padding-left: 10px;
@@ -235,7 +246,7 @@ p strong{
 
 .ticket-actions{
 	display: block;
-	margin: 15px 0px 10px;
+	margin: 10px 0px 0px;
 	.forward, .reply{
 		float: left;
 		font-size: 12px;
@@ -259,8 +270,59 @@ p strong{
 		    -ms-box-shadow: 0px 0px 1px #fff;
 		        box-shadow: 0px 0px 1px #fff;
 	}
+	.menu-dropdown, .dropdown-menu { 
+	float: left;
+	position: absolute;
+	top: 30px;
+	left: 0;
+	z-index: 900;
+	margin: 2px 0 0;
+	padding: 5px 0;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 0 0 6px 6px;
+	border-radius: 6px;
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	}
 
-	.ticket-btn-dropdown{
+
+	.btn {
+		padding: 7px 10px;
+		color: #333;
+		@include text-shadow(1px 0 0 rgba(255,255,255,0.49));
+		@include box-shadow(1px 0 1px #FFF);
+
+		&.tall {
+			padding: 7px 10px 8px;
+			font-weight: bold;
+			font-size: 14px;
+		}
+
+	}
+
+	.btn-group {
+		overflow: visible;
+		display: inline-block;
+		position: relative;
+		.btn.dropdown-toggle:after {
+		 	width: 0;
+			height: 0;
+			display: inline-block;
+			content: "&darr;";
+			text-indent: -99999px;
+			vertical-align: top;
+			margin-top: 6px;
+			margin-left: 0px;
+			border-left: 6px solid transparent;
+			border-right: 6px solid transparent;
+			border-top: 6px solid #6f6f6f;
+			@include opacity(1);
+		}
+	}
+
+	.ticket-btns{
 		float: left;
 		margin-right: 10px;
 
@@ -277,17 +339,15 @@ p strong{
 		@include filter-gradient(#ffffff, #e5e5e5, vertical);
 		$experimental-support-for-svg: true;
 		@include background-image(linear-gradient(top,  #ffffff 0%,#e5e5e5 100%));
-		-webkit-box-shadow: 0px 0px 1px #fff;
-		   -moz-box-shadow: 0px 0px 1px #fff;
-		    -ms-box-shadow: 0px 0px 1px #fff;
-		        box-shadow: 0px 0px 1px #fff;
-		        &:hover{
-		        	text-decoration: none;
-		        	background: #e6e6e6;
-		        	-webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-				    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-				    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-		        }
+		@include box-shadow(0px 0px 1px #fff);
+
+        &:hover{
+        	text-decoration: none;
+        	background: #e6e6e6;
+        	-webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+		    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+		    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
 	}
 
 	.forward{
@@ -334,7 +394,7 @@ p strong{
 .conversation_thread.redactor{
 	border:none;
 	margin-bottom: 30px;
-	margin-top: -21px;
+	margin-top: -30px;
 	@include box-shadow(none);
 
     .avatar-wrap:before{
@@ -363,6 +423,7 @@ p strong{
     .request_panel {
     	border: none;
     	overflow:hidden;
+    	padding: 0;
     }
 
     .ui-form .inline-field {
@@ -722,21 +783,24 @@ p strong{
 
 
 ol.conversation_thread{
-	padding: 0px 10px 10px 10px;
-	margin-top:-10px;
+	padding: 10px 10px 10px 10px;
+	margin-top:-20px;
 	border-left: 1px #d8d8d8 solid;
 	-webkit-box-shadow: -4px 0px 0px #f0f0f0;
 	   -moz-box-shadow: -4px 0px 0px #f0f0f0;
 	    -ms-box-shadow: -4px 0px 0px #f0f0f0;
 	        box-shadow: -4px 0px 0px #f0f0f0;
      
+    &.loading-center {
+    	li { display: none; }
+    	height: 50px;
+    	border: none;
+    	box-shadow: none;
+    }
 
 	li.conversation{
 		margin-bottom: 22px;
 		position: relative;
-		&:first-child{
-			padding-top: 2px;
-		}
 	}
 }
 
@@ -854,15 +918,127 @@ ol.conversation_thread{
 
 	.time-tracked{
 
+		.list-noinfo {
+			padding: 0;
+			font-size: 1.1em;
+		}
+
+		.new_timer a {
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		#timesheetlist {
+			padding: 10px 0;
+		}
+
+		div.preview_pic img {
+			width: 30px;
+			height: 30px;
+		}
 		.time-tracked-details{
 			display: inline-block;
-			margin-bottom: 10px;
+			margin:10px 0;
+
+		}
+
+		.details {
+			display: block;
+			float: left;
+			width: 270px;
+		}
+
+		.requester-avatar-wrap {
+			padding: 0px 10px 10px  0;
+			width: 30px;
+		}
+
+		.note {
+			padding: 5px 0;
+			a {
+				color: #333;
+			}
+
+		}
+
+		.info {
+			clear: both;
+			overflow: hidden;
+			width: 270px;
+			color: #777;
+			font-size: 10px;
+
+			.time_stamp {
+				width: 125px;
+				float: left;
+			}
+
+			.is_billable {
+				width: 125px;
+				float: right;
+				text-align: right;
+			}
 		}
 
 		h3,h4{
-			margin-bottom: 10px;
-			span{
+
+			.user_name {
+				color: #333;
+				font-size: 13px;
+			}
+			.tracked_time{
 				float: right;
+				text-align: right;
+			}
+
+			.time_unit {
+				font-size: 13px;
+				font-weight: normal;
+				font-style: normal;
+			}
+
+			.time {
+				font-size: 15px;
+				font-weight: bold;
+
+			}
+
+			.timer_box {
+				position: relative;
+				left: -70px;
+				top: -6px;
+
+				@include opacity(0.3);
+			}
+		}
+
+		.actions {
+			clear: both;
+			font-size: 13px;
+			margin-bottom: 10px;
+			a {
+				margin: 5px 10px 5px 0;
+			}
+
+			.toggle_timer {
+				display: none;
+			}
+		}
+
+		.time_running {
+			.toggle_timer {
+				display: inline;
+			}
+		}
+
+		.time-tracked-details:hover {
+			h3,h4 {
+				.timer_box {
+					@include opacity(1);
+				}
+			}
+			.actions {
+				visibility: visible;
 			}
 		}
 	
@@ -1068,6 +1244,124 @@ ol.conversation_thread{
 	}
 }
 
+// Timesheet Modal CSS Overrides and new CSS
+#timeentry_add, .timeentry_edit {
+	margin: 5px;
+	padding: 0;
+}
+
+.modal-body .ui-form {
+	.full_width {
+		width: 100%;
+		margin: 5px 0;
+		float:left;
+	}
+
+	.one_third {
+		width: 33%;
+		float: left;
+		margin-right: 1%;
+	}
+
+	.two_third {
+		width: 66%;
+		float: left;
+	}
+
+	label {
+		color: #000;
+		font-weight: bold;
+	}
+
+	label.billable_hours {
+		font-size: 11px;
+	}
+
+	.executed_at {
+		label {
+			display: inline-block;
+		}
+
+		cursor: pointer;
+		input {
+			border: none;
+			@include box-shadow(none);
+		}
+
+		&:hover input{
+			border: 1px solid #C6C6C6;
+			@include box-shadow(inset, 1px 1px 2px #dfdfdf);
+		}
+	}
+	.agent {
+		label {
+			display: inline-block;
+			width: 50px;
+		}
+
+		.select2-container {
+			width: 300px;
+	    	.select2-choice {
+	    		background: none;
+	    		border-color: #FFF;
+
+	    		div b {
+	    			display: none;
+	    		}
+	    	}
+	    }
+
+	    &:hover {
+	    	.select2-container .select2-choice {
+			    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+			    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+			    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+			    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
+			    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+			    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
+			    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+			    border: 1px solid #aaa;
+			    outline: none;
+
+			    //Copied from Select2
+
+
+	    		div b {
+	    			display: block;
+	    		}
+	    	}
+	    }
+
+	    .select2-container-active .select2-choice {
+	    	background-color: #fff;
+		    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+		    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
+		    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+		    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
+		    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+	    	border: 1px solid #5897fb;
+			    //Copied from Select2
+
+	    }
+
+	    .select2-container-active.select2-dropdown-open .select2-choice {
+	    	background-color: #fff;
+		    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+		    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+		    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
+		    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+		    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
+		    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+	    	border: 1px solid #AAA;
+			//Copied from Select2
+
+	    }
+	}
+}
+
 
 /*Comment-box*/
 .commentbox{
@@ -1078,7 +1372,7 @@ ol.conversation_thread{
 	padding: 10px;
 	background: #fffdf8;
 	border: 1px solid #cccccc;
-	@include min-height(100px);
+	@include min-height(30px);
 	@include border-radius(4px);
 
 	blockquote.freshdesk_quote {
@@ -1104,17 +1398,28 @@ ol.conversation_thread{
 	}
 
 	.author-mail-detail{
+		margin: 0 0 2px 0;
+		color: #a2a19f;
+		text-align: left;
+		padding: 0px;
 		a {
 			font-weight:bold;
 		}
-		margin-bottom: 20px;
-		padding: 0px;
+	}
 
-		p{ 
-			margin: 0 0 2px 0;
-			color: #a2a19f;
-			text-align: left;
-		}
+	.tag {
+		float:right;
+		background: #b5b5b5;
+		color: #FFF;
+		border: solid 1px #FFF;
+		@include text-shadow(-1px 0 0 rgba(0,0,0,0.28));
+		max-width: 150px;
+		display: block;
+		@include corners(5px);
+		font-size: 10px;
+		padding: 3px 10px 5px;
+		font-weight: 600;
+		margin-top: 5px;
 	}
 }
 
@@ -1496,7 +1801,6 @@ label.custom-select {
 	background: #f8f4e9;
 	border: 1px solid #cccccc;
 	min-height:100px;
-	overflow: hidden;
 	@include border-radius(4px);
 
 	.ticket-subject{
@@ -1522,6 +1826,46 @@ label.custom-select {
 }
 
 .commentbox-yellow:before {
+	border-color: rgba(204, 204, 204, 0);
+	border-right-color: #cccccc;
+	border-width: 9px;
+	top: 25px;
+	margin-top: -9px;
+}
+
+
+.commentbox-info{
+	position: relative;
+	margin-left: 40px;
+	padding: 10px 10px 0;
+	background: #f8f4e9;
+	border: 1px solid #cccccc;
+	height:85px;
+	@include border-radius(4px);
+
+	.ticket-subject{
+		padding-right: 320px;
+	}
+}
+.commentbox-info:after, .commentbox-info:before {
+	right: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.commentbox-info:after {
+	border-color: rgba(255, 253, 248, 0);
+	border-right-color: #f8f4e9;
+	border-width: 8px;
+	top: 25px;
+	margin-top: -8px;
+}
+
+.commentbox-info:before {
 	border-color: rgba(204, 204, 204, 0);
 	border-right-color: #cccccc;
 	border-width: 9px;

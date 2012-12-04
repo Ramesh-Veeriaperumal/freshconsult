@@ -36,6 +36,8 @@ class Helpdesk::Activity < ActiveRecord::Base
     }
   }
 
+  named_scope :newest_first, :order => "helpdesk_activities.id DESC"
+
   
  named_scope :permissible , lambda {|user| { 
  :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND helpdesk_activities.account_id = helpdesk_tickets.account_id AND notable_type = 'Helpdesk::Ticket'"  ,
@@ -50,6 +52,27 @@ class Helpdesk::Activity < ActiveRecord::Base
                   }
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
+
+  def ticket_activity_type
+    #Getting the Activity type ( Eg: activities.tickets.status_change.long ) to just "status_change"
+    description.chomp('.long').gsub('activities.tickets.','')
+  end
+
+  def type
+    description.split('.')[1]
+  end
+
+  def is_ticket?
+    type == 'tickets'
+  end
+
+  def is_note?
+    ticket_activity_type.start_with?('conversation.')
+  end
+
+  def note
+    return Helpdesk::Note.find(activity_data['eval_args']['reply_path'][1]['comment_id']) if is_note?
   end
 
   private

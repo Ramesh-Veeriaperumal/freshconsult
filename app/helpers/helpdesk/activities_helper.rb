@@ -101,10 +101,10 @@ module Helpdesk::ActivitiesHelper
 				
 				user_path = for_dashboard ? show_contact_hovercard(activity.user) : link_to(h(activity.user), activity.user)
 
-				previous_activity[:stack] << Liquid::Template.parse(h t(template)).render(eval_activity_data(activity.activity_data).merge(
+				previous_activity[:stack] << Liquid::Template.parse(t(template)).render(eval_activity_data(activity.activity_data).merge(
 												'user_path' => user_path,
 												'notable_path' => link_to(h(activity.notable), activity.notable) ))
-				previous_activity[:stack_single] = Liquid::Template.parse(h t(activity.description)).render(eval_activity_data(activity.activity_data).merge(
+				previous_activity[:stack_single] = Liquid::Template.parse( t(activity.description)).render(eval_activity_data(activity.activity_data).merge(
 								'user_path' => user_path,
 								'notable_path' => link_to(h(activity.notable), activity.notable) ))
 

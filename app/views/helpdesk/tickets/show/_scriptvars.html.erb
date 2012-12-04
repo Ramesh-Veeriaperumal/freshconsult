@@ -5,7 +5,9 @@ TICKET_DETAILS_DATA = {
 	total_notes			: "<%= @ticket_notes_total %>",
 	notes_per_page		: 50,
 	notes_pagination_url: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes?v=2&page=",
-	last_note_id		: "<%= @ticket_notes.last.id if @ticket_notes.present? %>",
+	last_note_id		: <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
+	activities_pagination_url: "/helpdesk/tickets/activities/<%= escape_javascript(h(@ticket.display_id)) %>?page=",
+	last_activity		: -1,
 	fetch_notes_url		: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes/since", 
 	tag_list			: tag_list.split(",")
 };

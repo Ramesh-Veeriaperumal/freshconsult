@@ -27,28 +27,28 @@ FRESHDIALOG.defaults = {
 FRESHDIALOG.options_to_fetch = ['width', 'title','classes','remote','keyboard','backdrop'];
 
 (function($){
-	var invokeFreshDialog = function(options) {
-		console.log(options);
-		//Closing the active modal:
+
+	$.closeDialog = function() {
+		//Closing the active modal
 		if ($('.modal.freshdialog.in').length > 0) {
 			$('.modal.freshdialog.in').each(function() {
-				console.log(this);
 				$('#' + this.id).modal('hide');
 			});
 		}
+	}
+
+	var invokeFreshDialog = function(options) {
+		$.closeDialog();
 		options = $.extend(options,FRESHDIALOG.defaults);
-		console.log(options);
-		console.log('element is ');
-		console.log(options['element']);
 		var invoked_from_DOM = typeof(options['element']) != 'undefined' && options['element'] != null ;
-		console.log(invoked_from_DOM);
+
 		if (invoked_from_DOM) {
 			element = $(options['element']);
 			if (element.data('dialog-loaded')) {
-				console.log('already loaded');
+
 				modal = $('#' + element.data('dialog-id'));
 				modal.modal('show');
-
+				$('body').animate({scrollTop:0},300);
 				return modal.attr('id');
 			}
 
@@ -73,12 +73,12 @@ FRESHDIALOG.options_to_fetch = ['width', 'title','classes','remote','keyboard','
 		// 	}
 		// 	// //Special Handling for Title
 		// 	options['title'] = options['title'] || element.attr('title');
-		// 	console.log(options);
+		// 	
 		// }
 
 		var modal = $(FRESHDIALOG.template);
 		modal.attr('id', FRESHDIALOG.id_keyword + '' + ++FRESHDIALOG.nextid);
-		console.log('id is now: ' + modal.attr('id'));
+		
 		modal.find('.modal-header h3').text(options['title']);
 		var modal_options = {
 			backdrop: options['backdrop'],
@@ -89,7 +89,8 @@ FRESHDIALOG.options_to_fetch = ['width', 'title','classes','remote','keyboard','
 		if (invoked_from_DOM) {
 			if (element.data('target') === undefined) {
 				var href = element.data('url') || element.attr('href');
-				modal.find('.modal-body').load(href,{}, function(responseText, textStatus, XMLHttpRequest) {
+				modal.find('.modal-body').load(href, function(responseText, textStatus, XMLHttpRequest) {
+													
 													modal.find('.modal-body').removeClass("loading-center");//.css({"height": "auto"});
 												});
 				
@@ -118,7 +119,7 @@ FRESHDIALOG.options_to_fetch = ['width', 'title','classes','remote','keyboard','
 		modal.modal('show');
 		$('body').animate({scrollTop:0},300);
 
-		modal.find('[rel=close-modal]').on('click', function(ev) {
+		$(modal).on('click', '[rel=close-modal]', function(ev) {
 			ev.preventDefault();
 			modal.modal('hide');
 		});
@@ -127,22 +128,17 @@ FRESHDIALOG.options_to_fetch = ['width', 'title','classes','remote','keyboard','
 	}
 
 	$.fn.freshdialog = function(opts) {
-		console.log('from $.fn.freshdialog');
 		opts['content'] = this;
 		opts['element'] = null;
 		return invokeFreshDialog(opts);
 	}
 	$.freshdialog = function(opts) {
-		console.log('from $.freshdialog');
-		console.log(opts);
 		if (typeof(opts['text']) != 'undefined') {
 			opts['content'] = '<div>' + opts['text'] + '</div>';
 		}
 		opts['element'] = null;
-		console.log('passing to invokeFreshDialog');
 		return invokeFreshDialog(opts);
 	}
-
 
 	$(document).ready(function() {
 		$('body').on('click','[data-activate=dialog]',function(ev) { 

@@ -1,0 +1,11 @@
+page << "timesheet.editCompelete('add', true)"
+page << "jQuery.closeDialog(); jQuery('#add_new_timer, #add_new_time_entry').resetForm();"
+page << "jQuery('#add_new_timer .submit, #add_new_time_entry .submit').each(function(i) {
+			jQuery(this).attr('disabled',false);
+			jQuery(this).removeClass('disabled');
+			jQuery(this).text(jQuery(this).data('resetText'));
+		});"
+
+page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/v2/time_entry", :object => @time_entry
+
+pushToTimesheetIntegratedApps page, @time_entry

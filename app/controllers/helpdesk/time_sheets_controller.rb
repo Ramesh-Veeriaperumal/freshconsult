@@ -3,13 +3,25 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ] 
-  before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
+  before_filter :load_ticket, :only => [:create, :index, :new, :edit, :update, :toggle_timer] 
   
   def index    
     @time_sheet = @ticket.time_sheets
-    render :index, :layout => false
+    if new_show_page?
+      render "helpdesk/time_sheets/v2/index", :layout => false
+    else
+      render :index, :layout => false
+    end
+  end
+
+  def new
+    render "helpdesk/time_sheets/v2/new", :layout => false  if new_show_page?
   end
   
+  def edit
+    render "helpdesk/time_sheets/v2/edit.html.erb", :layout => false  if new_show_page?
+  end
+
   def create
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
@@ -23,6 +35,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
                                              :billable => true})
     @time_entry = scoper.new(time_entry)
     @time_entry.save
+    render "helpdesk/time_sheets/v2/create" if new_show_page?
   end
    
   def update  
@@ -32,6 +45,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     if @time_entry.update_attributes(time_entry)
        
     end
+    render "helpdesk/time_sheets/v2/update" if new_show_page?
   end 
   
   def toggle_timer     
@@ -41,6 +55,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
         update_running_timer @time_entry.user_id
         @time_entry.update_attributes({ :timer_running => true, :start_time => Time.zone.now })
      end
+     render "helpdesk/time_sheets/v2/toggle_timer" if new_show_page?
   end
   
   def time_sheets_for_ticket
@@ -103,6 +118,10 @@ private
     to_time = to_time.to_time if to_time.respond_to?(:to_time)
     running_time =  ((to_time - from_time).abs).round 
     return (time_entry.time_spent + running_time)
+  end
+
+  def new_show_page?
+    true
   end
 
 end

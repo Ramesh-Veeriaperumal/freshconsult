@@ -1,16 +1,3 @@
-<ol class="conversation_thread" id="original_request">
-	<li class="conversation">
-		<%= render :partial => "helpdesk/tickets/show/original_request.html.erb" %> 
-	</li>
-</ol>
-<ol class="conversation_thread" id="show_more">
-	<li class="conversation">
-		<a href="" class="avatar-wrap avatar-wrap-collapse"><p><span class='count_number' rel='count-total-remaining'>95</span><span rel='count_more'>more</span></p></a>
-		<a href="" class="commentbox commentbox-black">
-			<div>Show more</div>
-		</a>
-	</li>
-</ol>
 <ol class="conversation_thread" id="all_notes">
 	<% unless @ticket_notes.blank? %>
 		<%= render :partial => "helpdesk/tickets/show/note.html.erb", :collection => @ticket_notes %>
