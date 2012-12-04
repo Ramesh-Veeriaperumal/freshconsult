@@ -1009,7 +1009,6 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
     t.text     "footer"
     t.text     "custom_css",   :limit => 16777215
     t.text     "layout",       :limit => 16777215
-    t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
