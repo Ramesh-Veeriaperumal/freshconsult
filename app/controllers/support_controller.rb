@@ -47,7 +47,6 @@ class SupportController < ApplicationController
                       :locals => { :dynamic_template => (get_data_for_template(t[0]) || "") }
           instance_variable_set "@#{t[0]}", _content
       end
-  		@search_portal ||= render_to_string :partial => "/portal/search", :locals => { :dynamic_template => "", :placeholder => t('portal.search.placeholder') }     
   	end
 
     def set_layout_liquid_variables(page_label)

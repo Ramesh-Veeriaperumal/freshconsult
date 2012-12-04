@@ -4,7 +4,7 @@ class Portal::Page < ActiveRecord::Base
 	belongs_to_account
 	belongs_to :template	
 	
-	validates_uniqueness_of :content, :scope => [:template_id, :page_type]	
+	validates_uniqueness_of :page_type, :scope => [:template_id]	
   
 	#!PORTALCSS Need to move these constances to lib
 
@@ -21,19 +21,25 @@ class Portal::Page < ActiveRecord::Base
 
 		# Solution pages
 		[:solution_home,      	6,   "support/solutions/index.portal", "support_solutions_path"],
-		[:article_list,       	7,   "support/solutions/folders/show.portal", "support_solutions_folder_path", "portal_folders"],
-		[:article_view,       	8,   "support/solutions/articles/show.portal", "support_solutions_article_path", "solution_articles"],
+		[:article_list,       	7,   "support/solutions/folders/show.portal", 
+			"support_solutions_folder_path", "portal_folders"],
+		[:article_view,       	8,   "support/solutions/articles/show.portal", 
+			"support_solutions_article_path", "solution_articles"],
 
 		# Discussion or Forum pages
 		[:discussions_home,   	9,  "support/discussions/index.portal", "support_discussions_path"],
-		[:topic_list,         	10,  "support/discussions/forums/show.portal", "support_discussions_forum_path", "forum_categories"],
-		[:topic_view,         	11,  "support/discussions/topics/show.portal", "support_discussions_topic_post_path", "portal_topics"],
-		[:new_topic,          	12,  "support/discussions/topics/new.portal", "new_support_discussions_topic_path"],
+		[:topic_list,         	10,  "support/discussions/forums/show.portal", 
+			"support_discussions_forum_path", "forum_categories"],
+		[:topic_view,         	11,  "support/discussions/topics/show.portal", 
+			"support_discussions_topic_post_path", "portal_topics"],
+		[:new_topic,          	12,  "support/discussions/topics/new.portal", 
+			"new_support_discussions_topic_path"],
 		
 		# Ticket pages
 		[:submit_ticket,      	13,  "support/tickets/new.portal", "new_support_ticket_path"],
 		[:ticket_list,        	14,  "support/tickets/index.portal", "support_tickets_path"],
-		[:ticket_view,        	15,  "support/tickets/show.portal", "support_ticket_path", "tickets"]
+		[:ticket_view,        	15,  "support/tickets/show.portal", 
+			"support_ticket_path", "tickets"]
 	]
 
 	# Manually organizing them as groups to avoid direct db save dependency

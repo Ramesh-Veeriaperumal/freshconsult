@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121020050335) do
+ActiveRecord::Schema.define(:version => 20121204120850) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -691,8 +691,8 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
   end
 
   add_index "helpdesk_schema_less_notes", ["account_id", "note_id"], :name => "index_helpdesk_schema_less_notes_on_account_id_note_id", :unique => true
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"string_nc01"=>"10", "account_id"=>nil}
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"string_nc02"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"account_id"=>nil, "string_nc01"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"account_id"=>nil, "string_nc02"=>"10"}
   add_index "helpdesk_schema_less_notes", ["id"], :name => "helpdesk_schema_less_notes_id"
   add_index "helpdesk_schema_less_notes", ["int_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc01_account_id"
   add_index "helpdesk_schema_less_notes", ["int_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc02_account_id"
@@ -993,22 +993,22 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
   end
 
   create_table "portal_pages", :force => true do |t|
-    t.integer  "template_id", :limit => 8, :null => false
-    t.integer  "account_id",  :limit => 8, :null => false
-    t.integer  "page_type",                :null => false
-    t.text     "content"
+    t.integer  "template_id", :limit => 8,        :null => false
+    t.integer  "account_id",  :limit => 8,        :null => false
+    t.integer  "page_type",                       :null => false
+    t.text     "content",     :limit => 16777215
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "portal_templates", :force => true do |t|
-    t.integer  "account_id",   :limit => 8,          :null => false
-    t.integer  "portal_id",    :limit => 8,          :null => false
+    t.integer  "account_id",  :limit => 8,        :null => false
+    t.integer  "portal_id",   :limit => 8,        :null => false
     t.text     "preferences"
     t.text     "header"
     t.text     "footer"
-    t.text     "custom_css",   :limit => 16777215
-    t.text     "layout",       :limit => 16777215
+    t.text     "custom_css",  :limit => 16777215
+    t.text     "layout"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1456,7 +1456,7 @@ ActiveRecord::Schema.define(:version => 20121020050335) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
-  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>"20"}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"

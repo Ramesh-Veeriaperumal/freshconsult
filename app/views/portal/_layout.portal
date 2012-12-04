@@ -6,7 +6,7 @@
 			<div class="hc-search">
 				<div class="hc-search-c">
 					<h2 class="heading">{% translate header.help_center %}</h2>
-					{{ search_portal }}				
+					{% snippet portal/search %}
 				</div>
 			</div>		
 			<div class="hc-nav">

@@ -22,10 +22,7 @@ class Portal::Template < ActiveRecord::Base
   # This is limited so that not all carry forward into the template
   LIMIT_PREFERENCES = %w(bg_color tab_color header_color) 
   
-  def page_types
-    default_pages = Portal::Page::PAGE_TYPE_OPTIONS.map{ |a| { :page_type => a[1], :page_name => a[0] } }
-  end
-
+  # Set of prefrences data that will be used during template creation
   def default_preferences
     {
       :bg_color => "#ffffff", 
