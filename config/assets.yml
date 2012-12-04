@@ -124,7 +124,9 @@ javascripts:
   # Code editor for portal cms
   codemirror:
     - public/javascripts/codemirror/*.js
-
+  portaltemplate:
+    - public/javascripts/portal.template.js
+    - public/javascripts/mousetrap.js
   visitor:
     - public/javascripts/frameworks/session.js
 
