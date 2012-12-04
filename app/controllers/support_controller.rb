@@ -52,12 +52,8 @@ class SupportController < ApplicationController
 
     def set_layout_liquid_variables(page_label)
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_label ]
-      _content = render_to_string :file => partial, 
-<<<<<<< HEAD
-                  :locals => { :dynamic_template => (get_data_for_page(page_type_token) || "") }
-=======
-                      :locals => { :dynamic_template => (get_data_for_page(page_label) || "") }
->>>>>>> e6836eb6206d0d49e5b3cf64553a40d92c80e860
+      _content = render_to_string :file => partial,
+                  :locals => { :dynamic_template => (get_data_for_page(page_label) || "") }
       @content_for_layout = _content
     end
 
