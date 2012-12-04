@@ -1,4 +1,4 @@
-<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, :class => "ticket-form" } do |f| %>
+<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, :class => "ticket-form",:rel => "validate" } do |f| %>
   <%= f.error_messages %>
   <% current_portal.customer_editable_ticket_fields.each do |field| %>    
       <%= construct_ticket_element :helpdesk_ticket, field, 
@@ -9,7 +9,7 @@
                                    "",
                                    true %>
   <% end %>
-  <%#= render :partial=>"/helpdesk/shared/attachment_form"  %>    
+  <%= render :partial=>"/helpdesk/shared/attachment_form"  %>    
   <% if feature?(:captcha) && !logged_in? %>
     <div class="control-group">
         <%= content_tag ( :label, t('ticket.verify_human') ) %>
@@ -64,8 +64,9 @@
                 var data_available = jQuery(data).find("a").length;
                 if( data_available )
                 {
-                  showTooltip(jQuery("#helpdesk_ticket_subject"), data);
-                  jQuery("#helpdesk_ticket_subject").qtip("show");
+                  //showTooltip(jQuery("#helpdesk_ticket_subject"), data);
+                  //jQuery("#helpdesk_ticket_subject").qtip("show");
+                  $("#new-ticket-search").html(data).show()
                 }
                 else{
                   jQuery("#helpdesk_ticket_subject").qtip("hide");
@@ -77,11 +78,12 @@
         
           jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
               var searchString = this.value.replace(/^\s+|\s+$/g, "");
+              console.log(searchString)
               if(searchString != '' && searchString.length > 1){
                 jQuery(this).addClass("loading-right");
-                delay(function(){
+                //delay(function(){
                   callbackToSolutionSearch(searchString);
-                }, 200 ); 
+                //}, 200 ); 
               }
               else{
                 jQuery(this).qtip("hide");

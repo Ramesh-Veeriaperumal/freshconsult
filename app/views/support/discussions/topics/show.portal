@@ -68,7 +68,7 @@
 			</section>
 		{% endfor %}
 	</section>
-
+	
 	{% if topic.locked? %}
 		<div class="p-content lead-small">
 			{% translate topic.comments_closed %} 
@@ -81,8 +81,10 @@
 			</div>
 			{% endif %}
 			<div class="p-content">
-				<input type="text" class="special span10" placeholder="Add comment" id="reply-form-proxy" 
-						onclick="jQuery('#new-post-form').show(); jQuery(this).hide(); jQuery('#post_body_html').getEditor().focus()" />
+				<input type="text" class="special span10" 
+						placeholder="Add comment" id="reply-form-proxy" 
+						data-proxy-for="#new-post-form" />
+
 				<div id="new-post-form" class="hide">
 					{% snippet reply_to_post %}
 				</div>
@@ -98,5 +100,4 @@
 			
 		</section>		
 	{% endif %}
-
 </div>

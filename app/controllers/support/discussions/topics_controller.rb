@@ -11,18 +11,13 @@ class Support::Discussions::TopicsController < SupportController
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission, :only => [:edit, :update] 
-
-  before_filter :set_selected_tab
   
-  uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
-
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
   # sure what analogous place to put it in this plugin.  It don't work in the init.rb  
   #caches_formatted_page :rss, :show
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
   def check_user_permission
-
     if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
           flash[:notice] =  t(:'flash.general.access_denied')
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -52,10 +47,6 @@ class Support::Discussions::TopicsController < SupportController
         @topic.hit! unless logged_in? and @topic.user == current_user
         @page_title = @topic.title
 
-        @topic_voting = render_to_string :partial => "topic_vote", :object => @topic
-        @reply_form = render_to_string :partial => "reply_to_post"
-
-        @posts = @topic.posts.paginate :page => params[:page]
         @post = Post.new
       end
       format.xml do
@@ -72,11 +63,14 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def new
-    set_portal_page :new_topic
-
-    # @forum = forum_scoper.find(params[:forum_id])
-    @forum_options = current_portal.forum_categories.map{ |c| [c.name, c.customer_editable_forums.map{ |f| [f.name, f.id] } ] }
     @topic = current_account.topics.new
+    set_portal_page :new_topic
+  end
+
+
+  def edit
+    set_portal_page :new_topic
+    render :new
   end
   
   def create
@@ -111,13 +105,6 @@ class Support::Discussions::TopicsController < SupportController
         format.xml  { render :xml => @topic.errors }
       end
     end
-  end
-  
-  def edit
-    set_portal_page :new_topic
-
-    @forum_options = current_portal.forum_categories.map{ |c| [c.name, c.customer_editable_forums.map{ |f| [f.name, f.id] } ] }
-    @topic_form = render_to_string :partial => "form"
   end
 
   def update
@@ -159,26 +146,7 @@ class Support::Discussions::TopicsController < SupportController
     @monitorship.update_attribute(:active, !@monitorship.active)
     
     render :nothing => true
-  end
-  
-   def update_stamp
-    if  @topic.update_attributes(:stamp_type => params[:stamp_type])
-      respond_to do |format|
-        format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
-        format.xml  { head 200 }
-      end
-     end
-  end
-    
-  def remove_stamp
-    if @topic.update_attributes(:stamp_type => nil) 
-     respond_to do |format|
-      format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
-      format.xml  { head 200 }
-    end
-   end
- end
- 
+  end 
 
   def like   
     unless @topic.voted_by_user?(current_user)
@@ -197,26 +165,26 @@ class Support::Discussions::TopicsController < SupportController
      render :partial => "topic_vote", :object => @topic
   end  
 
-def update_lock
-  @topic.locked = !@topic.locked
-  @topic.save!
-   respond_to do |format|
-      format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
-      format.xml  { head 200 }
-   end
-end
+  def update_lock
+    @topic.locked = !@topic.locked
+    @topic.save!
+     respond_to do |format|
+        format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+        format.xml  { head 200 }
+     end
+  end
 
-def users_voted
-    render :partial => "forum_shared/topic_voted_users", :object => @topic
-end
+  def users_voted
+      render :partial => "forum_shared/topic_voted_users", :object => @topic
+  end
 
- def create_attachments
-   return unless @topic.posts.first.respond_to?(:attachments) 
-    unless params[:post].nil?
-    (params[:post][:attachments] || []).each do |a|
-      @topic.posts.first.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
+  def create_attachments
+    return unless @topic.posts.first.respond_to?(:attachments) 
+      unless params[:post].nil?
+      (params[:post][:attachments] || []).each do |a|
+        @topic.posts.first.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
+      end
     end
-   end
   end
  
   
@@ -248,10 +216,6 @@ end
 
     def forum_scoper
       current_account.portal_forums
-    end
-    
-    def set_selected_tab
-      @selected_tab = :forums
     end
   
     def topic_param 

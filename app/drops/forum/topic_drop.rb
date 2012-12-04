@@ -79,6 +79,10 @@ class Forum::TopicDrop < BaseDrop
   def attachments
     source.posts.first.attachments
   end
+
+  def exits?
+    source.new_record?
+  end
     
   def locked?
     source.locked?

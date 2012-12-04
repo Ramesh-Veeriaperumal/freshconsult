@@ -5,8 +5,6 @@ module SupportHelper
 	
 	# ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
 	
-	# WillPaginate::ViewHelpers.pagination_options[:renderer] = 'BootstrapPaginationRenderer'
-	
 	# Forum based helpers 
 	# Have to move these into their respective pages
 	def bold content
@@ -133,21 +131,6 @@ module SupportHelper
 	    visible    
 	  end
 
-	def follow_topic_button topic, follow_label = "Follow", unfollow_label = "Unfollow"
-		if User.current
-			_monitoring = !Monitorship.count(:id, 
-							:conditions => ['user_id = ? and topic_id = ? and active = ?', 
-							User.current.id, topic['id'], true]).zero?
-
-			link_to _monitoring ? unfollow_label : follow_label, topic['toggle_follow_url'], 
-				"data-remote" => true, "data-method" => :put, 
-				:class => "btn btn-small #{_monitoring ? 'active' : ''}",
-				"data-toggle" => "button",
-				"data-button-active-label" => unfollow_label, 
-				"data-button-inactive-label" => follow_label
-		end
-	end
-
 	# Applicaiton link helpers
 	# !PORTALCSS move this area INTO link_helpers later
 	def login_via_google label
@@ -164,71 +147,85 @@ module SupportHelper
 	
 	# Topic specific filters
 
-	def voting topic
-		text = ""
+	# Follow/unfollow button 
+	# To modify label the liquid can be modified as so
+	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
+	def follow_topic_button topic, follow_label = "Follow", unfollow_label = "Unfollow"
+		if User.current
+			_monitoring = !Monitorship.count(:id, 
+							:conditions => ['user_id = ? and topic_id = ? and active = ?', 
+							User.current.id, topic['id'], true]).zero?
 
-		# text << render(:partial => "/support/discussions/topics/topic_vote", :object => topic)
+			link_to _monitoring ? unfollow_label : follow_label, topic['toggle_follow_url'], 
+				"data-remote" => true, "data-method" => :put, 
+				:class => "btn btn-small #{_monitoring ? 'active' : ''}",
+				"data-toggle" => "button",
+				"data-button-active-label" => unfollow_label, 
+				"data-button-inactive-label" => follow_label
+		end
 	end
 
-	# def link_to_solutions label
-	# 	_active_page_type = [:solution_home, :article_list, :article_view]
-	# 	link_to(label, "/support/", :class => "abc")
-	# end
+	# Ticket specific helpers
+	# Construct ticket form UI
+	def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
+	    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
+	    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+	    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
+	    field_name      = (field_name.blank?) ? field.field_name : field_name
+	    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+	    label = label_tag object_name+"_"+field.field_name, field_label
+	    case dom_type
+	      when "requester" then
+	        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+	        unless is_edit or params[:format] == 'widget'
+	          element = add_cc_field_tag element, field
+	        end
+	      when "email" then
+	        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+	        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
+	        element += add_name_field unless is_edit
+	      when "text", "number" then
+	        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+	      when "paragraph" then
+	        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value, :rows => 6)
+	      when "dropdown" then
+	        if (field.field_type == "default_status" and in_portal)
+	          element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
+	        else
+	          element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+	        end
+	      when "dropdown_blank" then
+	        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+	      when "nested_field" then
+	        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
+	      when "hidden" then
+	        element = hidden_field(object_name , field_name , :value => field_value)
+	      when "checkbox" then
+	        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
+	      when "html_paragraph" then
+	        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value, :rows => 6)
+	    end
+	    content_tag :div, element, :class => dom_type
+	 end
 
-	# Tab links
-	# def link_to label
-	# 	link_to(label, "/")
-	# end
+	def add_cc_field_tag element , field    
+		if current_user && current_user.agent? 
+		  element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html")) 
+		elsif current_user && current_user.customer? && field.all_cc_in_portal?
+		  element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
+		else
+		   element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
+		end
+		return element
+	end
 
-	# Portal new ticket form
-	# def construct_portal_ticket_element(form, field)
-	# 	output = []
-	# 	output << %(<div class="control-group">)
-	# 	output << %(</div>)
-	# 	case field.dom_type
-	# 		# when "requester" then
-	# 		# 	output << content_tag(:div, render(:partial => "requester_field", :locals => { :object_name => object_name, :field => field }))
-	# 		# 	# output << add_cc_field_tag(field) if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
-	# 		# 	# output << add_name_field unless is_edit
-	# 		when "text", "number" then
-	# 			output << form.text_field(field.name)
-	# 		# when "paragraph" then
-	# 		# 	output << form.text_area(object_name, field_name, :class => element_class, :value => field_value)
-	# 		when "dropdown", "dropdown_blank" then
-	# 			form.select field.name, field.choices
-	# 			# if (field.field_type == "default_status" and in_portal)
-	# 			#   output << select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
-	# 			# else
-	# 			#   output << select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
-	# 			# end
-	# 		# when "dropdown_blank" then
-	# 		# 	output << select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
-	# 		# when "nested_field" then
-	# 		# 	output << nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
-	# 		# when "hidden" then
-	# 		# 	output << hidden_field(object_name , field_name , :value => field_value)
-	# 		# when "checkbox" then
-	# 		# 	output << content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
-	# 		when "html_paragraph" then
-	# 			output << form.rich_editor(field.name)
-	# 		end
+	def add_requester_field
+		content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
+	end
 
-
-	    # dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-	    # element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-	    # field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
-	    # field_name      = (field_name.blank?) ? field.field_name : field_name
-	    # object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
-	    
-	 #    output = []
-	 #    output << %(<div class="control-group">)
-	 #    output << label_tag("#{object_name}_#{field.field_name}", field_label, :class => "control-label")
-	 #    output << %(<div class="controls">)
-	 
-
-		# output << %(</div></div>)
-	 #    # content_tag :div, element, :class => dom_type
-	 #    output.join(" ")
-	# end
+	def add_name_field
+		content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
+			:id => "name_field", :class => "hide") unless current_user
+	end
 
 end

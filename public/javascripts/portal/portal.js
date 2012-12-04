@@ -10,11 +10,6 @@ jQuery.noConflict()
 	$(function () {
 
 		"use strict"
-
-		//!PORTALCSS move this helper javascript to a util js
-		String.prototype.sanitize_ids = function() {
-		    return "#" + this.replace(' ', '').split(',').join(", #")
-		};
 		
 		// Attaching dom ready events
 
@@ -58,7 +53,7 @@ jQuery.noConflict()
 			ev.preventDefault()
 			if($(this).data("remote")) return
 
-			$($(this).data("showDom")||"").show()
+			$($(this).data("showDom")).show()
 		})
 
 		// Data api for onclick hiding dom elements
@@ -66,7 +61,7 @@ jQuery.noConflict()
 			ev.preventDefault()
 			if($(this).data("remote")) return
 
-			$($(this).data("hideDom")||"").hide()
+			$($(this).data("hideDom")).hide()
 		})
 
 		// Data api for onclick toggle of dom elements
@@ -74,8 +69,22 @@ jQuery.noConflict()
 			ev.preventDefault()
 			if($(this).data("remote")) return
 
-			$($(this).data("toggleDom")||"").toggle()
+			$($(this).data("toggleDom")).toggle()
 		})
+
+		// Data api for onclick for show hiding a proxy input box to show inplace of a redactor or textarea
+		$("input[data-proxy-for]").live("click", function(ev){
+			ev.preventDefault()
+			$(this).hide()
+
+			// Getting if there is any textarea in the proxy div
+			var _textarea = $($(this).data("proxyFor"))
+								.show()
+								.find("textarea")
+
+            // Setting the focus to the editor if it is redactor with a pre check for undefined
+			if(_textarea.getEditor()) _textarea.getEditor().focus()
+		})		
 
 		// Form validation any form append to the dom will be tested via live query and then be validated via jquery
 		$("form[rel=validate]").livequery(function(ev){

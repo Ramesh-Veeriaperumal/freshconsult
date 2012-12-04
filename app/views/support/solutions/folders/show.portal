@@ -3,10 +3,9 @@
 		<a href="{{ portal.solutions_home_path }}">Solution home</a>
 		<a href="{{ article.category.url }}">{{ folder.category.name }}</a>
 	</div>
-	<h2>{{ folder.name }}</h2>
-	<p class="intro">{{ folder.description }}</p>
-	<hr />
-	{% paginate folder.articles by 5 %}
+	<h2 class="heading">{{ folder.name }}</h2>
+	<p>{{ folder.description }}</p>
+	{% paginate folder.articles by 10 %}
 	<section class="article-list content-list">		
 		<ul>
 			{% for article in paginate.collection %}

@@ -25,14 +25,14 @@
 				like_support_discussions_topic_path(@topic), 
 				"data-remote" => true,
 				"data-method" => :put,
-				"data-update" => "vote-toolbar",
+				"data-update" => "#vote-toolbar",
 				:class => "btn btn-small" %>
 	<% else %>
 		<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_unlike_button"),
 				unlike_support_discussions_topic_path(@topic),
 				"data-remote" => true,
 				"data-method" => :put,
-				"data-update" => "vote-toolbar",
+				"data-update" => "#vote-toolbar",
 				:class => "btn btn-small" %>
 	<% end %>
 </span>

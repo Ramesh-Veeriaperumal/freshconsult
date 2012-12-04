@@ -1,17 +1,15 @@
 .c-wrapper, .cs-g-c{ @include pie-clearfix; }
 
-.content, .content-form{
+.content, .content-form, .content-light{
 	border: $content-border;
 	@include pie-clearfix;
 	padding: $content-padding-mobile;
 	@include box-shadow(rgba(255, 255, 255, 0.7) 0 1px inset);
-}
-
-.content{
-	background-color: $page-background;
 	position: relative;
 }
 
+.content{ background-color: $page-background; }
+.content-light{	background-color: $page-light-background; }
 .content-form{ background-color: $page-form-background; }
 
 .cs-s{
@@ -189,7 +187,7 @@
 /* Media styles for tablet and above */
 
 @include at-breakpoint($break-tablet){
-	.content, .content-form{ 
+	.content, .content-form, .content-light{ 
 		padding: $content-padding; 
 		margin-top: 10px; 
 	}

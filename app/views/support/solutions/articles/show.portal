@@ -9,9 +9,7 @@
 	</b>
 
 	<h2 class="heading">{{ article.title }}</h2>
-	<p class="intro">
-		Modified on: {{ article.modified_on }}
-	</p>
+	<p>Modified on: {{ article.modified_on }}</p>
 
 	<hr />
 	{% comment %}

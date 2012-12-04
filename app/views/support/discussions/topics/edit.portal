@@ -1,4 +1,0 @@
-<section class="main content rounded-6">
-	<legend>Edit topic</legend>
-	{{ topic_form }}
-</section>

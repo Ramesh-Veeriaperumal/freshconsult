@@ -1,12 +1,10 @@
 class Portal::Page < ActiveRecord::Base
 	set_table_name "portal_pages"
-
-	belongs_to :template                  
-	belongs_to :account                    
 	
-	validates_uniqueness_of :content, :scope => [:template_id, :page_type]
-
-	before_create { |page| page.account ||= Account.current }
+	belongs_to_account
+	belongs_to :template	
+	
+	validates_uniqueness_of :content, :scope => [:template_id, :page_type]	
   
 	#!PORTALCSS Need to move these constances to lib
 
@@ -16,7 +14,7 @@ class Portal::Page < ActiveRecord::Base
 	PAGE_TYPES = [
 		# General pages
 		[:portal_home,        	1,  "home/index.portal", "support_solutions_path"],    
-		[:user_signup,        	2,  "support/registrations/new.portal", "new_support_registration_path"],
+		[:user_signup,        	2,  "support/signups/show.portal", "new_support_registration_path"],
 		[:user_login,         	3,  "support/new.portal", "support_login_path"],
 		[:profile_edit,       	4,  "support/profiles/edit.portal", "edit_profile_path"],
 		[:search,    		  	5,  "support/search/index", "support_solutions_path"],

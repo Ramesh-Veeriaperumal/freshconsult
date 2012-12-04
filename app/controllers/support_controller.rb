@@ -4,9 +4,9 @@ class SupportController < ApplicationController
   layout 'portal'
   before_filter :set_portal, :set_forum_builder
 
-  def new
+  def new    
+    @user_session = current_account.user_sessions.new
     set_portal_page :user_login
-    @user_session = current_account.user_sessions.new 
   end
  
   protected
@@ -54,7 +54,7 @@ class SupportController < ApplicationController
     def set_layout_liquid_variables(page_type_token)
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_type_token ]
       _content = render_to_string :file => partial, 
-                      :locals => { :dynamic_template => (get_data_for_page(page_type_token) || "") }
+                  :locals => { :dynamic_template => (get_data_for_page(page_type_token) || "") }
       @content_for_layout = _content
     end
 

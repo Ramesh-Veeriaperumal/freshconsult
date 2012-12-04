@@ -45,7 +45,7 @@ class SearchController < ApplicationController
 
   def widget_solutions
     @widget_solutions = true
-    solutions
+    search_content [Solution::Article], '/support/search/suggest'
   end
   
   protected

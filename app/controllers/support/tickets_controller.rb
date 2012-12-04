@@ -12,30 +12,31 @@ class Support::TicketsController < SupportController
   end
   before_filter :check_user_permission, :only => [:show]
   before_filter :require_user_login, :only => [:index, :filter, :close_ticket, :update]
-  before_filter :load_item, :only =>[:update]
+  before_filter :load_item, :only =>[:show, :update]
 
   before_filter :set_mobile, :only => [:filter, :show, :update, :close_ticket]
-  before_filter :set_date_filter, :only => [:export_csv]
-  
-  before_filter :only => :show do |c|
-    c.send(:set_portal_page, :ticket_view)
-  end
+  before_filter :set_date_filter, :only => [:export_csv]  
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+
+  def show
+    @ticket = @item
+    set_portal_page :ticket_view
+  end
   
-  def index
-    set_portal_page :ticket_list
+  def index    
     build_tickets
     @page_title = t("helpdesk.tickets.views.#{@current_filter}")    
+    set_portal_page :ticket_list
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }
     end
   end
 
-  def new
-    set_portal_page :submit_ticket
+  def new    
     @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
+    set_portal_page :submit_ticket
   end
 
   def update
@@ -52,10 +53,10 @@ class Support::TicketsController < SupportController
     end
   end
 
-  def filter
-    set_portal_page :ticket_list
+  def filter    
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
+    set_portal_page :ticket_list
     respond_to do |format|
       format.html { render :partial => "ticket_list" }
       format.js
@@ -160,7 +161,6 @@ class Support::TicketsController < SupportController
       @company = current_user.customer.presence
       @filter_users = current_user.customer.users if current_user.client_manager?
       @requested_by = current_requested_by
-      puts "===> #{@requested_by}"
 
       date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? 
           ticket_scope.tickets : 

@@ -27,7 +27,7 @@ module FormBuilders
         options[:style] = "height:#{options[:height]}px;"
 
         output = <<HTML
-#{text_area_tag(name, content, options)}
+#{text_area_tag(name, content, options.merge({:rel => "redactor"})) }
 <script type="text/javascript">
     if (window['redactors'] === undefined) window.redactors = {}
     !function( $ ) {

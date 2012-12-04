@@ -9,6 +9,7 @@
 				<li>
 					<%= link_to(article.excerpts.title, support_solutions_article_path(article)) %>
 					<span class="label label-small label-light"><%= article.folder.name %></span> 
+					<p><%= article.excerpts.desc_un_html  %></p>
 				</li>
 			<% end %>
 			</ul>

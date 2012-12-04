@@ -1,4 +1,9 @@
-<section class="main content rounded-6">	
-	<h3 class="heading">{% translate topic.new %}</h3>
+<section class="main content rounded-6">
+	{% if topic.exits? %}
+		<h3 class="heading">{% translate topic.new %}</h3>
+	{% else %}
+		<h3 class="heading">{% translate topic.edit %}</h3>
+	{% endif %}
+
 	{% snippet form %}
 </section>

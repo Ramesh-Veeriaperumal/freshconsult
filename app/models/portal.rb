@@ -115,6 +115,10 @@ class Portal < ActiveRecord::Base
     self.template
   end
 
+  def forum_options
+    self.forum_categories.map{ |c| [c.name, c.customer_editable_forums.map{ |f| [f.name, f.id] } ] }    
+  end
+
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)

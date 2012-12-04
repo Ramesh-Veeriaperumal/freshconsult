@@ -34,7 +34,9 @@ stylesheets:
     - public/stylesheets/codemirror.css
 
   portal:                
-    - public/stylesheets/portal/portal.css
+    # - public/stylesheets/portal/portal.css
+    - public/stylesheets/redactor.css
+    - public/stylesheets/app/lib/qtip.css
     # - public/stylesheets/portal/responsive.css 
 
   tour_my_app:
@@ -170,6 +172,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/portal/jquery-ui-1.9.1.custom.js
+    - public/javascripts/frameworks/plugins/jquery.qtip.js
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/portal.js
 
