@@ -511,6 +511,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 	bindShowActivity: function(activities){
 		var email_marketing = this;
+		jQuery('#show-activity-'+this.app).die();
 		jQuery('#show-activity-'+this.app).live('click', function(ev){
 			ev.preventDefault();
 			cid = jQuery(this).attr("class").split(" ")[1];
