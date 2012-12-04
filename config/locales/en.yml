@@ -2553,7 +2553,7 @@ en:
     campaignmonitor:
       label: "Campaign Monitor"
       desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>Campaign Monitor Integration Help</h4>"
+      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, get your API Key from your Account Settings.<br/><br/> The instructions to get your ClientID is available from http://www.campaignmonitor.com/api/getting-started/#clientid. <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
       form:
         api_key: "API Key"
         api_key_info: "Get your API Key from Account Settings"

@@ -24,7 +24,7 @@ class ConstantContact < ActiveRecord::Migration
         </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/constantcontact.js");
-        ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}"  } ;
+        ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}", uid: "{{constantcontact.uid}}"  } ;
        </script>}
        options = {"display_in_pages" => ["contacts_show_page_side_bar"], "clazz" => "hide"}.to_yaml
        execute("INSERT INTO widgets(name, description, script, application_id, options) VALUES ('#{@widget_name}', '#{description}', '#{script}', #{app_id}, '#{options}')")

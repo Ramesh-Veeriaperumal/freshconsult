@@ -31,7 +31,7 @@ ConstantContactWidget.prototype= {
 		ccBundle.username = ccBundle.token;
 		ccBundle.url_token_key = "access_token";
 		ccBundle.auth_type = "UAuth";
-		ccBundle.domain = "https://api.constantcontact.com/ws/customers/"+"nathanclassic";
+		ccBundle.domain = "https://api.constantcontact.com/ws/customers/"+ccBundle.uid;
 		ccBundle.ssl_enabled = "true";
 		ccBundle.requests = {getUserInfo: this.getUserInfo(), getCampaigns: this.getCampaigns(), getAllLists: this.getAllLists()};
 		ccBundle.requestForListSub = true;
@@ -161,7 +161,7 @@ ConstantContactWidget.prototype= {
 			id = (XmlUtil.getNodeValue(entry[0], "id")).split("/contacts/")[1];
 			name = (XmlUtil.getNodeValue(entry[0], "Name"));
 			since = (XmlUtil.getNodeValue(entry[0], "InsertTime"));
-			contact = {"id" : id, "name" : name, "since" : since};
+			contact = {"id" : id, "name" : name, "since" : since.replace(/[T|Z]/g, ' ')};
 			this.contact = contact;
 			return this.contact;
 		}

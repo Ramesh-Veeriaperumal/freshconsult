@@ -281,7 +281,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			widgetOptions.integratable_impl = integratable_impl;
 			$super(widgetOptions);
 			this.renderPrimary();
-			this.mc_subscribe_lists = new Array(); this.mc_unsubscribe_lists = new Array();
+			this.mc_subscribe_lists = []; this.mc_unsubscribe_lists = [];
 		}
 	},
 
@@ -293,11 +293,31 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		else if(this.app == "mailchimp" || this.app == "campaignmonitor"){
 			this.getCampaignsForEmail();
 		}
+		this.bindClicks();
+	},
+
+	bindClicks: function(){
+		var obj = this;
+		jQuery('#' + this.options.widget_name).on('click','.lists-submit', (function(ev){
+			ev.preventDefault(); obj.manageLists();
+		}));
+		jQuery('#' + this.options.widget_name).on('click', '.contact-submit', (function(ev){
+			ev.preventDefault(); obj.addUser();
+		}));
+		jQuery('#' + this.options.widget_name).on('click', '.newlists-submit', (function(ev){
+			ev.preventDefault(); obj.newSubscribe();
+		}));
+		jQuery('#' + this.app + "_widget").on('click', '.list-tab', (function(ev){
+			ev.preventDefault(); obj.mailingLists();
+		}));
+		jQuery('#' + this.app + "_widget").on('click', '.campaign-tab', (function(ev){
+			ev.preventDefault(); obj.campaignActivity();
+		}));
 	},
 
 	updateRequests: function(options){
 		for(key in options.requests){
-			options.requests[key].on_failure = this.handleFailure;
+			options.requests[key].on_failure = this.handleFailure.bind(this);
 		}
 		return options;
 	},
@@ -352,15 +372,13 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	exportUser: function(){
 		var obj = this; var export_contact = {};
 		this.renderTemplate(_.template(this.Export, {name: this.options.reqName, email: this.options.reqEmail, appname: this.options.app_name}));
-		jQuery('#' + this.options.widget_name + ' .contact-submit').click(function(ev){
-			ev.preventDefault(); obj.addUser();
-		});
+		
 		jQuery('#' + this.options.widget_name).removeClass('loading-center');
 		this.renderUser(export_contact);
 	},
 
 	newSubscribe: function(){
-		var subscribed = [];
+		var subscribed = []; this.mc_subscribe_lists = []; this.mc_unsubscribe_lists = [];
 		if(jQuery('#' + this.options.widget_name + ' .lists input:checked').length == 0){
 			this.processFailure("Please select a mailing list to proceed");
 		}else{
@@ -451,6 +469,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 	handleSubscribedLists: function(response){
+		var obj = this; this.mc_subscribe_lists = []; this.mc_unsubscribe_lists = [];
 		if(this.options.requestForListSub == false){
 			lists = this.lists;
 		}
@@ -458,10 +477,9 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			lists = this.options.integratable_impl.handleSubscribedLists(response);
 		}
 		for(var i=0; i<lists.length; i++){
-			jQuery('#'+lists[i]).attr('checked', true)
+			jQuery('#'+lists[i]).attr('checked', true);
 			this.mc_subscribe_lists.push(lists[i]);
 		}
-		var obj = this;
 		jQuery('#' + this.options.widget_name + ' .lists input:unchecked').each(function() {
 		  obj.mc_unsubscribe_lists.push($(this).id);
 		});
@@ -479,16 +497,10 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			}
 			if(this.exportFlag){
 				this.renderTemplate(_.template(this.NewLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .lists-load')[0]);
-				jQuery('#' + this.options.widget_name + ' .lists-submit').click(function(ev){
-					ev.preventDefault(); obj.newSubscribe();
-				});
 				jQuery('#' + this.options.widget_name + ' .lists-load').removeClass('loading-center').prepend("<hr/>");
 			}
 			else{
 				this.renderTemplate(_.template(this.MailingLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .emailLists')[0]);
-				jQuery('#' + this.options.widget_name + ' .lists-submit').click(function(ev){
-					ev.preventDefault(); obj.manageLists();
-				});
 				this.getSubscribedLists();
 			}
 		}
@@ -506,8 +518,12 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 				jQuery('#user-campaign-' + cid).slideDown();
 				if(email_marketing.app == "mailchimp")
 					email_marketing.options.integratable_impl.getCampaignActivity((jQuery(this).attr("class")).split(" ")[1]);
-				else
+				else{
+					if(_.keys(activities).length == 0)
+						activities[cid] = [{"type": "", "time": "No campaign activity found for this campaign"}]
 					email_marketing.getCampaignActivity((jQuery(this).attr("class")).split(" ")[1], activities);
+				}
+					
 				jQuery('#user-campaign-' + cid).removeClass('hide');
 				jQuery('.'+cid).children().css('background-color', '#DDD');
 			}else{
@@ -524,15 +540,23 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 		getCampaignActivity: function(campaignId, activities){
-		var activity = "";
+		var activity = "", activities_time = "";
 		if(this.campaigns[campaignId].send_time){
 			activity = _.template(this.CampaignActivity, {action: "Sent", action_time: this.formatDate(this.campaigns[campaignId].send_time), action_url: ""});
 		}
 		for(key in activities){
 			if(key == campaignId){
 				for(i=0; i<activities[key].length; i++){
-					if(this.app != "constantcontact")
-						activities_time = (activities[key][i].time && activities[key][i].time != "") ? this.formatDate(activities[key][i].time) :  "";
+					if(this.app != "constantcontact"){
+						if(activities[key][i].time && activities[key][i].time != "") 
+							if(activities[key][i].type != "")
+								activities_time = this.formatDate(activities[key][i].time);
+							else
+								activities_time = activities[key][i].time;
+					}
+					else{
+						activities_time = activities[key][i].time;
+					}
 					activity += _.template(this.CampaignActivity, {action: activities[key][i].type, action_time: activities_time, action_url: activities[key][i].link || ""});
 				}
 			}
@@ -587,7 +611,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	handleUpdateSubscription: function(){
 		this.listsTmpl = null;
 		if(this.ErrorMessages.length > 0){
-			this.processFailure(this.ErrorMessages.join(', '));
+			this.processFailure(this.ErrorMessages[(this.ErrorMessages.length-1)]);
 		}
 		this.options.integratable_impl.handleUpdateSubscription();
 		
@@ -665,14 +689,6 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		var ecw = this;
 		jQuery('#' + this.app + "_widget").removeClass('loading-center');
 		this.renderTemplate(_.template(this.Parent, {campaigns: this.campaignTmpl}));
-		jQuery('#' + this.app + "_widget .list-tab").click(function(ev){
-			ev.preventDefault();
-			ecw.mailingLists();
-		});
-		jQuery('#' + this.app + "_widget .campaign-tab").click(function(ev){
-			ev.preventDefault();
-			ecw.campaignActivity();
-		});
 	},
 
 	renderUser: function(contact){
@@ -728,7 +744,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 	Title: '<div class="email_marketing">'+
 						'<div class="contact_title">'+
-							'<div class="<%=app%>-modal-logo"> <h3 class="fname"><%=contact.name%></h3></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/").replace(/[T|Z]/g, " ")).strftime("%a, %d %b %Y"))) : "" %></div>'+
+							'<div class="<%=app%>-modal-logo"> <h3 class="fname"><%=contact.name%></h3></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/")).strftime("%a, %d %b %Y"))) : "" %></div>'+
 						'</div>'+
 					'</div>',
 
@@ -755,7 +771,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 
 	NewLists: '<div class="mailing-msg"><b>Choose from the below mailing lists to add the contact and click Save</b></div>'+
-						'<div class="listsExportAll"><input type="submit" class="uiButton lists-submit"  value="Save"></div>' +
+						'<div class="listsExportAll"><input type="submit" class="uiButton newlists-submit"  value="Save"></div>' +
 						'<div class="all-lists"><div class="lists threecol-form"><%=lists%></div></div>',
 
 
