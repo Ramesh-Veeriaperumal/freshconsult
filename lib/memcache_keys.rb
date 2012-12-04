@@ -22,6 +22,8 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v1/ACCOUNT_STATUSES:%{account_id}"
 
+  PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
+
   class << self
 
     def newrelic_begin_rescue(&block)

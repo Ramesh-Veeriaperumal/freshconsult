@@ -3,7 +3,7 @@
 <% 
 soft_reset_url = "javascript:void(0)"
 soft_reset_url =  admin_portal_template_page_soft_reset_path( :page_id => params[:id], 
-										:page_type => @portal_page.page_type) if @fromRedis
+										:page_type => @portal_page.page_type) if @from_cache
 %>
 <h3 class="title">
 	<span class="light">Editing:</span> <%= @portal_page.name %>
@@ -14,8 +14,19 @@ soft_reset_url =  admin_portal_template_page_soft_reset_path( :page_id => params
             "data-fullscreen-actions" => "portal-page-actions" %>
 </p>
 <br />
-<div class="well">
-	<%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
-  <%= submit_tag "Draft", :name => 'save_button',:class => "btn floatr", :disable_with => "Please wait..." %>
-  <%= link_to "Discard", soft_reset_url, :class => "btn #{!@fromRedis&& 'disabled'}", :disabled => !@fromRedis %>
+<div class="well" id="pages_<%=@portal_page.page_type%>_btns">
+	<%= submit_tag "Preview", 
+		:name => 'preview_button', 
+		:class => "btn primary floatr", 
+		:target => "_blank", 
+		:disable_with => "Please wait...",
+		:onclick => "FD.PortalTemplate.save(this,event)",
+		:"data-code-refresh" => "#portal_page_content" %>
+  <%= submit_tag "Draft", 
+  	:name => 'save_button', 
+  	:class => "btn floatr", 
+  	:disable_with => "Please wait...",
+  	:onclick => "FD.PortalTemplate.save(this,event)",
+		:"data-code-refresh" => "#portal_page_content" %>
+  <%= link_to "Discard", soft_reset_url, :class => "btn #{!@from_cache&& 'disabled'}" %>
 </div>

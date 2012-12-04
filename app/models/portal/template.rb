@@ -1,12 +1,10 @@
 class Portal::Template < ActiveRecord::Base    
-	include RedisKeys
+
 	set_table_name "portal_templates"
-	
+
+	include MemcacheKeys
   belongs_to_account
   belongs_to :portal
-  # before_create :set_default_values
-  before_update :create_pages
-  after_update :remove_portal_preview_keys
   
   has_many :pages, :class_name => 'Portal::Page', :dependent => :destroy
 
@@ -28,8 +26,8 @@ class Portal::Template < ActiveRecord::Base
     default_pages = Portal::Page::PAGE_TYPE_OPTIONS.map{ |a| { :page_type => a[1], :page_name => a[0] } }
   end
 
-  def default_values
-    HashWithIndifferentAccess.new({
+  def default_preferences
+    {
       :bg_color => "#ffffff", 
       :header_color => "#4c4b4b", 
       :help_center_color => "#f9f9f9", 
@@ -45,7 +43,7 @@ class Portal::Template < ActiveRecord::Base
       :linkColor => "#049cdb", 
       :linkColorHover => "#036690",
       :inputFocusRingColor => "#f4af1a"
-    }).merge(self.get_portal_pref)
+    }.merge(self.get_portal_pref)
   end
 
   # Merge with default params for specific portal
@@ -55,43 +53,73 @@ class Portal::Template < ActiveRecord::Base
   end
 
   def reset_to_default
-    self.pages.destroy
-    self.preferences = default_values
+    self.pages.each(&:delete)
+    self.preferences = default_preferences
     self.header = nil
     self.footer = nil
     self.custom_css = nil
     self.layout = nil
-    self.send(:update_without_callbacks)
+    self.save
+  end
+
+  def draft!
+    MemcacheKeys.cache(draft_key,self)
+  end
+
+  def get_draft
+    MemcacheKeys.get_from_cache(draft_key)
+  end
+
+  def soft_reset!(keys)
+    cached_template = MemcacheKeys.get_from_cache(draft_key)
+    db_template = portal.template
+    keys.each { |key| cached_template[key.to_sym] = db_template[key.to_sym] }
+    cached_template.draft!
+    clear_cache! if cached_template.changes.blank?
+  end
+
+  def publish!
+    self.save
+    pages_from_cache.each(&:save)
+    clear_cache!
+    Portal::Page::PAGE_TYPE_OPTIONS.map do |page|
+      page_label = page[0]
+      clear_page_cache!(page_label)
+    end
+  end
+
+  def page_from_cache(page_label)
+    key = draft_key(page_label)
+    MemcacheKeys.get_from_cache(key)
+  end
+
+  def pages_from_cache
+    cached_pages = []
+    Portal::Page::PAGE_TYPE_OPTIONS.map do |page|
+      page_label = page[0]
+      cached_pages << page_from_cache(page_label) unless page_from_cache(page_label).nil?
+    end
+    cached_pages
+  end
+
+  def clear_cache!
+    MemcacheKeys.delete_from_cache draft_key
+  end
+
+  def cache_page(page_label, page)
+    key = draft_key(page_label)
+    MemcacheKeys.cache(key, page)
+  end
+
+  def clear_page_cache!(page_label)
+    MemcacheKeys.delete_from_cache draft_key(page_label)
   end
 
   private
-
-    def page_redis_key(page_label)
+    def draft_key(label = "cosmetic")
       PORTAL_PREVIEW % {:account_id => self.account_id, 
-                        :label=> page_label, 
                         :template_id=> self.id, 
+                        :label => label,
                         :user_id => User.current.id }
     end
-
-    def page_redis_content(page_label)
-      get_key(page_redis_key(page_label))
-    end
-
-    def create_pages
-      Portal::Page::PAGE_TYPE_OPTIONS.map do |page|
-        page_label = page[0]
-        page_type = page[1]  
-        portal_page = self.pages.find_by_page_type(page_type) || 
-                      self.pages.new( :page_type => page_type )
-        portal_page[:content] = page_redis_content(page_label)
-        portal_page.save() unless portal_page[:content].nil?
-      end
-    end
-
-    def remove_portal_preview_keys
-      portal_preview_keys = array_of_keys(PORTAL_PREVIEW_PREFIX % {:account_id => self.account_id, 
-           :user_id => User.current.id})
-       portal_preview_keys.each { |key| remove_key(key) } 
-    end
-
 end

@@ -1,5 +1,4 @@
 class ThemeController < SupportController
-	include RedisKeys
 
 	caches_page :index
 	skip_before_filter :set_liquid_variables
@@ -13,7 +12,6 @@ class ThemeController < SupportController
 								linkColor linkColorHover inputFocusRingColor)
 
 	def index		
-		@portal.build_template.save if @portal.template.blank? 
 		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compact)
 		_options[:load_paths] << "#{RAILS_ROOT}/public/src/portal"
 
@@ -27,30 +25,18 @@ class ThemeController < SupportController
 	end
 
 	private
-
-		def redis_key label, template_id
-      PORTAL_PREVIEW % {:account_id => current_account.id, 
-                        :label=> label, 
-                        :template_id=> template_id, 
-                        :user_id => current_user.id
-                      }
+		def preview?
+      !session[:preview_button].blank? && !current_user.blank? && current_user.agent?
     end
 
     def get_preferences
-    	unless session[:preview_button].blank?
-    		rkey = redis_key(:preferences,@portal.template.id)
-				rdata = get_key(rkey)
-				rdata = JSON.parse(rdata) unless rdata.blank?
-    	end
-    	rdata || @portal.template.preferences || []
+    	return @portal.template.get_draft.preferences || @portal.template.preferences || [] if preview?
+    	@portal.template.preferences || []
     end
 
     def get_custom_scss
-    	unless session[:preview_button].blank?
-	    	rkey = redis_key(:custom_css,@portal.template.id)
-				rdata = get_key(rkey)
-			end
-			rdata || @portal.template.custom_css.to_s || ""
+			return @portal.template.get_draft.custom_css.to_s || @portal.template.custom_css.to_s || "" if preview?
+			@portal.template.custom_css.to_s || ""
     end
 
     def set_theme_colors

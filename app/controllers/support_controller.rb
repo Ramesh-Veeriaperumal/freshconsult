@@ -1,19 +1,18 @@
 class SupportController < ApplicationController
-  include RedisKeys
 
   layout 'portal'
   before_filter :set_portal, :set_forum_builder
 
   def new
-    set_portal_page :user_login
     @user_session = current_account.user_sessions.new 
+    set_portal_page :user_login
   end
  
   protected
-    def set_portal_page(page_type_token)
-      set_layout_liquid_variables page_type_token
+    def set_portal_page(page_label)
+      set_layout_liquid_variables page_label
       # Setting up current_tab based on the page type obtained
-      set_tab page_type_token
+      set_tab page_label
 
       # Setting dynamic header, footer, layout and misc. information 
       set_common_liquid_variables    
@@ -51,38 +50,28 @@ class SupportController < ApplicationController
   		@search_portal ||= render_to_string :partial => "/portal/search", :locals => { :dynamic_template => "", :placeholder => t('portal.search.placeholder') }     
   	end
 
-    def set_layout_liquid_variables(page_type_token)
-      partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_type_token ]
+    def set_layout_liquid_variables(page_label)
+      partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_label ]
       _content = render_to_string :file => partial, 
-                      :locals => { :dynamic_template => (get_data_for_page(page_type_token) || "") }
+                      :locals => { :dynamic_template => (get_data_for_page(page_label) || "") }
       @content_for_layout = _content
     end
 
     def get_data_for_template(sym)
-      common_template = current_portal.template[sym] 
-      if preview?
-        key = redis_key(sym, current_portal.template[:id])
-        common_template = exists(key) ? get_key(key) : current_portal.template[sym]
-      end
-      common_template
+      data = current_portal.template[sym] 
+      data = current_portal.template.get_draft[sym] || current_portal.template[sym] if preview?
+      data
     end
 
-    def get_data_for_page(page_type_token)
-      _page_id = Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[ page_type_token ]
-      page = current_portal.template.pages.find_by_page_type( _page_id )
+    def get_data_for_page(page_label)
+      page_type = Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[ page_label ]
+      page = current_portal.template.pages.find_by_page_type( page_type )
       page_template = page.content unless page.blank?
       if preview?
-        key = redis_key(page_type_token, current_portal.template[:id])
-        page_template = get_key(key) if exists(key)
+        draft_page = current_portal.template.page_from_cache(page_label)
+        page_template = draft_page[:content] unless draft_page.nil?
       end
       page_template
-    end
-
-    def redis_key label, template_id
-      PORTAL_PREVIEW % {:account_id => current_account.id, 
-                        :label=> label, 
-                        :template_id=> template_id, 
-                        :user_id => current_user.id }
     end
 
     def set_forum_builder

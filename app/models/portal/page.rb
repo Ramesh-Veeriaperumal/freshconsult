@@ -2,7 +2,7 @@ class Portal::Page < ActiveRecord::Base
 	set_table_name "portal_pages"
 
 	belongs_to :template                  
-	belongs_to :account                    
+	belongs_to_account                    
 	
 	validates_uniqueness_of :content, :scope => [:template_id, :page_type]
 

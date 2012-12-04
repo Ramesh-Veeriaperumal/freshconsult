@@ -1,5 +1,6 @@
 <div id="portal-simple-template-options">
   <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put, :rel => "validate" } do |f| -%>
+    <%= hidden_field_tag 'tab', :preferences %>
     <h3 class="title">Background color</h3>
     <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color, :btn_primary_background, :btn_background] %>
     <div class='row-fluid'>
@@ -73,16 +74,15 @@
     </div>
 
     <br />
-    <div class="well">
-      <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", :target => "_blank", :disable_with => "Please wait..." %>
-      <%= submit_tag "Draft", :name => 'save_button',:class => "btn floatr", :disable_with => "Please wait..." %>
+    <div class="well" id="preferences_btns">
+      <%= submit_tag "Preview", :name => 'preview_button', :onclick => "FD.PortalTemplate.save(this,event)", :class => "btn primary floatr", :target => "_blank", :"data-disable-with" => "Please wait..." %>
+      <%= submit_tag "Draft", :onclick => "FD.PortalTemplate.save(this,event)", :name => 'save_button',:class => "btn floatr", :"data-disable-with" => "Please wait..." %>
       <% 
         soft_reset_url = "javascript:void(0)"
-        soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "preferences") if @preferences_from_redis
+        cached_data = @cached_properties.include?(:preferences)
+        soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "preferences") if cached_data
       %>
-      <%= link_to "Discard", soft_reset_url, 
-          :class => "btn #{!@preferences_from_redis && 'disabled'}", 
-          :disabled => !@preferences_from_redis%>
+      <%= link_to "Discard", soft_reset_url, :class => "btn #{!cached_data && 'disabled'}"%>
     </div>
   <% end %>
 </div>

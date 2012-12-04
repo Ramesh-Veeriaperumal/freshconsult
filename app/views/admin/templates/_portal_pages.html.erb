@@ -1,5 +1,5 @@
 <div class="customize-pages" id="PortalPages">
-	<% @page_groups.each do |group_hash| %>
+	<% Portal::Page::PAGE_GROUPS.each do |group_hash| %>
 		<% group_hash.each do |key, group| %>
 		<h5><%= t("portal_pages.groups.#{key}") %></h5>
 		<ul id="PortalPageList" class="portal-pages-list">

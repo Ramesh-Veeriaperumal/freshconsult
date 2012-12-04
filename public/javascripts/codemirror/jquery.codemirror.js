@@ -24,6 +24,12 @@
 		    ,   "Esc": function(cm) {
 		        	jQuery(cm.getTextArea()).codemirror("hideFullscreen")
 		        }
+		    ,   "Shift-Cmd-S" : function(cm) {
+		    		FD.PortalTemplate.save(jQuery('input[name="save_button"]:visible')[0]);
+		    	}
+		    ,   "Shift-Cmd-P" : function(cm) {
+		    		FD.PortalTemplate.save(jQuery('input[name="preview_button"]:visible')[0]);
+		    	}
 		    }
 		}
 
@@ -127,6 +133,9 @@
 		}
 	,	refresh: function(){
 			this.$editor.refresh()
+		}
+	, save: function(){
+			this.$editor.save()
 		}
 	}
 
