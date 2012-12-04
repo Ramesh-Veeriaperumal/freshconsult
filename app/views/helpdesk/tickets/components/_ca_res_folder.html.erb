@@ -1,7 +1,7 @@
 <li>
 	<% 
 	url = "#{helpdesk_ca_folder_url(ca_res_folder.id)}" 
-	ticket = @ticket.present? ? @ticket.id : "bulk" %>
+	ticket = @ticket.present? ? @ticket.display_id : "bulk" %>
 
 	<%= link_to_function(truncate(h(ca_res_folder.name), :length => 25, :omission => "...")+
 	" (#{ca_res_folder.available_responses_count})", 

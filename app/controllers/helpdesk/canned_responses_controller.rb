@@ -30,6 +30,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
 
   def search
+    @ticket = current_account.tickets.find(params[:ticket].to_i) unless params[:ticket].blank?
     @ca_responses = scoper.accessible_for(current_user).find(:all, 
       :conditions => ["title like ? ", "%#{params[:search_string]}%"])
     respond_to do |format|

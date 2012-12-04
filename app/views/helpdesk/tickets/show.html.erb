@@ -60,7 +60,7 @@
 			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			</div>
-			<%= link_to( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "/helpdesk/canned_responses/index/#{@ticket.id}", "data-ajax-dialog" => true, "data-width" => "650", :id => "canned_response_show", :title => "Canned Responses", :class => "hide insert-canned-response" ) %> 
+			<%= link_to( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "/helpdesk/canned_responses/index/#{@ticket.display_id}", "data-ajax-dialog" => true, "data-width" => "650", :id => "canned_response_show", :title => "Canned Responses", :class => "hide insert-canned-response" ) %> 
 		<% unless @ticket_notes.blank? %>
 			<%= render :partial => 'note', :collection => @ticket_notes %>
 			<%= will_paginate @ticket_notes %>
