@@ -10,6 +10,8 @@ class Portal::Template < ActiveRecord::Base
 
   serialize :preferences, Hash
 
+  before_create :set_defaults
+
   TEMPLATE_MAPPING = [ 
     [:header,  "portal/header.portal"],    
     [:footer,  "portal/footer.portal"],
@@ -69,6 +71,7 @@ class Portal::Template < ActiveRecord::Base
 
   def soft_reset!(keys)
     cached_template = MemcacheKeys.get_from_cache(draft_key)
+    return if cached_template.nil?
     db_template = portal.template
     keys.each { |key| cached_template[key.to_sym] = db_template[key.to_sym] }
     cached_template.draft!
@@ -118,5 +121,10 @@ class Portal::Template < ActiveRecord::Base
                         :template_id=> self.id, 
                         :label => label,
                         :user_id => User.current.id }
+    end
+
+    def set_defaults
+      self.preferences = default_preferences
+      self.account = self.portal.account
     end
 end

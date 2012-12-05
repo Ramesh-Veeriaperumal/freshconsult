@@ -33,6 +33,8 @@ class Portal < ActiveRecord::Base
 
   has_many :portal_forums, :through => :forum_category , :conditions => { :forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone] } 
   has_many :portal_topics, :through => :portal_forums
+
+  after_create :create_template
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -137,6 +139,11 @@ class Portal < ActiveRecord::Base
 
       f_list.each { |field| to_ret.push(field) if checks.fetch(field.name, true) }
       to_ret
+    end
+
+    def create_template
+      self.build_template()
+      self.template.save()
     end
   
 end
