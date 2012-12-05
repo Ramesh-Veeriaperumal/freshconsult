@@ -79,8 +79,8 @@ class PortalDrop < BaseDrop
   private
     def load_tabs
       tabs = [  [ root_path,                :home,		    true ],
-					      [ support_solutions_path,   :solutions,	  true ],
-				        [ support_discussions_path, :forums, 	    true ],
+					      [ support_solutions_path,   :solutions,	  allowed_in_portal?(:open_solutions) ],
+				        [ support_discussions_path, :forums, 	    allowed_in_portal?(:open_forums) ],
 				        [ support_tickets_path,     :tickets,     User.current ]]
 				      	  # company_tickets_tab ]
 
@@ -96,5 +96,10 @@ class PortalDrop < BaseDrop
         User.current.customer && User.current.client_manager?, User.current && 
           User.current.customer && User.current.customer.name ]
     end
+
+    def allowed_in_portal? f
+      Account.current.features? f
+    end
+  
   
 end

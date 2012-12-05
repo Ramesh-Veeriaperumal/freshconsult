@@ -2,7 +2,7 @@ class Solution::ArticlesController < ApplicationController
   
   include Helpdesk::ReorderUtility
   
-  before_filter :set_selected_tab
+  before_filter :set_selected_tab, :portal_check
   
   before_filter :check_solution_permission, :only => [:show]
   before_filter { |c| c.check_portal_scope :open_solutions }
@@ -196,4 +196,12 @@ end
     end   
     
   end
+
+   private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        @article = current_account.solution_articles.find(params[:id]) 
+        return redirect_to support_solutions_article_path(@article)
+      end
+    end
 end

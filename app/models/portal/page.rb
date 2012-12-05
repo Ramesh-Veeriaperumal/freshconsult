@@ -31,7 +31,7 @@ class Portal::Page < ActiveRecord::Base
 		[:topic_list,         	10,  "support/discussions/forums/show.portal", 
 			"support_discussions_forum_path", "forum_categories"],
 		[:topic_view,         	11,  "support/discussions/topics/show.portal", 
-			"support_discussions_topic_post_path", "portal_topics"],
+			"support_discussions_topic_path", "portal_topics"],
 		[:new_topic,          	12,  "support/discussions/topics/new.portal", 
 			"new_support_discussions_topic_path"],
 		

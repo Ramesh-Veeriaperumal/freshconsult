@@ -1,4 +1,5 @@
 class TopicsController < ApplicationController
+  before_filter :portal_check
   before_filter :find_forum_and_topic, :except => :index 
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
@@ -245,4 +246,11 @@ end
 #    def authorized?
 #      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
 #    end
+  private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        @topic = params[:id] ? current_account.portal_topics.find(params[:id]) : nil
+        return redirect_to support_discussions_topic_path(@topic)
+      end
+    end
 end

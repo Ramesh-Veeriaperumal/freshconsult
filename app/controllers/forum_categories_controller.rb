@@ -1,7 +1,7 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
-  
+  before_filter :portal_check
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
   end
@@ -106,6 +106,13 @@ class ForumCategoriesController < ApplicationController
      else
       :portal_forums 
      end
+    end
+
+  private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        return redirect_to support_discussions_path
+      end
     end
     
 end

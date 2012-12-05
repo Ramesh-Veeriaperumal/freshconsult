@@ -9,7 +9,8 @@ class Solution::CategoriesController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?, :except => :index
   before_filter :set_selected_tab     
-  before_filter :page_title  
+  before_filter :page_title
+  before_filter :portal_check
   
   def index
     
@@ -155,5 +156,12 @@ end
       :public_folders 
     end
   end
+
+  private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        return redirect_to support_solutions_path
+      end
+    end
 
 end
