@@ -775,6 +775,14 @@ h4.title{
 						width:93%;
 					}
 				}
+				.freshSkin table.mceLayout {
+					border: 1px solid #C9C9C9;
+					padding: 4px;
+				}
+				.freshSkin tr.mceLast {
+					border: 1px solid #C9C9C9;
+					padding: 4px;
+				}
 			}
 			.min_height{
 				@include min-height(100px);
@@ -3416,6 +3424,10 @@ div.addReminder{
 		   			background-image: url('/images/sources/detailed_forum.png');
 		   			background-repeat: no-repeat;
 		   		}
+		   		&.source-detailed-mobihelp {
+		   			background-image: url('/images/sources/detailed_mobihelp.png');
+		   			background-repeat: no-repeat;
+		   		}
 		   }
 
 		   &.assign {
@@ -3633,7 +3645,15 @@ div.addReminder{
 	}
 
 }	  
-
+.social_nw_link_error {
+	a {
+		font-weight: bold;
+	}
+	a .ticket_id {
+		font-weight: none;
+		color: #888;
+	}
+}
 
 #ticket-toolbar {
 	padding:8px;
@@ -6919,7 +6939,6 @@ a.mobile_switchBtn {
 	color:#222;
 	padding:10px;
 }
- 
 
 a[rel="load-rjs"] {
 	float:right;

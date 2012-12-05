@@ -33,15 +33,21 @@ crm:
        domain:  "freshdesk-dev"
 
 salesforce:
-    development: 
-       username : "periyaswamy@freshdesk.com"
-       password : "freshsales12345lPC9yohEA7x4MP9SlNLEGe8Tr"
+    development:
+       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+       consumer_secret : "8034737126137452216"
+       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+       access_secret : "2336849265765064476"
     production: 
-       username : "periyaswamy@freshdesk.com"
-       password : "freshsales12345lPC9yohEA7x4MP9SlNLEGe8Tr"
+       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+       consumer_secret : "8034737126137452216"
+       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+       access_secret : "2336849265765064476"
     staging:  
-       username : "periyaswamy@freshdesk.com"
-       password : "freshsales12345lPC9yohEA7x4MP9SlNLEGe8Tr"
+       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+       consumer_secret : "8034737126137452216"
+       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+       access_secret : "2336849265765064476"
 
 marketo:
   development:

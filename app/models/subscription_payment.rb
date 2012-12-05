@@ -45,6 +45,10 @@ class SubscriptionPayment < ActiveRecord::Base
     end
   end
 
+  def renewal_period
+    meta_info[:renewal_period]
+  end
+
   def renewal_type
     SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[subscription.renewal_period] 
   end

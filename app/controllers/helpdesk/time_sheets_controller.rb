@@ -19,7 +19,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
         render :index, :layout => false
       end
       format.xml do
-        render :xml=>@time_sheets.to_xml()
+        render :xml=>@time_sheets.to_xml({:root=>"time_entries"})
       end
        format.json do
         render :json=>@time_sheets.to_json()
