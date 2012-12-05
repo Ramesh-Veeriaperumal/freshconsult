@@ -30,13 +30,15 @@ class ThemeController < SupportController
     end
 
     def get_preferences
-    	return @portal.template.get_draft.preferences || @portal.template.preferences || [] if preview?
-    	@portal.template.preferences || []
+    	preferences = @portal.template.preferences
+    	preferences = @portal.template.get_draft.preferences if  preview? && @portal.template.get_draft
+    	preferences || []
     end
 
     def get_custom_scss
-			return @portal.template.get_draft.custom_css.to_s || @portal.template.custom_css.to_s || "" if preview?
-			@portal.template.custom_css.to_s || ""
+    	custom_css = @portal.template.custom_css.to_s
+			custom_css = @portal.template.get_draft.custom_css.to_s if  preview? && @portal.template.get_draft
+			custom_css || ""
     end
 
     def set_theme_colors

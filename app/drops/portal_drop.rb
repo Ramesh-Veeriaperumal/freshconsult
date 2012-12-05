@@ -76,11 +76,15 @@ class PortalDrop < BaseDrop
     @ticket_export_url ||= configure_export_support_tickets_path
   end
 
+  def tickets_path
+    @tickets_path ||= support_tickets_path
+  end
+
   private
     def load_tabs
       tabs = [  [ root_path,                :home,		    true ],
-					      [ support_solutions_path,   :solutions,	  allowed_in_portal?(:open_solutions) ],
-				        [ support_discussions_path, :forums, 	    allowed_in_portal?(:open_forums) ],
+					      [ support_solutions_path,   :solutions,	  User.current || allowed_in_portal?(:open_solutions) ],
+				        [ support_discussions_path, :forums, 	    User.current || allowed_in_portal?(:open_forums) ],
 				        [ support_tickets_path,     :tickets,     User.current ]]
 				      	  # company_tickets_tab ]
 

@@ -58,7 +58,7 @@ class SupportController < ApplicationController
 
     def get_data_for_template(sym)
       data = current_portal.template[sym] 
-      data = current_portal.template.get_draft[sym] || current_portal.template[sym] if preview?
+      data = current_portal.template.get_draft[sym] if preview? && current_portal.template.get_draft
       data
     end
 
