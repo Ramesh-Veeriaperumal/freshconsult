@@ -45,9 +45,9 @@ module ExportCsvUtil
   def export_contact_data(csv_hash)
     csv_string = ""
     if csv_hash.include?("customer_id")
-      items = current_account.users.find(:all, :include => :customer, :conditions => {:deleted => false, :active => false})
+      items = current_account.users.find(:all, :include => :customer, :conditions => {:deleted => false})
     else
-      items = current_account.users.find(:all, :conditions => {:deleted => false, :active => false})
+      items = current_account.users.find(:all, :conditions => {:deleted => false})
     end
     unless csv_hash.blank?
       csv_string = FasterCSV.generate do |csv|
