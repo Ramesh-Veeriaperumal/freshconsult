@@ -36,6 +36,7 @@ class ThemeController < SupportController
     end
 
     def get_custom_scss
+    	return "" unless feature?(:css_customization)
     	custom_css = @portal.template.custom_css.to_s
 			custom_css = @portal.template.get_draft.custom_css.to_s if  preview? && @portal.template.get_draft
 			custom_css || ""

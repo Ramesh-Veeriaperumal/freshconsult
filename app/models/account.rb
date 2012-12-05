@@ -251,11 +251,11 @@ class Account < ActiveRecord::Base
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting, :css_customization ],
       :inherits => [ :blossom ]
     },
     :estate => {
-      :features => [ :gamification ],
+      :features => [ :gamification, :layout_customization ],
       :inherits => [ :garden ]
     }
   }
