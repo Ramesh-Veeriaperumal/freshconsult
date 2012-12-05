@@ -585,8 +585,12 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		jQuery('#' + this.options.widget_name + ' .lists input:unchecked').each(function() {
 		  obj.mc_unsubscribe_lists.push($(this).id);
 		});
-		if (subscribed.length == 0 && unsubscribed.length == 0)
-			this.processFailure("Please select a mailing list to proceed");
+		if (subscribed.length == 0 && unsubscribed.length == 0){
+			if (jQuery('#' + this.options.widget_name + ' .lists input:checked').length > 0)
+				this.processFailure("The selected mailing lists are already subscribed. Please select a new mailing list to proceed");	
+			else
+				this.processFailure("Please select a mailing list to proceed");
+		}
 		else{
 			if(this.app == "campaignmonitor" || this.app == "mailchimp")
 				this.updateSubscription(subscribed, unsubscribed);
