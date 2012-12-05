@@ -161,7 +161,7 @@ ConstantContactWidget.prototype= {
 			id = (XmlUtil.getNodeValue(entry[0], "id")).split("/contacts/")[1];
 			name = (XmlUtil.getNodeValue(entry[0], "Name"));
 			since = (XmlUtil.getNodeValue(entry[0], "InsertTime"));
-			contact = {"id" : id, "name" : name, "since" : since.replace(/[T|Z]/g, ' ')};
+			contact = {"id" : id, "name" : name, "since" : since.replace(/[T|Z]/g, ' ').replace(/\.\d+/g, "")};
 			this.contact = contact;
 			return this.contact;
 		}
