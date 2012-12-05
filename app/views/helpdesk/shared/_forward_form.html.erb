@@ -12,7 +12,7 @@
           <a href="#" class="slim-button"  rel="fwd_cc_button_<%=cntid%>" data-input="#fwd_include_bcc_<%=cntid%>" data-parent="#fwd-bcc-form-container-<%=cntid%>" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_fwd_bcc_btn" >
             <%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
           </a>
-          <a href="#" id="forward_response" class="slim-button"> <%= t('canned_folders.responses') %> &raquo;</a>
+          <a href="#" data-current-forward="<%=cntid%>-body" id="forward_response" class="forward-resp slim-button"> <%= t('canned_folders.responses') %> &raquo;</a>
         </div>
         <% javascript_tag do %>
           jQuery('a[rel=fwd_cc_button_<%= cntid %>]').click(function(ev){
@@ -136,9 +136,9 @@
         fromEmail = selectObj.val();
         form['helpdesk_note[from_email]'].value = fromEmail;
   });
-  jQuery("#forward_response").click(function(ev){
+  jQuery(".forward-resp").live('click', function(ev){
     ev.preventDefault();
-    jQuery("#canned_response_show").attr('data-tiny-mce-id', "#{cntid}-body");
+    jQuery("#canned_response_show").attr('data-editor-id', jQuery(this).data('current-forward'));
     jQuery("#canned_response_show").trigger('click');
   });
   <% end %>

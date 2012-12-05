@@ -19,7 +19,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def recent
     @id_data = ActiveSupport::JSON.decode params[:ids]
     @ticket = current_account.tickets.find(params[:ticket_id].to_i) unless params[:ticket_id].blank?
-    @ca_responses = @id_data.collect {|id| scoper.find(:all, :conditions => { :id => @id_data }).detect {|resp| resp.id == id}}
+    @ca_responses = @id_data.collect {|id| scoper.accessible_for(current_user).find(:all, :conditions => { :id => @id_data }).detect {|resp| resp.id == id}}
     @ca_responses.delete_if { |x| x == nil }
     respond_to do |format|
       format.html

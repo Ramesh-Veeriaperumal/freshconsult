@@ -108,6 +108,7 @@ jQuery("[data-folder]").live('click', function(){
 });
 
 var makeFolderActive = function(folder_id) {
+	jQuery('#responses-select-all').removeAttr('disabled');
 	url = ca_path+folder_id;
 	jQuery('#del').attr('href', url);
 	if(!jQuery('[data-folder='+folder_id+']').hasClass('default-folder'))

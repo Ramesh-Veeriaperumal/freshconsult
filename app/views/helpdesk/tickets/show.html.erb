@@ -150,6 +150,9 @@
 				else if (fwd_area.css('display') =='block'){
 					element_id = "cnt-fwd-body";
 				}
+				else{
+					element_id = jQuery('#canned_response_show').data('editor-id');
+				}
 			}
 			if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){

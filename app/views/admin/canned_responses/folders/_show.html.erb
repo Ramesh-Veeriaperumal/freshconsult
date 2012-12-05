@@ -8,4 +8,6 @@
 
 <% javascript_tag do -%>
 jQuery('li[data-tab-name="<%=@selected_tab%>"]').addClass('active');
+if(jQuery('#responses').children().hasClass("list-noinfo"))
+	jQuery('#responses-select-all').attr('disabled','disabled');
 <% end %>
