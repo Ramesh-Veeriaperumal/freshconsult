@@ -94,8 +94,9 @@ CampaignMonitorWidget.prototype= {
 		activities = {}; campaigns = {}; campaignsTotal = 0; dateSubscribed = [];
 		this.contact = {"name": cmBundle.reqName};
 		if(this.subLists.length > 0){
-			for(i=0; i<this.subLists.length; i++)
-				dateSubscribed.push(new Date(this.subLists[i].DateSubscriberAdded));
+			for(i=0; i<this.subLists.length; i++){
+				dateSubscribed.push(new Date(this.subLists[i].DateSubscriberAdded.replace(/\-/g,'\/')));
+			}
 			subDate = _.min(dateSubscribed).toString();
 		}
 		else{
