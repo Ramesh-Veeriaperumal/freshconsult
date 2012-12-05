@@ -22,21 +22,28 @@ class Social::TwitterWorker
 
   def self.fetch_direct_msgs twt_handle
     sandbox do
-      twt_msg = Social::TwitterMessage.new(twt_handle)
-      twt_msg.process
+      Timeout.timeout(60) do
+        twt_msg = Social::TwitterMessage.new(twt_handle)
+        twt_msg.process
+      end
     end
   end
 
   def self.fetch_twt_mentions twt_handle
     sandbox do
-      twt_mention = Social::TwitterMention.new(twt_handle)
-      twt_mention.process
+      Timeout.timeout(60) do
+        twt_mention = Social::TwitterMention.new(twt_handle)
+        twt_mention.process
+      end
     end
   end
 
   def self.sandbox(return_value = nil)
       begin
         return_value = yield
+      rescue Timeout::Error
+        puts "TIMEOUT - rescued - wait for 5 seconds and then proceed." 
+        sleep(5) 
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
         puts "Something wrong happened in twitter!"

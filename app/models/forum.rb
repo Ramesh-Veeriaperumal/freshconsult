@@ -1,6 +1,5 @@
 class Forum < ActiveRecord::Base
   acts_as_list :scope => :forum_category
-
   include ActionController::UrlWriter
 
   has_many :activities, 
@@ -95,7 +94,6 @@ class Forum < ActiveRecord::Base
   def after_destroy 
     create_activity('delete_forum')
   end
-
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   
   

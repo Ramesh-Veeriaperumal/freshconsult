@@ -37,7 +37,7 @@ HTML
           ['/agents',                     'agent'                   ],
           ['/groups',                     'group'                   ],
           ['/admin/day_passes',           'day_pass', current_user.account_admin? ],
-      ]],
+      ], "Helpdesk"],
       [ [t(".helpdesk"),t(".productivity")], [ 
           ['/admin/va_rules',             'dispatcher'              ],
           ['/admin/supervisor_rules',     'supervisor'              ],
@@ -47,18 +47,18 @@ HTML
           ['/admin/canned_responses/folders',     'canned-response' ],
           ['/admin/surveys',              'survey-settings', current_account.features?(:surveys)      ],
           ['/admin/gamification',         'gamification-settings', current_account.features?(:gamification)      ]
-      ]],
+      ], "HelpdeskProductivity"],
       [ [t(".customer"),t(".portal")], [        
           ['/admin/security',             'security'   ],
           ['/admin/portal',               'customer-portal'         ],
           ['/admin/widget_config',        'feedback'                ],
-      ]],
+      ], "CustomerPortal"],
       
       [ [t(".account")], [
           ['/account',                    'account-settings', current_user.account_admin? ],
           ['/subscription',               'billing', current_user.account_admin? ],
           ['/admin/zen_import',           'import'                  ],
-      ]]
+      ], "Account"]
     ]
  
     admin_html = 
@@ -66,7 +66,7 @@ HTML
         content_tag( :div, 
                         content_tag(:h3, "<span>#{group[0][0]} #{group[0][1]}</span>", :class => "title") +
                         content_tag(:ul, admin_link(group[1]), :class => "admin_icons"),
-                        :class => "admin #{ cycle('odd', 'even') } #{group[0]} ")
+                        :class => "admin #{ cycle('odd', 'even') } #{group[2]} ")
       end
 
     admin_html

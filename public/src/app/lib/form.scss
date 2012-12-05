@@ -554,9 +554,6 @@ li.nested_field{
 .threecol-form .item{
 	float:left;
 	width:33%;
-	label{	
-		@include inline-block;
-	}
 	.level{
 		margin-left:20px;
 	}
@@ -671,24 +668,30 @@ li.nested_field{
 			padding:16px 26px;
 		}
 		div.timerange{
-			@include pie-clearfix;	
+			@include pie-clearfix;
+			padding:8px;	
 			input, strong{
 				float:left;
 			}
 			input{
 				width:80px;
 			}
-			strong{
+			span{
 				font-weight:normal;
-				padding:0 10px;
+				margin:5px;
+			}
+			.checked{
+				float :left;
+				width : 25px;
 			}
 		}
 	}
 	.business_days{
-		label{
-			@include inline-block;
-			padding-right:20px;
-		}
+		width:150px;
+		float:left;	
+	}
+	.business_days.active{
+		font-weight:bold;
 	}
 	.holidaylist{
 		padding-left:0;
@@ -713,6 +716,35 @@ li.nested_field{
 			}
 		}
 	}
+}
+.timerange{
+	padding: 4px;
+	margin: 4px 0px 4px 0px;
+}
+.morning_time, .evening_time{
+	margin-top :5px;
+}
+.outline{
+	border-radius: 4px;
+background-color: #FDD;
+border: 1px solid #F99
+}
+#duration{
+	display:inline-block;
+	padding: 0 10px;
+	position: relative;
+	top: 3px
+	
+}
+#duration .error{
+	background:sprite($symbol, warning) no-repeat;
+	padding: 0px 10px;
+}
+#error{
+	font-color: red;
+}
+#split{
+	margin-top:10px;
 }
 
 input.time{

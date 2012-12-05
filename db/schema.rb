@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121109120525) do
+ActiveRecord::Schema.define(:version => 20121126102259) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.boolean  "pass_through_enabled",              :default => true
     t.string   "bcc_email"
   end
+
+  add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -109,8 +111,10 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.integer  "group_id",   :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id", :limit => 8
   end
 
+  add_index "agent_groups", ["account_id", "user_id", "group_id"], :name => "index_agent_groups_on_account_id_and_user_id_and_group_id"
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
@@ -158,6 +162,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "holiday_data"
+    t.integer  "version",                         :default => 1
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
@@ -346,8 +351,10 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "import_id",          :limit => 8
+    t.integer  "account_id",         :limit => 8
   end
 
+  add_index "flexifield_def_entries", ["account_id", "flexifield_alias"], :name => "index_FFDef_entries_on_account_id_and_flexifield_alias"
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_name"], :name => "idx_ffde_onceperdef", :unique => true
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
 
@@ -504,6 +511,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.string  "google_id"
     t.text    "google_xml"
     t.integer "google_account_id", :limit => 8
+    t.integer "account_id",        :limit => 8
   end
 
   create_table "groups", :force => true do |t|
@@ -634,7 +642,10 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.string   "value"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id",    :limit => 8
   end
+
+  add_index "helpdesk_picklist_values", ["account_id", "pickable_type", "pickable_id"], :name => "index_on_picklist_account_id_and_pickabke_type_and_pickable_id"
 
   create_table "helpdesk_reminders", :force => true do |t|
     t.string   "body"
@@ -643,6 +654,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.integer  "ticket_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id", :limit => 8
   end
 
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
@@ -789,6 +801,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
     t.boolean  "override_bhrs",                :default => false
+    t.integer  "account_id",      :limit => 8
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -807,6 +820,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.integer  "ticket_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id", :limit => 8
   end
 
   add_index "helpdesk_subscriptions", ["ticket_id"], :name => "index_helpdesk_subscriptions_on_ticket_id"
@@ -816,6 +830,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.integer "tag_id",        :limit => 8, :null => false
     t.string  "taggable_type"
     t.integer "taggable_id",   :limit => 8
+    t.integer "account_id",    :limit => 8
   end
 
   add_index "helpdesk_tag_uses", ["tag_id"], :name => "index_helpdesk_tag_uses_on_tag_id"
@@ -849,6 +864,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.text     "field_options"
   end
 
+  add_index "helpdesk_ticket_fields", ["account_id", "field_type", "position"], :name => "index_tkt_flds_on_account_id_and_field_type_and_position"
   add_index "helpdesk_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_ticket_fields_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_ticket_issues", :force => true do |t|
@@ -969,6 +985,8 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.datetime "updated_at"
   end
 
+  add_index "installed_applications", ["account_id"], :name => "index_account_id_on_installed_applications"
+
   create_table "integrated_resources", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.string   "remote_integratable_id"
@@ -994,9 +1012,10 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
   add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
 
   create_table "monitorships", :force => true do |t|
-    t.integer "topic_id", :limit => 8
-    t.integer "user_id",  :limit => 8
-    t.boolean "active",                :default => true
+    t.integer "topic_id",   :limit => 8
+    t.integer "user_id",    :limit => 8
+    t.boolean "active",                  :default => true
+    t.integer "account_id", :limit => 8
   end
 
   create_table "password_resets", :force => true do |t|
@@ -1126,6 +1145,8 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.string   "thread_id"
   end
 
+  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"postable_id"=>nil, "account_id"=>nil, "postable_type"=>"15"}
+
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",       :limit => 8
     t.integer  "tweetable_id",   :limit => 8
@@ -1135,6 +1156,8 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.integer  "account_id"
     t.string   "tweet_type",                  :default => "mention"
   end
+
+  add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"tweetable_type"=>"15", "account_id"=>nil, "tweetable_id"=>nil}
 
   create_table "social_twitter_handles", :force => true do |t|
     t.integer  "twitter_user_id",           :limit => 8
@@ -1373,12 +1396,17 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.string   "unhappy_text",              :default => "Not Good"
   end
 
+  add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
+
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",  :limit => 8
     t.integer  "topic_id",   :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id", :limit => 8
   end
+
+  add_index "ticket_topics", ["account_id", "ticket_id"], :name => "index_account_id_and_ticket_id_on_ticket_topics"
 
   create_table "topics", :force => true do |t|
     t.integer  "forum_id",     :limit => 8
@@ -1480,6 +1508,7 @@ ActiveRecord::Schema.define(:version => 20121109120525) do
     t.string   "voteable_type", :limit => 15, :default => "",    :null => false
     t.integer  "voteable_id",   :limit => 8,  :default => 0,     :null => false
     t.integer  "user_id",       :limit => 8,  :default => 0,     :null => false
+    t.integer  "account_id",    :limit => 8
   end
 
   add_index "votes", ["user_id"], :name => "fk_votes_user"

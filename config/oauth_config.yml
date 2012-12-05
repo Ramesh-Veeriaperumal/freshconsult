@@ -5,6 +5,9 @@ oauth_options:
     token_url: /services/oauth2/token
   google:
     site: https://www.google.com/
+  mailchimp:
+    authorize_uri: https://login.mailchimp.com/oauth2/authorize
+    access_token_uri: https://login.mailchimp.com/oauth2/token
 
 development:
  salesforce:
@@ -13,7 +16,13 @@ development:
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
-
+ mailchimp:
+  consumer_token: 437815361144
+  consumer_secret: 409c0d6f80c62efcc42e01b6c5569203
+ constantcontact:
+  consumer_token: f2ff0ffa-5423-4c15-ad80-ac98c2b1191c
+  consumer_secret: 0a83bd57fb6946d4aa21faa9515df7e8
+ 
 defaults: &defaults
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzddB6NCYAJVslYxFc.rabGWq9hI7uRXIKqFvCm4IoVzHOtMEkwrHs7dwcLZa
@@ -42,6 +51,12 @@ staging:
  google:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
+ mailchimp:
+  consumer_token: 187267923355
+  consumer_secret: 0c8b6473fe421fa60dbd0f3befc4f219
+ constantcontact:
+  consumer_token: 5c84b94e-9de5-434e-9823-a7fd29e6e31b
+  consumer_secret: 698bf9ac69134535827e7fadae97e24b
 
 production:
  salesforce:
@@ -50,3 +65,9 @@ production:
  google:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
+ mailchimp:
+  consumer_token: 560756408749
+  consumer_secret: d30b60816fe878cf6ea67489b7c47dad
+ constantcontact:
+  consumer_token: dc001b2b-9c93-49a0-9585-17f6c4fe5e3f
+  consumer_secret: 0a83bd57fb6946d4aa21faa9515df7e8

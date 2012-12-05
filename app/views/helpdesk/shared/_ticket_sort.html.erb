@@ -1,13 +1,15 @@
 <div class="sort-bar toolbar">
   <div class="page_info">
     <div class="toolbar_pagination" id="ticket_pagination">
+      <span class="disabled prev_page"><span></span></span>
+      <span class="disabled next_page"><span></span></span>
     </div>
     <% unless @items.total_entries == 0 %>
     <div class="offset">
       Showing 
       <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b>
         of
-        <a rel="load-rjs" href="javscript:void(0)" id="ticket_list_count"><img src="/images/pageCountLoad.gif"><img src="/images/pageCountLoad1.gif"></a>
+        <a rel="load-rjs" href="javscript:void(0)" id="ticket_list_count"><img src="/images/ticketCount.gif"></a>
     </div>   
     <% end %>
   </div>

@@ -1,4 +1,4 @@
-﻿de: 
+de: 
   meta:
     language_name: 'German'
   enabled: "Aktiviert"
@@ -1313,8 +1313,8 @@
       reply_email_id: "Antwort von folgender E-Mail-Adresse senden"
       send_and_resolve: "Senden und lösen"
       send: "Senden"
-    facebook_form: 	  	
-      send_and_resolve: "Senden und lösen	  	"
+    facebook_form:      
+      send_and_resolve: "Senden und lösen     "
       send: "Senden"
     reported_by: "von %{requester}"
     close_btn: "Schließen"
@@ -1530,7 +1530,7 @@
         removebcc: "Bcc entfernen"
       tweet_form:
         title: "Antworten an %{user}"
-      facebook_form:  	
+      facebook_form:    
         title: "Antworten an %{user}"
       history:
         recent_item: "Neueste Elemente"

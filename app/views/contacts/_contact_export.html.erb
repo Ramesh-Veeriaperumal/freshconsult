@@ -1,0 +1,48 @@
+<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+  <input type="hidden" name="data_hash" value="" />
+	<div class="info-highlight"><%=t('export_data.contact_info')%></div>
+	<ul class="ui-form">
+		<li class="inline-field">
+			<h4 class="title"><%= t('export_data.select_header') %></h4>
+			<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
+			<div class="threecol-form" id="contact_fields">
+	 			<% csv_headers.each do |head| %>
+	 			  	<div class="item <%= head[:type] %>">
+		  				<label class="checkbox prime"> 
+		    				<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
+							<%= head[:label] %>														
+		  				</label>
+		  				<% head[:levels].each do |level| %>
+		  					<br />
+			  				<label class="checkbox level"> 
+			    				<%= check_box_tag "export_fields[#{level[:label]}]", level[:name], false  %> 
+								<%= level[:label] %>
+			  				</label>
+			  			<% end %>
+	  			    </div>	
+	 			<% end %>
+			</div>
+		<li>
+	</ul>	
+	<div class="button-container">
+		<%= submit_tag t('export_data.export_to_csv'), :class => "uiButton", :id => "ExportToCSV" %>
+	</div>
+<%end%>
+
+<% javascript_tag do %>
+  jQuery("#exportFilter").submit(function() {  
+
+	if (jQuery('#contact_fields :checked').length == 0) {
+		jQuery('#err_no_fields_selected').removeClass('hide');
+		return false;
+	} else {
+		jQuery('#err_no_fields_selected').addClass('hide');
+		jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+		setTimeout(function(){
+			active_dialog.dialog("close");
+			jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
+		}, 1000);
+	}
+  });
+
+<% end %>

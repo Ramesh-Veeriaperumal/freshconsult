@@ -385,7 +385,8 @@ var $J = jQuery.noConflict();
         setTimeout(function() {
           $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
         },10);
-
+        //clearing the pageless of previous page.
+        jQuery(window).unbind('.pageless');
         return true;
       })
    });
