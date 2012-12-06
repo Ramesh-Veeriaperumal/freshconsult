@@ -2545,7 +2545,7 @@ en:
     campaignmonitor:
       label: "Campaign Monitor"
       desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, get your API Key from your Account Settings.<br/><br/> The instructions to get your ClientID is available from http://www.campaignmonitor.com/api/getting-started/#clientid. <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
+      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, you should input your API Key and ClientID from Campaign Monitor. <br/></br/> API Key can be obtained from Campaign Monitor's Account Settings.<br/><br/> The instructions to get your ClientID are available from <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'> http://www.campaignmonitor.com/api/getting-started/#clientid </a> . <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
       form:
         api_key: "API Key"
         api_key_info: "Get your API Key from Account Settings"
@@ -2554,7 +2554,7 @@ en:
     icontact:
       label: "iContact"
       desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
+      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a target='_blank' href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
       form:
         app_id: "Application ID"
         username: "iContact Username"
