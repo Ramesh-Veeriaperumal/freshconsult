@@ -45,6 +45,10 @@ class SubscriptionPayment < ActiveRecord::Base
     end
   end
 
+  def renewal_period
+    meta_info[:renewal_period]
+  end
+
   def renewal_type
     SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[subscription.renewal_period] 
   end
@@ -52,6 +56,6 @@ class SubscriptionPayment < ActiveRecord::Base
   def to_s
     return meta_info[:description] if misc
     name = "Freshdesk #{plan_name} #{renewal_type} subscription for #{agents} Agents 
-           (with #{free_agents} free agents)"          
+           (with #{free_agents} free agent(s))"          
   end
 end

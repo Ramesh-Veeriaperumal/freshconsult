@@ -31,6 +31,42 @@ module ExportCsvUtil
     csv_headers
   end
 
+  def export_contact_fields
+    [
+      {:label => "Name", :value => "name", :selected => true},
+      {:label => "Email",   :value => "email",    :selected => true},
+      {:label => "Job Title", :value => "job_title", :selected => false},
+      {:label => "Company", :value => "customer_id", :selected => false},
+      {:label => "Phone", :value => "phone", :selected => false},
+      {:label => "Twitter ID", :value => "twitter_id", :selected => false}
+    ]
+  end
+
+  def export_contact_data(csv_hash)
+    csv_string = ""
+    items = current_account.contacts
+    unless csv_hash.blank?
+      csv_string = FasterCSV.generate do |csv|
+        headers = csv_hash.keys
+        csv << headers
+        items.each do |record|
+          csv_data = []
+          headers.each do |val|
+            if csv_hash[val] == "customer_id"
+              (record.customer.blank?) ? csv_data << nil : csv_data << record.customer.name
+            else
+              csv_data << record.send(csv_hash[val])
+            end
+          end
+          csv << csv_data if csv_data.any?
+        end
+      end
+    end
+    send_data csv_string, 
+            :type => 'text/csv; charset=utf-8; header=present', 
+            :disposition => "attachment; filename=contacts.csv"
+  end
+
   def export_data(items, csv_hash, is_portal=false)
     csv_string = ""
     unless csv_hash.blank?

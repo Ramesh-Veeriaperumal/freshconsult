@@ -1,15 +1,11 @@
-
 <div class="sidepanel wordwrap">
-		<h3 class="title"><%=t('email_configs.title')%></h3> 
-		<% unless @email_config.reply_email.eql? @email_config.to_email %>
-			<p><%=t('email_configs.info1')%> <strong><%= @email_config.reply_email %></strong></p>
-			<p><%=t('email_configs.info2')%> <strong><%= @email_config.to_email %></strong>. <%=t('email_configs.info3')%>.</p>
-		<% end %>
-		
-		<h3 class="title"><%=t('email_configs.reply_emails')%></h3> 
-		
-		<p><%=t('email_configs.info5')%>.</p>
-		<p><%= t(:'email_configs.spf_info', :solution_url => 'http://support.freshdesk.com/solution/categories/4/folders/7/articles/5-spf-record') %></p> 
-		
-		<a target="_blank" href="http://support.freshdesk.com/solution/categories/4/folders/7/articles/2-converting-your-support-email-into-freshdesk-tickets"><%= t(:'email_configs.help_link_info') %></a>
-</div>	
+	<h3 class="title"><%=t('email_configs.title')%></h3>		
+	<p><%=t(:'email_configs.helpcard.info5',:solution_url => 'https://support@demo.freshdesk.com')%></p>
+	<p><%=t(:'email_configs.helpcard.info19',:solution_url => 'https://demo.freshdesk.com')%></p>
+	<%= tour_button(t('email_configs.helpcard.tour1'), '5007f779e13a460684000024') %>
+	</br>
+	<h3 class="title"><%=t('email_configs.helpcard.info20')%></h3>
+	<p><%= t('email_configs.helpcard.info21') %></p> 
+	<p><%= t(:'email_configs.spf_info', :solution_url => 'http://support.freshdesk.com/solution/categories/4/folders/7/articles/5-spf-record') %></p> 
+	<%= tour_button(t('email_configs.helpcard.tour2'), '500f8573e13a46133e000044') %>
+</div>

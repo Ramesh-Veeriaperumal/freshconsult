@@ -1,12 +1,3 @@
-<% javascript_tag do %>  
-  function refresh_tickets(){
-    jQuery("#save_filter").show();
-    jQuery("#FilterOptions input[name=filter_name]").val("");
-    jQuery(".view_filters .active").removeClass("active");
-    getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
-  }
-<% end %>
 <%
   category_id = "#{field_id}_category"
   sub_category_id = "#{field_id}_sub_category"
@@ -54,7 +45,6 @@
         <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field"%>
       <% end %>
   <% end %>
-  <% content_for :pagefixed do %>
   <% javascript_tag do %>
       jQuery('#<%=category_id%>')
         .nested_select_tag({
@@ -69,6 +59,5 @@
           item_id: '<%= sub_category_item_id %>',
           change_callback: refresh_tickets
         });
-    <% end %>
     <% end %>
 <%end%>

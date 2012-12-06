@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
+  include Cache::Memcache::Account
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
@@ -136,7 +137,10 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
+
+  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
+  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
 
   has_many :facebook_pages, :class_name =>'Social::FacebookPage' 
@@ -251,7 +255,7 @@ class Account < ActiveRecord::Base
       :inherits => [ :blossom ]
     },
     :estate => {
-      :features => [ :gamification ],
+      :features => [ :gamification, :agent_collision ],
       :inherits => [ :garden ]
     }
   }
@@ -272,6 +276,14 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def installed_apps_hash
+    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps.inject({}) do |result,installed_app|
+     result[installed_app.application.name.to_sym] = installed_app
+     result
+   end
+  end
+
   def self.reset_current_account
     Thread.current[:account] = nil
   end
@@ -560,7 +572,9 @@ class Account < ActiveRecord::Base
       self.user.account = self
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
+      self.user.agent.account = self
       self.user.save
+      User.current = self.user
       
     end
     

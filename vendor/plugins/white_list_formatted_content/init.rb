@@ -49,6 +49,7 @@ ActiveRecord::Base.class_eval do
       
       self.body_html = auto_link(Nokogiri::HTML(self.body_html).at_css("body").inner_html, :link => :urls)
       text = Nokogiri::HTML(self.body_html)
+      text.xpath("//del").each { |div|  div.name= "span";}
       text.xpath("//p").each { |div|  div.name= "div";}
       self.body_html = text.inner_html
     end
