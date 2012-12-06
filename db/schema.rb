@@ -458,7 +458,6 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
 
   add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
-  add_index "flexifields", ["flexifield_set_id", "account_id"], :name => "index_flexifields_on_flexifield_set_id_and_account_id"
   add_index "flexifields", ["id"], :name => "flexifields_id"
 
   create_table "forum_categories", :force => true do |t|
