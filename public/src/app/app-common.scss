@@ -6981,7 +6981,7 @@ a[rel="load-rjs"] {
 		}
 }
 
-#customers-page{
+/*#customers-page{
 
 	.bulk-action{
 		margin-left: 9px;
@@ -7044,7 +7044,7 @@ a[rel="load-rjs"] {
 	.contacts_loader {
 		height : 25px;
 		width : 106px;
-		/*margin : 2px;*/
+		/*margin : 2px;
 		float : left;
 	}
 
@@ -7106,13 +7106,24 @@ a[rel="load-rjs"] {
 	div.item_information{
 		width: 55%;
 	}
+
+
+	.user_twitter{
+		padding: 0px 20px;
+		margin:5px 5px 0 0;
+		height: 11px;
+		display: inline;
+		background:sprite($symbol, reply-tweet) no-repeat transparent;
+	}
 }
 
 #contacts_import{	
 	margin-right: 10px;
-}
+}*/
 
 // !PATTERN TODO move this animation into the animation-css file
+
+
 .opacity-element{
 	filter: alpha(opacity=100);
     opacity: 1 !important;
@@ -7122,11 +7133,23 @@ a[rel="load-rjs"] {
        		transition: all .9s ease;
 }
 
+
 .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-    background-color:#fbfbfb;        
+    background-color:#fbfbfb;    
+}   
+
+
+.table-striped tbody tr.diffColor td{ 
+	background-color: #fefdee !important; 
+}
+.contact-name{
+	font-weight: bold;
+	font-size: 14px;
+
 }
 
 /*end*/
+
 
 .cust_list_table{
      margin:0 auto;
@@ -7217,4 +7240,93 @@ a[rel="load-rjs"] {
 			margin-right: 10px;
 		}
 	}
+}
+
+#contacts-page {
+	.small{
+		font-size: 75%;
+		a{
+			font-size: 95%;
+		}
+	}
+	#contacts-table{
+		tr td{
+				width: 22%;
+		    	vertical-align: middle;
+			    &:first-child{
+			        width:3%;
+				}
+			    &:nth-child(2){
+			        width:3%;
+			    }
+			    &:last-child{
+			    	min-width: 22%;
+			    }
+		}
+		.customers_selector{
+	    	margin-left: 5px;
+	    }
+	    .acheived-text{
+	    	font-size: 9px;
+		}
+	}
+	.info_data{
+		padding-bottom: 0px;
+	}
+	.email{
+		font-size: 13px !important;
+	}
+	.dropdown{
+		top: 7px;
+	}
+	.muted{
+		a{
+			color: #999;
+			font-weight: normal;
+		}
+		a:hover{
+			color: #369;
+		}
+	}
+}
+#cust-list{
+	.tabs{
+		margin-bottom: 0px;
+	}
+	.contacts_sub_header{
+		border-bottom: 0px;
+	}
+	.customers-toolbar{
+		padding: 7px 0 0 0;
+	}
+	#customers-select-all{
+		margin-left: 14px;
+		margin-top: 0px;
+	}
+	.bulk-action{
+		padding: 8px;
+		margin-top: -24px;
+		margin-left: 9px;
+	}
+}
+#customers-page{
+	#companies{
+		tr td{
+				width: 75%;
+		    	vertical-align: middle;
+			    &:first-child{
+			        width:4.7%;
+				}
+			    &:last-child{
+			    	min-width: 22%;
+			    }
+		}
+		.customers_selector{
+	    	margin-left: 5px;
+	    }
+	}
+}
+
+#company_sub_header{
+	font-size: 12px;
 }

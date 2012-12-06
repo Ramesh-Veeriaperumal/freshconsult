@@ -1,8 +1,10 @@
-<div id="customers-page">
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
+<div class="cust_list_table" id="contacts-page">
 	<% content_for :sidebar do %>
 	<div class="sidepanel">
 		<h3 class="title"><%=t('contacts.quick_contact')%></h3>	
-		<% form_tag :url  => contacts_path, :method =>:post do %>
+		<% form_tag :url  => contacts_path, :method => :post do %>
 		<%= error_messages_for :user %> 	
 		<ul class="ui-form">
 			<li> 
@@ -27,37 +29,50 @@
 		<%= render :partial => "/helpdesk/tags/tag_cloud", :object => @tags %>
 	</div>
 	<%end%>
-	<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
-	<div id="users_form_wrapper">
-	<% form_tag "", { :id => "tickets-expanded", :method => :put } do %>
-	<table class="table table-striped" id="users-table">
-		<% if @contacts.present? %>
-		<%= render :partial => "contact", :collection => @contacts %> 
-	</table>
-	<div class="negtiveMargin">  
-		<%= will_paginate @contacts %> 
-	</div>
-	<% else %>
-	<div class="big-info">
-		<div class="no-info-text">
-			<% if params[:state].blank? or params[:state].eql?('active') %>
-				<%= t('contacts.active.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
-				<% if params[:letter].blank? %>
-					<%= t('contacts.active.no_contacts') %><br />
-					<span class="small">Create a <a href= "/contacts/new" >new contact</a></span>
-				<% end %>
-			<% elsif params[:state].eql?('deleted') %>
-			   <%= t('contacts.deleted.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
-				<%= t('contacts.deleted.no_contacts') if params[:letter].blank? %>
-			<% else %>
-				<%= t('contacts.inactive.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
-				<%= t('contacts.inactive.no_contacts') if params[:letter].blank? %>
-			<% end %>
-		</div>
-	</div>
-	<% end %>
-	<% end %>
-	</div>
-</div>
-<!--script> -->
+    <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="home">
+            	<div id="cust-list">
+            		<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
+	            	<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "user"}) %>
+	            	<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
+		        		<% if @contacts.present? %>
+					        <div class="cust_list_table_body">
+					        	<!-- Add content here for top of the table-->
+					        	<%= render(:partial => '/shared/customers_toolbar', :locals => {:path => contacts_path}) %>
+					        		<table class="table table-striped" id = "contacts-table">
+										<%= render :partial => "contact", :collection => @contacts %> 
+									</table>  
+									<%= will_paginate @contacts, :renderer => BootstrapPaginationRenderer, 
+							        				:previous_label => "<b class='arrow-left'></b>",
+							        				:next_label => "<b class='arrow-right'></b>",
+							        				:class => "pagination pagination-centered" %>
+						    </div>
+					    <% else %>
+							<div class="big-info">
+								<div class="no-info-text">
+									<% if params[:state].blank? or params[:state].eql?('verified') or 
+																							params[:state].eql?('all')%>
+										<%= t('contacts.verified.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+										<% if params[:letter].blank? %>
+											<%= t('contacts.verified.no_contacts') %><br />
+											<span class="small">Create a <a href= "/contacts/new" >new contact</a></span>
+										<% end %>
+									<% elsif params[:state].eql?('deleted') %>
+									   <%= t('contacts.deleted.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+										<%= t('contacts.deleted.no_contacts') if params[:letter].blank? %>
+									<% else %>
+										<%= t('contacts.unverified.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+										<%= t('contacts.unverified.no_contacts') if params[:letter].blank? %>
+									<% end %>
+								</div>
+							</div>
+						<% end %>
+					<% end %>
+				</div>
+            </div>
+        </div>
+</div>​
+
+
+
 

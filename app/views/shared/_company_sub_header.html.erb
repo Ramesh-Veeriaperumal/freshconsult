@@ -1,0 +1,31 @@
+<div class="row-fluid" id="company_sub_header">
+	<% if type.eql?("user") %>
+		<div class="span3">
+			<div class="dropdown">
+                <%=t('contacts.showing')%><a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#"> <b><%= params[:state].blank? ? t("contacts.status.verified") : t("contacts.status.#{params[:state]}")  %></b><b class="caret"></b></a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
+                	<li><%= link_to t("contacts.status.verified"), {:state => "verified"}, :title => t("contacts.status_title.verified") %></li>
+                	<li><%= link_to t("contacts.status.unverified"), {:state => "unverified"}, :title => t("contacts.status_title.unverified") %></li>
+                	<li><%= link_to t("contacts.status.deleted"), {:state => "deleted"}, :title => t("contacts.status_title.deleted") %></li>
+                	<li><%= link_to t("contacts.status.all"), {:state => "all"}, :title => t("contacts.status_title.all") %></li>
+                </ul>
+			</div> 
+	    </div>
+	<% end %>
+	<div class="contacts_sub_header span9 pull-right" align="right">
+		<ul class="alpha_sort_list">		
+			<%= hidden_field_tag :letter, '' %>
+			<li class="first <%= 'active' if params[:letter].blank? %>">
+				<%= link_to 'All', :letter => '', :state => params[:state].blank? ? 'active' : params[:state] %>
+			</li>
+			<% "A".upto("Y") do |l| -%>	    
+			 <li class="<%= 'active' if params[:letter] == [l] %>">
+			 	<%= link_to l, :letter => l, :state => params[:state].blank? ? 'active' : params[:state] %>
+			 </li>	
+			<% end %>
+			<li class="last <%= 'active' if params[:letter] == ['Z'] %>">
+				<%= link_to 'Z', :letter => 'Z', :state => params[:state].blank? ? 'active' : params[:state] %>
+			</li>
+		</ul>
+	</div>
+</div>

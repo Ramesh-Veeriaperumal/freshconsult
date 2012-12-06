@@ -379,7 +379,7 @@ class User < ActiveRecord::Base
     day_pass_usages.on_the_day(start_time).first
   end
   
-  def self.filter(letter, page, state = "active", per_page = 2)
+  def self.filter(letter, page, state = "verified", per_page = 50)
     paginate :per_page => per_page, :page => page,
              :conditions => filter_condition(state, letter) ,
              :order => 'name'
@@ -387,10 +387,10 @@ class User < ActiveRecord::Base
 
   def self.filter_condition(state, letter)
     case state
-      when "active", "inactive"
-        [ ' name like ? and deleted = ? and active = ? ', "#{letter}%", false , state.eql?("active") ]
-      when "deleted"
-        [ ' name like ? and deleted = ? ', "#{letter}%", true ]
+      when "verified", "unverified"
+        [ ' name like ? and deleted = ? and active = ? and email is not ? ', "#{letter}%", false , state.eql?("verified"), nil ]
+      when "deleted", "all"
+        [ ' name like ? and deleted = ? ', "#{letter}%", state.eql?("deleted") ]
     end                                      
   end
   

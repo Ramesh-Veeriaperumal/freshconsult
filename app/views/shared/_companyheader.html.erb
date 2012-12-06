@@ -1,41 +1,27 @@
-<% javascript_tag do %>
-	validate_then_submit = function(url, method, params){
-		var customer_type = '<%=type.eql?('user') ? t('flash.contacts.info_select') : t('flash.customers.info_select')%>';
-		if (!jQuery('.customers_selector:checked').length)
-		{
-			jQuery("#noticeajax").text(customer_type);
-			jQuery("#noticeajax").show();
-			closeableFlash('#noticeajax');
-		}
-		else
-		{
-			helpdesk_submit(url, method, params);
-		}
-	}
-<% end %>
 <% content_for :onload_script do %>
 	
 	jQuery("#customers-select-all").live("change", function(ev){
-		jQuery("#tickets-expanded, #companies").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked"));
-		jQuery("#customers-toolbar .bulk-action .uiButton").attr('disabled',!this.checked);
-	});
-	
-	jQuery('.customers_selector').change(function() {
-		if(jQuery('.customers_selector:checked').length == 0 )
-			jQuery("#customers-toolbar .bulk-action .uiButton").attr('disabled','disabled');
-		else
-			jQuery("#customers-toolbar .bulk-action .uiButton").removeAttr('disabled');
-		jQuery("#customers-select-all").prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
-	});
-	
-	jQuery('#users-table tr').hover(function() {
-		jQuery(this).find('.user_actions').addClass("opacity-element");
-	}, function() {
-		jQuery(this).find('.user_actions').removeClass("opacity-element");
+		jQuery("#contacts-table .customers_selector, #companies .customers_selector")
+			.prop("checked", this.checked)
+			.parents("tr").toggleClass("diffColor", this.checked);
+
+		jQuery("#customers-toolbar .bulk-action .btn")
+			.attr('disabled',!this.checked);
 	});
 
-  	
-  	jQuery('.send-activation').one("click", function(ev) {
+	jQuery('.customers_selector').live("change", function(ev){
+		jQuery(this).parents("tr").toggleClass("diffColor", this.checked);
+
+		if(jQuery('.customers_selector:checked').length == 0 )
+			jQuery("#customers-toolbar .bulk-action .btn").attr('disabled','disabled');
+		else
+			jQuery("#customers-toolbar .bulk-action .btn").removeAttr('disabled');
+
+		jQuery("#customers-select-all")
+			.prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
+	});
+
+	jQuery('.send-activation').one("click", function(ev) {
 		complete_text = jQuery(this).attr("data-complete-text");
   		jQuery(this).attr("data-complete-text","<span class='symbol-done-tick'></span><span class='acheived-text'>"+complete_text+"</span>");
     	ev.preventDefault();
@@ -49,9 +35,13 @@
 			type: 'POST',
 			url: this.href,
 			data: _post_data,
-			success: function(data){
-				if(data.activation_sent)	
+			success: function(data){				
+				if(data.activation_sent)
 					_self.button("complete")
+					setTimeout(function(){
+						_self.addClass("disabled");
+					}, 10)
+					
 			}
 		})
 		jQuery(this).bind('click', disableLink);
@@ -60,65 +50,19 @@
 	function disableLink(e) {
     	// cancels the event
     	e.preventDefault();
+
 		return false;
 	}
 <% end %>
-
-<div>
-	<div class="floatr">				
-		<%= link_to(t('import'), csv_contact_import_path, :title => t("contacts.import_csv"), :id => "contacts_import") %>
-		<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
-		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
-		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
+<div class="cust_list_table_header"	>
+	<div class="row-fluid">
+		<div class="span6"><h3 class="title"><%= @page_title = t('customers') %></h3></div>
+		 <div class="span6 pull-right pagination-right" align="right">
+		 	<%= link_to(t('import'), csv_contact_import_path, :title => t("contacts.import_csv"), :id => "contacts_import") %>
+			<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
+			<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
+			<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
+        </div>
 	</div>
-
-	<h3 class="title"><%= @page_title = t('customers') %></h3>	
-	<div class="customers-toolbar" id="customers-toolbar">
-		<input type="checkbox" id="customers-select-all" />
-		<div class="bulk-action">
-			<%= button_to_function(t('contacts.activation'), "validate_then_submit('#{bulk_send_invite_activations_path}', 'put')",  :class => "uiButton", :disabled => "disabled" ) if params[:state].eql?("inactive")%>
-			<% if params[:state].eql?("deleted") %>
-				<%= button_to_function(t('contacts.restore'), "validate_then_submit('#{ path }/restore', 'restore')", :class => "uiButton", :disabled => "disabled") %>
-			<% else %> 
-				<%= button_to_function(t('delete'), "validate_then_submit('#{ path }/destroy', 'delete')", :class => "uiButton", :disabled => "disabled") %>
-			<% end %>
-		</div>
-	</div>
-	<%= contact_tabs type %>	
-	<div class="contacts_sub_header">
-		<ul class="alpha_sort_list">		
-			<%= hidden_field_tag :letter, '' %>
-			<li class="first <%= 'active' if params[:letter].blank? %>">
-				<%= link_to 'All', :letter => '', :state => params[:state].blank? ? 'active' : params[:state] %>
-			</li>
-			<% "A".upto("Y") do |l| -%>	    
-			 <li class="<%= 'active' if params[:letter] == [l] %>">
-			 	<%= link_to l, :letter => l, :state => params[:state].blank? ? 'active' : params[:state] %>
-			 </li>	
-			<% end %>
-			<li class="last <%= 'active' if params[:letter] == ['Z'] %>">
-				<%= link_to 'Z', :letter => 'Z', :state => params[:state].blank? ? 'active' : params[:state] %>
-			</li>
-		</ul>
-		<% if type.eql?('user') %>
-			<div class="customer_status_tab">
-				<b><%=t('contacts.showing')%></b>
-				<% [ [ "active", (params[:state].blank? or params[:state].eql?('active')) ],
-			 		[ "inactive", params[:state].eql?('inactive')],
-			 		[ "deleted", params[:state].eql?('deleted')],
-				   ].map{ |s| 
-						if(s[1]) 
-							concat content_tag :b, t("contacts.status.#{s[0]}") + " | "
-						else
-							concat link_to t("contacts.status.#{s[0]}") + " | ", 
-									{ :state => s[0] } , 
-									{ :title => t("contacts.status_title.#{s[0]}") } 
-						end
-					}
-				%>
-			</div>
-		<% end %>
-	</div>
-
-	<!-- %= render(:partial => '/shared/listsearch') % -->	
 </div>
+<%= contact_tabs type %>

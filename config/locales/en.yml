@@ -47,9 +47,10 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  facebook_user: Facebook User
   mobi_help: MobiHelp
   logmein_source: LogMeIn Rescue
-  working: Working
+  working: Working at
   attachment: Attachment
   attachments: Attachments
   show_quoted_text: Show Quoted text
@@ -1367,7 +1368,7 @@ en:
     tags: "Tags"
     tag_cloud: "Contact Tag Cloud"
     info3: Background information of %{nick_name}
-    working: Working
+    working: Working at
     info4: Recent tickets from %{nick_name}
     form_placeholder: 
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
@@ -1378,20 +1379,22 @@ en:
     role:
       info: Can see all tickets from this company 
     status:
-      active: Active
-      deleted: Deleted
-      inactive: Inactive 
+      verified: Verified contacts
+      deleted: Deleted contacts
+      unverified: Unverified contacts 
+      all: All
     status_title:
-      active : Show active contacts
-      inactive : Show contacts with unverified emails
+      verified : Show active contacts
+      unverified : Show contacts with unverified emails
       deleted : Show deleted contacts
-    active:
+      all: Show all contacts
+    verified:
       no_contacts: You don't have any contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
     deleted:
       no_contacts: You don't have any contacts to restore.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
-    inactive:
+    unverified:
       no_contacts: You don't have any unverified contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
   between: Between

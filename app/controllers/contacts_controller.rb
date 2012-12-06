@@ -28,7 +28,7 @@ class ContactsController < ApplicationController
   
   def index
     begin
-      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "active"))
+      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
     rescue Exception => e
       @contacts = {:error => get_formatted_message(e)}
     end

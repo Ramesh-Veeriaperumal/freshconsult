@@ -1,0 +1,31 @@
+<% javascript_tag do %>
+	validate_then_submit = function(url, method, params){
+		var customer_type = '<%=type.eql?('user') ? t('flash.contacts.info_select') : t('flash.customers.info_select')%>';
+		if (!jQuery('.customers_selector:checked').length)
+		{
+			jQuery("#noticeajax").text(customer_type);
+			jQuery("#noticeajax").show();
+			closeableFlash('#noticeajax');
+		}
+		else
+		{
+			var form = $("contacts-expanded");
+			if(method) form.down('input[name=_method]').value = method;
+			form.action = url;
+			form.submit();
+		}
+	}
+<% end %>
+<div class="customers-toolbar" id="customers-toolbar">
+	<input type="checkbox" id="customers-select-all" />
+	<div class="bulk-action">
+		<%= button_to_function(t('contacts.activation'), "validate_then_submit('#{bulk_send_invite_activations_path}', 'put', jQuery('#contacts-table .customers_selector:checked'))",  :class => "btn", :disabled => "disabled" ) if params[:state].eql?("unverified")%>
+		<% if params[:state].eql?("deleted") %>
+			<%= button_to_function(t('contacts.restore'), "validate_then_submit(
+			'#{ path }/restore', 'restore')", :class => "btn", :disabled => "disabled") %>
+		<% else %> 
+			<%= button_to_function(t('delete'), "validate_then_submit(
+			'#{ path }/destroy', 'delete')", :class => "btn", :disabled => "disabled") %>
+		<% end %>
+	</div>
+</div>
