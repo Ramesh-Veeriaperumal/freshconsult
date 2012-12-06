@@ -107,7 +107,7 @@ ConstantContactWidget.prototype= {
 			jQuery(contact).first().find('Confirmed').before(contact_list);
 		updated_list = contact.getElementsByTagName('entry')[0];
 		updateSubscriptionEndpoint = "contacts/#{id}";
-		requestBody = (new XMLSerializer()).serializeToString(updated_list);
+		requestBody = (new XMLSerializer()).serializeToString(updated_list).replace('xmlns=""', '');
 		this.freshdeskWidget.request({
 			method: "put",
 			body: requestBody,

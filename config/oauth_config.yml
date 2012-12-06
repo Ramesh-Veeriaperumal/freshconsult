@@ -55,8 +55,8 @@ staging:
   consumer_token: 187267923355
   consumer_secret: 0c8b6473fe421fa60dbd0f3befc4f219
  constantcontact:
-  consumer_token: 5c84b94e-9de5-434e-9823-a7fd29e6e31b
-  consumer_secret: 698bf9ac69134535827e7fadae97e24b
+  consumer_token: 918a740e-9f25-4471-a625-067f730b7c6e
+  consumer_secret: 14f777db3c414452a51925363001eda5
 
 production:
  salesforce:
@@ -69,5 +69,5 @@ production:
   consumer_token: 560756408749
   consumer_secret: d30b60816fe878cf6ea67489b7c47dad
  constantcontact:
-  consumer_token: dc001b2b-9c93-49a0-9585-17f6c4fe5e3f
-  consumer_secret: 0a83bd57fb6946d4aa21faa9515df7e8
+  consumer_token: 915f92ab-c49e-4fbc-9322-4606ceede9cd
+  consumer_secret: 5f2b1af85f5d40de97b66af3994361b5
