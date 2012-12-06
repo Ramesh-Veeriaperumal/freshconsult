@@ -281,7 +281,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			widgetOptions.integratable_impl = integratable_impl;
 			$super(widgetOptions);
 			this.renderPrimary();
-			this.mc_subscribe_lists = []; this.mc_unsubscribe_lists = [];
+			this.mc_subscribe_lists = []; this.mc_unsubscribe_lists = []; cw.title = [];
 		}
 	},
 
@@ -702,8 +702,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		title = _.template(this.Title, {contact: contact, app: this.app});
 		if (jQuery('#' + this.options.widget_name).dialog( "isOpen" ) == true)
 			jQuery('#' + this.options.widget_name).dialog("option", "title", title)
-		jQuery('#email_mark').html(title);
-		cw.title = title;
+		cw.title[this.app] = title;
 	},
 
 	renderCampaigns: function(activities, campaigns){

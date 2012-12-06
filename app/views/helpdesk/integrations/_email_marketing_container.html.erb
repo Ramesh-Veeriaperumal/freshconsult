@@ -35,10 +35,11 @@
 
 <% javascript_tag do %>
 	displayAsModal = function(app) {
+		var contact_title = cw.title[app.toLowerCase()] || "<%= contact.name %>";
 		jQuery('#' + app + '_widget .parent-tmpl, #' + app + '_widget .email_marketing').removeClass('hide');
 	  jQuery('#' + app.toLowerCase() + '_widget').dialog({ 
       show: "slide",
-      title: cw.title || jQuery('#email_mark').removeClass('hide'), 
+      title: contact_title, 
       width: '600px', height: 'auto', modal: true, resizable: false 
     });
 	}
