@@ -1,6 +1,11 @@
 <div class="results">
 	<% unless @total_results == 0 %>
-		<div class="list-lead"><%= "Displaying #{pluralize(@total_results, "result")} for \"#{@search_key}\"" %></div>
+		<div class="list-lead">
+			<%= "Displaying #{pluralize(@total_results, "result")} for \"#{@search_key}\"" %>
+			<% if @total_results > 3 %>
+				<%= link_to("See more results for \"#{@search_key}\"", "/search?search_key=#{@search_key}") %>
+			<% end %>
+		</div>
 	<% end %>
 	<% unless @searched_articles.nil? or @searched_articles.empty? %>
 		<div class="article-list">
@@ -27,10 +32,6 @@
 			<% end %>
 			</ul>
 		</div>
-	<% end %>
-
-	<% if @total_results == 10 %>
-		<%= link_to("See more results for \"#{@search_key}\"", "/search?search_key=#{@search_key}", :class => "see-more") %>
 	<% end %>
 
 	<% if @total_results == 0 %>

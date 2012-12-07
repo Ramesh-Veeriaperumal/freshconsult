@@ -3,10 +3,6 @@ class Support::Solutions::ArticlesController < SupportController
   include Helpdesk::TicketActions
   
   before_filter { |c| c.requires_permission :portal_knowledgebase }
-
-  before_filter :only => :show do |c|
-    c.send(:set_portal_page, :article_view)
-  end
   
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
   
@@ -24,6 +20,8 @@ class Support::Solutions::ArticlesController < SupportController
     @article = Solution::Article.find(params[:id], :include => :folder)    
     @category = @article.folder.category
     @folder = @article.folder
+    
+    set_portal_page :article_view
 
     respond_to do |format|
       format.html

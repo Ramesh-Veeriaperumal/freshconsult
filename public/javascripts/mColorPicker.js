@@ -63,10 +63,10 @@
   $.fn.mColorPicker.init = {
     replace: '[type=color]',
     index: 0,
-    enhancedSwatches: true,
-    allowTransparency: true,
+    enhancedSwatches: false,
+    allowTransparency: false,
     slogan: 'Meta100 - Designing Fun',
-    showLogo: true
+    showLogo: false
   };
 
   $.fn.mColorPicker.defaults = {
@@ -102,21 +102,18 @@
 
     $("#mColorPickerBg").live('click', $.fn.mColorPicker.closePicker);
 
-    $('.mColorPicker').live('keyup', function () {
-
-      try {
-  
-        $(this).css({
-          'border-right-color': $(this).val()
-        }).trigger('change');
-        // .css({
-        //   'color': $.fn.mColorPicker.textColor($(this).css('background-color'))
-        // })
-
-      } catch (r) {}
+    $('.mColorPicker').live({ "keyup": function () {
+        try {    
+          $(this).css({
+            'border-right-color': $(this).val()
+          }).trigger('change');
+        } catch (r) {}
+      },
+      "focusin": $.fn.mColorPicker.colorShow,
+      "focusout": $.fn.mColorPicker.closePicker 
     });
 
-    $('.mColorPickerTrigger').live('click', $.fn.mColorPicker.colorShow);
+    // $('.mColorPickerTrigger').live('click', $.fn.mColorPicker.colorShow);
   
     $('.mColor, .mPastColor').live('mousemove', function(e) {
 

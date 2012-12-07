@@ -4,7 +4,6 @@ class Support::TicketsController < SupportController
   include SupportTicketControllerMethods 
   include Support::TicketsHelper
   include ExportCsvUtil
-  include HelpdeskControllerMethods 
 
   before_filter { |c| c.requires_permission :portal_request }
   before_filter :only => [:new, :create] do |c| 
@@ -17,7 +16,7 @@ class Support::TicketsController < SupportController
   before_filter :set_mobile, :only => [:filter, :show, :update, :close_ticket]
   before_filter :set_date_filter, :only => [:export_csv]  
 
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+  # uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   def show
     @ticket = @item
@@ -32,11 +31,6 @@ class Support::TicketsController < SupportController
       format.html
       format.xml  { render :xml => @tickets.to_xml }
     end
-  end
-
-  def new    
-    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
-    set_portal_page :submit_ticket
   end
 
   def update

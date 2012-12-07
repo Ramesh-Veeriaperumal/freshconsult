@@ -35,30 +35,6 @@ $sources-sprite-dimensions:true;
 	overflow: auto;
 }
 
-.name_label{ font-weight: bold; }
-
-.ticket-form{ 
-	select,
-	textarea,
-	input[type="text"],
-	input[type="password"],
-	input[type="datetime"],
-	input[type="datetime-local"],
-	input[type="date"],
-	input[type="month"],
-	input[type="time"],
-	input[type="week"],
-	input[type="number"],
-	input[type="email"],
-	input[type="url"],
-	input[type="search"],
-	input[type="tel"],
-	input[type="color"],
-	.uneditable-input{
-		width: 100%;
-	}
-}
-
 /* Media styles for tablet and above */
 @include at-breakpoint($break-tablet){
 	.label-status{ float:right; background-color:#0c8519; }

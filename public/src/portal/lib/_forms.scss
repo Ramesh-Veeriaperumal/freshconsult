@@ -81,7 +81,7 @@ input[type="color"],
   display: inline-block;
   /*height: $baseLineHeight;*/
   padding: 4px;
-  margin-bottom: 9px;
+  /*margin-bottom: 9px;*/
   font-size: $baseFontSize;
   line-height: $baseLineHeight;
   color: $gray;
@@ -94,28 +94,6 @@ select{
 // Setting max input view for mobile devices
 input, textarea {
   width: 100%;
-}
-
-.ticket-sidebar{
-  select,
-  textarea,
-  input[type="text"],
-  input[type="password"],
-  input[type="datetime"],
-  input[type="datetime-local"],
-  input[type="date"],
-  input[type="month"],
-  input[type="time"],
-  input[type="week"],
-  input[type="number"],
-  input[type="email"],
-  input[type="url"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="color"],
-  .uneditable-input{
-    width:100%;
-  }
 }
 
 // Reset height since textareas have rows
@@ -275,7 +253,8 @@ textarea[class*="span"],
 .row-fluid input[class*="span"],
 .row-fluid select[class*="span"],
 .row-fluid textarea[class*="span"],
-.row-fluid .uneditable-input[class*="span"] {
+.row-fluid .uneditable-input[class*="span"],
+.add-on[class*="span"]{
   float: none;
   margin-left: 0;
 }
@@ -285,7 +264,8 @@ textarea[class*="span"],
 .input-prepend input[class*="span"],
 .input-prepend .uneditable-input[class*="span"],
 .row-fluid .input-prepend [class*="span"],
-.row-fluid .input-append [class*="span"] {
+.row-fluid .input-append [class*="span"],
+.add-on[class*="span"] {
   display: inline-block;
 }
 
@@ -417,6 +397,7 @@ select:focus:required:invalid {
     position: relative; // placed here by default so that on :focus we can place the input above the .add-on for full border and box-shadow goodness
     margin-bottom: 0; // prevent bottom margin from screwing up alignment in stacked forms
     *margin-left: 0;
+    margin-right: 0;
     vertical-align: middle;
     @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
     // Make input on top when focused so blue border and shadow always show
@@ -429,8 +410,8 @@ select:focus:required:invalid {
   }
   .add-on {
     display: inline-block;
-    width: auto;
-    height: $baseLineHeight;
+    /*width: auto;*/
+    /*height: $baseLineHeight;*/
     min-width: 16px;
     padding: 4px 5px;
     font-weight: normal;
@@ -438,12 +419,11 @@ select:focus:required:invalid {
     text-align: center;
     text-shadow: 0 1px 0 $white;
     vertical-align: middle;
-    background-color: $grayLighter;
+    /*background-color: $grayLighter;*/
     border: 1px solid #ccc;
   }
   .add-on,
   .btn {
-    margin-left: -1px;
     @include border-radius(0);
   }
   .active {
@@ -454,10 +434,15 @@ select:focus:required:invalid {
 .input-prepend {
   .add-on,
   .btn {
-    margin-right: -1px;
+    margin-right: -4px;
+  }
+  input,
+  .uneditable-input{
+    border-left-width:0;
   }
   .add-on:first-child,
   .btn:first-child {
+    border-right-width: 0;
     @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
   }
 }
@@ -467,12 +452,18 @@ select:focus:required:invalid {
   .uneditable-input {
     @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
   }
+  input,
+  .uneditable-input{
+    border-right-width:0;
+  }
   .uneditable-input {
     border-right-color: #ccc;
     border-left-color: #eee;
   }
   .add-on:last-child,
-  .btn:last-child {
+  .btn:last-child {    
+    border-left-width: 0;
+    margin-left: -4px;
     @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
   }
 }
@@ -591,6 +582,101 @@ input.special{
   @include box-shadow(rgba(0, 0, 0, 0.3) 0 1px 2px inset);
 }
 
+// Required label
+label.required:after{
+  content: "*";
+  color: #d00;
+  font-size: $baseFontSize * 1.2;
+  font-weight: bold;
+  position: relative;
+  top: 4px;
+  margin-left: 5px;
+}
+
+// Ticket form specific css
+.ticket-form{   
+  /*textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"],
+  .uneditable-input{
+    width: 100%;
+  }  */
+  .nested_field .level_2, 
+  .nested_field .level_3,
+  .control-tabbed-border{
+    border-left:1px dotted #333;    
+    padding-left:15px;
+    padding-top:15px;
+  }
+}
+
+.cc-emails{
+  @include clearfix;
+  margin-top: 6px;
+  .cc-label, input[type=text]{ float: left; }
+  .cc-label{
+    width: 10%;
+    border: 1px solid #ccc;
+    border-right: 0;
+    @include border-left-radius($inputBorderRadius); 
+    background-color:#f8f8f8;
+    height: $baseLineHeight+9px;
+    min-width: 16px;
+    padding: 4px 5px;
+    font-weight: normal;
+    line-height: $baseLineHeight;
+    text-align: center;
+    text-shadow: 0 1px 0 $white;
+    vertical-align: middle;
+  }
+  input[type=text]{ 
+    width:90%; 
+    @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
+    border-left-width: 0;
+  }
+  .select2-container{ width:90%; }
+  .select2-container .select2-choices{ border-left-color: #efefef; @include border-left-radius(0); }
+}
+
+.attachments-form{ 
+  margin-top: 5px; 
+  @include clearfix; 
+}
+
+.ticket-sidebar{
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"],
+  .uneditable-input{
+    width:100%;
+  }
+}
+
 // Horizontal-specific styles
 // --------------------------
 @include at-breakpoint($break-desktop){
@@ -635,13 +721,4 @@ input.special{
   input, textarea {
     width: 210px;
   }
-}
-
-label.required:after{
-  content: "*";
-  color: #d00;
-  font-size: $baseFontSize * 1.2;
-  font-weight: bold;
-  position: relative;
-  top: 4px;
 }

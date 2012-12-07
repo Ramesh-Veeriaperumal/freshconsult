@@ -134,7 +134,7 @@ javascripts:
     - public/javascripts/bootstrap/*.js
     - public/javascripts/dyn_menu.js
     - public/javascripts/utils.js
-    - public/javascripts/fast_autocompleter.js    
+    - public/javascripts/fast_autocompleter.js
     - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
@@ -173,9 +173,16 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/effects.js
+    - public/javascripts/controls.js
+    - public/javascripts/fast_autocompleter.js
     - public/javascripts/portal/jquery-ui-1.9.1.custom.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/portal/bootstrap.js
+    - public/javascripts/portal/select2.js
     - public/javascripts/portal/portal.js
 
   getting_started:

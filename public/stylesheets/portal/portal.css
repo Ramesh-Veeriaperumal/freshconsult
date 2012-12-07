@@ -746,7 +746,7 @@ input[type="color"],
   display: inline-block;
   /*height: $baseLineHeight;*/
   padding: 4px;
-  margin-bottom: 9px;
+  /*margin-bottom: 9px;*/
   font-size: 14px;
   line-height: 21.875px;
   color: #555555; }
@@ -759,31 +759,11 @@ select {
 input, textarea {
   width: 100%; }
 
-/* line 116, ../../src/portal/lib/_forms.scss */
-.ticket-sidebar select,
-.ticket-sidebar textarea,
-.ticket-sidebar input[type="text"],
-.ticket-sidebar input[type="password"],
-.ticket-sidebar input[type="datetime"],
-.ticket-sidebar input[type="datetime-local"],
-.ticket-sidebar input[type="date"],
-.ticket-sidebar input[type="month"],
-.ticket-sidebar input[type="time"],
-.ticket-sidebar input[type="week"],
-.ticket-sidebar input[type="number"],
-.ticket-sidebar input[type="email"],
-.ticket-sidebar input[type="url"],
-.ticket-sidebar input[type="search"],
-.ticket-sidebar input[type="tel"],
-.ticket-sidebar input[type="color"],
-.ticket-sidebar .uneditable-input {
-  width: 100%; }
-
-/* line 122, ../../src/portal/lib/_forms.scss */
+/* line 100, ../../src/portal/lib/_forms.scss */
 textarea {
   height: auto; }
 
-/* line 141, ../../src/portal/lib/_forms.scss */
+/* line 119, ../../src/portal/lib/_forms.scss */
 textarea,
 input[type="text"],
 input[type="password"],
@@ -814,7 +794,7 @@ input[type="color"],
   -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
   -o-transition: border linear 0.2s, box-shadow linear 0.2s;
   transition: border linear 0.2s, box-shadow linear 0.2s; }
-  /* line 149, ../../src/portal/lib/_forms.scss */
+  /* line 127, ../../src/portal/lib/_forms.scss */
   textarea:focus,
   input[type="text"]:focus,
   input[type="password"]:focus,
@@ -839,11 +819,11 @@ input[type="color"],
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6); }
 
-/* line 158, ../../src/portal/lib/_forms.scss */
+/* line 136, ../../src/portal/lib/_forms.scss */
 .checkbox.nested-child {
   padding-left: 40px; }
 
-/* line 165, ../../src/portal/lib/_forms.scss */
+/* line 143, ../../src/portal/lib/_forms.scss */
 input[type="radio"],
 input[type="checkbox"] {
   margin: 3px 0;
@@ -852,7 +832,7 @@ input[type="checkbox"] {
   line-height: normal;
   cursor: pointer; }
 
-/* line 177, ../../src/portal/lib/_forms.scss */
+/* line 155, ../../src/portal/lib/_forms.scss */
 input[type="submit"],
 input[type="reset"],
 input[type="button"],
@@ -860,16 +840,16 @@ input[type="radio"],
 input[type="checkbox"] {
   width: auto; }
 
-/* line 182, ../../src/portal/lib/_forms.scss */
+/* line 160, ../../src/portal/lib/_forms.scss */
 .uneditable-textarea {
   width: auto;
   height: auto; }
 
-/* line 187, ../../src/portal/lib/_forms.scss */
+/* line 165, ../../src/portal/lib/_forms.scss */
 input[type="file"] {
   line-height: 0; }
 
-/* line 193, ../../src/portal/lib/_forms.scss */
+/* line 171, ../../src/portal/lib/_forms.scss */
 select {
   height: 28px;
   /* In IE7, the height of the select element cannot be changed by height, only font-size */
@@ -877,17 +857,17 @@ select {
   /* For IE7, add top margin to align select with labels */
   line-height: 28px; }
 
-/* line 200, ../../src/portal/lib/_forms.scss */
+/* line 178, ../../src/portal/lib/_forms.scss */
 select {
   width: 220px;
   border: 1px solid #bbb; }
 
-/* line 207, ../../src/portal/lib/_forms.scss */
+/* line 185, ../../src/portal/lib/_forms.scss */
 select[multiple],
 select[size] {
   height: auto; }
 
-/* line 215, ../../src/portal/lib/_forms.scss */
+/* line 193, ../../src/portal/lib/_forms.scss */
 select:focus,
 input[type="file"]:focus,
 input[type="radio"]:focus,
@@ -896,24 +876,24 @@ input[type="checkbox"]:focus {
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px; }
 
-/* line 226, ../../src/portal/lib/_forms.scss */
+/* line 204, ../../src/portal/lib/_forms.scss */
 .radio,
 .checkbox {
   min-height: 18px;
   padding-left: 18px; }
 
-/* line 231, ../../src/portal/lib/_forms.scss */
+/* line 209, ../../src/portal/lib/_forms.scss */
 .radio input[type="radio"],
 .checkbox input[type="checkbox"] {
   float: left;
   margin-left: -18px; }
 
-/* line 238, ../../src/portal/lib/_forms.scss */
+/* line 216, ../../src/portal/lib/_forms.scss */
 .controls > .radio:first-child,
 .controls > .checkbox:first-child {
   padding-top: 5px; }
 
-/* line 245, ../../src/portal/lib/_forms.scss */
+/* line 223, ../../src/portal/lib/_forms.scss */
 .radio.inline,
 .checkbox.inline {
   display: inline-block;
@@ -921,36 +901,36 @@ input[type="checkbox"]:focus {
   margin-bottom: 0;
   vertical-align: middle; }
 
-/* line 252, ../../src/portal/lib/_forms.scss */
+/* line 230, ../../src/portal/lib/_forms.scss */
 .radio.inline + .radio.inline,
 .checkbox.inline + .checkbox.inline {
   margin-left: 10px; }
 
-/* line 262, ../../src/portal/lib/_forms.scss */
+/* line 240, ../../src/portal/lib/_forms.scss */
 .input-mini {
   width: 60px; }
 
-/* line 263, ../../src/portal/lib/_forms.scss */
+/* line 241, ../../src/portal/lib/_forms.scss */
 .input-small {
   width: 90px; }
 
-/* line 264, ../../src/portal/lib/_forms.scss */
+/* line 242, ../../src/portal/lib/_forms.scss */
 .input-medium {
   width: 150px; }
 
-/* line 265, ../../src/portal/lib/_forms.scss */
+/* line 243, ../../src/portal/lib/_forms.scss */
 .input-large {
   width: 210px; }
 
-/* line 266, ../../src/portal/lib/_forms.scss */
+/* line 244, ../../src/portal/lib/_forms.scss */
 .input-xlarge {
   width: 270px; }
 
-/* line 267, ../../src/portal/lib/_forms.scss */
+/* line 245, ../../src/portal/lib/_forms.scss */
 .input-xxlarge {
   width: 530px; }
 
-/* line 278, ../../src/portal/lib/_forms.scss */
+/* line 257, ../../src/portal/lib/_forms.scss */
 input[class*="span"],
 select[class*="span"],
 textarea[class*="span"],
@@ -958,17 +938,19 @@ textarea[class*="span"],
 .row-fluid input[class*="span"],
 .row-fluid select[class*="span"],
 .row-fluid textarea[class*="span"],
-.row-fluid .uneditable-input[class*="span"] {
+.row-fluid .uneditable-input[class*="span"],
+.add-on[class*="span"] {
   float: none;
   margin-left: 0; }
 
-/* line 288, ../../src/portal/lib/_forms.scss */
+/* line 268, ../../src/portal/lib/_forms.scss */
 .input-append input[class*="span"],
 .input-append .uneditable-input[class*="span"],
 .input-prepend input[class*="span"],
 .input-prepend .uneditable-input[class*="span"],
 .row-fluid .input-prepend [class*="span"],
-.row-fluid .input-append [class*="span"] {
+.row-fluid .input-append [class*="span"],
+.add-on[class*="span"] {
   display: inline-block; }
 
 /* line 238, ../../src/portal/lib/_mixins.scss */
@@ -1001,7 +983,7 @@ textarea.span1,
 .uneditable-input.span1 {
   width: 50px; }
 
-/* line 310, ../../src/portal/lib/_forms.scss */
+/* line 290, ../../src/portal/lib/_forms.scss */
 input[disabled],
 select[disabled],
 textarea[disabled],
@@ -1012,14 +994,14 @@ textarea[readonly] {
   background-color: gainsboro;
   border-color: #ddd; }
 
-/* line 319, ../../src/portal/lib/_forms.scss */
+/* line 299, ../../src/portal/lib/_forms.scss */
 input[type="radio"][disabled],
 input[type="checkbox"][disabled],
 input[type="radio"][readonly],
 input[type="checkbox"][readonly] {
   background-color: transparent; }
 
-/* line 328, ../../src/portal/lib/_forms.scss */
+/* line 308, ../../src/portal/lib/_forms.scss */
 div.error {
   padding: 8px 0 0; }
 
@@ -1116,13 +1098,13 @@ div.error {
   background-color: #dff0d8;
   border-color: #468847; }
 
-/* line 346, ../../src/portal/lib/_forms.scss */
+/* line 326, ../../src/portal/lib/_forms.scss */
 input:focus:required:invalid,
 textarea:focus:required:invalid,
 select:focus:required:invalid {
   color: #b94a48;
   border-color: #ee5f5b; }
-  /* line 349, ../../src/portal/lib/_forms.scss */
+  /* line 329, ../../src/portal/lib/_forms.scss */
   input:focus:required:invalid:focus,
   textarea:focus:required:invalid:focus,
   select:focus:required:invalid:focus {
@@ -1131,7 +1113,7 @@ select:focus:required:invalid {
     -moz-box-shadow: 0 0 6px #f8b9b7;
     box-shadow: 0 0 6px #f8b9b7; }
 
-/* line 360, ../../src/portal/lib/_forms.scss */
+/* line 340, ../../src/portal/lib/_forms.scss */
 .form-actions {
   padding: 20.875px 20px 21.875px;
   margin-top: 21.875px;
@@ -1152,7 +1134,7 @@ select:focus:required:invalid {
   .form-actions:after {
     clear: both; }
 
-/* line 371, ../../src/portal/lib/_forms.scss */
+/* line 351, ../../src/portal/lib/_forms.scss */
 .uneditable-input {
   overflow: hidden;
   white-space: nowrap;
@@ -1179,17 +1161,17 @@ input::-webkit-input-placeholder {
 [type="search"] {
   -webkit-appearance: textfield; }
 
-/* line 389, ../../src/portal/lib/_forms.scss */
+/* line 369, ../../src/portal/lib/_forms.scss */
 .help-block,
 .help-inline {
   color: #555555; }
 
-/* line 393, ../../src/portal/lib/_forms.scss */
+/* line 373, ../../src/portal/lib/_forms.scss */
 .help-block {
   display: block;
   margin-bottom: 10.9375px; }
 
-/* line 398, ../../src/portal/lib/_forms.scss */
+/* line 378, ../../src/portal/lib/_forms.scss */
 .help-inline {
   display: inline-block;
   *display: inline;
@@ -1197,11 +1179,11 @@ input::-webkit-input-placeholder {
   vertical-align: middle;
   padding-left: 5px; }
 
-/* line 412, ../../src/portal/lib/_forms.scss */
+/* line 392, ../../src/portal/lib/_forms.scss */
 .input-prepend,
 .input-append {
   margin-bottom: 5px; }
-  /* line 416, ../../src/portal/lib/_forms.scss */
+  /* line 396, ../../src/portal/lib/_forms.scss */
   .input-prepend input,
   .input-prepend select,
   .input-prepend .uneditable-input,
@@ -1211,13 +1193,14 @@ input::-webkit-input-placeholder {
     position: relative;
     margin-bottom: 0;
     *margin-left: 0;
+    margin-right: 0;
     vertical-align: middle;
     -webkit-border-radius: 0 3px 3px 0;
     -moz-border-radius: 0 3px 3px 0;
     -ms-border-radius: 0 3px 3px 0;
     -o-border-radius: 0 3px 3px 0;
     border-radius: 0 3px 3px 0; }
-    /* line 423, ../../src/portal/lib/_forms.scss */
+    /* line 404, ../../src/portal/lib/_forms.scss */
     .input-prepend input:focus,
     .input-prepend select:focus,
     .input-prepend .uneditable-input:focus,
@@ -1225,16 +1208,16 @@ input::-webkit-input-placeholder {
     .input-append select:focus,
     .input-append .uneditable-input:focus {
       z-index: 2; }
-  /* line 427, ../../src/portal/lib/_forms.scss */
+  /* line 408, ../../src/portal/lib/_forms.scss */
   .input-prepend .uneditable-input,
   .input-append .uneditable-input {
     border-left-color: #ccc; }
-  /* line 430, ../../src/portal/lib/_forms.scss */
+  /* line 411, ../../src/portal/lib/_forms.scss */
   .input-prepend .add-on,
   .input-append .add-on {
     display: inline-block;
-    width: auto;
-    height: 21.875px;
+    /*width: auto;*/
+    /*height: $baseLineHeight;*/
     min-width: 16px;
     padding: 4px 5px;
     font-weight: normal;
@@ -1242,39 +1225,43 @@ input::-webkit-input-placeholder {
     text-align: center;
     text-shadow: 0 1px 0 white;
     vertical-align: middle;
-    background-color: gainsboro;
+    /*background-color: $grayLighter;*/
     border: 1px solid #ccc; }
-  /* line 445, ../../src/portal/lib/_forms.scss */
+  /* line 426, ../../src/portal/lib/_forms.scss */
   .input-prepend .add-on,
   .input-prepend .btn,
   .input-append .add-on,
   .input-append .btn {
-    margin-left: -1px;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     -ms-border-radius: 0;
     -o-border-radius: 0;
     border-radius: 0; }
-  /* line 449, ../../src/portal/lib/_forms.scss */
+  /* line 429, ../../src/portal/lib/_forms.scss */
   .input-prepend .active,
   .input-append .active {
     background-color: #00f4fc;
     border-color: #006063; }
 
-/* line 456, ../../src/portal/lib/_forms.scss */
+/* line 436, ../../src/portal/lib/_forms.scss */
 .input-prepend .add-on,
 .input-prepend .btn {
-  margin-right: -1px; }
-/* line 460, ../../src/portal/lib/_forms.scss */
+  margin-right: -4px; }
+/* line 440, ../../src/portal/lib/_forms.scss */
+.input-prepend input,
+.input-prepend .uneditable-input {
+  border-left-width: 0; }
+/* line 444, ../../src/portal/lib/_forms.scss */
 .input-prepend .add-on:first-child,
 .input-prepend .btn:first-child {
+  border-right-width: 0;
   -webkit-border-radius: 3px 0 0 3px;
   -moz-border-radius: 3px 0 0 3px;
   -ms-border-radius: 3px 0 0 3px;
   -o-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px; }
 
-/* line 467, ../../src/portal/lib/_forms.scss */
+/* line 452, ../../src/portal/lib/_forms.scss */
 .input-append input,
 .input-append select,
 .input-append .uneditable-input {
@@ -1283,20 +1270,26 @@ input::-webkit-input-placeholder {
   -ms-border-radius: 3px 0 0 3px;
   -o-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px; }
-/* line 470, ../../src/portal/lib/_forms.scss */
+/* line 456, ../../src/portal/lib/_forms.scss */
+.input-append input,
+.input-append .uneditable-input {
+  border-right-width: 0; }
+/* line 459, ../../src/portal/lib/_forms.scss */
 .input-append .uneditable-input {
   border-right-color: #ccc;
   border-left-color: #eee; }
-/* line 475, ../../src/portal/lib/_forms.scss */
+/* line 464, ../../src/portal/lib/_forms.scss */
 .input-append .add-on:last-child,
 .input-append .btn:last-child {
+  border-left-width: 0;
+  margin-left: -4px;
   -webkit-border-radius: 0 3px 3px 0;
   -moz-border-radius: 0 3px 3px 0;
   -ms-border-radius: 0 3px 3px 0;
   -o-border-radius: 0 3px 3px 0;
   border-radius: 0 3px 3px 0; }
 
-/* line 483, ../../src/portal/lib/_forms.scss */
+/* line 474, ../../src/portal/lib/_forms.scss */
 .input-prepend.input-append input,
 .input-prepend.input-append select,
 .input-prepend.input-append .uneditable-input {
@@ -1305,7 +1298,7 @@ input::-webkit-input-placeholder {
   -ms-border-radius: 0;
   -o-border-radius: 0;
   border-radius: 0; }
-/* line 487, ../../src/portal/lib/_forms.scss */
+/* line 478, ../../src/portal/lib/_forms.scss */
 .input-prepend.input-append .add-on:first-child,
 .input-prepend.input-append .btn:first-child {
   margin-right: -1px;
@@ -1314,7 +1307,7 @@ input::-webkit-input-placeholder {
   -ms-border-radius: 3px 0 0 3px;
   -o-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px; }
-/* line 492, ../../src/portal/lib/_forms.scss */
+/* line 483, ../../src/portal/lib/_forms.scss */
 .input-prepend.input-append .add-on:last-child,
 .input-prepend.input-append .btn:last-child {
   margin-left: -1px;
@@ -1324,7 +1317,7 @@ input::-webkit-input-placeholder {
   -o-border-radius: 0 3px 3px 0;
   border-radius: 0 3px 3px 0; }
 
-/* line 503, ../../src/portal/lib/_forms.scss */
+/* line 494, ../../src/portal/lib/_forms.scss */
 .search-query {
   padding-right: 14px;
   padding-right: 4px \9;
@@ -1338,7 +1331,7 @@ input::-webkit-input-placeholder {
   -o-border-radius: 14px;
   border-radius: 14px; }
 
-/* line 529, ../../src/portal/lib/_forms.scss */
+/* line 520, ../../src/portal/lib/_forms.scss */
 .form-search input,
 .form-search textarea,
 .form-search select,
@@ -1364,29 +1357,29 @@ input::-webkit-input-placeholder {
   *display: inline;
   *zoom: 1;
   margin-bottom: 0; }
-/* line 535, ../../src/portal/lib/_forms.scss */
+/* line 526, ../../src/portal/lib/_forms.scss */
 .form-search .hide,
 .form-inline .hide,
 .form-portal .hide {
   display: none; }
 
-/* line 540, ../../src/portal/lib/_forms.scss */
+/* line 531, ../../src/portal/lib/_forms.scss */
 .form-portal {
   margin-top: 10px; }
 
-/* line 543, ../../src/portal/lib/_forms.scss */
+/* line 534, ../../src/portal/lib/_forms.scss */
 .form-search label,
 .form-inline label {
   display: inline-block; }
 
-/* line 550, ../../src/portal/lib/_forms.scss */
+/* line 541, ../../src/portal/lib/_forms.scss */
 .form-search .input-append,
 .form-inline .input-append,
 .form-search .input-prepend,
 .form-inline .input-prepend {
   margin-bottom: 0; }
 
-/* line 557, ../../src/portal/lib/_forms.scss */
+/* line 548, ../../src/portal/lib/_forms.scss */
 .form-search .radio,
 .form-search .checkbox,
 .form-inline .radio,
@@ -1395,7 +1388,7 @@ input::-webkit-input-placeholder {
   margin-bottom: 0;
   vertical-align: middle; }
 
-/* line 566, ../../src/portal/lib/_forms.scss */
+/* line 557, ../../src/portal/lib/_forms.scss */
 .form-search .radio input[type="radio"],
 .form-search .checkbox input[type="checkbox"],
 .form-inline .radio input[type="radio"],
@@ -1404,16 +1397,16 @@ input::-webkit-input-placeholder {
   margin-right: 3px;
   margin-left: 0; }
 
-/* line 574, ../../src/portal/lib/_forms.scss */
+/* line 565, ../../src/portal/lib/_forms.scss */
 .control-group {
   margin-bottom: 10.9375px; }
 
-/* line 579, ../../src/portal/lib/_forms.scss */
+/* line 570, ../../src/portal/lib/_forms.scss */
 legend + .control-group {
   margin-top: 21.875px;
   -webkit-margin-top-collapse: separate; }
 
-/* line 585, ../../src/portal/lib/_forms.scss */
+/* line 576, ../../src/portal/lib/_forms.scss */
 input.special {
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -1428,8 +1421,134 @@ input.special {
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px inset;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px inset; }
 
+/* line 586, ../../src/portal/lib/_forms.scss */
+label.required:after {
+  content: "*";
+  color: #d00;
+  font-size: 16.8px;
+  font-weight: bold;
+  position: relative;
+  top: 4px;
+  margin-left: 5px; }
+
+/* line 597, ../../src/portal/lib/_forms.scss */
+.ticket-form {
+  /*textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"],
+  .uneditable-input{
+    width: 100%;
+  }  */ }
+  /* line 618, ../../src/portal/lib/_forms.scss */
+  .ticket-form .nested_field .level_2,
+  .ticket-form .nested_field .level_3,
+  .ticket-form .control-tabbed-border {
+    border-left: 1px dotted #333;
+    padding-left: 15px;
+    padding-top: 15px; }
+
+/* line 625, ../../src/portal/lib/_forms.scss */
+.cc-emails {
+  *zoom: 1;
+  margin-top: 6px; }
+  /* line 15, ../../src/portal/lib/_mixins.scss */
+  .cc-emails:before, .cc-emails:after {
+    display: table;
+    content: ""; }
+  /* line 19, ../../src/portal/lib/_mixins.scss */
+  .cc-emails:after {
+    clear: both; }
+  /* line 628, ../../src/portal/lib/_forms.scss */
+  .cc-emails .cc-label, .cc-emails input[type=text] {
+    float: left; }
+  /* line 629, ../../src/portal/lib/_forms.scss */
+  .cc-emails .cc-label {
+    width: 10%;
+    border: 1px solid #ccc;
+    border-right: 0;
+    -moz-border-radius-topleft: 3px;
+    -webkit-border-top-left-radius: 3px;
+    border-top-left-radius: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    background-color: #f8f8f8;
+    height: 30.875px;
+    min-width: 16px;
+    padding: 4px 5px;
+    font-weight: normal;
+    line-height: 21.875px;
+    text-align: center;
+    text-shadow: 0 1px 0 white;
+    vertical-align: middle; }
+  /* line 644, ../../src/portal/lib/_forms.scss */
+  .cc-emails input[type=text] {
+    width: 90%;
+    -webkit-border-radius: 0 3px 3px 0;
+    -moz-border-radius: 0 3px 3px 0;
+    -ms-border-radius: 0 3px 3px 0;
+    -o-border-radius: 0 3px 3px 0;
+    border-radius: 0 3px 3px 0;
+    border-left-width: 0; }
+  /* line 649, ../../src/portal/lib/_forms.scss */
+  .cc-emails .select2-container {
+    width: 90%; }
+  /* line 650, ../../src/portal/lib/_forms.scss */
+  .cc-emails .select2-container .select2-choices {
+    border-left-color: #efefef;
+    -moz-border-radius-topleft: 0;
+    -webkit-border-top-left-radius: 0;
+    border-top-left-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0; }
+
+/* line 653, ../../src/portal/lib/_forms.scss */
+.attachments-form {
+  margin-top: 5px;
+  *zoom: 1; }
+  /* line 15, ../../src/portal/lib/_mixins.scss */
+  .attachments-form:before, .attachments-form:after {
+    display: table;
+    content: ""; }
+  /* line 19, ../../src/portal/lib/_mixins.scss */
+  .attachments-form:after {
+    clear: both; }
+
+/* line 675, ../../src/portal/lib/_forms.scss */
+.ticket-sidebar select,
+.ticket-sidebar textarea,
+.ticket-sidebar input[type="text"],
+.ticket-sidebar input[type="password"],
+.ticket-sidebar input[type="datetime"],
+.ticket-sidebar input[type="datetime-local"],
+.ticket-sidebar input[type="date"],
+.ticket-sidebar input[type="month"],
+.ticket-sidebar input[type="time"],
+.ticket-sidebar input[type="week"],
+.ticket-sidebar input[type="number"],
+.ticket-sidebar input[type="email"],
+.ticket-sidebar input[type="url"],
+.ticket-sidebar input[type="search"],
+.ticket-sidebar input[type="tel"],
+.ticket-sidebar input[type="color"],
+.ticket-sidebar .uneditable-input {
+  width: 100%; }
+
 @media (min-width: 60em) {
-  /* line 600, ../../src/portal/lib/_forms.scss */
+  /* line 686, ../../src/portal/lib/_forms.scss */
   .form-portal .control-group {
     margin-bottom: 21.875px;
     *zoom: 1; }
@@ -1440,40 +1559,31 @@ input.special {
     /* line 19, ../../src/portal/lib/_mixins.scss */
     .form-portal .control-group:after {
       clear: both; }
-  /* line 605, ../../src/portal/lib/_forms.scss */
+  /* line 691, ../../src/portal/lib/_forms.scss */
   .form-portal .control-label {
     float: left;
     width: 140px;
     padding-top: 5px; }
-  /* line 611, ../../src/portal/lib/_forms.scss */
+  /* line 697, ../../src/portal/lib/_forms.scss */
   .form-portal .controls {
     *display: inline-block;
     *padding-left: 20px;
     margin-left: 160px;
     *margin-left: 0; }
-    /* line 618, ../../src/portal/lib/_forms.scss */
+    /* line 704, ../../src/portal/lib/_forms.scss */
     .form-portal .controls:first-child {
       *padding-left: 160px; }
-  /* line 623, ../../src/portal/lib/_forms.scss */
+  /* line 709, ../../src/portal/lib/_forms.scss */
   .form-portal .help-block {
     margin-top: 10.9375px;
     margin-bottom: 0; }
-  /* line 628, ../../src/portal/lib/_forms.scss */
+  /* line 714, ../../src/portal/lib/_forms.scss */
   .form-portal .form-actions {
     padding-left: 160px; }
 
-  /* line 635, ../../src/portal/lib/_forms.scss */
+  /* line 721, ../../src/portal/lib/_forms.scss */
   input, textarea {
     width: 210px; } }
-/* line 640, ../../src/portal/lib/_forms.scss */
-label.required:after {
-  content: "*";
-  color: #d00;
-  font-size: 16.8px;
-  font-weight: bold;
-  position: relative;
-  top: 4px; }
-
 /* line 9, ../../src/portal/lib/_buttons.scss */
 .btn {
   display: inline-block;
@@ -1859,9 +1969,10 @@ input[type="submit"].btn {
   border-radius: 2em;
   width: 26px;
   height: 26px;
-  margin-right: 3px;
-  margin-top: -2px; }
-  /* line 65, ../../src/portal/lib/_sprites.scss */
+  margin-right: 1px;
+  margin-top: -2px;
+  margin-left: -2px; }
+  /* line 66, ../../src/portal/lib/_sprites.scss */
   .badge-announcement:before, .badge-ideas:before, .badge-problems:before, .badge-questions:before {
     content: "";
     display: -moz-inline-stack;
@@ -1873,23 +1984,23 @@ input[type="submit"].btn {
     vertical-align: text-top;
     margin: 2px 4px; }
 
-/* line 73, ../../src/portal/lib/_sprites.scss */
+/* line 74, ../../src/portal/lib/_sprites.scss */
 .page-stamp-article {
   background-color: #a249c5; }
 
-/* line 74, ../../src/portal/lib/_sprites.scss */
+/* line 75, ../../src/portal/lib/_sprites.scss */
 .badge-announcement, .page-stamp-announcement {
   background-color: #008b00; }
 
-/* line 75, ../../src/portal/lib/_sprites.scss */
+/* line 76, ../../src/portal/lib/_sprites.scss */
 .badge-ideas, .page-stamp-ideas {
   background-color: #f4af1a; }
 
-/* line 76, ../../src/portal/lib/_sprites.scss */
+/* line 77, ../../src/portal/lib/_sprites.scss */
 .badge-problems, .page-stamp-problems {
   background-color: #ff5959; }
 
-/* line 77, ../../src/portal/lib/_sprites.scss */
+/* line 78, ../../src/portal/lib/_sprites.scss */
 .badge-questions, .page-stamp-questions {
   background-color: #00aad5; }
 
@@ -3058,17 +3169,17 @@ button.close {
   -o-border-radius: 3px;
   border-radius: 3px; }
 
-/* line 1, ../../src/portal/lib/_header-footer.scss */
+/* line 2, ../../src/portal/lib/_header-footer.scss */
 .banner {
   background-color: #4c4b4b;
   padding: 0.9em 1.6em;
-  border: 1px solid #323232;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom-width: 0;
   color: white;
-  -webkit-box-shadow: rgba(255, 255, 255, 0.7) 0 1px inset;
-  -moz-box-shadow: rgba(255, 255, 255, 0.7) 0 1px inset;
-  box-shadow: rgba(255, 255, 255, 0.7) 0 1px inset;
+  -webkit-box-shadow: rgba(255, 255, 255, 0.5) 0 1px inset;
+  -moz-box-shadow: rgba(255, 255, 255, 0.5) 0 1px inset;
+  box-shadow: rgba(255, 255, 255, 0.5) 0 1px inset;
   *zoom: 1;
-  border-bottom-color: rgba(255, 255, 255, 0.8);
   text-shadow: rgba(0, 0, 0, 0.9) -1px -1px 1px; }
   /* line 15, ../../src/portal/lib/_mixins.scss */
   .banner:before, .banner:after {
@@ -3077,37 +3188,38 @@ button.close {
   /* line 19, ../../src/portal/lib/_mixins.scss */
   .banner:after {
     clear: both; }
-  /* line 14, ../../src/portal/lib/_header-footer.scss */
+  /* line 15, ../../src/portal/lib/_header-footer.scss */
   .banner a {
     color: inherit;
     font-size: 13px; }
-  /* line 15, ../../src/portal/lib/_header-footer.scss */
+  /* line 16, ../../src/portal/lib/_header-footer.scss */
   .banner a:hover {
     color: inherit; }
 
-/* line 18, ../../src/portal/lib/_header-footer.scss */
+/* line 19, ../../src/portal/lib/_header-footer.scss */
 .banner-title .heading {
   color: inherit; }
 
-/* line 20, ../../src/portal/lib/_header-footer.scss */
+/* line 21, ../../src/portal/lib/_header-footer.scss */
 .banner-nav {
   font-size: 0.929em;
   line-height: 1.3em; }
-  /* line 23, ../../src/portal/lib/_header-footer.scss */
+  /* line 24, ../../src/portal/lib/_header-footer.scss */
   .banner-nav .welcome {
     display: inline-block; }
-    /* line 25, ../../src/portal/lib/_header-footer.scss */
+    /* line 26, ../../src/portal/lib/_header-footer.scss */
     .banner-nav .welcome:after {
       content: " - "; }
-  /* line 27, ../../src/portal/lib/_header-footer.scss */
+  /* line 28, ../../src/portal/lib/_header-footer.scss */
   .banner-nav a {
     color: inherit; }
 
-/* line 30, ../../src/portal/lib/_header-footer.scss */
+/* line 31, ../../src/portal/lib/_header-footer.scss */
 .page-tabs {
   background-color: #006063;
   color: #fff;
   line-height: 35px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   *zoom: 1; }
   /* line 15, ../../src/portal/lib/_mixins.scss */
   .page-tabs:before, .page-tabs:after {
@@ -3116,27 +3228,27 @@ button.close {
   /* line 19, ../../src/portal/lib/_mixins.scss */
   .page-tabs:after {
     clear: both; }
-  /* line 35, ../../src/portal/lib/_header-footer.scss */
+  /* line 37, ../../src/portal/lib/_header-footer.scss */
   .page-tabs a {
     padding: 0 15px;
     color: inherit;
     min-width: 100px;
     width: auto !important;
     width: 100px; }
-  /* line 40, ../../src/portal/lib/_header-footer.scss */
+  /* line 42, ../../src/portal/lib/_header-footer.scss */
   .page-tabs a:hover, .page-tabs a.active {
     text-decoration: none;
     background-color: #4c4b4b;
     color: white; }
-  /* line 45, ../../src/portal/lib/_header-footer.scss */
+  /* line 47, ../../src/portal/lib/_header-footer.scss */
   .page-tabs a {
     display: none; }
-  /* line 46, ../../src/portal/lib/_header-footer.scss */
+  /* line 48, ../../src/portal/lib/_header-footer.scss */
   .page-tabs a.active {
     display: block; }
 
 @media (min-width: 45em) {
-  /* line 50, ../../src/portal/lib/_header-footer.scss */
+  /* line 52, ../../src/portal/lib/_header-footer.scss */
   .banner {
     -moz-border-radius-topleft: 6px;
     -webkit-border-top-left-radius: 6px;
@@ -3145,17 +3257,17 @@ button.close {
     -webkit-border-top-right-radius: 6px;
     border-top-right-radius: 6px; }
 
-  /* line 51, ../../src/portal/lib/_header-footer.scss */
+  /* line 53, ../../src/portal/lib/_header-footer.scss */
   .banner-nav {
     margin-top: 5px; }
-    /* line 53, ../../src/portal/lib/_header-footer.scss */
+    /* line 55, ../../src/portal/lib/_header-footer.scss */
     .banner-nav .welcome {
       display: block; }
-      /* line 55, ../../src/portal/lib/_header-footer.scss */
+      /* line 57, ../../src/portal/lib/_header-footer.scss */
       .banner-nav .welcome:after {
         content: none; }
 
-  /* line 58, ../../src/portal/lib/_header-footer.scss */
+  /* line 60, ../../src/portal/lib/_header-footer.scss */
   .page-tabs {
     -moz-border-radius-bottomleft: 6px;
     -webkit-border-bottom-left-radius: 6px;
@@ -3163,18 +3275,18 @@ button.close {
     -moz-border-radius-bottomright: 6px;
     -webkit-border-bottom-right-radius: 6px;
     border-bottom-right-radius: 6px; }
-    /* line 60, ../../src/portal/lib/_header-footer.scss */
+    /* line 62, ../../src/portal/lib/_header-footer.scss */
     .page-tabs a:first-child {
       -moz-border-radius-bottomleft: 6px;
       -webkit-border-bottom-left-radius: 6px;
       border-bottom-left-radius: 6px; }
-    /* line 61, ../../src/portal/lib/_header-footer.scss */
+    /* line 63, ../../src/portal/lib/_header-footer.scss */
     .page-tabs a {
       display: block;
       float: left;
-      border-right: 1px solid rgba(255, 255, 255, 0.8);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
       text-align: center; } }
-/* line 65, ../../src/portal/lib/_header-footer.scss */
+/* line 67, ../../src/portal/lib/_header-footer.scss */
 .logo {
   display: inline;
   float: left;
@@ -3183,35 +3295,35 @@ button.close {
   width: 50px;
   height: 50px; }
 
-/* line 73, ../../src/portal/lib/_header-footer.scss */
+/* line 75, ../../src/portal/lib/_header-footer.scss */
 footer {
   background-color: #777777;
   padding: 1.8em 2.2em;
   border: 1px solid #5e5e5e;
   color: white;
   text-align: center; }
-  /* line 79, ../../src/portal/lib/_header-footer.scss */
+  /* line 81, ../../src/portal/lib/_header-footer.scss */
   footer a {
     color: inherit;
     margin: 0 10px; }
-  /* line 80, ../../src/portal/lib/_header-footer.scss */
+  /* line 82, ../../src/portal/lib/_header-footer.scss */
   footer a:hover {
     color: inherit; }
-  /* line 81, ../../src/portal/lib/_header-footer.scss */
+  /* line 83, ../../src/portal/lib/_header-footer.scss */
   footer a:before {
     content: "";
     position: absolute;
     border: 3px solid rgba(255, 255, 255, 0.4);
     margin-left: -15px;
     margin-top: 7px; }
-  /* line 88, ../../src/portal/lib/_header-footer.scss */
+  /* line 90, ../../src/portal/lib/_header-footer.scss */
   footer a:first-child:before {
     content: none; }
-  /* line 91, ../../src/portal/lib/_header-footer.scss */
+  /* line 93, ../../src/portal/lib/_header-footer.scss */
   footer a:last-child {
     margin-right: 0; }
 
-/* line 96, ../../src/portal/lib/_header-footer.scss */
+/* line 98, ../../src/portal/lib/_header-footer.scss */
 .copyright {
   padding: 1.8em 2.2em;
   text-align: center;
@@ -3424,11 +3536,11 @@ footer {
 
 /* line 11, ../../src/portal/lib/_content.scss */
 .content {
-  background-color: rgba(255, 255, 255, 0.8); }
+  background-color: white; }
 
 /* line 12, ../../src/portal/lib/_content.scss */
 .content-light {
-  background-color: rgba(255, 255, 255, 0.5); }
+  background-color: rgba(255, 255, 255, 0.9); }
 
 /* line 13, ../../src/portal/lib/_content.scss */
 .content-form {
@@ -3735,6 +3847,11 @@ footer {
   background-position: center center;
   height: 100px; }
 
+/* Match css in autocompelete */
+/* line 254, ../../src/portal/lib/_content.scss */
+.match {
+  font-weight: bold; }
+
 /* line 1, ../../src/portal/lib/_login.scss */
 .alt-login-button .btn {
   text-align: left;
@@ -3948,6 +4065,593 @@ footer {
 		}
 	}
 }*/
+/*
+Version: 3.2 Timestamp: Mon Sep 10 10:38:04 PDT 2012
+*/
+/* line 8, ../../src/portal/lib/_autocomplete.scss */
+.select2-container {
+  position: relative;
+  display: inline-block;
+  /* inline-block for ie7 */
+  zoom: 1;
+  *display: inline;
+  vertical-align: top; }
+
+/* line 20, ../../src/portal/lib/_autocomplete.scss */
+.select2-container,
+.select2-drop,
+.select2-search,
+.select2-search input {
+  /*
+    Force border-box so that % widths fit the parent
+    container without overlap because of margin/padding.
+
+    More Info : http://www.quirksmode.org/css/box.html
+  */
+  -moz-box-sizing: border-box;
+  /* firefox */
+  -ms-box-sizing: border-box;
+  /* ie */
+  -webkit-box-sizing: border-box;
+  /* webkit */
+  -khtml-box-sizing: border-box;
+  /* konqueror */
+  box-sizing: border-box;
+  /* css3 */ }
+
+/* line 34, ../../src/portal/lib/_autocomplete.scss */
+.select2-container .select2-choice {
+  background-color: #fff;
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+  background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+  background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+  background-image: -o-linear-gradient(bottom, #eeeeee 0%, white 50%);
+  background-image: -ms-linear-gradient(top, #eeeeee 0%, white 50%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
+  background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #cccccc;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  height: 29.875px;
+  line-height: 26px;
+  padding: 0 0 0 8px;
+  color: #444;
+  text-decoration: none; }
+
+/* line 60, ../../src/portal/lib/_autocomplete.scss */
+.select2-container.select2-drop-above .select2-choice {
+  border-bottom-color: #aaa;
+  -moz-border-radius-bottomleft: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.9, white));
+  background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 90%);
+  background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 90%);
+  background-image: -o-linear-gradient(bottom, #eeeeee 0%, white 90%);
+  background-image: -ms-linear-gradient(top, #eeeeee 0%, white 90%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff',GradientType=0 );
+  background-image: linear-gradient(top, #eeeeee 0%, #ffffff 90%); }
+
+/* line 72, ../../src/portal/lib/_autocomplete.scss */
+.select2-container .select2-choice span {
+  margin-right: 26px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis; }
+
+/* line 82, ../../src/portal/lib/_autocomplete.scss */
+.select2-container .select2-choice abbr {
+  display: block;
+  position: absolute;
+  right: 26px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  font-size: 1px;
+  background: url("images/select2/select2.png") right top no-repeat;
+  cursor: pointer;
+  text-decoration: none;
+  border: 0;
+  outline: 0; }
+
+/* line 96, ../../src/portal/lib/_autocomplete.scss */
+.select2-container .select2-choice abbr:hover {
+  background-position: right -11px;
+  cursor: pointer; }
+
+/* line 101, ../../src/portal/lib/_autocomplete.scss */
+.select2-drop {
+  background: #fff;
+  color: #000;
+  border: 1px solid #aaa;
+  border-top: 0;
+  position: absolute;
+  top: 100%;
+  -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+  -o-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  width: 100%;
+  margin-top: -1px;
+  -moz-border-radius-bottomleft: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px; }
+
+/* line 119, ../../src/portal/lib/_autocomplete.scss */
+.select2-drop.select2-drop-above {
+  -moz-border-radius-topleft: 3px;
+  -webkit-border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -webkit-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+  margin-top: 1px;
+  border-top: 1px solid #cccccc;
+  border-bottom: 0;
+  -webkit-box-shadow: 0 -4px 5px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 -4px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 -4px 5px rgba(0, 0, 0, 0.15); }
+
+/* line 127, ../../src/portal/lib/_autocomplete.scss */
+.select2-container .select2-choice div {
+  -moz-border-radius-topright: 3px;
+  -webkit-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  background: #ccc;
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #cccccc), color-stop(0.6, #eeeeee));
+  background-image: -webkit-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
+  background-image: -moz-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
+  background-image: -o-linear-gradient(bottom, #cccccc 0%, #eeeeee 60%);
+  background-image: -ms-linear-gradient(top, #cccccc 0%, #eeeeee 60%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#cccccc', endColorstr = '#eeeeee', GradientType = 0);
+  background-image: linear-gradient(top, #cccccc 0%, #eeeeee 60%);
+  border-left: 1px solid #cccccc;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: block;
+  height: 100%;
+  width: 18px; }
+
+/* line 149, ../../src/portal/lib/_autocomplete.scss */
+.select2-container .select2-choice div b {
+  background: url("images/select2/select2.png") no-repeat 0 1px;
+  display: block;
+  width: 100%;
+  height: 100%; }
+
+/* line 156, ../../src/portal/lib/_autocomplete.scss */
+.select2-search {
+  display: inline-block;
+  white-space: nowrap;
+  z-index: 10000;
+  min-height: 26px;
+  width: 100%;
+  margin: 0;
+  padding-left: 4px;
+  padding-right: 4px; }
+
+/* line 167, ../../src/portal/lib/_autocomplete.scss */
+.select2-search-hidden {
+  display: block;
+  position: absolute;
+  left: -10000px; }
+
+/* line 173, ../../src/portal/lib/_autocomplete.scss */
+.select2-search input {
+  background: white url("images/select2/select2.png") no-repeat 100% -22px;
+  background: url("images/select2/select2.png") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
+  background: url("images/select2/select2.png") no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+  background: url("images/select2/select2.png") no-repeat 100% -22px, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+  background: url("images/select2/select2.png") no-repeat 100% -22px, -o-linear-gradient(bottom, white 85%, #eeeeee 99%);
+  background: url("images/select2/select2.png") no-repeat 100% -22px, -ms-linear-gradient(top, white 85%, #eeeeee 99%);
+  background: url("images/select2/select2.png") no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+  padding: 4px 20px 4px 5px;
+  outline: 0;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 1em;
+  width: 100%;
+  margin: 0;
+  height: 26px !important;
+  min-height: 26px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border-radius: 0;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0; }
+
+/* line 198, ../../src/portal/lib/_autocomplete.scss */
+.select2-drop.select2-drop-above .select2-search input {
+  margin-top: 4px; }
+
+/* line 202, ../../src/portal/lib/_autocomplete.scss */
+.select2-search input.select2-active {
+  background: white url("images/select2/spinner.gif") no-repeat 100%;
+  background: url("images/select2/spinner.gif") no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
+  background: url("images/select2/spinner.gif") no-repeat 100%, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+  background: url("images/select2/spinner.gif") no-repeat 100%, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+  background: url("images/select2/spinner.gif") no-repeat 100%, -o-linear-gradient(bottom, white 85%, #eeeeee 99%);
+  background: url("images/select2/spinner.gif") no-repeat 100%, -ms-linear-gradient(top, white 85%, #eeeeee 99%);
+  background: url("images/select2/spinner.gif") no-repeat 100%, linear-gradient(top, #ffffff 85%, #eeeeee 99%); }
+
+/* line 213, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-active .select2-choice,
+.select2-container-active .select2-choices {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
+  border-color: rgba(244, 175, 26, 0.8);
+  outline: 0;
+  outline: thin dotted \9;
+  /* IE6-9 */ }
+
+/* line 220, ../../src/portal/lib/_autocomplete.scss */
+.select2-dropdown-open .select2-choice {
+  border: 1px solid #cccccc;
+  border-bottom-color: transparent;
+  -webkit-box-shadow: 0 1px 0 #fff inset;
+  -moz-box-shadow: 0 1px 0 #fff inset;
+  -o-box-shadow: 0 1px 0 #fff inset;
+  box-shadow: 0 1px 0 #fff inset;
+  background-color: #eee;
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, white), color-stop(0.5, #eeeeee));
+  background-image: -webkit-linear-gradient(center bottom, white 0%, #eeeeee 50%);
+  background-image: -moz-linear-gradient(center bottom, white 0%, #eeeeee 50%);
+  background-image: -o-linear-gradient(bottom, white 0%, #eeeeee 50%);
+  background-image: -ms-linear-gradient(top, white 0%, #eeeeee 50%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee',GradientType=0 );
+  background-image: linear-gradient(top, #ffffff 0%, #eeeeee 50%);
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-bottomright: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0; }
+
+/* line 243, ../../src/portal/lib/_autocomplete.scss */
+.select2-dropdown-open .select2-choice div {
+  background: transparent;
+  border-left: none; }
+
+/* line 247, ../../src/portal/lib/_autocomplete.scss */
+.select2-dropdown-open .select2-choice div b {
+  background-position: -18px 1px; }
+
+/* results */
+/* line 252, ../../src/portal/lib/_autocomplete.scss */
+.select2-results {
+  margin: 4px 4px 4px 0;
+  padding: 0 0 0 4px;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 200px; }
+
+/* line 261, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub {
+  margin: 0 0 0 0; }
+
+/* line 265, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub > li .select2-result-label {
+  padding-left: 20px; }
+
+/* line 266, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
+  padding-left: 40px; }
+
+/* line 267, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
+  padding-left: 60px; }
+
+/* line 268, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
+  padding-left: 80px; }
+
+/* line 269, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
+  padding-left: 100px; }
+
+/* line 270, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
+  padding-left: 110px; }
+
+/* line 271, ../../src/portal/lib/_autocomplete.scss */
+.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
+  padding-left: 120px; }
+
+/* line 273, ../../src/portal/lib/_autocomplete.scss */
+.select2-results li {
+  list-style: none;
+  display: list-item; }
+
+/* line 278, ../../src/portal/lib/_autocomplete.scss */
+.select2-results li.select2-result-with-children > .select2-result-label {
+  font-weight: bold; }
+
+/* line 282, ../../src/portal/lib/_autocomplete.scss */
+.select2-results .select2-result-label {
+  padding: 3px 7px 4px;
+  margin: 0;
+  cursor: pointer; }
+
+/* line 288, ../../src/portal/lib/_autocomplete.scss */
+.select2-results .select2-highlighted {
+  background: #cccccc;
+  color: black; }
+
+/* line 292, ../../src/portal/lib/_autocomplete.scss */
+.select2-results li em {
+  background: #feffde;
+  font-style: normal; }
+
+/* line 296, ../../src/portal/lib/_autocomplete.scss */
+.select2-results .select2-highlighted em {
+  background: transparent; }
+
+/* line 301, ../../src/portal/lib/_autocomplete.scss */
+.select2-results .select2-no-results,
+.select2-results .select2-searching,
+.select2-results .select2-selection-limit {
+  background: #f4f4f4;
+  display: list-item; }
+
+/*
+disabled look for already selected choices in the results dropdown
+.select2-results .select2-disabled.select2-highlighted {
+    color: #666;
+    background: #f4f4f4;
+    display: list-item;
+    cursor: default;
+}
+.select2-results .select2-disabled {
+  background: #f4f4f4;
+  display: list-item;
+  cursor: default;
+}
+*/
+/* line 320, ../../src/portal/lib/_autocomplete.scss */
+.select2-results .select2-disabled {
+  display: none; }
+
+/* line 324, ../../src/portal/lib/_autocomplete.scss */
+.select2-more-results.select2-active {
+  background: #f4f4f4 url("images/select2/spinner.gif") no-repeat 100%; }
+
+/* line 328, ../../src/portal/lib/_autocomplete.scss */
+.select2-more-results {
+  background: #f4f4f4;
+  display: list-item; }
+
+/* disabled styles */
+/* line 335, ../../src/portal/lib/_autocomplete.scss */
+.select2-container.select2-container-disabled .select2-choice {
+  background-color: #f4f4f4;
+  background-image: none;
+  border: 1px solid #ddd;
+  cursor: default; }
+
+/* line 342, ../../src/portal/lib/_autocomplete.scss */
+.select2-container.select2-container-disabled .select2-choice div {
+  background-color: #f4f4f4;
+  background-image: none;
+  border-left: 0; }
+
+/* multiselect */
+/* line 351, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices {
+  background-color: white;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition: border linear 0.2s, box-shadow linear 0.2s;
+  border: 1px solid #cccccc;
+  margin: 0;
+  padding: 0;
+  cursor: text;
+  overflow: hidden;
+  height: auto !important;
+  height: 1%;
+  position: relative;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px; }
+
+/* line 367, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices {
+  min-height: 29.875px; }
+
+/* line 371, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi.select2-container-active .select2-choices {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 175, 26, 0.6);
+  border-color: rgba(244, 175, 26, 0.8);
+  outline: 0;
+  outline: thin dotted \9;
+  /* IE6-9 */ }
+
+/* line 377, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices li {
+  float: left;
+  list-style: none; }
+
+/* line 381, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-field {
+  white-space: nowrap;
+  margin: 0;
+  padding: 0; }
+
+/* line 387, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-field input {
+  color: #333;
+  background: transparent !important;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 100%;
+  height: 27px;
+  padding: 8px;
+  margin: 1px 0;
+  outline: 0;
+  border: 0;
+  font-weight: 300;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none; }
+
+/* line 404, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-field input.select2-active {
+  background: white url("images/select2/spinner.gif") no-repeat 100% !important; }
+
+/* line 408, ../../src/portal/lib/_autocomplete.scss */
+.select2-default {
+  color: #999 !important; }
+
+/* line 412, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-choice {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  background-color: #e4e4e4;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#eeeeee', GradientType=0 );
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
+  background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -o-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -ms-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  -webkit-box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  color: #333;
+  border: 1px solid #aaaaaa;
+  line-height: 15px;
+  padding: 3px 5px 3px 18px;
+  margin: 3px 0 3px 5px;
+  position: relative;
+  cursor: default; }
+
+/* line 438, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-choice span {
+  cursor: default; }
+
+/* line 441, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-choice-focus {
+  background: #d4d4d4; }
+
+/* line 445, ../../src/portal/lib/_autocomplete.scss */
+.select2-search-choice-close {
+  display: block;
+  position: absolute;
+  right: 3px;
+  top: 4px;
+  width: 12px;
+  height: 13px;
+  font-size: 1px;
+  background: url("images/select2/select2.png") right top no-repeat;
+  outline: none; }
+
+/* line 457, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-search-choice-close {
+  left: 3px; }
+
+/* line 462, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
+  background-position: right -11px; }
+
+/* line 465, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi .select2-choices .select2-search-choice-focus .select2-search-choice-close {
+  background-position: right -11px; }
+
+/* disabled styles */
+/* line 471, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi.select2-container-disabled .select2-choices {
+  background-color: #f4f4f4;
+  background-image: none;
+  border: 1px solid #ddd;
+  cursor: default; }
+
+/* line 478, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice {
+  background-image: none;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  padding: 3px 5px 3px 5px; }
+
+/* line 485, ../../src/portal/lib/_autocomplete.scss */
+.select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice .select2-search-choice-close {
+  display: none; }
+
+/* end multiselect */
+/* line 491, ../../src/portal/lib/_autocomplete.scss */
+.select2-result-selectable .select2-match,
+.select2-result-unselectable .select2-result-selectable .select2-match {
+  text-decoration: underline; }
+
+/* line 492, ../../src/portal/lib/_autocomplete.scss */
+.select2-result-unselectable .select2-match {
+  text-decoration: none; }
+
+/* line 494, ../../src/portal/lib/_autocomplete.scss */
+.select2-offscreen {
+  position: absolute;
+  left: -10000px; }
+
+/* Retina-ize icons */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5) {
+  /* line 499, ../../src/portal/lib/_autocomplete.scss */
+  .select2-search input, .select2-search-choice-close, .select2-container .select2-choice abbr, .select2-container .select2-choice div b {
+    background-image: url("images/select2/select2x2.png") !important;
+    background-repeat: no-repeat !important;
+    background-size: 60px 40px !important; }
+
+  /* line 504, ../../src/portal/lib/_autocomplete.scss */
+  .select2-search input {
+    background-position: 100% -21px !important; } }
 /* jQuery UI - v1.9.1 - 2012-11-06
 * http://jqueryui.com
 * Includes: jquery.ui.core.css, jquery.ui.datepicker.css
@@ -4494,56 +5198,32 @@ footer {
   max-height: 300px;
   overflow: auto; }
 
-/* line 38, ../../src/portal/lib/_ticket.scss */
-.name_label {
-  font-weight: bold; }
-
-/* line 57, ../../src/portal/lib/_ticket.scss */
-.ticket-form select,
-.ticket-form textarea,
-.ticket-form input[type="text"],
-.ticket-form input[type="password"],
-.ticket-form input[type="datetime"],
-.ticket-form input[type="datetime-local"],
-.ticket-form input[type="date"],
-.ticket-form input[type="month"],
-.ticket-form input[type="time"],
-.ticket-form input[type="week"],
-.ticket-form input[type="number"],
-.ticket-form input[type="email"],
-.ticket-form input[type="url"],
-.ticket-form input[type="search"],
-.ticket-form input[type="tel"],
-.ticket-form input[type="color"],
-.ticket-form .uneditable-input {
-  width: 100%; }
-
 /* Media styles for tablet and above */
 @media (min-width: 45em) {
-  /* line 64, ../../src/portal/lib/_ticket.scss */
+  /* line 40, ../../src/portal/lib/_ticket.scss */
   .label-status {
     float: right;
     background-color: #0c8519; }
 
-  /* line 65, ../../src/portal/lib/_ticket.scss */
+  /* line 41, ../../src/portal/lib/_ticket.scss */
   .c-ticket-row {
     padding: 8px 2.2em 8px 55px; }
 
-  /* line 66, ../../src/portal/lib/_ticket.scss */
+  /* line 42, ../../src/portal/lib/_ticket.scss */
   .ticket-brief {
     padding-top: 7px; }
 
-  /* line 67, ../../src/portal/lib/_ticket.scss */
+  /* line 43, ../../src/portal/lib/_ticket.scss */
   .label-status {
     margin-top: 6px; }
 
-  /* line 69, ../../src/portal/lib/_ticket.scss */
+  /* line 45, ../../src/portal/lib/_ticket.scss */
   .ticket-main {
     width: 70.83333%;
     float: left;
     margin-right: 2.08333%; }
 
-  /* line 70, ../../src/portal/lib/_ticket.scss */
+  /* line 46, ../../src/portal/lib/_ticket.scss */
   .ticket-sidebar {
     width: 27.08333%;
     float: right;

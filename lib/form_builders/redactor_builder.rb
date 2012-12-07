@@ -12,7 +12,8 @@ module FormBuilders
         :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
       }
 
-      def rich_editor(method, options = {})     
+      def rich_editor(method, options = {})
+        # !ERROR is occuring when a non-object model reference is being given.
         options[:id] = field_id( method, options[:index] )  
         rich_editor_tag(field_name(method), @object.send(method), options)
       end

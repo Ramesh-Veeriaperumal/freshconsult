@@ -1,5 +1,6 @@
-<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, :class => "ticket-form",:rel => "validate" } do |f| %>
+<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, :class => "form-portal ticket-form",:rel => "validate" } do |f| %>
   <%= f.error_messages %>
+  <div class="clearfix"> 
   <% current_portal.customer_editable_ticket_fields.each do |field| %>    
       <%= construct_ticket_element :helpdesk_ticket, field, 
                                    field.label_in_portal,
@@ -9,7 +10,8 @@
                                    "",
                                    true %>
   <% end %>
-  <%= render :partial=>"/helpdesk/shared/attachment_form"  %>    
+  </div>
+     
   <% if feature?(:captcha) && !logged_in? %>
     <div class="control-group">
         <%= content_tag ( :label, t('ticket.verify_human') ) %>
@@ -98,26 +100,12 @@
   <% end %>
 <% end %>
 
- <% javascript_tag do %>
-    jQuery(document).ready(function(){  
+<% javascript_tag do %>
+  jQuery(document).ready(function(){  
 
-    jQuery('#helpdesk_ticket_group_id')
-    .on("change", function(e){
-      jQuery('#helpdesk_ticket_responder_id')
-              .html("<option value=''>...</option>");
-      jQuery.ajax({
-        type:        'POST',
-        url:         '/helpdesk/commons/group_agents/'+this.value,
-        contentType: 'application/text',
-        success:     function(data){
-                        jQuery('#helpdesk_ticket_responder_id')
-                          .html(data);
-                     }
-      });
-      });
-
-    }); 
- <% end %>
+  
+  }); 
+<% end %>
 
 
 

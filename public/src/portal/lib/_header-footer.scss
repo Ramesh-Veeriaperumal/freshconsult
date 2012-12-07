@@ -1,11 +1,12 @@
+$header_border_color: rgba(#fff, 0.2);
 .banner{
 	background-color: $header_color;
 	padding: $header-padding;
-	border: 1px solid darken($header_color, 10%);
+	border: 1px solid $header_border_color;
+	border-bottom-width: 0;
 	color: $header_text_color;
-	@include box-shadow( rgba(#fff, 0.7) 0 1px inset );		
+	@include box-shadow( rgba(#fff, 0.5) 0 1px inset );		
 	@include clearfix;
-	border-bottom-color: rgba(#fff, 0.8);
 	
 	@if(lightness($header_color) < 50){
 		@include text-shadow(rgba(#000, 0.9) -1px -1px 1px);
@@ -31,6 +32,7 @@
 	background-color: $tab_color;
 	color: #fff;
 	line-height: 35px;
+	border:1px solid $header_border_color;
 	@include clearfix;
 	a{ 
 		padding:0 15px; 
@@ -58,7 +60,7 @@
 	.page-tabs{ 
 		@include border-bottom-radius(6px); 
 		a:first-child{ @include border-bottom-left-radius(6px); }
-		a{ display: block; float: left; border-right: 1px solid rgba(#fff, 0.8); text-align: center;  }
+		a{ display: block; float: left; border-right: 1px solid $header_border_color; text-align: center;  }
 	}
 }
 
