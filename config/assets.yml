@@ -134,7 +134,7 @@ javascripts:
     - public/javascripts/globalinit.js
     - public/javascripts/navsearch.js
   pattern:
-    # - public/javascripts/pattern/bootstrap-affix.js
+    - public/javascripts/pattern/bootstrap-affix.js
     # - public/javascripts/pattern/bootstrap-alert.js
     - public/javascripts/pattern/bootstrap-button.js
     # - public/javascripts/pattern/bootstrap-carousel.js

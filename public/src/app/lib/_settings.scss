@@ -1,6 +1,8 @@
 // Here is where you can define your constants for your application and to configure the blueprint framework.
 // Feel free to delete these if you want keep the defaults:
+@import "susy";
 @import "mixins";
+@import "compass";
 
 $blueprint-liquid-grid-columns: 24;
 $blueprint-liquid-grid-width: 3.167%;
@@ -19,11 +21,6 @@ $sidebar-width:310px;
 $invert-side-width:200px;
 $header_height:54px;
 $use-mozilla-ellipsis-binding:true;
-
-@import "compass/utilities";
-@import "compass/css3";
-@import "compass/support"; 
-@import "compass/typography/text/ellipsis";
 
 // Import the non-default scaffolding module.
 @import "blueprint/liquid";
@@ -46,6 +43,23 @@ $TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 6px;
 
 $priority-default-alpha: 1;
 $priority-hover-alpha: 1;
+
+// GRID SYSTEM FOR SUSY
+// --------------------------------------------------
+
+$total-columns: 4;
+$column-width: 60px;
+$gutter-width: 10px;
+$grid-padding: 10px;
+
+$container-style: magic;
+
+$media-mobile: 		0 30em; 
+$break-tablet:		45em 12;
+$break-desktop:		60em 12;
+$break-large:		75em 16;
+
+$container-width: 	1140px; 
 
 /* Sprite variables used inside the sheet */
 $symbol: sprite-map("symbols/*.png");

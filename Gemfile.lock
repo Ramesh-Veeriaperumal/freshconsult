@@ -272,6 +272,9 @@ GEM
       httpclient (>= 2.1.1)
     spreadsheet (0.6.8)
       ruby-ole (>= 1.0)
+    susy (1.0.5)
+      compass (>= 0.12.2)
+      sass (>= 3.2.0)
     systemu (2.5.1)
     thinking-sphinx (1.4.3)
       activerecord (>= 1.15.6, < 3.0.0)
@@ -349,6 +352,7 @@ DEPENDENCIES
   searchlogic (= 2.4.27)
   spreadsheet (= 0.6.8)
   stemmer (= 1.0.1)!
+  susy
   thinking-sphinx (= 1.4.3)
   tiny_mce (= 0.1.9)!
   twitter (= 2.1.1)!

@@ -7119,7 +7119,7 @@ a[rel="load-rjs"] {
 
 #contacts_import{	
 	margin-right: 10px;
-}*/
+}
 
 // !PATTERN TODO move this animation into the animation-css file
 
@@ -7139,9 +7139,6 @@ a[rel="load-rjs"] {
 }   
 
 
-.table-striped tbody tr.diffColor td{ 
-	background-color: #fefdee !important; 
-}
 .contact-name{
 	font-weight: bold;
 	font-size: 14px;
@@ -7151,6 +7148,9 @@ a[rel="load-rjs"] {
 /*end*/
 
 
+.table-striped tbody tr.diffColor td{ 
+	background-color: #fefdee !important; 
+}
 .cust_list_table{
      margin:0 auto;
      .cust_list_table_header{
@@ -7177,12 +7177,12 @@ a[rel="load-rjs"] {
     	div.preview_pic{
     	border: 2px solid #CCC;
 		@include border-radius(100%);
-		width: 45px;
-		height: 45px;
+		width: 30px;
+		height: 30px;
 		}
     	img{
-	        width:45px;
-	        height:45px;  
+	        width:30px;
+	        height:30px;  
 			@include border-radius(100%);     
     	}
     }
@@ -7197,23 +7197,26 @@ a[rel="load-rjs"] {
 		border-bottom: 1px solid #DDD;
 	    tr td
 	    {
-	    	width:22%; 
+	    	width:23%; 
 	    	vertical-align: middle;
-		    &:first-child{
-		        width:6%;
-		    }
 		    &:last-child{
-		        width:9%;
+		        width:31%;
+		        text-align:right;
+		        padding-right:10px;
 		    }
 		}
 	}
 }
 .agent_edit{
 	label{
-		font-weight:bold;
-		margin-bottom:0px;
-		font-size:13px;
-		margin-top:5px;
+		font-weight: bold;
+		margin-bottom: 0px;
+		font-size: 13px;
+	}
+	.info_data, .info-data {
+		display: block;
+		margin-top: -5px;
+		padding-left: 25px;
 	}
 	.avatar-controls{
 		color:#999;
@@ -7233,6 +7236,7 @@ a[rel="load-rjs"] {
 		width:100%;
 		clear:both;
 	}
+}
 	.agent-role{
 		margin-top:30px;
 		li{
@@ -7241,8 +7245,80 @@ a[rel="load-rjs"] {
 		input[type="radio"]{
 			float: left;
 			margin-right: 10px;
+			margin-top: 8px;	
 		}
 	}
+.icon_remove{
+	width: 15px;
+	height: 15px;
+	position: relative;
+	border: 1px solid #aaa;
+	background: #CCC;
+	@include border-radius(50%);
+	display: inline;
+	float: left;
+	margin: 8px;
+	margin-left: 0;
+	span {
+		background-color: white;
+		height: 2px;
+		width: 10px;
+		margin: 0 auto;
+		position: absolute;
+		top: 7px;
+		left: 2px;
+		@include box-shadow(0px -1px 0px 0px #aaa);
+	}
+	&:hover{
+		border-color: #d30000;
+		background: #d30000;
+	}
+}
+.lead-title{
+		margin-top: 15px;
+		border-top:1px solid #878787;
+	span{
+		border-top:3px solid #878787;
+	}
+}
+.nested-ul{
+	li label{
+		padding:0;
+		padding-left:20px;
+		margin-top:15px;
+		margin-bottom:0;
+	}
+}
+.role-nav{
+	padding:0px 0 35px 0;
+	border-left:1px solid #ccc;
+	li{
+		padding:10px;
+		background:#f6f6f6;
+		border-top:1px solid #fff;
+		padding-right:20px;
+		&:hover{
+			background:#f3f3f3;
+		}
+	}
+}
+.icon-eye{
+	display: inline-block;
+	width: 22px;
+	height: 12px;
+	margin-top: 1px;
+	vertical-align: text-top;
+	background-repeat: no-repeat;
+	background-image: url("/images/eye.png");
+}
+.icon-crosseye{
+	display: inline-block;
+	width: 22px;
+	height: 12px;
+	margin-top: 1px;
+	vertical-align: text-top;
+	background-repeat: no-repeat;
+	background-image: url("/images/crosseye.png");
 }
 
 #contacts-page {
@@ -7254,42 +7330,43 @@ a[rel="load-rjs"] {
 	}
 	#contacts-table{
 		tr td{
-				width: 22%;
+				width: 33%;
 		    	vertical-align: middle;
+		    	word-wrap:break-word;
 			    &:first-child{
-			        width:3%;
+			        width:1%;
 				}
-			    &:nth-child(2){
-			        width:3%;
-			    }
-			    &:last-child{
-			    	min-width: 22%;
-			    }
 		}
 		.customers_selector{
 	    	margin-left: 5px;
 	    }
-	    .acheived-text{
-	    	font-size: 9px;
+	    .sent-text{
+	    	margin-left: 7px;
+			top: 2px;
+			position: relative;
 		}
 	}
 	.info_data{
 		padding-bottom: 0px;
-	}
-	.email{
-		font-size: 13px !important;
 	}
 	.dropdown{
 		top: 7px;
 	}
 	.muted{
 		a{
-			color: #999;
-			font-weight: normal;
+			color: #333;
 		}
 		a:hover{
 			color: #369;
 		}
+	}
+	.email{
+		a{
+
+		}
+		a:hover{
+			color: #369;
+		}	
 	}
 }
 #cust-list{
@@ -7332,4 +7409,11 @@ a[rel="load-rjs"] {
 
 #company_sub_header{
 	font-size: 12px;
+}
+
+.margin-bottom{
+	margin-bottom:10px;
+}
+.margin-left{
+	margin-left: 10px;
 }

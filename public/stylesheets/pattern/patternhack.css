@@ -3,75 +3,84 @@
 /* Priority Color Codes */
 /* Sprite variables used inside the sheet */
 /* line 2, ../../src/pattern/patternhack.scss */
+body {
+  font-size: 13px; }
+
+/* line 5, ../../src/pattern/patternhack.scss */
 .lead {
   margin-bottom: 20px;
   font-size: 21px;
   font-weight: 200;
   line-height: 30px; }
 
-/* line 9, ../../src/pattern/patternhack.scss */
+/* line 12, ../../src/pattern/patternhack.scss */
 small {
-  font-size: 85%; }
+  font-size: 90%; }
 
-/* line 13, ../../src/pattern/patternhack.scss */
+/* line 16, ../../src/pattern/patternhack.scss */
 strong {
   font-weight: bold; }
 
-/* line 17, ../../src/pattern/patternhack.scss */
+/* line 20, ../../src/pattern/patternhack.scss */
 .muted {
   color: #999999; }
 
-/* line 20, ../../src/pattern/patternhack.scss */
+/* line 23, ../../src/pattern/patternhack.scss */
 .page-header {
   padding-bottom: 9px;
   margin: 20px 0 30px;
   border-bottom: 1px solid #eeeeee; }
 
-/* line 26, ../../src/pattern/patternhack.scss */
+/* line 29, ../../src/pattern/patternhack.scss */
 .topbar .dropdown-menu a, .dropdown-menu a {
   text-shadow: 0 0 0 white; }
 
-/* line 29, ../../src/pattern/patternhack.scss */
-.cust_list_table {
-  font-size: 14px; }
-  /* line 31, ../../src/pattern/patternhack.scss */
-  .cust_list_table .open .menu, .cust_list_table .dropdown.open .menu, .cust_list_table .open .dropdown-toggle, .cust_list_table .dropdown.open .dropdown-toggle {
-    border: 0 solid transparent;
-    background: none;
-    color: inherit; }
-  /* line 36, ../../src/pattern/patternhack.scss */
-  .cust_list_table .table-striped tbody tr:nth-child(odd) td, .cust_list_table .table-striped tbody tr:nth-child(odd) th {
-    background-color: #fbfbfb; }
-  /* line 39, ../../src/pattern/patternhack.scss */
-  .cust_list_table .pagination ul > li > a:hover, .cust_list_table .pagination ul > .active > a, .cust_list_table .pagination ul > .active > span {
-    background-color: #7f7f7f;
-    border-color: #7f7f7f;
-    color: #fff; }
-  /* line 44, ../../src/pattern/patternhack.scss */
-  .cust_list_table .pagination ul > li > a:hover {
-    background-color: #c6c6c6;
-    border-color: #c6c6c6; }
-  /* line 48, ../../src/pattern/patternhack.scss */
-  .cust_list_table .tabs {
-    margin-right: -20px;
-    margin-left: -20px;
-    padding-right: 20px;
-    padding-left: 20px; }
+/* line 33, ../../src/pattern/patternhack.scss */
+.cust_list_table .open .menu, .cust_list_table .dropdown.open .menu, .cust_list_table .open .dropdown-toggle, .cust_list_table .dropdown.open .dropdown-toggle {
+  border: 0 solid transparent;
+  background: none;
+  color: inherit; }
 
-/* line 56, ../../src/pattern/patternhack.scss */
+/* line 39, ../../src/pattern/patternhack.scss */
+.table th, .table td {
+  padding: 12px; }
+
+/* line 42, ../../src/pattern/patternhack.scss */
+.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+  background-color: #fbfbfb; }
+
+/* line 45, ../../src/pattern/patternhack.scss */
+.pagination ul > li > a:hover, .pagination ul > .active > a, .pagination ul > .active > span {
+  background-color: #7f7f7f;
+  border-color: #7f7f7f;
+  color: #fff; }
+
+/* line 50, ../../src/pattern/patternhack.scss */
+.pagination ul > li > a:hover {
+  background-color: #c6c6c6;
+  border-color: #c6c6c6; }
+
+/* line 54, ../../src/pattern/patternhack.scss */
+.tabs {
+  margin-right: -20px;
+  margin-left: -20px;
+  padding-right: 20px;
+  padding-left: 20px; }
+
+/* line 61, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-up {
   border-bottom-color: #fff; }
-/* line 59, ../../src/pattern/patternhack.scss */
+/* line 64, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-right {
   border-left-color: #fff; }
-/* line 62, ../../src/pattern/patternhack.scss */
+/* line 67, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-down {
   border-top-color: #fff; }
-/* line 65, ../../src/pattern/patternhack.scss */
+/* line 70, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-left {
   border-right-color: #fff; }
 
-/* line 72, ../../src/pattern/patternhack.scss */
+/* line 77, ../../src/pattern/patternhack.scss */
 .arrow-right,
 .arrow-left,
 .arrow-up,
@@ -97,28 +106,28 @@ strong {
   vertical-align: middle;
   width: 0; }
 
-/* line 95, ../../src/pattern/patternhack.scss */
+/* line 100, ../../src/pattern/patternhack.scss */
 .arrow-up {
   border-bottom-width: 1em;
   border-bottom-style: solid;
   border-bottom-color: #666;
   bottom: 0.25em; }
 
-/* line 102, ../../src/pattern/patternhack.scss */
+/* line 107, ../../src/pattern/patternhack.scss */
 .arrow-right {
   border-left-width: 1em;
   border-left-style: solid;
   border-left-color: #666;
   left: 0.35em; }
 
-/* line 109, ../../src/pattern/patternhack.scss */
+/* line 114, ../../src/pattern/patternhack.scss */
 .arrow-down {
   border-top-width: 1em;
   border-top-style: solid;
   border-top-color: #666;
   top: 0.25em; }
 
-/* line 116, ../../src/pattern/patternhack.scss */
+/* line 121, ../../src/pattern/patternhack.scss */
 .arrow-left {
   border-right-width: 1em;
   border-right-style: solid;

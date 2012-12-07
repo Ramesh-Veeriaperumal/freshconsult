@@ -22,8 +22,8 @@ end %>
     	<div class="row-fluid">
     		<div class="span6"><h3 class="title"><%=t('agent.title')%></h4></div>
     		 <div class="span6 pull-right pagination-right">
-    		 	<span>0 Agent seats available, <a href="">Buy more</a></span>
-                <b><%= link_to t('agent.new'), new_agent_path, :class => "btn"  %></b>
+    		 	<span>0 Agent seats available, <a href="" class="margin-left">Buy more</a> </span>
+                <b><%= link_to t('agent.new'), new_agent_path, :class => "btn"  %></b> 
             </div>
     	</div>
     </div>
@@ -64,20 +64,18 @@ end %>
 										<a href="#" class="cust-list-avatar">
 											<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
 										</a>
-									</td>
-									<td>
 										<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
 									</td>
 									<td>
-										<p class="muted"><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+										<p ><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 									</td>
 									<td>
-										<p class="muted">Last login: 3 days ago<br/>Used 30 day pass till date</p>
+										<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
 									</td>
 									<td>
 										<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
-										<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
-																 :method => :delete, :class => "btn btn-mini") unless (agent.user == current_user)  %>
+										<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+																 :method => :delete, :class => "btn btn-mini btn-delete") unless (agent.user == current_user)  %>
 									</td>
 								</tr>
 								<% end %>
@@ -116,19 +114,17 @@ end %>
 									<a href="#" class="cust-list-avatar">
 										<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
 									</a>
-								</td>
-								<td>
 									<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
 								</td>
 								<td>
-									<p class="muted"><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+									<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 								</td>
 								<td>
-									<p class="muted">Last login: 3 days ago<br/>Used 30 day pass till date</p>
+									<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
 								</td>
 								<td>
 									<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
-									<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
+									<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
 															 :method => :delete, :class => "btn btn-mini") unless (agent.user == current_user)  %>
 								</td>
 							</tr>
@@ -166,19 +162,17 @@ end %>
 									<a href="#" class="cust-list-avatar">
 										<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
 									</a>
-								</td>
-								<td>
 									<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> <br/></strong><small class="muted"><%= h agent.user.job_title %></small></p>
 								</td>
 								<td>
-									<p class="muted"><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+									<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 								</td>
 								<td>
-									<p class="muted">Last login: 3 days ago<br/>Used 30 day pass till date</p>
+									<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
 								</td>
 								<td>
 									<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
-									<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
+									<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
 															 :method => :delete, :class => "btn btn-mini") unless (agent.user == current_user)  %>
 								</td>
 							</tr>

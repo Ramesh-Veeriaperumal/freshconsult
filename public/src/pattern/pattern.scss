@@ -8,6 +8,8 @@
  * Designed and built with all the love in the world @twitter by @mdo and @fat.
  */
 
+@import "../app/lib/settings";
+
 // Core variables and mixins
 @import "lib/variables"; // Modify this for custom colors, font-sizes, etc
 @import "lib/mixins";
@@ -27,7 +29,7 @@
 @import "lib/tables";
 
 // Components: common
-//@import "lib/sprites";
+@import "lib/sprites";
 @import "lib/dropdowns";
 //@import "lib/wells";
 //@import "lib/component-animations";
@@ -46,7 +48,7 @@
 //@import "lib/pager";
 
 // Components: Popovers
-//@import "lib/modals";
+@import "lib/modals";
 //@import "lib/tooltip";
 //@import "lib/popovers";
 

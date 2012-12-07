@@ -1,11 +1,9 @@
-//
-// Modals
-// --------------------------------------------------
+@import "compass";
+// MODALS
+// ------
 
-
-// Recalculate z-index where appropriate,
-// but only apply to elements within modal
-.modal-open .modal {
+// Recalculate z-index where appropriate
+.modal-open {
   .dropdown-menu {  z-index: $zindexDropdown + $zindexModal; }
   .dropdown.open { *z-index: $zindexDropdown + $zindexModal; }
   .popover       {  z-index: $zindexPopover  + $zindexModal; }
@@ -20,47 +18,49 @@
   bottom: 0;
   left: 0;
   z-index: $zindexModalBackdrop;
-  background-color: $black;
+  background-color: #efefef;
+  background-image: url("/images/dialog/overlay.gif");
+  background-repeat: repeat;
   // Fade for backdrop
   &.fade { opacity: 0; }
 }
 
 .modal-backdrop,
 .modal-backdrop.fade.in {
-  @include opacity(80);
+  @include opacity(0.8);
 }
 
 // Base modal
 .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  position: absolute;
+  top:   10px;
+  left:  10px;
+  right: 10px;
+  width: auto;
+  margin: 0;  
   z-index: $zindexModal;
-  overflow: auto;
-  width: 560px;
-  margin: -250px 0 0 -280px;
   background-color: $white;
-  border: 1px solid #999;
-  border: 1px solid rgba(0,0,0,.3);
-  *border: 1px solid #999; /* IE6-7 */
+  @include background-image(linear-gradient(lighten($grayLighter, 5%), $white 30px) );
+  border: 2px solid #646464;
+  border: 2px solid rgba(#4f4f4f, 0.8);
+  *border: 2px solid #646464; /* IE6-7 */
   @include border-radius(6px);
-  @include box-shadow(0 3px 7px rgba(0,0,0,0.3));
+  @include box-shadow(0 3px 7px rgba(0,0,0,0.3), $white 0 0 1px inset);
   @include background-clip(padding-box);
+
   &.fade {
     @include transition(#{opacity .3s linear, top .3s ease-out});
     top: -25%;
   }
-  &.fade.in { top: 50%; }
+  &.fade.in { top: 10px; }
 }
 .modal-header {
-  padding: 9px 15px;
+  padding: 9px 40px 0 15px;
   border-bottom: 1px solid #eee;
-  // Close icon
-  .close { margin-top: 2px; }
-  // Heading
-  h3 {
-    margin: 0;
-    line-height: 30px;
+  .close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
   }
 }
 
@@ -94,5 +94,46 @@
   // but override that for button groups
   .btn-group .btn + .btn {
     margin-left: -1px;
+  }
+}
+
+@include at-breakpoint($break-tablet){
+  // Modals
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 710px;
+    margin: -250px 0 0 -355px;
+    &.fade.in { top: 50%; }
+  }
+  .modal-header{ padding: 9px 15px 0 15px; }
+  .modal-header .close {
+    height: 28px;
+    width: 28px;
+    border: none;
+    padding: 8px;
+    text-align:center;    
+    left:-28px;
+    top:15px;
+    @include background-image(linear-gradient(#4f4f4f, #646464));
+    @include border-radius(5px 0 0 5px);
+    @include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
+    /*@include hide-text();*/
+    &:focus, &:hover {
+      @include background-image(linear-gradient(#646464, #4b4b4b));
+      left: -30px;
+      width: 30px;
+    }
+    &:before {
+      content: "x";
+      text-indent: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      background: url("/images/dialog/icon-close.gif") no-repeat;
+      display:inline-block;
+      width:11px;
+      height:11px;
+    }
   }
 }

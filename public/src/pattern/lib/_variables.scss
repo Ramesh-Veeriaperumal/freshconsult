@@ -48,7 +48,7 @@ $sansFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 $serifFontFamily:       Georgia, "Times New Roman", Times, serif !default;
 $monoFontFamily:        Monaco, Menlo, Consolas, "Courier New", monospace !default;
 
-$baseFontSize:          12px !default;
+$baseFontSize:          13px !default;
 $baseFontFamily:        $sansFontFamily !default;
 $baseLineHeight:        16px !default;
 $altFontFamily:         $serifFontFamily !default;
@@ -70,8 +70,8 @@ $btnBackground:                     $white !default;
 $btnBackgroundHighlight:            darken($white, 10%) !default;
 $btnBorder:                         #bbb !default;
 
-$btnPrimaryBackground:              $linkColor !default;
-$btnPrimaryBackgroundHighlight:     adjust-hue($btnPrimaryBackground, 20%) !default;
+$btnPrimaryBackground:              #444 !default;
+$btnPrimaryBackgroundHighlight:     $grayDarker !default;
 
 $btnInfoBackground:                 #5bc0de !default;
 $btnInfoBackgroundHighlight:        #2f96b4 !default;
@@ -85,8 +85,8 @@ $btnWarningBackgroundHighlight:     $orange !default;
 $btnDangerBackground:               #ee5f5b !default;
 $btnDangerBackgroundHighlight:      #bd362f !default;
 
-$btnInverseBackground:              #444 !default;
-$btnInverseBackgroundHighlight:     $grayDarker !default;
+$btnInverseBackground:              $linkColor !default;
+$btnInverseBackgroundHighlight:     adjust-hue($btnPrimaryBackground, 20%) !default;
 
 
 // Forms
@@ -130,8 +130,8 @@ $zindexModal:             1050 !default;
 
 // Sprite icons path
 // -------------------------
-$iconSpritePath:          "../img/glyphicons-halflings.png" !default;
-$iconWhiteSpritePath:     "../img/glyphicons-halflings-white.png" !default;
+$iconSpritePath:          "/images/glyphicons-halflings.png" !default;
+$iconWhiteSpritePath:     "/images/glyphicons-halflings-white.png" !default;
 
 
 // Input placeholder text color

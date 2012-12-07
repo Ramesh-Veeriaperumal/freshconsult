@@ -1,4 +1,7 @@
 @import "../app/lib/settings";
+body{
+  font-size:13px;
+}
 .lead {
   margin-bottom: 20px;
   font-size: 21px;
@@ -7,7 +10,7 @@
 }
 
 small {
-  font-size: 85%;
+  font-size: 90%;
 }
 
 strong {
@@ -27,12 +30,15 @@ strong {
   @include text-shadow(0 0 0 #fff);
   }
 .cust_list_table{
-  font-size: 14px;
   .open .menu, .dropdown.open .menu, .open .dropdown-toggle, .dropdown.open .dropdown-toggle{
     border: 0 solid transparent;
     background: none;
     color: inherit;
   }
+}
+.table th, .table td {
+      padding: 12px;
+    }
     .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
         background-color:#fbfbfb;        
     }
@@ -51,7 +57,6 @@ strong {
       padding-right: 20px;
       padding-left:20px;
     }
-}
 .pagination ul > li > a:hover{ 
         .arrow-up {
             border-bottom-color: #fff;

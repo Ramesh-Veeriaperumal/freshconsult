@@ -95,10 +95,15 @@
 // Mini
 .btn-mini {
   padding: 2px 6px;
-  font-size: $baseFontSize - 3px;
-  line-height: $baseLineHeight - 3px;
+  font-size: $baseFontSize - 2px;
+  line-height: $baseLineHeight - 2px;
 }
 
+// Mini with icon
+.btn-mini [class^="icon-"]{
+  margin-right: -3px;
+  margin-left:-3px;
+}
 
 // Block button
 // -------------------------
@@ -170,8 +175,6 @@ input[type="button"] {
 .btn-inverse {
   @include buttonBackground($btnInverseBackground, $btnInverseBackgroundHighlight);
 }
-
-
 // Cross-browser Jank
 // --------------------------------------------------
 
@@ -228,4 +231,13 @@ input[type="submit"].btn {
 .btn-link[disabled]:hover {
   color: $grayDark;
   text-decoration: none;
+}
+
+.disabled{
+  pointer-events: none;
+  cursor: default;
+  color:$grayLight;
+  &:hover{
+    color:$grayLight;
+  }
 }
