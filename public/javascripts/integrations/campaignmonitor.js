@@ -120,6 +120,9 @@ CampaignMonitorWidget.prototype= {
 									activity = {"type": actions[k].Event, "time": actions[k].Date, "link": actions[k].Detail || "" };
 									(activities[cid]) ? activities[cid].push(activity) : activities[cid] = [activity];
 								}
+								else{
+									delete campaigns[cid];	
+								}
 							}
 						}}
 						if(_.keys(campaigns).length > 4)
