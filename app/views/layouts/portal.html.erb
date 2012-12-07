@@ -23,7 +23,7 @@
 		<% unless session[:preview_button].blank?%>
 			<div class="alert">
 				You are currently previewing the customisation changes.
-				<a href="<%=admin_portal_template_path(:portal_id => @portal.id)%>">Click here</a> to go back to the editing page.
+				<a href="javascript:window.close()">Click here</a> to go back to the editing page.
 			</div>
 		<%end%>
 

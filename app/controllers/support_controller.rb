@@ -43,22 +43,26 @@ class SupportController < ApplicationController
 
   	def set_common_liquid_variables
       Portal::Template::TEMPLATE_MAPPING.each_with_index do |t, t_i|
+          dynamic_template = ""
+          dynamic_template = get_data_for_template(t[0]) || "" if feature?(:layout_customization)
           _content = render_to_string :partial => t[1], 
-                      :locals => { :dynamic_template => (get_data_for_template(t[0]) || "") }
+                      :locals => { :dynamic_template => dynamic_template }
           instance_variable_set "@#{t[0]}", _content
       end
   	end
 
     def set_layout_liquid_variables(page_label)
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_label ]
+      dynamic_template = ""
+      dynamic_template = (get_data_for_page(page_label) || "") if feature?(:layout_customization)
       _content = render_to_string :file => partial,
-                  :locals => { :dynamic_template => (get_data_for_page(page_label) || "") }
+                  :locals => { :dynamic_template => dynamic_template }
       @content_for_layout = _content
     end
 
     def get_data_for_template(sym)
       data = current_portal.template[sym] 
-      data = current_portal.template.get_draft[sym] || current_portal.template[sym] if preview?
+      data = current_portal.template.get_draft[sym] if preview? && current_portal.template.get_draft
       data
     end
 

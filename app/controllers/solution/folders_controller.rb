@@ -1,6 +1,7 @@
 class Solution::FoldersController < ApplicationController
     include Helpdesk::ReorderUtility
 
+  before_filter :portal_check
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
@@ -9,7 +10,8 @@ class Solution::FoldersController < ApplicationController
   before_filter :portal_category?
   before_filter :check_folder_permission, :only => [:show]
   before_filter :set_selected_tab       
-  before_filter :page_title    
+  before_filter :page_title
+  
   
   def index        
     current_category  = current_account.solution_categories.find(params[:category_id])
@@ -167,5 +169,12 @@ class Solution::FoldersController < ApplicationController
       :published_articles 
     end
   end
+
+  private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        return redirect_to support_solutions_folder_path(@folder)
+      end
+    end
 
 end

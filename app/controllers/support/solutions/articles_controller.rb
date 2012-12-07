@@ -2,6 +2,7 @@ class Support::Solutions::ArticlesController < SupportController
   
   include Helpdesk::TicketActions
   
+  before_filter :check_solution_permission
   before_filter { |c| c.requires_permission :portal_knowledgebase }
   
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
@@ -57,5 +58,14 @@ class Support::Solutions::ArticlesController < SupportController
       "Thanks for the valuable feedback." : 
       "There is an error #{@ticket.errors}"
   end
+
+  private
+    def check_solution_permission  
+      @solution = current_account.solution_articles.find(params[:id]) 
+      unless @solution.folder.visible?(current_user)    
+        flash[:notice] = t(:'flash.general.access_denied')
+        redirect_to support_solutions_path and return
+      end
+    end
 
 end

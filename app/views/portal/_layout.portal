@@ -14,7 +14,7 @@
 					<a href="{{ portal.new_ticket_path }}" class="new-ticket ellipsis">
 						{% translate header.new_support_ticket %}
 					</a>
-					<a href="{{ portal.new_ticket_path }}" class="check-status ellipsis">
+					<a href="{{ portal.tickets_path }}" class="check-status ellipsis">
 						{% translate header.check_ticket_status %}
 					</a>
 					{% if portal.contact_info %}

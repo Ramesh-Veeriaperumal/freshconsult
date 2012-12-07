@@ -1,6 +1,7 @@
 # PortalView is a action view extension class to LiquidView
 # and use liquid as an template system for .portal files
 # @venom
+require 'portal/portal_filters'
 class PortalView 
 
   PROTECTED_ASSIGNS = %w( template_root response _session template_class action_name request_origin session template
@@ -58,7 +59,8 @@ class PortalView
     filters = if controller.respond_to?(:liquid_filters, true)
                 controller.send(:liquid_filters)
               elsif controller.respond_to?(:master_helper_module)
-                [controller.master_helper_module]
+                # [controller.master_helper_module]
+                PortalFilters
               else
                 [controller._helpers]
               end

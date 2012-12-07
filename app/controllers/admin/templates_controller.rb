@@ -46,6 +46,10 @@ class Admin::TemplatesController < Admin::AdminController
   private
     def build_objects
       @portal_template = scoper.template.get_draft || scoper.template
+      if @portal_template.preferences.nil?
+        @portal_template.preferences = @portal_template.default_preferences
+        @portal_template.save 
+      end
       @cached_properties = @portal_template.changes.symbolize_keys.keys
     end
 
