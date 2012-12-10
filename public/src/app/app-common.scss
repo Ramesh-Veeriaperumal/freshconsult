@@ -6982,173 +6982,6 @@ a[rel="load-rjs"] {
 		}
 }
 
-/*#customers-page{
-
-	.bulk-action{
-		margin-left: 9px;
-	}
-
-	.customer_status_tab{
-		margin-left: 37px;
-	}
-
-	.btn{
-		color: #333;
-		font-weight: bold;
-		text-decoration: none;
-		display: inline-block;
-		vertical-align: middle;
-		zoom: 1;
-		font-size: 100%;
-		line-height: 130%;
-		cursor: pointer;
-		white-space: nowrap;
-		text-align: center;
-		overflow: hidden;
-		padding: 4px 8px;
-		margin: 2px;
-		font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;
-		border-radius: 4px;
-		box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0;
-		background-image: url(/images/overlay-button.png?1319804108);
-		background-color: #F8F8F8;
-		border: 1px solid #CFCFCF;
-		position: relative;
-		&:hover{
-			background: #EEE;
-		}
-	}
-
-	#tickets-expanded{
-		.content_list{
-			margin-top: -1px;
-		}
-	}
-	.customers-toolbar{
-		margin: 0 -10px;
-		.uiButton{
-			margin-top: 5px;
-		}
-		input{
-			margin-top: 14px;
-			margin-left: 1px;
-		}
-		.bulk-action{
-			margin-top: 0px;
-		}
-	}
-
-	#users_form_wrapper{
-		margin : 0 -20px;
-	}
-
-	.contacts_loader {
-		height : 25px;
-		width : 106px;
-		/*margin : 2px;
-		float : left;
-	}
-
-	.contacts_loader img{
-		float : right;
-		margin-right: 53px;
-	}
-
-	.hover{
-		border: 2px solid #B3B3B3;
-		box-shadow:  #ECEAE9 0px 0px 4px 0px;;
-	}
-
-	.button-success{
-		background-image:url('paper.gif')
-	}
-
-	.user_actions{
-
-		opacity: 0;
-
-		.symbol-done-tick{
-			display: inline-block;
-			vertical-align: middle;
-			zoom: 1;
-			width: 16px;
-			height: 15px;
-			margin-left: 0px;
-		}
-		.acheived-text{
-			margin-left: 5px;
-		}
-	}
-
-	#tickets-expanded{
-		.selector-box{
-			width : 40px;
-			padding: 6px 8px;
-			input{
-				margin-left: 15px;
-			}
-		}
-		.name{
-			//width: 200px;
-			padding-left: 0px;
-		}
-		.small{
-			font-size: 75%;
-			a{
-				font-size: inherit;
-			}
-		}
-
-	}
-	#customers-select-all{
-		margin-left: 15px;
-	}
-
-	div.item_information{
-		width: 55%;
-	}
-
-
-	.user_twitter{
-		padding: 0px 20px;
-		margin:5px 5px 0 0;
-		height: 11px;
-		display: inline;
-		background:sprite($symbol, reply-tweet) no-repeat transparent;
-	}
-}
-
-#contacts_import{	
-	margin-right: 10px;
-}
-
-// !PATTERN TODO move this animation into the animation-css file
-
-
-.opacity-element{
-	filter: alpha(opacity=100);
-    opacity: 1 !important;
-    -webkit-transition: all .9s ease;
-       -moz-transition: all .9s ease;
-        -ms-transition: all .9s ease;
-       		transition: all .9s ease;
-}
-
-
-.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-    background-color:#fbfbfb;    
-}   
-
-
-.contact-name{
-	font-weight: bold;
-	font-size: 14px;
-
-}
-
-/*end*/
-
-
 .table-striped tbody tr.diffColor td{ 
 	background-color: #fefdee !important; 
 }
@@ -7362,6 +7195,9 @@ a[rel="load-rjs"] {
 		}
 	}
 	.email{
+		a{
+			color: $default_txt_color;
+		}
 		a:hover{
 			color: #369;
 		}	
@@ -7378,7 +7214,7 @@ a[rel="load-rjs"] {
 		padding: 7px 0 0 0;
 	}
 	#customers-select-all{
-		margin-left: 14px;
+		margin-left: 17px;
 		margin-top: 0px;
 	}
 	.bulk-action{

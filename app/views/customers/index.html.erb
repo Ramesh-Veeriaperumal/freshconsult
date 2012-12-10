@@ -15,7 +15,7 @@
 		<% end %>
 		</div>
 	<%end%> 
-	<div id="cust-list">
+	<div id="cust-list" class="cust_list_table">
 		<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
 		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "company", :path => customers_path})%>
 		<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
