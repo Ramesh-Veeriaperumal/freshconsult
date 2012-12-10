@@ -126,7 +126,7 @@ class Time
         BusinessCalendar.config.beginning_of_workday(time_b.wday)) # Last day
 
     time_b = Time.end_of_workday(Time.roll_backward(time_b-1.day)) #To preceed the time_b since last day is calculated - Abhinav
-    # # All days in between
+    # # All days in between - Abhinav
     while(time_b.to_date > time_a.to_date)
       time_a = Time::roll_forward(time_a+1.day)
       duration_of_working_day = Time::end_of_workday(time_a) - Time::beginning_of_workday(time_a)
