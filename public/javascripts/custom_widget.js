@@ -520,7 +520,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 				if(email_marketing.app == "mailchimp")
 					email_marketing.options.integratable_impl.getCampaignActivity((jQuery(this).attr("class")).split(" ")[1]);
 				else{
-					if(_.keys(activities).length == 0)
+					if(_.keys(activities[cid]).length == 0)
 						activities[cid] = [{"type": "", "time": "No campaign activity found for this campaign"}]
 					email_marketing.getCampaignActivity((jQuery(this).attr("class")).split(" ")[1], activities);
 				}

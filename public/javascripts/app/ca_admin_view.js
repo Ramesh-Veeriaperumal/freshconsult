@@ -33,6 +33,13 @@ jQuery('#edit-cancel').bind('click', function(ev){
 	jQuery('#editing').dialog('close');
 })
 
+jQuery('#save_edit').bind('click', function(ev){
+	if(jQuery.browser.opera || jQuery.browser.msie)
+	{
+		jQuery('#folder_edit_form').submit();
+	}
+});
+
 jQuery("#responses-select-all").live("change", function(ev){
 	jQuery("#responses").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked")).trigger('change');
 	jQuery("#responses").trigger('click');
@@ -104,11 +111,11 @@ jQuery('#resp-boxes input[type=checkbox]').live('change', function(){
 
 jQuery("[data-folder]").live('click', function(){
 	folder_id=jQuery(this).data('folder');
+	jQuery('#responses-select-all').removeAttr('disabled');
 	makeFolderActive(folder_id);
 });
 
 var makeFolderActive = function(folder_id) {
-	jQuery('#responses-select-all').removeAttr('disabled');
 	url = ca_path+folder_id;
 	jQuery('#del').attr('href', url);
 	if(!jQuery('[data-folder='+folder_id+']').hasClass('default-folder'))

@@ -63,8 +63,7 @@
                         success: function(data){    
                                     var msg_body_id =  "reply-multiple-cnt-reply-multiple"
                                     jQuery("#"+msg_body_id+"-body").getEditor().focus();
-                                    if(!jQuery.browser.opera)
-                                        jQuery("#"+msg_body_id+"-body").insertHtml(data);
+                                    jQuery("#"+msg_body_id+"-body").insertHtml(data);
                                     }
                     });
         jQuery(element).removeClass("response-loading");
