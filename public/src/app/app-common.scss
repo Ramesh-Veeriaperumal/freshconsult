@@ -4,7 +4,7 @@
 @import "lib/font";
 
 body { 
-	color: #333; 
+	color: $default_txt_color; 
 	background:$background; 
 	min-width:$blueprint-liquid-container-min-width+20; 
 	-webkit-font-smoothing: antialiased;
@@ -67,7 +67,7 @@ ul.summary{
 		border-right:1px solid #e8e8e8; 
 		text-align:center;
 		a{ 
-			text-decoration:none; color:#333333; text-align:center;
+			text-decoration:none; color:$default_txt_color; text-align:center;
 			span{
 				display:block;
 				position:relative;
@@ -280,7 +280,7 @@ div.contact_hover{
 }
 		
 h3.content_title, h2.content_title{
-		color:#333333;
+		color:$default_txt_color;
 		font-size:1.50em; 
 		padding:14px 0px 2px 0px;			
 		margin:0px; 
@@ -310,7 +310,7 @@ h2.content_title{
 	}	 
 	.subtitle{
 		font-style:italic;
-		color:#333333;
+		color:$default_txt_color;
 		font-size:0.8em; 
 	}
 }
@@ -362,7 +362,7 @@ h2.content_title{
 		@include vertical-gradient(#ffffff, #efefef);  
 		a{
 			text-decoration:none;
-			color:#333;
+			color:$default_txt_color;
 		}
 		 
 	}
@@ -684,7 +684,7 @@ h4.title{
 		position:relative; 		
 	}
 	
-	a.user_name{ @include link-colors( #333333, #527EAA ); } 
+	a.user_name{ @include link-colors($default_txt_color, #527EAA ); } 
 	
 	.request-cnt-first{
 		div.description{
@@ -829,7 +829,7 @@ h4.title{
 			padding:8px 0px;
 			font-size:14px;
 			font-weight:bold;
-			color:#333333;
+			color:$default_txt_color;
 	} 
 	
 }
@@ -884,7 +884,7 @@ h4.title{
 	li:hover{
 		background:#f1f7fc;
 		a{
-			@include link-colors(#993333, #333333, #333333, #333333);
+			@include link-colors(#993333, $default_txt_color, $default_txt_color, $default_txt_color);
 			text-decoration:none;
 		} 
 		.delete{
@@ -1124,7 +1124,7 @@ div.panel_area{
    label.overlabel{ margin:2px 7px !important; }
    a{
       text-decoration:none;
-      @include link-colors(#333333, #527EAA);
+      @include link-colors($default_txt_color, #527EAA);
    }
 	.tag_item{
 		background:#efefef; 
@@ -1181,7 +1181,7 @@ div.panel_area{
 		padding:3px 8px;
 		a{
 			font-size:12px;
-			@include link-colors(#333333);
+			@include link-colors($default_txt_color);
 			display:block;
 			text-decoration:none;
 			padding:5px;
@@ -1191,7 +1191,7 @@ div.panel_area{
 
 .expando{
 	border:1px solid #DFDFDF;
-	color:#333333;
+	color:$default_txt_color;
 	font-size:12px;
 	padding:5px 5px;
 	width:98%;
@@ -1201,7 +1201,7 @@ div.panel_area{
 } 
 
 .request_bt{
-	color:#333; 
+	color:$default_txt_color; 
 	padding:5px 12px 5px 12px;	
 	font-weight:bold;
 	background: #ffffff; /* old browsers */
@@ -1213,7 +1213,7 @@ div.panel_area{
 a.request_bt:hover{
 	background:#fff; 
 	border-color:#dae0c1; 
-	color:#333;	
+	color:$default_txt_color;	
 }
 
  
@@ -1550,7 +1550,7 @@ h4.list_title{
 		}
 	}
 	li.active a, li a:hover{
-		color:#333333;
+		color:$default_txt_color;
 		border-color:#000;
 		background: #fff;
 		@include box-shadow(rgba(0, 0, 0, 0.4) 0 1px 3px inset);
@@ -1657,7 +1657,7 @@ span.sort_handle{
 		margin:15px 0px;
 	}
 	p.info{		
-		color:#333333;
+		color:$default_txt_color;
 		background-color: transparent;
 		display: block;
 		font-size: 13px;
@@ -1783,7 +1783,7 @@ ul.active{
 ul.inactive{
 	a{
 		@include opacity(0.6);		
-		color:#333333;	
+		color:$default_txt_color;	
 	}
 	a:hover{
 		@include opacity(1);
@@ -1882,7 +1882,7 @@ h3.t_padding{
 		padding:3px 5px;
 		a{
 			font-size:14px;
-			color:#333333;
+			color:$default_txt_color;
 			text-decoration:none;
 			border-bottom:1px dotted #333333;
 			padding:0px;
@@ -1911,7 +1911,7 @@ h3.t_padding{
 	line-height: 20px;
 	vertical-align: baseline;
 	font-size:12px;
-	color:#333333;	
+	color:$default_txt_color;	
 	img{
 		margin:0px 10px 10px 10px;
 	}
@@ -2179,10 +2179,10 @@ h4.border_title{
 		padding:0px; margin:0px;
 		font-size:16px;
 		font-weight:bold;
-		color:#333333;
+		color:$default_txt_color;
 		a{
 			text-decoration:none;
-			color:#333333;
+			color:$default_txt_color;
 		}
 		span{
 			font-size:12px;
@@ -2250,7 +2250,7 @@ h4.border_title{
 		padding:8px 10px 10px 10px;
 	}
 	h2{
-		font-size:16px; color:#333333;
+		font-size:16px; color:$default_txt_color;
 	}
 	h4{
 		font-size:12px;
@@ -2284,7 +2284,7 @@ h4.border_title{
 	display:inline-block;
 	margin-left:10px;
 	@include corners(18px);
-	background:#333333;
+	background:$default_txt_color;
 	border-bottom:1px solid #b4b4b4;
 	a{
 		color:#b4b4b4 !important;
@@ -2339,7 +2339,7 @@ div.survey_check{
 	padding:4px 4px 4px 0px;
 	margin:0px 0px;
 	font-size:14px;
-	color:#333333;
+	color:$default_txt_color;
 	font-weight:bold;
 }
 span.sub_title{
@@ -2350,7 +2350,7 @@ span.sub_title{
 
 a.page_title{
 	text-decoration:none;
-	@include link_colors(#336699, #333333, #336699, #336699);
+	@include link_colors(#336699, $default_txt_color, #336699, #336699);
 }
 
 .title_area{
@@ -2407,7 +2407,7 @@ a.page_title{
        text-shadow: rgba(255, 255, 255, 0.8) 1px 1px 1px; 
    }
 	a{
-		@include link-colors(#336699, #333333, #336699, #336699);
+		@include link-colors(#336699, $default_txt_color, #336699, #336699);
 		font-weight:bold;
 		text-decoration:none;
 	}	
@@ -2605,7 +2605,7 @@ a.page_title{
 			line-height:16px;
 			background-position:5px 4px;
 			background-repeat:no-repeat;
-			@include link-colors(#333333, #ffffff, #333333, #333333);
+			@include link-colors($default_txt_color, #ffffff, $default_txt_color, $default_txt_color);
 			span.info{
 				float:right;
 				font-size:10px;
@@ -2699,7 +2699,7 @@ a.page_title{
 	}
 	.active{
 	   a{ 
-	      @include link-colors(#333333, #333333, #333333, #333333); }
+	      @include link-colors($default_txt_color, $default_txt_color, $default_txt_color, $default_txt_color); }
 	}
 	.sortable{
 		margin:0 -10px 0 -20px;
@@ -2854,7 +2854,7 @@ a.page_title{
 				}
 				position:relative;
 				display:block;
-				@include link-colors(#444444, #527EAA, #527EAA, #333333);
+				@include link-colors(#444444, #527EAA, #527EAA, $default_txt_color);
 				@include vertical-gradient(#efefef, #e8e8e8);
 				border-bottom:1px solid #dfdfdf;
 				text-decoration:none;
@@ -2880,7 +2880,7 @@ a.page_title{
 		position:relative;
 		a.item-title{
 			font-size:12px;
-			@include link-colors(#333333, #ffffff);
+			@include link-colors($default_txt_color, #ffffff);
 			display:block;
 			text-decoration:none;
 			padding:9px 8px 11px 26px;
@@ -3129,7 +3129,7 @@ div.addReminder{
 		text-decoration:none;
 		padding:6px 8px;
 		margin:0px 0px 0px 0px;
-		color:#333333 !important;
+		color:$default_txt_color !important;
 		border:1px solid #d3d3d3;
 		border-bottom:0px;
 		font-size:13px;
@@ -3589,7 +3589,7 @@ div.addReminder{
 				line-height: 16px;
 				padding-right:10px;
 				.result {
-					color:#333;
+					color:$default_txt_color;
 					font-weight: normal;
 					display:inline-block;
 					position: absolute;
@@ -3788,7 +3788,7 @@ div.addReminder{
 	text-align:center;
 	cursor:pointer;
 	text-transform:lowercase;
-	color:#333;
+	color:$default_txt_color;
 	margin-bottom:10px;
 	@include border-radius(3px);
 	@include text-shadow( 0 1px 0 white );
@@ -3909,7 +3909,7 @@ div.addReminder{
 			top:-4px;
 			visibility:hidden;
 			a{
-				color:#333333;
+				color:$default_txt_color;
 				font-weight:bold;
 				text-decoration:none;
 			}
@@ -4014,7 +4014,7 @@ div.addReminder{
 		    .slim-button{
 		       margin-top:0px;
 		       margin-left:-2px;
-		       color:#333333;
+		       color:$default_txt_color;
 		    }
 		 }
 		 .color_box{
@@ -4118,7 +4118,7 @@ div.addReminder{
 	}
 	a.active{
 		font-weight:bold;
-		color:#333333;
+		color:$default_txt_color;
 	}
 	a{
 		font-size:12px;
@@ -4243,7 +4243,7 @@ div.addReminder{
 		h2, h4{	text-transform:uppercase; font-weight:bold; }
 		h2{
 			font-size:22px;
-			color:#333333;
+			color:$default_txt_color;
 		}
 		h3{
 			font-size:18px;
@@ -4276,7 +4276,7 @@ div.addReminder{
 	}
 	.info-data{
 		font-size:14px;
-		color:#333333;
+		color:$default_txt_color;
 	}
 	.active{
 		border:0px;
@@ -4721,7 +4721,7 @@ a.close{
    position:relative;
    top:3px;
    right:5px;
-   color:#333333;
+   color:$default_txt_color;
 }
 
 .tweet-counter.error{
@@ -4730,7 +4730,7 @@ a.close{
 
 .adminTitle{
    font-size:20px;
-   color:#333;
+   color:$default_txt_color;
    text-transform:uppercase;
    font-weight:bold;
 }
@@ -4807,7 +4807,7 @@ a.close{
 	@include min-height(477px);
 	
    h3.title{
-      color:#333;
+      color:$default_txt_color;
       font-size:16px;
       font-weight:normal;
       padding:8px 8px 10px 0;
@@ -4816,7 +4816,7 @@ a.close{
    h4.title{
 		padding:0 6px 2px 0;
 		font-size:14px;
-		color:#333;
+		color:$default_txt_color;
    }
    
    .leftFilter{
@@ -4970,7 +4970,7 @@ a.close{
 	}
 
 	.text {
-		color:#333;
+		color:$default_txt_color;
 		font-size: 12px;
 		display: inline-block;
 		width: 420px;
@@ -5049,7 +5049,7 @@ a.close{
    a{
       display:block;
       padding:2px 12px 2px 24px;
-      color:#333333;
+      color:$default_txt_color;
       text-decoration:none;
       position:relative;
       @include text-shadow(#FFF 1px 1px 0);
@@ -5090,11 +5090,11 @@ a.close{
 		a, li {
 			padding: 2px 20px;
 			cursor: pointer;
-			color:#333;
+			color:$default_txt_color;
 
 			&:hover {
 				@include text-shadow(none);
-				color:#333;
+				color:$default_txt_color;
    				background:#ffffff;
 
    				&.selected {
@@ -5285,7 +5285,7 @@ a.close{
   a.link{
     display:block;
     padding:4px 12px 4px 24px;
-    color:#333333;
+    color:$default_txt_color;
     text-decoration:none;
   }
   a.link:hover{
@@ -5396,7 +5396,7 @@ a.close{
 			display: block;
 			padding:10px;
 			border-radius:6px;
-			color: #333;
+			color: $default_txt_color;
 			width: 160px;
 			text-align:center;
 			div {
@@ -5404,7 +5404,7 @@ a.close{
 			}
 
 			&:hover {
-				color: #333;
+				color: $default_txt_color;
 				background:#f2f2f2;
 				@include inset-shadows(rgba(0,0,0, 0.2), 0, 1px, 2px);	
 			}
@@ -5483,7 +5483,7 @@ a.close{
 
 		.special-notice {
 			background-color: #FDFDE5;
-			color: #333;
+			color: $default_txt_color;
 			font-size: 12px;
 			line-height: 18px;
 			margin:15px 0 15px 25px;
@@ -5592,7 +5592,7 @@ a.close{
 	display:inline; 
 	font-weight:bold;
 	border: 1px solid #fff7b4; 
-    color: #333333;
+    color: $default_txt_color;
     font-size: 13px;	
     padding: 8px 10px;
    	position:relative;  
@@ -5858,7 +5858,7 @@ a.close{
 		@include box-shadow(#c2c2c2 0 0 2px);
 		@include corners(5px);
 		padding: 5px 10px 7px;
-		color: #333;
+		color: $default_txt_color;
 		display: inline-block;
 		margin-bottom:5px;
 
@@ -6003,7 +6003,7 @@ a.close{
 			width: 65px;
 			font-size: 100%;
 			font-weight: bold; 
-			color: #333;
+			color: $default_txt_color;
 			padding: 0px 0px;
 		}
 		div > span {
@@ -6679,7 +6679,7 @@ margin:10px;
 			    	width: 200px;
 					span{
 						&.bold{
-							color: #333;
+							color: $default_txt_color;
 							font-weight: bold;
 							font-size: 13px;
 						}
@@ -6747,7 +6747,7 @@ margin:10px;
 	ul {
 		li {
 			margin-left: 48px;
-			color: #333;
+			color: $default_txt_color;
 			padding-bottom: 10px;
 			&.left{
 				float:left;
@@ -6772,7 +6772,7 @@ margin:10px;
 	text-align: right;
 
 	&:hover {
-		color:#333;
+		color:$default_txt_color;
 	}
 }
 
@@ -6784,7 +6784,7 @@ a.mobile_switchBtn {
 	background-color:#FFF;
 	border:1px solid #888;
 	@include border-radius(20px);
-	color:#333 !important;
+	color:$default_txt_color !important;
 	padding: 2px 8px;
 	font-size:11px;
 	font-weight:bold;
@@ -7417,4 +7417,4 @@ a[rel="load-rjs"] {
 }
 .margin-left{
 	margin-left: 10px;
-}
+} 
