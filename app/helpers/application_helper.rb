@@ -451,7 +451,7 @@ module ApplicationHelper
       when "dropdown" then
         choices = [];i=0
         field[:choices].each do |choice| 
-          choices[i] = t(choice);i=i+1
+          choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then

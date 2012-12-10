@@ -133,6 +133,11 @@
 
       $tip.removeClass('in')
 
+      if($.browser.opera)
+      {
+        $tip.remove();
+      }
+
       function removeElement () {
         $tip.remove()
       }

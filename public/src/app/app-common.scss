@@ -5792,21 +5792,15 @@ a.close{
 		background-size: 85px, 25px;
 }
 
-#tickets-expanded .fd-menu, .fd-menu{
-	margin-left: -100px;
-	margin-top: 10px;
-	min-width: 215px;
-	a{
-		padding: 7px 12px 7px 12px;
-	}
-	a:hover{
-		color: #333;
-	}
-}
-
 #tickets-expanded{
 	.email-apps, .email_marketing_apps{
 		display: inline;
+	}
+}
+.email-apps .fd-menu{
+	margin: 5px -150px;
+	li{
+		padding: 3px;
 	}
 }
 

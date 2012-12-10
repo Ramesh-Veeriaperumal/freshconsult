@@ -2464,18 +2464,20 @@ en:
         username: "Username"
         password: "Password"
     batchbook:
-      label: "Batchbook (Classic)"
+      label: "Batchbook"
       helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
       desc: "Bring in contact information from your Batchbook account into Freshdesk"
+      detect_error: "Unable to detect version of Batchbook. Please check the domain."
       form:
         domain: "Batchbook Domain:"
         domain_info: "For example, if your Batchbook URL is <strong>http://mycompany.batchbook.com/</strong> , enter <strong> mycompany </strong>. </span>" 
         api_key: "API Key"
-        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook (Classic)."
+        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook."
         version:
           label: "Version"
           classic: "Classic"
           new: "New"
+          auto_detect: "Detect Automaticaly"
         version_info: "Version field lets you choose between <i>Batchbook Classic</i> and <i>Batchbook New</i>."
         widget_title: "Widget Title"
     highrise:
@@ -2536,16 +2538,16 @@ en:
         logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
     mailchimp:
       label: "MailChimp"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      desc: "Add MailChimp to Freshdesk and start managing your subscriptions, export customer lists and pull necessary information about their activities from your help desk.  "
       helptext: "<h4>MailChimp Integration Help</h4>"
     constantcontact:
       label: "Constant Contact"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      desc: "Integrate your Constant Contact account to control your subscriptions inside Freshdesk and get updated information about customers and their activities."
       helptext: "<h4>ConstantContact Integration Help</h4>"
     campaignmonitor:
       label: "Campaign Monitor"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, get your API Key from your Account Settings.<br/><br/> The instructions to get your ClientID is available from http://www.campaignmonitor.com/api/getting-started/#clientid. <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
+      desc: "Look up and manage subscriptions on your Campaign Monitor account, and bring in insights on customer usage statistics right inside Freshdesk. "
+      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, you should input your API Key and ClientID from Campaign Monitor. <br/></br/> API Key can be obtained from Campaign Monitor's Account Settings.<br/><br/> The instructions to get your ClientID are available from <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'> http://www.campaignmonitor.com/api/getting-started/#clientid </a> . <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
       form:
         api_key: "API Key"
         api_key_info: "Get your API Key from Account Settings"
@@ -2553,8 +2555,8 @@ en:
         client_id_info: "To get your Client ID, follow the instructions given in http://www.campaignmonitor.com/api/getting-started/#clientid"
     icontact:
       label: "iContact"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
+      desc: "Export customer information, manage existing subscriptions, and bring in insights on customer usage statistics right inside Freshdesk."
+      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a target='_blank' href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
       form:
         app_id: "Application ID"
         username: "iContact Username"
