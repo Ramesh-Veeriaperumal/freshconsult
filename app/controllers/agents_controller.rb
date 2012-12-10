@@ -35,8 +35,7 @@ class AgentsController < ApplicationController
   end
     
   def index    
-    @agents = current_account.all_agents.list.filter(params[:page], params.fetch(:state, "active"))
-    #@agents = current_account.all_agents.list.paginate(:page => params[:page], :per_page => 3)
+    @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }

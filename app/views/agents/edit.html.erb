@@ -1,9 +1,7 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern  %>
-<!-- <h3 class="title"><%=t('agent.edit')%></h3>  Breadcrum will replace this space-->
+<h3 class="title"><%=t('agent.edit')%></h3>
 <% form_for @agent, :html => { :multipart => true } do |f| %>
 	<%= f.error_messages %>
 	<%= include_stylesheets :redactor  %>
@@ -12,10 +10,8 @@
 	<div class="button-container">
 		<%= link_to (t('delete'), @agent, :confirm => "#{t('agent.info3')}?", 
 												 :method => :delete, :class => "uiButton floatl") unless (@agent.user == current_user)  %>
-												 
-   		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
-		<%= f.submit t('agent.update'), { :class => "uiButton" } %>
+
+   		<%= f.submit t('agent.update'), { :class => "uiButton" } %>
+		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
 	</div>	  
 <%end%>
-
- 
