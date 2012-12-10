@@ -2464,18 +2464,20 @@ en:
         username: "Username"
         password: "Password"
     batchbook:
-      label: "Batchbook (Classic)"
+      label: "Batchbook"
       helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
       desc: "Bring in contact information from your Batchbook account into Freshdesk"
+      detect_error: "Unable to detect version of Batchbook. Please check the domain."
       form:
         domain: "Batchbook Domain:"
         domain_info: "For example, if your Batchbook URL is <strong>http://mycompany.batchbook.com/</strong> , enter <strong> mycompany </strong>. </span>" 
         api_key: "API Key"
-        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook (Classic)."
+        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook."
         version:
           label: "Version"
           classic: "Classic"
           new: "New"
+          auto_detect: "Detect Automaticaly"
         version_info: "Version field lets you choose between <i>Batchbook Classic</i> and <i>Batchbook New</i>."
         widget_title: "Widget Title"
     highrise:
