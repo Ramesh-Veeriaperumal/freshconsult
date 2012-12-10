@@ -1124,8 +1124,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def set_dueby_on_priority_change(sla_detail)
       created_time = self.created_at || Time.zone.now
-      self.due_by = sla_detail.calculate_due_by_time(self, created_time)      
-      self.frDueBy = sla_detail.calculate_frDue_by_time(self, created_time) 
+      self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time)      
+      self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time) 
   end
 
   def set_dueby_on_status_change(sla_detail)
