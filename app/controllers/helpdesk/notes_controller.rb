@@ -12,7 +12,15 @@ class Helpdesk::NotesController < ApplicationController
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   def index
-    @notes = @parent.conversation(params[:page])
+
+    if params[:since_id].present?
+      @notes = @parent.conversation_since(params[:since_id])
+    elsif params[:before_id].present?
+      @notes = @parent.conversation_before(params[:before_id])
+    else
+      @notes = @parent.conversation(params[:page])
+    end
+    
     if request.xhr?
       unless params[:v].blank? or params[:v] != '2'
         render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
@@ -20,6 +28,11 @@ class Helpdesk::NotesController < ApplicationController
         render(:partial => "helpdesk/tickets/note", :collection => @notes)
       end
     end    
+  end
+
+  def since
+    @notes = @parent.notes.newest_first.since(params[:last_note])
+    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
   end
 
   def since

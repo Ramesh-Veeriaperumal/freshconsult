@@ -64,22 +64,25 @@ $('#helpdesk_ticket_group_id').bind("change", function(e){
           }
     });
 });
-changeAggentList = function(group_id)
-{
-    console.log('changeAggentList');
-}
 
 function dueDateSelected(date){
-new Date(date);
+    new Date(date);
 }
 
 var fetchLatestNotes = function() {
+    var href;
+    var showing_notes = $('#all_notes').length > 0;
+    if (showing_notes) {
+        href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'since_id=' + TICKET_DETAILS_DATA['last_note_id'];
+    } else {
+        href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'since_id=' + TICKET_DETAILS_DATA['last_activity'];
+    }
+     
     $.ajax({
-        url: TICKET_DETAILS_DATA['fetch_notes_url'],
+        url: href,
         type: 'GET',
-        data: {last_note: TICKET_DETAILS_DATA['last_note_id']},
         success: function(response) {
-            $('#all_notes').append(response);
+            $('[rel=activity_container]').append(response);
             console.log('completed');
             console.log('Last Note: ' + TICKET_DETAILS_DATA['last_note_id']);
         }
@@ -89,34 +92,27 @@ var fetchLatestNotes = function() {
 var activeForm = null;
 swapEmailNote = function(formid, link){
     $('#TicketPseudoReply').hide();
+    console.log(formid);
 
     if((activeForm != null) && ($(activeForm).get(0).id != formid))
         $("#"+activeForm.get(0).id).hide();
 
 
-    activeForm = $('#'+formid).show();
-    switch(formid){
-        case 'cnt-reply':
-        case 'cnt-note':
-        case 'cnt-fwd':
-            invokeRedactor(formid+"-body",formid);
-            $('#'+formid+"-body").getEditor().focus();
-            if($.browser.mozilla){
-                $('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
-            }
-            $('#'+formid+"-body").getEditor().on('blur',function(){
+    activeForm = $('#'+formid).removeClass('hide').show();
+    if (activeForm.data('type') == 'textarea') {
+        //For Facebook and Twitter Reply forms.
+        setCaretToPos($('#' + formid + ' textarea').get(0), 0);
+    } else {
+        //For all other reply forms using redactor.
+        invokeRedactor(formid+"-body",formid);
+        $('#'+formid+"-body").getEditor().focus();
+        if($.browser.mozilla){
+            $('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
+        }
+        $('#'+formid+"-body").getEditor().on('blur',function(){
             $('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
             $('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
-
         });
-
-        break; 
-        case 'cnt-fb-post': 
-            setCaretToPos($('#send-fb-post-cnt-fb-post-body'), 0); 
-        break;
-        case 'cnt-tweet' : 
-            setCaretToPos($('#send-tweet-cnt-tweet-body'), 0);
-        break;
     }
 }
 
@@ -217,18 +213,23 @@ var updateShowMore = function() {
 
     //Checking if it is Notes (true) or Activities (false)
     var showing_notes = $('#all_notes').length > 0;
-    var total_count;
-    if (showing_notes)
+    var total_count, loaded_items;
+    if (showing_notes){
+        loaded_items = $('#all_notes li.conversation').length;
         total_count = TICKET_DETAILS_DATA['total_notes'];
-    else
+    } else {
         total_count = TICKET_DETAILS_DATA['total_activities'];
+        loaded_items = TICKET_DETAILS_DATA['loaded_activities'];
+    }
 
-    var loaded_items = $('#all_notes li.conversation').length;
+    console.log('loaded_items : ' + loaded_items);
+    console.log('total: ' + total_count);
     if (loaded_items < total_count) {
         var remaining_notes = total_count - loaded_items;
         $('#show_more [rel=count-total-remaining]').text(total_count - loaded_items);
         
         $('#show_more').removeClass('hide');
+        console.log('Showing More');
         return true;
     } else {
         $('#show_more').addClass('hide');
@@ -237,17 +238,27 @@ var updateShowMore = function() {
 }
 
 var updatePagination = function() {
+    console.log('updatePagination');
 
     if (updateShowMore()) {
-        var showing_notes = $('#all_notes').length() > 0;
+        var showing_notes = $('#all_notes').length > 0;
         $('#show_more').data('next-page',2);
+
+        //Unbinding the previous handler:
+        $('#show_more').off('click');
         $('#show_more').on('click',function(ev) {
             ev.preventDefault();
             $('#show_more').addClass('loading');
-            var href = TICKET_DETAILS_DATA['notes_pagination_url'] + $(this).data('next-page').toString();
+            var href;
+            if (showing_notes)
+                href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
+            else
+                href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'];
+
+            href += $(this).data('next-page').toString();
             $.get(href, function(response) {
                 $('#show_more').removeClass('loading');
-                $('#all_notes').prepend(response);
+                $('[rel=activity_container]').prepend(response);
                 $('#show_more').data('next-page',$('#show_more').data('next-page') + 1);
                 updateShowMore();
             });
@@ -295,7 +306,7 @@ $(document).ready(function() {
     });
 
     $("select").data('placeholder','');
-    $("select.dropdown, select.dropdown_blank, select.nested_field, #reply_email_id, select.select2").livequery(function(){
+    $("select.dropdown, select.dropdown_blank, select.nested_field, select.select2").livequery(function(){
         if (this.id == 'helpdesk_ticket_priority') {
             $(this).select2({
                 formatSelection: formatPriority,
@@ -318,33 +329,37 @@ $(document).ready(function() {
         });
     })
 
-    // $("[rel=autocomplete_emails]").livequery(function(){
-    //     $(this).select2({
-    //         tokenSeparators: [','],
-    //         tags: function() {
-    //             console.log(this)
-    //         },
-    //         minimumInputLength: 1,
-    //         ajax: {
-    //             url: '/helpdesk/authorizations/autocomplete',
-    //             dataType: 'json',
-    //             data: function(term, page) {
-    //                 return {
-    //                     v: term
-    //                 };
-    //             },
-    //             results: function (response, page) {
-    //                 console.log(response);
-    //                 return response;
-    //             }
-    //         },
 
-    //         formatSelection: formatEmailNames,
-    //         formatResult: formatEmailNames
-    //     });
-    // });
+    // For Twitter Replybox
+    $('#twitter_handle').live('change', function (){
+        twitter_handle= $('#twitter_handle').val();
+        req_twt_id = $('#requester_twitter_handle').val();
+        istwitter = $('#cnt-tweet').data('isTwitter');
+        if (!istwitter || req_twt_id == "" || twitter_handle == "")        
+            return ;
 
-    //   ABOVE EMAIL-AUTOCOMPLETE NOT BEING USED - REMOVE AFTER REVIEW
+        $.ajax({   
+            type: 'POST',
+            url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
+            contentType: 'application/text', 
+            async: false, 
+            success: function(data){ 
+                if (data.user_follows == true)
+                {
+                    $('#tweet_type_selector').show();
+                    $('#not_following_message').hide();
+                }
+                else
+                {
+                    $('#tweet_type_selector').hide();
+                    $('#not_following_message').show();
+                }
+            }
+        });
+    }); 
+    
+
+    //End of Twitter Replybox JS
 
     //For Clearing Bcc, Cc email list and hiding those containers
 
@@ -386,19 +401,21 @@ $(document).ready(function() {
 
     $("#TicketForms form").live('submit', function(ev) {
         ev.preventDefault();
-        jQuery(this).ajaxSubmit({
-            dataType: 'xml',
-            beforeSubmit: function(values, form) {
-                var format = $('<input type="hidden" name="format" value="xml" />');
-                $(form).append(format);
-            },
-            success: function(response) {
-                fetchLatestNotes();
-                $('#TicketForms .request_panel:visible').slideUp(function() {
-                    $('#TicketPseudoReply').show();
-                });
-            }
-        });
+        if ($(this).valid()) {
+            jQuery(this).ajaxSubmit({
+                dataType: 'xml',
+                beforeSubmit: function(values, form) {
+                    var format = $('<input type="hidden" name="format" value="xml" />');
+                    $(form).append(format);
+                },
+                success: function(response) {
+                    fetchLatestNotes();
+                    $('#TicketForms .request_panel:visible').slideUp(function() {
+                        $('#TicketPseudoReply').show();
+                    });
+                }
+            });
+        }
     });
 
     $('[rel=TicketReplyPlaceholder]').live('click', function(ev) {

@@ -3,15 +3,6 @@
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
-      <li class="inline-field field continous">
-        <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", 
-                        :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
-      </li>
-      <li class="inline-field field attachment-options" id="attachment-options-note">
-          <% unless local_assigns[:no_attachments] %>
-          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-          <% end %>
-      </li>
 
       <li class="inline-field field notify_agent">
         <label class="notify" for="helpdesk_note_to_emails">
@@ -19,11 +10,23 @@
         </label>
         <div class="email_container">
           <%= select_tag "helpdesk_note[to_emails]", 
-                          options_for_select(current_account.agents.map{|agent| "#{agent.user.name} <#{agent.user.email}>" }), 
+                          options_for_select(current_account.agents.map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, 
+                              [( @ticket.responder.present? && @ticket.responder.id != current_user.id ? 
+                                      "#{@ticket.responder.name} <#{@ticket.responder.email}>" : nil ) ]), 
                           :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify' %>
         </div>
       </li>
-			
+
+      <li class="inline-field field continous">
+        <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", 
+                        :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
+      </li>
+
+      <li class="inline-field field attachment-options continous" id="attachment-options-note">
+          <% unless local_assigns[:no_attachments] %>
+          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% end %>
+      </li>
     </ul> 
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>

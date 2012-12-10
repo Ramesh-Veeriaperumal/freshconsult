@@ -271,7 +271,7 @@ module Helpdesk::TicketActions
   end
 
   def forward_conv
-    render :partial => "/helpdesk/shared/forward_form", 
+    render :partial => "/helpdesk/tickets/show/forward_form", 
            :locals => { :id => "send-fwd-email", :cntid => "cnt-fwd-#{@conv_id}", :conv_id => @conv_id,
            :note => [@ticket, Helpdesk::Note.new(:private => true)] }
   end

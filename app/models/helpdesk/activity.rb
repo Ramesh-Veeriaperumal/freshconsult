@@ -30,8 +30,8 @@ class Helpdesk::Activity < ActiveRecord::Base
     }
   }
 
-  named_scope :activty_before, lambda { |account, activity_id|
-    { :conditions => ["helpdesk_activities.account_id = ? and helpdesk_activities.id <= ?", account, activity_id], 
+  named_scope :activity_before, lambda { | activity_id|
+    { :conditions => ["helpdesk_activities.id < ?", activity_id], 
       :order => "helpdesk_activities.id DESC"
     }
   }
@@ -72,7 +72,10 @@ class Helpdesk::Activity < ActiveRecord::Base
   end
 
   def note
-    return Helpdesk::Note.find(activity_data['eval_args']['reply_path'][1]['comment_id']) if is_note?
+    if is_note?
+      key = activity_data["eval_args"].keys.first
+      return Helpdesk::Note.find(activity_data['eval_args'][key][1]['comment_id'])
+    end
   end
 
   private

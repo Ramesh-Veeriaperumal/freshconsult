@@ -1,4 +1,4 @@
-<ol class="conversation_thread" id="all_notes">
+<ol class="conversation_thread" id="all_notes" rel='activity_container'>
 	<% unless @ticket_notes.blank? %>
 		<%= render :partial => "helpdesk/tickets/show/note.html.erb", :collection => @ticket_notes %>
 	<% end %>

@@ -42,3 +42,11 @@
 <%= javascript_include_tag  'bootstrap' %>
 <%= include_javascripts :redactor  %>
 <%= javascript_include_tag  'app/ticket_details' %>
+
+<script type="text/javascript">
+<% if @ticket.is_twitter? %>
+jQuery(document).ready(function(){
+	jQuery('#twitter_handle').change();
+});
+<% end %>
+</script>

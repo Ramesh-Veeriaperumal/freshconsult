@@ -1,8 +1,4 @@
 <%
-puts "activity :: #{activity.inspect}"
-puts ""
-puts "Important Type :: #{activity[:important_type].inspect}"
-
 note = activity[:is_note] ? activity[:stack].first.note : nil
 %>
 <li class="conversation activity <%= 'hide' if activity[:important_type] == 'new_ticket' %>">
@@ -61,7 +57,7 @@ note = activity[:is_note] ? activity[:stack].first.note : nil
 				puts "#{t('activities.action_verb')} "
 				puts "#{stack.map{|act| act.gsub(t('activities.action_verb'), '')}}"
 			%>
-			<%=  stack.size > 1 ? t('activities.action_verb').capitalize + stack.map{|act| act.gsub(t('activities.action_verb'), '')}.to_sentence : stack.first %>
+			<%=  stack.size > 1 ? t('activities.action_verb').capitalize + ' ' + stack.map{|act| act.gsub(t('activities.action_verb'), '')}.to_sentence : stack.first %>
 		</div>
 	<% end %>
 	</div>
@@ -85,6 +81,9 @@ note = activity[:is_note] ? activity[:stack].first.note : nil
 	<% end %>
 	<script type="text/javascript">
 		if (typeof(TICKET_DETAILS_DATA['last_activity']) == 'undefined' || TICKET_DETAILS_DATA['last_activity'] < <%= activity[:stack].first.id %>)
-			TICKET_DETAILS_DATA['last_activity'] = <%= activity[:stack].first.id %>;
+			TICKET_DETAILS_DATA['last_activity'] = <%= activity[:stack].last.id %>;
+		if (typeof(TICKET_DETAILS_DATA['first_activity']) == 'undefined' || TICKET_DETAILS_DATA['first_activity'] > <%= activity[:stack].last.id %>)
+			TICKET_DETAILS_DATA['first_activity'] = <%= activity[:stack].first.id %>;
+		<%= "TICKET_DETAILS_DATA['loaded_activities'] += #{activity[:stack].size}; " unless params[:since_id].present? %>
 	</script>
 </li>

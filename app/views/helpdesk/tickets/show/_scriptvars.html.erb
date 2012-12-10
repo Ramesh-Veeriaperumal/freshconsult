@@ -4,11 +4,12 @@ TICKET_DETAILS_DATA = {
 	displayId			: "<%= escape_javascript(h(@ticket.display_id)) %>",
 	total_notes			: "<%= @ticket_notes_total %>",
 	notes_per_page		: 50,
-	notes_pagination_url: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes?v=2&page=",
+	notes_pagination_url: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes?v=2&",
 	last_note_id		: <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
-	activities_pagination_url: "/helpdesk/tickets/activities/<%= escape_javascript(h(@ticket.display_id)) %>?page=",
+	activities_pagination_url: "/helpdesk/tickets/activities/<%= escape_javascript(h(@ticket.display_id)) %>?",
 	last_activity		: -1,
-	fetch_notes_url		: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes/since", 
+	loaded_activities		: 0,
+	fetch_notes_url		: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes", 
 	tag_list			: tag_list.split(",")
 };
 </script>

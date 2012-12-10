@@ -37,7 +37,8 @@ class Helpdesk::DashboardController < ApplicationController
   protected
     def recent_activities(activity_id)
       if activity_id
-        Helpdesk::Activity.activty_before(current_account,activity_id).permissible(current_user) unless activity_id == "0"
+
+        Helpdesk::Activity.freshest(current_account).activty_before(activity_id).permissible(current_user) unless activity_id == "0"
       else
         Helpdesk::Activity.freshest(current_account).permissible(current_user)
       end

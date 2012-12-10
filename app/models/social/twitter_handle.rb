@@ -40,4 +40,8 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
   end
 
+  def formatted_handle
+    "@#{screen_name}"
+  end
+
 end

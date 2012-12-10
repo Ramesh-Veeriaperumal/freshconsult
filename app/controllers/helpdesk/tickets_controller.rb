@@ -523,8 +523,22 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def activities
-    @activities = stacked_activities(@item.all_activities(params[:page]).reverse)
-    render :partial => "activities"
+    if params[:since_id].present?
+      puts ".activities.activity_since(params[:since_id])"
+      activity_records = @item.activities.activity_since(params[:since_id])
+    elsif params[:before_id].present?
+      activity_records = @item.activities.activity_before(params[:before_id]).reverse
+    else
+      activity_records = @item.activities.newest_first.first(3)
+    end
+
+    @activities = stacked_activities(activity_records.reverse)
+    @total_activities =  @item.activities_count
+    if params[:since_id].present? or params[:before_id].present?
+      render :partial => "helpdesk/tickets/show/activity.html.erb", :collection => @activities
+    else
+      render :layout => false
+    end
   end
 
   protected

@@ -73,7 +73,7 @@ module WillPaginate
           args.unshift(:all) if args.empty?
         end
         WillPaginate::Collection.create(page, per_page, total_entries, extra_offset) do |pager|
-          count_options = options.except :page, :per_page, :total_entries, :finder
+          count_options = options.except :page, :per_page, :total_entries, :finder, :extra_offset
           find_options = count_options.except(:count, :extra_offset).update(:offset => pager.offset, :limit => pager.per_page) 
           
           args << find_options

@@ -65,6 +65,12 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   }
   
+  named_scope :before, lambda { |first_note_id|
+    { :conditions => ["helpdesk_notes.id < ? ", first_note_id], 
+      :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+  
   named_scope :latest_facebook_message,
               :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 

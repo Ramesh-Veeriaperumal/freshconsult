@@ -8,7 +8,7 @@
 			  								:cntid => 'cnt-reply', 
 		  									:note => [@ticket, Helpdesk::Note.new(:private => false)], 
 		  									:conv_id => nil 
-		  								}) %>
+		  								}) unless @ticket.is_twitter? or @ticket.is_facebook? %>
 
 			  	
 				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
@@ -25,8 +25,18 @@
 										:cntid => "cnt-note", 
 										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
 									}) %>
-				<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-				<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form', 
+							:locals => { 
+										:id => 'send-tweet', 
+										:cntid => 'cnt-reply', 
+										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+									})  if @ticket.is_twitter? %>
+				<%= render(	:partial => '/helpdesk/tickets/show/facebook_form', 
+							:locals => { 
+										:id => 'send-fb-post', 
+										:cntid => 'cnt-reply', 
+										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+									}) if @ticket.is_facebook? %>
 				<% content_for :pagefixed do %> 
 					<div class="canned-response-menu hide" id="canned_response_container"> 
 					  <div>

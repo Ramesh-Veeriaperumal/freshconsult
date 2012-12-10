@@ -1311,10 +1311,10 @@
 
         // abstract
         getPlaceholder: function () {
-            return this.opts.element.find("option:first").text() ||
-                this.opts.element.attr("placeholder") ||
-                this.opts.element.attr("data-placeholder") || // jquery 1.4 compat
+            return this.opts.element.attr("placeholder") ||
                 this.opts.element.data("placeholder") ||
+                this.opts.element.attr("data-placeholder") || // jquery 1.4 compat
+                this.opts.element.find("option:first").text() ||
                 this.opts.placeholder;
         },
 

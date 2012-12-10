@@ -426,6 +426,21 @@ p strong{
     	padding: 0;
     }
 
+
+	.tweet-counter {
+		position: static;
+		color: #888;
+	}
+
+	#tweet_type_selector {
+		display: none;
+		position: relative;
+		top: 2px;
+		right: 15px;
+		width: 150px;
+	}
+
+
     .ui-form .inline-field {
     	$message_window_bg_color: #FDFDFD;
 
@@ -455,6 +470,12 @@ p strong{
     		}
     	}
 
+    	label.error {
+    		width: 100%;
+			margin: 0;
+			@include box-sizing(border-box);
+    	}
+
     	.attachments-wrap {
 
 			display: block;
@@ -463,6 +484,17 @@ p strong{
 				font-style: normal;
 			}
 
+    	}
+
+    	&.message {
+    		padding:0;
+    		textarea {
+	    		@include box-sizing(border-box);
+				width: 100%;
+				padding: 5px 10px;
+				border: none;
+				box-shadow: none;
+	    	}
     	}
 
     	&.cc_fields {
@@ -521,6 +553,8 @@ p strong{
     		}
 
 
+
+
     		input[type=text] {
 	    		display: inline-block;
 	    		width: 100%;
@@ -556,7 +590,8 @@ p strong{
 				zoom: 1;
 				vertical-align: top;
 				padding: 0 0 0 110px;
-				margin-top: -25px;
+				margin-top: -27px;
+				width: 100%;
 				@include box-sizing(border-box);
 				ul.multi_value_field {
 					border: none;
@@ -571,6 +606,7 @@ p strong{
 			}
 
     		.select2-container {
+				width: 100%;
 				.select2-choices {
 					border: 1px $message_window_bg_color solid;
 					background: $message_window_bg_color;					
@@ -694,7 +730,7 @@ p strong{
     	}
     }
 
-    #s2id_reply_email_id {
+    .responder_field {
     	&.select2-container {
 	    	.select2-choice {
 	    		background: none;
@@ -781,6 +817,11 @@ p strong{
 
 }
 
+#not_following_message {
+	padding:8px 10px;
+	margin-left:10px;
+	display: inline-block;
+}
 
 ol.conversation_thread{
 	padding: 10px 10px 10px 10px;
@@ -1382,6 +1423,31 @@ ol.conversation_thread{
 		color: #666;
 		border-left: 1px dotted #999;
 		padding: 6px 6px 1px 1em;
+	}
+
+	.actions {
+		float: right;
+		display: inline-block;
+		width: auto;
+		visibility: hidden;
+
+		a {
+			color: #1272de;
+			font-weight: bold;
+			font-size: 13px;
+			padding: 2px;
+			margin: 3px;
+		}
+
+		.red_links {
+			color: #933;
+		}
+	}
+
+	&:hover {
+		.actions {
+			visibility: visible;
+		}
 	}
 
 	.commentbox-menu{

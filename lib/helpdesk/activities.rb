@@ -1,25 +1,5 @@
 module Helpdesk::Activities
 
-	ACTIVITIES_NOT_TO_COMBINE = [
-									'new_ticket', 
-									'ticket_merge', 'ticket_split', 
-									'deleted', 'restored' ,
-									'assigned', 'reassigned',
-									'timesheet.new', 'timesheet.timer_started', 'timesheet.timer_stopped'
-								]
-
-	ACTIVITY_TYPES_IN_IMPORTANCE_ORDER = 	[
-												'status_change', #V
-												'priority_change', #V
-												'group_change', #T
-												'group_change_none', #T
-												'product_change',
-												'product_change_none',
-												'source_change',
-												'ticket_type_change'
-											]
-	#The above list is only activity types that would be stacked.
-
 	def stacked_activities(activities)
 		activity_stack = []
 		activity = {}
@@ -30,7 +10,7 @@ module Helpdesk::Activities
 			eligible = (activity.blank?) ? true : eligible?(current_activity, previous_activity_meta)
 
 			unless can_combine and eligible
-				activity_stack << previous_activity unless activity.blank?
+				activity_stack << activity unless activity.blank?
 				activity = {}
 				previous_activity_meta = {}
 			end
@@ -38,7 +18,6 @@ module Helpdesk::Activities
 			activity[:stack] ||= []
 			previous_activity_meta[:types] ||= []
 
-			p "current_activity.ticket_activity_type :: #{current_activity.type}"
 			previous_activity_meta[:time] = current_activity.created_at
 			previous_activity_meta[:user] = current_activity.user
 			previous_activity_meta[:notable] = current_activity.notable
@@ -61,16 +40,36 @@ module Helpdesk::Activities
 		end
 		activity_stack << activity unless activity.blank?
 
-		puts "Final activity_stack :: #{activity_stack.to_json}"
-		puts ""
 		activity_stack
 	end
 
 private
+
+
+	ACTIVITIES_NOT_TO_COMBINE = [
+									'new_ticket', 
+									'ticket_merge', 'ticket_split', 
+									'deleted', 'restored',
+									'timesheet.new', 'timesheet.timer_started', 'timesheet.timer_stopped'
+								]
+
+	ACTIVITY_TYPES_IN_IMPORTANCE_ORDER = 	[
+												'status_change', #V
+												'assigned', #V
+												'reassigned', #V
+												'assigned_to_nobody', #T
+												'priority_change', #V
+												'group_change', #T
+												'group_change_none', #T
+												'product_change', #V
+												'product_change_none', #T
+												'source_change', #V
+												'ticket_type_change' #V
+											]
+	#The above list is only activity types that would be stacked.
+
 	def important_type(types)
 		return types.first if types.size == 1
-
-		p "Types :: #{types.inspect}"
 		types_importance = types.map { |type| {:index => ACTIVITY_TYPES_IN_IMPORTANCE_ORDER.index(type), :type => type}}
 		types_importance.sort! { |x,y| x[:index] <=> y[:index]}.first[:type]
 	end

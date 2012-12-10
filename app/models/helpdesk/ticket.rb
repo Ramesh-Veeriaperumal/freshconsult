@@ -328,6 +328,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias :is_twitter :is_twitter?
 
   def is_facebook?
+    return true
      (fb_post) and (fb_post.facebook_page) 
   end
   alias :is_facebook :is_facebook?
@@ -398,13 +399,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def conversation(page = nil, no_of_records = 50)
     first_page_count = 3
     if page.blank? or page.to_i == 1
-      puts "PAGINATION ::: For the first page"
       return notes.visible.exclude_source('meta').newest_first.paginate(:page => 1, :per_page => first_page_count)
     else
-      puts "PAGINATION ::: For the nth pages"
-      puts "Sending these options :: #{ {:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count}.inspect }"
       return notes.visible.exclude_source('meta').newest_first.paginate(:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count)
     end
+  end
+
+  def conversation_since(since_id)
+      return notes.visible.exclude_source('meta').newest_first.since(since_id)
+  end
+
+  def conversation_before(before_id)
+      return notes.visible.exclude_source('meta').newest_first.before(before_id).first(50)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
@@ -418,6 +424,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     else
       return activities.newest_first.paginate(:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count)
     end
+  end
+
+  def activities_since(since_id)
+    activities.newest_first.activity_since(since_id)
+  end
+
+  def activities_before(before_id)
+    activities.newest_first.activity_before(since_id).reverse
   end
 
   def activities_count

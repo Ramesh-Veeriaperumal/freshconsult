@@ -1,7 +1,7 @@
 <% hide_class = conv_id.nil? ? "hide" : ""
   note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"  
 %>
-<div class="request_panel hide" id="cnt-fwd">
+<div class="request_panel <%= hide_class %>" id="cnt-fwd">
     <%= content_tag( :h4, t("fwd_to"), :class => "title", :id => "fwd_title" ) %>
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskFwd_#{cntid}" } do |f| %>
     <%= f.error_messages %>       
