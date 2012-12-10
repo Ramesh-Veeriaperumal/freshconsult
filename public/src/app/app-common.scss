@@ -23,6 +23,7 @@ body {
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
    	@extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
+	@include border-radius(5px);
 }
 
 .sidepanel, .rtCnt{
@@ -7354,16 +7355,13 @@ a[rel="load-rjs"] {
 	}
 	.muted{
 		a{
-			color: #333;
+			color: #999;
 		}
 		a:hover{
 			color: #369;
 		}
 	}
 	.email{
-		a{
-
-		}
 		a:hover{
 			color: #369;
 		}	
@@ -7413,6 +7411,9 @@ a[rel="load-rjs"] {
 
 .margin-bottom{
 	margin-bottom:10px;
+}
+.margin-right{
+	margin-right: 10px;
 }
 .margin-left{
 	margin-left: 10px;

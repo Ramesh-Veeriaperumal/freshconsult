@@ -6,13 +6,13 @@
 		<a href="#" class="cust-list-avatar">
 			<%= user_avatar(contact)%> <!-- class="img-circle" have to add in img tag for circle-->
 		</a>
-		<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name") %>
-		<div class="info_data">
+		<div class="text-info">
+			<strong><%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name") %></strong>
 			<% unless contact.job_title.blank? %>
 				<p class="muted"><%= h contact.job_title %></p>
 			<% end %>
 			<% unless contact.customer.blank? %>
-			  	<p class="muted"><%= link_to(h(contact.customer.name), contact.customer)  %></p>
+			  	<p  class="muted"><%= link_to(h(contact.customer.name), contact.customer) %></p>
 			<% end %> 
 		</div>
 	</td>

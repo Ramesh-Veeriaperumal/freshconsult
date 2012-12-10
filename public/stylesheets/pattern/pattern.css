@@ -4233,3 +4233,8 @@ strong {
   border-right-style: solid;
   border-right-color: #666;
   right: 0.35em; }
+
+/* line 128, ../../src/pattern/patternhack.scss */
+.cust-list-avatar, .text-info {
+  display: inline-block;
+  vertical-align: middle; }
