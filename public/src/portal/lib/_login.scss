@@ -39,7 +39,7 @@
 		.alt-login-button{ @include span-columns(1 omega); }
 	}
 	.login-form{ padding-right: 2em; }
-	.btn-login{ float: right; } 
+	.btn-login{ float: right; margin-top: -20px; } 
 	.btn-login, .btn-signup{ width: auto; }
 	.login-form{
 		border-right:1px solid #dadada;	

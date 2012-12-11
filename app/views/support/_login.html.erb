@@ -3,22 +3,25 @@
 	<fieldset>
 	  	<div class="control-group">
 	  		<div class="controls">
-	  			<%= f.email_field :email, :class => "required special", :placeholder => t('your_email_address') %>
+	  			<input class="required special" id="user_session_email" name="user_session[email]" 
+	  				placeholder="<%= t('your_email_address') %>" size="30" type="email" />
 	  		</div>
 		</div>
 		<div class="control-group">
 	  		<div class="controls">
-	  			<%= f.password_field :password, :class => "special", :placeholder => t('support.login.password') %>
+	  			<input class="special" id="user_session_password" name="user_session[password]" 
+	  				placeholder="<%= t('support.login.password') %>" size="30" type="password">
 	  		</div>
 	  	</div>	  	
-		<div class="control-group">
-			<button type="submit" class="btn btn-primary btn-login"> <%= t('.login') %> </button>
+		<div class="control-group">			
 	  		<div class="controls">
 	  			<label class="checkbox">
-					<%= f.check_box :remember_me %>
+					<input name="user_session[remember_me]" type="hidden" value="0">
+					<input id="user_session_remember_me" name="user_session[remember_me]" type="checkbox" value="1">
 					<%= t('.remember') %>
 				</label>
 			</div>
+			<button type="submit" class="btn btn-primary btn-login"> <%= t('.login') %> </button>
 			<%= link_to(t('.forgot'), "", "data-toggle-dom" => "#forgot-form, #login-form" ) %>
 	  	</div>	
 	</fieldset>

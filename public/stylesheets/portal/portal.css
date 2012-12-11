@@ -140,165 +140,162 @@ p {
     font-size: 12px;
     color: #999999; }
 
-/* line 16, ../../src/portal/lib/_type.scss */
-.lead, .lead-small {
+/* line 17, ../../src/portal/lib/_type.scss */
+.lead, .lead-small, .list-lead {
   margin-bottom: 21.875px;
   font-size: 20px;
   font-weight: 200;
-  line-height: 26.25px;
   color: #333333; }
+  /* line 22, ../../src/portal/lib/_type.scss */
+  .lead a, .lead-small a, .list-lead a {
+    color: inherit; }
+  /* line 23, ../../src/portal/lib/_type.scss */
+  .lead a:hover, .lead-small a:hover, .list-lead a:hover {
+    color: inherit; }
+  /* line 24, ../../src/portal/lib/_type.scss */
+  .lead b, .lead-small b, .list-lead b {
+    font-weight: 500; }
 
-/* line 24, ../../src/portal/lib/_type.scss */
+/* line 27, ../../src/portal/lib/_type.scss */
 .lead-small {
   font-size: 16px; }
 
-/* line 28, ../../src/portal/lib/_type.scss */
+/* List lead is used as title for titles inside the portal */
+/* line 30, ../../src/portal/lib/_type.scss */
 .list-lead {
-  font-size: 20px;
-  font-weight: 200;
-  line-height: 26.25px;
-  margin: 7.29167px 0;
-  color: #555555; }
-  /* line 34, ../../src/portal/lib/_type.scss */
-  .list-lead a {
-    color: inherit; }
-  /* line 35, ../../src/portal/lib/_type.scss */
-  .list-lead a:hover {
-    color: inherit; }
-  /* line 36, ../../src/portal/lib/_type.scss */
-  .list-lead b {
-    font-weight: 500; }
+  margin: 7.29167px 0; }
 
-/* line 43, ../../src/portal/lib/_type.scss */
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  text-rendering: optimizelegibility; }
-  /* line 46, ../../src/portal/lib/_type.scss */
-  h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
-    font-weight: normal;
-    color: #999999; }
-
-/* line 51, ../../src/portal/lib/_type.scss */
+/* line 36, ../../src/portal/lib/_type.scss */
 .heading {
   font-family: "Open Sans Condensed", Helvetica, sans-serif;
   font-weight: bold;
   color: inherit; }
 
-/* line 57, ../../src/portal/lib/_type.scss */
+/* Used to give a lighter font weight for headings */
+/* line 43, ../../src/portal/lib/_type.scss */
 .light {
   font-weight: 400; }
 
-/* line 61, ../../src/portal/lib/_type.scss */
+/* line 45, ../../src/portal/lib/_type.scss */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  text-rendering: optimizelegibility; }
+  /* line 48, ../../src/portal/lib/_type.scss */
+  h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
+    font-weight: normal;
+    color: #999999; }
+
+/* line 54, ../../src/portal/lib/_type.scss */
 h1 {
   font-size: 30px;
   line-height: 43.75px; }
-  /* line 64, ../../src/portal/lib/_type.scss */
+  /* line 57, ../../src/portal/lib/_type.scss */
   h1 small {
     font-size: 18px; }
 
-/* line 68, ../../src/portal/lib/_type.scss */
+/* line 61, ../../src/portal/lib/_type.scss */
 h2 {
   font-size: 24px;
   line-height: 35px; }
-  /* line 71, ../../src/portal/lib/_type.scss */
+  /* line 64, ../../src/portal/lib/_type.scss */
   h2 small {
     font-size: 18px; }
 
-/* line 75, ../../src/portal/lib/_type.scss */
+/* line 68, ../../src/portal/lib/_type.scss */
 h3 {
   font-size: 20px;
   line-height: 41.5625px; }
-  /* line 78, ../../src/portal/lib/_type.scss */
+  /* line 71, ../../src/portal/lib/_type.scss */
   h3 small {
     font-size: 14px; }
 
-/* line 82, ../../src/portal/lib/_type.scss */
+/* line 75, ../../src/portal/lib/_type.scss */
 h4, h5, h6 {
   line-height: 21.875px; }
 
-/* line 85, ../../src/portal/lib/_type.scss */
+/* line 78, ../../src/portal/lib/_type.scss */
 h4 {
   font-size: 14px; }
-  /* line 87, ../../src/portal/lib/_type.scss */
+  /* line 80, ../../src/portal/lib/_type.scss */
   h4 small {
     font-size: 12px; }
 
-/* line 91, ../../src/portal/lib/_type.scss */
+/* line 84, ../../src/portal/lib/_type.scss */
 h5 {
   font-size: 12px; }
 
-/* line 94, ../../src/portal/lib/_type.scss */
+/* line 87, ../../src/portal/lib/_type.scss */
 h6 {
   font-size: 11px;
   color: #999999;
   text-transform: uppercase; }
 
-/* line 101, ../../src/portal/lib/_type.scss */
+/* line 94, ../../src/portal/lib/_type.scss */
 .page-header {
   padding-bottom: 20.875px;
   margin: 21.875px 0;
   border-bottom: 1px solid gainsboro; }
 
-/* line 106, ../../src/portal/lib/_type.scss */
+/* line 99, ../../src/portal/lib/_type.scss */
 .page-header h1 {
   line-height: 1; }
 
-/* line 111, ../../src/portal/lib/_type.scss */
+/* line 104, ../../src/portal/lib/_type.scss */
 .intro {
   font-weight: 200;
   margin-top: -6px;
   margin-bottom: 0;
   color: #B2B2B2; }
 
-/* line 122, ../../src/portal/lib/_type.scss */
+/* line 115, ../../src/portal/lib/_type.scss */
 ul, ol {
   padding: 0;
   margin: 0 0 10.9375px 15px; }
 
-/* line 129, ../../src/portal/lib/_type.scss */
+/* line 122, ../../src/portal/lib/_type.scss */
 ul ul,
 ul ol,
 ol ol,
 ol ul {
   margin-bottom: 0; }
 
-/* line 132, ../../src/portal/lib/_type.scss */
+/* line 125, ../../src/portal/lib/_type.scss */
 ul {
   list-style: disc; }
 
-/* line 135, ../../src/portal/lib/_type.scss */
+/* line 128, ../../src/portal/lib/_type.scss */
 ol {
   list-style: decimal; }
 
-/* line 138, ../../src/portal/lib/_type.scss */
+/* line 131, ../../src/portal/lib/_type.scss */
 li {
   line-height: 21.875px; }
 
-/* line 142, ../../src/portal/lib/_type.scss */
+/* line 135, ../../src/portal/lib/_type.scss */
 ul.unstyled,
 ol.unstyled {
   margin-left: 0;
   list-style: none; }
 
-/* line 148, ../../src/portal/lib/_type.scss */
+/* line 141, ../../src/portal/lib/_type.scss */
 dl {
   margin-bottom: 21.875px; }
 
-/* line 152, ../../src/portal/lib/_type.scss */
+/* line 145, ../../src/portal/lib/_type.scss */
 dt,
 dd {
   line-height: 21.875px; }
 
-/* line 155, ../../src/portal/lib/_type.scss */
+/* line 148, ../../src/portal/lib/_type.scss */
 dt {
   font-weight: bold;
   line-height: 20.875px; }
 
-/* line 159, ../../src/portal/lib/_type.scss */
+/* line 152, ../../src/portal/lib/_type.scss */
 dd {
   margin-left: 10.9375px; }
 
-/* line 164, ../../src/portal/lib/_type.scss */
+/* line 157, ../../src/portal/lib/_type.scss */
 .dl-horizontal dt {
   float: left;
   width: 120px;
@@ -307,89 +304,89 @@ dd {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap; }
-/* line 171, ../../src/portal/lib/_type.scss */
+/* line 164, ../../src/portal/lib/_type.scss */
 .dl-horizontal dd {
   margin-left: 130px; }
 
-/* line 180, ../../src/portal/lib/_type.scss */
+/* line 173, ../../src/portal/lib/_type.scss */
 hr {
   margin: 16.82692px 0;
   border: 0;
   border-top: 1px solid gainsboro;
   border-bottom: 1px solid white; }
 
-/* line 188, ../../src/portal/lib/_type.scss */
+/* line 181, ../../src/portal/lib/_type.scss */
 strong {
   font-weight: bold; }
 
-/* line 191, ../../src/portal/lib/_type.scss */
+/* line 184, ../../src/portal/lib/_type.scss */
 em {
   font-style: italic; }
 
-/* line 194, ../../src/portal/lib/_type.scss */
+/* line 187, ../../src/portal/lib/_type.scss */
 .muted {
   color: #999999; }
 
-/* line 199, ../../src/portal/lib/_type.scss */
+/* line 192, ../../src/portal/lib/_type.scss */
 abbr[title] {
   cursor: help;
   border-bottom: 1px dotted #999999; }
 
-/* line 203, ../../src/portal/lib/_type.scss */
+/* line 196, ../../src/portal/lib/_type.scss */
 abbr.initialism {
   font-size: 90%;
   text-transform: uppercase; }
 
-/* line 209, ../../src/portal/lib/_type.scss */
+/* line 202, ../../src/portal/lib/_type.scss */
 blockquote {
   padding: 0 0 0 15px;
   margin: 0 0 21.875px;
   border-left: 5px solid gainsboro; }
-  /* line 213, ../../src/portal/lib/_type.scss */
+  /* line 206, ../../src/portal/lib/_type.scss */
   blockquote p {
     margin-bottom: 0;
     font-size: 16px;
     font-weight: 300;
     line-height: 27.34375px; }
-  /* line 217, ../../src/portal/lib/_type.scss */
+  /* line 210, ../../src/portal/lib/_type.scss */
   blockquote small {
     display: block;
     line-height: 21.875px;
     color: #999999; }
-    /* line 221, ../../src/portal/lib/_type.scss */
+    /* line 214, ../../src/portal/lib/_type.scss */
     blockquote small:before {
       content: '\2014 \00A0'; }
-  /* line 227, ../../src/portal/lib/_type.scss */
+  /* line 220, ../../src/portal/lib/_type.scss */
   blockquote.pull-right {
     float: right;
     padding-right: 15px;
     padding-left: 0;
     border-right: 5px solid gainsboro;
     border-left: 0; }
-    /* line 234, ../../src/portal/lib/_type.scss */
+    /* line 227, ../../src/portal/lib/_type.scss */
     blockquote.pull-right p,
     blockquote.pull-right small {
       text-align: right; }
 
-/* line 244, ../../src/portal/lib/_type.scss */
+/* line 237, ../../src/portal/lib/_type.scss */
 q:before,
 q:after,
 blockquote:before,
 blockquote:after {
   content: ""; }
 
-/* line 249, ../../src/portal/lib/_type.scss */
+/* line 242, ../../src/portal/lib/_type.scss */
 address {
   display: block;
   margin-bottom: 21.875px;
   font-style: normal;
   line-height: 21.875px; }
 
-/* line 257, ../../src/portal/lib/_type.scss */
+/* line 250, ../../src/portal/lib/_type.scss */
 small {
   font-size: 100%; }
 
-/* line 260, ../../src/portal/lib/_type.scss */
+/* line 253, ../../src/portal/lib/_type.scss */
 cite {
   font-style: normal; }
 
@@ -1777,147 +1774,171 @@ input[type="submit"].btn {
     *padding-bottom: 1px; }
 
 /* Importing admin icons */
-/* line 218, portal/icon/*.png */
+/* line 250, portal/icon/*.png */
 .icon-sprite, .icon-article-list, .article-list li:before, .icon-check-status, .check-status:before, .icon-dd-tick-dark, .dropdown-menu .active > a:before,
-.dropdown-menu .active > a:hover:before, .icon-dd-tick-light, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:before, .icon-forum-i, .badge-ideas:before, .icon-forum-p, .badge-problems:before, .icon-forum-q, .badge-questions:before, .icon-like-arrow-right, .topic-likes .arrow, .icon-new-ticket, .new-ticket:before, .icon-page-announcement, .icon-page-article, .icon-page-ideas, .icon-page-problems, .icon-page-questions, .icon-phone, .contact-info:before, .icon-search-dark, .icon-search-light, .mobile-icon-search:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-topic-list, .topic-list li:before {
-  background: url('/images/portal/icon-sa012c105cf.png') no-repeat; }
+.dropdown-menu .active > a:hover:before, .icon-dd-tick-light, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:before, .icon-forum-i, .badge-ideas:before, .icon-forum-p, .badge-problems:before, .icon-forum-q, .badge-questions:before, .icon-like-arrow-right, .topic-likes .arrow, .icon-new-ticket, .new-ticket:before, .icon-page-announcement, .icon-page-article, .icon-page-ideas, .icon-page-problems, .icon-page-questions, .icon-phone, .contact-info:before, .icon-quote, .icon-search-dark, .icon-search-light, .mobile-icon-search:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-smiley-happy, .icon-smiley-neutral, .icon-smiley-unhappy, .icon-topic-list, .topic-list li:before {
+  background: url('/images/portal/icon-s0bf9249e9c.png') no-repeat; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-article-list, .article-list li:before {
-  background-position: 0 -334px;
+  background-position: 0 -404px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-check-status, .check-status:before {
-  background-position: 0 -394px;
+  background-position: 0 -464px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-dd-tick-dark, .dropdown-menu .active > a:before,
 .dropdown-menu .active > a:hover:before {
-  background-position: 0 -134px;
+  background-position: 0 -204px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-dd-tick-light {
-  background-position: 0 -214px;
+  background-position: 0 -284px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-dual-arrow, .see-more:before {
-  background-position: 0 -454px;
+  background-position: 0 -537px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-forum-a, .badge-announcement:before {
-  background-position: 0 -354px;
+  background-position: 0 -424px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-forum-i, .badge-ideas:before {
-  background-position: 0 -194px;
+  background-position: 0 -264px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-forum-p, .badge-problems:before {
-  background-position: 0 -414px;
+  background-position: 0 -497px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-forum-q, .badge-questions:before {
-  background-position: 0 -294px;
+  background-position: 0 -364px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-like-arrow-right, .topic-likes .arrow {
-  background-position: 0 -40px;
+  background-position: 0 -110px;
   height: 34px;
   width: 19px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-new-ticket, .new-ticket:before {
-  background-position: 0 -434px;
+  background-position: 0 -517px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-page-announcement {
-  background-position: 0 -20px;
+  background-position: 0 -90px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-page-article {
-  background-position: 0 -274px;
+  background-position: 0 -344px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-page-ideas {
-  background-position: 0 0;
+  background-position: 0 -70px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-page-problems {
-  background-position: 0 -254px;
+  background-position: 0 -324px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-page-questions {
-  background-position: 0 -74px;
+  background-position: 0 -144px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-phone, .contact-info:before {
-  background-position: 0 -374px;
+  background-position: 0 -444px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-quote {
+  background-position: 0 -484px;
+  height: 13px;
+  width: 16px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-search-dark {
-  background-position: 0 -154px;
+  background-position: 0 -224px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-search-light, .mobile-icon-search:before {
-  background-position: 0 -174px;
+  background-position: 0 -244px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-sign-in-facebook, .btn-facebook:before {
-  background-position: 0 -234px;
+  background-position: 0 -304px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-sign-in-google, .btn-google:before {
-  background-position: 0 -94px;
+  background-position: 0 -164px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-sign-in-twitter, .btn-twitter:before {
-  background-position: 0 -314px;
+  background-position: 0 -384px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-smiley-happy {
+  background-position: 0 0;
+  height: 23px;
+  width: 23px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-smiley-neutral {
+  background-position: 0 -47px;
+  height: 23px;
+  width: 24px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.icon-smiley-unhappy {
+  background-position: 0 -23px;
+  height: 24px;
+  width: 23px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .icon-topic-list, .topic-list li:before {
-  background-position: 0 -114px;
+  background-position: 0 -184px;
   height: 20px;
   width: 20px; }
 
@@ -1932,12 +1953,12 @@ input[type="submit"].btn {
   [class*=" icon-"]:last-child {
     *margin-left: 0; }
 
-/* line 37, ../../src/portal/lib/_sprites.scss */
+/* line 36, ../../src/portal/lib/_sprites.scss */
 .page-stamp {
   display: none; }
 
 @media (min-width: 45em) {
-  /* line 39, ../../src/portal/lib/_sprites.scss */
+  /* line 38, ../../src/portal/lib/_sprites.scss */
   .page-stamp {
     position: absolute;
     display: block;
@@ -1945,7 +1966,7 @@ input[type="submit"].btn {
     left: -6px;
     padding: 4px 0 5px 2px;
     margin-top: 5px; }
-    /* line 46, ../../src/portal/lib/_sprites.scss */
+    /* line 45, ../../src/portal/lib/_sprites.scss */
     .page-stamp:after {
       content: "";
       position: absolute;
@@ -1954,7 +1975,7 @@ input[type="submit"].btn {
       border: 3px solid transparent;
       border-top-color: #6c6c6c;
       border-right-color: #6c6c6c; } }
-/* line 58, ../../src/portal/lib/_sprites.scss */
+/* line 57, ../../src/portal/lib/_sprites.scss */
 .badge-announcement, .badge-ideas, .badge-problems, .badge-questions {
   display: -moz-inline-stack;
   display: inline-block;
@@ -1972,7 +1993,7 @@ input[type="submit"].btn {
   margin-right: 1px;
   margin-top: -2px;
   margin-left: -2px; }
-  /* line 66, ../../src/portal/lib/_sprites.scss */
+  /* line 65, ../../src/portal/lib/_sprites.scss */
   .badge-announcement:before, .badge-ideas:before, .badge-problems:before, .badge-questions:before {
     content: "";
     display: -moz-inline-stack;
@@ -1984,23 +2005,23 @@ input[type="submit"].btn {
     vertical-align: text-top;
     margin: 2px 4px; }
 
-/* line 74, ../../src/portal/lib/_sprites.scss */
+/* line 73, ../../src/portal/lib/_sprites.scss */
 .page-stamp-article {
   background-color: #a249c5; }
 
-/* line 75, ../../src/portal/lib/_sprites.scss */
+/* line 74, ../../src/portal/lib/_sprites.scss */
 .badge-announcement, .page-stamp-announcement {
   background-color: #008b00; }
 
-/* line 76, ../../src/portal/lib/_sprites.scss */
+/* line 75, ../../src/portal/lib/_sprites.scss */
 .badge-ideas, .page-stamp-ideas {
   background-color: #f4af1a; }
 
-/* line 77, ../../src/portal/lib/_sprites.scss */
+/* line 76, ../../src/portal/lib/_sprites.scss */
 .badge-problems, .page-stamp-problems {
   background-color: #ff5959; }
 
-/* line 78, ../../src/portal/lib/_sprites.scss */
+/* line 77, ../../src/portal/lib/_sprites.scss */
 .badge-questions, .page-stamp-questions {
   background-color: #00aad5; }
 
@@ -3905,7 +3926,8 @@ footer {
 
   /* line 42, ../../src/portal/lib/_login.scss */
   .btn-login {
-    float: right; }
+    float: right;
+    margin-top: -20px; }
 
   /* line 43, ../../src/portal/lib/_login.scss */
   .btn-login, .btn-signup {
@@ -5228,6 +5250,36 @@ disabled look for already selected choices in the results dropdown
     width: 27.08333%;
     float: right;
     margin-right: 0; } }
-/* line 1, ../../src/portal/lib/_debug.scss */
-img:not([width]):not([height]) {
-  border: 2px solid red !important; }
+/* line 1, ../../src/portal/lib/_survey.scss */
+.survey-buttons a {
+  display: block;
+  color: #333;
+  padding: 5px 15px 5px 5px;
+  background-color: #f4f4f4;
+  border: 1px #e8e8e8 solid;
+  margin-bottom: 5px;
+  text-decoration: none;
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  -ms-border-radius: 2em;
+  -o-border-radius: 2em;
+  border-radius: 2em; }
+  /* line 10, ../../src/portal/lib/_survey.scss */
+  .survey-buttons a:hover {
+    background-color: #f9f9f9; }
+  /* line 11, ../../src/portal/lib/_survey.scss */
+  .survey-buttons a.active {
+    background-color: #a5a5a5;
+    color: #fff;
+    border-color: #a5a5a5;
+    -webkit-box-shadow: inset 1px 1px 3px #7c7c7c;
+    -moz-box-shadow: inset 1px 1px 3px #7c7c7c;
+    box-shadow: inset 1px 1px 3px #7c7c7c; }
+
+/* line 19, ../../src/portal/lib/_survey.scss */
+#survey-description {
+  margin-bottom: 5px;
+  height: 130px;
+  width: 100%; }
+
+/*@import "lib/debug";*/

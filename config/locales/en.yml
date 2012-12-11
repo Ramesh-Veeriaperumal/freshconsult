@@ -168,10 +168,13 @@ en:
   payment_info: Payment information
   support:
     shared:
-      survey_form:
+    tickets:    
+      ticket_survey:
+        title: "Survey feedback"
+        rating_sub_title: "Your have rated us"
         survey_title: Please take a minute to rate our support
-        feedback_title: Also your good words and specific critique can help us better our support in the future
-        rated_on: You gave us this rating on %{rated_on}
+        feedback_title: Describe your support experience (optional)
+        rated_on: on %{rated_on}
         change_of_mind: Changed your mind?
         rate_again: Rate us again
         submit: Submit

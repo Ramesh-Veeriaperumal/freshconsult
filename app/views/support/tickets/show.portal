@@ -1,10 +1,3 @@
-{% comment %}
-<% content_for :pagetop do -%>
-	<%= show_survey_form %>
-<%- end %>
-<%#= render :partial => "/support/shared/ticket_show" %>
-{% endcomment %}
-
 <section class="content ticket-page rounded-6 min-height-on-desktop">
 	<div class="breadcrumb">
 		<a href="/">Home</a>
@@ -14,6 +7,10 @@
 	<h2 class="heading"><em>#{{ ticket.id }}</em> {{ ticket.subject }}</h2>	
 	
 	<section class="ticket-sidebar hide-in-mobile" id="ticket-sidebar">
+		<section class="widget" id="survey-sidebar-details">
+			{% snippet ticket_survey %}
+		</section>
+		
 		<section class="widget" id="ticket-sidebar-details">
 			<div class="pull-right">
 				<a href="#" data-show-dom="#ticket-sidebar-edit" data-hide-dom="#ticket-sidebar-details">Edit</a>

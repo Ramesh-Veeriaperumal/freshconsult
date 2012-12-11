@@ -1,16 +1,15 @@
-<section class="main">
-	<div class="content rounded-6 min-height-on-desktop">
-		
-		<a href="{{portal.new_topic_path}}" class="start-topic">
-			{% translate portal.topic.start_new_topic %}
-		</a>
+<section class="content rounded-6 min-height-on-desktop">
+	<a href="{{portal.new_topic_path}}" class="start-topic">
+		{% translate portal.topic.start_new_topic %}
+	</a>
 
-		<h2 class="heading">Community forums</h2>
-		{% for category in portal.forum_categories %}	
-			<div class="cs-s">
-				<h3 class="heading">{{category.name}}</h3>
-				<div class="cs-g-c">
-				{% for forum in category.forums %}
+	<h2 class="heading">Community forums</h2>
+	{% for category in portal.forum_categories %}	
+		<div class="cs-s">
+			<h3 class="heading">{{category.name}}</h3>
+			<div class="cs-g-c">
+			{% for forum in category.forums %}
+				{% unless forum.topics == empty %}
 					<section class="cs-g topic-list">
 						<div class="list-lead">
 							<i class="badge-{{forum.type_name}}"></i>
@@ -36,42 +35,9 @@
 							<a href="{{forum.url}}" class="see-more">See all {{ forum.topics | size }} topics</a>
 						{% endif %}
 					</section>
-				{% endfor %}
-				</div>
+				{% endunless %}
+			{% endfor %}
 			</div>
-		{% endfor %}
-	</div>
-</section>
-<section class="sidebar">
-	<div class="content rounded-6 min-height-on-desktop">
-		<div class="list-lead">Popular topics</div>
-		<p class="intro">Showing recently popular topics</p>
-		<section class="cs-g topic-list">
-			{{ portal.recent_topics }}
-			<ul>
-				<li>
-					<a href="#">Freshdesk - What's new in Freshdesk?</a>
-					<p class="help-text">
-						posted by laurence fishburne, 1 year ago <br />
-						<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
-					</p>
-				</li>
-				<li>
-					<a href="#">Automatic refresh for the ticket page</a>
-					<p class="help-text">
-						posted by laurence fishburne, 1 year ago <br />
-						<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
-					</p>
-				</li>
-				<li>
-					<a href="#">Create a ticket *without* an email address</a>
-					<p class="help-text">
-						posted by laurence fishburne, 1 year ago <br />
-						<a href="#">Last reply</a> by Sierra Daley 17 hours ago 
-					</p>
-				</li>
-			</ul>
-			<a href="#" class="see-more">See all 10 topics</a>
-		</section>
-	</div>
+		</div>
+	{% endfor %}
 </section>

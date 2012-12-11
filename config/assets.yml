@@ -172,15 +172,16 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/hackz.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
-    - public/javascripts/effects.js
-    - public/javascripts/controls.js
-    - public/javascripts/fast_autocompleter.js
+    # - public/javascripts/effects.js
+    # - public/javascripts/controls.js
+    # - public/javascripts/fast_autocompleter.js
     - public/javascripts/portal/jquery-ui-1.9.1.custom.js
-    - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.chosen.js
+    # - public/javascripts/frameworks/plugins/jquery.qtip.js
+    # - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/select2.js
     - public/javascripts/portal/portal.js

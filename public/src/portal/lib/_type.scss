@@ -13,32 +13,34 @@ p {
     color: $grayLight;
   }
 }
-.lead, .lead-small{
+
+.lead, .lead-small, .list-lead {
   margin-bottom: $baseLineHeight;
   font-size: 20px;
   font-weight: 200;
-  line-height: $baseLineHeight * 1.2;
   color: $grayDark;
-}
-
-.lead-small{
-  font-size: 16px;
-}
-
-.list-lead{
-  font-size: 20px;
-  font-weight: 200;
-  line-height: $baseLineHeight * 1.2;
-  margin: $baseLineHeight / 3 0;
-  color: $gray; 
   a{ color: inherit; }
   a:hover{ color: inherit; }
   b{ font-weight: 500; }
 }
 
+.lead-small { font-size: 16px; }
+
+/* List lead is used as title for titles inside the portal */
+.list-lead { margin: $baseLineHeight / 3 0; }
+
 
 // HEADINGS
 // --------
+
+.heading {  
+  font-family: $headingsFontFamily;
+  font-weight: $headingsFontWeight;
+  color: $headingsColor;
+}
+
+/* Used to give a lighter font weight for headings */
+.light { font-weight: 400; }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -47,15 +49,6 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
     color: $grayLight;
   }
-}
-.heading {  
-  font-family: $headingsFontFamily;
-  font-weight: $headingsFontWeight;
-  color: $headingsColor;
-}
-
-.light{  
-  font-weight: 400;
 }
 
 h1 {

@@ -1,6 +1,6 @@
 <section class="content min-height-on-desktop rounded-6 ticket-page">
   <div class="ticket-toolbar pull-right">
-    <a href="{{ portal.ticket_export_url }}" data-target="#myModal" data-toggle="modal">
+    <a href="#export-modal" data-toggle="modal">
       Export tickets
     </a>
   </div>
@@ -33,7 +33,7 @@
   {% endcomment %}
 </section>
 
-<div id="myModal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="export-modal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 class="ellipsis" title="Export ticket data to CSV">Export ticket data to CSV</h3>

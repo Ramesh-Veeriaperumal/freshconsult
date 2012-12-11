@@ -16,8 +16,7 @@
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
 		<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
 		<%= include_stylesheets :portal %>
-
-		<%= include_javascripts :portal_head %>
+		<%= include_javascripts :portal_head %>		
 	</head>
 	<body>
 		<% unless session[:preview_button].blank?%>
@@ -29,8 +28,8 @@
 
 		<%= @layout %>
 
+		<%= include_javascripts :portal_head %>
 		<%= include_javascripts :portal_bottom, :redactor %>
-
 		<%= render :partial => "layouts/integrations" %>
 	</body>
 </html>
