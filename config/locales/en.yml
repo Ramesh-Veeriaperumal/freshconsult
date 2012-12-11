@@ -1379,9 +1379,9 @@ en:
     role:
       info: Can see all tickets from this company 
     status:
-      verified: Verified contacts
-      deleted: Deleted contacts
-      unverified: Unverified contacts 
+      verified: Verified
+      deleted: Deleted
+      unverified: Unverified
       all: All
     status_title:
       verified : Show active contacts

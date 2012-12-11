@@ -22,8 +22,6 @@
 	});
 
 	jQuery('.send-activation').one("click", function(ev) {
-		complete_text = jQuery(this).attr("data-complete-text");
-  		jQuery(this).attr("data-complete-text","<span class='icon-ok'></span><b class='sent-text'>"+complete_text+"</b>");
     	ev.preventDefault();
     	jQuery(this).button("loading")
     	var _o_data = jQuery(this).data(),
@@ -44,15 +42,7 @@
 					
 			}
 		})
-		jQuery(this).bind('click', disableLink);
 	});
-
-	function disableLink(e) {
-    	// cancels the event
-    	e.preventDefault();
-
-		return false;
-	}
 <% end %>
 <div class="cust_list_table_header"	>
 	<div class="row-fluid">

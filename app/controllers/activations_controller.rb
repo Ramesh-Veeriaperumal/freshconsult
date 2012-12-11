@@ -2,6 +2,7 @@ class ActivationsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
 
   include HelpdeskControllerMethods
+  
   skip_before_filter :build_item , :only => [:new, :create]
   
   before_filter :only => :send_invite do |c| 

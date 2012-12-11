@@ -124,7 +124,11 @@ strong {
   border-right-color: #666;
   right: 0.35em;
 }
-
+.text-info{
+  width:75%; //fix for long words word wrap
+  word-wrap:break-word;
+  overflow: hidden;
+}
 .cust-list-avatar,.text-info{
   display:inline-block;
   vertical-align: middle;
