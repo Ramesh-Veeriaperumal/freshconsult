@@ -350,7 +350,7 @@ en:
             send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
         index:
             congrats: Congratulations! Your “fresh” helpdesk is ready.
-            title_msg: Just fill in a few details to get started. (optional)
+            title_msg: Just fill in a few details to get started.
             support_email_title: Support<br> e-mail
             agents_title: Agents
             rebrand_title: Logo <br>&amp; colors
