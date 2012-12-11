@@ -188,6 +188,12 @@ BatchbookWidget.prototype= {
 				}	}
 			});
 			
+			title = (title) ? (title) : ""  ;
+            var cPhone = (cPhone) ? cPhone : "N/A";
+            var cMobile = cMobile ? cMobile : "N/A";
+            var cAddress = (cAddress) ? cAddress : "N/A";
+             
+
 			contacts.push({
 				name: fullName,
 				url: cLink,
