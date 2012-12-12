@@ -144,3 +144,14 @@ strong {
 .cust-list-avatar, .text-info {
   display: inline-block;
   vertical-align: middle; }
+
+/* This is class is overriding app-common css. */
+/* line 141, ../../src/pattern/patternhack.scss */
+.pagination {
+  border-bottom: 0; }
+  /* line 143, ../../src/pattern/patternhack.scss */
+  .pagination a {
+    font-weight: normal; }
+    /* line 145, ../../src/pattern/patternhack.scss */
+    .pagination a:hover, .pagination a:focus {
+      text-decoration: none; }

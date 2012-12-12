@@ -29,11 +29,15 @@
 									<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
 								</td>
 								<td class="name">
-									<p class="text-info"><strong><%= link_to(h(customer.name), customer, :class => 
-									"item_info" ) %><br/></strong>
-								    	<% if !customer.description.nil? %>
-								    		<small class="muted"><%= h customer.description %></small>
-										<% end %>
+									<p class="text-info">
+										<strong><%= link_to(h(customer.name), customer, :class => 
+																					"item_info" ) %><br/></strong>
+										<% if customer.users.size>=1 %>
+											<% updated_contact_count = pluralize(customer.users.size, t('contacts.contact'), t('contacts.contacts')) %>
+									    	<span class="muted"><%= t('contacts.contacts_in_companies', :contacts => updated_contact_count) %></span>
+									    <% else %>
+									    	<span class="muted"><%= t('contacts.no_contacts') %></span>
+									    <% end %>
 									</p>
 								</td>
 								<td>

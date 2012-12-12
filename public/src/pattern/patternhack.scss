@@ -133,3 +133,17 @@ strong {
   display:inline-block;
   vertical-align: middle;
 }
+
+
+/* This is class is overriding app-common css. */
+
+.pagination 
+{
+  border-bottom:0 ;
+  a{
+   font-weight:normal;
+   &:hover, &:focus{
+    text-decoration:none;
+   }
+  }
+}

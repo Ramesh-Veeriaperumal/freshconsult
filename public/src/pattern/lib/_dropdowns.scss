@@ -90,7 +90,7 @@
   text-decoration: none;
   color: $dropdownLinkColorHover;
   background-color: $dropdownLinkBackgroundHover;
-  @include gradient-vertical($dropdownLinkBackgroundHover, darken($dropdownLinkBackgroundHover, 5%));
+  @include gradient-vertical(darken($dropdownLinkBackgroundActive,9%), $dropdownLinkBackgroundActive);
 }
 
 // Active state
@@ -101,7 +101,7 @@
   text-decoration: none;
   outline: 0;
   background-color: $dropdownLinkBackgroundActive;
-  @include gradient-vertical($dropdownLinkBackgroundActive, darken($dropdownLinkBackgroundActive, 5%));
+  @include gradient-vertical(darken($dropdownLinkBackgroundActive,5%), $dropdownLinkBackgroundActive);
 }
 
 // Disabled state

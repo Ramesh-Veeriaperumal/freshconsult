@@ -1334,7 +1334,6 @@ en:
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
-  country: Country
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
@@ -1353,6 +1352,10 @@ en:
     edit: Edit Contact
     save_changes: Save changes
     deleted_message: This is a deleted contact
+    contacts_in_companies: "%{contacts}"
+    contact: contact
+    contacts: contacts
+    no_contacts: No contacts
     title: Contacts
     emailnotverified: Email has not been verified for this contact!
     showing: "Showing:"
@@ -1384,10 +1387,10 @@ en:
       unverified: Unverified
       all: All
     status_title:
-      verified : Show active contacts
-      unverified : Show contacts with unverified emails
-      deleted : Show deleted contacts
-      all: Show all contacts
+      verified : Active contacts
+      unverified : Contacts with unverified emails
+      deleted : Deleted contacts
+      all: All contacts
     verified:
       no_contacts: You don't have any contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'

@@ -16,15 +16,15 @@
 		<ul class="alpha_sort_list">		
 			<%= hidden_field_tag :letter, '' %>
 			<li class="first <%= 'active' if params[:letter].blank? %>">
-				<%= link_to 'All', :letter => '', :state => params[:state].blank? ? 'active' : params[:state] %>
+				<%= link_to 'All', :letter => '', :state => params[:state].blank? ? 'verified' : params[:state] %>
 			</li>
 			<% "A".upto("Y") do |l| -%>	    
 			 <li class="<%= 'active' if params[:letter] == [l] %>">
-			 	<%= link_to l, :letter => l, :state => params[:state].blank? ? 'active' : params[:state] %>
+			 	<%= link_to l, :letter => l, :state => params[:state].blank? ? 'verified' : params[:state] %>
 			 </li>	
 			<% end %>
 			<li class="last <%= 'active' if params[:letter] == ['Z'] %>">
-				<%= link_to 'Z', :letter => 'Z', :state => params[:state].blank? ? 'active' : params[:state] %>
+				<%= link_to 'Z', :letter => 'Z', :state => params[:state].blank? ? 'verified' : params[:state] %>
 			</li>
 		</ul>
 	</div>
