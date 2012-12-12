@@ -91,6 +91,8 @@ end
 group :assets do
 	gem "sass", "3.2.1"
 	gem "compass-rails"
+	# Portal grid system is done using susy grids
+	gem "susy" 
 end
 
 
