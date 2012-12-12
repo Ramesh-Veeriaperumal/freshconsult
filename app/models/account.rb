@@ -210,6 +210,9 @@ class Account < ActiveRecord::Base
   after_create :populate_features
   after_create :send_welcome_email
   after_update :update_users_language
+
+  after_commit_on_create :add_to_billing
+  before_destroy :update_billing
   
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
@@ -597,5 +600,13 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
+  private
 
+    def add_to_billing
+      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
+    end 
+
+    def update_billing
+      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
+    end
 end

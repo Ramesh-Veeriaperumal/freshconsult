@@ -5,6 +5,8 @@ class Subscription < ActiveRecord::Base
   SUBSCRIPTION_TYPES = ["active","trial","free"]
   
   AGENTS_FOR_FREE_PLAN = 1
+
+  NO_PRORATION_PERIOD_CYCLES = [1, 3]
   
   ACTIVE = "active"
   TRIAL = "trial"
@@ -27,6 +29,11 @@ class Subscription < ActiveRecord::Base
   before_validation :update_amount
   after_update :update_features,:send_invoice
   after_update :add_to_crm, :if => :free_customer?
+  
+  after_update :update_billing
+  after_update :add_card_to_billing, :if => :card_number_changed?
+  after_update :activate_paid_customer_in_billing, :if => :card_number_changed?
+  after_update :activate_free_customer_in_billing, :if => :free_plan_selected?
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -135,6 +142,7 @@ class Subscription < ActiveRecord::Base
   
   def store_card(creditcard, gw_options = {})
     # Clear out payment info if switching to CC from PayPal
+    puts creditcard.inspect
     @charge_now = gw_options[:charge_now]
     @response = if billing_id.blank?
       gateway.store(creditcard, gw_options)
@@ -479,12 +487,38 @@ class Subscription < ActiveRecord::Base
   end
 
   private
+
     def free_customer?
       (amount == 0 and active? ) || free?
     end
 
+    def free_plan_selected?
+      state_changed? and free?
+    end
+
+    def no_prorate?
+      (amount < @old_subscription.amount) and 
+        NO_PRORATION_PERIOD_CYCLES.include?(@old_subscription.renewal_period) unless @old_subscription.blank?
+    end
+
     def add_to_crm
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+    end
+
+    def update_billing
+      Resque.enqueue(Billing::AddToBilling::UpdateSubscription, id, !no_prorate?)
+    end 
+
+    def add_card_to_billing
+      Resque.enqueue(Billing::AddToBilling::StoreCard, id)
+    end
+
+    def activate_paid_customer_in_billing
+      Resque.enqueue(Billing::AddToBilling::ActivateSubscription, id) if @old_subscription.state.eql?("trial")
+    end
+
+    def activate_free_customer_in_billing
+      Resque.enqueue(Billing::AddToBilling::ActivateSubscription, id)
     end
 
  end
