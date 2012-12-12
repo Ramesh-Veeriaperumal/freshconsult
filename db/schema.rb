@@ -1164,6 +1164,7 @@ ActiveRecord::Schema.define(:version => 20121110141455) do
     t.text     "desc_un_html", :limit => 2147483647
     t.integer  "import_id",    :limit => 8
     t.integer  "position"
+    t.text     "seo_data"
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"

@@ -2696,6 +2696,7 @@ a.page_title{
 		text-align:center;
 		border-bottom:1px dotted #DCDCDC;
 		padding: 0 0 20px; 
+		word-break: break-all;
 	}
 	.active{
 	   a{ 
@@ -6955,9 +6956,77 @@ a[rel="load-rjs"] {
 		color: inherit;
 	}
 }
+
+/* solution page seo addition */
+ 
+
+#solution-seo-container {
+    margin-bottom: 25px;
+    .solution-seo-message {
+	    color: #666;
+	}
+	.solution-seo-description {
+	    height: 48px;   
+	}
+	.solution-seo-show {
+	    font-size:7px;
+	    &.arrow-right{
+	    	margin-top: -3px;
+	    }
+	}
+	.solution-seo-title {
+	    cursor: pointer;
+	    border-top: 1px solid #CCC;
+		padding-top: 6px;
+	    a{
+		    font-size: 13px;
+		    font-weight: bold;
+		    &:hover{
+		    	color: #333;
+		    }
+		}
+	}
+	#solution-seo li {
+	    padding: 8px 0px;
+	}
+}
 /* end */
 
 // !PATTERN TODO to be moved into mixins and cleaned up later
 // CSS animation
 
 @import "../animate-custom";
+
+.arrow-right,
+.arrow-down {
+  
+   /*
+   * In Internet Explorer, The"border-style: dashed" will never be
+   * rendered unless "(width * 5) >= border-width" is true.
+   * Since "width" is set to "0", the "dashed-border" remains
+   * invisible to the user, which renders the border just like how
+   * "border-color: transparent" renders.*/
+   
+  border-style: dashed;
+  padding:0;
+  border-color: transparent;
+  border-width: 0.7em;
+  display: -moz-inline-box;
+  display: inline-block;
+  height: 0;
+  line-height: 0;
+  position: relative;
+  vertical-align: middle;
+  width: 0;
+}
+
+.arrow-right {
+  @include triangle(right, black, 5px);
+}
+                    
+.arrow-down {
+  @include triangle(down, black, 5px);
+}
+.requestCnt .description .user_details .loading-center {
+	height: 50px;
+}

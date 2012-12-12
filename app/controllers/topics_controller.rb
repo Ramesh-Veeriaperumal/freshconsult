@@ -43,7 +43,7 @@ class TopicsController < ApplicationController
   end
 
   def new
-    @topic = Topic.new
+    @topic = current_account.topics.new
   end
   
   def show    

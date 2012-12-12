@@ -136,3 +136,108 @@
     *margin-left: 0;
   }
 }
+
+
+//// TRIANGLES ////
+
+// Transforms the element into a triangle
+// You can modify border sizes to change the shape
+@mixin triangle($direction: down, $color: black, $size: 6px) {
+  @if $direction == left {
+    border-bottom: $size solid transparent;
+    border-right: $size solid $color;
+    border-top: $size solid transparent;
+  }
+  @else if $direction == right {
+    border-bottom: $size solid transparent;
+    border-left: $size solid $color;
+    border-top: $size solid transparent;
+  }
+  @else if $direction == up {
+    border-bottom: $size solid $color;
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+  }
+  @else if $direction == down {
+    border-right: $size solid transparent;
+    border-left: $size solid transparent;
+    border-top: $size solid $color;
+  }
+  height: 0;
+  width: 0;
+}
+
+// Attaches a triangle to the element using a pseudo-element
+@mixin triangle-after($direction: down, $color: black, $size: 6px) {
+  position: relative;
+  &:after {
+    @include triangle($direction, $color, $size);
+    content: "";
+    margin: 0;
+    padding: 0;
+    position: absolute;
+  }
+}
+
+
+// Attaches a triangle to the element using a pseudo-element
+@mixin triangle-before($direction: down, $color: black, $size: 6px) {
+  position: relative;
+  &:before {
+    @include triangle($direction, $color, $size);
+    content: "";
+    margin: 0;
+    padding: 0;
+    position: absolute;
+  }
+}
+
+// Convenience function to change the current element and it's triangle's color
+@mixin triangle-color($color: black, $direction: down) {
+  background: $color;
+  &:after {
+    @if $direction == left {
+      border-right-color: $color;
+    }
+    @else if $direction == right {
+      border-left-color: $color;
+    }
+    @else if $direction == up {
+      border-bottom-color: $color;
+    }
+    @else if $direction == down {
+      border-top-color: $color;
+    }
+  }
+}
+
+
+//// BUBBLES ////
+
+// Turns element into a speech bubbles (used for numbers)
+@mixin bubble($background: none, $text: none) {
+  @include border-radius(3px);
+  position: relative;
+  font-size: 13px;
+  padding: 3px 5px;
+  @if $text != none {
+    color: $text;
+  }
+  @if $background != none {
+    background: $background;
+  }
+  &:after {
+    border-color: transparent;
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 4px;
+    height: 0;
+    width: 0;
+    bottom: -4px;
+    left: 5px;
+    @if $background != none {
+      border-left-color: $background;
+    }
+  }
+}
