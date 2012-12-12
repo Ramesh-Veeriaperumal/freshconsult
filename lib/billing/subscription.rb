@@ -2,9 +2,8 @@ class Billing::Subscription
 
   #$CHARGEBEE_DOMAIN = "testcb.com"
 
-  ENV_VARIABLES = { :site => "freshdesk-test" , :api_key => "cdrlcdNz41IGq8HHcuMKI2wJByPrcuwI0cdbC" }
+  ENV_VARIABLES = { :site => "freshdesk-test" , :api_key => "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv" }
   
-
   PLAN_CODES  = { :Sprout =>  { 1 => "sprout_monthly", 3 => "sprout_quarterly", 
                                 6 => "sprout_half_yearly", 12 => "sprout_annual" },
 
