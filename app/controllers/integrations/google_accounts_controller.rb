@@ -87,10 +87,10 @@ class Integrations::GoogleAccountsController < Admin::AdminController
       unless goog_acc.import_groups.blank?
         pre_import_groups = goog_acc.import_groups.clone
         latest_goog_cnts = goog_acc.fetch_latest_google_contacts(20)
-        # Reset the start index and import groups so the real import happens from the beginning.
-        goog_acc.reset_start_index
+        goog_acc.reset_start_index # Reset the start index and import groups so the real import happens from the beginning.
         goog_acc.import_groups = pre_import_groups
         goog_acc.donot_update_sync_time = true
+        goog_acc.access_token = nil # Removing. Because some case accesstoken reponse happens to be very big and makes its hard to fit within delayed_jobs column size.
         # Now start the importing.
         goog_cnts_iptr = Integrations::GoogleContactsImporter.new(goog_acc)
         if latest_goog_cnts.length > 20

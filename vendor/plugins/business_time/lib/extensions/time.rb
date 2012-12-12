@@ -43,6 +43,10 @@ class Time
       time > end_of_workday(time)
     end
 
+    def working_hours?(time)
+      (time >= beginning_of_workday(time)) and (time <= end_of_workday(time))
+    end
+
     # Rolls forward to the next beginning_of_workday
     # when the time is outside of business hours
     def roll_forward(time)
@@ -122,7 +126,7 @@ class Time
         BusinessCalendar.config.beginning_of_workday(time_b.wday)) # Last day
 
     time_b = Time.end_of_workday(Time.roll_backward(time_b-1.day)) #To preceed the time_b since last day is calculated - Abhinav
-    # # All days in between
+    # # All days in between - Abhinav
     while(time_b.to_date > time_a.to_date)
       time_a = Time::roll_forward(time_a+1.day)
       duration_of_working_day = Time::end_of_workday(time_a) - Time::beginning_of_workday(time_a)

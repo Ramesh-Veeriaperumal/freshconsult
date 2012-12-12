@@ -88,8 +88,8 @@ module ApplicationHelper
     flash.discard
   end
 
-  def each_or_message(partial, collection, message)
-    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "list-noinfo")
+  def each_or_message(partial, collection, message, locals = {})
+    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
   end
   
   def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
@@ -132,13 +132,13 @@ module ApplicationHelper
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets) ],
-      ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
-      ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
+      ['/helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
+      ['/helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    (current_user && current_user.can_view_all_tickets?)],
-      ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
+      ['/support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/reports',            :reports,      permission?(:manage_reports) ],
       ['/admin/home',         :admin,        permission?(:manage_users)],
       company_tickets_tab
@@ -328,7 +328,10 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+    avatar_content = MemcacheKeys.fetch(["v1","avatar",profile_size,user],options.fetch(:expiry,300)) do
+      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+    end
+    avatar_content
   end
 
   def user_avatar_with_expiry( user, expiry = 300)
@@ -448,7 +451,7 @@ module ApplicationHelper
       when "dropdown" then
         choices = [];i=0
         field[:choices].each do |choice| 
-          choices[i] = t(choice);i=i+1
+          choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
@@ -581,7 +584,8 @@ module ApplicationHelper
       :totalPages => total_pages,
       :url        => url,
       :loaderMsg  => message,
-      :params => params
+      :params => params,
+      :currentPage => 1
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
   end
@@ -606,7 +610,7 @@ module ApplicationHelper
   private
     def solutions_tab
       if current_portal.main_portal?
-        ['solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+        ['/solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
       elsif current_portal.solution_category
         [solution_category_path(current_portal.solution_category), :solutions, 
               allowed_in_portal?(:open_solutions)]

@@ -15,10 +15,12 @@
         <a href="#" class="slim-button"  rel="cc_button_<%=cntid%>" data-input="#include_bcc" data-parent="#bcc-form-container-<%=cntid%>" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_bcc_btn" >
           <%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
         </a>
-        <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.display_id})", :class => "slim-button insert-canned-response", "data-tiny-mce-id" => "#{cntid}-body") %>
+
+        <a href="#" id="reply_response" class="slim-button"><%= t('canned_folders.responses') %> &raquo;</a>
+
       </div>
 
-      <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title", :id => "reply_email_id" ) %>
+      <%= content_tag( :h4, t(".title", :email => @ticket.requester.email || @ticket.requester.name ), :class => "title", :id => "reply_email_id" ) %>
         <li class="inline-field field" >
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
@@ -103,7 +105,7 @@
             <div class="reply-draft" id="reply-draft">
               <%= t("draft") %>
               <%= content_tag :div, t("saving_draft"), :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
-              <div class="close-img" id="clear-draft"><span></span></div>
+              <div class="close-img" title="Clear saved draft" id="clear-draft"><span></span></div>
             </div>
             <% unless local_assigns[:no_attachments] %>
             <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
@@ -143,7 +145,13 @@
           form = e.target.form,
           fromEmail = selectObj.val();
           form['helpdesk_note[from_email]'].value = fromEmail;
-    })
+    });
+
+    jQuery("#reply_response").click(function(ev){
+    ev.preventDefault();
+    jQuery("#canned_response_show").attr('data-tiny-mce-id', "#{cntid}-body");
+    jQuery("#canned_response_show").trigger('click');
+  });
 
     <%= render(:partial => '/helpdesk/shared/reply_draft') %>
    

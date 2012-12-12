@@ -1,5 +1,6 @@
 class FlexifieldDefEntry < ActiveRecord::Base
   
+  belongs_to_account
   belongs_to :flexifield_def
 
   has_one :ticket_field, :class_name => 'Helpdesk::TicketField'
@@ -10,6 +11,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
   named_scope :drop_down_fields, :condition => {:flexifield_coltype => 'dropdown' }
   
   before_save :ensure_alias_is_one_word
+  before_create :set_account_id
   
   ViewColumn = Struct.new(:object,:content) do
     def viewname
@@ -69,6 +71,10 @@ class FlexifieldDefEntry < ActiveRecord::Base
     flexifield_alias.gsub!(/\s+/,"_")
   end
   
-  
+private
+  def set_account_id
+    self.account_id = flexifield_def.account_id
+  end
+ 
   
 end

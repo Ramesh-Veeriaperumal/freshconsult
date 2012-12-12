@@ -20,6 +20,8 @@ gem "omniauth-openid"
 gem "omniauth-google"
 gem "omniauth-facebook"
 gem "omniauth-salesforce"
+gem "omniauth-mailchimp", "~> 1.0.3"
+gem "omniauth-constantcontact2", "~> 1.0.4"
 
 gem "jira4r", "0.3.0"
 gem "ruby-openid", "2.1.8", :require => "openid"
@@ -89,6 +91,8 @@ end
 group :assets do
 	gem "sass", "3.2.1"
 	gem "compass-rails"
+	# Portal grid system is done using susy grids
+	gem "susy" 
 end
 
 

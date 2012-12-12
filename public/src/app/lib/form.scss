@@ -554,9 +554,6 @@ li.nested_field{
 .threecol-form .item{
 	float:left;
 	width:33%;
-	label{	
-		@include inline-block;
-	}
 	.level{
 		margin-left:20px;
 	}
@@ -1843,23 +1840,21 @@ a.new_ticket:hover{
    background-position: center 8px;
 }
 .canned-response-menu{
-   border:1px solid #cfcfcf;
+   border:2px #4b4b4b solid;
    background-color:#ffffff;
-   @include shadows( rgba(0, 0, 0, 0.2), 0, 2px, 4px);
-   padding:6px 6px 16px 6px;
-   width:400px;
-   margin-left: -300px;
-   margin-top: -10px;
-
-   position:absolute;
+   @include shadows( #999, 0, 10px, 20px);
+   @include corners(5px);
+   padding:0;
+   width:654px;
+   min-height:334px;
    text-align: left;
-   margin-left: -360px;
-   margin-top: -75px;
+   margin-left: 47px;
+   margin-top: 10px;
+   margin-bottom: 20px;
    z-index:1000;
    text-align: left;
    
    ul{
-      border-top:1px solid #efefef;
       position:relative;
       padding:12px 0 0 0;
       margin:6px 0 0 0;      
@@ -1875,20 +1870,22 @@ a.new_ticket:hover{
       width:1px;
    }
    li{       
-      padding: 6px 8px 6px 24px;
-      margin-left:10px;
+      padding: 3px 4px 2px 7px;
+      margin-left:6px;
       position:relative;
       a{
          font-size:13px;
          text-decoration:none;
       }
       span.bullet{
-         background:sprite($symbol, response) no-repeat;
-         position:absolute;
-         width:16px;
-         height:16px;
-         left:0;
-         top:7px;
+        background:sprite($symbol, bullet-folder) no-repeat;
+    	position: relative;
+    	display: inline-block;
+    	padding: 2px 0px;
+    	margin-top: 6px;
+    	width: 17px;
+    	height: 13px;
+
       }
    }
 }
@@ -2434,14 +2431,11 @@ input[type="text"].number{
     .small_curve{
         @include border-radius(5px);
     }
-    .top_spacing{
-        margin-top : 10px;
-    }
     select{
         width : 150px;
     }
     .inline-field{
-        width: 575px;
+        width: 639px;
     }
     .fields{
         float :left;
@@ -2481,6 +2475,8 @@ input[type="text"].number{
     {
         max-height : 132px;
         overflow : auto;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 	.menu-item{
         width : 350px;

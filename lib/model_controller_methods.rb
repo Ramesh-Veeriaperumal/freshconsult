@@ -47,6 +47,8 @@ module ModelControllerMethods
           flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
           redirect_back_or_default redirect_url
         end
+        format.xml { head :ok  }
+        format.json { head :ok }
         format.js 
       end
       

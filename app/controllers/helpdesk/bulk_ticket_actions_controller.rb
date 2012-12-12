@@ -20,6 +20,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
+      ticket.save
       begin
         reply_multiple reply_content, ticket
       rescue Exception => e
@@ -27,7 +28,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
         NewRelic::Agent.notice_error(e)
         Rails.logger.error("Error while sending reply")
       end
-      ticket.save
     end
     flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 
                                       :locals => { :failed_tickets => failed_tickets, :get_updated_ticket_count => get_updated_ticket_count })

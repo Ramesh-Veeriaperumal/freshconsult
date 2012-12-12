@@ -8,7 +8,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
-    account = Account.find_by_full_domain(to_email[:domain])
+    account = Account.first
+    # account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       account.make_current
       encode_stuffs

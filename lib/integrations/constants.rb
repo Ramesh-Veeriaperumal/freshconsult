@@ -9,7 +9,11 @@ module Integrations::Constants
     :salesforce => "salesforce",
     :logmein => "logmein",
     :batchbook => "batchbook",
-    :highrise => "highrise"
+    :highrise => "highrise",
+    :mailchimp => "MailChimp",
+    :constantcontact => "ConstantContact",
+    :icontact => "iContact",
+    :campaignmonitor => "CampaignMonitor",
   }
 
   APP_CATEGORY_ID_TO_NAME = {

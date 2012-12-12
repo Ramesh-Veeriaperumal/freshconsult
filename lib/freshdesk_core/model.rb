@@ -39,6 +39,7 @@ module FreshdeskCore::Model
     									{:dependant => :day_pass_purchases, :method => :destroy_all},
     									{:dependant => :data_import, :method => :destroy},
     									{:dependant => :tags, :method => :destroy_all},
+                      {:dependant => :canned_response_folders, :method => :destroy_all},
                       {:dependant => :all_quests, :method => :destroy_all}
     	] }
 
