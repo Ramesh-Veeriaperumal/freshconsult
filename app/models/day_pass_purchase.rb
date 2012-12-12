@@ -7,8 +7,6 @@ class DayPassPurchase < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :payment, :polymorphic => true
-
-  after_create :add_to_billing
   
   def success?
     status == STATUS[:success]
@@ -17,11 +15,4 @@ class DayPassPurchase < ActiveRecord::Base
   def paid_width_type
     PAID_WITH_BY_TYPE[paid_with]
   end
-
-
-  private
-
-    def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::AddDayPasses, id)
-    end
 end
