@@ -63,7 +63,8 @@
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
-  map.resources :activations, :member => { :send_invite => :put }
+  map.resources :activations, :member => { :send_invite => :put },
+                              :collection => { :bulk_send_invite => :put }
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
@@ -98,7 +99,11 @@
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
     admin.resources :portal, :only => [ :index, :update ]
-    admin.resources :canned_responses
+    admin.namespace :canned_responses do |ca_response|
+      ca_response.resources :folders do |folder|
+        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
+      end
+    end
     admin.resources :products
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
@@ -230,7 +235,7 @@
 #    end
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
-                                    :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
+                                    :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
                                     :filter_options => :get, :full_paginate => :get },  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
@@ -258,7 +263,8 @@
 
     helpdesk.resources :notes
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
-    helpdesk.resources :canned_responses
+    helpdesk.resources :ca_folders
+    helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 

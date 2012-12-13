@@ -2,7 +2,6 @@
 
 // This import applies a global reset to any page that imports this stylesheet.
 html {  height:100%; overflow-y:scroll; }
-
 .wrapper{
 	@include container;
 	@include pie-clearfix;
@@ -181,7 +180,7 @@ div.bg_pulp{
 		border:4px solid transparent;
 		border-top-color:#fff;
 		width:0;        
-		top:6px; 
+		top:9px; 
 		right:9px;
 	}
 } 
@@ -246,7 +245,7 @@ ul.header-tabs{
 	width:100%;
 	z-index:8;
 	.top-loading-strip, .top-loading-strip-opera-12 {
-		height:55px;
+		height:6px;
 		background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
 		-webkit-background-size: 19px 19px;
 	 	-webkit-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;

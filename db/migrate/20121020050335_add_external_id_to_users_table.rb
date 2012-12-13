@@ -7,9 +7,9 @@ class AddExternalIdToUsersTable < ActiveRecord::Migration
   end
 
   def self.down
+    execute("alter table `users` drop index `index_users_on_account_id_and_external_id`")
   	remove_column :users, :external_id
     remove_column :users, :string_uc01
     remove_column :users, :text_uc01
-  	execute("alter table `users` drop index `index_users_on_account_id_and_external_id`")
   end
 end

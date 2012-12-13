@@ -1,6 +1,6 @@
 class Workers::Sla 
   extend Resque::Plugins::Retry
-  @queue = 'SLA_worker'
+  @queue = 'sla_worker'
 
   @retry_limit = 3
   @retry_delay = 60*2
@@ -8,14 +8,20 @@ class Workers::Sla
   include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation  
  
   def self.perform(account_id)
-    account = Account.find(account_id)
-    account.make_current
-    NewRelic::Agent.manual_start 
-    # perform_action_with_newrelic_trace(:name => "RakeTasks::Sla", :category => "OtherTransaction/Rake") do 
-    run(account)
-    # end
-    Account.reset_current_account 
+    begin
+      account = Account.find(account_id)
+      account.make_current
+      NewRelic::Agent.manual_start 
+      # perform_action_with_newrelic_trace(:name => "RakeTasks::Sla", :category => "OtherTransaction/Rake") do 
+      run(account)
+      # end
+    rescue Exception => e
+      puts "something is wrong: #{e.message}"
+    rescue 
+      puts "something went wrong"
+    end
     NewRelic::Agent.shutdown
+    Account.reset_current_account 
   end
 
   def self.run account

@@ -36,12 +36,12 @@ class CRM::Salesforce < Resque::Job
 
   def add_free_customer_to_crm(subscription) 
     crm_ids = search_crm_record(subscription.account.id)
-    update_account(crm_ids[:account], subscription.account.full_domain, CUSTOMER_STATUS[:free])
+    update_account(crm_ids, subscription.account.full_domain, CUSTOMER_STATUS[:free])
   end
 
   def update_deleted_account_to_crm(deleted_customer)
     crm_ids = search_crm_record(deleted_customer.account_id)
-    update_account(crm_ids[:account], deleted_customer.full_domain, CUSTOMER_STATUS[:deleted])
+    update_account(crm_ids, deleted_customer.full_domain, CUSTOMER_STATUS[:deleted])
   end
 
   def update_admin_info(admin)
@@ -110,12 +110,15 @@ class CRM::Salesforce < Resque::Job
       record = account_details(crm_ids[:account], payment)
       binding.update('sObject {"xsi:type" => "Account"}' => record)
       binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
-        :Account_Renewal_Date__c => payment.account.subscription.next_renewal_at })
+        :Account_Renewal_Date__c => payment.account.subscription.next_renewal_at,
+        :Customer_Status__c => CUSTOMER_STATUS[:paid] })
     end
 
-    def update_account(crm_account_id, domain, status)
+    def update_account(crm_ids, domain, status)
       binding.update('sObject {"xsi:type" => "Account"}' => 
-        { :id => crm_account_id , :name => domain, :Customer_Status__c => status })
+        { :id => crm_ids[:account] , :name => domain, :Customer_Status__c => status })
+      binding.update('sObject {"xsi:type" => "Contact"}' => 
+        { :id => crm_ids[:contact], :Customer_Status__c => status })
     end
 
     def create_crm_record(record_type, record_attributes)
@@ -140,7 +143,7 @@ class CRM::Salesforce < Resque::Job
     def account_attributes(account)
       {
         :Freshdesk_Domain_Name__c => account.full_domain,
-        :Freshdesk_Account_Id__c => account.id,
+        :Freshdesk_Account_Id__c => account.id.to_s,
         :Account_Created_Date__c => account.created_at.to_s(:db),
         :Account_Renewal_Date__c => account.subscription.next_renewal_at.to_s(:db)
       }

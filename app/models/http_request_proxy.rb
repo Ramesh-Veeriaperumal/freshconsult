@@ -33,7 +33,6 @@ class HttpRequestProxy
           post_request_body = (params[entity_name].to_json :root => entity_name)
         end
       end
-
       unless /http.*/.match(domain)
         http_s = ssl_enabled == "true"? "https":"http";
         domain = http_s+"://"+ domain
@@ -45,10 +44,11 @@ class HttpRequestProxy
       if auth_header.blank?
         auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
       end
+      
       options = Hash.new
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
-
+      options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
       begin
         net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
         proxy_request = HTTParty::Request.new(net_http_method, remote_url, options)

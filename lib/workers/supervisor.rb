@@ -1,6 +1,6 @@
 class Workers::Supervisor
   extend Resque::Plugins::Retry
-  @queue = 'Supervisor_worker'
+  @queue = 'supervisor_worker'
 
   @retry_limit = 3
   @retry_delay = 60*2
@@ -29,9 +29,12 @@ class Workers::Supervisor
           rule.trigger_actions ticket
           ticket.save!
         end
-      rescue => exc
+      rescue Exception => e
+        puts "something is wrong: #{e.message}"
+      rescue
+        puts "something went wrong"
       end
     end
-    Account.reset_current_account 
+    Account.reset_current_account
   end
 end

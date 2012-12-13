@@ -16,7 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include RedisKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
-                            "header_info", "st_survey_rating"]
+                            "header_info", "st_survey_rating", "trashed"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
@@ -143,8 +143,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
-  
-  has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   attr_protected :attachments #by Shan - need to check..
   
@@ -286,6 +284,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
+  validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
   #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
@@ -774,6 +773,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def to_json(options = {}, deep=true)
     options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
+    unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
+      options[:only] = [:display_id,:subject,:deleted]
+      json_str = super options
+      return json_str
+    end
     if deep
       self.load_flexifield
       self[:notes] = self.notes
@@ -790,7 +794,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
+
+    unless options[:basic].blank? #to give only the basic properties[basic prop set from 
+      return super(:builder =>xml,:skip_instruct => true,:only =>[:display_id,:subject,:deleted],
+          :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
+    end
+    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id], 
+      :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
           begin
@@ -1075,8 +1085,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def set_dueby_on_priority_change(sla_detail)
       created_time = self.created_at || Time.zone.now
-      self.due_by = sla_detail.calculate_due_by_time(self, created_time)      
-      self.frDueBy = sla_detail.calculate_frDue_by_time(self, created_time) 
+      self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time)      
+      self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time) 
   end
 
   def set_dueby_on_status_change(sla_detail)
