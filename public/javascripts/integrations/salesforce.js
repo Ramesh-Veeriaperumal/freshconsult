@@ -42,7 +42,7 @@ SalesforceWidget.prototype= {
 			var cDept = (department) ? department : "N/A" ;
 			var cAddress = (address) ? address : "N/A";
 			var cType = contact.attributes.type;
-			contacts.push({name: fullName, designation: desig, phone: cPhone, mobile: cMobile, department: cDept, address: cAddress, type: cType, url: cLink});
+			contacts.push({name: fullName, designation: desig, company: null, company_url: null, phone: cPhone, mobile: cMobile, department: cDept, address: cAddress, type: cType, url: cLink});
 		});
 		return contacts;
 	},

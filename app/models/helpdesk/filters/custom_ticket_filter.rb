@@ -2,6 +2,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
+  include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   
   attr_accessor :query_hash 
   
@@ -25,9 +26,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
 
+  def self.trashed_condition(input)
+    { "condition" => 
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}", 
+      "operator" => "is", "value" => input}
+  end
+
+
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
-                      "deleted" =>  [spam_condition(false),deleted_condition(true)],
+                      "deleted" =>  [deleted_condition(true),trashed_condition(false)],
                       "overdue" =>  [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},spam_condition(false),deleted_condition(false) ],
                       "pending" => [{ "condition" => "status", "operator" => "is_in", "value" => PENDING},spam_condition(false),deleted_condition(false)],
                       "open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},spam_condition(false),deleted_condition(false)],
@@ -41,6 +49,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                    
   after_create :create_accesible
   after_update :save_accessible
+
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
    
   def create_accesible     
     self.accessible = Admin::UserAccess.new( {:account_id => account_id }.merge(self.visibility)  )
@@ -55,9 +66,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     (accessible.all_agents?) or (accessible.only_me? and accessible.user_id == user.id) or (accessible.group_agents_visibility? and !user.agent_groups.find_by_group_id(accessible.group_id).nil?)
   end
   
-  def self.my_ticket_filters(user)
-    self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.account_id =  wf_filters.account_id AND acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :order => 'created_at desc', :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
-  end
   
   def self.edit_ticket_filters(user)
     self.find( :all, 
@@ -75,11 +83,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
       end
       #Custome fields
-      Account.current.ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+      Account.current.custom_dropdown_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
 
-      Account.current.ticket_fields.nested_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+      Account.current.nested_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
         col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
           defs[get_id_from_field(nested_col).to_sym] = {get_op_list('dropdown').to_sym => 'dropdown' ,:name => nested_col.label , :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
@@ -90,6 +98,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
+      defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
       defs[:requester_id] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => :requester_id, :container => :dropdown})  # Added for email based custom view, which will be used in integrations.
       defs[:"helpdesk_tickets.id"] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_tickets.id", :container => :dropdown})
       defs
@@ -157,6 +166,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     if !params[:filter_name].eql?("spam") and !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
+      action_hash.push({ "condition" => "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}", "operator" => "is", "value" => false})
     end
 
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
@@ -259,21 +269,36 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                                       :conditions => all_conditions, :joins => all_joins)
       end
 
-      recs = model_class.paginate(:select => [" DISTINCT(helpdesk_tickets.id) as 'unique_id', helpdesk_tickets.* "],
-                                  :include => [:ticket_states,:ticket_status,:responder,:requester],
+      select = "helpdesk_tickets.* "
+      select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
+
+      recs = model_class.paginate(:select => select,
+                                  :include => [:ticket_states, :ticket_status, :responder,:requester],
                                   :order => order_clause, :page => page, 
-                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
+                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
+                                  :total_entries => count_without_query)
       recs.wf_filter = self
       recs
     end
+  end
+
+  def count_without_query
+    # ActiveRecord::Base.connection.select_values('SELECT FOUND_ROWS() AS "TOTAL_ROWS"').pop
+    per_page.to_f*page.to_f+1
   end
   
   def get_joins(all_conditions)
     all_joins = joins
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
+    all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins
+  end
+
+  def schema_less_join
+    " INNER JOIN helpdesk_schema_less_tickets ON helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id 
+                                      AND helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id "
   end
 
   def tags_join
@@ -330,5 +355,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def permissible_conditions(ticket, account, user)    
     return (" AND (helpdesk_tickets.account_id = #{account.id}) " << ticket.agent_permission_condition(user))   
   end
-  
+
+  class << self
+    include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
+  end
 end

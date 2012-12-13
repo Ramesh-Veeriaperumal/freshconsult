@@ -7,7 +7,13 @@ module Integrations::Constants
     :sugarcrm => "sugarcrm", 
     :workflow_max => "workflow_max",
     :salesforce => "salesforce",
-    :logmein => "logmein"
+    :logmein => "logmein",
+    :batchbook => "batchbook",
+    :highrise => "highrise",
+    :mailchimp => "MailChimp",
+    :constantcontact => "ConstantContact",
+    :icontact => "iContact",
+    :campaignmonitor => "CampaignMonitor",
   }
 
   APP_CATEGORY_ID_TO_NAME = {

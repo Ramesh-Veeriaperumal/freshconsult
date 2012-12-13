@@ -20,6 +20,8 @@ gem "omniauth-openid"
 gem "omniauth-google"
 gem "omniauth-facebook"
 gem "omniauth-salesforce"
+gem "omniauth-mailchimp", "~> 1.0.3"
+gem "omniauth-constantcontact2", "~> 1.0.4"
 
 gem "jira4r", "0.3.0"
 gem "ruby-openid", "2.1.8", :require => "openid"
@@ -46,6 +48,7 @@ gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/s
 # This tinymce vendor plugin is update with the tinymce verion 3.4.7
 gem "tiny_mce", "0.1.9", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/tiny_mce-0.1.9"
 gem "jammit", "0.6.5"
+gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
@@ -88,6 +91,8 @@ end
 group :assets do
 	gem "sass", "3.2.1"
 	gem "compass-rails"
+	# Portal grid system is done using susy grids
+	gem "susy" 
 end
 
 

@@ -1,0 +1,22 @@
+per_page = params[:per_page] || 30
+current_page = params[:page].to_i
+current_page = 1 if current_page.blank? || current_page == 0
+no_of_pages = (@ticket_count.to_f/per_page).ceil
+options = {
+	:per_page => per_page,
+	:current_page => current_page,
+	:total_pages => no_of_pages
+}
+options = options.symbolize_keys.reverse_merge WillPaginate::ViewHelpers.pagination_options
+if no_of_pages > 1
+	full_paginate_content = ticket_pagination_html(options,true)
+	options[:previous_label] = '<span></span>'
+	options[:next_label] = '<span></span>'
+	paginate_content = ticket_pagination_html(options)
+	page << "jQuery('#ticket_pagination').show()"
+	page.replace_html 'ticket_pagination', paginate_content
+	page.replace_html 'ticket-toolbar-bottom', full_paginate_content
+	# page << "jQuery('#ticket_pagination').show()"
+end
+page << "jQuery('#ticket_list_count').switchClass('fetching','done').html(#{@ticket_count}).data('url',false)"
+page << "jQuery('.page_info').hide();" if @ticket_count == 0

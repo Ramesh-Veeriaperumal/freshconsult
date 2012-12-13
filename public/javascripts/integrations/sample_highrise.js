@@ -2,10 +2,12 @@ var SampleHighriseWidget = Class.create();
 SampleHighriseWidget.prototype= {
 
   initialize:function(sample_highrise_options){
+    jQuery("#sample_highrise_widget").addClass('loading-fb');
     sample_highrise_options.app_name = "Sample CRM";
     sample_highrise_options.widget_name = "sample_highrise_widget";
     sample_highrise_options.ssl_enabled = true;
     sample_highrise_options.username = sample_highrise_options.api_key;
+    sample_highrise_options.reqEmail = "support@freshdesk.com"
     cnt_req = this.get_contact_request(sample_highrise_options.reqEmail);
     sample_highrise_options.init_requests = [cnt_req];
     this.freshdeskWidget = new Freshdesk.Widget(sample_highrise_options, this);
@@ -20,12 +22,13 @@ SampleHighriseWidget.prototype= {
   },
 
   handleContactSuccess:function(response){
+    jQuery("#sample_highrise_widget").removeClass('loading-fb');
     resJson = response.responseJSON;
     this.contacts = this.parse_contact(resJson.people[0]);
     if (this.contacts.length > 0) {
       this.renderContactWidget(this.contacts[0]);
     } else {
-      this.freshdeskWidget.alert_failure("Cannot find contact in Highrise. To test this submit a ticket with support@freshdesk.com as a requester.");
+      this.freshdeskWidget.alert_failure("Cannot find contact "+this.freshdeskWidget.options.reqEmail+" in Highrise. <br/> To test this submit a ticket with support@freshdesk.com as a requester.");
     }
     jQuery("#"+this.options.widget_name).removeClass('loading-fb');
   },

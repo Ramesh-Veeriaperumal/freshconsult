@@ -13,7 +13,12 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :skip_notification, :boolean_tc01
 	alias_attribute :header_info, :text_tc01
 	alias_attribute :st_survey_rating, :int_tc01
+	alias_attribute :trashed, :boolean_tc02
 
 	serialize :to_emails
 	serialize :header_info
+
+	def self.trashed_column
+		:boolean_tc02
+	end
 end

@@ -4,12 +4,15 @@ class ArticleObserver < ActiveRecord::Observer
 
 	observe Solution::Article
 	include Gamification::GamificationUtil
+	require 'nokogiri'
 
 	SOLUTION_UPDATE_ATTRIBUTES = ["folder_id", "status", "thumbs_up"]
 
 	def before_save(article)
+		remove_script_tags(article)
 		set_un_html_content(article)
 		article_changes(article)
+		article.seo_data ||= {}
 	end
 
 	def after_create(article) 
@@ -39,6 +42,18 @@ private
         :activity_data => {}
       )
   end
+
+	def remove_tag response, tag
+	    doc = Nokogiri::HTML response
+	    node = doc.search(".//#{tag}")
+	    node.remove
+	    node = doc.search(".//body")
+	    node.to_s.gsub(/(<\/?body>)?\n?\r?/, "")
+  	end
+
+  	def remove_script_tags(article)
+  		article.description = remove_tag(article.description, 'script') 
+  	end
 
 	def set_un_html_content(article)
       article.desc_un_html = (article.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless article.description.empty?

@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
+  include Cache::Memcache::Account
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
@@ -84,6 +85,7 @@ class Account < ActiveRecord::Base
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
+  has_many :all_agents, :through =>:users, :order => "users.name"
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
@@ -136,7 +138,10 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
+
+  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
+  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
 
   has_many :facebook_pages, :class_name =>'Social::FacebookPage' 
@@ -206,6 +211,10 @@ class Account < ActiveRecord::Base
   after_create :populate_features
   after_create :send_welcome_email
   after_update :update_users_language
+
+  after_commit_on_update :clear_cache
+  after_commit_on_destroy :clear_cache
+  before_update :backup_changes
   
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
@@ -251,7 +260,7 @@ class Account < ActiveRecord::Base
       :inherits => [ :blossom ]
     },
     :estate => {
-      :features => [ :gamification ],
+      :features => [ :gamification, :agent_collision ],
       :inherits => [ :garden ]
     }
   }
@@ -272,6 +281,14 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def installed_apps_hash
+    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps.inject({}) do |result,installed_app|
+     result[installed_app.application.name.to_sym] = installed_app
+     result
+   end
+  end
+
   def self.reset_current_account
     Thread.current[:account] = nil
   end
@@ -560,7 +577,9 @@ class Account < ActiveRecord::Base
       self.user.account = self
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
+      self.user.agent.account = self
       self.user.save
+      User.current = self.user
       
     end
     
@@ -583,5 +602,11 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
+   
+    def backup_changes
+      @old_object = self.clone
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
 
 end

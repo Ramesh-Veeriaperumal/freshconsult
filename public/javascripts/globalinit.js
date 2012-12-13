@@ -148,6 +148,17 @@ var $J = jQuery.noConflict();
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
+      // - Tour My App 'Next' button change
+      $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
+        if($(this).text() == "Next »")
+           $(this).addClass('next_button_arrow').text('Next');
+      });
+
+      // - Tour My App 'slash' replaced by 'of'
+      $('.tourmyapp-step-index').livequery(function() { 
+        $(this).text($(this).text().replace('/',' of '));
+      });
+
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $("[rel=remote]").livequery(function(){
         $(this).bind("afterShow", function(ev){
@@ -162,12 +173,6 @@ var $J = jQuery.noConflict();
       
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false
-      };
 
       $(".form-tooltip").twipsy({ 
         live: true,
@@ -200,11 +205,49 @@ var $J = jQuery.noConflict();
         });
       });
 
-      $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
-      $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
-      $("form.uniForm").validate(validateOptions);
-      $("form.ui-form").validate(validateOptions);
-      $("form[rel=validate]").validate(validateOptions);
+      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
+      validateOptions = {
+         onkeyup: false,
+         focusCleanup: true,
+         focusInvalid: false,
+         ignore:":not(:visible)"
+      };
+      
+      $("ul.ui-form").livequery(function(ev){
+        $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
+      })
+      $("div.ui-form").livequery(function(ev){
+        $(this).not(".dont-validate").find('form:first').validate(validateOptions); 
+      })
+      // $("form.uniForm").validate(validateOptions);
+      $("form.ui-form").livequery(function(ev){
+        $(this).validate(validateOptions);
+      })
+      // $("form[rel=validate]").validate(validateOptions);
+
+      validateOptions['submitHandler'] = function(form, btn) {
+                                          // Setting the submit button to a loading state
+                                          $(btn).button("loading")
+
+                                          // IF the form has an attribute called data-remote then it will be submitted via ajax
+                                          if($(form).data("remote"))
+                                              $(form).ajaxSubmit({
+                                                dataType: 'script',
+                                                success: function(response, status){
+                                                  // Resetting the submit button to its default state
+                                                $(btn).button("reset");
+
+                                                // If the form has an attribute called update it will used to update the response obtained
+                                                  $("#"+$(form).data("update")).html(response)
+                                                }
+                                              })
+                                          // For all other form it will be a direct page submission         
+                                          else form.submit()
+                                        }
+      // Form validation any form append to the dom will be tested via live query and then be validated via jquery
+      $("form[rel=validate]").livequery(function(ev){
+        $(this).validate(validateOptions)
+      })
 
     $('.single_click_link').live('click',function(ev) {
       if (! $(ev.srcElement).is('a')) {
@@ -228,42 +271,66 @@ var $J = jQuery.noConflict();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
          $('#Pagearea').css("minHeight", sidebarHeight);
 
-      // Any object with class custom-tip will be given a different tool tip
-      $(".custom-tip").qtip({
-             position: {
-                  my: 'center right',  // Position my top left...
-                  at: 'center left', // at the bottom right of...
-                  viewport: jQuery(window) 
-             }, 
-             style : {
-                classes: 'ui-tooltip-rounded ui-tooltip-shadow'
-             }
-        });
-         
-        $(".custom-tip-top").qtip({
-             position: {
-                  my: 'bottom center',  // Position my top left...
-                  at: 'top center', // at the bottom right of...
-                  viewport: jQuery(window) 
-             }, 
-             style : {
-                classes: 'ui-tooltip-rounded ui-tooltip-shadow'
-             }
-        });
-         
-        $(".custom-tip-bottom").qtip({
-             position: {
-                  my: 'top center',  // Position my top left...
-                  at: 'bottom center', // at the bottom right of...
-                  viewport: jQuery(window) 
-             }, 
-             style : {
-                classes: 'ui-tooltip-rounded ui-tooltip-shadow'
-             }
-        });
 
         if(window.location.hash != '')
           $(window.location.hash + "-tab").trigger('click');
+
+        qtipPositions = {
+          normal : {
+            my: 'center right',
+            at: 'center left'
+          },
+          top: {
+            my: 'bottom center',  // Position my top left...
+            at: 'top center' // at the bottom right of...
+          }, 
+          bottom : {
+            my: 'top center',  // Position my top left...
+            at: 'bottom center' 
+          },
+          left : {
+            my: 'top left',
+            at: 'bottom  left'          
+          }
+        };
+
+        $('.custom-tip, .custom-tip-top, .custom-tip-left, .custom-tip-bottom').live('mouseenter', function(ev) {
+          config_position = qtipPositions['normal'];
+
+          var classes = jQuery(this).data('tip-classes') || '';
+
+          if ($(this).hasClass('custom-tip-top')) {
+            config_position = qtipPositions['top'];
+          }
+          if ($(this).hasClass('custom-tip-bottom')) {
+            config_position = qtipPositions['bottom'];
+          }
+          if ($(this).hasClass('custom-tip-left')) {
+            config_position = qtipPositions['left'];
+          }
+          config_position['viewport'] = jQuery(window);
+
+          $(this).qtip({
+            overwrite: false,
+            position: config_position,
+            style: {
+              classes : 'ui-tooltip-rounded ui-tooltip-shadow ' + classes,
+              tip: {
+                mimic: 'center'
+              }
+            },
+            show: {
+              event: ev.type,
+              ready: true,
+              delay: 300
+            }
+          }, ev);
+
+
+        }).each(function(i) {
+          $.attr(this, 'oldtitle', $.attr(this, 'title'));
+          this.removeAttribute('title');
+        })
          
         menu_box_count = 0;
         fd_active_drop_box = null;
@@ -288,6 +355,14 @@ var $J = jQuery.noConflict();
                 }
                 fd_active_drop_box = $(this);
             });
+            
+         $('[rel=guided-tour]').live('click',function(ev) {
+          ev.preventDefault();
+          try {
+            tour.run($(this).data('tour-id'),true);
+          } catch(e) { }
+        });
+
          
         $(".nav-drop li.menu-item a").bind("click", function(){
             hideMenuItem();
@@ -307,6 +382,43 @@ var $J = jQuery.noConflict();
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }
+
+      if(jQuery.browser.opera){
+        jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
+      }
+
+      $(document).pjax('a[data-pjax]',{
+          timeout: -1
+        }).bind('pjax:beforeSend',function(evnt,xhr,settings){
+          start_time = new Date();
+          jQuery('#cf_cache').remove();
+          jQuery('#response_dialog').remove();
+          jQuery('#agent_collision_container').remove();
+          var bHeight = $('#body-container').height(),
+              clkdLI = $(evnt.relatedTarget).parent();
+          $('ul.header-tabs li.active').removeClass('active');
+          clkdLI.addClass('active');
+          jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
+            jQuery('.top-loading-wrapper').removeClass('hide');
+          });
+          // $('#body-container .wrapper').css('visibility','hidden');
+          $(document).trigger('ticket_list');
+          $(document).trigger('ticket_show');
+
+          return true;
+      }).bind('pjax:end',function(){
+        //$('.load-mask').hide();
+        jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
+        jQuery('.top-loading-wrapper').addClass('hide','slow');
+        // $('#body-container .wrapper').css('visibility','visible');
+        end_time = new Date();
+        setTimeout(function() {
+          $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
+        },10);
+        //clearing the pageless of previous page.
+        jQuery(window).unbind('.pageless');
+        return true;
+      })
    });
  
 })(jQuery);

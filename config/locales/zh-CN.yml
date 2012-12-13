@@ -1,0 +1,2531 @@
+zh-CN:
+  meta:
+     language_name: 'Chinese'
+  account: 
+    active_since: 启动时间由
+    cancel: 取消回到上一步
+    helpdesk_name: 帮助台名称
+    helpdesk_url: "支援台 URL"
+    info1: "您可使用这个栏位来设置顾客在 Freshdesk 的领域范围."
+    info2: "在您使用这个栏位之前请确定您已创建一个 CNAME DNS 纪录在您的DNS区域文件夹来指派 support.mycompanyname.com 给 %{full_domain}.  您的网络或服务器管理员应可帮助您来做正确的设定."
+    info3: 重新设定回初始设置的颜色
+    info4: "下一个个案号码会由这个号码开始 (应比上一个个案创建的号码大).  这会影响今后创建的个案."
+    language: 语言
+    name: 帐户名称
+    page_colors: 
+      background: 背景
+      header: 标头
+      tab_color: 标签颜色
+      title: 页面颜色
+    rebrand: 重新命名您的帮助台
+    save: 储存变更
+    time_zone: 时区
+  account_admin: 帐户管理员
+  account_admin_updated: 帐户管理员已更新！
+  accounts: 
+    billing: 
+      begin_subscription: 现在就开始订阅
+      begin_subscription_info: 将由您的信用卡内扣款并马上开始您的订阅
+      billing: 计费
+      save_billing_information: "储存 \"计价\" 信息"
+      save_billing_information_info: "将储存您的 \"方案及计价方式\" 的资料.  一旦您的试用期结束时, 我们将从您的信用卡扣款并开始您的订阅."
+      update_billing_info: 更新计价信息
+    cancel: 
+      cancel_account: "取消 Freshdesk 帐户"
+      change_your_plan: 更改您的计画
+      changeplan_instead_of_cancel: "也许您会想要改变 \"计画\" 而不要删除您的帐户"
+      confirm_and_cancel_my_account: 我确认我要取消我的帐户并删除所有资料
+      delete_my_account: 删除我的帐户
+      goback: "&#x2190; 回到帐户设置"
+      intro: "您即将删除您的帐户.  您将 <strong> 永久删除您所有的资料 </strong>."
+      warning_message: "您一旦这么做, 您将无法再度使用您的帐户及资料.  请确定您要这么做."
+      you_must_confirm: 您必须确认您的取消
+    show: 
+      account_settings: 帐户设置
+      export_data: 导出数据
+      export_data_text: "创造一个所有都通用帮助台数据资料的 XML 再经由电子邮件发送出"
+      export_now: 现在导出
+  activate: 激活
+  activate_account: 启动您的帐户
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: "%{attribute} %{message}"
+      messages: 
+        accepted: 必须是可被接受的
+        blank: 不能为空白
+        confirmation: 与确认值不符合
+        empty: 不能为空白
+        equal_to: "一定要等于 %{count}"
+        even: 必须为双数
+        exclusion: 被保留的
+        greater_than: "一定要大于 %{count}"
+        greater_than_or_equal_to: "一定要大于或等于 %{count}"
+        inclusion: 不包含在清单中
+        invalid: 是无效的
+        less_than: "一定要少于 %{count}"
+        less_than_or_equal_to: "一定要小于或等于 %{count}"
+        not_a_number: 不是一个号码
+        not_an_integer: 必须是整数
+        odd: 必须为单数
+        record_invalid: "校验失败: %{errors}"
+        too_long: "过长（最长为 %{count} 个字符）"
+        too_short: "过短（最短为 %{count} 个字）"
+        wrong_length: "长度不正确（必须为 %{count} 个字）"
+      template: 
+        body: 以下栏位出现错误
+        one: "有 1个错误发生导致「%{model}」无法被储存。"
+        other: "有 %{count} 个错误发生导致「%{model}」无法被储存。"
+  activities: 
+    solutions: 
+      new_solution: 
+        long: "{{user_path}} 创建新的解决方案{{notable_path}}"
+        short: "{{user_path}} 创建新的解决方案"
+    tickets: 
+      assigned: 
+        long: "{{user_path}} 指派个案 {{notable_path}} 给 {{responder_path}}"
+        short: "由 {{user_path}} 指派给 {{responder_path}}"
+      assigned_to_nobody: 
+        long: "{{user_path}} 指派这个个案 {{notable_path}} 给 'Nobody'"
+        short: "由 {{user_path}} 指派给 \"Nobody\""
+      conversation: 
+        in_email: 
+          long: "{{user_path}} 寄送一个 {{email_response_path}} 到这个个案 {{notable_path}}"
+          short: "{{user_path}} 发送一封 {{email_response_path}}"
+        note: 
+          long: "{{user_path}} 添加一个 {{comment_path}} 到个案 {{notable_path}}"
+          short: "{{user_path}} 添加一个 {{comment_path}}"
+        out_email: 
+          long: "{{user_path}} 已发送一个 {{reply_path}} 到个案 {{notable_path}}"
+          private: 
+            long: "個案 {{notable_path}}  已經經由 {{user_path}}  轉寄 {{fwd_path}} 到 {{to_emails}}"
+            short: "{{user_path}} 已经转寄 {{fwd_path}} 个案到 {{to_emails}}"
+          short: "{{user_path}} 已发送一个 {{reply_path}}"
+        twitter: 
+          long: "{{user_path}} 添加一个 {{twitter_path}} 到个案 {{notable_path}}"
+          short: "{{user_path}} 添加一个 {{twitter_path}}"
+      deleted: 
+        long: "{{user_path}} 已经删除个案 {{notable_path}}"
+        short: "{{user_path}} 已经删除这个个案"
+      execute_scenario: 
+        long: "在{{user_path}} 执行这个情况'{{scenario_name}}'  {{notable_path}}"
+        short: "{{user_path}} 执行这个情况'{{scenario_name}}"
+      group_change: 
+        long: "{{user_path}} 改变 {{notable_path}} 的族群到 {{group_name}}"
+        short: "{{user_path}} 改变族群到 {{group_name}}"
+      group_change_none: 
+        long: "{{user_path}} 改变 {{notable_path}} 的族群到 '无'"
+        short: "{{user_path}} 改变族群到 \"无\""
+      new_ticket: 
+        long: "{{user_path}} 提交一个新个案 {{notable_path}}"
+        short: "{{user_path}} 提交个案"
+      priority_change: 
+        long: "{{user_path}} 改变 {{notable_path}} 个案的优先权到 {{priority_name}}"
+        short: "{{user_path}} 转移优先权给  {{priority_name}}"
+      product_change: 
+        long: "{{user_path}} 改变 {{notable_path}} 的产品到 {{product_name}}"
+        short: "{{user_path}} 的产品改变为 {{product_name}}"
+      product_change_none: 
+        long: "{{user_path}} 改变 {{notable_path}} 的产品到无"
+        short: "{{user_path}} 改变产品为无"
+      reassigned: 
+        long: "{{user_path}} 重新指派个案 {{notable_path}} 给 {{responder_path}}"
+      restored: 
+        long: "{{user_path}} 已经恢复这个个案 {{notable_path}}"
+        short: "{{user_path}} 已恢复这个个案"
+      source_change: 
+        long: "{{user_path}} 改变 {{notable_path}} 的个案来源到 {{source_name}}"
+        short: "{{user_path}} 改变资料来源到 {{source_name}}"
+      status_change: 
+        long: "{{user_path}} 改变{{notable_path}}个案身份 到{{status_name}}"
+        short: "{{user_path}} 改变身份到 {{status_name}}"
+      ticket_merge: 
+        long: "{{user_path}} 已合并这个案 {{notable_path}} 到 {{merge_ticket_path}}"
+        short: "{{user_path}} 已合并这个案 {{notable_path}} 到 {{merge_ticket_path}}"
+      ticket_split: 
+        long: "{{user_path}} 已将个案 {{notable_path}} 由 {{split_ticket_path}} 分割"
+        short: "{{user_path}} 已将个案 {{notable_path}} 由 {{split_ticket_path}} 分割"
+      ticket_type_change: 
+        long: "{{user_path}} 改变 {{notable_path}} 的个案种类到 {{ticket_type}}"
+        short: "{{user_path}} 改变个案种类到 {{ticket_type}}"
+      timesheet: 
+        new: 
+          long: "{{user_path}} 添加一个 {{timesheet_path}} 到个案 {{notable_path}}"
+          short: "{{user_path}} 添加一个 {{timesheet_path}}"
+        timer_started: 
+          long: "{{user_path}} 对个案 {{notable_path}} 在 {{timesheet_path}} 启动计时器"
+          short: "{{user_path}} 在 {{timesheet_path}} 启动计时器"
+        timer_stopped: 
+          long: "对个案 {{notable_path}} {{user_path}} 在 {{timesheet_path}} 停止计时器"
+          short: "{{user_path}} 在 {{timesheet_path}} 停止计时器"
+  add: 添加
+  add_a_topic: 开始一个新主题
+  add_cc: "添加 Cc"
+  add_holiday: 添加假期
+  add_new_email: 添加新的电子邮件
+  add_new_forum: 添加一个新论坛
+  add_new_requester: 新增请求者
+  add_note: 添加备注
+  add_tags: 添加标签
+  add_to_do: 添加待办事项
+  admin: 
+    automations: 
+      edit: 
+        title: 编辑情况
+    canned_responses: 
+      edit: 
+        title: 编辑预录好的回答
+      form: 
+        all_agents: 全部代理人
+        available_for: 适用于
+        groups: 群组中的代理人
+        me_only: 只允许我
+        response_name: 回应的标题
+      index: 
+        new: 添加预录好的回答
+        title: 预录制好的回答
+      new: 
+        delete_confirm: 您确定要删除这个预录好的回覆吗?
+        title: 添加预录好的回答
+    day_passes: 
+      index: 
+        add_confirm: 您的信用卡将被收取
+        auto_recharge: 充值
+        buy_now: 立即购买
+        buy_pass: 购买更多通行证
+        current_balance: "您尚有 %{balance} 元剩下"
+        day_pass_history: 购买历史记录
+        day_pass_pack: "%{quantity} 个日通行证包价格为 {%{currency}%{amount}}"
+        day_passes: " 一日通行证"
+        daypass_quantity: "%{quantity} 一日通行证"
+        helptext: 您的日通行证将会自动更新增加一旦可用的日通行证数降到2时
+        no_of_day_passes: "# 张的一日通行证"
+        order: 订单＃
+        recharge_quantity: 重新补充数量
+        title: 一日通行证
+    gamification: 
+      error_updated: 更新游戏化设置时发生错误。
+      gamification_settings: 
+        bonus_points: 奖励积分
+        enable_label: 代理游戏化
+        fast_resolution: "快速 <span>(< 1 hr)</span>"
+        firstcall_resolution: 首次提问即得到解决
+        happy_customer: 满意的顾客
+        info_levels: 设置代理人升级分数
+        late_resolution: "迟缓 <span>(Overdue)</span>"
+        new_quest: 新任务
+        ontime_resolution: "准时 <span>(Within SLA)</span>"
+        quest_title: 任务
+        title_levels: 代理人等级
+        title_points_configuration: 分数设置
+        title_ticket_points: 任务分数
+        title_trophies: 奖品
+        unhappy_customer: 不满意的顾客
+      help_text: 
+        creating_survey: 创建满意度调查：
+        creating_survey_help: |
+            
+            您可以通过在回复邮件中的链接来收集客户的反馈意见，步骤如下：<br> 1. 启用客户满意度调查复选框<br>2. 指定满意度链接的文本。默认文本如下 &ldquo; 请告诉我们您对我们的支援服务有何意见。&rdquo;<br> <br> <b> 选择接收满意度调查链接的邮箱：</b><br> 您可以选择在每封邮件中都给客户发送满意度调查问卷，或仅在任务解决后的那封邮件中发送。 <br><br> 如欲了解更多有关满意度调查的资讯，请前往我们的“解决方案”页面。     </p>
+        quest: 任务
+        quest_form_info1: "选择为代理人设置的任务类型，包括以下三种：<br /> a) 解决任务，<br /> b) 发表解决方案以及<br /> c) 为论坛建言献策"
+        quest_form_info2: 完成之后，选择任务标准（代理人必须完成什么），设置代理人达到哪些条件便可获得勋章。
+        quest_form_info3: 选择代理人可以获得的分数和勋章。最后，为任务命名并提供一段简介。
+        quest_form_info4: 点击“保存任务”，存储设置。
+        quest_info1: |
+            
+            任务代表着您为代理人定下的目标。目标达成后，代理人便可获得荣誉勋章。
+        quest_info2: 所有的任务都默认为“开启”状态。您可以选择将不需要的那些设置为“关闭”状态。如果您希望增加更多任务，或为您的目标量身订造任务，只需点击“新的任务”，便可根据您的自身情况创建全新的任务。
+        trophies_info1: 根据不同的标准，代理人将获得4个奖品。
+        why_game: 分数和等级
+        why_game_info1: 分数将根据代理人解决任务的速度进行奖励。当任务首次提出便得以解决，以及顾客满意时，将会额外追加奖励积分。同样，任务并未得到及时解决，以及顾客不满时，代理人的分数会被扣除。
+        why_game_info2: |
+            
+            通过获取越来越多的分数，代理人可以达到更高等级。升级分数将由系统进行设置。
+      index: 
+        title: 游戏区设置
+      successfully_updated: 成功更新游戏化设置。
+    getting_started: 
+      index: 
+        admin_sub_title: "别忘了检查在选项中 \"%{admin_tab}\" 所有涵盖其中的功能您可以自订意的"
+        admin_title: 一切都好吗?
+        agent_email_exist: 电子邮件已使用
+        agent_email_partial: 部分成功
+        agent_email_required: "需要电子邮件 ID 来发送邀请函"
+        agent_email_sending: 发送邀请函
+        agent_email_taken: "以下的电子邮件已经被使用: <br> %{emails}"
+        agent_invite_field_placeholder: 请输入您的团队成员的电子邮件
+        agent_invite_multi_info: "使用逗号 (,) 来添加多个電子邮件。"
+        agent_limit_reached: 您已经超过您代理人的限制
+        agent_send_invite_label: 发送邀请函给代理人
+        agent_sub_title: "要请您的团队到 Freshdesk"
+        agent_title: 感觉孤独吗？
+        agents_sub_title: 邀请您的服务台代理人
+        agents_title: 代理人
+        agents_title_info: 邀请您的代理人使用Freshdesk。请用逗号隔开每个电邮地址。
+        back_link: 返回
+        config-support-email-address: 配置您的支援电子邮件地址
+        congrats: 恭喜！您的“fresh”服务台已经准备好啦。
+        email_config_field_title: 您的支援电子邮件地址
+        email_config_sub_title: "让 Freshdesk 处理您的支援电子邮件"
+        email_config_title: 您的支援电子邮件是?
+        email_invalid: "您的电子邮件是无效的, 请检查."
+        email_send_problem: 寄发电邮时产生问题
+        email_sent_success: 电子邮件已经成功发送
+        emails_invalid: 您的电子邮件中一个或多个是无效的
+        helpdesk_preview: 服务台预览
+        implement_changes: 执行变更...
+        next_alt_link: 前往服务台
+        next_link: 继续
+        next_please_wait: 请等待…
+        problem_updating: "问题已更新   请再试一次"
+        product_link_label: 跳到您的帮助台
+        rebrand_bg_empty: 需要背景颜色代码
+        rebrand_bg_invalid: 背景颜色代码无效
+        rebrand_color_background: 背景
+        rebrand_color_header: 标头
+        rebrand_color_tabs: 选项卡
+        rebrand_company_field_placeholder: 输入您的公司名称
+        rebrand_company_label: 公司名称
+        rebrand_header: 您的服务台名字和标志
+        rebrand_header_empty: 需要标头颜色代码
+        rebrand_header_invalid: 标头颜色代码无效
+        rebrand_paint_title: 为您的帮助台上色
+        rebrand_sub_title: "重新以您的商标及颜色包装 Freshdesk"
+        rebrand_submit_label: 重新包装
+        rebrand_tab_empty: 需要选项颜色代码
+        rebrand_tab_invalid: 选项颜色代码无效
+        rebrand_title: "标志 <br>&amp; 颜色"
+        save: 更改
+        save-and-next: 储存并到下一步
+        send_invite: 发送邀请函
+        send_verification_email: 发送确认信电子邮件
+        sending_test_mail_progress: "发送测试电子邮件, 请稍候..."
+        skip_link: 跳过直接前往服务台
+        social_add_account: 增加账号
+        social_facebook: Facebook
+        social_facebook_add: 添加一个页面
+        social_info: 把您的服务台带到Facebook，推特，您的社区，以及所有您的顾客会去的地方
+        social_title: 开始和社交圈互换意见
+        social_twitter: 推特
+        social_twitter_add: 添加帐户
+        sub_title: 这里一些资料可以帮助您开始使用这网页
+        successfully_sent: 发送成功
+        successfully_updated: 更新成功
+        support_email_sub_msg: 为了服务台的正常运作，您的支援邮箱是不可或缺的。
+        support_email_sub_title: 把您的支援邮箱告诉我们。
+        support_email_title: "支援<br> 邮箱"
+        title: 太棒了!!看来您的帮助台已准备运作了
+        title_msg: 只需填写几项细节，便可开始。(可选)
+        updating: 更新中...
+        validating: 验证
+      send_mail_content: 
+        button_again_title: …重新发送测试邮件
+        button_sending: 发送中…
+        button_title: 发送测试邮件
+        info: 您必须将支援邮件的备份转发至以下电子邮箱：
+        note: |
+            
+            <strong>注意：</strong> 为了能让FreshDesk把接收到的电子邮件转为任务，您必须在您的电子邮件服务器里设置好电邮的转发规则。
+        send_test_mail_confirm_no: "没办法, 我看不到任何个案"
+        send_test_mail_confirm_yes: "是的, 我了解了"
+        send_test_mail_info1: "请确定您已经建立您的电子邮件转发到 <b> %{to_email}</b>."
+        send_test_mail_info2: (学习如何)
+        send_test_mail_info3: "如果您认为到目前为止一切顺利，可以尝试发送一封测试邮件。 <br>%{send_test_mail_link}"
+        send_test_mail_link_title: 发送一个测试电子邮件
+        send_test_mail_response1: "我们已经发送了一封测试邮件到<b><span id=reply_email_1>%{reply_email}</span></b>。如果一切顺利，您应该能够在任务单中看到<a href=\"/helpdesk/tickets\" target=\"_blank\">新的任务</a>。"
+        send_test_mail_response_no1: 似乎有一个问题产生-->
+        send_test_mail_response_no2: 学习如何
+        send_test_mail_response_no3: "<strong>糟糕！似乎有点问题！ </strong><br>如果您并未在收件箱中收到邮件，请耐心等待数分钟。如果问题仍未得到解决，<a href=\"https://support.freshdesk.com/\" target=\"_blank\">请告诉我们</a>."
+        send_test_mail_response_yes: "恭喜您!!!! 您已经成功的连结您的支援电子邮件和您的帮助台入口网页.  使用愉快!!!"
+        test_info1: 如果您认为到目前为止一切顺利，可以尝试发送一封测试邮件。
+        title: 您的转发邮件：
+    home: 
+      index: 
+        account: 账号
+        account-settings: 帐户设置
+        agent: 代理人
+        billing: 计划和计费
+        business-hours: 工作时间
+        canned-response: 预录好的回答
+        customer: 顾客
+        customer-portal: 顾客入口网页
+        day_pass: 一日通行证设定
+        dispatcher: 派遣员
+        else: 其余的
+        email-notifications: 电子邮件通知
+        email-settings: 电子邮件设置
+        email_commands_setting: 电子邮件指令设置
+        everything: 每一件事
+        facebook-setting: "Facebook 设定"
+        feedback: 反馈小工具
+        gamification-settings: 游戏区
+        group: 群组
+        helpdesk: 服务台
+        import: "由 Zendesk 引入数据"
+        integrations: 整合
+        multi-product: 多个产品
+        portal: 门户网站
+        productivity: 生产效率
+        rebranding: 帮助台重新命名
+        remote-authentication: 远程身份验证
+        scenario: 情况自动化
+        security: 安全性
+        settings: 设置
+        sla: SLA政策
+        supervisor: 监督人
+        survey: 问卷设置
+        survey-settings: 客户满意设置
+        ticket-fields: 个案栏位
+        title: 管理员
+        twitter-setting: "Twitter 设置"
+    products: 
+      add_another_email: 添加另一个电子邮件
+      assign_product: 分配产品
+      edit: 
+        title: 编辑产品
+      form: 
+        configure_email: 配置电子邮件
+        configure_seperate_portal: 为此产品配置另一个入口网页
+        enable_product_portal: 启用产品入口网页
+        enter_support_email_id: 您的支援电子邮件
+        forwarding_email_info: 您的转寄电子邮件的住址是
+        product_name: 商品名称
+        product_support_emails: 产品支援电子邮件
+      helpnote: 
+        content: 多种产品可以帮助你提供产品或品牌較特定的支援
+        heading: 多个产品
+      index: 
+        add_product: 添加产品
+        title: 产品
+      new: 
+        title: 新商品
+      portal: 
+        cname_configure_info: "在您使用这个栏位之前请确定您已创建一个 CNAME DNS 纪录在您的DNS区域文件夹来指派 <strong>help.<b id=\"domain_info_name\">mycompanyname</b>.com</strong> 给 %{full_domain}.  您的网络或服务器管理员应可帮助您来做正确的设置."
+        portal_language: 入口网页语言
+        portal_language_info: 当顾客拜访您的入口网页时这将会是预设的语言
+        portal_name: 入口网页名称
+        portal_name_info: 您的名称将会显现在您的入口网页标头商标旁边
+        portal_rebranding: 重新命名入口网页
+        portal_settings: 入口网页设置
+        portal_url: "入口网页 URL"
+        select_forum_category: 选择一个论坛类别
+        select_solution_category: 选择一个解决方案类别
+        top_level_forum: 最高等级论坛类别
+        top_level_forum_info: "您可以连结一个论坛类别到这个产品.  当在这个产品入口页面下查阅论坛选项时所有其他的论坛将不会被顾客查阅"
+        top_level_solution: 最高等级解决方案类别
+        top_level_solution_info: 您可链接一个解决方案类别到这个产品。顾客在这个产品入口页面检视解决方案项目时所有其他的解决方案将会显现您可链接一个解决方案类别到这个产品。顾客在这个产品入口页面检视解决方案项目时所有其他的解决方案将会显现
+      primary_email_required: 至少要有一个主要支援电子邮件存在
+      primary_product_support_email: 主要产品支援电子邮件
+      product: 
+        delete: 您确定要删除这个产品
+        email_not_verified: 电子邮箱尚未确认
+      product_label_msg: 产品
+    quests: 
+      index: 
+        new_quest: 新任务
+        quest_description: 任务是您为代理人设置的特定业务目标，对他们而言，既是机遇，也是挑战！
+        quest_title: 任务
+        sideinfo1: "信息 1"
+        sideinfo2: "信息 2"
+        title: 任务
+      quest_form: 
+        forum: "让<br /> <strong> 社区 </strong>参与进来"
+        solution: "发表 <br /> <strong> 解决方案 </strong>"
+        ticket: "解决 <br /> <strong> 任务 </strong>"
+    security: 
+      index: 
+        click_to_disable: "点击来禁用 SSL"
+        click_to_enable: "点击来启动 SSL"
+        customer_portal_ssl_warning: "由于自定义服务台 URL 为了您的帐户而配置的, 你将被重定向到"
+        disabled: 解除设定
+        enable_SSL: "启动 SSL"
+        enable_SSL_anon: "SSL 允许您对于传送到或发送出 freshdesk 入口网页的资料得以加密"
+        enable_sso: 启用单次登录
+        enable_sso_info: "单点登录允许您可以使用您自己的应用程序或集中式的服务器 (像微软的 Active Directory) 来认证代理人及顾客, 使他们能以单一的用户名和密码进入 Freshdesk."
+        enabled: 已启用
+        multiple_product_ssl_warning: "如果配置了多个产品 SSL 将不适用"
+        remote_authentication: 远程身份验证
+        remote_login_url: 远程登录URL
+        remote_login_url_info: "这是 Freshdesk 的 URL, 它将会重新引导用户做身分认证, 当用户试图进入 Freshdesk 时"
+        remote_logout_url: "远程登出 URL"
+        remote_logout_url_info: "当用户在 Freshdesk 点击登出链接时 这个 URL 会重新引导用户"
+        security_title: 安全性
+        shared_secret: 共享秘密
+        shared_secret_info: "请复制这份令牌并保存在安全的地方.  您将会需要它来做远程身分验证.  这是您和 Freshdesk 之间共享的秘密."
+    shared: 
+      filter_jsinit: 
+        body: 主体内容
+        insert_placeholder: 插入位置标志符
+        not_selected: 未选择
+        selected: 已选择
+        to: 收件人
+    supervisor_rules: 
+      edit: 
+        title: "监督人 - 编辑规则"
+      index: 
+        help_info_1: 使用监督人定期的查询最近的个案并运作以时间为基础的特定活动例如发送提醒给顾客或升级个案或重新指派案等
+        help_info_2: "举例 - 如果个案等待顾客回答已超过24小时则须发送提醒电子邮件给顾客或是当个案已在 \"已解决\" 状态下超过48小时则自动关闭个案"
+        help_info_3: 监督人每个小时会监看系统及处理过去30天内已更新的个案
+        help_info_4: "监督人规则是按顺序处理的, 所以顺序很重要的.  一个规则可能会触发后续的规则发生."
+        help_title: 监督人
+        title: "监督人 - 规则"
+      new: 
+        title: "监督人 - 新规则"
+    surveys: 
+      error_updated: 更新调查设定时出现错误
+      helptext: "<p><b> 为什么要启动满意度调查?</b> <br> 满意度调查让你添加一个链接到你的回应邮件中, 您可直接收取客户的反馈和满意度.  <br><br> <b>   创建您的满意度调查表. </b><br> 以下的步骤让您可以经由您的回覆电子邮件中的链接, 收集您的顾客的反馈:<br> 1. 勾选复选框, 启动顾客满意度调查 <br>  2. 指定满意度链接文章.  预设文章如下 &ldquo; 请让您的意见增加我们的支援经验值.  &rdquo;<br> <br> <b> 选择有链接满意度调查的电子信箱:</b><br> 您可选择所有发送到每位顾客的电子邮件皆有满意度调查链接或一旦个案解决时, 只在最后发送的电子邮件中鏈接滿意度調查.  <br><br>  您可在我们的解决方案页面中了解更多关于滿意度調查. </p>"
+      index: 
+        title: 客户满意设置
+      satisfaction_settings: 
+        enable_label: 客户满意度调查
+        enter_happy_text: 进入到满意讯息内
+        enter_neutral_text: 进入到普通讯息内
+        enter_unhappy_text: 输入这个不满意的文本
+        link_text_info: 发送到顾客的电子邮件底部有这段文字在您签名的下方
+        link_text_input: 请让我们知道您的意见以增加我们的支持经验
+        link_text_label: 满意度调查的链接文字
+        send_while_option1: 所有电子邮件已寄发给顾客
+        send_while_option2: 个案解决后发送电子邮件
+        send_while_option3: 个案关闭后电子邮件已寄发
+        send_while_option4: 允许代理人添加调查链接键到特定的电子邮件
+        send_while_title: 选择有满意度调查链接的电子邮件
+      successfully_updated: 客户满意设置已成功更新
+    twitters: 
+      change: 
+        capture_dm: 转换直接信息为个案
+        capture_mention: 转换公开提及的个案
+        default_group: 预设群组
+        edit_twitter: "编辑 Twitter"
+        screen_name: 屏幕名称
+      index: 
+        add_search: 添加搜索
+        new: "添加 Twitter 帐户"
+        search_keys: 搜索关键字
+        title: "Twitter 帐户"
+      search: 
+        add_key: 添加搜索问题
+        edit_key: 编辑搜索问题
+        name: 搜索姓名
+        screen_name: "Twitter 帐户"
+        search_key: 搜索问题
+    widget_config: 
+      index: 
+        thankyou_default: "非常谢谢您的反馈   "
+        thankyou_info: "讯息会显示出来, 当用户提出个案表格时"
+        thankyou_label: 提交信息
+  agent: 
+    add_signature: 添加签名
+    admin: 管理员
+    admin_info: 可以执行所有管理任务
+    contact_exists: "此邮箱'%{existing_email}'已有请求者在使用，%{use_email}"
+    day_pass_expired: 您的一日通行证已过期，请登录获得新的一日通行证.
+    edit: 编辑代理人
+    full_time: 全职
+    global: "代理人 (全球通行)"
+    global_info: 能检阅所有在帮助台的个案
+    group: "代理人 (族群进入权限)"
+    group_info: 能检阅在他们自己群组内的和被指派的个案
+    individual: "代理人 (限制进入权限)"
+    individual_info: 只能检阅被指派的个案
+    info1: 这个代理人已删除
+    info2: 电子邮件已经被使用
+    info3: 您确定您要删除
+    insufficient_day_pass: "无法分配一日通行证给您, 请联系您的管理员."
+    make_admin: 标记这位代理人为管理人
+    new: 新代理人
+    occasional: 偶而
+    occasional_description: 这个代理人将可进入到支援入口网页
+    password_reset_message: "您希望重新设置 %{requester}的密码吗？"
+    password_reset_note: "注意：指示将随重设邮件发送至%{requester}"
+    permissions: 权限
+    restore: 恢复
+    signature: 签名
+    supervisor: 监督人
+    supervisor_info: "可以检阅在帮助台所有的个案并可进入到报告内 (没有管理阶层特权)"
+    title: 代理人
+    update: 更新
+    use_email: 使用此邮箱
+    view_user: 查看用户
+  agent_adds_comment: 代理人添加注释到个案
+  agent_assigned_info: 这个代理人没有开放或暂存的个案
+  agent_assigned_title: "最近指派的个案 (开放 &amp; 暂存)"
+  agent_closes_tkt: 代理人关闭个案
+  agent_deleted_message: 这个代理人是已被删除
+  agent_emailnotverified: 此代理人的电子邮箱尚未认证
+  agent_info_title: 代理人信息
+  agent_solves_tkt: 代理人解决了个案
+  agent_working_on_this_ticket: 代理人处理个案
+  agents: 代理人
+  align_to: 对齐到
+  all_due: 全部
+  already_overdue: "逾期 %{time_words}"
+  always: 总是
+  amount: 金额
+  amount_for_annual: "$%{amount} 年度"
+  amount_per_month: "$%{amount} %{period}"
+  answered: 已答覆
+  application: 
+    click_to_disable: 点击来停用插件
+    click_to_enable: 点击来启动插件
+    configure: 配置
+    configure_addon: 点击来配置这个插件
+    configure_custom_addon: 配置此小部件
+    confirm_disable: 您确定要禁用此附加元件吗?
+    desc: "和其他的应用程式整合来提升您 Freshdesk 的经验值"
+    disabled: 解除设定
+    enable: 启动
+    enabled: 已启用
+    new: 创建新的应用程序
+    title: "插件 & 整合"
+  apply: 应用
+  asked_on: 当被问及对
+  assign: 指派
+  assigned_to: 指派到
+  assume_identity_button: 假定身份
+  assumed_identity_msg: "您假设您的身份是 %{user_name}"
+  assuming_identity_not_allowed_msg: 你不能假设这个用户
+  assuming_identity_user_does_not_exist_msg: 您试着要假设的用户并不存在
+  at: 在
+  attach_files: 附加文档
+  attachment: 附件
+  attachment_help_info: "附件档案的尺寸最多可到 15 MB"
+  attachments: 附件
+  auto_suggest_solutions: 
+    info: "<b> 您知道吗? 我们可能已经有您问题的答案.  </b><br/> 请看有没有您想要的解答."
+  automations: 
+    available_placeholders: 标志位置
+    info1: "每个服务台有一组常用经常性的情况 - 例如。升级到第2级，指派给QA，转发给销售部等，这些情况通常包含对个案有多重动作的更新"
+    info2: "举例来说, 在您指派个案给问题集之前, 您想设定个案型态为系统错误指派给问题集并发送电邮给问题集管理告知关于新的系统错误"
+    info3: 状态自动化可让您只要简单点击就可以操作这些行动
+    info4: 选择以下的标志位置来添加电子邮箱地址系统会自动转换成适当的数据
+    info5: 指派问题集
+    info6: 标示这个个案为系统错误并指派给问题集
+    info7: 要执行的操作
+    info8: 添加新的行动
+    new: 新情况
+    reorder: 记录器
+    title: 情况自动化
+  awaiting_your_reply: 等候您的回答
+  back: 返回
+  back_plans_billing: "回到计画 &amp; 计价 页面"
+  back_to_admin: 返回到管理员
+  badges_achieved_label: 已获得勋章
+  basic_brief: 给小团队
+  basic_details: "电子邮件管理, 调度规则, 预设政策, 资源库, 自助服务入口网页, 网域部署, 社区支援"
+  bcc_email_updated_failure_msg: "更新 Bcc 电子邮件失败"
+  bcc_email_updated_success_msg: "成功更新 Bcc 电子邮件"
+  bcc_emails_key: ", 密件抄送 : %{bcc_emails}"
+  bcc_emails_key_pop: " <li class='left'>密件抄送 :</li> <li>%{bcc_emails}<li>"
+  begin_subscription_confirm: "您的信用卡将被收取的金额为 $%{cost}  您的订阅将立即生效。\\n\\n确定订阅吗?"
+  being_processed: 正在处理
+  between: 之间
+  between_range: 范围之间
+  billed_amount_annually: "每年您将会支付 $%{amount}"
+  billed_amount_per_month: "您将会被扣款 $%{amount} %{period}"
+  billed_monthly: 月付款
+  billing_info: 订阅信息
+  billing_info_update: 您的计价资料已经更新
+  block_users: 您也想要封锁联络人吗
+  blossom_brief: 社交客户支援
+  blossom_details: "所有一切在 &quot;Sprout&quot; 计画, Twitter 支援, Facebook 支援, 论坛, 社区 &amp; 电子邮件支援"
+  bottom: 底部
+  bulk_actions: 批量操作
+  business_hours: 
+    helpdesk_hours: 幫助台工作时间
+    holiday_added: 假期已经添加了
+    holiday_list: 年度假期清单
+    holiday_name: 假期名称
+    holidays: 假期
+    info1: "在 Freshdesk 设置您的工作时间能让您在您的 SLAs 得到更多的操控权.  例如, 如果您的工作时间为星期一到星期五早上9点到晚上6点, 当顾客在星期四下午4点发送了一封高优先权且期限为4个小时需解决的个案, 那系统会设置个案解决期限将为星期三上午11点.  您可配置您的 SLAs 来决定依循或忽略工作时间."
+    info2: "假期的工作时间与平日一样.  例如, 如果您的工作时间为星期一到星期五上午9点到下午6点, 而顾客在星期五下午8点发送一个中度优先的 SLA 个案其解决期限为24小时, 个案将设置在星期二上午9点为到期时间 (而非星期六下午8点)."
+    info3: 特定的工作时间
+    info4: 您帮助台的工作时间
+    info5: 当个案计算SLA时假期会被忽略
+    title: 工作时间
+  cancel: 取消
+  cancel_and_back: 取消回到上一步
+  cancel_my_account: 删除我的帐户
+  card_number: 卡片号码
+  card_process: 感谢您的付款。您的Freshdesk帐户现在已经启动！
+  category: 
+    edit: 编辑类别
+    new: 新类别
+  category_edit_not_allowed: 这个类别不能被修改
+  cc_emails_key: ", 抄送 : %{cc_emails}"
+  cc_emails_key_pop: " <li class='left'>抄送 : </li><li>%{cc_emails}</li>"
+  change: 更改
+  change_deleted_status_msg: 请改变状态因为目前的状态已经删除
+  change_details_anytime: 订阅细节或计划可以随时更改
+  change_free_plan: 更改您的免费计画
+  change_my_password: 变更我的密码
+  change_my_plan: 选择计划...
+  change_plan: 更改计画
+  change_plan_info: "您可在任何时间改变您的计画, 您下一个帐单日为 %{date}"
+  change_to_free_info: "降低您的计画的等级将会造成功能及数据资料的遗失.  您确定您要降低等级吗?"
+  chat: 聊天
+  choose_free_plan: "选择您的免费 %{plan}"
+  choose_plan: 选择计划
+  clear_draft_text: 清除存储的草稿？
+  click_select_action: 点击来选择行动作为
+  click_to_change_sort_order: 点击来变更分类顺序
+  click_to_select_filter: 点击来选择过滤
+  close: 关闭
+  closed: 关闭
+  comments: 评论
+  companies: 
+    active: 
+      no_companies: 您没有任何公司添加到这个清单
+      no_companies_with_letter: "在这个 '%{alphabet}' 字母下您没有登记任何公司"
+  company: 
+    edit: 编辑公司
+    info1: 您确定您要删除这家公司吗
+    info2: 这间公司的网页域名
+    info4: "添加一个备注关于 %{name}"
+    info5: "针对这家公司加上特定的注解.  举例 - 我们正和这家公司交涉 100K 的交易."
+    info6: "顾客姓名为 %{name}"
+    info7: 这间公司没有人提出个案
+    info8: "更多关于这些公司的资料像地址,电话号码,网页等."
+    info9: "Freshdesk 将会自动连结和公司有相关的联系人只要电子邮件中包含了这些网域"
+    name: 公司名称
+    new: 新公司
+    notes: 备注
+    quick_company: "快速  公司功能"
+    title: 公司
+  company_name: 公司名称
+  confirm: 确定
+  connect_ticket: 链接到个案
+  contact_name: 联系人
+  contacts: 
+    active: 
+      no_contacts: 您没有任何联系人添加到这个清单
+      no_contacts_with_letter: "您没有任何有效的联系人在这个 '%{alphabet}' 字母类别内"
+    add_new_requester: 新增请求者
+    deleted: 
+      no_contacts: 您没有任何联系人要恢复
+      no_contacts_with_letter: "您没有任何删除的联系人在这个 '%{alphabet}' 字母的类别内"
+    deleted_message: 这个联系人已经删除
+    edit: 编辑联系人
+    edit_contact: 编辑联系人
+    emailnotverified: 此联系人的电子邮件尚未认证
+    form_placeholder: 
+      description: "添加特定的注解关于这个联系人 例如 - 洛杉矶湖人队的粉丝 等"
+    import_csv: "由CSV 引入客户资料"
+    import_google: "由 Google 导入资料"
+    import_google_no: 否
+    import_google_yes: 是
+    info1: 您确定您要删除这个联系人
+    info2: 使这个用户成为代理人
+    info3: "%{nick_name} 的背景信息"
+    info4: "来自 %{nick_name} 最近的个案"
+    info5: 到目前为止用户尚未创见任何个案
+    info6: 添加特定的备注关于这个联系人
+    new: 新联系人
+    quick_contact: 快速联系人
+    restore: 恢复
+    role: 
+      info: 可以看到所有的个案来自这间公司
+    save_changes: 储存变更
+    send_activation: 发送激活電子邮件
+    showing: 显示
+    status: 
+      active: 启用状态
+      deleted: 已删除
+    tag_cloud: 联系人标签云
+    tags: 标签
+    title: 联系人
+    working: 工作中
+  contains: 内容物
+  continue_using_free: "继续使用 Feshdesk 当作一个.."
+  conv_contacts_info: "%{conv_type_msg} ： %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
+  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} ：</li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  conversation: 对话
+  country: 国家
+  create: 创建
+  created_on: 创建在
+  credit_card: 在卡片上的档案
+  credit_card_info: 信用卡资料
+  current_plan: 目前的计画
+  current_plan_details: "%{plan_name} 计画 %{agent_limit} 代理人"
+  customers: 顾客
+  date: 
+    ago: 之前
+    day: 天
+    days: 天数
+    from: 从现在开始
+    hour: 小时
+    hours: 小时数
+    minute: 分钟
+    minutes: 分钟数
+    month: 月
+    months: 月数
+    now: 刚才
+    second: 秒
+    seconds: 秒
+    week: 周
+    weeks: 周数
+    year: 年
+    years: 年
+  date_title: 日期
+  day: 1天
+  days: 天数
+  deactivate: 注销
+  default_category: 预设类别
+  default_category_description: "所有电子邮件发送到 %{full_domain} 将会以草稿的方式储存在这里"
+  default_folder: 草稿
+  default_folder_description: "所有电子邮件发送到 %{full_domain} 将会以草稿的方式储存在这里"
+  default_reply_template: 代理人回答范本
+  delete: 删除
+  delete_confirm_scenario: 您确定您要删除这个情况吗?
+  delete_reminder: 删除这个待办事项
+  delete_the_ticket: 删除个案
+  delete_topic_msg: 永久删除这个主题
+  description: 描述
+  disabled: 解除设定
+  dispatch: 
+    act_to_perform: 要执行的操作
+    add_condition: 添加新的状况
+    add_new_action: 添加新的行动
+    add_new_choice: 添加新的选择
+    delete: 您确定要删除这个规则
+    dispatch_rules: "派遣员 - 规则"
+    edit: "派遣员 - 编辑规则"
+    inactive_rules: 非有效的规则
+    info1: 订阅相关的个案
+    info2: 所有订阅相关的个案将会被指派给Susan
+    info3: 何时需应用这个规格
+    info4: 调度员会自动依制订的规则及动作来调度新创建的支援个案
+    info5: "记住, 规则的顺序很重要对每一个新进的个案,派遣员将会执行第一个配对的规则才停止"
+    match_all: 完全吻合
+    match_any: 符合任一
+    new: "派遣员 - 新规则"
+    new_rule: 新规则
+    reorder: 记录器
+    rule_name: 规则名称
+    skip_notification_no: 不
+    skip_notification_yes: 是的
+    skip_notifications: 跳过新的任务邮件提示
+    title: 派遣员
+  does_not_contain: 不包含
+  done: 完成
+  draft: 草稿：
+  due_in: "到期在%{time_words}"
+  due_next_eight: 下一个8小时
+  due_today: 今天
+  due_tomo: 明天
+  edit: 编辑
+  edit_agent: 编辑代理人
+  edit_email: 编辑电子邮件
+  edit_forum_category: 编辑论坛类别
+  eight: 8小时
+  email: 电子邮件
+  email_command_del_info_data: "小建议 - 选择一个最少三个字符独特的的分隔符组合 (建议使用特殊字符) 不会和一般电子邮件回覆的有相冲突即可"
+  email_command_delimeter_label: 电子邮件指令分隔符
+  email_command_delimeter_length_error_msg: 请提供至少三个字符给分隔符
+  email_command_preview_subject: 主题
+  email_command_preview_subject_value: 支援个案
+  email_command_preview_to_email: 收件人
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  email_command_settings_heading: 电子邮件指令设置
+  email_command_settings_info: 使用由邮件中撷取出的身分和电子邮件评语来配置分隔符
+  email_commands_update_failed: 无法更新電子邮件命令设置
+  email_commands_update_success: 电子邮件评语设置已成功更新了
+  email_configs: 
+    Personalized_email_replies: 使用代理人名称当作个人化电子邮件回答?
+    Personalized_email_replies_info: "如果YES 代理人回覆电邮中会以代理人名称为寄件人 (电子邮箱地址仍会是您的支援电子邮箱地址).  举例 '%{current_user_name} &lt;%{current_account_domain}&gt;'."
+    Personalized_email_replies_message: 您的设置已储存成功
+    Personalized_email_replies_no: 否
+    Personalized_email_replies_yes: 是
+    add_bcc_text: "添加 Bcc"
+    add_supp_emails: 其他支持电子邮件
+    assign_to_product_info: "如欲先将此邮箱连接至新产品 <a href='{{products_path}}'> 增加产品 </a>"
+    assign_to_product_msg: 链接这个支援电子邮件和产品一起
+    bcc_email: "Bcc 地址"
+    bcc_text: 密件抄送
+    change_this: 更改这个
+    delete: 您确定您要删除这个电子邮件
+    edit: 编辑
+    email: 电子邮件
+    email_added_succ_msg: 此电子邮件已经加入
+    forwarding_email: 转寄电子邮件
+    global_support_emails: 全球支持电子邮件
+    group: 群组
+    help_link_info: 关于更多详细资料请阅读我们的电子邮件设置文章
+    inactive_info1: "您所有的支援电子邮件都尚未确认, 您必须确认至少一个支援电子邮件"
+    inactive_info2: "直到启动前, 预设信箱 \"%{default_email}\" 将被设置为回覆信箱"
+    info1: 您的用户发送支持电子邮件给
+    info10: 发送到这个支援电子邮件的个案将会自动被分配到组别去
+    info11: 所有支援电子邮件地址清单
+    info12: 添加另一个电子邮件地址
+    info13: 您的支援电子邮件地址为
+    info14: 任何发送到该地址的电子邮件将被转换为个案
+    info15: 您必须将这些電子邮件转发到
+    info16: 个案将会指派给
+    info17: "这个电子邮件地址将会自动包括在所有个案通讯 Bcc 的栏位內"
+    info18: "自动 bcc 地址包含在个案回覆中"
+    info2: 您必须转发您的支持邮件到您特定的电子邮箱地址
+    info3: "Fresh 将会撷取那些电子邮件并将其转换成个案"
+    info4: "<strong> 注意 : </strong> 如果您有多个电子邮件信箱来支援多个产品, <a href='{{products_path}}'> 您可在此处添加 </a>."
+    info5: 由回覆的电子邮件会自动以您的原始支援电子邮件为发送电邮地址
+    info7: "这个也是您的回覆电子邮件地址, 例如 support@yourcompany.com"
+    info8: 转发您的电子邮件到
+    info9: 指派给族群
+    make_primary: 设定为第一级
+    mark_as_primary_msg: 您确定您想要让这个电子邮件成为您的主要支援电子邮件吗?
+    name: 姓名
+    name_info_msg: 电子邮件的名称将会用在个案回覆中
+    new_support_email: 新支援電子邮件
+    primary_supp_email: 主要支援电子邮件
+    primary_supp_email_tool_tip: 主要支援电子邮件
+    remove_msg: 您确定您要移除此电子邮件吗
+    reply_email: 您的支援电子邮件
+    reply_emails: "由 Freshdesk 发送的回应邮件"
+    secondary_supp_email_tool_tip: 以此电子邮件为主要电邮
+    send_verification_email: 再次确认
+    set_bcc_email_text: "设置自动 Bcc 地址"
+    spf_info: |
+        虽然您的大部分邮件都能发送到位，但为了安全起见，如果您是在自己的网域内使用邮箱，
+        您必须在您的网域档案内创建一份<a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">SPF记录 </a>。这样便能确保邮件能准确送达。
+    supp_email_add: 支援电子邮件地址
+    support_email: 支援电子邮件
+    support_email_exists: 支援電子邮件已经存在
+    title: 电子邮件设置
+    unverified: 电子邮件尚未确认
+    unverified_info1: "已发送含有确认链接讯息的邮件到这个信箱.  在确认之后才会启动支援电子邮件"
+  email_notifications: 
+    agent_notification: 代理人通知
+    customize_email: 定制电子邮件
+    default_reply_template_info: "每当代理人回答个案时, 范本将会自动出现在所有代理人的回覆中"
+    default_reply_template_title: 代理人回覆范本
+    do_not_delete_ticket_id_from_subject: "为获得顾客回应来当做个案对话, 个案 ID 的占位符应由主题中移除"
+    edit_reply_template: 编辑样板
+    event: 项目
+    insert_placeholder: 插入位置标志符
+    modify_agent_template: 修改代理人电子邮件样板
+    modify_requester_template: 修改请求者的电子邮件样板
+    requestor_notification: 请求者的通知
+    subject: 主题
+    title: 电子邮件通知
+  email_notifications_agent_selection_msg: 选择要通知的代理人
+  enabled: 已启用
+  ends_with: 结尾以
+  enter_billing_for_free: 请输入信用卡的详细资料，然后再选择付费计划
+  enter_message: 在这里输入您的信息
+  enter_payment: 输入付款细节...
+  enter_payment_details_to_add: 输入付款细节来添加多位代理人
+  error_in_plan: 改变计画时出现错误
+  errors: 
+    actions_empty: 操作不能为空白
+    conditions_empty: 状态不能为空白
+  errors_in_payment: 您的付款资料有错误讯息产生
+  errors_in_payment_info: 您的付款资料出现错误讯息
+  errors_in_plan_change: 因您的改变出现错误
+  errors_in_your_address: 您的住址有出现错误讯息
+  estate_brief: 企业级支援
+  estate_details: "在 &quot;Garden&quot中的每一件事；升级月费计划,  游戏化。"
+  example: 举例
+  expires: 期满
+  export_data: 
+    closed_at: 结束时间
+    created_at: 创建时间
+    custom_filter: 设定日期
+    export_to_csv: "导出为 CSV格式"
+    field_select_title: 选择导出范围
+    filter_label_agent: 过滤任务，通过：
+    filter_label_customer: 过滤以下时间创建的任务：
+    from: 从
+    info: 将当前视图中可用的任务信息导出为CSV格式。
+    mail: 
+      body: 请查看附件中的CSV文件。
+      info: 任务资料很快便会发送至您的邮箱！
+      subject: "输出任务- %{filter} - 从( %{start_date} 到 %{end_date} )"
+    no_fields_selected: 请检察以下至少一个栏位来进行下一步
+    resolved_at: 解决时间
+    seven_days: 最后7天
+    thirt_days: 最后30天
+    to: 到
+    twenty_four: 从昨天
+  export_data_successfull: 您的帮助台数据资料很快的将会发送到您的电子邮件!
+  f_request: 功能请求
+  facebook: 
+    deleted: "这个脸书网页 %{facebook_page} 已经被移除"
+    not_authorized: 您没被脸书网授权
+  facebook_source: Facebook
+  failure: 错误
+  fav_delete_msg: 你确定要删除这个喜欢的图标?
+  favicon: 图标
+  feedbackwidget_bgcolor: 背景颜色
+  feedbackwidget_btcustomize: 按钮自訂化
+  feedbackwidget_custom_image: "顾客图像的 URL"
+  feedbackwidget_custom_image_info: "如果您使用自定的照片, 颜色和内文将会被忽略"
+  feedbackwidget_defaultbutton: 支援
+  feedbackwidget_defaulttitle: "帮助 &amp; 支援"
+  feedbackwidget_embed_code: 小工具嵌入代码
+  feedbackwidget_embed_code_intro: "请复制并粘贴下面的代码在任何地方, 在&lt;/body&dt; 之前, 让有标签的模板在您的网页或每一页您想提供 Freshdesk 小工具的地方"
+  feedbackwidget_form_title: 小工具表格标题
+  feedbackwidget_formcustomize: 表单自定义
+  feedbackwidget_help_para1: 在您的网页上添加一个支援的项目来收集您顾客的反馈
+  feedbackwidget_help_para2: 可定制的选项打开成一个支援个案表格
+  feedbackwidget_help_title: 反馈小工具
+  feedbackwidget_intro: "定制下列您的 freshdesk 工具列并即时预览"
+  feedbackwidget_offset_info: "起始点的距离将会是在小工具按键 (像素) 由幕屏的左方或上方依照您所选择的对齐方式决定"
+  feedbackwidget_offset_label: 以起始点
+  feedbackwidget_position: 状态
+  feedbackwidget_text: 本文
+  feedbackwidget_title: 小工具设置
+  first_name: 名
+  first_response_sla: "第一回应 SLA 违规"
+  flash: 
+    account: 
+      update: 
+        success: 您的帐户资料已经更新
+    agents: 
+      create: 
+        success: "代理人已创建, 启动指示已发送到 %{email}!"
+      delete: 
+        not_allowed: 您没权限删除!
+    application: 
+      already: 插件已经安装完成
+      install: 
+        error: 启用插件时发生错误
+        success: 插件已经成功启用
+      not_installed: 插件尚未安装
+      uninstall: 
+        error: 停用插件时发生错误
+        success: 这个插件已经成功的停用了
+      update: 
+        error: 设置整合过程中发生错误。
+        success: 成功更新整合！
+    business_hours: 
+      update: 
+        failure: 工作时间更新失败
+        success: 营业时间更新成功
+    contacts: 
+      cancel: 取消
+      create: 
+        success: 已成功创建联系人
+      info_select: 请至少选择一位用户
+    contacts_import: 
+      failure: 请再试一次
+      no_file: 请上传一个档案
+      success: "%{created_count} 联系人已新输入 %{updated_count} 原有联系人已成功更新"
+    custom_fields: 
+      update: 
+        failure: 个案栏位更新失败
+        success: 个案栏位更新成功
+    customers: 
+      info_select: 请至少选择一位顾客
+    data_import: 
+      zendesk: 
+        failure: "无法由 zendesk 导入...请再试一次"
+        no_contact: "无法联系zendesk.  请确认您 zendesk 的资料再试一次!!"
+        running: "目前 zendesk 正在导入资料.  您可以稍后再试"
+        success: "您的资料数据已经开始导入, 在导入完成后您会收到电子邮件做确认.  导入程序可能会花几分钟时间, 要看您的资料数据来决定."
+    daypass: 
+      failed: 添加日通行证时出现错误
+      success: "%{quantity} 个日通行证已经成功添加到您的帐户"
+    email_notifications: 
+      update: 
+        success: "电子邮件的通知 已更新."
+    email_settings: 
+      activation: 
+        already_activated: "%{reply_email} 已经启动"
+        invalid_code: 启动代号无效
+        success: "%{reply_email} 已经启动"
+      make_primary: 
+        success: "<b>%{reply_email}</b> 现在是您的主要支持电子邮件"
+      send_activation: 
+        success: "确认邮件已发送到 %{reply_email}!"
+    facebook: 
+      updated: "Facebook 设置已经更新"
+    filter: 
+      delete_success: 检视画面已成功删除了
+      save_success: 检视画面已成功储存了
+    g_app: 
+      authentication_failed: 认证失败
+      authentication_success: 身份验证成功完成
+      no_subdomain: "没有像以下的子域名称. 请再试一次."
+      user_deleted: 用戶已删除
+    general: 
+      access_denied: 您不被允许进入此页面
+      create: 
+        failure: "无法储存 %{human_name}"
+        success: "%{human_name} 名称已创建"
+      destroy: 
+        failure: "%{human_name} 无法被删除"
+        success: "%{human_name} 已被删除"
+      insufficient_privilege: 
+        admin: "您没有足够的权限来更改.  请以管理员身份登录..！"
+      login_not_needed: 您必须先登出才可进入此页面
+      need_login: 您必须先登录才可进入此页面
+      restore: 
+        failure: "%{human_name} 无法回复"
+      update: 
+        success: "%{human_name} 已更新"
+    gmail_gadgets: 
+      account_not_associated: "您的 Gmail 帐户尚未和任何 Freshdesk 帐户连结.  请先到导航链接去联结"
+      agent_missing: "在 Freshdesk 您不是代理人身分.  转换用户身分到代理人身分后再试一次"
+      agent_not_active: "在 Freshdesk 您的电子邮件可能被删除或停用了.  重新启用后再试一次"
+      gmail_request_unverified: "错误的 Gmail 签名.  请在登录后再试一次"
+      kvp_missing: "验证无效.  重新打开该邮件后再试一次."
+      unknown_error: 不确定的服务器器问题请联系您的服务中心
+      user_missing: "在 Freshdesk 您的电子邮件并不存在.  添加一位代理人及电子邮件再试一次"
+      viewer_id_not_sent_by_gmail: "错误的 Gmail 的请求者.  请在登录后再试一次"
+    login: 
+      failed: 登录失败！
+      sso: 
+        expected_params: "预期的参数为姓名, 电子邮箱.  但没有显示任何资料."
+      success: 登录成功
+      verify_credentials: "无法登录.  请确认您的登录资料."
+    not_allowed_in_demo_site: 演示页面无法使用此功能
+    password_resets: 
+      email: 
+        reset: "指示已随重设邮件发送至%{requester}。"
+        success: "重置您密码的说明已经发送给您.  请查看您的邮箱."
+        user_not_found: 未找到符合此电子邮箱的用户
+      update: 
+        invalid_token: "我们很抱歉  但我们无法找到您的帐户  如果您有疑问请尝试由您的电子邮件复制及黏贴 URL 到您的浏览器或重新设置密码"
+        success: 密码更新成功
+    portal: 
+      tickets: 
+        create: 
+          success: "你的个案已经创建了, 副本已经由电子邮件发送给您."
+    portal_settings: 
+      update: 
+        success: 顾客入口网页的设置已更新
+    profile: 
+      api_key: 
+        reset_failure: "重置 API 键时出现错误"
+        reset_success: "API 键已经重新设定成功"
+      change_password: 
+        failure: "无法更新你的密码, 请检查你现在的密码"
+        success: "密码更新成功, 请再一次登录"
+      update: 
+        success: 您的档案资料已经更新
+    solutions: 
+      remove_tag: 
+        success: 解决方案中的标签已经移除
+    sso: 
+      update: 
+        success: 您的帐户资料已经更新
+    tickets: 
+      empty_spam: 
+        success: 垃圾文件夹中的所有个案已全部删除
+      empty_trash: 
+        success: 废件箱文件夹中的所有个案已全部删除
+      merge: 
+        success: 个案已合并成功
+        wrong_ticket_id: 请输入一个有效个案的身分码
+      monitor: 
+        start: 您正在监控这个个案
+        stop: 您不再监控此个案
+      notes: 
+        create: 
+          failure: 添加备注到您的个案时发生问题请再试一次
+          success: 备注已添加到您的个案
+      reply: 
+        success: 回覆邮件已发送
+      timesheet: 
+        timer_stopped: 个案计时器已停止计时
+    to_dos: 
+      complete: 
+        success: 待办事项已标示为完成
+    twitter: 
+      updated: " Twitter 帐户设定已更新"
+  folder: 
+    add_folder: 添加文件夹
+    edit: 编辑文件夹
+    info1: 您确定要删除这个文件夹
+  folder_edit_not_allowed: 这个文件夹无法被修改
+  footer: 
+    by_freshdesk: 由Freshdesk
+    helpdesk_software: 帮助台软件
+  for: 为
+  forgot_password: 忘记密码
+  forgot_password_intro: "填写以下的表格,  重设密码的说明会寄到你的电子信箱"
+  formatting_help: 帮助格式化
+  forum: 
+    confim_msg1: 您确定要删除这个论坛
+    edit: 编辑论坛
+    new: 新论坛
+    start_topic: 开始一个新主题
+    title: 论坛
+    types: 
+      announce: 声明
+      howto: 疑问
+      ideas: 主意
+      problem: 问题
+    verb: 
+      announcement: 宣布人为
+      ideas: 主意分享人为
+      problems: 报告问题人为
+      questions: 问题发问人为
+    visibility: 
+      agents: 代理人
+      all: 所有的
+      anyone: 任何人
+      logged_users: 登录的用户
+      select_company: 选择公司
+  forum_confirm_msg1: 您确定您要删除这个类别?
+  forum_key: 论坛
+  forum_shared: 
+    post: 
+      answer: 答案
+      delete_post: 删除上传文章
+      delete_post_confirm: "删除上传文章? 您确定吗?"
+      edit_post: 编辑上传文章
+      mark_answer: 标记这个为答案
+      post_accepted_as_a_good_answer: 这篇上传的文章被视为针对这个主题很好的回答
+      posted_on: "用户 %{user_name} 在 %{post_date} 上传的"
+      unmark_answer: 取消标记这个为答案
+    topic_vote: 
+      howto: 
+        vote_button: 我有这个问题
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote}个 人</a>有这个疑问。"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} 个人</a> 有这个疑问。"
+        vote_info_include_1: 您有这个问题
+        vote_info_include_2: "你和 <a id='users-voted' href='#' title='See who have this'> %{vote}个人</a>都有这个疑问。"
+        voted_users_widget_title: 有这个问题的顾客们
+      ideas: 
+        vote_button: 我喜欢这个主意
+        vote_info_1: "<a id='users-voted' href='#' title='See who likes this'> %{vote}个人</a>喜欢这个主意。"
+        vote_info_2: "<a id='users-voted' href='#' title='See who like this'> %{vote} 个人</a> 喜欢这个主意。"
+        vote_info_include_1: 您喜欢这个主意
+        vote_info_include_2: "你和 <a id='users-voted' href='#' title='See who like this'> %{vote} 个人</a>都喜欢这个主意。"
+        voted_users_widget_title: 喜欢这个主意的人们
+      problem: 
+        vote_button: 我有这样的问题
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} 个人</a> 有这个问题。"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} 个人</a> 有这个问题。"
+        vote_info_include_1: 您有这样的问题
+        vote_info_include_2: "You and <a id='users-voted' href='#' title='See who have this'> %{vote} 个人</a> 都有这个问题。"
+        voted_users_widget_title: 有出现这个问题的人
+      unlike: 不喜欢
+  forums: 
+    form: 
+      type: 论坛类型
+      visibility: 论坛能见度
+      visible_to: 对以下可见：
+    search: 
+      placeholder: "搜索 %{name}"
+    search_all: 
+      placeholder: 搜索全部主题
+  forums_order: 
+    overview: 概观
+    popular: 受欢迎
+    recent: 最近的
+  forward: 转发
+  forwarded_email: 转发电子邮件
+  forwarded_to: 转发至
+  four: 四小时
+  free_account: 免费帐户
+  from_email: 由电子邮件
+  fwd_success_msg: 个案已转发成功
+  fwd_to: 转发
+  gamification: 
+    leaderboard: 
+      love_trophie_info: 本月客户满意分数最高的代理人
+      love_trophie_info_group: 本月客户满意分数最高的团队
+      love_trophie_label: 客户赞好冠军
+      love_trophie_label_group: 客户赞好冠军
+      mvp_trophie_info: 本月总分最高的代理人
+      mvp_trophie_info_group: 本月总分最高的团队
+      mvp_trophie_label: 最具价值的玩家
+      mvp_trophie_label_group: 最具价值的团队
+      sharpshooter_trophie_info: 本月任务首次解决率最高的代理人
+      sharpshooter_trophie_info_group: 本月任务首次解决率最高的团队
+      sharpshooter_trophie_label: 神枪手
+      sharpshooter_trophie_label_group: 神枪手
+      speed_trophie_info: 本月快速解决任务分数最高的代理人
+      speed_trophie_info_group: 本月快速解决任务分数最高的团队
+      speed_trophie_label: 极速快手
+      speed_trophie_label_group: 极速快手
+    levels: 
+      beginner: 新手
+      expert: 专家
+      guru: 大师
+      intermediate: 中级的
+      master: 熟练的
+      professional: 专业的
+    notifications: 
+      achieved_quest: "<b> 太棒了！</b><br/>您已经获得了  <b>%{name}</b>的称号。"
+      newlevel: "<b> 太棒了！ </b><br/> 您已经成为了<b>%{name}</b>。"
+  garden_brief: 多项产品支援
+  garden_details: "所有一切在 &quot;Blossom&quot; 计画, 多重产品支援, 进阶报告, 社区, 电子邮件 &amp; 电话支援"
+  go_back_admin: 回去到管理台
+  greater_than: 大于
+  group: 
+    assigntime: 
+      day: 1天
+      eight: 8小时
+      four: 四小时
+      half: 30分钟
+      one: 1小时
+      threeday: 3天
+      two: 12小时
+      twoday: 2天
+    edit: 编辑群组
+    info1: 这个群组的代理人
+    info2: 这个群组没有代理人
+    info3: 升级电子邮件发送到
+    info4: 如果个案没被指派超过
+    info5: 您确定
+    name: 群族名称
+    new: 新群组
+    select_agents: 选择代理人
+    title: 群组
+  half: 30分钟
+  header: 
+    assumed_text: 您浏览的身分为
+    login: 登录
+    new_ticket: "新个案 "
+    search: 搜索
+    signout: 登出
+    submit_a_ticket: 提交一个个案
+    tabs: 
+      admin: 管理员
+      checkstatus: 检查你个案的状态
+      company_tickets: 公司个案
+      customers: 顾客
+      dashboard: 仪表板
+      forums: 论坛
+      home: 首页
+      reports: 报告
+      social: 社交
+      solutions: 解决方案
+      tickets: 个案
+    welcome: 欢迎
+  header_logo: 标头商标
+  helpdesk: 
+    dashboard: 
+      index: 
+        todo_title: 待办事项
+      summary: 
+        due_today: 今日到期
+        open: 打开
+        overdue: 过期
+        pending: 暂存
+        title: 个案总结
+        unassigned: 解除指派
+    flash: 
+      assigned_reassigned: "%{type} 到 %{username}"
+      assigned_to_you: "%{tickets} 指派给您"
+      assignedto: "%{tickets} 指定给 %{username}"
+      closing_the_ticket_failed: 关闭个案失败
+      flagged_spam: "%{tickets} 标记为垃圾邮件 %{undo}"
+      flagged_unspam: "%{tickets} 由垃圾文件夹中移除"
+      removed_from_spam: "%{tickets} 由垃圾文件夹中移除"
+      tickets_closed: "%{tickets} 关闭"
+      tickets_update: "%{tickets} 已更新"
+    merge: 
+      confirm_merge: 
+        confirm_and_merge: 确认及合并
+        source_merge_description: "此个案已关闭并合并到个案 %{ticket_id}"
+        source_ticket_close_info: "请见以下备注, 个案即将关闭"
+        target_merge_description1: "个案 %{ticket_id} %{ticket_subject} 已和这个 要求 合并"
+        target_merge_description2: "个案的叙述 %{ticket_id}"
+        target_ticket_updated_info: "请见以下讯息这个, 个案即将更新, 所有相关对话将会被移除"
+        will_be_merged_into: 将合并到
+      merge: 
+        enter_ticket_id: 输入个案的身分码
+        merge: 合并
+        merge_into: 合并到??
+        other_tickets: "由 %{requester} 提出的其他个案"
+    rebranding: 
+      name: 
+        info: "这将是显示在标头和邮件通知內 帮助台 的名称"
+    shared: 
+      facebook_form: 
+        title: "回答给 %{user}"
+      forward_form: 
+        addbcc: "添加 Bcc"
+        addcc: "添加 Cc"
+        bcc: 密件抄送
+        cc: 邮件副本
+        removebcc: "移除 Bcc"
+        removecc: "移除 Cc"
+      history: 
+        recent_item: 最近的项目
+      reply_form: 
+        addbcc: "添加 Bcc "
+        addcc: 添加邮件副本
+        bcc: 密件抄送
+        cc: 邮件副本
+        removebcc: "移除 Bcc"
+        removecc: 移除邮件副本
+        title: "回答電子邮件到 %{email}"
+      tweet_form: 
+        title: "回应给 %{user}"
+    tags: 
+      index: 
+        title: 标签
+    ticket_created_on_n_by: "在 %{date_time} 由 %{requester} 提出"
+    ticket_notifier: 
+      reply: 
+        happy: 太棒了
+        neutral: "只是 Okay"
+        unhappy: 不够好
+    tickets: 
+      close_notice: 
+        ticket_has_been_cloased: 个案已经关闭
+        view_ticket: 查看个案
+      components: 
+        due_date: 
+          due: 到期
+          earlier_date_and_time: 请输入一个在个案成立之后的日期与时间
+          next_week: 下周
+          set_date_time: 设置日期/时间
+          specific_date: 特定的日期/时间
+          this_week: 本周
+          today: 今天
+          tomorrow: 明天
+          when_is_it_due: 何时到期
+        scenarios: 
+          execute_this_scenario: 执行以下情况
+      customview: 
+        new: 
+          give_a_name: 给这个检阅页面一个名称
+          visible_to: 这个检视画面会显示给
+      execute_scenario_notice: 
+        actions_performed: 执行操作
+        execute_the_scenario: "执行以下的情况 <b>%{rule_name}</b>"
+        view_details: 查看详细资料
+      friendly_status: 
+        customer_responded: 客户回应
+        elapsed: 回应到期
+        new: 新
+        overdue: 过期
+        resolved: 已解决
+      no_email_found: "用户有着 %{email} 的电子邮件在这系统中无法使用"
+      note: 
+        attachment_size: 
+          exceed: 很抱歉您的附档超过15MB请附上上载者一点的档案
+        delete_note: 要由个案对话中移除这个吗
+        edit_note: 编辑备注
+        inbound_email: 传入的电子邮件
+        outbound_email: 发送邮件
+        posted_on: "%{user_name} 在 %{note_date}"
+        private_note: 私有备注
+        public_note: 公共备注
+        split_this_as_new_ticket: 分割这个为一个新个案
+        split_ticket_confirm: 分割这个备注及创建为一个新个案?
+      overlay_fwd_time: "%{time_in_words} 之前已转发"
+      overlay_note_time: "%{time_in_words} 之前, 添加的备注"
+      overlay_reply_time: "%{time_in_words} 之前已回覆"
+      save_and_close_notice: 
+        ticket_saved_and_closed: 这个个案已被创建及关闭
+        view_ticket: 检视个案
+      show: 
+        conversation: 对话
+        linked_ticket: 此个案已链接到论坛了
+        meta: 变换
+        timesheet: 时间表
+      tabular_view: 
+        assigned: 已指派
+        posted: 已上传的
+        priority: 优先权
+        sla: 到期日
+        status: 状态
+        time_ago: "%{time_in_words} 之前"
+        title: 标题
+      view_ticket: 
+        conversation: 对话
+        linked_ticket: 此个案已链接到论坛了
+        meta: 变换
+        timesheet: 时间表
+      views: 
+        all: 所有的个案
+        all_tickets: 所有的个案
+        closed: 已关闭个案
+        deleted: 垃圾
+        due_today: 今日到期个案
+        monitored_by: 我正在监控的个案
+        my_all: 我所有的个案
+        my_closed: 我的关闭个案
+        my_due_today: 我的今日到期个案
+        my_on_hold: 我的暂存个案
+        my_open: 我的开放个案
+        my_overdue: 我已过期的个案
+        my_resolved: 我的已解决个案
+        new: 新个案
+        new_and_my_open: "新的 & 我的开放个案"
+        new_my_open: "新的 & 我的开放个案"
+        no_tickets: 在目前检视画面下您没有任何个案
+        on_hold: 暂存个案
+        open: 开放个案
+        open_or_pending: 开放或暂存
+        overdue: 过期个案
+        resolved: 已解决的个案
+        resolved_or_closed: 已解决或已结束
+        select: 选择查看
+        spam: 垃圾邮件
+        tags: 标签的个案
+        this_view: 这个检视画面
+        tickets_by: 个案由
+        tickets_twitter: "由 twitter 上传的个案"
+    time_sheets: 
+      agent: 代理人
+      billing_type: 计费类型
+      customer: 顾客
+      executed_at: 日期
+      form: 
+        agent: 代理人
+        hours: 小时数
+        note: 备注
+      group_by: 群组由
+      hours: 小时数
+      index: 
+        no_timeentry: 这个个案没有时间纪录日志
+      new: 
+        title: 输入新的时间
+      note: 备注
+      report: 
+        no_timeentry: 没合适的资料
+        total: 合计
+      ticket: 个案
+      time_entry: 
+        toggle_timer_false: 停止计时
+        toggle_timer_true: 启动定时器
+  helpdesk_title: 支援台
+  high: 高
+  home: 
+    mobile_index: 
+      email: 电子邮件
+      forgot: 我忘记我的密码?
+      help: 帮助
+      login: 登录
+      password: 密码
+      remember: 在这台电脑上记住我
+      sign_in_using: 注册以...
+      sign_in_using_google: "以您的 Google 帐户登录"
+  how_to: 问题
+  identity_reverted_error_msg: 抱歉我们无法找到您原始的用户
+  identity_reverted_msg: 您已经将您的身分恢复了
+  import: 引入
+  import_added_newly: 新添加
+  import_articles: 解决方案的主题
+  import_data: 输入的日期
+  import_example_title: 以下为CSV档案的例子
+  import_forum: 论坛
+  import_groups: 群组
+  import_ignore_first_row: 忽略第一行(标题)
+  import_note_info: "这些栏位在您的 csv 文件中可以为任何顺序.  只要确定第一行有开头资料 (例如, 姓名, 电子邮件 等).  唯一要填入的栏位为电子邮件."
+  import_org_companies: "组织 &rarr; 公司"
+  import_solution_article: 转换论坛主题到解决方案
+  import_solution_article_info: 注意：我们不会储存论坛评论
+  import_step1_info: "选择一个CSV栏位 再点击引入"
+  import_step2_info: 以资料库栏位配置以下CVS的栏位并引入
+  import_ticket_group: "个案 和 群组"
+  import_tickets: 个案
+  import_topics: 主题
+  import_updated: 更新
+  import_user_notification: 发送用户启动电子邮件当引入信息或数据等
+  import_user_org: "用户 &amp; 组织"
+  import_user_org_text: "在您的Zendesk帐户内的所有用户 &amp; 及机构资料将会汇入您目前Freshdesk的帐户内 以联系人及公司的名称出现"
+  import_users_contacts: "用户 &rarr; 联系人"
+  import_warning_info: "当成功导入资料时, 含有用户激活指令的电子邮件将发送给每位联系人.  如果这个电子邮件已经有在资料库了, 我们将会更新它的属性, 像 姓名,公司 等"
+  import_zendesk_summary: 由zendesk摘要引入
+  import_zendesk_summary_info: "Zendesk 资料已成功导入"
+  import_zendesk_title: "由 Zendesk 导入"
+  incident: 事件
+  index_tooltip_loading_msg: 加载中…
+  integrations: 
+    capsule: 
+      desc: "您可在 Freshdesk 由 Capsule CRM 检视联系人信息.  这个信息可以经由个案细节页面或联系人细节页面进入检视"
+      form: 
+        api_key: "API 键"
+        api_key_info: "为了获得独特的API密钥，请登录至您的Capsule CRM账号，然后前往<br /> <b>“用户->我的偏好设置”</b>（位于页面的右上方）<br /> 点击 <b>“API 身份验证令牌”</b>, 获得独特的API密钥。<br /> 复制密钥并把其粘贴至上面的文本框中。"
+        bcc_drop_box_mail: 邮件收件箱地址
+        bcc_drop_box_mail_info: "您可以在<b>“设置-> 信箱”</b>.<br /> （位于页面的右上方）中找到您独特的Capsule邮箱地址。<br /> 复制邮箱地址并将其粘贴至上面的文本框中。<br /> 当您回复某项任务时，Freshdesk会自动将此邮箱地址添加到密件抄送栏中。 "
+        domain: 网域
+        domain_info: "只要提供独立的网域不需要 https.  例如: example.capsulecrm.com"
+        widget_title: 小工具标题
+      label: "Capsule CRM"
+    capsule_crm: 
+      helptext: "<h4>从 Capsule连接回 Freshdesk</h4><p><br/>您可以在Capsule CRM上创建一条链接，来查看Freshdesk上的联系人任务。</p> <p>如欲执行此功能，请前往您的<br /><b>设置 -> 自定义范围 -> 个人和组织</b></p><p> 然后点击“新增…”并选择<b>\"生成链接\"</b></p> <p>复制下方链接并粘贴至Capsule CRM作为链接定义<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+      label: "Capsule CRM"
+    custom_application: 
+      desc: 只需增加一个定制小部件，您就可以使用自定义脚本来显示所有详细信息。
+      description: 描述
+      edit: 编辑定制小部件
+      form: 
+        create_n_enable: 创建并启用
+        insert_placeholder: 插入占位符
+        widget_script: 小部件的代码片段
+        widget_title: 小部件名字
+      helptext: "<h4>定制小部件帮助</h4><p><br/> 您可以使用html,css 以及 javascript，创建专属您的定制小部件。</br></br>如欲创建定制小部件，请输入新部件的名字及一段简短描述。</br>请在'脚本’下方输入编码。您可以参考我们的“解决方案”页面，来了解更多有关脚本的资料。</br></br> 点击 <b>' 预览’</b> ，查看小部件在任务及联系页面的样子。"
+      label: 定制小部件
+      name: 名字
+      new: 新的定制小部件
+      script: 脚本
+      small_help_text: "您可以使用html,css 以及 javascript，创建专属您的定制小部件。"
+    freshbooks: 
+      desc: "您可记录所花费在个案上的时间在您的 Freshbooks 计画和任务"
+      form: 
+        api_key: 身份验证令牌
+        api_url: "API 链接"
+        api_url_info: "输入完整的 API URL 及 HTTPS.  例如 https://example.freshbooks.com/api/2.1/xml-in"
+        freshbooks_note: 备注文本
+        freshbooks_note_info: 这些文字将会附加在注解的最后并附上所费的时间记录表
+        widget_title: 小工具标题
+      helptext: "<h4> Freshbooks 整合式帮助 </h4><p><br/> 要 Freshbooks 和 Freshdesk整合在一起, 首先, 您需要有 Freshbooks API 和认证令牌.  <br/><br/> 登录到您的 Freshbooks 帐户, 点击您的 <b> 人 选项 </b> 再到 <b> 员工及承包商副选项 </b>.  在您的管理人点击 <b> 编辑 </b>.  您可以找到您的 API URL 和认证令牌.  <br/><br/> 在 Freshdesk, 点击一个个案再到时间表选项.  然后您可以添加您的时间追踪记录到 Freshbooks.\\n"
+      label: Freshbooks
+    google_analytics: 
+      account_number: 输入您的追踪ID号码
+      desc: "使用 Google 分析资料 在您的支援入口网页来监控访客的统计资料"
+      domain: 网域
+      form: 
+        copy_settings: 在所有入口网页使用上述的追踪ID号码
+        tracking_id: 需要的追踪ID号码
+        tracking_id_example: "举例 : UA-123456-1"
+      helptext: "<h4> Google 分析整合帮助 </h4><p><br/> 要整合Google分析和 Freshdesk 建议您在 Google 分析内您公司的帐户创建一个专用属性.  <br/><br/> 要创建一个属性, 登录到您的 Google 分析帐户再到您的\\n管理人选项选择您想要的帐户.  点击 <b>'新属性'</b>来创建一个新的.  在 '<b>网络 URL'</b> 输入您的支援入口网页的 URL 再点击 <b>'创建属性'</b>.  现在请点击您刚创建的属性, 您将可以在属性名称的下方见到<b>'属性 ID'</b> 再复制这个到 Freshdesk 的 Google分析设置上. </p>"
+      inline_help: 输入要查询的查询号码
+      label: "Google 分析"
+      portal: 入口网页
+    google_contacts: 
+      MERGE_LATEST: "合并 Google 和 Freshdesk 的联系人 (最后更新为优先)"
+      MERGE_LOCAL: "合并 Freshdesk 和 Google 联系人 (以 Freshdesk 为优先)"
+      MERGE_LOCAL_small: "合并 (Freshdesk 优先权)"
+      MERGE_REMOTE: "合并 Google 和 Freshdesk 的联系人 (以 Google 为优先)"
+      MERGE_REMOTE_small: "合并 ( Google 为优先)"
+      OVERWRITE_LOCAL: "导出 Freshdesk 联系人和所有更新到 Google 联系人"
+      OVERWRITE_LOCAL_small: 导出
+      OVERWRITE_REMOTE: "导入 Google 联系人和任何更新到 Freshdesk 联系人"
+      OVERWRITE_REMOTE_small: 引入
+      account: 帐户
+      account_not_configured: "Google 帐户的配置不正确.  请再试一次."
+      add_more: 同步更新新帐户
+      already_exist: "此電子邮件已经配置.  您不能再次添加相同的电子邮件."
+      delete: 删除
+      delete_action: 
+        error: "删除 Google 帐户时出现错误"
+        success: "成功的删除 Google 帐户"
+      desc: "周期性的同步 Google 和 Freshdesk 的联系人"
+      edit: 编辑
+      edit_app: 更新
+      edit_form: 
+        edit_app_title: "编辑 Google 联系人同步更新设置"
+        import_group: "选择要导入的组别 (可选择的)"
+        import_title: "Google 联系人输入设置"
+        install_title: "Google 联系人同步更新设置"
+        mail_box_detail: 同步效果
+      edit_helptext: "<h4> Google 联系人同步帮助 </h4><p><br/><b> 选择群组来导入 (可选的) </b> <br/> 除了设置同步化, 您可以选择由这里已存在的群组清单中导入联系人.  请选择您想要导入到 Freshdesk 的联系人的群组 <br/><br/> <b> 同步设置 </b><br/>  这个设置控制 Google 和 Freshdesk 的联系人同步.  Freshdesk 的联系人和特定的 <b>' 同步标签' </b> 连在一起将会和 Google 同步.  还有, 由 Google 导入的联系人将会和 <b>' 同步标签 '</b>. 连在一起.   <br/><br/> 在此提过的一个特别的群组将会和 Google 创建来同步联系人.  在第一次导入后, 所有添加的连系人将会同步回到 Freshdesk , 反之亦然."
+      email: 电子邮件
+      enable_integration: "导入完成后启动自动同步 (每天一次)."
+      fetch_problem: "读取 Google 联系人资料时产生问题"
+      form: 
+        account_not_configured: "<br/> Google 帐户设置尚未配置.  点击 '%{action}' 来配置 Google 新帐户. <br/><br/>"
+        sync_type: 同步类型
+        sync_type_info: "您希望如何同步更新您在 Google 和 Freshdesk 的联系人"
+      group: 同步群族名称
+      helptext: "<h4> Google通讯录同步设置帮助</h4><p><br/>点击<b>‘同步新的账号’</b>来新增需要同步的Google账号。当出现提示时，请同意Freshdesk进入并使用您的Google通讯录(如出现提示，请输入您的Google用户名以及密码) 。<br/><br/>如果您不希望继续以此账号进行同步，可将账号删除。<br/><br/><b>注意：</b> 我们建议您在同步前，先为您的Google通讯录做好备份。"
+      import: 引入
+      import_complete: 单一次导入完成
+      import_later_success: "Google 联系人开始导入成功.  您可在设置网页内查看导入状态."
+      import_problem: "导入 Google 联系人时出现问题"
+      import_success: "成功的导入 Google 联系人.  状态: %{added} 已添加, %{updated} 已更新和 %{deleted} 已删除"
+      import_success_no_stats: "成功的导入 Google 联系人"
+      info1: "使用同样的同步标签在多重 Google 帐户允许您来分享 Freshdesk 联系人和所有的帐户.  如果您不想要同步任何联系人 到 Google, 栏位可以是空白"
+      install: 导入及激活
+      internal_error: "发生内部错误 .  请联系技术支持."
+      label: "Google 联系人同步"
+      last_sync: 最后同步
+      last_sync_status: 最后同步更新的状态
+      last_sync_time: 最后同步时间
+      no_status: 无
+      not_yet_synced: 同步没有开始
+      overwrite_existing_user: "在 Freshdesk 覆盖现有的联络资料"
+      sync_group_info: "一个新的联系族群 <strong>%{group_name}</strong> 将会创建在您的 Gmail 帐户来作联系人同步"
+      sync_status: 
+        added: 已添加
+        deleted: 已删除
+        freshdesk: "在 Freshdesk 导入联系人的状态"
+        google: "在 Google 导出联系人的状态"
+        modified: 已修改
+      sync_type: 如何同步?
+      syncing_in_progress: 同步正在进行中
+      tag: 同步设置
+      tag_label: 同步标签
+      update_action: 
+        also: 还有
+        error: "更新 Google 帐户时出现错误"
+        success: "已成功加入 Google 帐户"
+    harvest: 
+      desc: "您可记录所花费在个案上的时间在您的 Harvest 计画和任务"
+      form: 
+        domain: 网域
+        domain_info: "不要加上 https 只要单独输入网域.  例如 .harvestapp.com"
+        harvest_note: 备注文本
+        harvest_note_info: 这将被附加在本说明的结束並附上时间记录日志
+        widget_title: 小工具标题
+      helptext: "<h4>Harvest整合帮助</h4><p><br/>如欲将Harvest和Freshdesk整合在一起，请输入您的<b>域名</b>并点击“启用”。<br/><br/>点击任意一项任务，前往<b>时间表选项卡</b>。然后输入您的Harvest <b>用户名</b> 及<b>密码</b>}进行登录。现在您可以把您的时间追踪记录增加到 Harvest上了。<br/><br/>注意：您可以点击<b>“记住我”的选项</b>，以便不用每次登录时都要输入Harvest的凭证。"
+      label: 收成
+    jira: 
+      desc: "转换个案到议题, 还可在 JIRA 追踪得到"
+      form: 
+        add_jira_comment: 加为JIRA上的评论。
+        add_note: 加为私人标注。
+        do_nothing: 什么都不做。
+        domain: 网域
+        domain_info: |
+            
+            输入完整的JIRA账号链接（以https或http开头）。举例：https://example.atlassian.net. <br /><span class='italics'> 注意：JIRA的预置变量将会在网上公开。 </span>
+        fd_comment_sync: "Freshdesk上增加的任何评论 %{dropdown}"
+        fd_status_sync: "有关Freshdesk状态的任何更改%{dropdown}"
+        jira_comment_sync: "有关JIRA问题的任何评论%{dropdown}"
+        jira_note: 说明文本
+        jira_note_info: 这个文本将被添加到JIRA的问题描述
+        jira_status_sync: "有关JIRA问题状态的任何更改%{dropdown}"
+        jira_status_sync_update_customer: 发送回复给顾客，同时更新状态栏。
+        jira_status_sync_update_field: 更新Freshdesk状态栏。
+        password: 密码
+        send_reply: 发送回复给顾客。
+        update_jira_status: 同时更新JIRA状态。
+        username: 用户名
+        widget_title: 小工具标题
+      helptext: "<h4> JIRA 整合帮助 </h4><p><br/> 要和 Freshdesk 整合 JIRA, 输入您的 JIRA 管理员用户名称和密码.  整合帮助支援在需求上和提及的变数, 从 JIRA 4.2 一直到最新版本 - JIRA 5. <br/><br/>   要在 Freshdesk 创建一个议题或链接到现有的议题, 导航到个案页面, 再点击 <img src='/images/ticket-icon/jira.png'/><br/><br/>  要在 JIRA 检阅链接到 Freshdesk 个案的细节, 相反的, 要在 Freshdesk 检阅 JIRA 议题细节, JIRA 管理员建议创建一个自由文字自义栏位给姓名 &quot; Freshdesk 个案&quot; 如以下叙述的. <br/><br/> 登录到您 JIRA 的帐户, 点击 <b> 管理 </b>, 导航到 <b> 议题 </b> -> <b> 栏位 </b> 再点击 <b> 添加自义栏位 </b>. 在 <b> 创键自义栏位 </b> 画面, 选择 <b> 自由文字栏位 </b> 再点击 <b> 下一步 </b>. 在姓名栏位输入 <b> &quot;Freshdesk 个案&quot;</b> 再点击完成.  在 <b> 相关栏位到画面</b> 页面, 勾选所有选择框再点击'更新'. <br/><br/>"
+      label: "Alassian JIRA"
+    jira_settings: 
+      add_comment_in_jira: 在JIRA上增加评论。
+      add_private_note_in_fd: 在Freshdesk上增加私人标注，并通知代理人。
+      add_public_note_in_fd: 在Freshdesk上增加公共标注。
+      none: 什么都不做。
+      send_reply_in_fd: 通过邮件通知顾客
+      update_jira_status: 更新JIRA状态
+      update_status_in_fd: 更新Freshdesk状态
+    logmein: 
+      desc: "通过LogMeIn Rescue，为您的顾客和员工提供即时的远程帮助。"
+      form: 
+        company_id: 公司ID
+        logmein_company_info: |
+            
+            如欲获得公司ID，请前往管理中心-> 技术团队 -> 整体设置  -> ASP.Net C# 服务器端示例
+        logmein_sso_pwd_info: |
+            
+            如欲获取您的单点登录（SSO）密码，请前往管理中心-> 技术团队 -> 整体设置 -> 单点登录 -> 新的单点登录密码
+        password: 单点登录密码
+        widget_title: 小部件标题
+      helptext: |
+          <h4>LogMeIn Rescue 整合帮助</h4><p><br/> 如欲将LogMeIn Rescue和Freshdesk整合在一起，请输入您的LogMeIn Rescue 公司账号和单点登录密码 ，然后点击更新。<br/>更新启用后，您可以在“任务详情”页面找到LogMeIn Rescue的小部件。<br/><br/>使用&quot; 启用Technician Console&quot;  来直接从Freshdesk的小部件中启用Technician Console。<br/> 现在您可以生成一个识别码，并和请求者分享指示，来继续使用LogMeIn Rescue的支援。<br/><br/> <b>注意：</b> 
+          代理人的邮箱必须和LogMeIn Rescue的技术员单点登录账号相一致。如欲设置您的单点登录账号，请前往管理中心->技术员名字->机构->单点登录账号
+      label: "LogMeIn Rescue"
+      note: 
+        chatlog: 聊天记录
+        header: "您的LogMeIn Rescue会话细节"
+        platform: 终止用户平台
+        session_id: 会话ID
+        tech_email: 技术员邮箱
+        tech_name: 技术员名字
+        tech_notes: 技术员标注
+        work_time: 总工作时间（以秒计）
+    salesforce: 
+      desc: "您可在 Freshdesk 的销售端查看联系人资料"
+      form: 
+        salesforce_settings: 销售动力设置
+      label: 销售动力
+    sugarcrm: 
+      desc: "在 Freshdesk 由 SugarCRM 您可看到联系人资料"
+      form: 
+        domain: "SugarCRM 帐户 URL"
+        domain_info: "例如, 如果您的 SugarCRM URL 是 <strong>http://mycompany.xyz/sugar/index.php? module=Administration&action=index</strong> , 输入 <strong> http://mycompany.xyz/sugar </strong><br /><br /> 注意: SugarCRM所提过的变数应该联系到互联网 </span>"
+        password: 密码
+        username: 用户名
+        widget_title: 小工具标题
+      helptext: "<h4>Sugar CRM整合帮助</h4><p><br/> 您可以通过Freshdesk的任务及联系人页面进入到SugarCRM的联系人信息。<br /><br /> 您可以进入以下的数据点-包括名称，职位，公司，部门，联系地址，座机及手机号码。 <br /><br />请注意，搜索功能是根据电邮地址进行的。如果有几个联系人共享同一个电邮地址，他们将会同时出现在列表中。"
+      label: SugarCRM
+    workflow_max: 
+      desc: 您可以记录花在个案的时间到您的最大工作流量的工作和任务
+      form: 
+        account_key: 帐户键
+        account_key_info: "由 工作流量最大支援 请求您的 帐户键并黏贴在此"
+        api_key: "API 键"
+        api_key_info: "由 工作流量最大支援 请求您的 API 键并黏贴在此"
+        widget_title: 小工具标题
+        workflow_max_note: 附加备注文本
+        workflow_max_note_info: 这些文字将会附加在备注的最后并附上所费的时间记录表
+      helptext: "<h4>Workflow Max 整合帮助</h4><p><br/> 如欲将Workflow Max的时间追踪整合到Freshdesk，您必须从<a href='mailto:support@workflowmax.com'>WorkflowMax 支援</a>处获得账号密钥以及API密钥。将密钥输入指定字段，完成整合。<br/><br/>整合后，点击任意一项任务并前往时间表选项卡。您可以选择员工，工作以及任务来在Workflow Max中新增时间记录。"
+      label: 最大工作量
+  is: 是
+  is_expiring_today: 今天到期
+  is_not: 不是
+  last: 最后
+  last_draft: 您上次的草稿
+  last_name: 姓
+  latest_ticket: 新的更新
+  latest_tickets: 新的更新资料
+  lead: 引导
+  left: 搁置
+  less_than: 少于
+  level_label: 等级
+  linkback_info: "当客户点击标头商标时, 您可以选择链接到您自己的网页"
+  linkback_overlabel: "链接回 URL"
+  loading: 
+    activities: 载入更多的活动
+    items: 加载多个项目
+  logmein_source: "LogMeIn Rescue"
+  logo: 商标
+  logo_delete_msg: 您确定要删除这个商标
+  low: 低
+  mark_as_spam: 标记为垃圾信件
+  maximum_agents_admin_msg: "您已经达到了预订的全职代理人数目上限。您需要删除一个现有的全职代理人或<a href='/subscription/plans'>升级您的账户</a>，才能创建一个新的代理人。如果您仅需要一位临时代理人，可在下方添加。"
+  maximum_agents_msg: "您已达您订阅所允许代理人的最大数量, 您必须删除一位现有的代理人或联络您的帐户管理人来生级您的帐户.  如果您只是偶而需要代理人可以在下方添加."
+  medium: 中
+  message: 信息
+  mobile: 
+    home: 
+      login: 登录
+      remember: 记住我
+      sign_in_error: 错误的電子邮件或密码
+      sign_in_using: 或注册使用
+  name: 姓名
+  never: 从不
+  new_ticket_created: 新个案创建
+  next: 下一步
+  next_charge_amount: "%{type} 费用"
+  next_charge_date: 您下次的付款时间为
+  next_level_info: " +%{points} ，成为%{name}"
+  no_badge_achieved_label: 暂未获得任何勋章。
+  no_change: 没有改变
+  no_date_to_display: 没有任何数据显示
+  no_forum_category: 没有论坛在这个类别里
+  no_level_achieved_label: 暂未达到任何等级。
+  no_message: 
+    canned_responses: 没有预先录制好的回答可用
+    products: 您尚未创建任何产品
+  no_password_reset: 不
+  no_tags: 没有标签
+  no_topics_text: 这个论坛内没有任何主题
+  no_twitter_handle: "请配置至少一个 twitter 帐户"
+  non_covered_feature_error: "您目前所选择 Freshdesk 的方案并不包含这项功能"
+  not_eligible_for_free_plan: 没有资格选择免费方案
+  not_selected: 尚未选择
+  note: 注：
+  notified_to: 已通知
+  ok: 确定
+  on_hold: 暂存中
+  one: 1小时
+  onemonth: 一个月
+  oneweek: 一个星期
+  open: 打开
+  open_tickets: 开放个案
+  or: 或者
+  paid_with: 支付与
+  password: 密码
+  password_reset_email: 重设密码的电子邮件
+  payment_info: 付款信息
+  pending: 暂停
+  phone: 电话
+  plan_amount: "每位代理人 / 每月"
+  plan_info_update: 您的计画已被更改
+  plan_is_selected: "您的免费帐户和 %{plan}计画现在已激活"
+  plans_billing: 计划和计费
+  portal: 
+    search: 
+      placeholder: 使用一个关键词或者一个完整的问题来搜索
+  portal_captcha: 没登录的情况下当要提交个案时有义务要提供验证码
+  portal_captcha_anon: 如果您想用户提交个案时提供验证码请启用这项功能
+  portal_customizer_anon_for_f: "如果您想要顾客可以以他们的 Facebook 用户名及密码登录, 请启动这项功能"
+  portal_customizer_anon_for_g: "如果您想要顾客可以以他们的谷歌用户名及密码登录, 请启动这项功能"
+  portal_customizer_anon_for_i: "如果您想在顾客入口网页隐藏论坛键, 请关闭这个功能."
+  portal_customizer_anon_for_t: "如果您想要顾客可以以 Twitter 的使用者名称和密码登录请启动这项功能"
+  portal_customizer_anon_tickets: 任何人皆可提交一个个案
+  portal_customizer_anon_tickets_i: "如果您想要您的用户能登录及提出个案. 请关闭这项功能"
+  portal_customizer_auto_suggest_solutions: "当用户创建一个新个案时, 如果您想要建议现有的解决方案.  请启动这项功能"
+  portal_customizer_facebook_signin: "允许使用者登录使用 Facebook"
+  portal_customizer_google_signin: 允许使用者登录使用Google
+  portal_customizer_open_forums: 任何人都可以浏览论坛
+  portal_customizer_open_sol_i: 如果您想要在公开顾客入口网页处隐藏解决方案键请关闭这个功能
+  portal_customizer_open_solutions: 任何人可以观看公开解决方案
+  portal_customizer_option_auto_suggest_solutions: 当用户创建一个新个案时自动建议解决方案
+  portal_customizer_option_for_i: 请关闭这项功能如果您想要用户在登录情况下才可观看解决方案
+  portal_customizer_option_forums: 用户未登录也可查看论谈内容
+  portal_customizer_option_sol_i: 如果您想要用户于登录后才可查阅解决方案必须取消这项功能
+  portal_customizer_option_solutions: 用户可以在不登录的情况下观看公开解决方案
+  portal_customizer_option_tickets: 用户能在没登录的情况下提出个案
+  portal_customizer_option_tickets_i: 如果您想要强制用户在提交个案前先登录必须先取消这个功能
+  portal_customizer_title: 自订您的公开顾客入口网页
+  portal_customizer_twitter_signin: "允许用户登录使用 Twitter"
+  portal_key: 入口网页
+  portal_signup: 允许顾客从顾客入口网页注册
+  portal_signup_anon: "如果您想要用户可以自己注册及创建他们自己的帐户,  请启动这项功能.  这将会启动用户登录及加入论坛讨论,主意投票 等."
+  posted_by: 上传文章人为
+  premium_brief: 最顶级
+  premium_details: "所有一切在 &quot;Pro&quot; 额外计画, 多重产品支援, 多重时区支援, 社区, 电子邮件 &amp; 电话支援"
+  preview: 预览
+  pro_brief: 给大的团队
+  pro_details: "所有情况在 &quot,Basic&quot, 添加计画, 自动情境化, 顾客特定 SLAs, 工作时间, 论坛, 社区, 邮箱支援."
+  problem: 问题
+  proceed_now: 继续吗
+  profile: 
+    api_key: 
+      reset: 重设API键
+      reset_warning: "一旦 API 键重设时, 所有使用旧 API 键的应用软件将停止运作.  您确定您要继续吗?"
+      title: "您的API 键"
+    change_password: 更改密码
+    confirm_password: 确认密码
+    current_password: 目前的密码
+    edit: 编辑个人资料
+    new_password: 新密码
+  quests: 
+    badge_mand: 请选择勋章。
+    customer_votes: 支持人数
+    date: 日期
+    delete: 您确定要删除此任务吗？
+    fcr: 属于首次提问即得到解决
+    forum_category: 类别
+    forum_mand: 请填充论坛数目。
+    forums: 论坛
+    inactive_quests: 闲置任务
+    js_forum_txt: "在此时间段$$questtime$$内，有$$questmode$$ $$questvalue$$的论坛帖子 ，并满足这些条件。"
+    js_quest_txt: 成功完成任务，您便可以开启$$badgename$$勋章，并获得$$questpoints$$奖励分数。
+    js_solution_txt: "在此时间段$$questtime$$内，创建 $$questvalue$$ 知识库文章 ，并满足这些条件。"
+    js_ticket_txt: "在此时间段$$questtime$$内，解决 $$questvalue$$任务，并满足这些条件。"
+    name_mand: 请提供任务名称。
+    satisfaction: 顾客满意度评分。
+    solution_articles: 文章
+    solution_folder: 文件夹
+    solution_likes: 赞好数目
+    solution_mand: 请填充解决方案数目。
+    ticket_mand: 请填充已解决任务的数目。
+  recent_activities: 近期的活动
+  recent_activity: 最近的活动
+  recent_forum_posts: 近期刊登的论坛
+  referral: 推荐信用
+  remove: 移除
+  reorder: 记录器
+  replied_to: 已回复至
+  replies: 回应
+  reply: 回复
+  reply_topic: 针对主题回答
+  reports: 
+    customer_activity_title: 活动报告
+    customer_title: 顾客的活动报告
+    customer_title_nav: 顾客的活动报告
+    date_ranges: 
+      custom: 日期范围
+      last_30_days: 最后30天
+      last_7_days: 最后7天
+      last_90_days: 最后90天
+      today: 今天
+      yesterday: 昨天
+    generate_button: 创造
+    helpdesk_activity_title: 帮助台活动报告
+    helpdesk_title: 帮助台活动报告
+    helpdesk_title_nav: 帮助台活动报告
+    pie_chart_title_prefix: 个案由
+    satisfaction_title: 满意度报告
+    scoreboard_agent_title: 代理人排行榜
+    scoreboard_group_title: 团队排行榜
+    scoreboard_reports: 
+      champions_title: 冠军
+      sharpshooter_title: 神枪手
+    scoreboard_title_nav: 排行榜
+    select_customer: 选择顾客
+    select_options: 提交报告
+    select_time_period: 选择时段
+    summary: 
+      fcr: 首次呼叫解决
+      open_tickets: 开放个案
+      pending_tickets: 暂存的个案
+      received_tickets: 接收到个案
+      resolved_tickets: 已解决的个案
+      sla_compliance: "SLA 合规"
+      title: 个案总结
+      total_tickets: 合计个案
+    summary_report: 
+      avg_1st_response_time: 平均首次回覆时间
+      back_to_reports: 回到报告
+      fcr_count: 首次接触解决问题
+      fcr_percent: 问题一次性解决率
+      helptext: "这篇报告内的数据是根据已解决任务的数目得出的。. <br /> 在服务水平协议内解决的任务可概括为 &quot;及时解决&quot;. <br /> &quot;问题一次性解决&quot; 栏显示那些首次回复便得到解决的任务。<br /> &quot;平均首次回复时间&quot;显示了从任务创建到代理人首次回复时所花费的时间。"
+      on_time_resolution: 准时解决问题
+      on_time_resolution_percent: 问题及时解决率
+      show_report: 显示报告
+      tickets_resolved: 个案已解决
+    survey_reports: 
+      back_to: 回到清单页面
+      feedbacks: 
+        in_response_to: 反应在
+      index: 
+        agent_list_loading: 取回代理人清单
+      list: 
+        no_feedback: 在这段期间没人给予任何反馈
+      list_content: 
+        happy: 太棒了
+        neutral: 还行
+        rating_msg_multiple: "%{count} 评价 %{rating}"
+        rating_msg_none: "没人给予评价 %{rating}"
+        rating_msg_single: "一位说 %{rating}"
+        rating_primary_msg_multiple: "%{count} 位顾客说 %{rating}"
+        rating_primary_msg_single: "一位顾客说 %{rating}"
+        unhappy: 不够好
+      sidebar: 
+        filter_by: 满意度检视
+        from: 由
+        helptext: "<b> 为什么要顾客满意度报告?  </b><p> 顾客满意度报告提供您顾客支援代理人服务品质的印象.  <br> 这份报告能让您了解您顾客的快乐指数, 以百分比值 (快乐,中立 和不快乐) 来代表相关的每位支援代理人.  <br><br><b>  还有什么是您能做的?  </b><br><p style='margin-left:15px;'> 1. 依代理人来过滤报告结果, 群组或公司 <br>  2. 检视特定期间的报告 </p></p>"
+        to: 收件人
+        view_report_date: 检视报告在
+    surveys_title_nav: 顾客满意度报告
+    tab_heading: 报告
+    tickets_by: 个案由
+    timeline_chart_title: 个案接收与解决
+    timesheet_reports: 
+      index: 
+        from: 由
+        select_agent: 选择代理人
+        select_billable: "选择 可计费 / 不可计费"
+        select_customer: 选择顾客
+        title: 时间表报告
+        to: 收件人
+        view_between: 检视报告在
+  requester_reopens: 请求者重新开启个案
+  requester_replies: 个案请求者针对个案作回覆
+  reset: 重置
+  reset_my_password: 重设我的密码
+  reset_password_title: 重设密码
+  resolution_time_sla: "决议时间 SLA 违规"
+  resolved: 已解决
+  resolved_late: 逾时解决个案
+  resolved_on_time: 准时解决个案
+  resolved_tickets: 已解决的个案
+  revert_identity_link_msg: 恢复身份
+  right: 对的
+  save: 储存
+  save_and_close: 储存及关闭
+  save_and_create: 储存并创建另一个
+  save_and_new: 储存和新的
+  save_changes: 储存变更
+  save_reply: 储存回应
+  save_this_view: 储存
+  save_this_view_tooltip: 储存检视
+  saved_draft: 已保存
+  saving_draft: 保存…
+  scenario_label: 情境标签
+  search: 
+    no_results_msg: 没有找到结果
+  security_code: 安全码
+  select: 选择…
+  select_a_plan: 选择一个计画
+  select_a_plan_gain_access: 从下面选择计划重新进入您的帐户。
+  select_another_plan: 选择另一个计画
+  select_free_plan: 选择您的免费计画
+  selected: 已选择
+  send_email_to_agent: 发送电子邮件给代理人
+  send_email_to_group: 发送电子邮件给群组
+  send_email_to_requester: 发送电子邮件给请求者
+  set_password: 设置您的密码
+  set_priority_as: 设置优先级为
+  set_status_as: 设置状态为
+  set_type_as: 设置类型为
+  settings: 设置
+  show_quoted_text: 显示引用的文字
+  sign_in_info: 您的登录身分为
+  signup: 报名
+  signup_complete_activate_info: "欢迎您!  我们已发送含有链接讯息的邮件到您的信箱, 您可设置您的密码及启动您的帐户"
+  signup_title: "报名加入到 %{current_portal}"
+  since: 自从
+  since_time: "从 %{time_words}"
+  sla_policy: 
+    business_time: 工作时间
+    calendar_time: 日历时间
+    edit: "编辑 SLA 政策"
+    escalate_to: 升级到
+    info1: "SLA 政策是一组目标回应及依个案优先解决次数.  此为产业中最佳的运作方式来设置服务等级依照优先权.  您的 SLA 政策可以用最简单的方式来表达如 \"高优先权个案应在2个小时解决\" 等"
+    info2: "Freshdesk 使用 SLA 政策来判定个案 \"到期\" 时间.  您可以为您的顾客预设一个 SLA 政策, 但是如果您的顾客特殊, 他要求要快一点的回应及解决时间, 您还是可以为他创建一个特殊 SLA 的政策."
+    info3: "SLA 策略运作和工作时间有连结"
+    new: "新 SLA 政策"
+    override: 覆盖
+    resolution_time: 解决问题的时间
+    response_time: 回应时间
+    select_policy: 选择政策
+    sla_targets: "SLA 目标"
+    tickets_with: 个案有着
+    title: "SLA 政策"
+    title1: SLA政策
+  social: 
+    facebook_pages: 
+      enable_facebook_page: 
+        associate: "选择您想要和帮助台联结的 facebook 的网页"
+        no_page_info: "哎呀！…看来您还没有Facebook页面呢。 <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>创建一个，来支持我们吧...</a>"
+      engage_info: 
+        add_facebook: "添加 Facebook 网页"
+        associate_account: "串联一个 Facebook 的网页到 <b> %{account_name} </b> 并由 Freshdesk 回覆您的顾客当他们有给予意见或上传文章到您的意见墙上"
+        engage_customers: "在 Facebook 直接启用您的顾客"
+        title: "添加您的 Facebook 网页"
+      form: 
+        company_posts: "导入 <strong> \"公司上传\" </strong> 为个案"
+        company_posts_info: "Freshdesk 将会转换所有公司上传文章在这个 Facebook 网页到个案"
+        direct_messages: "导入 <strong> \"直接信息\" </strong> 为个案"
+        direct_messages_info: "Freshdesk 将会转换所有在这个 Facebook 页面的直接信息成个案.  如果您为第一次启动这项功能您需要 <a href='{{reauth_url}}'> 再次和 Facebook 验证 </a>"
+        message_thread_time: 信息运作时间
+        message_thread_time_info: 用最多的时间来考量由同一位用户发出的信息来当作操作的运作时间
+        product: 产品
+        visitor_posts: "导入 <strong> \"访客上传\" </strong> 为个案"
+        visitor_posts_info: "Freshdesk 将会转换所有在 Facebook 网页的访客上传为个案"
+      index: 
+        reauth_required: 要求重新授权
+        reauthorize: 重新授权
+        title: "Facebook 网页"
+    twitter_handles: 
+      edit: 
+        twitter_settings_for_msg: "Twitter 的设置"
+      form: 
+        capture_dm_info: "Freshdesk 将会自动转换任何直接的短信到这个 Twitter 帐户给这个个案"
+        capture_dm_msg: "捕捉 <strong> \"直接信息\" </strong> 为个案"
+        capture_mentions_info: "Freshdesk 将会自动转换任何这个 Twitter 帐户的 @mentions 到个案"
+        capture_mentions_msg: "捕捉 <strong>\"@Mentions\"</strong> 为个案"
+        dm_time_info: 用最多的时间来考量由同一位用户发出的直接信息来当作操作的运作时间
+        dm_time_msg: 操作运作时间
+        info_data: "帮助您快速的监控 twitter 搜索和您产品 / 品牌 / 服务有相关的. <br /> <strong>Note:</strong>您可以添加多个搜索关键字以逗号来分开."
+        product: 产品
+        search_keywords: 关键字搜寻
+      index: 
+        remove_handle_msg: "您确定您要移除此 twitter 帐户吗"
+        title: " Twitter 帐户"
+      signin_info: 
+        add_twitter: "添加 twitter 帐户"
+        associate_account: "连结一个 twitter 帐户到 <b> %{product_name} </b> 并由 Freshdesk 以 tweet 或信息回应您的顾客"
+        engage_customers: "在 twitter 直接启用您的顾客"
+        title: "使用 twitter 帐户登录"
+  solution: 
+    add: 添加解决方案
+    add_new_solution: 添加一个新的解决方案
+    edit: 编辑解决方案
+    folder: 文件夹
+    folders: 
+      folder_form: 
+        visible_to: 对以下可见：
+      new: 
+        new_folder: 新文件夹
+    info1: 在Freshdesk的解决方案是您的资源库
+    info10: "私人 (仅限管理人查看)"
+    info2: "解决方案可分 <b>public</b> 或 <b>private</b>.  公开的解决方案可在自助入口页面内看得到也会出现在搜索的结果中"
+    info3: 私人的解决方案仅提供给管理人做为内部知识交流使用
+    info4: "解决方案有3个等级制度 - <b> 类别 --> 文件夹 --> 文章 </b>"
+    info5: "解决方案可有两种种类 - <b>Workaround</b> 或 <b>Permanent</b>解决方案"
+    info6: "当撰写一个解决方案时可设定为<b>草稿</b>模式,  一旦完成和查看时可更改为<b>公开</b>模式"
+    info7: 文件夹内没有解决方案
+    info8: 您确定要删除这个解决方案?
+    info9: "公开状态 (将会公布在自助服务页面)"
+    no_solutions_info: 文件夹内没有解决方案
+    status: 解决方案状态
+    title: 解决方案
+    type: 解决方案类型
+    visibility: 分类名称的能见度
+  solution_category: 
+    edit: 编辑解决方案类别
+    info1: 您确定您要删除这个类别?
+    info2: 这个类别中没有任何文件夹
+    name: 类别名称
+    new: 新解决方案类别
+    save_and_create: 储存并创建另一个
+  solutions: 
+    search: 
+      placeholder: "搜索 %{name}"
+    search_all: 
+      placeholder: 搜索所有解决方案
+    status: 
+      draft: 草稿
+      published: 公布
+    types: 
+      permanent: 永久
+      workaround: 变通方法
+    visibility: 
+      agents: 代理人
+      all: 所有的
+      anyone: 任何人
+      logged_in_users: 登录的用户
+      select_company: 选择公司
+  special_beta_offer: 测试账户的特别优惠
+  sprout_brief: 强大电子邮件帮助台
+  sprout_details: "电子邮件回应管理, 全自动, 预设 SLA 政策, 知识库, 自助服务入口网页, 网域部署, 报告, 社区支援"
+  start_typing_a_question: 开始键入一个疑问并即时看到“答案”
+  starts_with: 开头为
+  state: 状态
+  status: 状态
+  status_cust_disp_name_uniqueness_msg: 状态顾客的显示名称已经被使用了
+  status_deleted: 状态已删除
+  status_name_validate_presence_msg: 状态名称不能为空白
+  status_name_validate_uniqueness_msg: 状态名称已被使用
+  step1: 第1步
+  step2: 第2步
+  subject_or_description: 主题或说明
+  submit: 提交
+  subscription: 
+    error: 
+      lesser_agents: "您的 Freshdesk 帐户目前有 %{agent_count} 位代理人您不可再登记添加代理人. 请删除一些代理人再试一次"
+  subscription_plan: 
+    billing_cycle: 
+      annual: 年度
+      monthly: 每月
+      quarterly: 季度
+      sixmonth: 半年期
+  success: 成功
+  support: 
+    shared: 
+      survey_form: 
+        cancel: 取消
+        change_of_mind: 改变主意了？
+        feedback_title: 您的表扬和批评都将有助于我们提升未来的服务。
+        rate_again: 重新评分
+        rated_on: "您给了我们此评分%{rated_on}"
+        submit: 提交
+        survey_title: 请花点时间为我们的服务评个分吧。
+    surveys: 
+      feedback_already_done: 您对此回复已提供过反馈意见
+      new: 
+        additional_info: "除此之外, 您还可以和我们分享您的工作经验."
+        feedback_info: 非常谢谢您的反馈
+        feedback_optional: 提供反馈是选择性的
+        happy_info: 服务您是我荣幸很高兴您对我们的服务满意
+        neutral_info: 希望您感觉高兴一点
+        send: 发送
+        sorry: "然而   非常抱歉造成困扰"
+        thanks: 非常谢谢您的评价!
+        thanks_info: 感谢您花时间评价我们的支援服务
+        unhappy_info: 我们会特别确认下次会更小心
+      thanks_for_feedback: "已收到您的反馈   非常谢谢您"
+  suspended_plan_admin_info: "您的帐户已被暂停请联系您的帐户管理员 %{email}!"
+  suspended_plan_info: 您的帐户已被暂停请选择一个计划来继续进行
+  switch_heading: 转换代理人
+  swith_agent_msg: 转换另一位代理人
+  tag: 
+    title: 标签
+  this_ticket_has_been_closed: 个案已关闭
+  this_ticket_has_been_deleted: 个案已删除
+  this_ticket_has_been_resolved: 这个个案已经解决了
+  threeday: 3天
+  threemonth: 三个月
+  ticket: 
+    activities: 活动
+    activity: 活动
+    add_note: 添加备注
+    add_time: 添加时间
+    agent_notify: 加了备注并希望你去看看
+    agent_responded_at: "从代理人回覆后的时间 (小时)"
+    assign_to_agent: 指派给代理人
+    assigned_agent: 代理人
+    assigned_at: "自从个案指派后的时间 (小时)"
+    assigned_none: "-"
+    assigned_to: 指派到
+    canned_responses: 
+      ca_responses: 模板回复
+      insert_ca_resp_tip: 插入预录好的回答
+      insert_ca_response: 预录好的回答
+    close_btn: 关闭
+    close_btn_title: 关闭这个个案
+    closed_at: "关闭个案后的时间 (小时)"
+    convert_ticket_title: 转换成个案
+    create_ticket_title: 创建一个个案
+    created_at: "创建后的时间 (小时)"
+    created_on: "创建在 %{time}"
+    delete_btn: 删除
+    delete_btn_title: 移除这个案到废件箱
+    due_by: "个案过期后的时间 (小时)"
+    due_by_time: 因时间计算而到期
+    edit: 编辑个案
+    edit_btn: 编辑
+    execute_scenario: 执行以下操作
+    export: 输出
+    facebook_form: 
+      send: 发送
+      send_and_resolve: 发送和解决
+    first_assigned_at: "自从个案指派后的时间 (小时)"
+    first_response_due: "从第一次回覆到期后的时间 (小时)"
+    flag_spam: 垃圾邮件标记
+    group: 群组
+    ham_btn_title: 这邮件不是垃圾邮件
+    inbound_count: 请求者交流的数量
+    integrations: 
+      jira: 
+        tooltip: 检视相关的JIRA问题
+    merge_btn: 合并
+    monitor_btn_title: 监控这个个案
+    note_content: 备注内容
+    note_form: 
+      add_and_resolve: 添加和解决
+      form_title: 添加备注
+      notify_agents: 通知代理人
+      private_note: "这是一个私人的备注, 请不要给请求者看"
+    opened_at: "个案再次开启后时间 (小时)"
+    pending_since: "个案暂存后时间 (小时)"
+    pick_up: 选择
+    portal_created_on: "创建由 <span class='emphasize'>%{username}</span> 在 <span class='emphasize'>%{date}</span>"
+    portal_created_on_same_user: "创建在 <span class='emphasize'>%{date}</span>"
+    priority: 优先权
+    properties: 个案性质
+    recent_tickets: 近期的个案
+    reply_form: 
+      form_title: 回覆对话
+      post_to_linked_forum: 发表到已连接的论坛
+      reply_email_id: "由以下电子邮箱 ID 发送回覆"
+      send: 发送
+      send_and_resolve: 发送和解决
+      send_satisfaction_survey: 包含满意度调查
+    reply_to: 回答
+    reported_by: "由 %{requester}"
+    reported_from_source: "透过 %{source} 报告"
+    reported_on: "由 %{username}, 在 %{date} 做的最后更新"
+    requester: 请求者
+    requester_responded_at: "从请求者回覆后的时间 (小时)"
+    requestor_info: 请求者资料
+    resolved_at: "从个案解决后的时间 (小时)"
+    restore_btn: 恢复这个个案
+    restore_btn_title: 由废件箱回复这个个案
+    select_to_agent: 选择一位代理人
+    singular: 个案
+    sort_by: 排序方式以
+    source: 原始资料
+    spam_btn_title: 标记为垃圾邮件
+    split_ticket: 分割
+    status: 状态
+    stop_monitor_btn_title: 停止监控这个个案
+    subject: 主题
+    submit_ticket: 提交
+    submit_ticket_title: 提交一个个案
+    suggest_solutions: 建议的解决方案
+    suggested_solutions: 
+      insert_content: 插入内容
+      insert_content_tip: 插入这个解决方案文章到您的回覆或备注
+      insert_url: 插入URL
+      insert_url_tip: 插入这个解决方案的URL到您的回覆或备注
+      no_result: 没有找到解决方案
+      title: 建议的解决方案
+    tags: 
+      add_tag: 添加一个标签
+      create_success: 标签已经添加
+      destroy_success: 个案中的标签已经移除
+      no_match: "没有相符的资料.  按输入键创建新的标签."
+    thanks: 感谢您提出的反馈
+    ticket_list_status_agent_responded_at: "从: %{username}, 代理人回应: <span class='emphasize'>%{time_ago} 之前 </span>"
+    ticket_list_status_closed_at: "从: %{username} , 在 <span class='emphasize'>%{time_ago} 之前关闭了</span>"
+    ticket_list_status_created_at: "从: %{username}, 创建了 : <span class='emphasize'>%{time_ago} 之前 </span>"
+    ticket_list_status_requester_responded_at: "从: %{username}, 顾客回应: <span class='emphasize'>%{time_ago} 之前 </span>"
+    ticket_list_status_resolved_at: "从: %{username}, 解决了 : <span class='emphasize'>%{time_ago} 之前 </span>"
+    ticket_url: 个案URL
+    to_do: 个案待办事项
+    tweet_form: 
+      tweet_and_resolve: "Tweet 和 解决"
+      user_not_following: "该用户和你的 twitter 帐户没相关联"
+    tweets: 推特
+    type: 类型
+    unassigned: 解除指派
+    unflag_spam: 非垃圾邮件
+    verify_human: "为了确认您是人类.  请输入萤幕上的乱码代号."
+  ticket_cancel_multiple_button: 取消
+  ticket_cc_email_more: 更多
+  ticket_close_failure: 终止任务失败。
+  ticket_close_success: 成功终止您的任务。
+  ticket_closed_at_time: 关闭在
+  ticket_due_by_time: 因时间计算而到期
+  ticket_fields: 
+    confirm_delete: 您确定要删除这个栏位吗
+    fields: 
+      agent: 代理人
+      description: 说明
+      group: 群组
+      priority: 优先权
+      product: 产品
+      requester: 请求者
+      source: 原始资料
+      status: 状态
+      subject: 主题
+      ticket_type: 类型
+    first_choice: 首要选择
+    formfield_props: 
+      add_new_choice: 添加新的选择
+      agent_info1: "提出个案时, 栏位不可为空白"
+      agent_info2: "关闭个案时, 栏位不可为空白"
+      agent_mandatory_closure: 当关闭个案时会被要求
+      agent_mandatory_submission: 当提出申请表格时会被要求
+      behavior: 行为
+      cc_any_email: "可以 CC 任何一个电子邮件地址"
+      cc_company_contacts: "仅能 CC 给公司的联系人"
+      choices: 选择项目
+      customer_edit: 顾客可以编辑
+      customer_info1: "在线提出个案时, 栏位不可为空白"
+      customer_mandatory: 当提出申请表格时会被要求
+      customer_visible: 显示给客户
+      delete_field: 删除栏位
+      description: 说明
+      display_cc_field: "显示 CC 栏位"
+      display_to_customer: 显示讯息给客户
+      dropdown_choices: 下拉项目选项
+      dropdown_items_edit: "下拉列表中项目 - 编辑画面"
+      dropdown_items_preview: "下拉列表中项目 - 预览"
+      field_label_agents: 栏位标签是提供给代理人
+      field_label_customer: 给顾客的栏位标签
+      for_agents: 给代理人
+      for_customer: 给顾客
+      form_title: 栏位属性
+      label: 栏位标签
+      label_in_portal: 在入口网页中的标签
+      label_in_portal_info: 这个标签是显示在您自己的服务入口网页
+      level1: 第一级
+      level2: 第二级
+      level3: 第三级
+      nested_label: 预设好的栏位标签
+      nestedfield_helptext: "用以下自由文字空间来添加或编辑您的下拉选项, 点击选项键一次或两次来缩进选项.  我们会依照缩进来转换到下拉选项,请特别注意.  <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a>"
+      nestedfield_helptext_preview: 这是样品下拉列表中的项目“预览”，使用自由文本区域中的“编辑视图”來编辑项目
+      sla_timer: "SLA 计时器"
+      status_choices: 状态的选择项目
+    index: 
+      add_custom_field: 添加一个自订的栏位
+      checkbox: 复选框
+      customize_form: "定制您的 \"新个案\" 表格"
+      drag_drop_intro: "拖放任何栏位型态到以下的 '新个案' 表格来添加一个新的自订栏位"
+      dropdown: 下拉项目
+      nestedfield: 相关的栏位
+      number: 号码
+      paragraph: 段落文本
+      save: 储存个案栏位
+      single_line: 单行文本
+      title: 个案栏位
+    no_choice_message: 至少有一个有效的选择提供给您
+    second_choice: 第二选择
+    untitled: 无标题
+  ticket_pending_since_time: "暂存, 自"
+  ticket_resolved_at_time: "已解决, 在"
+  ticket_update_multiple_button: 更新
+  ticket_was: 个案曾经是
+  tickets_filter: 
+    sort_fields: 
+      asc: 依序递增
+      date_created: 创建的日期
+      desc: 依序递减
+      due_by: 因时间计算而到期
+      last_modified: 最后修改
+      priority: 优先权
+      status: 状态
+    title: 过滤个案
+    unsaved_view: 无标题的检视画面
+  tickets_were: 个案曾经是
+  tip_off: 点击来禁用
+  tip_on: 点击来启动
+  title: 标题
+  tkt_assigned_to_agent: 个案已指派给代理人
+  tkt_assigned_to_group: 个案指派给群组
+  tkt_unattended_in_grp: 在群组中无人注意的个案
+  to: 至
+  to_do: 待办事项
+  to_email: 到电子邮件
+  top: 最上级
+  topic: 
+    close: 结束讨论
+    edit: 编辑主题
+    ideas_stamps: 
+      implemented: 应用
+      nottaken: 未使用
+      planned: 已计画
+    locked: 锁定
+    msg1: 这个主题的评论已关闭
+    name: 主题名称
+    new: 新主题
+    open: 重新开启这个讨论
+    post: 发表主题
+    reply: 回覆这个主题
+    sticky: 小贴士
+  topics: 
+    last_reply: "%{post_time} 之前 %{user_link} 的最后回覆"
+    posted_at: "%{post_time} 前上传的"
+    show: 
+      mark_this_idea_as: 把这主意标记为
+  total: 合计
+  total_price: 总价
+  trial_expired_on: 您的测试帐户已过期
+  twelve: 12小时
+  twitter: 
+    associate_twitter: "连结一个 twitter 帐户到您的帮助台, 您可开始经由 twitter 支援您的顾客"
+    deleted: "这个 twitter 帐户 @%{twitter_screen_name} 已被移除"
+    error_sending: "发送 tweet 时产生错误讯息!  Twitter 可能不稳定.  请再试一次."
+    not_authorized: "您没有被 Twitter 授权"
+    sent: "成功发送 Tweet"
+    success_signin: "成功的连结 @%{twitter_screen_name} 和 %{helpdesk}"
+    ticket_save: "成功的转换 tweet 成为一个个案"
+    tkt_err_save: "无法转换 tweet 到个案或已经转换过了"
+    user_exists: "Twitter 特帐户以和另一个产品连结"
+    usr_not_thr: 用户不在
+  twitter_source: 推特
+  two: 二小时
+  twoday: 2天
+  twoweek: 2周
+  unable_to_charge: 无法为添加的代理人在卡片上扣款
+  unauthorized_msg: 授权失败
+  undelete: 恢复
+  undo: 撤消
+  update: 更新
+  update_and_login: 资料更新再登录
+  update_multiple_tickets: 更新多重个案
+  updated_on: "%{user_name} 在 %{note_date} 已更新"
+  upgrade_trial: 升级您的测试版
+  urgent: 紧急
+  use_reply_option: "请用 回答 选项来发送电子邮件给请求者"
+  user: 
+    address: 地址
+    back_info: 背景信息
+    company: 公司
+    email: 电子邮件
+    full_name: 全名
+    info1: "一个人的简介照片, 最好照片能有相同长度及高度"
+    mobile: 手机
+    name: 名字
+    phone_no: 电话号码
+    photo: 照片
+    secondary: 次要
+    title: 标题
+    twitter_id: "Twitter ID"
+    work: 工作
+  user_activation_email: 用户激活電子邮件
+  user_activation_message_sent: "用户已创建, 启动程序已发送到 %{user_email}!"
+  user_block: 是
+  user_sessions: 
+    new: 
+      email: 电子邮件
+      forgot: 我忘记我的密码?
+      help: 帮助
+      login: 登录
+      password: 密码
+      remember: 在这台电脑上记住我
+      sign_in_using: 登录
+      sign_in_using_google: "以您的 Google 帐户登录"
+  username: 用户名
+  users: 
+    activations: 
+      code_expired: 您的激活代码已经过期
+      send_invite_success: 激活电子邮件已经发送
+      success: 您的帐户已经激活
+  users_blocked_message: "以下联系人 (%{users}) 已被封锁"
+  validate_fwd_to_email_msg: 请输入一个有效的电子邮件地址
+  waiting_on_customer: 正在等候顾客
+  waiting_on_third_party: 等待第三方人员
+  warning: 警告
+  wf: 
+    filter: 
+      index: 
+        back: "&larr; 回到个案"
+        no_custom_view: 没有可用的自定画面!
+        title: 管理自订画面
+      view: 
+        delete: 您确定您要删除这个画面吗?
+    messages: 
+      no_tickets_for_user: "没有开放的个案给 %{user_name} 检视"
+      no_tickets_in_view: "在 %{view_name} 页面您没有任何个案"
+      no_tickets_subtext: "查看 %{view_1} 或 %{view_2}"
+      no_tickets_subtext_single: "查看 %{view_1}"
+  what_is_cvv: 什么是cvv?
+  widgets: 
+    contact_widget: 
+      description: "显示一个联系人或选向来添加联系人到 capsule"
+  will_expire_in: 将会过期在
+  working: 工作中
+  wrong_portal: 
+    content_not_available: "您要寻找的内容  并不在此入口页面"
+    title: 不提供资料或服务
+  yes_password_reset: 是的
+  your_email_address: 您的电子邮件住址
+  your_trial_account: 您的测试帐户
+  zendesk_backup: 备份文件
+  zendesk_backup_info: "由 Zendesk 选择 Zendesk 备份文件下载"
+  zendesk_credentials: "Zendesk 证书"
+  zendesk_url: "Zendesk 链接"
+  zendesk_url_info: "举例:- http://acme.zendesk.com"
+  zip: 邮码
