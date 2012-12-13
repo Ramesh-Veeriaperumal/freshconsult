@@ -13,7 +13,7 @@ BatchbookWidget.prototype= {
 			batchbookBundle.ssl_enabled = true;
 		}
 		this.batchbookBundle = batchbookBundle;
-		freshdeskWidget = new Freshdesk.CRMWidget(batchbookBundle, batchbookWidget);
+		this.freshdeskWidget = new Freshdesk.CRMWidget(batchbookBundle, batchbookWidget);
 	},
 
 	get_contact_request: function() {
@@ -26,6 +26,12 @@ BatchbookWidget.prototype= {
 	parse_contact: function(resJson){
 	if(this.batchbookBundle.ver == 'new')
 		return this.parse_for_bb2(resJson);
+
+	if((typeof resJson == 'string') && resJson.indexOf("<!DOCTYPE")==0)
+	{
+		this.freshdeskWidget.alert_failure("Could not fetch data from " + this.batchbookBundle.domain + "\n\nPlease verify your integration settings and try again.");
+		return;
+	}
 	contacts = [];
 	resJson.each( function(contact) {
 		bAddressAvailableForDisplay = false; 
@@ -187,7 +193,19 @@ BatchbookWidget.prototype= {
 						phone_type=phone.label; cPhone = phone.number + ((!phone.primary) ? label_mark(phone.label) : "");
 				}	}
 			});
+
+			title = (title) ? (title) : ""  ;
+			var cPhone = (cPhone) ? cPhone : "N/A";
+			var cMobile = cMobile ? cMobile : "N/A";
+			var cAddress = (cAddress) ? cAddress : "N/A";
 			
+			
+			title = (title) ? (title) : ""  ;
+            var cPhone = (cPhone) ? cPhone : "N/A";
+            var cMobile = cMobile ? cMobile : "N/A";
+            var cAddress = (cAddress) ? cAddress : "N/A";
+             
+
 			contacts.push({
 				name: fullName,
 				url: cLink,
