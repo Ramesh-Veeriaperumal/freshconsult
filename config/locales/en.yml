@@ -76,7 +76,7 @@ en:
     fields:
       source: Source
       subject: Subject
-      requester: Requester
+      requester: Search a requester
       status: Status
       group: Group
       agent: Agent

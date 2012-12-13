@@ -101,7 +101,9 @@ class User < ActiveRecord::Base
   end
   
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and (external_id.blank? || !email.blank?)
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
+                          (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
+                          (mobile.blank? || !email.blank?)
   end
 
   def add_tag(tag)
@@ -321,8 +323,13 @@ class User < ActiveRecord::Base
     role[:permissions][p]
   end
   
-  def name_email
-    "#{name} <#{email}>" unless email.nil?
+  def name_details #changed name_email to name_details
+    return "#{name} <#{email}>" unless email.blank?
+    return "#{name} (#{phone})" unless phone.blank?
+    return "#{name} (#{mobile})" unless mobile.blank?
+    return "@#{twitter_id}" unless twitter_id.blank?
+
+    name
   end
 
   def self.find_all_by_permission(account, p)
@@ -348,9 +355,7 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-
     UserDrop.new self
-    
   end
   
   def has_manage_forums?
@@ -501,6 +506,15 @@ class User < ActiveRecord::Base
     user
   end
 
+  def self.find_by_an_unique_id(options = {})
+    options.delete_if { |key, value| value.blank? }
+    
+    #return self.find(options[:id]) if options.key?(:id)
+    return self.find_by_email(options[:email]) if options.key?(:email)
+    return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
+    return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
+  end 
+  
   private
 
     def account_admin_updated?

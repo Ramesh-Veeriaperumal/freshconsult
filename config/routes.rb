@@ -278,7 +278,7 @@
 
     helpdesk.resources :attachments
     
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get }
+    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     
