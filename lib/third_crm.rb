@@ -61,6 +61,7 @@ class ThirdCRM
     lead_custom_field[:Plan__c ] = subscription.subscription_plan.name 
     lead_custom_field[:Amount__c] = subscription.amount 
     lead_custom_field[:Customer_Status__c] = subscription.state
+    lead_custom_field[:Customer_Status__c_contact] = subscription.state
     lead_custom_field
   end
   

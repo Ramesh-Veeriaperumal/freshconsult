@@ -22,10 +22,9 @@ class Solution::ArticlesController < ApplicationController
     @article = current_account.solution_articles.find(params[:id], :include => :folder) 
     wrong_portal and return unless(main_portal? || 
         (@article.folder.category_id == current_portal.solution_category_id))
-    
-    @page_title = @article.title
-    @page_description = "#{@article.title}. #{@article.folder.name}. #{@article.folder.category.name}" 
-    @page_keywords = @article.tags.join(", ")
+    @page_title = @article.article_title
+    @page_description = @article.article_description
+    @page_keywords = @article.article_keywords
         
     respond_to do |format|
       format.html

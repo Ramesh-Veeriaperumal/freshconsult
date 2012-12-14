@@ -58,5 +58,5 @@ module BusinessTime
     alias_method :ago, :before
     alias_method :until, :before
 
-  end   
+  end    
 end

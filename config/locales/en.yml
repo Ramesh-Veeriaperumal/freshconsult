@@ -47,9 +47,10 @@ en:
   pending: Pending
   twitter_source: Twitter
   facebook_source: Facebook
+  facebook_user: Facebook User
   mobi_help: MobiHelp
   logmein_source: LogMeIn Rescue
-  working: Working
+  working: Working at
   attachment: Attachment
   attachments: Attachments
   show_quoted_text: Show Quoted text
@@ -77,7 +78,7 @@ en:
     fields:
       source: Source
       subject: Subject
-      requester: Requester
+      requester: Search a requester
       status: Status
       group: Group
       agent: Agent
@@ -536,21 +537,33 @@ en:
       assign_product: "Assign Product"
       product_label_msg: "Product"
     canned_responses:
-      ca_response:
-        delete_confirm: Are you sure you want to delete this canned response?
-      new: 
-        title: Add Canned response        
-      edit: 
-        title: Edit Canned response
-      form: 
-        groups: Agents in group
-        response_name: Response title
-        all_agents: All agents
-        me_only: Me only
-        available_for: Available for
+      helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      folders:
+        helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      responses:
+        edit: 
+          title: Edit Canned response
+        new: 
+          title: Add Canned response   
+        form: 
+          groups: Agents in group
+          response_name: Response title
+          all_agents: All agents
+          me_only: Myself
+          available_for: Available for
       index: 
         new: Add Canned response
         title: Canned responses
+    ca_response:
+      delete_confirm: Are you sure you want to delete this canned response?
     twitters:
       index:
         new: Add Twitter account
@@ -602,7 +615,7 @@ en:
         portal: Portal
         account: Account
         customer: Customer
-        canned-response: Canned Response
+        canned-response: Canned Responses
         multi-product: Multiple Products
         twitter-setting: Twitter
         survey: Survey Settings
@@ -610,26 +623,6 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
-    canned_responses:
-      index:
-        title: Canned responses
-        new: Add Canned response
-      helpnote:
-        title: Canned responses
-        tour: Help me use canned responses
-        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
-        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      new:
-        title: Add Canned response        
-        delete_confirm: Are you sure you want to delete this canned response?      
-      edit: 
-        title: Edit Canned response
-      form:
-        available_for: Available for
-        all_agents: All agents
-        groups: Agents in group
-        me_only: Me only
-        response_name: Response title
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -1088,9 +1081,11 @@ en:
   billed_monthly: Billed monthly
   users: 
     activations: 
+      sent : Sent!
       send_invite_success: Activation email has been sent!
       success: Your account has been activated.
       code_expired: Your activation code has been expired!
+      bulk_send_invite_success: "Activation mails were sent to %{users} users."
   edit_email: Edit email
   fav_delete_msg: Are you sure you want to delete this fav icon?
   dispatch: 
@@ -1157,7 +1152,8 @@ en:
     edit: Edit Topic
     close: Close this Discussion
     post: Post Topic
-    reply: Reply to this Topic
+    add_comment: Add Comment
+    post_comment: Post
     msg1: Comments are closed for this topic
     sticky: Sticky
     locked: Locked
@@ -1222,12 +1218,12 @@ en:
         voted_users_widget_title: People who have this question
     post:
       posted_on: "%{user_name} on %{post_date}"
-      edit_post: Edit Post
+      edit_comment: Edit Comment
       unmark_answer: Unmark this as the answer
       post_accepted_as_a_good_answer: This post is accepted as a good answer to this topic
       mark_answer: Mark this as the answer
-      delete_post_confirm: Delete this post?  Are you sure?
-      delete_post: Delete post
+      delete_comment_confirm: Delete this comment?  Are you sure?
+      delete_comment: Delete Comment
       answer: Answer
   half: 30 Minutes
   between_range: Between Range
@@ -1331,7 +1327,6 @@ en:
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
-  country: Country
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
@@ -1350,6 +1345,10 @@ en:
     edit: Edit Contact
     save_changes: Save changes
     deleted_message: This is a deleted contact
+    contacts_in_companies: "%{contacts}"
+    contact: contact
+    contacts: contacts
+    no_contacts: No contacts
     title: Contacts
     emailnotverified: Email has not been verified for this contact!
     showing: "Showing:"
@@ -1366,24 +1365,35 @@ en:
     tags: "Tags"
     tag_cloud: "Contact Tag Cloud"
     info3: Background information of %{nick_name}
-    working: Working
+    working: Working at
     info4: Recent tickets from %{nick_name}
     form_placeholder: 
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
     info5: User has not created any ticket till now
     restore: Restore
+    activation : Send Activation
     info6: Add specific notes regarding this contact
     role:
       info: Can see all tickets from this company 
     status:
-      active: Active
+      verified: Verified
       deleted: Deleted
-    active:
-      no_contacts: You don't have any contact added to the list.
-      no_contacts_with_letter: You don't have any active contacts with the letter '%{alphabet}'
+      unverified: Unverified
+      all: All
+    status_title:
+      verified : Active contacts
+      unverified : Contacts with unverified emails
+      deleted : Deleted contacts
+      all: All contacts
+    verified:
+      no_contacts: You don't have any contacts.
+      no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
     deleted:
       no_contacts: You don't have any contacts to restore.
-      no_contacts_with_letter: You don't have any deleted contacts with the letter '%{alphabet}'
+      no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
+    unverified:
+      no_contacts: You don't have any unverified contacts.
+      no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
   between: Between
   portal_key: Portal
   add_new_forum: add a new forum
@@ -1459,14 +1469,14 @@ en:
     status: Solution Status
     info8: Are you sure you want to delete this solution?
     folder: Folder
-    meta: Meta tags for search engine
-    meta_title: Title_tag
-    meta_keywords: Meta Keywords
-    meta_description: Meta Description
+    solution_meta: Meta tags for search engines
+    solution_meta_title: Title Tag
+    solution_meta_keywords: Meta Keywords
+    solution_meta_description: Meta Description
     title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
     description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
-    keywords_message: Seperate keyword with commas
+    meta_keywords_message: Seperate keywords with comma
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   save: Save
@@ -1900,7 +1910,7 @@ en:
   add: Add
   portal_customizer_title: Customize your Public Customer Portal
   your_trial_account: Your trial account
-  reply_topic: Reply to topic
+  reply_comment: Add Comment
   password: Password
   import_step2_info: Map the following CSV fields with database fields and import.
   feedbackwidget_defaulttitle: Help &amp; Support
@@ -2472,18 +2482,20 @@ en:
         username: "Username"
         password: "Password"
     batchbook:
-      label: "Batchbook (Classic)"
+      label: "Batchbook"
       helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
       desc: "Bring in contact information from your Batchbook account into Freshdesk"
+      detect_error: "Unable to detect version of Batchbook. Please check the domain."
       form:
         domain: "Batchbook Domain:"
         domain_info: "For example, if your Batchbook URL is <strong>http://mycompany.batchbook.com/</strong> , enter <strong> mycompany </strong>. </span>" 
         api_key: "API Key"
-        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook (Classic)."
+        api_key_info: "Your Batchbook API Key can be found by following the <i>Your Account</i> link in Batchbook."
         version:
           label: "Version"
           classic: "Classic"
           new: "New"
+          auto_detect: "Detect Automaticaly"
         version_info: "Version field lets you choose between <i>Batchbook Classic</i> and <i>Batchbook New</i>."
         widget_title: "Widget Title"
     highrise:
@@ -2544,16 +2556,16 @@ en:
         logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
     mailchimp:
       label: "MailChimp"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      desc: "Add MailChimp to Freshdesk and start managing your subscriptions, export customer lists and pull necessary information about their activities from your help desk.  "
       helptext: "<h4>MailChimp Integration Help</h4>"
     constantcontact:
       label: "Constant Contact"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
+      desc: "Integrate your Constant Contact account to control your subscriptions inside Freshdesk and get updated information about customers and their activities."
       helptext: "<h4>ConstantContact Integration Help</h4>"
     campaignmonitor:
       label: "Campaign Monitor"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, get your API Key from your Account Settings.<br/><br/> The instructions to get your ClientID is available from http://www.campaignmonitor.com/api/getting-started/#clientid. <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
+      desc: "Look up and manage subscriptions on your Campaign Monitor account, and bring in insights on customer usage statistics right inside Freshdesk. "
+      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, you should input your API Key and ClientID from Campaign Monitor. <br/></br/> API Key can be obtained from Campaign Monitor's Account Settings.<br/><br/> The instructions to get your ClientID are available from <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'> http://www.campaignmonitor.com/api/getting-started/#clientid </a> . <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
       form:
         api_key: "API Key"
         api_key_info: "Get your API Key from Account Settings"
@@ -2561,8 +2573,8 @@ en:
         client_id_info: "To get your Client ID, follow the instructions given in http://www.campaignmonitor.com/api/getting-started/#clientid"
     icontact:
       label: "iContact"
-      desc: "Manage your mailing lists subscriptions, export your customers and get insights on campaign activities."
-      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
+      desc: "Export customer information, manage existing subscriptions, and bring in insights on customer usage statistics right inside Freshdesk."
+      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a target='_blank' href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
       form:
         app_id: "Application ID"
         username: "iContact Username"
@@ -2768,6 +2780,38 @@ en:
   saving_draft: "Saving..."
   draft: "Draft:"
   last_draft: "Your last draft"
-  clear_draft_text: "Clear stored draft?"
+  clear_draft_text: "Are you sure you want to clear saved draft?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
+  canned_folders:
+    new: "Folder name"
+    move: "Move"
+    title: "Canned Response Folders"
+    no_response: "No responses"
+    new_response: "New Canned Response"
+    responses: "Canned Responses"
+    viewing: "Folder: "
+    create: "Create Folder"
+    edit: " Rename"
+    delete: " Delete"
+    delete_confirmation: "Delete folder with all its contents ??"
+    move: "Move"
+    del: "Delete"
+    folder: "Folder"
+    recently: "Recently used..."
+    pick: "Pick a canned response"
+    search: "Search canned responses"
+    back_to_bulk: "Back to Bulk Reply"
+    folder_created: "Canned Response Folder was successfully created."
+    no_edit: "Default folder cannot be changed !!"
+    updated: "Canned Response Folder has been updated successfully !!"
+    deleted: "Canned Response Folder has been deleted successfully."
+    no_folders: "No Canned Responses"
+    folder_update: "Selected responses have been moved to the folder: {{folder_name}}"
+    update: "Canned Response was successfully updated."
+    created: "Canned Response was successfully created."
+    delete_multiple: "The selected canned responses were deleted!!"
+    no_delete: "Default folder cannot be deleted!!"
+    create_new: "Create New"
+    no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
+    select_folder: "Select Folder"

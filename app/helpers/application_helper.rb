@@ -88,8 +88,8 @@ module ApplicationHelper
     flash.discard
   end
 
-  def each_or_message(partial, collection, message)
-    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "list-noinfo")
+  def each_or_message(partial, collection, message, locals = {})
+    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
   end
   
   def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
@@ -132,13 +132,13 @@ module ApplicationHelper
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets) ],
-      ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
-      ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
+      ['/helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
+      ['/helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    (current_user && current_user.can_view_all_tickets?)],
-      ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
+      ['/support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/reports',            :reports,      permission?(:manage_reports) ],
       ['/admin/home',         :admin,        permission?(:manage_users)],
       company_tickets_tab
@@ -451,7 +451,7 @@ module ApplicationHelper
       when "dropdown" then
         choices = [];i=0
         field[:choices].each do |choice| 
-          choices[i] = t(choice);i=i+1
+          choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
@@ -470,15 +470,19 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
+    if dom_type == "requester"
+      field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
+      field_label += add_requester_field  
+    end
+    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
+        element+= hidden_field(object_name, :requester_id)  
         unless is_edit or params[:format] == 'widget'
-          element += add_requester_field 
           element = add_cc_field_tag element, field
         end
       when "email" then
@@ -521,7 +525,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (current_user && current_user.can_view_all_tickets?)
   end
   
   def add_name_field
@@ -610,7 +614,7 @@ module ApplicationHelper
   private
     def solutions_tab
       if current_portal.main_portal?
-        ['solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+        ['/solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
       elsif current_portal.solution_category
         [solution_category_path(current_portal.solution_category), :solutions, 
               allowed_in_portal?(:open_solutions)]

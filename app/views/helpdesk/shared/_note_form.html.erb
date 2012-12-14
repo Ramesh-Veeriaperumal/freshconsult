@@ -5,7 +5,7 @@
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
         <div class="request_form_options">
-          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.display_id})", :class => "slim-button insert-canned-response", "data-tiny-mce-id" => "#{cntid}-body") %>
+          <a href="#" id="note_response" class="slim-button"> <%= t('canned_folders.responses') %> &raquo;</a>
         </div>
         <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
         <label class="caption"><%= t("message")%>:</label>
@@ -71,5 +71,10 @@
 			jQuery("#HelpdeskNotes").validate();	  
 			jQuery("#cnt-note-body").val("");
     });
+    jQuery("#note_response").click(function(ev){
+    ev.preventDefault();
+    jQuery("#canned_response_show").attr('data-tiny-mce-id', "#{cntid}-body");
+    jQuery("#canned_response_show").trigger('click');
+  });
   <% end %>
 <% end %>
