@@ -102,7 +102,7 @@ class AuthorizationsController < ApplicationController
     domain = portal.host
     protocol = (account.ssl_enabled?) ? "https://" : "http://"
     config_params["mailchimp"] = "{'app_name':'#{provider}', 'api_endpoint':'#{@omniauth.extra.metadata.api_endpoint}', 'oauth_token':'#{@omniauth.credentials.token}'}" if provider == "mailchimp"
-    config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}'}" if provider == "constantcontact"
+    config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}', 'uid':'#{@omniauth.uid}'}" if provider == "constantcontact"
     config_params = config_params[provider].gsub("'","\"")
     key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, provider+'_oauth_config')
     key_value_pair.delete unless key_value_pair.blank?

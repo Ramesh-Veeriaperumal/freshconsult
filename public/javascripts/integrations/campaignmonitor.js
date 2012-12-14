@@ -92,13 +92,16 @@ CampaignMonitorWidget.prototype= {
 	handleActivities: function(){
 		this.subscribedLists = []; unsubscribedLists = []; messages = [];
 		activities = {}; campaigns = {}; campaignsTotal = 0; dateSubscribed = [];
-		this.contact = {"name": cmBundle.reqName}
+		this.contact = {"name": cmBundle.reqName};
 		if(this.subLists.length > 0){
-			for(i=0; i<this.subLists.length; i++)
-				dateSubscribed.push(new Date(this.subLists[i].DateSubscriberAdded));
-			subDate = _.min(dateSubscribed);
-		}else
+			for(i=0; i<this.subLists.length; i++){
+				dateSubscribed.push(new Date(this.subLists[i].DateSubscriberAdded.replace(/\-/g,'\/')));
+			}
+			subDate = _.min(dateSubscribed).toString();
+		}
+		else{
 			subDate = "";
+		}
 		this.contact.since = subDate;
 		cmWidget.freshdeskWidget.renderUser(this.contact);
 		if(cmWidget.activities.length  > 0){
@@ -108,13 +111,18 @@ CampaignMonitorWidget.prototype= {
 				for(c=0; c<response.length; c++){
 					campaign = response[c];
 					if(campaign.Type == "Campaign"){
-						cid = campaign.ID
+						cid = campaign.ID;
 						campaigns[cid] = {"title": campaign.Name};	
 						actions = campaign.Actions;
 						if(actions.length > 0){
 							for(k=0; k<actions.length; k++){
-								activity = {"type": actions[k].Event, "time": actions[k].Date};
-								(activities[cid]) ? activities[cid].push(activity) : activities[cid] = [activity];
+								if(actions[k].Event != "Unsubscribe"){
+									activity = {"type": actions[k].Event, "time": actions[k].Date, "link": actions[k].Detail || "" };
+									(activities[cid]) ? activities[cid].push(activity) : activities[cid] = [activity];
+								}
+								else{
+									delete campaigns[cid];	
+								}
 							}
 						}}
 						if(_.keys(campaigns).length > 4)
@@ -130,6 +138,8 @@ CampaignMonitorWidget.prototype= {
 				cmWidget.freshdeskWidget.renderCampaigns(activities, campaigns);
 		}else
 			cmWidget.freshdeskWidget.handleEmptyCampaigns();
+
+
 	},
 
 	handleLists: function(response){

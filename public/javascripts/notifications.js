@@ -8,7 +8,7 @@ FD.Notifications = (function($){
 		time : 8000,
 		position : 'bottom-right',
 		fade_in_speed: 10,
-		fade_out_speed: 2000,
+		fade_out_speed: 2000
 	},
 	publish = function(feeds){
 		$.each(feeds,function(index,feed) {

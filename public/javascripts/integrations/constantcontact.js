@@ -31,7 +31,7 @@ ConstantContactWidget.prototype= {
 		ccBundle.username = ccBundle.token;
 		ccBundle.url_token_key = "access_token";
 		ccBundle.auth_type = "UAuth";
-		ccBundle.domain = "https://api.constantcontact.com/ws/customers/"+"nathanclassic";
+		ccBundle.domain = "https://api.constantcontact.com/ws/customers/"+ccBundle.uid;
 		ccBundle.ssl_enabled = "true";
 		ccBundle.requests = {getUserInfo: this.getUserInfo(), getCampaigns: this.getCampaigns(), getAllLists: this.getAllLists()};
 		ccBundle.requestForListSub = true;
@@ -92,29 +92,30 @@ ConstantContactWidget.prototype= {
 		jQuery('.lists input:checked').each(function() {
 		  list.push($(this).id);
 		});
-		contact = this.contactDetailResponse;
-		contact_entry = XmlUtil.extractEntities(contact, 'ContactLists')[0];
-		cList = "<ContactLists>";
+		contact = this.contactDetailResponseText;
 		for(var i=0; i<list.length; i++){
 			cList += _.template(this.ContactList, {username: "nathanclassic", list_id: list[i]});
 		}
 		cList += "</ContactLists>";
-		doc = XmlUtil.loadXMLString(cList);
-		contact_list = doc.getElementsByTagName('ContactLists')[0];
-		if(contact_entry)
-			jQuery(contact).first().find('ContactLists').replaceWith(contact_list);
-		else
-			jQuery(contact).first().find('Confirmed').before(contact_list);
-		updated_list = contact.getElementsByTagName('entry')[0];
+
+		if(contact.indexOf("ContactLists") > 0){
+			contactArr = contact.split("<ContactLists>");
+			contactArrEnd = contact.split("</ContactLists>");
+			requestBody = contactArr[0]  + "<ContactLists>" + cList + contactArrEnd[1];
+		}else{
+			contactArr = contact.split("<Confirmed>");
+			requestBody = contactArr[0] + "<ContactLists>" + cList + "<Confirmed>" + contactArr[1];
+		}
+
 		updateSubscriptionEndpoint = "contacts/#{id}";
-		requestBody = (new XMLSerializer()).serializeToString(updated_list);
 		this.freshdeskWidget.request({
 			method: "put",
 			body: requestBody,
 			rest_url: updateSubscriptionEndpoint.interpolate({id: this.contact.id}) ,
 			content_type: "application/atom+xml",
 			on_failure: function(response){
-				this.freshdeskWidget.handleFailure(response);
+				if(response.status != 1223)
+					this.freshdeskWidget.handleFailure(response);
 				this.freshdeskWidget.getAllLists();	
 			}.bind(this),
 			on_success: this.updateSubscriptionSuccess.bind(this)
@@ -146,9 +147,9 @@ ConstantContactWidget.prototype= {
 
 	handleSubscribedLists: function(response){
 		lists = [];
-		response = response.responseXML;
-		this.contactDetailResponse = response;
-		sublists = (XmlUtil.extractEntities(response, 'ContactList'));
+		this.contactDetailResponse = response.responseXML;
+		this.contactDetailResponseText = response.responseText;
+		sublists = (XmlUtil.extractEntities(response.responseXML, 'ContactList'));
 		for(i=0; i<sublists.length; i++){
 			lists.push(XmlUtil.getNodeAttrValue(sublists[i], 'link', 'href').split("/lists/")[1]);
 		}
@@ -161,7 +162,7 @@ ConstantContactWidget.prototype= {
 			id = (XmlUtil.getNodeValue(entry[0], "id")).split("/contacts/")[1];
 			name = (XmlUtil.getNodeValue(entry[0], "Name"));
 			since = (XmlUtil.getNodeValue(entry[0], "InsertTime"));
-			contact = {"id" : id, "name" : name, "since" : since};
+			contact = {"id" : id, "name" : name, "since" : since.replace(/[T|Z]/g, ' ').replace(/\.\d+/g, "")};
 			this.contact = contact;
 			return this.contact;
 		}

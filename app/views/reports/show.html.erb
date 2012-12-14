@@ -79,7 +79,7 @@ jQuery(document).ready(function() {
 		<tr class="<%= cycle("odd", "even") %>">
 			<% case @current_report[:name] 
 					when "responder" %>
-						<td><%= obj.user.name_email %></td>
+						<td><%= obj.user.name_details %></td>
 						<% data = @report_data.fetch(obj.user_id, {}) %>
 			<%	when "group" %>
 						<td><%= obj.name %></td>

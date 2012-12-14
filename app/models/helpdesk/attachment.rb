@@ -25,7 +25,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
     
-   
+ named_scope :gallery_images,  
+    {
+      :conditions => ['description = ? and attachable_type = ?', 
+      'public', 'Image Upload'],
+      :order => "created_at DESC",
+      :limit => 20
+    }
+
  
   
     #before_validation_on_create :set_random_secret

@@ -77,9 +77,10 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "content_html", :limit => 2147483647
+    t.integer  "folder_id",    :limit => 8
   end
 
-  add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
+  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"folder_id"=>nil, "account_id"=>nil, "title"=>"20"}
 
   create_table "admin_data_imports", :force => true do |t|
     t.string   "import_type"
@@ -165,6 +166,16 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
+
+  create_table "ca_folders", :force => true do |t|
+    t.string   "name"
+    t.boolean  "is_default",              :default => false
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -546,7 +557,7 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_type"=>"14", "account_id"=>nil, "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_id"=>nil, "attachable_type"=>"14"}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -706,8 +717,8 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
   end
 
   add_index "helpdesk_schema_less_notes", ["account_id", "note_id"], :name => "index_helpdesk_schema_less_notes_on_account_id_note_id", :unique => true
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"string_nc01"=>"10", "account_id"=>nil}
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"string_nc02"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"account_id"=>nil, "string_nc01"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"account_id"=>nil, "string_nc02"=>"10"}
   add_index "helpdesk_schema_less_notes", ["id"], :name => "helpdesk_schema_less_notes_id"
   add_index "helpdesk_schema_less_notes", ["int_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc01_account_id"
   add_index "helpdesk_schema_less_notes", ["int_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc02_account_id"
@@ -775,8 +786,8 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
   add_index "helpdesk_schema_less_tickets", ["int_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_02"
   add_index "helpdesk_schema_less_tickets", ["long_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_01"
   add_index "helpdesk_schema_less_tickets", ["long_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_02"
-  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"string_tc01"=>"10", "account_id"=>nil}
-  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"string_tc02"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"account_id"=>nil, "string_tc01"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
   create_table "helpdesk_sla_details", :force => true do |t|
@@ -1182,6 +1193,7 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
     t.text     "desc_un_html", :limit => 2147483647
     t.integer  "import_id",    :limit => 8
     t.integer  "position"
+    t.text     "seo_data"
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -1466,7 +1478,7 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
-  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>"20"}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"

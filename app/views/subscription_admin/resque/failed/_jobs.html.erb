@@ -1,0 +1,51 @@
+<% date_format = "%Y/%m/%d %T %z" %>
+<% jobs.each do |job| %>
+<ul class='failed failed-grids'>
+<% id = job['job_id'] %>
+    <li>
+      <dl>
+        <% if job.nil? %>
+          <dt>Error</dt>
+          <dd>Job <%= id %> could not be parsed; perhaps it contains invalid JSON?</dd>
+        <% else %>
+          <dt>Worker</dt>
+          <dd>
+            <%= puts job['worker']%>
+            <b class='resque_worker'><%= job['worker'].split(':')[0...2].join(':') %></b> on <b class='queue-tag'><%= job['queue'] %></b > at <b><span class="resque_time"><%= Time.parse(job['failed_at']).strftime(date_format) %></span></b>
+            <% if job['retried_at'] %>
+              <div style="margin-left: 760px;">
+                
+                <b class="retried">Retried at </b> <b><span class="resque_time"><%= Time.parse(job['retried_at']).strftime(date_format) %></span></b>
+                <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "uiButton", :id => "resque_btn" } %>
+                              
+              </div>
+            <% else %>
+                <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "uiButton",:id => "resque_btn" } %>
+                
+                <%= link_to 'retry', requeue_admin_resque_failed_path(id, :job => job), { :method => :put, :class => "uiButton" , :id => "resque_btn" } %>
+            <% end %>
+          </dd>
+          <dt class='failed_category'>Class</dt>
+            <dd><code><%= job['payload'] ? job['payload']['class'] : 'nil' %></code></dd>
+          <dt class='failed_category'>Arguments</dt>
+            <dd><pre><%=h job['payload'] ? Array(job['payload']['args']).map { |a| a.inspect }.join("\n"): 'nil' %></pre></dd>
+          <dt class='failed_category'>Exception</dt>
+            <dd><code><%= job['exception'] %></code></dd>
+          <dt class='failed_category'>Error</dt>
+            <dd class='error'>
+              <% if job['backtrace'] %>
+                <%= h(job['error']) %>
+                <pre style='display:none'><%=h job['backtrace'].join("\n") %></pre>
+              <% else %>
+                <%=h job['error'] %>
+              <% end %>
+            </dd>
+        <% end %>
+      </dl>
+    </li>
+</ul>
+<% end %>
+
+<script type="text/javascript">
+	jQuery("#results").data("jobCount", <%= @job_count.to_s %>)
+</script>
