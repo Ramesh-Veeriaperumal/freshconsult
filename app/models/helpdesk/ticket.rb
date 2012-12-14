@@ -328,7 +328,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias :is_twitter :is_twitter?
 
   def is_facebook?
-    return true
      (fb_post) and (fb_post.facebook_page) 
   end
   alias :is_facebook :is_facebook?

@@ -1,6 +1,16 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
   <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
-  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
+  <% form_for note, :html => {
+                      :multipart => true,  
+                      :id => "HelpdeskNotes",
+                      :rel => 'forward_form', 
+                      "data-panel" => cntid,
+                      "data-show-pseudo-reply" => 'true',
+                      "data-destroy-editor" => 'true',
+                      "data-fetch-latest" => 'true',
+                      "data-cnt-id" => cntid
+
+                    } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
 

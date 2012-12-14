@@ -1,17 +1,29 @@
-<% form_for [@parent, @item], :html => { :id => "Edit_Note_#{@item.id}" } do |f| %>
-	<ul>
-		<li>
+<% form_for [@parent, @item], 
+			:html => { 
+				:id => "edit_@item.id}",
+				:rel => 'edit_note_form', 
+				"data-panel" => "edit-#{@item.id}",
+				"data-show-pseudo-reply" => 'false',
+				"data-fetch-latest" => 'false',
+				"data-cnt-id" => @item.id
+
+			} do |f| %>
+	<ul class="ui-form dont-validate">
+		<li class="inline-field field continous">
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
-			<%= f.text_area :body_html, :value => @item.body_html, :id =>"#{@item.id}-body" %>
+			<%= f.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
 		</li>
 		<li class="button-container">
-			<%= submit_tag(t("update"), :class => "uiButton special") %>
-			<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>
+			
 		</li>
 	</ul>
+	<div class="f-right">
+		<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>
+    	<%= submit_tag(t("update"), :class => "uiButton special") %>
+    </div>
 <% end %>
 <% javascript_tag do %>
- invokeRedactor('<%= "#{@item.id}-body" %>');
+	invokeRedactor('<%= "#{@item.id}-body" %>');
 	jQuery(document).ready(function(){
 		jQuery("#Edit_Note_<%= @item.id %>")
 			.validate();

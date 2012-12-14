@@ -1,10 +1,10 @@
-<% note_view_id = "note_view_"+note.id.to_s() %>
+<% note_view_id = "helpdesk_note_"+note.id.to_s() %>
 <% notedetails  = "note_details_#{note.id.to_s()}" %>
 <% forward_note_id = "cnt-fwd-#{note.id.to_s()}" %>
 <% edit_id = "edit-#{note.id.to_s()}" %>
 <li id="<%= note_view_id %>" class="conversation">
 	<%= link_to user_avatar(note.user), note.user, :class => 'avatar-wrap', :name => "note#{note.id}"  if note.user %>
-	<div class="commentbox <%= 'commentbox-gray' if note.user.blank? or note.user.agent? %>" id='<%= notedetails %>'>
+	<div class="commentbox <%= 'commentbox-gray' if note.user.blank? or note.user.agent? %>">
 		<%= content_tag(:span, "", :class => "comment-lock") if note.private_note? %>
 
 		<div class="actions">
@@ -13,14 +13,15 @@
 							"jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow');") if(note.note? && note.user && note.user.agent?) %>
 
 				<%= link_to_function(t("fwd_to"), 
-							"jQuery('##{forward_note_id}').show().trigger('afterShow');" ) unless note.private %>
+							"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ) unless note.private %>
 
 				<%= link_to (t('ticket.split_ticket'), 
 							{ :action => :split_the_ticket , :note_id => note.id }, 
 							:method => :post, :confirm => t(".split_ticket_confirm"),
 							:class => "tooltip", :title => t(".split_this_as_new_ticket")) if note.incoming and @item && !@item.fb_post %>
 
-				<%= link_to(t('delete'), helpdesk_ticket_helpdesk_note_path(note.notable, note), 
+				<% p helpdesk_ticket_helpdesk_note_path(note.notable, note) %>
+				<%= link_to_remote(t('delete'), :url => helpdesk_ticket_helpdesk_note_path(note.notable, note), 
 							:method => :delete, :confirm => t(".delete_note"), 
 							:class => "red_links") if note.user && note.user.agent?    %>   
 			<% end %>
@@ -38,14 +39,14 @@
 			</p></div>
 		<% end %>
 
-		
-		<%= content_tag :div, "", :id => "#{edit_id}", :class => "hide", :rel => "remote", 
+
+		<%= content_tag :div, "", :id => "#{edit_id}", :class => "request_panel email-edit-form hide", :rel => "remote", 
 								"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note) %>
 	    <%= content_tag :div, "", :id => forward_note_id, :class => "request_panel note-forward-form hide", :rel => "remote", 
 						"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
 													:id => note.notable.display_id, 
 													:note_id => note.id }) %>
-		<div class="details">
+		<div class="details" id='<%= notedetails %>'>
 			<div class="request_mail">
 				<% 
 			       	notes = note.body_html		       

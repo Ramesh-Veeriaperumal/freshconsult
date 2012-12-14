@@ -155,11 +155,12 @@ var $J = jQuery.noConflict();
       $("[rel=remote]").livequery(function(){
         $(this).bind("afterShow", function(ev){
           var _self = $(this);
-          if(_self.data('remoteUrl'))
+          if(_self.data('remoteUrl')) {
             _self.append("<div class='loading-box'></div>");
             _self.load(_self.data('remoteUrl'), function(){
                 _self.data('remoteUrl', false);
             });
+          }
         });
       });
       

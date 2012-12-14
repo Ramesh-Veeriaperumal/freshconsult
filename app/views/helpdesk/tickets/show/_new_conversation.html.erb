@@ -11,6 +11,7 @@
 		  								}) unless @ticket.is_twitter? or @ticket.is_facebook? %>
 
 			  	
+				<div class="request_panel hide" id="cnt-fwd">
 				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
 							:locals => { 
 										:id => 'send-fwd-email', 
@@ -18,6 +19,7 @@
 										:note => [@ticket, Helpdesk::Note.new(:private => true)], 
 										:conv_id => nil 
 									}) %>
+				</div>
 
 				<%= render(:partial => '/helpdesk/tickets/show/note_form', 
 							:locals => { 

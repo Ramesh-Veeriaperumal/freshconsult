@@ -17,11 +17,12 @@ var deferredTicketUpdate = function(timeout) {
         clearTimeout(ticket_update_timeout);
     }
 
-    if ($('#custom_ticket_form').valid()) {
-        ticket_update_timeout = setTimeout(function() {
-            $('#custom_ticket_form').submit();
-        },3000);
-    }
+    //  Commented as automatically firing updates might cause a problem to the Observer feature.
+    // if ($('#custom_ticket_form').valid()) {
+    //     ticket_update_timeout = setTimeout(function() {
+    //         $('#custom_ticket_form').submit();
+    //     },3000);
+    // }
 
 }
 
@@ -83,8 +84,6 @@ var fetchLatestNotes = function() {
         type: 'GET',
         success: function(response) {
             $('[rel=activity_container]').append(response);
-            console.log('completed');
-            console.log('Last Note: ' + TICKET_DETAILS_DATA['last_note_id']);
         }
     });
 }
@@ -92,7 +91,7 @@ var fetchLatestNotes = function() {
 var activeForm = null;
 swapEmailNote = function(formid, link){
     $('#TicketPseudoReply').hide();
-    console.log(formid);
+    
 
     if((activeForm != null) && ($(activeForm).get(0).id != formid))
         $("#"+activeForm.get(0).id).hide();
@@ -222,14 +221,12 @@ var updateShowMore = function() {
         loaded_items = TICKET_DETAILS_DATA['loaded_activities'];
     }
 
-    console.log('loaded_items : ' + loaded_items);
-    console.log('total: ' + total_count);
+    
     if (loaded_items < total_count) {
         var remaining_notes = total_count - loaded_items;
         $('#show_more [rel=count-total-remaining]').text(total_count - loaded_items);
         
         $('#show_more').removeClass('hide');
-        console.log('Showing More');
         return true;
     } else {
         $('#show_more').addClass('hide');
@@ -238,7 +235,6 @@ var updateShowMore = function() {
 }
 
 var updatePagination = function() {
-    console.log('updatePagination');
 
     if (updateShowMore()) {
         var showing_notes = $('#all_notes').length > 0;
@@ -399,20 +395,66 @@ $(document).ready(function() {
         })
     })
 
-    $("#TicketForms form").live('submit', function(ev) {
+    $(".conversation_thread .request_panel form").live('submit', function(ev) {
         ev.preventDefault();
         if ($(this).valid()) {
-            jQuery(this).ajaxSubmit({
+
+            if ($(this).attr('rel') == 'forward_form')  {
+                //Check for To Addresses.              
+                if ($(this).find('input[name="helpdesk_note[to_emails][]"]').length == 0 )
+                {
+                    alert('No email addresses found');
+                    return false;
+                }
+            }
+
+            _form = $(this);
+            _form.ajaxSubmit({
                 dataType: 'xml',
                 beforeSubmit: function(values, form) {
                     var format = $('<input type="hidden" name="format" value="xml" />');
-                    $(form).append(format);
+                    _form.append(format);
+                    var format = $('<input type="hidden" name="xhr" value="true" />');
+                    _form.append(format);
+
+                    //Blocking the Form:
+                    if (_form.data('panel'))
+                        $('#' + _form.data('panel')).block({
+                            message: " <h1>...</h1> ",
+                            css: {
+                                borderRadius: '5px',
+                                padding: '10px'
+                            }
+                        });
                 },
                 success: function(response) {
-                    fetchLatestNotes();
-                    $('#TicketForms .request_panel:visible').slideUp(function() {
+
+                    console.log(response)
+                    if (_form.data('fetchLatest'))
+                        fetchLatestNotes();
+
+                    if (_form.data('panel')) {
+                        $('#' + _form.data('panel')).unblock();
+                        $('#' + _form.data('panel')).hide();
+                    }
+
+                    console.log(_form.attr('rel'));
+                    if (_form.attr('rel') == 'edit_note_form')  {
+                        console.log('#note_details_' + _form.data('cntId'));
+                        console.log($(response).find("body-html").text());
+                        $('#note_details_' + _form.data('cntId')).html($(response).find("body-html").text());
+                        $('#note_details_' + _form.data('cntId')).show();
+                    }
+
+                    if (_form.data('cntId') && _form.data('destroyEditor')){
+                        $('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
+                        _form.resetForm();
+                    }
+                        
+
+                    if (_form.data('showPseudoReply'))
                         $('#TicketPseudoReply').show();
-                    });
+
                 }
             });
         }

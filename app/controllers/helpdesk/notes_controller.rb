@@ -60,7 +60,14 @@ class Helpdesk::NotesController < ApplicationController
         NewRelic::Agent.notice_error(e)
       end
   
-      post_persist
+
+      if request.xhr? || params[:xhr].eql?('true')
+        puts "XHR REQUEST :::: ----"
+        render :xml => {:success => true}.to_xml
+      else
+        post_persist
+      end
+
     else
       create_error
     end
@@ -175,11 +182,11 @@ class Helpdesk::NotesController < ApplicationController
       add_cc_email     
       if @item.fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
-        flash[:notice] = t(:'fwd_success_msg')
+        flash[:notice] = t(:'fwd_success_msg') unless params[:xhr] == 'true'
       else        
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
                 :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
-        flash[:notice] = t(:'flash.tickets.reply.success')
+        flash[:notice] = t(:'flash.tickets.reply.success') unless params[:xhr] == 'true'
       end
     end
 

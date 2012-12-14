@@ -25,7 +25,15 @@
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>">
   
   <div class="form_title"><strong><%= t('.title') %>: </strong><%= @ticket.requester.email %> </div>
-  <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
+  <% form_for note, :html => { 
+                        :multipart => true, 
+                        :id => "HelpdeskReply",
+                        "data-panel" => cntid,
+                        "data-show-pseudo-reply" => 'true',
+                        "data-fetch-latest" => 'true',
+                        "data-cnt-id" => cntid,
+                        "data-destroy-editor" => 'true',
+                      } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field" >
