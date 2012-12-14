@@ -7,7 +7,7 @@ class ConstantContact < ActiveRecord::Migration
         :name => @app_name,
         :display_name => "integrations.constantcontact.label", 
         :description => "integrations.constantcontact.desc", 
-        :listing_order => 15,
+        :listing_order => 16,
         :options => {:direct_install => true, :oauth_url => "/auth/constantcontact?origin={{account_id}}"})
     constantcontact.save
     res = execute("SELECT id FROM applications WHERE name='#{@app_name}'")
