@@ -736,7 +736,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def verify_permission
-      unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
+      unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
         if params['format'] == "widget"
           return false

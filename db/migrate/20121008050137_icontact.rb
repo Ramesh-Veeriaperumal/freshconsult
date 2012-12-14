@@ -5,7 +5,7 @@ class Icontact < ActiveRecord::Migration
   def self.up
     display_name = "integrations.icontact.label"  
     description = "integrations.icontact.desc"
-    listing_order = 15,
+    listing_order = 14,
     options = {
         :keys_order => [:api_url, :username, :password], 
         :api_url => { :type => :text, :required => true, :label => "integrations.icontact.form.api_url", :info => "integrations.icontact.form.api_url_info", :validator_type => "url_validator" }, 
