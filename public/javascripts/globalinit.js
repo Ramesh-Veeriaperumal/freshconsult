@@ -241,42 +241,66 @@ var $J = jQuery.noConflict();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
          $('#Pagearea').css("minHeight", sidebarHeight);
 
-      // Any object with class custom-tip will be given a different tool tip
-      $(".custom-tip").qtip({
-             position: {
-                  my: 'center right',  // Position my top left...
-                  at: 'center left', // at the bottom right of...
-                  viewport: jQuery(window) 
-             }, 
-             style : {
-                classes: 'ui-tooltip-rounded ui-tooltip-shadow'
-             }
-        });
-         
-        $(".custom-tip-top").qtip({
-             position: {
-                  my: 'bottom center',  // Position my top left...
-                  at: 'top center', // at the bottom right of...
-                  viewport: jQuery(window) 
-             }, 
-             style : {
-                classes: 'ui-tooltip-rounded ui-tooltip-shadow'
-             }
-        });
-         
-        $(".custom-tip-bottom").qtip({
-             position: {
-                  my: 'top center',  // Position my top left...
-                  at: 'bottom center', // at the bottom right of...
-                  viewport: jQuery(window) 
-             }, 
-             style : {
-                classes: 'ui-tooltip-rounded ui-tooltip-shadow'
-             }
-        });
 
         if(window.location.hash != '')
           $(window.location.hash + "-tab").trigger('click');
+
+        qtipPositions = {
+          normal : {
+            my: 'center right',
+            at: 'center left'
+          },
+          top: {
+            my: 'bottom center',  // Position my top left...
+            at: 'top center' // at the bottom right of...
+          }, 
+          bottom : {
+            my: 'top center',  // Position my top left...
+            at: 'bottom center' 
+          },
+          left : {
+            my: 'top left',
+            at: 'bottom  left'          
+          }
+        };
+
+        $('.custom-tip, .custom-tip-top, .custom-tip-left, .custom-tip-bottom').live('mouseenter', function(ev) {
+          config_position = qtipPositions['normal'];
+
+          var classes = jQuery(this).data('tip-classes') || '';
+
+          if ($(this).hasClass('custom-tip-top')) {
+            config_position = qtipPositions['top'];
+          }
+          if ($(this).hasClass('custom-tip-bottom')) {
+            config_position = qtipPositions['bottom'];
+          }
+          if ($(this).hasClass('custom-tip-left')) {
+            config_position = qtipPositions['left'];
+          }
+          config_position['viewport'] = jQuery(window);
+
+          $(this).qtip({
+            overwrite: false,
+            position: config_position,
+            style: {
+              classes : 'ui-tooltip-rounded ui-tooltip-shadow ' + classes,
+              tip: {
+                mimic: 'center'
+              }
+            },
+            show: {
+              event: ev.type,
+              ready: true,
+              delay: 300
+            }
+          }, ev);
+
+
+        }).each(function(i) {
+          $.attr(this, 'oldtitle', $.attr(this, 'title'));
+          this.removeAttribute('title');
+        })
          
         menu_box_count = 0;
         fd_active_drop_box = null;
@@ -333,10 +357,13 @@ var $J = jQuery.noConflict();
         jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
       }
 
-      $(document).pjax('a[data-pjax]',"#body-container",{
+      $(document).pjax('a[data-pjax]',{
           timeout: -1
         }).bind('pjax:beforeSend',function(evnt,xhr,settings){
           start_time = new Date();
+          jQuery('#cf_cache').remove();
+          jQuery('#response_dialog').remove();
+          jQuery('#agent_collision_container').remove();
           var bHeight = $('#body-container').height(),
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
@@ -347,6 +374,7 @@ var $J = jQuery.noConflict();
           // $('#body-container .wrapper').css('visibility','hidden');
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
+
           return true;
       }).bind('pjax:end',function(){
         //$('.load-mask').hide();
@@ -355,11 +383,12 @@ var $J = jQuery.noConflict();
         // $('#body-container .wrapper').css('visibility','visible');
         end_time = new Date();
         setTimeout(function() {
-          $('#benchmarkresult').html('Finnally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
+          $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
         },10);
+        //clearing the pageless of previous page.
+        jQuery(window).unbind('.pageless');
         return true;
       })
-
    });
  
 })(jQuery);

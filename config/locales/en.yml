@@ -350,7 +350,7 @@ en:
             send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
         index:
             congrats: Congratulations! Your “fresh” helpdesk is ready.
-            title_msg: Just fill in a few details to get started. (optional)
+            title_msg: Just fill in a few details to get started.
             support_email_title: Support<br> e-mail
             agents_title: Agents
             rebrand_title: Logo <br>&amp; colors
@@ -536,21 +536,33 @@ en:
       assign_product: "Assign Product"
       product_label_msg: "Product"
     canned_responses:
-      ca_response:
-        delete_confirm: Are you sure you want to delete this canned response?
-      new: 
-        title: Add Canned response        
-      edit: 
-        title: Edit Canned response
-      form: 
-        groups: Agents in group
-        response_name: Response title
-        all_agents: All agents
-        me_only: Me only
-        available_for: Available for
+      helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      folders:
+        helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      responses:
+        edit: 
+          title: Edit Canned response
+        new: 
+          title: Add Canned response   
+        form: 
+          groups: Agents in group
+          response_name: Response title
+          all_agents: All agents
+          me_only: Myself
+          available_for: Available for
       index: 
         new: Add Canned response
         title: Canned responses
+    ca_response:
+      delete_confirm: Are you sure you want to delete this canned response?
     twitters:
       index:
         new: Add Twitter account
@@ -602,7 +614,7 @@ en:
         portal: Portal
         account: Account
         customer: Customer
-        canned-response: Canned Response
+        canned-response: Canned Responses
         multi-product: Multiple Products
         twitter-setting: Twitter
         survey: Survey Settings
@@ -610,26 +622,6 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
-    canned_responses:
-      index:
-        title: Canned responses
-        new: Add Canned response
-      helpnote:
-        title: Canned responses
-        tour: Help me use canned responses
-        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets. 
-        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      new:
-        title: Add Canned response        
-        delete_confirm: Are you sure you want to delete this canned response?      
-      edit: 
-        title: Edit Canned response
-      form:
-        available_for: Available for
-        all_agents: All agents
-        groups: Agents in group
-        me_only: Me only
-        response_name: Response title
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -755,7 +747,9 @@ en:
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
       empty_trash: 
-        success: All tickets in the trash folder were deleted.
+        success: The trash was emptied.
+      delete_forever:
+        success: %{tickets} deleted.
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1355,6 +1349,7 @@ en:
     info2: Convert to an Agent
     send_activation: Send activation email
     import_csv: Import Customers from CSV
+    export_csv: Export to CSV
     import_google: Import from Google
     import_google_no: "No"
     import_google_yes: "Yes"
@@ -1460,8 +1455,6 @@ en:
     meta_title: Title_tag
     meta_keywords: Meta Keywords
     meta_description: Meta Description
-    meta_keywords: Keywords
-    meta_description: Description
     title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
     description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
@@ -1497,7 +1490,7 @@ en:
   sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Basic Reporting, Community Support.
   blossom_details: Everything in &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forums, Community &amp; Email Support.
   garden_details: Everything in &quot;Blossom&quot; Plan plus, Multiple Product Support, Advanced Reporting, Community, Email &amp; Phone Support
-  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification.
+  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification and Agent Collision.
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
@@ -1765,6 +1758,8 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket                                   
     flag_spam: Flag Spam
+    delete_forever: Delete Forever
+    empty_trash: Empty Trash
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     export: Export
@@ -2148,6 +2143,8 @@ en:
     actions_empty: "Actions can't be empty"
   export_data:
     info: Export ticket information available in the current view to a CSV file.
+    contact_info: Export active contacts to a CSV file.
+    select_header: "Select fields to export"
     filter_label_customer: "Filter tickets created in"
     filter_label_agent: "Filter tickets by:"
     field_select_title: Select fields to export
@@ -2537,6 +2534,33 @@ en:
         password: "SSO Password"
         logmein_company_info: "To get your Company ID go to Admin Center -> Technician Group -> Global Settings -> ASP.Net C# server side example "
         logmein_sso_pwd_info: "To set your SSO password, go to Admin Center -> Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
+    mailchimp:
+      label: "MailChimp"
+      desc: "Add MailChimp to Freshdesk and start managing your subscriptions, export customer lists and pull necessary information about their activities from your help desk.  "
+      helptext: "<h4>MailChimp Integration Help</h4>"
+    constantcontact:
+      label: "Constant Contact"
+      desc: "Integrate your Constant Contact account to control your subscriptions inside Freshdesk and get updated information about customers and their activities."
+      helptext: "<h4>ConstantContact Integration Help</h4>"
+    campaignmonitor:
+      label: "Campaign Monitor"
+      desc: "Look up and manage subscriptions on your Campaign Monitor account, and bring in insights on customer usage statistics right inside Freshdesk. "
+      helptext: "<h4>Campaign Monitor Integration Help</h4><br/>To integrate with Campaign Monitor, you should input your API Key and ClientID from Campaign Monitor. <br/></br/> API Key can be obtained from Campaign Monitor's Account Settings.<br/><br/> The instructions to get your ClientID are available from <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'> http://www.campaignmonitor.com/api/getting-started/#clientid </a> . <br/><br/>Now click &quot;Update&quot; to get started with your Campaign Monitor integration."
+      form:
+        api_key: "API Key"
+        api_key_info: "Get your API Key from Account Settings"
+        client_id: "Client ID"
+        client_id_info: "To get your Client ID, follow the instructions given in http://www.campaignmonitor.com/api/getting-started/#clientid"
+    icontact:
+      label: "iContact"
+      desc: "Export customer information, manage existing subscriptions, and bring in insights on customer usage statistics right inside Freshdesk."
+      helptext: "<h4>iContact Integration Help</h4><br/> To integrate with iContact, go to <a target='_blank' href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> and grant access to the Freshdesk app by entering the below Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Set a password of your choice and click &quot;Save&quot;. This API password will be used for all API requests from Freshdesk. <br/><br/> Copy the API URL from the &quot;Account Information&quot; section and paste it in the API URL field here. Enter your iContact username and the new API password and click Update. "
+      form:
+        app_id: "Application ID"
+        username: "iContact Username"
+        api_password: "API Password"
+        api_url: "API URL"
+        api_url_info: "To get your API URL, go to https://app.icontact.com/icp/core/externallogin and copy the API URL from &quot;Account Information&quot; section. "
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -2736,6 +2760,38 @@ en:
   saving_draft: "Saving..."
   draft: "Draft:"
   last_draft: "Your last draft"
-  clear_draft_text: "Clear stored draft?"
+  clear_draft_text: "Are you sure you want to clear saved draft?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
+  canned_folders:
+    new: "Folder name"
+    move: "Move"
+    title: "Canned Response Folders"
+    no_response: "No responses"
+    new_response: "New Canned Response"
+    responses: "Canned Responses"
+    viewing: "Folder: "
+    create: "Create Folder"
+    edit: " Rename"
+    delete: " Delete"
+    delete_confirmation: "Delete folder with all its contents ??"
+    move: "Move"
+    del: "Delete"
+    folder: "Folder"
+    recently: "Recently used..."
+    pick: "Pick a canned response"
+    search: "Search canned responses"
+    back_to_bulk: "Back to Bulk Reply"
+    folder_created: "Canned Response Folder was successfully created."
+    no_edit: "Default folder cannot be changed !!"
+    updated: "Canned Response Folder has been updated successfully !!"
+    deleted: "Canned Response Folder has been deleted successfully."
+    no_folders: "No Canned Responses"
+    folder_update: "Selected responses have been moved to the folder: {{folder_name}}"
+    update: "Canned Response was successfully updated."
+    created: "Canned Response was successfully created."
+    delete_multiple: "The selected canned responses were deleted!!"
+    no_delete: "Default folder cannot be deleted!!"
+    create_new: "Create New"
+    no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
+    select_folder: "Select Folder"

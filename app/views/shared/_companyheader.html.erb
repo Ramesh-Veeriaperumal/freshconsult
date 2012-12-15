@@ -26,6 +26,7 @@
 
 <div>
 	<div class="floatr">				
+		<%= link_to("Export", { :action => "configure_export" }, :class => "padding6 dialog2", :title => "Export to CSV", "data-width" => "650" ) %>
 		<%= link_to(t('contacts.import_csv'), csv_contact_import_path) %>
 		<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
 	</div>

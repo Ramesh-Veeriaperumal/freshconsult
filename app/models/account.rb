@@ -137,7 +137,10 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
+
+  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
+  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
 
   has_many :facebook_pages, :class_name =>'Social::FacebookPage' 
@@ -252,7 +255,7 @@ class Account < ActiveRecord::Base
       :inherits => [ :blossom ]
     },
     :estate => {
-      :features => [ :gamification ],
+      :features => [ :gamification, :agent_collision ],
       :inherits => [ :garden ]
     }
   }
@@ -262,7 +265,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false, :agent_collision => false}
+    :personalized_email_replies => false}
     
   
   has_features do

@@ -75,13 +75,15 @@ class Admin::ProductsController < Admin::AdminController
         end
         return
       end
-
+      portal_params[:updated_at] = Time.now
       @product.portal.update_attributes(portal_params) and return if @product.portal_enabled?
       @product.portal.destroy
     end
     
     def delete_icon(icon_type)
-      current_account.portals.find(params[:id]).send(icon_type).destroy
+      portal = current_account.portals.find(params[:id])
+      portal.send(icon_type).destroy
+      portal.touch
       render :text => "success"
     end
 end

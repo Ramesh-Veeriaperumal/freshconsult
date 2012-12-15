@@ -362,7 +362,7 @@ module Helpdesk::TicketsHelper
     if current_page == 1
       content << "<span class='disabled prev_page'>#{options[:previous_label]}</span>"
     else
-      content << "<a class='prev_page' href='/helpdesk/tickets?page=#{(current_page-1)}'>#{options[:previous_label]}</a>"
+      content << "<a class='prev_page' href='/helpdesk/tickets?page=#{(current_page-1)}' title='Previous'>#{options[:previous_label]}</a>"
     end
     visible_pages.each do |index|
       # detect gaps:
@@ -377,7 +377,7 @@ module Helpdesk::TicketsHelper
     if current_page == no_of_pages
       content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
     else
-      content << "<a href='/helpdesk/tickets?page=#{(current_page+1)}' class='next_page' rel='next'>#{options[:next_label]}</a>"
+      content << "<a href='/helpdesk/tickets?page=#{(current_page+1)}' class='next_page' rel='next' title='Next'>#{options[:next_label]}</a>"
     end
     content << "</div>" if full_pagination
     content

@@ -16,8 +16,7 @@ if no_of_pages > 1
 	page << "jQuery('#ticket_pagination').show()"
 	page.replace_html 'ticket_pagination', paginate_content
 	page.replace_html 'ticket-toolbar-bottom', full_paginate_content
-else
-	page << "jQuery('#ticket_pagination').hide()"
+	# page << "jQuery('#ticket_pagination').show()"
 end
 page << "jQuery('#ticket_list_count').switchClass('fetching','done').html(#{@ticket_count}).data('url',false)"
 page << "jQuery('.page_info').hide();" if @ticket_count == 0

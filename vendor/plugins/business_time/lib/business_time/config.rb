@@ -22,17 +22,30 @@ module BusinessTime
       #   BusinessTime::Config.holidays << my_holiday_date_object
       # someplace in the initializers of your application.
       attr_accessor :holidays
+      
+    end
+    
+    def self.days
+      BusinessCalendar::DEFAULT_SEED_DATA[:working_hours]
+    end
 
+    def self.beginning_of_workday(day)
+      self.days[day][:beginning_of_workday]
+    end
+
+    def self.end_of_workday(day)
+      self.days[day][:end_of_workday]
     end
 
     def self.weekdays
       [1,2,3,4,5]
     end
-    
     def self.reset
       self.holidays = []
-      self.beginning_of_workday = "9:00 am"
-      self.end_of_workday = "5:00 pm"
+      #self.beginning_of_workday =Hash.new
+      #self.end_of_workday = Hash.new
+      #self.beginning_of_workday = "9:00 am"
+      #self.end_of_workday = "5:00 pm"
     end
     
     # loads the config data from a yaml file written as:
@@ -53,11 +66,8 @@ module BusinessTime
         self.holidays <<
           Time.zone ? Time.zone.parse(holiday) : Time.parse(holiday)
       end
-      
     end
-    
     #reset the first time we are loaded.
     self.reset
   end
-  
 end

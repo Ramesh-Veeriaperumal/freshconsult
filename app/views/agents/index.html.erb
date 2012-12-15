@@ -22,7 +22,7 @@
 				<% if params[:state].blank? or params[:state].eql?('active') %>	
 					<div class="item_actions">
 						<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
-											:method => :delete, :class => "button") unless (agent.user == current_user)  %>
+											:method => :delete, :class => "button") if can_destroy?(agent) %>
 						<%= link_to t('edit'), edit_agent_path(agent), :class => "button" %>	
 					</div>								 
 				<% else %>
