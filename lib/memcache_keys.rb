@@ -39,6 +39,7 @@ module MemcacheKeys
         block.call
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
+        return
       end 
     end
 

@@ -49,9 +49,9 @@
 			<% end %>
 			<h4 class="border_title">
 				<% unless category.folders.empty? %>
-					<%= link_to category.name + " &raquo;", category %>
+					<%= link_to  "#{h(category.name)} &raquo;", category %>
 				<% else %>
-					<%= category.name %>
+					<%= h(category.name) %>
 				<% end %>
 			</h4>  
 			<ul>			
