@@ -857,7 +857,7 @@ ol.conversation_thread{
 
 #show_more {
 
-	.loading {
+	&.loading {
 		background: none;
 		.avatar-wrap {
 			@include hide-text();

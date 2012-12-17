@@ -26,6 +26,30 @@ var deferredTicketUpdate = function(timeout) {
 
 }
 
+showHideDueByDialog = function(showHide){
+    if(showHide){
+        var duedate_container = $("#duedate-dialog-container").detach();
+        $('#ticket_status_box').append(duedate_container);
+       
+        $("#duedate-dialog-container").show();
+        $("#due-date-dialog").fadeIn();
+        $("#due-date-dialog").position({
+            of: $( "#due-by-element-parent" ),
+            my: "right top",
+            at: "left top"
+        });
+        $("#due-date-dialog").css({top: $("#due-date-dialog").position().top + 30 });
+    }else{
+        $("#due-date-dialog")
+            .fadeOut(300, function(){
+                $("#duedate-dialog-container").hide();
+                var duedate_container = $("#duedate-dialog-container").detach();
+                $('#Pagearea').append(duedate_container);
+            });
+    }
+    $( "#edit-due-by-time" ).removeClass("highlight-text");
+}
+
 
 showHideEmailContainer = function(){
     $(".ccEmailMoreContainer").toggle();
@@ -268,6 +292,101 @@ var updatePagination = function() {
 
 
 $(document).ready(function() {
+
+
+// For Setting Due-by Time
+
+
+    $( "#due-date-picker" ).datepicker({
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        changeMonth: true,
+        changeYear: true,
+        onSelect: function(dateText, inst) {
+            selectedDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
+            $("#due-date-value").html( selectedDate.toDateString() );
+            CalcSelectedDateTime();
+        }
+    });
+        
+    $("#due-date-options").change(function(){
+        if(this.value == 'specific')
+            toggleDateCalender(true);
+        else
+            toggleDateCalender(false);
+    });
+    
+    $("#due_by_hour, #due_by_minute, #due_by_am_pm").change(CalcSelectedDateTime);
+        
+    $("#set-date-time").click(function(){
+        toggleDateCalender(true);
+        $("#due-date-options").val("specific");
+    });
+        
+    function toggleDateCalender(showOrHide){
+        if(showOrHide){
+            $("#due-date-button").hide();
+            $("#due-date-calender").slideDown(300);
+        }   
+        else{
+            $("#due-date-button").show();
+            $("#due-date-calender").slideUp(300);
+        }
+    }
+    
+    $("#Pagearea").on('click', '#edit-dueby-time',function(){
+        showHideDueByDialog(true);
+    });
+    
+    $("#due-date-overlay").click(function(){
+        showHideDueByDialog(false);
+    });
+    
+    function CalcSelectedDateTime() {
+        _date_time = $("#due-date-picker").datepicker("getDate"); 
+        am_pm_val = $("#due_by_am_pm").val();
+        hrs_val = parseInt($("#due_by_hour").val())
+        
+        if(hrs_val == 12 && am_pm_val == "AM") hrs_val = 0
+        else if(am_pm_val == "PM" && hrs_val != 12) hrs_val += 12
+        
+        _date_time.setHours( hrs_val );
+        _date_time.setMinutes( $("#due_by_minute").val() );
+        
+        if (TICKET_DETAILS_DATA['created_on'] > _date_time){
+            $("#calender-buttons").hide();
+            $("#calender-info").show();
+        }else{
+            $("#calender-buttons").show();
+            $("#calender-info").hide();
+        }               
+        return _date_time;
+    }
+    
+    $("#DueDateForm").submit(function(){  
+        $("#calender-buttons").addClass("saving-items");
+        _date_time = new Date();
+        
+        if($( "#due-date-options" ).val() == "specific"){
+            _date_time = CalcSelectedDateTime();
+        } 
+         
+        $("#due_by_date_time").val(_date_time);
+                            
+        $.post(this.action, $(this).serialize(), 
+                    function(data) {
+                        $("#edit-dueby-time-parent").html(data);
+                        showHideDueByDialog(false);
+                        $("#calender-buttons").removeClass("saving-items");
+                    });
+        return false;
+    });
+
+// End of Due-by time JS
+
+
+
+
     $('ul.tkt-tabs').each(function(){
         // For each set of tabs, we want to keep track of
         // which tab is active and it's associated content
@@ -429,7 +548,7 @@ $(document).ready(function() {
                 },
                 success: function(response) {
 
-                    console.log(response)
+                    
                     if (_form.data('fetchLatest'))
                         fetchLatestNotes();
 
@@ -438,10 +557,8 @@ $(document).ready(function() {
                         $('#' + _form.data('panel')).hide();
                     }
 
-                    console.log(_form.attr('rel'));
                     if (_form.attr('rel') == 'edit_note_form')  {
-                        console.log('#note_details_' + _form.data('cntId'));
-                        console.log($(response).find("body-html").text());
+                        
                         $('#note_details_' + _form.data('cntId')).html($(response).find("body-html").text());
                         $('#note_details_' + _form.data('cntId')).show();
                     }
@@ -571,12 +688,11 @@ window.onbeforeunload = function(e) {
     if ($('#custom_ticket_form .error:input').length > 0 ) {
         messages.push('There are errors in the form.');
     }
-    console.log("TICKET_DETAILS_DATA['updating_properties'] : " + TICKET_DETAILS_DATA['updating_properties']);
+    
     if (TICKET_DETAILS_DATA['updating_properties']) {
         messages.push('Unsaved changes in the form');
     }
 
-    console.log('unload');
     if (messages.length > 0) {
         var msg = '';
         messages.forEach(function(str) {

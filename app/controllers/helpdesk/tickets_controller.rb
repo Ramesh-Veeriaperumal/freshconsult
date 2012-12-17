@@ -386,7 +386,7 @@ class Helpdesk::TicketsController < ApplicationController
   def change_due_by     
     due_date = get_due_by_time    
     @item.update_attributes(:due_by => due_date)
-    render :partial => "due_by", :object => @item.due_by
+    render :partial => switch_to_new_show? ? "/helpdesk/tickets/show/due_by" : "due_by", :object => @item.due_by
   end  
   
   def get_due_by_time
@@ -831,7 +831,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def switch_to_new_show?
-    cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
+    true
+    # cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
   end
 
 end

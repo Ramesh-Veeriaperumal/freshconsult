@@ -117,9 +117,11 @@
   <span><%= submit_tag(t('forward'), :onclick => "", :class => "uiButton special") %></span>
   <!-- jQuery('##{cntid}').hide();jQuery('##{cntid}-body').destroyEditor(); -->
 </div>
+<% if conv_id.present? %>
 <script type="text/javascript">
   invokeRedactor('<%= "#{cntid}-body" %>');
 </script>
+<% end %>
 
 <script type="text/javascript">
     jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){ 

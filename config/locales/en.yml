@@ -2011,6 +2011,16 @@ en:
           title: "Reply to %{user}"
         history:
           recent_item: Recent Items
+        due_date:
+          when_is_it_due: When's it Due?
+          today: Today
+          tomorrow: Tomorrow
+          this_week: This week
+          next_week: Next week
+          specific_date: "Specific date/time..."
+          set_date_time: "Set Date/time"
+          due: Due
+          earlier_date_and_time: Please give a date & time that is newer than the ticket's created date & time
       view_ticket:
         meta: meta
         linked_ticket: This ticket is linked to the forum

@@ -10,6 +10,7 @@ TICKET_DETAILS_DATA = {
 	last_activity		: -1,
 	loaded_activities		: 0,
 	fetch_notes_url		: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes", 
-	tag_list			: tag_list.split(",")
+	tag_list			: tag_list.split(","),
+	created_on			: new Date("<%= @ticket.created_at.strftime("%B %e, %Y %H:%M") %>")
 };
 </script>
