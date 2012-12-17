@@ -1141,7 +1141,8 @@ input.search{
 	@include clearfix;
 	background-color:#f6f6f6;
 	border-top:1px solid #e2e2e2; 
-	padding:6px 30px 6px 20px;  
+	padding:6px 30px 6px 20px; 
+	margin-top:15px; 
 }
 
 
@@ -1989,8 +1990,7 @@ ul.ui-form .inputs-list{
 }
 
 .add_requester_button { 
-	float: left; 
-	margin-top: 5px;
+	font-weight:bold;
 }
 
 #cc_emails_sec .chzn-container,#cc_emails_sec .search-field   input{

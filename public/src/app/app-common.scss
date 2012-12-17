@@ -3092,6 +3092,7 @@ div.addReminder{
 			margin:2px 0px 0px 0px;
 			padding:0px 5px;
 			width: 245px;
+			@include box-shadow(0 0 0 #fff);
 		}
 		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); box-shadow:none; }
 		label.overlabel{
