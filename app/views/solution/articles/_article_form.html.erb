@@ -56,7 +56,7 @@
 							<%= s.label(:meta_title, t('solution.solution_meta_title')) %>
 							<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
 								'data-counter' => "TitleCounter", 'data-limit' => 72, 
-								:value => (@article.seo_data || {:meta_title => nil}).fetch(:meta_title) %>
+								:value => (@article.seo_data || {}).fetch(:meta_title, nil) %>
 							<div class="solution-seo-message">
 								<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
 								<%= t('solution.title_counter_message') %>
@@ -66,7 +66,7 @@
 							<%= s.label(:meta_description, t('solution.solution_meta_description')) %>
 				    		<%= s.text_area  :meta_description, :rel => "charcounter", 
 								'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
-								:value => (@article.seo_data || {:meta_description => nil}).fetch(:meta_description), 
+								:value => (@article.seo_data || {}).fetch(:meta_description, nil), 
 								:class => "solution-seo-description" %>
 							<div class="solution-seo-message">
 					    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
@@ -76,7 +76,7 @@
 						<li>
 							<%= s.label(:meta_keywords, t('solution.solution_meta_keywords')) %>
 							<%= s.text_field :meta_keywords, :class => "text", 
-								:value => (@article.seo_data || {:meta_keywords => nil}).fetch(:meta_keywords) %>
+								:value => (@article.seo_data || {}).fetch(:meta_keywords, nil) %>
 							<div class="solution-seo-message">
 								<%= t('solution.meta_keywords_message') %>
 							</div>
