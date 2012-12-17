@@ -1,8 +1,6 @@
 class Billing::Subscription 
 
   #$CHARGEBEE_DOMAIN = "testcb.com"
-
-  ENV_VARIABLES = { :site => "freshdesk-test" , :api_key => "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv" }
   
   PLAN_CODES  = { :Sprout =>  { 1 => "sprout_monthly", 3 => "sprout_quarterly", 
                                 6 => "sprout_half_yearly", 12 => "sprout_annual" },
@@ -43,7 +41,8 @@ class Billing::Subscription
 
 
   def initialize
-    ChargeBee.configure(:site => ENV_VARIABLES[:site], :api_key => ENV_VARIABLES[:api_key])
+    ChargeBee.configure(:site => AppConfig['chargebee'][RAILS_ENV]['site'],
+                        :api_key => AppConfig['chargebee'][RAILS_ENV]['api_key'])
   end
 
   def create_subscription(account)

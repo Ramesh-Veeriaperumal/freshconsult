@@ -160,6 +160,12 @@
     end
   end
 
+  map.with_options(:conditions => { :subdomain => AppConfig['billing_subdomain'] }) do |subdom|
+    subdom.with_options(:namespace => 'billing/', :path_prefix => nil) do |billing|
+      billing.resources :billing, :collection => { :trigger => :post }
+    end
+  end
+
   map.namespace :widgets do |widgets|
     widgets.resource :feedback_widget, :member => { :loading => :get } 
   end 
