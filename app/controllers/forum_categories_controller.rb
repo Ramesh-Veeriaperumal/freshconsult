@@ -17,7 +17,7 @@ class ForumCategoriesController < ApplicationController
   def index
      @forum_categories = current_portal.forum_categories
      respond_to do |format|
-      format.html 
+      format.html { @page_canonical = categories_url }
       format.xml  { render :xml => @forum_categories }
       format.json  { render :json => @forum_categories }
       format.atom 
@@ -46,7 +46,7 @@ class ForumCategoriesController < ApplicationController
     @forums = @forum_category.forums.paginate :page => params[:page]
 
     respond_to do |format|
-      format.html 
+      format.html { @page_canonical = category_url(@forum_category) }
       format.xml  { render :xml => @forum_category.to_xml(:include => fetch_forum_scope) }
       format.json  { render :json => @forum_category.to_json(
                               :except => [:account_id,:import_id],
