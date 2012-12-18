@@ -328,7 +328,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v1","avatar",profile_size,user],options.fetch(:expiry,300)) do
+    avatar_content = MemcacheKeys.fetch(["v2","avatar",profile_size,user],options.fetch(:expiry,300)) do
       content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content

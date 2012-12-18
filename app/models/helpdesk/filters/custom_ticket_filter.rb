@@ -166,7 +166,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     if !params[:filter_name].eql?("spam") and !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
-      action_hash.push({ "condition" => "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}", "operator" => "is", "value" => false})
     end
 
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
