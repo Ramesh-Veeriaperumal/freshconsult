@@ -27,7 +27,7 @@ class Solution::ArticlesController < ApplicationController
     @page_keywords = @article.article_keywords
         
     respond_to do |format|
-      format.html
+      format.html { @page_canonical = solution_category_folder_article_url(@article.folder.category, @article.folder.id, @article) }
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
       format.json  { render :json => @article.to_json(:include => {:folder => {:except => [:is_default]}}) }
     end    

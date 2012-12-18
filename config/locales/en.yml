@@ -815,8 +815,10 @@ en:
       update: 
         success: The %{human_name} has been updated.
     post:
+      deleted: "Post of '{title}' was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
     topic:
+      deleted: "Topic '{title}' was deleted." 
       page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
     forum:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."

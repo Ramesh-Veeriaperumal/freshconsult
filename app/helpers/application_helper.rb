@@ -77,6 +77,10 @@ module ApplicationHelper
     @page_keywords    
   end
 
+  def page_canonical
+    @page_canonical
+  end
+
   def tab(title, url, cls = false, tab_name="")
     content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
