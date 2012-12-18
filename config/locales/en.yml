@@ -2456,6 +2456,17 @@ en:
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
+    nimble:
+      label: "Nimble"
+      desc: "You can view contact information from Nimble crm in Freshdesk."
+    zohocrm:
+      label: "Zoho CRM"
+      desc: "You can view contact information from Zoho crm in Freshdesk."
+      helptext: "<h4>Zoho CRM Integration Help</h4><p><br/>To integrate Zoho CRM with Freshdesk, <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>Generate the Auth Token</a> in Zoho CRM through Browser Mode and paste the generated Auth Token here.  If you already generated the Auth Token you can get it from <a href='https://accounts.zoho.com/u/h#setting/authtoken' target='_blank'>your accounts page.</a>
+        <br/><br/>Once it is done you can view the contact information in any ticket or contact view.</p>"
+      form:
+        api_key: Auth Token
+        api_key_info: <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>Generate the Auth Token</a> in Zoho CRM through Browser Mode and paste the generated Auth Token here.
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"

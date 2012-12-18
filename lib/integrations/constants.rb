@@ -14,6 +14,8 @@ module Integrations::Constants
     :constantcontact => "ConstantContact",
     :icontact => "iContact",
     :campaignmonitor => "CampaignMonitor",
+    :nimble => "nimble",
+    :zohocrm => "zohocrm"
   }
 
   APP_CATEGORY_ID_TO_NAME = {
