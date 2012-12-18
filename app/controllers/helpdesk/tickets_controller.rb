@@ -15,7 +15,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [:index, :show, :details, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :select_show_page , :only => [:show, :details ]
-  before_filter :check_user , :only => [:show, :details ]
+  before_filter :check_user, :load_installed_apps, :only => [:show, :details, :forward_conv]
+
 
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]

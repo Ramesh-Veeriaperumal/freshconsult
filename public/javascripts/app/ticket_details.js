@@ -603,6 +603,16 @@ $(document).ready(function() {
     // -----   END OF TICKET BAR FIXED TOP ------ //
 
 
+    $('.ticket_show #close_ticket_btn').live('click', function(ev){
+        ev.preventDefault();
+        var form = $("<form>")
+            .attr("method", "post")
+            .attr("action", $(this).attr('data-href') +"?disable_notification=" + ev.shiftKey )
+            .appendTo(document.body);
+        form.submit();
+        return false;
+    });
+
     $('#custom_ticket_form').on('change',function(ev) {
         if (!dontAjaxUpdate) 
         {

@@ -32,23 +32,19 @@
 						<%= render :partial => 'helpdesk/tickets/show/status.html.erb' %>
 
 						<div class="ticket-subject">
-							<%= content_tag :h2, h(@ticket.subject), :class => "subject" %>
+							<h2 class="subject">
+								<span id="monitor"><%= render :partial => "/helpdesk/subscriptions/monitor" %></span>
+								<%= h(@ticket.subject) %>
+							</h2>
 							<div class="ticket-actions clearfix">
 								<ul>	
 
 									<% unless @ticket.deleted %>
-										<!-- <li><%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "ticket-btn email reply") unless @item.from_email.nil? %></li>
-										<li><%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
-											:id => "FwdButton", :class => "button forward reply") %></li>
-										<li><%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%></li>
-										<li><%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "ticket-btn facebook reply") if @item.requester && @item.is_facebook?%></li>
-										<li><%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "ticket-btn") %>	</li> -->
-									<% end %>
 									<li class="ticket-btns">
 										<div class="btn-group">
 										  <button class="btn tall" rel="note-button" data-note-type="reply" id="ReplyButton">
 										  	<span class="reply-inner"></span>
-										  	<strong><%= t('ticket.reply_to')  %></strong>
+										  	<%= t('ticket.reply_to')  %>
 										  	<span class="caret"></span>
 										  </button>
 										  <button class="btn dropdown-toggle tall" data-toggle="dropdown">
@@ -69,35 +65,48 @@
 										</div>
 									</li>
 									<li class="ticket-btns">
-										<button class="btn">
-										  	Execute Scenario
-										  	<span class="caret"></span>
-										  </button>
+										<%= link_to(t('ticket.close_btn'), "#", 
+												:title  => t('ticket.close_btn_title'), 
+												:class => "btn" , :id=>"close_ticket_btn" , 
+												:"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
+
 									</li>
-								</ul>
-								<ul class='f-right'>
+									<li class="ticket-btns">
+										<%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", 
+												:id => "Merge", :title => "Merge ticket", :class => 'btn', "data-ajax-dialog" => true %>
+									</li>
 									<li class="ticket-btns">
 										<div class="btn-group">
-										  <button class="btn">
-										  	Mark as Closed
-										  	<span class="caret"></span>
-										  </button>
+											
 										  <button class="btn dropdown-toggle" data-toggle="dropdown">
+										  	More
 										    <span class="caret"></span>
 										  </button>
+
 										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
-										    <li>
-										    	<a href="">Delete</a>
-										    </li>
-										    <li>
-										    	<a href="">Mark as Spam</a>
-										    </li>
-										    <li>
-										    	<a href="">Another Option</a>
-										    </li>
+										  	
+										  	<li>
+										  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
+										  	</li>
+										  	
+										  	<li>
+										  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
+										  	</li>
+
+										  	<li id="spamicon">
+										  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
+										  	</li>
+
+										  	<li>
+										  		<%= link_to(t('ticket.delete_btn'), 
+										  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
+										  					:method => :delete, :title => t('ticket.delete_btn_title')) %>
+							  				</li>
 										  </ul>
 										</div>
 									</li>
+
+									<% end %>
 								</ul>
 							</div>
 						</div>

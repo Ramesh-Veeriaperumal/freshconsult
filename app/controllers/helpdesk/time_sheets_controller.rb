@@ -4,7 +4,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :new, :update, :toggle_timer] 
-  before_filter :load_installed_apps, :only => [:index, :create, :edit, :update, :toggle_timer, :destroy]  
+  before_filter :load_installed_apps, :only => [:index, :create, :new, :edit, :update, :toggle_timer, :destroy]
+  before_filter :set_newshow_page
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
@@ -32,13 +33,9 @@ class Helpdesk::TimeSheetsController < ApplicationController
   end
 
   def new
-    render "helpdesk/time_sheets/v2/new", :layout => false  if new_show_page?
+    render :layout => false
   end
   
-  def edit
-    render "helpdesk/time_sheets/v2/edit.html.erb", :layout => false  if new_show_page?
-  end
-
   def create
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
@@ -166,6 +163,10 @@ private
 
   def new_show_page?
     true
+  end
+
+  def set_newshow_page
+    @details_page_version = 2 if new_show_page?
   end
   
   def respond_to_format result

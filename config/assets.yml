@@ -32,6 +32,8 @@ stylesheets:
     - public/stylesheets/app/app-bootstrap.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/select2.css
+    - public/stylesheets/app/lib/dialog.css
 
   pattern:
     - public/stylesheets/pattern/pattern.css
@@ -52,6 +54,9 @@ stylesheets:
   freshwidget:
     - public/stylesheets/freshwidget.css
 
+  tkt_details:
+    - public/stylesheets/app/tkt_details.css
+    
   gadget:
     - public/stylesheets/app/lib/defaults.css
     - public/stylesheets/app/lib/layout.css    
@@ -112,6 +117,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
@@ -133,6 +139,7 @@ javascripts:
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
     - public/javascripts/navsearch.js
+    - public/javascripts/dialog3.js
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
     # - public/javascripts/pattern/bootstrap-alert.js

@@ -1159,10 +1159,15 @@ div.panel_area{
 	.monitor_active img{ 
 		background: sprite($ticketicon, monitor_active) no-repeat;
 	}
-	.spam img{ 
+	.spam, .spam_active {
+		@include hide-text();
+		width: 24px;
+		height: 24px;
+	}
+	.spam { 
 		background: sprite($ticketicon, flag-spam) no-repeat;
 	}
-	.spam_active img{ 
+	.spam_active { 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
 	.jira img{ 
