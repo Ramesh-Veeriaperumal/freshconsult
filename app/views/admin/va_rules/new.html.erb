@@ -1,3 +1,7 @@
+<% content_for :sidebar do %>
+	<%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
 <h3 class="title"><%=t('dispatch.new')%></h3> 
 <% form_for :va_rule, @va_rule, :url => admin_va_rules_path, :html => { :method => :post , :id => "VirtualAgent" } do |f| %>
 	<%= render :partial => "/admin/shared/rule_form", :locals => { :f => f } %>

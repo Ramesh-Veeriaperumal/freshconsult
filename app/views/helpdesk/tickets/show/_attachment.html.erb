@@ -1,0 +1,12 @@
+<li>
+	<%= link_to("", helpdesk_attachment_path(attachment), :class =>"attachment-close", 
+				:method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
+	<% 
+	extname = attachment.content_file_name.split('.')[-1] 
+	extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
+	%>
+	<div class="attachment-type file-types-<%= extname %>">
+		<%= link_to truncate(h(attachment.content_file_name), 23), attachment, :popup => true %>
+		<span>(<%= number_to_human_size attachment.content_file_size %>)</span>
+	</div>
+</li>

@@ -6,6 +6,11 @@ class Portal < ActiveRecord::Base
   delegate :friendly_email, :to => :product, :allow_nil => true
   
   include Mobile::Actions::Portal
+  include Cache::Memcache::Portal
+
+  after_commit_on_update :clear_portal_cache
+  after_commit_on_destroy :clear_portal_cache
+  before_update :backup_changes
 
   has_one :logo,
     :as => :attachable,
@@ -87,6 +92,12 @@ class Portal < ActiveRecord::Base
 
       f_list.each { |field| to_ret.push(field) if checks.fetch(field.name, true) }
       to_ret
+    end
+
+    def backup_changes
+      @old_object = self.clone
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
     end
   
 end

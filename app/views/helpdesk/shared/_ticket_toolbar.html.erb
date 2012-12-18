@@ -7,26 +7,39 @@
 				</th>
 		    <th class="bulk_action_buttons"> 
 		    	<% if @current_view == "deleted" %>
-    			  <%= button_to_function(t('undelete'), "helpdesk_submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/restore', 'put');" type="button" value="<%=t('undelete')%>" disabled="disabled">
     			<% else %>
-    			  <%= button_to_function(t('delete'), "helpdesk_submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
+            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple', 'delete');" type="button"
+              value="<%=t('delete')%>" disabled="disabled">
     			<% end %>
 			
     			<% if @current_view == "spam" %>
-    			  <%= button_to_function(t('ticket.unflag_spam'), "helpdesk_submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+          <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button" value="<%=t('ticket.unflag_spam')%>" disabled="disabled"> 
     			<% else %>
-    			  <%= button_to_function(t('ticket.flag_spam'), "helpdesk_submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+            <% if @current_view == "deleted" %>
+              <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/delete_forever', 'delete');" type="button" value="<%=t('ticket.delete_forever')%>" disabled="disabled">
+            <% else %>
+              <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" value="<%=t('ticket.flag_spam')%>" disabled="disabled">
+            <% end %>
     			<% end %> 
 			
     			<% if @current_view != "deleted" && @current_view != "spam" %>
-            <%= button_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put' , [{name: 'disable_notification' , value: event.shiftKey}])", :class => "button") %>
-            <%= button_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
-		            <%= content_tag(:button, t('ticket.assign_to_agent'),  "data-url" => url_for(:action => "assign_to_agent"), :class => "button dialog2", :title => t('ticket.assign_to_agent'), "data-width" => "360" ) %>
-	            	<%= content_tag(:button, t('bulk_actions'), "data-url" => url_for(:action => "update_multiple_tickets") , :class => "button","data-activate"=>"dialog", :title => t('bulk_actions'), "data-width" => "600" ) %>
+            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" type="button" value="<%=t('close')%>" disabled="disabled">
+
+            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button" value="<%=t('ticket.pick_up')%>" disabled="disabled">
+
+            <button class="button dialog2" data-url="/helpdesk/tickets/assign_to_agent" data-width="360" title="<%=t('ticket.assign_to_agent')%>" disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
+
+            <button class="button dialog2" data-url="/helpdesk/tickets/update_multiple_tickets" data-width="667" title="<%=t('bulk_actions')%>" disabled="disabled"><%=t('bulk_actions')%></button>
+
           <% end %>
           	</th>
           	<th class="toolbar_right">
-              <%= link_to("Export", { :action => "configure_export" }, :class => "padding6", "data-activate"=>"dialog", :title => "Export to CSV", "data-width" => "650", :id => 'export_tickets' ) %>
+              <% if @current_view == "deleted" %>
+                <%= link_to t('ticket.empty_trash'),empty_trash_helpdesk_tickets_path, :method => 'delete', :class => 'padding6', :id => 'empty_trash' %>
+              <% else %>
+                <a href="/helpdesk/tickets/configure_export" class="padding6 dialog2" title="Export to CSV"  "data-width" ="650" id = 'export_tickets'><%= t('ticket.export')%></a>
+              <% end %>
   
               <ul id="ticket_view_choices">
                 <li class="icon active"><a class="ticket-view-detail ticket-view-choice"></a></li>

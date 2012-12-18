@@ -38,7 +38,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def requester_status_name
-		Helpdesk::TicketStatus.translate_status_name(@source.ticket_status, "customer_display_name")
+		@source.requester_status_name
 	end
 
 	def priority
@@ -91,4 +91,12 @@ class Helpdesk::TicketDrop < BaseDrop
 	  time.in_time_zone(user_time_zone)
 	end
 
+	def before_method(method)
+		custom_fields = @source.load_flexifield
+		if custom_fields["#{method}_#{@source.account_id}"]
+			custom_fields["#{method}_#{@source.account_id}"]
+		else
+			super
+		end
+	end
 end

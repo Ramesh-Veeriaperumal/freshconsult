@@ -25,14 +25,14 @@
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskFwd_#{cntid}" } do |f| %>
     <%= f.error_messages %>       
     <ul class="ui-form dont-validate">
-				<div class="request_form_options">
-					<a href="#" class="slim-button" rel="fwd_cc_button_<%=cntid%>" data-input="#fwd_include_cc_<%=cntid%>" data-parent="#fwd-cc-form-container-<%=cntid%>" data-show-text="<%= t(".addcc")%>" data-hide-text="<%= t(".removecc")%>" id="add_fwd_cc_btn">
-						<%= t(".addcc") %>
-					</a>
-					<a href="#" class="slim-button"  rel="fwd_cc_button_<%=cntid%>" data-input="#fwd_include_bcc_<%=cntid%>" data-parent="#fwd-bcc-form-container-<%=cntid%>" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_fwd_bcc_btn" >
-						<%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
-					</a>
-          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this, #{@ticket.display_id})", :class => "slim-button insert-canned-response", :id => "#{cntid}", "data-tiny-mce-id" => "#{cntid}-body") %>
+        <div class="request_form_options">
+          <a href="#" class="slim-button" rel="fwd_cc_button_<%=cntid%>" data-input="#fwd_include_cc_<%=cntid%>" data-parent="#fwd-cc-form-container-<%=cntid%>" data-show-text="<%= t(".addcc")%>" data-hide-text="<%= t(".removecc")%>" id="add_fwd_cc_btn">
+            <%= t(".addcc") %>
+          </a>
+          <a href="#" class="slim-button"  rel="fwd_cc_button_<%=cntid%>" data-input="#fwd_include_bcc_<%=cntid%>" data-parent="#fwd-bcc-form-container-<%=cntid%>" data-show-text="<%= t(".addbcc")%>" data-hide-text="<%= t(".removebcc")%>" id="add_fwd_bcc_btn" >
+            <%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
+          </a>
+          <a href="#" data-current-forward="<%=cntid%>-body" id="forward_response" class="forward-resp slim-button"> <%= t('canned_folders.responses') %> &raquo;</a>
         </div>
         <% javascript_tag do %>
           jQuery('a[rel=fwd_cc_button_<%= cntid %>]').click(function(ev){
@@ -46,7 +46,7 @@
             jQuery(jQuery(this).data("input")).prop("checked", _condition);
           });
           <% end %>
-    		<%= content_tag( :h4, t("fwd_to"), :class => "title", :id => "fwd_title" ) %>
+        <%= content_tag( :h4, t("fwd_to"), :class => "title", :id => "fwd_title" ) %>
       <li class="inline-field field" >
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
@@ -69,7 +69,7 @@
             <label class="caption">
                 <%= t(".cc") %>:
             </label>
-	          <div class="fields" id="fwd_cc_emails_id" rel="fwd_cc_div" data-button="#add_fwd_cc_btn" data-parent="#fwd-cc-form-container"> 
+            <div class="fields" id="fwd_cc_emails_id" rel="fwd_cc_div" data-button="#add_fwd_cc_btn" data-parent="#fwd-cc-form-container"> 
                 
             <input type="text" id="fwd_cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
               <% javascript_tag do -%>
@@ -77,8 +77,8 @@
               <%- end %>
             </div>
         </li>
-		    <li class="inline-field field" id="fwd-bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
-			    <label class="caption">
+        <li class="inline-field field" id="fwd-bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
+          <label class="caption">
             <%= t(".bcc") %>:
           </label>
 
@@ -127,8 +127,8 @@
         </li>
     </ul>
     <div class="button-container">         
-    	<%= submit_tag(t('forward'), :class => "uiButton special" ) %>
-  		<%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
+      <%= submit_tag(t('forward'), :class => "uiButton special" ) %>
+      <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
     </div>
 
     <% end %>
@@ -155,6 +155,11 @@
         form = e.target.form,
         fromEmail = selectObj.val();
         form['helpdesk_note[from_email]'].value = fromEmail;
-  })
+  });
+  jQuery(".forward-resp").live('click', function(ev){
+    ev.preventDefault();
+    jQuery("#canned_response_show").attr('data-editor-id', jQuery(this).data('current-forward'));
+    jQuery("#canned_response_show").trigger('click');
+  });
   <% end %>
 <% end %>

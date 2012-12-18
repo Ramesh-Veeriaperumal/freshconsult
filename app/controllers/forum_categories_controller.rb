@@ -2,6 +2,8 @@ class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
   
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
   end
@@ -66,6 +68,9 @@ class ForumCategoriesController < ApplicationController
           render :action => 'show'
         end
       end
+      wants.xml { render :xml =>@result}
+      wants.json { render :json =>@result}
+
     end
   end  
     
@@ -106,6 +111,11 @@ class ForumCategoriesController < ApplicationController
      else
       :portal_forums 
      end
+    end
+
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.forum_category.page_not_found')
+      redirect_to categories_path
     end
     
 end

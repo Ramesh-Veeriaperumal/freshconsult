@@ -1,35 +1,6 @@
-  <%= will_filter_scripts_tag %>
-    <h3 class="title"><%= t("tickets_filter.title") %></h3>
-    <form id="FilterOptions" action="#">
-      <input type="hidden" name="data_hash" value="" />
-      <input type="hidden" name="filter_name" value="<%= @current_view %>" />
-      <input type="hidden" name="wf_order" value="<%= current_wf_order %>" />
-      <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
-  		<input type="hidden" name="page" value="1" />
-    </form>
-      <% @show_options.each_with_index do |c_hash, i| %> 
-        <%
-          if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
-            container = "nested_field"
-          elsif     
-            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
-          end
-        %> 
-    	  <% 
-        unless c_hash[:options].blank?
-          content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
-                                :class       => "ff_item", 
-                                :condition   => c_hash[:condition],
-                                :operator    => c_hash[:operator],
-                                :container   => container } do %>
-            <h4 class="title"><%= c_hash[:name] %></h4>
-            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
-          <% end
-          end 
-        end %>
-<script type="text/javascript"> 
-	var query_hash  = $A();
-  
+
+  <script type="text/javascript">
+
   function getFilterData(){
     query_hash = $A(); 
     jQuery("div.ff_item").map(function () {
@@ -55,7 +26,7 @@
         });
       }
     });
-		jQuery("#FilterOptions input[name=page]").val(1);
+    jQuery("#FilterOptions input[name=page]").val(1);
   }
 
   function refresh_tickets(){
@@ -70,6 +41,40 @@
     getFilterData();
     jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
   }
+  </script>
+  <%= will_filter_scripts_tag %>
+  <% special_case_views = ['deleted','spam','monitored_by'] %>
+    <h3 class="title"><%= t("tickets_filter.title") %></h3>
+    <form id="FilterOptions" action="#">
+      <input type="hidden" name="data_hash" value="" />
+      <input type="hidden" name="filter_name" value="<%= @current_view %>" />
+      <input type="hidden" name="wf_order" value="<%= current_wf_order %>" />
+      <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
+  		<input type="hidden" name="page" value="1" />
+      <input type="hidden" name="total_entries" value="0">
+    </form>
+      <% @show_options.each_with_index do |c_hash, i| %> 
+        <%
+          if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
+            container = "nested_field"
+          elsif     
+            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
+          end
+        %> 
+    	  <% 
+        unless c_hash[:options].blank?
+          content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+                                :class       => "ff_item", 
+                                :condition   => c_hash[:condition],
+                                :operator    => c_hash[:operator],
+                                :container   => container } do %>
+            <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}") : c_hash[:name] %></h4>
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
+          <% end
+          end 
+        end %>
+<script type="text/javascript"> 
+	var query_hash  = $A();
   
 	jQuery(document).ready(function(){
     
@@ -88,7 +93,7 @@
 
 
     getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON())
+    <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());' unless special_case_views.include?(@current_view) %>
 
     jQuery(".filter_item").bind("change", function(){
       refresh_tickets();
@@ -98,18 +103,23 @@
       jQuery("#save_filter").show();
       jQuery("#delete_filter").hide();
     }
+    jQuery(".wf_order_type, .wf_order").die();
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
     });	
+    jQuery(".toolbar_pagination a, .toolbar_pagination_full a").die();
 		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
 			ev.preventDefault();
 			jQuery(document).scrollTop(0);
+      count = +jQuery('#ticket_list_count').html();
+      jQuery("#FilterOptions input[name=total_entries]").val(count);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
 		});	
 
     if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
       jQuery('#export_tickets').hide();
+      jQuery('#empty_trash').hide();
     }	
 
   });
@@ -119,25 +129,26 @@
     if (supports_html5_storage()) {
       window.localStorage['is_unsaved_view'] = false;
     } 
-     jQuery.ajax({
-        url: "/helpdesk/tickets/custom_search",
-        type: "POST",
-        dataType: "script",
-        data: jQuery(this).serializeArray(),
-        success: function(script){ 
-          if (supports_html5_storage()) {
-            window.localStorage['is_unsaved_view'] = jQuery("#active_filter").hasClass('unsaved');
-            window.localStorage['updated_ticket_list'] = script;
-            setCookie('ticket_list_updated',true);
-          }
-
-          if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
-            jQuery('#export_tickets').hide();
-          } else {
-            jQuery('#export_tickets').show();
-          } 
-
+    jQuery.ajax({
+      url: "/helpdesk/tickets/custom_search",
+      type: "POST",
+      dataType: "script",
+      data: jQuery(this).serializeArray(),
+      success: function(script){ 
+        jQuery("#FilterOptions input[name=total_entries]").val(0);
+        if (supports_html5_storage()) {
+          window.localStorage['is_unsaved_view'] = jQuery("#active_filter").hasClass('unsaved');
+          window.localStorage['updated_ticket_list'] = script;
+          setCookie('ticket_list_updated',true);
         }
-      }); 
+
+        if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+          jQuery('#export_tickets').hide();
+        } else {
+          jQuery('#export_tickets').show();
+        } 
+
+      }
+    }); 
   });
 </script>

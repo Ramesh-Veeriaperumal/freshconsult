@@ -4,7 +4,9 @@ page << "jQuery('#errorMessages').hide();"
 if @user.errors.empty?
   show_ajax_flash(page)
   page << "active_dialog.dialog('close');"
-  page << "jQuery('#helpdesk_ticket_email').val('#{@user.name_email}')"
+  page << "jQuery('#helpdesk_ticket_email').val('#{@user.name_details}')"
+  page << "jQuery('#helpdesk_ticket_requester_id').val('#{@user.id}')"
+  page << "jQuery('#helpdesk_ticket_email').data('requesterCheck',true)"
 else
   #email exists
   if @existing_user
@@ -13,7 +15,9 @@ else
     
     #Script for populate requestor
     page << "jQuery('#populate_requestor_button').click(function(){
-                jQuery('#helpdesk_ticket_email').val('#{@existing_user.name_email}');
+                jQuery('#helpdesk_ticket_email').val('#{@existing_user.name_details}');
+                jQuery('#helpdesk_ticket_requester_id').val('#{@existing_user.id}');
+                jQuery('#helpdesk_ticket_email').data('requesterCheck',true);
                 active_dialog.dialog('close'); 
              });"
   #display validation error messages              

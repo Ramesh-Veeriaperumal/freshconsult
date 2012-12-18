@@ -20,7 +20,7 @@ class HttpRequestProxy
       domain = params[:domain]
       method = params[:method] || method
       ssl_enabled = params[:ssl_enabled]
-      resource = params[:resource]
+      rest_url = params[:rest_url]
       user = params[:username]
       pass = params[:password]
       entity_name = params[:entity_name]
@@ -33,22 +33,22 @@ class HttpRequestProxy
           post_request_body = (params[entity_name].to_json :root => entity_name)
         end
       end
-
       unless /http.*/.match(domain)
         http_s = ssl_enabled == "true"? "https":"http";
         domain = http_s+"://"+ domain
       end
-      resource = resource ? "/" + resource : ""
-      remote_url = domain + resource
+      rest_url = rest_url ? "/" + rest_url : ""
+      remote_url = domain + rest_url
       remote_url = Liquid::Template.parse(remote_url).render("password"=>params[:password])
 
       if auth_header.blank?
         auth_header = "Basic "+Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
       end
+      
       options = Hash.new
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
-
+      options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
       begin
         net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
         proxy_request = HTTParty::Request.new(net_http_method, remote_url, options)
@@ -71,6 +71,14 @@ class HttpRequestProxy
       response_code = 500  # Internal server error
     end
     response_type = accept_type if response_type.blank?
+    begin
+      if accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
+        response_body = proxy_response.parsed_response.to_json
+        response_type = "application/json"
+      end
+    rescue => e
+      Rails.logger.error("Error while parsing remote response.")
+    end
     return {:text=>response_body, :content_type => response_type, :status => response_code}
   end
 

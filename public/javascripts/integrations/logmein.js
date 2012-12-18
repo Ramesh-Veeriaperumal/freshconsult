@@ -44,7 +44,7 @@ LogMeInWidget.prototype= {
 	getAuthcode: function(){
 		authcodeEndpoint = "API/requestAuthCodeSSO.aspx?ssoid=#{sso_id}&pwd={{password}}&company=#{company_id}";
 		this.freshdeskWidget.request({
-			resource: authcodeEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
+			rest_url: authcodeEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
 			on_failure: this.authcodeFailure.bind(this),
 			on_success: this.authcodeSuccess.bind(this)
 		});
@@ -54,7 +54,7 @@ LogMeInWidget.prototype= {
 	getTechConsole: function(){
 		techConsoleEndpoint = "SSO/GetLoginTicket.aspx?ssoid=#{sso_id}&Password={{password}}&CompanyID=#{company_id}";
 		this.freshdeskWidget.request({
-			resource: techConsoleEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
+			rest_url: techConsoleEndpoint.interpolate({sso_id: logmeinBundle.ssoId, company_id: logmeinBundle.companyId}) ,
 			on_failure: this.processFailure,
 			on_success: this.assignTechnicianTicket.bind(this)
 		});
@@ -68,7 +68,7 @@ LogMeInWidget.prototype= {
 		else{
 			pincodeEndpoint = "API/requestPINCode.aspx?cfield0=#{reqName}&tracking0=INTEGRATIONS_LOGMEIN:#{account}:#{ticket}:#{secret}&notechconsole=1&authcode=#{authcode}";
 			this.freshdeskWidget.request({
-				resource: pincodeEndpoint.interpolate({reqName: encodeURIComponent(logmeinBundle.reqName), account: logmeinBundle.accountId, ticket: logmeinBundle.ticketId, secret: logmeinBundle.secret, authcode: logmeinBundle.authcode}) ,
+				rest_url: pincodeEndpoint.interpolate({reqName: encodeURIComponent(logmeinBundle.reqName), account: logmeinBundle.accountId, ticket: logmeinBundle.ticketId, secret: logmeinBundle.secret, authcode: logmeinBundle.authcode}) ,
 				on_failure: this.processFailure,
 				on_success: this.processPincode.bind(this)
 			});	
@@ -80,7 +80,8 @@ LogMeInWidget.prototype= {
 	assignTechnicianTicket:function(response){
 		response = response.responseText;
 		if(response.indexOf('OK') >= 0){
-			logmeinWidget.techlink = response.substr(3);
+			//logmeinWidget.techlink = response.substr(3);
+			logmeinWidget.techlink = response.split("OK:")[1];
 			this.renderTechConsole(logmeinWidget.techlink, logmeinBundle.pincode, logmeinBundle.pinTime);
 			jQuery("#logmein_widget").removeClass('loading-fb');
 			if(logmeinBundle.pincode != ""){
@@ -97,10 +98,10 @@ LogMeInWidget.prototype= {
 	},
 
 	processPincode:function(response){	
-		if(response.responseText.substr(0,2) == 'OK') {
+		if(response.responseText.indexOf('OK') >= 0) {
 			jQuery('#pinsubmit').prop('value', 'New Remote Session');
 			jQuery('#pinsubmit').removeAttr('disabled');
-			pincode = response.responseText.substr(12);
+			pincode = response.responseText.split("PINCODE:")[1].slice(0,-1);
 			logmeinBundle.pincode = pincode;
 			logmeinBundle.pinTime = "";
 			if(pincode != ""){
@@ -130,7 +131,8 @@ LogMeInWidget.prototype= {
 	authcodeSuccess: function(response){
 		response = response.responseText;
 		if(response.indexOf('OK') >= 0){
-			logmeinBundle.authcode = response.substring(13);
+			//logmeinBundle.authcode = response.substring(13);
+			logmeinBundle.authcode = response.split("AUTHCODE:")[1].slice(0,-1);
 			this.updateAuthcode();
 			this.generatePincode();
 		}

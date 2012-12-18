@@ -1,0 +1,19 @@
+<% if failed_tickets.any? %>
+	 <%= t("helpdesk.flash.tickets_update_with_errors", :tickets => get_updated_ticket_count ) %>
+	 <%= link_to_function t("helpdesk.tickets.execute_scenario_notice.view_details"), "jQuery('#bulk_actions_failed').slideDown(300); $(this).hide()" %>
+	<div class='list' id="bulk_actions_failed" style="display:none;">
+	  <h4 class='title'><%= t("helpdesk.flash.sending_failure") %></h4>
+	  <ul>
+	    <% failed_tickets.each do |a| %>
+			<% content_tag(:li) do %>
+				<h3 class="social_nw_link_error">
+					<%= link_to "#{a.subject}	#{content_tag(:span, '#'+a.display_id.to_s, :class =>'ticket_id')}", 
+						%(/helpdesk/tickets/#{a.display_id}), :target => "_blank" %>
+				</h3>
+			<% end %>
+	    <% end %>
+	  </ul> 
+	</div>
+<% else %>
+	 <%= t("helpdesk.flash.tickets_update", :tickets => get_updated_ticket_count ) %>
+<% end %>

@@ -121,12 +121,13 @@ class Mobile::TicketsController < ApplicationController
     view_list = []
     views = current_account.ticket_filters.my_ticket_filters(current_user)
     view_list.concat( views.map { |view| 
-      serialize_params_for_tags(view.data[:data_hash])
       view.deserialize_from_params(view.data)
       filter_id = view[:id]
       filter_name = view[:name]
       joins = view.get_joins(view.sql_conditions)
-      ticket_count =  current_account.tickets.permissible(current_user).count(:id, :joins => joins, :conditions=> view.sql_conditions)
+      options = { :joins => joins, :conditions => view.sql_conditions, :select => :id}
+      options[:distinct] = true if view.sql_conditions[0].include?("helpdesk_tags.name")
+      ticket_count =  current_account.tickets.permissible(current_user).count(options)
 
       { 
         :id => filter_id, 
@@ -147,21 +148,6 @@ class Mobile::TicketsController < ApplicationController
         :type => :filter, :count => count )
     } 
     render :json => view_list.to_json
-  end
-
-  # Method used set the ticket.ids in params[:data_hash] based on tags.name
-  def serialize_params_for_tags(data_hash)
-    return if data_hash.nil? 
-
-    action_hash = data_hash.kind_of?(Array) ? data_hash : 
-      ActiveSupport::JSON.decode(data_hash)
-    
-    action_hash.each_with_index do |filter, index|
-      next if filter["value"].nil? || !filter["condition"].eql?("helpdesk_tags.name")
-      value = current_account.tickets.permissible(current_user).with_tag_names(filter["value"].split(",")).join(",")
-      action_hash[index]={ "condition" => "helpdesk_tickets.id", "operator" => "is_in", "value" => value }
-      break
-    end
   end
 
 end

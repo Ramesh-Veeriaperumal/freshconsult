@@ -4,6 +4,8 @@ class Admin::GettingStartedController < Admin::AdminController
 
   helper Admin::GettingStartedHelper
   
+  VALID_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}){1,2}$/
+
   def index
     request_token = @wrapper.request_tokens   
     @auth_redirect_url = request_token.authorize_url
@@ -18,20 +20,41 @@ class Admin::GettingStartedController < Admin::AdminController
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
     @account = current_account    
-    render :partial => "index"
+    render :layout => false
   end
   
   def delete_logo
   	 current_account.main_portal.logo.destroy
+     current_account.main_portal.touch
  	   render :text => "success"
   end
 
-  def rebrand
-    current_portal.update_attributes(params[:account][:main_portal_attributes])
+  def rebrand    
+    pref = params[:account][:main_portal_attributes][:preferences]
+    pref.each do |key,value|        
+        error(key) unless valid_color_code(value)
+        break unless @error.blank?
+    end
+
+    current_portal.update_attributes(params[:account][:main_portal_attributes]) if @error.blank?
+    current_portal.touch
+    redirect_params = {:activeSlide => "3"}
+    redirect_params[:error] = @error unless @error.blank?
+    redirect_to admin_getting_started_index_path(redirect_params) if params["rebrand_from_ie"]=="true"
   end
     
   protected
-  
+    
+    def error(color_title)
+          @error = I18n.t('admin.getting_started.index.rebrand_header_invalid') if(color_title.eql?("header_color"))
+          @error = I18n.t('admin.getting_started.index.rebrand_tab_invalid') if(color_title.eql?("tab_color"))
+          @error = I18n.t('admin.getting_started.index.rebrand_bg_invalid') if(color_title.eql?("bg_color"))          
+    end
+
+    def valid_color_code(color)      
+      (color =~ VALID_COLOR_REGEX) ? true : false
+    end
+
     def twitter_wrapper
       @wrapper = TwitterWrapper.new @twitter_item, {:current_account => current_account,
                                              :callback_url => authdone_social_twitters_url }

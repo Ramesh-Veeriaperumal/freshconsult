@@ -43,13 +43,13 @@
   /* IE 7 specific style */ }
 
 /* line 32, ../src/freshwidget.scss */
-.right {
-  right: 35px \0/IE89;
+.ie8.right, .ie9.right {
+  right: 35px;
   /* IE 8 & 9 specific style */ }
 
 /* line 35, ../src/freshwidget.scss */
-.right:hover {
-  right: 33px \0/IE89;
+.ie8.right:hover, .ie9.right:hover {
+  right: 33px;
   /* IE 8 & 9 specific style */ }
 
 /* line 39, ../src/freshwidget.scss */
@@ -146,8 +146,18 @@
   transform: rotate(45deg);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
 
+/* line 103, ../src/freshwidget.scss */
+.left a.ie10 {
+  -ms-transform: rotate(-90deg);
+  -ms-transform-origin: top left; }
+
+/* line 108, ../src/freshwidget.scss */
+.right a.ie10 {
+  -ms-transform: rotate(-90deg);
+  -ms-transform-origin: bottom left; }
+
 /* Widget Form Style */
-/* line 105, ../src/freshwidget.scss */
+/* line 114, ../src/freshwidget.scss */
 .freshwidget-dialog {
   position: absolute;
   padding: 8px 0px;
@@ -155,11 +165,11 @@
   margin-left: -260px;
   top: 100px;
   z-index: 900010; }
-  /* line 113, ../src/freshwidget.scss */
+  /* line 122, ../src/freshwidget.scss */
   .freshwidget-dialog iframe {
     width: 612px;
     height: 900px; }
-  /* line 118, ../src/freshwidget.scss */
+  /* line 127, ../src/freshwidget.scss */
   .freshwidget-dialog .widget-close {
     position: absolute;
     right: 5px;

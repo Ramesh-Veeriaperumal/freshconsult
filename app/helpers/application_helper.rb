@@ -6,6 +6,8 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
 
+  include MemcacheKeys
+
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -75,8 +77,8 @@ module ApplicationHelper
     @page_keywords    
   end
 
-  def tab(title, url, cls = false)
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => ( cls ? "active": "" ) )
+  def tab(title, url, cls = false, tab_name="")
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
@@ -86,8 +88,8 @@ module ApplicationHelper
     flash.discard
   end
 
-  def each_or_message(partial, collection, message)
-    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "list-noinfo")
+  def each_or_message(partial, collection, message, locals = {})
+    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
   end
   
   def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
@@ -132,13 +134,13 @@ module ApplicationHelper
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets) ],
-      ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
-      ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
+      ['/helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
+      ['/helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    (current_user && current_user.can_view_all_tickets?)],
-      ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
+      ['/support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/reports',            :reports,      permission?(:manage_reports) ],
       ['/admin/home',         :admin,        permission?(:manage_users)],
       company_tickets_tab
@@ -158,7 +160,7 @@ module ApplicationHelper
     navigation = tabs.map do |s| 
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
+      tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ) 
     end
     navigation
   end          
@@ -313,17 +315,29 @@ module ApplicationHelper
       ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    current_account.ticket_fields.custom_fields.each { |custom_field|
+      name = custom_field.name[0..custom_field.name.rindex('_')-1]
+      place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
+    }
     place_holders
   end
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
-    content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+    img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
+    if options.include?(:width)  
+      img_tag_options[:width] = options.fetch(:width)
+      img_tag_options[:height] = options.fetch(:height)
+    end 
+    avatar_content = MemcacheKeys.fetch(["v1","avatar",profile_size,user],options.fetch(:expiry,300)) do
+      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+    end
+    avatar_content
   end
 
   def user_avatar_with_expiry( user, expiry = 300)
-    user_avatar(user,:thumb,"preview_pic",{:expiry => expiry})
+    user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
   end
   
   def is_user_social( user, profile_size )
@@ -381,7 +395,7 @@ module ApplicationHelper
   
   def get_app_config(app_name)
     installed_app = get_app_details(app_name)
-    return installed_app[0].configs[:inputs] unless installed_app.blank?
+    return installed_app.configs[:inputs] unless installed_app.blank?
   end
 
   def is_application_installed?(app_name)
@@ -390,14 +404,12 @@ module ApplicationHelper
   end
 
   def get_app_details(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = @installed_apps_hash[app_name.to_sym]
     return installed_app
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
-    installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
-                  :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
+    installed_app = @installed_apps_hash[app_name.to_sym]
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
@@ -441,7 +453,7 @@ module ApplicationHelper
       when "dropdown" then
         choices = [];i=0
         field[:choices].each do |choice| 
-          choices[i] = t(choice);i=i+1
+          choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
@@ -460,16 +472,20 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, altered_choices = nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
+    if dom_type == "requester"
+      field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
+      field_label += add_requester_field  
+    end
+    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     choices = altered_choices || field.choices
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
+        element+= hidden_field(object_name, :requester_id)  
         unless is_edit or params[:format] == 'widget'
-          element += add_requester_field 
           element = add_cc_field_tag element, field
         end
       when "email" then
@@ -515,7 +531,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (current_user && current_user.can_view_all_tickets?)
   end
   
   def add_name_field
@@ -529,7 +545,8 @@ module ApplicationHelper
     _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
-      :initValues => _field_values
+      :initValues => _field_values,
+      :disable_children => false
     }.merge!(_opt)
 
     _field.nested_levels.each do |l|       
@@ -577,7 +594,8 @@ module ApplicationHelper
       :totalPages => total_pages,
       :url        => url,
       :loaderMsg  => message,
-      :params => params
+      :params => params,
+      :currentPage => 1
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
   end
@@ -591,12 +609,18 @@ module ApplicationHelper
 
   def email_regex
     Helpdesk::Ticket::VALID_EMAIL_REGEX.source
+  end
+
+  def nodejs_url namespace
+    nodejs_protocol = (current_account && current_account.ssl_enabled) ? "https" : "http"
+    nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
+    "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
   end  
    
   private
     def solutions_tab
       if current_portal.main_portal?
-        ['solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+        ['/solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
       elsif current_portal.solution_category
         [solution_category_path(current_portal.solution_category), :solutions, 
               allowed_in_portal?(:open_solutions)]
@@ -627,6 +651,12 @@ module ApplicationHelper
   def company_tickets_tab
     tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
     tab || ""
+  end
+
+  def tour_button(text, tour_id)
+    link_to (content_tag( :div, text, :class=> 'guided-tour-start') , '#', 
+              :rel => 'guided-tour',
+              "data-tour-id" => tour_id)
   end
   
 end
