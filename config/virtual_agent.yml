@@ -38,6 +38,12 @@ default_fields:
     company:
         handler: text
         
+    responder_id:
+        handler: object_id
+        
+    group_id:
+        handler: object_id
+
     created_at:
         <<: *date_time
     opened_at:
@@ -83,5 +89,6 @@ handlers:
     date_time: Va::Handlers::DateTime
     dropdown:  Va::Handlers::Text
     checkbox: Va::Handlers::Boolean
+    object_id: Va::Handlers::ObjectId
     nested_field: Va::Handlers::NestedField
     allow_all: Va::Handlers::AllowAll
