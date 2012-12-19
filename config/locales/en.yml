@@ -1691,6 +1691,8 @@ en:
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     group: Group
+    agent: Agent 
+    none: None
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent
