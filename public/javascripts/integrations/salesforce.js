@@ -7,17 +7,18 @@ SalesforceWidget.prototype= {
 		salesforceBundle.app_name = "Salesforce";
 		salesforceBundle.integratable_type = "crm";
 		salesforceBundle.auth_type = "OAuth";
+		salesforceBundle.oauth_token = salesforceBundle.token;
 		this.salesforceBundle = salesforceBundle;
 		freshdeskWidget = new Freshdesk.CRMWidget(salesforceBundle, this);
 	},
 
 	get_contact_request: function() {
-		var sosl = encodeURIComponent("FIND {" + this.salesforceBundle.reqEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")");
+		var sosl = "FIND {" + this.salesforceBundle.reqEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")";
 		return { rest_url: "services/data/v20.0/search?q="+sosl };
 	},
 
 	parse_contact: function(resJson){
-		contacts = [];
+		var contacts = [];
 		resJson.each( function(contact) {
 			title = contact.Title;
 			var cLink = this.salesforceBundle.domain +"/"+contact.Id;

@@ -53,7 +53,7 @@ gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
-gem "newrelic_rpm","3.0.0"
+gem "newrelic_rpm","3.5.0.1"
 
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
 gem "sanitize", "2.0.3"
@@ -91,6 +91,8 @@ end
 group :assets do
 	gem "sass", "3.2.1"
 	gem "compass-rails"
+	# Portal grid system is done using susy grids
+	gem "susy" 
 end
 
 

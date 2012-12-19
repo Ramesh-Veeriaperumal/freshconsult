@@ -1,0 +1,83 @@
+
+<% default_page_count = 10 %>
+<% start = params[:start].to_i %>
+<% per_page = (params[:per_page].to_i > 0) ? params[:per_page].to_i : default_page_count %>
+<% failed = Resque::Failure.all(start, per_page) %>
+<% index = 0 %>
+<% date_format = "%Y/%m/%d %T %z" %>
+
+<% javascript_tag do -%>
+  jQuery('.header').hide();
+<% end %>
+
+<%= link_to "Overview", admin_resque_home_path(), {:class => "uiButton", :id => "overview_button" } %>
+
+<% unless failed.blank? %>
+  <% Resque.queues.each do |name| %>
+    <%= link_to "#{t('remove')} #{name}" , destroy_all_admin_resque_failed_path(:name => name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
+  <%end%>
+<% end %>
+
+
+<h1 class="failed_heading">Failed Jobs</h1>
+
+<p >Showing <%=start%> to <%= start + ((failed.size < per_page) ? failed.size : per_page) %> of <b><%= size = Resque::Failure.count %></b> jobs</p>
+
+<ul class='failed failed-grids'>
+  <%for job in failed%>
+    <% index += 1 %>
+    <% id = start + index - 1 %>
+    <li>
+      <dl>
+        <% if job.nil? %>
+          <dt>Error</dt>
+          <dd>Job <%= index%> could not be parsed; perhaps it contains invalid JSON?</dd>
+        <% else %>
+          <dt>Worker</dt>
+          <dd>
+            <%= puts job['worker']%>
+            <b class='resque_worker'><%= job['worker'].split(':')[0...2].join(':') %></b> on <b class='queue-tag'><%= job['queue'] %></b > at <b><span class="resque_time"><%= Time.parse(job['failed_at']).strftime(date_format) %></span></b>
+            <% if job['retried_at'] %>
+              <div style="margin-left: 760px;">
+                
+                <b class="retried">Retried at </b> <b><span class="resque_time"><%= Time.parse(job['retried_at']).strftime(date_format) %></span></b>
+                <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "uiButton", :id => "resque_btn" } %>
+                              
+              </div>
+            <% else %>
+                <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "uiButton",:id => "resque_btn" } %>
+                
+                <%= link_to 'retry', requeue_admin_resque_failed_path(id, :job => job, :failed => failed), { :method => :put, :class => "uiButton" , :id => "resque_btn" } %>
+            <% end %>
+          </dd>
+          <dt class='failed_category'>Class</dt>
+            <dd><code><%= job['payload'] ? job['payload']['class'] : 'nil' %></code></dd>
+          <dt class='failed_category'>Arguments</dt>
+            <dd><pre><%=h job['payload'] ? Array(job['payload']['args']).map { |a| a.inspect }.join("\n"): 'nil' %></pre></dd>
+          <dt class='failed_category'>Exception</dt>
+            <dd><code><%= job['exception'] %></code></dd>
+          <dt class='failed_category'>Error</dt>
+            <dd class='error'>
+              <% if job['backtrace'] %>
+                <%= h(job['error']) %>
+                <pre style='display:none'><%=h job['backtrace'].join("\n") %></pre>
+              <% else %>
+                <%=h job['error'] %>
+              <% end %>
+            </dd>
+        <% end %>
+      </dl>
+    </li>
+  <%end%>
+</ul>
+
+<% if  start - default_page_count >= 0 || start + default_page_count <= size %>
+<p class='pagination'>
+  <% if start - default_page_count >= 0 %>
+    <a href="<%= url_path request.path_info.sub('/','') %>?start=<%= start - default_page_count %>" >&laquo; less</a>
+  <% end %>
+  <% if start + default_page_count <= size %>
+    <a href="<%= url_path request.path_info.sub('/','') %>?start=<%= start + default_page_count %>" >more &raquo;</a>
+  <% end %>
+</p>
+<%end%>

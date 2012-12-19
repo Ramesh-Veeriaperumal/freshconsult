@@ -31,7 +31,14 @@ jQuery('#edit-ca-folder').bind('click', function(){
 jQuery('#edit-cancel').bind('click', function(ev){
 	ev.preventDefault();
 	jQuery('#editing').dialog('close');
-})
+});
+
+jQuery('#save_edit').bind('click', function(ev){
+	if(jQuery.browser.opera || jQuery.browser.msie)
+	{
+		jQuery('#folder_edit_form').submit();
+	}
+});
 
 jQuery('#save_edit').bind('click', function(ev){
 	if(jQuery.browser.opera || jQuery.browser.msie)

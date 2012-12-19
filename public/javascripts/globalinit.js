@@ -213,11 +213,41 @@ var $J = jQuery.noConflict();
          ignore:":not(:visible)"
       };
       
-      $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
-      $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
-      $("form.uniForm").validate(validateOptions);
-      $("form.ui-form").validate(validateOptions);
-      $("form[rel=validate]").validate(validateOptions);
+      $("ul.ui-form").livequery(function(ev){
+        $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
+      })
+      $("div.ui-form").livequery(function(ev){
+        $(this).not(".dont-validate").find('form:first').validate(validateOptions); 
+      })
+      // $("form.uniForm").validate(validateOptions);
+      $("form.ui-form").livequery(function(ev){
+        $(this).validate(validateOptions);
+      })
+      // $("form[rel=validate]").validate(validateOptions);
+
+      validateOptions['submitHandler'] = function(form, btn) {
+                                          // Setting the submit button to a loading state
+                                          $(btn).button("loading")
+
+                                          // IF the form has an attribute called data-remote then it will be submitted via ajax
+                                          if($(form).data("remote"))
+                                              $(form).ajaxSubmit({
+                                                dataType: 'script',
+                                                success: function(response, status){
+                                                  // Resetting the submit button to its default state
+                                                $(btn).button("reset");
+
+                                                // If the form has an attribute called update it will used to update the response obtained
+                                                  $("#"+$(form).data("update")).html(response)
+                                                }
+                                              })
+                                          // For all other form it will be a direct page submission         
+                                          else form.submit()
+                                        }
+      // Form validation any form append to the dom will be tested via live query and then be validated via jquery
+      $("form[rel=validate]").livequery(function(ev){
+        $(this).validate(validateOptions)
+      })
 
     $('.single_click_link').live('click',function(ev) {
       if (! $(ev.srcElement).is('a')) {
