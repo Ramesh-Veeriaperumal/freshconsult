@@ -439,6 +439,7 @@ $(document).ready(function() {
 
     $('[rel=tagger]').livequery(function() {
         $(this).select2({
+            multiple: true,
             tags: TICKET_DETAILS_DATA['tag_list'],
             tokenSeparators: [','],
         });
@@ -516,18 +517,21 @@ $(document).ready(function() {
 
     $(".conversation_thread .request_panel form").live('submit', function(ev) {
         ev.preventDefault();
-        if ($(this).valid()) {
 
-            if ($(this).attr('rel') == 'forward_form')  {
+        var _form = $(this);
+        _form.find('input[type=submit]').prop('disabled', true);
+
+        if (_form.valid()) {
+
+            if (_form.attr('rel') == 'forward_form')  {
                 //Check for To Addresses.              
-                if ($(this).find('input[name="helpdesk_note[to_emails][]"]').length == 0 )
+                if (_form.find('input[name="helpdesk_note[to_emails][]"]').length == 0 )
                 {
                     alert('No email addresses found');
                     return false;
                 }
             }
 
-            _form = $(this);
             _form.ajaxSubmit({
                 dataType: 'xml',
                 beforeSubmit: function(values, form) {
@@ -541,14 +545,19 @@ $(document).ready(function() {
                         $('#' + _form.data('panel')).block({
                             message: " <h1>...</h1> ",
                             css: {
-                                borderRadius: '5px',
-                                padding: '10px'
+                                display: 'none',
+                                backgroundColor: '#FFFFFF',
+                                border: 'none',
+                                color: '#FFFFFF'
+                            },
+                            overlayCSS: {
+                                backgroundColor: '#FFFFFF',
+                                opacity: 0.6
                             }
                         });
                 },
                 success: function(response) {
 
-                    
                     if (_form.data('fetchLatest'))
                         fetchLatestNotes();
 
@@ -568,12 +577,14 @@ $(document).ready(function() {
                         _form.resetForm();
                     }
                         
-
+                    _form.find('input[type=submit]').prop('disabled', false);
                     if (_form.data('showPseudoReply'))
                         $('#TicketPseudoReply').show();
 
                 }
             });
+        } else {
+            _form.find('input[type=submit]').prop('disabled', false);
         }
     });
 
@@ -602,6 +613,12 @@ $(document).ready(function() {
     });
     // -----   END OF TICKET BAR FIXED TOP ------ //
 
+    //Toggling Note visiblity
+    $('#toggle-note-visibility').live('click', function(ev){
+        var checkbox = $(this).find('input[type=checkbox]');
+        checkbox.prop("checked", !checkbox.prop("checked"));
+        $(this).toggleClass('visible');
+    });
 
     $('.ticket_show #close_ticket_btn').live('click', function(ev){
         ev.preventDefault();

@@ -862,7 +862,7 @@ class Helpdesk::TicketsController < ApplicationController
       Helpdesk::TagUse.destroy tag_uses
 
       #Decrementing Tag Uses Count (on multiple items)
-      Helpdesk::Tag.update_all("tag_uses_count = tag_uses_count -1", {:id => tags.collect(&:id)})
+      # Helpdesk::Tag.update_all("tag_uses_count = tag_uses_count -1", {:id => tags.collect(&:id)})
 
     end
 

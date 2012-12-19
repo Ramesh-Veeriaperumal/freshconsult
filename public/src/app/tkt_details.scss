@@ -263,6 +263,56 @@ p strong{
 	}
 }
 
+#toggle-note-visibility {
+	display: inline-block;
+	float: right;
+	margin: 0 5px;
+
+	.note-visible, .note-hidden {
+		i {
+			display: block;
+			width: 30px;
+			height: 26px;
+			float: right;
+		}
+		label {
+			font-size: 13px;
+			display: inline-block;
+			padding:6px 10px 0 0;
+			cursor: pointer;
+		}
+		cursor: pointer;
+	}
+
+	
+	.note-visible i {
+		background:sprite($symbol, note-visible);
+		background-repeat: no-repeat;
+	}
+	.note-hidden i {
+		background:sprite($symbol, note-hidden);
+		background-repeat: no-repeat;
+	}
+
+	.note-visible {
+		display: none;
+	}
+
+	&.visible {
+		.note-visible{
+			display:block;
+		}
+
+		.note-hidden {
+			display: none;
+		}
+	}
+
+	input[type=checkbox] {
+		display: none;
+	}
+}
+
 .ticket-actions{
 	display: block;
 	margin: 10px 0px 0px;
