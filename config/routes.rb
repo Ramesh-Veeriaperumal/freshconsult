@@ -151,8 +151,13 @@
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
-      admin.resources :analytics
+      admin.namespace :resque do |resque|
+        resque.home '', :controller => 'home', :action => 'index'
+        resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
+        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
       end
+      admin.resources :analytics 
+    end
   end
   
   map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|

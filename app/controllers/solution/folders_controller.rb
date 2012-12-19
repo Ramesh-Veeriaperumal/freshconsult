@@ -31,7 +31,7 @@ class Solution::FoldersController < ApplicationController
         store_location
         format.html {redirect_to login_url }
       else
-        format.html
+        format.html { @page_canonical = solution_category_folder_url(current_category, @item) }
       end
       format.xml  { render :xml => @item.to_xml(:include => fetch_articles_scope) }
       format.json { render :json => @item.to_json(:except => [:account_id,:import_id],:include => fetch_articles_scope) }
