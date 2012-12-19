@@ -5,6 +5,12 @@ oauth_options:
     token_url: /services/oauth2/token
   google:
     site: https://www.google.com/
+  mailchimp:
+    authorize_uri: https://login.mailchimp.com/oauth2/authorize
+    access_token_uri: https://login.mailchimp.com/oauth2/token
+  nimble:
+    token_method: :get
+    site: "https://api.nimble.com"
 
 development:
  salesforce:
@@ -13,6 +19,15 @@ development:
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
+ mailchimp:
+  consumer_token: 437815361144
+  consumer_secret: 409c0d6f80c62efcc42e01b6c5569203
+ constantcontact:
+  consumer_token: f2ff0ffa-5423-4c15-ad80-ac98c2b1191c
+  consumer_secret: 0a83bd57fb6946d4aa21faa9515df7e8
+ nimble:
+  consumer_token: 086decd7b63c4293c766674099b84061
+  consumer_secret: 27b2144bd5c63ee7
 
 defaults: &defaults
  salesforce:
@@ -31,17 +46,20 @@ slave:
 
 staging:
  salesforce:
-  #freshbugs tokens
-  #consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzd2iOSIknPyJt6zA9J48lmi8mHKiUN9uAWjDon3nuxFvigIGrhxl.voS9amJ
-  #consumer_secret: 9020749689711648741
-
-  #freshpo
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
   consumer_secret: 7527225363657893740
- 
  google:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
+ mailchimp:
+  consumer_token: 187267923355
+  consumer_secret: 0c8b6473fe421fa60dbd0f3befc4f219
+ constantcontact:
+  consumer_token: 918a740e-9f25-4471-a625-067f730b7c6e
+  consumer_secret: 14f777db3c414452a51925363001eda5
+ nimble:
+  consumer_token: 086decd7b63c4293c766674099b84061
+  consumer_secret: 27b2144bd5c63ee7
 
 production:
  salesforce:
@@ -50,3 +68,12 @@ production:
  google:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
+ mailchimp:
+  consumer_token: 560756408749
+  consumer_secret: d30b60816fe878cf6ea67489b7c47dad
+ constantcontact:
+  consumer_token: 915f92ab-c49e-4fbc-9322-4606ceede9cd
+  consumer_secret: 5f2b1af85f5d40de97b66af3994361b5
+ nimble:
+  consumer_token: 086decd7b63c4293c766674099b84061
+  consumer_secret: 27b2144bd5c63ee7

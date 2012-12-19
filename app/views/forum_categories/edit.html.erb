@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%-end %>
-<h3 class="title"><%= t('edit_forum_category')%>  <span class="sub_title">"<%=@forum_category.name%>"</span>  </h3>
+<h3 class="title"><%= t('edit_forum_category')%>  <span class="sub_title">"<%=h(@forum_category.name)%>"</span>  </h3>
 <% form_for :forum_category,@forum_category, :url => category_url , :html=>{:method=>:put}  do |f| -%>
   <%= f.error_messages %>
   <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>

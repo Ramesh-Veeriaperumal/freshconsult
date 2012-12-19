@@ -1,0 +1,27 @@
+<% content_for :sidebar do -%><%- end %>
+
+<%= f.error_messages :object_name => 'canned_response_folder' %>
+<ul class="ui-form">
+	<li>
+    		<%= f.label(:name, t('canned_folders.new')) %>
+    		<%= f.text_field :name, :id => "new_name", :class => "text required" %>
+	</li>
+</ul>
+<div class="button-container">
+	<%= submit_tag t('save'), :class => "uiButton", :role => "button disabled", :id => "save_here", "disabled" => "disabled" %>	      	
+	<%= link_to(t('cancel'), "#", :class => "uiButton", :id => "new_cancel" ) %>
+</div>
+
+<% javascript_tag  do -%>
+jQuery("#new_cancel").bind('click', function(ev){
+	jQuery(this).parent().parent().parent().dialog('close');
+	return false;
+});
+
+jQuery('#new_name').bind('keyup', function(){
+	if(jQuery('#new_name').val() != "")
+		jQuery('#save_here').removeAttr('disabled');
+	else
+		jQuery('#save_here').attr('disabled', 'disabled');
+});
+<% end %>

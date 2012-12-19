@@ -44,7 +44,7 @@ HTML
           ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
           ['/admin/email_commands_settings', 'email_commands_setting'], 
           ['/integrations/applications',  'integrations'            ],
-          ['/admin/canned_responses',     'canned-response'         ],
+          ['/admin/canned_responses/folders',     'canned-response' ],
           ['/admin/surveys',              'survey-settings', current_account.features?(:surveys)      ],
           ['/admin/gamification',         'gamification-settings', current_account.features?(:gamification)      ]
       ], "HelpdeskProductivity"],

@@ -99,7 +99,7 @@ module HelpdeskControllerMethods
     respond_to do |result|
       result.html{
         flash[:notice] = render_to_string(
-          :partial => '/helpdesk/shared/flash/restore_notice')
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
         redirect_to after_restore_url 
       }
       result.xml {  render :xml => @items.to_xml(options) }
@@ -253,9 +253,8 @@ protected
   end
   
   def after_restore_url
+    return :back if params[:redirect_back] or @items.size>1
     return @items.first if @items.size == 1
-    
-    :back
   end
 
   def add_to_history(item = false, cls = false)

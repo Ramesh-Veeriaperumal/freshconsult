@@ -186,13 +186,14 @@ class Forum < ActiveRecord::Base
       :activity_data => { 
                           :path => category_forum_path(forum_category_id, 
                                     id), 
-                          'category_name' => forum_category.to_s, 
+                          'category_name' => h(forum_category.to_s), 
                           :url_params => {
                                            :category_id => forum_category_id, 
                                            :forum_id => id,
                                            :path_generator => 'category_forum_path'
                                           },
-                          :title => to_s
+                          :title => h(to_s),
+                          :version => 2
                         }
     )
   end

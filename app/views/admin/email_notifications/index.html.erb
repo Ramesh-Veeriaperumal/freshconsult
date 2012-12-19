@@ -1,6 +1,7 @@
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
-<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
+<!-- Commented out because of an issue. Ticket ID 26280. by Shridar -->
+<!--script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script-->
 <% javascript_tag do %>
 	var active_email_body = null;
 	jQuery(document).ready(function(){

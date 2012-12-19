@@ -1,5 +1,5 @@
-<% form_remote_for @user, :url => contacts_path, :method => 'post', 
-          :html => { :id => "add_requester_form" } do |add_requester| %>
+<% form_for @user, :url => contacts_path, :method => 'post', 
+      :html => { :id => "add_requester_form", :rel => "validate", "data-remote" => true } do |add_requester| %>
   <div id="errorExplanation" class="errorExplanation" style="display:none;">
   </div>
   <div id="errorMessages" style="display:none;">
@@ -7,15 +7,15 @@
   <ul class="ui-form">
     <li>
       <%= add_requester.label t('user.name') %>
-      <%= add_requester.text_field :name %>
+      <%= add_requester.text_field :name, :class => "required"%>
     </li>
     <li>
       <%= add_requester.label t('user.email') %>
-      <%= add_requester.text_field :email %>
+      <%= add_requester.text_field :email, :class => "require_from_group user_info email" %>
     </li>
     <li>
       <%= add_requester.label t('user.phone_no') %>
-      <%= add_requester.text_field :phone %>
+      <%= add_requester.text_field :phone, :class => "require_from_group user_info" %>
     </li>
     <li>
       <%= add_requester.label t('user.company') %>
@@ -25,8 +25,8 @@
   	<%= add_requester.hidden_field :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] %>
   </ul>
   <div class="button-container">
-    <%= add_requester.submit t('create'), :class => "uiButton small" %>
-    <%= link_to t('cancel'), "javascript:void(0);", :class => "uiButton small", :id => "cancel_button" %>
+    <%= add_requester.submit t('create'), :class => "btn primary" %>
+    <%= link_to t('cancel'), "javascript:void(0);", :class => "btn", :id => "cancel_button" %>
   </div>
 <% end %>
 

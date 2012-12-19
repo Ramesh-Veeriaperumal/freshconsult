@@ -1,12 +1,16 @@
-<%= include_tiny_mce_if_needed %>
+<%= include_stylesheets :redactor %>
+<%= include_javascripts :redactor %>
 <%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
     		<%= f.label(:title, t('title')) %>
-    		<%= f.text_field :title, :class => "text required" %>
+    		<%= f.text_field :title, :class => "text required", :rel => "cloneSource", 
+				'data-destination' => "solution_article_seo_data_meta_title", :autofocus => true %>
 		</li>
 		<li>
-    		<%= f.text_area  :description, :class => "mceEditor", :id => 'article-body' %>		
+    		<%= f.rich_editor  :description,
+    		:rel => "cloneSource", 'data-destination' => "solution_article_seo_data_meta_description", 
+    		'data-multiline' => true, 'editor-type' => :solution, :height => "350px"  %>		
 		</li>
 		<li>
 			<%= render :partial => "/solution/shared/attachment_form" %>
@@ -23,7 +27,8 @@
 		<% fields_for :tags  do |tag| %>
 		<li>
 			<%= tag.label(:name, t('tag.title')) %>
-			<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+","}, :class => "text" %>
+			<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+","}, :class => "text", 
+				:rel => "cloneSource", 'data-destination' => "solution_article_seo_data_meta_keywords" %>
 		</li>
 		<%end%>
 		<li class="dropdown">
@@ -38,4 +43,101 @@
 			<%= f.label :status, t('solution.status') %>
 			<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
 		</li>
+		<li id="solution-seo-container">
+			<div id="solution-seo-show" class="solution-seo-title">
+				<div class="arrow-right  solution-seo-show" id="show-hide-button">
+				</div>
+				<a href="javascript:void(null);"><%= t('solution.solution_meta') %></a>
+			</div>
+			<div id="solution-seo" class="hide">
+				<ul>
+					<% f.fields_for :seo_data  do |s| %>
+						<li>
+							<%= s.label(:meta_title, t('solution.solution_meta_title')) %>
+							<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
+								'data-counter' => "TitleCounter", 'data-limit' => 72, 
+								:value => (@article.seo_data || {})[:meta_title] %>
+
+							<div class="solution-seo-message">
+								<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
+								<%= t('solution.title_counter_message') %>
+							</div>
+						</li>
+						<li>
+							<%= s.label(:meta_description, t('solution.solution_meta_description')) %>
+				    		<%= s.text_area  :meta_description, :rel => "charcounter", 
+								'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
+								:value => (@article.seo_data || {})[:meta_description], 
+								:class => "solution-seo-description" %>
+							<div class="solution-seo-message">
+					    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
+					    		<%= t('solution.description_counter_message') %>
+				    		</div>
+						</li>
+						<li>
+							<%= s.label(:meta_keywords, t('solution.solution_meta_keywords')) %>
+							<%= s.text_field :meta_keywords, :class => "text", 
+								:value => (@article.seo_data || {})[:meta_keywords] %>
+							<div class="solution-seo-message">
+								<%= t('solution.meta_keywords_message') %>
+							</div>
+						</li>
+					<% end %>
+				</ul>
+			</div>
+		</li>
 	</ul>
+	<%= javascript_include_tag 'frameworks/plugins/jquery.char_counter.js' %>
+	<% javascript_tag do %>
+		(function($) {
+			$(document).ready(function() {
+				function cloneText(source, destination, multiline) {
+					if (typeof(multiline) == "undefined")
+						$("#" + destination).val($(source).val()).keyup();
+					else{
+						var div = document.createElement("div");
+						//Redactor hack for new line
+						//div.innerHTML = $(source).val().split('</p>').join('<br>');
+						div.innerHTML = $(source).val().replace(/\<\/(p|div|h[1-6]|li)\>/g, "\n");
+						text = div.textContent.replace(/\n+/g, " ").trim();
+						text = (text.length > 150) ? (text.substring(0,147) + '...') :text.substring(0,150);
+						$("#" + destination).val(
+						text).keyup();
+					}
+				}
+				$('[rel=cloneSource]').each(function(i,node) {
+					if ($("#" + $(node).data("destination")).val() == ""){
+						cloneText(this, $(node).data("destination"), $(node).data("multiline"));
+						$(node).live("keyup", function() {
+							cloneText(this, $(this).data('destination'), $(node).data("multiline"))
+						});
+					}
+					$("#" + $(node).data("destination")).live("change", function() {
+						$(node).unbind("keyup");
+					});
+				});
+				$('#solution_article_description').getEditor().bind("keyup", function() {
+					$('#solution_article_description').keyup();
+				});
+				$('#solution-seo-show').bind("click", function(){
+					if($('#solution-seo').is(":visible")) {
+						$('#show-hide-button').addClass("arrow-right");
+						$('#show-hide-button').removeClass("arrow-down");
+					}
+					else {
+						$('#show-hide-button').removeClass("arrow-right");
+						$('#show-hide-button').addClass("arrow-down");
+					}
+					
+					$('#solution-seo').toggle('fast',function(){
+						$(window).scrollTop($('#solution-seo').offset().top);
+						$('#solution_article_seo_data_meta_title').focus();
+					});
+				});
+				$('#article-form').bind("submit", function() {
+					$('#solution_article_seo_data_meta_description').val(
+					$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim());
+				});
+			});
+		})(jQuery)
+	<% end %>
