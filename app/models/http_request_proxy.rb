@@ -51,7 +51,7 @@ class HttpRequestProxy
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
       begin
         net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
-        proxy_request = HTTParty::Request.new(net_http_method, remote_url, options)
+        proxy_request = HTTParty::Request.new(net_http_method, URI.encode(remote_url), options)
         Rails.logger.debug "Sending request: #{proxy_request.inspect}"
         proxy_response = proxy_request.perform
         Rails.logger.debug "Received response: #{proxy_response.inspect}"
@@ -59,7 +59,7 @@ class HttpRequestProxy
         # TODO Need to audit all the request and response calls to 3rd party api.
         response_body = proxy_response.body
         response_code = proxy_response.code
-        response_type = proxy_response.header['content-type']
+        response_type = proxy_response.headers['content-type']
       rescue => e
         Rails.logger.error("Error during #{method.to_s}ing #{remote_url.to_s}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
         response_body = '{"result":"error"}'
@@ -72,6 +72,10 @@ class HttpRequestProxy
     end
     response_type = accept_type if response_type.blank?
     begin
+      x_headers = {}
+      proxy_response.headers.map { |key, value|
+        x_headers[key] = value if key.start_with?("x-")
+      }
       if accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
         response_body = proxy_response.parsed_response.to_json
         response_type = "application/json"
@@ -79,7 +83,7 @@ class HttpRequestProxy
     rescue => e
       Rails.logger.error("Error while parsing remote response.")
     end
-    return {:text=>response_body, :content_type => response_type, :status => response_code}
+    return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end
 
   HTTP_METHOD_TO_CLASS_MAPPING = {

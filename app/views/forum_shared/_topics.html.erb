@@ -17,7 +17,8 @@
 				
 				<%= content_tag (:b, "STICKY") if (topic.sticky?) %>
 				
-				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
+				<%= link_to h(topic.title), category_forum_topic_path(category, forum, topic), 
+						:class => "topic-title" %>
 				
 					<div class="info_data"> 
 						<% if topic.posts_count > 1 %>

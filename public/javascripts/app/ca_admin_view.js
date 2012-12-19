@@ -40,6 +40,13 @@ jQuery('#save_edit').bind('click', function(ev){
 	}
 });
 
+jQuery('#save_edit').bind('click', function(ev){
+	if(jQuery.browser.opera || jQuery.browser.msie)
+	{
+		jQuery('#folder_edit_form').submit();
+	}
+});
+
 jQuery("#responses-select-all").live("change", function(ev){
 	jQuery("#responses").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked")).trigger('change');
 	jQuery("#responses").trigger('click');
