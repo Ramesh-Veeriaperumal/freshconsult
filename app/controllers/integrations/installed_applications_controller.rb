@@ -2,9 +2,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   include Integrations::AppsUtil
 
+  before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object 
   before_filter :check_jira_authenticity, :only => [:install, :update]
-  before_filter :strip_slash, :only => [:install, :update]
   
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
@@ -20,6 +20,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         else
           flash[:error] = t(:'flash.application.install.error')
         end
+      rescue VersionDetectionError => e
+        flash[:error] = t("integrations.batchbook.detect_error")
       rescue => e
         Rails.logger.error "Problem in installing an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         flash[:error] = t(:'flash.application.install.error')
@@ -34,6 +36,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       begin
         @installed_application.save!
         flash[:notice] = t(:'flash.application.update.success')   
+      rescue VersionDetectionError => e
+        flash[:error] = t("integrations.batchbook.detect_error")
       rescue => e
         Rails.logger.error "Problem in updating an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         flash[:error] = t(:'flash.application.update.error')
@@ -125,7 +129,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     end
 
     def strip_slash
-      params[:configs][:domain] = params[:configs][:domain][0..-2] if !(params[:configs].blank?) and !(params[:configs][:domain].blank?) and params[:configs][:domain].ends_with?('/')
+      params[:configs][:domain] = params[:configs][:domain][0..-2] if !params[:configs].blank? and !params[:configs][:domain].blank? and params[:configs][:domain].ends_with?('/')
     end
 
 end

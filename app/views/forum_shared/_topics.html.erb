@@ -17,7 +17,8 @@
 				
 				<%= content_tag (:b, "STICKY") if (topic.sticky?) %>
 				
-				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
+				<%= link_to h(topic.title), category_forum_topic_path(category, forum, topic), 
+						:class => "topic-title" %>
 				
 					<div class="info_data"> 
 						<% if topic.posts_count > 1 %>
@@ -58,6 +59,6 @@
   <% else %>
 	<div class="big-info">
 		<div class="no-info-text"><%= t('no_topics_text')%></div>
-		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") %>
+		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") if logged_in? && (!forum.announcement? || permission?(:manage_forums)) %>
 	</div>
 <% end %>	

@@ -1,0 +1,72 @@
+/* Welcome to Compass. Use this file to write IE specific override styles.
+ * Import this file using the following HTML or equivalent:
+ * <!--[if IE]>
+ *   <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+ * <![endif]--> */
+.ie7 .navigation a {
+  border: 1px #ccc solid;
+}
+
+/* line 11, ../sass/ie.scss */
+.ie8 a.facebook {
+  display: inline-block;
+  position: relative;
+  z-index: 100;
+}
+
+.ie8 .rebrand-textbox input{
+ background: #fff;
+}
+
+/* line 17, ../sass/ie.scss */
+.ie8 a.twitter {
+  display: inline-block;
+  position: relative;
+  z-index: 100;
+}
+
+.ie8 .colorpicker input[type="text"]{  
+  height:29px;
+}
+
+.ie7 .custom-upload .fake-file{
+ display:none;
+}
+
+.ie8 .custom-upload .fake-file{
+ display:none !important;
+}
+
+.ie9 .custom-upload .fake-file{
+ display:none;
+}
+
+.ie7 .custom-upload input[type="file"]{
+ height:33px;
+}
+
+.ie8 .custom-upload input[type="file"]{
+ height:33px;
+}
+
+.ie7 .custom-upload{
+ background-image: none !important;
+}
+
+.ie8 .custom-upload{
+ background-image: none !important;
+}
+
+:root .custom-upload .fake-file{
+  display:none\9;
+}
+
+:root .custom-upload input[type="file"]{
+  opacity:1\9;
+  height:33px\9;
+}
+
+:root .custom-upload{
+ background-image: none\9 !important; 
+ background-size: 0px 0px\9;
+}

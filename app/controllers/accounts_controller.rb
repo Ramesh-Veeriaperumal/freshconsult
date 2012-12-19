@@ -243,6 +243,7 @@ class AccountsController < ApplicationController
   def update
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
+    params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     
     if @account.save
@@ -297,11 +298,13 @@ class AccountsController < ApplicationController
   
   def delete_logo
     current_account.main_portal.logo.destroy
+    current_account.main_portal.touch
     render :text => "success"
   end
   
   def delete_fav
     current_account.main_portal.fav_icon.destroy
+    current_account.main_portal.touch
     render :text => "success"
   end
 
@@ -385,7 +388,7 @@ class AccountsController < ApplicationController
                   metrics_obj[:landing_url] = metrics["current_session"]["url"]
                   metrics_obj[:first_referrer] = params[:first_referrer]
                   metrics_obj[:first_landing_url] = params[:first_landing_url]
-                  metrics_obj[:country] = metrics["location"]["countryName"]
+                  metrics_obj[:country] = metrics["location"]["countryName"] unless metrics["location"].blank?
                   metrics_obj[:language] = metrics["locale"]["lang"]
                   metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
                   metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
@@ -410,7 +413,8 @@ class AccountsController < ApplicationController
                   @account.conversion_metric_attributes = metrics_obj
 
            rescue => e
-                Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")                
+                NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while building conversion metrics"}})
+                Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")
            end
 
         end      

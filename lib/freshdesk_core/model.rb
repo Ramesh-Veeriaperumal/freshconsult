@@ -1,6 +1,8 @@
 module FreshdeskCore::Model
 
     MODEL_DEPENDENCIES = { :account => [{:dependant => :account_admin, :method => :destroy},
+                                        {:dependant => :products, :method => :destroy_all},
+                                        {:dependant => :portals, :method => :destroy_all},
     									{:dependant => :all_email_configs, :method => :destroy_all},
     									{:dependant => :features, :method => :destroy_all},
     									{:dependant => :flexi_field_defs, :method => :destroy_all},
@@ -37,6 +39,7 @@ module FreshdeskCore::Model
     									{:dependant => :day_pass_purchases, :method => :destroy_all},
     									{:dependant => :data_import, :method => :destroy},
     									{:dependant => :tags, :method => :destroy_all},
+                      {:dependant => :canned_response_folders, :method => :destroy_all},
                       {:dependant => :all_quests, :method => :destroy_all}
     	] }
 

@@ -62,10 +62,32 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     return TICKET_LIST_VIEW_STATES[:created_at]
   end
 
+  def resolved_at_dirty
+    resolved_at || resolved_at_dirty_fix
+  end
+
+  def closed_at_dirty
+    closed_at || closed_at_dirty_fix
+  end
 
 private
   TICKET_LIST_VIEW_STATES = { :created_at => "created_at", :closed_at => "closed_at", 
     :resolved_at => "resolved_at", :agent_responded_at => "agent_responded_at", 
     :requester_responded_at => "requester_responded_at" }
+
+
+  def resolved_at_dirty_fix
+    return nil if tickets.active?
+    self.update_attribute(:resolved_at , updated_at)
+    NewRelic::Agent.notice_error(Exception.new("resolved_at is nil. Ticket state id is #{id}"))
+    resolved_at
+  end
+
+  def closed_at_dirty_fix
+    return nil if tickets.active?
+    self.update_attribute(:closed_at, updated_at)
+    NewRelic::Agent.notice_error(Exception.new("closed_at is nil. Ticket state id is #{id}"))
+    closed_at
+  end
 
 end

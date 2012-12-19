@@ -129,7 +129,7 @@ module Helpdesk::AdjacentTickets
 			current = send("new_page_" + direction.to_s , filter_params, current)
 
 			end_page[direction] = current
-			set_key(adjacent_meta_key, end_page.to_json, 1.day.to_i)
+			set_key(adjacent_meta_key, end_page.to_json, 3600)
 			current
 		end
 

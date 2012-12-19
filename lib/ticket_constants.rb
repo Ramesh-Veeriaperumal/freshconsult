@@ -12,8 +12,9 @@ module TicketConstants
     [ :phone,      I18n.t('phone'),            3 ],
     [ :forum,      I18n.t('forum_key'),        4 ],
     [ :twitter,    I18n.t('twitter_source'),   5 ],
-    [ :facebook,   I18n.t('facebook_source'),         6 ],
-    [ :chat,       I18n.t('chat'),             7 ]    
+    [ :facebook,   I18n.t('facebook_source'),  6 ],
+    [ :chat,       I18n.t('chat'),             7 ],
+    [ :mobi_help,  I18n.t('mobi_help'),        8 ]
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
@@ -50,15 +51,15 @@ module TicketConstants
   DEFAULT_COLUMNS_ORDER = [:responder_id,:group_id,:due_by,:status,:priority,:ticket_type,:source,"helpdesk_tags.name","users.customer_id"]
   
   DEFAULT_COLUMNS =  [
-    [ :status,              "Status",   :dropdown],
-    [ :responder_id,        "Agents",   :dropdown],
-    [ :ticket_type,         "Type",     :dropdown],
-    [ :group_id,            "Groups",   :dropdown],
-    [ :source,              "Source",   :dropdown],
-    [ :priority,            "Priority", :dropdown],
-    [ :due_by,              "Due By",  :due_by],
-    [ "helpdesk_tags.name", "Tags",     :dropdown],
-    [ "users.customer_id",  "Customers", :dropdown],
+    [ :status,              'status',   :dropdown],
+    [ :responder_id,        'responder_id',   :dropdown],
+    [ :ticket_type,         'ticket_type',     :dropdown],
+    [ :group_id,            'group_id',   :dropdown],
+    [ :source,              'source',   :dropdown],
+    [ :priority,            'priority', :dropdown],
+    [ :due_by,              'due_by',  :due_by],
+    [ "helpdesk_tags.name", "tags",     :dropdown],
+    [ "users.customer_id",  "customers", :dropdown],
     #[ :created_at,          "Created At", :created_at]
   ]
   
@@ -103,7 +104,7 @@ module TicketConstants
     :group_id         => "create_group_activity",
     :deleted          => "create_deleted_activity",
     :responder_id     => "create_assigned_activity",
-    :email_config_id  => "create_product_activity",
+    :product_id       => "create_product_activity",
     :ticket_type      => "create_ticket_type_activity"
   }
   

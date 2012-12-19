@@ -1,0 +1,2 @@
+flash[:notice] = t('canned_folders.delete_multiple')
+page.redirect_to (:back)

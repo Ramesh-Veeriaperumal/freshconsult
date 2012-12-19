@@ -12,14 +12,14 @@ WorkflowMaxWidget.prototype = {
 		init_reqs = [null, {
 			accept_type: "application/xml",
 			method: "get", 
-			resource: "job.api/tasks"+this.auth_keys,
+			rest_url: "job.api/tasks"+this.auth_keys,
 			on_success: widgetInst.loadJobList.bind(this)
 		}]
 		if (workflowMaxBundle.remote_integratable_id)
 			init_reqs[0] = {
 				accept_type: "application/xml",
 				method: "get", 
-				resource: "time.api/get/"+workflowMaxBundle.remote_integratable_id+this.auth_keys,
+				rest_url: "time.api/get/"+workflowMaxBundle.remote_integratable_id+this.auth_keys,
 				on_success: widgetInst.loadTimeEntry.bind(this),
 				on_failure: function(evt){}
 			}
@@ -162,7 +162,7 @@ WorkflowMaxWidget.prototype = {
 				body: body,
 				content_type: "application/xml",
 				method: "post",
-				resource: "time.api/add"+this.auth_keys,
+				rest_url: "time.api/add"+this.auth_keys,
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
 					this.add_workflow_max_resource_in_db();
@@ -204,7 +204,7 @@ WorkflowMaxWidget.prototype = {
 			this.freshdeskWidget.request({
 				accept_type: "application/xml",
 				method: "get", 
-				resource: "time.api/get/"+workflowMaxBundle.remote_integratable_id+this.auth_keys,
+				rest_url: "time.api/get/"+workflowMaxBundle.remote_integratable_id+this.auth_keys,
 				on_success: this.loadTimeEntry.bind(this)
 			});
 		}
@@ -260,7 +260,7 @@ WorkflowMaxWidget.prototype = {
 				body: body,
 				content_type: "application/xml",
 				method: "post",
-				resource: "time.api/update"+this.auth_keys,
+				rest_url: "time.api/update"+this.auth_keys,
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
 					if(resultCallback) resultCallback(evt);
@@ -288,7 +288,7 @@ WorkflowMaxWidget.prototype = {
 					body: body,
 					content_type: "application/xml",
 					method: "put",
-					resource: "time.api/update"+this.auth_keys,
+					rest_url: "time.api/update"+this.auth_keys,
 					on_success: function(evt){
 						this.handleTimeEntrySuccess(evt);
 						if(resultCallback) resultCallback(evt);
@@ -305,7 +305,7 @@ WorkflowMaxWidget.prototype = {
 			this.freshdeskWidget.request({
 				content_type: "application/xml",
 				method: "delete",
-				resource: "time.api/delete/"+remote_integratable_id+this.auth_keys,
+				rest_url: "time.api/delete/"+remote_integratable_id+this.auth_keys,
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
 					this.delete_workflow_max_resource_in_db(integrated_resource_id, resultCallback);

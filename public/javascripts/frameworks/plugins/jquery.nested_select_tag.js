@@ -10,7 +10,8 @@
             _category = $(this),
             _subcategory = $("#" + opts.subcategory_id),
             _item = $("#" + opts.item_id),
-            _vals = (opts.initValues || {});
+            _vals = (opts.initValues || {}),
+            _disable_children = opts.disable_children;
 
          opts["default_option"] = "<option value=''>"+opts["include_blank"]+"</option>";   
 
@@ -28,7 +29,7 @@
             _subcategory.trigger("change");
             _condition = (!_items_present || (!_category.val() || _category.val() == -1));
 
-            _subcategory.prop("disabled", _condition).parent().toggle(!_condition);
+            _subcategory.prop("disabled", _disable_children && _condition).parent().toggle(!_condition);
          });
 
          _subcategory.bind("change", function(ev){
@@ -51,7 +52,7 @@
               });                 
               _item.trigger("change");
               _condition = (!_items_present || (!_subcategory.val() || _subcategory.val() == -1));
-              _item.prop("disabled", _condition).parent().toggle(!_condition);
+              _item.prop("disabled", _disable_children && _condition).parent().toggle(!_condition);
             }
          });
 
@@ -92,7 +93,8 @@
      include_blank: "...",
      default_option: "<option value=''>...</option>",
      inline_labels: true,
-     change_callback: function(){}
+     change_callback: function(){},
+     disable_children: true
   };
 
 

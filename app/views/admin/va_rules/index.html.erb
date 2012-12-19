@@ -1,11 +1,5 @@
 <% content_for :sidebar do %>
-	<div class="sidepanel">
-		<h3 class="title"><%=t('dispatch.title')%></h3>
-		<div class="help_text">
-			<p><%=t('dispatch.info4')%>.</p>
-			<p><%=t('dispatch.info5')%>.</p>
-		</div>
-	</div>
+	<%= render :partial => "helpnote" %>
 <% end %>
 
 <% content_for :page_title do -%>
@@ -14,7 +8,7 @@
 
 <% content_for :page_toolbar do -%>
   <%= link_to (t('dispatch.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
-  <%= link_to t('dispatch.new_rule'), new_admin_va_rule_path, :class => "uiButton"  %>
+  <%= link_to t('dispatch.new_rule'), new_admin_va_rule_path, :class => "uiButton", :id => "new_dispatchr_rule"  %>
 <% end %>
 
 <% content_for :page_active_list do -%>

@@ -32,6 +32,9 @@ default_fields:
     source:
         handler: numeric
 
+    product_id:
+        handler: numeric
+
     contact:
         handler: text
 

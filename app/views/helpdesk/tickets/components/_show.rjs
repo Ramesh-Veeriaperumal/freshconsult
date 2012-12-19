@@ -1,0 +1,5 @@
+if !params[:ticket_id].blank? 
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) unless params[:ticket_id] == 'bulk' 
+    page.replace_html 'responses', :partial => 'helpdesk/tickets/components/ca_responses'
+end 
+page << "jQuery('#responses').removeClass('loading-center');"

@@ -1,4 +1,4 @@
-unless Account.current
+if Integrations::Application.count == 0
   # Populate Capsule CRM
   capsule_app = Integrations::Application.seed(:name) do |s|
     s.name = 'capsule_crm'
@@ -47,6 +47,7 @@ unless Account.current
         CustomWidget.include_js("/javascripts/integrations/freshbooks.js");
         freshbooksBundle={ k:"{{freshbooks.api_key}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", freshbooksNote:"{{freshbooks.freshbooks_note | escape_html}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}"};
        </script>}
+    s.application_id = freshbooks_app.id
   end
   
   
@@ -125,6 +126,54 @@ unless Account.current
     s.application_id = jira_app.id
   end
 
+
+  #Google Analytics
+
+  google_analytics_app = Integrations::Application.seed(:name) do |s|
+    s.name = "google_analytics"  # Do not change the name.
+    s.display_name = "integrations.google_analytics.label" 
+    s.description = "integrations.google_analytics.desc"
+    s.listing_order = 6
+    s.options = { 
+                  :keys_order => [:google_analytics_settings], 
+                  :google_analytics_settings => {:type => :custom, 
+                      :partial => "/integrations/applications/google_analytics", 
+                      :required => false, :label => "integrations.google_analytics.form.google_analytics_settings", 
+                      :info => "integrations.google_analytics.form.google_analytics_settings_info" }
+                }
+  end
+
+  #Sugar CRM
+
+  sugarcrm_app = Integrations::Application.seed(:name) do |s|
+    s.name = "sugarcrm"
+    s.display_name = "integrations.sugarcrm.label"
+    s.description = "integrations.sugarcrm.desc" 
+    s.listing_order = 7
+    s.options = {
+        :keys_order => [:domain, :username, :password], 
+        :domain => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.domain", :info => "integrations.sugarcrm.form.domain_info", :validator_type => "url_validator" }, 
+        :username => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.username" },
+        :password => { :type => :password, :label => "integrations.sugarcrm.form.password", :encryption_type => "md5" }
+    }
+    
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "sugarcrm_widget"
+    s.description = "sugarcrm.widgets.sugarcrm_widget.description"
+    s.script = %{
+      <div id="sugarcrm_widget" class="integration_widget crm_contact_widget">
+        <div class="content"></div>
+      </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/sugarcrm.js");
+        sugarcrmBundle={domain:"{{sugarcrm.domain}}", reqEmail:"{{requester.email}}", username:"{{sugarcrm.username}}", password:"{{sugarcrm.password}}"} ;
+       </script>}
+    s.application_id = sugarcrm_app.id
+  end
+
+
   # Populate Workflow MAX
   wfmax_app = Integrations::Application.seed(:name) do |s|
     s.name = "workflow_max"  # Do not change the name.
@@ -174,8 +223,8 @@ unless Account.current
         </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/salesforce.js");
-        salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}" } ;
-       </script>}
+        salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", reqName:"{{requester.name}}"} ;
+      </script>}
     s.application_id = salesforce_app.id
   end
 
@@ -209,6 +258,166 @@ unless Account.current
       </script>}
     s.application_id = logmein_app.id
   end
+  
+  # Batchbook
+  batchbook_app = Integrations::Application.seed(:name) do |s|
+      s.name = "batchbook" 
+      s.display_name = "integrations.batchbook.label"
+      s.description = "integrations.batchbook.desc" 
+      s.listing_order = 11
+      s.options =  {
+          :keys_order => [:domain, :api_key, :version], 
+          :domain => {  :type => :text,
+                  :required => true,
+                  :label => "integrations.batchbook.form.domain",
+                  :info => "integrations.batchbook.form.domain_info",
+                  :rel => "ghostwriter",
+                  :autofill_text => ".batchbook.com",
+                  :validator_type => "domain_validator"
+                }, 
+          :api_key => { :type => :text, :required => true, :label => "integrations.batchbook.form.api_key" },
+          :version => { :type => :dropdown,
+                        :choices => [
+                                        ["integrations.batchbook.form.version.auto_detect", "auto"],
+                                        ["integrations.batchbook.form.version.new", "new"],
+                                        ["integrations.batchbook.form.version.classic", "classic"]
+                                    ],
+                        :required => true,
+                        :default_value => "auto",
+                        :label => "integrations.batchbook.form.version.label"
+                }
+      }
+  end
 
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "batchbook_widget"
+    s.description = "batchbook.widgets.batchbook_widget.description"
+    s.script = %(      
+      <div id="batchbook_widget"  class="integration_widget crm_contact_widget">
+        <div class="content"></div>
+      </div>
+      <script type="text/javascript">
+        jQuery(document).ready(function(){
+          batchbookBundle={ domain:"{{batchbook.domain}}", k:"{{batchbook.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name}}", ver: "{{batchbook.version}}"};
+          CustomWidget.include_js("/javascripts/integrations/batchbook.js");
+        });
+      </script>
+      )
+    s.options = {'display_in_pages' => ["contacts_show_page_side_bar"]}
+    s.application_id = batchbook_app.id
+  end
+
+  #MailChimp
+
+  mailchimp_app = Integrations::Application.seed(:name) do |s|
+    s.name = "mailchimp"
+    s.display_name = "integrations.mailchimp.label"
+    s.description = "integrations.mailchimp.desc" 
+    s.listing_order = 13
+    s.options = {:direct_install => true, :oauth_url => "/auth/mailchimp?origin={{account_id}}"}
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "mailchimp_widget"
+    s.description = "mailchimp.widgets.mailchimp_widget.description"
+    s.script = %{
+      <div id="mailchimp_widget">
+        <div class="error modal_error hide"></div>
+        <div class="content"></div>
+        </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/mailchimp.js");
+        mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}"  } ;
+       </script>}
+    s.application_id = mailchimp_app.id
+    s.options =  {"display_in_pages" => ["contacts_show_page_side_bar"], "clazz" => "hide"}
+  end
+
+  #Campaign Monitor
+
+  campaignmonitor_app = Integrations::Application.seed(:name) do |s|
+    s.name = "campaignmonitor"
+    s.display_name = "integrations.campaignmonitor.label"
+    s.description = "integrations.campaignmonitor.desc" 
+    s.listing_order = 14
+    s.options = {
+        :keys_order => [:api_key, :client_id], 
+        :api_key => { :type => :text, :required => true, :label => "integrations.campaignmonitor.form.api_key", :info => "integrations.campaignmonitor.form.api_key_info" },
+        :client_id => { :type => :text, :required => true, :label => "integrations.campaignmonitor.form.client_id", :info => "integrations.campaignmonitor.form.client_id_info" }
+    }
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "campaignmonitor_widget"
+    s.description = "campaignmonitor.widgets.campaignmonitor_widget.description"
+    s.script = %{
+      <div id="campaignmonitor_widget">
+        <div class="error modal_error hide"></div>
+        <div class="content"></div>
+        </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/campaignmonitor.js");
+        cmBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}", api_key:"{{campaignmonitor.api_key}}", client_id:"{{campaignmonitor.client_id}}", export: "{{export}}" } ;
+       </script>}
+    s.application_id = campaignmonitor_app.id
+    s.options =  {"display_in_pages" => ["contacts_show_page_side_bar"], "clazz" => "hide"}
+  end
+
+  #iContact
+
+  icontact_app = Integrations::Application.seed(:name) do |s|
+    s.name = "icontact"
+    s.display_name = "integrations.icontact.label"
+    s.description = "integrations.icontact.desc" 
+    s.listing_order = 15
+    s.options = {
+        :keys_order => [:api_url, :username, :password], 
+        :api_url => { :type => :text, :required => true, :label => "integrations.icontact.form.api_url", :info => "integrations.icontact.form.api_url_info", :validator_type => "url_validator" }, 
+        :username => { :type => :text, :required => true, :label => "integrations.icontact.form.username" },
+        :password => { :type => :password, :label => "integrations.icontact.form.api_password" }
+    }
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "icontact_widget"
+    s.description = "icontact.widgets.icontact_widget.description"
+    s.script = %{
+      <div id="icontact_widget">
+        <div class="error modal_error hide"></div>
+        <div class="content"></div>
+        </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/icontact.js");
+        icontactBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  app_id:"{{icontact.app_id}}", username:"{{icontact.username}}", api_url:"{{icontact.api_url}}", app_id:"{{icontact.app_id}}", export: "{{export}}"  } ;
+       </script>}
+    s.application_id = icontact_app.id
+    s.options =  {"display_in_pages" => ["contacts_show_page_side_bar"], "clazz" => "hide"}
+  end
+
+  #ConstantContact
+
+  constantcontact_app = Integrations::Application.seed(:name) do |s|
+    s.name = "constantcontact"
+    s.display_name = "integrations.constantcontact.label"
+    s.description = "integrations.constantcontact.desc" 
+    s.listing_order = 16
+    s.options = {:direct_install => true, :oauth_url => "/auth/constantcontact?origin={{account_id}}"}
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "constantcontact_widget"
+    s.description = "constantcontact.widgets.constantcontact_widget.description"
+    s.script = %{
+      <div id="constantcontact_widget">
+        <div class="error modal_error hide"></div>
+        <div class="content"></div>
+        </div>
+      <script type="text/javascript">
+        CustomWidget.include_js("/javascripts/integrations/constantcontact.js");
+        ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}", uid: "{{constantcontact.uid}}"  } ;
+       </script>}
+    s.application_id = constantcontact_app.id
+    s.options =  {"display_in_pages" => ["contacts_show_page_side_bar"], "clazz" => "hide"}
+  end
 
 end

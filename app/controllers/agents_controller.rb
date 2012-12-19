@@ -9,10 +9,11 @@ class AgentsController < ApplicationController
 
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update,:destroy,:restore,:edit, :reset_password ]
+  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password ,:convert_to_contact ]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
-  before_filter :check_user_permission, :only => :destroy
+  before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
   before_filter :check_agent_limit, :only =>  :restore
+  before_filter :set_selected_tab
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -20,7 +21,7 @@ class AgentsController < ApplicationController
   end
   
   def check_user_permission
-    if (@agent.user == current_user) || (@agent.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
+    unless can_destroy?(@agent)
       flash[:notice] = t(:'flash.agents.delete.not_allowed')
       redirect_to :back  
     end    
@@ -34,18 +35,11 @@ class AgentsController < ApplicationController
   end
     
   def index    
-    @agents = current_account.agents.list.paginate(:page => params[:page], :per_page => 30)
+    @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }
     end
-  end
-
-  def convert_to_user
-    user = current_account.all_users.first(:include=>:agent, :conditions=>["agents.id=?",params[:id]])
-    user.agent.delete
-    user.user_role=3
-    user.save!
   end
 
   def show    
@@ -104,7 +98,7 @@ class AgentsController < ApplicationController
   end
   
   def create_multiple_items
-    @agent_emails = params[:agents_invite_email].split(/,/)
+    @agent_emails = params[:agents_invite_email]
 
     @responseObj = {}
     if current_account.can_add_agents?(@agent_emails.length)
@@ -150,6 +144,13 @@ class AgentsController < ApplicationController
      
   end
 
+  def convert_to_contact
+      user = @agent.user
+      user.make_customer
+      flash[:notice] = t(:'flash.agents.to_contact')
+      redirect_to contact_path(user)
+  end
+  
   def destroy    
     if @agent.user.update_attribute(:deleted, true)    
        @restorable = true
@@ -203,5 +204,9 @@ class AgentsController < ApplicationController
     flash[:notice] = t('maximum_agents_msg')
     redirect_to :back 
    end
+  end
+
+  def set_selected_tab
+    @selected_tab = :admin
   end
 end

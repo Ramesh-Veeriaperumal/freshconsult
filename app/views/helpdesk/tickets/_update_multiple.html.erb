@@ -1,3 +1,5 @@
+<div id="bulkcontent">
+<div id="bulkfull">
 <div class="bulktickets" id="bulktickets">
 <div class="dialog-special small_curve " id="update-fields">
   <div class="content clearfix scrollbar">
@@ -16,32 +18,24 @@
           <%
             object_name = "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
   			    
-            checkbox = check_box_tag object_name+"_"+field.field_name+"_label"
+            checkbox = check_box_tag object_name+"_"+field.field_name+"_label", "", false,
+                          :class => "update-check-for-fields"
             label = label_tag (object_name+"_"+field.field_name+"_label", checkbox + field.label,:rel => "inputcheckbox")
             
             if field.field_type == "nested_field"
-              helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+field.field_name
-                field.nested_ticket_fields.each do |nested_ticket_fields|
-                    helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}_custom_field"+"_"+nested_ticket_fields.field_name
-            end 
               element = label + nested_field_tag(object_name, field.field_name, field, {:include_blank => t('select'), :selected => {}},{:class => dom_type, :rel => "inputselectbox"}, {}, false)
-              
             else
-              helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '_custom_field' : '' }"+"_"+field.field_name
               element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('select'), :selected => t('select')},{:class => dom_type, :rel => "inputselectbox"})   
-
-              
             end
           %>  
   			  <%= content_tag :div, element, :class => "field-item #{cycle('clear', '', '') }" %>
-
-  			<%end%>
+        <%end%>
   		<%end%>
 	   <%end%>
   </div>
 </div>
-<div class="dialog-special small_curve top_spacing" id="reply-fields">
-  <div class="content clearfix">
+<div class="dialog-special small_curve" id="reply-fields">
+  <div id="content-bulk" class="content clearfix">
     <div class="field-item" id="bulkreplycheck">
       <label for="addbulkreply" rel="inputcheckbox">
         <input id="addbulkreply" type="checkbox" name="Add Bulk Reply" value="addbulkreply" /> Add Bulk Reply
@@ -55,22 +49,43 @@
 <div class="button-container">
   <div class="loading hide" id="loader">
   </div>
-  <%= button_to_function t('ticket_update_multiple_button'), "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', #{helpdesk_submit_options.to_json})", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
-  <%= button_to_function t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
+  <%= button_to_function t('ticket_update_multiple_button'), "submitBulkUpdate()", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
+  <%= link_to t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
+</div>
+</div>
+<div id="bulk-response-group" class="hide">
+  <a id="no-response">&laquo; <%= t('canned_folders.back_to_bulk') %></a>
+  <div id="bulk_canned_response_holder"> 
+  </div> 
+</div>
 </div>
 </div>
 
 <% javascript_tag do %> 
- jQuery('#ticket_cancel_multiple_button').click(
- 	function(){
-		active_dialog.dialog('close');
- 	}); 
- 
- jQuery("#ticket_update_multiple_button").bind('click',  function(ev){
-    jQuery(this).attr('disabled','disabled');
-    jQuery('#ticket_cancel_multiple_button').attr('disabled','disabled');
-    jQuery('#loader').removeClass("hide");
-  });
+  
+  jQuery('#ticket_cancel_multiple_button').click(
+   	function(){
+  		active_dialog.dialog('close');
+   	});
+
+  jQuery('#no-response').hide();
+
+  function submitBulkUpdate(){
+    if(!$('addbulkreply').checked || jQuery("#reply-multiple-cnt-reply-multiple-body").valid()){
+      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )" %>
+      jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
+      jQuery('#loader').removeClass("hide");
+    }
+  }
+
+  jQuery('#no-response').bind('click', function(){
+    jQuery('#bulkcontent').css('height','auto');
+    jQuery('#bulktickets').animate({marginLeft: '+=688px'}, 300, function() {
+      jQuery('#bulk-response-group').addClass('hide');
+    });
+    jQuery('#no-response').toggle('fast');
+    jQuery('#clear-search').trigger('click');
+});
 
  jQuery("[rel=inputselectbox]").bind('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
@@ -94,17 +109,22 @@
       if(jQuery(this).attr('for')=="addbulkreply")
       {
         jQuery("#bulkreplyform").slideDown();
+        jQuery("#bulkreplyform textarea").attr("disabled", false);
+        jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus();
       }
     }
     else
     {
       jQuery(this).removeClass("active");
+      jQuery(this).parent().find('.level_2, .level_3').slideUp();
       if(jQuery(this).attr('for')=="addbulkreply")
+      {
         jQuery("#bulkreplyform").slideUp();
+        jQuery("#bulkreplyform textarea").attr("disabled", true);
+      }
       jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');
-    }
-
-  });
+      }
+    });
 
 function groupchange(value){
     this.value = value;
@@ -113,7 +133,7 @@ function groupchange(value){
 	 blank_value = "No Change";
      jQuery.ajax({
        type:        'POST',
-       url: 		'/helpdesk/tickets/get_agents/'+this.value+'?blank_value=<%=t('select')%>',
+       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>',
        contentType: 'application/text',
        success:     function(data){
 
@@ -122,4 +142,9 @@ function groupchange(value){
                     }
      });
    }
+
+jQuery('.ui-icon-closethick').bind('click', function(){
+  if(!jQuery('#no-response').is(':hidden'))
+    jQuery('#no-response').click();
+});
 <% end %>
