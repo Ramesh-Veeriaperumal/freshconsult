@@ -1,5 +1,6 @@
 class Helpdesk::PicklistValue < ActiveRecord::Base
   
+  belongs_to_account
   set_table_name "helpdesk_picklist_values"
   validates_presence_of :value
   validates_uniqueness_of :value, :scope => [:pickable_id, :pickable_type]
@@ -11,6 +12,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   
   acts_as_list
   
+  before_create :set_account_id
   # scope_condition for acts_as_list
   def scope_condition
     "pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 
@@ -31,5 +33,14 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   def choices
     sub_picklist_values.collect { |c| [c.value, c.value]}
   end
+
+  def self.with_exclusive_scope(method_scoping = {}, &block)
+    with_scope(method_scoping, :overwrite, &block)
+  end
+
+  private
+    def set_account_id
+      self.account_id = pickable.account_id
+    end
 
 end

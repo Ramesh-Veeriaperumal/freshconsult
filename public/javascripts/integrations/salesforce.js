@@ -7,17 +7,18 @@ SalesforceWidget.prototype= {
 		salesforceBundle.app_name = "Salesforce";
 		salesforceBundle.integratable_type = "crm";
 		salesforceBundle.auth_type = "OAuth";
+		salesforceBundle.oauth_token = salesforceBundle.token;
 		this.salesforceBundle = salesforceBundle;
 		freshdeskWidget = new Freshdesk.CRMWidget(salesforceBundle, this);
 	},
 
 	get_contact_request: function() {
-		var sosl = encodeURIComponent("FIND {" + this.salesforceBundle.reqEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")");
+		var sosl = "FIND {" + this.salesforceBundle.reqEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + this.salesforceBundle.contactFields + "), Lead(" + this.salesforceBundle.leadFields + ")";
 		return { rest_url: "services/data/v20.0/search?q="+sosl };
 	},
 
 	parse_contact: function(resJson){
-		contacts = [];
+		var contacts = [];
 		resJson.each( function(contact) {
 			title = contact.Title;
 			var cLink = this.salesforceBundle.domain +"/"+contact.Id;
@@ -42,7 +43,7 @@ SalesforceWidget.prototype= {
 			var cDept = (department) ? department : "N/A" ;
 			var cAddress = (address) ? address : "N/A";
 			var cType = contact.attributes.type;
-			contacts.push({name: fullName, designation: desig, phone: cPhone, mobile: cMobile, department: cDept, address: cAddress, type: cType, url: cLink});
+			contacts.push({name: fullName, designation: desig, company: null, company_url: null, phone: cPhone, mobile: cMobile, department: cDept, address: cAddress, type: cType, url: cLink});
 		});
 		return contacts;
 	},

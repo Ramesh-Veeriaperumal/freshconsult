@@ -1,26 +1,47 @@
 <script type="text/javascript" charset="utf-8">
+  var _latest_response_data = [];
   function lookup(searchString, callback) { 
     new Ajax.Request('<%= url %>?v='+searchString, 
                         { parameters: {name: searchString, rand: (new Date()).getTime()},
                           onSuccess:  function(response) {
                                         var choices = $A();
                                         response.responseJSON.results
-                                          .each(function(item){
-                                            choices.push(item.value+" <"+item.id+">");
-                                          });                                             
+                                          .each(function(item){ 
+                                            choices.push(item.details);
+                                          });  
+                                        _latest_response_data = response.responseJSON.results;
                                         callback(choices);
-                                      } });
+                                      }
+                               });
+
   }
   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
-  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);    
 </script>
 <%if @item.requester and !@item.requester_has_email?%>
  <%= text_field object_name, :twitter_id, :value => (@item.requester_info), :disabled => true %>
 <%else%>
- <%= text_field object_name, :email, :value => (@item.requester_info) %>
+ <%= text_field object_name, :email, :value => (@item.requester_info), :class => "required requester", "data-requester-check" => false, "data-current-user" => "" %>
 <%end%>
 <div id="<%=object_name%>_email_choices" class="autocomplete"></div>
-
 <script type="text/javascript" charset="utf-8">
-  new Autocompleter.Json("<%=object_name%>_email", "<%=object_name%>_email_choices", cachedLookup, {});
+  new Autocompleter.Json("<%=object_name%>_email", "<%=object_name%>_email_choices", cachedLookup, {
+    afterUpdateElement: function(element, choice){
+      jQuery("#helpdesk_ticket_email").data("partialRequesterList", _latest_response_data)
+      _latest_response_data.each(function(item){    
+        if(element.value == item.details){
+          jQuery('#helpdesk_ticket_requester_id').val(item.user_id);
+        }
+      });
+    }
+  });
+  jQuery("#helpdesk_ticket_email").bind("keyup", function(){
+    jQuery(this).data("requesterCheck", false);
+  });
+
+  jQuery("#add_requester_btn_proxy").live("click",function(ev){
+    ev.preventDefault();
+    jQuery('#add_requester_btn').trigger("click");
+});
+  
 </script>

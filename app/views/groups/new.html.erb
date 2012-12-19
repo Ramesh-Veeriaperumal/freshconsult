@@ -1,2 +1,4 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do %>
+  <%= render :partial => "helpnote_without_tour" %>
+<% end %>
 <%= render :partial => "form", :locals => { :title => t('group.new') } %>

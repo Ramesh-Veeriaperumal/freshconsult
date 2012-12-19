@@ -408,7 +408,7 @@ a.menu:after, .dropdown-toggle:after {
 
 .right-tabs{
   margin:0px -20px; 
-  padding:10px 9px 0 50px;
+  padding:17px 9px 0 50px;
   a{ font-weight:bold; }
   @include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 }
@@ -874,7 +874,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border-color: rgba(0, 0, 0, 0.15);
 }
 
-.modal-backdrop {
+/*.modal-backdrop {
   background-color: #000000;
   position: fixed;
   top: 0;
@@ -903,7 +903,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border: 1px solid #999;
   border: 1px solid rgba(0, 0, 0, 0.3);
   *border: 1px solid #999;
-  /* IE6-7 */
+   
 
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -966,7 +966,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 }
 .modal .popover, .modal .twipsy {
   z-index: 12000;
-}
+}*/
 .twipsy {
   display: block;
   position: absolute;
@@ -1444,6 +1444,126 @@ a.pill.help{
 	vertical-align: middle;
 }
 
+
+.ticket-notifications{
+  position:fixed;   
+  margin-left:-54px;
+  margin-top:23px;    
+  li{
+    width:33px; height:30px;
+    background-color:#626262;
+    margin-bottom:1px;      
+    position:relative;
+    @include border-radius(4px 0 0 4px);
+    @include opacity(0.1);
+  }
+  li.active{
+    @include opacity(1);
+  }                     
+  li.active span.pill{
+    display:block;
+  }
+  li.active a{ cursor:pointer; }
+  a{ 
+    cursor: default;
+    @include inline-block;
+    width:24px;height:24px;  
+    margin-left:5px;
+    margin-top:3px;
+  }          
+  span.pill{
+    background-color:#bf0000;
+    @include border-radius(25px);
+    @include box-shadow(#000 0 1px 2px);
+    font-size:10px;
+    padding:1px 4px;
+    border:2px solid #fff;
+    position:absolute;
+    top:6px;    
+    left:-8px;      
+    line-height:12px;
+    height:12px;       
+    display:none;
+    -webkit-animation-delay: 0.2s;
+       -moz-animation-delay: 0.2s;
+        -ms-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+    -webkit-animation: blink 2s ease infinite;
+       -moz-animation: blink 2s ease infinite;
+        -ms-animation: blink 2s ease infinite;
+            animation: blink 2s ease infinite;
+  }
+}  
+
+.index-collision {
+  display: inline-block;
+  position: relative;
+  top: -5px;
+  padding-left: 22px;
+
+  [rel=view_collision], [rel=reply_collision] {
+    display:none;
+  }
+
+  [rel=view_collision].view_collision ,[rel=reply_collision].reply_collision {
+    display: inline-block;
+  }
+  
+  .view_collision, .reply_collision  {
+    height: 18px;
+    width: 18px;
+    position: relative;
+    padding-left: 25px;
+
+    span{
+      position: relative;
+      top: 4px;
+    }
+  }
+}
+
+                     
+
+.symbols-ac-refreshon{  background:sprite($symbol, ac-refreshon) no-repeat;  }
+.symbols-ac-viewingon{  background:sprite($symbol, ac-viewingon) no-repeat;  }
+.symbols-ac-replyon{  background:sprite($symbol, ac-replyon) no-repeat;  }
+.symbols-ac-viewingon-listview{  background:sprite($symbol, ac-viewingon-listview) no-repeat;  }
+.symbols-ac-replyon-listview{  background:sprite($symbol, ac-replyon-listview) no-repeat;  }
+
+.popover .ticket-notice-popover{
+  background:#5f5f5f;                                                                    
+  @include min-width(160px);
+  @include border-radius(5px);
+  .title, .content{ background:none; font-size:13px; font-weight:normal; text-align:left; border:0; 
+    @include text-shadow(#3d3d3d -1px 0px 1px); 
+   }  
+  .title{ color:#aeaeae; padding:7px 10px 1px;  }
+  .content{ color:#ffffff; padding:1px 10px 7px; }
+}                                               
+
+.popover.right .notice-arrow{
+  border-right-color: #5f5f5f;  
+}
+
+@-webkit-keyframes blink{
+  0% { -webkit-transform: scale(1.2)}
+  100% { -webkit-transform: scale(1)}
+}
+
+@-moz-keyframes blink{
+  0% { -moz-transform: scale(1.2)}
+  100% { -moz-transform: scale(1)}
+}
+
+@-ms-keyframes blink{
+  0% { -ms-transform: scale(1.2)}
+  100% { -ms-transform: scale(1)}
+}
+
+@keyframes blink{
+  0% { transform: scale(1.2)}
+  100% { transform: scale(1)}
+}
 
 /* Variables.less
  * Variables to customize the look and feel of Bootstrap

@@ -29,6 +29,12 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
         :select     => "DISTINCT `helpdesk_time_sheets`.*"
       } unless customers.blank?}
       
+  named_scope :for_contacts, lambda{|contact_email|
+      {
+        :include =>{:ticket =>:requester},
+        :conditions =>{:users => {:email => contact_email}},
+      } unless contact_email.blank?}
+    
   BILLABLE_HASH = { "Billable" => true, "Non-Billable" => false}
   GROUP_BY_ARR = [["Customer" , :customer_name] , ["Ticket",:ticket] , ["Agent" , :agent_name] , ["Date" , :group_by_day_criteria]]
   REPORT_LIST_VIEW = {:ticket => I18n.t('helpdesk.time_sheets.ticket') , :customer_name => I18n.t('helpdesk.time_sheets.customer') , 
@@ -72,6 +78,35 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.timer_running=false
      self.time_spent = calculate_time_spent
      self.save
+  end
+
+   def to_json(options = {}, deep=true)
+    if deep
+      self[:ticket_id] = self.ticket.display_id
+      self[:agent_name] = self.agent_name
+      self[:time_spent] = sprintf( "%0.02f", self.time_spent/3600) # converting to hours as in UI
+      self[:agent_email] = user.email
+      self[:customer_name] = self.customer_name
+      self[:contact_email] = ticket.requester.email
+      options[:except] = [:account_id,:ticket_id,:time_spent]
+      options[:root] =:time_entry
+    end
+    json_str = super options
+    json_str
+  end
+
+  def to_xml(options = {})
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    super(:builder => xml, :skip_instruct => true,:dasherize=>false,:except => [:account_id,:ticket_id,:time_spent],:root=>:time_entry) do |xml|
+      xml.tag!(:ticket_id,ticket.display_id)
+      xml.tag!(:agent_name,agent_name)
+      xml.tag!(:time_spent,sprintf( "%0.02f", self.time_spent/3600)) # converting to hours as in UI
+      xml.tag!(:agent_email,user.email) 
+      xml.tag!(:customer_name,self.customer_name)
+      xml.tag!(:contact_email,ticket.requester.email)
+    end
   end
   
   private

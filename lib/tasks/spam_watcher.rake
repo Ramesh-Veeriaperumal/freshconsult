@@ -1,14 +1,17 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
+DB_SLAVE = "slave"
 
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
 
 namespace :spam_watcher do
   desc 'Check for abnormal activities and email us, if needed'
   task :ticket_load => :environment do
-    puts "Check for abnormal activities started at ddddddddddddddddd #{Time.now}"
-    check_for_spam('helpdesk_tickets', 'requester_id', SPAM_TICKETS_THRESHOLD)
-    check_for_spam('helpdesk_notes', 'user_id', SPAM_CONVERSATIONS_THRESHOLD)
+    puts "Check for abnormal activities started at  #{Time.now}"
+    check_for_slave_db unless Rails.env.development?
+    check_for_tickets_spam('helpdesk_tickets', 'requester_id', SPAM_TICKETS_THRESHOLD)
+    check_for_notes_spam('helpdesk_notes', 'user_id', SPAM_CONVERSATIONS_THRESHOLD)
+    puts "Check for abnormal activities end at  #{Time.now}"
   end
   
   task :unblock => :environment do
@@ -16,6 +19,14 @@ namespace :spam_watcher do
     check_for_users_and_unblock
   end
   
+end
+
+def check_for_slave_db
+ @db_to_connect = Rails.configuration.database_configuration.keys.include?(DB_SLAVE) ? DB_SLAVE :  Rails.env
+end
+
+def execute_sql_on_slave(query_str)
+  ActiveRecord::Base.establish_connection(@db_to_connect).connection.select_values(query_str)
 end
 
 def check_for_users_and_unblock
@@ -37,16 +48,15 @@ def check_for_users_and_unblock
 end
 
 
-def check_for_spam(table,column_name, threshold)
+def check_for_tickets_spam(table,column_name, threshold)
   current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' 
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}'  and id > 5961998
     group by #{column_name} having total > #{threshold}
   eos
+  requesters = execute_sql_on_slave(query_str)
   puts query_str
-  requesters = ActiveRecord::Base.connection.select_values(query_str)
-  puts "The accounts which are having abnormal load in '#{table}' are #{requesters}"
   deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
   
   # unless requesters.empty?
@@ -67,6 +77,18 @@ def check_for_spam(table,column_name, threshold)
   # end
 
   
+end
+
+def check_for_notes_spam(table,column_name, threshold)
+  current_time = Time.zone.now #Should it be Time.now?!?!
+  query_str = <<-eos
+    select #{column_name},count(*) as total from #{table} where created_at 
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 4891917
+    group by #{column_name} having total > #{threshold}
+  eos
+  requesters = execute_sql_on_slave(query_str)
+  puts query_str
+  deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
 end
 
 def deliver_spam_alert(table, query_str,additional_info)

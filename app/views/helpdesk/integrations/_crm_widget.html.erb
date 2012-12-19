@@ -1,4 +1,4 @@
-<%crm_apps=[:sugarcrm, :salesforce]
+<%crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm]
 crm_apps.each { |crm_app| 
 if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>   
 	<div id="<%=crm_app%>" class="sidepanel">

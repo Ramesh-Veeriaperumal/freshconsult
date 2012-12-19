@@ -11,6 +11,7 @@ class ContactsController < ApplicationController
     before_filter :requires_all_tickets_access 
     
    include HelpdeskControllerMethods
+   include ExportCsvUtil
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
@@ -28,7 +29,7 @@ class ContactsController < ApplicationController
   
   def index
     begin
-      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "active"))
+      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
     rescue Exception => e
       @contacts = {:error => get_formatted_message(e)}
     end
@@ -89,6 +90,15 @@ class ContactsController < ApplicationController
     @user = current_account.all_users.find(params[:id])    
     render :partial => "hover_card"
   end
+
+  def configure_export
+    render :partial => "contacts/contact_export", :locals => {:csv_headers => export_contact_fields}
+  end
+
+  def export_csv
+    csv_hash = params[:export_fields]
+    export_contact_data csv_hash
+  end
   
   def build_and_save
     @user = current_account.users.new #by Shan need to check later  
@@ -145,10 +155,12 @@ class ContactsController < ApplicationController
     @item.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
     @agent = current_account.agents.new
     @agent.user = @item 
+    @item.deleted = false
     @agent.occasional = false
     respond_to do |format|
       if @agent.save        
-        format.html { redirect_to @item }
+        format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
+          redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }

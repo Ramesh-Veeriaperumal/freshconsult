@@ -7,6 +7,7 @@ module RedisKeys
 	HELPDESK_TICKET_ADJACENTS_META	 	= "HELPDESK_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
 	INTEGRATIONS_JIRA_NOTIFICATION = "INTEGRATIONS_JIRA_NOTIFY:%{account_id}:%{local_integratable_id}:%{remote_integratable_id}"
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
+	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	
 	def get_key(key)
 		begin
@@ -90,4 +91,11 @@ module RedisKeys
 	  end
 	end
 
+	def publish_to_channel channel, message
+	  begin
+	  	return $redis.publish(channel, message)
+	  rescue Exception => e
+	  	NewRelic::Agent.notice_error(e)
+	  end
+	end
 end

@@ -63,4 +63,47 @@
       url_without_protocol : { url_without_protocol : true }
   });
 
+  // Valid Requester field check
+  $.validator.addMethod("requester", function(value, element) {
+
+    var _returnCondition = jQuery(element).data("requesterCheck"),
+        _latest_response_data = jQuery(element).data("partialRequesterList") || []
+        _user = jQuery(element).data("currentUser") //for not editing add new requester
+
+    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/.test(value)){
+        _returnCondition = true
+        jQuery('#helpdesk_ticket_requester_id').val('') 
+    }
+    
+    if (value == _user) 
+      _returnCondition = true
+
+    _latest_response_data.each(function(item){  //check for item['choice']    
+      if(value == item.details) _returnCondition = true
+    });
+ 
+    return _returnCondition
+
+ },jQuery.format('We could not find any matching requester. Please check your query, or try adding a <a href="#" id="add_requester_btn_proxy">new requester.</a>'));
+
+  $.validator.addClassRules("requester", { requester: true });
+
+
+//Check if one of the two fields is filled 
+$.validator.addMethod("require_from_group", function(value, element, options) {
+  var numberRequired = options[0];
+  var selector = options[1];
+  var fields = $(selector, element.form);
+  var filled_fields = fields.filter(function() {
+    return $(this).val() != ""; 
+  });
+  var empty_fields = fields.not(filled_fields);
+  if (filled_fields.length < numberRequired && empty_fields[0] == element) {
+    return false;
+  }
+  return true;
+}, jQuery.format("Please enter a Email or Phone Number"));
+
+$.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_info"]});
+
 })(jQuery);
