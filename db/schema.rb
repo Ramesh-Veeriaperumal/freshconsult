@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121126102259) do
+ActiveRecord::Schema.define(:version => 20121218133527) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1273,6 +1273,14 @@ ActiveRecord::Schema.define(:version => 20121126102259) do
     t.integer  "free_agents"
   end
 
+  create_table "subscription_events", :force => true do |t|
+    t.integer  "account_id"
+    t.string   "code"
+    t.text     "info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+  
   create_table "subscription_payments", :force => true do |t|
     t.integer  "account_id",                :limit => 8
     t.integer  "subscription_id",           :limit => 8

@@ -66,6 +66,17 @@ marketo:
     api_subdomain: "na-b"
     api_version: "1_5"
 
+chargebee:
+  development:
+    site: "freshdesk-test"
+    api_key: "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv"
+  staging:
+    site: "freshdesk-test"
+    api_key: "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv"
+  production:
+    site: "freshdesk-test"
+    api_key: "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv"
+
 
 integrations_url:
     development: "http://localhost:3000"
@@ -87,3 +98,5 @@ gateway: brain_tree
 admin_subdomain: admin
 
 partner_subdomain: partner
+
+billing_subdomain: billing

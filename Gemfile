@@ -53,7 +53,7 @@ gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
-gem "newrelic_rpm","3.5.0.1"
+gem "newrelic_rpm","3.5.3.25"
 
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
 gem "sanitize", "2.0.3"
@@ -75,6 +75,7 @@ gem 'resque-retry', "0.2.2"
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 gem 'after_commit', "~> 1.0.10"
+gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
