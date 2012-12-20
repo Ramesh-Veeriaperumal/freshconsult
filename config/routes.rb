@@ -63,7 +63,8 @@
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
-  map.resources :activations, :member => { :send_invite => :put }
+  map.resources :activations, :member => { :send_invite => :put },
+                              :collection => { :bulk_send_invite => :put }
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
@@ -150,8 +151,13 @@
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
-      admin.resources :analytics
+      admin.namespace :resque do |resque|
+        resque.home '', :controller => 'home', :action => 'index'
+        resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
+        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
       end
+      admin.resources :analytics 
+    end
   end
   
   map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
@@ -289,7 +295,7 @@
 
     helpdesk.resources :attachments
     
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get }
+    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     

@@ -85,6 +85,7 @@ class Account < ActiveRecord::Base
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
+  has_many :all_agents, :through =>:users, :order => "users.name"
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
@@ -211,8 +212,9 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
-  after_commit_on_create :add_to_billing
-  before_destroy :update_billing
+  after_commit_on_update :clear_cache
+  after_commit_on_destroy :clear_cache
+  before_update :backup_changes
   
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
@@ -600,13 +602,11 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
-  private
-
-    def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
-    end 
-
-    def update_billing
-      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
+   
+    def backup_changes
+      @old_object = self.clone
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
     end
+
 end

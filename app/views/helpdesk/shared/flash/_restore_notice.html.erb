@@ -1,1 +1,5 @@
-<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were") %> restored 
+<% if @items.size == 1 and @items.first.name.present?%>
+	<%= "#{@items.first.name} was restored" %>
+<% else %>
+	<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were") %> restored
+<% end %>

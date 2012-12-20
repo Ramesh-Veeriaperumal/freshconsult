@@ -281,7 +281,6 @@ active_dialog = null;
             curItem = $(item);
             var dialog = null;
 
-            curItem.modal();
             curItem.click(function(e){
                e.preventDefault();
                width = $(this).data("width") || '750px';
@@ -686,3 +685,6 @@ function fetchResponses(url, element){
     }
   }
 }
+
+function trim(s){return s.replace(/^\s+|\s+$/g, '');}
+

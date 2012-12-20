@@ -4,10 +4,11 @@ Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
 		this.options = widgetOptions || {};
-		this.app_name = this.options.app_name || "Integrated Application";
-		if(!this.options.widget_name) this.options.widget_name = this.app_name.toLowerCase()+"_widget"
+		this.app_name = this.options.app_name || this.app_name || "Integrated Application";
+		if(!this.options.widget_name) this.options.widget_name = this.app_name.toLowerCase().replace(' ', '_')+"_widget"
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.widget_name+"_username");
 		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.widget_name+"_password") || 'x'; // 'x' is for API key handling.
+		this.callbacks_awaiting_access_token = [];
 		this.content_element = $$("#"+this.options.widget_name+" .content")[0];
 		this.error_element = $$("#"+this.options.widget_name+" .error")[0];
 		this.title_element = $$("#"+this.options.widget_name+" #title")[0];
@@ -64,7 +65,7 @@ Freshdesk.Widget.prototype={
 		if(this.options.init_requests){
 			cw=this;
 			this.options.init_requests.each(function(reqData){
-				if(reqData) cw.request(reqData);
+				if(reqData) cw.request(reqData); 
 			});
 		}
 	},
@@ -82,17 +83,22 @@ Freshdesk.Widget.prototype={
 		if(this.options.use_server_password) {
 			reqData.username = this.options.username;
 			reqData.use_server_password = this.options.use_server_password;
-			reqData.app_name = this.options.app_name.toLowerCase();
+			reqData.app_name = this.options.app_name.toLowerCase().replace(' ', '_');
 		}
 		else if(this.options.auth_type == 'OAuth'){
-			reqHeader.Authorization = "OAuth " + this.options.oauth_token;
-		} 
+			if(this.options.url_token_key) {
+				if (reqData.resource == null) reqData.resource = reqData.rest_url;
+				merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
+				reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.oauth_token;
+			} else
+				reqHeader.Authorization = "OAuth " + this.options.oauth_token;
+		}
 		else if(this.options.auth_type == 'NoAuth'){}
 		else if(this.options.auth_type == 'UAuth'){
-		   if (reqData.resource == null) reqData.resource = reqData.rest_url;
-		   merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
-		   reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.username;
-	  }
+			if (reqData.resource == null) reqData.resource = reqData.rest_url;
+			merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
+			reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.username;
+		}
 		else{
 			reqHeader.Authorization = "Basic " + Base64.encode(this.options.username + ":" + this.options.password);
 		}
@@ -141,12 +147,12 @@ Freshdesk.Widget.prototype={
 			if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 				reqData.on_failure(evt);
 			} else if (this.options.auth_type == 'OAuth'){
-				cw = this;
+				cw = this; 
 				this.refresh_access_token(function(){
 					if(cw.options.oauth_token) {
 						cw.request(reqData);
 					} else {
-						cw.alert_failure("Problem in connecting to "+this.app_name+". Please try again later.")
+						cw.alert_failure("Problem in connecting to "+cw.app_name+". Please try again later.");
 					}
 				});
 			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please verify your integration settings and try again."); }
@@ -170,6 +176,11 @@ Freshdesk.Widget.prototype={
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 			reqData.on_failure(evt);
+		} else if (evt.status == 404){
+				if(this.app_name == "Google Calendar"){ /* Event could have been deleted. Blank for now */ }
+				else {
+					this.alert_failure("Could not fetch data from " + (this.options.domain || this.domain) + "\n\nPlease verify your integration settings and try again.");
+				}			
 		} else {
 				errorStr = evt.responseText;
 				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + ".\n\nTry fixing the error or Contact Support.");
@@ -183,22 +194,34 @@ Freshdesk.Widget.prototype={
 			jQuery(this.error_element).removeClass('hide').parent().removeClass('loading-fb');
 			this.error_element.innerHTML = errorMsg;
 		}
+		jQuery("#" + this.options.widget_name).removeClass('loading-fb');
 	},
 
 	refresh_access_token:function(callback){
 		cw = this;
 		this.options.oauth_token = null;
-		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name.toLowerCase(), {
+		this.callbacks_awaiting_access_token.push(callback);
+		if(this.awaiting_access_token)	return;
+		this.awaiting_access_token = true;
+		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name.toLowerCase().replace(' ', '_'), {
 				asynchronous: true,
 				method: "get",
 				onSuccess: function(evt){
 					resJ = evt.responseJSON;
 					cw.options.oauth_token = resJ.access_token;
-					if(callback) callback();
+					cw.awaiting_access_token = false;
+					cw.callbacks_awaiting_access_token.each(function(callback){						
+						if(callback) callback();
+					});
+					cw.callbacks_awaiting_access_token = [];
 				},
 				onFailure: function(evt){
 					cw.options.oauth_token = null;
-					if(callback) callback();
+					cw.awaiting_access_token = false;
+					cw.callbacks_awaiting_access_token.each(function(callback){						
+						if(callback) callback();
+					});
+					cw.callbacks_awaiting_access_token = [];
 				}
 			});
 	},
@@ -818,32 +841,31 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 							'</div>'
 });
 
-Freshdesk.CRMWidget=Class.create();
-Freshdesk.CRMWidget.prototype={
-	initialize:function(widgetOptions, integratable_impl) {
-		Freshdesk.CRMWidget.addMethods(Freshdesk.Widget.prototype); // Extend the Freshdesk.Widget
+Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
+	initialize:function($super, widgetOptions, integratable_impl) {
 		if(widgetOptions.domain) {
 			if(widgetOptions.reqEmail == ""){
-				this.handleInitFailure(widgetOptions, 'Email not available for this requester. Please make sure a valid Email is set for this requester.');
+				$super(widgetOptions);
+				this.alert_failure('Email not available for this requester. A valid Email is required to fetch the contact from '+this.options.app_name);
 			} else {
 				widgetOptions.integratable_impl = integratable_impl;
-				cnt_req = integratable_impl.get_contact_request();
+				var cnt_req = integratable_impl.get_contact_request();
 				if(cnt_req) {
-					cnt_req.on_success = this.handleContactSuccess.bind(this);
-					if (widgetOptions.auth_type != 'OAuth' && integratable_impl.processFailure)
-						cnt_req.on_failure = this.handleFailure.bind(this);
-					widgetOptions.init_requests = [cnt_req];
+					if(cnt_req.length == undefined) cnt_req = [cnt_req]
+					for(var i=0;i<cnt_req.length;i++) {
+						cnt_req[i].on_success = this.handleContactSuccess.bind(this);
+						if (widgetOptions.auth_type != 'OAuth' && integratable_impl.processFailure)
+							cnt_req[i].on_failure = this.handleFailure.bind(this);
+					}
+					this.contacts = [];
+					widgetOptions.init_requests = cnt_req;
 				}
-				this.initialize(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
+				$super(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
 			}
 		} else {
-			this.handleInitFailure(widgetOptions, 'Domain name not configured. Try reinstalling '+this.options.app_name);
+			$super(widgetOptions);
+			this.alert_failure('Domain name not configured. Try reinstalling '+this.options.app_name);
 		}
-	},
-
-	handleInitFailure: function(widgetOptions, message){
-		this.initialize(widgetOptions);
-		this.alert_failure(message);
 	},
 
 	handleFailure:function(response) {
@@ -854,16 +876,17 @@ Freshdesk.CRMWidget.prototype={
 		resJson = response.responseJSON;
 		if(resJson == null)
 			resJson = JSON.parse(response.responseText);
-		this.contacts = this.options.integratable_impl.parse_contact(resJson);
-		if (this.contacts.length > 0) {
-			if(this.contacts.length == 1){
-				this.renderContactWidget(this.contacts[0]);
-				jQuery('#search-back').hide();
+		if(this.contacts = this.contacts.concat(this.options.integratable_impl.parse_contact(resJson, response))) {
+			if ( this.contacts.length > 0) {
+				if(this.contacts.length == 1){
+					this.renderContactWidget(this.contacts[0]);
+					jQuery('#search-back').hide();
+				} else {
+					this.renderSearchResults();
+				}
 			} else {
-				this.renderSearchResults();
+				this.renderContactNa();
 			}
-		} else {
-			this.renderContactNa();
 		}
 		jQuery("#"+this.options.widget_name).removeClass('loading-fb');
 	},
@@ -871,7 +894,7 @@ Freshdesk.CRMWidget.prototype={
 	renderSearchResults:function(){
 		var crmResults="";
 		for(var i=0; i<this.contacts.length; i++){
-			crmResults += '<a href="javascript:cw.renderContactWidget(this.contacts[' + i + '])">'+this.contacts[i].name+'</a><br/>';
+			crmResults += '<a href="javascript:cw.renderContactWidget(cw.contacts[' + i + '])">'+this.contacts[i].name+'</a><br/>';
 		}
 		var results_number = {resLength: this.contacts.length, requester: this.options.reqEmail, resultsData: crmResults};
 		this.renderSearchResultsWidget(results_number);
@@ -885,8 +908,6 @@ Freshdesk.CRMWidget.prototype={
 		eval_params.department = eval_params.department?eval_params.department:null;
 		eval_params.url = eval_params.url?eval_params.url:"#";
 		eval_params.address_type_span = eval_params.address_type_span || " ";
-		
-		
 		this.options.application_html = function(){ return _.template(cw.VIEW_CONTACT, eval_params);	} 
 		this.display();
 	},
@@ -912,7 +933,7 @@ Freshdesk.CRMWidget.prototype={
 					'<div id="contact-name" class="contact-name"><a title="<%=name%>" target="_blank" href="<%=url%>"><%=name%></a></div>' +
 				    '<div id="contact-desig"><%=(designation ? designation : ( company ? "Works" : "" ))%>' +
 					    '<span class="<%=(company ? "dummy" : "hide")%>"> at ' +
-					    	'<a href="<%=(company_url || "#")%>"><%=(company || "")%></a>' + 
+					    	'<a target="_blank" href="<%=(company_url || "#")%>"><%=(company || "")%></a>' + 
 				    	'</span>' + 
 				    '</div>'+
 			    '</div>' + 
@@ -955,7 +976,7 @@ Freshdesk.CRMWidget.prototype={
 		'<div class="title contact-na <%=widget_name%>_bg">' +
 			'<div class="name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
 		'</div>'
-};
+});
 
 var UIUtil = {
 

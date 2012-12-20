@@ -258,6 +258,54 @@ if Integrations::Application.count == 0
       </script>}
     s.application_id = logmein_app.id
   end
+  
+  # Batchbook
+  batchbook_app = Integrations::Application.seed(:name) do |s|
+      s.name = "batchbook" 
+      s.display_name = "integrations.batchbook.label"
+      s.description = "integrations.batchbook.desc" 
+      s.listing_order = 11
+      s.options =  {
+          :keys_order => [:domain, :api_key, :version], 
+          :domain => {  :type => :text,
+                  :required => true,
+                  :label => "integrations.batchbook.form.domain",
+                  :info => "integrations.batchbook.form.domain_info",
+                  :rel => "ghostwriter",
+                  :autofill_text => ".batchbook.com",
+                  :validator_type => "domain_validator"
+                }, 
+          :api_key => { :type => :text, :required => true, :label => "integrations.batchbook.form.api_key" },
+          :version => { :type => :dropdown,
+                        :choices => [
+                                        ["integrations.batchbook.form.version.auto_detect", "auto"],
+                                        ["integrations.batchbook.form.version.new", "new"],
+                                        ["integrations.batchbook.form.version.classic", "classic"]
+                                    ],
+                        :required => true,
+                        :default_value => "auto",
+                        :label => "integrations.batchbook.form.version.label"
+                }
+      }
+  end
+
+  Integrations::Widget.seed(:application_id, :name) do |s|
+    s.name = "batchbook_widget"
+    s.description = "batchbook.widgets.batchbook_widget.description"
+    s.script = %(      
+      <div id="batchbook_widget"  class="integration_widget crm_contact_widget">
+        <div class="content"></div>
+      </div>
+      <script type="text/javascript">
+        jQuery(document).ready(function(){
+          batchbookBundle={ domain:"{{batchbook.domain}}", k:"{{batchbook.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name}}", ver: "{{batchbook.version}}"};
+          CustomWidget.include_js("/javascripts/integrations/batchbook.js");
+        });
+      </script>
+      )
+    s.options = {'display_in_pages' => ["contacts_show_page_side_bar"]}
+    s.application_id = batchbook_app.id
+  end
 
   #MailChimp
 
@@ -371,10 +419,5 @@ if Integrations::Application.count == 0
     s.application_id = constantcontact_app.id
     s.options =  {"display_in_pages" => ["contacts_show_page_side_bar"], "clazz" => "hide"}
   end
-
-
-
-
-
 
 end

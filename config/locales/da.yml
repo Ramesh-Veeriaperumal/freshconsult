@@ -1,0 +1,2498 @@
+da: 
+  account: 
+    active_since: "Aktiv siden"
+    cancel: "Fortryd og gå tilbage"
+    helpdesk_name: "Helpdesk navn"
+    helpdesk_url: "Helpdesk URL"
+    info1: "Du kan bruge dette felt til at opsætte et custom domail til din Freshdesk"
+    info2: "Før dette felt anvendes, skal du sikre, at du har oprettet en CNAME DNS record i din DNS Zonefil for at pege support.mycompanyname.com til %{full_domain}. Din webmaster eller Serveradministrator kan hjælpe dig med at sætte dette korrekt op"
+    info3: "Nulstil til standard farver"
+    info4: "Den næste ticket ID counter starter med dette tal (skal være større end det senest oprettede ticket ID). Dette påvirker efterfølgende tickets."
+    language: Sprog
+    name: Kontonavn
+    page_colors: 
+      background: Baggrund
+      header: Overskrift
+      tab_color: Fanebladsfarve
+      title: Sidefarver
+    rebrand: "Rebrand din helpdesk"
+    save: "Gem ændringer"
+    time_zone: Tidszone
+  account_admin: "Konto administrator"
+  account_admin_updated: "Admin kontoen er opdateret"
+  accounts: 
+    billing: 
+      begin_subscription: "Start abbonnement nu..."
+      begin_subscription_info: "vil trække penge på dit kreditkort og begynde dit abonnement med det samme"
+      billing: Betaling
+      save_billing_information: "Gem betalingsinformationer"
+      save_billing_information_info: "vil gemme dine abonnementsinformationer. Vi trækker først penge på dit kort når din gratis prøveperiode udløber."
+      update_billing_info: "Opdater betalingsinformationer"
+    cancel: 
+      cancel_account: "Opsig Freshdesk konto"
+      change_your_plan: "Skift kontotype"
+      changeplan_instead_of_cancel: "I stedet for at opsige din konto, vil du måske gerne bare ændre din plan."
+      confirm_and_cancel_my_account: "Jeg bekræfter, at jeg ønsker at opsige min konto og slette alle mine data..."
+      delete_my_account: "Slet min konto"
+      goback: "&#x2190; Tilbage til kontoindstillinger"
+      intro: "Du er ved at slette din konto. Dette vil <strong> slette alle dine data </strong>permanent."
+      warning_message: "Herefter vil du ikke længere have adgang til dine data, så du skal være sikker på, at dette er hvad du ønsker at gøre."
+      you_must_confirm: "Du skal bekræfte din abonnementsopsigelse"
+    show: 
+      account_settings: Kontoindstillinger
+      export_data: "Eksportér data"
+      export_data_text: "Generer en XML med alle tilgængelige Helpdeskdata, og send den på e-mail."
+      export_now: "Eksportér nu"
+  activate: Aktivér
+  activate_account: "Aktiver din konto"
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: "%{attribute} %{message}"
+      messages: 
+        accepted: "skal accepteres"
+        blank: "må ikke være blankt"
+        confirmation: "stemmer ikke overens med bekræftelsen"
+        empty: "må ikke være tomt"
+        equal_to: "skal være lig med %{count}"
+        even: "skal være lige"
+        exclusion: "er reserveret"
+        greater_than: "skal være større end %{count}"
+        greater_than_or_equal_to: "skal være større end eller lig med %{count}"
+        inclusion: "findes ikke på listen"
+        invalid: "er ugyldigt"
+        less_than: "skal være mindre end %{count}"
+        less_than_or_equal_to: "skal være mindre eller lig med %{count}"
+        not_a_number: "er ikke et tal"
+        not_an_integer: "skal være et heltal"
+        odd: "skal være ulige"
+        record_invalid: "Validering fejlede: %{errors}"
+        too_long: "er for langt (maks %{count} karakterer)"
+        too_short: "er for kort (minimum %{count} karakterer)"
+        wrong_length: "har den forkerte længde (skal være %{count} karakterer)"
+      template: 
+        body: "Der var problemer med følgende felter:"
+        one: "1 fejl forhindrede i at %{model} kunne gemmes"
+        other: "%{count} fejl forhindrede %{model} i at kunne gemmes"
+  activities: 
+    solutions: 
+      new_solution: 
+        long: "{{user_path}} oprettede en ny løsning {{notable_path}}"
+        short: "{{user_path}} oprettede den nye løsning"
+    tickets: 
+      assigned: 
+        long: "{{user_path}} tildelte supportsagen {{notable_path}} til {{responder_path}}"
+        short: "Tildelt til {{responder_path}} af {{user_path}}"
+      assigned_to_nobody: 
+        long: "{{user_path}} tildelte supportsagen {{notable_path}} til 'Ingen'"
+        short: "Tildelt til 'Ingen' af {{user_path}}"
+      conversation: 
+        in_email: 
+          long: "{{user_path}}sendte en {{email_response_path}} til supportsagen {{notable_path}}"
+          short: "{{user_path}} sendte en {{email_response_path}}"
+        note: 
+          long: "{{user_path}} tilføjede en {{comment_path}} til supportsagen {{notable_path}}"
+          short: "{{user_path}} tilføjede en {{comment_path}}"
+        out_email: 
+          long: "{{user_path}} har sendte {{reply_path}} til supportsagen {{notable_path}}"
+          private: 
+            long: "Supportsagen {{notable_path}} er blevet {{fwd_path}} til {{to_emails}} af {{user_path}}"
+            short: "{{user_path}} har {{fwd_path}} supportsagen til {{to_emails}}"
+          short: "{{user_path}} har sendt {{reply_path}}"
+        twitter: 
+          long: "{{user_path}} tilføjede en {{twitter_path}} til supportsagen {{notable_path}}"
+          short: "{{user_path}} tilføjede en {{twitter_path}}"
+      deleted: 
+        long: "{{user_path}} har slettet supportsagen {{notable_path}}"
+        short: "{{user_path}} har slettet denne supportsag"
+      execute_scenario: 
+        long: "{{user_path}} udførte scenariet ' {{scenario_name}} ' på {{notable_path}}"
+        short: "{{user_path}} udførte scenariet ' {{scenario_name}} '"
+      group_change: 
+        long: "{{user_path}} ændrede gruppen af {{notable_path}} til {{group_name}}"
+        short: "{{user_path}} ændrede gruppen til {{group_name}}"
+      group_change_none: 
+        long: "{{user_path}} ændrede gruppen {{notable_path}} til 'ingen'"
+        short: "{{user_path}} ændrede gruppen til 'ingen'"
+      new_ticket: 
+        long: "{{user_path}} oprettede en ny supportsag {{notable_path}}"
+        short: "{{user_path}} oprettede supportsagen"
+      priority_change: 
+        long: "{{user_path}} ændrede prioriteten for supportsagen {{notable_path}} til {{priority_name}}"
+        short: "{{user_path}} ændrede proriteten til {{priority_name}}"
+      product_change: 
+        long: "{{user_path}} ændrede produktet for {{notable_path}} til {{product_name}}"
+        short: "{{user_path}} ændrede produktet til {{product_name}}"
+      product_change_none: 
+        long: "{{user_path}} ændrede produktet for {{notable_path}} til 'ingen'"
+        short: "{{user_path}} ændrede produktet til 'ingen'"
+      reassigned: 
+        long: "{{user_path}} flyttede supportsagen {{notable_path}} til {{responder_path}}"
+      restored: 
+        long: "{{user_path}} har genoprettet supportsagen {{notable_path}}"
+        short: "{{user_path}} har genoprettet denne supportsag"
+      source_change: 
+        long: "{{user_path}} ændrede kilden for supportsagen {{notable_path}} kilde til {{source_name}}"
+        short: "{{user_path}} ændrede kilden til {{source_name}}"
+      status_change: 
+        long: "{{user_path}} ændrede status for supportsagen {{notable_path}} til {{status_name}}"
+        short: "{{user_path}} ændrede status til {{status_name}}"
+      ticket_merge: 
+        long: "{{user_path}} har sammenlagt supportsagen {{notable_path}} med {{merge_ticket_path}}"
+        short: "{{user_path}} har sammenlagt supportsagen {{notable_path}} med {{merge_ticket_path}} "
+      ticket_split: 
+        long: "{{user_path}} har opdelt supportsagen {{notable_path}} fra {{split_ticket_path}}"
+        short: "{{user_path}} har opdelt supportsagen {{notable_path}} fra {{split_ticket_path}}"
+      ticket_type_change: 
+        long: "{{user_path}} har ændret supportsagstypen for {{notable_path}} til {{ticket_type}}"
+        short: "{{user_path}} ændrede supportsagstypen til {{ticket_type}}"
+      timesheet: 
+        new: 
+          long: "{{user_path}} tilføjede en {{timesheet_path}} til supportsagen {{notable_path}}"
+          short: "{{user_path}} tilføjede en {{timesheet_path}}"
+        timer_started: 
+          long: "{{user_path}} startede timer på {{timesheet_path}} til the ticket {{notable_path}}"
+          short: "{{user_path}} startede timer på {{timesheet_path}}"
+        timer_stopped: 
+          long: "{{user_path}} stoppede timer for {{timesheet_path}} til supportsagen {{notable_path}}"
+          short: "{{user_path}} stoppede timer på {{timesheet_path}}"
+  add: Tilføj
+  add_a_topic: "Start et emne"
+  add_cc: "Tilføj CC"
+  add_holiday: "Tilføj feriedag"
+  add_new_email: "Tilføj ny e-mail"
+  add_new_forum: "tilføj nyt forum"
+  add_new_requester: "Tilføj ny anmoder"
+  add_note: "Tilføj note"
+  add_tags: "Tilføj Tag(s)"
+  add_to_do: "Tilføj To do"
+  admin: 
+    automations: 
+      edit: 
+        title: "Rediger scenarie"
+    canned_responses: 
+      edit: 
+        title: "Rediger canned response"
+      form: 
+        all_agents: "Alle agenter"
+        available_for: "Tilgængelig for"
+        groups: "Agenter i gruppen"
+        me_only: "Kun mig"
+        response_name: Svartitel
+      index: 
+        new: "Tilføj canned response"
+        title: "Canned responses"
+      new: 
+        delete_confirm: "Er du sikker på, du vil slette dette canned response?"
+        title: "Tilføj canned response"
+    day_passes: 
+      index: 
+        add_confirm: "Vil blive trukket på dit kreditkort "
+        auto_recharge: "Automatisk genoptankning"
+        buy_now: "Køb nu"
+        buy_pass: "Køb flere dagspas"
+        current_balance: "Du har %{balance} tilbage"
+        day_pass_history: Købshistorik
+        day_pass_pack: "%{quantity} Day Pass Pack %{currency} %{amount}"
+        day_passes: Dagspas
+        daypass_quantity: "%{quantity} dagspas"
+        helptext: "Dine day passes vil blive automatisk genoptanket, når antallet af tilgængelige day passes kommer ned på to."
+        no_of_day_passes: "antal dagspas"
+        order: Ordrenummer
+        recharge_quantity: Genoptankningskvantitet
+        title: Dagspas
+    gamification: 
+      error_updated: "Fejl ved opdatering af gamificationindstillinger."
+      gamification_settings: 
+        bonus_points: Bonuspoint
+        enable_label: "Agents Gamification"
+        fast_resolution: "Hurtig <span> < 1 hr)</span>"
+        firstcall_resolution: "Første Opkald Løsning"
+        happy_customer: "Glad kunde"
+        info_levels: "Set points der skal opnås af en agent for at nå et level"
+        late_resolution: "Sen <span> (forfalden) </span>"
+        new_quest: "Ny Søgning"
+        ontime_resolution: "Til tiden <span> (Inden for SLA) </span>"
+        quest_title: Søgning
+        title_levels: Agentniveauer
+        title_points_configuration: Pointopsætning
+        title_ticket_points: Supportsagspoint
+        title_trophies: Trofæer
+        unhappy_customer: "Utifreds Kunde"
+      help_text: 
+        creating_survey: "Oprettelse af tilfredshedsundersøgelse:"
+        creating_survey_help: "Følgende trin går det muligt for dig at samle feedback fra dine kunder via et link i dine svar-e-mails: <br>1. Aktiver tjekboksen Kundetilfredshedsundersøgelse <br> 2. Specificer tekst til Tilfredshedslink. Standardteksten er &ldquo; Fortæl os hvad du mener om oplevelsen af vores support.&rdquo; <br></b><b> Vælg hvilke e-mails, der har link til tilfredshedsundersøgelsen: <br><br> Du kan vælge, om links til tilfredshedsundersøgelsen sendes til kunder i alle e-mails eller kun i den sidste e-mail, når the ticket er løst. <br><br> Du kan læse mere om tilfredshedsundersøgelser i vores solutions side. </p>"
+        quest: Søgninger
+        quest_form_info1: "Vælg typen af søgning, der skal opstilles for agenterne. Det kan være en af tre <br /> a) løsning af tickets, <br /> b) offentliggørelse af løsninger og <br /> c) deltagelse i fora."
+        quest_form_info2: "Når dette er udført, vælg søgningskriterier (hvad agenten skal gøre) og tilføj betingelserne. Når disse er opfyldt, vinder han the badge"
+        quest_form_info3: "Vælg de point, agenten vinder, og det badge, han bliver tildelt. Navngiv afslutningsvis din søgning, og skriv et kort notat om den."
+        quest_form_info4: "Klik på 'Gem Søgning* for at gemme dine indstillinger."
+        quest_info1: "Søgninger repræsenterer præstationsmål, du har sat for agenterne. Ved fuldførelse vil de modtage badges of honour."
+        quest_info2: "Alle Søgninger er som standard ON. Du kan vælge at sætte dem, du ikke ønsker til OFF. Hvis du vil tilføje flere søgninger eller oprette søgninger specifikke for dine mål, klik på 'Ny Søgning*, og du kan oprette helt nye søgninger med de betingelser, du ønsker."
+        trophies_info1: "Agenten modtager 4 trofæer baseret på forskellige kriterier."
+        why_game: "Point og niveauer"
+        why_game_info1: "Agenterne tildeles point baseret på hvor hurtigt, de løser de tickets, de bliver tildelt. Der er også bonus for first call resolution og tilfredse kunder. Agenterne mister også point for sen resolution of tickets og for utilfredse kunder."
+        why_game_info2: "En agent kan opnå højere levels, når han får flere og flere point; det antal point, der skal opnås, bestemmes af Admin."
+      index: 
+        title: Arkadeindstillinger
+      successfully_updated: "Gamificationindstillinger opdateret succesfuldt."
+    getting_started: 
+      index: 
+        admin_sub_title: "Glem ikke at tjekke alle de under-the-hood funktioner, du kan skræddersy i %{admin_tab} tab"
+        admin_title: "Alt vel?"
+        agent_email_exist: "E-mail(s) allerede taget."
+        agent_email_partial: "Delvist succesfuld."
+        agent_email_required: "E-mail ID påkrævet for at sende invitation."
+        agent_email_sending: "Sender invitationer..."
+        agent_email_taken: "Følgende e-mails er allerede taget: <br> %{emails}"
+        agent_invite_field_placeholder: "Indtast teammedlemmers e-mails"
+        agent_invite_multi_info: "Brug komma ( , ) for at tilføje flere e-mails."
+        agent_limit_reached: "Du har overskredet din agentgrænse."
+        agent_send_invite_label: "Send Invitationer til agenter"
+        agent_sub_title: "Inviter dit team til Freshdesk"
+        agent_title: "Føler du dig ensom?"
+        agents_sub_title: "Inviter dine helpdesk agenter"
+        agents_title: Agenter
+        agents_title_info: "Inviter dine agenter til at bruge Freshdesk, adskil e-mailadresser med et komma"
+        back_link: Tilbage
+        config-support-email-address: "Opsæt din support e-mailadresse"
+        congrats: "Tilllykke! Din nye helpdesk er klar"
+        email_config_field_title: "Din support e-mailadresse"
+        email_config_sub_title: "Lad Freshdesk håndtere dine support emails!"
+        email_config_title: "Hvad er din support email?"
+        email_invalid: "Din e-mail er ugyldig, venligst kontroller"
+        email_send_problem: "Der var et problem med at sende e-mailen."
+        email_sent_success: "E-mail sendt."
+        emails_invalid: "En eller flere af dine e-mails er ugyldige."
+        helpdesk_preview: "Helpdesk forhåndsvisning "
+        implement_changes: "Gennemfører  ændringerne..."
+        next_alt_link: "Gå til helpdesk"
+        next_link: Næste
+        next_please_wait: "Vent venligst..."
+        problem_updating: "Problem med opdatering, prøv venligst igen."
+        product_link_label: "Smut fordi din helpdesk >>"
+        rebrand_bg_empty: "Baggrunds farvekode er påkrævet."
+        rebrand_bg_invalid: "Baggrundsfarve kode er ugyldig."
+        rebrand_color_background: Baggrund
+        rebrand_color_header: Sidehoved
+        rebrand_color_tabs: Faner
+        rebrand_company_field_placeholder: "Indtast firmanavn"
+        rebrand_company_label: Firmanavn
+        rebrand_header: "Dit helpdesk navn og logo"
+        rebrand_header_empty: "Sidehoved-farve er påkrævet."
+        rebrand_header_invalid: "Sidehoved-farve er ugyldig."
+        rebrand_paint_title: "Farvelæg din helpdesk"
+        rebrand_submit_label: Rebrand
+        rebrand_tab_empty: "Fane farvekode er påkrævet."
+        rebrand_tab_invalid: "Fane farvekode er ugyldig."
+        rebrand_title: "Logo <br>&amp; farver"
+        save: Rediger
+        save-and-next: "Gem og Gå til næste"
+        send_invite: "Send Invitering"
+        send_verification_email: "Send verifikationse-mail"
+        sending_test_mail_progress: "Sender test e-mail, vent veligst..."
+        skip_link: "Spring over og gå til din helpdesk"
+        social_add_account: "Tilføj Konto"
+        social_facebook: Facebook
+        social_facebook_add: "Tilføj en side"
+        social_info: "Tag din Help Desk til Facebook, Twitter, dine sociale fællesskaber og næsten overalt hvor dine kunder færdes"
+        social_title: "Go Social?"
+        social_twitter: Twitter
+        social_twitter_add: "Tilføj Konto"
+        sub_title: "Her er en masse ting der kan hjælpe dig i gang"
+        successfully_sent: Sendt.
+        successfully_updated: Opdateret.
+        support_email_sub_msg: "Din Support-e-mail er påkrævet for at helpdesk funktionen kan fungere ordenligt."
+        support_email_sub_title: "Giv os venligst din Support-e-mail."
+        support_email_title: "Support<br> e-mail"
+        title: "Cool! Det ser ud til at din help desk er klar til at komme i gang..."
+        title_msg: "Du skal blot udfylde et par detaljer for at komme i gang. (valgfrit)"
+        updating: Opdaterer...
+        validating: Validerer...
+      send_mail_content: 
+        button_again_title: "...eller Send test e-mail igen"
+        button_sending: Sender...
+        button_title: "Send Test E-mail"
+        info: "Du skal videresende en kopi af dine Support-e-mails til den e-mailadresse, der vises nedenfor:"
+        note: "<strong>Bemærk:</strong> For at FreshDesk kan konvertere indkommende e-mails til billetter, skal du konfigurere en regel for videresendelse af e-mail i din mail-server."
+        send_test_mail_confirm_no: "Nej, jeg kan ikke se en billet."
+        send_test_mail_confirm_yes: "Ja, jeg har modtaget den."
+        send_test_mail_info1: "Sørg for at du har indstillet dine e-mails til at blive videresendt til <b> %{to_email} </b>."
+        send_test_mail_info2: "(Learn How)"
+        send_test_mail_info3: "Hvis du mener at alt er i orden indtil videre, kan du sende en test e-mail. <br>%{send_test_mail_link}"
+        send_test_mail_link_title: "sending a test email"
+        send_test_mail_response1: "Vi har sendt en test e-mail til <b><span id=reply_email_1>%{reply_email}</span></b>. Hvis alt er i orden, vil du se den <a href=\"/helpdesk/tickets\" target=\"_blank\">nye billet</a> i billetvisningen."
+        send_test_mail_response_no1: "Det ser ud til at der er et problem ->"
+        send_test_mail_response_no2: "Lær hvordan"
+        send_test_mail_response_no3: "<strong>Æv! Det ser ud til at der er et problem!</strong><br>Hvis du ikke modtog e-mailen til din indboks, så vent venligst et par minutter. Hvis problemer fortsætter, <a href=\"https://support.freshdesk.com/\" target=\"_blank\">fortæl os om det</a>."
+        send_test_mail_response_yes: "Tillykke!!! Du har tilsluttet din Support-e-mail til din help desk portal. Held og lykke med servicen!!!"
+        test_info1: "Hvis du mener at alt er i orden indtil videre, kan du sende en test e-mail"
+        title: "Din videresendelsese-mail:"
+    home: 
+      index: 
+        account: Konto
+        agent: Agenter
+        billing: "Planer og fakturering"
+        business-hours: Åbningstider
+        canned-response: Standardsvar
+        customer: Kunde
+        customer-portal: Kundeportal
+        day_pass: "Day Pass Settings"
+        dispatcher: Dispatch'r
+        else: ellers
+        email-notifications: E-mailmeddelelser
+        email-settings: "E-mail indstillinger"
+        email_commands_setting: "Email Command Settings"
+        everything: Alt
+        feedback: "Feedback widget"
+        gamification-settings: Arkade
+        group: Grupper
+        helpdesk: Helpdesk
+        import: "Importer data fra Zendesk"
+        integrations: Integrationer
+        multi-product: "Flere Produkter"
+        portal: Portal
+        productivity: Produktivitet
+        rebranding: "Helpdesk Rebranding"
+        remote-authentication: Fjerngodkendelse
+        scenario: "Scenarie  Automationer"
+        security: Sikkerhed
+        settings: Indstillinger
+        sla: "SLA Politik"
+        supervisor: Supervisor
+        survey: "Survey Indstillinger"
+        survey-settings: "Customer Satisfaction Settings"
+        ticket-fields: Supportsagsfelter
+        title: Asmin
+    products: 
+      add_another_email: "Tilføj endnu en E.mail"
+      assign_product: "Tildel Produkt"
+      edit: 
+        title: "Rediger Produkt"
+      form: 
+        configure_email: "Konfigurer email"
+        configure_seperate_portal: "Konfigurer en særskilt portal for dette produkt"
+        enable_product_portal: "Aktiver Produkt Portal"
+        enter_support_email_id: "Din Support-e-mail"
+        forwarding_email_info: "Din videresendelses e-mailadresse:"
+        product_name: Produktnavn
+        product_support_emails: "Produkt Service-e-mails"
+      helpnote: 
+        content: "Flere produkter hjælper dig med at levere specifik produkt- eller mærkeservice."
+        heading: "Flere Produkter"
+      index: 
+        add_product: "Tilføj produkt"
+        title: Produkter
+      new: 
+        title: "Nyt produkt"
+      portal: 
+        cname_configure_info: "Før du bruger dette felt, sørg venligst for at du har oprettet en CNAME DNS post i din DNS Zone fil til at modtage <strong>hjælp.<b id=\"domain_info_name\">mycompanyname</b>.com</strong> to %{full_domain}. Din Webmaster eller Server administrator bør kunne hjælpe dig med at indstille dette korrekt."
+        portal_language: "Portal Sprog"
+        portal_language_info: "Dette vil være standardsproget, når kunder besøger din portal"
+        portal_name: "Portal navn"
+        portal_name_info: "Navnet vil blive vist i din produktportal ved siden af sidelogoet"
+        portal_rebranding: "Portal rebranding"
+        portal_settings: "Portal indstillinger"
+        portal_url: "Portal URL"
+        select_forum_category: "Vælg en forum kategori..."
+        select_solution_category: "Vælg en løsningskategori...."
+        top_level_forum: "Topniveau forum-kategori"
+        top_level_forum_info: "Du kan knytte en forum-kategori til dette produkt. Alle andre fora vil ikke være synlige for kunderne, når de kigger på fora fanen i denne produkt portal."
+        top_level_solution: "Topniveau løsningskategori"
+        top_level_solution_info: "Du kan knytte en løsningskategori til dette produkt. Alle andre løsninger vil ikke være synlige for kunderne, når de kigger på løsningsfanen i denne produkt portal."
+      primary_email_required: "Mindst én primær e-mail skal være til stede"
+      primary_product_support_email: "Primær Produkt Support E-mail"
+      product: 
+        delete: "Er du sikker på at du vil slette dette produkt?"
+        email_not_verified: "E-mail ikke verificeret"
+      product_label_msg: Produkt
+    quests: 
+      index: 
+        new_quest: "Nyt Foretagende"
+        quest_description: "Foretagender er Forretningsspecifikke mål du kan oprette for at udfordre dine agenter til at opnå mere!"
+        quest_title: Foretagender
+        sideinfo1: "Info 1"
+        sideinfo2: "Info 2"
+      quest_form: 
+        forum: "Engager <br /> <strong> Fællesskabet </strong>"
+        solution: "At udgive <br /> <strong> Løsninger </strong>"
+        ticket: "At løse <br /> <strong> Billetter </strong>"
+    security: 
+      index: 
+        click_to_disable: "Klik for at deaktivere SSL"
+        click_to_enable: "Klik for at aktivere SSL"
+        customer_portal_ssl_warning: "Da brugerdefineret helpdesk URL er konfigureret til din konto, vil du blive omdirigeret til"
+        disabled: Deaktiveret
+        enable_SSL: "Aktiver SSL"
+        enable_SSL_anon: "SSL giver dig mulighed for at kryptere data, der overføres til og fra freshdesk portaler"
+        enable_sso: "Aktiver Single Sign On"
+        enable_sso_info: "Single Sign On giver dig mulighed for at bruge din egen applikation eller en centraliseret server (som MS Active Directory) til at godkende agenter og kunder, så de kan få adgang til Freshdesk uden at indtaste et særskilt brugernavn og adgangskode."
+        enabled: Aktiveret
+        multiple_product_ssl_warning: "SSL kan ikke anvendes, hvis flere produkter er konfigureret."
+        remote_authentication: Fjerngodkendelse
+        remote_login_url: "Fjern log ind URL"
+        remote_login_url_info: "Det er den URL som Freshdesk vil omdirigere brugere til for godkendelse, når de forsøger at få adgang til Freshdesk."
+        remote_logout_url: "Fjern Log ud URL"
+        remote_logout_url_info: "Det er den URL som Freshdesk vil omdirigere brugerne til, når de klikker på Log ud linket i Freshdesk."
+        security_title: Sikkerhed
+        shared_secret: "Delt Hemmelighed"
+        shared_secret_info: "Kopier venligst dette token og hold det sikkert. Du skal bruge det til at aktivere Fjerngodkendelse. Dette er en delt hemmelighed mellem dig og Freshdesk."
+    shared: 
+      filter_jsinit: 
+        body: Krop
+        insert_placeholder: "Indsæt Pladsholder"
+        not_selected: "Ikke valgt"
+        selected: Valgt
+        to: Til
+    supervisor_rules: 
+      edit: 
+        title: "Supervisor - Rediger regel"
+      index: 
+        help_info_1: "Brug Supervisor til regelmæssigt at checke de seneste billetter og udføre visse tids-baserede aktiviteter som at sende påmindelser til kunder eller eskalerende billetter eller omfordeling billetter osv."
+        help_info_2: "For eksempel - Hvis en billet venter på kundens respons i mere end 24 timer, send en påmindelsese-mail til kunden eller automatisk luk en billet, der har status \"Løst\" i mere end 48 timer."
+        help_info_3: "Supervisor vil køre hver time og behandle billetter der er blevet opdateret indenfor de sidste 30 dage."
+        help_info_4: "Supervisor regler behandles sekventielt, så rækkefølgen af reglerne er vigtig. En regel kan medføre visse handlinger, der udløser efterfølgende regler."
+        help_title: Supervisor
+        title: "Supervisor - Regler"
+      new: 
+        title: "Supervisor - Ny Regel"
+    surveys: 
+      error_updated: "Fejl under opdateringen af survey-indstillinger."
+      helptext: "<p><b>Why enable satisfaction surveys?</b> <br> Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction. <br><br> <b>Creating your satisfaction survey:</b><br> The following steps let you collect feedback from your customers through a link in your response emails:<br> 1.Enable the Customer Satisfaction Surveys checkbox<br> 2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br> <br> <b>Choose which emails have the satisfaction survey link:</b><br> You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved. <br><br> You can learn more about satisfaction surveys from our solutions page. </p>"
+      index: 
+        title: "Kundetilfredshed Indstillinger"
+      satisfaction_settings: 
+        enable_label: "Kundetilfredshed Surveys"
+        enter_happy_text: "Indtast den glade tekst"
+        enter_neutral_text: "Indtast den neutrale tekst"
+        enter_unhappy_text: "Indtast den utilfredse tekst"
+        link_text_info: "Denne tekst vises under din signatur nederst i e-mailen der sendes til kunden"
+        link_text_input: "Lad os venligst vide din mening om vores Support oplevelse."
+        link_text_label: "Tilfredshedssurvey link tekst"
+        send_while_option1: "Alle e-mails sendt til kunde."
+        send_while_option2: "E-mails sendt efter en billet markeres som \"Løst\"."
+        send_while_option3: "E-mails sendt efter en billet er \"Lukket\"."
+        send_while_option4: "Tillader agenter at tilføje survey links til specifikke e-mails."
+        send_while_title: "Vælg, hvilke e-mails indeholder tilfredshedsundersøgelseslinket"
+      successfully_updated: "Kundetilfredshed indstillinger er blevet opdateret."
+    twitters: 
+      change: 
+        capture_dm: "Konverter direkte beskeder til billetter"
+        capture_mention: "Konverter offentlige bemærkninger til billetter"
+        default_group: "Standard Gruppe"
+        edit_twitter: "Rediger Twitter"
+        screen_name: Skærmnavn
+      index: 
+        add_search: "Tilføj Søgning"
+        new: "Tilføj Twitter konto"
+        search_keys: Søgetaster
+        title: "Twitter kontoer"
+      search: 
+        add_key: "Tilføj Søgning"
+        edit_key: "Rediger Søgning"
+        name: "Navn på Søgning"
+        screen_name: "Twitter konto"
+        search_key: Søgning
+    widget_config: 
+      index: 
+        thankyou_default: "Tak for din feedback"
+        thankyou_info: "Meddelelse, der skal vises efter en bruger indsender billetformularen"
+        thankyou_label: "Send besked"
+  agent: 
+    add_signature: "Tilføj signatur"
+    admin: Administrator
+    admin_info: "Kan udføre alle Admin opgaver"
+    contact_exists: "En rekvient med e-mail '%{existing_email}' eksisterer allerede, %{use_email}"
+    day_pass_expired: "Dit dagspas er udløbet, du skal logge ind for at erhverve et nyt dagspas."
+    edit: "Rediger Agent"
+    full_time: Fuldtids
+    global: "Agent (Global adgang)"
+    global_info: "Kan se alle Billetter i Helpdesk"
+    group: "Agent (Gruppe adgang)"
+    group_info: "Kan se Billetter i deres Gruppe(r) og Billetter tildelt dem"
+    individual: Medarbejder
+    individual_info: "Kan kun se Billetter tildelt dem"
+    info1: "Dette er en slettet Agent"
+    info2: "E-mail er allerede optaget"
+    info3: "Er du sikker på at du vil slette"
+    insufficient_day_pass: "Kan ikke tildele et dagspas til dig, du bedes venligst kontakte din administrator."
+    make_admin: "Gør denne agent til admin"
+    new: "Ny agent"
+    occasional: Lejlighedsvis
+    occasional_description: "Denne agent vil få adgang til Support portalen"
+    password_reset_message: "Ønsker du at nulstille %{requester}'s adgangskode?"
+    password_reset_note: "Bemærk: En nulstillingsmail med instruktioner vil blive sendt til %{requester}"
+    permissions: Tilladelser
+    restore: gendan
+    signature: Signatur
+    supervisor: Supervisor
+    supervisor_info: "Kan se alle Billetter i Hjælpesektion og har adgang til Rapporter (ingen admin-rettigheder)"
+    title: Agenter
+    update: Opdatér
+    use_email: "Brug denne e-mail"
+    view_user: "Vis bruger"
+  agent_adds_comment: "Agent tilføjer kommentar til Billet"
+  agent_assigned_info: "Ingen åbne og afventende billetter for denne agent"
+  agent_assigned_title: "For nylig tildelte billetter (Open &amp; Pending)"
+  agent_closes_tkt: "Agent lukker Billetten"
+  agent_deleted_message: "Dette er en slettet agent"
+  agent_emailnotverified: "E-mail er ikke blevet bekræftet for denne agent!"
+  agent_info_title: "Agent information"
+  agent_solves_tkt: "Agent løser Billetten"
+  agent_working_on_this_ticket: "Medarbejder på denne supportsag"
+  agents: Agenter
+  align_to: "Juster til"
+  all_due: All
+  already_overdue: "Forsinket med %{time_words}"
+  always: Altid
+  amount: Antal
+  amount_for_annual: "$%{amount} årligt"
+  amount_per_month: "$%{amount} %{period}"
+  answered: Besvaret
+  application: 
+    click_to_disable: "Click to disable Addon"
+    click_to_enable: "Click to enable Addon"
+    configure: Konfigurer
+    configure_addon: "Click to configure this Addon"
+    configure_custom_addon: "Konfigurer denne widget"
+    confirm_disable: "Are you sure you want to disable this Addon?"
+    desc: "Integrer med andre Apps for at gøre din Freshdesk oplevelse endnu mere fantastisk."
+    disabled: Deaktiveret
+    enable: Aktiver
+    enabled: Aktiveret
+    new: "Opret ny Applikation"
+    title: "Addons & Integration"
+  apply: Tilføj
+  asked_on: "Spurgt den"
+  assign: Tildel
+  assigned_to: "Tildelt til"
+  assume_identity_button: "Påtag Identitet"
+  assumed_identity_msg: "Du har påtaget dig identitenen af %{user_name}."
+  assuming_identity_not_allowed_msg: "Du kan ikke påtage dig denne brugers identitet."
+  assuming_identity_user_does_not_exist_msg: "Den bruger hvis identitet du prøver at påtage dig, findes ikke."
+  at: kl.
+  attach_files: "Vedhæft filer"
+  attachment: "Vedhæftet fil"
+  attachment_help_info: "Filstørrelse op til 15 MB"
+  attachments: "Vedhæftede filer"
+  auto_suggest_solutions: 
+    info: "<b>Ved du hvad? Vi har måske allerede et svar til dit spørgsmål.</b><br/>Tjek, om nogen af ​​disse passer."
+  automations: 
+    available_placeholders: Pladsholdere
+    info1: "Hver helpdesk har et sæt almindeligt tilbagevendende scenarier - f.eks. Eskaler til niveau 2, Tildel til QA, Videresend til Salgsafd. osv. Disse scenarier vil typisk involvere flere opdateringer til billetten"
+    info2: "For eksempel inden du tildeler en billet til QA, kan du indstille billet type som Bug, tildele den til QA-gruppen og e-maile QA manager om den nye bug."
+    info3: "Scenarie Automatisering lader dig automatisere disse handlinger med et enkelt klik"
+    info4: "Vælg nedenstående Pladsholdere til at tilføje e-mail indholdet, og de vil blive konverteret til de relevante data"
+    info5: "Tildel QA"
+    info6: "Markér Billet som en Bug og tildel til QA"
+    info7: "Handlinger at Udføre"
+    info8: "Tilføj ny handling"
+    new: "Nyt Scenarie"
+    reorder: Omorganiser
+    title: "Scenarie  Automationer"
+  awaiting_your_reply: "Afventer dit Svar"
+  back: Tilbage
+  back_plans_billing: "Tilbage til Planer &amp; Fakturering"
+  back_to_admin: "Tilbage til Admin"
+  badges_achieved_label: "Opnåede Badges"
+  basic_brief: "For Mindre teams"
+  basic_details: "E-mail Svaradministrering, Dispatch'r Regler Standard SLA Politik, Vidensbase, Selvservice Portal, Domæne Kortlægning, Fælleskab Service."
+  bcc_email_updated_failure_msg: "Kunne ikke Bcc e-mail"
+  bcc_email_updated_success_msg: "Succesfuld opdateret Bcc e-mail"
+  bcc_emails_key: ", bcc : %{bcc_emails}"
+  bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
+  begin_subscription_confirm: "Dit kreditkort vil blive opkrævet et beløb på $%{cost}\\nog dit abonnement vil begynde med det samme. \\n\\nFortsæt nu?"
+  being_processed: "Under behandling"
+  between: Mellem
+  between_range: "Mellem interval"
+  billed_amount_annually: "Du vil blive faktureret $%{amount} årligt"
+  billed_amount_per_month: "Du vil blive faktureret $%{amount} %{period}"
+  billed_monthly: "Månedlig fakturering"
+  billing_info: "Abonnement information"
+  billing_info_update: "Dine faktureringsdetaljer er blevet opdateret."
+  block_users: "Vil du også blokere kontakt(erne)?"
+  blossom_brief: "Social Support"
+  blossom_details: "Alt i &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forummer, Fælleskab &amp; E-mail Support."
+  bottom: Nederste
+  bulk_actions: Bulk-handlinger
+  business_hours: 
+    helpdesk_hours: "Helpdesk Timer"
+    holiday_added: "Helligdag allerede tilføjet"
+    holiday_list: "Årlig Helligdagsliste"
+    holiday_name: "Helligdag navn"
+    holidays: Helligdage
+    info1: "Opsætning af dine Åbningstider i Freshdesk giver dig mulighed for at få mere kontrol på dine SLA'er. For f.eks. hvis din helpdesk er åben fra 9:00 til 18:00 man-fre og en kunde sender en høj prioritet billet kl. 16:00 på en tirsdag med en SLA for løsning på 4 timer, så sættes Billettens Forfaldstid til 11:00 om onsdagen. Du kan konfigurere SLA'er til enten at respektere eller ignorere åbningstider"
+    info2: "Helligdage fungerer præcis som Åbningstider. For f.eks. hvis din helpdesk er åben mellem 9:00 til 18:00 man-fre og en kunde sender en medium prioritet billet kl. 20:00 på en fredag ​​med en SLA med en SLA for løsning på 24 timer, så sættes Billettens forfaldstid til 09:00 tirsdag. (Ikke 08:00 lørdag)"
+    info3: "Konkrete Arbejdstimer"
+    info4: "Arbejdsdage for din Helpdesk"
+    info5: "Helligdage vil blive ignoreret når SLA beregnes for en billet"
+    title: Åbningstider
+  cancel: Annuller
+  cancel_and_back: "Annuller og gå tilbage"
+  cancel_my_account: "Annuller min konto"
+  card_number: Kortnummer
+  card_process: "Tak for din betaling. Din Freshdesk konto er nu live!"
+  category: 
+    edit: "Rediger kategori"
+    new: "Ny Kategori"
+  category_edit_not_allowed: "Denne kategori kan ikke modificeres"
+  cc_emails_key: ", cc : %{cc_emails}"
+  cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
+  change: Rediger
+  change_deleted_status_msg: "Venligst ændre status, eftersom den nuværende status er slettet"
+  change_details_anytime: "Abonnement detaljer eller planer kan ændres når som helst."
+  change_free_plan: "Rediger din Gratis plan"
+  change_my_password: "Skift mit kodeord"
+  change_my_plan: "Vælg denne plan..."
+  change_plan: "Skift plan"
+  change_plan_info: "Du kan ændre din plan til enhver tid, din næste faktureringsdato er %{date}."
+  change_to_free_info: "Nedklassificering af din plan vil resultere i tab af funktionalitet og data. Er du sikker på du vil nedgradere?"
+  chat: Chat
+  choose_free_plan: "Vælg din Gratis %{plan}"
+  choose_plan: "Vælg Plan"
+  clear_draft_text: "Ryd gemt udkast?"
+  click_select_action: "Klik for at Vælge handling"
+  click_to_change_sort_order: "Klik for at ændre sorteringsrækkefølgen"
+  click_to_select_filter: "Klik for at vælge Filter"
+  close: Luk
+  closed: Lukket
+  comments: Kommentarer
+  companies: 
+    active: 
+      no_companies: "Du har ikke noget firma tilføjet til listen."
+      no_companies_with_letter: "Du har ikke nogen firmaer med bogstavet '%{alphabet}'"
+  company: 
+    edit: "Rediger firma"
+    info1: "Er du sikker på at du vil slette dette firma?"
+    info2: "Domænenavne for dette firma"
+    info4: "Tilføj en Bemærkning om %{name}"
+    info5: "Tilføj specifikke bemærkninger vedrørende dette selskab. Eksempel - vi forhandler en 100K aftale med dette selskab"
+    info6: "Folk i %{name}"
+    info7: "Ingen billetter er blevet skabt af folk i dette selskab"
+    info8: "Mere info om dette selskab såsom adresse, telefonnummer, hjemmeside mv"
+    info9: "Freshdesk vil automatisk forbinde Kontakter med dette selskab, hvis email id'er indeholder disse domæner"
+    name: Firmanavn
+    new: "Nyt firma"
+    notes: Noter
+    quick_company: "Quick Firma"
+    title: Firmaer
+  company_name: Firmanavn
+  confirm: Bekræft
+  connect_ticket: "Link til supportsag"
+  contact_name: Kontaktperson
+  contacts: 
+    active: 
+      no_contacts: "Du har ikke nogen kontakt føjet til listen."
+      no_contacts_with_letter: "Du har ikke nogen aktive kontakter med bogstavet '%{alphabet}'"
+    add_new_requester: "Tilføj ny Rekvient"
+    deleted: 
+      no_contacts: "Du har ikke nogen kontakter at gendanne."
+      no_contacts_with_letter: "Du har ikke nogen slettede kontakter med bogstavet '%{alphabet}'"
+    deleted_message: "Dette er en slettet kontakt"
+    edit: "Rediger Kontakt"
+    edit_contact: "Rediger kontakt"
+    emailnotverified: "E-mail er ikke bekræftet for denne kontakt!"
+    form_placeholder: 
+      description: "Tilføj specifikke bemærkninger om denne kontakt, som eksempel - LA Lakers fan osv."
+    import_csv: "Importer Kunder fra CSV"
+    import_google: "Importer fra Google"
+    import_google_no: Nej
+    import_google_yes: Ja
+    info1: "Er du sikker på at du vil slette denne kontakt?"
+    info2: "Gør denne Bruger til en Agent"
+    info3: "Baggrundsinformation om %{nick_name}"
+    info4: "Seneste supportsager fra %{nick_name}"
+    info5: "Bruger har ikke oprettet en billet indtil videre"
+    info6: "Tilføj specifikke bemærkninger om denne kontakt"
+    new: "Ny Kontakt"
+    quick_contact: "Quick Kontakt"
+    restore: Gendan
+    role: 
+      info: "Kan se alle billetter fra dette firma"
+    save_changes: "Gem ændringer"
+    send_activation: "Send aktiveringse-mail"
+    showing: "Viser:"
+    status: 
+      active: Aktiv
+      deleted: Slettet
+    tag_cloud: "Kontakt Tag Cloud"
+    tags: Tags
+    title: Kontakter
+    working: Arbejder
+  contains: Indeholder
+  continue_using_free: "Fortsæt med at bruge Freshdesk som en "
+  conv_contacts_info: "%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
+  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  conversation: Historik
+  country: Land
+  create: Opret
+  created_on: Oprettet
+  credit_card: "Kortet er gemt"
+  credit_card_info: "Kredikort information"
+  current_plan: "Nuværende Plan"
+  current_plan_details: "%{plan_name} Plan med %{agent_limit} agenter"
+  customers: Kunder
+  date: 
+    ago: Siden
+    day: Dag
+    days: Dage
+    from: "Fra Nu"
+    hour: Time
+    hours: Timer
+    minute: Minut
+    minutes: Minutter
+    month: Måned
+    months: Måneder
+    now: "Lige Nu"
+    second: Sekund
+    seconds: Sekunder
+    week: Uge
+    weeks: Uger
+    year: År
+    years: År
+  date_title: Dato
+  day: "1 dag"
+  days: dage
+  deactivate: Deaktiver
+  default_category: "Standard Kategori"
+  default_category_description: "Alle e-mails sendt til %{full_domain} vil blive gemt her som kladder."
+  default_folder: Kladder
+  default_folder_description: "Alle e-mails sendt til %{full_domain} vil blive gemt her som kladder."
+  default_reply_template: "Agent Svartemplate"
+  delete: Slet
+  delete_confirm_scenario: "Er du sikker på at du vil slette dette scenarie?"
+  delete_reminder: "Slet denne ToDo?"
+  delete_the_ticket: "Slet Billetten"
+  delete_topic_msg: "Slet dette emne for evigt"
+  description: Beskrivelse
+  disabled: Deaktiveret
+  dispatch: 
+    act_to_perform: "Handlinger at Udføre"
+    add_condition: "Tilføj ny betingelse"
+    add_new_action: "Tilføj ny handling"
+    add_new_choice: "Tilføj Nyt valg"
+    delete: "Er du sikker på at du vil slette denne regl?"
+    dispatch_rules: "Dispatch'r - Regler"
+    edit: "Dispatch'r - Rediger Regl"
+    inactive_rules: "Inaktive regler"
+    info1: "Abonnement relaterede billetter"
+    info2: "Alle Abonnement relaterede billetter vil blive tildelt til Susan"
+    info3: "Hvornår skal denne regel anvendes"
+    info4: "Dispatch'r vil automatisk sende en nyoprettet supportbillet baseret på de definerede regler og handlinger"
+    info5: "Husk, at rækkefølgen af ​​reglerne er vigtig. For hver indgående billet, vil Dispatch'r udføre den første matchende regel og stoppe"
+    match_all: "Match Alle"
+    match_any: "Match Enhver"
+    new: "Dispatch'r - Ny Regel"
+    new_rule: "Ny regel"
+    reorder: Omorganiser
+    rule_name: "Regel Navn"
+    skip_notification_no: Nej
+    skip_notification_yes: Ja
+    skip_notifications: "Spring over Ny Billet e-mail notifikationer"
+    title: Dispatch'r
+  does_not_contain: "Indeholder ikke"
+  done: Udført
+  draft: "Kladde:"
+  due_in: "Forfalder om %{time_words}"
+  due_next_eight: "Næste 8 timer"
+  due_today: "I dag"
+  due_tomo: "I morgen"
+  edit: Rediger
+  edit_agent: "Rediger Agent"
+  edit_email: "Rediger e-mIl"
+  edit_forum_category: "Rediger Forumkategori"
+  eight: "8 timer"
+  email: E-mail
+  email_command_del_info_data: "Tip - Vælg en unik skilletegnkombination på mindst tre tegn (specialtegn anbefales), som ikke vil være i modstrid med det almindelige e-mail-svar."
+  email_command_delimeter_label: "E-mail Kommando Skilletegn"
+  email_command_delimeter_length_error_msg: "Angiv mindst tre tegn som skilletegn."
+  email_command_preview_subject: Emne
+  email_command_preview_subject_value: "Support Billet"
+  email_command_preview_to_email: Til
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  email_command_settings_heading: "E-mail Kommando Indstillinger"
+  email_command_settings_info: "Konfigurer det skilletegn der bruges til at identificere og udtrække e-mail-kommandoer fra e-mailen"
+  email_commands_update_failed: "Kunne ikke opdatere E-mail Kommando Indstillinger"
+  email_commands_update_success: "E-mail Kommando Indstillinger er opdateret"
+  email_configs: 
+    Personalized_email_replies: "Brug Agentnavne til Individualiserede e-mail svar?"
+    Personalized_email_replies_info: "Hvis JA så vil agentens svar have agentens navn som afsender navn (e-mailadresse vil stadig være din Support E-mail-adresse). For eksempel '%{current_user_name} &lt;%{current_account_domain}&gt;'."
+    Personalized_email_replies_message: "Din indstilling er gemt."
+    Personalized_email_replies_no: Nej
+    Personalized_email_replies_yes: Ja
+    add_bcc_text: "Tilføj Bcc"
+    add_supp_emails: "Yderligere support e-mail(s)"
+    assign_to_product_info: "Hvis du vil linke e-mailen til et nyt produkt, skal du først <a href='{{products_path}}'> tilføje produktet </a>"
+    assign_to_product_msg: "Link denne support e-mail til et produkt"
+    bcc_email: "Bcc adresse"
+    change_this: "Rediger dette"
+    delete: "Er du sikker på at du vil slette denne e-mail?"
+    edit: Rediger
+    email: e-mail
+    email_added_succ_msg: "Denne e-mail er blevet tilføjet"
+    forwarding_email: "Videresend E-mail"
+    global_support_emails: "Globale Support E-mails"
+    group: Gruppe
+    help_link_info: "Læs vores e-mailindstillinger artikel for mere information..."
+    inactive_info1: "Alle dine support e-mails er stadig ubekræftede, du skal mindst bekræfte én support e-mail"
+    inactive_info2: "Indtil da, vil standard e-mail \"%{default_email}\" blive brugt som svar e-mail."
+    info1: "Dine brugere sender support e-mails til"
+    info10: "Nye billetter til denne support e-mail vil blive automatisk tildelt en gruppe"
+    info11: "Liste over alle support e-mailadresser"
+    info12: "Tilføj en anden E-mail adresse"
+    info13: "Din support e-mailadresse er"
+    info14: "Enhver e-mail sendt til denne adresse vil blive konverteret til en billet"
+    info15: "Du skal videresende disse e-mails til"
+    info16: "Billetter vil blive tildelt"
+    info17: "Denne e-mailadresse vil blive inkluderet automatisk i Bcc feltet for al billetkommunikation"
+    info18: "Automatisk bcc adresse inkluderet i billetsvar"
+    info2: "Du skal videresende dine support e-mails til din unikket e-mailadresse"
+    info3: "Freshdesk vil hente disse e-mails og konvertere dem til billetter"
+    info4: "<strong>BEMÆRK:</strong> Hvis du har flere e-mailadresser til at understøtte flere produkter, <a href='{{products_path}}'>kan du tilføje dem her</a>."
+    info5: "Svar e-mails fra Freshdesk vil automatisk bruge de originale support e-mail id'er som Fra e-mailadresse"
+    info7: "Dette er også din Svar-til adresse, fx support@yourcompany.com"
+    info8: "Videresend dine e-mails til"
+    info9: "Tildel til Gruppe"
+    make_primary: "Gør primær"
+    mark_as_primary_msg: "Er du sikker på at du vil gøre dette til din primære support e-mail?"
+    name: Navn
+    name_info_msg: "Navnet på e-mailen der vil blive brugt i billetsvar"
+    new_support_email: "Ny Support e-mail"
+    primary_supp_email: "Primær support e-mail"
+    primary_supp_email_tool_tip: "Primær support e-mail"
+    remove_msg: "Er du sikker på at du vil fjerne denne e-mail?"
+    reply_email: "Din Support-e-mail"
+    reply_emails: "Svar e-mails fra Freshdesk"
+    secondary_supp_email_tool_tip: "Gør denne E-mail til primær"
+    send_verification_email: "Bekræft igen"
+    set_bcc_email_text: "Indstil automatisk Bcc e-mail"
+    spf_info: "Mens de fleste af dine e-mails vil blive leveret, skal du, for at være på den sikre side, oprette en <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF post</a> i din DNS zone fil, hvis du bruger e-mail i dit eget domæne. Dette hjælper med at sikre ordenlig levering af e-mailen."
+    supp_email_add: "Support e-mailadresse"
+    support_email: "Support E-mail"
+    support_email_exists: "Support E-mail eksisterer allerede"
+    title: "E-mail indstillinger"
+    unverified: "Email ikke verificeret"
+    unverified_info1: "En e-mail med et bekræftelseslink er blevet sendt til denne e-mail. Først efter verifikation vil denne support e-mail blive aktiv."
+  email_notifications: 
+    agent_notification: "Agent Meddelelse"
+    customize_email: "Personaliser e-mail"
+    default_reply_template_info: "Skabelon vises automatisk for alle agent svar, når de svarer på billetter"
+    default_reply_template_title: "Agent Svartemplate"
+    do_not_delete_ticket_id_from_subject: "For at opfange kundernes svar som billetsamtaler, må billettens ID pladsholder ikke fjernes fra emnelinjen"
+    edit_reply_template: "Rediger Skabelon"
+    event: Begivenhed
+    insert_placeholder: "Indsæt Pladsholdere"
+    modify_agent_template: "Rediger Agent E-mailskabelon"
+    modify_requester_template: "Rediger Rekvient E-mailskabelon"
+    requestor_notification: "Rekvient Meddelelse"
+    subject: Emne
+    title: "E-mail notifikationer"
+  email_notifications_agent_selection_msg: "Vælg agenter at underrette"
+  enabled: Aktiveret
+  ends_with: "Slutter med"
+  enter_billing_for_free: "Angiv venligst kreditkortoplysninger, før du vælger den betalte plan"
+  enter_message: "Indtast din besked her"
+  enter_payment: "Indtast Betalingsdetaljer..."
+  enter_payment_details_to_add: "Indtast betalingsdetaljer for at tilføje flere agenter"
+  error_in_plan: "Fejl i ændring af plan"
+  errors: 
+    actions_empty: "Handlinger kan ikke være tom"
+    conditions_empty: "Betingelser kan ikke være tom"
+  errors_in_payment: "Problemer med din betaling:"
+  errors_in_payment_info: "Problemer med din betalingsinformation:"
+  errors_in_plan_change: "Problemer med din ændring:"
+  errors_in_your_address: "Problemer med din adresse:"
+  estate_brief: "Enterprise Niveau Support"
+  estate_details: "Alt i &quot;Garden&quot; Plan plus, Gamification."
+  example: eksempel
+  expires: Udløber
+  export_data: 
+    closed_at: Lukketid
+    created_at: "Oprettet tid"
+    custom_filter: "Indsæt dato"
+    export_to_csv: "Eksporter til CSV"
+    field_select_title: "Vælg felter, der skal eksporteres"
+    filter_label_agent: "Filtrer billetter efter:"
+    filter_label_customer: "Filtrer supportsager oprettet"
+    from: Fra
+    info: "Eksportér information om supportsag i nuværende visning til en CSV fil."
+    mail: 
+      body: "Find venligst CSV vedlagt."
+      info: "Din Billetdata vil blive sendt til din e-mail inden for kort tid!"
+      subject: "Eksporter billetter - %{filter} - ( %{start_date} til %{end_date} )"
+    no_fields_selected: "Tjek venligst mindst én af nedenstående felter for at fortsætte."
+    resolved_at: "Løst time"
+    seven_days: "Seneste 7 dage"
+    thirt_days: "Seneste 30 dage"
+    to: Til
+    twenty_four: "i går"
+  export_data_successfull: "Din Help desk data vil blive sendt til din e-mail inden for kort tid!"
+  f_request: "Anmodning om Feature"
+  facebook: 
+    deleted: "Facebooksiden %{facebook_page} er blevet fjernet."
+    not_authorized: "Du blev ikke godkendt af Facebook"
+  facebook_source: Facebook
+  failure: "Fejl ..."
+  fav_delete_msg: "Er du sikker på at du vil slette dette fav ikon?"
+  favicon: Favicon
+  feedbackwidget_bgcolor: Baggrundsfarve
+  feedbackwidget_btcustomize: Knap-personalisering
+  feedbackwidget_custom_image: "Brugerdefineret billed-URL"
+  feedbackwidget_custom_image_info: "hvis du bruger et brugerdefineret billede, vil farve og tekst blive ignoreret."
+  feedbackwidget_defaultbutton: Support
+  feedbackwidget_defaulttitle: "Hjælp &amp; Support"
+  feedbackwidget_embed_code: "Widget indlejringskode"
+  feedbackwidget_embed_code_intro: "Du bedes kopiere og indsætte koden nedenfor overalt før &lt;/body&gt; tagget i HTML-skabelonen på din hjemmeside eller hver side, hvor du ønsker at tilbyde Freshdesk widgetten."
+  feedbackwidget_form_title: "Widget formular titel"
+  feedbackwidget_formcustomize: "formular Formular brugertilpasning"
+  feedbackwidget_help_para1: "Saml feedback fra dine kunder ved at tilføje en support-fane på dine hjemmesider."
+  feedbackwidget_help_para2: "Brugerdefinerbar fane der åbnes til en Support billetformular."
+  feedbackwidget_help_title: "Feedback widget"
+  feedbackwidget_intro: "Tilpas din freshdesk widget nedenfor og se et realtime preview."
+  feedbackwidget_offset_info: "Forskydningen vil være afstanden af widget knappen (pixels) fra venstre eller øverst på skærmen, baseret på den justering du vælger."
+  feedbackwidget_offset_label: "Med en forskydning på"
+  feedbackwidget_position: Position
+  feedbackwidget_text: Tekst
+  feedbackwidget_title: "Widget Indstillinger"
+  first_name: Fornavn
+  first_response_sla: "Første Svar SLA Overtrædelse"
+  flash: 
+    account: 
+      update: 
+        success: "Dine kontooplysninger er blevet opdateret."
+    agents: 
+      create: 
+        success: "Agenten er blevet oprettet og aktiveringsinstruktioner sendt til %{email}!"
+      delete: 
+        not_allowed: "Du har ikke adgang til at slette det!"
+    application: 
+      already: "Addon is already installed."
+      install: 
+        error: "Error in enabling the Addon."
+        success: "The Addon has been enabled successfully!"
+      not_installed: "This addon is not yet installed."
+      uninstall: 
+        error: "Error in disabling the Addon."
+        success: "The Addon has been disabled successfully!"
+      update: 
+        error: "Fejl i konfiguration af integration."
+        success: "Integrationen er blevet opdateret!"
+    business_hours: 
+      update: 
+        failure: "Kunne ikke opdatere Åbningstider"
+        success: "Åbningstider er blevet opdateret"
+    contacts: 
+      cancel: Annuller
+      create: 
+        success: "Kontakten er blevet oprettet."
+      info_select: "Vælg venligst mindst 1 bruger."
+    contacts_import: 
+      failure: "Prøv venligst igen"
+      no_file: "Upload venligst en fil"
+      success: "%{created_count} kontakter er blevet importeret for nyligt og %{updated_count} eksisterende kontakter er blevet opdaterede!"
+    custom_fields: 
+      update: 
+        failure: "Opdatering af Billet felter mislykkedes."
+        success: "Billet felter opdaterede."
+    customers: 
+      info_select: "Vælg venligst mindst 1 kunde."
+    data_import: 
+      zendesk: 
+        failure: "Kan ikke importere fra Zendesk...prøv venligst igen"
+        no_contact: "Kan ikke kontakte Zendesk. Du bedes bekræfte dine Zendesk legitimationsoplysninger og prøve igen!"
+        running: "En Zendesk import kører i øjeblikket. Du kan prøve senere !!"
+        success: "Dine data import er startet, og du vil modtage en mail, når den er færdig. Importen kan tage flere minutter, afhængigt af omfanget af dine data"
+    daypass: 
+      failed: "Fejl ved tilføjelse af dagspas"
+      success: "%{quantity} Dagspas er blevet tilføjet din konto."
+    email_notifications: 
+      update: 
+        success: "E-mailmeddelelser er blevet opdateret."
+    email_settings: 
+      activation: 
+        already_activated: "%{reply_email} er allerede blevet aktiveret!"
+        invalid_code: "Aktiveringskoden er ikke gyldig!"
+        success: "%{reply_email} er aktiveret!"
+      make_primary: 
+        success: "<b>%{reply_email}</b> er nu din primære support e-mail!"
+      send_activation: 
+        success: "Verifikationse-mail er blevet sendt til %{reply_email}!"
+    facebook: 
+      updated: "Facebookindstilling er blevet opdateret"
+    filter: 
+      delete_success: "View has been delete successfully!"
+      save_success: "Visning er blevet gemt!"
+    g_app: 
+      authentication_failed: "Godkendelse mislykkedes"
+      authentication_success: "Godkendelse fuldført"
+      no_subdomain: "Der er intet underdomæne som dette. Prøv venligst igen."
+      user_deleted: "Bruger er slettet!"
+    general: 
+      access_denied: "Du har ikke adgang til denne side!"
+      create: 
+        failure: "Kan ikke gemme %{human_name}"
+        success: "%{human_name} er blevet oprettet."
+      destroy: 
+        failure: "%{human_name} kunne ikke slettes"
+        success: "%{human_name} er blevet slettet."
+      insufficient_privilege: 
+        admin: "Du har ikke tilstrækkelig rettighed til at ændre dette. Log venligst ind som administrator..!"
+      login_not_needed: "Du skal være logget ud for at få adgang til denne side"
+      need_login: "Du skal være logget ind for at få adgang til denne side"
+      restore: 
+        failure: "%{human_name} kunne ikke gendannes"
+      update: 
+        success: "%{human_name} er blevet opdateret"
+    gmail_gadgets: 
+      account_not_associated: "Din Gmail-konto er endnu ikke knyttet til en Freshdesk konto. Gå gennem navigationslinket for at tilknytte det først."
+      agent_missing: "I Freshdesk, er du ikke en agent. Konverter brugeren til agent, og prøv igen."
+      agent_not_active: "I Freshdesk, er din e-mail måske blevet slettet eller deaktiveret. Aktiver den, og prøv igen."
+      gmail_request_unverified: "Forkert Gmail signatur. Prøv venligst efter du logger ind igen."
+      kvp_missing: "Ugyldig godkendelse. Genåbn mail og prøv igen."
+      unknown_error: "Ukendt serverfejl. Kontakt venligst support."
+      user_missing: "I Freshdesk, eksisterer din e-mail ikke. Tilføj en agent med din e-mail, og prøv igen."
+      viewer_id_not_sent_by_gmail: "Forkert Gmail anmodning. Prøv efter du logger ind igen."
+    login: 
+      failed: "Log ind mislykkedes"
+      sso: 
+        expected_params: "Forventede params er navn, email og hash, som ikke er til stede"
+      success: "Du er nu logget ind"
+      verify_credentials: "Kunne ikke logge ind. Bekræft venligst brugeroplysninger"
+    not_allowed_in_demo_site: "Demoside har ikke denne adgang!"
+    password_resets: 
+      email: 
+        reset: "En nulstillingse-mail med instruktioner er blevet sendt til %{requester}."
+        success: "Instrukser om nulstilling af dit kodeord er blevet e-mailet til dig. Se venligst din e-mail."
+        user_not_found: "Ingen bruger er fundet med denne e-mailadresse"
+      update: 
+        invalid_token: "Vi beklager, men vi kunne ikke finde din konto. Hvis du har problemer kan du prøve at kopiere og indsætte webadressen fra din e-mail i din browser eller genstarte nulstilling af adgangskode processen."
+        success: "Kodeord opdateret"
+    portal: 
+      tickets: 
+        create: 
+          success: "Din supportsag er blevet oprettet, og en kopi er sendt til dig på e-mail."
+    portal_settings: 
+      update: 
+        success: "Kundeportal indstillinger er blevet opdateret."
+    profile: 
+      api_key: 
+        reset_failure: "Fejl i nulstilling af API Nøgle."
+        reset_success: "API Nøgle er blevet nulstillet."
+      change_password: 
+        failure: "Kan ikke skifte dit kodeord. Kontroller venligst nuværende kodeord."
+        success: "Kodeord opdateret. Venligst log ind igen"
+      update: 
+        success: "Din profil er blevet opdateret."
+    solutions: 
+      remove_tag: 
+        success: "Tagget er blevet fjernet fra denne Løsning"
+    sso: 
+      update: 
+        success: "Dine kontooplysninger er blevet opdateret."
+    tickets: 
+      empty_spam: 
+        success: "Alle billetter i spam-mappen er blevet slettet."
+      empty_trash: 
+        success: "Alle billetter i papirkurven er blevet slettet."
+      merge: 
+        success: "Billet er blevet fusioneret"
+        wrong_ticket_id: "Angiv venligst et gyldigt billet id"
+      monitor: 
+        start: "Du overvåger nu denne billet"
+        stop: "Du overvåger ikke længere denne billet"
+      notes: 
+        create: 
+          failure: "Der opstod et problem med at tilføje bemærkning til din billet. Prøv venligst igen."
+          success: "Kommentaren er tilføjet din supportsag"
+      reply: 
+        success: "Svaret er blevet sendt."
+      timesheet: 
+        timer_stopped: "billettimer er blevet stoppet"
+    to_dos: 
+      complete: 
+        success: "To-Do er blevet markeret som afsluttet."
+    twitter: 
+      updated: "Twitterindstilling er blevet opdateret"
+  folder: 
+    add_folder: "Tilføj mappe"
+    edit: "Rediger Mappe"
+    info1: "Er du sikker på at du vil slette denne mappe?"
+  folder_edit_not_allowed: "Denne mappe kan ikke redigeres"
+  footer: 
+    by_freshdesk: "af Freshdesk"
+    helpdesk_software: "Help Desk Software"
+  for: for
+  forgot_password: "Glemt kodeord"
+  forgot_password_intro: "Udfyld formularen nedenfor. Instrukser om nulstilling af dit password vil blive e-mailet til dig."
+  formatting_help: "Formatering Hjælp"
+  forum: 
+    confim_msg1: "Er du sikker på at du vil slette dette forum?"
+    edit: "Rediger forum"
+    new: "Nyt forum"
+    start_topic: "Start et emne"
+    title: Fora
+    types: 
+      announce: Meddelelse
+      howto: Spørgsmål
+      ideas: Ideer
+      problem: Problemer
+    verb: 
+      announcement: "Meddelelse fra"
+      ideas: "Ide delt af"
+      problems: "Problem rapporteret af"
+      questions: "Spørgsmål stillet af"
+    visibility: 
+      agents: Agenter
+      all: Alle
+      anyone: Enhver
+      logged_users: "Brugere der er loggede ind"
+      select_company: "Vælg firmaer"
+  forum_confirm_msg1: "Er du sikker på at du vil slette denne kategori?"
+  forum_key: Forum
+  forum_shared: 
+    post: 
+      answer: Svar
+      delete_post: "Slet indlæg"
+      delete_post_confirm: "Slet dette indlæg? Er du sikker?"
+      edit_post: "Rediger Indlæg"
+      mark_answer: "Marker dette som svaret"
+      post_accepted_as_a_good_answer: "Dette indlæg er accepteret som et godt svar til dette emne"
+      posted_on: "%{user_name} den %{post_date}"
+      unmark_answer: "Fjern markeringen af dette som svar"
+    topic_vote: 
+      howto: 
+        vote_button: "Jeg har dette Spørgsmål"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> har dette Spørgsmål"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} Folk</a> har dette Spørgsmål"
+        vote_info_include_1: "Du har har dette Spørgsmål"
+        vote_info_include_2: "Du og <a id='users-voted' href='#' title='See who have this'> %{vote} Folk</a> har dette Spørgsmål"
+        voted_users_widget_title: "Folk der har dette Spørgsmål"
+      ideas: 
+        vote_button: "Jeg godt lide denne Ide"
+        vote_info_1: "<a id='users-voted' href='#' title='See who likes this'> %{vote} Person</a> kan godt lige denne Ide"
+        vote_info_2: "<a id='users-voted' href='#' title='See who like this'> %{vote} Folk</a> kan godt lige denne Ide"
+        vote_info_include_1: "Du kan godt lige denne Ide"
+        vote_info_include_2: "Du og <a id='users-voted' href='#' title='See who like this'> %{vote} Folk</a> kan godt lige denne Ide"
+        voted_users_widget_title: "Folk der godt kan lide denne Ide"
+      problem: 
+        vote_button: "Jeg har dette Problem"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> har dette Problem"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'> %{vote} Folk</a> har dette Problem"
+        vote_info_include_1: "Du har dette Problem"
+        vote_info_include_2: "Du og <a id='users-voted' href='#' title='See who have this'> %{vote} Folk</a> har dette Problem"
+        voted_users_widget_title: "Folk der har dette problem"
+  forums: 
+    form: 
+      type: "Forum type"
+      visibility: "Forum synlighed"
+      visible_to: "Synligt for"
+    search: 
+      placeholder: "Søg %{name} "
+    search_all: 
+      placeholder: "Søg alle emner"
+  forums_order: 
+    overview: Oversigt
+    popular: Populært
+    recent: Seneste
+  forward: Videresend
+  forwarded_email: "Videresendt e-mail"
+  forwarded_to: "Videresendt til"
+  four: "4 timer"
+  free_account: "Gratis konto"
+  from_email: "Fra E-mail"
+  fwd_success_msg: "Billetten er blevet videresendt"
+  fwd_to: Videresend
+  gamification: 
+    leaderboard: 
+      love_trophie_info: "Agent med det maksimale antal Kundetilfredshedspointi denne måned"
+      love_trophie_info_group: "Gruppe med det maksimale antal Kundetilfredshedspointi denne måned"
+      love_trophie_label: "Kunde Wow Champion"
+      love_trophie_label_group: "Kunde Wow Champions"
+      mvp_trophie_info: "Agent med flest point denne måned"
+      mvp_trophie_info_group: "Gruppe med flest point denne måned"
+      mvp_trophie_label: "Mest værdifulde Spiller"
+      mvp_trophie_label_group: "Mest værdifulde Gruppe"
+      sharpshooter_trophie_info: "Agent med flest højeste Løst i Første Opkald point i denne måned"
+      sharpshooter_trophie_info_group: "Gruppe med flest Løst i Første Opkald point i denne måned"
+      sharpshooter_trophie_label: Skarpskytte
+      sharpshooter_trophie_label_group: Skarpskytter
+      speed_trophie_info: "Agent med flest point for hurtig løsning i denne måned"
+      speed_trophie_info_group: "Gruppe med flest point for hurtig løsning i denne måned"
+      speed_trophie_label: Hurtigløber
+      speed_trophie_label_group: Hurtigløbere
+    levels: 
+      beginner: Begynder
+      expert: Ekspert
+      guru: Guru
+      intermediate: Øvet
+      master: Master
+      professional: Professionel
+    notifications: 
+      achieved_quest: "<b> Hurra! </b><br/> Du har opnået <b>%{name}</b>."
+      newlevel: "<b> Hurra! </b><br/> Du er nu <b>%{name}</b>."
+  garden_brief: "Multi Produkt Support"
+  garden_details: "Alt indenfor &quot;Blossom&quot; Plan plus, Multi Produkt Support, Avanceret Rapportering, Fælleskab, E-mail- &amp; Telefonsupport"
+  go_back_admin: "Gå tilbage til Admin"
+  greater_than: "Større end"
+  group: 
+    assigntime: 
+      day: "1 dag"
+      eight: "8 timer"
+      four: "4 timer"
+      half: "30 minutter"
+      one: "1 time"
+      threeday: "3 dage"
+      two: "12 timer"
+      twoday: "2 dage"
+    edit: "Rediger Gruppe"
+    info1: "Agenter i denne Gruppe"
+    info2: "Ingen agenter i denne Gruppe"
+    info3: "Send eskaleringse-mail til"
+    info4: "hvis en billet ikke er blevet tildelt indenfor"
+    info5: "Er du sikker"
+    name: "Gruppe Navn"
+    new: "Ny gruppe"
+    select_agents: "Vælg Agenter"
+    title: Grupper
+  half: "30 minutter"
+  header: 
+    assumed_text: "Du har visning som"
+    login: "Log ind"
+    new_ticket: "Ny supportsag"
+    search: Søg
+    signout: "Log ud"
+    submit_a_ticket: "Opret en supportsag"
+    tabs: 
+      admin: Admin
+      checkstatus: "Tjek dine supportsager"
+      company_tickets: "Firma Billetter"
+      customers: Kunder
+      dashboard: Dashboard
+      forums: Fora
+      home: Hjem
+      reports: Rapporter
+      social: Social
+      solutions: Løsninger
+      tickets: Supportsager
+    welcome: Velkommen
+  header_logo: "Sidehoved Logo"
+  helpdesk: 
+    dashboard: 
+      index: 
+        todo_title: "At gøre"
+      summary: 
+        due_today: "Forfalder i dag"
+        open: Åben
+        overdue: Forfalden
+        pending: Afventer
+        title: "Billet sammendrag"
+        unassigned: "Ikke tildelt"
+    flash: 
+      assigned_reassigned: "%{type} til %{username}"
+      assigned_to_you: "%{tickets} tildelt til dig"
+      assignedto: "%{tickets} tildelt til %{username}."
+      closing_the_ticket_failed: "Billetten kunne ikke lukkes"
+      flagged_spam: "%{tickets} markeret som spam. %{undo}"
+      flagged_unspam: "%{tickets} fjernet fra papirkurven."
+      removed_from_spam: "%{tickets} fjernet fra papirkurven."
+      tickets_closed: "%{tickets} lukket"
+      tickets_update: "%{tickets} opdaterede"
+    merge: 
+      confirm_merge: 
+        confirm_and_merge: "Bekræft og flet"
+        source_merge_description: "Denne supportsag er lukket og sammenlagt i supportsagen %{ticket_id}."
+        source_ticket_close_info: "Denne billet vil blive lukket med følgende bemærkning"
+        target_merge_description1: "Billet %{ticket_id} %{ticket_subject} er sammenlagt med denne anmodning"
+        target_merge_description2: "Beskrivelse i %{ticket_id}"
+        target_ticket_updated_info: "Denne billet vil blive opdateret med følgende bemærkning, og alle samtaler vil blive flyttet"
+        will_be_merged_into: "Bliver sammenflettet med..."
+      merge: 
+        enter_ticket_id: "Indtast billet id"
+        merge: Flet
+        merge_into: Sammenlægningsinfo?
+        other_tickets: "Andre billetter rapporteret af %{requester}"
+    rebranding: 
+      name: 
+        info: "Dette vil være det help desk navn, der vises i sidehovedet og e-mails."
+    shared: 
+      facebook_form: 
+        title: "Svar til %{user}"
+      forward_form: 
+        addbcc: "Tilføj Bcc"
+        addcc: "Tilføj CC"
+        cc: Cc
+        removebcc: "Fjern Bcc"
+        removecc: "Fjern Cc"
+      history: 
+        recent_item: "Nylige Emner"
+      reply_form: 
+        addbcc: "Tilføj Bcc"
+        addcc: "Tilføj CC"
+        cc: Cc
+        removebcc: "Fjern Bcc"
+        removecc: "Fjern Cc"
+        title: "Svar til %{email}"
+      tweet_form: 
+        title: "Svar til %{user}"
+    tags: 
+      index: 
+        title: Tags
+    ticket_created_on_n_by: "af %{requester} den %{date_time}"
+    ticket_notifier: 
+      reply: 
+        happy: Suveræn
+        neutral: OK
+        unhappy: Dårlig
+    tickets: 
+      close_notice: 
+        ticket_has_been_cloased: "Supportsagen er lukket"
+        view_ticket: "Se supportsag"
+      components: 
+        due_date: 
+          earlier_date_and_time: "Angiv venligst en dato og tidspunkt der ligger efter supportsagens oprettelses dato og tidspunkt"
+          next_week: "Næste uge"
+          set_date_time: "Indsæt dato/tid"
+          specific_date: "Specifik dato/tid..."
+          this_week: "Denne uge"
+          today: "I dag"
+          tomorrow: "I morgen"
+          when_is_it_due: "Hvornår forfalder denne?"
+        scenarios: 
+          execute_this_scenario: "Udfør dette scenarie"
+      customview: 
+        new: 
+          give_a_name: "Giv denne visning et navn"
+          visible_to: "Visningen er synlig for"
+      execute_scenario_notice: 
+        actions_performed: "Handlinger udført"
+        execute_the_scenario: "Udførte scenariet <b>%{rule_name}</b>"
+        view_details: "se detaljer"
+      friendly_status: 
+        customer_responded: "Kunde Svarede"
+        elapsed: "Svar Forfalder"
+        new: Ny
+        overdue: Forfalden
+        resolved: Løst
+      no_email_found: "Bruger med e-mail %{email} er ikke tilgængelig i systemet."
+      note: 
+        attachment_size: 
+          exceed: "Ups! Din vedhæftede fil overstiger 15 MB. Vedlæg venligst en mindre fil."
+        delete_note: "Fjern dette fra billetsamtale?"
+        edit_note: "Rediger bemærkning"
+        inbound_email: "Indkommende e-mail"
+        outbound_email: "Udgående e-mail"
+        posted_on: "%{user_name} til %{note_date}"
+        private_note: "Privat bemærkning"
+        public_note: Kommentar
+        split_this_as_new_ticket: "Opdel dette som en ny Billet"
+        split_ticket_confirm: "Opdel denne bemærkning og opret den som en ny billet?"
+      overlay_fwd_time: " videresendt, %{time_in_words} siden"
+      overlay_note_time: " tilføjede en bemærkning, %{time_in_words} sider"
+      overlay_reply_time: " svarede, %{time_in_words} sider"
+      save_and_close_notice: 
+        ticket_saved_and_closed: "Denne billet er blevet oprettet og lukket"
+        view_ticket: "Se supportsag"
+      show: 
+        conversation: Historik
+        linked_ticket: "Denne billet er sammensat med dette forum"
+        meta: meta
+        timesheet: Tidsstyring
+      tabular_view: 
+        assigned: Tildelt
+        posted: Opslået
+        priority: Prioritet
+        status: Satus
+        time_ago: "%{time_in_words} siden"
+        title: Titel
+      view_ticket: 
+        conversation: Historik
+        linked_ticket: "Denne billet er sammensat med dette forum"
+        meta: meta
+        timesheet: Tidsstyring
+      views: 
+        all: "Alle supportsager"
+        all_tickets: "Alle supportsager"
+        closed: "Lukkede supportsager"
+        due_today: "Billetter der Forfalder i dag"
+        monitored_by: "Billetter jeg Overvåger"
+        my_all: "Alle mine supportsager"
+        my_closed: "Mine lukkede supportsager"
+        my_due_today: "Mine Billetter der Forfalder i dag"
+        my_on_hold: "Mine afventende supportsager"
+        my_open: "Mine åbne supportsager"
+        my_overdue: "Mine Forfaldne Billetter"
+        my_resolved: "Mine løste supportsager"
+        new: "Nye supportsager"
+        new_and_my_open: "Nye og mine åbne supportsager"
+        new_my_open: "Nye og mine åbne supportsager"
+        no_tickets: "Du har ikke nogen sbilletter i den aktuelle visning"
+        on_hold: "Afventende supportsager"
+        open: "Åbne supportsager"
+        open_or_pending: "Åbne eller afventer"
+        overdue: "Forfaldne Billetter"
+        resolved: "Løste supportsager"
+        resolved_or_closed: "Løst eller lukket"
+        select: "Vælg Visning..."
+        tags: "Tags efter Billet"
+        this_view: "denne visning"
+        tickets_by: "Billetter fra"
+        tickets_twitter: "Supportsager via twitter"
+    time_sheets: 
+      agent: Agenter
+      billing_type: Faktueringstype
+      customer: Kunde
+      executed_at: Dato
+      form: 
+        agent: Agenter
+        hours: Timer
+      group_by: "Grupperet af mig"
+      hours: Timer
+      index: 
+        no_timeentry: "Intet tidspunkt logget for denne billet"
+      new: 
+        title: "Ny tidspunkt post"
+      report: 
+        no_timeentry: "Ingen data tilgængelig"
+        total: Total
+      ticket: Supportsag
+      time_entry: 
+        toggle_timer_false: "Stop timer"
+        toggle_timer_true: "Start timer"
+  helpdesk_title: Helpdesk
+  high: Høj
+  home: 
+    mobile_index: 
+      email: E-mail
+      forgot: "Har du glemt dit password?"
+      help: Hjælp
+      login: "Log ind"
+      password: Kodeord
+      remember: "Husk mig på denne computer"
+      sign_in_using: "Log ind med"
+      sign_in_using_google: "Log ind med Google konto"
+  how_to: Spørgsmål
+  identity_reverted_error_msg: "Vi kunne desværre ikke finde din originale bruger."
+  identity_reverted_msg: "You have reverted your identify back to you."
+  import: Importer
+  import_added_newly: "Nyligt Tilføjet"
+  import_articles: Løsningsartikler
+  import_data: "Dato Importeret"
+  import_example_title: "Det følgende er et eksempel på en CSV fil"
+  import_forum: Fora
+  import_groups: Grupper
+  import_ignore_first_row: "Ignorer den første række (overskrifter)"
+  import_note_info: "Felterne i din CSV-fil kan være i vilkårlig rækkefølge. Bare sørg for, at den første række har sidehoved information. (F.eks navn, e-mail osv.) Det eneste påkrævede felt er e-mail."
+  import_org_companies: "Organisationer &rarr; Firmaer"
+  import_solution_article: "Konverter Artikelforum til løsning"
+  import_solution_article_info: "Bemærk: Vi vil ikke gemme forumkommentarerne"
+  import_step1_info: "Vælg en CSV fil og klik på importer"
+  import_step2_info: "Marker følgende CSV felter med database felter og import."
+  import_ticket_group: "Supportsager &amp; Gruppe"
+  import_tickets: Supportsager
+  import_topics: Emner
+  import_updated: Opdateret
+  import_user_notification: "Send Bruger aktiveringsmail under import"
+  import_user_org: "Brugere &amp; Organisationer"
+  import_user_org_text: "Alle Brugere &amp; Organisationer i din Zendesk konto vil blive importeret til din aktuelle Freshdesk konto som \"Kontakter & Firmaer\""
+  import_users_contacts: "Brugere &rarr; Kontakter"
+  import_warning_info: "En e-mail med bruger aktiveringsinstruktioner vil blive sendt til hver kontakt ved vellykket import. Hvis e-mailen allerede er til stede i databasen, vil vi opdatere egenskaber som Navn, Firma osv."
+  import_zendesk_summary: "Oversigt over Import fra Zendesk"
+  import_zendesk_summary_info: "Zendesk data er blevet importeret."
+  import_zendesk_title: "Importer fra zendesk"
+  incident: Hændelse
+  index_tooltip_loading_msg: Loader...
+  integrations: 
+    capsule: 
+      desc: "Du kan se kontaktoplysninger fra Capsule CRM i Freshdesk. Denne information kan tilgås på Billetdetaljer siden og Kontaktdetaljer siden."
+      form: 
+        api_key: "Api Nøgle"
+        api_key_info: "For at få din unikke API nøgle, skal du logge ind på din Capsule CRM-konto og navigere til <br /> <b>“Bruger -> My Præferencer”</b>.  (Du kan finde dette i øverste højre hjørne af siden).<br /> Klik på <b>“API Autentificeringstoken”</b>, og for at få den unikke API-nøgle. <br /> Kopier nøglen og indsæt den i tekstfeltet ovenfor."
+        bcc_drop_box_mail: "Mail Drop Box-adresse"
+        bcc_drop_box_mail_info: "Du kan finde din unikke Capsule Drop box e-mailadresse under <b>“Indstillinger -> Mail Drop Box”</b>.<br /> (Du kan finde denne i øverste højre hjørne af siden. ).<br /> Kopier e-mailadresse og indsæt den i tekstfeltet ovenfor.<br />  Freshdesk vil automatisk tilføje denne e-mailadresse til feltet Bcc, når du besvarer en Billet"
+        domain: Domæne
+        domain_info: "Indtast domænet uden https. Fx: eksempel.capsulecrm.com"
+        widget_title: "Widget Titel"
+      label: "Capsule CRM"
+    capsule_crm: 
+      helptext: "<h4>Link tilbage fra Capsule til Freshdesk</h4><p><br/>Du kan oprette et link i Capsule CRM for at se kontaktens billetter i Freshdesk.</p> <p>For at gøre dette gå til <br /><b>Indstillinger -> Brugerdefinerede felter -> For Folk & Organisation</b></p><p> Klik derefter på \"Tilføj ny...\" og vælg <b>\"Genereret link\"</b></p> <p> Kopier URL nøjagtigt som vist herunder og indsæt den i Capsule CRM som led definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+      label: "Capsule CRM"
+    custom_application: 
+      desc: "Du kan tilføje en brugerdefineret widget til at vise detaljer ved hjælp af dit egen brugerdefinerede script."
+      description: Beskrivelse
+      edit: "Rediger Brugerdefineret Widget"
+      form: 
+        create_n_enable: "Opret og Aktiver"
+        insert_placeholder: "Indsæt Pladsholder"
+        widget_script: "Widget kode snippet"
+        widget_title: "Widget Navn"
+      helptext: "<h4>Brugerdefineret Widget Hjælp</h4><p><br/> Du kan oprette dine egne brugerdefinerede widgets ved hjælp af html,css og javascript.</br></br>For at oprette den brugerdefinerede widget, skal du indtaste navnet på din nye widget og en kort beskrivelse af den.</br>Indtast din kode under ‘Script’.  Du kan referere til vores løsningsside for at lære mere om scriptet.</br></br>Du kan klikke <b>‘Vis Eksempel’</b> for at se hvordan din widget vil se ud, både i billetten og på kontaktsiderne."
+      label: "Brugerdefineret Widget"
+      name: Navn
+      new: "Ny Brugerdefineret Widget"
+      script: Script
+      small_help_text: "Du kan oprette dine egne brugerdefinerede widgets ved hjælp af html,css og javascript"
+    freshbooks: 
+      desc: "Du kan logge tid brugt på billetter i dine FreshBooks projekter og opgaver."
+      form: 
+        api_key: Autentificeringstoken
+        api_url: "API URL"
+        api_url_info: "Indtast den komplette API URL med https. Fx: https://example.freshbooks.com/api/2.1/xml-in"
+        freshbooks_note: "Bemærkninger tekst"
+        freshbooks_note_info: "Denne tekst vil blive hæftet til slutningen af bemærkningen, sammen med den indtastede tid."
+        widget_title: "Widget Titel"
+      helptext: "<h4>Freshbooks Integration Hjælp</h4><p><br/>For at integrere Freshbooks med Freshdesk, skal du først få fat på Freshbooks API & Autentificeringstoken. <br/><br/>Log ind på din Freshbooks konto, klik på din <b>Personale fane</b> og gå til <b>Personale og Entreprenører underfanen</b>. Klik på <b>Rediger</b> i din Admin.  Du kan finde din API URL og Autentificeringstoken.<br/><br/>I Freshdesk, skal du klikke på en billet og gå til Tidsregistrering fanen. Du kan derefter tilføje din tidsregistrering til FreshBooks."
+      label: Freshbooks
+    google_analytics: 
+      account_number: "Indtast dit Tracking ID"
+      desc: "Overvåg statistik om besøgende på din support portal ved hjælp af Google Analytics"
+      domain: Domæne
+      form: 
+        copy_settings: "Brug det ovenstående Tracking ID for alle portaler"
+        tracking_id: "Tracking ID for "
+        tracking_id_example: "F.eks.: UA-123456-1"
+      helptext: "<h4>Google Analytics Integration Hjælp</h4><p><br/>For at integrere Google Analytics med Freshdesk, anbefales det at du opretter en dedikeret ejendom indeni dit firmas konto hos Google Analytics. <br/><br/>For at oprette en ejendom, skal du logge ind på din Google Analytics konto og gå til din Admin fane og vælge den ønskede konto. Klik på <b>'Ny Ejendom'</b> for at oprette en. I '<b>Hjemmeside URL'</b>, skal du indtast din Support Portals URL og klikke på <b>'Opret Ejendom'</b>. Nu skal du klikke på ejendommen du har oprettet og du vil kunne se <b>'Ejendom ID'</b> lige under ejendom navn. Kopier dette til Google Analytics Indstillinger i Freshdesk.</p>"
+      inline_help: "Indtast Tracking ID for"
+      label: "Google Analytics"
+      portal: Portal
+    google_contacts: 
+      MERGE_LATEST: "Sammenflet Freshdesk og Google kontakter (Seneste opdatering forrang)"
+      MERGE_LOCAL: "Sammenflet Freshdesk og Google kontakter (Freshdesk forrang)"
+      MERGE_LOCAL_small: "Sammenflet (Freshdesk forrang)"
+      MERGE_REMOTE: "Sammenflet Freshdesk og Google kontakter (Google forrang)"
+      MERGE_REMOTE_small: "Sammenflet (Google forrang)"
+      OVERWRITE_LOCAL: "Eksporter Freshdesk kontakter og eventuelle ajourføringer i Google kontakter"
+      OVERWRITE_LOCAL_small: Eksporter
+      OVERWRITE_REMOTE: "Importer Google-kontakter og eventuelle ajourføringer i Freshdesk kontakter"
+      OVERWRITE_REMOTE_small: Importer
+      account: Konto
+      account_not_configured: "Google-konto er ikke konfigureret korrekt. Prøv venligst igen."
+      add_more: "Synkroniser ny konto"
+      already_exist: "Denne e-mail er allerede konfigureret. Du kan ikke tilføje den samme e-mail igen."
+      delete: Slet
+      delete_action: 
+        error: "Fejl under sletning af Google-konto."
+        success: "Google-konto slettet."
+      desc: "Periodisk synkronisere kontakter mellem Google og Freshdesk."
+      edit: Rediger
+      edit_app: Opdatér
+      edit_form: 
+        edit_app_title: "Rediger Google-kontakter synkronisering indstilling"
+        import_group: "Vælg grupper til at importere (valgfrit)"
+        import_title: "Google-kontakter import indstilling"
+        install_title: "Google-kontakter synkronisering indstilling"
+        mail_box_detail: "Synkroniser med"
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/> <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/> A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
+      email: E-mail
+      enable_integration: "Start automatisk synkronisering efter import fuldført (daglig)."
+      fetch_problem: "Problem med at hente Google-kontakter."
+      form: 
+        account_not_configured: "<br/>Google-kontoindstillinger er endnu ikke konfigureret. Klik på '%{action}' for at konfigurere ny konto hos Google.<br/><br/>"
+        sync_type: Synkroniseringstype
+        sync_type_info: "Hvordan vil du synkronisere kontakterne mellem Google og Freshdesk."
+      group: "Synkroniser Gruppe navn"
+      helptext: "<h4>Google-kontaktpersoner synkronisering setup hjælp</h4><p><br/> Klik på <b>‘Synkroniser ny konto’</b> for at tilføje en ny Google konto til synkronisering. Når du bliver bedt om det, skal du lade Freshdesk bruge Google kontakter (Indtast dit Google brugernavn & adgangskode hvis du bliver bedt om det).<br/><br/>Du kan slette en konto hvis du ikke længere vil synkronisere med denne konto mere.<br/><br/><b>Bemærk:</b> Det anbefales at du gemmer en bavkup af dine Google kontakter for synkronisering."
+      import: Importer
+      import_complete: "Engangs import afsluttet."
+      import_later_success: "Google-kontakter import startede uden problemer. Du kan kontrollere import status i indstillingerne på selve siden."
+      import_problem: "Problemer med at importere Google-kontakter."
+      import_success: "Successfully imported Google contacts. Status: %{added} Added, %{updated} Updated and %{deleted} Deleted."
+      import_success_no_stats: "Google-kontakter importeret."
+      info1: "Brug samme synkronisering tags på tværs af flere Google-konti giver dig mulighed for at dele Freshdesk kontakter med alle konti. Hvis du ikke vil synkronisere alle kontakter i Google, kan du lade den være tom."
+      install: "Importer & Aktiver"
+      internal_error: "En intern fejl opstod. Kontakt venligst support."
+      label: "Google kontakter synkronisering"
+      last_sync_status: "Sidste synkronisering status"
+      last_sync_time: "Sidste synkronisering tid"
+      no_status: N/A
+      not_yet_synced: "Synkronisering ikke startet."
+      overwrite_existing_user: "Overskriv eksisterende kontaktoplysninger i Freshdesk"
+      sync_group_info: "En ny kontaktgruppe <strong>%{group_name}</strong> vil blive oprettet i din Gmail konto til de synkroniserede kontakter."
+      sync_status: 
+        added: tilføjet
+        deleted: slettet
+        freshdesk: "Importerede Kontakter status i Freshdesk"
+        google: "Importerede Kontakter status i Google"
+        modified: modificeret
+      syncing_in_progress: "Synkronisering i gang"
+      tag: "Synk. Indstillinger"
+      tag_label: "Synk. Tag"
+      update_action: 
+        also: Også
+        error: "Fejl under opdateringen af Google-konto."
+        success: "Google-konto tilføjet."
+    harvest: 
+      desc: "Du kan logge tid brugt på billetter i dine Harvest projekter og opgaver."
+      form: 
+        domain: Domæne
+        domain_info: "Indtast domænet alene uden https. Fx: eksempel.harvestapp.com"
+        harvest_note: "Bemærkninger tekst"
+        harvest_note_info: "Denne tekst skal tilføjes i slutningen af bemærkningen, sammen med tid brugt log."
+        widget_title: "Widget Titel"
+      helptext: "<h4>Harvest Integration Hjælp</h4><p><br/>For at integrere Harvest med Freshdesk, skal du indtaste dit <b>Domæne navn</b> og klikke på Aktiver.<br/><br/>Klik på en billet, gå til <b>Tidsstyrring fanen</b>.  Du kan derefter indtaste dit Harvest <b>Brugernavn</b> og <b>Adgangskode</b> for at logge ind. Nu kan du tilføje din tidsførsel til  Harvest.<br/><br/>Bemærk: Du kan klikke på <b>Husk mig</b>, så du ikke behøver at indtaste dine Harvest detaljer hver gang."
+      label: Harvest
+    jira: 
+      desc: "Konverter billetter til emner, der kan spores i JIRA."
+      form: 
+        add_jira_comment: "Tilføj det som en kommentar i JIRA."
+        add_note: "Tilføj det som en privat note."
+        do_nothing: "Gør intet."
+        domain: Domæne
+        domain_info: "Indtast den komplette JIRA konto URL med https/http. Fx. https://example.atlassian.net. <br /><span class='italics'> Bemærk: De fysiske varianter af JIRA bør udsættes for internettet. </span>"
+        fd_comment_sync: "For enhver kommentar tilføjet i Freshdesk %{dropdown}"
+        fd_status_sync: "For enhver ændring i Freshdesk status %{dropdown}"
+        jira_comment_sync: "For enhver kommentar tilføjet i JIRA emne %{dropdown}"
+        jira_note: Beskrivelsestekst
+        jira_note_info: "Denne tekst vil blive tilføjet til emne beskrivelsen i JIRA."
+        jira_status_sync: "For enhver ændring i JIRA emnestatus %{dropdown}"
+        jira_status_sync_update_customer: "Send svar til kunden og opdater statusfelt."
+        jira_status_sync_update_field: "Opdater Freshdesk statusfelt."
+        password: Kodeord
+        send_reply: "Send det som svar til kunden."
+        update_jira_status: "Opdater også JIRA status"
+        username: Brugernavn
+        widget_title: "Widget Titel"
+      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/> To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/> To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
+      label: "Atlassian JIRA"
+    jira_settings: 
+      add_comment_in_jira: "Tilføj en kommentar i JIRA"
+      add_private_note_in_fd: "Tilføj en privat bemærkning i Freshdesk og send meddelelse til agent."
+      add_public_note_in_fd: "Tilføj en offentlig bemærkning i Freshdesk."
+      none: "Gør intet."
+      send_reply_in_fd: "Underret kunde via e-mail"
+      update_jira_status: "Opdater JIRA status"
+      update_status_in_fd: "Opdater status i Freshdesk."
+    logmein: 
+      desc: "Giv øjeblikkelig fjernsupport til dine kunder og medarbejdere med LogMeIn Rescue"
+      form: 
+        company_id: "Firma ID"
+        logmein_company_info: "For at få dit Firma ID, gå til Admin Center -> Tekniker Gruppe -> Globale Indstillinger -> ASP.Net C# server side eksempel "
+        logmein_sso_pwd_info: "For at sætte din SSO adgangskode, gå til Admin Center -> Tekniker Gruppe -> Globale Indstillinger -> Single Sign-On -> ny SSO adgangskode"
+        password: "SSO kodeord"
+        widget_title: "Widget Titel"
+      helptext: "<h4>LogMeIn Rescue Integration Hjælp</h4><p><br/> For at integrere LogMeIn Rescue med Freshdesk, skal du indtaste dit LogMeIn Rescue FirmaID og SSO adgangskode og klikke på Opdater. <br/>Når aktiveret kan en, LogMeIn Rescue widget findes i billetdetaljer siden. <br/><br/>Brug  &quot;Kør Tekniker Konsol&quot; for at lancere tekniker konsolen direkte fra denne Freshdesk Widget. <br/>Nu kan du generere en pinkode og dele instruktionerne med rekvienten for at fortsætte supporten i LogMeIn Rescue. <br/><br/> <b>Bemærk:</b> Agentens e-mail skal matche LogMeIn Rescue's tekniker SSO ID. For at indstille dit SSO ID gå til Admin Center -> Tekniket Navn -> Organisation -> SSOID"
+      label: "LogMeIn Rescue"
+      note: 
+        chatlog: "Chat Log"
+        header: "Din LogMeIn Rescue Session detaljer"
+        platform: "Slutbruger Platform"
+        session_id: "Session ID"
+        tech_email: "Tekniker E-mail"
+        tech_name: "Tekniker Navn"
+        tech_notes: "Tekniker Notater"
+        work_time: "Total arbejdstid (i sekunder)"
+    salesforce: 
+      desc: "You can view contact information from Salesforce in Freshdesk."
+      form: 
+        salesforce_settings: "Salesforce Indstillinger"
+      label: Salesforce
+    sugarcrm: 
+      desc: "Du kan se kontaktoplysninger fra SugarCRM i Freshdesk."
+      form: 
+        domain: "SugarCRM Konto URL"
+        domain_info: "For eksempel hvis din  SugarCRM URL er <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , indtast <strong> http://mycompany.xyz/sugar </strong><br /><br /> Bemærk: Den fysiske variant af SugarCRM skal være forbundet til internettet. </span>"
+        password: Kodeord
+        username: Brugernavn
+        widget_title: "Widget Titel"
+      helptext: "<h4>Sugar CRM Integration Hjælp</h4><p><br/> Du kan få adgang til din SugarCRM kontaktinformation i Freshdesk billetten & kontaktsiderne. <br /><br /> De følgende datapunkter vil være tilgængelige - navn, titel, firma, addeling, kontaktadresse, telefon- & mobilnumre. <br /><br />Bemærk venligst at søgefunktionen er baseret på e-mailadressen. Hvis der er flere kontaker med den samme e-mailadresse, vil de alle blive vist på en liste."
+      label: SugarCRM
+    workflow_max: 
+      desc: "Du kan logge tid brugt på billetterne til din Workflow Max jobs og opgaver."
+      form: 
+        account_key: "Konto Nøgle"
+        account_key_info: "Anmod om din Konto Nøgle fra Workflow Max support og indsæt den her."
+        api_key: "API Nøgle"
+        api_key_info: "Anmod om din API Nøgle fra Workflow Max support og indsæt den her."
+        widget_title: "Widget Titel"
+        workflow_max_note: "Note-tekst skal tilføjes"
+        workflow_max_note_info: "Denne tekst vil blive hæftet til slutningen af bemærkningen, sammen med den indtastede tid."
+      helptext: "<h4>Workflow Max Integration Hjælp</h4><p><br/> For at integrere Workflow Max tidsregistrering med Freshdesk, er du nødt til at få Konto Nøglen  og API Nøglen fra <a href='mailto:support@workflowmax.com'>WorkflowMax Support</a>.  Indtast nøglerne i de angivne felter for at fuldende integreringen. <br/><br/>Når integreret, klik på en billet og gå til Tidsstyring fanen. Du kan derefter vælge det personale, job og opgave du vil tilføje til tidspunkt poster i Workflow Max."
+      label: "Workflow Max"
+  is: Er
+  is_expiring_today: "udløber i dag"
+  is_not: "Er ikke"
+  last: sidste
+  last_draft: "Din sidste kladde"
+  last_name: Efternavn
+  latest_ticket: "ny opdatering"
+  latest_tickets: "nye opdateringer"
+  lead: Tråd
+  left: Tilbage
+  less_than: "Mindre end"
+  level_label: Niveau
+  linkback_info: "Du kan vælge LinkBack til din egen hjemmeside, når kunden klikker på hovedside logoet"
+  linkback_overlabel: "Linkback URL"
+  loading: 
+    activities: "Indlæser flere aktiviteter"
+    items: "Indlæser flere emner"
+  logmein_source: "LogMeIn Rescue"
+  logo: Logo
+  logo_delete_msg: "Er du sikker på at du vil slette dette logo?"
+  low: Lav
+  mark_as_spam: "Marker som Spam"
+  maximum_agents_admin_msg: "Du har nået det maksimale antal fuldtids agenter dit abonnement tillader. Du er nødt til at slette en eksisterende fuldtidsagent eller <a href='/subscription/plans'>opgradere din konto</a> for at oprette en ny agent. Hvis du kun har brug for en halvtidsagent, kan du tilføje en herunder"
+  maximum_agents_msg: "Du har nået det maksimale antal agenter dit abonnement tillader. Du er nødt til at slette en eksisterende agent eller kontakte din konto administrator for at opgradere din konto. Hvis du kun har brug for en halvtidsagent, kan du tilføje en herunder"
+  medium: Mellem
+  message: Besked
+  meta: 
+    language_name: Danish
+  mobile: 
+    home: 
+      login: "Opret bruger"
+      remember: "Husk mig"
+      sign_in_error: "Forkert e-mail eller kodeord."
+      sign_in_using: "... eller log ind med"
+  name: Navn
+  never: Aldrig
+  new_ticket_created: "Ny Billet Oprettet"
+  next: Næste
+  next_charge_amount: "%{type} pris:"
+  next_charge_date: "Din næste betaling vil blive behandlet på:"
+  next_level_info: "+%{points} for at blive %{name}"
+  no_badge_achieved_label: "Ingen Badges opnået endnu."
+  no_change: "Ingen Ændring"
+  no_date_to_display: "Ingen data at vise"
+  no_forum_category: "Ingen Forummer i denne kategori"
+  no_level_achieved_label: "Ingen niveauer opnået endnu"
+  no_message: 
+    canned_responses: "Ingen standardsvar tilgængelige"
+    products: "Du har ikke oprettet nogen produkter endnu"
+  no_password_reset: Nej
+  no_tags: "Ingen tags fundet."
+  no_topics_text: "Ingen emner i dette forum"
+  no_twitter_handle: "Konfigurer venligst mindst en twitterkonto"
+  non_covered_feature_error: "Din nuværende Freshdesk plan dækker ikke denne funktion."
+  not_eligible_for_free_plan: "Ikke berettiget til at vælge en Gratis plan"
+  not_selected: "Ikke Valgt"
+  note: "Bemærk:"
+  notified_to: "Anmeldt til"
+  ok: Ok
+  on_hold: Venter
+  one: "1 time"
+  onemonth: "1 måned"
+  oneweek: "1 uge"
+  open: Åben
+  open_tickets: "Åbne supportsager"
+  or: eller
+  paid_with: "Betalt med"
+  password: Kodeord
+  password_reset_email: "E-mail til nulstilling af kodeord"
+  payment_info: Betalingsinformation
+  pending: Afventer
+  phone: Telefon
+  plan_amount: "per agent/måned"
+  plan_info_update: "Din plan er ændret"
+  plan_is_selected: "Din Gratis konto er nu aktiv med %{plan} planen"
+  plans_billing: "Planer og fakturering"
+  portal: 
+    search: 
+      placeholder: "Søg med enkeltord eller spørgsmål"
+  portal_captcha: "Gør captcha obligatorisk under indsendelsen af billet uden at være logget ind"
+  portal_captcha_anon: "Aktiver denne funktion, hvis du vil have brugerne til at indsende billetter med captcha"
+  portal_customizer_anon_for_f: "Aktiver denne funktion, hvis du ønsker at kunderne skal være i stand til at logge ind med deres Facebook-brugernavn og adgangskode."
+  portal_customizer_anon_for_g: "Aktiver denne funktion, hvis du ønsker at kunderne skal være i stand til at logge på ved hjælp af deres Google-brugernavn og adgangskode."
+  portal_customizer_anon_for_i: "Slå denne funktion fra, hvis du ønsker at skjule 'Forummer' fanen i den offentlige kundeportal."
+  portal_customizer_anon_for_t: "Aktiver denne funktion, hvis du ønsker at kunderne skal være i stand til at logge ind med deres Twitter-brugernavn og adgangskode."
+  portal_customizer_anon_tickets: "Alle kan oprette en supportsag"
+  portal_customizer_anon_tickets_i: "Slå denne funktion fra, hvis du vil have dine brugere skal være logget ind for at indsende en billet."
+  portal_customizer_auto_suggest_solutions: "Aktiver denne funktion, hvis du vil foreslå eksisterende løsninger, når brugeren opretter en ny billet."
+  portal_customizer_facebook_signin: "Tillad brugere at Logge ind med Facebook"
+  portal_customizer_google_signin: "Tillad brugere at Logge ind med Google."
+  portal_customizer_open_forums: "Alle kan se forummer"
+  portal_customizer_open_sol_i: "Slå denne funktion fra, hvis du ønsker at skjule 'Løsninger' fanen i den offentlige kundeportal."
+  portal_customizer_open_solutions: "Alle kan se offentlige løsninger"
+  portal_customizer_option_auto_suggest_solutions: "Automatisk foreslå løsninger, når brugeren opretter en ny billet."
+  portal_customizer_option_for_i: "Deaktiver denne funktion, hvis du ønsker, at brugerne skal logge ind for at se løsninger"
+  portal_customizer_option_forums: "Brugere kan se Forummer uden at logge ind"
+  portal_customizer_option_sol_i: "Deaktiver denne funktion, hvis du ønsker, at brugerne skal logge ind for at se løsninger"
+  portal_customizer_option_solutions: "Brugere kan se offentlige løsninger uden at logge ind"
+  portal_customizer_option_tickets: "Brugere kan Indsende en billet uden at logge ind"
+  portal_customizer_option_tickets_i: "Deaktiver denne funktion, hvis du ønsker at tvinge brugerne til at logge ind, før de indsender en billet"
+  portal_customizer_title: "Personaliser din offentlige Kundeportal"
+  portal_customizer_twitter_signin: "Tillad brugere at logge på ved hjælp af Twitter"
+  portal_key: Portal
+  portal_signup: "Lad kunderne Tilmelde sig fra kundeportalen"
+  portal_signup_anon: "Aktiver denne funktion, hvis du ønsker, at brugerne skal kunne tilmelde sig og skabe deres egne brugerkonti. Dette vil gøre det muligt for brugerne at logge ind og deltage i forum diskussioner, stemme på ideer mv."
+  posted_by: "Skrevet af"
+  premium_brief: Top-of-the-line
+  premium_details: "Alt indenfor &quot;Pro&quot; Plan plus, Multi-Product Support, Multi-tidszone support, Fælleskab, E-mail &amp; Telefon Support"
+  pro_brief: "For større Teams"
+  pro_details: "Alt indenfor &quot;Basic&quot; Plan plus, Scenarie  Automations, Kundespecifik SLAs, Åbningstider, Forummer, Følleskab &amp; E-mail Support."
+  problem: Problem
+  proceed_now: |-
+      
+      
+      Fortsæt
+  profile: 
+    api_key: 
+      reset: "Nulstil API Nøgle"
+      reset_warning: "Når API-nøgle bliver nulstillet, vil alle programmer, der bruger den gamle nøgle stoppe med at arbejde. Er du sikker på du vil fortsætte?"
+      title: "Din API Nøgle"
+    change_password: "Skift kodeord"
+    confirm_password: "Bekræft kodeord"
+    current_password: "Nuværende kodeord"
+    edit: "Rediger profil"
+    new_password: "Nyt kodeord"
+  quests: 
+    badge_mand: "Vælg venligst et bagde."
+    customer_votes: "Antal stemmer"
+    date: Dato
+    delete: "Er du sikker på at du vil slette dette foretagende?"
+    fcr: "Er en første opkald løsning"
+    forum_category: Kategori
+    forum_mand: "Venligst udfyld antal Forummer."
+    forums: Forummer
+    inactive_quests: "Inaktive Foretagender"
+    js_forum_txt: "$$questmode$$ $$questvalue$$ forum indlæg indenfor  $$questtime$$ og som opfylder disse betingelser."
+    js_quest_txt: "Efter en vellykket afslutning af foretagenet kan du låse op for $$badgename$$ badge og $$questpoints$$ bonus points."
+    js_solution_txt: "Opret $$questvalue$$ vidensbase artikel indenfor  $$questtime$$ og som opfylder disse betingelser."
+    js_ticket_txt: "Løs $$questvalue$$ billetter indenfor $$questtime$$ og som opfylder disse betingelser."
+    name_mand: "Angiv venligst Foretagende navn."
+    satisfaction: "Kundetilfredshed vurdering"
+    solution_articles: Artikel
+    solution_folder: Mappe
+    solution_likes: "Antal syntes godt om"
+    solution_mand: "Udfyld venligst antal Løsninger."
+    ticket_mand: "Udfyld venligst antal løste billetter."
+  recent_activities: "Seneste aktivitet"
+  recent_activity: "Seneste aktivitet"
+  recent_forum_posts: "Seneste poster i forum"
+  referral: "Henvisning kredit"
+  remove: Fjern
+  reorder: Omorganiser
+  replied_to: "Svaret til"
+  replies: svar
+  reply: svar
+  reply_topic: "Besvar emne"
+  reports: 
+    customer_activity_title: Aktivitetsrapport
+    customer_title: "Kunde Aktivitetsrapport"
+    customer_title_nav: "Kunde Aktivitetsrapport"
+    date_ranges: 
+      custom: Datointerval
+      last_30_days: "Seneste 30 dage"
+      last_7_days: "Seneste 7 dage"
+      last_90_days: "Sidste 90 dage"
+      today: "I dag"
+      yesterday: "I går"
+    generate_button: Generer
+    helpdesk_activity_title: "Helpdesk Aktivitetsrapport"
+    helpdesk_title: "Helpdesk Aktivitetsrapport"
+    helpdesk_title_nav: "Helpdesk Aktivitetsrapport"
+    pie_chart_title_prefix: "Billetter efter"
+    satisfaction_title: Tilfredshedsrapport
+    scoreboard_agent_title: "Agent Førertavle"
+    scoreboard_group_title: "Gruppe Førertavle"
+    scoreboard_reports: 
+      champions_title: Mestre
+      sharpshooter_title: Skarpskydere
+    scoreboard_title_nav: Førertavle
+    select_customer: "Vælg Kunde"
+    select_options: "Rapporter efter"
+    select_time_period: "Vælg Tidsperiode"
+    summary: 
+      fcr: "Første Opkald Løsning"
+      open_tickets: "Åbne supportsager"
+      pending_tickets: "Afventende supportsager"
+      received_tickets: "Modtagne Billetter"
+      resolved_tickets: "Løste supportsager"
+      sla_compliance: "SLA Overholdelse"
+      title: "Billet overblik"
+      total_tickets: "Totale antal Billetter"
+    summary_report: 
+      avg_1st_response_time: "Gennemsnitlig tid for første svar"
+      back_to_reports: "Tilbage til Rapporter"
+      fcr_count: "Første Kontakt Løsning"
+      fcr_percent: "FCR %"
+      helptext: "Statistik beregnet i rapporten er med hensyn til antallet af løste billetter. <br /> Billetter løses inden for SLA opsummeres som &quot;LøstTil Tiden&quot;. <br /> Og &quot;Første Kontakt Løsning&quot; kolonne viser billetter der er blevet løst med det første svar.<br /> &quot;Gennemsnitlig Første Svar Tid&quot; viser tidsrummet mellem da billetten blev oprettet, og da agenten først besvarede den."
+      on_time_resolution: "Løsning til Tiden"
+      on_time_resolution_percent: "OTR %"
+      show_report: "Vis Rapport"
+      tickets_resolved: "Supportsager løst"
+    survey_reports: 
+      back_to: "Tilbage til Listevisning"
+      feedbacks: 
+        in_response_to: "Som svar til"
+      index: 
+        agent_list_loading: "Henter agent liste"
+      list: 
+        no_feedback: "Ingen har givet nogen feedback i løbet af denne tid."
+      list_content: 
+        happy: Suveræn
+        neutral: OK
+        rating_msg_multiple: "%{count} sagde %{rating}"
+        rating_msg_none: "ingen sagde %{rating}"
+        rating_msg_single: "en sagde %{rating}"
+        rating_primary_msg_multiple: "%{count} kunder sagde %{rating}"
+        rating_primary_msg_single: "en kunde sagde %{rating}"
+        unhappy: Dårlig
+      sidebar: 
+        filter_by: Tilfredshedsvisninger
+        from: Fra
+        helptext: "<b>Hvorfor bruge en Kundetilfredsheds Rapport?</b><p>Kundetilfredsheds Rapporten giver dig en ide af hvilken servicekvalitet dine Support agenter giver.<br>Rapporten hjælper dig med at forstå hvor tilfredse dine kunder er, hvilket er repræsenteret med en procentværdi (glad,  neutral & utilfreds) i forhold til hver support agent.<br><br><b>Hvad kan du ellers gøre?</b><br><p style='margin-left:15px;'>1.Filtrere rapporten resultaterne i forhold til Agenter, Gruppe eller Firma<br>2.Se rapporter for en bestemt tidsramme</p></p>"
+        to: Til
+        view_report_date: "Se rapporter fra"
+    surveys_title_nav: "Kundetilfredsheds Rapport"
+    tab_heading: Rapporter
+    tickets_by: "Billetter efter"
+    timeline_chart_title: "Billetter Modtaget mod Løste"
+    timesheet_reports: 
+      index: 
+        from: Fra
+        select_agent: "Vælg Agent"
+        select_billable: "Vælg Fakturerbar/ikke Fakturerbar"
+        select_customer: "Vælg Kunde"
+        title: "Tidsstyring Rapport"
+        to: Til
+        view_between: "Se rapport mellem"
+  requester_reopens: "Rekvient genåbner Billetten"
+  requester_replies: "Rekvient svarer på Biletten"
+  reset: Nulstil
+  reset_my_password: "Nulstil mit kodeord"
+  reset_password_title: "Nulstil kodeord"
+  resolution_time_sla: "Løsningstid SLA overtrædelse"
+  resolved: Løst
+  resolved_late: "Forsinket Løsning"
+  resolved_on_time: "Løst til tiden"
+  resolved_tickets: "Løste supportsager"
+  revert_identity_link_msg: "Tilbagefør identitet"
+  right: Rigtigt
+  save: Gem
+  save_and_close: "Gem og luk"
+  save_and_create: "Gem og Opret en Ny"
+  save_and_new: "Gem og ny"
+  save_changes: "Gem ændringer"
+  save_reply: "Gem svar"
+  save_this_view: Gem
+  save_this_view_tooltip: "Gem Visning"
+  saved_draft: Gemt
+  saving_draft: Gemmer...
+  scenario_label: "Scenarie Etiket"
+  search: 
+    no_results_msg: "Ingen resultater"
+  security_code: Sikkerhedskode
+  select: Vælg...
+  select_a_plan: "Vælg en Plan"
+  select_a_plan_gain_access: "Vælg en plan fra det nedenstående, for at få adgang til din konto."
+  select_another_plan: "Vælg en anden plan"
+  select_free_plan: "Vælg den Gratis plan"
+  selected: Valgt
+  send_email_to_agent: "Send E-mail til Agent"
+  send_email_to_group: "Send Email til gruppe"
+  send_email_to_requester: "Send E-mail til Rekvient"
+  set_password: "Vælg dit kodeord"
+  set_priority_as: "Sæt prioritet som"
+  set_status_as: "Sæt Status som"
+  set_type_as: "Sæt Type som"
+  settings: indstillinger
+  show_quoted_text: "Vis Citeret Tekst"
+  sign_in_info: "Log ind med"
+  signup: opret
+  signup_complete_activate_info: "Velkommen! Vi har sendt dig en e-mail med et link, hvor du kan vælge dit kodeord og aktivere din konto."
+  signup_title: "Opret dig hos %{current_portal}"
+  since: Siden
+  since_time: "Siden %{time_words}"
+  sla_policy: 
+    business_time: Åbningstider
+    calendar_time: Kalendertimer
+    edit: "Rediger SLA Politik"
+    escalate_to: "Eskaler til"
+    info1: "SLA Politik er et sæt af mål for svar- og løsningstider baseret på billettens prioritet. Det er bedste praksis i industrien at indstille Serviceniveauer baseret på prioritet. Din SLA politik kunne være så simpelt som at sige\" høj prioritet billetter bør løses på 2 timer \"osv.\""
+    info2: "Freshdesk bruger SLA Politik til at bestemme \"Forfald\" tidspunkt for billetter. Du kan have en standard SLA politik for alle dine kunder, men hvis du har en særlig kunde, der kræver hurtigere respons og løsningstider, kan du altid oprette en speciel SLA politik for den pågældende kunde."
+    info3: "SLA Politik fungerer sammen med Åbningstider"
+    new: "Ny SLA Politik"
+    override: Overskriv
+    resolution_time: Løsningstid
+    response_time: Svartid
+    select_policy: "Vælg politik"
+    sla_targets: "SLA Mål"
+    tickets_with: "Supportsager med"
+    title: "SLA Politik"
+    title1: "SLA Politik"
+  social: 
+    facebook_pages: 
+      enable_facebook_page: 
+        associate: "Vælg de facebook sider, du gerne vil knytte til det Helpdesk."
+        no_page_info: "Ups!.. Det ser ud til at du ikke har en Facebook side. <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>Opret en og kom i gang med at yde support!..</a>"
+      engage_info: 
+        add_facebook: "Tilføj Facebook Side"
+        associate_account: "Knyt en Facebook-side til <b> %{account_name} </b> og svar dine kunder indefra freshdesk når de kommenterer eller skriver på din væg."
+        engage_customers: "Engager dine kunder, direkte på Facebook"
+        title: "Tilføj dine Facebook-sider"
+      form: 
+        company_posts: "Importer <strong>\"Firma indlæg\"</strong> som billet"
+        company_posts_info: "Freshdesk vil konvertere alle Firma indlæg på denne Facebook-side til billetter."
+        direct_messages: "Importer <strong>\"Direkte beskeder\"</strong> som billet"
+        direct_messages_info: "Freshdesk vil konvertere alle direkte beskeder på denne Facebook-side til billetter. Hvis du aktiverer dette for første gang, er du måske nødt til at <a href='{{reauth_url}}'>Reauthorize med Facebook</a>"
+        message_thread_time: "Meddelelsestråd Tid"
+        message_thread_time_info: "Maksimal tid til at overveje beskeder fra samme bruger som en del af tråd"
+        product: Produkt
+        visitor_posts: "Importer <strong>\"Besøger indlæg\"</strong> som billet"
+        visitor_posts_info: "Freshdesk vil konvertere alle besøger indlæg på denne Facebook-side til billetter."
+      index: 
+        reauth_required: "Reauthorization kræves"
+        reauthorize: Reauthorize
+        title: Facebook-sider
+    twitter_handles: 
+      edit: 
+        twitter_settings_for_msg: "Twitter indstillinger for"
+      form: 
+        capture_dm_info: "Freshdesk vil automatisk konvertere alle direkte meddelelser til denne Twitter-konto til billetter."
+        capture_dm_msg: "Fang <strong>\"Direkte meddelelser\"</strong> som billet"
+        capture_mentions_info: "Freshdesk vil automatisk konvertere alle @ omtaler i denne Twitter-konto til billetter."
+        capture_mentions_msg: "Fang <strong>\"@Omtaler\"</strong> som billetter"
+        dm_time_info: "Maksimal tid til at overveje direkte beskeder fra samme bruger som en del af tråd."
+        dm_time_msg: "DM Trådtid"
+        info_data: "Hjælper dig til hurtigt at overvåge twitter søgning vedrørende dit produkt/mærke/service.<br /> <strong>Bemærk:</strong> Du kan tilføje flere søgeord adskilt af komma."
+        product: Produkt
+        search_keywords: Søgeord
+      index: 
+        remove_handle_msg: "Er du sikker på at du vil fjerne denne twitter-konto?"
+        title: Twitter-kontoer
+      signin_info: 
+        add_twitter: "Tilføj twitter-konto"
+        associate_account: "Knyt en twitter-konto til <b>  %{product_name} </b> og reager på dine kunder med et tweet eller en besked indefra Freshdesk."
+        engage_customers: "Engager dine kunder, direkte på twitter"
+        title: "Log ind med twitter"
+  solution: 
+    add: "Tilføj løsning"
+    add_new_solution: "Tilføj en ny løsning"
+    edit: "Ret løsning"
+    folder: Mappe
+    folders: 
+      folder_form: 
+        visible_to: "Synlig for"
+      new: 
+        new_folder: "Ny mappe"
+    info1: "Løsninger i Freshdesk er din vidensbase."
+    info10: "Privat (Kan kun ses af Agenter)"
+    info2: "Løsninger kan være <b>offentlige</b> eller <b>private</b>. Offentlige Løsninger er synlige i Selvservice Portalen og vises ogsp i Søgningsresultater"
+    info3: "Private løsninger er kun for agenter og bruges til intern vidensdeling"
+    info4: "Løsninger har 3 niveauer - <b>Kategori --> Mappe --> Artikel</b>"
+    info5: "Løsninger kan være af to typer - <b>Midlertidige</b> eller <b>Permanente</b> løsninger"
+    info6: "En Løsning kan have en <b>Kladde</b> status når du arbejder på den og kan derefter ændres til <b>Udgivet</b> status når den er færdig og gennemset"
+    info7: "Ingen løsninger i denne mappe"
+    info8: "Er du sikker på, at du vil slette denne løsning?"
+    info9: "Offentlig (Vil blive vist i Selvservice)"
+    no_solutions_info: "Ingen løsninger i denne mappe"
+    status: Løsningsstatus
+    title: Løsninger
+    type: Løsningstype
+    visibility: Synlighed
+  solution_category: 
+    edit: "Rediger løsningsstatus"
+    info1: "Er du sikker på at du vil slette denne kategori?"
+    info2: "Ingen mapper fundet i denne kategori"
+    name: Kategorinavn
+    new: "Ny løsningskategori"
+    save_and_create: "Gem og Opret en Ny"
+  solutions: 
+    search: 
+      placeholder: "Søg %{name} "
+    search_all: 
+      placeholder: "Søg alle løsninger"
+    status: 
+      draft: Kladde
+      published: Købt
+    types: 
+      permanent: Permanent
+      workaround: Midlertidig
+    visibility: 
+      agents: Agenter
+      all: Alle
+      anyone: Enhver
+      logged_in_users: "Brugere der er loggede ind"
+      select_company: "Vælg firmaer"
+  special_beta_offer: "Specielt tilbud til Beta-kontoer"
+  sprout_brief: "Robust E-mail Helpdesk"
+  sprout_details: "E-mail Svar Administration, Alle Automationer, Standard SLA Politik, Vidensbase, Selvservice Portal, Domæne Kortlægning, Basale Rapporter, Fælleskabs Support."
+  start_typing_a_question: "Skriv dit spørgsmål, og se svar med det samme."
+  starts_with: "Starter med"
+  state: Stat
+  status: Status
+  status_cust_disp_name_uniqueness_msg: "Status kundedisplay navn er allerede taget"
+  status_deleted: "Status slettet"
+  status_name_validate_presence_msg: " Status navn må ikke være tomt"
+  status_name_validate_uniqueness_msg: " Status navnet er allerede brugt"
+  step1: "Trin 1"
+  step2: "Trin 2"
+  subject_or_description: "Emne eller beskrivelse"
+  submit: Send
+  subscription: 
+    error: 
+      lesser_agents: "Din freshdesk konto har i øjeblikket %{agent_count} agenter, du kan ikke abonnere på et mindre antal agenter. Slet nogle agenter, og prøv igen."
+  subscription_plan: 
+    billing_cycle: 
+      annual: Årligt
+      monthly: Månedsvis
+      quarterly: Kvartalsvis
+      sixmonth: Halvårligt
+  success: Success
+  support: 
+    shared: 
+      survey_form: 
+        cancel: Annuller
+        change_of_mind: "Har du skiftet mening?"
+        feedback_title: "Kom også gerne med ris, ros eller andre kommentarer, som kan hjælpe os med at forbedre vores support i fremtiden."
+        rate_again: "Bedøm os igen"
+        rated_on: "Du bedømte os %{rated_on}"
+        submit: Send
+        survey_title: "Brug et øjeblik på at bedømme vores support"
+    surveys: 
+      feedback_already_done: "Du har allerede givet feedback til dette svar."
+      new: 
+        additional_info: "Derudover kan du også dele ud af din erfaring med at arbejde med os."
+        feedback_info: "Din feedback er meget værdsat."
+        feedback_optional: "Feedback er valgfrit"
+        happy_info: "Det har været vores fornøjelse at betjene dig, vi er glade for at du var tilfreds med vores service"
+        neutral_info: "Vi ville ønske du var lidt mere tilfreds."
+        send: Send
+        sorry: "Men vi beklager virkeligt for ulejligheden."
+        thanks: "Tak for din tid."
+        thanks_info: "Tak fordi du tog dig tid til at bedømme vores Support-oplevelse."
+        unhappy_info: "Vi vil sørge for at vi tager os ekstra godt af dig næste gang."
+      thanks_for_feedback: "Vi har modtaget din feedback. Mange tak."
+  suspended_plan_admin_info: "Din konto er blevet suspenderet, du bedes kontakte din kontoadministrator %{email}!"
+  suspended_plan_info: "Din konto er blevet suspenderet, vælg venligst en plan for at fortsætte!"
+  switch_heading: "Skift agent"
+  swith_agent_msg: "Skift til en anden agent"
+  tag: 
+    title: Tags
+  this_ticket_has_been_closed: "Denne supportsag er blevet lukket"
+  this_ticket_has_been_deleted: "Denne supportsag er blevet slettet"
+  this_ticket_has_been_resolved: "Denne billet er blevet løst"
+  threeday: "3 dage"
+  threemonth: "3 måneder"
+  ticket: 
+    activities: Aktiviteter
+    activity: Aktivitet
+    add_note: "Tilføj kommentar"
+    add_time: "Tilføj tid"
+    agent_notify: "tilføjede en bemærkning og ville gerne have dig til at kigge på den"
+    agent_responded_at: "Timer siden agent svarede"
+    assign_to_agent: "Tildel til Agent"
+    assigned_agent: Agenter
+    assigned_at: "Timer siden tildelt"
+    assigned_none: "-"
+    assigned_to: Tildelt
+    canned_responses: 
+      ca_responses: Standardsvar
+      insert_ca_resp_tip: "Indsæt dette standardsvar"
+      insert_ca_response: Standardsvar
+    close_btn: Luk
+    close_btn_title: "Luk denne supportsag"
+    closed_at: "Timer siden lukket"
+    convert_ticket_title: "Konverter til en billet"
+    create_ticket_title: "Opret en billet"
+    created_at: "Timer siden oprettet"
+    created_on: "Oprettet %{time}"
+    delete_btn: Slet
+    delete_btn_title: "Flyt denne billet til skraldespanden"
+    due_by: "Timer siden billet blev forsinket"
+    due_by_time: "Skal færdiggøres inden"
+    edit: "Rediger billet"
+    edit_btn: Rediger
+    execute_scenario: "Udfør Scenarie"
+    export: Eksporter
+    facebook_form: 
+      send: Send
+      send_and_resolve: "Send og Løs"
+    first_assigned_at: "Timer siden tildelt første gang"
+    first_response_due: "Timer siden første svar overskred tidsgrænse "
+    flag_spam: "Marker som Spam"
+    group: Gruppe
+    ham_btn_title: "Dette er ikke spam"
+    inbound_count: "Antal rekvirent-interaktioner"
+    integrations: 
+      jira: 
+        tooltip: "Se det tilknyttede JIRA nummer"
+    merge_btn: Flet
+    monitor_btn_title: "Overvåg denne billet"
+    note_content: "Note indhold"
+    note_form: 
+      add_and_resolve: "Tilføj og Løs"
+      form_title: "Tilføj kommentar"
+      notify_agents: "Underret Agenter"
+      private_note: "Dette er en privat bemærkning, vis den ikke til rekvirenten."
+    opened_at: "Timer siden genåbnet"
+    pending_since: "Timer siden afventer"
+    pick_up: "Tag op"
+    portal_created_on: "Oprettet af <span class='emphasize'>%{username}</span> den <span class='emphasize'>%{date}</span>"
+    portal_created_on_same_user: "Oprettet den <span class='emphasize'>%{date}</span>"
+    priority: Prioritet
+    properties: "Egenskaber for supportsag"
+    recent_tickets: "Seneste supportsager"
+    reply_form: 
+      form_title: Besvar
+      post_to_linked_forum: "Skriv som oplæg på forbundet forum"
+      reply_email_id: "Send svaret fra det følgende e-mail ID"
+      send: Send
+      send_and_resolve: "Send og Løs"
+      send_satisfaction_survey: "Inkluder tilfredshedsundersøgelse"
+    reply_to: Svar
+    reported_by: "fra %{requester}"
+    reported_from_source: "Rapporteret via %{source}"
+    reported_on: "fra %{username}, Sidst opdateret: den %{date}"
+    requester: Anmoder
+    requester_responded_at: "Timer siden rekvirenten reagerede"
+    requestor_info: "Rekvient information"
+    resolved_at: "Timer siden løst"
+    restore_btn: "Genopret denne billet"
+    restore_btn_title: "Genopret denne billet fra skraldespanden"
+    select_to_agent: "Vælg en Agent"
+    singular: Supportsag
+    sort_by: "Sorteret efter"
+    source: Kilde
+    spam_btn_title: "Marker som Spam"
+    split_ticket: Opdel
+    status: Status
+    stop_monitor_btn_title: "Stop med at overvåge denne billet"
+    subject: Emne
+    submit_ticket: Send
+    submit_ticket_title: "Opret en supportsag"
+    suggest_solutions: "Foreslå Løsninger"
+    suggested_solutions: 
+      insert_content: "Indsæt Indhold"
+      insert_content_tip: "Indsæt denne løsningsartikel til dit Svar eller Bemærkning"
+      insert_url: "Indsæt URL"
+      insert_url_tip: "Indsæt denne løsnings-URL til dit Svar eller Bemærkning"
+      no_result: "Ingen løsninger fundet"
+      title: "Foreslåede Løsninger"
+    tags: 
+      add_tag: "Tilføj et tag:"
+      create_success: "Dette tag blev tilføjet"
+      destroy_success: "Dette tag blev fjernet fra denne billet"
+      no_match: "Ingen match. Tryk enter for at skabe et tag."
+    thanks: "Tak fordi du indsendte din feedback"
+    ticket_list_status_agent_responded_at: "Fra: %{username}, Agent svarede: <span class='emphasize'>%{time_ago} siden </span>"
+    ticket_list_status_closed_at: "Fra: %{username}, Lukket: <span class='emphasize'>%{time_ago} siden </span>"
+    ticket_list_status_created_at: "Fra: %{username}, Oprettet: <span class='emphasize'>%{time_ago} siden </span>"
+    ticket_list_status_requester_responded_at: "Fra: %{username}, Kunde svarede: <span class='emphasize'>%{time_ago} siden </span>"
+    ticket_list_status_resolved_at: "Fra: %{username}, Løst: <span class='emphasize'>%{time_ago} siden </span>"
+    ticket_url: "Billet URL"
+    to_do: "Billetter To-Do"
+    tweet_form: 
+      tweet_and_resolve: "Tweet og Løs"
+      user_not_following: "Denne bruger følger ikke din twitter-konto"
+    tweets: Tweets
+    type: Type
+    unassigned: "Ikke tildelt"
+    unflag_spam: "Ikke spam"
+    verify_human: "Verificer venligst, at du er et menneske. Skriv nedenstående ord."
+  ticket_cancel_multiple_button: Annuller
+  ticket_cc_email_more: mere
+  ticket_close_failure: "Det mislykkedes at lukke biletten."
+  ticket_close_success: "Din supportsag er blevet lukket."
+  ticket_closed_at_time: "Lukket den"
+  ticket_due_by_time: "Due by time"
+  ticket_fields: 
+    confirm_delete: "Er du sikker på at du vil slette dette felt?"
+    fields: 
+      agent: Agenter
+      description: Beskrivelse
+      group: Gruppe
+      priority: Prioritet
+      product: Produkt
+      requester: Anmoder
+      source: Kilde
+      status: Status
+      subject: Emne
+      ticket_type: Type
+    first_choice: "Første valg"
+    formfield_props: 
+      add_new_choice: "Tilføj nyt valg"
+      agent_info1: "Felt kan ikke være tomt når biletten indsendes"
+      agent_info2: "Felt kan ikke være tomt når biletten lukkes"
+      agent_mandatory_closure: "Krævet når biletten lukkes"
+      agent_mandatory_submission: "Krævet når formularen indsendes"
+      behavior: Opførsel
+      cc_any_email: "Kan CC enhver e-mailadresse"
+      cc_company_contacts: "Kan kun CC firma e-mailkontakter"
+      choices: Valg
+      customer_edit: "Kunde kan redigere"
+      customer_info1: "Felt kan ikke være tomt når biletten indsendes online."
+      customer_mandatory: "Krævet når formularen indsendes"
+      customer_visible: "Vist til kunde"
+      delete_field: "Slet felt"
+      description: Beskrivelse
+      display_cc_field: "Vis CC Felt"
+      display_to_customer: "Vis besked til kunde"
+      dropdown_choices: "Dropdown valg"
+      dropdown_items_edit: "Dropdown emner - rediger visning"
+      dropdown_items_preview: "Dropdown emner - Eksempelvisning"
+      field_label_agents: "Feltetiket til agenter"
+      field_label_customer: "Feltetiket til kunder"
+      for_agents: "Til Agenter"
+      for_customer: "Til Kunder"
+      form_title: Feltegenskaber
+      label: Feltetiket
+      label_in_portal: "Etiket i Portal"
+      label_in_portal_info: "Etiketten der vises i din selvservice portal"
+      level1: "Niveau 1"
+      level2: "Niveau 2"
+      level3: "Niveau 3"
+      nested_label: "Indlejrede feltetiketter"
+      nestedfield_helptext: "Brug det nedenstående fritekstområde, til at tilføje eller redigere elementer til din dropdown, indryk elementer ved at trykke på tabulatortasten én eller to gange. Vi vil konvertere dem til dropdown elementer baseret på indrykning, så vær ekstra forsigtig. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Lær mere</a> "
+      nestedfield_helptext_preview: "Dette er et \"Eksempel\" af prøve dropdown emner, brug fritekst området i \"Rediger visning\" til at redigere emnerne"
+      sla_timer: "SLA timer"
+      status_choices: "Valg for status"
+    index: 
+      add_custom_field: "Tilføj et brugerdefineret felt"
+      checkbox: Checkboks
+      customize_form: "Tilpas din \"Ny billet\" formular."
+      drag_drop_intro: "Træk og slip enhver felttype i \"Ny billet\" formularen nedenfor for at tilføje et nyt brugerdefineret felt"
+      dropdown: Dropdown
+      nestedfield: "Afhængigt felt"
+      number: Nummer
+      paragraph: "Afsnit tekst"
+      save: "Gem billetfelter"
+      single_line: "Enkeltlinje tekst"
+      title: Billetfelter
+    no_choice_message: "Mindst et gyldigt valg skal være til stede"
+    second_choice: "Andet valg"
+    untitled: Unavngivet
+  ticket_pending_since_time: "Afventer siden"
+  ticket_resolved_at_time: "Løst kl."
+  ticket_update_multiple_button: Opdatér
+  ticket_was: "supportsagen blev"
+  tickets_filter: 
+    sort_fields: 
+      asc: Stigende
+      date_created: "Dato for oprettelse"
+      desc: Faldende
+      due_by: "Skal færdiggøres inden"
+      last_modified: "Senest ændrede"
+      priority: Prioritet
+      status: Status
+    title: "Filtrer biletter"
+    unsaved_view: "Se unavngivne"
+  tickets_were: "billetter var"
+  tip_off: "Klik fo at deaktivere"
+  tip_on: "Klik for at aktivere"
+  title: Titel
+  tkt_assigned_to_agent: "Billett tildelt agent"
+  tkt_assigned_to_group: "Billet tildelt gruppe"
+  tkt_unattended_in_grp: "Billet ikke videregivet i gruppe"
+  to: til
+  to_do: "To Do "
+  to_email: "Til e-mail"
+  top: Top
+  topic: 
+    close: "Luk denne diskution"
+    edit: "Rediger emne"
+    ideas_stamps: 
+      implemented: Implementeret
+      nottaken: "Ikke taget"
+      planned: Planlagt
+    locked: Låst
+    msg1: "Der er lukket for kommentarer på dette emne"
+    name: "Emne navn"
+    new: "Nyt emne"
+    open: "Genåben denne diskution"
+    post: "Indlæg Emne"
+    reply: "Besvar dette emne"
+    sticky: Opslag
+  topics: 
+    last_reply: "Sidste svar %{post_time} siden fra %{user_link}"
+    posted_at: "Indsendt %{post_time} siden"
+    show: 
+      mark_this_idea_as: "Markér denne idé som"
+  total: Total
+  total_price: "Total pris"
+  trial_expired_on: "Din prøvekonto udløb den"
+  twelve: "12 timer"
+  twitter: 
+    associate_twitter: "Tilknyt en twitter-konto til din helpdesk, så du kan begynde at støtte dine kunder via tweets."
+    deleted: "Twitterkontoen @%{twitter_screen_name} er blevet fjernet."
+    error_sending: "Kunne ikke sende tweet! Twitter kan være ustabil. Prøv venligst igen."
+    not_authorized: "Du blev ikke godkendt af Twitter"
+    sent: "Tweet sendt"
+    success_signin: "Succesfuld tilknytning af @%{twitter_screen_name} med %{helpdesk}."
+    ticket_save: "Tweet omdannet til billet"
+    tkt_err_save: "Kunne ikke omdanne tweet til billet eller den var allerede omdannet"
+    user_exists: "Twitterkonto allerede tilknyttet et andet produkt."
+    usr_not_thr: "Bruger er der ikke."
+  twitter_source: Twitter
+  two: "2 timer"
+  twoday: "2 dage"
+  twoweek: "2 uger"
+  unable_to_charge: "Kunne ikke ændre kortet til den tilføjede agent!"
+  unauthorized_msg: "Autorisation mislykkedes"
+  undelete: Gendan
+  undo: Fortryd
+  update: Opdatér
+  update_and_login: "Opdater og log ind"
+  update_multiple_tickets: "Opdater flere billetter"
+  updated_on: "%{user_name} opdateret den %{note_date}"
+  upgrade_trial: "Opgradér din prøvekonto!"
+  urgent: Haster
+  use_reply_option: "Brug venligst Svar-knappen til at sende en e-mail til rekvirenten"
+  user: 
+    address: Adresse
+    back_info: Baggrundsinformation
+    company: Firma
+    email: E-mail
+    full_name: "Fulde navn"
+    info1: "Et profilbillede af personen; det er bedst, hvis billedet har samme længde og højde"
+    mobile: Mobil
+    name: Navn
+    phone_no: Telefon
+    photo: Foto
+    secondary: sekundær
+    title: Titel
+    twitter_id: "Twitter ID"
+    work: Arbejde
+  user_activation_email: "Bruger Aktiveringse-mail"
+  user_activation_message_sent: "Brugeren er oprettet og aktiveringsinstruktioner er sendt til %{user_email}!"
+  user_block: Ja
+  user_sessions: 
+    new: 
+      email: E-mail
+      forgot: "Har du glemt dit kodeord?"
+      help: Hjælp
+      login: "Log ind"
+      password: Kodeord
+      remember: "Husk mig på denne computer"
+      sign_in_using: "Log ind"
+      sign_in_using_google: "Log ind med din Google-konto"
+  username: Brugernavn
+  users: 
+    activations: 
+      code_expired: "Din aktiveringskode er udløbet!"
+      send_invite_success: "Aktiveringse-mail sendt!"
+      success: "Din konto er aktiveret."
+  users_blocked_message: "De følgende kontakt(er) (%{users}) er blevet blokerede"
+  validate_fwd_to_email_msg: "Indtast venligst en gyldig e-mailadresse"
+  waiting_on_customer: "Venter på Kunde"
+  waiting_on_third_party: "Venter på Tredjepart"
+  warning: ADVARSEL
+  wf: 
+    filter: 
+      index: 
+        back: "&larr; Tilbage til Billetter"
+        no_custom_view: "Ingen brugerdefinerede visninger til rådighed!"
+        title: "Administrer brugerdefinerede visninger"
+      view: 
+        delete: "Er du sikker på at du vil slette denne visning?"
+    messages: 
+      no_tickets_for_user: "Der er ingen åbne billetter for %{user_name} at gennemse."
+      no_tickets_in_view: "Du har ikke nogen billetter i %{view_name}"
+      no_tickets_subtext: "Se %{view_1} eller %{view_2}"
+      no_tickets_subtext_single: "Se %{view_1}"
+  what_is_cvv: "Hvad er cvv?"
+  widgets: 
+    contact_widget: 
+      description: "Vis en kontakt eller mulighed for at tilføje kontakten i kapslen."
+  will_expire_in: "vil udløbe om"
+  working: Arbejder
+  wrong_portal: 
+    content_not_available: "Det indhold, du leder efter, er ikke tilgængeligt på denne portal."
+    title: "Ikke tilgængelig!"
+  yes_password_reset: Ja
+  your_email_address: "Din e-mailadresse"
+  your_trial_account: "Din prøvekonto"
+  zendesk_backup: "Backup fil"
+  zendesk_backup_info: "Vælg Zendesk backup filen downloaded fra zendesk"
+  zendesk_credentials: "Zendesk Akkreditiver"
+  zendesk_url: "Zendesk URL"
+  zendesk_url_info: "fx:- http://acme.zendesk.com"
+  zip: Zip

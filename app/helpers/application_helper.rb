@@ -77,6 +77,10 @@ module ApplicationHelper
     @page_keywords    
   end
 
+  def page_canonical
+    @page_canonical
+  end
+
   def tab(title, url, cls = false, tab_name="")
     content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
@@ -328,7 +332,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v1","avatar",profile_size,user],options.fetch(:expiry,300)) do
+    avatar_content = MemcacheKeys.fetch(["v2","avatar",profile_size,user],options.fetch(:expiry,300)) do
       content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
@@ -451,7 +455,7 @@ module ApplicationHelper
       when "dropdown" then
         choices = [];i=0
         field[:choices].each do |choice| 
-          choices[i] = t(choice);i=i+1
+          choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
@@ -470,15 +474,19 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }"
+    if dom_type == "requester"
+      field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
+      field_label += add_requester_field  
+    end
+    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))    
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
+        element+= hidden_field(object_name, :requester_id)  
         unless is_edit or params[:format] == 'widget'
-          element += add_requester_field 
           element = add_cc_field_tag element, field
         end
       when "email" then
@@ -521,7 +529,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (current_user && current_user.can_view_all_tickets?)
   end
   
   def add_name_field

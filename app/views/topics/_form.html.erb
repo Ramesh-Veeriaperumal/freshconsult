@@ -1,4 +1,5 @@
-<%= include_tiny_mce_if_needed %>
+<%= include_stylesheets :redactor %>
+<%= include_javascripts :redactor %>
 <ul class="ui-form">
 	<li>
 		<label for="topic_title"><%= t('topic.name') %>*</label>
@@ -6,11 +7,9 @@
 	</li>	 
 	<li>
 		<label for="topic_body"><%= t('message') %></label>
-		<% if @topic.new_record? %>
-			<%= form.text_area  :body_html, :class=>"mceEditor", :id => 'topic_body' %>
-		<% else %>
-			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
-		<% end %>
+		<%= form.rich_editor(:body_html, 
+			:value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
+			:tabindex => 20, :height => "250px") %>
 	</li>
 	<% if admin? and not @topic.new_record? %>
 		<li id="topic_forum_id">
