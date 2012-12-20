@@ -351,7 +351,7 @@ en:
             send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
         index:
             congrats: Congratulations! Your “fresh” helpdesk is ready.
-            title_msg: Just fill in a few details to get started. (optional)
+            title_msg: Just fill in a few details to get started.
             support_email_title: Support<br> e-mail
             agents_title: Agents
             rebrand_title: Logo <br>&amp; colors
@@ -1083,11 +1083,14 @@ en:
   billed_monthly: Billed monthly
   users: 
     activations: 
-      sent : Sent!
+      users: users.
+      user: user.
+      sent: Sent!
       send_invite_success: Activation email has been sent!
       success: Your account has been activated.
       code_expired: Your activation code has been expired!
-      bulk_send_invite_success: "Activation mails were sent to %{users} users."
+      bulk_send_invite_success: "Activation mail was sent to"
+      bulk_send_invite_success2: "Activation mails were sent to"
   edit_email: Edit email
   fav_delete_msg: Are you sure you want to delete this fav icon?
   dispatch: 
@@ -1691,6 +1694,8 @@ en:
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     group: Group
+    agent: Agent 
+    none: None
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent
@@ -1831,8 +1836,12 @@ en:
     edit: Edit Company
     quick_company: Quick Company
     title: Companies
+    title1: companies?
+    title2: company?
     notes: Notes
     info1: Are you sure you want to delete this company?
+    info11: Are you sure you want to delete
+    info10: "Note: Deleting a company will not delete its contacts."
     info2: Domain Names for this company
     info4: Add a Note about %{name}
     info5: Add specific notes regarding this company. example - we are negotiating a 100K deal with this company
@@ -2458,6 +2467,17 @@ en:
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
+    nimble:
+      label: "Nimble"
+      desc: "You can view contact information from Nimble crm in Freshdesk."
+    zohocrm:
+      label: "Zoho CRM"
+      desc: "You can view contact information from Zoho crm in Freshdesk."
+      helptext: "<h4>Zoho CRM Integration Help</h4><p><br/>To integrate Zoho CRM with Freshdesk, <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>Generate the Auth Token</a> in Zoho CRM through Browser Mode and paste the generated Auth Token here.  If you already generated the Auth Token you can get it from <a href='https://accounts.zoho.com/u/h#setting/authtoken' target='_blank'>your accounts page.</a>
+        <br/><br/>Once it is done you can view the contact information in any ticket or contact view.</p>"
+      form:
+        api_key: Auth Token
+        api_key_info: <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>Generate the Auth Token</a> in Zoho CRM through Browser Mode and paste the generated Auth Token here.
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"

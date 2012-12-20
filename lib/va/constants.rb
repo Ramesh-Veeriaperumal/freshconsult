@@ -8,7 +8,8 @@ module Va
       :number      => [ "is", "is_not" ],
       :hours       => [ "is", "greater_than", "less_than" ],
       :nestedlist  => [ "is" ],
-      :greater     => [ "greater_than" ]
+      :greater     => [ "greater_than" ],
+      :object_id   => [ "is" ]
     }
 
     CF_OPERATOR_TYPES = {

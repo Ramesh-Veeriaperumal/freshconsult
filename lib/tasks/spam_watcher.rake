@@ -52,7 +52,7 @@ def check_for_tickets_spam(table,column_name, threshold)
   current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}'  and id > 4300000
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}'  and id > 5961998
     group by #{column_name} having total > #{threshold}
   eos
   requesters = execute_sql_on_slave(query_str)
@@ -83,7 +83,7 @@ def check_for_notes_spam(table,column_name, threshold)
   current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 3500000
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 4891917
     group by #{column_name} having total > #{threshold}
   eos
   requesters = execute_sql_on_slave(query_str)

@@ -6020,8 +6020,6 @@ a.close{
 		height: 30px;
 }
 
-
-
 .remote_support{
 	.session_data{
 		text-align: center;
@@ -6218,6 +6216,15 @@ a.close{
 		background-position: 223px 7px;
   	}
 
+ 	div.zohocrm_widget_bg {
+		background: url(/images/integrations/zohocrm_icon.png) 0 2px no-repeat;
+		background-position: 210px -6px;
+  	}
+
+ 	div.nimble_widget_bg {
+		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+  	}
 	
 
  	.error {
