@@ -351,7 +351,7 @@ en:
             send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
         index:
             congrats: Congratulations! Your “fresh” helpdesk is ready.
-            title_msg: Just fill in a few details to get started. (optional)
+            title_msg: Just fill in a few details to get started.
             support_email_title: Support<br> e-mail
             agents_title: Agents
             rebrand_title: Logo <br>&amp; colors
@@ -815,8 +815,10 @@ en:
       update: 
         success: The %{human_name} has been updated.
     post:
+      deleted: "Post of '{title}' was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
     topic:
+      deleted: "Topic '{title}' was deleted." 
       page_not_found: "This topic could not be found. It might have been deleted or the URL mistyped."
     forum:
       page_not_found: "This forum could not be found. It might have been deleted or the URL mistyped."
@@ -1689,6 +1691,8 @@ en:
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     group: Group
+    agent: Agent 
+    none: None
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent
@@ -2456,6 +2460,17 @@ en:
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
+    nimble:
+      label: "Nimble"
+      desc: "You can view contact information from Nimble crm in Freshdesk."
+    zohocrm:
+      label: "Zoho CRM"
+      desc: "You can view contact information from Zoho crm in Freshdesk."
+      helptext: "<h4>Zoho CRM Integration Help</h4><p><br/>To integrate Zoho CRM with Freshdesk, <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>Generate the Auth Token</a> in Zoho CRM through Browser Mode and paste the generated Auth Token here.  If you already generated the Auth Token you can get it from <a href='https://accounts.zoho.com/u/h#setting/authtoken' target='_blank'>your accounts page.</a>
+        <br/><br/>Once it is done you can view the contact information in any ticket or contact view.</p>"
+      form:
+        api_key: Auth Token
+        api_key_info: <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>Generate the Auth Token</a> in Zoho CRM through Browser Mode and paste the generated Auth Token here.
     google_analytics:
       label: "Google Analytics"
       desc: "Monitor visitor stats on your support portal using Google Analytics"

@@ -95,14 +95,15 @@ private
       :activity_data => { 
                           :path        => category_forum_topic_path(topic.forum.forum_category_id,
                                           topic.forum_id, topic.id),
-                          'forum_name' => topic.forum.to_s,
+                          'forum_name' => h(topic.forum.to_s),
                           :url_params  => { 
                                             :category_id => topic.forum.forum_category_id, 
                                             :forum_id => topic.forum_id, 
                                             :topic_id => topic.id,
                                             :path_generator => 'category_forum_topic_path'
                                           },
-                          :title        => topic.to_s
+                          :title        => h(topic.to_s),
+                          :version      => 2
                         }
     )
   end

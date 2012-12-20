@@ -3092,6 +3092,7 @@ div.addReminder{
 			margin:2px 0px 0px 0px;
 			padding:0px 5px;
 			width: 245px;
+			@include box-shadow(0 0 0 #fff);
 		}
 		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); box-shadow:none; }
 		label.overlabel{
@@ -6019,8 +6020,6 @@ a.close{
 		height: 30px;
 }
 
-
-
 .remote_support{
 	.session_data{
 		text-align: center;
@@ -6217,6 +6216,15 @@ a.close{
 		background-position: 223px 7px;
   	}
 
+ 	div.zohocrm_widget_bg {
+		background: url(/images/integrations/zohocrm_icon.png) 0 2px no-repeat;
+		background-position: 210px -6px;
+  	}
+
+ 	div.nimble_widget_bg {
+		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+  	}
 	
 
  	.error {

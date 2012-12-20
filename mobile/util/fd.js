@@ -23,7 +23,7 @@ FD.Util = {
         var me = this;
         options.callback = function(data,operation,success){
             me.onAjaxCallback(data,operation,success,callBack,scope)
-        }
+        };
         Ext.Ajax.request(options);
     },
     getJSON : function(options,callBack,scope){

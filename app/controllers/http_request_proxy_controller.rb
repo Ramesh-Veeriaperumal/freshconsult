@@ -5,7 +5,9 @@ class HttpRequestProxyController < ApplicationController
 
   def fetch
     httpRequestProxy = HttpRequestProxy.new
-    render httpRequestProxy.fetch(params, request);
+    http_resp = httpRequestProxy.fetch(params, request);
+    response.headers.merge!(http_resp.delete('x-headers')) if http_resp['x-headers'].present?
+    render http_resp
   end
 
   private
