@@ -14,7 +14,15 @@ class ActivationsController < ApplicationController
   def send_invite
     user = current_account.all_users.find params[:id]
     user.deliver_activation_instructions!(current_portal, true) if user and user.has_email?
-    render :json => { :activation_sent => true }
+    respond_to do |format|
+      format.html { 
+        flash[:notice] = t('users.activations.send_invite_success') 
+        redirect_to(:back)
+      }
+      format.json { 
+        render :json => { :activation_sent => true }
+      }
+    end
   end
 
   def bulk_send_invite
