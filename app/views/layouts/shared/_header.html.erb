@@ -20,7 +20,7 @@
      <% else %>
 
         <%= link_to( t('header.login') , login_path) %>
-		<%= link_to( t('signup') , new_support_registration_path ) if feature?(:signup_link) %>
+		<%= link_to( t('signup') , current_portal.signup_path ) if feature?(:signup_link) %>
     <% end %>
     </div>     
 		<% if current_user then %>                        
