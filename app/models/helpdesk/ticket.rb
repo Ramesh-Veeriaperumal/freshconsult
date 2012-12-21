@@ -1135,6 +1135,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def populate_requester
       return if requester
 
+      self.requester_id = nil
+
       unless email.blank?
         name_email = parse_email email  #changed parse_email to return a hash
         self.email = name_email[:email]
