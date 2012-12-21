@@ -63,8 +63,7 @@
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
-  map.resources :activations, :member => { :send_invite => :put },
-                              :collection => { :bulk_send_invite => :put }
+  map.resources :activations, :member => { :send_invite => :put }
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
@@ -163,6 +162,12 @@
   map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
     subdom.with_options(:namespace => 'partner_admin/', :name_prefix => 'partner_', :path_prefix => nil) do |partner|
       partner.resources :affiliates, :collection => {:add_affiliate_transaction => :post}
+    end
+  end
+
+  map.with_options(:conditions => { :subdomain => AppConfig['billing_subdomain'] }) do |subdom|
+    subdom.with_options(:namespace => 'billing/', :path_prefix => nil) do |billing|
+      billing.resources :billing, :collection => { :trigger => :post }
     end
   end
 
