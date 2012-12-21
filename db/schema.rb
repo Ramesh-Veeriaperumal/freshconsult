@@ -9,11 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20121205135727) do
-=======
 ActiveRecord::Schema.define(:version => 20121126102259) do
->>>>>>> origin/pre_staging
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
