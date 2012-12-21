@@ -1,315 +1,95 @@
-/* Theme Colors and layout Defaults */
-/* Bullet icon */
-/* Priority Color Codes */
-/* Sprite variables used inside the sheet */
-/* 
-  html5doctor.com Reset Stylesheet (Eric Meyer's Reset Reloaded + HTML5 baseline)
-  v1.4 2009-07-27 | Authors: Eric Meyer & Richard Clark
-  html5doctor.com/html-5-reset-stylesheet/
+/*
+Syntax error: Invalid CSS after "...---------------": expected selector or at-rule, was "======="
+        on line 68 of /Users/venom/helpkit/public/src/app/lib/_settings.scss
+        from line 1 of /Users/venom/helpkit/public/src/fresh-mce/content.scss
+
+63: 
+64: $container-width: 	1140px; 
+65: 
+66: // Sprite sheet creation
+67: // --------------------------------------------------
+68: =======
+69: /* Sprite variables used inside the sheet */
+70: $symbol: sprite-map("symbols/*.png");
+71: $ticketicon: sprite-map("ticket-icon/*.png");
+72: $icons: sprite-map("icons/*.png");
+
+Backtrace:
+/Users/venom/helpkit/public/src/app/lib/_settings.scss:68
+/Users/venom/helpkit/public/src/fresh-mce/content.scss:1
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/scss/parser.rb:1130:in `expected'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/scss/parser.rb:1066:in `expected'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/scss/parser.rb:28:in `parse'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:342:in `_to_tree'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:273:in `to_tree'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/util.rb:371:in `silence_sass_warnings'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:273:in `to_tree'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:222:in `visit_import'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `send'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:98:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:53:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:53:in `map'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:53:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:107:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:119:in `with_environment'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:106:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:126:in `visit_root'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `send'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:98:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:7:in `send'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:7:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/root_node.rb:20:in `render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:315:in `_render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:263:in `render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/util.rb:371:in `silence_sass_warnings'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:263:in `render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:340:in `update_stylesheet'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:202:in `update_stylesheets'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:200:in `each'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:200:in `update_stylesheets'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin.rb:81:in `update_stylesheets'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin.rb:54:in `check_for_updates'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/rack.rb:51:in `call'
+/Library/Ruby/Gems/1.8/gems/newrelic_rpm-3.5.3.25/lib/new_relic/rack/browser_monitoring.rb:12:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/string_coercion.rb:25:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/head.rb:9:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/methodoverride.rb:24:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/params_parser.rb:15:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/session/cookie_store.rb:99:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/failsafe.rb:26:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `synchronize'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:114:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/reloader.rb:34:in `run'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:108:in `call'
+/Library/Ruby/Gems/1.8/gems/rails-2.3.8/lib/rails/rack/static.rb:31:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:47:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:41:in `each'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:41:in `call'
+/Library/Ruby/Gems/1.8/gems/rails-2.3.8/lib/rails/rack/log_tailer.rb:17:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/content_length.rb:13:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/chunked.rb:15:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/handler/mongrel.rb:67:in `process'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:159:in `process_client'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:158:in `each'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:158:in `process_client'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `run'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `initialize'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `new'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `run'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:268:in `initialize'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:268:in `new'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:268:in `run'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/handler/mongrel.rb:38:in `run'
+/Library/Ruby/Gems/1.8/gems/rails-2.3.8/lib/commands/server.rb:111
+script/server:3:in `require'
+script/server:3
 */
-/* line 19, ../../src/app/lib/_reset.scss */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  font-weight: inherit;
-  font-style: inherit;
-  font-size: 100%;
-  font-family: inherit;
-  vertical-align: baseline; }
-
-/* line 31, ../../src/app/lib/_reset.scss */
-body {
-  line-height: 1;
-  color: black;
-  background: white; }
-
-/* line 38, ../../src/app/lib/_reset.scss */
-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  vertical-align: middle; }
-
-/* line 44, ../../src/app/lib/_reset.scss */
-caption, th, td {
-  text-align: left;
-  font-weight: normal;
-  vertical-align: middle; }
-
-/* tables still need cellspacing="0" in the markup */
-/* line 54, ../../src/app/lib/_reset.scss */
-table {
-  border-collapse: collapse;
-  border-spacing: 0; }
-
-/* line 56, ../../src/app/lib/_reset.scss */
-q, blockquote {
-  quotes: none; }
-  /* line 103, ../../../../../../.rvm/gems/ruby-1.8.7-p358/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-  q:before, q:after, blockquote:before, blockquote:after {
-    content: "";
-    content: none; }
-
-/* line 57, ../../src/app/lib/_reset.scss */
-a img {
-  border: none; }
-
-/* line 60, ../../src/app/lib/_reset.scss */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-  display: block; }
-
-/* line 64, ../../src/app/lib/_reset.scss */
-ol, ul {
-  list-style: none; }
-
-/* line 66, ../../src/app/lib/_reset.scss */
-nav ul {
-  list-style: none; }
-
-/* line 68, ../../src/app/lib/_reset.scss */
-blockquote, q {
-  quotes: none; }
-
-/* line 71, ../../src/app/lib/_reset.scss */
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none; }
-
-/* line 73, ../../src/app/lib/_reset.scss */
-a {
-  margin: 0;
-  padding: 0;
-  font-size: 100%;
-  vertical-align: baseline;
-  background: transparent; }
-
-/* line 75, ../../src/app/lib/_reset.scss */
-ins {
-  background-color: #ff9;
-  color: #000;
-  text-decoration: none; }
-
-/* line 77, ../../src/app/lib/_reset.scss */
-mark {
-  background-color: #ff9;
-  color: #000;
-  font-style: italic;
-  font-weight: bold; }
-
-/* line 79, ../../src/app/lib/_reset.scss */
-del {
-  text-decoration: line-through; }
-
-/* line 81, ../../src/app/lib/_reset.scss */
-abbr[title], dfn[title] {
-  border-bottom: 1px dotted;
-  cursor: help; }
-
-/* line 83, ../../src/app/lib/_reset.scss */
-hr {
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 1px solid #ccc;
-  margin: 1em 0;
-  padding: 0; }
-
-/* line 85, ../../src/app/lib/_reset.scss */
-input, select {
-  vertical-align: middle;
-  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; }
-
-/* line 87, ../../src/app/lib/_reset.scss */
-textarea {
-  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; }
-
-/* line 89, ../../src/app/lib/_reset.scss */
-ol {
-  list-style: decimal outside;
-  margin: 3px 8px 3px 28px; }
-
-/* line 91, ../../src/app/lib/_reset.scss */
-strong, b {
-  font-weight: bold; }
-
-/* line 93, ../../src/app/lib/_reset.scss */
-em, i {
-  font-style: italic; }
-
-/* line 116, ../../../../../../.rvm/gems/ruby-1.8.7-p358/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
-  display: block; }
-
-/* END RESET CSS */
-/* line 99, ../../src/app/lib/_reset.scss */
-#tag-list {
-  margin: 5px -5px 5px 0; }
-
-/* line 102, ../../src/app/lib/_reset.scss */
-#tag-list li {
-  display: inline;
-  list-style: none outside none;
-  margin: 0;
-  color: #000000;
-  border-color: #DDDDDD;
-  border-width: 1px;
-  border-style: solid;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
-  padding: 2px 3px;
-  font-size: 11px;
-  background-color: #33a8a8; }
-
-/* line 115, ../../src/app/lib/_reset.scss */
-#tag-list li a {
-  color: #fff; }
-
-/* line 119, ../../src/app/lib/_reset.scss */
-#tag-cloud {
-  margin: 5px -5px 5px 0; }
-
-/* line 122, ../../src/app/lib/_reset.scss */
-#tag-cloud li {
-  display: inline;
-  list-style: none outside none;
-  margin: 0;
-  padding: 0; }
-
-/* line 129, ../../src/app/lib/_reset.scss */
-#tag-cloud li a:hover {
-  color: #000000; }
-
-/* line 4, ../../src/fresh-mce/content.scss */
-body, td, pre {
-  color: #333333;
-  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-  margin: 8px;
-  font-size: 13px;
-  line-height: 18px; }
-
-/* line 87, ../../src/app/lib/_mixins.scss */
-p, li, div {
-  font-size: 13px;
-  line-height: 18px;
-  font-style: normal;
-  margin: 0; }
-
-/* line 93, ../../src/app/lib/_mixins.scss */
-code, pre, p, li, span {
+body:before {
   white-space: pre;
-  white-space: pre-wrap;
-  white-space: pre-line;
-  white-space: -pre-wrap;
-  white-space: -o-pre-wrap;
-  white-space: -moz-pre-wrap;
-  white-space: -hp-pre-wrap;
-  word-wrap: break-word;
-  white-space: pre-line !important;
-  white-space: pre-wrap !important; }
-
-/* line 98, ../../src/app/lib/_mixins.scss */
-h1 {
-  font-size: 2em; }
-
-/* line 99, ../../src/app/lib/_mixins.scss */
-h2 {
-  font-size: 1.5em; }
-
-/* line 100, ../../src/app/lib/_mixins.scss */
-h3 {
-  font-size: 1.17em; }
-
-/* line 101, ../../src/app/lib/_mixins.scss */
-h4 {
-  font-size: 1em; }
-
-/* line 102, ../../src/app/lib/_mixins.scss */
-h5 {
-  font-size: .83em; }
-
-/* line 103, ../../src/app/lib/_mixins.scss */
-h6 {
-  font-size: .75em; }
-
-/* line 104, ../../src/app/lib/_mixins.scss */
-img, iframe {
-  border: 0;
-  max-width: 100%; }
-
-/* line 105, ../../src/app/lib/_mixins.scss */
-table {
-  cursor: default;
-  border: 1px solid #afafaf; }
-
-/* line 106, ../../src/app/lib/_mixins.scss */
-table td, table th {
-  cursor: text;
-  font-size: inherit;
-  font-size: 13px;
-  border: 1px solid #afafaf;
-  padding: 4px; }
-
-/* line 107, ../../src/app/lib/_mixins.scss */
-em {
-  font-style: italic; }
-
-/* line 108, ../../src/app/lib/_mixins.scss */
-ins {
-  border-bottom: 1px solid green;
-  text-decoration: none;
-  color: green; }
-
-/* line 109, ../../src/app/lib/_mixins.scss */
-cite {
-  border-bottom: 1px dashed blue; }
-
-/* line 110, ../../src/app/lib/_mixins.scss */
-acronym {
-  border-bottom: 1px dotted #CCC;
-  cursor: help; }
-
-/* line 111, ../../src/app/lib/_mixins.scss */
-abbr {
-  border-bottom: 1px dashed #CCC;
-  cursor: help; }
-
-/* line 112, ../../src/app/lib/_mixins.scss */
-ol, ul {
-  margin: 8px 0px 4px 0px;
-  padding: 0px 0px 0px 40px;
-  line-height: 17px; }
-
-/* line 113, ../../src/app/lib/_mixins.scss */
-ul {
-  list-style: disc outside; }
-
-/* line 114, ../../src/app/lib/_mixins.scss */
-blockquote {
-  font-size: 13px;
-  line-height: 22px;
-  margin: 0.5em;
-  color: #666;
-  border-left: 1px dotted #999;
-  padding: 6px 6px 1px 1em; }
-
-/* line 115, ../../src/app/lib/_mixins.scss */
-del {
-  text-decoration: none; }
+  font-family: monospace;
+  content: "Syntax error: Invalid CSS after \"...---------------\": expected selector or at-rule, was \"=======\"\A         on line 68 of /Users/venom/helpkit/public/src/app/lib/_settings.scss\A         from line 1 of /Users/venom/helpkit/public/src/fresh-mce/content.scss\A \A 63: \A 64: $container-width: 	1140px; \A 65: \A 66: // Sprite sheet creation\A 67: // --------------------------------------------------\A 68: =======\A 69: /* Sprite variables used inside the sheet */\A 70: $symbol: sprite-map(\"symbols/*.png\");\A 71: $ticketicon: sprite-map(\"ticket-icon/*.png\");\A 72: $icons: sprite-map(\"icons/*.png\");"; }

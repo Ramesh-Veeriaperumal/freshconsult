@@ -262,8 +262,7 @@ class Account < ActiveRecord::Base
       :inherits => [ :blossom ]
     },
     :estate => {
-      :features => [ :gamification, :layout_customization ],
-      :features => [ :gamification, :agent_collision ],
+      :features => [ :gamification, :agent_collision, :layout_customization ],
       :inherits => [ :garden ]
     }
   }

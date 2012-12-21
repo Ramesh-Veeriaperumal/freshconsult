@@ -521,7 +521,7 @@ a:hover {
   color: #036690;
   text-decoration: underline; }
 
-/* line 14, ../../../../../../Library/Ruby/Gems/1.8/gems/susy-1.0.1/sass/susy/_grid.scss */
+/* line 14, ../../../../../../Library/Ruby/Gems/1.8/gems/susy-1.0.5/sass/susy/_grid.scss */
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -579,10 +579,10 @@ a:hover {
   /* line 19, ../../src/portal/lib/_layout.scss */
   .page {
     max-width: 1140px;
-    margin-left: auto;
-    margin-right: auto;
     padding-left: 10px;
     padding-right: 10px;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 10px;
     margin-bottom: 10px;
     /*@include susy-grid-background;*/ }
@@ -5468,9 +5468,9 @@ disabled look for already selected choices in the results dropdown
     clear: both;
     width: 100%;
     font-size: 0em; } }
-/* line 90, sources/*.png */
-.sources-sprite, .sources-detailed-chat, .sources-detailed-email, .sources-detailed-facebook, .sources-detailed-forum, .sources-detailed-phone, .sources-detailed-portal, .sources-detailed-twitter {
-  background: url('/images/sources-sef0ebcf63f.png') no-repeat; }
+/* line 98, sources/*.png */
+.sources-sprite, .sources-detailed-chat, .sources-detailed-email, .sources-detailed-facebook, .sources-detailed-forum, .sources-detailed-phone, .sources-detailed-portal, .sources-detailed-twitter, .sources-detailed_mobihelp {
+  background: url('/images/sources-s88f404d311.png') no-repeat; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .sources-detailed-chat {
@@ -5480,13 +5480,13 @@ disabled look for already selected choices in the results dropdown
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .sources-detailed-email {
-  background-position: 0 -336px;
+  background-position: 0 -392px;
   height: 56px;
   width: 36px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .sources-detailed-facebook {
-  background-position: 0 -280px;
+  background-position: 0 -336px;
   height: 56px;
   width: 36px; }
 
@@ -5511,6 +5511,12 @@ disabled look for already selected choices in the results dropdown
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .sources-detailed-twitter {
   background-position: 0 -112px;
+  height: 56px;
+  width: 36px; }
+
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.sources-detailed_mobihelp {
+  background-position: 0 -280px;
   height: 56px;
   width: 36px; }
 

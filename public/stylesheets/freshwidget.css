@@ -1,179 +1,95 @@
-/* Theme Colors and layout Defaults */
-/* Bullet icon */
-/* Priority Color Codes */
-/* Sprite variables used inside the sheet */
-/* line 3, ../src/freshwidget.scss */
-.widget-ovelay {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-  opacity: 0.5;
-  background-color: white; }
+/*
+Syntax error: Invalid CSS after "...---------------": expected selector or at-rule, was "======="
+        on line 68 of /Users/venom/helpkit/public/src/app/lib/_settings.scss
+        from line 1 of /Users/venom/helpkit/public/src/freshwidget.scss
 
-/* line 8, ../src/freshwidget.scss */
-.freshwidget-container, .widget-ovelay {
-  position: fixed;
-  _position: absolute;
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 90002; }
+63: 
+64: $container-width: 	1140px; 
+65: 
+66: // Sprite sheet creation
+67: // --------------------------------------------------
+68: =======
+69: /* Sprite variables used inside the sheet */
+70: $symbol: sprite-map("symbols/*.png");
+71: $ticketicon: sprite-map("ticket-icon/*.png");
+72: $icons: sprite-map("icons/*.png");
 
-/* line 17, ../src/freshwidget.scss */
-.freshwidget-container {
-  position: absolute; }
-
-/* line 21, ../src/freshwidget.scss */
-.left a {
-  left: -2px; }
-
-/* line 22, ../src/freshwidget.scss */
-.left a:hover {
-  left: 0px; }
-
-/* line 24, ../src/freshwidget.scss */
-.right {
-  right: -2px;
-  *right: 35px;
-  /* IE 7 specific style */ }
-
-/* line 28, ../src/freshwidget.scss */
-.right:hover {
-  right: 0px;
-  *right: 33px;
-  /* IE 7 specific style */ }
-
-/* line 32, ../src/freshwidget.scss */
-.ie8.right, .ie9.right {
-  right: 35px;
-  /* IE 8 & 9 specific style */ }
-
-/* line 35, ../src/freshwidget.scss */
-.ie8.right:hover, .ie9.right:hover {
-  right: 33px;
-  /* IE 8 & 9 specific style */ }
-
-/* line 39, ../src/freshwidget.scss */
-.top {
-  top: -2px; }
-
-/* line 40, ../src/freshwidget.scss */
-.top:hover {
-  top: 0px; }
-
-/* line 42, ../src/freshwidget.scss */
-.bottom {
-  bottom: 0px; }
-  /* line 44, ../src/freshwidget.scss */
-  .bottom a {
-    bottom: -2px; }
-  /* line 45, ../src/freshwidget.scss */
-  .bottom a:hover {
-    bottom: 0px; }
-
-/* line 48, ../src/freshwidget.scss */
-.freshwidget-theme {
-  -moz-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
-  box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
-  text-shadow: rgba(0, 0, 0, 0.2), -1px, -1px, 1px;
-  padding: 6px 16px 8px 16px;
-  background-color: #7eb600;
-  border: 2px solid #ffffff;
-  color: #ffffff;
-  font-size: 16px;
-  text-decoration: none;
-  font-weight: bold;
-  outline: 0; }
-
-/* line 61, ../src/freshwidget.scss */
-.freshwidget-theme:hover {
-  color: #f3f3f3; }
-
-/* line 65, ../src/freshwidget.scss */
-.freshwidget-customimage {
-  overflow: visible; }
-
-/* line 67, ../src/freshwidget.scss */
-.right .freshwidget-customimage {
-  right: 0px; }
-
-/* line 69, ../src/freshwidget.scss */
-.freshwidget-button {
-  position: absolute;
-  display: block !important;
-  width: 0px;
-  height: 0px;
-  z-index: 90000;
-  margin: 0px;
-  outline: 0; }
-  /* line 70, ../src/freshwidget.scss */
-  .freshwidget-button a {
-    position: fixed;
-    white-space: nowrap;
-    _position: absolute;
-    _right: 0px;
-    outline: 0; }
-
-/* line 86, ../src/freshwidget.scss */
-.proxy-link {
-  position: absolute;
-  z-index: 10;
-  outline: 0; }
-
-/* line 92, ../src/freshwidget.scss */
-.left a.freshwidget-theme, .top a.freshwidget-theme {
-  border-top-width: 0px; }
-
-/* line 93, ../src/freshwidget.scss */
-.left a.freshwidget-theme {
-  -webkit-transform: perspective(top left) rotate(-90deg);
-  -moz-transform: perspective(top left) rotate(-90deg);
-  -ms-transform: perspective(top left) rotate(-90deg);
-  -o-transform: perspective(top left) rotate(-90deg);
-  transform: perspective(top left) rotate(-90deg);
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
-
-/* line 97, ../src/freshwidget.scss */
-.bottom a.freshwidget-theme, .right a.freshwidget-theme {
-  border-bottom-width: 0px; }
-
-/* line 98, ../src/freshwidget.scss */
-.right a.freshwidget-theme {
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  transform: rotate(45deg);
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); }
-
-/* line 103, ../src/freshwidget.scss */
-.left a.ie10 {
-  -ms-transform: rotate(-90deg);
-  -ms-transform-origin: top left; }
-
-/* line 108, ../src/freshwidget.scss */
-.right a.ie10 {
-  -ms-transform: rotate(-90deg);
-  -ms-transform-origin: bottom left; }
-
-/* Widget Form Style */
-/* line 114, ../src/freshwidget.scss */
-.freshwidget-dialog {
-  position: absolute;
-  padding: 8px 0px;
-  left: 50%;
-  margin-left: -260px;
-  top: 100px;
-  z-index: 900010; }
-  /* line 122, ../src/freshwidget.scss */
-  .freshwidget-dialog iframe {
-    width: 612px;
-    height: 900px; }
-  /* line 127, ../src/freshwidget.scss */
-  .freshwidget-dialog .widget-close {
-    position: absolute;
-    right: 5px;
-    top: 6px;
-    width: 28px;
-    height: 28px;
-    cursor: pointer; }
+Backtrace:
+/Users/venom/helpkit/public/src/app/lib/_settings.scss:68
+/Users/venom/helpkit/public/src/freshwidget.scss:1
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/scss/parser.rb:1130:in `expected'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/scss/parser.rb:1066:in `expected'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/scss/parser.rb:28:in `parse'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:342:in `_to_tree'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:273:in `to_tree'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/util.rb:371:in `silence_sass_warnings'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:273:in `to_tree'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:222:in `visit_import'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `send'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:98:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:53:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:53:in `map'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:53:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:107:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:119:in `with_environment'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:106:in `visit_children'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:126:in `visit_root'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `send'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:98:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:7:in `send'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/visitors/perform.rb:7:in `visit'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/tree/root_node.rb:20:in `render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:315:in `_render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:263:in `render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/util.rb:371:in `silence_sass_warnings'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/engine.rb:263:in `render'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:340:in `update_stylesheet'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:202:in `update_stylesheets'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:200:in `each'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/compiler.rb:200:in `update_stylesheets'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin.rb:81:in `update_stylesheets'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin.rb:54:in `check_for_updates'
+/Library/Ruby/Gems/1.8/gems/sass-3.2.1/lib/sass/../sass/plugin/rack.rb:51:in `call'
+/Library/Ruby/Gems/1.8/gems/newrelic_rpm-3.5.3.25/lib/new_relic/rack/browser_monitoring.rb:12:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/string_coercion.rb:25:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/head.rb:9:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/methodoverride.rb:24:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/params_parser.rb:15:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/session/cookie_store.rb:99:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/failsafe.rb:26:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `synchronize'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/lock.rb:11:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:114:in `call'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/reloader.rb:34:in `run'
+/Users/venom/.gem/ruby/1.8/gems/actionpack-2.3.8/lib/action_controller/dispatcher.rb:108:in `call'
+/Library/Ruby/Gems/1.8/gems/rails-2.3.8/lib/rails/rack/static.rb:31:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:47:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:41:in `each'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/urlmap.rb:41:in `call'
+/Library/Ruby/Gems/1.8/gems/rails-2.3.8/lib/rails/rack/log_tailer.rb:17:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/content_length.rb:13:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/chunked.rb:15:in `call'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/handler/mongrel.rb:67:in `process'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:159:in `process_client'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:158:in `each'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:158:in `process_client'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `run'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `initialize'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `new'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:285:in `run'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:268:in `initialize'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:268:in `new'
+/Library/Ruby/Gems/1.8/gems/mongrel-1.1.5/lib/mongrel.rb:268:in `run'
+/Library/Ruby/Gems/1.8/gems/rack-1.1.2/lib/rack/handler/mongrel.rb:38:in `run'
+/Library/Ruby/Gems/1.8/gems/rails-2.3.8/lib/commands/server.rb:111
+script/server:3:in `require'
+script/server:3
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Syntax error: Invalid CSS after \"...---------------\": expected selector or at-rule, was \"=======\"\A         on line 68 of /Users/venom/helpkit/public/src/app/lib/_settings.scss\A         from line 1 of /Users/venom/helpkit/public/src/freshwidget.scss\A \A 63: \A 64: $container-width: 	1140px; \A 65: \A 66: // Sprite sheet creation\A 67: // --------------------------------------------------\A 68: =======\A 69: /* Sprite variables used inside the sheet */\A 70: $symbol: sprite-map(\"symbols/*.png\");\A 71: $ticketicon: sprite-map(\"ticket-icon/*.png\");\A 72: $icons: sprite-map(\"icons/*.png\");"; }
