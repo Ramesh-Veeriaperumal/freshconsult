@@ -35,7 +35,7 @@ class SupportController < ApplicationController
       output = []
       [:notice, :warning, :error].collect do |type| 
         if flash[type]          
-          output << %( <div id="#{type}" class="alert alert-page alert-#{type} fade"> )
+          output << %( <div id="#{type}" class="alert alert-page alert-#{type}"> )
           output << %( <button type="button" class="close" data-dismiss="alert">&times;</button> )
           output << flash[type]
           output << %( </div> )          
