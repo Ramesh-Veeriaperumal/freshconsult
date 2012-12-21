@@ -11,6 +11,7 @@ class Portal < ActiveRecord::Base
   after_commit_on_update :clear_portal_cache
   after_commit_on_destroy :clear_portal_cache
   before_update :backup_changes
+  before_destroy :backup_changes
 
   has_one :logo,
     :as => :attachable,
