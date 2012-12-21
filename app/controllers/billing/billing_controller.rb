@@ -1,6 +1,7 @@
 class Billing::BillingController < ApplicationController
 
-  before_filter :login_from_basic_auth, :ssl_check
+  #before_filter :login_from_basic_auth
+  before_filter :ssl_check
 
   skip_before_filter :set_time_zone, :set_locale, :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
