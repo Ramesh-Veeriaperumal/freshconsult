@@ -36,7 +36,7 @@ class Billing::BillingController < ApplicationController
     end
 
 		def ensure_right_parameters
-			if ((!request.ssl?) or (params[:event_type].blank?) or (params[:content].blank?))
+			if ((Rails.env.production? and !request.ssl?) or (params[:event_type].blank?) or (params[:content].blank?))
 				return render :json => ArgumentError, :status => 500
 			end
 		end
