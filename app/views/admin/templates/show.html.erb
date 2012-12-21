@@ -1,6 +1,7 @@
 <%= include_stylesheets :codemirror %>
 <%= include_javascripts :codemirror %>
 <%= include_javascripts :portaltemplate %>
+<%= javascript_include_tag "portal.template.js" %>
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
 <a href="<%=admin_portal_template_publish_path%>" class="pull-right btn primary large">Publish changes</a>
