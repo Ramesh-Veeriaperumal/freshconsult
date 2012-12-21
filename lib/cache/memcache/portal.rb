@@ -16,8 +16,15 @@ module Cache::Memcache::Portal
   end
 
   def clear_portal_cache
+
+    (@all_changes && @all_changes[:portal_url] || [] ).each do |url|
+      key = PORTAL_BY_URL % { :portal_url => url}
+      MemcacheKeys.delete_from_cache key
+    end
+    
     key = PORTAL_BY_URL % { :portal_url => @old_object.portal_url}
     MemcacheKeys.delete_from_cache key
+
     key = ACCOUNT_MAIN_PORTAL % { :account_id => @old_object.account_id }
     MemcacheKeys.delete_from_cache key
   end
