@@ -8,18 +8,18 @@ free_plan_agts: 1
 base_domain: 
     development: freshdesk-dev.com
     production: freshdesk.com
-    staging: freshpo.com
-    test: freshpo.com
+    staging: freshbugs.com
+    test: freshbugs.com
 
 demo_site:
     development: "localhost:388"
     production:  "demo.freshdesk.com"
-    staging:     "demo.freshpo.com"
+    staging:     "demo.freshbugs.com"
 
 sub_bcc_email:
     development: "kiran@freshdesk.com"
     production:  "team@freshdesk.com"
-    staging:     "support@freshpo.com"
+    staging:     "support@freshbugs.com"
     
 crm:
     development: 
@@ -71,7 +71,7 @@ integrations_url:
     development: "http://localhost:3000"
     production: "https://login.freshdesk.com"
     #staging: "https://login.freshbugs.com"
-    staging: "https://login.freshpo.com"
+    staging: "https://login.freshbugs.com"
 
 
 
