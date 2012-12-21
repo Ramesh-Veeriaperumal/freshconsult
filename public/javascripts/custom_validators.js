@@ -67,7 +67,7 @@
   $.validator.addMethod("requester", function(value, element) {
 
     var _returnCondition = jQuery(element).data("requesterCheck"),
-        _latest_response_data = jQuery(element).data("partialRequesterList") || []
+        _partial_list = jQuery(element).data("partialRequesterList") || []
         _user = jQuery(element).data("currentUser") //for not editing add new requester
 
     if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/.test(value)){
@@ -78,8 +78,8 @@
     if (value == _user) 
       _returnCondition = true
 
-    _latest_response_data.each(function(item){  //check for item['choice']    
-      if(value == item.details) _returnCondition = true
+    _partial_list.each(function(item){  //check for item['choice']
+      if(trim(value) == trim(item.details)) _returnCondition = true
     });
  
     return _returnCondition
