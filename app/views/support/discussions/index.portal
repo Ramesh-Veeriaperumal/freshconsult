@@ -1,8 +1,7 @@
-<section class="content rounded-6 min-height-on-desktop">
+<section class="main content rounded-6 min-height-on-desktop">
 	<a href="{{portal.new_topic_path}}" class="start-topic">
 		{% translate portal.topic.start_new_topic %}
 	</a>
-
 	<h2 class="heading">Community forums</h2>
 	{% for category in portal.forum_categories %}	
 		<div class="cs-s">
@@ -21,13 +20,15 @@
 								<div class="ellipsis">
 									<a href="{{topic.url}}">{{topic.title}}</a>
 								</div>
-								<p class="help-text">
-									posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }} <br />
-									{% if topic.has_comments %}
+								<div class="help-text">
+									posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }}
+								</div>
+								{% if topic.has_comments %}
+									<div class="help-text">
 										<a href="{{topic.last_post.url}}">Last reply</a>
 										by {{ topic.last_post.created_on | time_ago }}
-									{% endif %}
-								</p>
+									</div>
+								{% endif %}
 							</li>
 							{% endfor %}
 						</ul>
@@ -40,4 +41,31 @@
 			</div>
 		</div>
 	{% endfor %}
+</section>
+
+<section class="sidebar content rounded-6">
+	<section class="cs-g-c topic-list">
+		<div class="list-lead">
+			Popular topics
+		</div>
+		<p class="intro">Showing recently popular topics</p>
+		<ul>
+		{% for topic in portal.popular_topics limit:10 %}
+			<li class="cs-g-3">
+				<div class="ellipsis">
+					<a href="{{topic.url}}">{{topic.title}}</a>
+				</div>
+				<div class="help-text">
+					posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }}
+				</div>
+				{% if topic.has_comments %}
+					<div class="help-text">
+						<a href="{{topic.last_post.url}}">Last reply</a>
+						by {{ topic.last_post.created_on | time_ago }}
+					</div>
+				{% endif %}
+			</li>
+		{% endfor %}
+		</ul>
+	</section>
 </section>

@@ -17,7 +17,7 @@
 /* Importing admin icons */
 @import "portal/icon/*.png";
 $icon-sprite-dimensions: true;
-$icon-layout:smart;
+$icon-layout:horizontal;
 @include all-icon-sprites;
 
 [class^="icon-"],

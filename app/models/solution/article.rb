@@ -136,6 +136,11 @@ class Solution::Article < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
+
+  # Added for portal customisation drop
+  def self.filter(_per_page = self.per_page, _page = 1)
+    paginate :per_page => _per_page, :page => _page
+  end
   
   def to_liquid
     Solution::ArticleDrop.new self

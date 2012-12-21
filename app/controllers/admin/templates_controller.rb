@@ -2,9 +2,9 @@ class Admin::TemplatesController < Admin::AdminController
   include Portal::TemplateActions
   include MemcacheKeys
 
-  before_filter :build_objects, :default_liquids, :set_forum_builder, :clear_preview_session
+  before_filter :build_objects, :default_liquids, :set_forum_builder, :clear_preview_session #needs to split
   
-  before_filter(:only => [:update]) do |c|
+  before_filter(:only => :update) do |c| #validating the syntax before persisting.
     custom_css = c.request.params[:portal_template][:custom_css]
     c.send(:css_syntax?, custom_css) unless custom_css.nil?
     Portal::Template::TEMPLATE_MAPPING_FILE_BY_TOKEN.each do |key,file|
@@ -25,19 +25,22 @@ class Admin::TemplatesController < Admin::AdminController
   end
 
   def update
-    @portal_template.attributes = @portal_template.attributes.merge params[:portal_template]
-    @portal_template.draft!
-    if params[:preview_button]
-      session[:preview_button] = true
-      @redirect_to_portal_url = support_solutions_url
-    end
-    flash[:notice] = "Portal template saved successfully."
+    @portal_template.attributes = @portal_template.attributes.merge params[:portal_template] #why not merge!
+    @portal_template.draft!    
+    flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
     build_objects
-    render "update.rjs"
+    respond_to do |format|
+      format.html { 
+        if params[:preview_button]
+          session[:preview_button] = true
+          redirect_to support_home_url
+        end
+      }
+    end
   end  
 
   def soft_reset
-    properties = params[:portal_template].split(":")
+    properties = params[:portal_template].split(":") #keys.. json..
     @portal_template.soft_reset!(properties)
     flash[:notice] = "Portal template reseted successfully."
     redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"

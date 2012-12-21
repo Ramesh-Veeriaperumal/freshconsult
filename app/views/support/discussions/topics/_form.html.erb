@@ -25,7 +25,8 @@
 		</label>
 		<div class="controls">
 			<%= form.select :forum_id, grouped_options_for_select(@portal.forum_options, @topic.forum_id), 
-				{ :include_blank => "--- Select a forum ---" }, { :class => "required" } %>
+				{ :include_blank => "--- Select a forum ---" }, 
+				{ :class => "required", :disabled => !@topic.new_record? } %>
 		</div>
 	</div>
 	<div class="control-group">
@@ -70,6 +71,7 @@
 	<%end%>
 </fieldset>
 <div class="form-actions">
-	<input type="submit" class="btn btn-primary" value="Submit" />		
+	<input type="submit" class="btn btn-primary" value="Submit" />
+	<a href="javascript:history.back()" class="btn">Cancel</a>
 </div>
 <% end %>

@@ -2,7 +2,7 @@
 <% form_for @topic.posts.new, :url => support_discussions_topic_posts_path(@topic), 
 	:html => { :multipart => true, :rel => "validate" } do |f| -%>		
 	<div class="row-fluid">
-		<p class="span10">
+		<p class="span12">
 			<%= f.rich_editor :body_html, :height => 150 %>
 		</p>
 	</div>

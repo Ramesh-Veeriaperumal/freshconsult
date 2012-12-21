@@ -31,9 +31,6 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-  has_many :portal_forums, :through => :forum_category , :conditions => { :forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone] } 
-  has_many :portal_topics, :through => :portal_forums
-
   after_create :create_template
     
   def logo_attributes=(icon_attr)
@@ -78,7 +75,7 @@ class Portal < ActiveRecord::Base
   end
   
   def portal_login_path
-    login_path(:host => portal_url)
+    support_login_path(:host => portal_url)
   end
   
   def portal_logout_path
@@ -95,6 +92,10 @@ class Portal < ActiveRecord::Base
 
   def new_topic_path
     new_support_discussions_topic_path(:host => portal_url)
+  end
+
+  def profile_path
+    edit_support_profile_path(:host => portal_url)
   end
 
   def host

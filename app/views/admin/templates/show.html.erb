@@ -29,7 +29,7 @@
       </div>
 
     	<div class="tab-pane" id="custom_css">		
-        <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
+        <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put, :target => "blank" } do |f| -%>
         <%= hidden_field_tag 'tab', :custom_css %>
       	<h3 class="title">Custom stylesheet</h3>
       	<p class="help-text">
@@ -41,18 +41,16 @@
                       "data-fullscreen-actions" => "custom-css-actions" %>            
         <br />
           <div class="well" id="custom_css_btns">
-            <%= submit_tag "Preview", :name => 'preview_button', 
-              :onclick => "FD.PortalTemplate.save(this,event)", 
-              :class => "btn primary floatr", 
-              :target => "_blank", 
-              :"data-disable-with" => "Please wait...", 
-              :"data-code-refresh" => "#portal_template_custom_css" %>
+            <%= submit_tag "Preview", :name => 'preview_button',
+              :class => "btn primary floatr",
+              "data-disable-with" => "Please wait...", 
+              "data-code-refresh" => "#portal_template_custom_css" %>
 
-            <%= submit_tag "Draft", 
+            <%= submit_tag "Save and continue editing", 
               :onclick => "FD.PortalTemplate.save(this,event)", 
               :name => 'save_button',:class => "btn floatr", 
-              :"data-disable-with" => "Please wait...", 
-              :"data-code-refresh" => "#portal_template_custom_css" %>
+              "data-disable-with" => "Please wait...", 
+              "data-code-refresh" => "#portal_template_custom_css" %>
             <% 
               soft_reset_url = "javascript:void(0)"
               cached_data = @cached_properties.include?(:custom_css)
@@ -78,7 +76,7 @@
 
         <div class="tab-content">
           <div class="tab-pane active" id="layout">
-            <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put } do |f| -%>
+            <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put, :target => "blank" } do |f| -%>
               <%= hidden_field_tag 'tab', :header %>
               <%= f.error_messages %>
               <label>Header</label>  
@@ -101,18 +99,16 @@
                     "data-fullscreen-actions" => "layout-actions" %>  
               <br />
               <div class="well" id="header_btns">
-                <%= submit_tag "Preview", :name => 'preview_button', 
-                  :onclick => "FD.PortalTemplate.save(this,event)", 
-                  :class => "btn primary floatr", 
-                  :target => "_blank", 
-                  :"data-disable-with" => "Please wait...", 
-                  :"data-code-refresh" => "#portal_template_header, #portal_template_footer, #portal_template_layout" %>
+                <%= submit_tag "Preview", :name => 'preview_button',
+                  :class => "btn primary floatr",
+                  "data-disable-with" => "Please wait...", 
+                  "data-code-refresh" => "#portal_template_header, #portal_template_footer, #portal_template_layout" %>
 
-                <%= submit_tag "Draft", 
+                <%= submit_tag "Save and continue editing", 
                   :onclick => "FD.PortalTemplate.save(this,event)", 
                   :name => 'save_button',:class => "btn floatr", 
-                  :"data-disable-with" => "Please wait...", 
-                  :"data-code-refresh" => "#portal_template_header, #portal_template_footer, #portal_template_layout" %>
+                  "data-disable-with" => "Please wait...", 
+                  "data-code-refresh" => "#portal_template_header, #portal_template_footer, #portal_template_layout" %>
                     <% 
                   soft_reset_url = "javascript:void(0)"
                   cached_data = !(@cached_properties & [:header, :footer, :layout]).blank?
@@ -142,7 +138,7 @@
           </div>
         </div>
       </div>
-</div>
+</div> 
 
 <% content_for :onload_script do %>
   jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){

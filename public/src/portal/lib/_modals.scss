@@ -96,14 +96,21 @@
   }
 }
 
+@include at-breakpoint($media-mobile){
+  /* Resetting width and margin so it will be calculated during the dialog wapper */
+  .modal { 
+    width:auto !important; 
+    margin-left: 0 !important;
+  }
+}
+
 @include at-breakpoint($break-tablet){
   // Modals
   .modal {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 710px;
-    margin: -250px 0 0 -355px;
+
     &.fade.in { top: 50%; }
   }
   .modal-header{ padding: 9px 15px 0 15px; }
@@ -137,3 +144,7 @@
   }
 }
 
+
+@include at-breakpoint($break-desktop){
+  .modal { width: 710px; margin: -250px 0 0 -355px; }
+}

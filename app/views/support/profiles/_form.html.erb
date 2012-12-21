@@ -1,128 +1,100 @@
-<% form_for @profile, :url => support_profile_path, :html => { :class => "form-portal", :multipart => true } do |f| %>
+<% form_for @profile, :url => support_profile_path, 
+	:html => { :class => "form-portal", :multipart => true, :rel => "validate"} do |f| %>
 	<%= f.error_messages %>
-	<% javascript_tag do %>
-	  /* jQuery(document).ready(function(){  
-	    jQuery("#password_confirmation").rules("add", {  
-		          equalTo: "#password"
-	          });   
-	  }); */
-	<% end %>
-	<% user = @profile %>
-	 
 	<% fields_for "users", @profile do |usr| %>
-	    <%= error_messages_for :user %> 
-	    <div class="row-fluid">
-	    <fieldset class="span4">	    	
-				<% javascript_tag do %>
-					/*function changeProfilePic(){
-						jQuery('#AvatarPic').toggle();
-						jQuery('#AvatarInput').toggle();		
-					}
-					
-					deletePic = function() {
-					    jQuery("#AvatarControls").remove();
-						jQuery('#AvatarPic').remove();
-						jQuery('#AvatarInput').show();
-					}*/
+    <div class="row-fluid">
+    	<fieldset class="span4">
+			<% if(@profile.avatar) %>
+				<div class="user-pic-original" id="AvatarPic">					  
+					<%= image_tag @profile.avatar.expiring_url(:medium, 300) %>						
+				</div>
+				<span class="dropdown">
+	              	<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+	              		Change photo <b class="caret"></b>
+	              	</a>
+					<ul class="dropdown-menu">
+						<li><%= link_to_function("Choose another photo", "changeProfilePic()") %></li>
+						<li>
+							<%= link_to_remote('Remove photo', 
+									:url => { :action => "delete_avatar", :id => @profile.id },
+									:success => "deletePic()",
+									:confirm => 'Are you sure you want to delete this Profile Photo',
+									:method => 'delete' ) %>
+						</li>
+					</ul>
+	            </span>
+			<% end %>		
+			<div id="AvatarInput" class="<%= (@profile.avatar) ? 'hide' : '' %>">
+				<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
+					<div class="info-data"><%=t('user.info1')%></div>
+					<%= avatar_form.file_field :content %>				
 				<% end %>
-				
-				<% if(user.avatar) %>				
-					<div class="user-pic-original" id="AvatarPic">						  
-						<%= image_tag user.avatar.content.url(:medium) %>    
-						<span class="dropdown">
-			              	<a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">
-			              		<i class="icon-cog icon-white"></i> <b class="caret"></b>
-			              	</a>
-							<ul id="menu1" class="dropdown-menu">
-								<li><%= link_to_function("Change", "changeProfilePic()") %></li>
-								<li>
-									<%= link_to_remote('Remove profile picture', 
-										:url => { :action => "delete_avatar", :id => user.id },
-										:success => "deletePic()",
-										:confirm => 'Are you sure you want to delete this Profile Photo',
-										:method => 'delete' ) %>
-								</li>
-							</ul>
-			            </span>
-					</div>
-
-					<a href="#" class="btn">Change password</a>
-
-
-					<div id="AvatarInput" style="display:none;">
-						<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>	
-							<div class="info-data"><%=t('user.info1')%></div>				
-							<%= avatar_form.file_field :content %>				
-						<% end %>
-					</div>
-					<div id="AvatarControls">
-				    	
-					</div>				
-					<br />
-				<% else %>		
-					<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
-						<div class="info-data"><%=t('user.info1')%></div>
-						<%= avatar_form.file_field :content %>				
-					<% end %>
-				<% end %>			
+			</div>			
 		</fieldset>
-	 	<fieldset class="span8 omega">
+ 		<fieldset class="span8 omega">
+
 			<div class="control-group">
-				<%= label(:user, :name, t("user.full_name") + "*", :class => "control-label" ) %>
+				<%= f.label(:name, t("user.full_name"), :class => "control-label required" ) %>
 				<div class="controls">
-					<%= text_field(:user, :name, :class => "required", :value => user.name )  %>
+					<%= f.text_field(:name, :class => "required")  %>
 				</div>
 			</div>
+
 			<div class="control-group">
-				<%= label(:user, :job_title, t("user.title"), :class => "control-label" ) %>
+				<%= f.label(:job_title, t("user.title"), :class => "control-label" ) %>
 				<div class="controls">
-					<%= text_field(:user, :job_title, :value => user.job_title ) %>
+					<%= f.text_field(:job_title) %>
 				</div>
 			</div>
+
 			<div class="control-group">
-				<%= label(:user, :email, t("user.email"), :class => "control-label" ) %>			
+				<%= f.label(:email, t("user.email"), :class => "control-label" ) %>			
 				<div class="controls">
-					<%= text_field(:user, :email, :value => user.email , :disabled =>true) %>
-					<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role) %>			
+					<%= f.text_field(:email, :disabled => @profile.email.present?) %>
+					<%= f.hidden_field(:user_role, :value => @profile.user_role) %>
 				</div>
 			</div>
+
 			<div class="control-group">
-				<%= label(:user, :phone, t("user.phone_no"), :class => "control-label" ) %>	
+				<%= f.label(:phone, t("user.phone_no"), :class => "control-label" ) %>	
 				<div class="controls multiple-inputs">
-					<%= text_field(:user, :phone, :class => "text", :value => user.phone, :placeholder => "work") %>
-					<%= text_field(:user, :mobile, :class => "text",:value => user.mobile, :placeholder => "mobile") %>
+					<%= f.text_field(:phone, :placeholder => "work") %>
+					<%= f.text_field(:mobile, :placeholder => "mobile") %>
 				</div>
 			</div>			
 			
 			<div class="control-group">
-				<%= label(:user, :twitter_id, t("user.twitter_id"), :class => "control-label" ) %>
+				<%= f.label(:twitter_id, t("user.twitter_id"), :class => "control-label" ) %>
 				<div class="controls">
-					<%= text_field(:user, :twitter_id, :class => "text" ) %>
+					<%= f.text_field(:twitter_id) %>
 				</div>
 			</div>
+
 			<div class="control-group">
-				<%= label(:user, :customer, "Company", :class => "control-label") %>
+				<%= f.label(:customer, t("user.company"), :class => "control-label") %>
 				<div class="controls">
-					<%= text_field(:user, :customer, :value => (user.customer.nil? ? "" : user.customer.name)) %>
+					<%= f.text_field(:customer, :value => @profile.customer.presence) %>
 				</div>
 			</div>
 			
 			<% if feature?(:multi_timezone) %>
-				<div class="control-group">
-					<%= label(:user , :time_zone, t("account.time_zone"), :class => "control-label" ) %>			
-					<div class="controls">
-						<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
-					</div>
+			<div class="control-group">
+				<%= f.label(:time_zone, t("account.time_zone"), :class => "control-label" ) %>			
+				<div class="controls">
+					<%= f.time_zone_select (:time_zone, ActiveSupport::TimeZone.all, :default => @profile.time_zone) %>
 				</div>
+			</div>
 			<% end %>
+
 			<% if feature?(:multi_language) %>
-				<div class="control-group">
-					<%= label(:user, :language, t('account.language'), :class => "control-label" ) %>
-					<div class="controls">
-						<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
-					</div>
+			<div class="control-group">
+				<%= f.label(:language, t('account.language'), :class => "control-label" ) %>
+				<div class="controls">
+					<%= f.select(:language, I18n.available_locales_with_name, { :selected => @profile.language.to_sym() })%>
 				</div>
+			</div>
 			<% end %>
+
 		</fieldset>
 	</div>
 	<% end %>	

@@ -1,10 +1,10 @@
 <div class="results">
-	<% unless @total_results == 0 %>
-		<div class="list-lead">
+	<% unless @total_results.blank? %>
+		<%= link_to("See more results for \"#{@search_key}\"", 
+			"/support/search?search_key=#{@search_key}", 
+			:class => "see-more pull-right") if @total_results > 5 %>
+		<div class="lead-small">
 			<%= "Displaying #{pluralize(@total_results, "result")} for \"#{@search_key}\"" %>
-			<% if @total_results > 3 %>
-				<%= link_to("See more results for \"#{@search_key}\"", "/search?search_key=#{@search_key}") %>
-			<% end %>
 		</div>
 	<% end %>
 	<% unless @searched_articles.nil? or @searched_articles.empty? %>
@@ -13,8 +13,7 @@
 			<% @searched_articles.each do |article| %>
 				<li>
 					<%= link_to(article.excerpts.title, support_solutions_article_path(article)) %>
-					<span class="label label-small label-light"><%= article.folder.name %></span> 
-					<p><%= article.excerpts.desc_un_html  %></p>
+					<span class="label label-small label-light"><%= article.folder.name %></span>
 				</li>
 			<% end %>
 			</ul>
@@ -34,7 +33,7 @@
 		</div>
 	<% end %>
 
-	<% if @total_results == 0 %>
+	<% if @total_results.blank? %>
 		<div class="list-lead"><%= "No results found for \"#{@search_key}\"" %></div>
 	<% end %>
 </div>

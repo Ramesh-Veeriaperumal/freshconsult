@@ -28,6 +28,10 @@ class PortalDrop < BaseDrop
     @new_topic_path ||= source.new_topic_path
   end
 
+  def profile_path
+    @profile_path ||= source.profile_path
+  end
+
   def forums_home_path
     support_discussions_path
   end
@@ -36,8 +40,8 @@ class PortalDrop < BaseDrop
     @solutions_home_path ||= support_solutions_path
   end
 
-  def can_signup_feature? 
-    Account.current.features? :signup_link
+  def can_signup_feature?
+    allowed_in_portal? :signup_link
   end
   
   def tabs
@@ -45,31 +49,31 @@ class PortalDrop < BaseDrop
   end
   
   def solution_categories
-    @solution_categories ||= liquify(*@source.solution_categories.reject(&:is_default?))
+    @solution_categories ||= @source.solution_categories.reject(&:is_default?)
   end
   
   def forum_categories
-    @forum_categories ||= liquify(*@source.forum_categories)
-  end
-
-  def logo
-    @portal_logo ||= !source.logo.blank? ? source.logo.content.url(:logo) : "/images/logo.png"
+    @forum_categories ||= @source.forum_categories
   end
 
   def forums
     @forums ||= source.portal_forums
   end
 
-  def user
-    @current_user ||= User.current
+  def logo_url
+    @logo_url ||= source.logo.content.url(:logo) if source.logo.present?
   end
 
-  def google_login
-    link_to(image_tag("google.png", :alt => t(".sign_in_using_google")) + "label", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "btn") if Account.current.features? :google_signin
+  def linkback_url
+    @linkback_url ||= source.preferences[:logo_link] || support_home_path
   end
 
   def contact_info
     @contact_info ||= source.preferences[:contact_info]
+  end
+
+  def current_user
+    @current_user ||= User.current
   end
 
   def ticket_export_url
@@ -80,30 +84,30 @@ class PortalDrop < BaseDrop
     @tickets_path ||= support_tickets_path
   end
 
+  def popular_topics
+    @popular_topics ||= popular_topics_from_portal
+  end
+  
   private
     def load_tabs
-      tabs = [  [ root_path,                :home,		    true ],
+      tabs = [  [ support_home_path,        :home,		    true ],
 					      [ support_solutions_path,   :solutions,	  User.current || allowed_in_portal?(:open_solutions) ],
 				        [ support_discussions_path, :forums, 	    User.current || allowed_in_portal?(:open_forums) ],
 				        [ support_tickets_path,     :tickets,     User.current ]]
-				      	  # company_tickets_tab ]
 
 			tabs.map do |s| 
-				next unless s[2]
-	      	#tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
+				next unless s[2] 
 	      	TabDrop.new( :name => s[1].to_s, :url => s[0], :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s )
 		    end
-    end
-    
-    def company_tickets_tab
-      [ support_company_tickets_path, :company_tickets, User.current && 
-        User.current.customer && User.current.client_manager?, User.current && 
-          User.current.customer && User.current.customer.name ]
-    end
+    end    
 
     def allowed_in_portal? f
-      Account.current.features? f
+      source.account.features? f
     end
-  
-  
+
+    def popular_topics_from_portal
+      source.main_portal? ? source.account.portal_topics.popular.filter(@per_page, @page) :
+        source.forum_category ? source.forum_category.portal_topics.popular.filter(@per_page, @page) : []
+    end
+
 end

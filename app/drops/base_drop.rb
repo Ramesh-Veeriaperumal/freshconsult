@@ -12,8 +12,14 @@ class BaseDrop < Liquid::Drop
   
   def context=(current_context)
     #current_context.registers[:controller].send(:cached_references) << @source if @source && current_context.registers[:controller]
-    # @site is set for every drop except SiteDrop, or you get into an infinite loop
-    #@site   = current_context['site'].source if !is_a?(SiteDrop) && @site.nil? && current_context['site']
+    
+    # @portal is set for every drop except PortalDrop, or you get into an infinite loop
+    # @portal = current_context['current_portal'].source if !is_a?(PortalDrop) && @portal.nil? && current_context['current_portal']
+
+    # Pagination variables for when liquid is created with pagination
+    @per_page = current_context['per_page'].presence
+    @page = current_context['page'].presence
+    
     super
   end
 

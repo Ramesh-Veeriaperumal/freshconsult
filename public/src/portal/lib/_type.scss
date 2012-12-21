@@ -19,9 +19,11 @@ p {
   font-size: 20px;
   font-weight: 200;
   color: $grayDark;
-  a{ color: inherit; }
-  a:hover{ color: inherit; }
   b{ font-weight: 500; }
+}
+
+.links-inherit, .list-lead{ 
+  a, a:hover{ color: inherit; } 
 }
 
 .lead-small { font-size: 16px; }
@@ -253,3 +255,5 @@ small {
 cite {
   font-style: normal;
 }
+/* Match css in autocompelete */
+.match{ background-color:$acHighlightBg; }

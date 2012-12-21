@@ -59,8 +59,8 @@ class PortalView
     filters = if controller.respond_to?(:liquid_filters, true)
                 controller.send(:liquid_filters)
               elsif controller.respond_to?(:master_helper_module)
-                # [controller.master_helper_module]
-                PortalFilters
+                [controller.master_helper_module]
+                # PortalFilters
               else
                 [controller._helpers]
               end

@@ -19,11 +19,7 @@ class Portal::Template < ActiveRecord::Base
   ]
 
   TEMPLATE_MAPPING_FILE_BY_TOKEN = Hash[*TEMPLATE_MAPPING.map { |i| [i[0], i[1]] }.flatten]
-  
-  # Selectable preferences from main portal
-  # This is limited so that not all carry forward into the template
-  LIMIT_PREFERENCES = %w(bg_color tab_color header_color) 
-  
+
   # Set of prefrences data that will be used during template creation
   def default_preferences
     {
@@ -47,10 +43,11 @@ class Portal::Template < ActiveRecord::Base
 
   # Merge with default params for specific portal
   def get_portal_pref
-    pref = self.portal.preferences || Account.current.main_portal.preferences
-    Hash[*pref.select {|k,v| LIMIT_PREFERENCES.include?(k)}.flatten]
+    pref = self.portal.preferences || Account.main_portal.preferences
+    # Selecting only bg_color, tab_color, header_color from the portals preferences
+    Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]
   end
-
+  
   def reset_to_default
     self.pages.each(&:delete)
     self.preferences = default_preferences
@@ -62,7 +59,7 @@ class Portal::Template < ActiveRecord::Base
   end
 
   def draft!
-    MemcacheKeys.cache(draft_key,self)
+    MemcacheKeys.cache(draft_key, self)
   end
 
   def get_draft

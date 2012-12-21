@@ -1,11 +1,11 @@
 <div id="portal-simple-template-options">
-  <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put, :rel => "validate" } do |f| -%>
+  <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :target => "_blank", :method => :put, :rel => "validate" } do |f| -%>
     <%= hidden_field_tag 'tab', :preferences %>
     <h3 class="title">Background color</h3>
     <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color, :btn_primary_background, :btn_background] %>
-    <div class='row-fluid'>
+    <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
-      <div class="span3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
           <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
@@ -16,9 +16,9 @@
 
     <h3 class="title">Tab colors</h3>
     <% pref_bgs = [:tab_color, :tab_hover_color] %>
-    <div class='row-fluid'>
+    <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
-      <div class="span3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
           <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
@@ -29,9 +29,9 @@
 
     <h3 class="title">Portal fonts</h3>
     <% pref_bgs = [:baseFontFamily, :textColor, :headingsFontFamily, :headingsColor] %>
-    <div class='row-fluid'>
+    <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>    
-      <div class="span3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>
         <% if((i+1) % 2 != 0) %>          
           <select class="customSelect" name="portal_template[preferences][<%= p %>]" id="portal_template_prefereces_<%= p %>">
@@ -49,9 +49,9 @@
 
     <h3 class="title">Link color</h3>
     <% pref_bgs = [:linkColor, :linkColorHover] %>
-    <div class='row-fluid'>
+    <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
-      <div class="span3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
           <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
@@ -62,9 +62,9 @@
 
     <h3 class="title">Form elements</h3>
     <% pref_bgs = [:inputFocusRingColor] %>
-    <div class='row-fluid'>
+    <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
-      <div class="span3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
         <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
         <div class="color">
           <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
@@ -75,8 +75,10 @@
 
     <br />
     <div class="well" id="preferences_btns">
-      <%= submit_tag "Preview", :name => 'preview_button', :onclick => "FD.PortalTemplate.save(this,event)", :class => "btn primary floatr", :target => "_blank", :"data-disable-with" => "Please wait..." %>
-      <%= submit_tag "Draft", :onclick => "FD.PortalTemplate.save(this,event)", :name => 'save_button',:class => "btn floatr", :"data-disable-with" => "Please wait..." %>
+      <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", 
+        "data-disable-with" => "Please wait..." %>
+      <%= submit_tag "Save and continue editing", :onclick => "FD.PortalTemplate.save(this,event)", 
+        :name => 'save_button', :class => "btn floatr", "data-disable-with" => "Please wait..." %>
       <% 
         soft_reset_url = "javascript:void(0)"
         cached_data = @cached_properties.include?(:preferences)

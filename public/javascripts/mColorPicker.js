@@ -113,7 +113,7 @@
       "focusout": $.fn.mColorPicker.closePicker 
     });
 
-    // $('.mColorPickerTrigger').live('click', $.fn.mColorPicker.colorShow);
+    $('.mColorPickerTrigger').live('click', $.fn.mColorPicker.colorShow);
   
     $('.mColor, .mPastColor').live('mousemove', function(e) {
 
@@ -452,8 +452,8 @@
   
     $.fn.mColorPicker.closePicker();
     $.fn.mColorPicker.addToSwatch();
-  
-    $o.currentInput.trigger('colorpicked');
+    
+    $o.currentInput.trigger('colorpicked').trigger('change');
   };
 
   $.fn.mColorPicker.addToSwatch = function (color) {

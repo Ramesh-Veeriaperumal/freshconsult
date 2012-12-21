@@ -12,8 +12,7 @@ else
 end
 buttons = <<HTML
 	#{submit_tag "Preview", :name => 'preview_button', :onclick => "FD.PortalTemplate.save(this,event)", :class => "btn primary floatr", :target => "_blank", :"data-disable-with" => "Please wait...", :"data-code-refresh" => "#{@code_refresh}" }
-	#{submit_tag "Draft", :onclick => "FD.PortalTemplate.save(this)", :name => 'save_button',:class => "btn floatr", :"data-disable-with" => "Please wait...", :"data-code-refresh" => "#{@code_refresh}"}
+	#{submit_tag "Save and continue editing", :onclick => "FD.PortalTemplate.save(this)", :name => 'save_button',:class => "btn floatr", :"data-disable-with" => "Please wait...", :"data-code-refresh" => "#{@code_refresh}"}
 	#{link_to "Discard", @soft_reset_url, :class => "btn #{!@cached_data&& 'disabled'}" }
 HTML
 page.replace_html "#{@active_tab}_btns", buttons
-page << "jQuery('#portal-preview-url').attr('href', '#{@redirect_to_portal_url}').get(0).click()" unless @redirect_to_portal_url.nil?

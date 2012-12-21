@@ -80,8 +80,8 @@ class Account < ActiveRecord::Base
   
   has_one :subscription
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders,:order => "position"
-  has_many :solution_articles , :class_name =>'Solution::Article'
+  has_many :solution_categories, :class_name =>'Solution::Category',:include =>:folders,:order => "position"
+  has_many :solution_articles, :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :customers
@@ -116,12 +116,10 @@ class Account < ActiveRecord::Base
   has_many :forum_categories, :order => "position"
   
   has_one :business_calendar
-  
-  
-  has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
-  
-  
-  has_many :portal_forums, :through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position" 
+    
+  has_many :portal_forums, :through => :forum_categories, 
+    :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position" 
+    
   has_many :portal_topics, :through => :portal_forums# , :order => 'replied_at desc', :limit => 5
   
   has_many :user_forums, :through => :forum_categories, :conditions =>['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] 
@@ -130,10 +128,10 @@ class Account < ActiveRecord::Base
   has_many :topics
   has_many :posts
 
-  has_many :portal_folders , :class_name =>'Solution::Folder' , :conditions =>{:visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position" 
-
- 
-  
+  has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories  
+  has_many :public_folders, :through => :solution_categories
+  has_many :published_articles, :through => :public_folders
+   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"

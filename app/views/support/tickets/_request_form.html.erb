@@ -29,49 +29,19 @@
 
 <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
   <% javascript_tag do %>
-    var showTooltip = function(elm, data) {
-      jQuery(elm).qtip({
-          style: {
-            classes:'ui-tooltip-light ui-tooltip-rounded ui-tooltip-shadow ui-solution-suggest',
-            tip: {
-              width: 8,
-              height: 15
-            }
-          },
-          content: {
-            text: '<%= t('auto_suggest_solutions.info') %>' + data,
-          },
-          position: { 
-            type: 'absolute',
-            my: 'left top',
-            at: 'right center',
-            adjust: {
-              x: 40,
-              y: -15          }
-          },
-          show: {
-            event: 'false'
-          },
-          hide: {
-            event: false
-          }
-        });
-    };
-
     (function($){
       jQuery(document).ready(function(){  
         callbackToSolutionSearch = function(string){
           jQuery.ajax({ url: "/search/widget_solutions?search_key="+string, 
             success: function(data){
                 var data_available = jQuery(data).find("a").length;
-                if( data_available )
-                {
+                if(data_available){
                   //showTooltip(jQuery("#helpdesk_ticket_subject"), data);
                   //jQuery("#helpdesk_ticket_subject").qtip("show");
                   $("#new-ticket-search").html(data).show()
                 }
                 else{
-                  jQuery("#helpdesk_ticket_subject").qtip("hide");
+                  //jQuery("#helpdesk_ticket_subject").qtip("hide");
                 }
                 jQuery("#helpdesk_ticket_subject").removeClass("loading-right");
               }
@@ -88,7 +58,7 @@
                 //}, 200 ); 
               }
               else{
-                jQuery(this).qtip("hide");
+                //jQuery(this).qtip("hide");
                 jQuery(this).removeClass("loading-right");        
               }
           });
@@ -98,13 +68,6 @@
       }); 
     })(jQuery);
   <% end %>
-<% end %>
-
-<% javascript_tag do %>
-  jQuery(document).ready(function(){  
-
-  
-  }); 
 <% end %>
 
 

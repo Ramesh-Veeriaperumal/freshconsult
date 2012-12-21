@@ -62,7 +62,7 @@ module ApplicationHelper
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
       render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
     end     
-  end         
+  end
 
   def page_title
     portal_name = h(current_portal.portal_name) + " : "

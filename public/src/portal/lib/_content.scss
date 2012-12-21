@@ -21,9 +21,12 @@
 	}
 }
 
-.article-list, .topic-list{		
-	margin-bottom: 20px;
-	ul{ margin-bottom: 0; margin-left: 0 }
+.article-list, .topic-list, .ticket-list{	
+	ul{ 
+		margin-bottom: 0; 
+		margin-left: 0; 
+		margin-top: 10px;
+	}
 	li{
 		list-style: none;	
 		position: relative;
@@ -37,8 +40,10 @@
 		}
 	}
 }
+.article-list, .topic-list{ margin-bottom: 20px; }
 .article-list li:before{ @extend .icon-article-list; }
 .topic-list li:before{ @extend .icon-topic-list; }
+.ticket-list li:before{ @extend .icon-article-list; }
 
 .start-topic{
 	float:right;
@@ -67,64 +72,94 @@
 .list-noinfo{ text-align: center; }
 
 /* Forum and ticket details style */
-.post-title{ float: left; }
+/*.post-title{ float: left; }*/
 
-.topic-likes{ 
+/*.topic-likes{ 
 	background-color:#fff8c7; 
 	border:1px solid #ecd095;
-	border-width: 1px 0 1px 1px;
+	border-width: 1px 1px 1px 1px;
 	@include border-left-radius(3px);
-	float: left;
-	padding: 6px 6px 6px 14px;
+	padding: 6px 14px 6px 6px;
 	font-size: 12px;
-	margin-right: 20px;
-	top: 2px;
+	margin-right: 15px;
 	position: relative;
 	line-height: 12px;
 	height: 26px;
-	color: #333333;
 	@include box-shadow(0 0 7px #ecd095);
+	@include inline-block;
+	font-weight: bold;
 	.arrow{
 		position: absolute;
 		@extend .icon-like-arrow-right;
 		top:-5px;
-		right: -19px;
+		right:-19px;
+		display: none;
+	}
+	a{ color: #a1913f; }
+	a:hover{ color: darken(#a1913f, 10%); }
+}*/
+
+#vote-toolbar{
+	#topic-vote-down-button{ display: none; }
+	&:hover #topic-vote-down-button{ display: inline; }
+}
+
+/* A small colen is added in front of the 
+   up-vote button if its next to the atleast 1 user is voted label */
+#topic-vote-up-button:nth-child(2){
+	margin-left: 10px;
+	&:before{
+		content: " : ";
+		color: $textColor;
+		position: absolute;
+		margin-left: -8px;
 	}
 }
 
+/* Background for a sticky topic in the list view */
+.c-topic-sticky{ background-color: #fffff6; }
+
 .user-comment{
-	margin:20px 0;
+	margin:5px 0 20px;
 	.user-pic-thumb{
-		border: 1px solid #E6E6E6;
-		clear: right;
-		margin: -12px 6px -18px 12px;
+		clear: right; 
 		z-index: 3;
 	}
 }
 
+.user-info{
+	@include clearfix;
+	margin-bottom: 10px;
+	.user-details{ margin-left: 55px; margin-top: 2px; }
+}
+
 .p-content{
-	background-color:#fafafa;
-	padding: 10px 15px;
-	border: 1px solid #ebebeb;	
-	position: relative;	
+	background-color:$comments-background;
+	padding: $comments-padding;
+	border:1px solid $comments-border-color;	
+	@include border-radius(5px);
+	position: relative;
 	margin: 0 0 10px;
+	
 	/* To handle the paragraph tags coming in from redactor */
 	p{ margin: 0; }
+	hr{
+		margin-top: 10px;
+		margin-bottom: 10px;
+		margin-left: -$comments-padding-side;
+		margin-right: -$comments-padding-side;
+		border-top: 1px solid #efefef;
+	}
 }
 
 .comment-by-agent .p-content{
-	background-color:#fffdf8;
-	border-color:#cccccc;
+	background-color:$comments-agent-background;
+	border-color:$comments-agent-border-color;
 	@include box-shadow(rgba(0, 0, 0, 0.05) 0 3px 3px);
 }
 
-.post-actions{
-	clear: left;
-	padding: 15px 0 5px;
-}
-
 .c-list{
-	border-bottom: 1px solid #f3f3f3;	
+	border-bottom: 1px solid $row-border-color;	
 	margin-bottom: 12px;
 	margin-top: 5px;
 	margin-bottom: 1em;
@@ -133,16 +168,24 @@
 .c-row{
 	@include pie-clearfix;
 	padding:10px 0;
-	border-top:1px solid #f3f3f3;
+	border-top:1px solid $row-border-color;
   	.help-text{ font-size: 0.96em; }
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
 }
 
-.c-user-thumb{
+.c-user-thumb, .uv-user-thumb{
 	padding-left: 55px;
   	.user-pic-thumb {
 		margin-left: -53px;
   		img{ width: 35px; height: 35px; }
+  	}
+}
+
+.uv-user-thumb{
+	padding-left: 45px;
+  	.user-pic-thumb {
+		margin-left: -40px;
+  		img{ width: 30px; height: 30px; }
   	}
 }
 
@@ -184,49 +227,86 @@
 	}
 }
 
-/* Media styles for tablet and above */
+/* User voted list in topic details page */
+.user-list{
+	margin-top: -10px;
+}
+.uv-row{
+	@include pie-clearfix;
+	border-bottom: 1px solid $row-border-color;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	&:last-child{
+		border-bottom: 0;
+	}
+	.lead-small{
+		margin-top: 7px;
+		margin-bottom: 0;
+	}
+}
 
+/* Pointer that shows up near the user pic in Ticket and Topic details page */
+.user-pointer-bottom, .user-pointer-right{
+   	&:before, &:after{
+		content: "";
+		border: 8px solid transparent;		
+		line-height: 0;
+		height: 0;
+		position: absolute;			
+		z-index: 1;
+    }
+    &:after{		
+		border-width: 7px;
+		z-index: 2;
+    }
+}
+.user-pointer-bottom{	
+	&:before, &:after{
+		bottom: -12px;
+		right: 14px;
+		border-bottom-color: #ebebeb;
+	}
+	&:after{ 
+		right: 15px; 
+		border-bottom-color: #fafafa;
+	}
+}
+
+.user-pointer-right{	
+	&:before{
+		top: 14px;
+		right: -18px;
+		border-right-color: #ebebeb;
+	}
+	&:after{ 
+		top: 15px;
+		right: -19px; 
+		border-right-color: #fafafa;
+	}
+}
+
+.comment-by-agent{
+	.user-pointer-bottom{
+		&:before{ border-bottom-color:#cccccc; }
+		&:after{ border-bottom-color:#fffdf8; }
+	}
+	.user-pointer-right{
+		&:before{ border-right-color:#cccccc; }
+		&:after{ border-right-color:#fffdf8; }	
+	}
+}
+
+hr.content-divider{
+	margin-top: 30px;
+	margin-bottom: 20px;
+	border-bottom-color:#f6f6f6;
+}
+
+/* Media styles for tablet and above */
 @include at-breakpoint($break-tablet){
 	.content, .content-form, .content-light{ 
 		padding: $content-padding; 
 		margin-top: 10px; 
-	}
-	.p-content{
-	    margin-left: 65px;
-	    @include border-radius(5px);
-	}
-
-	.user-comment .user-pic-thumb{
-	   	&:before, &:after{
-			content: "";
-			border: 8px solid transparent;
-			border-right-color: #ebebeb;
-			line-height: 0;
-			height: 0;
-			position: absolute;
-			right: -18px;
-			z-index: 1;
-			top: 14px;
-	    }
-	    &:after{
-			border-right-color: #fafafa;
-			border-width: 7px;
-			right: -19px;  
-			top: 15px;
-			z-index: 2;
-	    }
-	}
-
-	.comment-by-agent .user-pic-thumb{
-		&:before{ border-right-color:#cccccc; }
-		&:after{ border-right-color:#fffdf8; }
-	}
-
-	.post-actions{ 
-	    text-align: right; 
-	    clear: none;
-	    float: right; 
-	    padding: 5px 0 0 10px;
 	}
 
 	.user-comment .user-pic-thumb{
@@ -234,23 +314,28 @@
 		margin: 0;
 	}
 
-	.c-list{ margin-left: -$content-padding-side; margin-right: -$content-padding-side; }
-	.c-row{	padding-right: 1em;	}
 	.c-user-thumb{ 
-		padding-left: 70px; 
+		padding-left: 60px; 
 		.user-pic-thumb{ padding: 2px; }
+	}
+
+	hr.content-divider{ 
+		margin-left: -$content-padding-side;
+		margin-right: -$content-padding-side; 
+	}
+
+	.topic-actions, .ticket-actions{
+		float: right;
+		margin-bottom: -50px;
+		margin-top: 15px;
 	}
 }
 
-/* Loading content */
-.loading-box{
-	background-image:url('/images/load.gif');
-	background-repeat:no-repeat;
-	background-position:center center;
-	height:100px;
+@include at-breakpoint($break-desktop){
+	#home-page-discussions .topic-list:nth-child(n+3) ul{ display: none; }
 }
 
-/* Match css in autocompelete */
-.match{
-	font-weight: bold;
+@include at-breakpoint($media-mobile){
+	.topic-actions{ margin-top: 15px; margin-bottom: 15px; }
+	.topic-actions .btn{ min-width: 30%; }
 }

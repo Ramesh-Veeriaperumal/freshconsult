@@ -1,18 +1,18 @@
-class HomeController < SupportController
+class HomeController < ApplicationController
 	
- 	before_filter { @hash_of_additional_params = { :format => "html" } }  
- 	# before_filter :set_portal_variables
+ 	before_filter { @hash_of_additional_params = { :format => "html" } }
   before_filter :set_content_scope, :set_mobile #, :set_selected_tab
-  before_filter :only => :index do |c|
-    c.send(:set_portal_page, :portal_home)
-  end
   
   def index
     # redirect_to MOBILE_URL and return if (current_user && mobile?)
-    redirect_to helpdesk_dashboard_path if (current_user && current_user.permission?(:manage_tickets))
+    if (current_user && current_user.permission?(:manage_tickets))
+      redirect_to helpdesk_dashboard_path
+    else
+      redirect_to support_home_path
+    end   
     redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
     
-    #@categories = current_portal.solution_categories.customer_categories if allowed_in_portal?(:open_solutions)
+    # @categories = current_portal.solution_categories.customer_categories if allowed_in_portal?(:open_solutions)
     if allowed_in_portal?(:open_solutions)
       @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
     end
@@ -28,7 +28,7 @@ class HomeController < SupportController
   
     def set_content_scope
       @content_scope = 'portal_'
-      @content_scope = 'user_'  if permission?(:post_in_forums) 
+      @content_scope = 'user_' if permission?(:post_in_forums) 
     end
   
     def recent_topics
@@ -36,10 +36,6 @@ class HomeController < SupportController
         (current_portal.forum_category ? 
             current_portal.forum_category.topics.visible(current_user).newest(5) : [])
     end
-    
-    # def set_portal_variables
-    #   @portal_template = current_portal.template
-    # end
 
   private
     # def set_selected_tab

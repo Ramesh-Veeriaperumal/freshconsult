@@ -55,7 +55,9 @@
 
 	<div class="hide" id="vote-feedback-container">
 		<div class="lead">{% translate feedback.down_vote_form_title %}</div>
-		<div id="vote-feedback-form"></div>
+		<div id="vote-feedback-form">
+			<div class="loading-box"></div>
+		</div>
 	</div>	
 </section>
 

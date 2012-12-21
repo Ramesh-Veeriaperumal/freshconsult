@@ -7,7 +7,7 @@ class UserDrop < BaseDrop
 	end
 
 	def profile_url
-		source.avatar.nil? ? "/images/fillers/profile_blank_thumb.gif" : source.avatar.content.url(:thumb)
+		source.avatar.nil? ? "/images/fillers/profile_blank_thumb.gif" : @source.avatar.expiring_url(:thumb, 300)
 	end
 
 	def id

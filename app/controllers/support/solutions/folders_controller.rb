@@ -11,6 +11,6 @@ class Support::Solutions::FoldersController < SupportController
 		end
 
 		def check_folder_permission
-	    return redirect_to support_solutions_path if !@folder.nil? and  !@folder.visible?(current_user)
-	  end
+	    	return redirect_to support_solutions_path if !@folder.nil? and  !@folder.visible?(current_user)
+	  	end
 end

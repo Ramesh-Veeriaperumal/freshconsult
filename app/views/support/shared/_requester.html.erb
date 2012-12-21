@@ -3,12 +3,13 @@
 <div class="controls">
 	<div class="clearfix">
 		<%= text_field object_name, :email, 
-				:value => @ticket.email, :class => "span12 email required", 
+				:value => @ticket.email, :class => "span12 email required",
+				"data-check-email-path" => (current_user ? "" : check_email_support_tickets_path),
 				:placeholder => "Email", "data-remote" => "true", "data-remote-triggers" => "focusout" %>
 			
 		<div id="name_field" class="hide">
 			<input class="text span12" placeholder="Enter your full name" 
-				name="helpdesk_ticket[name]" size="30" type="text" />
+				name="helpdesk_ticket[name]" type="text" disabled="disabled" />
 		</div>
 
 		<% if _cc_condition %>		
@@ -26,50 +27,5 @@
 		    	<input type="text" id="cc_emails" />
 		    <% end %>
 		</div>
-		<% javascript_tag do -%>
-			jQuery(document).ready(function(){
-				_opts = {}
-				_opts['tokenSeparators'] = [",", " "]
-
-				<% unless field.company_cc_in_portal? %>
-					_opts['formatNoMatches'] = function () { return "Add multiple cc emails seperated by \",\""; } 
-					_opts['createSearchChoice'] = function(term, data) {
-						if(jQuery(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) { 
-							if(validEmail(term))
-								return {id:term, text:term}; 
-						} 
-					}
-					_opts['multiple'] = true
-	                _opts['data'] = []
-	            <% end %>
-
-		        jQuery("#cc_emails").select2(_opts)
-			})
-		<%- end %>
-	<% end %>
-
-	<% unless current_user %>
-	  	<% javascript_tag do %>
-	    jQuery("#helpdesk_ticket_email").focusout(function(){
-			var ticket_email = jQuery("#helpdesk_ticket_email").val();
-			var valid_email = /^<%= email_regex %>$/;
-
-			if(valid_email.test(ticket_email)) {  
-				jQuery("#helpdesk_ticket_email").addClass("loading-right");
-				jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+ticket_email,
-				  	success: function(data){
-					    jQuery("#helpdesk_ticket_email").removeClass("loading-right");
-
-					    if(!data.user_exists)
-					    	jQuery("#name_field").slideDown();
-					    else
-					    	jQuery("#name_field").slideUp();
-					    	
-					}
-				});
-			} 
-		});
-	  <% end %>
 	<% end %>
 </div>
-

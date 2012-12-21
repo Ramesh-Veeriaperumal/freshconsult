@@ -1,5 +1,5 @@
 class Support::Discussions::TopicsController < SupportController
-  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor]
+  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, :users_voted]
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
   end
@@ -34,9 +34,7 @@ class Support::Discussions::TopicsController < SupportController
     end
   end
   
-  def show    
-    set_portal_page :topic_view
-    
+  def show
     respond_to do |format|
       format.html do
         # see notes in application.rb on how this works
@@ -60,6 +58,7 @@ class Support::Discussions::TopicsController < SupportController
         render :action => 'show', :layout => false
       end
     end
+    set_portal_page :topic_view
   end
 
   def new
@@ -175,7 +174,7 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def users_voted
-      render :partial => "forum_shared/topic_voted_users", :object => @topic
+    render :partial => "users_voted", :object => @topic
   end
 
   def create_attachments

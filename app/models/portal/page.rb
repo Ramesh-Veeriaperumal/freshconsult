@@ -13,23 +13,23 @@ class Portal::Page < ActiveRecord::Base
 	# so that it can be uniq even if the obj gets reorganized at a later period
 	PAGE_TYPES = [
 		# General pages
-		[:portal_home,        	1,  "home/index.portal", "support_solutions_path"],    
-		[:user_signup,        	2,  "support/signups/show.portal", "new_support_registration_path"],
-		[:user_login,         	3,  "support/new.portal", "support_login_path"],
-		[:profile_edit,       	4,  "support/profiles/edit.portal", "edit_profile_path"],
-		[:search,    		  	5,  "support/search/index", "support_solutions_path"],
+		[:portal_home,        	1,  "support/home/show.portal", "support_home_path"],    
+		[:user_signup,        	2,  "support/signups/show.portal", "support_signup_path"],
+		[:user_login,         	3,  "support/login/new.portal", "support_login_path"],
+		[:profile_edit,       	4,  "support/profiles/edit.portal", "edit_support_profile_path"],
+		[:search,    		  	5,  "support/search/index.portal", "support_search_index_path"],
 
 		# Solution pages
 		[:solution_home,      	6,   "support/solutions/index.portal", "support_solutions_path"],
 		[:article_list,       	7,   "support/solutions/folders/show.portal", 
-			"support_solutions_folder_path", "portal_folders"],
+			"support_solutions_folder_path", "public_folders"],
 		[:article_view,       	8,   "support/solutions/articles/show.portal", 
-			"support_solutions_article_path", "solution_articles"],
+			"support_solutions_article_path", "published_articles"],
 
 		# Discussion or Forum pages
 		[:discussions_home,   	9,  "support/discussions/index.portal", "support_discussions_path"],
 		[:topic_list,         	10,  "support/discussions/forums/show.portal", 
-			"support_discussions_forum_path", "forum_categories"],
+			"support_discussions_forum_path", "portal_forums"],
 		[:topic_view,         	11,  "support/discussions/topics/show.portal", 
 			"support_discussions_topic_path", "portal_topics"],
 		[:new_topic,          	12,  "support/discussions/topics/new.portal", 
@@ -61,10 +61,6 @@ class Portal::Page < ActiveRecord::Base
 	PAGE_REDIRECT_ACTION_BY_TOKEN 		= Hash[*PAGE_TYPES.map { |i| [i[0], i[3]] }.flatten]
 	PAGE_MODEL_ACTION_BY_TOKEN 		= Hash[*PAGE_TYPES.map { |i| [i[0], i[4]] }.flatten]
   
-	def name
-		I18n.t("portal_pages.pages.#{self.token}")
-	end
-
 	def token
 		PAGE_TYPE_TOKEN_BY_KEY[self.page_type]
 	end

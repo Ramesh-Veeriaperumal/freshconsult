@@ -165,6 +165,9 @@ en:
     overview: Overview
     recent: Recent
     popular: Popular
+    planned: Planned
+    implemented: Implemented
+    nottaken: Not Taken
   payment_info: Payment information
   support:
     shared:
@@ -194,14 +197,15 @@ en:
           unhappy_info: We will ensure that we will take extra care the next time around.
           additional_info: Additionally, you could also share your experience working with us.
     login:      
-      email: Email
-      password: Password
-      remember: Remember me on this computer
-      login: Login
-      forgot: I forgot my password?
-      sign_in_using: Sign In
-      sign_in_using_google: Sign in using your Google account
-      help: Help
+      form:      
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: forgot your password?
+        sign_in_using: Sign In
+        sign_in_using_google: Sign in using your Google account
+        help: Help
   gamification:
     levels:
       beginner: Beginner
@@ -275,7 +279,7 @@ en:
       topic_view: "Topic view"
       new_topic: "New topic"
       submit_ticket: "New ticket"
-      ticket_list: "User specific tickets"
+      ticket_list: "User tickets"
       ticket_view: "Ticket details"
   admin:
     portal_settings:
@@ -1462,12 +1466,15 @@ en:
       howto:
         one: "has this question"
         other: "have this question"
-      ideas_button: "I like this idea"
-      problem_button: "I have this problem"
-      howto_button: "I have this question"
-      ideas_unlike_button: "Unlike"
-      problem_unlike_button: "I don't have this problem"
-      howto_unlike_button: "I don't have this question"
+      ideas_button: "Do you like this idea?"
+      problem_button: "Do you have this problem?"
+      howto_button: "Do you have this question as well?"
+      ideas_unlike_button: "unlike!"
+      problem_unlike_button: "I don't have this problem!"
+      howto_unlike_button: "I don't have this question!"
+      ideas_users_voted_title: People who like this idea
+      problem_users_voted_title: People who have this problem
+      howto_users_voted_title: People who have this question
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -1570,6 +1577,7 @@ en:
     login: "Login"
     guest: "Guest"
     signout: "Sign out"
+    edit_profile: "Edit profile"
     assumed_text: "You are viewing as"
     help_center: "Help center"
     new_support_ticket: "New support ticket"

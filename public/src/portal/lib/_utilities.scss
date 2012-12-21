@@ -36,8 +36,24 @@
 }
 
 .hide-in-mobile{ 
-  display: none; 
+  display: none;
 }
+
+/* Loading content */
+.loading-box, .loading{
+  background-image:url('/images/load.gif');
+  background-repeat:no-repeat;
+}
+
+.loading-box{  
+  background-position:center center;
+  height:100px;
+}
+
+input[type="text"].loading{
+  background-position:right 3px;
+}
+
 
 @include at-breakpoint($break-tablet){
   // Rounded options only for tablet and desktop
@@ -52,6 +68,7 @@
   .align-right-tablet{ text-align:right; }
   .align-left-tablet{ text-align:left; }
   .hide-in-mobile{ display: block; }
+  .show-in-mobile{ display: none; }
 }
 
 // Ellipsis

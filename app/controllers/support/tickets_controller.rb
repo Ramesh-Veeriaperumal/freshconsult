@@ -10,16 +10,15 @@ class Support::TicketsController < SupportController
     c.check_portal_scope :anonymous_tickets
   end
   before_filter :check_user_permission, :only => [:show]
-  before_filter :require_user_login, :only => [:index, :filter, :close_ticket, :update]
-  before_filter :load_item, :only =>[:show, :update]
+  before_filter :require_user_login, :only => [:show, :index, :filter, :close, :update, :add_people]
+  before_filter :load_item, :only =>[:show, :update, :close, :add_people]
 
-  before_filter :set_mobile, :only => [:filter, :show, :update, :close_ticket]
+  before_filter :set_mobile, :only => [:filter, :show, :update, :close]
   before_filter :set_date_filter, :only => [:export_csv]  
 
   # uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   def show
-    @ticket = @item
     set_portal_page :ticket_view
   end
   
@@ -91,49 +90,22 @@ class Support::TicketsController < SupportController
     export_data items, csv_hash, true
   end
 
-  def close_ticket
-    @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
-     status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
-     logger.debug "close the ticket...with status id  #{status_id}"
-     res = Hash.new
-     mob_json = {}
-     if @item.update_attribute(:status , status_id)
-       # res["success"] = true
-       #        res["status"] = 'Closed'
-       #        res["value"]  = status_id
-       #        res["message"] = "Successfully updated"
-       #        render :json => ActiveSupport::JSON.encode(res)
-       flash[:notice] = I18n.t('ticket_close_success')
-       mob_json[:success] = true
-     else
-       # res["success"] = false
-       # res["message"] = "closing the ticket failed"
-       # render :json => ActiveSupport::JSON.encode(res)      
-       flash[:notice] = I18n.t('ticket_close_failure')
-       mob_json[:failure] = true
-     end
-     respond_to do |format|
-      format.html{
-        redirect_to :back
-      }
-      format.mobile {
-        mob_json[:item] = @item;
-        render :json => mob_json.to_json
-      }
-     end
+  def close
+    status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
+    if @item.update_attribute(:status , status_id)
+     flash[:notice] = I18n.t('ticket_close_success')
+    else
+     flash[:notice] = I18n.t('ticket_close_failure')
+    end
+    redirect_to :back
   end
 
-  def add_cc
-      @ticket = Helpdesk::Ticket.find_by_id(params[:id])      
-      cc_params = params[:ticket][:cc_email][:cc_emails].split(/,/)
-      cc_emails_array = @ticket.cc_email[:cc_emails]
-      cc_emails_array = Array.new if cc_emails_array.nil?
-      cc_emails_array = cc_emails_array | cc_params  
-      cc_emails_array = cc_emails_array.delete_if {|x|  !valid_email?(x)}
-      @ticket.cc_email[:cc_emails] = cc_emails_array  
-      @ticket.save
-      flash[:notice] = ['"', cc_params.join(","),'" has been successfully added to CC.'].join()
-      redirect_to support_ticket_path(@ticket)
+  def add_people
+    cc_params = params[:helpdesk_ticket][:cc_email][:cc_emails].split(/,/)
+    @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
+    @ticket.save
+    flash[:notice] = "Email(s) successfully added to CC."
+    redirect_to support_ticket_path(@ticket)
   end  
 
   protected 
@@ -143,7 +115,7 @@ class Support::TicketsController < SupportController
     end
 
     def load_item
-      @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
+      @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
       @item || raise(ActiveRecord::RecordNotFound)      
     end
 
@@ -168,6 +140,7 @@ class Support::TicketsController < SupportController
       @tickets ||= []
     end
 
+    # Used for scoping of filters
     def ticket_scope
       if current_user.client_manager?
         if @requested_by.to_i == 0

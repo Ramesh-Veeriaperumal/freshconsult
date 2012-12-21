@@ -7,13 +7,13 @@
 html {  height:100%; overflow-y:scroll; }
 
 @include at-breakpoint($break-tablet){
-  // Generic Grid classes
-  .row-fluid{ @include pie-clearfix; }
-  @for $i from 1 through 12 {
-  	.span#{$i}{ @include span-columns($i); }	
-  	.row-last-omega .span#{$i}:last-child{ @include omega; }
-  }
-  .omega{ @include omega; }
+	// Generic Grid classes
+	.srow-fluid{ @include pie-clearfix; }
+
+	@for $i from 1 through 12 {
+	  	.sgrid#{$i}{ @include span-columns($i); }
+	}
+  	.omega{ @include omega; }
 }
 
 .wrapper{

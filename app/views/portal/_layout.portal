@@ -1,7 +1,10 @@
 <div class="page">
 	{{ header }}
+
+	<!-- Message that shows  -->
+	{{ page_message }}
 	
-	{% if current_tab and current_tab != "tickets" and current_tab != "company_tickets" %}
+	{% if current_tab and current_tab != "tickets" %}
 		<section class="help-center rounded-6">	
 			<div class="hc-search">
 				<div class="hc-search-c">
@@ -25,11 +28,8 @@
 		</section>
 	{% endif %}
 
-	{{ show_flash }}
-
 	<div class="c-wrapper">		
 		{{ content_for_layout }}
-		{{ content_for_sidebar }}
 	</div>
 
 	{{ footer }}

@@ -5,7 +5,6 @@ class Support::ProfilesController < SupportController
 
   def edit
     set_portal_page :profile_edit
-   	@user_edit_form = render_to_string :partial => "form"
   end
 
   def update

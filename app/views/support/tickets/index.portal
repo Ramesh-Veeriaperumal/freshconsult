@@ -1,6 +1,7 @@
 <section class="content min-height-on-desktop rounded-6 ticket-page">
   <div class="ticket-toolbar pull-right">
-    <a href="#export-modal" data-toggle="modal">
+    <a href="{{ portal.ticket_export_url }}" data-target="#export-modal" data-submit-label="Export to CSV"
+      rel="freshdialog" title="Export ticket data to CSV">
       Export tickets
     </a>
   </div>
@@ -9,40 +10,4 @@
   </div>
   
   {% snippet ticket_list %}
-
-  {% comment %}
-  {% paginate tickets by 10 %}
-  <div id="ticket-list" class="c-list">
-    {% for ticket in paginate.collection %}
-      <div class="c-row c-ticket-row">
-        <div class="status-source sources-detailed-{{ ticket.source_name | downcase }}"></div>
-        <span class="label-status label label-small">{{ ticket.status }}</span>
-        <div class="ticket-brief">
-          <div class="ellipsis">
-            <a href="{{ ticket.portal_url }}" class="c-link">
-              {{ ticket.subject }} #{{ ticket.id }}
-            </a>
-          </div>
-          <div class="help-text">{{ ticket | default_info }}</div>
-        </div>
-      </div>
-    {% endfor %}
-    {{ paginate | default_pagination }}
-  </div>
-  {% endpaginate %}
-  {% endcomment %}
 </section>
-
-<div id="export-modal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 class="ellipsis" title="Export ticket data to CSV">Export ticket data to CSV</h3>
-  </div>
-  <div class="modal-body">
-    <div class="loading-box"></div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary" data-loading-text="Sending request..." id="export-to-csv">Export to CSV</button>
-  </div>
-</div>

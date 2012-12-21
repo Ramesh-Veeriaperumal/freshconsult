@@ -1,154 +1,139 @@
 // !PATTERN
-"use strict"
+// OnDemand dialog wrapper for Bootstrap modal 
+// This will have the default markup example as the wrapper-template
 
-var FRESHDIALOG = {}
-FRESHDIALOG.nextid = 0;
-FRESHDIALOG.template = '<div class="modal fade freshdialog">' + 
-							'<div class="modal-header">' +
-								'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-								'<h3></h3>'+
-							'</div>' + 
-							'<div class="modal-body loading-center"></div>' +
-						'</div>';
-FRESHDIALOG.id_keyword = "ui-freshdialog-";
-FRESHDIALOG.defaults = {
-	width: 500,
-	title: '',
-	classes: '',
-	keyboard: true,
-	backdrop: true,
+!function( $ ) {
 
-	//The below options are for event callbacks. 
-	show: false, 
-	shown: false, 
-	hide: false, 
-	hidden: false 
-}
-FRESHDIALOG.options_to_fetch = ['width', 'title','classes','remote','keyboard','backdrop'];
+	"use strict"
 
-(function($){
-	var invokeFreshDialog = function(options) {
-		console.log(options);
-		//Closing the active modal:
-		if ($('.modal.freshdialog.in').length > 0) {
-			$('.modal.freshdialog.in').each(function() {
-				console.log(this);
-				$('#' + this.id).modal('hide');
-			});
-		}
-		options = $.extend(options,FRESHDIALOG.defaults);
-		console.log(options);
-		console.log('element is ');
-		console.log(options['element']);
-		var invoked_from_DOM = typeof(options['element']) != 'undefined' && options['element'] != null ;
-		console.log(invoked_from_DOM);
-		if (invoked_from_DOM) {
-			element = $(options['element']);
-			if (element.data('dialog-loaded')) {
-				console.log('already loaded');
-				modal = $('#' + element.data('dialog-id'));
-				modal.modal('show');
+	/* DIALOG PUBLIC CLASS DEFINITION
+	* ============================== */
 
-				return modal.attr('id');
-			}
+	var Freshdialog = function (element, options) {
+		this.$element = $(element)
 
-			options = $.extend(options, element.data());
-		} else if (typeof(options['id']) != 'undefined') {
-			//We will return the Modal's id by default, so it can be invoked again using that.
-			modal = $('#' + options['id']);
-			modal.modal('show');
-			return options['id'];
+		this.options = $.extend({}, $.fn.freshdialog.defaults, options, this.$element.data())		
+
+		// Removing the hash in-front of the target
+		this.$dialogid = this.options.targetId.substring(1)
+
+		// Getting static content id and dom if it is present in the document
+		this.$content = $(/#/.test(element.href) && this.options.targetId)
+
+		// Building the base wrapper for the modal dialog
+		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
+									.attr('id', this.$dialogid)
+									.addClass(this.options.classes) // Adding classes if send via options
+									.css({ 
+											"width": this.options.width
+										,	"marginLeft": -(parseInt(this.options.width)/2)
+									})
+									.appendTo('body') // Appending to the end of the body														
+        
+        if(this.options.templateHeader != ""){
+        	// Title for the header        
+        	this.dialogTitle = element.getAttribute('title') || this.options.title
+
+	        // Setting modal dialogs header and its title
+	    	this.$dynamicTarget
+	    			.append(this.options.templateHeader)
+					.find(".modal-title")
+					.attr("title", this.dialogTitle)
+					.html(this.dialogTitle)
 		}
 
+        // Setting up content body 
+        this.$body = $(this.options.templateBody)
+        // Using static content body if its present in the dom
+		if(this.$content.get(0)){
+			this.$body
+				.html(this.$content.attr("id", "").show())
+				.attr("id", this.$dialogid + "-content")
+		}
+		this.$dynamicTarget.append(this.$body)
 
-		var element;
-		if (invoked_from_DOM){
-			
-			// for (var i=0; i<FRESHDIALOG.options_to_fetch.length; i++) {
+		// Building the footer content
+		if(this.options.templateFooter != ""){		
+			this.$closeBtn = $('<a href="#" data-dismiss="modal" class="btn">' +
+								this.options.closeLabel + '</a>')
+			this.$submitBtn = $('<a href="#" data-submit="modal" class="btn btn-primary">' +
+								this.options.submitLabel + '</a>')
 
-			// 	if (typeof(element.data(FRESHDIALOG.options_to_fetch[i])) != 'undefined') {
-			// 		options[FRESHDIALOG.options_to_fetch[i]] = element.data(FRESHDIALOG.options_to_fetch[i]);	
-			// 	}
-			// }
-			// //Special Handling for Title
-			options['title'] = options['title'] || element.attr('title');
-			console.log(options);
+			this.$footer = $(this.options.templateFooter)
+							.append(this.$closeBtn).append(this.$submitBtn)
+							.appendTo(this.$dynamicTarget)
 		}
 
-		var modal = $(FRESHDIALOG.template);
-		modal.attr('id', FRESHDIALOG.id_keyword + '' + ++FRESHDIALOG.nextid);
-		console.log('id is now: ' + modal.attr('id'));
-		modal.find('.modal-header h3').text(options['title']);
-		var modal_options = {
-			backdrop: options['backdrop'],
-			keyboard: options['keyboard'],
-			show	: false
-		}
-
-		if (invoked_from_DOM) {
-			if (element.data('target') === undefined) {
-				var href = element.data('url') || element.attr('href');
-				modal.find('.modal-body').load(href,{}, function(responseText, textStatus, XMLHttpRequest) {
-													modal.find('.modal-body').removeClass("loading-center");//.css({"height": "auto"});
-												});
-				
-			} else {
-				var target_element = $(element.data('target'));
-				target_element.show().detach().appendTo(modal.find('.modal-body'));
-				modal.find('.modal-body').removeClass("loading-center");
-			}
-
-			element.data('dialog-loaded', true);
-			element.data('dialog-id',modal.attr('id'));
-		} else {
-			if (options['content'])
-			var content = $(options['content']);
-			content.detach().removeClass('hide').show();
-			modal.find('.modal-body').html(content).removeClass('loading-center');
-
-		}
-		modal.addClass(options['classes']);
-		modal.css({width: options['width'] + 30});
-
-		//Removing the modal-backdrops
-		// $('.modal-backdrop').remove();
-
-		$(modal).modal(modal_options);
-		modal.modal('show');
-		$('body').animate({scrollTop:0},300);
-
-		modal.find('[rel=close-modal]').on('click', function(ev) {
-			ev.preventDefault();
-			modal.modal('hide');
-		});
-
-		return modal.attr('id');
+		// Delegating the click for a submit button
+ 		this.$dynamicTarget
+ 			.delegate('[data-submit="modal"]', 'click.submit.modal', $.proxy(this.formSubmit, this))
 	}
 
-	$.fn.freshdialog = function(opts) {
-		console.log('from $.fn.freshdialog');
-		opts['content'] = this;
-		opts['element'] = null;
-		return invokeFreshDialog(opts);
-	}
-	$.freshdialog = function(opts) {
-		console.log('from $.freshdialog');
-		console.log(opts);
-		if (typeof(opts['text']) != 'undefined') {
-			opts['content'] = '<div>' + opts['text'] + '</div>';
+	Freshdialog.prototype = {
+		constructor: Freshdialog
+		// To submit the first form inside the modal dialog
+	,	formSubmit: function(e){
+			e && e.preventDefault()
+
+			var form = this.$dynamicTarget.find('form:first')
+
+			if(form.get(0)) form.submit()
 		}
-		opts['element'] = null;
-		console.log('passing to invokeFreshDialog');
-		return invokeFreshDialog(opts);
 	}
 
+	/* DIALOG PLUGIN DEFINITION
+	* ======================= */
 
-	$(document).ready(function() {
-		$('body').on('click','[data-activate=dialog]',function(ev) { 
-			ev.preventDefault();
-			invokeFreshDialog({element: this});
-		});
-	});
+	$.fn.freshdialog = function (option) {
+		return this.each(function () {			
+			var $this = $(this)
+			, data = $this.data('freshdialog')
+			, options = typeof option == 'object' && option
 
+			if (!data) $this.data('freshdialog', (data = new Freshdialog(this, options)))
 
-})( jQuery );
+			if (typeof option == 'string') data[option]()
+		})
+	}
+
+	$.fn.freshdialog.defaults = {
+	  	width: 		"710px",
+		title: 		'',
+		classes: 	'',
+		templateHeader: '<div class="modal-header">' +
+							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+							'<h3 class="ellipsis modal-title"></h3>' +
+						'</div>',
+		templateBody:	'<div class="modal-body"><div class="loading-box"></div></div>',
+        templateFooter: '<div class="modal-footer"></div>',
+        submitLabel: 	"Submit",
+        closeLabel: 	"Close"
+	}
+
+	$.fn.freshdialog.Constructor = Freshdialog
+
+	$(document).on('click.freshdialog.data-api', '[rel="freshdialog"]', function (e) {
+	    e.preventDefault()
+
+	    var $this = $(this)
+	    ,  	href = $this.attr('href')
+
+	    // creating the dialog through the api
+	    if(!$this.data('freshdialog')){
+	    	$(this).data("targetId", ($this.attr('data-target') || 
+	    		(href && href.replace(/.*(?=#[^\s]+$)/, ''))))
+	    	$this.freshdialog($this.data())
+	    }
+
+	    var $target = $($(this).data("targetId"))
+	    , 	option = $target.data('modal') ? 'toggle' : $.extend({ remote:!/#/.test(href) && href }, $target.data(), $this.data())
+
+	    $target
+			.modal(option)
+			.one('hide', function () {
+				$this.focus()
+			})
+
+	  })
+
+}(window.jQuery);

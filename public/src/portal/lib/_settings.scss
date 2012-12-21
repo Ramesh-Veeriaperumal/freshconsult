@@ -91,6 +91,10 @@ $helpTextColor: 		  #999 !default;
 // -------------------------
 $hrBorder:                $grayLighter !default;
 
+// Autocompelete
+// -------------------------
+$acHighlightBg: 		  #ffffaa !default;
+
 // Forms
 // -------------------------
 $inputBackground:               $white !default;
@@ -135,7 +139,7 @@ $infoBorder:              darken(adjust-hue($infoBackground, -10), 7%) !default;
 $btn_background: 					$white !default;
 $btnBackground:                     $btn_background;
 $btnBackgroundHighlight:            darken($btnBackground, 10%);
-$btnBorder:                         #c4c0c0;
+$btnBorder:                         darken($btnBackground, 15%);
 $btnTextColor:						if(lightness($btnBackground) > 50, $grayDark, white);
 $btnShadowColor: 					if(lightness($btnBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
 
@@ -188,3 +192,14 @@ $header-padding: 0.9em 1.6em;
 $content-border: 1px solid $grayLighter;
 
 $page-lead-padding: 1em 2.2em;
+$row-border-color: #f3f3f3;
+
+// TOPIC AND TICKET COMMENTS RELATED STYLES
+// --------------------------------------------------
+$comments-padding-side: 1em !default;
+$comments-padding: 0.8em $comments-padding-side !default;
+$comments-border-color: #ebebeb !default;
+$comments-background: #fafafa !default;
+
+$comments-agent-background: #fffdf8 !default;
+$comments-agent-border-color: #cccccc !default;

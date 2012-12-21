@@ -1,0 +1,11 @@
+<!-- {% unless ticket.closed? %}
+			<a href="{{ ticket.close_ticket_path }}" 
+				data-method="post" data-remote="true" class="btn btn-small mobile-span3"
+				id="close-ticket-button" data-response-type="script">
+				Mark ticket as closed
+			</a>
+		{% endunless %} -->
+
+<% unless @ticket.closed? %>
+	<%= link_to "Mark ticket as closed", close_support_ticket_path(@ticket.display_id), :method => :post, :class =>"btn btn-small" %>
+<% end %>		

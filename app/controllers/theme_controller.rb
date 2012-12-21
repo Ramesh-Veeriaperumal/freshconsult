@@ -1,8 +1,7 @@
 class ThemeController < SupportController
 
 	caches_page :index
-	skip_before_filter :set_liquid_variables
-	before_filter :set_theme_colors, :set_custom_scss
+	before_filter :theme_colors, :merged_scss
 
 	# Precautionary settings override
 	ALLOWED_THEME_OPTIONS = %w( bg_color header_color help_center_color footer_color 
@@ -25,30 +24,27 @@ class ThemeController < SupportController
 	end
 
 	private
-		def preview?
-      !session[:preview_button].blank? && !current_user.blank? && current_user.agent?
-    end
 
-    def get_preferences
-    	preferences = @portal.template.preferences
-    	preferences = @portal.template.get_draft.preferences if  preview? && @portal.template.get_draft
-    	preferences || []
-    end
+    	def theme_colors
+	    	@theme_colors = color_preferences.map{ |k, p| (ALLOWED_THEME_OPTIONS.include? k.to_s) ? "$#{k}:#{p};" : "" }.join("")
+	    end
 
-    def get_custom_scss
-    	return "" unless feature?(:css_customization)
-    	custom_css = @portal.template.custom_css.to_s
-			custom_css = @portal.template.get_draft.custom_css.to_s if  preview? && @portal.template.get_draft
+	    def color_preferences
+	    	preferences = current_portal.template.preferences
+	    	preferences = current_portal.template.get_draft.preferences if preview? && current_portal.template.get_draft
+	    	preferences || []
+	    end
+
+	    def merged_scss	
+	    	@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
+	    	@default_custom_css = "#{@default_custom_css}\r\n #{custom_scss}"
+	    end	    
+
+	    def custom_scss
+	    	return "" unless feature?(:css_customization)
+	    	custom_css = current_portal.template.custom_css.to_s
+			custom_css = current_portal.template.get_draft.custom_css.to_s if preview? && current_portal.template.get_draft
 			custom_css || ""
-    end
-
-    def set_theme_colors
-    	@theme_colors = get_preferences.map{ |k, p| (ALLOWED_THEME_OPTIONS.include? k.to_s) ? "$#{k}:#{p};" : "" }.join("")
-    end
-
-    def set_custom_scss	
-    	@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
-    	@default_custom_css = "#{@default_custom_css}\r\n #{get_custom_scss}"
-    end
+	    end
 
 end

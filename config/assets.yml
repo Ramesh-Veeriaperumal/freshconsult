@@ -183,8 +183,10 @@ javascripts:
     # - public/javascripts/frameworks/plugins/jquery.qtip.js
     # - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/portal/bootstrap.js
+    - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/portal/select2.js
     - public/javascripts/portal/portal.js
+    - public/javascripts/portal/portal-app-actions.js
 
   getting_started:
     - public/javascripts/getting_started.js

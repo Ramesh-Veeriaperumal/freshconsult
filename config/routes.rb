@@ -26,7 +26,7 @@
   
   map.resources :groups
   
-  map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
+  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
   
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
@@ -312,54 +312,76 @@
     solution.resources :articles, :only => :show         
   end
 
-  #!PORTALCSS To be removed afterwords development is over - by venom
-  map.liquid_list '/liquid_list', :controller => 'home', :action => 'liquid_list' 
-
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 
 
-  #!PORTALCSS A bit dirty way for login url... to be changed later - by venom
-  map.support_login '/support/login', :controller => 'support', :action => 'new'
-  map.support_theme '/support/theme.:format', :controller => 'support', :action => 'theme'
+  # Theme for the support portal
   map.connect "/theme.:format", :controller => 'theme'
 
-  # Support Portal routes #
+  # Support Portal routes
   map.namespace :support do |support|
-    support.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-
-    support.resources :tickets, :collection => { :check_email => :get, :configure_export => :get, :filter => :get } do |ticket|
-      ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
-    end
+    # All portal tickets are now served from this controller
     
-    support.ticket_add_cc "/support/ticket/:id/add_cc", :controller => 'tickets', :action => 'add_cc'
-    support.resources :company_tickets
+    # Portal home
+    support.home 'home', :controller => "home", :action => "show"
+    
+    # Login for user in the portal
+    support.login 'login', :controller => "login", :action => "new"    
 
+    # Signup for a new user in the portal
     support.resource :signup, :only => [:show, :create]
 
+    # Signed in user profile edit and update routes
     support.resource :profile, :only => [:edit, :update]
+
+    # Search for the portal, can search Articles, Topics and Tickets
     support.resources :search, :only => :index, :member => { :suggest => :get }
 
+    # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show]
     support.namespace :discussions do |discussion|
-      discussion.resources :forums, :only => [:show]
-      discussion.resources :topics, :except => [:index], :member => { :like => :put, :unlike => :put, :toggle_monitor => :put } do |topic|
-        topic.resources :posts, :only => [:create, :edit, :update, :toggle_monitor], :member => { :toggle_answer => :put }
+      discussion.resources :forums, :only => :show
+      discussion.resources :topics, :except => :index, :member => { :like => :put, 
+          :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
+        topic.resources :posts, :only => [:create, :edit, :update, :toggle_monitor], 
+          :member => { :toggle_answer => :put }
       end
     end
 
+    # Solutions for the portal
     support.resources :solutions, :only => [:index, :show]
     support.namespace :solutions do |solution|
-      solution.resources :folders, :only => [:show]
-      solution.resources :articles, :only => [:show, :index], :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
+      solution.resources :folders, :only => :show
+      solution.resources :articles, :only => :show, :member => { :thumbs_up => :put, 
+        :thumbs_down => :put , :create_ticket => :post }
     end
 
-    # !PORTALCSS TODO to be removed later if its not really used
-    # support.resources :minimal_tickets
-    # support.resources :registrations
-    
+    # !PORTALCSS TODO The below is a access routes for accessing routes without the solutions namespace
+    # Check with shan if we really need this route or the one with the solution namespace
+    support.resources :articles, :controller => 'solutions/articles', 
+      :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
+
+    # Tickets for the portal
+    support.resources :tickets, 
+      :collection => { :check_email => :get, :configure_export => :get, :filter => :get }, 
+      :member => { :close => :post, :add_people => :put } do |ticket|
+
+      ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
+    end
+
     support.portal_survey '/surveys/:ticket_id', :controller => 'surveys', :action => 'create_for_portal'
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
-    support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', :conditions => { :method => :post }
+    support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
+      :conditions => { :method => :post }
+
+    ### !PORTALCSS TODO to be removed later if its not really used at end of developement
+    ### support.resources :minimal_tickets
+    # support.resources :registrations
+
+    ### !PORTALCSS TODO clean remove this controller and views
+    ### The company_tickets is now deprecated as the view is directly integrated into the tickets controller and view
+    # support.resources :company_tickets
+
   end
   
   map.namespace :anonymous do |anonymous|

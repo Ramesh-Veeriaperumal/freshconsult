@@ -9,9 +9,9 @@ class Support::SearchController < SupportController
   
   #by Shan
   #To do.. some smart meta-programming
-  def index 
+  def index
+    search
     set_portal_page :search
-    search_content content_classes, false
   end
   
   def suggest
@@ -89,7 +89,7 @@ class Support::SearchController < SupportController
         end
         process_results
       rescue Exception => e
-        @total_results = 0
+        @search_results = 0
         NewRelic::Agent.notice_error(e)      
       end
       
@@ -157,14 +157,11 @@ class Support::SearchController < SupportController
         results[i.class.name] << i
       end
 
-      
       @searched_tickets   = results['Helpdesk::Ticket']
       @searched_articles  = results['Solution::Article']
-      @searched_users     = results['User']
-      @searched_companies = results['Customer']
       @searched_topics    = results['Topic']
       
-      @search_key = params[:search_key]
+      @search_key = params[:search_key]      
       @total_results = @items.size
 
     end
@@ -258,7 +255,7 @@ class Support::SearchController < SupportController
      @items = ThinkingSphinx.search filter_key(params[:search_key]), 
                                       :with => with_options, 
                                       :without => without_options,
-                                      :classes=>classes,
+                                      :classes => classes,
                                       :sphinx_select=>sphinx_select,
                                       :page => params[:page], :per_page => 10
    end

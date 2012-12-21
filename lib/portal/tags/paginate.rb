@@ -24,16 +24,21 @@ class Portal::Tags::Paginate < ::Liquid::Block
 
   def render(context)
     context.stack do
-      collection = context[@collection_name]
       params = context.registers[:controller].params.clone
+      context['per_page'] = @per_page
+      context['page'] = params[:page]
 
-      raise ::Liquid::ArgumentError.new("Cannot paginate array '#{@collection_name}'. Not found.") if collection.nil?
+      # We need the collections passed into this as a paginate collection
+      pagination = context[@collection_name]
 
-      pagination = collection.send(:paginate, {
-        :include  => [:images, :master],
-        :page       => params[:page],
-        :per_page   => @per_page })
-      context[@collection_name] = pagination  
+      # Paginating if the collection is not already paginated from the model
+      unless pagination.total_pages
+        pagination = context[@collection_name].send(:paginate, {
+          :page       => params[:page],
+          :per_page   => @per_page })
+      end
+
+      raise ::Liquid::ArgumentError.new("Cannot paginate array '#{@collection_name}'. Not found.") if pagination.nil?
 
       page_count, current_page = pagination.total_pages, pagination.current_page
 
@@ -42,14 +47,15 @@ class Portal::Tags::Paginate < ::Liquid::Block
       params.delete(:action) if params[:action]
       params.delete(:controller) if params[:controller]            
       params.delete(:id) if params[:id]            
-      params.delete(:store_name) if params[:store_name]                  
-
+      params.delete(:store_name) if params[:store_name]       
+        
       pagination_context = {}
       pagination_context['collection'] = pagination
+      pagination_context['total_entries'] = pagination.total_entries 
       pagination_context['previous'] = link("&laquo;", current_page - 1, path, params) if pagination.previous_page
       pagination_context['next'] = link("&raquo;", current_page + 1, path, params) if pagination.next_page
       pagination_context['parts'] = []
-
+      pagination_context['total_pages'] = pagination.total_pages
       prev = nil
 
       if page_count > 1
@@ -64,27 +70,6 @@ class Portal::Tags::Paginate < ::Liquid::Block
           prev = page
         end
       end
-
-      # if page_count > 1
-      #   1.upto(page_count) do |page|
-      #     if current_page == page
-      #       pagination_context['parts'] << no_link(page)
-      #     elsif page == 1
-      #       pagination_context['parts'] << link(page, page, path, params)
-      #     elsif page == page_count - 1
-      #       pagination_context['parts'] << link(page, page, path, params)
-      #     elsif page <= current_page - window_size or page >= current_page + window_size
-      #       next if hellip_break
-      #       pagination_context['parts'] << no_link('&hellip;')
-      #       hellip_break = true
-      #       next
-      #     else
-      #       pagination_context['parts'] << link(page, page, path, params)
-      #     end
-
-      #     hellip_break = false
-      #   end
-      # end
 
       context['paginate'] = pagination_context
       render_all(@nodelist, context)

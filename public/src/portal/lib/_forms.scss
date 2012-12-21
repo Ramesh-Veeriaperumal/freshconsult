@@ -81,15 +81,13 @@ input[type="color"],
   display: inline-block;
   /*height: $baseLineHeight;*/
   padding: 4px;
-  /*margin-bottom: 9px;*/
+  margin-bottom: 9px;
   font-size: $baseFontSize;
   line-height: $baseLineHeight;
   color: $gray;
 }
 
-select{
-  font-size: $baseFontSize * 0.9;
-}
+select{ font-size: $baseFontSize * 0.9; }
 
 // Setting max input view for mobile devices
 input, textarea {
@@ -305,7 +303,7 @@ input[type="checkbox"][readonly] {
 // --------------------------
 
 // Warning
-div.error{ padding: 8px 0 0; }
+div.error{ padding: 8px 0 0; margin-top: -15px; }
 
 .control-group.warning-group {
   @include formFieldState($warningText, $warningText, $warningBackground);
@@ -338,7 +336,7 @@ select:focus:required:invalid {
 // ------------
 
 .form-actions {
-  padding: ($baseLineHeight - 1) 20px $baseLineHeight;
+  padding: 16px 12px 20px;
   margin-top: $baseLineHeight;
   margin-bottom: $baseLineHeight;
   background-color: $formActionsBackground;
@@ -520,7 +518,6 @@ select:focus:required:invalid {
   .input-append {
     display: inline-block;
     @include ie7-inline-block();
-    margin-bottom: 0;
   }
   // Re-hide hidden elements due to specifity
   .hide {
@@ -563,7 +560,7 @@ select:focus:required:invalid {
 
 // Margin to space out fieldsets
 .control-group {
-  margin-bottom: $baseLineHeight / 2;
+  margin-bottom: 16px;
 }
 
 // Legend collapses margin, so next element is responsible for spacing
@@ -594,25 +591,7 @@ label.required:after{
 }
 
 // Ticket form specific css
-.ticket-form{   
-  /*textarea,
-  input[type="text"],
-  input[type="password"],
-  input[type="datetime"],
-  input[type="datetime-local"],
-  input[type="date"],
-  input[type="month"],
-  input[type="time"],
-  input[type="week"],
-  input[type="number"],
-  input[type="email"],
-  input[type="url"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="color"],
-  .uneditable-input{
-    width: 100%;
-  }  */
+.ticket-form{
   .nested_field .level_2, 
   .nested_field .level_3,
   .control-tabbed-border{

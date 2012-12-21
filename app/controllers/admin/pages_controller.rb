@@ -11,14 +11,17 @@ class Admin::PagesController < Admin::AdminController
 
   def update
     @portal_page.attributes = @portal_page.attributes.merge params[:portal_page]
-    scoper.template.cache_page(@portal_page_label, @portal_page)
-    if params[:preview_button]
-      session[:preview_button] = true
-      @redirect_to_portal_url = get_redirect_portal_url
-    end
-    flash[:notice] = "Page saved successfully."
+    scoper.template.cache_page(@portal_page_label, @portal_page)    
+    flash[:notice] = "Page saved successfully." unless params[:preview_button]
     get_raw_page
-    render "update.rjs"
+    respond_to do |format|
+      format.html { 
+        if params[:preview_button]
+          session[:preview_button] = true
+          redirect_to get_redirect_portal_url
+        end
+      }
+    end
   end
 
   def soft_reset
@@ -49,12 +52,16 @@ class Admin::PagesController < Admin::AdminController
 
     def get_redirect_portal_url
       method_name = Portal::Page::PAGE_REDIRECT_ACTION_BY_TOKEN[@portal_page_label.to_sym]
-      portal_redirect_url = support_solutions_url
+      portal_redirect_url = send(method_name)
       begin
         cname = Portal::Page::PAGE_MODEL_ACTION_BY_TOKEN[@portal_page_label.to_sym]
-        data = current_account.send(cname).first if !cname.blank? && current_account.respond_to?(cname) 
-        id = data.id unless data.blank?
-        portal_redirect_url = send(method_name, :id => id)  
+        unless cname.blank?
+          data = current_account.send(cname).first if !cname.blank? && current_account.respond_to?(cname) 
+          id = data.id unless data.blank?
+          portal_redirect_url = send(method_name, :id => id)  
+        else
+          portal_redirect_url = send(method_name)
+        end
       rescue Exception => e
         # NewRelic::Agent.notice_error(e)
       end

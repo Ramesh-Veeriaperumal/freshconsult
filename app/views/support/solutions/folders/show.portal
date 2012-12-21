@@ -6,27 +6,27 @@
 	<h2 class="heading">{{ folder.name }}</h2>
 	<p>{{ folder.description }}</p>
 	{% paginate folder.articles by 10 %}
-	<section class="article-list content-list">		
-		<ul>
-			{% for article in paginate.collection %}
-				<li>
-					<div class="ellipsis"> 
-						<a href="{{article.url}}">{{article.title}}</a>
-					</div>
-					<div class="description">
-						{{ article.body_plain || truncatewords:20 }}
-					</div>
-					<p class="help-text">{{ article.modified_on }}</p>
-				</li>
-			{% endfor %}
-			{% if folder.articles == empty %}
-				<p class="lead">
-					~ Watch this space for articles regarding {{ folder.name }} ~
-				</p>
-			{% endif %}
-		</ul>		
-	</section>
-	{{ paginate | default_pagination }}
+		<section class="article-list content-list">		
+			<ul>
+				{% for article in paginate.collection %}
+					<li>
+						<div class="ellipsis"> 
+							<a href="{{article.url}}">{{article.title}}</a>
+						</div>
+						<div class="description">
+							{{ article.body_plain || truncatewords:20 }}
+						</div>
+						<p class="help-text">{{ article.modified_on }}</p>
+					</li>
+				{% endfor %}
+				{% if folder.articles == empty %}
+					<p class="lead">
+						~ Watch this space for articles regarding {{ folder.name }} ~
+					</p>
+				{% endif %}
+			</ul>		
+		</section>
+		{{ paginate | default_pagination }}
 	{% endpaginate %}
 </section>
 

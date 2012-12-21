@@ -20,8 +20,8 @@ class Solution::FolderDrop < BaseDrop
     source.category
   end
   
-  def articles #To do.. Scoping.. current_user
-    @articles ||= liquify(*@source.articles)
+  def articles
+    @articles ||= @source.published_articles.filter(@per_page, @page)
   end
   
 end

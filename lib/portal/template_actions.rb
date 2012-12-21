@@ -2,7 +2,7 @@ module Portal::TemplateActions
 	
 	# setting portal
 	def scoper
-      @portal ||= current_account.portals.find_by_id(params[:portal_id]) || current_portal
+      @portal ||= current_account.portals.find_by_id(params[:portal_id])# || current_portal
   end
 
   # setting forum builder
@@ -15,9 +15,13 @@ module Portal::TemplateActions
     begin
       Liquid::Template.parse(liquid_data)
     rescue Exception => e
-      flash[:notice] = e.to_s
-      # redirect_to "#{admin_portal_template_path( @portal )}#header" and return
-      render "update.rjs" and return
+      flash[:error] = e.to_s
+      respond_to do |format|
+        format.html { 
+          redirect_to support_home_path and return
+        }
+        format.js{ render "update.rjs" and return }
+      end
       #NewRelic::Agent.notice_error(e)
     end  
   end
@@ -25,13 +29,18 @@ module Portal::TemplateActions
   # css validation
   def css_syntax?(custom_css)
     begin
-      _options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compact)
+      _options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, 
+        :always_update => true, :style => :compact)
       custom_css = Sass::Engine.new(custom_css, _options).render
     rescue Exception => e
       first_line = e.backtrace[0]
-      flash[:notice] = "#{e.to_s} at line number #{first_line[first_line.index(":")..-1]}"
-      # redirect_to "#{admin_portal_template_path( @portal )}#custom_css" and return
-      render "update.rjs" and return
+      flash[:error] = "#{e.to_s} at line number #{first_line[first_line.index(":")..-1]}"
+      respond_to do |format|
+        format.html { 
+          redirect_to support_home_path and return
+        }
+        format.js{ render "update.rjs" and return }
+      end
     end
   end
 

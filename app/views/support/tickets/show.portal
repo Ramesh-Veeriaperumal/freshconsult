@@ -3,33 +3,51 @@
 		<a href="/">Home</a>
 		<a href="/">Tickets list</a>
 	</div>
-	<a href="#" class="pull-right" onclick="jQuery('#ticket-sidebar').toggleClass('hide-in-mobile')">Show props.</a>
-	<h2 class="heading"><em>#{{ ticket.id }}</em> {{ ticket.subject }}</h2>	
+	<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
 	
-	<section class="ticket-sidebar hide-in-mobile" id="ticket-sidebar">
-		<section class="widget" id="survey-sidebar-details">
-			{% snippet ticket_survey %}
-		</section>
-		
-		<section class="widget" id="ticket-sidebar-details">
-			<div class="pull-right">
-				<a href="#" data-show-dom="#ticket-sidebar-edit" data-hide-dom="#ticket-sidebar-details">Edit</a>
-			</div>
-			<!-- The below snippet will work only in the ticket details page -->
-			{% snippet ticket_details %}
-		</section>
-		<section class="widget hide" id="ticket-sidebar-edit">
-			<!-- The below snippet will work only in the ticket details page -->
-			{% snippet ticket_edit %}
+	{% if current_user %}
+	<section class="ticket-main" id="ticket-toolbar">
+		<section class="ticket-actions">
+			<span class="hide-tablet pull-right">
+				<a href="#" class="btn btn-icon btn-small btn-primary" 
+					data-toggle-dom="#ticket-sidebar" data-animated>
+					<i class="icon-cog-drop-light"></i>
+				</a>
+			</span>
+			<div class="btn-group" id="ticket-toolbar">
+				<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>		
+				
+				{% snippet close %}
+				
+				<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
+					data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
+			</div>			
 		</section>
 	</section>
+	{% endif %}
+	
+	<section class="ticket-sidebar hide-in-mobile" id="ticket-sidebar">
+		{% snippet ticket_survey %}
+		
+		{% snippet ticket_details %}
+
+		{% snippet ticket_edit %}
+
+		<hr class="hide-tablet" />
+	</section>
 	<section class="ticket-main">		
-		<section class="user-comment" id="ticket-description">
-			<div class="user-pic-thumb">
-				<img src="{{ ticket.requester.profile_url }}" width="40px" height="40px" />
+		<section class="user-comment" id="ticket-description">			
+			<div class="user-info">
+				<div class="user-pic-thumb user-pointer-bottom">
+					<img src="{{ ticket.requester.profile_url }}" width="40px" height="40px" />
+				</div>
+				<div class="user-details">
+					<h4 class="user-name">{{ ticket.requester.name }}</h4>
+					<div class="p-info">reported {{ ticket.created_on | time_ago }}</div>
+				</div>
 			</div>
 			<div class="p-content">
-				{{ ticket.description }}
+				<div class="p-desc">{{ ticket.description }}</div>
 			</div>
 		</section>
 
@@ -37,14 +55,64 @@
 			{% for comment in ticket.public_comments %}
 				<section class="user-comment {% if comment.user.is_agent? %} comment-by-agent {% endif %}" 
 						 id="ticket-note-{{comment.id}}">
-					<div class="user-pic-thumb">
-						<img src="{{ comment.user.profile_url }}" width="40px" height="40px" />
+
+					<div class="user-info">
+						<div class="user-pic-thumb user-pointer-bottom">
+							<img src="{{ comment.user.profile_url }}" width="40px" height="40px" />
+						</div>
+						<div class="user-details">
+							<h4 class="user-name">{{ comment.user.name }}</h4> 
+							<div class="p-info">said {{ comment.created_on | time_ago }}</div>
+						</div>
 					</div>
-					<div class="p-content">
-						{{ comment.description }}
+
+					<div class="p-content">						
+						<div class="p-desc">
+							{{ comment.description }}
+						</div>
+						{% if comment.attachments.size > 0 %}
+						<hr />
+						<div class="cs-g-c attachments" id="comment-{{comment.id}}-attachments">
+							{% for attachment in comment.attachments %}
+								<div class="cs-g-3 attachment">
+									<img src="{{ attachment.thumbnail }}" 
+										 class="file-thumbnail {% if attachment.image? %} file-image {% endif %}"
+										 width="50px" height="50px"  />
+									<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+										{{ attachment.filename }}
+									</a>
+									<div class="help-text file-size">
+										{{ attachment.size }}
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+						{% endif %}
 					</div>
 				</section>
 			{% endfor %}
+
+			<section id="reply-to-ticket" name="reply-to-ticket" class="user-comment">
+				<div class="user-info">
+					<div class="user-pic-thumb user-pointer-bottom">
+						<img src="{{ current_user.profile_url }}" width="40px" height="40px" />
+					</div>
+					<div class="user-details">
+						<h4 class="user-name">{{ current_user.name }}</h4>
+					</div>
+				</div>
+				<div class="p-content">
+					<input type="text" class="special span12" 
+							placeholder="Click here to reply to this ticket" id="add-note-form-proxy" 
+							data-proxy-for="#add-note-form" />
+
+					<div id="add-note-form" class="hide">
+						{% snippet add_note_form %}
+					</div>
+				</div>
+			</section>
 		</section>
 	</section>
 </section>
+
+{% snippet add_people %}

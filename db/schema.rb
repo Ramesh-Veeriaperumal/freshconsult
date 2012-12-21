@@ -996,7 +996,7 @@ ActiveRecord::Schema.define(:version => 20121205135727) do
     t.integer  "template_id", :limit => 8,        :null => false
     t.integer  "account_id",  :limit => 8,        :null => false
     t.integer  "page_type",                       :null => false
-    t.text     "content",     :limit => 16777215
+    t.text     "content",     :limit => 65537
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1007,7 +1007,7 @@ ActiveRecord::Schema.define(:version => 20121205135727) do
     t.text     "preferences"
     t.text     "header"
     t.text     "footer"
-    t.text     "custom_css",  :limit => 16777215
+    t.text     "custom_css",  :limit => 65537
     t.text     "layout"
     t.datetime "created_at"
     t.datetime "updated_at"

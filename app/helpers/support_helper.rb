@@ -1,7 +1,124 @@
 module SupportHelper
+	include ActionView::Helpers::TagHelper
 	include Portal::PortalFilters
-	
+
+	# Top page login, signup and user welcome information
+	def welcome_navigation portal
+		output = []
+		
+		# Showing welcome text before login link		
+		output << %(<div class="welcome">#{ t('header.welcome') })
+
+		# Showing logged in user name or displaying as Guest
+		output << %(<b>#{ portal['current_user'] || t('header.guest') }</b> </div> )
+
+		# Showing portal login link or signout link based on user logged in condition 
+		if portal['current_user']
+			# Showing profile settings path for loggedin user
+			output << %(<b><a href="#{ portal['profile_path'] }">#{ t('header.edit_profile') }</a></b>)
+			# Showing Signout path for loggedin user
+			output << %(- <b><a href="#{ portal['logout_path'] }">#{ t('header.signout') }</a></b>)
+		else
+			# Showing login path for non-loggedin user
+			output << %(<b><a href="#{ portal['login_path'] }">#{ t('header.login') }</a></b>)
+			# Showing signup url based on customer portal settings feature
+			output << %(or <b><a href="#{ portal['signup_path'] }">#{ t('signup') }</a></b>) if portal['can_signup_feature?']
+		end
+
+		output.join(" ")
+	end
+
+	# Logo for the portal
+	def logo portal
+		_output = []
+		_output << %(<a href='#{portal['linkback_url']}'>)
+		if portal['logo_url'].blank?
+			# Showing default logo directly applied from class
+			# This is done like a class so that a darker and lighter variation 
+			# can be shown based on the header color
+			_output << %(<span class='logo'></span>)
+		else
+			# Showing the customer uploaded logo within an image tag
+			_output << %(<img src='#{portal['logo_url']}' class='portal-logo' />)
+		end
+		_output << %(</a>)
+		_output.join(" ")
+	end
+
+	# Default topic filter that shows up in the topic list
+	def default_topic_filters forum
+		output = []
+		output << %(<ul class="nav nav-pills nav-filter">)		
+			forum.allowed_filters.each do |f|
+				output << %(<li class="#{forum.current_topic_filter == f[:name] ? "active" : ""}">)
+				output << link_to(t("forums_order.#{f[:name]}"), f[:url])
+				output << %(</li>)
+			end
+		output << %(</ul>)
+	end
+
+	# Follow/unfollow button 
+	# To modify label the liquid can be modified as so
+	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
+	def follow_topic_button topic, follow_label = "Follow", unfollow_label = "Following"
+		if User.current
+			_monitoring = !Monitorship.count(:id, 
+							:conditions => ['user_id = ? and topic_id = ? and active = ?', 
+							User.current.id, topic['id'], true]).zero?
+
+			link_to _monitoring ? unfollow_label : follow_label, topic['toggle_follow_url'], 
+				"data-remote" => true, "data-method" => :put, 
+				:id => "topic-monitor-button",
+				:class => "btn btn-small #{_monitoring ? 'active' : ''}",
+				"data-toggle" => "button",
+				"data-button-active-label" => unfollow_label, 
+				"data-button-inactive-label" => follow_label
+		end
+	end
+
+	def topic_full_brief topic, last_post
+		output = []
+		output << topic_brief(topic)
+		output << post_brief(last_post) if topic.has_comments
+		output << bold(topic_votes(topic)) if(topic.votes > 0)
+		output.join(", ")
+	end
+		
+	def topic_brief topic
+		"Posted by #{bold topic.user.name}, #{time_ago topic.created_on}"
+	end
+
+	def topic_votes topic
+		pluralize topic.votes, "vote"
+	end
+
+	def link_to_topic_edit topic, label = I18n.t("topic.edit")
+		if User.current == topic.user			
+			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"
+		end
+	end
+
+	def post_brief post, link_label = "Last reply"
+		output = ""
+		if post.present?
+			output += "<a href='#{post.url}'>#{link_label}</a> "
+			output += "by #{post.user.name} #{time_ago post.created_on}"
+		end
+		output
+	end
+
 	# Ticket specific helpers
+	def survey_text survey_result
+		if survey_result != 0
+			Account.current.survey.title(survey_result)
+		end
+	end
+	
+	# rendering partial if its corresponding db_file is not available
+	def portal_render local_file, db_file = ""
+		# render_to_string :partial => local_file, :locals => { :dynamic_template => db_file }
+	end
+
 	# Construct ticket form UI
 	def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
 	    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
@@ -21,13 +138,10 @@ module SupportHelper
 	        element = label + content_tag(:div, text_field(object_name, field_name, :class => element_class + " span12", :value => field_value), :class => "controls")
 	      when "paragraph" then
 	        element = label + content_tag(:div, text_area(object_name, field_name, :class => element_class + " span12", :value => field_value, :rows => 6), :class => "controls")
-	      when "dropdown" then
-	        if (field.field_type == "default_status" and in_portal)
-	          element = label + content_tag(:div, 
-	          		select(object_name, field_name,  
-	          			field.field_type == "default_status" ? field.visible_status_choices : field.choices, 
-	          			{:selected => field_value}, {:class => element_class}), :class => "controls")
-	        end
+	      when "dropdown" then	        
+          	element = label + content_tag(:div, 
+          		select(object_name, field_name, field.field_type == "default_status" ? field.visible_status_choices : field.choices, 
+          			{:selected => field_value}, {:class => element_class}), :class => "controls")
 	      when "dropdown_blank" then
 	        element = label + content_tag(:div, 
 	        	select(object_name, field_name, field.choices, { :include_blank => "...", :selected => field_value }, {:class => element_class}), :class => "controls")

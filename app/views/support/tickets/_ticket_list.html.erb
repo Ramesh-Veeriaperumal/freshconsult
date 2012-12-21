@@ -24,8 +24,8 @@
 			</div>
 		<% end %>
 	</div>
+
 	<%= content_tag :div, t("helpdesk.tickets.views.no_tickets"), :class => "lead" if @tickets.blank? %>
 
 	<%= will_paginate @tickets, :renderer =>  BootstrapPaginationRenderer %>
-
 </div>

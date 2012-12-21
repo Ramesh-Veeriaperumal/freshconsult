@@ -28,28 +28,31 @@
   line-height: 16px;
   text-transform: uppercase;
   font-weight: normal;
+  margin-right: 10px;
   padding: 0 7px;
 }
 
 // Colors
-$colorPlanned: #007fd8;
 
-.label-planned        { background-color: $colorPlanned; }
-.label-planned:hover  { background-color: darken($colorPlanned, 10%); }
+// Labels & Label Colors
+// Add more colors with 1st value as class name and 2nd value as color
+$labels: 
+  planned #3ea9e0, 
+  implemented #346600, 
+  nottaken #993531, 
+  status #0c8519, 
+  sticky #6d6d6d,
+  warning $orange,
+  success $successText,
+  info $infoText,
+  inverse $grayDark;
 
-.label-warning          { background-color: $orange; }
-.label-warning:hover    { background-color: darken($orange, 10%); }
-
-.label-success          { background-color: $successText; }
-.label-success:hover    { background-color: darken($successText, 10%); }
-
-.label-info             { background-color: $infoText; }
-.label-info:hover       { background-color: darken($infoText, 10%); }
-
-.label-inverse             { background-color: $grayDark; }
-.label-inverse:hover       { background-color: darken($grayDark, 10%); }
-
-.label-light           { background-color: #eee; color:#afafaf; @include text-shadow(none); }
+@each $label in $labels{
+  .label-#{nth($label, 1)}        { background-color: nth($label, 2); }
+  .label-#{nth($label, 1)}:hover  { background-color: darken(nth($label, 2), 10%); }
+}
+  
+.label-light           { background-color: #eeeeee; color:#afafaf; @include text-shadow(none); }
 .label-light:hover     { background-color: darken(#eee, 3%); color:#afafaf; @include text-shadow(none); }
 
 @include at-breakpoint($break-tablet){

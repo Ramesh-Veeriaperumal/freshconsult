@@ -1,121 +1,55 @@
 <section class="content rounded-6 min-height-on-desktop">
+	<a href="{{ portal.new_topic_path }}" class="start-topic"> 
+		{% translate portal.topic.start_new_topic %}
+	</a>
 	<div class="breadcrumb">
 		<a href="/">Home</a>
 		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
 	</div>		
 	<i class="page-stamp page-stamp-{{ forum.type_name }}">
 		<i class="icon-page-{{ forum.type_name }}"></i>
-	</i>
-	<a href="{{ portal.new_topic_path }}" class="pull-right btn">
-		<strong> {% translate portal.topic.start_new_topic %}</strong>
-	</a>
+	</i>	
 	<div class="list-lead">
-		{{ forum.name }} ({{ forum.topics | size }})			
+		{{ forum.name }} ({{ forum.total_topics }})			
 	</div>
 	<p class="intro ellipsis" title="{{forum.description}}">
 		{{ forum.description }}
 	</p>
 
-	{% comment %}
-	<div class="subnav">
-		<ul class="nav nav-pills">
-		  {{ snippet filters }}
-		</ul>
-	</div>
-	{% endcomment %}
+	{{ forum | default_topic_filters }}
 
 	{% paginate forum.topics by 10 %}
 		<div class="c-list" id="forum-topic-list">					
 			{% for topic in paginate.collection %}
 				{% assign last_post_user = topic.last_post.user %}
-				<div class="c-row c-user-thumb">
+				<div class="c-row c-user-thumb {% if topic.sticky? %} c-topic-sticky {% endif %}">					
 					<div class="user-pic-thumb">
-						<img src="{{ last_post_user.profile_url }}" width="50px" height="50px" />
-					</div>	
+						<img src="{{ topic.user.profile_url }}" width="50px" height="50px" />
+					</div>					
+					{% if topic.sticky? %}
+						<span class="pull-right-tablet label label-small label-sticky">
+							Sticky
+						</span>
+					{% endif %}
 					{% if topic.stamp_type %}
-						<span class="pull-right-tablet label label-small label-{{topic.stamp_name | downcase}}">
+						<span class="pull-right-tablet label label-small label-{{topic.stamp_key | downcase}}">
 							{{ topic.stamp_name }}
 						</span>
 					{% endif %}
-					<div class="ellipsis">
+					<div class="ellipsis">						
 						<a class="c-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
 					</div>				
-					<div class="help-text">
-						Posted by {{ topic.user.name | bold }}, {{ topic.created_on | time_ago }}{% if topic.has_comments %}, 
-							<a href="{{topic.last_post.url}}">Last reply</a>
-							by {{ last_post_user.name | bold }} {{ topic.last_post.created_on | time_ago }}
-						{% endif %}
+					<div class="help-text"> 
+						{{ topic | topic_full_brief: topic.last_post }}
 					</div>
 				</div>
 			{% endfor %}
 		</div>			
 		{{ paginate | default_pagination }}
 	{% endpaginate %}
+	
+	{% if filtered_topics == empty %}
+		<p class="lead">~ No topics in this view ~</p>
+	{% endif %}
 </section>
-
-{% comment %}
-
-<% unless @topics.empty? %> 
-	<ul class="content-list">
-		<% @topics.each do |topic| %>
-			<% className = (topic.sticky?) ? "sticky" : "" %>
-			<% last_post = topic.last_post %>
-			<li class="<%= className %>"> 
-				<%= user_avatar( (topic.posts_count > 1) ? last_post.user : topic.user ) %>
-				
-					<span class="pull-right badge badge-success">
-						<span class="stamp stamp_type_<%=topic.stamp_type%>"> 
-							<%= h(topic.stamp_name) %>
-						</span>
-					</span>
-				
-					<%= content_tag (:b, "STICKY") if (topic.sticky?) %>				
-					<%= content_tag :h4, link_to(topic.title, support_discussions_topic_path(topic)) %>
-				
-					<p class="help-data"> 
-						<% if topic.posts_count > 1 %>
-							<%= t("topics.last_reply", :post_time => time_ago_in_words(last_post.created_at), :user_link => link_to_user(last_post.user) ) %>
-						<% else %>
-							<%= t("topics.posted_at", :post_time => time_ago_in_words(topic.created_at)) %>
-						<% end %> 
-						-  
-						<% 
-							count = topic.posts_count
-							if topic.posts_count > 1 
-								count -= 1
-						  end 
-						%>
-						<%= pluralize(count, t("reply"), t("replies")) %> 
-						-
-						<%= t("forum.verb.#{topic.forum.type_name.downcase}") %>   
-						<%= link_to_user topic.user %>
-						<%if @forum.ideas?%>
-							|  
-							<span class='idea-likes <%= "leftflat" unless topic.stamp_name.blank? %> '>
-								<span class="like-image"></span>
-								<%= topic.votes_count %> 
-							</span> 
-						<%end%>
-					</p>
-					<%if @forum.questions?%>  
-						<%if topic.posts.answered_posts.count > 0%>
-							<%= t('answered') %>
-						<%end%>
-					<%end%> 
-				  <% if topic.paged? -%>
-				  	<small><%= link_to t('last') %></small>
-				  <% end -%>  
-			</li>
-		<% end %>
-	</ul>
-  <% else %>
-	<div class="big-info">
-		<div class="no-info-text"><%= t('no_topics_text')%></div>
-		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") %>
-	</div>
-<% end %>	
-
-<%= will_paginate @topics %>	
-
-{% endcomment %}
 	 

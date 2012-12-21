@@ -64,12 +64,16 @@ $header_border_color: rgba(#fff, 0.2);
 	}
 }
 
-.logo{
-	@include float-left;
-	background: url("/images/portal/#{$logo-url}.png");
-	margin: -3px 10px 0 -5px;
-	width: 50px;
+.logo, .portal-logo{
+	@include float-left;	
+	margin: -3px 10px 0 -5px;	
 	height: 50px;
+	width: auto;
+}
+
+.logo{
+	background: url("/images/portal/#{$logo-url}.png");
+	width: 50px;
 }
 
 footer{

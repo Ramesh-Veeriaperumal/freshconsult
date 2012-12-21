@@ -60,6 +60,16 @@ class Solution::ArticleDrop < BaseDrop
     thumbs_down_support_solutions_article_path(source.id)
   end
 
+  # !PORTALCSS CHECK need to check with shan 
+  # if we can keep excerpts for individual model objects
+  def excerpt_title
+    source.excerpts.title
+  end
+
+  def excerpt_description
+    source.excerpts.desc_un_html
+  end
+
   # def feedback_form
   #   ActionView::Base.new(Rails::Configuration.new.view_path).render_to_string :partial => 
   # end

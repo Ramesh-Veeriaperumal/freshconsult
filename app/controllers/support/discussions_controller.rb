@@ -11,14 +11,14 @@ class Support::DiscussionsController < SupportController
 	end
 
 	def show
-		@category = scoper.find_by_id(params[:id])
+		@category = current_portal.forum_categories.find_by_id(params[:id])
 		set_portal_page :discussions_home
 	end	
 
 	private
 
 		def scoper
-			@categories = current_portal.forum_categories
+			# @categories = current_portal.forum_categories
 		end
 
 end
