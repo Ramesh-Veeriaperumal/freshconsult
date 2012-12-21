@@ -98,7 +98,7 @@
 						var div = document.createElement("div");
 						//Redactor hack for new line
 						div.innerHTML = $(source).val().replace(/\<\/(p|div|h[1-6]|li)\>/g, "\n");
-						text = (div.textContent || div.innerText).replace(/\n+/g, " ").trim();
+						text = $.trim((div.textContent || div.innerText).replace(/\n+/g, " "));
 						text = (text.length > 150) ? (text.substring(0,147) + '...') :text.substring(0,150);
 						$("#" + destination).val(text).keyup();
 					}
