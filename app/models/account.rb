@@ -215,6 +215,7 @@ class Account < ActiveRecord::Base
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache
   before_update :backup_changes
+  before_destroy :backup_changes
   
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
