@@ -47,7 +47,7 @@ class Social::FacebookPosts
           :product_id => @fb_page.product_id,
           :group_id => group_id,
           :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-          :created_at => Time.zone.at(feed[:created_time]).to_s(:db),
+          :created_at => Time.zone.at(feed[:created_time]),
           :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id} )
       
        if @ticket.save
@@ -122,8 +122,7 @@ class Social::FacebookPosts
         comment.symbolize_keys!
         profile_id = comment[:from]["id"]
         user = get_facebook_user(profile_id)
-        created_at  =  Time.parse(comment[:created_time])
-        
+
         @note = @ticket.notes.build(
                         :body => comment[:message],
                         :private => true ,
@@ -131,7 +130,7 @@ class Social::FacebookPosts
                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
                         :account_id => @fb_page.account_id,
                         :user => user,
-                        :created_at => created_at.to_s(:db),
+                        :created_at => Time.zone.parse(comment[:created_time]),
                         :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id}
                                   )
       if @note.save

@@ -1,7 +1,9 @@
 #To Do Shan - Need to use ModelController or HelpdeskController classes, instead of
 #writing/duplicating all the CRUD methods here.
 class ForumsController < ApplicationController 
-   include Helpdesk::ReorderUtility
+  include Helpdesk::ReorderUtility
+
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
  
   before_filter :portal_check
   before_filter :except => [:index, :show] do |c| 
@@ -40,6 +42,7 @@ class ForumsController < ApplicationController
     
     respond_to do |format|
       format.html do
+        @page_canonical = category_forum_url(@forum.forum_category, @forum)
         # keep track of when we last viewed this forum for activity indicators
          end
       format.xml  { render :xml => @forum.to_xml(:include => :topics) }
@@ -124,6 +127,11 @@ class ForumsController < ApplicationController
     
     def set_selected_tab
       @selected_tab = :forums
+    end
+
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.forum.page_not_found')
+      redirect_to categories_path
     end
 
     alias authorized? admin?

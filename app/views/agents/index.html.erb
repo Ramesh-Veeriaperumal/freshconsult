@@ -6,20 +6,46 @@
 		<%= link_to t('agent.new'), new_agent_path, :class => "uiButton special"  %>
 	</div>
 	<h3 class="title"><%=t('agent.title')%></h3>
+	<b><%=t('agent.showing')%></b>				
+	<% if params[:state].blank? or params[:state].eql?('active') %>					
+		<b><%=t('agent.status.active') %></b> |
+		<%= link_to t('agent.status.deleted'), :state => 'deleted' %>
+	<% else %>						
+		<%= link_to t('agent.status.active'), :state => 'active' %> |
+		<b><%=t('agent.status.deleted') %></b>
+	<% end %>	
 </div>
-<ul class="admin_list">		 
-	<% @agents.each do |agent| %>
-		<li>
-			<div class="item_actions">
-				<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
-											 :method => :delete, :class => "button") unless (agent.user == current_user)  %>
-				<%= link_to t('edit'), edit_agent_path(agent), :class => "button" %>									 
-			</div>
-			<%= user_avatar(agent.user) %>
-			<%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %>
-			<div><%= h agent.user.job_title %></div>
-			<div><%= mail_to ( h(agent.user.email)) %></div>							
-		</li>	
-	<% end %>	 
-</ul>
-<%= will_paginate(@agents) %>
+<% if @agents.length > 0 %>
+	<ul class="admin_list">	
+		<% @agents.each do |agent| %>
+			<li>
+				<% if params[:state].blank? or params[:state].eql?('active') %>	
+					<div class="item_actions">
+						<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
+											:method => :delete, :class => "button") if can_destroy?(agent) %>
+						<%= link_to t('edit'), edit_agent_path(agent), :class => "button" %>	
+					</div>								 
+				<% else %>
+					<div class="item_actions">
+						<%= link_to t('agent.restore'), {:action => :restore ,:id => agent.id} , :method => 'put' , :class => "button" unless (agent.user == current_user)  %>
+					</div>
+				<% end %> 
+				<%= user_avatar(agent.user) %>
+				<%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %>
+				<div><%= h agent.user.job_title %></div>
+				<div><%= mail_to ( h(agent.user.email)) %></div>							
+			</li>	
+		<% end %>	 
+	</ul>
+	<%= will_paginate(@agents) %>
+<% else %>
+	<div class="big-info">
+		<div class="no-info-text">
+			<% if params[:state].blank? or params[:state].eql?('active') %>	
+				<%= t('agent.active.no_agents') %>
+			<% else %>
+				<%= t('agent.deleted.no_agents') %>
+			<% end %>
+		</div>
+	</div>
+<% end %>

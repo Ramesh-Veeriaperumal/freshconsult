@@ -73,6 +73,17 @@ class Helpdesk::Note < ActiveRecord::Base
   
   ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
 
+  TICKET_NOTE_SOURCE_MAPPING = { 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal] => SOURCE_KEYS_BY_TOKEN["email"] ,
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => SOURCE_KEYS_BY_TOKEN["twitter"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"],
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:mobi_help] => SOURCE_KEYS_BY_TOKEN["email"]
+  }
+
   CATEGORIES = {
     :customer_response => 1,
     :agent_private_response => 2,
@@ -148,7 +159,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def to_json(options = {})
     options[:include] = [:attachments]
-    options[:methods] = [:user_name]
+    options[:methods] = [:user_name,:source_name] unless options[:human].blank?
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
   end
@@ -170,7 +181,13 @@ class Helpdesk::Note < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :attachments,:except => [:account_id,:notable_id,:notable_type]) 
+      super(:builder => xml, :skip_instruct => true, :include=>:attachments, 
+                          :except => [:account_id,:notable_id,:notable_type]) do |xml|
+        unless options[:human].blank?
+          xml.tag!(:source_name,self.source_name)
+          xml.tag!(:user_name,user.name)
+        end
+      end
    end
 
   def create_fwd_note_activity(to_emails)

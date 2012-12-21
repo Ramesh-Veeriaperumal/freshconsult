@@ -31377,7 +31377,7 @@ Ext.define("Freshdesk.view.CannedResponses", {
         var msgFormContainer = Ext.ComponentQuery.query('#'+this.formContainerId)[0], 
             ticket_id = msgFormContainer.ticket_id,
             opts  = {
-                url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id
+                url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id
             };
         FD.Util.getJSON(opts,this.populateMessage,this);
     },
@@ -39358,7 +39358,8 @@ Ext.define('Freshdesk.view.TicketReply', {
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-                }
+                },
+                headers : { 'Accept': 'application/json' }
             });
         }
     },
@@ -39550,7 +39551,8 @@ Ext.define('Freshdesk.view.TicketNote', {
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-                }
+                },
+                headers : { 'Accept': 'application/json' }
             });
         }
     },
@@ -39638,7 +39640,8 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);    
-                }
+                },
+                headers : { 'Accept': 'application/json' }
             });    
         }
         else{
@@ -39735,7 +39738,8 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-                }
+                },
+                headers : { 'Accept': 'application/json' }
             });
         }
     },
@@ -39827,7 +39831,8 @@ Ext.define('Freshdesk.view.TicketFacebookForm', {
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-                }
+                },
+                headers : { 'Accept': 'application/json' }
             });
         }
             
@@ -40899,7 +40904,8 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
                     errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                 }
                 Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-            }
+            },
+            headers : { 'Accept': 'application/json' }
         });
     },
     onDeleteButton: function(){

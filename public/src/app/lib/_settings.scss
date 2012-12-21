@@ -1,7 +1,9 @@
 // Here is where you can define your constants for your application and to configure the blueprint framework.
 // Feel free to delete these if you want keep the defaults:
+@import "susy";
 @import "mixins";
 @import "susy";
+@import "compass";
 
 $blueprint-liquid-grid-columns: 24;
 $blueprint-liquid-grid-width: 3.167%;
@@ -14,17 +16,13 @@ $blueprint-liquid-grid-push-pull: -($blueprint-liquid-grid-margin + $blueprint-l
 $header_color:#2f3733;
 $tab_color:#7cb537;
 $background:#efefef;
+$default_txt_color:#333;
 
 $sidebar-color:#ffffff;
 $sidebar-width:310px;
 $invert-side-width:200px;
 $header_height:54px;
 $use-mozilla-ellipsis-binding:true;
-
-@import "compass/utilities";
-@import "compass/css3";
-@import "compass/support"; 
-@import "compass/typography/text/ellipsis";
 
 // Import the non-default scaffolding module.
 @import "blueprint/liquid";
@@ -67,6 +65,7 @@ $container-width: 	1140px;
 
 // Sprite sheet creation
 // --------------------------------------------------
+=======
 /* Sprite variables used inside the sheet */
 $symbol: sprite-map("symbols/*.png");
 $ticketicon: sprite-map("ticket-icon/*.png");

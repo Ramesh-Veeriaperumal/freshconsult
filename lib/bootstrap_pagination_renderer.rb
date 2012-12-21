@@ -22,7 +22,7 @@ protected
       visible_page_numbers.inject [] do |links, n|
         # detect gaps:
         links << gap_marker if prev and n > prev + 1
-        links << page_link_or_span(n, 'current')
+        links << page_link_or_span(n)
         prev = n
         links
       end
@@ -30,12 +30,12 @@ protected
     # visible_page_numbers.map { |n| page_link_or_span(n, (n == current_page ? 'current' : nil)) }
   end
 
-  def page_link_or_span(page, span_class, text = nil)
+  def page_link_or_span(page, span_class = "", text = nil)
     text ||= page.to_s
     if page && page != current_page
       page_link(page, text, :class => span_class)
     else
-      page_span(page, text, :class => span_class + " disabled")
+      page_disabled_link(page, text, :class => span_class + (( %w(previous next).include? span_class) ? " disabled" : " active"))
     end
   end
 
@@ -43,7 +43,7 @@ protected
     @template.content_tag(:li, @template.link_to(text, url_for(page)), attributes)
   end
 
-  def page_span(page, text, attributes = {})
+  def page_disabled_link(page, text, attributes = {})
     @template.content_tag(:li, @template.link_to(text, ""), attributes)
   end
 

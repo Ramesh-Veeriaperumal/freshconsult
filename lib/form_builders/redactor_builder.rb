@@ -3,17 +3,29 @@ module FormBuilders
       include ActionView::Helpers::TagHelper
       include ActionView::Helpers::FormTagHelper
 
+      # !REDACTOR TODO need to keep a default settings options and then later modify based on other editor type
+      # If possible move this to a lib settings file
+
       REDACTOR_FORUM_EDITOR = {
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/uploaded_images",
         :allowedTags => ["a", "div", "b", "i"],
-        :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
+        :imageGetJson => "/uploaded_images",
+        :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
+                      '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
+      }
+
+      REDACTOR_SOLUTION_EDITOR = {
+        :autoresize => false,
+        :tabindex => 2,
+        :convertDivs => false,
+        :imageUpload => "/uploaded_images",
+        :imageGetJson => "/uploaded_images"
       }
 
       def rich_editor(method, options = {})
-        # !ERROR is occuring when a non-object model reference is being given.
         options[:id] = field_id( method, options[:index] )  
         rich_editor_tag(field_name(method), @object.send(method), options)
       end
@@ -22,13 +34,16 @@ module FormBuilders
         id = options[:id] = options[:id] || field_id( name )          
         content = options[:value] if options[:value].present?
 
-        _javascript_options = REDACTOR_FORUM_EDITOR.merge(options).to_json
+        redactor_opts = (options['editor-type'] == :solution) ? REDACTOR_SOLUTION_EDITOR : REDACTOR_FORUM_EDITOR
+
+        _javascript_options = redactor_opts.merge(options).to_json
 
         # Height set as :height in the redator helper object will be used as the base height for the js editor
-        options[:style] = "height:#{options[:height]}px;"
+        options[:style] = "height:#{options[:height]};"
 
         output = <<HTML
 #{text_area_tag(name, content, options.merge({:rel => "redactor"})) }
+
 <script type="text/javascript">
     if (window['redactors'] === undefined) window.redactors = {}
     !function( $ ) {

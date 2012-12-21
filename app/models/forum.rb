@@ -1,6 +1,13 @@
 class Forum < ActiveRecord::Base
   acts_as_list :scope => :forum_category
+  include ActionController::UrlWriter
+
+  has_many :activities, 
+    :class_name => 'Helpdesk::Activity', 
+    :as => 'notable'
   
+  belongs_to_account
+
   TYPES = [
     [ :howto,    I18n.t("forum.types.howto"),    1 ],
     [ :ideas,    I18n.t("forum.types.ideas"),    2 ],
@@ -80,6 +87,13 @@ class Forum < ActiveRecord::Base
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums
   
+  def after_create 
+    create_activity('new_forum')
+  end
+
+  def after_destroy 
+    create_activity('delete_forum')
+  end
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   
   
@@ -158,9 +172,34 @@ class Forum < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
-  
+
   def to_liquid
     Forum::ForumDrop.new self
+  end    
+
+  def to_s
+    name
+  end
+
+  def create_activity(type)
+    activities.create(
+      :description => "activities.forums.#{type}.long",
+      :short_descr => "activities.forums.#{type}.short",
+      :account => account,
+      :user => User.current,
+      :activity_data => { 
+                          :path => category_forum_path(forum_category_id, 
+                                    id), 
+                          'category_name' => h(forum_category.to_s), 
+                          :url_params => {
+                                           :category_id => forum_category_id, 
+                                           :forum_id => id,
+                                           :path_generator => 'category_forum_path'
+                                          },
+                          :title => h(to_s),
+                          :version => 2
+                        }
+    )
   end
    
 end

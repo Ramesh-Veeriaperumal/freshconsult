@@ -413,7 +413,7 @@ a.menu:after, .dropdown-toggle:after {
 
 .right-tabs{
   margin:0px -20px; 
-  padding:10px 9px 0 50px;
+  padding:17px 9px 0 50px;
   a{ font-weight:bold; }
   @include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 }
@@ -881,7 +881,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border-color: rgba(0, 0, 0, 0.15);
 }
 
-.modal-backdrop {
+/*.modal-backdrop {
   background-color: #000000;
   position: fixed;
   top: 0;
@@ -910,7 +910,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border: 1px solid #999;
   border: 1px solid rgba(0, 0, 0, 0.3);
   *border: 1px solid #999;
-  /* IE6-7 */
+   
 
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -973,7 +973,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 }
 .modal .popover, .modal .twipsy {
   z-index: 12000;
-}
+}*/
 .twipsy {
   display: block;
   position: absolute;

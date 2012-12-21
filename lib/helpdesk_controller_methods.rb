@@ -22,17 +22,19 @@ module HelpdeskControllerMethods
     #create_attachments 
     flash.now[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     process_item #    
+    options = {}
+    options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
     #redirect_back_or_default redirect_url
     respond_to do |format|
       format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
-      format.xml  { render :xml => @item, :status => :created, :location => url_for(@item) }
+      format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
       format.mobile {
         render :json => {:success => true,:item => @item}.to_json
       }
       format.json { 
-        render :json => @item.to_json
+        render :json => @item.to_json(options)
       }
     end
   end
@@ -74,6 +76,7 @@ module HelpdeskControllerMethods
       end
     end
     
+    options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}
     respond_to do |expects|
       expects.html do 
         process_destroy_message  
@@ -81,6 +84,8 @@ module HelpdeskControllerMethods
       end
       expects.json  { render :json => :deleted}
       expects.js { after_destory_js }
+      #until we impl query based retrieve we show only limited data on deletion.
+      expects.xml{ render :xml => @items.to_xml(options)}
     end
 
   end
@@ -89,11 +94,17 @@ module HelpdeskControllerMethods
     @items.each do |item|
       item.update_attribute(:deleted, false)
     end
+    options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}
 
-    flash[:notice] = render_to_string(
-      :partial => '/helpdesk/shared/flash/restore_notice')
-
-    redirect_to after_restore_url
+    respond_to do |result|
+      result.html{
+        flash[:notice] = render_to_string(
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
+        redirect_to after_restore_url 
+      }
+      result.xml {  render :xml => @items.to_xml(options) }
+      result.json {  render :json => @items.to_json(options) }
+    end
   end
 
   def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan
@@ -242,9 +253,8 @@ protected
   end
   
   def after_restore_url
+    return :back if params[:redirect_back] or @items.size>1
     return @items.first if @items.size == 1
-    
-    :back
   end
 
   def add_to_history(item = false, cls = false)

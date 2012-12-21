@@ -31,6 +31,8 @@
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
+
+  map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
@@ -61,8 +63,10 @@
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
-  map.resources :activations, :member => { :send_invite => :put }
-
+  
+  map.resources :activations, :member => { :send_invite => :put },
+                              :collection => { :bulk_send_invite => :put }
+  map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
@@ -96,6 +100,12 @@
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
     admin.resources :canned_responses
+    admin.resources :portal, :only => [ :index, :update ]
+    admin.namespace :canned_responses do |ca_response|
+      ca_response.resources :folders do |folder|
+        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
+      end
+    end
     admin.resources :products
     admin.resources :portal, :only => [ :index, :update] do |portal|
       portal.resource :template, :collection => { :show =>:get, :update => :put} do |template|
@@ -153,8 +163,13 @@
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
-      admin.resources :analytics
+      admin.namespace :resque do |resque|
+        resque.home '', :controller => 'home', :action => 'index'
+        resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
+        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
       end
+      admin.resources :analytics 
+    end
   end
   
   map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
@@ -237,7 +252,7 @@
 #    end
 
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
-                                    :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
+                                    :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
                                     :filter_options => :get, :full_paginate => :get },  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
@@ -265,7 +280,8 @@
 
     helpdesk.resources :notes
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
-    helpdesk.resources :canned_responses
+    helpdesk.resources :ca_folders
+    helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 
@@ -285,7 +301,7 @@
 
     helpdesk.resources :attachments
     
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get }
+    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     

@@ -22,7 +22,9 @@
 	};
 	
   jQuery(document).ready(function() {
-	jQuery("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2();
+		jQuery("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
+			jQuery(this).dialog2();
+		})
     <%= yield :onload_script -%>
   });
 <%- end -%>

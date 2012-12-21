@@ -1,7 +1,9 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
-  before_filter :portal_check
+  
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
   end
@@ -15,7 +17,7 @@ class ForumCategoriesController < ApplicationController
   def index
      @forum_categories = current_portal.forum_categories
      respond_to do |format|
-      format.html 
+      format.html { @page_canonical = categories_url }
       format.xml  { render :xml => @forum_categories }
       format.json  { render :json => @forum_categories }
       format.atom 
@@ -44,7 +46,7 @@ class ForumCategoriesController < ApplicationController
     @forums = @forum_category.forums.paginate :page => params[:page]
 
     respond_to do |format|
-      format.html 
+      format.html { @page_canonical = category_url(@forum_category) }
       format.xml  { render :xml => @forum_category.to_xml(:include => fetch_forum_scope) }
       format.json  { render :json => @forum_category.to_json(
                               :except => [:account_id,:import_id],
@@ -66,6 +68,9 @@ class ForumCategoriesController < ApplicationController
           render :action => 'show'
         end
       end
+      wants.xml { render :xml =>@result}
+      wants.json { render :json =>@result}
+
     end
   end  
     
@@ -108,11 +113,9 @@ class ForumCategoriesController < ApplicationController
      end
     end
 
-  private
-    def portal_check
-      if current_user.nil? || current_user.customer?
-        return redirect_to support_discussions_path
-      end
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.forum_category.page_not_found')
+      redirect_to categories_path
     end
     
 end

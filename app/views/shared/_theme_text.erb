@@ -16,13 +16,13 @@
 	$lightness_val: lightness($header_color);
 	
 	//$loading_color: darken($header_color, 10%);
-	$loading_color: rgba(60,60,60,0.1);
+	$loading_color: rgba(60,60,60,0.2);
 
 	@if $lightness_val < 10 {
-		$loading_color: rgba(255,255,255,0.2)
+		$loading_color: rgba(255,255,255,0.3)
 	 	//$loading_color: lighten($header_color, 20%);
 	} @else if $lightness_val < 50 {
-		$loading_color: rgba(255,255,255,0.2)
+		$loading_color: rgba(255,255,255,0.3)
 	 	//$loading_color: lighten($header_color, 15%);
 	}
 
@@ -133,7 +133,8 @@
 	 
 	background-size: 19px 19px;
 	animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
-
+	border-bottom:1px solid $loading-color;
+	box-shadow: 0 4px 10px $header_color;
 	}
 
 	.top-loading-wrapper .top-loading-strip-opera-12 {

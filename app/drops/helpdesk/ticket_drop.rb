@@ -46,7 +46,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def requester_status_name
-		Helpdesk::TicketStatus.translate_status_name(@source.ticket_status, "customer_display_name")
+		@source.requester_status_name
 	end
 
 	def priority

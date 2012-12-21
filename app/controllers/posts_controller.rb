@@ -1,4 +1,7 @@
 class PostsController < ApplicationController
+  
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
   before_filter :find_forum_topic, :only => :create
   before_filter :find_post,      :except =>  [:monitored, :create]
   #before_filter :login_required, :except => [:index, :monitored, :search, :show]
@@ -121,7 +124,7 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    flash[:notice] = "Post of '{title}' was deleted."[:post_deleted_message, @post.topic.title]
+    flash[:notice] = I18n.t('flash.post.deleted')[:post_deleted_message, h(@post.topic.title)]
     respond_to do |format|
       format.html do
         redirect_to(@post.topic.frozen? ? 
@@ -177,4 +180,10 @@ class PostsController < ApplicationController
         format.xml  { render :xml => @posts.to_xml }
       end
     end
+
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.post.page_not_found')
+      redirect_to categories_path
+    end
+    
 end

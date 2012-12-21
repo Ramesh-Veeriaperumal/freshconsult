@@ -1,7 +1,0 @@
-<div class="pageContent">
-	<h3 class="content_title"><%= @page_title = 'New User' %></h3>
-	<span class="seperator"></span>
-	<% form_for @user, :html => { :multipart => true }  do |f| -%>
-	    <%= render :partial => "form", :locals => { :f => f , :type => "new" } %>
-	<% end %>
-</div>
