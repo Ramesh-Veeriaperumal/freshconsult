@@ -246,7 +246,7 @@
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
-                                    :change_due_by => :put, :split_the_ticket =>:post, 
+                                    :change_due_by => :put, :split_the_ticket =>:post, :status => :get, 
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post } do |ticket|
 

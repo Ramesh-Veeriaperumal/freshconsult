@@ -1,16 +1,27 @@
 <script type="text/javascript">
-var tag_list = "<%= escape_javascript(current_account.tags.collect{|tag| tag.name}.join(',')) %>"; 
+var tag_list = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>"; 
 TICKET_DETAILS_DATA = {
 	displayId			: "<%= escape_javascript(h(@ticket.display_id)) %>",
 	total_notes			: "<%= @ticket_notes_total %>",
 	notes_per_page		: 50,
 	notes_pagination_url: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes?v=2&",
+	status_refresh_url	: "<%= status_helpdesk_ticket_path(@ticket)%>",
 	last_note_id		: <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
 	activities_pagination_url: "/helpdesk/tickets/activities/<%= escape_javascript(h(@ticket.display_id)) %>?",
 	last_activity		: -1,
-	loaded_activities		: 0,
+	loaded_activities	: 0,
 	fetch_notes_url		: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes", 
 	tag_list			: tag_list.split(","),
-	created_on			: new Date("<%= @ticket.created_at.strftime("%B %e, %Y %H:%M") %>")
+	created_on			: new Date("<%= @ticket.created_at.strftime("%B %e, %Y %H:%M") %>"),
+	draft				: {
+							saving_text		: '<%= "#{t('draft')} #{t('saving_draft')}" %>',
+							save_path		: '<%=save_draft_helpdesk_ticket_path%>',
+							saved_text		: "<%= "#{t('draft')} #{t('saved_draft')}" %>",
+							clear_text		: "<%= t('clear_draft_text') %>",
+							clear_path		: '<%=clear_draft_helpdesk_ticket_path%>',
+							cleared_flag	: <%= @draft.blank?.to_s %>,
+							hasChanged		: false,
+							default_reply	: "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>"
+						}
 };
 </script>

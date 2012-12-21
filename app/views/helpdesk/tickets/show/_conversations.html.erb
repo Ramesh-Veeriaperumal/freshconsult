@@ -1,5 +1,5 @@
-<ol class="conversation_thread" id="all_notes" rel='activity_container'>
+<%= '<ol class="conversation_thread" id="all_notes" rel="activity_container">' unless params[:since_id].present? or params[:before_id].present? %>
 	<% unless @ticket_notes.blank? %>
 		<%= render :partial => "helpdesk/tickets/show/note.html.erb", :collection => @ticket_notes %>
 	<% end %>
-</ol>
+<%= '</ol>' unless params[:since_id].present? or params[:before_id].present? %>

@@ -5,7 +5,7 @@
     			jQuery('#'+element_id).redactor({autoresize:false,convertDivs: false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
     			break;
 	    	case 'cnt-reply':
-	         	jQuery('#'+element_id).redactor({ focus: true, convertDivs: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],execCommandCallback: function(obj, command) { isDirty=true; } , keyupCallback: function(obj, event) {isDirty=true;} });
+	         	jQuery('#'+element_id).redactor({ focus: true, convertDivs: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],execCommandCallback: function(obj, command) { isDirty=true; TICKET_DETAILS_DATA['draft']['hasChanged'] = true; } , keyupCallback: function(obj, event) {isDirty=true; TICKET_DETAILS_DATA['draft']['hasChanged'] = true;} });
 	         	break;
 	        case 'signature':
 	         	jQuery('#'+element_id).redactor({ focus: false,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	

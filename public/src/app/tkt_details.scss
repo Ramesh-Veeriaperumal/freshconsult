@@ -218,18 +218,20 @@ p strong{
 					}
 
 					background-color: $COL_RESOLVED_CLOSED;		//Fallback
-					&.priority-low {
+
+					&.priority_color_1 {
 						background-color: $COL_PRI_LOW;
 					}
-					&.priority-medium {
+					&.priority_color_2 {
 						background-color: $COL_PRI_MEDIUM;
 					}
-					&.priority-urgent {
+					&.priority_color_4 {
 						background-color: $COL_PRI_URGENT;
 					}
-					&.priority-high {
+					&.priority_color_3 {
 						background-color: $COL_PRI_HIGH;
 					}
+
 					&.resolved, &.closed {
 						background-color: $COL_RESOLVED_CLOSED !important;
 					}
@@ -462,6 +464,11 @@ p strong{
 	color: #999;
 	border-radius: 5px;
 	cursor: pointer;
+
+	a {
+		color: #666;
+		border-bottom: dotted 1px #999;
+	}
 }
 
 
@@ -568,7 +575,7 @@ p strong{
     		color: #333;
     		float:left;
     		margin:0;
-    		padding: 3px 7px;
+    		padding: 1px 7px;
     	}
 
     	&.saving {
@@ -928,6 +935,12 @@ ol.conversation_thread{
 }
 
 #show_more {
+
+	.avatar-wrap-collapse {
+		background: #1272de;
+		border-color: #0155b2;
+		color: #FFF;
+	}
 
 	&.loading {
 		background: none;
@@ -1499,6 +1512,7 @@ ol.conversation_thread{
 	display: block;
 	margin-left: 29px;
 	padding: 10px;
+	line-height: 150%;
 	background: #fffdf8;
 	border: 1px solid #cccccc;
 	@include min-height(30px);
@@ -1619,15 +1633,17 @@ ol.conversation_thread{
 	margin-top: -9px;
 }
 
-.commentbox-black{
-	background: #7d7d7d;
-	border: 1px #565656 solid;
-	@include box-shadow(0px 0px 0px #ffffff);
+.commentbox-blue{
+	background: #1272de;
+	border: 1px #3a7ecc solid;
+	@include box-shadow(0px 0px 0px rgba(0,0,0,0.36));
 	@include min-height(10px);
-	padding: 10px 20px;
+	padding: 10px 20px !important;
 	margin-top:0;
-	width: 200px;
+	width: 100px;
+	line-height: 100%;
 	font-size: 13px;
+	font-weight: bold;
 	color: #fff;
 	text-align: center;
 	text-shadow: 0px 1px 0px #000;
@@ -1637,15 +1653,15 @@ ol.conversation_thread{
 	}
 }
 
-.commentbox-black:after{
-	border-color: rgba(#000000, 0);
-	border-right-color: #7d7d7d;
+.commentbox-blue:after{
+	border-color: rgba(#1272de, 0);
+	border-right-color: #1272de;
 	margin-top: -15px;
 }
 
-.commentbox-black:before{
-	border-color: rgba(#000000, 0);
-	border-right-color: #565656;
+.commentbox-blue:before{
+	border-color: rgba(#1272de, 0);
+	border-right-color: #1272de;
 	margin-top: -16px;
 }
 
@@ -1659,6 +1675,10 @@ ol.conversation_thread{
 	   -moz-transition: all 0.5s ease;
 	    -ms-transition: all 0.5s ease;
 			transition: all 0.5s ease;
+}
+
+#ticket_original_request div {
+	margin: 10px 0;
 }
 
 .attachments-wrap{
@@ -1820,56 +1840,88 @@ label.custom-select {
 			font-size: 13px;
 			padding: 5px 3px;
 			color: #505050;
+			font-weight: bold;
+		}
+		a {
+			font-weight: normal;
 		}
 	}
 }
 
-.pagination-link{
-		float: right;
-		li{
-			float: right;
-			font-size: 13px;
-			padding: 5px 0px;
-			margin-left: 5px;
-		}
-		.pagi-btn{
-			@include border-radius(4px);
-			border: 1px #d2d2d2 solid;
-			display: inline-block;
-			padding: 7px 10px;
-			color: #333;
-			span.arrow-next, span.arrow-previous{
-				width: 7px;
-				height: 9px;
-				display: inline-block;
-				margin: 0px 3px;
-			}
-
-			span.arrow-next{
-				background: url(/images/ticket-details/arrow-next.png) no-repeat;
-			}
-
-			span.arrow-previous{
-				background: url(/images/ticket-details/arrow-previous.png) no-repeat;
-			}
-			&:hover{
-				background: #f6f4f4;
-			}
-			&:active{
-				background: #fff;
-			}
-
-			&.disabled {
-				color: #CCC;
-				border: 1px #f6f6f6 solid;
-
-				span {
-					@include opacity(0.1);
-				}
-			}
-		}
-
+.activity_toggle {
+	float: right;
+	text-align: center;
+	width: 100px;
+	@include border-radius(4px);
+	border: 1px #eaeaea solid;
+	background-color: #f7f7f7;
+	padding: 7px 10px;
+	cursor: pointer;
+	margin: 5px 15px;
+	span {
+		font-weight: bold;
 	}
+
+	.visible { display: none; }
+	&.visible {
+		span { display: none; }
+		.visible { display: inline; }
+	}
+
+	&.loading-center {
+		@include hide-text();
+		font-size: 0.1em;
+		color: #f7f7f7;
+		height:15px;
+	}
+}
+
+.pagination-link{
+	float: right;
+	li{
+		float: right;
+		font-size: 13px;
+		padding: 5px 0px;
+		margin-left: 5px;
+	}
+	.pagi-btn{
+		@include border-radius(4px);
+		border: 1px #d2d2d2 solid;
+		display: inline-block;
+		padding: 7px 10px;
+		color: #333;
+		span.arrow-next, span.arrow-previous{
+			width: 7px;
+			height: 9px;
+			display: inline-block;
+			margin: 0px 3px;
+		}
+
+		span.arrow-next{
+			background: url(/images/ticket-details/arrow-next.png) no-repeat;
+		}
+
+		span.arrow-previous{
+			background: url(/images/ticket-details/arrow-previous.png) no-repeat;
+		}
+		&:hover{
+			background: #f6f4f4;
+		}
+		&:active{
+			background: #fafafa;
+		}
+
+		&.disabled {
+			color: #CCC;
+			border: 1px #f6f6f6 solid;
+
+			span {
+				@include opacity(0.1);
+			}
+		}
+	}
+
+}
 
 .redactor-ribbon-wrap{
 	font-size: 13px;

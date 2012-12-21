@@ -33,7 +33,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   skip_before_filter :load_item
   alias :load_ticket :load_item
-  before_filter :load_ticket, :verify_permission, :only => [:show, :details, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities]
+  before_filter :load_ticket, :verify_permission, :only => [:show, :details, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -587,6 +587,10 @@ class Helpdesk::TicketsController < ApplicationController
     else
       render :layout => false
     end
+  end
+
+  def status
+    render :partial => 'helpdesk/tickets/show/status.html.erb'
   end
 
   protected

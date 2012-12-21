@@ -41,7 +41,9 @@
 									}) if @ticket.is_facebook? %>
 			</div> 
 			<div id="TicketPseudoReply" class="pseudo_reply" rel="note-button" data-note-type="reply">
-				Click here to reply
+				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" ><%= t('ticket.reply_to')  %></a> /
+				<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /
+				<a href="#"  rel="note-button" data-note-type="note" ><%= t('ticket.add_note') %></a>
 			</div>
 		</div>
 

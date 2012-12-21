@@ -53,7 +53,9 @@
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
     <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
     <div class="f-right">
-      <%= button_to_function(t('cancel'), "jQuery('#cnt-note').slideUp()", :class => "uiButton" ) %>   
+      <%= submit_tag(t('cancel'), :class => "uiButton cancel_btn", 
+                                  "data-show-pseudo-reply" => 'true',
+                                  "data-cnt-id" => cntid ) %>   
     	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('resolved');" , :class => "uiButton") %> 
       <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
     </div>

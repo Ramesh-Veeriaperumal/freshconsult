@@ -36,6 +36,8 @@ class Helpdesk::Tag < ActiveRecord::Base
             :include => :tag_uses,
             :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }
         }
+  named_scope :most_used, lambda { |num| { :limit => num, :order => 'tag_uses_count DESC'}
+        }
 
   SORT_FIELDS = [
     [ :activity_desc, 'Most Used',    "tag_uses_count DESC"  ],

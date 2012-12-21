@@ -25,7 +25,8 @@ class Helpdesk::NotesController < ApplicationController
     
     if request.xhr?
       unless params[:v].blank? or params[:v] != '2'
-        render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
+        @ticket_notes = @notes.reverse
+        render :partial => "helpdesk/tickets/show/conversations"
       else
         render(:partial => "helpdesk/tickets/note", :collection => @notes)
       end
