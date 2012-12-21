@@ -135,10 +135,9 @@ strong {
 }
 
 
-/* This is class is overriding app-common css. */
+/* This class overriding app-common css. */
 
-.pagination 
-{
+.pagination{
   border-bottom:0 ;
   a{
    font-weight:normal;
@@ -146,4 +145,10 @@ strong {
     text-decoration:none;
    }
   }
+}
+
+/* This class overriding app-bootstrap css. */
+
+.dropdown-toggle:after{
+  border-top:0;
 }
