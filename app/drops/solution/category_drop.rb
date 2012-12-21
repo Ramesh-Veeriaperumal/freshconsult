@@ -19,5 +19,9 @@ class Solution::CategoryDrop < BaseDrop
   def folders
     @folders ||= liquify(*@source.folders.reject(&:is_default?))
   end
+
+  def total_folders
+    @total_folders ||= @source.folders.reject(&:is_default?).size
+  end
   
 end

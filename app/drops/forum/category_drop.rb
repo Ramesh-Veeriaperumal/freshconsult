@@ -17,7 +17,11 @@ class Forum::CategoryDrop < BaseDrop
   end
   
   def forums
-    @forums ||= liquify(*@source.portal_forums)
+    @forums ||= @source.portal_forums
+  end
+
+  def total_forums
+    @source.portal_forums.size
   end
   
 end

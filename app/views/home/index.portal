@@ -1,5 +1,5 @@
 <section class="main content rounded-6 min-height-on-desktop">
-	<h2 class="heading">Knowledge base</h2>
+	<h2 class="heading">{% translate portal.knowledge_base %}</h2>
 	<div class="cs-s">
 		{% for category in portal.solution_categories %}
 			<h3 class="heading">{{ category.name }}</h3>
@@ -7,7 +7,7 @@
 				{% for folder in category.folders %}
 					<section class="cs-g article-list">
 						<div class="list-lead">
-							<a href="{{folder.url}}">{{folder.name}} ({{ folder.articles | size }})</a>
+							<a href="{{folder.url}}">{{ folder.name }} ({{ folder.total_articles }})</a>
 						</div>
 						<ul>
 							{% for article in folder.articles limit:5 %}
@@ -33,8 +33,8 @@
 	<a href="{{portal.new_topic_path}}" class="start-topic">
 		{% translate portal.topic.start_new_topic %}
 	</a>
-	<h2 class="heading">Community</h2>
-	<p class="intro">Showing recent updates</p>
+	<h2 class="heading">{% translate portal.community %}</h2>
+	<p class="intro">{% translate portal.showing_recent_updates %}</p>
 	<div class="cs-g-c" id="home-page-discussions">
 		{% for forum in portal.forums %}
 			{% unless forum.total_topics == 0 %}

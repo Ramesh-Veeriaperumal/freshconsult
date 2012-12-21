@@ -48,8 +48,16 @@ class PortalDrop < BaseDrop
     @tabs ||= load_tabs
   end
   
+  def total_solution_categories
+    @total_solution_categories ||= @source.solution_categories.reject(&:is_default?).size
+  end
+
   def solution_categories
     @solution_categories ||= @source.solution_categories.reject(&:is_default?)
+  end
+
+  def total_forum_categories
+    @total_forum_categories ||= @source.forum_categories.size
   end
   
   def forum_categories

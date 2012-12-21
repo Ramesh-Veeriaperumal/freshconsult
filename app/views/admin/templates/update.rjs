@@ -11,8 +11,8 @@ else
 	@soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => @active_tab) if @cached_data
 end
 buttons = <<HTML
-	#{submit_tag "Preview", :name => 'preview_button', :onclick => "FD.PortalTemplate.save(this,event)", :class => "btn primary floatr", :target => "_blank", :"data-disable-with" => "Please wait...", :"data-code-refresh" => "#{@code_refresh}" }
-	#{submit_tag "Save and continue editing", :onclick => "FD.PortalTemplate.save(this)", :name => 'save_button',:class => "btn floatr", :"data-disable-with" => "Please wait...", :"data-code-refresh" => "#{@code_refresh}"}
+	#{submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", "data-code-refresh" => "#{@code_refresh}" }
+	#{submit_tag "Save and continue editing", :onclick => "FD.PortalTemplate.save(this)", :name => 'save_button',:class => "btn floatr", "data-disable-with" => "Please wait...", "data-code-refresh" => "#{@code_refresh}"}
 	#{link_to "Discard", @soft_reset_url, :class => "btn #{!@cached_data&& 'disabled'}" }
 HTML
 page.replace_html "#{@active_tab}_btns", buttons

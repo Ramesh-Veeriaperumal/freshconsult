@@ -1538,6 +1538,10 @@ en:
       ideas_users_voted_title: People who like this idea
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
+    knowledge_base: "Knowledge base"
+    community: "Community"
+    showing_recent_updates: "Showing recent updates"
+
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}

@@ -23,5 +23,9 @@ class Solution::FolderDrop < BaseDrop
   def articles
     @articles ||= @source.published_articles.filter(@per_page, @page)
   end
+
+  def total_articles
+    @total_articles ||= @source.published_articles.size
+  end
   
 end
