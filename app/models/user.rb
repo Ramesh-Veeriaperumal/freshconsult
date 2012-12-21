@@ -401,7 +401,7 @@ class User < ActiveRecord::Base
   end
   
   def get_info
-    (email) || (twitter_id) || (external_id)
+    (email) || (twitter_id) || (external_id) || (name)
   end
   
   def twitter_style_id
