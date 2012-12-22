@@ -25,6 +25,7 @@
 </script>
 <%if @item.requester and !@item.requester_has_email?%>
  <%= text_field object_name, :twitter_id, :value => (@item.requester_info), :disabled => true %>
+ <%= hidden_field object_name, :requester_id, :value => (@item.requester_id) %>
 <%else%>
  <%= text_field object_name, :email, :value => (@item.requester_info), :class => "required requester", "data-requester-check" => false, "data-current-user" => "" %>
 <%end%>
