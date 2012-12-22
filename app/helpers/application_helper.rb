@@ -485,9 +485,9 @@ module ApplicationHelper
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
-        element+= hidden_field(object_name, :requester_id)  
+        element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         unless is_edit or params[:format] == 'widget'
-          element = add_cc_field_tag element, field
+          element = add_cc_field_tag element, field  
         end
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
