@@ -46,6 +46,7 @@ class UsersController < ApplicationController
       item.save if item.customer?
     end
     flash[:notice] = t("users_blocked_message", :users => @items.map {|u| u.name}.join(', '))
+    render(:update) { |page| show_ajax_flash(page)  }
   end
   
    

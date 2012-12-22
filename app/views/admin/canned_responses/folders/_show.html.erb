@@ -1,0 +1,13 @@
+<table id="canned_table_big" class="zebra-striped">
+<tbody>
+	<% fields_for :ids do |f| %>
+		<%= each_or_message("ca_response", @ca_responses, t('canned_folders.no_response_admin', {:link =>new_admin_canned_responses_folder_response_path(@ca_res_folder)}), { :f => f }) %>
+	<% end %>
+</tbody>
+</table>
+
+<% javascript_tag do -%>
+jQuery('li[data-tab-name="<%=@selected_tab%>"]').addClass('active');
+if(jQuery('#responses').children().hasClass("list-noinfo"))
+	jQuery('#responses-select-all').attr('disabled','disabled');
+<% end %>

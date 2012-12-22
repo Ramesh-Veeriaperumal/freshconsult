@@ -1,45 +1,72 @@
-<%content_for :sidebar do%>
-	<div class="sidepanel">
-	<h3 class="title"><%=t('company.quick_company')%></h3> 
-	<% form_tag :action=> :quick, :method =>:post do %> 
-	<ul class="ui-form">
-	<li> 
-		 <label for="customer_name"><%=t('company.name')%></label> 
-		 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
-	</li> 
-	</ul>
-  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
-	<% end %>
-	</div>
-<%end%> 
-<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
-<% form_tag "", { :id => "tickets-expanded", :method => :put } do %>
-	<% if @customers.length > 0 %>
-		<ul id="companies" class="content_list company-list">
-			<% @customers.each do |customer| %>
-			  <li class="<%= cycle('stripe', '') %>">		  	
-				<div class="item_actions">
-			    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "button") %>
-			    	<%= link_to t('delete'), {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  "#{t('company.info1')}?", :method => 'delete', :class => "button" %>
-				</div> 
-			    <div class="item_information">
-			    	<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
-			    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			
-					<div><%= h customer.description %></div>
-				</div>		    
-			  </li>
-			<% end %>
-		</ul>	
-
-		<%= will_paginate @customers %>
-	<% else %>
-		<div class="big-info">
-			<div class="no-info-text">
-				<% if params[:state].blank? or params[:state].eql?('active') %>
-					<%= t('companies.active.no_companies_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
-					<%= t('companies.active.no_companies') if params[:letter].blank? %>
-				<% end %>
-			</div>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
+<div id="customers-page">
+	<%content_for :sidebar do%>
+		<div class="sidepanel">
+		<h3 class="title"><%=t('company.quick_company')%></h3> 
+		<% form_tag :action=> :quick, :method =>:post do %> 
+		<ul class="ui-form">
+		<li> 
+			 <label for="customer_name"><%=t('company.name')%></label> 
+			 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
+		</li> 
+		</ul>
+	  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
+		<% end %>
 		</div>
-	<% end %>
-<% end %>
+	<%end%> 
+	<div id="cust-list" class="cust_list_table">
+		<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
+		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "company", :path => customers_path})%>
+		<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
+			<% if @customers.length > 0 %>
+				<div class="cust_list_table_body">
+					<%= render(:partial => '/shared/customers_toolbar', :locals => {:path => "customers"}) %>
+					<table class="table table-striped" id="companies" >
+						<% @customers.each do |customer| %>
+							<tr>
+								<td class="selector-box">
+									<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
+								</td>
+								<td class="name">
+									<p class="text-info">
+										<strong><%= link_to(h(customer.name), customer, :class => 
+																					"item_info" ) %><br/></strong>
+										<% if customer.users.size>=1 %>
+											<% updated_contact_count = pluralize(customer.users.size, t('contacts.contact'), t('contacts.contacts')) %>
+									    	<span class="muted"><%= t('contacts.contacts_in_companies', :contacts => updated_contact_count) %></span>
+									    <% else %>
+									    	<span class="muted"><%= t('contacts.no_contacts') %></span>
+									    <% end %>
+									</p>
+								</td>
+								<td>
+									<div class="item_actions" align="right">
+								    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "btn btn-mini") %>
+								    	<%= link_to "<i class='icon-trash'></i>", {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
+								    		"#{t('company.info11')} #{customer.name}?\n#{t('company.info10')}", 
+								    		:method => 'delete', :class => "btn btn-mini" %>
+									</div> 
+								</td>
+							</tr>
+						<% end %>
+					</table>  
+					<%= will_paginate @customers, 
+			    				:renderer => BootstrapPaginationRenderer, 
+			    				:previous_label => "<b class='arrow-left'></b>",
+			    				:next_label => "<b class='arrow-right'></b>",
+			    				:class => "pagination pagination-centered" %>
+			    </div>
+			<% else %>
+				<div class="big-info">
+					<div class="no-info-text">
+						<% if params[:state].blank? or params[:state].eql?('verified') %>
+							<%= t('companies.active.no_companies_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
+							<%= t('companies.active.no_companies') if params[:letter].blank? %>
+						<% end %>
+					</div>
+				</div>
+			<% end %>
+		<% end %>
+	</div>
+</div>

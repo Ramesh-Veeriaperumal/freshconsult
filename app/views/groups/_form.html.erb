@@ -53,11 +53,11 @@
 			});			
 		
 		jQuery("#group_form").submit(function(ev){
-			activeAgents = $H();
+			activeAgents = new Array();
 			jQuery("ul#Active_list li").each(function(index, item){
-				activeAgents.set(item.getAttribute("agent_id"), item.getAttribute("agent_name"));
+				activeAgents.push(item.getAttribute("agent_id"));
 			});
-			jQuery("#agent_list").val(activeAgents.toJSON()); 
+			jQuery("#agent_list").val(activeAgents); 
 		});
 		
 		toggleText();
@@ -115,10 +115,7 @@
 					<%= link_to_function t('add'), 'AddUser()', :class => "button" %>
 			</span>
 			
-			
-			<% fields_for "AgentGroups", @group.agent_groups do |agent| %>
-				<%= agent.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>			
-			<%end%>
+				<%= f.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>			
 						
 			
 			

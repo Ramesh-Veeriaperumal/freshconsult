@@ -43,12 +43,13 @@ class TopicsController < ApplicationController
   end
 
   def new
-    @topic = Topic.new
+    @topic = current_account.topics.new
   end
   
   def show    
     respond_to do |format|
       format.html do
+        @page_canonical = category_forum_topic_url(@topic.forum.forum_category, @topic.forum, @topic)
         # see notes in application.rb on how this works
         update_last_seen_at
         # keep track of when we last viewed this topic for activity indicators
@@ -93,11 +94,13 @@ class TopicsController < ApplicationController
 			respond_to do |format| 
 				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
 				format.xml  { render  :xml => @topic }
+        format.json  { render  :json => @topic }
 			end
 	else
    respond_to do |format|  
 			format.html { render :action => "new" }
       format.xml  { render  :xml => @topic.errors }
+      format.json  { render  :json => @topic.errors }
    end
 		end
   end
@@ -129,10 +132,11 @@ class TopicsController < ApplicationController
   
   def destroy
     @topic.destroy
-    flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, @topic.title]
+    flash[:notice] = I18n.t('flash.topic.deleted')[:topic_deleted_message, h(@topic.title)]
     respond_to do |format|
       format.html { redirect_to  category_forum_path(@forum_category,@forum) }
       format.xml  { head 200 }
+      format.json  { head 200 }
     end
   end
   

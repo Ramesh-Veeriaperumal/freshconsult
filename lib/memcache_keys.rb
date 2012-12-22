@@ -6,7 +6,7 @@ module MemcacheKeys
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
-  ACCOUNT_TICKET_TYPES = "v1/ACCOUNT_TICKET_TYPES:%{account_id}"
+  ACCOUNT_TICKET_TYPES = "v2/ACCOUNT_TICKET_TYPES:%{account_id}"
 
   ACCOUNT_AGENTS = "v2/ACCOUNT_AGENTS:%{account_id}"
 
@@ -22,6 +22,16 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v1/ACCOUNT_STATUSES:%{account_id}"
 
+  PORTAL_BY_URL = "v1/PORTAL_BY_URL:%{portal_url}"
+
+  ACCOUNT_BY_FULL_DOMAIN = "v1/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
+
+  ACCOUNT_MAIN_PORTAL = "v1/ACCOUNT_MAIN_PORTAL:%{account_id}"
+
+  ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v1/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
+
+  ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
+  
   class << self
 
     def newrelic_begin_rescue(&block)
@@ -29,6 +39,7 @@ module MemcacheKeys
         block.call
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
+        return
       end 
     end
 
@@ -52,19 +63,20 @@ module MemcacheKeys
       newrelic_begin_rescue { $memcache.get(key) }
     end
 
-    def cache(key,value)
-      newrelic_begin_rescue { $memcache.set(key, value) }
+    def cache(key,value,expiry=0)
+      newrelic_begin_rescue { $memcache.set(key, value, expiry) }
     end
 
     def delete_from_cache(key)
       newrelic_begin_rescue { $memcache.delete(key) }
     end
 
-    def fetch(key, &block)
+    def fetch(key, expiry=0,&block)
+      key = ActiveSupport::Cache.expand_cache_key(key) if key.is_a?(Array)
       cache_data = get_from_cache(key)
       unless cache_data
         Rails.logger.debug "Cache hit missed :::::: #{key}"
-        cache(key, (cache_data = block.call))
+        cache(key, (cache_data = block.call),expiry)
       end
 
       cache_data

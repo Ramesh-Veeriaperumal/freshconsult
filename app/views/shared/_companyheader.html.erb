@@ -1,77 +1,64 @@
-<% javascript_tag do %>
-	validate_then_submit = function(url, method, params){
-		var customer_type = '<%=type.eql?('user') ? t('flash.contacts.info_select') : t('flash.customers.info_select')%>';
-		if (!jQuery('.customers_selector:checked').length)
-		{
-			jQuery("#noticeajax").text(customer_type);
-			jQuery("#noticeajax").show();
-			closeableFlash('#noticeajax');
-		}
-		else
-		{
-			helpdesk_submit(url, method, params);
-		}
-	}
-<% end %>
 <% content_for :onload_script do %>
+	
 	jQuery("#customers-select-all").live("change", function(ev){
-		jQuery("#users, #companies").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked"));
-		jQuery(".bulk-action").toggle( jQuery(this).prop("checked") );
+		jQuery("#contacts-table .customers_selector, #companies .customers_selector")
+			.prop("checked", this.checked)
+			.parents("tr").toggleClass("diffColor", this.checked);
+
+		jQuery("#customers-toolbar .bulk-action .btn")
+			.attr('disabled',!this.checked);
 	});
-	jQuery('.customers_selector').change(function() {
-		jQuery(".bulk-action").toggle( jQuery('.customers_selector:checked').length > 0 );
-		jQuery("#customers-select-all").prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
+
+
+	jQuery('.customers_selector').live("change", function(ev){
+		jQuery(this).parents("tr").toggleClass("diffColor", this.checked);
+
+		if(jQuery('.customers_selector:checked').length == 0 )
+			jQuery("#customers-toolbar .bulk-action .btn").attr('disabled','disabled');
+		else
+			jQuery("#customers-toolbar .bulk-action .btn").removeAttr('disabled');
+
+		jQuery("#customers-select-all")
+			.prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
+	});
+
+	jQuery('.send-activation').one("click", function(ev) {
+    	ev.preventDefault();
+    	jQuery(this).button("loading")
+    	var _o_data = jQuery(this).data(),
+			_self = jQuery(this),
+			_post_data = { 
+				"_method" : jQuery(this).data("method")
+			}
+		jQuery.ajax({
+			type: 'POST',
+			url: this.href,
+			data: _post_data,
+			dataType: "json",
+			success: function(data){		
+				if(data.access_denied){ 
+					_self.button("reset").html("Access denied")
+				}
+
+				if(data.activation_sent)
+					_self.button("complete")
+					setTimeout(function(){
+						_self.addClass("disabled")
+					}, 10);
+			}
+		})
 	});
 <% end %>
-
-<div>
-	<div class="floatr">				
-		<%= link_to(t('contacts.import_csv'), csv_contact_import_path) %>
-		<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
+<div class="cust_list_table_header"	>
+	<div class="row-fluid">
+		<div class="span6"><h3 class="title"><%= @page_title = t('customers') %></h3></div>
+		 <div class="span6 pull-right pagination-right header_buttons align-right" >
+			<%= link_to("Export", { :action => "configure_export" }, :class => "padding6 dialog2", :title => "Export to CSV", "data-width" => "650" ) %> &middot; 
+		 	<%= link_to(t('import'), csv_contact_import_path, :title => t("contacts.import_csv"), :class => "padding6 margin-right", :id => "contacts_import") %>
+			<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
+			<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
+			<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
+        </div>
 	</div>
-
-	<h3 class="title"><%= @page_title = t('customers') %></h3>	
-	<div class="customers-toolbar">
-		<input type="checkbox" id="customers-select-all" />
-		<div class="bulk-action">
-			<% if params[:state].eql?("deleted") %>
-				<%= link_to_function(t('contacts.restore'), "validate_then_submit('#{ path }/restore', 'restore')", :class => "uiButton") %>
-			<% else %>
-				<%= link_to_function(t('delete'), "validate_then_submit('#{ path }/destroy', 'delete')", :class => "uiButton") %>
-			<% end %>
-		</div>
-		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
-		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
-	</div>
-	<%= contact_tabs type %>	
-	<div class="contacts_sub_header">
-		<ul class="alpha_sort_list">		
-			<%= hidden_field_tag :letter, '' %>
-			<li class="first <%= 'active' if params[:letter].blank? %>">
-				<%= link_to 'All', :letter => '', :state => params[:state].blank? ? 'active' : params[:state] %>
-			</li>
-			<% "A".upto("Y") do |l| -%>	    
-			 <li class="<%= 'active' if params[:letter] == [l] %>">
-			 	<%= link_to l, :letter => l, :state => params[:state].blank? ? 'active' : params[:state] %>
-			 </li>	
-			<% end %>
-			<li class="last <%= 'active' if params[:letter] == ['Z'] %>">
-				<%= link_to 'Z', :letter => 'Z', :state => params[:state].blank? ? 'active' : params[:state] %>
-			</li>
-		</ul>
-		<% if type.eql?('user') %>
-			<div class="customer_status_tab">
-				<b><%=t('contacts.showing')%></b>				
-				<% if params[:state].blank? or params[:state].eql?('active') %>					
-					<b><%=t('contacts.status.active') %></b> |
-					<%= link_to t('contacts.status.deleted'), :state => 'deleted' %>
-				<% else %>						
-					<%= link_to t('contacts.status.active'), :state => 'active' %> |
-					<b><%=t('contacts.status.deleted') %></b>
-				<% end %>	
-			</div>
-		<% end %>
-	</div>
-
-	<!-- %= render(:partial => '/shared/listsearch') % -->	
 </div>
+<%= contact_tabs type %>
