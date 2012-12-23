@@ -57,6 +57,10 @@ class Portal::Template < ActiveRecord::Base
     self.layout = nil
     self.save
     clear_cache!
+    Portal::Page::PAGE_TYPE_OPTIONS.map do |page|
+      page_label = page[0]
+      clear_page_cache!(page_label)
+    end
   end
 
   def draft!
