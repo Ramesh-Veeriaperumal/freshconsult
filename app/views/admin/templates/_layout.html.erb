@@ -1,0 +1,28 @@
+<% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put, :target => "blank" } do |f| -%>
+  <%= f.error_messages %>
+  <%= hidden_field_tag 'portal_tab', :layout %>
+
+  <label>Header</label>  
+  <p class="help-text">Change the header area of your support portal</p>
+
+  <%= f.code_editor :header, :height => "150px",
+        "data-fullscreen-title" => "<span class='light'>Editing</span> Header",
+        "data-fullscreen-actions" => "layout-actions" %>          
+  <br />
+  <label>Footer</label>
+  <p class="help-text">Change the footer area of your support portal</p>  
+  <%= f.code_editor :footer, :height => "80px",
+        "data-fullscreen-title" => "<span class='light'>Editing</span> Footer",
+        "data-fullscreen-actions" => "layout-actions" %>
+  <br />
+  <label>Page layout</label>
+  <p class="help-text">Customize the entire layout of your support portal</p> 
+  <%= f.code_editor :layout,
+        "data-fullscreen-title" => "<span class='light'>Editing</span> Page layout",
+        "data-fullscreen-actions" => "layout-actions" %>  
+  <br />
+  <div class="well" id="layout_btns">
+    <%= render :partial => "/admin/shared/customization_buttons", 
+      :locals => { :type => :template, :active_tab => :layout } %>
+  </div>
+<% end %>

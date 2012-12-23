@@ -27,7 +27,7 @@ class Admin::PagesController < Admin::AdminController
   def soft_reset
     scoper.template.clear_page_cache!(@portal_page_label)
     flash[:notice] = "Page reseted successfully."
-    redirect_to "#{admin_portal_template_path( @portal )}#header#pages"
+    # redirect_to "#{admin_portal_template_path( @portal )}#header#pages"
   end
 
   private

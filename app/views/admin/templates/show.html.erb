@@ -4,12 +4,11 @@
 <%= javascript_include_tag "portal.template.js" %>
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
-<a href="<%=admin_portal_template_publish_path%>" class="pull-right btn primary large">Publish changes</a>
-<a href="<%=admin_portal_template_restore_default_path%>" class="pull-right btn large marginr10">Reset to Default</a>
-<h3 class="sub-title">Portal template customization</h3>
-<div class="hide">
-  <a id="portal-preview-url" href="/support/solutions" target="_blank"></a>
+<div class="pull-right">
+  <a href="<%=admin_portal_template_restore_default_path%>" class="btn">Reset all changes</a>
+  <a href="<%=admin_portal_template_publish_path%>" class="btn primary">Publish changes</a>
 </div>
+<h3 class="sub-title">Portal template customization</h3>
 <br />
 <div class="clearfix">
   <ul data-tabs="tabs" class="tabs">    
@@ -25,43 +24,13 @@
   </ul>        
   
     <div class="tab-content">
-      <div class="tab-pane active" id="preferences">        
+      <div class="tab-pane active" id="preferences">
         <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
       </div>
 
     	<div class="tab-pane" id="custom_css">		
-        <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put, :target => "blank" } do |f| -%>
-        <%= hidden_field_tag 'tab', :custom_css %>
-      	<h3 class="title">Custom stylesheet</h3>
-      	<p class="help-text">
-          Add or overwrite freshdesk default styles with your own custom css.
-        </p>
-      	<%= f.code_editor :custom_css, 
-                      :value => @default_custom_css, :mode => "css", 
-                      "data-fullscreen-title" => "<span class='light'>Editing</span> Custom stylesheet",
-                      "data-fullscreen-actions" => "custom-css-actions" %>            
-        <br />
-          <div class="well" id="custom_css_btns">
-            <%= submit_tag "Preview", :name => 'preview_button',
-              :class => "btn primary floatr",
-              "data-disable-with" => "Please wait...", 
-              "data-code-refresh" => "#portal_template_custom_css" %>
-
-            <%= submit_tag "Save and continue editing", 
-              :onclick => "FD.PortalTemplate.save(this,event)", 
-              :name => 'save_button',:class => "btn floatr", 
-              "data-disable-with" => "Please wait...", 
-              "data-code-refresh" => "#portal_template_custom_css" %>
-            <% 
-              soft_reset_url = "javascript:void(0)"
-              cached_data = @cached_properties.include?(:custom_css)
-              soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "custom_css") if cached_data
-            %>
-            <%= link_to "Discard", soft_reset_url, :class => "btn #{!cached_data&& 'disabled'}" %>
-          </div>
-        <% end -%>
+        <%= render :partial => "custom_css" %>
     	</div>
-
 
       <div class="tab-pane" id="header">
         <ul data-tabs="tabs" class="pills">
@@ -77,48 +46,7 @@
 
         <div class="tab-content">
           <div class="tab-pane active" id="layout">
-            <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :method => :put, :target => "blank" } do |f| -%>
-              <%= hidden_field_tag 'tab', :header %>
-              <%= f.error_messages %>
-              <label>Header</label>  
-              <p class="help-text">Change the header area of your support portal</p>
-
-              <%= f.code_editor :header, :height => "150px",
-                    "data-fullscreen-title" => "<span class='light'>Editing</span> Header",
-                    "data-fullscreen-actions" => "layout-actions" %>          
-              <br />
-              <label>Footer</label>
-              <p class="help-text">Change the footer area of your support portal</p>  
-              <%= f.code_editor :footer, :height => "80px",
-                    "data-fullscreen-title" => "<span class='light'>Editing</span> Footer",
-                    "data-fullscreen-actions" => "layout-actions" %>
-              <br />
-              <label>Page layout</label>
-              <p class="help-text">Customize the entire layout of your support portal</p> 
-              <%= f.code_editor :layout,
-                    "data-fullscreen-title" => "<span class='light'>Editing</span> Page layout",
-                    "data-fullscreen-actions" => "layout-actions" %>  
-              <br />
-              <div class="well" id="header_btns">
-                <%= submit_tag "Preview", :name => 'preview_button',
-                  :class => "btn primary floatr",
-                  "data-disable-with" => "Please wait...", 
-                  "data-code-refresh" => "#portal_template_header, #portal_template_footer, #portal_template_layout" %>
-
-                <%= submit_tag "Save and continue editing", 
-                  :onclick => "FD.PortalTemplate.save(this,event)", 
-                  :name => 'save_button',:class => "btn floatr", 
-                  "data-disable-with" => "Please wait...", 
-                  "data-code-refresh" => "#portal_template_header, #portal_template_footer, #portal_template_layout" %>
-                    <% 
-                  soft_reset_url = "javascript:void(0)"
-                  cached_data = !(@cached_properties & [:header, :footer, :layout]).blank?
-                  soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "header:footer:layout") if cached_data
-                %>
-
-                <%= link_to "Discard", soft_reset_url, :class => "btn #{!cached_data&& 'disabled'}" %>
-              </div>     
-            <% end %>
+            <%= render :partial => "layout" %>
           </div>
           <div class="tab-pane" id="pages">
             <div>

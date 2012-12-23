@@ -1,7 +1,6 @@
 @import "susy";
 @import "compass";
 
-
 // GLOBAL VALUES
 // --------------------------------------------------
 
@@ -173,12 +172,13 @@ $grid-padding: 10px;
 
 $container-style: magic;
 
+$default-container-width: 1140px !default;
+$container-width: $default-container-width;
+
 $media-mobile: 		0 30em;
 $break-tablet:		45em 12;
 $break-desktop:		60em 12;
 $break-large:		75em 16;
-
-$container-width: 	1140px; 
 
 // PAGE RELATED STYLES
 // --------------------------------------------------

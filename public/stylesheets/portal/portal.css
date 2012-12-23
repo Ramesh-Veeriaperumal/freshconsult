@@ -4225,7 +4225,7 @@ hr.content-divider {
 
 /* line 11, ../../src/portal/lib/_login.scss */
 .btn-signup {
-  color: #049cdb;
+  /*color: $linkColor;*/
   margin: 16px 0;
   width: 100%; }
 

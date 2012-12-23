@@ -9,13 +9,14 @@
 }
 
 .btn-signup{
-	color: $linkColor;
+	/*color: $linkColor;*/
+	font-weight: bold;
 	margin: 16px 0;
 	width: 100%;
 }
 
 .btn-login{
-	float:none;
+	float: none;
 	width: 100%;
 	text-transform: uppercase;
 	margin: 4px 0 10px;

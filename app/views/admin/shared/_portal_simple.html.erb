@@ -1,6 +1,6 @@
 <div id="portal-simple-template-options">
   <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :target => "_blank", :method => :put, :rel => "validate" } do |f| -%>
-    <%= hidden_field_tag 'tab', :preferences %>
+    <%= hidden_field_tag 'portal_tab', :preferences %>
     <h3 class="title">Background color</h3>
     <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color, :btn_primary_background, :btn_background] %>
     <div class='srow-fluid'>
@@ -75,16 +75,8 @@
 
     <br />
     <div class="well" id="preferences_btns">
-      <%= submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", 
-        "data-disable-with" => "Please wait..." %>
-      <%= submit_tag "Save and continue editing", :onclick => "FD.PortalTemplate.save(this,event)", 
-        :name => 'save_button', :class => "btn floatr", "data-disable-with" => "Please wait..." %>
-      <% 
-        soft_reset_url = "javascript:void(0)"
-        cached_data = @cached_properties.include?(:preferences)
-        soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "preferences") if cached_data
-      %>
-      <%= link_to "Discard", soft_reset_url, :class => "btn #{!cached_data && 'disabled'}"%>
+      <%= render :partial => "/admin/shared/customization_buttons", 
+          :locals => { :type => :template, :active_tab => :preferences } %>
     </div>
   <% end %>
 </div>

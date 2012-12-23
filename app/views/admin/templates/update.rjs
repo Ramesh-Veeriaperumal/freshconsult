@@ -1,18 +1,4 @@
 show_ajax_flash page
-@soft_reset_url = "javascript:void(0)"
-@active_tab = params[:tab].to_sym
-@code_refresh = "#portal_template_#{@active_tab}"
-if @active_tab.eql?(:header)
-	@code_refresh = "#portal_template_header, #portal_template_footer, #portal_template_layout"
-	@cached_data = !(@cached_properties & [:header, :footer, :layout]).blank?
-  @soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => "header:footer:layout") if @cached_data
-else
-	@cached_data = @cached_properties.include?(@active_tab)
-	@soft_reset_url =  admin_portal_template_soft_reset_path(:portal_template => @active_tab) if @cached_data
-end
-buttons = <<HTML
-	#{submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", "data-code-refresh" => "#{@code_refresh}" }
-	#{submit_tag "Save and continue editing", :onclick => "FD.PortalTemplate.save(this)", :name => 'save_button',:class => "btn floatr", "data-disable-with" => "Please wait...", "data-code-refresh" => "#{@code_refresh}"}
-	#{link_to "Discard", @soft_reset_url, :class => "btn #{!@cached_data&& 'disabled'}" }
-HTML
-page.replace_html "#{@active_tab}_btns", buttons
+@active_tab = params[:portal_tab].to_sym
+page.replace_html "#{@active_tab}_btns", :partial => "/admin/shared/customization_buttons", 
+		:locals => { :type => :template, :active_tab => @active_tab } 

@@ -1,0 +1,32 @@
+<%= submit_tag "Preview", :name => 'preview_button',
+              :class => "btn primary floatr",
+              "data-disable-with" => "Please wait...", 
+              "data-code-refresh" => "#portal_template_custom_css" %>
+
+<%= submit_tag "Save and continue editing", 
+  :onclick => "FD.PortalTemplate.save(this, event)", 
+  :name => 'save_button',:class => "btn floatr", 
+  "data-disable-with" => "Please wait...", 
+  "data-code-refresh" => "#portal_template_custom_css" %>
+
+<% if type == :template %>  
+  <% _portal_template = active_tab %>
+  <% if active_tab.eql?(:layout) %>  
+    <% cached_data = !(@cached_properties & [:header, :footer, :layout]).blank? %>
+    <% _portal_template = [:header, :footer, :layout].join(":")  %>
+  <% else %>
+    <% cached_data = @cached_properties.include?(active_tab) %>
+  <% end %>
+  <% soft_reset_url = admin_portal_template_soft_reset_path(:portal_template => _portal_template, :portal_tab => active_tab) if cached_data %>  
+<% else %>
+  <% cached_data = @from_cache %>
+  <% soft_reset_url = admin_portal_template_page_soft_reset_path(:page_id => params[:id], 
+                          :page_type => @portal_page.page_type) if @from_cache %>
+<% end %>
+
+<%= link_to_remote "Reset to last published", 
+      :url => soft_reset_url, 
+      :html => { 
+        :class => "btn #{!cached_data && 'disabled'}",
+        "data-loading-text" => "Please wait..."
+      } %>

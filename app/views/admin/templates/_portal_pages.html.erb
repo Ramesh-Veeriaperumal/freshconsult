@@ -14,6 +14,7 @@
 								:page_type => page_id,
 								:page_group => key), 
 					:method => :get, 
+					:html => { :id => "page_id_#{page_id}" },
 					:update => "Customizepage" %>
 			</li>
 		<% end %>

@@ -42,8 +42,9 @@ class Admin::TemplatesController < Admin::AdminController
   def soft_reset
     properties = params[:portal_template].split(":") #keys.. json..
     @portal_template.soft_reset!(properties)
+    build_objects
     flash[:notice] = "Portal template reseted successfully."
-    redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"
+    # redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"
   end                                                          
  
   private

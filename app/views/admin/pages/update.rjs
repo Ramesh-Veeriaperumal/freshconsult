@@ -1,11 +1,3 @@
 show_ajax_flash page
-@code_refresh = "#portal_page_content"
-@soft_reset_url = "javascript:void(0)"
-@soft_reset_url =  admin_portal_template_page_soft_reset_path( :page_id => params[:id], :page_type => @portal_page.page_type) if @from_cache
-buttons = <<HTML
-	#{submit_tag "Preview", :name => 'preview_button', :class => "btn primary floatr", "data-code-refresh" => "#{@code_refresh}" }
-	#{submit_tag "Draft", :onclick => "FD.PortalTemplate.save(this)", :name => 'save_button', :class => "btn floatr", "data-disable-with" => "Please wait...", "data-code-refresh" => "#{@code_refresh}" }
-	#{link_to "Discard", @soft_reset_url, :class => "btn #{!@from_cache&& 'disabled'}" }
-HTML
-page.replace_html "pages_#{@portal_page.page_type}_btns", buttons
-# page << "jQuery('#portal-preview-url').attr('href', '#{@redirect_to_portal_url}').get(0).click()" unless @redirect_to_portal_url.nil?
+page.replace_html "page_btns", :partial => "/admin/shared/customization_buttons", 
+      :locals => { :page_id => params[:id], :page_type => @portal_page.page_type, :type => :page }

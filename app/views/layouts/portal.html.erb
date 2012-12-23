@@ -19,7 +19,7 @@
 		<%= include_javascripts :portal_head %>		
 	</head>
 	<body>
-		<% unless session[:preview_button].blank?%>
+		<% if session[:preview_button].present? && current_user && current_user.agent? %>
 			<div class="alert">
 				You are currently previewing the customisation changes.
 				<a href="javascript:window.close()">Click here</a> to go back to the editing page.
