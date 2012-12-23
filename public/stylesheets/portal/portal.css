@@ -4226,17 +4226,18 @@ hr.content-divider {
 /* line 11, ../../src/portal/lib/_login.scss */
 .btn-signup {
   /*color: $linkColor;*/
+  font-weight: bold;
   margin: 16px 0;
   width: 100%; }
 
-/* line 17, ../../src/portal/lib/_login.scss */
+/* line 18, ../../src/portal/lib/_login.scss */
 .btn-login {
   float: none;
   width: 100%;
   text-transform: uppercase;
   margin: 4px 0 10px; }
 
-/* line 24, ../../src/portal/lib/_login.scss */
+/* line 25, ../../src/portal/lib/_login.scss */
 .btn-google:before, .btn-facebook:before, .btn-twitter:before {
   content: "";
   display: inline-block;
@@ -4248,43 +4249,43 @@ hr.content-divider {
     *margin-left: 0; }
 
 @media (min-width: 45em) {
-  /* line 38, ../../src/portal/lib/_login.scss */
+  /* line 39, ../../src/portal/lib/_login.scss */
   .login-form {
     width: 74.07407%;
     float: left;
     margin-right: 3.7037%; }
 
-  /* line 39, ../../src/portal/lib/_login.scss */
+  /* line 40, ../../src/portal/lib/_login.scss */
   .alt-login-button {
     width: 22.22222%;
     float: right;
     margin-right: 0; }
 
-  /* line 41, ../../src/portal/lib/_login.scss */
+  /* line 42, ../../src/portal/lib/_login.scss */
   .login-form {
     padding-right: 2em; }
 
-  /* line 42, ../../src/portal/lib/_login.scss */
+  /* line 43, ../../src/portal/lib/_login.scss */
   .btn-login {
     float: right;
     margin-top: -20px; }
 
-  /* line 43, ../../src/portal/lib/_login.scss */
+  /* line 44, ../../src/portal/lib/_login.scss */
   .btn-login, .btn-signup {
     width: auto; }
 
-  /* line 44, ../../src/portal/lib/_login.scss */
+  /* line 45, ../../src/portal/lib/_login.scss */
   .login-form {
     border-right: 1px solid #dadada;
     -webkit-box-shadow: white 1px 0 0;
     -moz-box-shadow: white 1px 0 0;
     box-shadow: white 1px 0 0; } }
 @media (min-width: 60em) {
-  /* line 50, ../../src/portal/lib/_login.scss */
+  /* line 51, ../../src/portal/lib/_login.scss */
   #login-container, #signup-container {
     min-height: 275px; }
 
-  /* line 51, ../../src/portal/lib/_login.scss */
+  /* line 52, ../../src/portal/lib/_login.scss */
   #login-container {
     margin-bottom: 200px; } }
 /* line 1, ../../src/portal/lib/_search.scss */

@@ -1,5 +1,6 @@
 <div id="portal-simple-template-options">
-  <% form_for [:admin, @portal_template], :url => { :action => :update }, :html => { :target => "_blank", :method => :put, :rel => "validate" } do |f| -%>
+  <% form_for [:admin, @portal_template], :url => { :action => :update }, 
+      :html => { :method => :put, :rel => "portal_form", :target => "_blank" } do |f| -%>
     <%= hidden_field_tag 'portal_tab', :preferences %>
     <h3 class="title">Background color</h3>
     <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color, :btn_primary_background, :btn_background] %>

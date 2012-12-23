@@ -56,6 +56,7 @@ class Portal::Template < ActiveRecord::Base
     self.custom_css = nil
     self.layout = nil
     self.save
+    clear_cache!
   end
 
   def draft!

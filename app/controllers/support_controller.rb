@@ -81,11 +81,10 @@ class SupportController < ApplicationController
 
     def process_template_liquid
       Portal::Template::TEMPLATE_MAPPING.each_with_index do |t, t_i|
-          dynamic_template = ""
-          dynamic_template = template_data(t[0]) || "" if feature?(:layout_customization)
-          _content = render_to_string :partial => t[1], 
-                      :locals => { :dynamic_template => dynamic_template }
-          instance_variable_set "@#{t[0]}", _content
+        dynamic_template = template_data(t[0]) if feature?(:layout_customization)
+        _content = render_to_string :partial => t[1], 
+                    :locals => { :dynamic_template => dynamic_template }
+        instance_variable_set "@#{t[0]}", _content
       end
     end
 

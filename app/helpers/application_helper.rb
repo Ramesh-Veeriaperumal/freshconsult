@@ -86,7 +86,7 @@ module ApplicationHelper
   end
   
   def show_ajax_flash(page)
-    page.replace_html :noticeajax, flash[:notice]
+    page.replace_html :noticeajax, ([:notice, :warning, :error].collect {|type| content_tag('div', flash[type])})
     page << "$('noticeajax').show()"
     page << "closeableFlash('#noticeajax')"
     flash.discard

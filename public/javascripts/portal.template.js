@@ -1,11 +1,12 @@
 var FD = FD || {};
 FD.PortalTemplate = (function($){
-	var resetFormSubmit = function(form){ form.onsubmit = function(){ return false} },
-			rjssubmit = function(elm){
+	var resetFormSubmit = function(form){ form.onsubmit = function(){ return false } },
+			rjssubmit = function(elm){				
 				var form = $(elm.form),
 					url = form.action,
 					data = form.serialize(),
 					data = data+'&'+elm.name+'='+$(elm).attr('originalValue');
+
 					if(!form.valid()) {
 						enableElement(elm)
 						$('input:blank').focus();
@@ -33,9 +34,8 @@ FD.PortalTemplate = (function($){
 			prerequitions = function(elm){
 				populate_codemirror($(elm))
 				resetFormSubmit(elm.form);
-				disableElement(elm);
+				// disableElement(elm);
 				rjssubmit(elm);
-				
 			};
 	return {
 		save : function(elm,evt){

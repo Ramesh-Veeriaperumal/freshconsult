@@ -42,9 +42,8 @@ class Admin::TemplatesController < Admin::AdminController
   def soft_reset
     properties = params[:portal_template].split(":") #keys.. json..
     @portal_template.soft_reset!(properties)
-    build_objects
     flash[:notice] = "Portal template reseted successfully."
-    # redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"
+    redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"
   end                                                          
  
   private
@@ -52,7 +51,7 @@ class Admin::TemplatesController < Admin::AdminController
       @portal_template = scoper.template.get_draft || scoper.template
       if @portal_template.preferences.nil?
         @portal_template.preferences = @portal_template.default_preferences
-        @portal_template.save 
+        @portal_template.save
       end
       @cached_properties = @portal_template.changes.symbolize_keys.keys
     end

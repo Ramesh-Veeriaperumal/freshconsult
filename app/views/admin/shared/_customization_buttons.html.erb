@@ -1,32 +1,29 @@
-<%= submit_tag "Preview", :name => 'preview_button',
-              :class => "btn primary floatr",
-              "data-disable-with" => "Please wait...", 
-              "data-code-refresh" => "#portal_template_custom_css" %>
-
-<%= submit_tag "Save and continue editing", 
-  :onclick => "FD.PortalTemplate.save(this, event)", 
-  :name => 'save_button',:class => "btn floatr", 
-  "data-disable-with" => "Please wait...", 
-  "data-code-refresh" => "#portal_template_custom_css" %>
-
 <% if type == :template %>  
   <% _portal_template = active_tab %>
+  <% _coderefresh_ids = "#portal_template_#{_portal_template.to_s}" %>
   <% if active_tab.eql?(:layout) %>  
     <% cached_data = !(@cached_properties & [:header, :footer, :layout]).blank? %>
     <% _portal_template = [:header, :footer, :layout].join(":")  %>
+    <% _coderefresh_ids = [:header, :footer, :layout].map{ |a| "#portal_template_#{a.to_s}" }.join(", ") %>
   <% else %>
     <% cached_data = @cached_properties.include?(active_tab) %>
   <% end %>
-  <% soft_reset_url = admin_portal_template_soft_reset_path(:portal_template => _portal_template, :portal_tab => active_tab) if cached_data %>  
+  <% soft_reset_url = admin_portal_template_soft_reset_path(:portal_template => _portal_template, :portal_tab => active_tab) %>  
 <% else %>
   <% cached_data = @from_cache %>
   <% soft_reset_url = admin_portal_template_page_soft_reset_path(:page_id => params[:id], 
-                          :page_type => @portal_page.page_type) if @from_cache %>
+                          :page_type => @portal_page.page_type) %>
+  <% _coderefresh_ids = "#portal_page_content" %>
 <% end %>
 
-<%= link_to_remote "Reset to last published", 
-      :url => soft_reset_url, 
-      :html => { 
-        :class => "btn #{!cached_data && 'disabled'}",
-        "data-loading-text" => "Please wait..."
-      } %>
+<%= submit_tag "Preview",
+              :name => "preview_button",
+              :class => "btn btn-primary pull-right",
+              "data-loading-text" => "Please wait..." %>
+
+<%= submit_tag "Save and continue editing",
+              "data-loading-text" => "Please wait...",
+              "data-code-refresh" => _coderefresh_ids,              
+              :name => 'save_button', :class => "btn pull-right" %>
+
+<%= link_to "Reset to last published", soft_reset_url, :class => "btn #{!cached_data && 'disabled'}", :id => "soft_reset_button" %>

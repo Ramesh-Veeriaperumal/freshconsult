@@ -1,12 +1,13 @@
 <%= include_stylesheets :codemirror %>
 <%= include_javascripts :codemirror %>
 <%= include_javascripts :portaltemplate %>
-<%= javascript_include_tag "portal.template.js" %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
 <div class="pull-right">
-  <a href="<%=admin_portal_template_restore_default_path%>" class="btn">Reset all changes</a>
-  <a href="<%=admin_portal_template_publish_path%>" class="btn primary">Publish changes</a>
+  <%= link_to "Reset all changes", admin_portal_template_restore_default_path, :confirm => "This action will reset all your customizations to freshdesk default. Are you sure you want to continue?", :class => "btn" %>
+  <a href="<%=admin_portal_template_publish_path%>" class="btn btn-primary">Publish changes</a>
 </div>
 <h3 class="sub-title">Portal template customization</h3>
 <br />
@@ -77,18 +78,44 @@
     }, 100)    
   });
 
+  jQuery("form[rel=portal_form]").livequery(function(ev){
+      jQuery(this).validate({
+        submitHandler: function(form, btn) {
+          // Setting the submit button to a loading state
+          $btn = jQuery(btn)
+          if(btn.name != "preview_button"){
+            $btn.button("loading")
+            jQuery($btn.data("codeRefresh")).codemirror('save');
+            jQuery(form).ajaxSubmit({
+              success: function(response, status){
+                // Resetting the submit button to its default state
+                console.log(status)
+                $btn.button("reset")
+                $btn.parent().find("#soft_reset_button").attr("disabled", false).removeClass("disabled")
+              },
+              dataType: "script"
+            })
+          }else{
+            form.submit()
+          }
+          return false;
+        }
+      })
+    })
+
   jQuery("#pages-tab").live("click", function(ev){
     if(jQuery("#Customizepage").html() == "")
       jQuery("#PortalPageList a").first().trigger("click");
   });
+
   if(window.Mousetrap){
     Mousetrap.bind('command+shift+s',function(e){
-      FD.PortalTemplate.save(jQuery('input[name="save_button"]:visible')[0]);
+      jQuery('input[name="save_button"]:visible')[0].click();
       return false;
     });
 
     Mousetrap.bind('command+shift+p',function(e){
-      FD.PortalTemplate.save(jQuery('input[name="preview_button"]:visible')[0]);
+      jQuery('input[name="preview_button"]:visible')[0].click();
       return false;
     });
   }
