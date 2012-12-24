@@ -476,7 +476,8 @@ module ApplicationHelper
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     if dom_type == "requester"
       field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
-      field_label += add_requester_field  
+      rfield = add_requester_field
+      field_label += rfield  if rfield
     end
     field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
     field_name      = (field_name.blank?) ? field.field_name : field_name
