@@ -53,6 +53,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     statuses = account.ticket_status_values
     statuses.map{|status| [status.status_id, translate_status_name(status, disp_col_name)]}
   end
+
+  def self.status_names_without_close(account)
+    disp_col_name = self.display_name
+    statuses = account.ticket_status_values
+    statuses = statuses.reject { |status| status.status_id == Helpdesk::Ticketfields::TicketStatus::CLOSED &&
+                      !User.current.privilege?(:close_ticket) }
+    statuses.map{|status| [status.status_id, translate_status_name(status, disp_col_name)]}
+  end
   
   def self.status_names_by_key(account)
     Hash[*status_names(account).flatten]

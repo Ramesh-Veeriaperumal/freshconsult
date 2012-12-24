@@ -4,6 +4,7 @@ class AuthorizationsController < ApplicationController
   include Integrations::OauthHelper
   include HTTParty
 
+  skip_before_filter :check_privilege
   before_filter :require_user, :only => [:destroy]
   before_filter :fetch_request_details,:only => :create
 

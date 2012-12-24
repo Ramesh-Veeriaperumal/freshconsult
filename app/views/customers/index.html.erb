@@ -1,16 +1,18 @@
 <%content_for :sidebar do%>
-	<div class="sidepanel">
-	<h3 class="title"><%=t('company.quick_company')%></h3> 
-	<% form_tag :action=> :quick, :method =>:post do %> 
-	<ul class="ui-form">
-	<li> 
-		 <label for="customer_name"><%=t('company.name')%></label> 
-		 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
-	</li> 
-	</ul>
-  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
-	<% end %>
-	</div>
+  <% if privilege?(:add_contact) %>
+  	<div class="sidepanel">
+  	<h3 class="title"><%=t('company.quick_company')%></h3> 
+  	<% form_tag :action=> :quick, :method =>:post do %> 
+  	<ul class="ui-form">
+  	<li> 
+  		 <label for="customer_name"><%=t('company.name')%></label> 
+  		 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
+  	</li> 
+  	</ul>
+    	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
+  	<% end %>
+  	</div>
+  <% end %>
 <%end%> 
 <%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
 <% form_tag "", { :id => "tickets-expanded", :method => :put } do %>
@@ -19,12 +21,18 @@
 			<% @customers.each do |customer| %>
 			  <li class="<%= cycle('stripe', '') %>">		  	
 				<div class="item_actions">
-			    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "button") %>
+          <% if privilege?(:edit_contact) %>
+			      <%= link_to(t('edit'), edit_customer_path(customer), :class => "button") %>
+          <% end %>
+          <% if privilege?(:delete_contact) %> 
 			    	<%= link_to t('delete'), {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  "#{t('company.info1')}?", :method => 'delete', :class => "button" %>
+           <% end %>
 				</div> 
 			    <div class="item_information">
-			    	<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
-			    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			
+            <% if privilege?(:delete_contact) %> 
+  			    	<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
+            <% end %>
+  			    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			
 					<div><%= h customer.description %></div>
 				</div>		    
 			  </li>

@@ -3,6 +3,7 @@
 #In future, we can just try using delayed_jobs for non-attachment mails or something like that..
 
 class EmailController < ApplicationController
+  skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
   skip_before_filter :set_time_zone
   

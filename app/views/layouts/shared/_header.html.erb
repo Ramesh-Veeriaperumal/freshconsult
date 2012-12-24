@@ -32,7 +32,7 @@
 			<% if is_assumed_user? %>    
 				<span class="seperator"></span>
 				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>
-      		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
+      		<% elsif !is_assumed_user? && (privilege?(:manage_users) || current_user.account_admin?) %>
       			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
       			<% unless @allowed_to_assume.blank? %>
 					<span class="seperator"></span>
@@ -56,7 +56,7 @@
 		<div class="wrapper">
 			 <div class="top_nav"> 	
 				<div class="nav_right">
-					<% if current_user and permission?(:manage_tickets) then %>
+					<% if privilege?(:manage_tickets) then %>
 						<%= link_to( "<span></span> #{t('header.new_ticket')}", new_helpdesk_ticket_path, :class => "new_ticket" ) %>
 					<% else %>
 						<%= link_to( "<span></span> #{t('header.submit_a_ticket')}", new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>

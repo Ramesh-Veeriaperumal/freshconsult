@@ -1,12 +1,12 @@
 class Support::NotesController < ApplicationController
 
+  skip_before_filter :check_privilege
   before_filter :set_mobile , :only => [:create]
 
   def create
     @ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless @ticket
-
-    access = (current_user && @ticket.requester_id == current_user.id) || (current_user && current_user.client_manager?  &&@ticket.requester.customer == current_user.customer) || (permission?(:manage_tickets))
+    access = (current_user && @ticket.requester_id == current_user.id) || (current_user && current_user.client_manager?  &&@ticket.requester.customer == current_user.customer) || (privilege?(:manage_tickets))
 
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless access
   

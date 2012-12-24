@@ -1,16 +1,8 @@
 class TopicsController < ApplicationController
   before_filter :find_forum_and_topic, :except => :index 
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :post_in_forums
-  end
-  
-  before_filter :only => [:update_stamp,:remove_stamp,:destroy] do |c| 
-    c.requires_permission :manage_forums
-  end
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission,:only => [:edit,:update] 
   
   before_filter :set_selected_tab
   
@@ -21,12 +13,6 @@ class TopicsController < ApplicationController
   #caches_formatted_page :rss, :show
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
-  def check_user_permission
-    if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
-          flash[:notice] =  t(:'flash.general.access_denied')
-          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    end
-  end
     
   def index
     respond_to do |format|
@@ -195,10 +181,10 @@ end
       @topic.user     = current_user if @topic.new_record?
       @topic.account_id = current_account.id
       # admins and moderators can sticky and lock topics
-      return unless admin? or current_user.moderator_of?(@topic.forum)
+      return unless privilege?(:manage_forums) or current_user.moderator_of?(@topic.forum)
       @topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked] 
       # only admins can move
-      return unless admin?
+      return unless privilege?(:manage_forums)
       @topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
     end
     

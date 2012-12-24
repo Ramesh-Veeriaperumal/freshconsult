@@ -34,7 +34,7 @@ class Group < ActiveRecord::Base
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
   
   def excluded_agents(account)      
-   cust_roles=  User::USER_ROLES_KEYS_BY_TOKEN[:customer],User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]
+   cust_roles=  User::USER_ROLES_KEYS_BY_TOKEN[:customer]
    return account.users.find(:all , :conditions=>['user_role not in(?) and id not in (?)', cust_roles, agents.map(&:id)]) unless agents.blank? 
    return account.users.find(:all , :conditions=>['user_role not in(?)', cust_roles])  
   end

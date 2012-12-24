@@ -6,9 +6,11 @@ module SearchUtil
 
 	def forum_visibility
       vis_arr = Array.new
-      if permission?(:manage_forums)
+      # permission?(:manage_forums)
+      if privilege?(:manage_forums)
         vis_arr = Forum::VISIBILITY_NAMES_BY_KEY.keys
-      elsif permission?(:post_in_forums)
+        # permission?(:post_in_forums)
+      elsif privilege?(:post_in_forums)
         vis_arr = [Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone],Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
         vis_arr.push(Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) if (current_user && current_user.has_company?)
       else
@@ -19,7 +21,8 @@ module SearchUtil
 
   def solution_visibility
   	if current_user
-  		if current_user.has_manage_solutions?
+      # current_user.has_manage_solutions?
+  		if privilege?(:publish_solution)
   			Solution::Folder::VISIBILITY_NAMES_BY_KEY.keys
   		else
   			contact_solution_visibility

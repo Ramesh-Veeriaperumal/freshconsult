@@ -1,6 +1,5 @@
 class Helpdesk::NotesController < ApplicationController
   
-  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods

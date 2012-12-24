@@ -1,9 +1,7 @@
 class UploadedImagesController < ApplicationController
   protect_from_forgery :only => [:update, :destroy]
   
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :manage_knowledgebase
-  end
+  skip_before_filter :check_privilege, :only => [:index, :show]
   
   def index
     @images = Helpdesk::Attachment.find(:all,:conditions => ['account_id=? and description = \'public\'',current_account.id])

@@ -5,6 +5,7 @@ class Integrations::JiraIssueController < ApplicationController
 	include Integrations::Constants
   include RedisKeys
 
+  skip_before_filter :check_privilege, :only => [:notify]
 	before_filter :validate_request, :only => [:notify, :register] # TODO Needs to be replaced with OAuth authentication.
   before_filter :getJiraObject, :except => [:notify, :register]	
 

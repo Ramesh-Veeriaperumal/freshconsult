@@ -17,13 +17,21 @@
 	<%= ticket_tabs %>        
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
-			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
+      <% if privilege?(:reply_ticket) %>
+			  <%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") unless @item.from_email.nil? %>
+        <%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
+        <%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
+      <% end %>
+      <% if privilege?(:forward_ticket) %>
+			  <%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
 				:id => "FwdButton", :class => "button forward reply") %>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
-			<%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
-			<%= link_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
+      <% end %>
+      <% if privilege?(:create_private_note) %>
+			  <%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
+      <% end %>
+      <% if privilege?(:view_time_entries) %>
+			  <%= link_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
+      <% end %>
 		</div>
 	<% end %>
 </div>		
@@ -42,7 +50,7 @@
 			<% content_for :pagefixed do %> 
 				<div class="canned-response-menu hide" id="canned_response_container"> 
 				  <div>
-				    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+				    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if privilege?(:view_admin) && privilege?(:manage_canned_responses) %>
 				  </div>
 				  <div id="canned_response_list"></div>
 				</div>
@@ -52,10 +60,10 @@
 			<%= render :partial => 'note', :collection => @ticket_notes %>
 			<%= will_paginate @ticket_notes %>
 		<% end %>	
-  </div>			  
-	<div class="requestCnt request-conversation tab-pane" id="Timesheet">
-	  <div class="loading-box"></div>
-	</div>
+  </div>		  
+  <div class="requestCnt request-conversation tab-pane" id="Timesheet">
+    <div class="loading-box"></div>
+  </div>
 </div>
 
 
@@ -66,7 +74,6 @@
 	var activeForm = null;
 	swapEmailNote = function(formid, link){  
 			jQuery("#PagesTab").click();
-
 			if((activeForm != null) && (jQuery(activeForm).get(0).id != formid))
 				jQuery("#"+activeForm.get(0).id).hide();
 

@@ -1,7 +1,7 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div class="clearfix">
 	<div class="floatr">
-		<% if admin? %>
+    <% if privilege?(:manage_forums) -%>  
 			<%= link_to(t('reorder'),'#', :id => "forum_categories_reorder_button", :class => "uiButton") unless(@forum_categories.size <= 1)%>
 	  		<%= link_to t('category.new'), new_category_path, :class => "uiButton special" %>
 		<% end %> 
@@ -26,8 +26,7 @@
 		<% end %>
 	</div>
 </div>
-
-<% if logged_in? && current_user.has_manage_solutions? -%>	
+<% if privilege?(:manage_forums) -%>	
 	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_categories,  :action_url => reorder_categories_path, :title => :name, :container_id => "forum_categories_sort", :reorder_id => "forum_categories_reorder_button", :list_id => "forum_categories_list"} %>
 <% end %>
 

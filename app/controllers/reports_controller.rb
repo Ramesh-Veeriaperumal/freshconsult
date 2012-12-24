@@ -1,5 +1,4 @@
 class ReportsController < ApplicationController
-  before_filter { |c| c.requires_permission :manage_reports }
   before_filter :report_list, :only => [ :index, :show ]
   
   include Reports::ConstructReport

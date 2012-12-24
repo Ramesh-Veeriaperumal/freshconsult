@@ -48,10 +48,11 @@
 	<% end %>
 	</div>
 	<h3 class="title"><%=t('ticket.properties')%></h3>	
-	<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
+	<% form_for @ticket, :url => url_for(:controller => "helpdesk/tickets", :action => "update_ticket_properties", :id => @ticket.id), :html => { :id => 'custom_ticket_form' } do |f| %>
 	   <ul class="cnt">
 		   <!--form values starts here-->
 		   <% current_portal.ticket_fields.each do |field| %>
+         <% next if field.field_type == "default_priority" && !privilege?(:ticket_priority) %> 
 		     <% if field.visible_in_view_form? %>
 		      <% 
 		          field_value = (field.is_default_field?) ? ticket.send(field.field_name) : @item.get_ff_value(field.name)

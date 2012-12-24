@@ -4,9 +4,15 @@
 
 <div class="contact-box clearfix">
 		<div class="action_buttons">
-			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
-			<%= link_to t('assume_identity_button'), assume_identity_user_path(@user) if is_allowed_to_assume?(@user) %>
-			<%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) if (current_user.admin? && @user.has_email?)%>
+      <% if privilege?(:edit_contact) %>
+			  <%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
+      <% end %>
+      <% if is_allowed_to_assume?(@user) %>
+			  <%= link_to t('assume_identity_button'), assume_identity_user_path(@user) %>
+      <% end %>
+      <% if (privilege?(:manage_users) && @user.has_email?) %>
+			  <%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) %>
+      <% end %>
 		</div>
 		<%= user_avatar(@user, :medium, "profile_pic") %>
 		<h1 class="title"><%= @user.display_name %></h1>
@@ -24,8 +30,12 @@
 		</div>
 		<% if @user.deleted || (!@user.active? and @user.has_email?) %>
 		<div class="info-highlight">
-			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? %>
+      <% if privilege?(:delete_contact) %>
+			  <%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
+      <% end %>
+      <% if privilege?(:manage_users) %>
+			  <%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? %>
+      <% end %>
 		</div>
 		<% end %>
 </div>
@@ -35,9 +45,11 @@
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph" %>
-			<div class="alignright"> 
-				<%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
-			</div>
+      <% if privilege?(:edit_contact) %>
+			  <div class="alignright"> 
+				  <%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
+			  </div>
+      <% end %>
 		<% end %>
 
 		<span class="seperator"></span>

@@ -1,10 +1,10 @@
 class Helpdesk::AttachmentsController < ApplicationController
   
   include HelpdeskControllerMethods
- 
-
-  before_filter :check_download_permission, :only => [:show]
-  
+  # 1. destroy_permission, i dont know if Account and user have the correct thing
+  # => in what context do they come ? if its account shouldnt he have manage account?
+  skip_before_filter :check_privilege
+  before_filter :check_download_permission, :only => [:show]  
   before_filter :check_destroy_permission, :only => [:destroy]
 
   def show
@@ -34,15 +34,15 @@ class Helpdesk::AttachmentsController < ApplicationController
       @items.each do |attachment|
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
           ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
-          can_destroy = true if permission?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
+          can_destroy = true if privilege?(:edit_ticket) or (current_user && ticket.requester_id == current_user.id)
         elsif ['Solution::Article'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_knowledgebase) or (current_user && attachment.attachable.user_id == current_user.id)
+          can_destroy = true if privilege?(:edit_solution) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['Account'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_users)
+          can_destroy = true if privilege?(:manage_account)
         elsif ['Post'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_forums) or (current_user && attachment.attachable.user_id == current_user.id)
+          can_destroy = true if privilege?(:manage_forums) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['User'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
+          can_destroy = true if privilege?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
         end
       end
       
@@ -67,7 +67,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? @attachment.attachable_type
   
         # If the user has high enough permissions, let them download it
-        return true if permission?(:manage_tickets)
+        return true if privilege?(:manage_tickets)
   
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
@@ -79,7 +79,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       elsif ['Solution::Article', 'Post', 'Account', 'Portal'].include? @attachment.attachable_type
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
-        return true if permission?(:manage_users)
+        return true if privilege?(:manage_account)
       end         
 
     end

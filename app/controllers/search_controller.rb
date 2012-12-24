@@ -1,6 +1,6 @@
 
 class SearchController < ApplicationController
-  
+  skip_before_filter :check_privilege
   extend NewRelic::Agent::MethodTracer
   
   include SearchUtil
@@ -120,7 +120,7 @@ class SearchController < ApplicationController
   
     def search
       begin
-        if permission? :manage_tickets
+        if privilege?(:manage_tickets)
           @items = ThinkingSphinx.search filter_key(params[:search_key]), 
                                                               :with => search_with, 
                                                               :classes => searchable_classes,
@@ -128,7 +128,7 @@ class SearchController < ApplicationController
                                                               :star => false,
                                                               :match_mode => :any,                                          
                                                               :page => params[:page], :per_page => 10                                          
-        elsif current_user && (permission? :portal_request)
+        elsif current_user && current_user.customer?
           search_portal_for_logged_in_user
         end
         process_results

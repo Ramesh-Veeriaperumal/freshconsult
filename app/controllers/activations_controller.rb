@@ -1,8 +1,7 @@
 class ActivationsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
-  before_filter :only => :send_invite do |c| 
-    c.requires_permission :manage_users
-  end
+ 
+  skip_before_filter :check_privilege, :only => [:new, :create]
   
   def send_invite
     user = current_account.all_users.find params[:id]

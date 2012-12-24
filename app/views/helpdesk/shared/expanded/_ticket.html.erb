@@ -38,44 +38,46 @@
 	  			data-options="#ticket_agents" >
 
 	  			<label><%=t('ticket.assigned_agent')%>: </label>
-				<% if ticket.freshness == :new %>
-					<%=content_tag :span, t('ticket.assigned_none'), :class => "result" %>
-				<% else %>
-					<%=content_tag :span, h(ticket.responder.display_name) , :class => "result" %>
-				<% end %>
+  				<% if ticket.freshness == :new %>
+  					<%=content_tag :span, t('ticket.assigned_none'), :class => "result" %>
+  				<% else %>
+  					<%=content_tag :span, h(ticket.responder.display_name) , :class => "result" %>
+  				<% end %>
 			</li>
 
 	  		<li class="quick-action dynamic-menu" title="Change Status"  data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
 				<label><%=t('ticket.status')%>: </label>
 				<span class="result"><%= h(ticket.status_name) %></span>
 			</li>
-			<li class="quick-action dynamic-menu" title="Change Priority"  data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
-				<label><%=t('ticket.priority')%>: </label>
-				<span class="result"><%= h(ticket.priority_name) %></span>
-			</li>
+      <% if privilege?(:ticket_priority) %>
+  			<li class="quick-action dynamic-menu" title="Change Priority"  data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
+  				<label><%=t('ticket.priority')%>: </label>
+  				<span class="result"><%= h(ticket.priority_name) %></span>
+  			</li>
+      <% end %>
 		</ul>
   </td>
-  <td class="hideForDetails">
-  	<div class="quick-action ajax-menu" 
-  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="agent"  
-  			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
-  		<span class = "result">
-  	<% if ticket.freshness == :new %>
-		<%=t('ticket.assigned_none')%>
-	<% else %>
-		<%= h(ticket.responder.display_name) %>
-	<% end %>
-		</span>
-	</div>
-  </td>
-  <td class="hideForDetails">
-  	<div class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
-  		<span class = "result"><%= h(ticket.status_name) %></span>
-  	</div>
-  </td>
-  <td class="hideForDetails">
-  	<div  class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
-  		<span class="result"><%= h(ticket.priority_name) %></span>
-  	</div>
-  </td>
+    <td class="hideForDetails">
+    	<div class="quick-action ajax-menu" 
+    			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="agent"  
+    			data-options-url="<%= url_for( :controller => 'helpdesk/tickets', :action => 'get_ticket_agents', :id => ticket.display_id ) %>">
+    		<span class = "result">
+      	  <% if ticket.freshness == :new %>
+    		    <%=t('ticket.assigned_none')%>
+    	    <% else %>
+    		    <%= h(ticket.responder.display_name) %>
+    	    <% end %>
+  		  </span>
+  	  </div>
+    </td>
+    <td class="hideForDetails">
+    	<div class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+    		<span class = "result"><%= h(ticket.status_name) %></span>
+    	</div>
+    </td>
+    <td class="hideForDetails">
+    	<div  class="quick-action dynamic-menu" data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
+    		<span class="result"><%= h(ticket.priority_name) %></span>
+    	</div>
+    </td>
 </tr>

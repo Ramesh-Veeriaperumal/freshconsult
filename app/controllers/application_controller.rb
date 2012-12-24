@@ -13,7 +13,6 @@ class ApplicationController < ActionController::Base
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
-  include HelpdeskSystem
   
   include SslRequirement
   include SubscriptionSystem
@@ -37,8 +36,8 @@ class ApplicationController < ActionController::Base
   end
  
   def check_account_state
-    if !current_account.active? 
-      if permission?(:manage_account)
+    unless current_account.active? 
+      if privilege?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
         return redirect_to(plan_subscription_url)
       else

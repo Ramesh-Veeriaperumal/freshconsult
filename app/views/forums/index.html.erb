@@ -2,7 +2,7 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div class="clearfix">
 	<div class="floatr">
-		<% if admin? %>
+		<% if privilege?(:manage_forums) %>
 	  		<%= link_to t('category.new'), new_category_path, :class => "uiButton special" %>
 		<% end %> 
 	</div>

@@ -1,19 +1,14 @@
 class UsersController < ApplicationController 
   
-  
+  # 1. need to think how to implement customer and account admin
+  # => roles 2. is change account admin correct ?
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
   include HelpdeskControllerMethods
 
+  skip_before_filter :check_privilege, :only => :revert_identity
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
   
-  before_filter :only => :change_account_admin do |c| 
-    c.requires_permission :manage_account
-  end
-  
-  before_filter :except => :revert_identity do |c|
-   c.requires_permission :manage_tickets 
-  end
   before_filter :load_multiple_items, :only => :block
 
    ##redirect to contacts
@@ -72,11 +67,13 @@ class UsersController < ApplicationController
     User.transaction do
       if current_account.account_admin.id != params[:account_admin].to_i
         @pre_owner = current_account.account_admin
-        @pre_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:admin]
-        @new_owner = current_account.admins.find(params[:account_admin])
-        @new_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]
-        pre_owner_saved = @pre_owner.save 
-        new_owner_saved = @new_owner.save 
+        @pre_owner = current_account.account_admin
+        @pre_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:agent]
+        @pre_owner.account_admin =  false
+        @new_owner = current_account.agents.find(params[:account_admin])
+        @new_owner.account_admin = true
+        pre_owner_saved = @pre_owner.save
+        new_owner_saved = @new_owner.save
       end
     end
     if pre_owner_saved and new_owner_saved
@@ -119,9 +116,6 @@ class UsersController < ApplicationController
       current_account.all_users
     end
     
-    def authorized?
-      (logged_in? && self.action_name == 'index') || admin?
-    end
 
     def set_selected_tab
       @selected_tab = :customers

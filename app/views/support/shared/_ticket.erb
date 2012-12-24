@@ -7,7 +7,7 @@
   <td class="name">
 	<div class="ticket_subject">
 		<h3>
-			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket ) %> 
+			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), support_ticket_path(ticket) ) %> 
 		</h3>
 		<div class="info-data">
 			<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>

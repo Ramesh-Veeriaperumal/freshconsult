@@ -2,7 +2,6 @@ class Reports::TimesheetReportsController < ApplicationController
   
   include Reports::TimesheetReport
   
-  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_selected_tab
   before_filter :build_item ,  :only => [:index,:export_csv,:report_filter]
   before_filter :time_sheet_list, :only => [:index,:report_filter]

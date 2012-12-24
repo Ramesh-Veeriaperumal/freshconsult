@@ -4,7 +4,7 @@ class Support::CompanyTicketsController < ApplicationController
   include Support::CompanyTicketsHelper
   include ExportCsvUtil
 
-  before_filter { |c| c.requires_permission :portal_request }
+  skip_before_filter :check_privilege
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end

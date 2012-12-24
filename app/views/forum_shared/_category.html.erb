@@ -7,7 +7,7 @@
 
 		<% else %>
 			<span class="no_info_text"><%=t('no_forum_category')%> </span>
-			<%  if permission?(:manage_forums)  %>
+			<%  if privilege?(:manage_forums)  %>
 	  			- <%= link_to t('add_new_forum'), new_category_forum_path(category) %>
 			<% end %> 
 		<% end %>

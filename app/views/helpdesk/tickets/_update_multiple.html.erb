@@ -3,6 +3,7 @@
   	<ul>
   	<% helpdesk_submit_options = []%>
   	<% current_portal.ticket_fields.each  do |field| %>
+    <% next if field.field_type == "default_priority" && !privilege?(:ticket_priority) %> 
 		<% if field.visible_in_view_form? %>
       <%
         dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type  

@@ -1,13 +1,4 @@
 class ContactsController < ApplicationController
-
-    before_filter :except => [:make_agent] do |c| 
-      c.requires_permission :manage_tickets
-    end
-
-    before_filter :only => [:make_agent] do |c| 
-      c.requires_permission :manage_users
-    end
-
     before_filter :requires_all_tickets_access 
     
    include HelpdeskControllerMethods
@@ -142,7 +133,7 @@ class ContactsController < ApplicationController
   end
   
   def make_agent    
-    @item.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
+    @item.update_attributes(:delete =>false, :user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:agent])      
     @agent = current_account.agents.new
     @agent.user = @item 
     @agent.occasional = false
@@ -209,11 +200,7 @@ protected
       current_account.all_contacts
     end
   end
-
-  def authorized?
-      (logged_in? && self.action_name == 'index') || admin?
-  end
-    
+   
   def set_selected_tab
       @selected_tab = :customers
   end

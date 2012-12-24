@@ -2,7 +2,7 @@ class Support::ArticlesController < ApplicationController
   
   include Helpdesk::TicketActions
   
-  before_filter { |c| c.requires_permission :portal_knowledgebase }
+  skip_before_filter :check_privilege
   
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
   

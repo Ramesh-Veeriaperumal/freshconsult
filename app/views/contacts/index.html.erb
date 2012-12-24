@@ -1,26 +1,28 @@
 <% content_for :sidebar do %>
-	<div class="sidepanel">
-		<h3 class="title"><%=t('contacts.quick_contact')%></h3>	
-		<% form_tag :url  => contacts_path, :method =>:post do %>
-		<%= error_messages_for :user %> 	
-		<ul class="ui-form">
-			<li> 
-				<label for="user_name"><%=t('user.full_name')%></label> 
-				<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
-			</li> 
-			<li>
-				<label for="email_primary"><%=t('user.email')%></label> 
-				<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
-			</li>
-			<li>
-				<label for="user_phone"><%=t('user.phone_no')%></label> 
-				<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
-			</li>
-			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
-		</ul>
-	  <div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
-		<% end %>
-	</div>
+  <% if privilege?(:add_contact) %>
+	 <div class="sidepanel">
+  		<h3 class="title"><%=t('contacts.quick_contact')%></h3>	
+  		<% form_tag :url  => contacts_path, :method =>:post do %>
+  		<%= error_messages_for :user %> 	
+  		<ul class="ui-form">
+  			<li> 
+  				<label for="user_name"><%=t('user.full_name')%></label> 
+  				<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+  			</li> 
+  			<li>
+  				<label for="email_primary"><%=t('user.email')%></label> 
+  				<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
+  			</li>
+  			<li>
+  				<label for="user_phone"><%=t('user.phone_no')%></label> 
+  				<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
+  			</li>
+  			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
+  		</ul>
+  	  <div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
+  		<% end %>
+	 </div>
+  <% end %>
 	<div id="contact_tag_cloud" class="sidepanel">
 	<h3 class="title"><%=t('contacts.tag_cloud')%></h3>
 		<%= render :partial => "/helpdesk/tags/tag_cloud", :object => @tags %>
@@ -33,11 +35,17 @@
 	  <% @contacts.each do |contact| %>
 	    <li class="<%= cycle('stripe', '') %>">
 		  	<div class="item_actions">
-				<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact} , :method => 'put', :class => "button") if contact.deleted? %>
-				<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") if !contact.deleted? %>
-				<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") if contact != current_user and !contact.deleted? %>
+        <% if privilege?(:edit_contact) %>
+  				<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") if !contact.deleted? %>
+        <% end %>
+        <% if privilege?(:delete_contact) %>          
+          <%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact} , :method => 'put', :class => "button") if contact.deleted? %>
+  				<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") if contact != current_user and !contact.deleted? %>
+        <% end %>
 		  	</div>
-		  	<%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+        <% if privilege?(:delete_contact) %>
+		  	  <%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+        <% end %>
 		  	<%= user_avatar( contact ) %>
 		  	<div class="item_information">
 	        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>

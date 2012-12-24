@@ -25,23 +25,29 @@
 <% end %>
 
 <div>
+  <% if privilege?(:add_contact) %>
 	<div class="floatr">				
 		<%= link_to(t('contacts.import_csv'), csv_contact_import_path) %>
 		<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
 	</div>
+  <% end %>
 
 	<h3 class="title"><%= @page_title = t('customers') %></h3>	
 	<div class="customers-toolbar">
-		<input type="checkbox" id="customers-select-all" />
-		<div class="bulk-action">
-			<% if params[:state].eql?("deleted") %>
-				<%= link_to_function(t('contacts.restore'), "validate_then_submit('#{ path }/restore', 'restore')", :class => "uiButton") %>
-			<% else %>
-				<%= link_to_function(t('delete'), "validate_then_submit('#{ path }/destroy', 'delete')", :class => "uiButton") %>
-			<% end %>
-		</div>
-		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
-		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
+    <% if privilege?(:delete_contact) %>
+  		<input type="checkbox" id="customers-select-all" />
+  		<div class="bulk-action">
+  			<% if params[:state].eql?("deleted") %>
+  				<%= link_to_function(t('contacts.restore'), "validate_then_submit('#{ path }/restore', 'restore')", :class => "uiButton") %>
+  			<% else %>
+  				<%= link_to_function(t('delete'), "validate_then_submit('#{ path }/destroy', 'delete')", :class => "uiButton") %>
+  			<% end %>
+  		</div>
+    <% end %>
+    <% if privilege?(:add_contact) %>
+  		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
+  		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
+    <% end %>
 	</div>
 	<%= contact_tabs type %>	
 	<div class="contacts_sub_header">

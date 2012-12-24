@@ -1,11 +1,11 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
-  
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :manage_forums
-  end
-  
+  # 1. For content scope we used manage_forums to define
+  # => global scope, i.e agent view... but now an agent might
+  # => not be have the privilege and will end up having a customer
+  # => like view... this will get solved with portal customization
+  # => Until then ?  
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :portal_category?, :except => :index
@@ -73,8 +73,8 @@ class ForumCategoriesController < ApplicationController
   
     def content_scope
       @content_scope = 'portal_' 
-      @content_scope = 'user_'  if permission?(:post_in_forums) 
-      @content_scope = ''  if permission?(:manage_forums)
+      @content_scope = 'user_'  if privilege?(:post_in_forums)
+      @content_scope = '' if privilege?(:manage_forums)
     end
     
     def scoper

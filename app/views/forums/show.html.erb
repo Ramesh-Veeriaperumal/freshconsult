@@ -14,7 +14,7 @@
 	
 	<div class="forum-group">
 		<div class="search-grey-box">
-			<% if logged_in? && admin? -%>
+			<% if privilege?(:manage_forums) -%>
 				<div class="action_buttons no_margin">
 					<%= link_to t("forum.edit"), edit_category_forum_path(@forum_category, @forum), :class => "last"  %>
 				</div>

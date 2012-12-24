@@ -4,7 +4,7 @@ class Support::MinimalTicketsController < ApplicationController
 
   layout 'support/minimal'
 
-  before_filter { |c| c.requires_permission :portal_request }
+  skip_before_filter :check_privilege
 
 protected
 

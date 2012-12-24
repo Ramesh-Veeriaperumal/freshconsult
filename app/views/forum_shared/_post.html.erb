@@ -33,7 +33,7 @@
 		</ul>
 	</div>
 	<%= content_tag(:div, t(".answer"), :class => "stamp_answer floatr", :title => t(".post_accepted_as_a_good_answer")) if post.answer? %>
-	<% if permission?(:manage_forums) and feature?(:gamification) %>
+	<% if privilege?(:manage_forums) and feature?(:gamification) %>
 		<textarea id='<%= "post-agent-hovercard_#{post.id}" %>' style="display:none;">
 			<div class="contact_hover" style="min-height:50px;">
 			  <%= user_avatar(post.user) if post.user %>

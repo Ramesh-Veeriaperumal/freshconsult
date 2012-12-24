@@ -5,7 +5,7 @@
 		<li class = "<%= ( folder == selected ) ? 'active' : '' %>" > 
 			<%= link_to folder.name,  solution_category_folder_path(category,folder)  %> 
 			<span>
-				<% if logged_in? && current_user.has_manage_solutions? %>
+				<% if privilege?(:publish_solution) %>
 					(<%= folder.articles.size %>)
 				<%else%>
 	  				(<%= folder.articles.visible.size %>)
