@@ -212,6 +212,9 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
+  after_commit_on_create :add_to_billing
+  before_destroy :update_billing
+
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache
   before_update :backup_changes
@@ -603,11 +606,20 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
-   
     def backup_changes
       @old_object = self.clone
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
+    end
+
+  private 
+
+    def add_to_billing
+      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
+    end 
+
+    def update_billing
+      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
 end
