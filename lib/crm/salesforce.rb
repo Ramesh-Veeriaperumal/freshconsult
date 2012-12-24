@@ -75,7 +75,10 @@ class CRM::Salesforce < Resque::Job
       
       return create_new_crm_account(Account.find(account_id)) if response.result[:size].eql?(0)
       
-      record = response.result.records[0] if response.result.records.count == 1
+      record = response.result.records[0] if response.result.records.count > 1  #duplicate records
+
+      record = response.result.records
+
       crm_ids = CRM_IDS.inject({}) { |h, (k, v)| 
                   h[k] = (id = record[v]).is_a?(Array)? id[0] : id ; h } 
     end
