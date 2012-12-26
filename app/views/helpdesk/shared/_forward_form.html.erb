@@ -2,7 +2,7 @@
   note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"  
 %>
   <div class="reply_box">
-    <% form_for note, :html => {:multipart => true, :id => "HelpdeskFwd_#{cntid}" } do |f| %>
+    <% form_for note, :url => forward_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true, :id => "HelpdeskFwd_#{cntid}" } do |f| %>
     <%= f.error_messages %>       
     <ul class="ui-form dont-validate">
 				<div class="request_form_options">

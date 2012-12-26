@@ -1,10 +1,5 @@
 class Solution::CategoriesController < ApplicationController
-  
   include Helpdesk::ReorderUtility
-  
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :manage_knowledgebase
-  end
   
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?, :except => :index
@@ -12,8 +7,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :page_title  
   
   def index
-    
-    @categories = permission?(:manage_knowledgebase) ? current_portal.solution_categories : 
+    @categories = privilege?(:manage_tickets) ? current_portal.solution_categories : 
       (main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories)
 
     respond_to do |format|
@@ -28,7 +22,7 @@ class Solution::CategoriesController < ApplicationController
      @item = current_account.solution_categories.find(params[:id], :include => :folders)
     
      respond_to do |format|
-      if (@item.is_default? && !permission?(:manage_knowledgebase))
+      if (@item.is_default? && !privilege?(:manage_tickets))
         store_location
         format.html {redirect_to login_url }
       else
@@ -146,7 +140,7 @@ end
   end
   
   def fetch_folder_scope
-    if current_user && current_user.has_manage_solutions?
+    if privilege?(:manage_tickets)
       :folders
     elsif current_user
       :user_folders

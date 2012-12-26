@@ -99,7 +99,7 @@ class ForumCategoriesController < ApplicationController
     end
     
     def fetch_forum_scope
-      if current_user && current_user.has_manage_forums?
+      if privilege?(:manage_forums)
       :forums
      elsif current_user
       :user_forums

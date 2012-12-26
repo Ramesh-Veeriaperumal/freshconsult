@@ -27,7 +27,7 @@ class Post < ActiveRecord::Base
   attr_protected	:topic_id , :account_id , :attachments
   
   def editable_by?(user)
-    user && (user.id == user_id || user.has_manage_forums? || user.moderator_of?(forum_id))
+    user && (user.id == user_id || user.privilege?(:manage_forums) || user.moderator_of?(forum_id))
   end
   
   def to_xml(options = {})

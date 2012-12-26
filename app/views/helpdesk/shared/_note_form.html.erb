@@ -1,6 +1,6 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
   <div class="reply_box">
-  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
+  <% form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "HelpdeskNotes", :method => :post } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">

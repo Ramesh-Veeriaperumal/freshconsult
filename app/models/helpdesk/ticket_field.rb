@@ -116,7 +116,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::TicketStatus.statuses(account)
+        Helpdesk::TicketStatus.statuses(account).reject do |status|
+          status[1] == Helpdesk::Ticketfields::TicketStatus::CLOSED &&
+                   !User.current.privilege?(:close_ticket)
+        end
        when "default_ticket_type" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then

@@ -5,7 +5,7 @@ module AgentsHelper
   end
   
   def fetch_upgrade_error_msg
-    if permission?(:manage_account)
+    if privilege?(:manage_account)
       t('maximum_agents_admin_msg')
     else
       t('maximum_agents_msg')
@@ -43,11 +43,11 @@ module AgentsHelper
  end
 
  def manage_agents?
-     permission?(:manage_users)
+     privilege?(:manage_users)
   end
 
   def can_show?
-    (current_user && current_user.can_view_all_tickets?)
+    privilege?(:view_contacts)
   end  
 
 end

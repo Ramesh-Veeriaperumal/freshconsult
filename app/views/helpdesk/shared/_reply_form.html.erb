@@ -25,9 +25,8 @@
   %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>">
   <div class="reply_box">
-    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
+    <% form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
-       
     <ul class="ui-form dont-validate">
       <div class="request_form_options">
         <a href="#" class="slim-button" rel="cc_button_<%=cntid%>" data-input="#include_cc" data-parent="#cc-form-container-<%=cntid%>" data-show-text="<%= t(".addcc")%>" data-hide-text="<%= t(".removecc")%>" id="add_cc_btn_<%=cntid%>">
@@ -98,7 +97,7 @@
                 <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => bind_last_reply(conv_item, @signature) %>
             </div>
         </li>
-        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
+        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) and privilege?(:post_in_forums) %>
         <li class="inline-field field">
             <div class="fields">
                 <label>

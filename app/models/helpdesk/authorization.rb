@@ -17,8 +17,4 @@ class Helpdesk::Authorization < ActiveRecord::Base
     user.name
   end
 
-  def self.find_all_by_privilege(p)
-    self.find(:all).select { |a| a.privilege?(p) }
-  end
-
 end

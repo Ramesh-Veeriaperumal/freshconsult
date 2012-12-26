@@ -12,11 +12,9 @@ class Helpdesk::TicketsController < ApplicationController
   include RedisKeys
   include Helpdesk::AdjacentTickets
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
+  before_filter :set_mobile, :only => [:index, :show,:update, :update_ticket_properties, :create, :get_ca_response_content, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :check_user , :only => [:show]
     
-  before_filter { |c| c.requires_permission :manage_tickets }
-
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
@@ -27,11 +25,11 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
-  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
+  before_filter :load_item, :verify_permission, :only => [:show, :edit, :update, :update_ticket_properties, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
-  before_filter :check_ticket_status, :only => [:update]
+  before_filter :check_ticket_status, :only => [:update, :update_ticket_properties]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
@@ -226,6 +224,30 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def update_ticket_properties
+    old_item = @item.clone
+    #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
+    if @item.update_attributes(params[nscname])
+      #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
+      respond_to do |format|
+        format.html { 
+          flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+          redirect_to item_url 
+        }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
+        }
+      end
+    else
+      respond_to do |format|
+        format.html { edit_error }
+        format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
+      end
+    end
+  end
+
   def assign
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user 
     assign_ticket user
@@ -242,6 +264,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def update_multiple
+
+    raise I18n.t('set_priority_error') if
+              !params[nscname][:priority].blank? && !privilege?(:ticket_priority)
+    raise I18n.t('close_ticket_error') if
+              (params[nscname][:status] == Helpdesk::Ticketfields::TicketStatus::CLOSED) &&
+              !privilege?(:close_ticket)
+    
     params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless params[nscname][:custom_field].nil?
     @items.each do |item|
       params[nscname].each do |key, value|
@@ -358,7 +387,8 @@ class Helpdesk::TicketsController < ApplicationController
     redirect_to :back
   end
   
-  def change_due_by     
+  def change_due_by
+    raise I18n.t('change_due_by_error') unless privilege?(:due_by_time)    
     due_date = get_due_by_time    
     @item.update_attributes(:due_by => due_date)
     render :partial => "due_by", :object => @item.due_by
@@ -620,7 +650,9 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def allowed_quick_assign_fields
-      ['agent','status','priority']
+      fields = ['agent', 'status']
+      fields << 'priority' if privilege?(:ticket_priority)
+      fields
     end
 
     def cache_filter_params

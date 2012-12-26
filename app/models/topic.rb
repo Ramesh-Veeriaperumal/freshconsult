@@ -26,7 +26,7 @@ class Topic < ActiveRecord::Base
 
   def self.visiblity_options(user)
     if user
-       if user.has_manage_forums?
+       if user.privilege?(:manage_forums)
           {}
        else
           { :include => [:forum =>:customer_forums],
@@ -117,7 +117,11 @@ class Topic < ActiveRecord::Base
   end
 
   def editable_by?(user)
-    user && (user.id == user_id || user.admin? || user.moderator_of?(forum_id))
+    user && (user.id == user_id || user.privilege?(:manage_forums) || user.moderator_of?(forum_id))
+  end
+
+  def deletable_by?(user)
+    user && (user.id == user_id || user.privilege?(:delete_forum_topic) || user.moderator_of?(forum_id))
   end
   
   def update_cached_post_fields(post)
