@@ -31,6 +31,7 @@ class CustomersController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @customer }
+      format.json {render :json=> @customer.to_json}
     end
   end
 

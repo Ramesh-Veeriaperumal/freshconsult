@@ -1,7 +1,7 @@
 
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
-  
+
   acts_as_list :scope => :folder
 
   belongs_to :folder, :class_name => 'Solution::Folder'
@@ -39,7 +39,7 @@ class Solution::Article < ActiveRecord::Base
     has folder.visibility , :as => :visibility, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    has folder.customer_folders(:customer_id), :as => :customer_ids
+    has folder.customer_folders(:customer_id), :as => :customer_ids,:type => :multi
 
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
     has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer

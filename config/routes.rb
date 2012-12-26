@@ -15,7 +15,9 @@
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
-  map.resources :customers ,:member => {:quick => :post}
+  map.resources :customers ,:member => {:quick => :post} do |customer|
+     customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
+   end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
   map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put}
@@ -25,8 +27,11 @@
   
   map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put}
-  
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
+      agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
+  end
+
+  map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
@@ -88,7 +93,7 @@
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
-    admin.resources :getting_started, :only => :index
+    admin.resources :getting_started, :collection => {:rebrand => :put}
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
@@ -225,25 +230,27 @@
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete,
-                                    :user_ticket => :get, :search_tweets => :any, :custom_search => :get,
-                                    :export_csv => :post, :update_multiple => :put, :latest_ticket_count => :post, :add_requester => :post },
-                                 :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get,
-                                    :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post,
-                                    :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put,
-                                    :change_due_by => :put, :get_ca_response_content => :post, :split_the_ticket =>:post,
-                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get,
+    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
+                                    :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
+                                    :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
+                                    :filter_options => :get, :full_paginate => :get },  
+                                 :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
+                                    :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
+                                    :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
+                                    :change_due_by => :put, :split_the_ticket =>:post, 
+                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get, 
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
 
-    ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
-                                       :twitter => :post, :facebook => :post}                                      
-    
-    ticket.resources :notes, :name_prefix => 'helpdesk_ticket_helpdesk_'
 
+      ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
+                                       :twitter => :post, :facebook => :post}
+
+      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_' 
+
     end
 
     #helpdesk.resources :ticket_issues
@@ -254,25 +261,24 @@
       :collection => { :active => :get, :unachieved => :get }
 
     helpdesk.resources :notes
-
+    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
+    helpdesk.resources :canned_responses
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
-    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }    
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
 
-
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
 
-#    helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
+#   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
-
 
     helpdesk.resources :attachments
     
@@ -287,6 +293,8 @@
     helpdesk.resources :sla_policies 
 
     helpdesk.resources :notifications, :only => :index
+
+    helpdesk.resources :commons 
     
   end
   

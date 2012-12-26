@@ -1,9 +1,10 @@
 class Agent < ActiveRecord::Base
   
+  belongs_to_account
   include Notifications::MessageBroker
-  include Gamification::Scoreboard::Memcache #Need to refactor this!
+  include Cache::Memcache::Agent
 
-  belongs_to :user, :class_name =>'User', :foreign_key =>'user_id' , :dependent => :destroy 
+  belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
   accepts_nested_attributes_for :user
   
@@ -12,14 +13,28 @@ class Agent < ActiveRecord::Base
   attr_accessible :signature_html, :user_id , :ticket_permission, :occasional
   
   
-  has_many :agent_groups ,:class_name => 'AgentGroup', :through => :user , :foreign_key =>'user_id', :source =>'agents'
+  has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
+          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
+          :dependent => :delete_all
 
-  has_many :time_sheets , :class_name => 'Helpdesk::TimeSheet' , :through => :user , :foreign_key =>'user_id'
+  has_many :time_sheets, :class_name => 'Helpdesk::TimeSheet' , :through => :user , 
+          :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
+          :dependent => :delete_all
+
+  has_many :achieved_quests, :foreign_key =>'user_id', :primary_key => "user_id",
+          :dependent => :delete_all
+
+  has_many :support_scores, :foreign_key =>'user_id', :primary_key => "user_id",
+          :dependent => :delete_all
+
+  has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key =>'responder_id', 
+          :primary_key => "user_id", :dependent => :nullify
 
   belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
   
   before_create :set_default_ticket_permission
   before_update :update_agents_level
+  before_create :set_account_id
 
   after_save  :update_agent_levelup
   after_update :publish_game_notifications
@@ -63,9 +78,16 @@ end
     user.account.scoreboard_levels.next_level_for_points(points).first
   end
 
-  def clear_leaderboard_cache! #Refactor this code!
-    memcache_delete(user)
-  end
+def signature_htm
+  puts "#{self.signature_html}"
+  self.signature_html
+end
+
+def self.filter(page, state = "active")
+  paginate :per_page => 30, :page => page,
+           :include => [ {:user => :avatar} ], 
+           :conditions => { :users => { :deleted  => !state.eql?("active") } }
+end
 
 protected
   
@@ -92,6 +114,10 @@ protected
     if level and ((points ? points : 0) < new_point)
       SupportScore.add_agent_levelup_score(user, new_point)
     end 
+  end
+
+  def set_account_id
+    account_id = user.account_id
   end
 
 end

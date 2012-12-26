@@ -1,4 +1,3 @@
-<% content_for :layoutType do%>single<% end %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
@@ -141,7 +140,7 @@
 						   	 checkStyle = "visibility:hidden" 
 						   end %>
 						<input type="checkbox" style="<%=checkStyle%>" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv='<%= "requester_template_div_#{data.id}" %>' class="notify_check"><%=t('email_notifications.edit_reply_template')%> </a>
+						<a href="javascript:void(0)" showdiv='<%= "requester_template_div_#{data.id}" %>' class="notify_check" id="agent_reply_template_id"><%=t('email_notifications.edit_reply_template')%> </a>
 					<% end %>
 				</span	>
 					</td>
@@ -156,7 +155,7 @@
 						   	 checkStyle = "visibility:hidden" 
 						   end %>
 						<input type="checkbox" style="<%=checkStyle%>" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv='<%= "requester_template_div_#{data.id}" %>' class="notify_check"><%=t('email_notifications.customize_email')%> </a>
+						<a href="javascript:void(0)" showdiv='<%= "requester_template_div_#{data.id}" %>' class="notify_check" > <%=t('email_notifications.customize_email')%> </a>
 					<% end %>
 					&nbsp;
 				</td>
@@ -167,7 +166,7 @@
 						   	 checkStyle = "visibility:hidden" 
 						   end %>
 						<input type="checkbox" style="<%=checkStyle%>" name="agent_notification" class="checkbox agent" <%= (data.agent_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv='<%= "agent_template_div_#{data.id}" %>' class="notify_check"><%=t('email_notifications.customize_email')%></a>
+						<a href="javascript:void(0)" showdiv='<%= "agent_template_div_#{data.id}" %>' class="notify_check" id='<%= "agent_id_#{data.notification_type}" %>' ><%=t('email_notifications.customize_email')%></a>
 					<% end %>
 					&nbsp;					
 				</td>				
@@ -241,4 +240,8 @@
 
 <% content_for :pagefixed do %>
 	<%= render :partial => "shared/notification_placeholder" %>
+<% end %>
+
+<% content_for :sidebar do %> 
+	<%= render :partial => "helpnote" %>	
 <% end %>

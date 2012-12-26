@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   include Mobile::Actions::User
   include Users::Activator
   include Authority::ModelHelpers
-
+  include Cache::Memcache::User
 
   USER_ROLES = [
     [ :agent,        "Agent",            2 ],
@@ -39,6 +39,7 @@ class User < ActiveRecord::Base
  
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.account_admin  == true }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
   has_many :tag_uses,
     :as => :taggable,
@@ -56,11 +57,18 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  has_many :support_scores
+  has_many :support_scores, :dependent => :delete_all
 
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
+  after_update :update_admin_in_crm , :if => :account_admin_updated?
+
+  after_commit_on_create :clear_agent_list_cache, :if => :agent?
+  after_commit_on_update :clear_agent_list_cache, :if => :agent?
+  after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
+  after_commit_on_update :clear_agent_list_cache, :if => :user_role_updated?
+  before_update :bakcup_user_changes
   
   named_scope :account_admin, :conditions => [:account_admin => true ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]})" ]
@@ -107,7 +115,7 @@ class User < ActiveRecord::Base
   end
   
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and (external_id.blank? || !email.blank?)
   end
 
   def add_tag(tag)
@@ -182,6 +190,7 @@ class User < ActiveRecord::Base
     self.mobile = params[:user][:mobile]
     self.second_email = params[:user][:second_email]
     self.twitter_id = params[:user][:twitter_id]
+    self.external_id = params[:user][:external_id]
     self.description = params[:user][:description]
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
@@ -194,12 +203,14 @@ class User < ActiveRecord::Base
     self.update_tag_names(params[:user][:tags]) # update tags in the user object
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.deleted = true if email =~ /MAILER-DAEMON@(.+)/i
-    signup(portal)
+    return false unless save_without_session_maintenance
+    deliver_activation_instructions!(portal,false, params[:email_config]) if (!deleted and !email.blank?)
+    true
   end
 
   def signup(portal=nil)
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
+    deliver_activation_instructions!(portal,false) if (!deleted and !email.blank?)
     true
   end
 
@@ -230,7 +241,7 @@ class User < ActiveRecord::Base
   end
 
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank?
+    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank? && self.external_id.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model
@@ -258,7 +269,7 @@ class User < ActiveRecord::Base
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
 
-  has_many :achieved_quests, :dependent => :destroy
+  has_many :achieved_quests, :dependent => :delete_all
 
   has_many :quests, :through => :achieved_quests
   
@@ -360,7 +371,7 @@ class User < ActiveRecord::Base
   end
   
   def get_info
-    (email) || (twitter_id)
+    (email) || (twitter_id) || (external_id)
   end
   
   def twitter_style_id
@@ -389,7 +400,7 @@ class User < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
-                                                              :user_role,:fb_profile_id,:language,:address]) 
+                                                              :user_role,:fb_profile_id,:external_id,:language,:address]) 
   end
   
   def company_name
@@ -403,7 +414,7 @@ class User < ActiveRecord::Base
   def to_mob_json
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
-      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
+      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id, :external_id ]
     }
     to_json options
   end
@@ -424,6 +435,13 @@ class User < ActiveRecord::Base
     achieved_quest(quest).updated_at
   end
   
+  def make_customer
+    return if customer?
+    
+    update_attributes({:user_role => USER_ROLES_KEYS_BY_TOKEN[:customer], :deleted => false})
+    agent.destroy
+  end
+
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?
@@ -467,4 +485,23 @@ class User < ActiveRecord::Base
     user = self.find(:first, :conditions => conditions)
     user
   end
+
+  private
+
+    def account_admin_updated?
+      user_role_changed? && account_admin?
+    end
+
+    def update_admin_in_crm
+      Resque.enqueue(CRM::AddToCRM::UpdateAdmin, self.id)
+    end
+
+    def bakcup_user_changes
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+    def user_role_updated?
+      @all_changes.has_key?(:user_role)
+    end
 end

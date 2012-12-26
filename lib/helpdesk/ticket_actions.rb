@@ -11,7 +11,7 @@ module Helpdesk::TicketActions
     set_default_values
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
-    build_attachments
+    build_ticket_attachments
     return false unless @ticket.save
 
     if params[:meta]
@@ -50,8 +50,8 @@ module Helpdesk::TicketActions
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
   #we are getting the mass-assignment warning right now..
-  def build_attachments
-     handle_screenshot_attachments unless params[:screenshot].blank?
+  def build_ticket_attachments
+    handle_screenshot_attachments unless params[:screenshot].blank?
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
       @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
@@ -84,7 +84,7 @@ module Helpdesk::TicketActions
       params[:later] = true
       Resque.enqueue(Helpdesk::TicketsExport, params)
       flash[:notice] = t("export_data.mail.info")
-      redirect_to :back
+      redirect_to helpdesk_tickets_path
     else
       csv_tickets_string = Helpdesk::TicketsExport.perform(params)
       send_data csv_tickets_string, 
@@ -96,11 +96,6 @@ module Helpdesk::TicketActions
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
     render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
-  end
-  
-  def canned_reponse
-    @ticket = current_account.tickets.find_by_id(params[:id])
-    render :partial => "helpdesk/tickets/components/canned_responses"
   end
   
   def update_split_activity    
@@ -265,9 +260,9 @@ module Helpdesk::TicketActions
     current_account.twitter_search_keys.find_by_search_query(query).twitter_handle.id
   end
    
-   def decode_utf8_b64(string)
+  def decode_utf8_b64(string)
       URI.unescape(CGI::escape(Base64.decode64(string)))
-   end
+  end
 
   def reply_to_conv
     render :partial => "/helpdesk/shared/reply_form", 
@@ -285,4 +280,19 @@ module Helpdesk::TicketActions
     @user = current_account.users.new
     render :partial => "contacts/add_requester_form"
   end
+
+  def full_paginate
+    total_entries = params[:total_entries]
+    if(total_entries.blank? || total_entries.to_i == 0)
+      load_cached_ticket_filters
+      load_ticket_filter
+      @ticket_filter.deserialize_from_params(params)
+      joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+      options = { :joins => joins, :conditions => @ticket_filter.sql_conditions, :select => :id}
+      options[:distinct] = true if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+      total_entries = current_account.tickets.permissible(current_user).count(options)
+    end
+    @ticket_count = total_entries.to_i
+  end
+
 end

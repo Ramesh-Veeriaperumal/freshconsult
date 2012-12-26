@@ -3,6 +3,12 @@
  * Genric core utility class for the application
  */
 
+if (typeof console === "undefined" || typeof console.log === "undefined") {
+    console = { };
+    console.log = function() {
+    };
+}
+
 function log(entry) {
   if (console) {
     console.log(entry);
@@ -163,13 +169,32 @@ function helpdesk_submit(url, method, params){
       var field = new Element('input', {
                      type: 'hidden',
                      value: source.value
-                  });
+                   });
           field.name = source.name;
           field.value = source.value;
           form.appendChild(field);
    });
    form.action = url;
    form.submit();
+}
+
+function reply_multiple_submit( url, method, params){ 
+  var form = $("replymultiple");
+
+  (params.concat(jQuery('#tickets-expanded [name="ids[]"]').get()) || []).each(function(item){
+    item = $(item);
+
+    if(item.name == 'ids[]' && !item.checked) return;
+
+    var field = new Element('input', {
+                     type: 'hidden'
+                   });
+    field.name = item.name;
+    field.value = item.value;
+    form.appendChild(field);
+  });
+  form.action = url;
+  form.submit();
 }
 
 function setSelRange(inputEl, selStart, selEnd) { 

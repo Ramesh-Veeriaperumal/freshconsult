@@ -62,7 +62,7 @@ module SubscriptionSystem
       
       account = Account.find(:first, :conditions => { :full_domain => request.host }) || 
                   (Rails.env.development? ? Account.first : nil)
-      (render("/errors/invalid_domain") and raise ActiveRecord::RecordNotFound) unless account
+      (raise ActiveRecord::RecordNotFound and return) unless account
       
       @current_portal = account.main_portal
       account

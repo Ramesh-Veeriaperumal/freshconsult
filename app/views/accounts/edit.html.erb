@@ -1,4 +1,6 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do %>
+<%= render :partial => "helpnote" %>
+<% end %>
 <%= javascript_include_tag "mColorPicker.min.js" %>
 <%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>
@@ -7,6 +9,16 @@
 			jQuery("#HeaderColor").val("#252525").trigger("keyup");
 			jQuery("#TabColor").val("#006063").trigger("keyup");
 			jQuery("#BackgroundColor").val("#efefef").trigger("keyup");
+		});
+		jQuery("#account_main_portal_attributes_portal_url").blur(function(){
+			input_url = jQuery('#account_main_portal_attributes_portal_url').val();
+			protocol_exists = !(input_url.indexOf('http://') && input_url.indexOf('https://'));
+			if(protocol_exists)
+			{
+			    get_index = input_url.indexOf("://");
+			    result_url = input_url.substring(get_index+3);
+			    jQuery('#account_main_portal_attributes_portal_url').val(result_url);
+			}
 		});
 	}); 
 <% end %>
@@ -65,7 +77,7 @@
 					<label class="overlabel" for="account_main_portal_attributes_portal_url">
 						Eg. support.mycompanyname.com						
 					</label>
-			    <%= portal.text_field :portal_url, :class => "text auto" %> 
+			    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol" %> 
 					<div class="info-data">
 						<%=t('account.info2',:full_domain => @account.full_domain)%>
 					</div>	
@@ -98,6 +110,6 @@
 		</ul>
 	  <div class="button-container">
 			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
-			<%= submit_tag t('account.save'), :class => 'uiButton' %>
+			<%= submit_tag t('account.save'), :class => 'uiButton', :id => 'account_submit' %>
 	  </div>
 	<% end %>

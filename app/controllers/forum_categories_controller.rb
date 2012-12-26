@@ -1,11 +1,7 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
-  # 1. For content scope we used manage_forums to define
-  # => global scope, i.e agent view... but now an agent might
-  # => not be have the privilege and will end up having a customer
-  # => like view... this will get solved with portal customization
-  # => Until then ?  
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :portal_category?, :except => :index
@@ -106,6 +102,11 @@ class ForumCategoriesController < ApplicationController
      else
       :portal_forums 
      end
+    end
+
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.forum_category.page_not_found')
+      redirect_to categories_path
     end
     
 end

@@ -1,7 +1,8 @@
 class TopicObserver < ActiveRecord::Observer
 
 	include Gamification::GamificationUtil
-
+  include ActionController::UrlWriter
+  
 	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
 
 	def before_create(topic)
@@ -12,16 +13,16 @@ class TopicObserver < ActiveRecord::Observer
 		check_for_changing_forums(topic)
 	end
 
+	def before_save(topic)
+		topic_changes(topic)
+	end
+
 	def before_destroy(topic)
 		update_post_user_counts(topic)
 	end
 
-	def after_create(topic)
-		add_resque_job(topic) if gamification_feature?(topic.account)
-	end
-
-	def after_update(topic)
-		changed_topic_attributes = topic.changed & TOPIC_UPDATE_ATTRIBUTES
+	def after_commit(topic)
+		changed_topic_attributes = @topic_changes.keys & TOPIC_UPDATE_ATTRIBUTES
 		add_resque_job(topic) if gamification_feature?(topic.account) && changed_topic_attributes.any?
 	end
 
@@ -29,8 +30,13 @@ class TopicObserver < ActiveRecord::Observer
 		update_forum_counter_cache(topic)
 	end
 
+  def after_create(topic)
+    create_activity(topic, 'new_topic')
+  end
+
 	def after_destroy(topic)
 		update_forum_counter_cache(topic)
+    create_activity(topic, 'delete_topic')
 	end
 
 	def add_resque_job(topic)
@@ -76,5 +82,30 @@ private
       @voices = topic.voices.to_a
   end
 
+  def topic_changes(topic)
+  	@topic_changes = topic.changes.clone
+  end
+
+  def create_activity(topic, type)
+    topic.activities.create(
+      :description => "activities.forums.#{type}.long",
+      :short_descr => "activities.forums.#{type}.short",
+      :account       => topic.account,
+      :user          => topic.user,
+      :activity_data => { 
+                          :path        => category_forum_topic_path(topic.forum.forum_category_id,
+                                          topic.forum_id, topic.id),
+                          'forum_name' => topic.forum.to_s,
+                          :url_params  => { 
+                                            :category_id => topic.forum.forum_category_id, 
+                                            :forum_id => topic.forum_id, 
+                                            :topic_id => topic.id,
+                                            :path_generator => 'category_forum_topic_path'
+                                          },
+                          :title        => topic.to_s
+                        }
+    )
+  end
+  
 end
 

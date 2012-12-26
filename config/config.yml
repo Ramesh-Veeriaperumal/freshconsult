@@ -32,6 +32,23 @@ crm:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
 
+salesforce:
+    development:
+       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+       consumer_secret : "8034737126137452216"
+       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+       access_secret : "2336849265765064476"
+    production: 
+       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+       consumer_secret : "8034737126137452216"
+       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+       access_secret : "2336849265765064476"
+    staging:  
+       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+       consumer_secret : "8034737126137452216"
+       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+       access_secret : "2336849265765064476"
+
 marketo:
   development:
     access_key: "freshdesk1_239416885003D634EEFB51"

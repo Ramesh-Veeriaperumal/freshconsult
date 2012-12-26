@@ -1,7 +1,7 @@
 <div id="ticket_statuses" class="hide">
 	<%
     if privilege?(:close_ticket)
-     statuses = Helpdesk::TicketStatus.status_names(current_account) 
+     statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account) 
     else
      statuses = Helpdesk::TicketStatus.status_names_without_close(current_account) 
     end
@@ -32,8 +32,9 @@
 	   data-value="-" data-text="-" >Nobody</a>
 
 	<span class="seperator"></span>
-	<% current_account.agents.list.each do |agent| %>
-		<%= link_to h(agent.user.name), "", :class => 'action_assign', :tabindex => 99, 
-			'data-value' => agent.user.id, 'data-assign-action' => 'agent' unless agent.user_id == current_user.id %>
+	<% current_account.agents_from_cache.each do |agent| %>
+			<% unless agent.user_id == current_user.id %>
+				<a href="#" class="action_assign" tabindex=99 data-value= "<%=agent.user.id%>" data-assign-action="agent" ><%=h(agent.user.name)%></a>
+			<% end %>
   	<% end %>
 </div>

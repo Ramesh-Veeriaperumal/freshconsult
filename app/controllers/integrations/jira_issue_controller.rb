@@ -22,7 +22,7 @@ class Integrations::JiraIssueController < ApplicationController
 	def create
 		begin
 			resData = @jiraObj.create(params)
-            custom_field_id = @installed_app.configs[:inputs]['customFieldId']
+      custom_field_id = @installed_app.configs[:inputs]['customFieldId']
 			unless resData.blank?
 				resJson = JSON.parse(resData)
 				Rails.logger.debug "Response received for creating a new issue in Jira :: " + resJson.inspect
@@ -47,12 +47,12 @@ class Integrations::JiraIssueController < ApplicationController
 	def update
 		begin
 			resData = @jiraObj.update(params)
-            custom_field_id = @installed_app.configs[:inputs]['customFieldId']
-				params['integrated_resource']['remote_integratable_id'] = params['remoteKey']
-				params['integrated_resource']['account'] = current_account
-				newIntegratedResource = Integrations::IntegratedResource.createResource(params)
-				newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
-				render :json => newIntegratedResource
+      custom_field_id = @installed_app.configs[:inputs]['customFieldId']
+			params['integrated_resource']['remote_integratable_id'] = params['remoteKey']
+			params['integrated_resource']['account'] = current_account
+			newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+			newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
+			render :json => newIntegratedResource
 		rescue Exception => e
 			Rails.logger.error "Error linking the ticket to the jira issue. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			render :json => {:error=> "#{e}"}
@@ -61,10 +61,12 @@ class Integrations::JiraIssueController < ApplicationController
 
 	def unlink
 		begin
-			resData = @jiraObj.update(params)
 			params['integrated_resource']['account'] = current_account
+			if @installed_app.configs_customFieldId
+				resData = @jiraObj.update(params)
+			end
 			Integrations::IntegratedResource.deleteResource(params)
-           	render :json => {:status=> :success}
+      render :json => {:status=> :success}
 		rescue Exception => e
 			Rails.logger.error "Error unlinking the ticket from the jira issue. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			render :json => {:error=> "#{e}"}

@@ -9,16 +9,16 @@ class ArticleObserver < ActiveRecord::Observer
 
 	def before_save(article)
 		set_un_html_content(article)
+		article_changes(article)
 	end
 
 	def after_create(article) 
 		create_activity(article)
-		add_resque_job(article) if gamification_feature?(article.account)
 	end
 
-	def after_update(article)
+	def after_commit(article)
 		return unless gamification_feature?(article.account)
-		changed_filter_attributes = article.changed & SOLUTION_UPDATE_ATTRIBUTES
+		changed_filter_attributes = @article_changes.keys & SOLUTION_UPDATE_ATTRIBUTES
 		add_resque_job(article) if changed_filter_attributes.any?
 	end
 
@@ -43,5 +43,9 @@ private
 	def set_un_html_content(article)
       article.desc_un_html = (article.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless article.description.empty?
   end
-	
+
+  def article_changes(article)
+  	@article_changes = article.changes.clone
+  end
+
 end

@@ -1,15 +1,19 @@
 class TopicsController < ApplicationController
+
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
   before_filter :find_forum_and_topic, :except => :index 
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
+  before_filter :check_announcement_permission, :only => [:create]
   
   before_filter :set_selected_tab
   
   uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
 
-	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
-	# sure what analogous place to put it in this plugin.  It don't work in the init.rb  
+  # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
+  # sure what analogous place to put it in this plugin.  It don't work in the init.rb  
   #caches_formatted_page :rss, :show
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
@@ -191,7 +195,7 @@ end
     def find_forum_and_topic
       wrong_portal unless(main_portal? || 
             (params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
-            
+        
        @forum_category = scoper.find(params[:category_id])
        @forum = @forum_category.forums.find(params[:forum_id])
        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
@@ -217,7 +221,19 @@ end
       param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
       return param
     end
-    
+
+    def check_announcement_permission  
+      if @forum.announcement? && !privilege?(:manage_forums)
+        flash[:error] = I18n.t(:'flash.general.access_denied')
+        redirect_to category_forum_path(@forum_category, @forum)
+      end
+    end
+
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.topic.page_not_found')
+      redirect_to categories_path
+    end
+
 #    def authorized?
 #      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
 #    end

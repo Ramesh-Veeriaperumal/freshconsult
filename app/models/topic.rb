@@ -10,7 +10,10 @@ class Topic < ActiveRecord::Base
   has_many :monitorships,:dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
-  has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :destroy
+  has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all
+  # previously posts had :dependant => :destroy
+  # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
+  # as a result no callbacks will be triggered and so User.posts_count will not be updated
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
   has_one :ticket_topic,:dependent => :destroy
@@ -18,6 +21,10 @@ class Topic < ActiveRecord::Base
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
+  has_many :activities, 
+    :class_name => 'Helpdesk::Activity', 
+    :as => 'notable'
+
   named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
 
   named_scope :visible, lambda {|user| visiblity_options(user) }
@@ -130,8 +137,8 @@ class Topic < ActiveRecord::Base
     if remaining_post
       self.class.update_all(['replied_at = ?, replied_by = ?, last_post_id = ?, posts_count = ?', 
         remaining_post.created_at, remaining_post.user_id, remaining_post.id, posts.count], ['id = ?', id])
-    else
-      self.destroy
+    # else
+      # self.destroy
     end
   end
   
@@ -149,6 +156,10 @@ class Topic < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+  end
+
+  def to_s
+    title
   end
 
 end

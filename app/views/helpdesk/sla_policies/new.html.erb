@@ -1,4 +1,6 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do %>
+<%= render :partial => "helpnote_without_tour" %>
+<% end %>
 <h3 class="title"><%=t('sla_policy.new')%></h3>
 	<% form_for(@sla_policy) do |f| %> 
 	  <%= render :partial => "form", :locals => { :f => f } %> 

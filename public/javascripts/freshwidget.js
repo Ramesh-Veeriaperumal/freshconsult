@@ -28,6 +28,17 @@
 			}
 		}
 	 }
+
+	 // Checking browser support for IE
+	 var Browser = {
+		Version: function() {
+			var version = 999; // we assume a sane browser
+			// bah, IE again, lets downgrade version number
+			if (navigator.appVersion.indexOf("MSIE") != -1)				
+				version = parseFloat(navigator.appVersion.split("MSIE")[1]);
+			return version;
+		}
+	 }
 	 
 	 function prependSchemeIfNecessary(url) {
 	    if (url && !(urlWithScheme.test(url))) {
@@ -94,17 +105,24 @@
 			button.setAttribute('id', 'freshwidget-button');
 			button.style.display = 'none';
 			button.className = "freshwidget-button " + class_name;
-			
+
+			if(Browser.Version() <= 10)
+				button.className += " ie"+Browser.Version();
+					
 			link = document.createElement('a');
 			link.setAttribute('href', 'javascript:void(0)');
 			
 			text = null;
-			
+
+			proxyLink = document.createElement('a');
+			proxyLink.setAttribute('href', 'javascript:void(0)');
+						
 			if(options.backgroundImage == null || options.backgroundImage == ""){
 				link.className = "freshwidget-theme";
 				link.style.color		   = options.buttonColor;
 				link.style.backgroundColor = options.buttonBg;
 				link.style.borderColor	   = options.buttonColor;
+				proxyLink.className 	   = "proxy-link";
 				text = document.createTextNode(options.buttonText);
 			}else{
 				link.className 			   = "freshwidget-customimage";
@@ -121,9 +139,15 @@
 			}
 			
 			document.body.insertBefore(button, document.body.childNodes[0]);
-			button.appendChild(link);
+			button.appendChild(link);			
 			link.appendChild(text);
-			
+
+			if((options.backgroundImage == null || options.backgroundImage == "") && (Browser.Version() <= 10)) {
+				button.appendChild(proxyLink);
+				bind(proxyLink, 'click', function(){ window.FreshWidget.show(); });				
+				proxyLink.style.height = link.offsetHeight+"px";
+				proxyLink.style.width = link.offsetWidth+"px";
+			}
 			bind(link, 'click', function(){ window.FreshWidget.show(); });
 		}
 	 }	 
@@ -184,24 +208,26 @@
 	 function showContainer(){ 
 	 	scroll(0,0);
 	 	container.style.display = 'block';	 	
-        html2canvas( [ document.body ], {
-				ignoreIds: "FreshWidget|freshwidget-button",
-				proxy:false,
-			    onrendered: function( canvas ) {
-			      	var img = canvas.toDataURL();
-			      	var message = img;
-					 
-					 sendMessage = setInterval(function() {
-					 	if (iframeLoaded) {
-						 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, options.url);
-						 	clearInterval(sendMessage);
-					 	} 
-					 	else {
-					 		console.log('waiting for iframe to load');
-					 	}	
-					 }, 500);
-			    }
-		});
+
+	 	if(Browser.Version() > 8){
+	        html2canvas( [ document.body ], {
+					ignoreIds: "FreshWidget|freshwidget-button",
+					proxy:false,
+				    onrendered: function( canvas ) {
+				      	var img = canvas.toDataURL();
+				      	var message = img;
+						 
+						 sendMessage = setInterval(function() {
+						 	if (iframeLoaded) {
+							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
+							 	clearInterval(sendMessage);
+						 	}else {
+						 		console.log('waiting for iframe to load');
+						 	}	
+						 }, 500);
+				    }
+			});
+    	}
 	 	if(!iframeLoaded) {
 	 		widgetFormUrl();
 	 	}
@@ -214,7 +240,10 @@
 	 
 	 function initialize(params){ 
 		extend(params);
-		loadjsfile(options.assetUrl+"/html2canvas.js");
+		
+		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined'))
+			loadjsfile(options.assetUrl+"/html2canvas.js");
+
 		bind(window, 'load', function(){
 			// File name to be changed later when uploaded			
 			createButton();

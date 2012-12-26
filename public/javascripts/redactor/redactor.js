@@ -771,7 +771,12 @@ Redactor.prototype = {
 				}
 				else if(key === 37)	
 				{
-					e.preventDefault(); //Ctrl + left arrow
+					//Ctrl + left arrow
+					if(navigator.userAgent.indexOf('Firefox') > -1)
+					{
+						e.preventDefault();
+						this.getSelection().modify("move", "backward", "lineboundary");
+					}
 				}							
 			}	
 			
@@ -1621,7 +1626,7 @@ Redactor.prototype = {
 	},
 	buildButton: function(key, s)
 	{
-		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '"></a>');
+		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '" tabindex="-1"></a>');
 		
 		if (typeof s.func === 'undefined')
 		{

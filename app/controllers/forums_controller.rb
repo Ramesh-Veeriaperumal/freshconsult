@@ -1,11 +1,17 @@
 #To Do Shan - Need to use ModelController or HelpdeskController classes, instead of
 #writing/duplicating all the CRUD methods here.
 class ForumsController < ApplicationController 
-   include Helpdesk::ReorderUtility
+  include Helpdesk::ReorderUtility
+
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
  
+  before_filter :except => [:index, :show] do |c| 
+    c.requires_permission :manage_forums
+  end
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :find_or_initialize_forum, :except => :index
+  before_filter :admin?, :except => [:show, :index]
   before_filter :set_selected_tab
 
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
@@ -121,4 +127,10 @@ class ForumsController < ApplicationController
       @selected_tab = :forums
     end
 
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.forum.page_not_found')
+      redirect_to categories_path
+    end
+
+    alias authorized? admin?
 end

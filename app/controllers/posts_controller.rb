@@ -1,4 +1,7 @@
 class PostsController < ApplicationController
+  
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
   before_filter :find_forum_topic, :only => :create
   before_filter :find_post,      :except =>  [:monitored, :create]
   #before_filter :login_required, :except => [:index, :monitored, :search, :show]
@@ -167,4 +170,10 @@ class PostsController < ApplicationController
         format.xml  { render :xml => @posts.to_xml }
       end
     end
+
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.post.page_not_found')
+      redirect_to categories_path
+    end
+    
 end

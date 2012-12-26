@@ -2,6 +2,8 @@ class Helpdesk::QuestsController < ApplicationController
   before_filter :set_selected_tab
   before_filter { |c| c.requires_feature :gamification }
   
+  helper Helpdesk::QuestsHelper
+
   def index
     @quests = scoper.paginate(:all, :page => params[:page], :per_page => 25)
     if request.xhr?
@@ -11,7 +13,7 @@ class Helpdesk::QuestsController < ApplicationController
 
   def active
     ##need to fetch only locked quests for the agent.
-    @quests = unachieved_scoper.find(:all, :limit => 2)
+    #@quests = unachieved_scoper.find(:all, :limit => 2)
     render :layout => false
   end
 

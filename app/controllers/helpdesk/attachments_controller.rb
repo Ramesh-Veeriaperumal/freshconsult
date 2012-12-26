@@ -75,8 +75,14 @@ class Helpdesk::AttachmentsController < ApplicationController
           (current_user.client_manager?  && ticket.requester.customer == current_user.customer)))
   
       # Is the attachment on a solution  If so, it's always downloadable.
-      
-      elsif ['Solution::Article', 'Post', 'Account', 'Portal'].include? @attachment.attachable_type
+
+      elsif ['Solution::Article'].include? @attachment.attachable_type
+        return true if permission?(:manage_knowledgebase)
+        return @attachment.attachable.folder.visible?(current_user) 
+      elsif ['Post'].include? @attachment.attachable_type      
+        return true if permission?(:manage_forums)
+        return @attachment.attachable.forum.visible?(current_user)     
+      elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
         return true if privilege?(:manage_account)

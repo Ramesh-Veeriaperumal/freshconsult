@@ -1,0 +1,8 @@
+<div class="custom-upload" style="background-image:url('<%=get_logo%>');">
+  <% fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
+          <%= logo_form.file_field :content, :onchange => "update_image(this)" %>
+  <% end %>
+  <div class="fake-file">
+      <input type="button" value="Change Logo" class="change-logo-but">
+  </div>
+</div>​

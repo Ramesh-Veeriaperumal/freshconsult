@@ -136,10 +136,12 @@ class ContactsController < ApplicationController
     @item.update_attributes(:delete =>false, :user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:agent])      
     @agent = current_account.agents.new
     @agent.user = @item 
+    @item.deleted = false
     @agent.occasional = false
     respond_to do |format|
       if @agent.save        
-        format.html { redirect_to @item }
+        format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
+          redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }

@@ -26,7 +26,8 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   named_scope :activity_since, lambda { |id|
     { :conditions => ["helpdesk_activities.id > ? ", id],
-      :order => "helpdesk_activities.id DESC"
+      :order => "helpdesk_activities.id DESC",
+      :limit => 20
     }
   }
 

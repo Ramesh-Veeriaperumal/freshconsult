@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120912174542) do
+ActiveRecord::Schema.define(:version => 20121109113720) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -123,7 +123,10 @@ ActiveRecord::Schema.define(:version => 20120912174542) do
     t.text     "signature_html"
     t.integer  "points",              :limit => 8
     t.integer  "scoreboard_level_id", :limit => 8
+    t.integer  "account_id",          :limit => 8
   end
+
+  add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
 
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8
@@ -535,7 +538,7 @@ ActiveRecord::Schema.define(:version => 20120912174542) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "attachable_type"=>"14", "account_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_type"=>"14", "account_id"=>nil, "attachable_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -804,7 +807,7 @@ ActiveRecord::Schema.define(:version => 20120912174542) do
   end
 
   add_index "helpdesk_tag_uses", ["tag_id"], :name => "index_helpdesk_tag_uses_on_tag_id"
-  add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_id"=>nil, "taggable_type"=>"10"}
+  add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_type"=>"10", "taggable_id"=>nil}
 
   create_table "helpdesk_tags", :force => true do |t|
     t.string  "name"
@@ -863,6 +866,8 @@ ActiveRecord::Schema.define(:version => 20120912174542) do
     t.integer  "account_id",             :limit => 8
     t.datetime "status_updated_at"
     t.datetime "sla_timer_stopped_at"
+    t.integer  "outbound_count",                      :default => 0
+    t.float    "avg_response_time"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
@@ -1427,9 +1432,13 @@ ActiveRecord::Schema.define(:version => 20120912174542) do
     t.string   "address"
     t.datetime "deleted_at"
     t.boolean  "whitelisted",                      :default => false
+    t.string   "external_id"
+    t.string   "string_uc01"
+    t.text     "text_uc01"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"
