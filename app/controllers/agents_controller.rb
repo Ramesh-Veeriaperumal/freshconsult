@@ -4,7 +4,6 @@ class AgentsController < ApplicationController
   
   include Gamification::GamificationUtil
 
-  before_filter :authorized_to_manage_agents, :except => :show
   before_filter :authorized_to_view_agents, :only => :show
 
   skip_before_filter :check_account_state, :only => :destroy

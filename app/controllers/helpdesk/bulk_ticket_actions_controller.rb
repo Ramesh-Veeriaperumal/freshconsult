@@ -12,6 +12,13 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   before_filter :load_multiple_items, :validate_attachment_size, :only => :update_multiple
 
   def update_multiple
+
+    raise I18n.t('set_priority_error') if
+              !params[nscname][:priority].blank? && !privilege?(:ticket_priority)
+    raise I18n.t('close_ticket_error') if
+              (params[nscname][:status] == Helpdesk::Ticketfields::TicketStatus::CLOSED) &&
+              !privilege?(:close_ticket)
+              
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
     #           params[nscname][:custom_field].nil?
     reply_content = params[:helpdesk_note][:body_html]
