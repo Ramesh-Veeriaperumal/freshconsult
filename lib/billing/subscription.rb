@@ -108,7 +108,7 @@ class Billing::Subscription
 
     def add_on_data(day_pass_purchase)
       plan = day_pass_purchase.account.subscription_plan.name.to_sym
-      add_on_attributes = { :subscription_id => day_pass_purchase.account.subscription.id,
+      add_on_attributes = { :subscription_id => day_pass_purchase.account_id,
                             :addon_id => DAY_PASSES[plan], 
                             :addon_quantity => day_pass_purchase.quantity_purchased }
     end
