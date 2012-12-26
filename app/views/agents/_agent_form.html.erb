@@ -13,12 +13,12 @@
 		jQuery("#admin_ticket_permission").click(function(event){ 
 		   jQuery('#user_role').val('<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>');
 		});
-		
+
 		jQuery("#supervisor_ticket_permission").click(function(event){ 
 		   jQuery('#user_role').val('<%=User::USER_ROLES_KEYS_BY_TOKEN[:supervisor]%>');
 		});
-		
-		
+
+
 	});	
  </script> 
  <div>
@@ -29,7 +29,7 @@
 			<%= link_to(t('agent.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) %>
 		</div>
 	<% end %>
-	
+
 </div>
  
  <% fields_for "users", @agent.user do |usr| %>
@@ -56,7 +56,7 @@
 			<%= label(:user, :email, t('user.email')) %>
 			<!--label class="overlabel" for="email_primary">Primary</label-->
 			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" , :value => @agent.user.email) %>
-						
+
 		</li>	
 		<li>
 			<%= label(:user, :job_title, t('user.title')) %>
@@ -90,18 +90,18 @@
 				<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
 			</li>
 		<% end %>
-		
+
 	    <% if feature?(:multi_language) %>
 				<li>
 					<%= label(:user, :language, t('account.language')) %>
 					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym() })%>
 				</li>
      	<% end %>
-		
+
 		<li>
 			<%= label(:agent, :signature_html, t('agent.signature')) %>
 			<label class="overlabel" for="user_binfo">
-				
+
 			</label>
 			<%= text_area(:agent, :signature_html , :class => "text", :id => "user_binfo" ) %>			
 			<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
@@ -123,11 +123,11 @@
 					</li>
 				</div>
 				<div id="agent_ticket_permission">
-				
+
 				<li>
 					<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets"}) %> 
 					<%=t('agent.global')%> - <%= content_tag( :span, t('agent.global_info'), :class => "info-data" ) %> 
-					
+
 				</li>
 				<li>
 					 <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets"}) %> 
@@ -138,21 +138,21 @@
 					 <%=t('agent.individual')%> - <%= content_tag( :span, t('agent.individual_info'), :class => "info-data" ) %>
 				</li>
 				</div>
-				
+
 				 <%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
-				
-				
+
+
 			</ul>
-			
+
 		</li>
 		<% end %>
-		
+
 		<li>
 			<%= label(:agent, :occasional, t('agent.occasional_description')) %>
 			<br><%= radio_button 'agent', 'occasional', 'false', :checked => !agents_exceeded?(@agent), :disabled => full_time_disabled?(@agent) %> <%= t('agent.full_time') %>
 			<%= radio_button 'agent', 'occasional', 'true',:checked => agents_exceeded?(@agent) %> <%= t('agent.occasional') %>
 		</li>
-				
+
 		<li class="seperator"></li>
 	</ul>	 	
  

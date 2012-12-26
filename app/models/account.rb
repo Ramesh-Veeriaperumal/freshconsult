@@ -72,8 +72,10 @@ class Account < ActiveRecord::Base
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
-  has_one :account_admin, :class_name => "User", :conditions => { :account_admin => true }
-  has_many :technicians, :class_name => "User", :conditions => ["user_role in (?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:agent], false] ,:order => "name desc"
+  
+  has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
+  has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
+  has_many :all_admins, :class_name => "User", :conditions => ["user_role in (?,?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:account_admin],false] ,:order => "name desc"
   
   has_one :subscription
   has_many :subscription_payments
@@ -82,11 +84,12 @@ class Account < ActiveRecord::Base
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :customers
-  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer] , :deleted =>false}
+  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
+  has_many :all_agents, :through =>:users, :order => "users.name"
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
-  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer] }
+  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
@@ -135,7 +138,10 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
   
-  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :order => 'title' 
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
+
+  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
+  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' 
 
   has_many :facebook_pages, :class_name =>'Social::FacebookPage' 
@@ -205,6 +211,14 @@ class Account < ActiveRecord::Base
   after_create :populate_features
   after_create :send_welcome_email
   after_update :update_users_language
+
+  after_commit_on_create :add_to_billing
+  before_destroy :update_billing
+
+  after_commit_on_update :clear_cache
+  after_commit_on_destroy :clear_cache
+  before_update :backup_changes
+  before_destroy :backup_changes
   
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
@@ -250,7 +264,7 @@ class Account < ActiveRecord::Base
       :inherits => [ :blossom ]
     },
     :estate => {
-      :features => [ :gamification ],
+      :features => [ :gamification, :agent_collision ],
       :inherits => [ :garden ]
     }
   }
@@ -260,7 +274,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false, :agent_collision => false}
+    :personalized_email_replies => false}
     
   
   has_features do
@@ -565,8 +579,7 @@ class Account < ActiveRecord::Base
     def create_admin
       self.user.active = true  
       self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:agent]  
-      self.user.account_admin = true
+      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
       self.user.agent.account = self
       self.user.save
@@ -593,5 +606,20 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
+    def backup_changes
+      @old_object = self.clone
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+  private 
+
+    def add_to_billing
+      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
+    end 
+
+    def update_billing
+      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
+    end
 
 end

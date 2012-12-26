@@ -32,7 +32,7 @@
 <% if request.headers['X-PJAX'] %>
 	<% javascript_tag do %>
 		setTimeout(function(){
-			$J("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2();
+			<!-- $J("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2(); -->
 			<%= yield :onload_script -%>
 		}, 50);
 	<% end %>

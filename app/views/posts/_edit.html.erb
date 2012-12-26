@@ -1,7 +1,14 @@
-<%= include_tiny_mce_if_needed %>
-<% form_for :post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>
-	<%= f.text_area :body_html,  :class => "mceEditor", :id => "edit_post_#{@post.id}", :tabindex => 1 %>
+<% remote_form_for @post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>
+	<%= f.rich_editor :body_html, :height => "150px", :index => @post.id  %>
 	<div class="button-container"> 
-		<%= submit_tag(t("update"), :class => "uiButton small") %>			
+		<%= submit_tag(t("save"), :class => "uiButton small save_button", 'data-id' => @post.id, :id => "save_button_#{@post.id}") %>
+		<%= submit_tag t('cancel'), { :name => 'reset', 'data-id' => @post.id, :id => "reset_button_#{@post.id}", :type => "reset", :class => "uiButton small reset_button"} %>		
 	</div>
 <% end -%>
+<% javascript_tag do %>
+	(function($) {
+		$("#reset_button_" + <%= @post.id.to_s %>).data('html', 
+							$('#post_' + <%= @post.id.to_s %> +'_body_html').val());
+		$('#post_<%= @post.id %>_body_html').getEditor().focus();
+	})(jQuery)
+<% end %>

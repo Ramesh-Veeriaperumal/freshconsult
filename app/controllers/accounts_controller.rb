@@ -11,8 +11,8 @@ class AccountsController < ApplicationController
                       :create_account_google, :openid_complete, :associate_google_account,
                       :associate_local_to_google, :create, :rebrand, :dashboard]
 
-  skip_before_filter :set_locale, :except => [:cancel,:show]
-  skip_before_filter :set_time_zone, :except => [:cancel]
+  skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
+  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   
@@ -168,6 +168,7 @@ class AccountsController < ApplicationController
   def update
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
+    params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     
     if @account.save
@@ -199,11 +200,13 @@ class AccountsController < ApplicationController
   
   def delete_logo
     current_account.main_portal.logo.destroy
+    current_account.main_portal.touch
     render :text => "success"
   end
   
   def delete_fav
     current_account.main_portal.fav_icon.destroy
+    current_account.main_portal.touch
     render :text => "success"
   end
 

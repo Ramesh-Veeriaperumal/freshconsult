@@ -4,9 +4,11 @@ class Vote < ActiveRecord::Base
   belongs_to :user
 
   belongs_to :voteable, :polymorphic => true
+  belongs_to_account
 
   after_create :update_user_votes_count
   after_destroy :update_user_votes_count
+  before_create :set_account_id
 
   def self.find_votes_cast_by_user(user)
     find(:all,
@@ -20,5 +22,11 @@ class Vote < ActiveRecord::Base
   	voteable.user_votes = voteable.votes_count
   	voteable.save
   end
+
+  private
+    def set_account_id
+      self.account_id = user.account_id
+    end
+  
 
 end

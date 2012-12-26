@@ -2,6 +2,7 @@ class ContactsController < ApplicationController
     before_filter :requires_all_tickets_access 
     
    include HelpdeskControllerMethods
+   include ExportCsvUtil
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
@@ -19,7 +20,7 @@ class ContactsController < ApplicationController
   
   def index
     begin
-      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "active"))
+      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
     rescue Exception => e
       @contacts = {:error => get_formatted_message(e)}
     end
@@ -79,6 +80,15 @@ class ContactsController < ApplicationController
   def hover_card
     @user = current_account.all_users.find(params[:id])    
     render :partial => "hover_card"
+  end
+
+  def configure_export
+    render :partial => "contacts/contact_export", :locals => {:csv_headers => export_contact_fields}
+  end
+
+  def export_csv
+    csv_hash = params[:export_fields]
+    export_contact_data csv_hash
   end
   
   def build_and_save

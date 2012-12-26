@@ -409,6 +409,7 @@ div.action_buttons:hover{
    }
    .disabled.prev_page, .disabled.next_page{ 
       background:#efefef;
+      cursor: default;
       span{ @include opacity(0.3); }  
    }
 

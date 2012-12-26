@@ -17,23 +17,35 @@ class Helpdesk::AuthorizationsController < ApplicationController
   def agent_autocomplete
      deliver_autocomplete autocomplete_scoper.technicians
   end
-  
+
   def deliver_autocomplete auto_scoper
     items = auto_scoper.find(
       :all, 
       :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
       :limit => 1000)
 
-    r = {:results => items.map {|i| {:id => i.email, :value => i.name} } } 
-
+    r = {:results => items.map {|i| {:id => i.email , :value => i.name }}}
     r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
-
+    
     respond_to do |format|
       format.json { render :json => r.to_json }
     end
-
+    
   end
 
+  def requester_autocomplete
+     items = autocomplete_scoper.find(
+      :all, 
+      :conditions => ["name like ? or email like ? or phone like ?", "%#{params[:v]}%", "%#{params[:v]}%","%#{params[:v]}%"], 
+      :limit => 1000)
+
+    r = {:results => items.map {|i| {:details => i.name_details, :user_id => i.id}}}
+    r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
+    
+    respond_to do |format|
+      format.json { render :json => r.to_json }
+    end
+  end
 protected
 
   def item_url

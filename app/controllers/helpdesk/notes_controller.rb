@@ -16,6 +16,17 @@ class Helpdesk::NotesController < ApplicationController
     @notes = @parent.conversation(params[:page])
     if request.xhr?
       render(:partial => "helpdesk/tickets/note", :collection => @notes)
+    else 
+      options = {}
+      options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
+      respond_to do |format|
+        format.xml do
+         render :xml => @notes.to_xml(options) 
+        end
+        format.json do
+          render :json => @notes.to_json(options)
+        end
+      end
     end    
   end
   

@@ -20,13 +20,12 @@ class Solution::ArticlesController < ApplicationController
     @article = current_account.solution_articles.find(params[:id], :include => :folder) 
     wrong_portal and return unless(main_portal? || 
         (@article.folder.category_id == current_portal.solution_category_id))
-    
-    @page_title = @article.title
-    @page_description = "#{@article.title}. #{@article.folder.name}. #{@article.folder.category.name}" 
-    @page_keywords = @article.tags.join(", ")
+    @page_title = @article.article_title
+    @page_description = @article.article_description
+    @page_keywords = @article.article_keywords
         
     respond_to do |format|
-      format.html
+      format.html { @page_canonical = solution_category_folder_article_url(@article.folder.category, @article.folder.id, @article) }
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
       format.json  { render :json => @article.to_json(:include => {:folder => {:except => [:is_default]}}) }
     end    

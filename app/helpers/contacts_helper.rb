@@ -1,11 +1,11 @@
 module ContactsHelper
 
 	def contact_tabs(type)
-		tabs = [['customers', t('company.title')],
-		        ['contacts', t('contacts.title')]]
+		tabs = [['contacts', t('contacts.title')],
+				['customers', t('company.title')]]
 		ul tabs.map{ |t| 
-		              link_to t[1], "/#{t[0]}", :id => "#{t[0]}Tab"
-		            }, { :class => "tabs right-tabs", "data-tabs" => "tabs" }, type.eql?('user')? 1 : 0
+		              link_to t[1], "/#{t[0]}", :id => "#{t[0]}Tab", :class => "#{t[2]}"
+		            }, { :class => "tabs nav-tabs", :id => "contacts-tab" }, type.eql?('user') ? 0 : 1
 	end
 
 end

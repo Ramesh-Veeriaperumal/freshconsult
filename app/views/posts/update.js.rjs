@@ -1,3 +1,5 @@
+page["loading_#{@post.id}"].show
 page.edit_form.cancel
-page.replace_html "post-body-#{@post.id}", @post.body_html
-page.visual_effect :highlight, "post-body-#{@post.id}", :duration => 1.5
+page.replace_html "post_details_#{@post.id}", @post.body_html
+page["loading_#{@post.id}"].hide
+page.visual_effect :highlight, "post_details_#{@post.id}", :duration => 1.5

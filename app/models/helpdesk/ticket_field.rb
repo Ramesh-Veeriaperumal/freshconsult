@@ -23,6 +23,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_save :set_portal_edit
   
   acts_as_list
+
+  after_commit :clear_cache
   
   def delete_from_ticket_filter
     if is_dropdown_field?

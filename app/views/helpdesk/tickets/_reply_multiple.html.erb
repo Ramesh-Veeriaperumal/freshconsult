@@ -3,13 +3,7 @@
     
     <ul class="ui-form dont-validate">
         <div class="request_form_options">
-            <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", :onclick=>"show_canned_response()", :class => "slim-button insert-canned-response-reply-multiple", :id=>"canned_response_button")  %>
-            <div class="canned-response-menu hide" id="canned_response_container"> 
-              <div> 
-                 <h1><strong><%=t(:'ticket.canned_responses.ca_responses')%></strong></h1>
-              </div> 
-              <div id="canned_response_list"></div>
-            </div>
+           <a id="canned_show" class="slim-button"> <%= t('canned_folders.responses') %> &raquo;</a>
         </div>
               
         <li class="inline-field">
@@ -38,34 +32,43 @@
         active_dialog.dialog('close');
     }); 
 
+    jQuery('#canned_show').bind('click', function(ev){
+        ev.preventDefault();
+        jQuery('#bulk-response-group').removeClass('hide');
+        jQuery('#bulktickets').animate({marginLeft: '-=688px'}, 300);
+        jQuery('#no-response').toggle('fast');
+        jQuery('#bulkcontent').css('height','375px');
+    });
+
     function show_canned_response(){
-      var user_id=jQuery('#user_id').val();
-      jQuery("#canned_response_container")
-        .show().addClass("loading");
-      jQuery("#canned_response_list")
-        .load("/helpdesk/canned_responses/index/"+user_id, function(){
-                                jQuery("#canned_response_container")
+      var user_id=jQuery('#helpdesk_note_user_id').val();
+      jQuery("#bulk_canned_response_contaner_folder").addClass("loading");
+      jQuery("#bulk_canned_response_holder")
+        .load("/helpdesk/canned_responses", function(){
+                                jQuery("#canned_response_contaner")
             .removeClass("loading");
         })
         .show();        
     }
 
-    function getCannedResponse(ca_resp_id){
-      jQuery("#canned_response_container").addClass("loading")
+    show_canned_response();
+
+    function getCannedResponse(ca_resp_id, element){
+      jQuery("#bulk_canned_response_holder").addClass("loading")
+      jQuery(element).addClass("response-loading");
         jQuery.ajax({   type: 'POST',
                         url: '/helpdesk/canned_responses/show/?ca_resp_id='+ca_resp_id,
                         contentType: 'application/text',
                         async: false,
-                        success: function(data){     
+                        success: function(data){    
                                     var msg_body_id =  "reply-multiple-cnt-reply-multiple"
                                     jQuery("#"+msg_body_id+"-body").getEditor().focus();
-                                    if(!jQuery.browser.opera)
-                                        jQuery("#"+msg_body_id+"-body").insertHtml(data);
-                                    jQuery("#canned_response_list")
-                                            .removeClass("loading")
-                                            .hide(300);
+                                    jQuery("#"+msg_body_id+"-body").insertHtml(data);
                                     }
                     });
+        jQuery(element).removeClass("response-loading");
+        jQuery(element).qtip('hide');
+        jQuery('#no-response').click();
         return true;
     } 
 

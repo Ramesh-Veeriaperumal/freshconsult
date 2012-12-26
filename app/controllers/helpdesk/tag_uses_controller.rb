@@ -12,9 +12,14 @@ class Helpdesk::TagUsesController < ApplicationController
     rescue ActiveRecord::RecordInvalid => e
     end
 
-    flash[:notice] = t(:'ticket.tags.create_success')
-
-    redirect_to :back
+    respond_to do |format|
+        format.html {
+          flash[:notice] = t(:'ticket.tags.create_success')
+          redirect_to :back
+        }
+        format.xml { render :xml => tag.to_xml , :status => :created }
+        format.json { render :json => tag.to_json, :status => :created }
+    end
   end
 
   def destroy
@@ -32,8 +37,14 @@ class Helpdesk::TagUsesController < ApplicationController
     count = tag.tag_uses_count - 1
     tag.update_attribute(:tag_uses_count,count )
     
-    flash[:notice] = t(:'ticket.tags.destroy_success')
-    redirect_to :back
+    respond_to do |format|
+        format.html {
+          flash[:notice] = t(:'ticket.tags.destroy_success')
+          redirect_to :back
+        }
+        format.xml { render :xml => tag.to_xml }
+        format.json { render :json => tag.to_json }
+    end
     
   end
   

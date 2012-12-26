@@ -3,10 +3,10 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and topic_id = ? and active = ?', current_user.id, @topic.id, true]).zero? %>
 
 <% content_for :sidebar do -%>
-	<% if privilege?(:manage_forums) || privilege?(:manage_tickets) %>
+	<% if logged_in? && current_user.has_manage_forums? %>
 	<div class="rtCnt sidepanel">
 		<div class="rtDetails_forum">
-		<% if privilege?(:manage_forums) %> 
+		<% if logged_in? && current_user.has_manage_forums? %>
 			<% if @forum.ideas? %>
 				<%= content_tag(:h4, t(".mark_this_idea_as"), :class => "title") %>
 				<div class="mark_action">
@@ -19,14 +19,12 @@
 						<%end%>
 					<% end %>
 			    </div>
-			<% end %> 
-    <% end %>
-		<div>
-      <% if privilege?(:manage_tickets) %>
-			  <%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton full-width") if logged_in? and @topic.ticket_topic.nil?  %>
-			  <%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
-      <% end %>
-		</div> 
+			<% end %>
+			<div>
+				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton full-width") if logged_in? and @topic.ticket_topic.nil?  %>
+				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
+			</div> 
+		<% end %>
 		</div>
 	</div>
 	<% end %>
@@ -34,8 +32,8 @@
 		<div class="request_details">   
   		<div class="breadcrumbs">
   			<%= link_to(t('forum.title'), categories_path) %> &rarr;
-  			<%= link_to( "#{@forum_category.name}", category_path(@forum_category)) %> &rarr;
-  			<%= link_to( "#{@forum.name}", category_forum_path(@forum_category, @forum)) %> 
+  			<%= link_to( "#{h(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
+  			<%= link_to( "#{h(@forum.name)}", category_forum_path(@forum_category, @forum)) %> 
   		</div>
 	    	<div class="requestCnt request-cnt-first">  
 			  <h3 class="forum-title">
@@ -43,7 +41,7 @@
 			  </h3>
 				<% first_post = @posts.first %>
 				<div class="description">
-					<% if privilege?(:manage_forums) and feature?(:gamification) %>
+					<% if permission?(:manage_forums) and feature?(:gamification) %>
 						<textarea id="agent-hovercard" style="display:none;">
 							<div class="contact_hover" style="min-height:50px;">
 							  <%= user_avatar(@topic.user) if @topic.user %>
@@ -53,7 +51,7 @@
 							  <% end %>
 							</div>
 						</textarea>
-          <% end %>
+            		<% end %>
 					<div class="user_details">
 						<%= user_avatar( @topic.user ) %>
             			<%=t('posted_by')%> <%= link_to_user ( @topic.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard" ) %>
@@ -74,13 +72,16 @@
               <% if @topic.editable_by?(current_user) -%>
                 <div class="action_buttons">
                   <%= link_to(t('topic.edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %>
-                </div>		
+                </div>
+                <div class="action_buttons">
+                <%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
+		              update_lock_category_forum_topic_path(@forum_category,@forum, @topic),
+		              :method => :put, :class => "last" )	if logged_in? && current_user.has_manage_forums? %>
+		        </div>
               <% end %>
 						  <div class="floatr"> 
-                <% if privilege?(:create_forum_topic) %>
-  							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :post, :class => "monitor", :title => "Monitor this topic" ) unless @monitoring %>
-  							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this topic" ) if @monitoring %>
-                <% end %>
+							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :post, :class => "monitor", :title => "Monitor this topic" ) unless @monitoring %>
+							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this topic" ) if @monitoring %>
 						  </div>	  	
 						<% end %> 
 					</div>
@@ -99,19 +100,14 @@
                 :locals => { :url => [first_post], :show_delete => (logged_in? && @topic.editable_by?(current_user)) } %>
  					  </ul>
  					<% end %>
-					<% if privilege?(:view_forums) && !@topic.forum.announcement? %>
+					<% unless @topic.forum.announcement? %>   
 						<div class="status" id="voting_container"> 
 							  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
 						</div>
 					<% end %>             
 					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-           <%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
-              update_lock_category_forum_topic_path(@forum_category,@forum, @topic),
-              :method => :put,  :title => "Discussion comments", :class => "uiButton" )	if privilege?(:manage_forums) %>
-            <% if privilege?(:post_in_forums) %>    
-              <%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "uiButton special") if logged_in? && !@topic.locked? %>
-            <% end %>
+           <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if logged_in? && !@topic.locked? %>
           </div>
 					</div>   
         </div>
@@ -134,3 +130,17 @@
       <% end %>
       <div id="edit"></div>
     </div>
+    <% javascript_tag do %>
+    	(function($) {
+		    $('.requestCnt').on('click', '.reset_button, .save_button', function(ev){
+		    	var id = $(this).data('id');
+		    	$('#post_' + id + '_body_html').destroyEditor();
+				$('#edit_post_' + id).hide();
+				$('#loading_' + id).removeClass('hide');
+				if($(this).hasClass('reset_button')) {
+					$('#post_details_' + id).html($(this).data('html'));
+					$('#loading_' + id).addClass('hide');
+				}
+			});
+		})(jQuery)
+    <% end %>

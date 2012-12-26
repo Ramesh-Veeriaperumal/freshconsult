@@ -1,3 +1,6 @@
-<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were") %> deleted. 
-
+<% if @items.size == 1 and @items.first.respond_to?("name") %>
+	<%= "#{@items.first.name} was deleted" %>
+<% else %>
+	<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were")%> deleted
+<% end %>
 <%= link_to('Undo', { :action => :restore, :ids => params[:ids] }, :method => :put ) if @restorable %>
