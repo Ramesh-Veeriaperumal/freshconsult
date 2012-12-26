@@ -54,9 +54,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   belongs_to :responder,
     :class_name => 'User',
-    :conditions => ['users.user_role not in (?,?)',User::USER_ROLES_KEYS_BY_TOKEN[:customer],
-    User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]
-
+    :conditions => ['users.user_role not in (?)',User::USER_ROLES_KEYS_BY_TOKEN[:customer]]
+    
   belongs_to :requester,
     :class_name => 'User'
   

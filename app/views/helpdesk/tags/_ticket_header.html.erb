@@ -24,7 +24,7 @@
 					
 					<a href="javascript:void(0)" id="assign-options-link" class="button">Assign To Agent</a>
 					<div id="assign-options" class="assign-agent" style="display:none;">
-					    Assign to agent <%= select_tag 'responder_id', options_from_collection_for_select(User.find_all_by_permission(current_account, :manage_tickets), :id, :name, current_user) %>
+					    Assign to agent <%= select_tag 'responder_id', options_from_collection_for_select(current_account.technicians, :id, :name, current_user) %>
 					    <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>">Assign</button>
 					</div>
 				</th>	

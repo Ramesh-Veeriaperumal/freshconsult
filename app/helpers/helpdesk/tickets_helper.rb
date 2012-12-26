@@ -58,7 +58,7 @@ module Helpdesk::TicketsHelper
     tabs = [['Pages',     t(".conversation"), @ticket.conversation_count],
             ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
                                                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
-                                               feature?(:timesheets)]]
+                                               feature?(:timesheets) && privilege?(:view_time_entries)]]
     
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]

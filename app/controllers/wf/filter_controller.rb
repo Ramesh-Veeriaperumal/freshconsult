@@ -23,15 +23,14 @@
 
 class Wf::FilterController < ApplicationController
   
-  before_filter { |c| c.requires_permission :manage_tickets }
-  
+  skip_before_filter :check_privilege
   before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
   
   def index
     @edit_filters = []
     view_filters = scoper.my_ticket_filters(current_user)
     view_filters.each do |filter|
-      if (filter.accessible.user_id == current_user.id) or current_user.admin?
+      if (filter.accessible.user_id == current_user.id) or privilege?(:create_ticket_view)
         @edit_filters.push(filter)
       end
     end
@@ -40,7 +39,7 @@ class Wf::FilterController < ApplicationController
  
   def chk_usr_permission 
      @wf_filter = current_account.ticket_filters.find_by_id(params[:id])
-     if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !current_user.admin? 
+     if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !privilege?(:create_ticket_view)
       flash[:notice] =  t(:'flash.general.access_denied')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
      end

@@ -7,15 +7,13 @@ class User < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
   include Users::Activator
+  include Authority::ModelHelpers
+
 
   USER_ROLES = [
-    [ :admin,       "Admin",            1 ],
-    [ :poweruser,   "Power User",       2 ],
-    [ :customer,    "Customer",         3 ],
-    [ :account_admin,"Account admin",   4 ],
-    [ :client_manager,"Client Manager", 5 ],
-    [ :supervisor,    "Supervisor"    , 6 ]
-   ]
+    [ :agent,        "Agent",            2 ],
+    [ :customer,     "Customer",         3 ]
+  ]
 
   USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
@@ -32,8 +30,14 @@ class User < ActiveRecord::Base
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
   
   has_many :email_notification_agents,  :dependent => :destroy
+
+  has_many :user_roles, :dependent => :destroy
+  has_many :roles, :through => :user_roles, :class_name => 'Admin::Role'
   
-  validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
+  accepts_nested_attributes_for :user_roles, :reject_if => proc { |attrs| attrs.all? { |k, v| v.to_i.zero? } }, 
+                                :allow_destroy => true
+ 
+  validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.account_admin  == true }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
   has_many :tag_uses,
@@ -58,17 +62,16 @@ class User < ActiveRecord::Base
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   
-  named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
-  named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
-  named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
+  named_scope :account_admin, :conditions => [:account_admin => true ]
+  named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]})" ]
+  named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]})"]
   named_scope :visible, :conditions => { :deleted => false }
+
   named_scope :allowed_to_assume, lambda { |user|
-    if user.supervisor?
-      { :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:admin]}, #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}) and id != ?", user.id]} 
-    elsif user.admin?  
-      { :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}) and id != ?", user.id]} 
-    else   
+    if user.account_admin?
       { :conditions => ["id != ?", user.id]}  
+    elsif user.privilege?(:manage_users)   
+      { :conditions => ["id != ? and account_admin = false", user.id]}  
     end      
   }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
@@ -84,6 +87,18 @@ class User < ActiveRecord::Base
   end
   
   validates_presence_of :email, :unless => :customer?
+
+   def user_roles_attributes=(user_attr)
+    # delete records if update
+    user_roles.destroy_all unless user_roles.blank?
+    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
+    # build user_roles
+    role_ids.each { |id| user_roles.build({:role_id => id}) }
+    # set privileges based on chosen roles
+    privilege_masks = Admin::Role.find(:all, :select => "privileges",
+                 :conditions => ["id IN (?)", role_ids])
+    self.privileges = union_privileges(privilege_masks).to_s
+  end
   
   def check_email_value
     if email.blank?
@@ -135,7 +150,7 @@ class User < ActiveRecord::Base
   attr_accessor :import
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language, :address
+                  :deleted , :fb_profile_id , :language, :address, :user_roles_attributes, :privileges
 
   #Sphinx configuration starts
   define_index do
@@ -261,33 +276,21 @@ class User < ActiveRecord::Base
   end
 
   #implement in your user model 
-  def admin?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:admin] ||  user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
-  end
-  
+
   def customer?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:customer]
   end
   alias :is_customer :customer?
   
   def agent?
-    !customer?
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:agent]
   end
   alias :is_agent :agent?
   
   def account_admin?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
+    agent? && account_admin
   end
   
-  def client_manager?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
-  end
-  alias :is_client_manager :client_manager?
-
-  def supervisor?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:supervisor]
-  end
-
   def first_login?
     login_count <= 2
   end
@@ -305,18 +308,10 @@ class User < ActiveRecord::Base
     @role ||= Helpdesk::ROLES[USER_ROLES_SYMBOL_BY_KEY[user_role]] || Helpdesk::ROLES[:customer]
   end
   
-  def permission?(p)
-    role[:permissions][p]
-  end
-  
   def name_email
     "#{name} <#{email}>" unless email.nil?
   end
 
-  def self.find_all_by_permission(account, p)
-    #self.find(:all).select { |a| a.permission?(p) }
-    self.find_all_by_account_id(account).select { |a| a.permission?(p) }
-  end
   ##Authorization copy ends here
   
   def url_protocol
@@ -340,16 +335,7 @@ class User < ActiveRecord::Base
     UserDrop.new self
     
   end
-  
-  def has_manage_forums?
-      self.permission?(:manage_forums)
-  end
-  
-  def has_manage_solutions?
-    self.permission?(:manage_tickets)
-  end
-  
-
+    
   def has_company?
     customer? && customer
   end
@@ -382,11 +368,11 @@ class User < ActiveRecord::Base
   end
   
   def can_view_all_tickets?
-    self.permission?(:manage_tickets) && agent.all_ticket_permission
+    self.privilege?(:manage_tickets) && agent.all_ticket_permission
   end
   
   def group_ticket_permission
-    self.permission?(:manage_tickets) && agent.group_ticket_permission
+    self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
   
   def has_ticket_permission? ticket
