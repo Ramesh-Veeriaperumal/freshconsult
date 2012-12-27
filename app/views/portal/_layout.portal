@@ -1,32 +1,30 @@
 <div class="page">
 	{{ header }}
-
-	<!-- Message that shows  -->
-	{{ page_message }}
-	
-	{% if current_tab and current_tab != "tickets" %}
-		<section class="help-center rounded-6">	
-			<div class="hc-search">
-				<div class="hc-search-c">
-					<h2 class="heading">{% translate header.help_center %}</h2>
-					{% snippet portal/search %}
-				</div>
-			</div>		
-			<div class="hc-nav">
-				<nav>
-					<a href="{{ portal.new_ticket_path }}" class="new-ticket ellipsis">
-						{% translate header.new_support_ticket %}
-					</a>
-					<a href="{{ portal.tickets_path }}" class="check-status ellipsis">
-						{% translate header.check_ticket_status %}
-					</a>
-					{% if portal.contact_info %}
-						<span class="contact-info">{{ portal.contact_info }}</span>
-					{% endif %}
-				</nav>
+		
+	<section class="help-center rounded-6">	
+		<div class="hc-search">
+			<div class="hc-search-c">
+				<h2 class="heading">{% translate header.help_center %}</h2>
+				{% snippet portal/search %}
 			</div>
-		</section>
-	{% endif %}
+		</div>		
+		<div class="hc-nav">
+			<nav>
+				<a href="{{ portal.new_ticket_path }}" class="new-ticket ellipsis">
+					{% translate header.new_support_ticket %}
+				</a>
+				<a href="{{ portal.tickets_path }}" class="check-status ellipsis">
+					{% translate header.check_ticket_status %}
+				</a>
+				{% unless portal.contact_info == empty %}
+					<span class="contact-info">{{ portal.contact_info }}</span>
+				{% endunless %}
+			</nav>
+		</div>
+	</section>
+
+	<!-- Notifocation Messages for the page  -->
+	{{ page_message }}
 
 	<div class="c-wrapper">		
 		{{ content_for_layout }}

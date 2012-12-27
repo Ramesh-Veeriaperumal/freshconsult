@@ -1,7 +1,7 @@
 <section class="content ticket-page rounded-6 min-height-on-desktop">
 	<div class="breadcrumb">
 		<a href="/">Home</a>
-		<a href="/">Tickets list</a>
+		<a href="{{ portal.tickets_path }}">Tickets list</a>
 	</div>
 	<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
 	

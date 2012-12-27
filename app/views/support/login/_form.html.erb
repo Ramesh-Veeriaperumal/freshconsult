@@ -1,10 +1,10 @@
-<% form_for @user_session, :url => user_session_path do |f| %>
+<% form_for @user_session, :url => support_login_path do |f| %>
   	<%= f.error_messages %>
 	<fieldset>
 	  	<div class="control-group">
 	  		<div class="controls">
 	  			<input class="required special" id="user_session_email" name="user_session[email]" 
-	  				placeholder="<%= t('your_email_address') %>" size="30" type="email" />
+	  				placeholder="<%= t('your_email_address') %>" size="30" type="email" value="<%= @user_session.email %>" />
 	  		</div>
 		</div>
 		<div class="control-group">
@@ -16,8 +16,7 @@
 		<div class="control-group">			
 	  		<div class="controls">
 	  			<label class="checkbox">
-					<input name="user_session[remember_me]" type="hidden" value="0">
-					<input id="user_session_remember_me" name="user_session[remember_me]" type="checkbox" value="1">
+	  				<%= f.check_box :remember_me %>
 					<%= t('.remember') %>
 				</label>
 			</div>

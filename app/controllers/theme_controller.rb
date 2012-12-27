@@ -26,7 +26,7 @@ class ThemeController < SupportController
 	private
 
     	def theme_colors
-	    	@theme_colors = color_preferences.map{ |k, p| (ALLOWED_THEME_OPTIONS.include? k.to_s) ? "$#{k}:#{p};" : "" }.join("")
+	    	@theme_colors = color_preferences.map{ |k, p| (p.present? && ALLOWED_THEME_OPTIONS.include?(k.to_s)) ? "$#{k}:#{p};" : "" }.join("")
 	    end
 
 	    def color_preferences

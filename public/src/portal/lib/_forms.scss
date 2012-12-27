@@ -701,3 +701,8 @@ label.required:after{
     width: 210px;
   }
 }
+
+#errorExplanation, .errorExplanation{
+  h2, p{ display: none; }
+  ul{ margin-bottom: 0; }
+}

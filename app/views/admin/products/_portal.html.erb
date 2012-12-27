@@ -53,7 +53,7 @@
 
     <label>
       <%= t(".top_level_solution") %>    
-      <%= portal.collection_select :solution_category_id, @solution_categories, :id, :name, options ={:prompt => t(".select_solution_category")} %>
+      <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), :id, :name, options ={:prompt => t(".select_solution_category")} %>
     </label>
     <%= content_tag(:div, t('.top_level_solution_info'), :class => "info-data") %>
   </div>

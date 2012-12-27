@@ -2,7 +2,7 @@ class Forum::ForumDrop < BaseDrop
   
   include ActionController::UrlWriter
   
-  liquid_attributes << :name << :description
+  liquid_attributes << :name << :description << :topics_count
   
   def initialize(source)
     super source
@@ -65,10 +65,6 @@ class Forum::ForumDrop < BaseDrop
 
   def forum_category
     source.forum_category
-  end
-  
-  def total_topics
-    source.topics.size    
   end
 
   def topics

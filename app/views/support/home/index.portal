@@ -1,0 +1,82 @@
+<section class="main content rounded-6 min-height-on-desktop">
+	<h2 class="heading">Knowledge base</h2>
+	{% if portal.total_articles > 0 %}				
+		{% for category in portal.solution_categories %}
+			<div class="cs-s">
+				<h3 class="heading">{{ category.name }}</h3>
+				<div class="cs-g-c">
+					{% for folder in category.folders %}
+						{% if folder.total_articles > 0 %}
+							<section class="cs-g article-list">
+								<div class="list-lead">
+									<a href="{{folder.url}}">{{folder.name}} ({{ folder.total_articles }})</a>
+								</div>
+								<ul>
+									{% for article in folder.articles limit:5 %}
+									<li>
+										<div class="ellipsis">
+											<a href="{{article.url}}" title="{{article.title}}">{{article.title}}</a>
+										</div>
+									</li>
+									{% endfor %}
+								</ul>
+								{% if folder.total_articles > 5 %}
+									<a href="{{ folder.url }}" class="see-more">
+										See all {{ folder.total_articles }} articles 
+									</a>
+								{% endif %}
+							</section>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+		{% endfor %}		
+	{% else %}
+		<div class="lead">Sorry, we haven’t published any articles. </div>
+		<div class="lead-small">Please check again later. </div>
+	{% endif %}
+</section>
+<section class="sidebar content rounded-6 min-height-on-desktop">
+	<div class="community-sidebar" id="home-community-sidebar">
+		<h2 class="heading">Community</h2>
+		{% if portal.total_topics > 0 %}
+			<div class="start-topic">{{ portal | link_to_start_topic }}</div>
+			<p class="intro">Showing recent updates</p>
+			<div class="cs-g-c" id="home-page-discussions">
+				{% for forum in portal.forums %}
+					{% unless forum.topics_count == 0 %}
+						<section class="cs-g topic-list">
+							<div class="list-lead">
+								<i class="badge-{{forum.type_name}}"></i>
+								<a href="{{forum.url}}">{{ forum.name }} ({{ forum.topics_count }})</a>
+							</div>
+							{% assign show_limit = 3 %}
+							<ul>
+								{% for topic in forum.topics limit:show_limit %}
+								<li>
+									<div class="ellipsis">
+										<a href="{{topic.url}}" title="{{topic.title}}">{{topic.title}}</a>
+									</div>
+									<p class="help-text">
+										posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }} <br />
+										{% if topic.has_comments %}
+											<a href="{{topic.last_post.url}}">Last reply</a>
+											by {{ topic.last_post.created_on | time_ago }}
+										{% endif %}
+									</p>
+								</li>
+								{% endfor %}
+								{% if forum.topics_count > show_limit %}
+									<a href="{{forum.url}}" class="see-more">See all {{ forum.topics_count }} topics</a>
+								{% endif %}
+							</ul>
+						</section>
+					{% endunless %}
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="lead">No forum topic yet</div>
+			<div class="lead-small">Why dont you start a {{ portal | link_to_start_topic }}?</div>
+		{% endif %}
+	</div>
+</section>

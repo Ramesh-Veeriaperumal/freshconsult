@@ -142,10 +142,10 @@ p {
 
 /* line 17, ../../src/portal/lib/_type.scss */
 .lead, .lead-small, .list-lead {
-  margin-bottom: 21.875px;
+  line-height: 28.4375px;
   font-size: 20px;
   font-weight: 200;
-  color: #333333; }
+  color: inherit; }
   /* line 22, ../../src/portal/lib/_type.scss */
   .lead b, .lead-small b, .list-lead b {
     font-weight: 500; }
@@ -436,7 +436,7 @@ cite {
 
 /* Loading content */
 /* line 43, ../../src/portal/lib/_utilities.scss */
-.loading-box, .loading {
+.loading-box, .loading, .ui-autocomplete-loading {
   background-image: url("/images/load.gif");
   background-repeat: no-repeat; }
 
@@ -446,11 +446,15 @@ cite {
   height: 100px; }
 
 /* line 53, ../../src/portal/lib/_utilities.scss */
-input[type="text"].loading {
+input[type="text"].loading, .ui-autocomplete-loading {
   background-position: right 3px; }
 
+/* line 57, ../../src/portal/lib/_utilities.scss */
+.special.ui-autocomplete-loading {
+  background-position: 99% 5px; }
+
 @media (min-width: 45em) {
-  /* line 60, ../../src/portal/lib/_utilities.scss */
+  /* line 64, ../../src/portal/lib/_utilities.scss */
   .rounded-6 {
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
@@ -458,42 +462,42 @@ input[type="text"].loading {
     -o-border-radius: 6px;
     border-radius: 6px; }
 
-  /* line 63, ../../src/portal/lib/_utilities.scss */
+  /* line 67, ../../src/portal/lib/_utilities.scss */
   .pull-right-tablet {
     float: right; }
 
-  /* line 64, ../../src/portal/lib/_utilities.scss */
+  /* line 68, ../../src/portal/lib/_utilities.scss */
   .pull-left-tablet {
     float: left; }
 
-  /* line 65, ../../src/portal/lib/_utilities.scss */
+  /* line 69, ../../src/portal/lib/_utilities.scss */
   .hide-tablet {
     display: none; }
 
-  /* line 66, ../../src/portal/lib/_utilities.scss */
+  /* line 70, ../../src/portal/lib/_utilities.scss */
   .show-tablet {
     display: block; }
 
-  /* line 67, ../../src/portal/lib/_utilities.scss */
+  /* line 71, ../../src/portal/lib/_utilities.scss */
   .invisible-tablet {
     visibility: hidden; }
 
-  /* line 68, ../../src/portal/lib/_utilities.scss */
+  /* line 72, ../../src/portal/lib/_utilities.scss */
   .align-right-tablet {
     text-align: right; }
 
-  /* line 69, ../../src/portal/lib/_utilities.scss */
+  /* line 73, ../../src/portal/lib/_utilities.scss */
   .align-left-tablet {
     text-align: left; }
 
-  /* line 70, ../../src/portal/lib/_utilities.scss */
+  /* line 74, ../../src/portal/lib/_utilities.scss */
   .hide-in-mobile {
     display: block; }
 
-  /* line 71, ../../src/portal/lib/_utilities.scss */
+  /* line 75, ../../src/portal/lib/_utilities.scss */
   .show-in-mobile {
     display: none; } }
-/* line 75, ../../src/portal/lib/_utilities.scss */
+/* line 79, ../../src/portal/lib/_utilities.scss */
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;
@@ -1634,6 +1638,13 @@ label.required:after {
   /* line 700, ../../src/portal/lib/_forms.scss */
   input, textarea {
     width: 210px; } }
+/* line 706, ../../src/portal/lib/_forms.scss */
+#errorExplanation h2, #errorExplanation p, .errorExplanation h2, .errorExplanation p {
+  display: none; }
+/* line 707, ../../src/portal/lib/_forms.scss */
+#errorExplanation ul, .errorExplanation ul {
+  margin-bottom: 0; }
+
 /* line 9, ../../src/portal/lib/_buttons.scss */
 .btn {
   display: inline-block;
@@ -1994,12 +2005,12 @@ input[type="submit"].btn {
 
 /* Importing admin icons */
 /* line 322, portal/icon/*.png */
-.icon-sprite, .icon-article-list, .article-list li:before, .ticket-list li:before, .icon-check-status, .check-status:before, .icon-cog-dark, .icon-cog-drop-dark, .icon-cog-drop-light, .icon-cog-light, .icon-dd-tick-dark, .dropdown-menu .active > a:before,
-.dropdown-menu .active > a:hover:before, .icon-dd-tick-light, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:before, .icon-forum-i, .badge-ideas:before, .icon-forum-p, .badge-problems:before, .icon-forum-q, .badge-questions:before, .icon-like-arrow-right, .icon-more-details-light, .icon-more-details, .icon-new-ticket, .new-ticket:before, .icon-page-announcement, .icon-page-article, .icon-page-ideas, .icon-page-problems, .icon-page-questions, .icon-phone, .contact-info:before, .icon-quote, .icon-search-dark, .icon-search-light, .mobile-icon-search:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-smiley-happy-small, .icon-smiley-happy, .icon-smiley-neutral-small, .icon-smiley-neutral, .icon-smiley-unhappy-small, .icon-smiley-unhappy, .icon-topic-list, .topic-list li:before {
+.icon-sprite, .icon-article-list, .article-list li:before, li.article-item:before, .ticket-list li:before, li.ticket-item:before, .icon-check-status, .check-status:before, .icon-cog-dark, .icon-cog-drop-dark, .icon-cog-drop-light, .icon-cog-light, .icon-dd-tick-dark, .dropdown-menu .active > a:before,
+.dropdown-menu .active > a:hover:before, .icon-dd-tick-light, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:before, .icon-forum-i, .badge-ideas:before, .icon-forum-p, .badge-problems:before, .icon-forum-q, .badge-questions:before, .icon-like-arrow-right, .icon-more-details-light, .icon-more-details, .icon-new-ticket, .new-ticket:before, .icon-page-announcement, .icon-page-article, .icon-page-ideas, .icon-page-problems, .icon-page-questions, .icon-phone, .contact-info:before, .icon-quote, .icon-search-dark, .icon-search-light, .mobile-icon-search:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-smiley-happy-small, .icon-smiley-happy, .icon-smiley-neutral-small, .icon-smiley-neutral, .icon-smiley-unhappy-small, .icon-smiley-unhappy, .icon-topic-list, .topic-list li:before, li.topic-item:before {
   background: url('/images/portal/icon-sa4e1c51433.png') no-repeat; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-article-list, .article-list li:before, .ticket-list li:before {
+.icon-article-list, .article-list li:before, li.article-item:before, .ticket-list li:before, li.ticket-item:before {
   background-position: 0 -494px;
   height: 20px;
   width: 20px; }
@@ -2210,7 +2221,7 @@ input[type="submit"].btn {
   width: 23px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-topic-list, .topic-list li:before {
+.icon-topic-list, .topic-list li:before, li.topic-item:before {
   background-position: 0 -244px;
   height: 20px;
   width: 20px; }
@@ -3604,9 +3615,9 @@ footer {
 
 /* line 1, ../../src/portal/lib/_page-lead.scss */
 .help-center {
-  background-color: rgba(249, 249, 249, 0.6);
+  background-color: whitesmoke;
   padding: 1em;
-  border: 1px solid rgba(224, 224, 224, 0.6);
+  border: 1px solid gainsboro;
   *zoom: 1; }
   /* line 15, ../../src/portal/lib/_mixins.scss */
   .help-center:before, .help-center:after {
@@ -3663,6 +3674,10 @@ footer {
   #margin-left: -10px;
   display: inline; }
 
+/* line 29, ../../src/portal/lib/_page-lead.scss */
+.hc-search-input {
+  position: relative; }
+
 /* line 30, ../../src/portal/lib/_page-lead.scss */
 .hc-search-input input, .hc-search-button .btn {
   height: 35px; }
@@ -3707,10 +3722,8 @@ footer {
 /* line 43, ../../src/portal/lib/_page-lead.scss */
 .new-ticket, .check-status, .contact-info {
   padding: 3px 8px 3px 2px;
-  margin-bottom: 3px; }
-  /* line 46, ../../src/portal/lib/_page-lead.scss */
-  .new-ticket:hover, .check-status:hover, .contact-info:hover {
-    text-decoration: none; }
+  float: left;
+  margin-right: 15px; }
   /* line 47, ../../src/portal/lib/_page-lead.scss */
   .new-ticket:before, .check-status:before, .contact-info:before {
     content: "";
@@ -3720,7 +3733,6 @@ footer {
     *vertical-align: auto;
     zoom: 1;
     *display: inline;
-    vertical-align: text-top;
     margin-right: 5px;
     -webkit-border-radius: 2em;
     -moz-border-radius: 2em;
@@ -3729,58 +3741,52 @@ footer {
     border-radius: 2em;
     margin-top: -1px;
     background-color: #696767; }
+  /* line 55, ../../src/portal/lib/_page-lead.scss */
+  .new-ticket:hover, .check-status:hover, .contact-info:hover {
+    text-decoration: none; }
 
-/* line 58, ../../src/portal/lib/_page-lead.scss */
-.new-ticket {
-  width: 48.14815%;
-  float: left;
-  margin-right: 3.7037%;
-  display: inline; }
-
-/* line 60, ../../src/portal/lib/_page-lead.scss */
-.check-status {
-  width: 48.14815%;
-  float: right;
-  margin-right: 0;
-  #margin-left: -10px;
-  display: inline; }
-
-/* line 62, ../../src/portal/lib/_page-lead.scss */
+/* line 59, ../../src/portal/lib/_page-lead.scss */
 .contact-info:before {
   margin-right: 8px; }
 
 @media (min-width: 45em) {
-  /* line 65, ../../src/portal/lib/_page-lead.scss */
+  /* line 62, ../../src/portal/lib/_page-lead.scss */
   .help-center {
     margin-top: 10px;
     padding: 1em 2.2em; }
 
-  /* line 67, ../../src/portal/lib/_page-lead.scss */
+  /* line 64, ../../src/portal/lib/_page-lead.scss */
   .hc-search {
-    width: 66.26506%;
-    float: left;
-    margin-right: 1.20482%; }
+    width: 68%;
+    padding-right: 2%;
+    border-right: 1px solid gainsboro; }
 
-  /* line 68, ../../src/portal/lib/_page-lead.scss */
+  /* line 69, ../../src/portal/lib/_page-lead.scss */
   .hc-nav {
-    width: 32.53012%;
-    float: right;
-    margin-right: 0; }
+    width: 31%;
+    padding-left: 1%; }
+    /* line 72, ../../src/portal/lib/_page-lead.scss */
+    .hc-nav a, .hc-nav span {
+      display: -moz-inline-stack;
+      display: inline-block;
+      vertical-align: middle;
+      *vertical-align: auto;
+      zoom: 1;
+      *display: inline; }
 
-  /* line 71, ../../src/portal/lib/_page-lead.scss */
-  .hc-nav a, .hc-nav span {
-    float: none;
-    width: auto;
-    margin-right: auto;
-    float: left;
-    clear: left; }
   /* line 76, ../../src/portal/lib/_page-lead.scss */
-  .hc-nav nav {
-    margin-left: 5px;
-    padding-left: 1.5em;
-    border-left: 1px solid rgba(224, 224, 224, 0.6); } }
+  .help-center:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle; }
+
+  /* line 82, ../../src/portal/lib/_page-lead.scss */
+  .hc-search, .hc-nav {
+    display: inline-block;
+    vertical-align: middle; } }
 @media (min-width: 60em) {
-  /* line 85, ../../src/portal/lib/_page-lead.scss */
+  /* line 89, ../../src/portal/lib/_page-lead.scss */
   .hc-search-button .btn {
     font-size: 14px; } }
 /* line 1, ../../src/portal/lib/_content.scss */
@@ -3838,32 +3844,57 @@ footer {
   margin-bottom: 0;
   margin-left: 0;
   margin-top: 10px; }
-/* line 30, ../../src/portal/lib/_content.scss */
-.article-list li, .topic-list li, .ticket-list li {
+
+/* line 33, ../../src/portal/lib/_content.scss */
+.article-list li, .topic-list li, .ticket-list li,
+li.article-item, li.topic-item, li.ticket-item {
   list-style: none;
   position: relative;
-  margin-bottom: 6px;
   padding-left: 30px; }
-  /* line 35, ../../src/portal/lib/_content.scss */
-  .article-list li:before, .topic-list li:before, .ticket-list li:before {
+  /* line 37, ../../src/portal/lib/_content.scss */
+  .article-list li:before, .topic-list li:before, .ticket-list li:before,
+  li.article-item:before, li.topic-item:before, li.ticket-item:before {
     left: 0;
     content: "";
     position: absolute;
     vertical-align: text-top; }
 
-/* line 43, ../../src/portal/lib/_content.scss */
+/* line 44, ../../src/portal/lib/_content.scss */
+.article-list li, .topic-list li, .ticket-list li {
+  margin-bottom: 6px; }
+
+/* line 47, ../../src/portal/lib/_content.scss */
+li.article-item, li.topic-item, li.ticket-item {
+  padding-right: 10px; }
+  /* line 49, ../../src/portal/lib/_content.scss */
+  li.article-item:before, li.topic-item:before, li.ticket-item:before {
+    left: 8px; }
+  /* line 50, ../../src/portal/lib/_content.scss */
+  li.article-item .label, li.topic-item .label, li.ticket-item .label {
+    margin-left: 5px;
+    margin-top: -5px; }
+
+/* line 52, ../../src/portal/lib/_content.scss */
 .article-list, .topic-list {
   margin-bottom: 20px; }
 
-/* line 48, ../../src/portal/lib/_content.scss */
+/* line 57, ../../src/portal/lib/_content.scss */
 .start-topic {
   float: right;
   font-weight: bold; }
 
-/* line 53, ../../src/portal/lib/_content.scss */
+/* line 62, ../../src/portal/lib/_content.scss */
+.tabbed {
+  margin-left: 15px; }
+
+/* line 66, ../../src/portal/lib/_content.scss */
+#home-community-sidebar .start-topic {
+  margin-top: -30px; }
+
+/* line 70, ../../src/portal/lib/_content.scss */
 .see-more {
   color: rgba(4, 156, 219, 0.5); }
-  /* line 55, ../../src/portal/lib/_content.scss */
+  /* line 72, ../../src/portal/lib/_content.scss */
   .see-more:before {
     content: "";
     display: -moz-inline-stack;
@@ -3875,21 +3906,21 @@ footer {
     vertical-align: text-top;
     margin-right: 8px; }
 
-/* line 64, ../../src/portal/lib/_content.scss */
+/* line 81, ../../src/portal/lib/_content.scss */
 .help-text, .p-info, .info-text, .list-noinfo {
   color: #999999;
   font-weight: 200;
   line-height: 19.88636px; }
 
-/* line 70, ../../src/portal/lib/_content.scss */
+/* line 87, ../../src/portal/lib/_content.scss */
 .help-text {
   font-size: 12px; }
 
-/* line 71, ../../src/portal/lib/_content.scss */
+/* line 88, ../../src/portal/lib/_content.scss */
 .p-info strong {
   color: #333333; }
 
-/* line 72, ../../src/portal/lib/_content.scss */
+/* line 89, ../../src/portal/lib/_content.scss */
 .list-noinfo {
   text-align: center; }
 
@@ -3919,39 +3950,41 @@ footer {
 	a{ color: #a1913f; }
 	a:hover{ color: darken(#a1913f, 10%); }
 }*/
-/* line 103, ../../src/portal/lib/_content.scss */
+/* line 120, ../../src/portal/lib/_content.scss */
 #vote-toolbar #topic-vote-down-button {
   display: none; }
-/* line 104, ../../src/portal/lib/_content.scss */
+/* line 121, ../../src/portal/lib/_content.scss */
 #vote-toolbar:hover #topic-vote-down-button {
   display: inline; }
 
 /* A small colen is added in front of the 
    up-vote button if its next to the atleast 1 user is voted label */
-/* line 109, ../../src/portal/lib/_content.scss */
-#topic-vote-up-button:nth-child(2) {
-  margin-left: 10px; }
-  /* line 111, ../../src/portal/lib/_content.scss */
-  #topic-vote-up-button:nth-child(2):before {
+/* line 126, ../../src/portal/lib/_content.scss */
+#topic-vote-up-button:nth-child(3) {
+  margin-left: 10px;
+  position: relative; }
+  /* line 129, ../../src/portal/lib/_content.scss */
+  #topic-vote-up-button:nth-child(3):before {
     content: " : ";
     color: #333333;
     position: absolute;
-    margin-left: -8px; }
+    margin-left: -8px;
+    top: -3px; }
 
 /* Background for a sticky topic in the list view */
-/* line 120, ../../src/portal/lib/_content.scss */
+/* line 139, ../../src/portal/lib/_content.scss */
 .c-topic-sticky {
   background-color: #fffff6; }
 
-/* line 122, ../../src/portal/lib/_content.scss */
+/* line 141, ../../src/portal/lib/_content.scss */
 .user-comment {
   margin: 5px 0 20px; }
-  /* line 124, ../../src/portal/lib/_content.scss */
+  /* line 143, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb {
     clear: right;
     z-index: 3; }
 
-/* line 130, ../../src/portal/lib/_content.scss */
+/* line 149, ../../src/portal/lib/_content.scss */
 .user-info {
   *zoom: 1;
   margin-bottom: 10px; }
@@ -3962,12 +3995,12 @@ footer {
   /* line 19, ../../src/portal/lib/_mixins.scss */
   .user-info:after {
     clear: both; }
-  /* line 133, ../../src/portal/lib/_content.scss */
+  /* line 152, ../../src/portal/lib/_content.scss */
   .user-info .user-details {
     margin-left: 55px;
     margin-top: 2px; }
 
-/* line 136, ../../src/portal/lib/_content.scss */
+/* line 155, ../../src/portal/lib/_content.scss */
 .p-content {
   background-color: #fafafa;
   padding: 0.8em 1em;
@@ -3980,10 +4013,10 @@ footer {
   position: relative;
   margin: 0 0 10px;
   /* To handle the paragraph tags coming in from redactor */ }
-  /* line 145, ../../src/portal/lib/_content.scss */
+  /* line 164, ../../src/portal/lib/_content.scss */
   .p-content p {
     margin: 0; }
-  /* line 146, ../../src/portal/lib/_content.scss */
+  /* line 165, ../../src/portal/lib/_content.scss */
   .p-content hr {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -3991,7 +4024,7 @@ footer {
     margin-right: -1em;
     border-top: 1px solid #efefef; }
 
-/* line 155, ../../src/portal/lib/_content.scss */
+/* line 174, ../../src/portal/lib/_content.scss */
 .comment-by-agent .p-content {
   background-color: #fffdf8;
   border-color: #cccccc;
@@ -3999,14 +4032,14 @@ footer {
   -moz-box-shadow: rgba(0, 0, 0, 0.05) 0 3px 3px;
   box-shadow: rgba(0, 0, 0, 0.05) 0 3px 3px; }
 
-/* line 161, ../../src/portal/lib/_content.scss */
+/* line 180, ../../src/portal/lib/_content.scss */
 .c-list {
   border-bottom: 1px solid #f3f3f3;
   margin-bottom: 12px;
   margin-top: 5px;
   margin-bottom: 1em; }
 
-/* line 168, ../../src/portal/lib/_content.scss */
+/* line 187, ../../src/portal/lib/_content.scss */
 .c-row {
   *zoom: 1;
   padding: 10px 0;
@@ -4016,57 +4049,57 @@ footer {
     content: "";
     display: table;
     clear: both; }
-  /* line 172, ../../src/portal/lib/_content.scss */
+  /* line 191, ../../src/portal/lib/_content.scss */
   .c-row .help-text {
     font-size: 0.96em; }
-  /* line 173, ../../src/portal/lib/_content.scss */
+  /* line 192, ../../src/portal/lib/_content.scss */
   .c-row:hover {
     background-color: rgba(241, 239, 236, 0.3); }
 
-/* line 176, ../../src/portal/lib/_content.scss */
+/* line 195, ../../src/portal/lib/_content.scss */
 .c-user-thumb, .uv-user-thumb {
   padding-left: 55px; }
-  /* line 178, ../../src/portal/lib/_content.scss */
+  /* line 197, ../../src/portal/lib/_content.scss */
   .c-user-thumb .user-pic-thumb, .uv-user-thumb .user-pic-thumb {
     margin-left: -53px; }
-    /* line 180, ../../src/portal/lib/_content.scss */
+    /* line 199, ../../src/portal/lib/_content.scss */
     .c-user-thumb .user-pic-thumb img, .uv-user-thumb .user-pic-thumb img {
       width: 35px;
       height: 35px; }
 
-/* line 184, ../../src/portal/lib/_content.scss */
+/* line 203, ../../src/portal/lib/_content.scss */
 .uv-user-thumb {
   padding-left: 45px; }
-  /* line 186, ../../src/portal/lib/_content.scss */
+  /* line 205, ../../src/portal/lib/_content.scss */
   .uv-user-thumb .user-pic-thumb {
     margin-left: -40px; }
-    /* line 188, ../../src/portal/lib/_content.scss */
+    /* line 207, ../../src/portal/lib/_content.scss */
     .uv-user-thumb .user-pic-thumb img {
       width: 30px;
       height: 30px; }
 
-/* line 192, ../../src/portal/lib/_content.scss */
+/* line 211, ../../src/portal/lib/_content.scss */
 .c-link {
   font-size: 1.16em;
   font-weight: 200; }
 
 /* Solution voting button */
-/* line 198, ../../src/portal/lib/_content.scss */
+/* line 217, ../../src/portal/lib/_content.scss */
 .vote-up, .vote-down {
   font-weight: bold;
   margin-left: 10px; }
-  /* line 201, ../../src/portal/lib/_content.scss */
+  /* line 220, ../../src/portal/lib/_content.scss */
   .vote-up:hover, .vote-down:hover {
     text-decoration: none; }
 
-/* line 205, ../../src/portal/lib/_content.scss */
+/* line 224, ../../src/portal/lib/_content.scss */
 .vote-down:before {
   content: "-";
   color: #e5e5e5;
   margin-right: 10px; }
 
 /* File attachment based styles */
-/* line 212, ../../src/portal/lib/_content.scss */
+/* line 231, ../../src/portal/lib/_content.scss */
 .attachment {
   *zoom: 1;
   margin-bottom: 15px; }
@@ -4077,28 +4110,28 @@ footer {
   /* line 19, ../../src/portal/lib/_mixins.scss */
   .attachment:after {
     clear: both; }
-  /* line 215, ../../src/portal/lib/_content.scss */
+  /* line 234, ../../src/portal/lib/_content.scss */
   .attachment a {
     display: block; }
-  /* line 216, ../../src/portal/lib/_content.scss */
+  /* line 235, ../../src/portal/lib/_content.scss */
   .attachment .file-thumbnail {
     float: left;
     margin-right: 10px;
     margin-top: 2px;
     width: 30px;
     height: 32px; }
-  /* line 223, ../../src/portal/lib/_content.scss */
+  /* line 242, ../../src/portal/lib/_content.scss */
   .attachment .file-image {
     border: 1px solid #afafaf;
     width: 50px;
     height: 50px; }
 
 /* User voted list in topic details page */
-/* line 231, ../../src/portal/lib/_content.scss */
+/* line 250, ../../src/portal/lib/_content.scss */
 .user-list {
   margin-top: -10px; }
 
-/* line 234, ../../src/portal/lib/_content.scss */
+/* line 253, ../../src/portal/lib/_content.scss */
 .uv-row {
   *zoom: 1;
   border-bottom: 1px solid #f3f3f3;
@@ -4109,16 +4142,16 @@ footer {
     content: "";
     display: table;
     clear: both; }
-  /* line 239, ../../src/portal/lib/_content.scss */
+  /* line 258, ../../src/portal/lib/_content.scss */
   .uv-row:last-child {
     border-bottom: 0; }
-  /* line 242, ../../src/portal/lib/_content.scss */
+  /* line 261, ../../src/portal/lib/_content.scss */
   .uv-row .lead-small {
     margin-top: 7px;
     margin-bottom: 0; }
 
 /* Pointer that shows up near the user pic in Ticket and Topic details page */
-/* line 250, ../../src/portal/lib/_content.scss */
+/* line 269, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:before, .user-pointer-bottom:after, .user-pointer-right:before, .user-pointer-right:after {
   content: "";
   border: 8px solid transparent;
@@ -4126,46 +4159,46 @@ footer {
   height: 0;
   position: absolute;
   z-index: 1; }
-/* line 258, ../../src/portal/lib/_content.scss */
+/* line 277, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:after, .user-pointer-right:after {
   border-width: 7px;
   z-index: 2; }
 
-/* line 264, ../../src/portal/lib/_content.scss */
+/* line 283, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:before, .user-pointer-bottom:after {
   bottom: -12px;
   right: 14px;
   border-bottom-color: #ebebeb; }
-/* line 269, ../../src/portal/lib/_content.scss */
+/* line 288, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:after {
   right: 15px;
   border-bottom-color: #fafafa; }
 
-/* line 276, ../../src/portal/lib/_content.scss */
+/* line 295, ../../src/portal/lib/_content.scss */
 .user-pointer-right:before {
   top: 14px;
   right: -18px;
   border-right-color: #ebebeb; }
-/* line 281, ../../src/portal/lib/_content.scss */
+/* line 300, ../../src/portal/lib/_content.scss */
 .user-pointer-right:after {
   top: 15px;
   right: -19px;
   border-right-color: #fafafa; }
 
-/* line 290, ../../src/portal/lib/_content.scss */
+/* line 309, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-bottom:before {
   border-bottom-color: #cccccc; }
-/* line 291, ../../src/portal/lib/_content.scss */
+/* line 310, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-bottom:after {
   border-bottom-color: #fffdf8; }
-/* line 294, ../../src/portal/lib/_content.scss */
+/* line 313, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-right:before {
   border-right-color: #cccccc; }
-/* line 295, ../../src/portal/lib/_content.scss */
+/* line 314, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-right:after {
   border-right-color: #fffdf8; }
 
-/* line 299, ../../src/portal/lib/_content.scss */
+/* line 318, ../../src/portal/lib/_content.scss */
 hr.content-divider {
   margin-top: 30px;
   margin-bottom: 20px;
@@ -4173,44 +4206,44 @@ hr.content-divider {
 
 /* Media styles for tablet and above */
 @media (min-width: 45em) {
-  /* line 307, ../../src/portal/lib/_content.scss */
+  /* line 326, ../../src/portal/lib/_content.scss */
   .content, .content-form, .content-light {
     padding: 1.8em 2.2em;
     margin-top: 10px; }
 
-  /* line 312, ../../src/portal/lib/_content.scss */
+  /* line 331, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb {
     clear: none;
     margin: 0; }
 
-  /* line 317, ../../src/portal/lib/_content.scss */
+  /* line 336, ../../src/portal/lib/_content.scss */
   .c-user-thumb {
     padding-left: 60px; }
-    /* line 319, ../../src/portal/lib/_content.scss */
+    /* line 338, ../../src/portal/lib/_content.scss */
     .c-user-thumb .user-pic-thumb {
       padding: 2px; }
 
-  /* line 322, ../../src/portal/lib/_content.scss */
+  /* line 341, ../../src/portal/lib/_content.scss */
   hr.content-divider {
     margin-left: -2.2em;
     margin-right: -2.2em; }
 
-  /* line 327, ../../src/portal/lib/_content.scss */
+  /* line 346, ../../src/portal/lib/_content.scss */
   .topic-actions, .ticket-actions {
     float: right;
     margin-bottom: -50px;
     margin-top: 15px; } }
 @media (min-width: 60em) {
-  /* line 335, ../../src/portal/lib/_content.scss */
+  /* line 354, ../../src/portal/lib/_content.scss */
   #home-page-discussions .topic-list:nth-child(n+3) ul {
     display: none; } }
 @media (max-width: 30em) {
-  /* line 339, ../../src/portal/lib/_content.scss */
+  /* line 358, ../../src/portal/lib/_content.scss */
   .topic-actions {
     margin-top: 15px;
     margin-bottom: 15px; }
 
-  /* line 340, ../../src/portal/lib/_content.scss */
+  /* line 359, ../../src/portal/lib/_content.scss */
   .topic-actions .btn {
     min-width: 30%; } }
 /* line 1, ../../src/portal/lib/_login.scss */
@@ -4290,11 +4323,10 @@ hr.content-divider {
     margin-bottom: 200px; } }
 /* line 1, ../../src/portal/lib/_search.scss */
 #search-autocomplete {
-  display: none;
   position: absolute;
   z-index: 9999;
   width: 100%; }
-  /* line 6, ../../src/portal/lib/_search.scss */
+  /* line 5, ../../src/portal/lib/_search.scss */
   #search-autocomplete .results {
     -moz-border-radius-bottomleft: 6px;
     -webkit-border-bottom-left-radius: 6px;
@@ -4310,20 +4342,19 @@ hr.content-divider {
     border-top: 1px solid #dddede;
     padding: 10px 20px;
     margin-top: -1px; }
-    /* line 14, ../../src/portal/lib/_search.scss */
+    /* line 13, ../../src/portal/lib/_search.scss */
     #search-autocomplete .results .article-list, #search-autocomplete .results .topic-list {
       margin: 0; }
-    /* line 15, ../../src/portal/lib/_search.scss */
+    /* line 14, ../../src/portal/lib/_search.scss */
     #search-autocomplete .results .list-lead {
       font-size: 16px;
       margin-top: 0; }
-    /* line 16, ../../src/portal/lib/_search.scss */
+    /* line 15, ../../src/portal/lib/_search.scss */
     #search-autocomplete .results li {
-      margin-bottom: 7px;
-      padding-bottom: 7px;
+      padding: 7px 12px;
       border-bottom: 1px solid #efefef; }
 
-/* line 24, ../../src/portal/lib/_search.scss */
+/* line 22, ../../src/portal/lib/_search.scss */
 #search_results {
   display: block; }
 
@@ -5072,10 +5103,8 @@ disabled look for already selected choices in the results dropdown
 .ui-state-disabled {
   cursor: default !important; }
 
-/* Icons
-----------------------------------*/
 /* states and images */
-/* line 27, ../../src/portal/lib/_jquery-ui.scss */
+/* line 24, ../../src/portal/lib/_jquery-ui.scss */
 .ui-icon {
   display: block;
   text-indent: -99999px;
@@ -5085,7 +5114,7 @@ disabled look for already selected choices in the results dropdown
 /* Misc visuals
 ----------------------------------*/
 /* Overlays */
-/* line 32, ../../src/portal/lib/_jquery-ui.scss */
+/* line 29, ../../src/portal/lib/_jquery-ui.scss */
 .ui-widget-overlay {
   position: absolute;
   top: 0;
@@ -5093,26 +5122,69 @@ disabled look for already selected choices in the results dropdown
   width: 100%;
   height: 100%; }
 
-/* line 33, ../../src/portal/lib/_jquery-ui.scss */
+/* line 30, ../../src/portal/lib/_jquery-ui.scss */
+.ui-autocomplete {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: default;
+  list-style: none;
+  -moz-border-radius-bottomleft: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  -moz-border-radius-bottomright: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  -webkit-box-shadow: #aaaaaa 0 6px 10px;
+  -moz-box-shadow: #aaaaaa 0 6px 10px;
+  box-shadow: #aaaaaa 0 6px 10px;
+  border: 1px solid #cdcccc;
+  background: #f8f8f8;
+  border-top: 1px solid #dddede;
+  padding-bottom: 10px;
+  margin-top: -1px; }
+  /* line 43, ../../src/portal/lib/_jquery-ui.scss */
+  .ui-autocomplete .article-list, .ui-autocomplete .topic-list {
+    margin: 0; }
+  /* line 44, ../../src/portal/lib/_jquery-ui.scss */
+  .ui-autocomplete .list-lead {
+    font-size: 16px;
+    margin-top: 0; }
+  /* line 45, ../../src/portal/lib/_jquery-ui.scss */
+  .ui-autocomplete li {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #efefef; }
+    /* line 49, ../../src/portal/lib/_jquery-ui.scss */
+    .ui-autocomplete li a:hover {
+      text-decoration: none; }
+
+/* workarounds */
+/* line 56, ../../src/portal/lib/_jquery-ui.scss */
+* html .ui-autocomplete {
+  width: 1px; }
+
+/* without this, the menu expands to 100% in IE6 */
+/* line 57, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker {
   width: 17em;
   padding: .2em .2em 0;
   display: none;
   font-weight: 300; }
 
-/* line 34, ../../src/portal/lib/_jquery-ui.scss */
+/* line 58, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-header {
   position: relative;
   padding: .2em 0; }
 
-/* line 35, ../../src/portal/lib/_jquery-ui.scss */
+/* line 59, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
   position: absolute;
   top: 2px;
   width: 1.8em;
   height: 1.8em; }
 
-/* line 37, ../../src/portal/lib/_jquery-ui.scss */
+/* line 61, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-prev:before, .ui-datepicker-next:before {
   content: "";
   border: 8px solid transparent;
@@ -5121,25 +5193,25 @@ disabled look for already selected choices in the results dropdown
   margin-top: -8px;
   position: absolute; }
 
-/* line 46, ../../src/portal/lib/_jquery-ui.scss */
+/* line 70, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-prev:before {
   border-right-color: #666;
   margin-left: -12px; }
 
-/* line 47, ../../src/portal/lib/_jquery-ui.scss */
+/* line 71, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-next:before {
   border-left-color: #666;
   margin-left: -4px; }
 
-/* line 48, ../../src/portal/lib/_jquery-ui.scss */
+/* line 72, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-prev {
   left: 2px; }
 
-/* line 49, ../../src/portal/lib/_jquery-ui.scss */
+/* line 73, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-next {
   right: 2px; }
 
-/* line 50, ../../src/portal/lib/_jquery-ui.scss */
+/* line 74, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span {
   display: block;
   position: absolute;
@@ -5148,53 +5220,53 @@ disabled look for already selected choices in the results dropdown
   top: 50%;
   margin-top: -8px; }
 
-/* line 51, ../../src/portal/lib/_jquery-ui.scss */
+/* line 75, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-title {
   margin: 0 2.3em;
   line-height: 1.8em;
   text-align: center; }
 
-/* line 52, ../../src/portal/lib/_jquery-ui.scss */
+/* line 76, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-title select {
   margin: 1px 1%; }
 
-/* line 53, ../../src/portal/lib/_jquery-ui.scss */
+/* line 77, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker select.ui-datepicker-month-year {
   width: 100%; }
 
-/* line 55, ../../src/portal/lib/_jquery-ui.scss */
+/* line 79, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker select.ui-datepicker-month,
 .ui-datepicker select.ui-datepicker-year {
   width: 48%; }
 
-/* line 56, ../../src/portal/lib/_jquery-ui.scss */
+/* line 80, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker table {
   width: 100%;
   font-size: .9em;
   border-collapse: collapse;
   margin: 0 0 .4em; }
 
-/* line 57, ../../src/portal/lib/_jquery-ui.scss */
+/* line 81, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker th {
   padding: .7em .3em;
   text-align: center;
   font-weight: 300;
   border: 0; }
 
-/* line 58, ../../src/portal/lib/_jquery-ui.scss */
+/* line 82, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker td {
   border: 0;
   padding: 0;
   background-color: #f6f6f6; }
 
-/* line 59, ../../src/portal/lib/_jquery-ui.scss */
+/* line 83, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker td span, .ui-datepicker td a {
   display: block;
   padding: .3em .5em;
   text-align: right;
   text-decoration: none; }
 
-/* line 60, ../../src/portal/lib/_jquery-ui.scss */
+/* line 84, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-buttonpane {
   background-image: none;
   margin: .7em 0 0 0;
@@ -5203,7 +5275,7 @@ disabled look for already selected choices in the results dropdown
   border-right: 0;
   border-bottom: 0; }
 
-/* line 61, ../../src/portal/lib/_jquery-ui.scss */
+/* line 85, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-buttonpane button {
   float: right;
   margin: .5em .2em .4em;
@@ -5212,63 +5284,63 @@ disabled look for already selected choices in the results dropdown
   width: auto;
   overflow: visible; }
 
-/* line 62, ../../src/portal/lib/_jquery-ui.scss */
+/* line 86, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current {
   float: left; }
 
 /* RTL support */
-/* line 65, ../../src/portal/lib/_jquery-ui.scss */
+/* line 89, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl {
   direction: rtl; }
 
-/* line 66, ../../src/portal/lib/_jquery-ui.scss */
+/* line 90, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-prev {
   right: 2px;
   left: auto; }
 
-/* line 67, ../../src/portal/lib/_jquery-ui.scss */
+/* line 91, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-next {
   left: 2px;
   right: auto; }
 
-/* line 68, ../../src/portal/lib/_jquery-ui.scss */
+/* line 92, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-prev:hover {
   right: 1px;
   left: auto; }
 
-/* line 69, ../../src/portal/lib/_jquery-ui.scss */
+/* line 93, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-next:hover {
   left: 1px;
   right: auto; }
 
-/* line 70, ../../src/portal/lib/_jquery-ui.scss */
+/* line 94, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-buttonpane {
   clear: right; }
 
-/* line 71, ../../src/portal/lib/_jquery-ui.scss */
+/* line 95, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-buttonpane button {
   float: left; }
 
-/* line 72, ../../src/portal/lib/_jquery-ui.scss */
+/* line 96, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-buttonpane button.ui-datepicker-current {
   float: right; }
 
-/* line 73, ../../src/portal/lib/_jquery-ui.scss */
+/* line 97, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-group {
   float: right; }
 
-/* line 74, ../../src/portal/lib/_jquery-ui.scss */
+/* line 98, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-group-last .ui-datepicker-header {
   border-right-width: 0;
   border-left-width: 1px; }
 
-/* line 75, ../../src/portal/lib/_jquery-ui.scss */
+/* line 99, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-rtl .ui-datepicker-group-middle .ui-datepicker-header {
   border-right-width: 0;
   border-left-width: 1px; }
 
 /* IE6 IFRAME FIX (taken from datepicker 1.5.3 */
-/* line 79, ../../src/portal/lib/_jquery-ui.scss */
+/* line 103, ../../src/portal/lib/_jquery-ui.scss */
 .ui-datepicker-cover {
   position: absolute;
   /*must have*/
@@ -5287,22 +5359,22 @@ disabled look for already selected choices in the results dropdown
 
 /* Component containers
 ----------------------------------*/
-/* line 90, ../../src/portal/lib/_jquery-ui.scss */
+/* line 114, ../../src/portal/lib/_jquery-ui.scss */
 .ui-widget {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.1em; }
 
-/* line 91, ../../src/portal/lib/_jquery-ui.scss */
+/* line 115, ../../src/portal/lib/_jquery-ui.scss */
 .ui-widget .ui-widget {
   font-size: 1em; }
 
-/* line 92, ../../src/portal/lib/_jquery-ui.scss */
+/* line 116, ../../src/portal/lib/_jquery-ui.scss */
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1em; }
 
-/* line 93, ../../src/portal/lib/_jquery-ui.scss */
-.ui-widget-content {
+/* line 117, ../../src/portal/lib/_jquery-ui.scss */
+.ui-datepicker {
   color: #333333;
   border: 2px solid #666;
   -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3), white 0 0 1px inset;
@@ -5313,96 +5385,108 @@ disabled look for already selected choices in the results dropdown
   background-image: -moz-linear-gradient(#e9e9e9, #ffffff 30px);
   background-image: -o-linear-gradient(#e9e9e9, #ffffff 30px);
   background-image: linear-gradient(#e9e9e9, #ffffff 30px); }
+  /* line 122, ../../src/portal/lib/_jquery-ui.scss */
+  .ui-datepicker a {
+    color: #333333; }
 
-/* line 99, ../../src/portal/lib/_jquery-ui.scss */
-.ui-widget-content a {
-  color: #333333; }
-
-/* line 100, ../../src/portal/lib/_jquery-ui.scss */
+/* line 124, ../../src/portal/lib/_jquery-ui.scss */
 .ui-widget-header {
   border-bottom: 1px solid #E0E0E0;
   font-weight: 300;
   height: 35px; }
 
-/* line 105, ../../src/portal/lib/_jquery-ui.scss */
+/* line 129, ../../src/portal/lib/_jquery-ui.scss */
 .ui-widget-header a {
   color: #ffffff; }
 
 /* Interaction states
 ----------------------------------*/
-/* line 109, ../../src/portal/lib/_jquery-ui.scss */
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+/* line 134, ../../src/portal/lib/_jquery-ui.scss */
+.ui-state-default, .ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
   color: #1c94c4; }
 
-/* line 110, ../../src/portal/lib/_jquery-ui.scss */
-.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+/* line 136, ../../src/portal/lib/_jquery-ui.scss */
+.ui-state-default a, .ui-state-default a:link,
+.ui-state-default a:visited {
   color: #1c94c4;
   text-decoration: none; }
 
-/* line 111, ../../src/portal/lib/_jquery-ui.scss */
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
-  background-color: #dddddd;
-  color: #167297; }
+/* line 140, ../../src/portal/lib/_jquery-ui.scss */
+.ui-state-hover, .ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover, .ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+  background-color: #e9e9e9; }
+  /* line 142, ../../src/portal/lib/_jquery-ui.scss */
+  .ui-state-hover a, .ui-widget-content .ui-state-hover a,
+  .ui-widget-header .ui-state-hover a, .ui-state-focus a,
+  .ui-widget-content .ui-state-focus a,
+  .ui-widget-header .ui-state-focus a {
+    color: #167297; }
 
-/* line 112, ../../src/portal/lib/_jquery-ui.scss */
-.ui-state-hover a, .ui-state-hover a:hover, .ui-state-hover a:link, .ui-state-hover a:visited {
+/* line 145, ../../src/portal/lib/_jquery-ui.scss */
+.ui-state-hover a, .ui-state-hover a:hover,
+.ui-state-hover a:link, .ui-state-hover a:visited {
   color: #c77405;
   text-decoration: none; }
 
-/* line 113, ../../src/portal/lib/_jquery-ui.scss */
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+/* line 147, ../../src/portal/lib/_jquery-ui.scss */
+.ui-state-active, .ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active {
   background-color: #999;
   color: #fff;
   -webkit-box-shadow: #666666 0 0 10px inset;
   -moz-box-shadow: #666666 0 0 10px inset;
   box-shadow: #666666 0 0 10px inset; }
 
-/* line 114, ../../src/portal/lib/_jquery-ui.scss */
-.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+/* line 149, ../../src/portal/lib/_jquery-ui.scss */
+.ui-state-active a, .ui-state-active a:link,
+.ui-state-active a:visited {
   color: #eb8f00;
   text-decoration: none; }
 
 /* Interaction Cues
 ----------------------------------*/
-/* line 118, ../../src/portal/lib/_jquery-ui.scss */
+/* line 153, ../../src/portal/lib/_jquery-ui.scss */
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
   font-weight: bold; }
 
-/* line 119, ../../src/portal/lib/_jquery-ui.scss */
+/* line 154, ../../src/portal/lib/_jquery-ui.scss */
 .ui-state-highlight a, .ui-widget-content .ui-state-highlight a, .ui-widget-header .ui-state-highlight a {
   color: #363636; }
 
-/* line 120, ../../src/portal/lib/_jquery-ui.scss */
+/* line 155, ../../src/portal/lib/_jquery-ui.scss */
 .ui-state-error, .ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {
   border: 1px solid #cd0a0a;
   background: #b81900 url("/images/portal/ui-bg_diagonals-thick_18_b81900_40x40.png") 50% 50% repeat;
   color: #ffffff; }
 
-/* line 121, ../../src/portal/lib/_jquery-ui.scss */
+/* line 156, ../../src/portal/lib/_jquery-ui.scss */
 .ui-state-error a, .ui-widget-content .ui-state-error a, .ui-widget-header .ui-state-error a {
   color: #ffffff; }
 
-/* line 122, ../../src/portal/lib/_jquery-ui.scss */
+/* line 157, ../../src/portal/lib/_jquery-ui.scss */
 .ui-state-error-text, .ui-widget-content .ui-state-error-text, .ui-widget-header .ui-state-error-text {
   color: #ffffff; }
 
-/* line 123, ../../src/portal/lib/_jquery-ui.scss */
+/* line 158, ../../src/portal/lib/_jquery-ui.scss */
 .ui-priority-primary, .ui-widget-content .ui-priority-primary, .ui-widget-header .ui-priority-primary {
   font-weight: bold; }
 
-/* line 124, ../../src/portal/lib/_jquery-ui.scss */
+/* line 159, ../../src/portal/lib/_jquery-ui.scss */
 .ui-priority-secondary, .ui-widget-content .ui-priority-secondary, .ui-widget-header .ui-priority-secondary {
   opacity: .7;
   filter: Alpha(Opacity=70);
   font-weight: normal; }
 
-/* line 125, ../../src/portal/lib/_jquery-ui.scss */
+/* line 160, ../../src/portal/lib/_jquery-ui.scss */
 .ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled {
   opacity: .35;
   filter: Alpha(Opacity=35);
   background-image: none; }
 
-/* line 126, ../../src/portal/lib/_jquery-ui.scss */
+/* line 161, ../../src/portal/lib/_jquery-ui.scss */
 .ui-state-disabled .ui-icon {
   filter: Alpha(Opacity=35); }
 
@@ -5410,8 +5494,9 @@ disabled look for already selected choices in the results dropdown
 /* Misc visuals
 ----------------------------------*/
 /* Corner radius */
-/* line 132, ../../src/portal/lib/_jquery-ui.scss */
-.ui-widget-content, .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+/* line 168, ../../src/portal/lib/_jquery-ui.scss */
+.ui-datepicker.ui-widget-content, .ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   -ms-border-radius: 6px;
@@ -5420,51 +5505,51 @@ disabled look for already selected choices in the results dropdown
 
 /* Overriding position parameters to handle mobile sizing */
 @media (max-width: 30em) {
-  /* line 136, ../../src/portal/lib/_jquery-ui.scss */
-  .ui-widget-content {
+  /* line 174, ../../src/portal/lib/_jquery-ui.scss */
+  .ui-datepicker.ui-widget-content {
     width: auto !important;
     left: 25px !important;
     right: 25px !important; } }
 /* with multiple calendars the calenders will be responsive */
 @media (min-width: 45em) {
-  /* line 145, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 183, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker.ui-datepicker-multi {
     width: auto; }
 
-  /* line 146, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 184, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi .ui-datepicker-group {
     float: left; }
 
-  /* line 147, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 185, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi .ui-datepicker-group table {
     width: 95%;
     margin: 0 auto .4em; }
 
-  /* line 148, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 186, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi-2 .ui-datepicker-group {
     width: 50%; }
 
-  /* line 149, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 187, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi-3 .ui-datepicker-group {
     width: 33.3%; }
 
-  /* line 150, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 188, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi-4 .ui-datepicker-group {
     width: 25%; }
 
-  /* line 151, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 189, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header {
     border-left-width: 0; }
 
-  /* line 152, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 190, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header {
     border-left-width: 0; }
 
-  /* line 153, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 191, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-multi .ui-datepicker-buttonpane {
     clear: left; }
 
-  /* line 154, ../../src/portal/lib/_jquery-ui.scss */
+  /* line 192, ../../src/portal/lib/_jquery-ui.scss */
   .ui-datepicker-row-break {
     clear: both;
     width: 100%;

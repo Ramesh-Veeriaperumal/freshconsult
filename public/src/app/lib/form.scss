@@ -2520,8 +2520,7 @@ input[type="text"].number{
 #portal-simple-template-options{
 	h3.title{ padding:5px 0px 15px; }
 	.config_item { 
-		@include min-height(80px); 
-		label{ margin-bottom: 8px; }
+		@include min-height(80px);
 	}
 	.chzn-container-single .chzn-single{
 		height: 30px; line-height: 30px;

@@ -40,7 +40,7 @@
 }
 
 /* Loading content */
-.loading-box, .loading{
+.loading-box, .loading, .ui-autocomplete-loading{
   background-image:url('/images/load.gif');
   background-repeat:no-repeat;
 }
@@ -50,8 +50,12 @@
   height:100px;
 }
 
-input[type="text"].loading{
+input[type="text"].loading, .ui-autocomplete-loading{
   background-position:right 3px;
+}
+
+.special.ui-autocomplete-loading{
+  background-position:99% 5px; 
 }
 
 

@@ -56,6 +56,10 @@ class PortalDrop < BaseDrop
     @solution_categories ||= @source.solution_categories.reject(&:is_default?)
   end
 
+  def total_articles
+    @total_articles ||= articles_count_for_portal
+  end
+
   def total_forum_categories
     @total_forum_categories ||= @source.forum_categories.size
   end
@@ -65,7 +69,11 @@ class PortalDrop < BaseDrop
   end
 
   def forums
-    @forums ||= source.portal_forums
+    @forums ||= @source.portal_forums.visible(User.current)
+  end
+
+  def total_topics
+    @total_topics ||= topics_count_for_portal
   end
 
   def logo_url
@@ -77,7 +85,7 @@ class PortalDrop < BaseDrop
   end
 
   def contact_info
-    @contact_info ||= source.preferences[:contact_info]
+    @contact_info ||= source.preferences.fetch(:contact_info, "")
   end
 
   def current_user
@@ -118,4 +126,23 @@ class PortalDrop < BaseDrop
         source.forum_category ? source.forum_category.portal_topics.popular.filter(@per_page, @page) : []
     end
 
+    def topics_count_for_portal
+      if source.main_portal?
+        source.account.portal_forums.visible(User.current).map{ |t| t.topics_count }.sum
+      elsif source.forum_category.present?
+        source.forum_category.forums.visible(User.current).map{ |t| t.topics_count }.sum
+      else
+        0
+      end
+    end
+
+    def articles_count_for_portal
+      if source.main_portal? 
+        source.account.published_articles.size
+      elsif source.solution_category
+        source.solution_category.published_articles.size
+      else
+        0
+      end
+    end
 end

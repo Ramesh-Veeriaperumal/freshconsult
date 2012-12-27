@@ -1,6 +1,6 @@
 class Support::HomeController < SupportController
 
-  def show
+  def index
     set_portal_page :portal_home
   end
 

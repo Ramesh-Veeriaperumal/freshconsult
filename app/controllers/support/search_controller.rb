@@ -3,6 +3,7 @@ class Support::SearchController < SupportController
   extend NewRelic::Agent::MethodTracer
   
   include SearchUtil
+  include ActionView::Helpers::TextHelper
 
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
@@ -18,7 +19,7 @@ class Support::SearchController < SupportController
     to_search = content_classes
     render :nothing => true and return if to_search.empty?
 
-    search_content to_search, 'suggest'
+    search_content to_search#, 'suggest'
   end
   
   def content
@@ -87,7 +88,7 @@ class Support::SearchController < SupportController
         else
           search_portal_content(f_classes, s_options)
         end
-        process_results
+        
       rescue Exception => e
         @search_results = 0
         NewRelic::Agent.notice_error(e)      
@@ -97,13 +98,29 @@ class Support::SearchController < SupportController
 
       respond_to do |format|
         format.html { render :partial => output_file }
+        format.json {
+          json_list = []
+          json_list << @searched_topics.map{ |t| { 
+            :value => t.title, 
+            :group => t.forum.name, 
+            :desc => truncate(t.posts.first.body, 120),
+            :type => "topic", :url => support_discussions_topic_path(t) 
+          } } if @searched_topics.present?
+          json_list << @searched_articles.map{ |t| { 
+            :value => t.title, 
+            :group => t.folder.name, 
+            :desc => t.excerpts.desc_un_html,
+            :type => "article", :url => support_solutions_article_path(t) 
+          } } if @searched_articles.present?
+
+          render :json => json_list.flatten.to_json
+        }
         format.xml  { 
-        api_xml = []
-        api_xml = @searched_articles.to_xml  if ['Solution::Article'].include? f_classes.first.name and !@searched_articles.nil?
-        api_xml = @searched_topics.to_xml  if ['Topic'].include? f_classes.first.name and !@searched_topics.nil?
-        
-        render :xml => api_xml
-        
+          api_xml = []
+          api_xml = @searched_articles.to_xml  if ['Solution::Article'].include? f_classes.first.name and !@searched_articles.nil?
+          api_xml = @searched_topics.to_xml  if ['Topic'].include? f_classes.first.name and !@searched_topics.nil?
+          
+          render :xml => api_xml
         }
       end 
            

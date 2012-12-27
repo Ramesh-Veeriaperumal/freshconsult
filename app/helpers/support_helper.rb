@@ -28,6 +28,11 @@ module SupportHelper
 		output.join(" ")
 	end
 
+	# Helpcenter search, ticket creation buttons
+	def help_center portal
+		
+	end
+
 	# Logo for the portal
 	def logo portal
 		_output = []
@@ -74,6 +79,12 @@ module SupportHelper
 				"data-button-active-label" => unfollow_label, 
 				"data-button-inactive-label" => follow_label
 		end
+	end
+
+	def link_to_start_topic portal, *args
+		options = link_args_to_options(args)
+    	label = options.delete(:label) || I18n.t('portal.topic.start_new_topic')
+    	content_tag :a, label, { :href => portal['new_topic_path'], :title => label }.merge(options)
 	end
 
 	def topic_full_brief topic, last_post
@@ -197,4 +208,11 @@ module SupportHelper
 
 		_category + javascript_tag("jQuery(document).ready(function(){jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});})")
 	end
+
+	private
+		def link_args_to_options(args)
+	      options = {}
+	      [:label, :title, :id, :class, :rel].zip(args) {|key, value| options[key] = h(value) unless value.blank?}
+	      options
+	    end
 end

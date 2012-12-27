@@ -26,28 +26,45 @@
 		margin-bottom: 0; 
 		margin-left: 0; 
 		margin-top: 10px;
-	}
-	li{
-		list-style: none;	
-		position: relative;
-		margin-bottom: 6px;
-		padding-left: 30px;
-		&:before{
-			left: 0;
-			content:"";
-			position: absolute;			
-			vertical-align: text-top;
-		}
+	}	
+}
+
+.article-list li, .topic-list li, .ticket-list li, 
+li.article-item, li.topic-item, li.ticket-item {
+	list-style: none;	
+	position: relative;
+	padding-left: 30px;
+	&:before{
+		left: 0;
+		content:"";
+		position: absolute;			
+		vertical-align: text-top;
 	}
 }
+.article-list li, .topic-list li, .ticket-list li{	
+	margin-bottom: 6px;
+}
+li.article-item, li.topic-item, li.ticket-item {
+	padding-right: 10px;	
+	&:before{ left:8px; }
+	.label{ margin-left: 5px; margin-top: -5px; }
+}
 .article-list, .topic-list{ margin-bottom: 20px; }
-.article-list li:before{ @extend .icon-article-list; }
-.topic-list li:before{ @extend .icon-topic-list; }
-.ticket-list li:before{ @extend .icon-article-list; }
+.article-list li, li.article-item{ &:before{ @extend .icon-article-list; } }
+.topic-list li, li.topic-item{ &:before{ @extend .icon-topic-list; } }
+.ticket-list li, li.ticket-item{ &:before{ @extend .icon-article-list; } }
 
 .start-topic{
 	float:right;
 	font-weight: bold;
+}
+
+.tabbed{
+	margin-left: 15px;
+}
+
+#home-community-sidebar .start-topic{
+	margin-top: -30px;
 }
 
 .see-more{
@@ -106,13 +123,15 @@
 
 /* A small colen is added in front of the 
    up-vote button if its next to the atleast 1 user is voted label */
-#topic-vote-up-button:nth-child(2){
+#topic-vote-up-button:nth-child(3){
 	margin-left: 10px;
+	position: relative;
 	&:before{
 		content: " : ";
 		color: $textColor;
 		position: absolute;
 		margin-left: -8px;
+		top: -3px;
 	}
 }
 

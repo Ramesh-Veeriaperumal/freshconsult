@@ -87,4 +87,23 @@ module Support::TicketsHelper
     dropdown_menu sort_fields.concat(sort_order), TOOLBAR_LINK_OPTIONS
   end
 
+  def ticket_field_display_value(field, ticket)
+    _field_type = field.field_type
+    _field_value = (field.is_default_field?) ? ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+    _dom_type = (_field_type == "default_source") ? "dropdown" : field.dom_type
+    case _dom_type
+      when "dropdown", "dropdown_blank"
+        if(_field_type == "default_agent")
+          ticket.responder.name if ticket.responder
+        elsif(_field_type == "nested_field")
+          ticket.get_ff_value(field.name)
+        else
+          field.dropdown_selected(((_field_type == "default_status") ? 
+              field.all_status_choices : field.choices), _field_value)
+        end
+    else
+      _field_value
+    end
+  end
+
 end

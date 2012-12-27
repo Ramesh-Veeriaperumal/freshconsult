@@ -39,7 +39,7 @@ module FormBuilders
         _javascript_options = redactor_opts.merge(options).to_json
 
         # Height set as :height in the redator helper object will be used as the base height for the js editor
-        options[:style] = "height:#{options[:height]};"
+        options[:style] = "height:#{options[:height]}px;"
 
         output = <<HTML
 #{text_area_tag(name, content, options.merge({:rel => "redactor"})) }

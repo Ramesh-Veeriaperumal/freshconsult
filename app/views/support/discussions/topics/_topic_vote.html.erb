@@ -1,6 +1,5 @@
 <!-- Topic voting will not be there for announcement topics -->
 <% unless @forum.announcement? %>
-<div id="vote-toolbar">
 	<% 
 		t_likes = @topic.user_votes 
 		if(@topic.voted_by_user? current_user)
@@ -11,34 +10,35 @@
 			t_middle = t("portal.topic_vote.people", :count => t_likes)
 			t_suffix = t("portal.topic_vote.#{@forum.type_symbol}", :count => t_likes)
 		end
-	%> 
-	<% if(t_likes > 0) %>
-		<span class="lead-small" id="topic-voted-information">
-			<%= t_prefix %> 
-				<%= link_to t_middle, users_voted_support_discussions_topic_path(@topic), 
-						"data-target" => "#users-voted", :rel => "freshdialog", 
-						"data-width" => "300", "data-template-footer" => "", 
-						:title => t("portal.topic_vote.#{@forum.type_symbol}_users_voted_title") if t_middle.present? %>
-			<%= t_suffix %>
-		</span>
-	<% end %>
-
-	<% if current_user %>
-		<% unless(@topic.voted_by_user? current_user) %>
-			<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_button"),
-					like_support_discussions_topic_path(@topic), 
-					"data-remote" => true,
-					"data-method" => :put,
-					:id => "topic-vote-up-button",
-					"data-update" => "#vote-toolbar" %>
-		<% else %>
-			<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_unlike_button"),
-					unlike_support_discussions_topic_path(@topic),
-					"data-remote" => true,
-					"data-method" => :put,
-					:id => "topic-vote-down-button",
-					"data-update" => "#vote-toolbar" %>
+	%> 	
+	<div id="vote-toolbar">
+		<%= (t_likes > 0 || current_user && current_user.id != @topic.user_id) ? '<hr />' : '' %>
+		<% if(t_likes > 0) %>		
+			<span class="lead-small" id="topic-voted-information">
+				<%= t_prefix %> 
+					<%= link_to t_middle, users_voted_support_discussions_topic_path(@topic), 
+							"data-target" => "#users-voted", :rel => "freshdialog", 
+							"data-width" => "300", "data-template-footer" => "", 
+							:title => t("portal.topic_vote.#{@forum.type_symbol}_users_voted_title") if t_middle.present? %>
+				<%= t_suffix %>
+			</span>
 		<% end %>
-	<% end %>
-</div>
+		<% if current_user && current_user.id != @topic.user_id %>
+			<% unless(@topic.voted_by_user? current_user) %>
+				<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_button"),
+						like_support_discussions_topic_path(@topic), 
+						"data-remote" => true,
+						"data-method" => :put,
+						:id => "topic-vote-up-button",
+						"data-update" => "#vote-toolbar" %>
+			<% else %>
+				<%= link_to t("portal.topic_vote.#{@forum.type_symbol}_unlike_button"),
+						unlike_support_discussions_topic_path(@topic),
+						"data-remote" => true,
+						"data-method" => :put,
+						:id => "topic-vote-down-button",
+						"data-update" => "#vote-toolbar" %>
+			<% end %>
+		<% end %>
+	</div>
 <% end %>

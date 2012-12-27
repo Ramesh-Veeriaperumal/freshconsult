@@ -1,5 +1,4 @@
 #search-autocomplete{
-	display:none;
 	position:absolute;
 	z-index:9999;
 	width:100%;
@@ -14,8 +13,7 @@
 		.article-list, .topic-list{ margin: 0; }
 		.list-lead{ font-size: 16px; margin-top: 0; }
 		li{			
-			margin-bottom:7px; 
-			padding-bottom: 7px;
+			padding:7px 12px;
 			border-bottom:1px solid #efefef;
 		}
 	}

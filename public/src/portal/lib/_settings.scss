@@ -50,7 +50,7 @@ $footer_text_color: 	if(lightness($footer_color) > 50, black, white) !default;
 
 $logo-url: 				if(lightness($header_color) > 50, "logo-color", "logo-white") !default;
 
-$help_center_color: 	rgba(#f9f9f9, 0.6) !default;
+$help_center_color: 	#f5f5f5 !default;
 $page-background: 		$white !default;
 $page-light-background: rgba($white, 0.9) !default;
 $page-form-background: 	rgba(#f4f4f4, 0.9) !default;

@@ -334,18 +334,19 @@
   # Theme for the support portal
   map.connect "/theme.:format", :controller => 'theme'
 
-  # Support Portal routes
+  # Support Portal routes  
   map.namespace :support do |support|
-    # All portal tickets are now served from this controller
-    
     # Portal home
-    support.home 'home', :controller => "home", :action => "show"
+    support.home 'home', :controller => "home"
     
-    # Login for user in the portal
-    support.login 'login', :controller => "login", :action => "new"    
+    # Login for users in the portal
+    support.resource :login, :controller => "login", :only => [:new, :create]
+    support.connect "/login", :controller => 'login', :action => :new
 
     # Signup for a new user in the portal
-    support.resource :signup, :only => [:show, :create]
+    # registrations route is not renamed to signup
+    support.resource :signup, :only => [:new, :create]
+    support.connect "/signup", :controller => 'signups', :action => :new
 
     # Signed in user profile edit and update routes
     support.resource :profile, :only => [:edit, :update]
@@ -378,6 +379,7 @@
       :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
 
     # Tickets for the portal
+    # All portal tickets including company_tickets are now served from this controller
     support.resources :tickets, 
       :collection => { :check_email => :get, :configure_export => :get, :filter => :get }, 
       :member => { :close => :post, :add_people => :put } do |ticket|
@@ -389,14 +391,6 @@
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
       :conditions => { :method => :post }
-
-    ### !PORTALCSS TODO to be removed later if its not really used at end of developement
-    ### support.resources :minimal_tickets
-    # support.resources :registrations
-
-    ### !PORTALCSS TODO clean remove this controller and views
-    ### The company_tickets is now deprecated as the view is directly integrated into the tickets controller and view
-    # support.resources :company_tickets
 
   end
   

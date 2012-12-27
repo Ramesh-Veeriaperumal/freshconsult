@@ -61,12 +61,14 @@
 	</div>	
 </section>
 
-<section class="sidebar content rounded-6 min-height-on-desktop">	
+{% if article.folder.total_articles > 1 %}
+<section class="sidebar content rounded-6">	
 	<div class="cs-g-c">
 		<section class="article-list">
-			<div class="list-lead">
-			 	More articles in {{ article.folder.name }}
-			</div>
+			<h3 class="list-lead">
+				More articles in
+				<div class="folder-name">{{ article.folder.name }}</div>
+			</h3> 
 			<ul>
 				{% for o_article in article.folder.articles %}
 					{% if article.id != o_article.id %}
@@ -81,3 +83,4 @@
 		</section>
 	</div>
 </section>
+{% endif %}

@@ -10,19 +10,19 @@ class Support::SignupsController < SupportController
     end
   end
 
-  def show
+  def new
     set_portal_page :user_signup
   end
   
   def create
     @user = current_account.users.new
     
-    if verify_recaptcha(:model => @user, :message => t("captcha_verify_message")) && @user.signup!(params , current_portal)
+    if verify_recaptcha(:model => @user, :message => t("captcha_verify_message")) && @user.signup!(params, current_portal)
       flash[:notice] = t("signup_complete_activate_info")
       redirect_to login_url
     else
       set_portal_page :user_signup
-      render :action => 'show'
+      render :action => 'new'
     end
   end
 end

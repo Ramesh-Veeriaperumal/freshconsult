@@ -60,7 +60,8 @@ class Portal < ActiveRecord::Base
   end
   
   def portal_forums
-    main_portal ? account.portal_forums : portal_forums
+    main_portal ? account.portal_forums : 
+      forum_category ? forum_category.portal_forums : []
   end
 
   #Yeah.. It is ugly.

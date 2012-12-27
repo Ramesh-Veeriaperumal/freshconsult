@@ -14,6 +14,8 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  send_feedback: "Send feedback"
+  your_email: "Your Email"
   captcha_verify_message: "Captcha verification failed, try again!"
   filter_options:
     status: "Status"

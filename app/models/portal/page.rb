@@ -13,8 +13,8 @@ class Portal::Page < ActiveRecord::Base
 	# so that it can be uniq even if the obj gets reorganized at a later period
 	PAGE_TYPES = [
 		# General pages
-		[:portal_home,        	1,  "support/home/show.portal", "support_home_path"],    
-		[:user_signup,        	2,  "support/signups/show.portal", "support_signup_path"],
+		[:portal_home,        	1,  "support/home/index.portal", "support_home_path"],    
+		[:user_signup,        	2,  "support/signups/new.portal", "support_signup_path"],
 		[:user_login,         	3,  "support/login/new.portal", "support_login_path"],
 		[:profile_edit,       	4,  "support/profiles/edit.portal", "edit_support_profile_path"],
 		[:search,    		  	5,  "support/search/index.portal", "support_search_index_path"],

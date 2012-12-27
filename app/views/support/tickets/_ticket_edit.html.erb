@@ -1,3 +1,4 @@
+<% if @editable_ticket_fields.present? %>
 <section class="widget hide" id="ticket-sidebar-edit">
 	<h3 class="light">Modify ticket details</h4>
 	<% form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
@@ -19,7 +20,9 @@
 	      	<% end %>
 	    <% end %>
 	    <hr />
-		<a href="#" class="btn btn-small" data-toggle-dom="#ticket-sidebar-edit, #ticket-sidebar-details" data-animated><%= t('cancel') %></a>
+		<a href="#" class="btn btn-small" data-toggle-dom="#ticket-sidebar-edit, #ticket-sidebar-details" data-animated>
+			<%= t('cancel') %>
+		</a>
 		<%= f.submit t('update'), :class => "btn btn-small btn-primary pull-right" %>
 					
 		<% javascript_tag do %> 
@@ -31,3 +34,4 @@
 		<% end %>
 	<% end %>
 </section>
+<% end %>
