@@ -325,7 +325,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def order_clause
     @order_clause ||= begin
-      order_columns = "id" if "created_at".eql?(order)
+      order_columns = order
+      order_columns = "id" if "created_at".eql?(order_columns)
       order_parts = order_columns.split('.')
       if order_parts.size > 1
         "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
