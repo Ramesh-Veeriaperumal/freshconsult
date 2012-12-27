@@ -142,7 +142,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
     self.name =  params[:filter_name]     unless params[:filter_name].blank?
-    @order = default_order if @order.eql?("created_at")
+
     @fields = []
     unless params[:wf_export_fields].blank?
       params[:wf_export_fields].split(",").each do |fld|
@@ -321,6 +321,18 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def order_field
     "helpdesk_tickets.#{@order}"    
+  end
+
+  def order_clause
+    @order_clause ||= begin
+      order_columns = "id" if "created_at".eql?(order)
+      order_parts = order_columns.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+    end  
   end
   
   def previous_ticket_sql(ticket, account, user)   
