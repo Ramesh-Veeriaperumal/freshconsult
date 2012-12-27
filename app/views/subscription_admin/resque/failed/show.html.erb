@@ -1,0 +1,24 @@
+<% javascript_tag do -%>
+  jQuery('.header').hide();
+<% end %>
+
+<%= link_to "Overview", admin_resque_home_path(), {:class => "uiButton", :id => "overview_button" } %>
+
+    <%= link_to "#{t('remove')} #{@name}" , destroy_all_admin_resque_failed_path(:name => @name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
+
+<h1 class="failed_heading">Failed Jobs</h1>
+
+<%= render :partial => "jobs", :object => @failed_in_given_queue %>
+
+<div id="results" data-job-count="<%= @job_count.to_s %>"> </div>
+
+<% javascript_tag do %>
+jQuery('#results').pageless({ 
+                           url: "<%= url_path(request.path_info.sub('/','')) %>"
+                          , params: { job_count: function(){ return jQuery("#results").data("jobCount") } }
+                          , loaderMsg: 'Loading more results'
+                          });
+
+<% end %>                          
+  
+

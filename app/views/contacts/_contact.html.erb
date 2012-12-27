@@ -1,0 +1,39 @@
+<tr>
+	<td class="selector-box">
+		<%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+	</td>
+	<td >
+		<a href="#" class="cust-list-avatar">
+			<%= user_avatar(contact)%> <!-- class="img-circle" have to add in img tag for circle-->
+		</a>
+		<div class="text-info">
+			<strong><%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name") %></strong>
+			<% unless contact.job_title.blank? %>
+				<p class="muted"><%= h contact.job_title %></p>
+			<% end %>
+			<% unless contact.customer.blank? %>
+			  	<p class="muted"><%= link_to(h(contact.customer.name), contact.customer) %></p>
+			<% end %> 
+		</div>
+	</td>
+	<td class="email">
+		<div><%= content_tag(:span, "#{h(contact.email)} ") unless contact.email.blank? %></div>
+		<div>
+			<%= content_tag(:span, "#{I18n.t('phone')} : #{h(contact.phone)} ") unless contact.phone.blank? %>
+		</div>
+		<% if contact.email.blank? and contact.phone.blank? and contact.mobile.blank? %>
+			<%= content_tag(:div, "<a target='_blank' href=http://twitter.com/#{h(contact.twitter_id) }>@#{h(contact.twitter_id)}</a>", :class => "user_twitter") if !contact.twitter_id.blank? %>
+			<%= content_tag(:div, "<a target='_blank' href=http://facebook.com/#{h(contact.fb_profile_id) }>#{t('facebook_user')}</a>") if !contact.fb_profile_id.blank? %>
+		<% end %>
+	</td>
+	<td>
+		<div class="user_actions" align="right">
+			<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? %>
+			<%= link_to(t('contacts.send_activation'), send_invite_activation_path(contact), "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
+					"data-loading-text" => t('admin.getting_started.index.next_please_wait'), 
+					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>") if !contact.active? and !contact.deleted and !contact.email.blank? %>
+			<%= link_to(t('edit'), edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? %>
+			<%= link_to("<i class='icon-trash'></i>", {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('company.info11')} #{contact.name}?", :class => "btn btn-mini") if contact != current_user and !contact.deleted? %>
+		</div>
+	</td>
+</tr>

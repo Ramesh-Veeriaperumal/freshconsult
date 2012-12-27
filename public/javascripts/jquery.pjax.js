@@ -30,10 +30,10 @@
 function fnPjax(selector, container, options) {
   var context = this
   return this.on('click.pjax', selector, function(event) {
-    options = optionsFor(container, options)
-    if (!options.container)
-      options.container = $(this).attr('data-pjax') || context
-    handleClick(event, options)
+    var opts = $.extend({}, optionsFor(container, options))
+    if (!opts.container)
+      opts.container = $(this).attr('data-pjax') || context
+    handleClick(event, opts)
   })
 }
 
@@ -66,7 +66,7 @@ function handleClick(event, container, options) {
 
   // Middle click, cmd click, and ctrl click should open
   // links in a new tab as normal.
-  if ( event.which > 1 || event.metaKey || event.ctrlKey )
+  if ( event.which > 1 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey )
     return
 
   // Ignore cross origin links
@@ -88,7 +88,6 @@ function handleClick(event, container, options) {
     target: link,
     fragment: null
   }
-
 
   pjax($.extend({}, defaults, options))
 
@@ -221,8 +220,9 @@ function pjax(options) {
     var container = extractContainer("", xhr, options)
 
     var allowed = fire('pjax:error', [xhr, textStatus, errorThrown, options])
-    if (textStatus !== 'abort' && allowed)
+    if (options.type == 'GET' && textStatus !== 'abort' && allowed) {
       locationReplace(container.url)
+    }
   }
 
   options.success = function(data, status, xhr) {
@@ -247,8 +247,7 @@ function pjax(options) {
     }
 
     if (container.title) document.title = container.title
-    //context.html(container.contents)
-    context.empty().html(container.contents); // For removing the events and memroy leaks ... Pratheepv
+    context.html(container.contents)
 
     // Scroll to top by default
     if (typeof options.scrollTo === 'number')
@@ -384,19 +383,17 @@ function onPjaxPopstate(event) {
         scrollTo: false
       }
 
-      // if (contents) {
-      //   container.trigger('pjax:start', [null, options])
+      if (contents) {
+        container.trigger('pjax:start', [null, options])
 
-      //   if (state.title) document.title = state.title
-      //   container.html(contents)
-      //   pjax.state = state
+        if (state.title) document.title = state.title
+        container.html(contents)
+        pjax.state = state
 
-      //   container.trigger('pjax:end', [null, options])
-      // } else {
-      //   pjax(options)
-      // }
-      //Allways get latest content from server.... Pratheepv
-      pjax(options)
+        container.trigger('pjax:end', [null, options])
+      } else {
+        pjax(options)
+      }
 
       // Force reflow/relayout before the browser tries to restore the
       // scroll position.
@@ -720,7 +717,8 @@ function disable() {
   $.pjax.disable = $.noop
   $.pjax.click = $.noop
   $.pjax.submit = $.noop
-  $.pjax.reload = window.location.reload
+  $.pjax.reload = function() { window.location.reload() }
+
   $(window).unbind('popstate.pjax', onPjaxPopstate)
 }
 
