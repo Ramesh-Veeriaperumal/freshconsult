@@ -9,7 +9,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
 
   before_filter { |c| c.requires_permission :manage_tickets }
 
-  before_filter :load_multiple_items, :validate_attachment_size, :only => :update_multiple
+  before_filter :load_multiple_items, :only => :update_multiple
 
   def update_multiple
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
@@ -20,10 +20,14 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
-      ticket.save
+      # ticket.save
       begin
-        reply_multiple reply_content, ticket
+        ticket.save unless reply_multiple reply_content, ticket
       rescue Exception => e
+        if e.is_a?(HelpdeskExceptions::AttachmentLimitException)
+          flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')  
+          redirect_to helpdesk_tickets_path and return 
+        end
         failed_tickets.push(ticket)
         NewRelic::Agent.notice_error(e)
         Rails.logger.error("Error while sending reply")
