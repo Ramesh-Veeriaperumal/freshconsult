@@ -1032,7 +1032,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def update_ticket_changes
       @ticket_changes = self.changes.clone
-      @ticket_changes.merge!(schema_less_ticket.changes.clone)
+      @ticket_changes.merge!(schema_less_ticket.changes.clone) if schema_less_ticket
       @ticket_changes.symbolize_keys!
     end
     
