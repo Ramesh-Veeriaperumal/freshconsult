@@ -73,9 +73,8 @@ class Account < ActiveRecord::Base
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
   
-  has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
-  has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
-  has_many :all_admins, :class_name => "User", :conditions => ["user_role in (?,?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:account_admin],false] ,:order => "name desc"
+  has_one :account_admin, :class_name => "User", :conditions => { :account_admin => true } #has_one ?!?!?!?!
+  has_many :technicians, :class_name => "User", :conditions => ["user_role in (?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:agent], false] ,:order => "name desc"
   
   has_one :subscription
   has_many :subscription_payments
@@ -84,12 +83,12 @@ class Account < ActiveRecord::Base
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :customers
-  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
+  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer] , :deleted =>false}
   has_many :all_agents, :through =>:users, :order => "users.name"
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
-  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
+  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
@@ -579,7 +578,8 @@ class Account < ActiveRecord::Base
     def create_admin
       self.user.active = true  
       self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
+      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:agent]  
+      self.user.account_admin = true
       self.user.build_agent()
       self.user.agent.account = self
       self.user.save

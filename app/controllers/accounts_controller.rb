@@ -1,7 +1,5 @@
 class AccountsController < ApplicationController
 
-  # 3. how do i test this controller ?
-  
   include ModelControllerMethods
   include FreshdeskCore::Model
   
