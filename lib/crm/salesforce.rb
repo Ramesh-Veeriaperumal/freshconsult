@@ -39,9 +39,9 @@ class CRM::Salesforce < Resque::Job
     update_account(crm_ids, subscription.account.full_domain, CUSTOMER_STATUS[:free])
   end
 
-  def update_deleted_account_to_crm(deleted_customer)
-    crm_ids = search_crm_record(deleted_customer.account_id)
-    update_account(crm_ids, deleted_customer.full_domain, CUSTOMER_STATUS[:deleted])
+  def update_deleted_account_to_crm(account_id)
+    crm_ids = search_crm_record(account_id)
+    update_account(crm_ids, account_id, CUSTOMER_STATUS[:deleted])
   end
 
   def update_admin_info(admin)
@@ -72,10 +72,11 @@ class CRM::Salesforce < Resque::Job
     def search_crm_record(account_id)
       search_string = %(SELECT Id, AccountId FROM Contact WHERE Freshdesk_Account_Id__c = '#{account_id}')
       response = binding.query(:searchString => search_string).queryResponse
+
+      return create_new_crm_account(Account.find(account_id)) if response.result[:size].eql?("0")
+
+      record = (response.result.records.is_a?(Array))? response.result.records[0] : response.result.records
       
-      return create_new_crm_account(Account.find(account_id)) if response.result[:size].eql?(0)
-      
-      record = response.result.records[0] if response.result.records.count == 1
       crm_ids = CRM_IDS.inject({}) { |h, (k, v)| 
                   h[k] = (id = record[v]).is_a?(Array)? id[0] : id ; h } 
     end
@@ -157,8 +158,9 @@ class CRM::Salesforce < Resque::Job
       }
     end
 
-    def payment_attributes(payment)                      
-      payment_attr = PAYMENT_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = payment.send(v).to_s; h }
+    def payment_attributes(payment)
+      return { :Name => payment.to_s } unless DayPassPurchase.find_by_payment_id(payment.id).blank?
+      payment_attr = PAYMENT_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = payment.send(v).to_s; h } 
     end
 
     def opportunity_attributes

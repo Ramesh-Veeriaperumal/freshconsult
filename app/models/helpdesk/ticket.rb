@@ -34,10 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
   
   after_create :refresh_display_id, :create_meta_note
 
@@ -212,7 +209,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :select => "helpdesk_tickets.id", 
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
-  
+
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -288,11 +285,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
-  
+
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type ||= account.ticket_type_values.first.value
+    self.ticket_type ||= account.ticket_types_from_cache.first.value
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
     #self.description = subject if description.blank?
@@ -914,6 +911,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
 
+
   private
 
     
@@ -1169,6 +1167,5 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def can_add_requester?
       email.present? || twitter_id.present? || external_id.present? 
     end
-
 end
 
