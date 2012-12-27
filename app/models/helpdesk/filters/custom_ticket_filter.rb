@@ -106,7 +106,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def default_order
-    'created_at'
+    'id'
   end
   
   def default_filter(filter_name)
@@ -142,7 +142,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
     self.name =  params[:filter_name]     unless params[:filter_name].blank?
-    
+    @order = default_order if @order.eql?("created_at")
     @fields = []
     unless params[:wf_export_fields].blank?
       params[:wf_export_fields].split(",").each do |fld|

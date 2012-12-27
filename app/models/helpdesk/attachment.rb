@@ -39,6 +39,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_post_process :image?
     #before_post_process :set_content_dispositon
     before_create :set_content_type
+    before_save :set_account_id
 
    def s3_permissions
     public_permissions? ? "public-read" : "private"
@@ -103,6 +104,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def lookup_by_extension(extension)
     MIME_TYPE_MAPPING[extension]
+  end
+
+  def set_account_id
+    self.account_id = attachable.account_id
   end
   
 
