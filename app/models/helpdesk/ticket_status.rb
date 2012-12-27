@@ -50,7 +50,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
   
   def self.status_keys_by_name(account)
-    Hash[*statuses(account).flatten].insensitive
+    Hash[*statuses_from_cache(account).flatten].insensitive
   end
 
   def self.status_names(account)
@@ -60,7 +60,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
   
   def self.status_names_by_key(account)
-    Hash[*status_names(account).flatten]
+    Hash[*status_names_from_cache(account).flatten]
   end
   
   def self.donot_stop_sla_statuses(account)
