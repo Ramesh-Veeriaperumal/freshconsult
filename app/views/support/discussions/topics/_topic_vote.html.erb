@@ -1,5 +1,6 @@
 <!-- Topic voting will not be there for announcement topics -->
 <% unless @forum.announcement? %>
+	<% unless @topic.blank? %>
 	<% 
 		t_likes = @topic.user_votes 
 		if(@topic.voted_by_user? current_user)
@@ -41,4 +42,5 @@
 			<% end %>
 		<% end %>
 	</div>
+	<% end %>
 <% end %>

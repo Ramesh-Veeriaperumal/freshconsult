@@ -148,6 +148,11 @@ $btnPrimaryBackgroundHighlight:     darken($btnPrimaryBackground, 10%);
 $btnPrimaryTextColor:				if(lightness($btnPrimaryBackground) > 50, $grayDark, white) !default;
 $btnPrimaryShadowColor: 			if(lightness($btnPrimaryBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
 
+$btnDangerBackground:              	$red;
+$btnDangerBackgroundHighlight:     	darken($btnDangerBackground, 10%);
+$btnDangerTextColor:				if(lightness($btnDangerBackground) > 50, $grayDark, white) !default;
+$btnDangerShadowColor: 				if(lightness($btnDangerBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
+
 // COMPONENT VARIABLES
 // --------------------------------------------------
 

@@ -16,7 +16,7 @@ class Portal::Page < ActiveRecord::Base
 		[:portal_home,        	1,  "support/home/index.portal", "support_home_path"],    
 		[:user_signup,        	2,  "support/signups/new.portal", "support_signup_path"],
 		[:user_login,         	3,  "support/login/new.portal", "support_login_path"],
-		[:profile_edit,       	4,  "support/profiles/edit.portal", "edit_support_profile_path"],
+		[:profile_edit,       	4,  "support/profiles/edit.html.erb", "edit_support_profile_path"],
 		[:search,    		  	5,  "support/search/index.portal", "support_search_index_path"],
 
 		# Solution pages
@@ -44,11 +44,15 @@ class Portal::Page < ActiveRecord::Base
 
 	# Manually organizing them as groups to avoid direct db save dependency
 	PAGE_GROUPS = [
-		{ :general 		=> [:portal_home, :user_signup, :user_login, :profile_edit, :search] },
+		{ :general 		=> [:portal_home, :user_signup, :user_login, :search] },
 		{ :solutions 	=> [:solution_home, :article_list, :article_view] }, 
 		{ :discussions 	=> [:discussions_home, :topic_list, :topic_view, :new_topic] },
-		{ :tickets 		=> [:submit_ticket, :ticket_list, :ticket_view] }
+		{ :tickets 		=> [:submit_ticket] }
 	]
+
+	# Hiding customization for profile_edit, ticket_list and ticket_view
+	# :general -> :profile_edit
+	# :tickets -> :ticket_list, :ticket_view
 
 	# Helper constants for access of PAGE_TYPES
 	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[0], i[1]] }	

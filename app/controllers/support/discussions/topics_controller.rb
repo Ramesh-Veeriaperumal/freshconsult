@@ -1,10 +1,10 @@
 class Support::Discussions::TopicsController < SupportController
-  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, :users_voted]
+  before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor, :users_voted, :destroy]
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
   end
   
-  before_filter :only => [:update_stamp, :remove_stamp, :destroy] do |c| 
+  before_filter :only => [:update_stamp, :remove_stamp] do |c| 
     c.requires_permission :manage_forums
   end
   
@@ -62,7 +62,6 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def new
-    @topic = current_account.topics.new
     set_portal_page :new_topic
   end
 
@@ -82,6 +81,7 @@ class Support::Discussions::TopicsController < SupportController
       @post       = @topic.posts.build(post_param)
       @post.topic = @topic
       @post.user  = current_user
+      @post.account_id = current_account.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
       topic_saved = @topic.save if @post.valid?
@@ -135,8 +135,7 @@ class Support::Discussions::TopicsController < SupportController
     @topic.destroy
     flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, @topic.title]
     respond_to do |format|
-      format.html { redirect_to  category_forum_path(@forum_category,@forum) }
-      format.xml  { head 200 }
+      format.html { redirect_to support_discussions_path }
     end
   end
 
@@ -147,7 +146,7 @@ class Support::Discussions::TopicsController < SupportController
     render :nothing => true
   end 
 
-  def like   
+  def like
     unless @topic.voted_by_user?(current_user)
       @vote = Vote.new(:vote => params[:vote] == "for")  
       @vote.user_id = current_user.id  
@@ -157,7 +156,7 @@ class Support::Discussions::TopicsController < SupportController
     render :partial => "topic_vote", :object => @topic
   end 
 
-  def unlike   
+  def unlike
      @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
      @votes.first.destroy
      load_topic

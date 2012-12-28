@@ -670,7 +670,7 @@ module ApplicationHelper
   end
 
   def tour_button(text, tour_id)
-    link_to (content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
+    link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
               :rel => 'guided-tour',
               "data-tour-id" => tour_id)
   end

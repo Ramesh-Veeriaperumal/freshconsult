@@ -1543,7 +1543,10 @@ en:
     knowledge_base: "Knowledge base"
     community: "Community"
     showing_recent_updates: "Showing recent updates"
-
+    tickets:
+      export: "Export tickets"
+      export_ticket_data: "Export ticket data to CSV"
+      export_to_csv: "Export to CSV"
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}

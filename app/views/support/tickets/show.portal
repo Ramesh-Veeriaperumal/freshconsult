@@ -17,7 +17,9 @@
 			<div class="btn-group" id="ticket-toolbar">
 				<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>		
 				
-				{% snippet close %}
+				{% unless ticket.closed? %}
+					<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">Mark ticket as closed</a>
+				{% endunless %}
 				
 				<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
 					data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
@@ -107,7 +109,7 @@
 							data-proxy-for="#add-note-form" />
 
 					<div id="add-note-form" class="hide">
-						{% snippet add_note_form %}
+						{% snippet ticket_reply %}
 					</div>
 				</div>
 			</section>
@@ -115,4 +117,4 @@
 	</section>
 </section>
 
-{% snippet add_people %}
+{% snippet ticket_add_people %}

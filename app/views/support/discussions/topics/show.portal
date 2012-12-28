@@ -37,11 +37,22 @@
 	<section id="topic-comments">
 		{% for post in topic.posts %}
 			<section class="user-comment {% if post.user.is_agent?? %} comment-by-agent {% endif %}" id="post-{{post.id}}">
-				<div class="user-info">
+				<div class="user-info">					
 					<div class="user-pic-thumb user-pointer-bottom">
 						<img src="{{ post.user.profile_url }}" width="40px" height="40px" />
 					</div>
 					<div class="user-details">						
+						{% unless forloop.first %}
+						<!-- <span class="dropdown pull-right">					          	
+					        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+					        	<li><a href="#">Edit</a></li>
+					        	<li><a href="#">Delete</a></li>
+					       	</ul>
+					       	<a href="#" class="dropdown-toggle" data-toggle="dropdown" class="btn btn-icon btn-small">
+								<i class="icon-cog-drop-dark"></i>
+							</a>
+					    </span> -->
+						{% endunless %}
 						<h4 class="user-name">{{ post.user.name }}</h4>
 						<div class="p-info">
 							{% if forloop.first %}
@@ -103,7 +114,7 @@
 						placeholder="Click here to add a comment" id="reply-form-proxy" 
 						data-proxy-for="#new-post-form" />
 				<section id="new-post-form" class="hide">
-					{% snippet reply_to_post %}
+					{% snippet topic_reply %}
 				</section>
 			</div>
 		</section>

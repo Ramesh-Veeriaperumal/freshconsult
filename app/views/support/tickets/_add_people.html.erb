@@ -1,3 +1,4 @@
+<% if @ticket.present? %>
 <div id="add-people" class="hide">
 	<div class="alert">Add or remove emails that need to be copied when a notification for this ticket is sent.</div>
 	<% form_for @ticket, :url => add_people_support_ticket_path(@ticket.display_id), :method => :put, 
@@ -10,3 +11,4 @@
 		<%end%>
 	<% end %>
 </div>
+<% end %>

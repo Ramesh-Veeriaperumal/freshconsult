@@ -1,31 +1,40 @@
 <div id="ticket-list">
-	<div class="c-list">
-		<% @tickets.each do |ticket| %>
-			<div class="c-row c-ticket-row">
-				<span class="status-source sources-detailed-<%= ticket.source_name.to_s.downcase %>" 
-						 title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"> </span>
-				<span class="label-status label label-small"><%= ticket.status_name %></span>			 
-				<div class="ticket-brief">
-				    <div class="ellipsis">
-				      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => truncate(ticket.description, { :length => 350 }), :class => "c-link") %> 
-				    </div>
-				    <div class="help-text">
-						<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>
-							<%= t('ticket.portal_created_on', {:username => h(ticket.requester.display_name), :date => formated_date(ticket.created_at)}) %>
-						<% else %>
-							<%= t('ticket.portal_created_on_same_user', {:date => formated_date(ticket.created_at)}) %>
-						<% end %>
+	<% unless @tickets.blank? %>
+		<div class="c-list">
+			<% @tickets.each do |ticket| %>
+				<div class="c-row c-ticket-row">
+					<span class="status-source sources-detailed-<%= ticket.source_name.to_s.downcase %>" 
+							 title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"> </span>
+					<span class="label-status label label-small"><%= ticket.status_name %></span>			 
+					<div class="ticket-brief">
+					    <div class="ellipsis">
+					      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => truncate(ticket.description, { :length => 350 }), :class => "c-link") %> 
+					    </div>
+					    <div class="help-text">
+							<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>
+								<%= t('ticket.portal_created_on', {:username => h(ticket.requester.display_name), :date => formated_date(ticket.created_at)}) %>
+							<% else %>
+								<%= t('ticket.portal_created_on_same_user', {:date => formated_date(ticket.created_at)}) %>
+							<% end %>
 
-						<% unless ticket.freshness == :new %>
-					       <%=t('ticket.assigned_agent')%>: <span class='emphasize'><%=h(ticket.responder.display_name)%></span>
-					    <% end %>
-					</div>
-				</div>	
-			</div>
-		<% end %>
-	</div>
+							<% unless ticket.freshness == :new %>
+						       <%=t('ticket.assigned_agent')%>: <span class='emphasize'><%=h(ticket.responder.display_name)%></span>
+						    <% end %>
+						</div>
+					</div>	
+				</div>
+			<% end %>
+		</div>
 
-	<%= content_tag :div, t("helpdesk.tickets.views.no_tickets"), :class => "lead" if @tickets.blank? %>
+		<%= will_paginate @tickets, :renderer =>  BootstrapPaginationRenderer %>
 
-	<%= will_paginate @tickets, :renderer =>  BootstrapPaginationRenderer %>
+	<% else %>
+
+		<%= content_tag :div, t("helpdesk.tickets.views.no_tickets"), :class => "lead"  %>
+
+	<% end %>
+
+	<script type='text/javascript'>
+		jQuery("#ticket-export-button").toggle(<%= @tickets.present? %>)
+	</script>
 </div>

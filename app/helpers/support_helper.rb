@@ -125,10 +125,12 @@ module SupportHelper
 		end
 	end
 	
-	# rendering partial if its corresponding db_file is not available
-	def portal_render local_file, db_file = ""
-		# render_to_string :partial => local_file, :locals => { :dynamic_template => db_file }
-	end
+	def is_file_restricted file_name
+    	_files = {  :new_topic => "/support/discussions/topics/form", 
+    				:request_form => "/support/tickets/request_form" }
+
+    	_files[file_name.to_sym]
+  	end
 
 	# Construct ticket form UI
 	def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)

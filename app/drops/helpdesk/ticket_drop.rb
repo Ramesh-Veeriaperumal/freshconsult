@@ -120,8 +120,8 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.freshness
 	end
 
-	def close_ticket_path
-		@close_ticket_path ||= close_support_ticket_path(@source, :host => @source.portal_host, :protocol=> @source.url_protocol)
+	def close_ticket_url
+		@close_ticket_url ||= close_support_ticket_path(@source, :host => @source.portal_host, :protocol=> @source.url_protocol)
 	end
 
 	def closed?

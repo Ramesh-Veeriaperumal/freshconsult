@@ -1,11 +1,12 @@
 <div class="page">
 	{{ header }}
-		
+	
+	{% if current_tab %}	
 	<section class="help-center rounded-6">	
 		<div class="hc-search">
 			<div class="hc-search-c">
 				<h2 class="heading">{% translate header.help_center %}</h2>
-				{% snippet portal/search %}
+				{% snippet search_form %}
 			</div>
 		</div>		
 		<div class="hc-nav">
@@ -22,6 +23,7 @@
 			</nav>
 		</div>
 	</section>
+	{% endif %}
 
 	<!-- Notifocation Messages for the page  -->
 	{{ page_message }}
@@ -31,4 +33,5 @@
 	</div>
 
 	{{ footer }}
+
 </div>

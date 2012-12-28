@@ -16,9 +16,7 @@ module SupportTicketControllerMethods
     end
   end
 
-  def new
-    @ticket = current_account.tickets.new 
-    @ticket.email = current_user.email if current_user
+  def new    
     set_portal_page :submit_ticket
   end
   

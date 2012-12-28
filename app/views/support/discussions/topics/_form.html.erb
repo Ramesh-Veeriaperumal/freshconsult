@@ -1,77 +1,88 @@
-<% form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
-					:method => @topic.new_record? ? :post : :put,
-					:html => { :multipart => true, :rel => "validate", :class => "form-portal" } do |form| -%>
-<%= form.error_messages %>					
-<fieldset>
-	<div class="control-group">
-		<label class="control-label required" for="topic_title">
-			Topic title
-		</label>
-		<div class="controls">
-			<%= form.text_field :title, :class => "required text span12", :tabindex => 10 %>
-		</div>
-	</div> 	
-	<div class="control-group">
-		<label class="control-label" for="topic_body">
-			<%= t('message') %>
-		</label>
-		<div class="controls">
-			<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", :rows => 12 %>
-		</div>
-	</div>	
-	<div class="control-group">
-		<label class="control-label required">
-			Post topic in
-		</label>
-		<div class="controls">
-			<%= form.select :forum_id, grouped_options_for_select(@portal.forum_options, @topic.forum_id), 
-				{ :include_blank => "--- Select a forum ---" }, 
-				{ :class => "required", :disabled => !@topic.new_record? } %>
-		</div>
+<% unless current_user %>
+	<div class="lead">
+		<a href="<%= support_login_path %>">Login</a> to post a new topic
 	</div>
-	<div class="control-group">
-		<div class="controls">
-			<% if ["new"].include? params[:action] %>
-				<label class="checkbox" id="monitor-topic-lable">
-					<%= check_box_tag 'monitor', '', true, :class => "checkbox" %> 
-					Monitor this topic
-				</label>
-			<%end%>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">Attach files</label>	
-		<% attach_id = attach_id || "post" %>
-		<div class="controls">
-			<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-			<div class="attachments" id="<%=attach_id%>-container" style="display:none">
-			  <div id="<%=attach_id%>-attachments"></div>
+<% else %>
+	<% @topic ||= current_account.topics.new %>
+	<% form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
+						:method => @topic.new_record? ? :post : :put,
+						:html => { :multipart => true, :rel => "validate", :class => "form-portal" } do |form| -%>
+	<%= form.error_messages %>					
+	<fieldset>
+		<div class="control-group">
+			<label class="control-label required" for="topic_title">
+				Topic title
+			</label>
+			<div class="controls">
+				<%= form.text_field :title, :class => "required text span12", :tabindex => 10 %>
+			</div>
+		</div> 	
+		<div class="control-group">
+			<label class="control-label" for="topic_body">
+				<%= t('message') %>
+			</label>
+			<div class="controls">
+				<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", :rows => 12 %>
 			</div>
 		</div>	
-					
-		<script id="file-list-template" type="text/x-jquery-tmpl">			
-		  <div class="item">
-		  	<span>
-		  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
-			</span>
+		<div class="control-group">
+			<label class="control-label required">
+				Post topic in
+			</label>
+			<div class="controls">
+				<%= form.select :forum_id, grouped_options_for_select(@portal.forum_options, @topic.forum_id), 
+					{ :include_blank => "--- Select a forum ---" }, 
+					{ :class => "required", :disabled => !@topic.new_record? } %>
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<% if ["new"].include? params[:action] %>
+					<label class="checkbox" id="monitor-topic-lable">
+						<%= check_box_tag 'monitor', '', true, :class => "checkbox" %> 
+						Monitor this topic
+					</label>
+				<%end%>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Attach files</label>	
+			<% attach_id = attach_id || "post" %>
+			<div class="controls">
+				<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+				<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+				  <div id="<%=attach_id%>-attachments"></div>
+				</div>
+			</div>	
+						
+			<script id="file-list-template" type="text/x-jquery-tmpl">			
+			  <div class="item">
+			  	<span>
+			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
+				</span>
+			  </div>
+			</script>
+		</div>
+		
+		<% unless @topic.new_record? %>
+		<div class="attachment-list-container">
+		    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
+		    <table class="attachment-list">
+		      <%= render(
+		        :partial => '/helpdesk/shared/attachment', 
+		        :collection => @topic.posts.first.attachments,
+		        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
+		    </table>
 		  </div>
-		</script>
+		<%end%>
+	</fieldset>
+	<div class="form-actions">
+		<input type="submit" class="btn btn-primary" value="Save" />
+		<a href="javascript:history.back()" class="btn"><%= t('cancel') %></a>
+		<% unless @topic.new_record? %>
+			<%= link_to t('delete'), support_discussions_topic_path(@topic), :confirm => "#{t('delete_topic_msg')}?", 
+				:class => "btn btn-danger pull-right", "data-method" => "delete" %>
+		<% end %>
 	</div>
-	
-	<% unless @topic.new_record? %>
-	<div class="attachment-list-container">
-	    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
-	    <table class="attachment-list">
-	      <%= render(
-	        :partial => '/helpdesk/shared/attachment', 
-	        :collection => @topic.posts.first.attachments,
-	        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
-	    </table>
-	  </div>
-	<%end%>
-</fieldset>
-<div class="form-actions">
-	<input type="submit" class="btn btn-primary" value="Submit" />
-	<a href="javascript:history.back()" class="btn">Cancel</a>
-</div>
+	<% end %>
 <% end %>
