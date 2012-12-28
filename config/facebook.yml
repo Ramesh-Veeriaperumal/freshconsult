@@ -10,8 +10,8 @@ development:
  callback_url: http://localhost.local:3000/social/facebook/authdone  
 
 staging:
- app_id: 177912822282439
- secret_key: 81297d69e2deaf8152a7b0b96508c161
+ app_id: 235038579942982
+ secret_key: 13f90c9038dc120787bed4a29f9bea0f
  callback_url: http://login.freshbugs.com/social/facebook/authdone 
 
 slave:
