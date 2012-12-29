@@ -109,6 +109,20 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     'created_at'
   end
   
+  def order_clause
+    @order_clause ||= begin
+      order_columns = order
+      #Performence reseason we are using id instead of created_at.
+      order_columns = "id" if "created_at".eql?(order_columns)
+      order_parts = order_columns.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+    end  
+  end
+
   def default_filter(filter_name)
      self.name = filter_name.blank? ? "new_my_open" : filter_name
      if "on_hold".eql?filter_name
