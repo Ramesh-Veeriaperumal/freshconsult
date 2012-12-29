@@ -474,12 +474,8 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    if dom_type == "requester"
-      field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
-      rfield = add_requester_field
-      field_label += rfield  if rfield
-    end
-    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
+    field_label    += '<span class="required_start">*</span>' if required
+    field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
@@ -530,7 +526,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    render(:partial => "/shared/add_requester") if (current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (params[:format] != 'widget'  && current_user && current_user.can_view_all_tickets?)
   end
   
   def add_name_field
