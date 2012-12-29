@@ -478,7 +478,7 @@ class User < ActiveRecord::Base
   end
 
   def set_contact_name 
-    if self.name.blank?
+    if self.name.blank? && email
       self.name = (self.email.split("@")[0]).capitalize
     end
   end
