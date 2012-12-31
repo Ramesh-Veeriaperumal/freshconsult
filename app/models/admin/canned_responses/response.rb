@@ -2,7 +2,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   
   set_table_name "admin_canned_responses"    
   
-  belongs_to :account
+  belongs_to_account
  
   belongs_to :folder, :class_name => "Admin::CannedResponses::Folder"
 

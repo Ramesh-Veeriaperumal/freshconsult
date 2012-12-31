@@ -1,7 +1,6 @@
 class SubscriptionAdmin::Resque::FailedController < ApplicationController
 	include AdminControllerMethods
 	include SubscriptionAdmin::Resque::FailedHelper
-
 	layout "resque_admin"
 	
 	def index

@@ -423,6 +423,7 @@ module ApplicationHelper
 
   def widget_script(installed_app, widget, liquid_objs)
     replace_objs = liquid_objs || {}
+    replace_objs = replace_objs.merge({"current_user"=>current_user})
     # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
     replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, "application" => installed_app.application}) unless installed_app.blank?# Application name based liquid obj values.
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.

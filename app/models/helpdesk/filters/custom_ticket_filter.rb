@@ -106,7 +106,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def default_order
-    'created_at'
+    'id'
   end
   
   def default_filter(filter_name)
@@ -142,7 +142,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
     self.name =  params[:filter_name]     unless params[:filter_name].blank?
-    
+
     @fields = []
     unless params[:wf_export_fields].blank?
       params[:wf_export_fields].split(",").each do |fld|
@@ -268,7 +268,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                                       :conditions => all_conditions, :joins => all_joins)
       end
 
-      select = "helpdesk_tickets.* "
+      select = "helpdesk_tickets.id, helpdesk_tickets.status, helpdesk_tickets.source, helpdesk_tickets.responder_id, helpdesk_tickets.requester_id, helpdesk_tickets.status, helpdesk_tickets.frDueBy, helpdesk_tickets.due_by, helpdesk_tickets.display_id, helpdesk_tickets.priority, helpdesk_tickets.subject"
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
 
       recs = model_class.paginate(:select => select,
@@ -321,6 +321,18 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def order_field
     "helpdesk_tickets.#{@order}"    
+  end
+
+  def order_clause
+    @order_clause ||= begin
+      order_columns = "id" if "created_at".eql?(order)
+      order_parts = order_columns.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+    end  
   end
   
   def previous_ticket_sql(ticket, account, user)   
