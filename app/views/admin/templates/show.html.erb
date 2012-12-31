@@ -6,68 +6,74 @@
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
 <div class="pull-right">
-  <%= link_to "Reset all changes", admin_portal_template_restore_default_path, :confirm => "This action will reset all your customizations to freshdesk default. Are you sure you want to continue?", :class => "btn" %>
-  <a href="<%=admin_portal_template_publish_path%>" class="btn btn-primary">Publish changes</a>
+  <%= link_to t("portalcss.reset_all_changes"), restore_default_admin_portal_template_path, :confirm => t("portalcss.reset_all_confirm_message"), :class => "btn" %>
+  <a href="<%=publish_admin_portal_template_path%>" class="btn btn-primary"><%=t("portalcss.publish_changes")%></a>
 </div>
-<h3 class="sub-title">Portal template customization</h3>
+<h3 class="sub-title"><%=t("portalcss.header")%></h3>
 <br />
 <div class="clearfix">
   <ul data-tabs="tabs" class="tabs">    
     <li class="active">      
-      <a href="#preferences" data-toggle="tab" id="preferences-tab">Color &amp; font</a>
+      <a href="#preferences" data-toggle="tab" id="preferences-tab"><%=t("portalcss.color_and_font_header")%></a>
     </li>
+    <%if feature?(:css_customization)%>
     <li>
-      <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css">Stylesheet</a>
-    </li>    
-    <li>
-      <a id="layout-tab" href="#header" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout">Layout &amp; pages</a>
+      <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css"><%=t("portalcss.css_header")%></a>
     </li>
+    <%end%>
+    <%if feature?(:layout_customization)%>
+    <li>
+      <a id="layout-tab" href="#header" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout"><%=t("portalcss.layout_and_pages_header")%></a>
+    </li>
+    <%end%>
   </ul>        
   
     <div class="tab-content">
       <div class="tab-pane active" id="preferences">
         <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
       </div>
+      <%if feature?(:css_customization)%>
+      	<div class="tab-pane" id="custom_css">		
+          <%= render :partial => "custom_css" %>
+      	</div>
+      <%end%>
+      <%if feature?(:layout_customization)%>
+        <div class="tab-pane" id="header">
+          <ul data-tabs="tabs" class="pills">
+            <li class="active">
+              <a id="layout-tab" href="#layout" code-refresh-id="portal_template_layout">
+                <%=t("portalcss.layout_pages.subheader_layout")%>
+              </a>
+            </li>
+            <li>
+              <a id="pages-tab" href="#pages"><%=t("portalcss.layout_pages.subheader_pages")%></a> 
+            </li>
+          </ul>
 
-    	<div class="tab-pane" id="custom_css">		
-        <%= render :partial => "custom_css" %>
-    	</div>
-
-      <div class="tab-pane" id="header">
-        <ul data-tabs="tabs" class="pills">
-          <li class="active">
-            <a id="layout-tab" href="#layout" code-refresh-id="portal_template_layout">
-              Portal layout
-            </a>
-          </li>
-          <li>
-            <a id="pages-tab" href="#pages">Portal pages</a> 
-          </li>
-        </ul>
-
-        <div class="tab-content">
-          <div class="tab-pane active" id="layout">
-            <%= render :partial => "layout" %>
-          </div>
-          <div class="tab-pane" id="pages">
-            <div>
-              <h2 class="title light">Portal pages</h2>
-              <p class="help-text">
-                Here you will be able to customize body area of individual pages
-              </p>
+          <div class="tab-content">
+            <div class="tab-pane active" id="layout">
+              <%= render :partial => "layout" %>
             </div>
-            <br />
-            <div class="row-fluid">
-              <div class="span2">
-                <%= render :partial => "portal_pages"%>
+            <div class="tab-pane" id="pages">
+              <div>
+                <h2 class="title light"><%=t("portalcss.layout_pages.subheader_pages")%></h2>
+                <p class="help-text">
+                  <%=t("portalcss.layout_pages.pages_help_message")%>
+                </p>
               </div>
-              <div class="span10 omega">
-                <div id="Customizepage"></div>
+              <br />
+              <div class="row-fluid">
+                <div class="span2">
+                  <%= render :partial => "portal_pages"%>
+                </div>
+                <div class="span10 omega">
+                  <div id="Customizepage"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <%end%>
 </div> 
 
 <% content_for :onload_script do %>
@@ -89,9 +95,9 @@
             jQuery(form).ajaxSubmit({
               success: function(response, status){
                 // Resetting the submit button to its default state
-                console.log(status)
                 $btn.button("reset")
                 $btn.parent().find("#soft_reset_button").attr("disabled", false).removeClass("disabled")
+                jQuery('#cm-fs-actions #soft_reset_button').attr("disabled", false).removeClass("disabled")
               },
               dataType: "script"
             })

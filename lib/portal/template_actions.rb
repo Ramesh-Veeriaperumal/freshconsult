@@ -10,10 +10,8 @@ module Portal::TemplateActions
     ActionView::Base.default_form_builder = FormBuilders::CodeMirrorBuilder
   end
 
-  # Liquid validation
-  def liquid_syntax?(liquid_data)
-    begin
-      Liquid::Template.parse(liquid_data)
+  def syntax_rescue
+    yield
     rescue Exception => e
       flash[:error] = e.to_s
       respond_to do |format|
@@ -22,26 +20,18 @@ module Portal::TemplateActions
         }
         format.js{ render "update.rjs" and return }
       end
-      #NewRelic::Agent.notice_error(e)
-    end  
+  end
+
+  # Liquid validation
+  def liquid_syntax?(liquid_data)
+    syntax_rescue { Liquid::Template.parse(liquid_data) }
   end
 
   # css validation
   def css_syntax?(custom_css)
-    begin
-      _options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, 
+    _options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, 
         :always_update => true, :style => :compact)
-      custom_css = Sass::Engine.new(custom_css, _options).render
-    rescue Exception => e
-      first_line = e.backtrace[0]
-      flash[:error] = "#{e.to_s} at line number #{first_line[first_line.index(":")..-1]}"
-      respond_to do |format|
-        format.html { 
-          redirect_to support_home_path and return
-        }
-        format.js{ render "update.rjs" and return }
-      end
-    end
+    syntax_rescue { Sass::Engine.new(custom_css, _options).render }
   end
 
   def clear_preview_session

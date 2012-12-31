@@ -2,7 +2,7 @@
   <% form_for [:admin, @portal_template], :url => { :action => :update }, 
       :html => { :method => :put, :rel => "portal_form", :target => "_blank" } do |f| -%>
     <%= hidden_field_tag 'portal_tab', :preferences %>
-    <h3 class="title">Background color</h3>
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_background_color")%></h3>
     <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color, :btn_primary_background, :btn_background] %>
     <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
@@ -15,7 +15,7 @@
     <% end %>
     </div>
 
-    <h3 class="title">Tab colors</h3>
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_tab_color")%></h3>
     <% pref_bgs = [:tab_color, :tab_hover_color] %>
     <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
@@ -28,7 +28,7 @@
     <% end %>
     </div>
 
-    <h3 class="title">Portal fonts</h3>
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_portal_fonts")%></h3>
     <% pref_bgs = [:baseFontFamily, :textColor, :headingsFontFamily, :headingsColor] %>
     <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>    
@@ -48,7 +48,7 @@
     <% end %>
     </div>
 
-    <h3 class="title">Link color</h3>
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_link_color")%></h3>
     <% pref_bgs = [:linkColor, :linkColorHover] %>
     <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
@@ -61,7 +61,7 @@
     <% end %>
     </div>
 
-    <h3 class="title">Form elements</h3>
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_form_elements")%></h3>
     <% pref_bgs = [:inputFocusRingColor] %>
     <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>

@@ -2,7 +2,7 @@ class Portal::Template < ActiveRecord::Base
 
 	set_table_name "portal_templates"
 
-	include MemcacheKeys
+  include RedisKeys
   belongs_to_account
   belongs_to :portal
   
@@ -64,20 +64,22 @@ class Portal::Template < ActiveRecord::Base
   end
 
   def draft!
-    MemcacheKeys.cache(draft_key, self)
+    set_key(draft_key, Marshal.dump(self))
   end
 
   def get_draft
-    MemcacheKeys.get_from_cache(draft_key)
+    cached_template = get_key(draft_key)
+    Marshal.load(cached_template) if cached_template
   end
 
   def soft_reset!(keys)
-    cached_template = MemcacheKeys.get_from_cache(draft_key)
-    return if cached_template.nil?
-    db_template = portal.template
-    keys.each { |key| cached_template[key.to_sym] = db_template[key.to_sym] }
-    cached_template.draft!
-    clear_cache! if cached_template.changes.blank?
+    cached_template = get_draft
+    if cached_template
+      db_template = portal.template
+      keys.each { |key| cached_template[key.to_sym] = db_template[key.to_sym] }
+      cached_template.draft!
+      clear_cache! if cached_template.changes.blank?
+    end
   end
 
   def publish!
@@ -92,7 +94,8 @@ class Portal::Template < ActiveRecord::Base
 
   def page_from_cache(page_label)
     key = draft_key(page_label)
-    MemcacheKeys.get_from_cache(key)
+    cached_page = get_key(key)
+    Marshal.load(cached_page) if cached_page
   end
 
   def pages_from_cache
@@ -105,16 +108,16 @@ class Portal::Template < ActiveRecord::Base
   end
 
   def clear_cache!
-    MemcacheKeys.delete_from_cache draft_key
+    remove_key(draft_key)
   end
 
   def cache_page(page_label, page)
     key = draft_key(page_label)
-    MemcacheKeys.cache(key, page)
+    set_key(key, Marshal.dump(page))
   end
 
   def clear_page_cache!(page_label)
-    MemcacheKeys.delete_from_cache draft_key(page_label)
+    remove_key(draft_key(page_label))
   end
 
   private
