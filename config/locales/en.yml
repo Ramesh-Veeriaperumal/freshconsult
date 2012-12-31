@@ -14,6 +14,7 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  your_email: "Your email"
   filter_options:
     status: "Status"
     responder_id: "Agents"
@@ -738,6 +739,7 @@ en:
         success: The reply has been sent.
       notes: 
         create: 
+          invalid_email: Please enter a valid Email address
           failure: There was a problem adding the note to your ticket. Please try again.
           success: The note has been added to your ticket.
       empty_spam: 

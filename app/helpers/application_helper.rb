@@ -299,6 +299,7 @@ module ApplicationHelper
       ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
       ['{{ticket.description}}',      'Description',        'Ticket description.'],
       ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
+      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL path to ticket for viewing and replying without login'],
       ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
       ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
       ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],
