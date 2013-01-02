@@ -217,6 +217,10 @@ p strong{
 						background: sprite($symbol, source-badge-email);
 					}
 
+					&.collision_refresh {
+						background: sprite($symbol, collision_refresh);
+					}
+
 					background-color: $COL_RESOLVED_CLOSED;		//Fallback
 
 					&.priority_color_1 {
@@ -315,6 +319,45 @@ p strong{
 	}
 }
 
+
+
+.btn {
+	margin: 0;
+	padding: 5px 10px;
+	color: #333;
+	font-family: inherit;
+	font-weight: 500;
+	@include text-shadow(1px 0 0 rgba(255,255,255,0.49));
+	@include box-shadow(1px 0 1px #FFF);
+
+	&.tall {
+		padding: 5px 10px 6px;
+		font-size: 12px;
+	}
+
+}
+
+.btn-group {
+	overflow: visible;
+	display: inline-block;
+	position: relative;
+	.btn.dropdown-toggle:after {
+	 	width: 0;
+		height: 0;
+		display: inline-block;
+		content: "&darr;";
+		text-indent: -99999px;
+		vertical-align: top;
+		margin-top: 6px;
+		margin-left: 0px;
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-top: 6px solid #6f6f6f;
+		@include opacity(1);
+	}
+}
+
+
 .ticket-actions{
 	display: block;
 	margin: 10px 0px 0px;
@@ -356,43 +399,6 @@ p strong{
 	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-	}
-
-
-	.btn {
-		margin: 0;
-		padding: 5px 10px;
-		color: #333;
-		font-family: inherit;
-		font-weight: 500;
-		@include text-shadow(1px 0 0 rgba(255,255,255,0.49));
-		@include box-shadow(1px 0 1px #FFF);
-
-		&.tall {
-			padding: 5px 10px 6px;
-			font-size: 12px;
-		}
-
-	}
-
-	.btn-group {
-		overflow: visible;
-		display: inline-block;
-		position: relative;
-		.btn.dropdown-toggle:after {
-		 	width: 0;
-			height: 0;
-			display: inline-block;
-			content: "&darr;";
-			text-indent: -99999px;
-			vertical-align: top;
-			margin-top: 6px;
-			margin-left: 0px;
-			border-left: 6px solid transparent;
-			border-right: 6px solid transparent;
-			border-top: 6px solid #6f6f6f;
-			@include opacity(1);
-		}
 	}
 
 	.ticket-btns{
@@ -595,6 +601,18 @@ p strong{
 
 }
 
+.list_agents_replying {
+	float: right;
+	margin-top: -19px;
+	background: #fcfcf9;
+	padding: 5px 15px;
+	border: solid 1px #ccc;
+	border-radius: 5px;
+}
+
+#cnt-note .list_agents_replying  {
+	margin: 0 5px;
+}
 #not_following_message {
 	padding:8px 10px;
 	margin-left:10px;
@@ -615,6 +633,10 @@ ol.conversation_thread{
     	height: 50px;
     	border: none;
     	box-shadow: none;
+    }
+
+    .freshdesk_quote {
+    	// display: none;
     }
 
 	li.conversation{
@@ -659,6 +681,18 @@ ol.conversation_thread{
 		width: 150px;
 	}
 
+
+	.post_in_forum {
+		text-align: right;
+		display: inline-block;
+		margin-right: 25px;
+		padding: 0;
+		font-size: 12px;
+
+		[type="checkbox"] {
+			margin: 0 5px;
+		}
+	}
 
     .ui-form .inline-field {
     	$message_window_bg_color: #FDFDFD;
@@ -1517,6 +1551,7 @@ ol.conversation_thread{
 	border: 1px solid #cccccc;
 	@include min-height(30px);
 	@include border-radius(4px);
+	@include box-shadow(0px 5px 8px rgba(130,130,130,0.24));
 
 	blockquote.freshdesk_quote {
 		font-size: 13px;
@@ -1710,6 +1745,7 @@ ol.conversation_thread{
 		padding: 3px 0 3px 25px;
 		width: auto;
 		height: 14px;
+		display: inline-block;
 	}
 
 	.attachment-close{
@@ -2079,6 +2115,16 @@ label.custom-select {
 	margin-top: -9px;
 }
 
+// Agent Collision CSS
+.fixedStrap .ticket-notifications {
+	position: absolute;
+	top: 20px;
+}
+
+
+.symbols-ac-show-reply{  background: sprite($symbol, ac-show-reply);  }
+.symbols-ac-show-view{  background: sprite($symbol, ac-show-viewing);  }
+
 /***** FIXED HEADER CSS ******/
 
 .fixedStrap.at_the_top{
@@ -2118,4 +2164,198 @@ label.custom-select {
 
 .drop-yellow{
 	background-color: yellow;
+}
+
+
+/* Agent Collision CSS */
+
+.reply-flip, .view-flip {
+    position: absolute;
+    display: inline-block;
+    color: #fff;
+    left: -12px;
+    @include perspective(1000);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px #ccc solid;
+    @include opacity(0.15);
+}
+.reply-flip.active, .view-flip.active {
+	@include opacity(1);
+}
+.view-flip {
+    top: -5px;
+}
+.reply-flip {
+    top: 30px;
+}
+
+.reply-flip, .view-flip {
+
+	.flip-front, .flip-back{
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    @include transform-style(preserve-3d);
+	    @include backface-visibility(hidden);
+	    -webkit-transition: 0.75s;
+	    -moz-transition: 0.75s;
+	    -o-transition: 0.75s;
+	    transition: 0.75s;
+	}
+
+	.flip-front{
+	   z-index: 5;
+	   border-radius: 50%;
+	   background: #333;
+	   color: #fff;
+	   width: 20px;
+	   height: 20px;
+	   background-repeat: no-repeat;
+	}
+
+	.flip-back {
+		z-index: 0;
+		border-radius: 50%;
+		font-size: 10px;
+		vertical-align: middle;
+		text-align: center;
+		padding-top: 5px;
+		color: #fff;
+		width: 20px;
+		height: 15px;
+		@include rotateY(-180deg);
+		background: #333;
+		color: #fff;
+	}
+
+	&:hover {
+		.flip-front {
+		    z-index: 5;
+		    @include rotateY(180deg);
+		    background: #333;
+		}
+
+		.flip-back  {
+		    z-index: 10;
+		    @include rotateY(0deg);
+		}
+	}
+
+}
+.reply-flip .flip-front {
+   background-image: inline-image('collision/show-reply.png', 'image/png');
+}
+
+.view-flip .flip-front {
+	background-image: inline-image('collision/show-viewing.png', 'image/png');
+}
+
+/* Keyframes for Agent Collision in Ticket view */
+
+@-webkit-keyframes flipauto{
+    0% {
+        -webkit-transform: rotateY(0deg);
+        z-index: 0;
+    }
+  100% {
+        -webkit-transform: rotateY(180deg);
+        z-index: 20;
+    }
+}
+
+@-webkit-keyframes flipauto-back{
+    0% {
+        -webkit-transform: rotateY(0deg);
+        z-index: 10;
+    }
+  100% {
+        -webkit-transform: rotateY(180deg);
+        z-index:10;
+    }
+}
+
+@-moz-keyframes flipauto{
+    0% {
+        -moz-transform: rotateY(0deg);
+        z-index: 0;
+    }
+  100% {
+        -moz-transform: rotateY(180deg);
+        z-index: 20;
+    }
+}
+
+@-moz-keyframes flipauto-back{
+    0% {
+        -webkit-transform: rotateY(0deg);
+        z-index: 10;
+    }
+  100% {
+        -moz-transform: rotateY(180deg);
+        z-index:10;
+    }
+}
+
+@-ms-keyframes flipauto{
+    0% {
+        -ms-transform: rotateY(0deg);
+        z-index: 0;
+    }
+  100% {
+        -ms-transform: rotateY(180deg);
+        z-index: 20;
+    }
+}
+
+@-ms-keyframes flipauto-back{
+    0% {
+        -ms-transform: rotateY(0deg);
+        z-index: 10;
+    }
+  100% {
+        -ms-transform: rotateY(180deg);
+        z-index:10;
+    }
+}
+
+@keyframes flipauto{
+    0% {
+        transform: rotateY(0deg);
+        z-index: 0;
+    }
+  100% {
+        transform: rotateY(180deg);
+        z-index: 20;
+    }
+}
+
+@keyframes flipauto-back{
+    0% {
+        transform: rotateY(0deg);
+        z-index: 10;
+    }
+  100% {
+        transform: rotateY(180deg);
+        z-index:10;
+    }
+}
+
+.dropdown.open .dropdown-toggle {
+	color: #333;
+}
+.redactor_insert_btns {
+	position: absolute;
+	z-index:5;
+	right: 15px;
+
+	.btn {
+		border: none;
+		background: none;
+	}
+
+	.dropdown-menu {
+		margin-left: -100px;
+	}
 }

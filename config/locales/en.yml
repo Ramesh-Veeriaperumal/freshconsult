@@ -862,7 +862,7 @@ en:
       assigned_to_nobody: "Agent Unassigned"
       reassigned: "Agent Reassigned"
       assigned: "Agent Assigned"
-      priority_change: "::Priority value::"
+      priority_change: "::Priority value:: {{value}}"
       new_ticket: "New Ticket"
       conversation:
         out_email: 
@@ -878,7 +878,7 @@ en:
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
       ticket_split: "Ticket Splitted"
-      status_change: "::Status Value ::"
+      status_change: "::Status Value :: {{value}}"
       deleted: "Ticket Deleted"
       restored: "Ticket Restored"
       product_change: "Product Updated"
@@ -1731,6 +1731,7 @@ en:
   ok: Ok
   back: Back
   ticket:
+    insert: "Insert"
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"

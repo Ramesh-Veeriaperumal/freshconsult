@@ -241,7 +241,7 @@ module Helpdesk::TicketsHelper
     end
   end
   
-  def bind_last_conv (item, signature, forward = false)
+  def bind_last_conv (item, signature, forward = false, quoted=true)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)
@@ -274,19 +274,22 @@ module Helpdesk::TicketsHelper
         default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
       end 
     end
+
+    return default_reply unless quoted
+    
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content+"</blockquote></div>"
     return content
   end
 
-  def bind_last_reply (item, signature, forward = false)
+  def bind_last_reply (item, signature, forward = false, quoted = true)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     # last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_key(key) || bind_last_conv(item, signature) )
+    return ( get_key(key) || bind_last_conv(item, signature, false, quoted) )
   end
 
   def status_changed_time_value_hash (ticket)

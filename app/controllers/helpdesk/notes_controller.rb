@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include ParserUtil
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
-  
+  before_filter :add_quoted_text, :only => [:create]
   before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
@@ -56,6 +56,11 @@ class Helpdesk::NotesController < ApplicationController
 
   
   def create  
+    puts " "
+    puts " ------ "
+    puts " "
+    puts "params :: "
+    puts params.inspect
     build_attachments @item, :helpdesk_note
     if @item.save
       if params[:post_forums]
@@ -214,6 +219,31 @@ class Helpdesk::NotesController < ApplicationController
 
   def set_default_source
     @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
+  end
+
+  def add_quoted_text
+    puts "email_reply? :: #{email_reply?}"
+    puts "Private?? #{!params[:helpdesk_note][:private].to_bool}"
+    if email_reply? and !params[:helpdesk_note][:private].to_bool
+
+      puts "Adding Quoted Text "
+      last_conv = scoper.visible.public.last || @parent
+      puts "last_conv.requester :: #{last_conv.inspect}"
+      last_reply_by = (last_conv.user.name || last_conv.requester.name || '' ) + "&lt;" + (last_conv.user.email || last_conv.requester.email || '') + "&gt;"
+      last_reply_time = last_conv.created_at.strftime("%a, %b %e, %Y at %l:%M %p")
+      last_reply_content = last_conv.description_html || last_conv.body_html
+
+      puts "last_reply_by :: #{last_reply_by.inspect}" 
+      puts "last_reply_time :: #{last_reply_time.inspect}" 
+      puts "last_reply_content :: #{last_reply_content.inspect}" 
+
+      params[:helpdesk_note][:body_html] += "<div class='freshdesk_quote'>
+                                <blockquote class='freshdesk_quote'>
+                                  On #{last_reply_time} <span class='separator' /> , 
+                                  #{last_reply_by} wrote: #{last_reply_content} 
+                                </blockquote>
+                              </div>"
+    end
   end
 
   def after_restore_url

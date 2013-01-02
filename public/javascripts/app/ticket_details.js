@@ -230,6 +230,8 @@ swapEmailNote = function(formid, link){
 		});
 	}
 
+	activeForm.trigger("visibility")
+
 	//Draft Saving for Reply form
 	if (formid == 'cnt-reply') {
 		dontSaveDraft = false;
@@ -251,7 +253,7 @@ swapEmailNote = function(formid, link){
 }
 
 var activeTinyMce = null;
-function show_canned_response(button, ticket_id){
+show_canned_response = function(button, ticket_id){
 	$("#canned_response_container").css($(button).offset());
 
 	activeTinyMce = $(button).data("tinyMceId") || "";
@@ -269,7 +271,7 @@ function show_canned_response(button, ticket_id){
 }
 
 	 
-function insertIntoConversation(value,element_id){
+insertIntoConversation = function(value,element_id){
 	note_area  = $('#cnt-note');
 	reply_area = $('#cnt-reply');
 	fwd_area = $('#cnt-fwd')
@@ -299,7 +301,7 @@ function insertIntoConversation(value,element_id){
 	return;
 }
 
-function getCannedResponse(ticket_id, ca_resp_id){
+getCannedResponse = function(ticket_id, ca_resp_id){
 	jQuery("#canned_response_container").addClass("loading")
 	jQuery.ajax({   
 					type: 'POST',
@@ -631,10 +633,14 @@ $(document).ready(function() {
 		})
 	})
 
+	$('.collision_refresh').live('click', function(ev) {
+		window.location = TICKET_DETAILS_DATA['ticket_path'];
+	});
+
 	$(".conversation_thread .request_panel form .cancel_btn").live('click', function(ev) {
 		ev.preventDefault();
 		var btn = $(this);
-		$('#' + btn.data('cntId')).hide();
+		$('#' + btn.data('cntId')).hide().trigger('visibility');
 		$('#' + btn.data('cntId') + '-body').destroyEditor();
 		if (btn.data('showPseudoReply')) 
 			$('#TicketPseudoReply').show();
@@ -692,6 +698,7 @@ $(document).ready(function() {
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
 						$('#' + _form.data('panel')).hide();
+						$('#' + _form.data('panel')).trigger('visibility');
 					}
 
 					if (_form.attr('rel') == 'edit_note_form')  {
@@ -815,10 +822,10 @@ $(document).ready(function() {
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				submit.text(submit.data('default-text')).prop('disabled',false);
-				console.log('Errors');
-				console.log(jqXHR);
-				console.log(textStatus);
-				console.log(errorThrown);
+				// console.log('Errors');
+				// console.log(jqXHR);
+				// console.log(textStatus);
+				// console.log(errorThrown);
 			}
 		});
 	});

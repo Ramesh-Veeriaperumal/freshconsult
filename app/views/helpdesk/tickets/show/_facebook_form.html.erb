@@ -1,7 +1,8 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea">
+<div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-node-name="agent_replying">
   <div class="form_title">
     <strong><%= t(".title", :user => @ticket.requester.name ) %>: </strong> 
   </div>
+  <div class="list_agents_replying" class="hide"></div>
   <input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
     <%= f.error_messages %>

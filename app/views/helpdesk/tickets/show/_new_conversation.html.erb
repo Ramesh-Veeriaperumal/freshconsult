@@ -11,7 +11,7 @@
 		  								}) unless @ticket.is_twitter? or @ticket.is_facebook? %>
 
 			  	
-				<div class="request_panel hide" id="cnt-fwd">
+				<div class="request_panel hide" id="cnt-fwd" rel="emitter" data-node-name="agent_replying">
 				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
 							:locals => { 
 										:id => 'send-fwd-email', 

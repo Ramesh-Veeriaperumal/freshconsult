@@ -1,7 +1,7 @@
 <%
 note = activity[:is_note] ? activity[:stack].first.note : nil
 %>
-<li class="conversation activity <%= 'hide' if activity[:important_type] == 'new_ticket' %>">
+<li class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>">
 	<%= link_to user_avatar(activity[:user]), activity[:user], :class => 'avatar-wrap'  if activity[:user] %>
 	<div class="commentbox <%= 'commentbox-gray' if activity[:user].blank? or activity[:user].agent? %>">
 	<% if note.present? %>
@@ -38,7 +38,7 @@ note = activity[:is_note] ? activity[:stack].first.note : nil
 		<% end %>
 	<% else %>
 		<div class="tag">
-			<%= t('activities.tag.' + activity[:important_type]) %>
+			<%= t('activities.tag.' + activity[:important][:type], {:value => activity[:important][:value]} ) %>
 		</div>
 		<div class="author-mail-detail">
 			<%= t("helpdesk.tickets.note.posted_on", :user_name => link_to_user(activity[:user], :class => "user_name" ), :note_date => formated_date(activity[:time]) ) %>
@@ -52,10 +52,6 @@ note = activity[:is_note] ? activity[:stack].first.note : nil
 															'notable_path' => link_to(h(act.notable), act.notable) )
 														) 
 											}
-				puts "Stack :: #{stack.inspect}"
-				puts "stack.map{|act| act.gsub(t('activities.action_verb'), '')} "
-				puts "#{t('activities.action_verb')} "
-				puts "#{stack.map{|act| act.gsub(t('activities.action_verb'), '')}}"
 			%>
 			<%=  stack.size > 1 ? t('activities.action_verb').capitalize + ' ' + stack.map{|act| act.gsub(t('activities.action_verb'), '')}.to_sentence : stack.first %>
 		</div>

@@ -1,5 +1,12 @@
 <%= include_stylesheets :redactor  %>
+
+<%# include_stylesheets :pattern %>
+<%# javascript_include_tag  'bootstrap' %>
+<%= include_javascripts :redactor  %>
+<%= include_javascripts :pattern  %>
+<%= javascript_include_tag  'bootstrap/bootstrap.dialog' %>
 <%= include_stylesheets :tkt_details %>
+<%= stylesheet_link_tag "app/lib/dialog" %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
 <div class="tkt-wrapper ticket_show" data-showing='notes'>
 	<div class="tkt-wrapper-inner clearfix">
@@ -39,9 +46,6 @@
 		</div>
 	</div>
 </div>
-<%= javascript_include_tag  'bootstrap' %>
-<%= include_javascripts :redactor  %>
-<%= javascript_include_tag  'app/ticket_details' %>
 
 <script type="text/javascript">
 <% if @ticket.is_twitter? %>
@@ -50,4 +54,13 @@ jQuery(document).ready(function(){
 });
 <% end %>
 </script>
-<%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %> 
+<%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
+<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
+<%= javascript_include_tag  'app/ticket_details' %>
+<script type="text/javascript">
+<% unless @draft.nil? %>
+	swapEmailNote('cnt-reply', null);
+	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
+	jQuery(window).trigger('scroll');
+<% end %>
+</script>

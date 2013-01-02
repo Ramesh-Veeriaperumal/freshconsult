@@ -1,4 +1,4 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;" data-is-twitter="<%=@ticket.is_twitter?.to_s%>" data-type="textarea">
+<div class="request_panel" id="<%=cntid%>" style="display:none;" data-is-twitter="<%=@ticket.is_twitter?.to_s%>" data-type="textarea" rel="emitter" data-node-name="agent_replying">
 	<div class="form_title">
 		<strong><%= t(".title", :user=>"@#{@ticket.requester.twitter_id}") %>: </strong> 
 
@@ -6,6 +6,7 @@
 			<%=t('ticket.tweet_form.user_not_following')%>
 		</span>
 	</div>
+	<div class="list_agents_replying" class="hide"></div>
 	<input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
 	<% form_for note, :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
 		<%= f.error_messages %>

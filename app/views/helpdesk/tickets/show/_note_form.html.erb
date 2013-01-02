@@ -1,4 +1,4 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
+<div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
   <% form_for note, :html => {
                       :multipart => true,  
                       :id => "HelpdeskNotes",
@@ -20,6 +20,7 @@
       </div>
       <%= f.check_box(:private, :checked => true) %>
     </div>
+    <div class="list_agents_replying" class="hide"></div>
     <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
 
     <%= f.error_messages %>

@@ -20,7 +20,6 @@
 							:method => :post, :confirm => t(".split_ticket_confirm"),
 							:class => "tooltip", :title => t(".split_this_as_new_ticket")) if note.incoming and @item && !@item.fb_post %>
 
-				<% p helpdesk_ticket_helpdesk_note_path(note.notable, note) %>
 				<%= link_to_remote(t('delete'), :url => helpdesk_ticket_helpdesk_note_path(note.notable, note), 
 							:method => :delete, :confirm => t(".delete_note"), 
 							:class => "red_links") if note.user && note.user.agent?    %>   
@@ -60,7 +59,7 @@
 			<div class="attachments-wrap clearfix">
 				<h5><strong><%= pluralize(note.attachments.size, t('attachment'), t('attachments'))%></strong></h5>
 				<ul class="attachment_list">
-				    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+				    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 				</ul>
 			</div>
 		<% end %>

@@ -10,7 +10,7 @@ module Helpdesk::Activities
 			eligible = (activity.blank?) ? true : eligible?(current_activity, previous_activity_meta)
 
 			unless can_combine and eligible
-				activity_stack << activity unless activity.blank?
+				activity_stack << combine(activity, previous_activity_meta) unless activity.blank?
 				activity = {}
 				previous_activity_meta = {}
 			end
@@ -26,19 +26,17 @@ module Helpdesk::Activities
 			activity[:stack] << current_activity
 			activity[:time] = current_activity.created_at
 			activity[:user] = current_activity.user
-			activity[:important_type] = important_type(previous_activity_meta[:types])
 			activity[:is_note] = current_activity.is_note?
-			#Updating the important one of the types
-
 
 			unless can_combine
-				activity_stack << activity
+				activity_stack << combine(activity, previous_activity_meta)
 				activity = {}
 				previous_activity_meta = {}
 			end
 
 		end
-		activity_stack << activity unless activity.blank?
+
+		activity_stack << combine(activity, previous_activity_meta) unless activity.blank?
 
 		activity_stack
 	end
@@ -68,11 +66,9 @@ private
 											]
 	#The above list is only activity types that would be stacked.
 
-	def important_type(types)
-		return types.first if types.size == 1
-		types_importance = types.map { |type| {:index => ACTIVITY_TYPES_IN_IMPORTANCE_ORDER.index(type), :type => type}}
-		types_importance.sort! { |x,y| x[:index] <=> y[:index]}.first[:type]
-	end
+
+	ACTIVITY_TYPES_REQUIRING_DATA_FOR_IMPORTANT_TYPE = [ 'priority_change', 'status_change' ]
+
 
 	def can_combine?(activity)
 		activity.is_ticket? and !(ACTIVITIES_NOT_TO_COMBINE.include?(activity.ticket_activity_type) or activity.is_note?)
@@ -93,4 +89,32 @@ private
 	def same_notable?(current,previous_notable) 
 		current.notable.class.name == previous_notable.class.name and current.notable.id == previous_notable.id
 	end
+
+	def combine(activity, previous_activity_meta)
+		activity[:important] = highlight(previous_activity_meta[:types], activity[:stack])
+		activity
+	end
+
+	def highlight(types, stack)
+		type = important_type(types)
+		value = ""
+		if [ 'priority_change', 'status_change' ].include?(type) 
+			reversed = stack.reverse
+			reversed.each do |act|
+
+				if act.short_descr == "activities.tickets.#{type}.short"
+					value = act.activity_data.values.first
+					break
+				end
+			end
+		end
+		{:type => type, :value => value}
+	end
+
+	def important_type(types)
+		return types.first if types.size == 1
+		types_importance = types.map { |type| {:index => ACTIVITY_TYPES_IN_IMPORTANCE_ORDER.index(type), :type => type}}
+		types_importance.sort! { |x,y| x[:index] <=> y[:index]}.first[:type]
+	end
+
 end

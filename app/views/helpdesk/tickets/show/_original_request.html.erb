@@ -20,7 +20,7 @@
 		<div class="attachments-wrap clearfix">
 			<h5><strong><%= pluralize(@ticket.attachments.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
-			    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@ticket] } %>
+			    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@ticket] } %>
 			</ul>
 		</div>
 	<% end %>

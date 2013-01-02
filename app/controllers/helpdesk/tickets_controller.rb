@@ -572,10 +572,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   def activities
     if params[:since_id].present?
-      puts ".activities.activity_since(params[:since_id])"
       activity_records = @item.activities.activity_since(params[:since_id])
     elsif params[:before_id].present?
-      activity_records = @item.activities.activity_before(params[:before_id]).reverse
+      activity_records = @item.activities.activity_before(params[:before_id])
     else
       activity_records = @item.activities.newest_first.first(3)
     end
@@ -684,7 +683,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_reply_to_all_emails
-    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note])
+    @ticket_notes = @ticket.conversation(nil,3,[:survey_remark, :user, :attachments, :schema_less_note])
     reply_to_all_emails
   end
 
