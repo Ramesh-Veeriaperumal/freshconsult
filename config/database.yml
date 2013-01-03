@@ -9,7 +9,7 @@
 
 development:
   adapter: seamless_database_pool
-  database: helpkit2
+  database: helpkit1
   username: root
   password: 
   pool_adapter: mysql
