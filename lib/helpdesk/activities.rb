@@ -62,7 +62,8 @@ private
 												'product_change', #V
 												'product_change_none', #T
 												'source_change', #V
-												'ticket_type_change' #V
+												'ticket_type_change', #V
+												'execute_scenario' #V
 											]
 	#The above list is only activity types that would be stacked.
 

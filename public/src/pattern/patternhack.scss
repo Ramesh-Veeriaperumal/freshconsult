@@ -134,7 +134,70 @@ strong {
   vertical-align: middle;
 }
 
+/*  overriding buttons styles from Bootstrap v1.4 */
 
+.btn-group.open {
+  overflow: visible;
+}
+.btn.dropdown-toggle {
+  overflow: visible;
+  &:after { 
+    display: none;
+  }
+
+  .caret {
+    margin: 6px 0 0;
+  }
+}
+.open .dropdown-toggle {
+  color: inherit;
+}
+
+// Adding upward arrow buttons to Dropdown menus
+
+.open > .dropdown-menu:before {
+  @include triangle(up, rgba(0, 0, 0, 0.35), 6px);
+  position:absolute;
+  z-index:2;
+  content:"";
+  top: -6px;
+  left: 25px;
+}
+
+.open > .dropdown-menu:after {
+  @include triangle(up, #FFF, 5px);
+  position:absolute;
+  z-index:3;
+  content:"";
+  top: -5px;
+  left: 26px;
+}
+
+
+/*  End of Button overriding */
+
+
+// Stripe Select
+
+table.selected_to_yellow tbody tr td {
+  &.stripe-select {
+    background-color: #fffad8;
+  }
+
+  label { cursor: pointer;}
+}
+
+
+// End of Stripe Select
+
+.dialog-well {
+  height: 350px;
+  overflow: scroll;
+  border: 1px solid #f1f1f1;
+  border-top: 3px solid #f1f1f1;
+  border-bottom: 8px solid #f1f1f1;
+  @include corners(5px);
+}
 /* This is class is overriding app-common css. */
 
 .pagination 

@@ -14,6 +14,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Activities
 
   before_filter :set_mobile, :only => [:index, :show, :details, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
+  before_filter :set_show_version
   before_filter :select_show_page , :only => [:show, :details ]
   before_filter :check_user, :load_installed_apps, :only => [:show, :details, :forward_conv]
 
@@ -367,7 +368,10 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.xml { render :xml => @item, :status=>:success }
       format.json { render :json => @item, :status=>:success }  
-      format.js
+      format.js { 
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
+                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+      }
       format.mobile { 
         render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
       }
@@ -871,6 +875,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   end
 
+  def set_show_version
+    @new_show_page = true
+  end
   def select_show_page
     return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'
     # redirect_to url_for(:overwrite_params => { :action => 'show' }) if params[:action] == 'details'

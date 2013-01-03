@@ -128,7 +128,7 @@ javascripts:
     - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/twipsy.js
-    - public/javascripts/bootstrap/modal.js
+    # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js
     - public/javascripts/dyn_menu.js
@@ -148,7 +148,7 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-carousel.js
     # - public/javascripts/pattern/bootstrap-collapse.js
     - public/javascripts/pattern/bootstrap-dropdown.js
-    # - public/javascripts/pattern/bootstrap-modal.js
+    - public/javascripts/pattern/bootstrap-modal.js
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js

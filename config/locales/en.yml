@@ -966,7 +966,7 @@ en:
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
       execute_scenario: 
         short: "{{user_path}} executed the scenario '{{scenario_name}}"
-        without_user: "executed the scenario <strong>'{{scenario_name}}"
+        without_user: "executed the scenario <strong>{{scenario_name}}</strong>"
         long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "

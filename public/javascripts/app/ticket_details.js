@@ -868,6 +868,13 @@ $(document).ready(function() {
 	// $.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
 });
 
+
+// MOVE TO !PATTERN
+$('.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]').live('change', function(ev) {
+	$(this).parents('.selected_to_yellow').find('.stripe-select').removeClass('stripe-select');
+	$(this).parents('td').first().toggleClass('stripe-select', $(this).prop('checked'));
+});
+
 // Capturing the Unload and making sure everything is fine, before we let the 
 window.onbeforeunload = function(e) {
 	var messages = [];

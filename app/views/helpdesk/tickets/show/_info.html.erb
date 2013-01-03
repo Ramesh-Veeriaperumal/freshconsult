@@ -43,6 +43,28 @@
 									<% unless @ticket.deleted %>
 									<li class="ticket-btns">
 										<div class="btn-group">
+										  <a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
+										    <span class="reply-inner"></span>
+										  	<%= t('ticket.reply_to')  %>
+										  	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+										    <span class="caret"></span>
+											</a>
+										  </a>
+										  <ul class="dropdown-menu">
+										    <li>
+										    	<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
+										    		<%= t('fwd_to') %>
+										    	</a>
+										    </li>
+											<li>
+												<a href="#"  rel="note-button" data-note-type="note" >
+													<%= t('ticket.add_note') %>
+												</a>
+											</li>
+										  </ul>
+										</div>
+
+										<!-- <div class="btn-group">
 										  <button class="btn tall" rel="note-button" data-note-type="reply" id="ReplyButton">
 										  	<span class="reply-inner"></span>
 										  	<%= t('ticket.reply_to')  %>
@@ -63,7 +85,7 @@
 												</a>
 											</li>
 										  </ul>
-										</div>
+										</div> -->
 									</li>
 									<li class="ticket-btns">
 										<%= link_to(t('ticket.close_btn'), "#", 
@@ -86,6 +108,12 @@
 
 										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
 										  	
+										  	<li>
+										  		<%= link_to( t('ticket.execute_scenario'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
+										  				:rel => 'freshdialog', "data-target" => "#execute_scenario", 
+										  				"data-submit-label" => t('ticket.execute_scenario'),
+										  				:title => t('ticket.execute_scenario') ) %>
+										  	</li>
 										  	<li>
 										  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
 										  	</li>

@@ -1,0 +1,16 @@
+<%  form_remote_tag(:url => execute_scenario_helpdesk_ticket_path(ticket), :method => :post) do %>
+<div class="dialog-well">
+<table class="table table-striped selected_to_yellow">
+  <% current_account.scn_automations.each do |scenario| %>
+  <tr><td>
+
+	<label class="radio">
+		<input type="radio" name="scenario_id" value="<%=scenario.id%>">
+		<div><strong> <%= h scenario.name %> </strong> </div>
+		<div><span class="sub_title"> <%= h scenario.description %> </span> </div>
+	</label>
+  </td></tr>
+  <% end %>
+</table>
+</div>
+<% end %>

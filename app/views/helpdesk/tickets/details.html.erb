@@ -1,6 +1,6 @@
 <%= include_stylesheets :redactor  %>
-
-<%# include_stylesheets :pattern %>
+<!-- INCLUDING PATTERN CSS -->
+<%= include_stylesheets :pattern %>
 <%# javascript_include_tag  'bootstrap' %>
 <%= include_javascripts :redactor  %>
 <%= include_javascripts :pattern  %>
@@ -64,3 +64,4 @@ jQuery(document).ready(function(){
 	jQuery(window).trigger('scroll');
 <% end %>
 </script>
+<% content_for :layoutType do -%>ticket_details<%- end %>

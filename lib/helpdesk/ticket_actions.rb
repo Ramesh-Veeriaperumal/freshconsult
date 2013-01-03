@@ -95,7 +95,11 @@ module Helpdesk::TicketActions
 
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
-    render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
+    unless @new_show_page
+      render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
+    else
+      render :partial => "helpdesk/tickets/show/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
+    end
   end
   
   def update_split_activity    

@@ -1,1 +1,2 @@
 show_ajax_flash page
+page << "try { jQuery('#execute_scenario').modal('hide'); } catch(e) {}"

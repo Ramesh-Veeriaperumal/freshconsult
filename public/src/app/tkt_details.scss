@@ -2,7 +2,7 @@
 /*Requester Info Tabs in Ticket Details page */
 @import "requester-info/*.png";
 
-.pagearea{
+.ticket_details .pagearea{
 	min-width: 1100px;
 	margin: 0 auto;
 	margin-top: -11px;
@@ -48,6 +48,7 @@ p strong{
 
 .clearfix {
     zoom:1;
+    overflow: visible;
 }
 
 .tkt-wrapper-inner{
@@ -321,41 +322,41 @@ p strong{
 
 
 
-.btn {
-	margin: 0;
-	padding: 5px 10px;
-	color: #333;
-	font-family: inherit;
-	font-weight: 500;
-	@include text-shadow(1px 0 0 rgba(255,255,255,0.49));
-	@include box-shadow(1px 0 1px #FFF);
+// .btn {
+// 	margin: 0;
+// 	padding: 5px 10px;
+// 	color: #333;
+// 	font-family: inherit;
+// 	font-weight: 500;
+// 	@include text-shadow(1px 0 0 rgba(255,255,255,0.49));
+// 	@include box-shadow(1px 0 1px #FFF);
 
-	&.tall {
-		padding: 5px 10px 6px;
-		font-size: 12px;
-	}
+// 	&.tall {
+// 		padding: 5px 10px 6px;
+// 		font-size: 12px;
+// 	}
 
-}
+// }
 
-.btn-group {
-	overflow: visible;
-	display: inline-block;
-	position: relative;
-	.btn.dropdown-toggle:after {
-	 	width: 0;
-		height: 0;
-		display: inline-block;
-		content: "&darr;";
-		text-indent: -99999px;
-		vertical-align: top;
-		margin-top: 6px;
-		margin-left: 0px;
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
-		border-top: 6px solid #6f6f6f;
-		@include opacity(1);
-	}
-}
+// .btn-group {
+// 	overflow: visible;
+// 	display: inline-block;
+// 	position: relative;
+// 	.btn.dropdown-toggle:after {
+// 	 	width: 0;
+// 		height: 0;
+// 		display: inline-block;
+// 		content: "&darr;";
+// 		text-indent: -99999px;
+// 		vertical-align: top;
+// 		margin-top: 6px;
+// 		margin-left: 0px;
+// 		border-left: 6px solid transparent;
+// 		border-right: 6px solid transparent;
+// 		border-top: 6px solid #6f6f6f;
+// 		@include opacity(1);
+// 	}
+// }
 
 
 .ticket-actions{
@@ -1887,7 +1888,7 @@ label.custom-select {
 .activity_toggle {
 	float: right;
 	text-align: center;
-	width: 100px;
+	width: 120px;
 	@include border-radius(4px);
 	border: 1px #eaeaea solid;
 	background-color: #f7f7f7;
