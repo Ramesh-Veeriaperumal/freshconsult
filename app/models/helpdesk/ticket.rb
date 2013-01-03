@@ -34,10 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
   
   after_create :refresh_display_id, :create_meta_note
 
@@ -212,7 +209,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :select => "helpdesk_tickets.id", 
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
-  
+
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -241,7 +238,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   #Sphinx configuration starts
-  define_index do
+  define_index 'without_description' do
+    
+    indexes :display_id, :sortable => true
+    indexes :subject, :sortable => true
+    
+    has account_id, deleted, responder_id, group_id, requester_id, status
+    has sphinx_requester.customer_id, :as => :customer_id
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
+
+    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
+
+    #set_property :delta => Sphinx::TicketDelta
+
+    set_property :field_weights => {
+      :display_id   => 10,
+      :subject      => 10
+     }
+  end
+  #Sphinx configuration ends here..
+
+
+  define_index 'with_description' do
     
     indexes :display_id, :sortable => true
     indexes :subject, :sortable => true
@@ -264,7 +283,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :note         => 3
      }
   end
-  #Sphinx configuration ends here..
 
   #For custom_fields
   COLUMNTYPES = [
@@ -288,11 +306,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
-  
+
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type ||= account.ticket_type_values.first.value
+    self.ticket_type ||= account.ticket_types_from_cache.first.value
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
     #self.description = subject if description.blank?
@@ -583,7 +601,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def self.search_display(ticket)
-    "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
+    "#{ticket.subject} (##{ticket.display_id})"
   end
   
   def friendly_reply_email
@@ -914,6 +932,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
 
+
   private
 
     
@@ -1169,6 +1188,5 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def can_add_requester?
       email.present? || twitter_id.present? || external_id.present? 
     end
-
 end
 

@@ -1,6 +1,7 @@
 class AgentsController < ApplicationController
   include AgentsHelper
   helper AgentsHelper
+  include APIHelperMethods
   
   include Gamification::GamificationUtil
 
@@ -35,10 +36,18 @@ class AgentsController < ApplicationController
   end
     
   def index    
-    @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
+    unless params[:query].blank?
+      #for using query string in api calls
+      @agents = current_account.all_agents.with_conditions(convert_query_to_conditions(params[:query])).filter(params[:page], params.fetch(:state, "active")) 
+    else
+      @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
+    end
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @agents }
+      format.xml  { render :xml => @agents.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
+      format.json  { render :json => @agents.to_json({:except=>[:account_id,:google_viewer_id] ,:include=>{:user=>{:only=>[:id,:name,:email,:created_at,:updated_at,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address] }}}) } #Adding the attributes from user as that is what is needed
     end
   end
 

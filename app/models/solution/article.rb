@@ -9,10 +9,8 @@ class Solution::Article < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to :account
   
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
+  
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable',
