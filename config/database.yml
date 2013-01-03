@@ -1,11 +1,29 @@
 # SQLite version 3.x
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
+# development:
+#   adapter: mysql
+#   encoding: utf8
+#   database: helpkit2
+#   username: root
+#   password: 
+
 development:
-  adapter: mysql
-  encoding: utf8
-  database: helpkit1
+  adapter: seamless_database_pool
+  database: helpkit2
   username: root
   password: 
+  pool_adapter: mysql
+  port: 3306
+  master:
+    host: 127.0.0.1
+    pool_weight: 0
+    username: root
+    password: 
+  read_pool:
+    - host: 127.0.0.1
+      pool_weight: 2
+      database: helpkit1
+      
 
 slave:
   adapter: mysql
