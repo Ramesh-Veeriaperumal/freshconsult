@@ -753,6 +753,10 @@ en:
         success: The trash was emptied.
       delete_forever:
         success: %{tickets} deleted.
+      unwatch: 
+        success: %{tickets} removed from the watch-list.
+        failure: Ticket unwatch action failed.
+        unsubscribe_success: The ticket has been removed from your watch-list.
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1743,6 +1747,7 @@ en:
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
+    unwatch: Unwatch
     submit_ticket_title: Submit a ticket
     create_ticket_title: Create a ticket
     convert_ticket_title: Convert as a ticket
@@ -2042,6 +2047,35 @@ en:
         priority: "Priority"
         time_ago: "%{time_in_words} ago"
         sla: "Due By"
+      add_watcher:
+        add_watcher_link: Add Watcher
+        add_button: Add
+        no_agents: No agent is watching this ticket
+        ticket_watchers: Ticket Watchers
+        me: Me
+        cancel: Cancel
+        view_watchers_link: View Watchers
+        no_watcher_text: No agent is watching this ticket
+        watcher_text: Agents added as watchers receive email alerts when the ticket is updated
+        unwatch: Unwatch
+        pick_agents: Pick agents to watch this ticket
+        all_agents_watching: All agents are watching this ticket
+        mail:
+          hi: Hi
+          added_as_watcher: %{agent_name} has added you as a watcher
+          new_activity: New activity on your watched ticket
+          new_activity_subject: New activity on watched ticket
+          new_watcher_subject: %{agent_name} has added you as a watcher for the ticket %{ticket_id} %{ticket_subject}
+          activity: Activity
+          ticket: Ticket
+          requester: Requester
+          customer: The Customer
+          status_change:  %{agent_name} has %{status} the ticket
+          response: %{responder} has responded to the ticket
+          ticket_details: Ticket Details
+          customer_response: Customer Response
+          agent_response: Agent Response
+          stop_emails: "Stop getting activity emails on ticket #%{ticket_id}"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -2101,7 +2135,7 @@ en:
         my_on_hold: My Tickets On Hold
         select: Select View...
         spam: Spam
-        monitored_by: Tickets I'm Monitoring
+        monitored_by: Tickets I'm Watching
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by

@@ -257,7 +257,11 @@
 
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
+                                                        :unsubscribe => :get,
+                                                        :unwatch => :delete,
+                                                        :unwatch_multiple => :delete },
+                                       :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_' 
