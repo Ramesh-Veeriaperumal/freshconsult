@@ -355,7 +355,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end 
 
     def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private?
+      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private? || zendesk_import?
     end
 
     def update_avg_response_time(ticket_state)
