@@ -505,8 +505,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if @ticket_changes.key?(:status)
-      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
-      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
+      if (status == RESOLVED)
+        notify_by_email(EmailNotification::TICKET_RESOLVED) 
+        notify_watchers("resolved")
+        return
+      end
+      if (status == CLOSED)
+        notify_by_email(EmailNotification::TICKET_CLOSED)
+        notify_watchers("closed")
+        return
+      end
+    end
+  end
+
+  def notify_watchers(status)
+    self.subscriptions.each do |subscription|
+      if subscription.user.id != User.current.id
+        Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_status_change, self, 
+                                              subscription, status, "#{User.current.name}")
+      end
     end
   end
   
@@ -912,6 +929,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def unsubscribed_agents
+    user_ids = subscriptions.map(&:user_id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
 
 
   private

@@ -1,12 +1,16 @@
 class Reports::HelpdeskReportsController < ApplicationController
-  
+
+  include ReadsToSlave
   include Reports::HelpdeskReport
+  
   
   before_filter { |c| c.requires_feature :advanced_reporting }
   before_filter { |c| c.requires_permission :manage_reports }
   before_filter :set_selected_tab
   before_filter :set_default_values
-  
+
+
+
   def generate
     @pie_charts_hash = {}
 

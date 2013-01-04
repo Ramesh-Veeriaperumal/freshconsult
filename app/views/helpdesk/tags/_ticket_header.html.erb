@@ -23,6 +23,12 @@
 					<%= link_to_function("Close", "Helpdesk.sel.submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 					
 					<%= link_to_function("Pick Up", "Helpdesk.sel.submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+
+					<% if current_selector == [:monitored_by] %>
+					  <%= link_to_function("Unwatch", 
+					  "Helpdesk.sel.submit('#{ unwatch_multiple_helpdesk_ticket_helpdesk_subscriptions_path('multiple') }', 'delete')", :class => "button") %>
+					<% end %>
+
 					
 					<a href="javascript:void(0)" id="assign-options-link" class="button">Assign To Agent</a>
 					<div id="assign-options" class="assign-agent" style="display:none;">
