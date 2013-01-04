@@ -2881,7 +2881,12 @@ a.page_title{
 		}	
 		
 	}
-
+.private-icon{
+	background:sprite($symbol, private-lock-grey) no-repeat;
+	width:16px;
+	height:16px;
+	display:inline-block;
+}
 .request-list{
 	background-color:#f4f4f4;
 	margin:4px 1px;
@@ -2916,9 +2921,6 @@ a.page_title{
 		}
 		.private-icon{
 			display:none;
-			background:sprite($symbol, private-lock-grey) no-repeat;
-			width:16px;
-			height:16px;
 			position:relative;
 			left:5px;
 			float:right;			

@@ -2,10 +2,10 @@ class Helpdesk::TimeSheetsController < ApplicationController
   
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
+  before_filter :set_show_version
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :new, :update, :toggle_timer] 
   before_filter :load_installed_apps, :only => [:index, :create, :new, :edit, :update, :toggle_timer, :destroy]
-  before_filter :set_newshow_page
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
@@ -17,11 +17,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     end
     respond_to do |format|
       format.html do 
-        if new_show_page?
-          render "helpdesk/time_sheets/v2/index", :layout => false
-        else
-          render :index, :layout => false
-        end
+        render :index, :layout => false
       end
       format.xml do
         render :xml=>@time_sheets.to_xml({:root=>"time_entries"})
@@ -62,7 +58,6 @@ class Helpdesk::TimeSheetsController < ApplicationController
     if @time_entry.save!
       respond_to_format @time_entry
     end
-    render "helpdesk/time_sheets/v2/create" if new_show_page?
   end
    
   def show
@@ -76,10 +71,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
     if @time_entry.update_attributes(time_entry)
       respond_to_format @time_entry
-      # TO BE FIXED
-      # render "helpdesk/time_sheets/v2/update" if new_show_page? 
     end
-    render "helpdesk/time_sheets/v2/update" if new_show_page?
   end 
   
   def toggle_timer     
@@ -89,8 +81,6 @@ class Helpdesk::TimeSheetsController < ApplicationController
         update_running_timer @time_entry.user_id
         @time_entry.update_attributes({ :timer_running => true, :start_time => Time.zone.now })
      end
-     render "helpdesk/time_sheets/v2/toggle_timer" if new_show_page?
-     #TO BE FIXED
      respond_to_format @time_entry
   end
   
@@ -161,12 +151,12 @@ private
     return (time_entry.time_spent + running_time)
   end
 
-  def new_show_page?
-    true
+  def set_show_version
+    @new_show_page = true
   end
 
-  def set_newshow_page
-    @details_page_version = 2 if new_show_page?
+  def new_show_page?
+    true
   end
   
   def respond_to_format result

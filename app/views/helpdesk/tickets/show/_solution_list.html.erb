@@ -1,0 +1,96 @@
+<form id="searchmoreform" action="#">
+	<div class="input-append">
+	  <input name="solution[search]" id="solution_search" placeholder="Search solutions">
+	  <input type="submit" class="btn" value="Search" />
+	</div>
+</form>
+<div class="dialog-well">
+  <div id="default_solution_suggestions" class="request_well">
+  	<table class="table table-striped">
+    <%= each_or_message("helpdesk/tickets/show/article", @articles, t(:'ticket.suggested_solutions.no_result')) %>
+    </table>
+  </div>
+  <div id="more_search_results"></div>
+</div>
+<script type="text/javascript">
+
+function respondWithSol(select, sol_id, url){	
+	if (select == "url"){
+		insertSuggestions(url);
+	}
+	else if(select == "none"){
+		return true;		
+	}
+	else{
+		handleSolutionDetail(sol_id);		
+	}
+}
+
+function insertSuggestions(value)
+{
+	note_area  = jQuery('#cnt-note');
+	reply_area = jQuery('#cnt-reply');
+	if(reply_area.css('display')== 'block') {
+	 	element_id = "cnt-reply-body";
+	}
+	else if (note_area.css('display') =='block'){
+		element_id = "cnt-note-body";
+	}
+	if(jQuery(element_id)){
+    	jQuery("#"+element_id).getEditor().focus();
+		restoreCaretPosition(element_id);//method in ticket show page.
+   		jQuery("#"+element_id).insertHtml(value);
+	}  
+}
+
+//Method to restore the caret position when editor loses focus.[Suggest solutions]
+function restoreCaretPosition(element_id){
+	range = document.getSelection().getRangeAt(0);
+	var range = document.createRange();
+	focusNode = jQuery('#'+element_id).data('focus_node');
+	focusOffSet = jQuery('#'+element_id).data('focus_node_offSet');
+	if(focusNode == undefined) return;
+	range.setStart(focusNode, focusOffSet);
+	range.setEnd(focusNode, focusOffSet);
+	document.getSelection().removeAllRanges();
+	document.getSelection().addRange(range);
+}
+
+function handleSolutionDetail(sol_id){
+  jQuery.ajax({	type: 'POST',
+    url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
+    success: function(data){ insertSuggestions(data); }
+  });
+  return true;
+};
+
+jQuery("div.item").live("mouseover mouseout", function(event) {
+	if ( event.type == "mouseover" ) {
+		jQuery(this).find(".item-menu").show();
+	} else {
+		jQuery(this).find(".item-menu").hide();
+	}
+});
+
+jQuery('#solution_search').live('keyup', function(ev) {
+	if (this.value == '') {
+		jQuery('#default_solution_suggestions').show(); 
+		jQuery('#more_search_results').hide();
+	}
+});
+
+jQuery("#searchmoreform").submit(function(ev){
+	ev.preventDefault();
+	console.log('')
+	var query = $('solution_search').value;
+	jQuery('#default_solution_suggestions').hide();
+	jQuery("#more_search_results").show().addClass("loading-center");
+	jQuery('#more_search_results')
+	  .load('/helpdesk/tickets/component/' + <%=@ticket.id%> + '?component=search_solutions&q='+query, 
+	        function() {
+	    jQuery("#more_search_results").removeClass("loading-center");
+	  });
+	  
+	return false;
+});
+</script>

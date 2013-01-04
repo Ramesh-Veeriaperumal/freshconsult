@@ -173,6 +173,22 @@ strong {
   left: 26px;
 }
 
+.open > .dropdown-menu.right{
+
+  left: auto;
+  right: 0;
+
+  &:before {
+    right: 25px;
+    left: auto;
+  }
+
+  &:after {
+    right: 26px;
+    left: auto;
+  }
+}
+
 
 /*  End of Button overriding */
 

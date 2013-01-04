@@ -9,10 +9,23 @@
 	<%= each_or_message "helpdesk/time_sheets/v2/time_entry", @ticket.time_sheets, t(".no_timeentry") %>
 </div>
 <div class="new_timer">
-	<a href="<%= new_helpdesk_ticket_helpdesk_time_sheet_path(@ticket) %>" title="Add Time Entry" data-activate="dialog" data-width="400">Add Time Entry</a>
+	<a href="<%= new_helpdesk_ticket_helpdesk_time_sheet_path(@ticket) %>" title="Add Time Entry" 
+		rel="freshdialog" data-target="#new_timeentry" data-width="400" data-submit-label="<%= t('save')%>">Add Time Entry</a> or 
+
+	<!-- Empty form for Start Timer - All the fields will be hidden. -->
+  	<% form_remote_for :time_entry, 
+                   :url => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                   :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) return false;',
+                   :html => { :id => "add_new_timer", :class => 'hide' } do |f| %>
+		<%= hidden_field(:time_entry, :ticket_id , { :value => @ticket.id }  )%>
+		<%= f.hidden_field :user_id, :value => current_user.id %>
+		<%= f.hidden_field :billable, :value => 1 %>
+		   
+	<% end %>
+  <%= link_to_function t('.start_timer') , "jQuery('#add_new_timer').submit();", "data-loading-text" => "Starting Timer...", :id => "new_time_submit" %>
 </div>
 <% javascript_tag do -%>
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
    jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
 <% end %>
-<%= include_javascripts :timesheet_v2 %>
+<%= include_javascripts :timesheet %>
