@@ -3673,6 +3673,9 @@ div.addReminder{
 		display: none;
 	}
 }
+#tickets_view {
+	margin-top: 12px;
+}
  
 .list_view {
 	.tickets, .tickets-expanded{
@@ -8362,3 +8365,71 @@ height: auto;
 .margin-bottom{ margin-bottom:10px; }
 .margin-right{ margin-right: 10px; }
 .margin-left{ margin-left: 10px; } 
+
+#div_ff_requester_id{
+	
+}
+
+.autocomplete_requester_filter{
+	.select2-choices{
+		border-radius: 5px;
+	}
+	.select2-search-field{
+		height: 27px;
+	}
+	#s2id_requester_filter{
+		width: 190px;
+	}
+}
+
+.contact_tickets{
+
+	.detailed_view{
+		h4.title{
+			font-size: 17px;
+			font-weight: 300;
+		}
+	}
+
+	#view_tickets{
+
+		td{
+			background: none;
+		}
+
+		tr:hover td {
+			background: none;
+		}
+
+		tr.active td, tr.active:hover td{
+			background: none;
+		}
+
+		.priority-border{
+			display: none;
+		}
+		.check{
+			display: none;
+		}
+
+		td.assign{
+			width: 148px;
+		}
+
+	}
+
+	.more_results{
+		margin-top: 10px;
+		text-align: center;
+		background-color: white;
+		font-size: 14px;
+		#show_more{
+			font-weight: bold;
+		}
+	}
+
+}
+
+.select2_list_detail{
+	color:#888;
+}

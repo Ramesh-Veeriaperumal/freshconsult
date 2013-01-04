@@ -145,6 +145,7 @@ var $J = jQuery.noConflict();
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
 
+      $('.contact_tickets .detailed_view .quick-action').removeClass('dynamic-menu quick-action').attr('title','');
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
