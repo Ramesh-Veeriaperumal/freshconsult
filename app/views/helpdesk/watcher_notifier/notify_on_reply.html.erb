@@ -5,13 +5,8 @@
 <% end %>
 
 <%=t('helpdesk.tickets.add_watcher.mail.hi') %> <%=@subscription.user.name%>,<br /><br />
-<%=t('helpdesk.tickets.add_watcher.mail.new_activity') %><br /><br />
+<%=t('helpdesk.tickets.add_watcher.mail.response', :responder => @responder) %><br /><br />
 <table>
-    <tr>
-    	<td> <b> <%=t('helpdesk.tickets.add_watcher.mail.activity') %> </b> </td>
-    	<td> : </td>
-    	<td>  <%=t('helpdesk.tickets.add_watcher.mail.response', :responder => @responder) %> </td>
-    </tr> <br />
 	<tr>
     	<td> <b> <%=t('helpdesk.tickets.add_watcher.mail.ticket') %> </b> </td>
     	<td> : </td>
@@ -37,10 +32,10 @@
     ---------- <%= t('helpdesk.tickets.add_watcher.mail.agent_response') %> ---------- <br /> <br />
 <% end %>
 
-<%= @note.body%> <br /> <br /> 
+<%= @note.body_html%> <br /> <br /> 
 ---------- ---------- ----------<br /><br />
 
 <a href="<%=unsubscribe_helpdesk_ticket_helpdesk_subscriptions_url(@ticket,
                                                                 :host => @ticket.account.host)%>">
-    <%=t('helpdesk.tickets.add_watcher.mail.stop_emails', :ticket_id => @ticket.id) %>
-</a>
+    <%=t('helpdesk.tickets.add_watcher.mail.stop_emails') %>
+</a> <br /> <br />
