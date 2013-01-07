@@ -666,34 +666,44 @@ $(document).ready(function() {
 				}
 			}
 
-			_form.ajaxSubmit({
-				dataType: 'xml',
-				beforeSubmit: function(values, form) {
-					var format = $('<input type="hidden" name="format" value="xml" />');
-					_form.append(format);
-					var format = $('<input type="hidden" name="xhr" value="true" />');
-					_form.append(format);
 
-					//Blocking the Form:
-					if (_form.data('panel'))
-						$('#' + _form.data('panel')).block({
-							message: " <h1>...</h1> ",
-							css: {
-								display: 'none',
-								backgroundColor: '#FFFFFF',
-								border: 'none',
-								color: '#FFFFFF'
-							},
-							overlayCSS: {
-								backgroundColor: '#FFFFFF',
-								opacity: 0.6
-							}
-						});
+			//Blocking the Form:
+			if (_form.data('panel'))
+			{	
+				$('#' + _form.data('panel')).block({
+					message: " <h1>...</h1> ",
+					css: {
+						display: 'none',
+						backgroundColor: '#FFFFFF',
+						border: 'none',
+						color: '#FFFFFF'
+					},
+					overlayCSS: {
+						backgroundColor: '#FFFFFF',
+						opacity: 0.6
+					}
+				});
+			}
+
+			_form.ajaxSubmit({
+				dataType: 'script',
+				beforeSubmit: function(values, form) {
+					var showing_notes = $('#all_notes').length > 0;
+
+					var format = $('<input type="hidden" rel="ajax_params" name="format" value="js" />');
+					_form.append(format);
+					var input_xhr = $('<input type="hidden" rel="ajax_params" name="xhr" value="true" />');
+					_form.append(input_xhr);
+					var input_showing = $('<input type="hidden" rel="ajax_params" name="showing" value="' + (showing_notes ? 'notes' : 'activities' ) + '" />');
+					_form.append(input_showing);
+					var input_since = $('<input type="hidden" rel="ajax_params" name="since_id" value="' + (showing_notes ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity'] ) + '" />');
+					_form.append(input_since);
+
 				},
 				success: function(response) {
 
-					if (_form.data('fetchLatest'))
-						fetchLatestNotes();
+					// if (_form.data('fetchLatest'))
+						// fetchLatestNotes();
 
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
@@ -711,10 +721,23 @@ $(document).ready(function() {
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 						_form.resetForm();
 					}
+
+					_form.find('[rel=ajax_params]').remove();
 						
 					_form.find('input[type=submit]').prop('disabled', false);
 					if (_form.data('showPseudoReply'))
 						$('#TicketPseudoReply').show();
+
+				},
+				error: function(response) {
+					console.log(response);
+					alert('Error');
+
+					_form.find('input[type=submit]').prop('disabled', false);
+
+					if (_form.data('panel')) {
+						$('#' + _form.data('panel')).unblock();
+					}
 
 				}
 			});

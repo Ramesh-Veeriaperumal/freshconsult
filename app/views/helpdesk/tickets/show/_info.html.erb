@@ -30,7 +30,7 @@
 						<a href="#" class='source <%= "priority_color_#{@ticket.priority} source-#{@ticket.source_name.to_s.downcase}" %>'></a>
 					</div>
 					<div class="commentbox-info" id="ticket_status_box">
-						<%= render :partial => 'helpdesk/tickets/show/status.html.erb' %>
+						<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} %>
 
 						<div class="ticket-subject">
 							<h2 class="subject">
@@ -62,29 +62,18 @@
 												</a>
 											</li>
 										  </ul>
-										</div>
-
-										<!-- <div class="btn-group">
-										  <button class="btn tall" rel="note-button" data-note-type="reply" id="ReplyButton">
-										  	<span class="reply-inner"></span>
-										  	<%= t('ticket.reply_to')  %>
-										  	<span class="caret"></span>
-										  </button>
-										  <button class="btn dropdown-toggle tall" data-toggle="dropdown">
-										    <span class="caret"></span>
-										  </button>
-										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
-										    <li>
-										    	<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
-										    		<%= t('fwd_to') %>
-										    	</a>
-										    </li>
-											<li>
-												<a href="#"  rel="note-button" data-note-type="note" >
-													<%= t('ticket.add_note') %>
-												</a>
-											</li>
-										  </ul>
+										</div><!-- 
+										<div class="btn-group">
+											<a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
+												<span class="reply-inner"></span>
+												<%= t('ticket.reply_to')  %>
+											</a>
+											<a class="btn" href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
+												<%= t('fwd_to') %>
+											</a>
+											<a  class="btn" href="#"  rel="note-button" data-note-type="note" >
+												<%= t('ticket.add_note') %>
+											</a>
 										</div> -->
 									</li>
 									<li class="ticket-btns">

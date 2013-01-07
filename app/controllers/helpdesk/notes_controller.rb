@@ -2,12 +2,14 @@ class Helpdesk::NotesController < ApplicationController
   
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
+
+  helper 'helpdesk/tickets'
   
   include HelpdeskControllerMethods
   include ParserUtil
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
-  before_filter :add_quoted_text, :only => [:create]
+  # before_filter :add_quoted_text, :only => [:create]
   before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
@@ -79,14 +81,8 @@ class Helpdesk::NotesController < ApplicationController
         NewRelic::Agent.notice_error(e)
       end
   
-
-      if request.xhr? || params[:xhr].eql?('true')
-        puts "XHR REQUEST :::: ----"
-        render :xml => {:success => true}.to_xml
-      else
-        post_persist
-      end
-
+      post_persist
+  
     else
       create_error
     end

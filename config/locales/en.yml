@@ -2017,6 +2017,8 @@ en:
       v2:
         index:
           no_timeentry: "No time entry logged for this ticket"
+          start_timer: "Start Timer"
+          add_entry: "Add Time Entry"
         time_entry:
           toggle_timer_true: "Start timer"
           toggle_timer_false: "Stop timer"

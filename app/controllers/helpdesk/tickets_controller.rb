@@ -593,7 +593,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def status
-    render :partial => 'helpdesk/tickets/show/status.html.erb'
+    render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket}
   end
 
   protected

@@ -1,0 +1,15 @@
+#Getting the latest notes and appending
+
+if params[:showing] == 'activities'
+	activity_records = @parent.activities.activity_since(params[:since_id])
+	@activities = stacked_activities(activity_records.reverse)
+    @total_activities =  @parent.activities_count
+
+    page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/activity", :collection => @activities)
+else
+	@notes = @parent.conversation_since(params[:since_id])
+	page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
+end
+
+# Updating the Status box
+page.replace "due-by-element-parent", render(:partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @parent})
