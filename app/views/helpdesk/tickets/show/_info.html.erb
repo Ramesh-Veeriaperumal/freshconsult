@@ -34,6 +34,11 @@
 
 						<div class="ticket-subject">
 							<h2 class="subject">
+								<div class="watchers_tooltip hide" id="new_watcher_page"
+									rel="remote-load" 
+									data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket.id)%>" >
+									<span class="arrow-right"></span>
+								</div>
 								<span id="monitor"><%= render :partial => "/helpdesk/subscriptions/monitor" %></span>
 								<%= h(@ticket.subject) %>
 							</h2>

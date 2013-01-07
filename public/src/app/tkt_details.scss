@@ -2377,3 +2377,14 @@ label.custom-select {
 		margin-right: 10px;
 	}
 }
+
+
+// Overriding common elements for new details page
+.ticket_details {
+	div.watchers_tooltip {
+		margin: -11px 0px 0px 25px;
+
+		.arrow-right {display:none}
+
+	}
+}
