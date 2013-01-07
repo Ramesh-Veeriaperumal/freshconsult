@@ -68,11 +68,11 @@ marketo:
 
 chargebee:
   development:
-    site: "freshdesk-test"
-    api_key: "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv"
+    site: "freshpo-test"
+    api_key: "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"
   staging:
-    site: "freshdesk-test"
-    api_key: "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv"
+    site: "freshpo-test"
+    api_key: "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"
   production:
     site: "freshdesk-test"
     api_key: "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv"
