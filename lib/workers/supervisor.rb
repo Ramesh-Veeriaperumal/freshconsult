@@ -8,6 +8,7 @@ class Workers::Supervisor
   def self.perform(account_id)
     account = Account.find(account_id)
     account.make_current
+    SeamlessDatabasePool.use_persistent_read_connection do
     account.supervisor_rules.each do |rule|
       begin
         conditions = rule.filter_query
@@ -35,6 +36,7 @@ class Workers::Supervisor
         puts "something went wrong"
       end
     end
+  end
     Account.reset_current_account
   end
 end

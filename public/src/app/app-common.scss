@@ -3101,6 +3101,7 @@ div.addReminder{
 			margin:2px 0px 0px 0px;
 			padding:0px 5px;
 			width: 245px;
+			@include box-shadow(0 0 0 #fff);
 		}
 		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); box-shadow:none; }
 		label.overlabel{
@@ -3680,6 +3681,9 @@ div.addReminder{
 	.hideForDetails {
 		display: none;
 	}
+}
+#tickets_view {
+	margin-top: 12px;
 }
  
 .list_view {
@@ -6028,8 +6032,6 @@ a.close{
 		height: 30px;
 }
 
-
-
 .remote_support{
 	.session_data{
 		text-align: center;
@@ -6226,6 +6228,15 @@ a.close{
 		background-position: 223px 7px;
   	}
 
+ 	div.zohocrm_widget_bg {
+		background: url(/images/integrations/zohocrm_icon.png) 0 2px no-repeat;
+		background-position: 210px -6px;
+  	}
+
+ 	div.nimble_widget_bg {
+		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+  	}
 	
 
  	.error {
@@ -7311,6 +7322,172 @@ a[rel="load-rjs"] {
 .requestCnt .description .user_details .loading-center {
 	height: 50px;
 }
+
+/* Add Watcher Start */
+
+div.watchers_tooltip{
+    position: absolute;
+    border: 1px solid #aaa;
+    margin: -41px 0px 0px -288px;
+    @include min-height(84px);
+    height: auto;
+    width: 275px;
+    background-color: white;
+    @include box-shadow(0px 0px 7px rgba(0,0,0, 0.3));
+    @include border-radius(5px);
+    z-index: 10000;
+
+    .watcher_label{
+        margin-top: 14px;
+        margin-left: 16px;
+        float: left;
+        font-size: 16px;
+        font-weight: 300;
+        width: 141px;
+    }
+
+    #watcherlist{
+    	clear: both;
+    	padding-bottom: 15px;
+    }
+
+    ul{
+    	margin-bottom: -7px;
+    	max-height: 258px;
+    	overflow-x: hidden;
+    	overflow-y: auto; 
+    	padding-top: 7px;
+    }
+
+    li{
+    	display: block;
+    	padding: 5px 16px;
+    	overflow: hidden;
+    }
+
+    .add_watcher_text, .view_watcher_text{
+        margin-top: -14px;
+        margin-right: 16px;
+        float: right;
+        text-align: right;
+        font-size: 13px;
+        width: 100px;
+        a{
+        	color: #369;
+        }
+    }
+
+    .add_watcher_text{
+		margin-top: -15px;
+	}
+
+	.view_watcher_text{
+		margin-top: 16px;
+	}
+
+    #link_disabled{
+    	opacity: .4;
+		color: #3F3F3F;
+		cursor: default;
+		font-weight: normal;
+    }
+
+    .no_watcher_text{
+        font-size: 13px;
+        padding-top: 18px;
+        text-align: center;
+        color: #777;
+    }
+
+    .watcher_text{
+    	color: #CCC;
+    	margin-left: 3px;
+    	text-align: center;
+    	padding-top: 15px;
+    }
+
+    .watcher_list{
+    	float: left;
+        padding-top: 4px;
+        font-size: 13px;
+    }
+
+    .user_image{
+    	float: left;
+	    .preview_pic{
+	       	border: 2px solid #CCC;
+	        @include border-radius(100%);
+	        width: 20px;
+	        height: 20px;
+	        margin-right: 6px;
+
+	       img{
+	           width: 20px;
+	           height: 20px;  
+	           @include border-radius(100%);     
+	        }
+	    }
+	}
+
+	.unwatch{
+		float: left;
+		margin-top: 6px;
+		margin-left: 10px;
+		img{
+			height: 16px;
+			width: 16px;
+		}
+	}
+
+	.arrow-right{
+		right: -20px;
+		position: absolute;
+		border-left-color: #999;
+		top: 15px;
+		border-width: 10px;
+		&:before{
+			border-bottom: 9px solid transparent;
+			border-left: 9px solid white;
+			border-top: 9px solid transparent;
+			height: 0;
+			width: 0;
+			content: " ";
+			position: absolute;
+			top: -9px;
+			left: -10px;
+		}
+	}
+
+	.select_agents{
+		clear: both;
+	}
+
+    .watcher_input{
+		margin: 9px 16px;
+		width: 241px;
+	}
+
+	div.chzn-container{
+		margin: 9px 16px;
+	}
+
+	div.ids_chzn{
+		width: 245px;
+	}
+
+	.add_cancel_buttons{
+		float: right;
+		padding-right: 13px;
+		padding-bottom: 10px;
+	}
+
+	.submit_watcher{
+		margin-left: 2px;
+	}
+}
+
+/* Add Watcher End */
+
 /* Admin-canned-response-folders */
 
 .folder_list
@@ -8095,18 +8272,21 @@ height: auto;
      }
 }
 .cust_list_table_body{
-    border:1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
+    border:1px solid #eee; /* depands upon bootstrap table variable $tableBorder  */
     background:#f6f6f6;
     padding:8px 0 8px 0;
     @include border-radius(5px);
-    @include box-shadow(0px 0px 8px rgba(200, 200, 200, 0.3));
+    @include box-shadow(0px 0px 10px rgba(200, 200, 200, 0.2));
     table{
         background:#fff;
     	margin:0;
     }
+    .item_actions{
+    	padding-right: 5px;
+    }
     .pagination{
     	background:#f6f6f6;
-        border-top:1px solid #f1f1f1;     /* depands upon bootstrap table variable $tableBorder  */ 
+        border-top:1px solid #eee;     /* depands upon bootstrap table variable $tableBorder  */ 
         margin:0px;  
         padding:10px; 
         padding-bottom:0;
@@ -8360,3 +8540,92 @@ height: auto;
 .margin-bottom{ margin-bottom:10px; }
 .margin-right{ margin-right: 10px; }
 .margin-left{ margin-left: 10px; } 
+
+.autocomplete_requester_filter{
+	.select2-choices{
+		border-radius: 5px;
+	}
+	.select2-search-field{
+		height: 27px;
+	}
+	#s2id_requester_filter{
+		width: 190px;
+	}
+}
+
+.contact_tickets{
+
+	.detailed_view{
+		h4.title{
+			font-size: 17px;
+			font-weight: 300;
+		}
+	}
+
+	#view_tickets{
+
+		td{
+			background: none;
+		}
+
+		tr:hover td {
+			background: none;
+		}
+
+		tr.active td, tr.active:hover td{
+			background: none;
+		}
+
+		.priority-border{
+			display: none;
+		}
+		.check{
+			display: none;
+		}
+
+		td.assign{
+			width: 148px;
+		}
+
+	}
+
+	.more_results{
+		margin-top: 10px;
+		text-align: center;
+		background-color: white;
+		font-size: 14px;
+		#show_more{
+			font-weight: bold;
+		}
+	}
+
+}
+
+.select2_list_detail{
+	color:#888;
+}
+.select2-highlighted .select2_list_detail{
+	color:#fff;
+}
+/*!pattern Need to delete after pattern intagrated to product */
+.watchers_tooltip{
+	.btn-primary {
+		color: white;
+		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+		background-color: #373737;
+		background-image: -moz-linear-gradient(top, #444, #222);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444), to(#222));
+		background-image: -webkit-linear-gradient(top, #444, #222);
+		background-image: -o-linear-gradient(top, #444, #222);
+		background-image: linear-gradient(to bottom, #444, #222);
+		background-repeat: repeat-x;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF444444', endColorstr='#FF222222', GradientType=0);
+		border-color: #222 #222 black;
+		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+	}
+	.btn-primary:hover{
+		color: white;
+		background-color: #222;
+	}
+}

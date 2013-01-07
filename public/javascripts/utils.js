@@ -280,8 +280,6 @@ active_dialog = null;
           return this.each(function(i, item){
             curItem = $(item);
             var dialog = null;
-
-            // curItem.modal();
             curItem.click(function(e){
                e.preventDefault();
                width = $(this).data("width") || '750px';

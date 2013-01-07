@@ -21,7 +21,8 @@ Ext.define('Freshdesk.view.TicketsFormContainer', {
                 me.items.items[1].submit({
                     success:function(form,response){
                         me.onSaveSuccess(response);
-                    }
+                    },
+                    headers : { 'Accept': 'application/json' }
                 });
                 
             }

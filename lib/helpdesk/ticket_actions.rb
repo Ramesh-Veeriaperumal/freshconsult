@@ -299,4 +299,17 @@ module Helpdesk::TicketActions
     @ticket_count = total_entries.to_i
   end
 
+  def clear_filter
+    if params[:requester_id]
+      params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
+                            "condition"=>"requester_id", "value"=> params[:requester_id] }]
+
+      @ticket_filter.query_hash = [{"operator"=>"is_in", "condition"=>"requester_id", 
+                                    "value"=> params[:requester_id] }]
+                                    
+      cache_filter_params
+      @requester_id_param = params[:requester_id]
+    end
+  end
+
 end

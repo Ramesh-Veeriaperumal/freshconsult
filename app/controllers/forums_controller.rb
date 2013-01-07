@@ -41,6 +41,7 @@ class ForumsController < ApplicationController
     
     respond_to do |format|
       format.html do
+        @page_canonical = category_forum_url(@forum.forum_category, @forum)
         # keep track of when we last viewed this forum for activity indicators
          end
       format.xml  { render :xml => @forum.to_xml(:include => :topics) }

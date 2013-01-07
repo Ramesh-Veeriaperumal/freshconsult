@@ -1,4 +1,5 @@
 class Reports::CustomerReportsController < ApplicationController
+  include ReadsToSlave
   include Reports::CompanyReport
    
   before_filter { |c| c.requires_feature :advanced_reporting }

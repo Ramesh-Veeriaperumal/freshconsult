@@ -39,6 +39,7 @@ module MemcacheKeys
         block.call
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
+        return
       end 
     end
 
@@ -63,7 +64,7 @@ module MemcacheKeys
     end
 
     def cache(key,value,expiry=0)
-      newrelic_begin_rescue { $memcache.set(key, value) }
+      newrelic_begin_rescue { $memcache.set(key, value, expiry) }
     end
 
     def delete_from_cache(key)

@@ -45,6 +45,7 @@ class Agent < ActiveRecord::Base
     [ :assigned_tickets, 3 ]
   ]
  
+  named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]

@@ -271,7 +271,7 @@
       var twipsy = get(this)
       twipsy.hoverState = 'out'
       if (options.delayOut == 0) {
-        twipsy.hide()
+            twipsy.hide()
       } else {
         setTimeout(function() {
           if (twipsy.hoverState == 'out') {

@@ -1,0 +1,172 @@
+<% content_for :pagefixed do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <% javascript_tag do -%>
+    document.observe("dom:loaded", function(){
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['attachment-options']
+      });
+    });	
+
+	function closeTicket(ticket_id)
+	{
+		jQuery.ajax({
+  					type: 'POST',
+							url: '/support/tickets/close_ticket/'+ticket_id,
+							contentType: 'application/text',
+  					success: function(data){											
+								if(data.success)
+								{
+									jQuery('#status_name_id').text(data.status).show("highlight", 500);
+									jQuery('#close_ticket_btn').css("display", "none");
+								
+								}								
+								//Need to show the message some where data.message
+							}
+	    			});	
+	}	
+
+	show_ticket_props_form = function()
+	{
+		jQuery("#edit_button").hide();
+		jQuery("#ticket_props_form").show();	
+		jQuery("#ticket_props").hide();			
+	}	
+	
+	hide_ticket_props_form = function()
+	{
+		jQuery("#edit_button").show();
+		jQuery("#ticket_props_form").hide();	
+		jQuery("#ticket_props").show();	
+	}	
+    jQuery(document).ready(function(){
+      jQuery('#ticket_props_form').validate(); 
+    });
+	
+  <%- end %>
+<% end %>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
+
+<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
+<% content_for :onload_script do -%>
+jQuery('#add_cc_btn').bind("click", function(ev){
+		ev.preventDefault();
+		jQuery("#cc_emails_sec").toggle();
+		jQuery("#cc_emails").val("");
+		jQuery("#cc_emails").trigger("liszt:updated");
+	});
+<%- end %>
+
+<% content_for :sidebar do %>
+    <% if @ticket.responder && !@ticket.deleted %>
+		<div class="sidepanel clearfix">
+			<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
+			<%= user_avatar(@ticket.responder, :thumb)  %>
+			<%= content_tag(:b, h(@ticket.responder.name)) %>			
+		</div>
+  	<% end %>
+	<%
+		has_visible_field = false;
+		has_editable_field = false;
+
+		current_portal.ticket_fields.each do |field|
+			field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+			has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
+			has_editable_field = true if (field.visible_in_view_form? && field.editable_in_portal)
+		end
+	%>
+	
+	<%if has_visible_field%>
+		<div id="ticket_" class="sidepanel clearfix">
+			<%= link_to_function("Edit", "show_ticket_props_form()", 
+					:class => "button floatr", :id => "edit_button") if has_editable_field && current_user && 
+					params[:id] != @ticket.access_token %> 
+					<!-- added params[:id] check for not displaying edit button in public tickets show page-->
+			
+			<h4 class="border_title"><%=t('ticket.properties')%></h4>
+			
+			<div id="ticket_props">
+			   <ul class="cnt">
+				   <% current_portal.ticket_fields.each do |field| %>
+				     <% if (field.visible_in_view_form? && field.visible_in_portal)%>
+				       <% 
+				          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+				          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+				          if(field.field_type == "nested_field")
+				          	field_value = {}
+				          	field.nested_levels.each do |ff|
+				          		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
+				          	end
+				          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
+				          end
+				       %>
+		          	   <%= construct_ticket_text_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
+		          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "view"}) if field.field_type == "nested_field"%>
+		             <% end %>
+		           <% end %>
+			   </ul>
+		    </div>
+			
+			<%if has_editable_field%>	
+				<div id="ticket_props_form" style="display:none;">
+					<% form_for @ticket, :url => {:action => "update", :controller => "support/tickets"}, :html => { :id => 'portal_ticket_form' } do |f| %>
+					   <ul class="cnt">
+						   <% current_portal.ticket_fields.each do |field| %>
+						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
+						       <% 
+						          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+						          if(field.field_type == "nested_field")
+						          	field_value = {}
+						          	field.nested_levels.each do |ff|
+						          	field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
+						          	end
+						          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
+						          end
+						          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+						       %>
+				          	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
+				          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
+				             <% end %>
+				           <% end %>
+							<li class="button-container">
+								<%= link_to_function("Cancel", "hide_ticket_props_form()", :class => "uiButton floatl" )  %>
+								<%= f.submit t('update'), :class => "uiButton special" %>
+							</li>
+									
+					       <% javascript_tag do %>  
+					       	validateOptions = {
+								onkeyup: false,
+								focusCleanup: true,
+								focusInvalid: false,
+								ignore:":not(:visible)"
+						    };
+							jQuery('#portal_ticket_form').validate(validateOptions);
+					         jQuery('#helpdesk_ticket_group_id')
+					           .bind("change", function(e){
+					             jQuery('#helpdesk_ticket_responder_id')
+					                     .html("<option value=''>...</option>");
+					             jQuery.ajax({
+					               type:        'POST',
+					               url: 		     '/helpdesk/commons/group_agents/'+this.value,
+					               contentType: 'application/text',
+					               success:     function(data){
+					                               jQuery('#helpdesk_ticket_responder_id')
+					                                 .html(data);
+					                            }
+					             });
+					           });
+					    	<% if @ticket.ticket_status.deleted? %>
+         					jQuery("#helpdesk_ticket_status")
+         					.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
+         					.val("<%=@ticket.status%>")
+         					<% end %>
+					       <% end %>
+					   </ul>
+					<% end %> 	   	
+				</div>
+			<%end%>
+		</div>
+	<%end%>
+<% end %>

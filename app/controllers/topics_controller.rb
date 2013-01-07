@@ -49,6 +49,7 @@ class TopicsController < ApplicationController
   def show    
     respond_to do |format|
       format.html do
+        @page_canonical = category_forum_topic_url(@topic.forum.forum_category, @topic.forum, @topic)
         # see notes in application.rb on how this works
         update_last_seen_at
         # keep track of when we last viewed this topic for activity indicators
@@ -83,13 +84,14 @@ class TopicsController < ApplicationController
       @post.account_id = current_account.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
+      @topic.monitorships.build(:user_id => current_user.id,:active => true) if params[:monitor] 
+      build_attachments  
       topic_saved = @topic.save if @post.valid?
       post_saved = @post.save 
     end
 		
 		if topic_saved && post_saved
-      @topic.monitorships.create(:user_id => current_user.id,:active => true) if params[:monitor] 
-      create_attachments  
+      
 			respond_to do |format| 
 				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
 				format.xml  { render  :xml => @topic }
@@ -112,11 +114,12 @@ class TopicsController < ApplicationController
       @post = @topic.posts.first
       @post.attributes = post_param
       @topic.body_html = @post.body_html 
+      build_attachments
       topic_saved = @topic.save
       post_saved = @post.save
     end
     if topic_saved && post_saved
-      create_attachments
+      
       respond_to do |format|
         format.html { redirect_to category_forum_topic_path(@topic.forum.forum_category_id,@topic.forum_id, @topic) }
         format.xml  { head 200 }
@@ -131,7 +134,7 @@ class TopicsController < ApplicationController
   
   def destroy
     @topic.destroy
-    flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, @topic.title]
+    flash[:notice] = I18n.t('flash.topic.deleted')[:topic_deleted_message, h(@topic.title)]
     respond_to do |format|
       format.html { redirect_to  category_forum_path(@forum_category,@forum) }
       format.xml  { head 200 }
@@ -187,11 +190,11 @@ def users_voted
     render :partial => "forum_shared/topic_voted_users", :object => @topic
 end
 
- def create_attachments
+ def build_attachments
    return unless @topic.posts.first.respond_to?(:attachments) 
     unless params[:post].nil?
     (params[:post][:attachments] || []).each do |a|
-      @topic.posts.first.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
+      @topic.posts.first.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
     end
    end
   end

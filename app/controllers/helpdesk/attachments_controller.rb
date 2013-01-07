@@ -72,7 +72,8 @@ class Helpdesk::AttachmentsController < ApplicationController
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
         return (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-          (current_user.client_manager?  && ticket.requester.customer == current_user.customer)))
+          (current_user.client_manager?  && ticket.requester.customer == current_user.customer))) || 
+          (params[:access_token] && ticket.access_token == params[:access_token])
   
       # Is the attachment on a solution  If so, it's always downloadable.
 

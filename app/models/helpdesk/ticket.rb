@@ -16,7 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include RedisKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
-                            "header_info", "st_survey_rating", "trashed"]
+                            "header_info", "st_survey_rating", "trashed", "access_token"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
@@ -34,15 +34,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
   
   after_create :refresh_display_id, :create_meta_note
 
 
   before_update :assign_email_config, :load_ticket_status, :update_dueby
+
+  before_validation_on_create :set_token
   
   before_save :update_ticket_changes
 
@@ -214,7 +213,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :select => "helpdesk_tickets.id", 
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
-  
+
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -243,12 +242,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   #Sphinx configuration starts
-  define_index do
+  define_index 'without_description' do
     
     indexes :display_id, :sortable => true
     indexes :subject, :sortable => true
-    indexes description
-    indexes sphinx_notes.body, :as => :note
     
     has account_id, deleted, responder_id, group_id, requester_id, status
     has sphinx_requester.customer_id, :as => :customer_id
@@ -261,12 +258,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     set_property :field_weights => {
       :display_id   => 10,
-      :subject      => 10,
-      :description  => 5,
-      :note         => 3
+      :subject      => 10
      }
   end
   #Sphinx configuration ends here..
+
+
+  define_index 'with_description' do
+    
+    indexes :display_id, :sortable => true
+    indexes :subject, :sortable => true
+    indexes description
+    
+    has account_id, deleted, responder_id, group_id, requester_id, status
+    has sphinx_requester.customer_id, :as => :customer_id
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
+
+    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0 and helpdesk_tickets.id > 5000000"
+
+    #set_property :delta => Sphinx::TicketDelta
+
+    set_property :field_weights => {
+      :display_id   => 10,
+      :subject      => 10,
+      :description  => 5
+     }
+  end
 
   #For custom_fields
   COLUMNTYPES = [
@@ -290,11 +308,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
-  
+
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type ||= account.ticket_type_values.first.value
+    self.ticket_type ||= account.ticket_types_from_cache.first.value
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
     #self.description = subject if description.blank?
@@ -545,8 +563,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if @ticket_changes.key?(:status)
-      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
-      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
+      if (status == RESOLVED)
+        notify_by_email(EmailNotification::TICKET_RESOLVED) 
+        notify_watchers("resolved")
+        return
+      end
+      if (status == CLOSED)
+        notify_by_email(EmailNotification::TICKET_CLOSED)
+        notify_watchers("closed")
+        return
+      end
+    end
+  end
+
+  def notify_watchers(status)
+    self.subscriptions.each do |subscription|
+      if subscription.user.id != User.current.id
+        Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_status_change, self, 
+                                              subscription, status, "#{User.current.name}")
+      end
     end
   end
   
@@ -622,7 +657,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def self.search_display(ticket)
-    "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
+    "#{ticket.subject} (##{ticket.display_id})"
   end
   
   def friendly_reply_email
@@ -952,6 +987,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def unsubscribed_agents
+    user_ids = subscriptions.map(&:user_id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
 
   private
 
@@ -1071,7 +1111,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def update_ticket_changes
       @ticket_changes = self.changes.clone
-      @ticket_changes.merge!(schema_less_ticket.changes.clone)
+      @ticket_changes.merge!(schema_less_ticket.changes.clone) if schema_less_ticket
       @ticket_changes.symbolize_keys!
     end
     
@@ -1171,8 +1211,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
       fire_event(:update) unless disable_observer
     end
 
+    def set_token   
+      self.access_token ||= generate_token(Helpdesk::SECRET_2)     
+    end
+
+    def generate_token(secret)
+      Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
+    end
+
+    def populate_access_token
+      set_token
+      save
+    end
+    
     def populate_requester
       return if requester
+
+      self.requester_id = nil
 
       unless email.blank?
         name_email = parse_email email  #changed parse_email to return a hash
@@ -1206,6 +1261,5 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def can_add_requester?
       email.present? || twitter_id.present? || external_id.present? 
     end
-
 end
 

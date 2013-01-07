@@ -1,4 +1,29 @@
 <% javascript_tag do %>
+	function delete_customer(){
+		var confirm_text
+		var checked_items = jQuery('.customers_selector:checked')
+						
+		if(checked_items.length == 1){
+			checked_items
+				.closest('tr')
+				.find('.icon-trash')
+				.trigger('click')
+
+			return
+		}
+		else{
+			if(jQuery("#contacts-table").get(0) != undefined)
+				confirm_text = "<%= t('company.info11')%> " +
+					checked_items.size() + " <%= t('contacts.contacts')%>?"
+			else
+				confirm_text = "<%= t('company.info11')%> " + 
+				checked_items.size() + " <%= t('company.title1')%>" + "\n" + "<%= t('company.info10')%>"
+		}
+
+		if (confirm(confirm_text))
+			validate_then_submit('<%= path %>/destroy', 'delete')
+	}
+
 	validate_then_submit = function(url, method, params){
 		var customer_type = '<%=type.eql?('user') ? t('flash.contacts.info_select') : t('flash.customers.info_select')%>';
 		if (!jQuery('.customers_selector:checked').length)
@@ -15,17 +40,29 @@
 			form.submit();
 		}
 	}
+	function bulk_send_activation(){
+		var selected_items = jQuery("#contacts-table .diffColor")
+		var flash_text = "<%= t('users.activations.bulk_send_invite_success')%> "+selected_items.length
+		selected_items.find(".send-activation").trigger('click');
+		flash_text =  flash_text + ( ( selected_items.length ==  1 ) ? " <%= t('users.activations.user')%>" : 
+																		" <%= t('users.activations.users')%>")
+		jQuery("#noticeajax").text(flash_text);
+		jQuery("#noticeajax").show();
+		closeableFlash('#noticeajax');
+		selected_items.find(".customers_selector").prop("checked",false);	
+		selected_items.removeClass("diffColor");
+		jQuery("#customers-toolbar .bulk-action .btn").attr('disabled','disabled');
+	}
 <% end %>
 <div class="customers-toolbar" id="customers-toolbar">
 	<input type="checkbox" id="customers-select-all" />
 	<div class="bulk-action">
-		<%= button_to_function(t('contacts.activation'), "validate_then_submit('#{bulk_send_invite_activations_path}', 'put', jQuery('#contacts-table .customers_selector:checked'))",  :class => "btn", :disabled => "disabled" ) if params[:state].eql?("unverified")%>
+		<%= button_to_function(t('contacts.send_activation'), "bulk_send_activation()",  :class => "btn", :disabled => "disabled" ) if params[:state].eql?("unverified")%>
 		<% if params[:state].eql?("deleted") %>
 			<%= button_to_function(t('contacts.restore'), "validate_then_submit(
 			'#{ path }/restore', 'restore')", :class => "btn", :disabled => "disabled") %>
 		<% else %> 
-			<%= button_to_function(t('delete'), "validate_then_submit(
-			'#{ path }/destroy', 'delete')", :class => "btn", :disabled => "disabled") %>
+			<%= button_to_function(t('delete'), "delete_customer()", :class => "btn", :disabled => "disabled") %>
 		<% end %>
 	</div>
 </div>

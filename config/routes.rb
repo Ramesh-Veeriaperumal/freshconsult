@@ -63,8 +63,7 @@
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
-  map.resources :activations, :member => { :send_invite => :put },
-                              :collection => { :bulk_send_invite => :put }
+  map.resources :activations, :member => { :send_invite => :put }
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
@@ -166,6 +165,12 @@
     end
   end
 
+  map.with_options(:conditions => { :subdomain => AppConfig['billing_subdomain'] }) do |subdom|
+    subdom.with_options(:namespace => 'billing/', :path_prefix => nil) do |billing|
+      billing.resources :billing, :collection => { :trigger => :post }
+    end
+  end
+
   map.namespace :widgets do |widgets|
     widgets.resource :feedback_widget, :member => { :loading => :get } 
   end 
@@ -250,9 +255,13 @@
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post } do |ticket|
 
-
       ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
+                                                        :unsubscribe => :get,
+                                                        :unwatch => :delete,
+                                                        :unwatch_multiple => :delete },
+                                       :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_' 
@@ -277,6 +286,7 @@
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
+    helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
@@ -336,6 +346,12 @@
   
   map.namespace :anonymous do |anonymous|
     anonymous.resources :requests
+  end
+
+  map.namespace :public do |p|
+     p.resources :tickets do |ticket|
+        ticket.resources :notes
+    end
   end
 
   map.namespace :mobile do |mobile|

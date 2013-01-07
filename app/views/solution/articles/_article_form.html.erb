@@ -56,7 +56,8 @@
 							<%= s.label(:meta_title, t('solution.solution_meta_title')) %>
 							<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
 								'data-counter' => "TitleCounter", 'data-limit' => 72, 
-								:value => (@article.seo_data || {:meta_title => nil}).fetch(:meta_title) %>
+								:value => (@article.seo_data || {})[:meta_title] %>
+
 							<div class="solution-seo-message">
 								<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
 								<%= t('solution.title_counter_message') %>
@@ -66,7 +67,7 @@
 							<%= s.label(:meta_description, t('solution.solution_meta_description')) %>
 				    		<%= s.text_area  :meta_description, :rel => "charcounter", 
 								'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
-								:value => (@article.seo_data || {:meta_description => nil}).fetch(:meta_description), 
+								:value => (@article.seo_data || {})[:meta_description], 
 								:class => "solution-seo-description" %>
 							<div class="solution-seo-message">
 					    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
@@ -76,7 +77,7 @@
 						<li>
 							<%= s.label(:meta_keywords, t('solution.solution_meta_keywords')) %>
 							<%= s.text_field :meta_keywords, :class => "text", 
-								:value => (@article.seo_data || {:meta_keywords => nil}).fetch(:meta_keywords) %>
+								:value => (@article.seo_data || {})[:meta_keywords] %>
 							<div class="solution-seo-message">
 								<%= t('solution.meta_keywords_message') %>
 							</div>
@@ -96,12 +97,10 @@
 					else{
 						var div = document.createElement("div");
 						//Redactor hack for new line
-						//div.innerHTML = $(source).val().split('</p>').join('<br>');
 						div.innerHTML = $(source).val().replace(/\<\/(p|div|h[1-6]|li)\>/g, "\n");
-						text = div.textContent.replace(/\n+/g, " ").trim();
+						text = $.trim((div.textContent || div.innerText).replace(/\n+/g, " "));
 						text = (text.length > 150) ? (text.substring(0,147) + '...') :text.substring(0,150);
-						$("#" + destination).val(
-						text).keyup();
+						$("#" + destination).val(text).keyup();
 					}
 				}
 				$('[rel=cloneSource]').each(function(i,node) {
