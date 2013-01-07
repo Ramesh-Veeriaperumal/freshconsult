@@ -22,7 +22,6 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v1/ACCOUNT_STATUSES:%{account_id}"
 
-  PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
 
   PORTAL_BY_URL = "v1/PORTAL_BY_URL:%{portal_url}"
 

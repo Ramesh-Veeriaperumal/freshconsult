@@ -1,7 +1,9 @@
 class Admin::PagesController < Admin::AdminController
   include Portal::TemplateActions
 
-  before_filter :build_or_find, :get_raw_page, :set_forum_builder
+  before_filter :portal_page_label, :only =>[:edit, :update, :soft_reset]
+  before_filter :build_or_find, :get_raw_page, :only => [:edit, :update]
+  before_filter :set_forum_builder, :only => :edit
 
   before_filter(:only => [:update]) do |c|
     c.send(:liquid_syntax?, c.request.params[:portal_page][:content])
@@ -10,7 +12,7 @@ class Admin::PagesController < Admin::AdminController
   layout false
 
   def update
-    @portal_page.attributes = @portal_page.attributes.merge params[:portal_page]
+    @portal_page.attributes= params[:portal_page]
     scoper.template.cache_page(@portal_page_label, @portal_page)    
     flash[:notice] = "Page saved successfully." unless params[:preview_button]
     get_raw_page
@@ -31,6 +33,11 @@ class Admin::PagesController < Admin::AdminController
   end
 
   private
+    def portal_page_label
+      page_type = params[:page_type] || params[:portal_page][:page_type]
+      @portal_page_label = Portal::Page::PAGE_TYPE_TOKEN_BY_KEY[page_type.to_i]
+    end
+
     def build_or_find
       page_type = params[:page_type] || params[:portal_page][:page_type]
 
@@ -46,6 +53,7 @@ class Admin::PagesController < Admin::AdminController
                       scoper.template.pages.find_by_page_type(page_type) || 
                       scoper.template.pages.new( :page_type => page_type )
     end
+
 
     def get_raw_page
       if @portal_page[:content].nil?

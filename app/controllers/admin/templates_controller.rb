@@ -1,8 +1,9 @@
 class Admin::TemplatesController < Admin::AdminController  
   include Portal::TemplateActions
-  include MemcacheKeys
 
-  before_filter :build_objects, :default_liquids, :set_forum_builder, :clear_preview_session #needs to split
+  before_filter :build_objects,  :only => [:show, :update, :soft_reset, :restore_default, :publish]
+  before_filter :clear_preview_session, :default_liquids, :set_forum_builder, :only => :show
+
   
   before_filter(:only => :update) do |c| #validating the syntax before persisting.
     custom_css = c.request.params[:portal_template][:custom_css]
@@ -25,10 +26,9 @@ class Admin::TemplatesController < Admin::AdminController
   end
 
   def update
-    @portal_template.attributes = @portal_template.attributes.merge params[:portal_template] #why not merge!
+    @portal_template.attributes = params[:portal_template]
     @portal_template.draft!    
     flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
-    build_objects
     respond_to do |format|
       format.html { 
         if params[:preview_button]
@@ -40,7 +40,7 @@ class Admin::TemplatesController < Admin::AdminController
   end  
 
   def soft_reset
-    properties = params[:portal_template].split(":") #keys.. json..
+    properties = params[:portal_template]
     @portal_template.soft_reset!(properties)
     flash[:notice] = "Portal template reseted successfully."
     redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"
@@ -49,11 +49,6 @@ class Admin::TemplatesController < Admin::AdminController
   private
     def build_objects
       @portal_template = scoper.template.get_draft || scoper.template
-      if @portal_template.preferences.nil?
-        @portal_template.preferences = @portal_template.default_preferences
-        @portal_template.save
-      end
-      @cached_properties = @portal_template.changes.symbolize_keys.keys
     end
 
     def default_liquids

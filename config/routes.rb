@@ -108,13 +108,10 @@
     end
     admin.resources :products
     admin.resources :portal, :only => [ :index, :update] do |portal|
-      portal.resource :template, :collection => { :show =>:get, :update => :put} do |template|
-        template.soft_reset '/soft_reset/:portal_template', :controller => 'templates', :action => :soft_reset
-        template.restore_default '/restore_default', :controller => 'templates', :action => :restore_default
-        template.publish '/publish', :controller => 'templates', :action => :publish
-        template.resources :pages, :member => { :edit_by_page_type => :get } do |page|
-          page.soft_reset '/soft_reset/:page_type', :controller => 'pages', :action => :soft_reset
-        end
+      portal.resource :template, 
+                      :collection => { :show =>:get, :update => :put, :soft_reset => :put, 
+                                        :restore_default => :get, :publish => :get } do |template|
+        template.resources :pages, :member => { :edit_by_page_type => :get, :soft_reset => :put }
       end
     end
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }

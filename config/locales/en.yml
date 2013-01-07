@@ -2962,3 +2962,34 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+  portalcss:
+    reset_all_changes: Reset all changes
+    reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
+    publish_changes: Publish changes
+    header: Portal template customization
+    color_and_font_header: Color &amp; font
+    css_header: Stylesheet
+    layout_and_pages_header: Layout &amp; pages
+    editing: Editing
+    reset_to_last_published: Reset to last published
+    preview: Preview
+    save_and_continue: Save and continue editing
+    please_wait: Please wait...
+    layout_pages:
+      subheader_layout: Portal layout
+      subheader_pages: Portal pages
+      pages_help_message: Here you will be able to customize body area of individual pages.
+      header_layout_title: Header
+      footer_layout_title: Footer
+      pagelayout_title: Page layout
+      header_layout_help_message: Change the header area of your support portal
+      footer_layout_help_message: Change the footer area of your support portal
+      pagelayout_help_message: Customize the entire layout of your support portal
+    cosmetic:
+      subheader_background_color: Background color
+      subheader_tab_color: Tab colors
+      subheader_portal_fonts: Portal fonts
+      subheader_link_color: Link color
+      subheader_form_elements: Form elements
+      css_subheader: Custom stylesheet
+      css_help_message: Add or overwrite freshdesk default styles with your own custom css.
