@@ -10,7 +10,7 @@
 		<i class="icon-page-{{ forum.type_name }}"></i>
 	</i>	
 	<div class="list-lead">
-		{{ forum.name }} ({{ forum.total_topics }})			
+		{{ forum.name }} ({{ forum.topics_count }})			
 	</div>
 	<p class="intro ellipsis" title="{{forum.description}}">
 		{{ forum.description }}
@@ -29,6 +29,11 @@
 					{% if topic.sticky? %}
 						<span class="pull-right-tablet label label-small label-sticky">
 							Sticky
+						</span>
+					{% endif %}
+					{% if topic.answered? %}
+						<span class="pull-right-tablet label label-small label-answered">
+							Answered
 						</span>
 					{% endif %}
 					{% if topic.stamp_type %}

@@ -41,17 +41,9 @@
 					<div class="user-pic-thumb user-pointer-bottom">
 						<img src="{{ post.user.profile_url }}" width="40px" height="40px" />
 					</div>
-					<div class="user-details">						
+					<div class="user-details">
 						{% unless forloop.first %}
-						<!-- <span class="dropdown pull-right">					          	
-					        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-					        	<li><a href="#">Edit</a></li>
-					        	<li><a href="#">Delete</a></li>
-					       	</ul>
-					       	<a href="#" class="dropdown-toggle" data-toggle="dropdown" class="btn btn-icon btn-small">
-								<i class="icon-cog-drop-dark"></i>
-							</a>
-					    </span> -->
+							{{ post | post_actions }}
 						{% endunless %}
 						<h4 class="user-name">{{ post.user.name }}</h4>
 						<div class="p-info">
@@ -63,8 +55,15 @@
 						</div>
 					</div>
 				</div>
-				<div class="p-content">
-					<div class="p-desc">{{ post.body_html }}</div>
+				<div class="p-content" id="post-{{post.id}}-description">
+					<div class="p-desc">
+						{% if post.answer? %}
+							<span class="label label-small label-answered pull-left">
+								Answer
+							</span>
+						{% endif %}
+						{{ post.body_html }}
+					</div>
 
 					{% if forloop.first %}						
 						{% snippet topic_vote %}
@@ -88,6 +87,9 @@
 						{% endfor %}
 					</div>
 					{% endif %}
+				</div>
+				<div class="p-content hide" id="post-{{post.id}}-edit">
+					<div class="loading-box"></div>
 				</div>
 			</section>
 		{% endfor %}

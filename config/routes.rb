@@ -352,7 +352,8 @@
     support.resource :profile, :only => [:edit, :update]
 
     # Search for the portal, can search Articles, Topics and Tickets
-    support.resources :search, :only => :index, :member => { :suggest => :get }
+    support.resource :search, :controller => 'search', :only => :show, 
+      :member => { :solutions => :get, :topics => :get, :tickets => :get }
 
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show]
@@ -360,7 +361,7 @@
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
           :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
-        topic.resources :posts, :only => [:create, :edit, :update, :toggle_monitor], 
+        topic.resources :posts, :except => [:index, :new, :show], 
           :member => { :toggle_answer => :put }
       end
     end

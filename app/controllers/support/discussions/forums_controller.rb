@@ -9,7 +9,7 @@ class Support::Discussions::ForumsController < SupportController
 
 private
 	def load_forum 
-		@forum = current_account.portal_forums.find_by_id(params[:id])
+		@forum = current_portal.portal_forums.visible(current_user).find_by_id(params[:id])
 		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@forum.nil? and !@forum.visible?(current_user) 
     end
 end

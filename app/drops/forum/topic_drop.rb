@@ -105,6 +105,9 @@ class Forum::TopicDrop < BaseDrop
     source.sticky?
   end
   
+  def answered?
+    source.answered?
+  end
   # !PORTALCSS CHECK need to check with shan 
   # if we can keep excerpts for individual model objects
   def excerpt_title

@@ -39,6 +39,7 @@
 $labels: 
   planned #3ea9e0, 
   implemented #346600, 
+  answered #6b9d56,
   nottaken #993531, 
   status #0c8519, 
   sticky #6d6d6d,
@@ -52,8 +53,8 @@ $labels:
   .label-#{nth($label, 1)}:hover  { background-color: darken(nth($label, 2), 10%); }
 }
   
-.label-light           { background-color: #eeeeee; color:#afafaf; @include text-shadow(none); }
-.label-light:hover     { background-color: darken(#eee, 3%); color:#afafaf; @include text-shadow(none); }
+.label-light           { background-color: #eee; color:#666; @include text-shadow(none); }
+.label-light:hover     { background-color: darken(#eee, 3%); color:#444; @include text-shadow(none); }
 
 @include at-breakpoint($break-tablet){
   .label{ 

@@ -1,7 +1,7 @@
 class SupportController < ApplicationController
   layout 'portal'
 
-  before_filter :redactor_form_builder, :page_message, :portal_context
+  before_filter :portal_context, :redactor_form_builder, :page_message
  
   protected
     def set_portal_page page_token

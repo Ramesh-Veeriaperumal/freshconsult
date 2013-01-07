@@ -1,0 +1,15 @@
+<% form_for @post, :url => support_discussions_topic_post_path(@topic.id, @post.id), :method => :put,
+	:html => { :rel => "validate" } do |f| -%>		
+	<div class="row-fluid">
+		<p class="span12">
+			<%= f.rich_editor :body_html, :height => 150 %>
+		</p>
+	</div>
+	<hr />
+	<div>
+		<%= submit_tag t('topic.update_comment'), :class => "btn btn-primary" %> 
+		<a href="#" data-hide-dom="#post-<%= @post.id %>-edit" data-show-dom="#post-<%= @post.id %>-description" class="btn">
+			<%= t('cancel') %>
+		</a>
+	</div>
+<% end -%>

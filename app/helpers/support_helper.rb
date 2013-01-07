@@ -50,6 +50,18 @@ module SupportHelper
 		_output.join(" ")
 	end
 
+	# Default search filters for portal
+	def default_filters search
+		output = []
+		output << %(<ul class="nav nav-pills nav-filter">)		
+			search.filters.each do |f|
+				output << %(<li class="#{search.current_filter == f[:name] ? "active" : ""}">)
+				output << link_to(t("portal.search.filters.#{f[:name]}"), f[:url])
+				output << %(</li>)
+			end
+		output << %(</ul>)
+	end
+
 	# Default topic filter that shows up in the topic list
 	def default_topic_filters forum
 		output = []
@@ -104,7 +116,7 @@ module SupportHelper
 	end
 
 	def link_to_topic_edit topic, label = I18n.t("topic.edit")
-		if User.current == topic.user			
+		if User.current == topic.user
 			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"
 		end
 	end
@@ -116,6 +128,34 @@ module SupportHelper
 			output += "by #{post.user.name} #{time_ago post.created_on}"
 		end
 		output
+	end
+
+	def post_actions post
+		if User.current == post.user
+			output = <<HTML
+				<span class="dropdown pull-right">
+					<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+						<li>
+						<a href="#{ post["edit_url"] }" data-remote data-type="GET" data-loadonce
+								 	data-update="#post-#{post["id"]}-edit" data-show-dom="#post-#{post["id"]}-edit"
+								    data-hide-dom="#post-#{post["id"]}-description">
+									#{t("edit")}
+						</a>
+						</li>
+						<li>
+				     		<a href="#{ post["delete_url"] }" data-method="delete"
+				     			data-confirm="This post will be delete permanently. Are you sure?">
+				     			#{t("delete")}
+				     		</a>
+			     		</li>
+			     	</ul>
+				    <a href="#" class="dropdown-toggle btn btn-icon post-actions" data-toggle="dropdown">
+						<i class="icon-cog-drop-dark"></i>
+					</a>
+				</span>
+HTML
+			output.html_safe
+		end
 	end
 
 	# Ticket specific helpers
@@ -211,6 +251,28 @@ module SupportHelper
 		_category + javascript_tag("jQuery(document).ready(function(){jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});})")
 	end
 
+	# NON-FILTER HELPERS
+
+	# Options list for forums in new and edit topics page
+	def forum_options
+		current_portal.forum_categories.map{ |c| [c.name, 
+			c.forums.visible(current_user).reject(&:announcement?).map{ |f| [f.name, f.id] } ] }	
+	end
+
+	# Search url for different tabs
+	def tab_based_search_url
+		case @current_tab
+			when 'tickets'
+				tickets_support_search_path
+			when 'solutions'
+				solutions_support_search_path
+			when 'forums'
+				topics_support_search_path
+			else
+				support_search_path
+		end
+	end
+
 	private
 		def link_args_to_options(args)
 	      options = {}
@@ -218,3 +280,4 @@ module SupportHelper
 	      options
 	    end
 end
+

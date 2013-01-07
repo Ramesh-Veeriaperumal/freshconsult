@@ -30,7 +30,7 @@
 				Post topic in
 			</label>
 			<div class="controls">
-				<%= form.select :forum_id, grouped_options_for_select(@portal.forum_options, @topic.forum_id), 
+				<%= form.select :forum_id, grouped_options_for_select(forum_options, @topic.forum_id), 
 					{ :include_blank => "--- Select a forum ---" }, 
 					{ :class => "required", :disabled => !@topic.new_record? } %>
 			</div>

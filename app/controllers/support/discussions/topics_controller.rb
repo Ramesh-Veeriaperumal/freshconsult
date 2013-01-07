@@ -213,7 +213,7 @@ class Support::Discussions::TopicsController < SupportController
     end
 
     def forum_scoper
-      current_account.portal_forums
+      current_portal.portal_forums
     end
   
     def topic_param 

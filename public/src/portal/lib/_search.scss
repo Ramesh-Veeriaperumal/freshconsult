@@ -1,125 +1,14 @@
-#search-autocomplete{
+.search-autocomplete{
 	position:absolute;
 	z-index:9999;
 	width:100%;
-	.results{
-		@include border-bottom-radius(6px);
-		@include box-shadow(#aaaaaa 0 6px 10px);
-		border:1px solid #cdcccc;		
-		background:#f8f8f8;
-		border-top:1px solid #dddede;
-		padding: 10px 20px;		
-		margin-top: -1px;
-		.article-list, .topic-list{ margin: 0; }
-		.list-lead{ font-size: 16px; margin-top: 0; }
-		li{			
-			padding:7px 12px;
-			border-bottom:1px solid #efefef;
-		}
-	}
 }
 
-#search_results{
-	display:block; 
-}
-/*
-.results{ 
-	padding-bottom:8px;
-	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:block; }
-	.ticket_icon	span.icon{ background:sprite($icons, page-white) no-repeat; }
-	.contact_icon	span.icon{ background:sprite($icons, user) no-repeat; } 
-	.company_icon	span.icon{ background:sprite($icons, building) no-repeat; } 
-	.solution_icon	span.icon{ background:sprite($icons, solutions) no-repeat; } 
-	.forum_icon		span.icon{ background:sprite($icons, comments) no-repeat; }  
-	
-	li{
-		list-style:none;
-		position:relative;
-		padding:6px 0px 8px 0px;
-		span.icon{ 
-			position:absolute;
-			width:16px;
-			height:16px;
-			margin-left:4px;
-			margin-top:5px;
-		}
-		a{
-			display:block;
-			text-decoration:none;
-			line-height:16px;
-			background-position:5px 4px;
-			background-repeat:no-repeat;
-			@include link-colors(#333333, #ffffff, #333333, #333333);
-			span.info{
-				float:right;
-				font-size:10px;
-				color:#888888;
-			}
-		}
-		
-		a.user{
-			@include link-colors(#006699, #126d9b, #006699, #006699);
-			font-weight:bold;
-		}
-		a.big{
-			font-size:13px;
-			position:relative;
-			left:-25px;
-			@include link-colors(#006699, #126d9b, #006699, #006699);
-		}
-		a.big:hover{
-			text-decoration:underline;
-		}
-		
-		h4{
-			position:absolute;
-			left:0px;
-			top:9px;
-			margin-left:-100px;
-			width:90px;
-			color:#888888;
-			font-size:12px;
-			text-align:right;
-		}
-		div, a{
-			padding:4px 8px 4px 25px;
-		}
-		div.title{
-			background:#efefef;
-			color:#666666;
-		}
-		strong.title{
-			font-weight:bold;
-			font-size:13px;
-		}
-		div.group{
-			@include clearfix;
-			border-bottom:1px solid #f1f1f1;
-			padding-top:6px;
-			padding-bottom:6px;
-			.preview_pic{
-				padding:0px;
-				margin:0px;
-				position:relative;
-				margin-left:-28px;
-				img{
-					border:0px;
-					padding:6px;
-				}
-			}
-			span{
-				padding:0px 0px 4px 0px; 
-			}
-			span.small{
-				font-size:11px;
-			}
-			span.light{
-				color:#888888;
-			}
-			span.icon{ 
-				padding:0px;
-				margin-left:-20px;
-			}
-		}
+ul.ui-autocomplete{ 
+	margin: 0;
+	li.article-item, li.topic-item, li.ticket-item {
+		padding-left: 35px;
+		&:before{ left: 10px; }
 	}
-}*/
+}
+.search-results-list{ margin: 0; }

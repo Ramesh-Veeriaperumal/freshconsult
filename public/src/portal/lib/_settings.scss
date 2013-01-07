@@ -180,10 +180,11 @@ $container-style: magic;
 $default-container-width: 1140px !default;
 $container-width: $default-container-width;
 
-$media-mobile: 		0 30em;
-$break-tablet:		45em 12;
-$break-desktop:		60em 12;
-$break-large:		75em 16;
+
+$media-mobile: 		0 30em; // Applying styles only for mobile
+$break-tablet:		45em 12; // Applying styles for Tablets to Medium & Large desktops 
+$break-desktop:		60em 12; // Applying styles for Medium & Large desktops 
+$break-large:		75em 16; // Applying styles for Large desktops and above
 
 // PAGE RELATED STYLES
 // --------------------------------------------------

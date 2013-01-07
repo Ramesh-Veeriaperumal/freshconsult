@@ -63,7 +63,6 @@ module PortalFilters
 		    html << %(</ul></div>)
 		end		
 	    html.join(' ')
-	    # windowed_links
 	end
 
 	def windowed_links

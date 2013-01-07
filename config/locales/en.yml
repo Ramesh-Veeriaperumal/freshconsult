@@ -1226,7 +1226,8 @@ en:
     edit: Edit Topic
     close: Close this Discussion
     post: Post Topic
-    add_comment: Add Comment
+    add_comment: Post comment
+    update_comment: "Update comment"
     post_comment: Post
     msg1: Comments are closed for this topic
     sticky: Sticky
@@ -1508,7 +1509,12 @@ en:
   import_solution_article_info: "Note: We will not save the forum comments"
   portal: 
     search: 
-      placeholder: Search using a keyword or a full question
+      filters:
+        all: "All"
+        solutions: "Solutions"
+        topics: "Topics"
+        tickets: "Tickets"
+      placeholder: Enter your search term here...
     topic:
       comments_closed: "Comments to this discussion are now closed!"
       start_new_topic: "Start a new topic"
@@ -1706,6 +1712,7 @@ en:
   step1: Step 1
   next_charge_date: "Your next payment will be processed on:"
   update_and_login: Update and login
+  password: "Password"
   enter_payment: Enter Payment details...
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:

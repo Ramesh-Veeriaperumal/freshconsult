@@ -164,6 +164,10 @@ class Topic < ActiveRecord::Base
       # self.destroy
     end
   end
+
+  def answered?
+    posts.answered_posts.count > 0
+  end
   
   def users_who_voted
     users = User.find(:all,

@@ -17,7 +17,7 @@ class Portal::Page < ActiveRecord::Base
 		[:user_signup,        	2,  "support/signups/new.portal", "support_signup_path"],
 		[:user_login,         	3,  "support/login/new.portal", "support_login_path"],
 		[:profile_edit,       	4,  "support/profiles/edit.html.erb", "edit_support_profile_path"],
-		[:search,    		  	5,  "support/search/index.portal", "support_search_index_path"],
+		[:search,    		  	5,  "support/search/show.portal", "support_search_path"],
 
 		# Solution pages
 		[:solution_home,      	6,   "support/solutions/index.portal", "support_solutions_path"],
@@ -39,7 +39,10 @@ class Portal::Page < ActiveRecord::Base
 		[:submit_ticket,      	13,  "support/tickets/new.portal", "new_support_ticket_path"],
 		[:ticket_list,        	14,  "support/tickets/index.portal", "support_tickets_path"],
 		[:ticket_view,        	15,  "support/tickets/show.portal", 
-			"support_ticket_path", "tickets"]
+			"support_ticket_path", "tickets"],
+
+		# Password reset with perishable token
+		[:password_reset,       16,  "password_resets/edit.portal"]
 	]
 
 	# Manually organizing them as groups to avoid direct db save dependency
@@ -50,10 +53,10 @@ class Portal::Page < ActiveRecord::Base
 		{ :tickets 		=> [:submit_ticket] }
 	]
 
-	# Hiding customization for profile_edit, ticket_list and ticket_view
-	# :general -> :profile_edit
-	# :tickets -> :ticket_list, :ticket_view
-
+	# Restricted pages from editing
+	# Hiding customization for profile_edit, ticket_list, ticket_view and password_reset
+	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset]
+	
 	# Helper constants for access of PAGE_TYPES
 	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[0], i[1]] }	
 	# PAGE_TYPE_NAME_BY_KEY 	= Hash[*PAGE_TYPES.map { |i| [i[2], i[1]] }.flatten]

@@ -33,7 +33,15 @@ class Admin::PagesController < Admin::AdminController
   private
     def build_or_find
       page_type = params[:page_type] || params[:portal_page][:page_type]
+
       @portal_page_label = Portal::Page::PAGE_TYPE_TOKEN_BY_KEY[page_type.to_i] 
+
+      # Restricted page object will throw errors
+      if(Portal::Page::RESTRICTED_PAGES.include?(@portal_page_label) || @portal_page_label.blank?)
+        flash[:warning] = t('flash.general.access_denied')
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      end
+
       @portal_page = scoper.template.page_from_cache(@portal_page_label) ||
                       scoper.template.pages.find_by_page_type(page_type) || 
                       scoper.template.pages.new( :page_type => page_type )

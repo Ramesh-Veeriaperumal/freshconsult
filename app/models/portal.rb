@@ -60,8 +60,8 @@ class Portal < ActiveRecord::Base
   end
   
   def portal_forums
-    main_portal ? account.portal_forums : 
-      forum_category ? forum_category.portal_forums : []
+    main_portal ? account.forums : 
+      forum_category ? forum_category.forums : []
   end
 
   #Yeah.. It is ugly.
@@ -123,10 +123,6 @@ class Portal < ActiveRecord::Base
   
   def portal_page
     self.template
-  end
-
-  def forum_options
-    self.forum_categories.map{ |c| [c.name, c.customer_editable_forums.map{ |f| [f.name, f.id] } ] }    
   end
 
   private

@@ -1,11 +1,27 @@
-<div class="content rounded-6 min-height-desktop">
-	<div class="breadcrumb">
-		<a href="/">Home</a>
-		<span> Search results for "{{search_key}}" </span>
-	</div>
-	<h3 class="heading">Total results {{ total_results }}</h3>
+<section class="content rounded-6 min-height-desktop">
+	<h2 class="heading">Search results for "{{ search.term }}"</h2>	
+	{{ search | default_filters }}
+	<hr />
+	{% if search.result_count != 0 %}
+		<ul class="search-results-list">
+			{% for result in search.results %}
+			<li class="{{ result.type | downcase }}-item">				
+				<a href="{{result.url}}">{{ result.title }}</a>
+				<span class="label label-small label-light">{{ result.group }}</span>
+				<div>{{ result.desc }}</div>
+				<p class="help-text">
+					{{ result.source.created_on }}
+				</p>
+			</li>
+			{% endfor %}
+		</ul>
+		{{ search.pagination }}
+	{% else %}
+		<div class="lead">No results found</div>
+	{% endif %}
+
 	{% unless total_results == 0 %}
-		{% unless searched_articles == empty %}
+		{% if searched_articles %}
 		<section class="article-list">
 			<div class="list-lead">Articles</div>
 			<ul>
@@ -22,8 +38,8 @@
 			{% endfor %}
 			</ul>
 		</section>
-		{% endunless %}
-		{% unless searched_topics == empty %}
+		{% endif %}
+		{% if searched_topics %}
 		<section class="topic-list">
 			<div class="list-lead">Forums</div>
 			<ul>
@@ -44,8 +60,8 @@
 			{% endfor %}
 			</ul>
 		</section>
-		{% endunless %}
-		{% unless searched_tickets == empty %}
+		{% endif %}
+		{% if searched_tickets %}
 		<section class="ticket-list">
 			<div class="list-lead">Tickets</div>
 			<ul>
@@ -61,7 +77,7 @@
 			{% endfor %}
 			</ul>
 		</section>
-		{% endunless %}
+		{% endif %}
 		{% snippet pagination %}
 	{% else %}
 		<div class="lead">No results found for "{{search_key}}"</div>
@@ -99,4 +115,4 @@
 	<% end %>
 
 	{% endcomment %}
-</div>
+</section>

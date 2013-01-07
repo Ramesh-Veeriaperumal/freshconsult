@@ -117,11 +117,11 @@ class Account < ActiveRecord::Base
   has_many :forum_categories, :order => "position"
   
   has_one :business_calendar
-    
+
+  has_many :forums, :through => :forum_categories    
   has_many :portal_forums, :through => :forum_categories, 
-    :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position" 
-    
-  has_many :portal_topics, :through => :portal_forums# , :order => 'replied_at desc', :limit => 5
+    :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position"     
+  has_many :portal_topics, :through => :forums# , :order => 'replied_at desc', :limit => 5
   
   has_many :user_forums, :through => :forum_categories, :conditions =>['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] 
   has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5

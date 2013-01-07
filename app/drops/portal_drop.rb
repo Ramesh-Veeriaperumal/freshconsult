@@ -68,12 +68,12 @@ class PortalDrop < BaseDrop
     @forum_categories ||= @source.forum_categories
   end
 
-  def forums
-    @forums ||= @source.portal_forums.visible(User.current)
-  end
+  # def forums
+  #   @forums ||= @source.portal_forums.visible(User.current)
+  # end
 
   def total_topics
-    @total_topics ||= topics_count_for_portal
+    @total_topics ||= source.portal_forums.visible(User.current).map{ |t| t.topics_count }.sum
   end
 
   def logo_url
@@ -116,10 +116,6 @@ class PortalDrop < BaseDrop
 	      	TabDrop.new( :name => s[1].to_s, :url => s[0], :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s )
 		    end
     end    
-
-    def allowed_in_portal? f
-      source.account.features? f
-    end
 
     def popular_topics_from_portal
       source.main_portal? ? source.account.portal_topics.popular.filter(@per_page, @page) :

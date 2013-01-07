@@ -25,9 +25,9 @@
 			  </div>
 			</script>
 		</div>
-		<br />
+		<hr />
 		<div>
-			<%= submit_tag "Post comment", :class => "btn btn-primary", :id => "post-submit-button"  %> 
+			<%= submit_tag t('topic.add_comment'), :class => "btn btn-primary", :id => "post-submit-button"  %> 
 			<a href="#" data-hide-dom="#new-post-form" data-show-dom="#reply-form-proxy" class="btn"><%= t('cancel') %></a>
 		</div>
 	<% end -%>

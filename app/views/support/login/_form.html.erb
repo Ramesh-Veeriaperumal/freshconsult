@@ -13,7 +13,7 @@
 	  			<input class="special" id="user_session_password" name="user_session[password]" 
 	  				placeholder="<%= t('.password') %>" size="30" type="password">
 	  		</div>
-	  	</div>	  	
+	  	</div>
 		<div class="control-group">			
 	  		<div class="controls">
 	  			<label class="checkbox">
@@ -22,7 +22,9 @@
 				</label>
 			</div>
 			<button type="submit" class="btn btn-primary btn-login"> <%= t('.login') %> </button>
-			<%= link_to(t('.forgot'), "", "data-toggle-dom" => "#forgot-form, #login-form" ) %>
-	  	</div>	
+			<%= link_to(t('.forgot'), "", 
+					:id => "forgot_password",
+					"data-toggle-dom" => "#forgot-form, #login-form" ) %>
+	  	</div>
 	</fieldset>
 <% end %>

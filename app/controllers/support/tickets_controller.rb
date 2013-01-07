@@ -127,7 +127,9 @@ class Support::TicketsController < SupportController
   
     def build_tickets
       @company = current_user.customer.presence
-      @filter_users = current_user.customer.users if current_user.client_manager?
+      @filter_users = current_user.customer.users if 
+            @company && current_user.client_manager? && @company.users.size > 1 
+
       @requested_by = current_requested_by
 
       date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? 
@@ -141,6 +143,11 @@ class Support::TicketsController < SupportController
 
       @tickets ||= []
     end
+
+    def many_employees_in_company?
+      current_user.client_manager? && has_company? && customer.user > 1
+    end
+
 
     # Used for scoping of filters
     def ticket_scope
