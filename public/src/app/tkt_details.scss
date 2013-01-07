@@ -2360,3 +2360,20 @@ label.custom-select {
 		margin-left: -100px;
 	}
 }
+
+
+#revert_details_view {
+	clear: both;
+	margin: 0 0 20px;
+	padding: 5px 0;
+	border: solid 1px #DEDEDE;
+	@include corners(5px);
+	text-align: center;
+
+	a.switch {
+		width:140px;
+		border-right: solid 1px #CCC;
+		display: inline-block;
+		margin-right: 10px;
+	}
+}

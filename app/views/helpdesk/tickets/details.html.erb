@@ -16,6 +16,10 @@
 		<div id="tkt-inner" class="scollable_content">
 
 			<div class="tkt-sidebar" id="ticket_details_sidebar">
+				<div id="revert_details_view">
+					<%= link_to "Switch to Class View</strong>", helpdesk_ticket_path(@ticket), :class => "switch" %>
+					<a href="#">Submit Feedback</a>
+				</div>
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %>  
 				<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
 				<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
@@ -63,5 +67,9 @@ jQuery(document).ready(function(){
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 	jQuery(window).trigger('scroll');
 <% end %>
+
+	jQuery('#revert_details_view .switch').click(function(ev) {
+		setCookie('new_details_view', 'false', 90);
+	});
 </script>
 <% content_for :layoutType do -%>ticket_details<%- end %>

@@ -496,9 +496,6 @@ $(document).ready(function() {
 
 // End of Due-by time JS
 
-
-
-
 	$('ul.tkt-tabs').each(function(){
 		// For each set of tabs, we want to keep track of
 		// which tab is active and it's associated content
@@ -515,6 +512,10 @@ $(document).ready(function() {
 
 		// Bind the click event handler
 		$(this).on('click', 'a', function(e){
+
+			// Prevent the anchor's default click action
+			e.preventDefault();
+
 			// Make the old tab inactive.
 			$active.parent().removeClass('active');
 			$content.hide();
@@ -525,11 +526,14 @@ $(document).ready(function() {
 
 			// Make the tab active.
 			$active.parent().addClass('active');
+			var widget_code = $content.find('textarea');
+			$content.append(widget_code.val());
+			widget_code.remove();
 			$content.show();
 
-			// Prevent the anchor's default click action
-			e.preventDefault();
 		});
+
+		$active.click();
 	});
 
 	$("select").data('placeholder','');
@@ -888,7 +892,7 @@ $(document).ready(function() {
 
 
 	//Previous Next Buttons request
-	// $.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
 });
 
 

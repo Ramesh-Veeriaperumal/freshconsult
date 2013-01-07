@@ -152,11 +152,7 @@ private
   end
 
   def set_show_version
-    @new_show_page = true
-  end
-
-  def new_show_page?
-    true
+    @new_show_page = cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
   end
   
   def respond_to_format result

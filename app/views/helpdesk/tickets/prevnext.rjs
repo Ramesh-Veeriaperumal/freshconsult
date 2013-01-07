@@ -1,6 +1,6 @@
 
 next_link = 'javascript:void(0)'
-next_class = 'pagi-btn'
+next_class = 'pagi-btn next_page'
 if !@next_ticket.blank? and  @next_ticket != '-1'
 	next_link = "/helpdesk/tickets/#{@next_ticket}"
 else
@@ -8,7 +8,7 @@ else
 end
 
 previous_link = 'javascript:void(0)'
-previous_class = 'pagi-btn'
+previous_class = 'pagi-btn prev_page'
 if !@previous_ticket.blank? and  @previous_ticket != '-1'
 	previous_link = "/helpdesk/tickets/#{@previous_ticket}"
 else

@@ -2,8 +2,15 @@
 	<div class="tkt-tabs-wrap">
 		<ul class="tkt-tabs">
 			<li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
-			<li><a href="#contact_info_capsulecrm" class="requester-info-sprite requester-info-capsulecrm"></a></li>
-			<li><a href="#contact_info_sugarcrm" class="requester-info-sprite requester-info-sugarcrm"></a></li>
+			<%
+			crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm]
+			crm_apps.each do |crm_app| 
+				if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>   
+				<li><a href="#contact_info_<%=crm_app%>" class="requester-info-sprite requester-info-<%=crm_app%>"></a></li>
+				<% 
+				end 
+			end
+			%> 
 		</ul>
 	</div>
 	<% 
@@ -28,38 +35,19 @@
 			<p class='more_details'><%= link_to('More details...', contact) %></p>
 		</div>
 	</div>
-	<div id="contact_info_sugarcrm" class='requester_tab'>
-		<h3>Sugar <%=t('ticket.requestor_info')%></h3>
-		<div class="requester-avatar-wrap">
-			<%= user_avatar(user, :medium)  %>
-		</div>
-
-		<div class="requester-details">
-			<p><%= link_to(h(user.name), contact, :class => "user_name") %></p>
-			<p><%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %></p>
-			<%= content_tag(:p, "Email: #{render_item(h(user.email), "link")}" ) unless user.email.blank? %>
-			<%= content_tag(:p, "Twitter: #{h(user.twitter_id)}" ) unless user.twitter_id.blank? %>
-			<%= content_tag(:p, "Facebook: #{render_item(h(user.fb_profile_id), "facebook")}" ) unless user.fb_profile_id.blank? %>
-			<%= content_tag(:p, "Phone: #{h(user.phone)}" ) unless user.phone.blank? %>
-			<%= content_tag(:p, "Mobile: #{h(user.mobile)}" ) unless user.mobile.blank? %>
-			<p><%= link_to('More details...', contact) %></p>
-		</div>
+	<%
+	crm_apps.each do |crm_app| 
+		if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>
+	<div id="contact_info_<%=crm_app%>" class='requester_tab'>
+		<%
+		@liquid_objects = {"requester" => @ticket.requester}
+		widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[crm_app], "#{crm_app}_widget", @liquid_objects) 
+		%>
+		<textarea class="hide"><%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %></textarea>
+		
 	</div>
-	<div id="contact_info_capsulecrm" class='requester_tab'>
-		<h3>Capsule <%=t('ticket.requestor_info')%></h3>
-		<div class="requester-avatar-wrap">
-			<%= user_avatar(user, :medium)  %>
-		</div>
-
-		<div class="requester-details">
-			<p><%= link_to(h(user.name), contact, :class => "user_name") %></p>
-			<p><%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %></p>
-			<%= content_tag(:p, "Email: #{render_item(h(user.email), "link")}" ) unless user.email.blank? %>
-			<%= content_tag(:p, "Twitter: #{h(user.twitter_id)}" ) unless user.twitter_id.blank? %>
-			<%= content_tag(:p, "Facebook: #{render_item(h(user.fb_profile_id), "facebook")}" ) unless user.fb_profile_id.blank? %>
-			<%= content_tag(:p, "Phone: #{h(user.phone)}" ) unless user.phone.blank? %>
-			<%= content_tag(:p, "Mobile: #{h(user.mobile)}" ) unless user.mobile.blank? %>
-			<p><%= link_to('More details...', contact) %></p>
-		</div>
-	</div>
+	<% 
+		end 
+	end
+	%>
 </div>

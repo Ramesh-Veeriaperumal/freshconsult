@@ -15,7 +15,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [:index, :show, :details, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :set_show_version
-  before_filter :select_show_page , :only => [:show, :details ]
   before_filter :check_user, :load_installed_apps, :only => [:show, :details, :forward_conv]
 
 
@@ -210,7 +209,14 @@ class Helpdesk::TicketsController < ApplicationController
       :conditions => {:user_id => current_user.id})
       
     respond_to do |format|
-      format.html  
+      format.html  {
+        if @new_show_page
+          @ticket_notes.reverse!
+          @ticket_notes_total = @ticket.conversation_count
+
+          render :action => "details"
+        end
+      }
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  
@@ -237,8 +243,7 @@ class Helpdesk::TicketsController < ApplicationController
       
     respond_to do |format|
       format.html  {
-        @ticket_notes.reverse!
-        @ticket_notes_total = @ticket.conversation_count
+        
       }
       format.atom
       format.xml  { 
@@ -877,21 +882,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def set_show_version
-    @new_show_page = true
-  end
-  def select_show_page
-    return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'
-    # redirect_to url_for(:overwrite_params => { :action => 'show' }) if params[:action] == 'details'
-    # if switch_to_new_show?
-    #   return redirect_to url_for(:overwrite_params => { :action => 'details' })  if params[:action] == 'show'
-    # else
-    #   return redirect_to url_for(:overwrite_params => { :action => 'show' }) if params[:action] == 'details'
-    # end
-  end
-
-  def switch_to_new_show?
-    true
-    # cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
+    @new_show_page = cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
+    puts "new_show_page :: #{@new_show_page}"
   end
 
   def set_selected_tab

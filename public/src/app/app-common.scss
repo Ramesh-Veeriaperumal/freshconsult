@@ -1154,6 +1154,8 @@ div.panel_area{
 		background-color:none;
 		width:24px;
 		height:24px;
+
+		display: inline-block;
 	}
 	.monitor img{ 
 		background: sprite($ticketicon, monitor) no-repeat;
@@ -1165,6 +1167,8 @@ div.panel_area{
 		@include hide-text();
 		width: 24px;
 		height: 24px;
+		display: inline-block;
+
 	}
 	.spam { 
 		background: sprite($ticketicon, flag-spam) no-repeat;
@@ -8607,6 +8611,18 @@ height: auto;
 .select2-highlighted .select2_list_detail{
 	color:#fff;
 }
+
+#switch_details_view {
+	background: #fffad3;
+
+	a.switch {
+		width:150px;
+		border-right: solid 1px #CCC;
+		display: inline-block;
+		margin-right: 10px;
+	}
+}
+
 /*!pattern Need to delete after pattern intagrated to product */
 .watchers_tooltip{
 	.btn-primary {
