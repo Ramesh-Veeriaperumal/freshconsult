@@ -114,7 +114,6 @@
 
 	$(document).on('click.freshdialog.data-api', '[rel="freshdialog"]', function (e) {
 	    e.preventDefault()
-	    console.log(e)
 
 	    var $this = $(this)
 	    ,  	href = $this.attr('href')
@@ -126,14 +125,8 @@
 	    	$this.freshdialog($this.data())
 	    }
 
-	    console.log('Is Remote??')
-	    console.log(!/#/.test(href) && href)
 	    var $target = $($(this).data("targetId"))
-	    console.log($.extend({ remote:!/#/.test(href) && href }, $target.data(), $this.data()))
 	    var	option = $target.data('modal') ? 'toggle' : $.extend({ remote:!/#/.test(href) && href }, $target.data(), $this.data())
-
-	    console.log($target)
-	    console.log($.fn.modal);
 
 	    $target
 			.modal(option);

@@ -67,19 +67,7 @@
 												</a>
 											</li>
 										  </ul>
-										</div><!-- 
-										<div class="btn-group">
-											<a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
-												<span class="reply-inner"></span>
-												<%= t('ticket.reply_to')  %>
-											</a>
-											<a class="btn" href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
-												<%= t('fwd_to') %>
-											</a>
-											<a  class="btn" href="#"  rel="note-button" data-note-type="note" >
-												<%= t('ticket.add_note') %>
-											</a>
-										</div> -->
+										</div>
 									</li>
 									<li class="ticket-btns">
 										<%= link_to(t('ticket.close_btn'), "#", 
@@ -128,6 +116,13 @@
 										  </ul>
 										</div>
 									</li>
+									<% else %>
+									<div class="alert-message block-message warning">
+								      <div class="alert-actions-right">
+								        <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
+								      </div>
+								      <p><strong><%= t('this_ticket_has_been_deleted') %></strong></p>
+								    </div>
 
 									<% end %>
 								</ul>

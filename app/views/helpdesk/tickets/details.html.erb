@@ -6,7 +6,6 @@
 <%= include_javascripts :pattern  %>
 <%= javascript_include_tag  'bootstrap/bootstrap.dialog' %>
 <%= include_stylesheets :tkt_details %>
-<%= stylesheet_link_tag "app/lib/dialog" %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
 <div class="tkt-wrapper ticket_show" data-showing='notes'>
 	<div class="tkt-wrapper-inner clearfix">
@@ -17,8 +16,8 @@
 
 			<div class="tkt-sidebar" id="ticket_details_sidebar">
 				<div id="revert_details_view">
-					<%= link_to "Switch to Class View</strong>", helpdesk_ticket_path(@ticket), :class => "switch" %>
-					<a href="#">Submit Feedback</a>
+					<%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket), :class => "switch" %>
+					<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>
 				</div>
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %>  
 				<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
@@ -73,3 +72,15 @@ jQuery(document).ready(function(){
 	});
 </script>
 <% content_for :layoutType do -%>ticket_details<%- end %>
+
+<script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+<style type="text/css" media="screen, projection">
+	@import url(http://assets.freshdesk.com/widget/freshwidget.css);
+
+	.ticket_details #freshwidget-button {
+		display: none !important;
+	}
+</style> 
+<script type="text/javascript">
+	FreshWidget.init("", {"queryString": "", "buttonText": "Support", "buttonColor": "#ffffff", "buttonBg": "#006063", "alignment": "4", "offset": "235px", "url": "http://support.freshdesk.com", "assetUrl": "http://assets.freshdesk.com/widget"} );
+</script>

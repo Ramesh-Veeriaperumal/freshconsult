@@ -1,7 +1,7 @@
 <% content_for :sidebar do -%>
 	<div id="switch_details_view" class="sidepanel">
-		<%= link_to "Try the <strong>New Ticket View</strong>", helpdesk_ticket_path(@ticket), :class => "switch" %>
-		<a href="#">What's New?</a>
+		<%= link_to t('ticket.switch_view.new_view'), helpdesk_ticket_path(@ticket), :class => "switch" %>
+		<%= link_to t('ticket.switch_view.whats_new'), "#" %>
 	</div>
 
   <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>

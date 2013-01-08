@@ -1745,6 +1745,11 @@ en:
   back: Back
   ticket:
     insert: "Insert"
+    switch_view: 
+      new_view: "Try the <strong>New Ticket View</strong>"
+      whats_new: "What's new"
+      revert_view: "Switch to Classic View"
+      submit_feedback: "Submit Feedback"
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
