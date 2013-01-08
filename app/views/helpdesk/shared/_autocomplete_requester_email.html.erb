@@ -38,6 +38,7 @@ jQuery(document).ready(function() {
     minimumInputLength: 2,
     multiple: true,
     allowClear: true,
+    maximumSelectionSize: 3,
     data: [<%=hash_val.join(",")%>],
     ajax: { 
         url: '<%= url %>',
@@ -64,7 +65,8 @@ jQuery(document).ready(function() {
     formatSelection: select2_requester_format,
     formatNoMatches: function () { return "No matching Requester found"; },
     formatInputTooShort: function (input, min) { 
-      return "Please type " + (min - input.length) + " or more letters"; }
+      return "Please type " + (min - input.length) + " or more letters"; },
+    formatSelectionTooBig: function (limit) { return "You can only select " + limit + " Requester" + (limit == 1 ? "" : "s"); },
   });
 
   jQuery("#requester_filter").select2("val",[]);
