@@ -36,49 +36,52 @@
 		<div class="lead-small">Please check again later. </div>
 	{% endif %}
 </section>
-<section class="sidebar content rounded-6 min-height-on-desktop">
-	<div class="community-sidebar" id="home-community-sidebar">
-		<h2 class="heading">Community</h2>
-		{% if portal.total_topics > 0 %}
-			<div class="start-topic">{{ portal | link_to_start_topic }}</div>
-			<p class="intro">Showing recent updates</p>
-			<div class="cs-g-c" id="home-page-discussions">
-				{% for category in portal.forum_categories %}
-					{% for forum in category.forums %}
-						{% unless forum.topics_count == 0 %}
-							<section class="cs-g topic-list">
-								<div class="list-lead">
-									<i class="badge-{{forum.type_name}}"></i>
-									<a href="{{forum.url}}">{{ forum.name }} ({{ forum.topics_count }})</a>
-								</div>
-								{% assign show_limit = 3 %}
-								<ul>
-									{% for topic in forum.topics limit:show_limit %}
-									<li>
-										<div class="ellipsis">
-											<a href="{{topic.url}}" title="{{topic.title}}">{{topic.title}}</a>
-										</div>
-										<p class="help-text">
-											posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }} <br />
-											{% if topic.has_comments %}
-												<a href="{{topic.last_post.url}}">Last reply</a>
-												by {{ topic.last_post.created_on | time_ago }}
-											{% endif %}
-										</p>
-									</li>
-									{% endfor %}
-									{% if forum.topics_count > show_limit %}
-										<a href="{{forum.url}}" class="see-more">See all {{ forum.topics_count }} topics</a>
-									{% endif %}
-								</ul>
-							</section>
-						{% endunless %}
-					{% endfor %}
-				{% endfor %}
-			</div>
-		{% else %}
-			<div class="lead">No forum topic yet</div>
-			<div class="lead-small">Why dont you start a {{ portal | link_to_start_topic }}?</div>
-		{% endif %}
-	</div>
-</section>
+{{ portal.forums }}
+{% if portal.has_forums %}
+	<section class="sidebar content rounded-6 min-height-on-desktop">
+		<div class="community-sidebar" id="home-community-sidebar">
+			<h2 class="heading">Community</h2>
+			{% if portal.total_topics > 0 %}
+				<div class="start-topic">{{ portal | link_to_start_topic }}</div>
+				<p class="intro">Showing recent updates</p>
+				<div class="cs-g-c" id="home-page-discussions">				
+					{% for category in portal.forum_categories %}
+						{% for forum in category.forums %}
+							{% unless forum.topics_count == 0 %}
+								<section class="cs-g topic-list">
+									<div class="list-lead">
+										<i class="badge-{{forum.type_name}}"></i>
+										<a href="{{forum.url}}">{{ forum.name }} ({{ forum.topics_count }})</a>
+									</div>
+									{% assign show_limit = 3 %}
+									<ul>
+										{% for topic in forum.topics limit:show_limit %}
+										<li>
+											<div class="ellipsis">
+												<a href="{{topic.url}}" title="{{topic.title}}">{{topic.title}}</a>
+											</div>
+											<p class="help-text">
+												posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }} <br />
+												{% if topic.has_comments %}
+													<a href="{{topic.last_post.url}}">Last reply</a>
+													by {{ topic.last_post.created_on | time_ago }}
+												{% endif %}
+											</p>
+										</li>
+										{% endfor %}
+										{% if forum.topics_count > show_limit %}
+											<a href="{{forum.url}}" class="see-more">See all {{ forum.topics_count }} topics</a>
+										{% endif %}
+									</ul>
+								</section>
+							{% endunless %}
+						{% endfor %}
+					{% endfor %}				
+				</div>
+			{% else %}
+				<div class="lead">No forum topic yet</div>
+				<div class="lead-small">Why dont you start a {{ portal | link_to_start_topic }}?</div>
+			{% endif %}
+		</div>
+	</section>
+{% endif %}

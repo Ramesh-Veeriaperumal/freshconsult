@@ -7,7 +7,7 @@ class PortalDrop < BaseDrop
   def initialize(source)
     super source
   end
-  
+
   def login_path
     @login_path ||= source.portal_login_path
   end
@@ -65,15 +65,19 @@ class PortalDrop < BaseDrop
   end
   
   def forum_categories
-    @forum_categories ||= @source.forum_categories
+    @forum_categories ||= source.forum_categories
   end
 
-  # def forums
-  #   @forums ||= @source.portal_forums.visible(User.current)
-  # end
+  def forums
+    @forums ||= forum_categories.map{ |c| c.forums.visible(portal_user) }.reject!(&:blank?)
+  end
 
-  def total_topics
-    @total_topics ||= source.portal_forums.visible(User.current).map{ |t| t.topics_count }.sum
+  def has_forums
+    (forums.present? && allowed_in_portal?(:open_forums))
+  end
+
+  def topics_count
+    @topics_count ||= forums.map{ |t| t.topics_count }.sum
   end
 
   def logo_url
@@ -88,10 +92,6 @@ class PortalDrop < BaseDrop
     @contact_info ||= source.preferences.fetch(:contact_info, "")
   end
 
-  def current_user
-    @current_user ||= User.current
-  end
-
   def ticket_export_url
     @ticket_export_url ||= configure_export_support_tickets_path
   end
@@ -103,13 +103,17 @@ class PortalDrop < BaseDrop
   def popular_topics
     @popular_topics ||= popular_topics_from_portal
   end
+
+  def current_user
+    @current_user ||= portal_user
+  end
   
   private
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],
-					      [ support_solutions_path,   :solutions,	  User.current || allowed_in_portal?(:open_solutions) ],
-				        [ support_discussions_path, :forums, 	    User.current || allowed_in_portal?(:open_forums) ],
-				        [ support_tickets_path,     :tickets,     User.current ]]
+					      [ support_solutions_path,   :solutions,	  portal_user || allowed_in_portal?(:open_solutions) ],
+				        [ support_discussions_path, :forums, 	    portal_user || allowed_in_portal?(:open_forums) ],
+				        [ support_tickets_path,     :tickets,     portal_user ]]
 
 			tabs.map do |s| 
 				next unless s[2] 
@@ -123,13 +127,7 @@ class PortalDrop < BaseDrop
     end
 
     def topics_count_for_portal
-      if source.main_portal?
-        source.account.portal_forums.visible(User.current).map{ |t| t.topics_count }.sum
-      elsif source.forum_category.present?
-        source.forum_category.forums.visible(User.current).map{ |t| t.topics_count }.sum
-      else
-        0
-      end
+      source.portal_forums.visible(portal_user).map{ |t| t.topics_count }.sum
     end
 
     def articles_count_for_portal

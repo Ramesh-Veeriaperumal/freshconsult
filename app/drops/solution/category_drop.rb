@@ -17,11 +17,11 @@ class Solution::CategoryDrop < BaseDrop
   end
   
   def folders
-    @folders ||= @source.folders.visible(User.current)
+    @folders ||= @source.folders.visible(portal_user)
   end
 
   def total_folders
-    @total_folders ||= @source.folders.visible(User.current).size
+    @total_folders ||= @source.folders.visible(portal_user).size
   end
   
 end

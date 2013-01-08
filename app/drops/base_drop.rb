@@ -62,9 +62,17 @@ class BaseDrop < Liquid::Drop
     #     end_eval
     #   end
     # end
+    
+    def portal_user
+      @current_user ||= User.current
+    end
+
+    def portal_account
+      @current_account ||= Account.current
+    end 
 
     def allowed_in_portal? f
-      @account.features? f
+      portal_account.features? f
     end
     
     def liquify(*records, &block)

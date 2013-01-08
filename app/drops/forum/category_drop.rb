@@ -17,11 +17,11 @@ class Forum::CategoryDrop < BaseDrop
   end
   
   def forums
-    @forums ||= @source.forums.visible(User.current)
+    @forums ||= @source.forums.visible(portal_user)
   end
 
   def total_forums
-    @source.forums.visible(User.current).size
+    @source.forums.visible(portal_user).size
   end
   
 end

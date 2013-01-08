@@ -36,7 +36,7 @@ class SearchDrop < BaseDrop
 	    			 		:url => topics_support_search_path(:term => term) }) if
 				( allowed_in_portal? :open_forums )			
 
-		if(User.current)
+		if(portal_user)
 			def_list.push({ :name => :tickets,
 	    			  		:url => tickets_support_search_path(:term => term) })
         end

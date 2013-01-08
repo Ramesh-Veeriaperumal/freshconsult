@@ -69,7 +69,7 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def voted_by_current_user?
-    source.voted_by_user? User.current
+    source.voted_by_user? portal_user
   end
 
   def like_url

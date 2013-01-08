@@ -255,8 +255,12 @@ HTML
 
 	# Options list for forums in new and edit topics page
 	def forum_options
-		current_portal.forum_categories.map{ |c| [c.name, 
-			c.forums.visible(current_user).reject(&:announcement?).map{ |f| [f.name, f.id] } ] }	
+		_forum_options = []
+		current_portal.forum_categories.each do |c| 
+			_forums = c.forums.visible(current_user).reject(&:announcement?).map{ |f| [f.name, f.id] }
+			_forum_options << [ c.name, _forums ] if _forums.present?
+		end
+		_forum_options
 	end
 
 	# Search url for different tabs
