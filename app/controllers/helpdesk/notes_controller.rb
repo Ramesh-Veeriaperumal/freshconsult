@@ -183,7 +183,8 @@ class Helpdesk::NotesController < ApplicationController
         flash[:notice] = t(:'fwd_success_msg') unless params[:xhr] == 'true'
       elsif @item.to_emails.present? or @item.cc_emails.present? or @item.bcc_emails.present?
         Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
-                :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
+                :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false),
+                :quoted_text => (params[:quoted_text].present? && params[:quoted_text] == 'true')})
         flash[:notice] = t(:'flash.tickets.reply.success') unless params[:xhr] == 'true'
       end
     end

@@ -69,6 +69,13 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   }
   
+  named_scope :for_quoted_text, lambda { |first_note_id|
+    { :conditions => ["source != ? AND helpdesk_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id], 
+      :order => "helpdesk_notes.created_at DESC",
+      :limit => 4
+    }
+  }
+  
   named_scope :latest_facebook_message,
               :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 

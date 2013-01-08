@@ -96,8 +96,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
   
     part "text/html" do |html|
-      html.body   render_message("reply",:ticket => ticket, :body => note.body_html,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]))
+      html.body   render_message("reply",:ticket => ticket, :body => note.body_html, :note => note,
+                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+                  :include_quoted_text => options[:quoted_text]
+                  )
     end
 
     note.attachments.each do |a|
