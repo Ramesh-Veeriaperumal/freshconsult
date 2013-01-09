@@ -426,11 +426,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation_since(since_id)
-      return notes.visible.exclude_source('meta').newest_first.since(since_id)
+    return notes.visible.exclude_source('meta').newest_first.since(since_id)
   end
 
   def conversation_before(before_id)
-      return notes.visible.exclude_source('meta').newest_first.before(before_id).first(50)
+    return notes.visible.exclude_source('meta').newest_first.before(before_id)
   end
 
   def conversation_count(page = nil, no_of_records = 5)

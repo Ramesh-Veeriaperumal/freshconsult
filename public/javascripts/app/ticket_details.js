@@ -60,8 +60,9 @@ stopDraftSaving = function() {
 clearSavedDraft = function(){
 	$.ajax({
 		url: TICKET_DETAILS_DATA['draft']['clear_path'],
-		method: 'delete'
+		type: 'delete'
 	});
+	TICKET_DETAILS_DATA['draft']['clearingDraft'] = true;
 	$('#cnt-reply-body').setCode(TICKET_DETAILS_DATA['draft']['default_reply']);
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 	$(".ticket_show #reply-draft").hide();
@@ -376,7 +377,6 @@ var updatePagination = function() {
 
 	if (updateShowMore()) {
 		var showing_notes = $('#all_notes').length > 0;
-		$('#show_more').data('next-page',2);
 
 		//Unbinding the previous handler:
 		$('#show_more').off('click');
@@ -389,7 +389,6 @@ var updatePagination = function() {
 			else
 				href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'];
 
-			href += $(this).data('next-page').toString();
 			$.get(href, function(response) {
 				$('#show_more').removeClass('loading');
 				$('[rel=activity_container]').prepend(response);
@@ -537,7 +536,7 @@ $(document).ready(function() {
 	});
 
 	$("select").data('placeholder','');
-	$("select.dropdown, select.dropdown_blank, select.nested_field, select.select2").livequery(function(){
+	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, select.select2").livequery(function(){
 		if (this.id == 'helpdesk_ticket_priority') {
 			$(this).select2({
 				formatSelection: formatPriority,

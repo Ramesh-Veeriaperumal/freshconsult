@@ -70,6 +70,8 @@ jQuery(document).ready(function(){
 	jQuery('#revert_details_view .switch').click(function(ev) {
 		setCookie('new_details_view', 'false', 90);
 	});
+	
+	jQuery(".list_agents_replying").addClass("hide");
 </script>
 <% content_for :layoutType do -%>ticket_details<%- end %>
 
@@ -83,4 +85,13 @@ jQuery(document).ready(function(){
 </style> 
 <script type="text/javascript">
 	FreshWidget.init("", {"queryString": "", "buttonText": "Support", "buttonColor": "#ffffff", "buttonBg": "#006063", "alignment": "4", "offset": "235px", "url": "http://support.freshdesk.com", "assetUrl": "http://assets.freshdesk.com/widget"} );
+
+	var removeWidgetButton = setInterval(function() {
+		if (window.FreshWidget) {
+			//Which means FreshWidget is loaded.
+			//Now remove the widget button.
+			jQuery('.ticket_details #freshwidget-button').remove();
+			clearInterval(removeWidgetButton);
+		}
+	}, 1000);
 </script>

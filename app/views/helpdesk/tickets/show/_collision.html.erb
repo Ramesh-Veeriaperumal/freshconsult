@@ -95,7 +95,6 @@
     jQuery(document).ready(function() {   
      
       var socket = io.connect('<%= nodejs_url("collision") %>');
-      jQuery(".list_agents_replying").addClass("hide");
       jQuery(document).bind('ticket_show', function(ev){
         socket.socket.disconnect();
       });

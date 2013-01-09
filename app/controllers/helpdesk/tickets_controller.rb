@@ -693,7 +693,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_reply_to_all_emails
-    @ticket_notes = @ticket.conversation(nil,3,[:survey_remark, :user, :attachments, :schema_less_note])
+    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note])
     reply_to_all_emails
   end
 
@@ -883,7 +883,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_show_version
     @new_show_page = cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
-    puts "new_show_page :: #{@new_show_page}"
   end
 
   def set_selected_tab
