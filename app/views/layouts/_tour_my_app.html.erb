@@ -8,6 +8,7 @@
 	    if (window.location.href.indexOf("freshpo.com") != -1) {
     		tour.setOptions({"test_mode": true});
   		}
+  		tour.setUserReference("<%= current_account.full_domain%> [<%= current_account.id %>]");
 	    tour.start();
 	});
 	</script>
