@@ -115,6 +115,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
@@ -122,8 +123,7 @@ javascripts:
     - public/javascripts/frameworks/socket.io.js
   visitor:
     - public/javascripts/frameworks/session.js            
-  workspace: 
-    - public/javascripts/frameworks/plugins/select2.js
+  workspace:  
     - public/javascripts/bootstrap/twipsy.js
     - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js

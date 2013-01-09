@@ -10,9 +10,7 @@ end
 %>
 
 <div class = "autocomplete_requester_filter">
-  <input type="hidden" id="requester_filter" name="requester" class="filter_item" 
-         data-hash="[<%=hash_val.join(",")%>]" />
-
+  <input type="hidden" id="requester_filter" name="requester" />
 </div>
 <script>
 jQuery(document).ready(function() {
@@ -58,18 +56,23 @@ jQuery(document).ready(function() {
         }
     },
     initSelection : function (element, callback) {
-      callback( eval(element.data('hash')) );
-     },
+      callback( [<%=hash_val.join(",")%>] );
+    },
     specialFormatting: true,
     formatResult: select2_requester_results,
     formatSelection: select2_requester_format,
     formatNoMatches: function () { return "No matching Requester found"; },
     formatInputTooShort: function (input, min) { 
       return "Please type " + (min - input.length) + " or more letters"; },
-    formatSelectionTooBig: function (limit) { return "You can only select " + limit + " Requester" + (limit == 1 ? "" : "s"); },
+    formatSelectionTooBig: function (limit) { 
+      return "You can only select " + limit + " Requester" + (limit == 1 ? "" : "s"); },
   });
 
   jQuery("#requester_filter").select2("val",[]);
+
+  jQuery("#requester_filter").on("change", function(){
+    refresh_tickets();
+  });  
 
 });
 
