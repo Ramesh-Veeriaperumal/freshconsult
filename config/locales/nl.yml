@@ -1798,7 +1798,7 @@ nl:
   set_type_as: "Type instellen als"
   show_quoted_text: "Aangehaalde tekst tonen"
   sign_in_info: "U wordt aangemeld met"
-  signup: aanmelden
+  signup: Aanmelden
   signup_complete_activate_info: "Welkom! We hebben u een e-mail gestuurd met een koppeling, waarin u uw wachtwoord kunt instellen en uw account activeren."
   signup_title: "Aanmelden bij %{current_portal}"
   since: Sinds
@@ -2232,7 +2232,7 @@ nl:
       login: Inloggen
       password: Wachtwoord
       remember: "Onthoud mij op deze computer"
-      sign_in_using: "Aanmelden met"
+      sign_in_using: "Inloggen met"
       sign_in_using_google: "Aanmelden met uw Google-account"
   username: Gebruikersnaam
   users: 

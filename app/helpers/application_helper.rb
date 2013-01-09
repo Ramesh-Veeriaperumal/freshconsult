@@ -13,7 +13,11 @@ module ApplicationHelper
   ASSETIMAGE = { :help => "/images/helpimages" }
   
   def format_float_value(val)
-    sprintf( "%0.02f", val) unless val.nil? 
+    if !(val.is_a? Fixnum)
+      sprintf( "%0.01f", val)
+    else
+      return val.to_s
+    end
   end
 
   def timediff_in_words(interval)
@@ -30,13 +34,13 @@ module ApplicationHelper
     if (interval.to_i <= 0) 
       "-"
     elsif days > 0
-      "#{days} days and #{hours % 24} hours"
+      "#{days} days  #{hours % 24} hrs"
     elsif hours > 0
-      "#{hours} hours and #{mins % 60} minutes"
+      "#{hours} hrs  #{mins % 60} mins"
     elsif mins > 0
-      "#{mins} minutes and #{secs % 60} seconds"
+      "#{mins} mins  #{secs % 60} secs"
     elsif secs >= 0
-      "#{secs} seconds"
+      "#{secs} secs"
     end
 
   end
@@ -476,12 +480,8 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    if dom_type == "requester"
-      field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
-      rfield = add_requester_field
-      field_label += rfield if rfield  
-    end
-    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
+    field_label    += '<span class="required_start">*</span>' if required
+    field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
@@ -532,7 +532,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    render(:partial => "/shared/add_requester") if (current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && current_user && current_user.can_view_all_tickets?)
   end
   
   def add_name_field

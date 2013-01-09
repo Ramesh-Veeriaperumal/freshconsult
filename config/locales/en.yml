@@ -1,4 +1,6 @@
 en:
+  meta:
+   language_name: 'English'
   enabled: "Enabled"
   disabled: "Disabled"
   tip_on: "Click to Enable"
@@ -25,13 +27,12 @@ en:
     due_by: "Due By"
     customers: "Customers"
     tags: "Tags"
+    requester: "Requesters"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
-  meta:
-   language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: Attachment(s) size can be up to 15 MB
+  attachment_help_info: Attachment(s) size can be up to 20 MB
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
@@ -753,6 +754,10 @@ en:
         success: The trash was emptied.
       delete_forever:
         success: %{tickets} deleted.
+      unwatch: 
+        success: %{tickets} removed from the watch-list.
+        failure: Ticket unwatch action failed.
+        unsubscribe_success: This ticket has been removed from your watch-list.
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1374,6 +1379,7 @@ en:
     info3: Background information of %{nick_name}
     working: Working at
     info4: Recent tickets from %{nick_name}
+    show_more: Show more tickets from %{nick_name} »
     form_placeholder: 
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
     info5: User has not created any ticket till now
@@ -1692,6 +1698,11 @@ en:
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_closed_at: "Closed: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_resolved_at: "Resolved: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_agent_responded_at: "Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_requester_responded_at: "Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_created_at: "Created: <span class='emphasize'>%{time_ago} ago</span>"
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
@@ -1743,6 +1754,7 @@ en:
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
+    unwatch: Unwatch
     submit_ticket_title: Submit a ticket
     create_ticket_title: Create a ticket
     convert_ticket_title: Convert as a ticket
@@ -2042,6 +2054,33 @@ en:
         priority: "Priority"
         time_ago: "%{time_in_words} ago"
         sla: "Due By"
+      add_watcher:
+        add_watcher_link: Add Watcher
+        add_button: Add
+        no_agents: No agent is watching this ticket
+        ticket_watchers: Ticket Watchers
+        me: Me
+        cancel: Cancel
+        view_watchers_link: View Watchers
+        no_watcher_text: No agent is watching this ticket
+        watcher_text: Agents added as watchers receive email alerts when the ticket is updated
+        unwatch: Unwatch
+        pick_agents: Add agents
+        all_agents_watching: All agents are watching this ticket
+        mail:
+          hi: Hi
+          added_as_watcher: %{agent_name} has added you as a watcher of a ticket
+          new_activity: New activity on your watched ticket
+          activity: Activity
+          ticket: Ticket
+          requester: Requester
+          customer: The Customer
+          status_change:  %{agent_name} has %{status} a ticket you are watching
+          response: %{responder} has responded to a ticket you are watching
+          ticket_details: Ticket Description
+          customer_response: Customer Response
+          agent_response: Agent Response
+          stop_emails: "Stop watching this ticket"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -2101,7 +2140,7 @@ en:
         my_on_hold: My Tickets On Hold
         select: Select View...
         spam: Spam
-        monitored_by: Tickets I'm Monitoring
+        monitored_by: Tickets I'm Watching
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by
@@ -2120,7 +2159,7 @@ en:
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
+           exceed: Oops! Your attachment exceeds 20 MB. Please attach a smaller file.
     merge:
       merge:
         merge_into: Merge into?
@@ -2632,12 +2671,13 @@ en:
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
-        tickets_resolved: "Tickets Resolved"
-        on_time_resolution: "On time Resolution"
+        tickets_resolved: "Tickets <br> Resolved"
+        on_time_resolution: "On Time <br> Resolution"
         on_time_resolution_percent: "OTR %"
-        fcr_count: "First Contact Resolution"
+        fcr_count: "First Contact <br> Resolution"
         fcr_percent: "FCR %"
-        avg_1st_response_time: "Avg. first response time"
+        avg_1st_response_time: "Average First <br> Response Time"
+        avg_response_time: "Average Response <br> Time"
         helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"

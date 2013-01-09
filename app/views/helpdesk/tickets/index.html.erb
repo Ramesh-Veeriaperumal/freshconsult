@@ -23,8 +23,8 @@
 <%= javascript_include_tag "sisyphus" %>
 <div class="containerFull">
   <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != 'deleted' && @current_view != 'spam' && @current_view != 'monitored_by') ? 'block' : 'none' %>">
-    <div id="ticket-leftFilter" rel="remote" class="leftFilter" data-remote-url="/helpdesk/tickets/filter_options" >   
-      <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
+    <div id="ticket-leftFilter" rel="remote" class="leftFilter">   
+      <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter, :requester_id =>  params[:requester_id] } %>
     </div>
   </div>
   <div id="rightCol" class="contentCol <%="hasRightCol" unless (@current_view == "deleted" or @current_view == "spam" or @current_view == "monitored_by") %>">

@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%>
+<% content_for :sidebar do %>
   <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
 
@@ -32,7 +32,7 @@
 		<% end %>
 </div>
 
-<div class="contact-box-additional">
+<div>
 	<h4 class="title"><%=t('contacts.info3',:nick_name => @user.display_name)%></h4>
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
@@ -40,13 +40,29 @@
 			<div class="alignright"> 
 				<%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
 			</div>
-		<% end %>
-
-		<span class="seperator"></span>
-		<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
-		<% if @user_tickets_open_pending.blank? %>
-			<%= "#{t('contacts.info5')}" %>
-		<% end %>
-		<%= render :partial => "tickets", :object => @user_tickets_open_pending %>
+		<% end %>	
 </div>
-<br><br>
+<% unless @user.deleted %>
+	<div id="tickets-expanded" class="contact_tickets">
+		<div class="detailed_view">
+			<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
+			<span class="seperator"></span>
+			<% if @user_tickets.blank? %>
+				<%= "#{t('contacts.info5')}" %>
+			<% else %>
+				<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
+				<table class="tickets" id="tickets_view" width="100%">	
+			    	<tbody id="view_tickets">
+						<%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @user_tickets, 
+							:inline => true, :locals => { :user_page => true } %>
+				    </tbody>
+			  	</table>
+			  	<% if @user.tickets.visible.size > 5 %>
+				  	<div class="more_results">
+				  		<%= link_to t('contacts.show_more',:nick_name => @user.display_name), helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
+				  	</div>
+			  	<% end %>
+		  	<% end %>
+		</div>
+	</div>
+<% end %>

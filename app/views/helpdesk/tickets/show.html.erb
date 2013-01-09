@@ -9,6 +9,7 @@
 <%- end %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
+<%= include_javascripts :pattern   %>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 
