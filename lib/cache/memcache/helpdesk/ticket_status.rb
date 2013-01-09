@@ -18,12 +18,16 @@ module Cache::Memcache::Helpdesk::TicketStatus
 
   def status_names_from_cache(account)
     key = status_names_memcache_key(account.id)
-    MemcacheKeys.fetch(key) { self.status_names(account) }
+    statuses = MemcacheKeys.fetch(key) { account.ticket_status_values.find(:all) }
+    disp_col_name = self.display_name
+    statuses.map{|status| [status.status_id, translate_status_name(status, disp_col_name)]}
   end
 
   def statuses_from_cache(account)
+    disp_col_name = self.display_name
     key = statuses_memcache_key(account.id)
-    MemcacheKeys.fetch(key) { self.statuses(account) }
+    statuses = MemcacheKeys.fetch(key) { account.ticket_status_values.find(:all) }
+    statuses.map{|status| [translate_status_name(status, disp_col_name), status.status_id]}  
   end
 
   
