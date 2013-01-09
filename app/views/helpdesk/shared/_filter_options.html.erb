@@ -14,7 +14,11 @@
        
       if(container == "nested_field") {         
         value = jQuery(this).children('select').val();
-      } else {
+      }
+      else if(container == "requester"){
+        value = jQuery('#requester_filter').val().toString() || '';
+      }
+      else {
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
       }
                         
@@ -58,7 +62,7 @@
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
           elsif     
-            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
+            container = (c_hash[:name] == 'requester') ? 'requester': (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 
     	  <% 

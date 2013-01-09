@@ -117,7 +117,9 @@ class ContactsController < ApplicationController
     @user = nil # reset the user object.
     @user = current_account.all_users.find_by_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
-    @user_tickets_open_pending = current_account.tickets.requester_active(@user).visible.newest(5)
+    @user_tickets = current_account.tickets.requester_active(@user).visible.newest(5).find(:all, 
+      :include => [ :ticket_states,:ticket_status,:responder,:requester ])
+    
     respond_to do |format|
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request

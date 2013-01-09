@@ -1,0 +1,79 @@
+<%
+hash_val = []
+if selected_requesters
+  selected_requesters.each do |req|
+    hash_val << "{id: '#{req.id}',
+                  value: '#{escape_javascript(req.name)}',
+                  text: '#{escape_javascript(req.name)}'}"
+  end
+end
+%>
+
+<div class = "autocomplete_requester_filter">
+  <input type="hidden" id="requester_filter" name="requester" />
+</div>
+<script>
+jQuery(document).ready(function() {
+  select2_requester_format = function(result, container, query) {
+    return result.value;
+  }
+
+  select2_requester_results = function(result, container, query) {
+    split_info = result.info.split(/<|\(/);
+    name = result.value;
+    if(split_info[1])
+      detail = split_info[1].slice(0,-1);
+    else
+      detail = result.info
+    if(detail.length > 25)
+      detail = split_info[1].substring(0,26)+ "...";
+    display_result = "<b>"+ name + "</b><br><span class='select2_list_detail'>" + detail + "</span>";
+    return display_result;
+  }
+  
+  jQuery("#requester_filter").select2({
+    placeholder: "Enter Requesters name or email",
+    minimumInputLength: 2,
+    multiple: true,
+    allowClear: true,
+    maximumSelectionSize: 3,
+    data: [<%=hash_val.join(",")%>],
+    ajax: { 
+        url: '<%= url %>',
+        dataType: 'json',
+        data: function (term) {
+            return {
+                v: term,
+            };
+        },
+        results: function (data) {
+          var results = [];
+          jQuery.each(data.results, function(i, item){
+            results.push({id: item.user_id, value: item.value, info: item.details});
+          });
+          return {results: results}
+
+        }
+    },
+    initSelection : function (element, callback) {
+      callback( [<%=hash_val.join(",")%>] );
+    },
+    specialFormatting: true,
+    formatResult: select2_requester_results,
+    formatSelection: select2_requester_format,
+    formatNoMatches: function () { return "No matching Requester found"; },
+    formatInputTooShort: function (input, min) { 
+      return "Please type " + (min - input.length) + " or more letters"; },
+    formatSelectionTooBig: function (limit) { 
+      return "You can only select " + limit + " Requester" + (limit == 1 ? "" : "s"); },
+  });
+
+  jQuery("#requester_filter").select2("val",[]);
+
+  jQuery("#requester_filter").on("change", function(){
+    refresh_tickets();
+  });  
+
+});
+
+</script>

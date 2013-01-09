@@ -103,6 +103,16 @@ module Search::TicketSearch
       return Account.current.customers_from_cache.collect { |au| [au.id, au.name] }
     end
 
+    if criteria_key == :requester_id
+      if @requester_id_param
+        requester_id = @requester_id_param.to_a
+      elsif @current_options && @current_options.has_key?("requester_id")
+        requester_id = @current_options["requester_id"].split(',')
+      end
+      @selected_requesters = Account.current.users.find(requester_id) if requester_id
+      return @selected_requesters || [[1,""]]
+    end
+
     return []
   end
   

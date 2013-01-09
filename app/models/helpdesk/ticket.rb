@@ -240,12 +240,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   #Sphinx configuration starts
-  define_index do
+  define_index 'without_description' do
     
     indexes :display_id, :sortable => true
     indexes :subject, :sortable => true
-    indexes description
-    indexes sphinx_notes.body, :as => :note
     
     has account_id, deleted, responder_id, group_id, requester_id, status
     has sphinx_requester.customer_id, :as => :customer_id
@@ -258,12 +256,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     set_property :field_weights => {
       :display_id   => 10,
-      :subject      => 10,
-      :description  => 5,
-      :note         => 3
+      :subject      => 10
      }
   end
   #Sphinx configuration ends here..
+
+
+  define_index 'with_description' do
+    
+    indexes :display_id, :sortable => true
+    indexes :subject, :sortable => true
+    indexes description
+    
+    has account_id, deleted, responder_id, group_id, requester_id, status
+    has sphinx_requester.customer_id, :as => :customer_id
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
+    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
+
+    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0 and helpdesk_tickets.id > 5000000"
+
+    #set_property :delta => Sphinx::TicketDelta
+
+    set_property :field_weights => {
+      :display_id   => 10,
+      :subject      => 10,
+      :description  => 5
+     }
+  end
 
   #For custom_fields
   COLUMNTYPES = [
@@ -505,8 +524,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if @ticket_changes.key?(:status)
-      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
-      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
+      if (status == RESOLVED)
+        notify_by_email(EmailNotification::TICKET_RESOLVED) 
+        notify_watchers("resolved")
+        return
+      end
+      if (status == CLOSED)
+        notify_by_email(EmailNotification::TICKET_CLOSED)
+        notify_watchers("closed")
+        return
+      end
+    end
+  end
+
+  def notify_watchers(status)
+    self.subscriptions.each do |subscription|
+      if subscription.user.id != User.current.id
+        Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_status_change, self, 
+                                              subscription, status, "#{User.current.name}")
+      end
     end
   end
   
@@ -582,7 +618,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def self.search_display(ticket)
-    "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
+    "#{ticket.subject} (##{ticket.display_id})"
   end
   
   def friendly_reply_email
@@ -912,6 +948,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def unsubscribed_agents
+    user_ids = subscriptions.map(&:user_id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
 
 
   private
@@ -1032,7 +1072,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def update_ticket_changes
       @ticket_changes = self.changes.clone
-      @ticket_changes.merge!(schema_less_ticket.changes.clone)
+      @ticket_changes.merge!(schema_less_ticket.changes.clone) if schema_less_ticket
       @ticket_changes.symbolize_keys!
     end
     

@@ -107,7 +107,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_account_id
-    self.account_id = attachable.account_id
+    self.account_id = attachable.account_id if attachable
   end
   
 
