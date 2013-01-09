@@ -21,7 +21,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/seamless_database_pool.git
-  revision: bb8aef2ce2edf780e145f6c9cd1f6bd6a9af19cf
+  revision: 2345a449d3349fdf9d8decea854162cb18000369
   specs:
     seamless_database_pool (1.0.12)
       activerecord (>= 2.2.2)

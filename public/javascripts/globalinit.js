@@ -107,11 +107,15 @@ var $J = jQuery.noConflict();
       if(!document.getElementById('remote_loaded_dom_elements'))
         $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
 
-        $(this)
+      var $this = jQuery(this)
+
+      $(this)
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
           $(this).removeClass("loading-box");
-          $(this).clone().prependTo('#remote_loaded_dom_elements');          
+          
+          if(!$this.data("loadUnique"))            
+            $(this).clone().prependTo('#remote_loaded_dom_elements');
         });
     });
 

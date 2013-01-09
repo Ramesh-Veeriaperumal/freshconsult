@@ -45,7 +45,7 @@
 							</div>
 							<div class="unwatch" 
 							     title=<%=t('helpdesk.tickets.add_watcher.unwatch')%> >
-								<%= link_to_remote(image_tag("/images/delete.png"), :url => unwatch_helpdesk_ticket_helpdesk_subscriptions_path(@ticket.id), 
+								<%= link_to_remote(image_tag("/images/delete.png"), :url => unwatch_helpdesk_ticket_helpdesk_subscriptions_path(@ticket), 
 								    :method => "delete") %>
 							</div>
 						<% else %>
@@ -73,7 +73,7 @@
 		<%= link_to_function( t('helpdesk.tickets.add_watcher.view_watchers_link'), 
 							  "jQuery('#addwatcher').hide(); jQuery('#watcherlist').show();") %>
 	</div>
-	<% form_remote_tag(:url => create_watchers_helpdesk_ticket_helpdesk_subscriptions_path(@ticket.id), 
+	<% form_remote_tag(:url => create_watchers_helpdesk_ticket_helpdesk_subscriptions_path(@ticket), 
 					   :method => :post,
 					   :class => "add_new_watcher") do %>
 		<div class="select_agents">

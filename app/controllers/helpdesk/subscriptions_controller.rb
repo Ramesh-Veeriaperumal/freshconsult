@@ -38,7 +38,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
         format.js { render :partial => "update_watcher_script" }
         format.html {
                       flash[:notice] = t(:'flash.tickets.unwatch.unsubscribe_success') 
-                      redirect_to helpdesk_tickets_path 
+                      redirect_to helpdesk_ticket_path(@ticket)
                     }
     end
   end

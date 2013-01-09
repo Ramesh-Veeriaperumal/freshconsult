@@ -129,7 +129,7 @@ javascripts:
     - public/javascripts/frameworks/socket.io.js
   visitor:
     - public/javascripts/frameworks/session.js            
-  workspace: 
+  workspace:  
     - public/javascripts/bootstrap/twipsy.js
     # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js

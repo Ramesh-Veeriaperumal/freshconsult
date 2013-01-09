@@ -758,7 +758,7 @@ en:
       unwatch: 
         success: %{tickets} removed from the watch-list.
         failure: Ticket unwatch action failed.
-        unsubscribe_success: The ticket has been removed from your watch-list.
+        unsubscribe_success: This ticket has been removed from your watch-list.
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -2155,24 +2155,22 @@ en:
         no_watcher_text: No agent is watching this ticket
         watcher_text: Agents added as watchers receive email alerts when the ticket is updated
         unwatch: Unwatch
-        pick_agents: Pick agents to watch this ticket
+        pick_agents: Add agents
         all_agents_watching: All agents are watching this ticket
         mail:
           hi: Hi
-          added_as_watcher: %{agent_name} has added you as a watcher
+          added_as_watcher: %{agent_name} has added you as a watcher of a ticket
           new_activity: New activity on your watched ticket
-          new_activity_subject: New activity on watched ticket
-          new_watcher_subject: %{agent_name} has added you as a watcher for the ticket %{ticket_id} %{ticket_subject}
           activity: Activity
           ticket: Ticket
           requester: Requester
           customer: The Customer
-          status_change:  %{agent_name} has %{status} the ticket
-          response: %{responder} has responded to the ticket
-          ticket_details: Ticket Details
+          status_change:  %{agent_name} has %{status} a ticket you are watching
+          response: %{responder} has responded to a ticket you are watching
+          ticket_details: Ticket Description
           customer_response: Customer Response
           agent_response: Agent Response
-          stop_emails: "Stop getting activity emails on ticket #%{ticket_id}"
+          stop_emails: "Stop watching this ticket"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -2794,12 +2792,13 @@ en:
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
-        tickets_resolved: "Tickets Resolved"
-        on_time_resolution: "On time Resolution"
+        tickets_resolved: "Tickets <br> Resolved"
+        on_time_resolution: "On Time <br> Resolution"
         on_time_resolution_percent: "OTR %"
-        fcr_count: "First Contact Resolution"
+        fcr_count: "First Contact <br> Resolution"
         fcr_percent: "FCR %"
-        avg_1st_response_time: "Avg. first response time"
+        avg_1st_response_time: "Average First <br> Response Time"
+        avg_response_time: "Average Response <br> Time"
         helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"
