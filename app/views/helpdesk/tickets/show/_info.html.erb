@@ -36,7 +36,7 @@
 							<h2 class="subject">
 								<div class="watchers_tooltip hide" id="new_watcher_page"
 									rel="remote-load" 
-									data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket.id)%>" >
+									data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" >
 									<span class="arrow-right"></span>
 								</div>
 								<span id="monitor"><%= render :partial => "/helpdesk/subscriptions/monitor" %></span>
@@ -48,6 +48,7 @@
 									<% unless @ticket.deleted %>
 									<li class="ticket-btns">
 										<div class="btn-group">
+										<% if @item.from_email.present? %>
 										  <a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
 										    <span class="reply-inner"></span>
 										  	<%= t('ticket.reply_to')  %>
@@ -57,16 +58,24 @@
 										  </a>
 										  <ul class="dropdown-menu">
 										    <li>
-										    	<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
+										    	<a class="btn" href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
 										    		<%= t('fwd_to') %>
 										    	</a>
 										    </li>
 											<li>
-												<a href="#"  rel="note-button" data-note-type="note" >
+												<a class="btn" href="#"  rel="note-button" data-note-type="note" >
 													<%= t('ticket.add_note') %>
 												</a>
 											</li>
 										  </ul>
+										<% else %>
+										  	<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
+									    		<%= t('fwd_to') %>
+									    	</a>
+										  	<a href="#"  rel="note-button" data-note-type="note" >
+												<%= t('ticket.add_note') %>
+											</a>
+								    	<% end %>
 										</div>
 									</li>
 									<li class="ticket-btns">

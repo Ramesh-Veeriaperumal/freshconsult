@@ -2388,3 +2388,23 @@ label.custom-select {
 
 	}
 }
+
+//CRM Integrations Overrides
+.integration_widget.crm_contact_widget{
+	.title {
+		background: none;
+		border: none;
+	}
+
+	.content {
+		clear: both;
+		padding: 5px 5px 15px;
+	}
+}
+
+.requester_tab {
+	.content {
+		clear: both;
+		padding: 5px 5px 15px;
+	}
+}

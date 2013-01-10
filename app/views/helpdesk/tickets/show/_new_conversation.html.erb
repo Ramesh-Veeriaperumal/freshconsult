@@ -8,7 +8,7 @@
 			  								:cntid => 'cnt-reply', 
 		  									:note => [@ticket, Helpdesk::Note.new(:private => false)], 
 		  									:conv_id => nil 
-		  								}) unless @ticket.is_twitter? or @ticket.is_facebook? %>
+		  								}) if !(@ticket.is_twitter? or @ticket.is_facebook?) and (@item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
 
 			  	
 				<div class="request_panel hide" id="cnt-fwd" rel="emitter" data-node-name="agent_replying">
@@ -41,7 +41,9 @@
 									}) if @ticket.is_facebook? %>
 			</div> 
 			<div id="TicketPseudoReply" class="pseudo_reply" rel="note-button" data-note-type="reply">
+				<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
 				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" ><%= t('ticket.reply_to')  %></a> /
+				<% end %>
 				<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /
 				<a href="#"  rel="note-button" data-note-type="note" ><%= t('ticket.add_note') %></a>
 			</div>
