@@ -1,5 +1,5 @@
-# Based on http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/1812-default_scope-cant-take-procs
-
+#https://groups.google.com/forum/?fromgroups=#!topic/rubyonrails-security/DCNTNp_qjFM
+#Better way is to move to Rails 2.3.15
 
 ActiveRecord::Base.class_eval do
 
