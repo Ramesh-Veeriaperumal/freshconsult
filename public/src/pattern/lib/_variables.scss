@@ -277,3 +277,13 @@ $fluidGridGutterWidth1200:     percentage($gridGutterWidth1200/$gridRowWidth1200
 // 768px-979px
 $fluidGridColumnWidth768:      percentage($gridColumnWidth768/$gridRowWidth768) !default;
 $fluidGridGutterWidth768:      percentage($gridGutterWidth768/$gridRowWidth768) !default;
+
+
+//Admin Page admin-breadcrum-size
+//-----------------------------------------------------
+// Arrow mark in the breadcrum is based on this two variable
+
+$admin-breadcrum-padding : 12px;
+$admin-font-size : 1.4em;
+$admin-arrow-size: 23px;
+$admin-breadcrum-color:  $grayLighter;

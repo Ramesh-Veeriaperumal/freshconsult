@@ -1,51 +1,199 @@
-<% content_for :sidebar do %>
-  <%= render :partial => "helpnote" %>
-<% end %>
-<div class="clearfix">
-	<div class="floatr">
-		<%= link_to t('agent.new'), new_agent_path, :class => "uiButton special"  %>
-	</div>
-	<h3 class="title"><%=t('agent.title')%></h3>
-	<b><%=t('agent.showing')%></b>				
-	<% if params[:state].blank? or params[:state].eql?('active') %>					
-		<b><%=t('agent.status.active') %></b> |
-		<%= link_to t('agent.status.deleted'), :state => 'deleted' %>
-	<% else %>						
-		<%= link_to t('agent.status.active'), :state => 'active' %> |
-		<b><%=t('agent.status.deleted') %></b>
-	<% end %>	
-</div>
-<% if @agents.length > 0 %>
-	<ul class="admin_list">	
-		<% @agents.each do |agent| %>
-			<li>
-				<% if params[:state].blank? or params[:state].eql?('active') %>	
-					<div class="item_actions">
-						<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
-											:method => :delete, :class => "button") if can_destroy?(agent) %>
-						<%= link_to t('edit'), edit_agent_path(agent), :class => "button" %>	
-					</div>								 
-				<% else %>
-					<div class="item_actions">
-						<%= link_to t('agent.restore'), {:action => :restore ,:id => agent.id} , :method => 'put' , :class => "button" unless (agent.user == current_user)  %>
-					</div>
-				<% end %> 
-				<%= user_avatar(agent.user) %>
-				<%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %>
-				<div><%= h agent.user.job_title %></div>
-				<div><%= mail_to ( h(agent.user.email)) %></div>							
-			</li>	
-		<% end %>	 
-	</ul>
-	<%= will_paginate(@agents) %>
-<% else %>
-	<div class="big-info">
-		<div class="no-info-text">
-			<% if params[:state].blank? or params[:state].eql?('active') %>	
-				<%= t('agent.active.no_agents') %>
-			<% else %>
-				<%= t('agent.deleted.no_agents') %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern  %>
+
+<% occasional_agents = [] %>
+
+<% @agents.each do |occ_agent| 
+	 if occ_agent.occasional 
+	 	occasional_agents.push(occ_agent)
+	 end
+end %>
+<!-- Deleted agent-->
+<% deleted_agents = [] %>
+<% puts @agents.inspect %>
+<% @agents.each do |delete_agent| 
+	 if delete_agent.user.deleted 
+	 	deleted_agents.push(delete_agent)
+	 end
+end %>
+
+<div class="cust_list_table">
+    <div class="cust_list_table_header"	>
+    	<div class="row-fluid">
+    		<div class="span6"><h3 class="title"><%=t('agent.title')%></h4></div>
+    		 <div class="span6 pull-right pagination-right">
+    		 	<span>0 Agent seats available, <a href="" class="margin-right">Buy more</a> </span>
+                <b><%= link_to t('agent.new'), new_agent_path, :class => "btn"  %></b> 
+            </div>
+    	</div>
+    </div>
+    <div>
+		<ul id="agentTab" class="tabs nav-tabs">
+          <li class="active"><a href="#home" data-toggle="tab">Full time Agents</a></li>
+         	<% if occasional_agents.length > 0 %>
+				<li><a href="#Occasional" data-toggle="tab">Occasional Agents </a></li>
 			<% end %>
-		</div>
-	</div>
-<% end %>
+			<% if deleted_agents.length > 0 %>
+          		<li><a href="#Deleted" data-toggle="tab">Deleted Agents </a></li>
+          	<% end %>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="home">
+        		<div class="row-fluid">
+        			<div class="span4">
+			            <div class="dropdown">
+			               Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">Last login date<b class="caret"></b></a> </strong>
+			                <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
+		                        <li><a href="http://google.com">Action</a></li>
+		                        <li><a href="#anotherAction">Another action</a></li>
+		                        <li><a href="#">Something else here</a></li>
+		                        <li class="divider"></li>
+		                        <li><a href="#">Separated link</a></li>
+		                      </ul>
+			            </div>
+		        	</div>
+		        </div>
+		        <div class="cust_list_table_body">
+		        	<!-- Add content here for top of the table-->
+		        	<% unless @agents.blank? %>
+						<table class="table table-striped">
+							<% @agents.each do |agent| %>
+							<% if agent.occasional == false %>
+								<tr>
+									<td>
+										<a href="#" class="cust-list-avatar">
+											<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
+										</a>
+										<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
+									</td>
+									<td>
+										<p ><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+									</td>
+									<td>
+										<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
+									</td>
+									<td>
+										<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+										<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+																 :method => :delete, :class => "btn btn-mini btn-delete") unless (agent.user == current_user)  %>
+									</td>
+								</tr>
+								<% end %>
+							<% end %>
+						</table>
+		        		<%= will_paginate @agents, 
+		        				:renderer => BootstrapPaginationRenderer, 
+		        				:previous_label => "<b class='arrow-left'></b>",
+		        				:next_label => "<b class='arrow-right'></b>",
+		        				:class => "pagination pagination-centered" %>
+		        	<% end %>
+              	</div>
+            </div>
+            <!-- Occasional Agent tab code start -->
+			<div class="tab-pane fade" id="Occasional">
+		        <div class="row-fluid">
+        			<div class="span4">
+			            <div class="dropdown">
+			                Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">Last login date<b class="caret"></b></a></strong>
+			                <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
+		                        <li><a href="http://google.com">Action</a></li>
+		                        <li><a href="#anotherAction">Another action</a></li>
+		                        <li><a href="#">Something else here</a></li>
+		                        <li class="divider"></li>
+		                        <li><a href="#">Separated link</a></li>
+		                      </ul>
+			            </div>
+		        	</div>
+		        </div>
+		        <div class="cust_list_table_body">
+					<table class="table table-striped">
+						<% if occasional_agents.length > 0
+							occasional_agents.each do |agent| %>
+							<tr>
+								<td>
+									<a href="#" class="cust-list-avatar">
+										<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
+									</a>
+									<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
+								</td>
+								<td>
+									<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+								</td>
+								<td>
+									<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
+								</td>
+								<td>
+									<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+									<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+															 :method => :delete, :class => "btn btn-mini") unless (agent.user == current_user)  %>
+								</td>
+							</tr>
+							<% end %>
+					</table>  
+					<%= will_paginate @occasional_agents, 
+		        				:renderer => BootstrapPaginationRenderer, 
+		        				:previous_label => "<b class='arrow-left'></b>",
+		        				:next_label => "<b class='arrow-right'></b>",
+		        				:class => "pagination pagination-centered" %>
+		        	<% end %>
+              	</div>
+			</div>
+			<div class="tab-pane fade" id="Deleted">
+		        <div class="row-fluid">
+        			<div class="span4">
+			            <div class="dropdown">
+			                Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">Last login date<b class="caret"></b></a></strong>
+			                <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
+		                        <li><a href="http://google.com">Action</a></li>
+		                        <li><a href="#anotherAction">Another action</a></li>
+		                        <li><a href="#">Something else here</a></li>
+		                        <li class="divider"></li>
+		                        <li><a href="#">Separated link</a></li>
+		                      </ul>
+			            </div>
+		        	</div>
+		        </div>
+		        <div class="cust_list_table_body">
+					<table class="table table-striped">
+						<% if deleted_agents.length > 0
+							deleted_agents.each do |agent| %>
+							<tr>
+								<td>
+									<a href="#" class="cust-list-avatar">
+										<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
+									</a>
+									<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> <br/></strong><small class="muted"><%= h agent.user.job_title %></small></p>
+								</td>
+								<td>
+									<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+								</td>
+								<td>
+									<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
+								</td>
+								<td>
+									<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+									<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+															 :method => :delete, :class => "btn btn-mini") unless (agent.user == current_user)  %>
+								</td>
+							</tr>
+							<% end %>
+					</table>  
+					<%= will_paginate @deleted_agents, 
+		        				:renderer => BootstrapPaginationRenderer, 
+		        				:previous_label => "<b class='arrow-left'></b>",
+		        				:next_label => "<b class='arrow-right'></b>",
+		        				:class => "pagination pagination-centered" %>
+		        	<% end %>
+              	</div>
+			</div>
+        </div>
+    </div>
+</div>​
+<script>
+jQuery(document).ready(function(){
+   jQuery('#agentTab a').click(function (e) {
+	  e.preventDefault();
+	  jQuery(this).tab('show');
+	});
+  });
+</script>
