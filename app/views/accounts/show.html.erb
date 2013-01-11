@@ -33,7 +33,7 @@
   		<div class="action_buttons">        
             <%= link_to_function "#{t('change')}", "jQuery(this).parents('form:first').trigger('submit')" %>
         </div>
-				<%= select_tag :account_admin, options_from_collection_for_select(current_account.technicians, :id, :name_email, current_account.account_admin.id) %>
+				<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_details,current_account.account_admin.id) %>
     </div>
 	<%end-%>
 	

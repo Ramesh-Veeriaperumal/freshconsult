@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   has_many :day_pass_usages, :dependent => :destroy
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
-  
+   
   has_many :email_notification_agents,  :dependent => :destroy
 
   has_many :user_roles, :dependent => :destroy
@@ -60,9 +60,10 @@ class User < ActiveRecord::Base
   has_many :support_scores, :dependent => :delete_all
 
   before_create :set_time_zone , :set_company_name , :set_language
-  before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
+  before_save :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   after_update :update_admin_in_crm , :if => :account_admin_updated?
+  after_update :update_admin_to_billing , :if => :account_admin_updated?
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
@@ -115,7 +116,9 @@ class User < ActiveRecord::Base
   end
   
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and (external_id.blank? || !email.blank?)
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
+                          (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
+                          (mobile.blank? || !email.blank?)
   end
 
   def add_tag(tag)
@@ -317,10 +320,15 @@ class User < ActiveRecord::Base
   ##Authorization copy starts here
   def role
     @role ||= Helpdesk::ROLES[USER_ROLES_SYMBOL_BY_KEY[user_role]] || Helpdesk::ROLES[:customer]
-  end
+  end  
   
-  def name_email
-    "#{name} <#{email}>" unless email.nil?
+  def name_details #changed name_email to name_details
+    return "#{name} <#{email}>" unless email.blank?
+    return "#{name} (#{phone})" unless phone.blank?
+    return "#{name} (#{mobile})" unless mobile.blank?
+    return "@#{twitter_id}" unless twitter_id.blank?
+
+    name
   end
 
   ##Authorization copy ends here
@@ -342,9 +350,7 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-
     UserDrop.new self
-    
   end
     
   def has_company?
@@ -364,14 +370,23 @@ class User < ActiveRecord::Base
     day_pass_usages.on_the_day(start_time).first
   end
   
-  def self.filter(letter, page, state = "active")
-  paginate :per_page => 10, :page => page,
-           :conditions => [ 'name like ? and deleted = ?', "#{letter}%", !state.eql?("active") ],
-           :order => 'name'
+  def self.filter(letter, page, state = "verified", per_page = 50)
+    paginate :per_page => per_page, :page => page,
+             :conditions => filter_condition(state, letter) ,
+             :order => 'name'
+  end
+
+  def self.filter_condition(state, letter)
+    case state
+      when "verified", "unverified"
+        [ ' name like ? and deleted = ? and active = ? and email is not ? ', "#{letter}%", false , state.eql?("verified"), nil ]
+      when "deleted", "all"
+        [ ' name like ? and deleted = ? ', "#{letter}%", state.eql?("deleted") ]
+    end                                      
   end
   
   def get_info
-    (email) || (twitter_id) || (external_id)
+    (email) || (twitter_id) || (external_id) || (name)
   end
   
   def twitter_style_id
@@ -398,7 +413,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+      super(:builder => xml,:root=>options[:root], :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
                                                               :user_role,:fb_profile_id,:external_id,:language,:address]) 
   end
@@ -443,30 +458,23 @@ class User < ActiveRecord::Base
   end
 
   protected
-    def set_account_id_in_children
-      self.avatar.account_id = account_id unless avatar.nil?
-  end
-  
-  def set_contact_name  
-    if self.name.blank?
+
+  def set_contact_name 
+    if self.name.blank? && email
       self.name = (self.email.split("@")[0]).capitalize
     end
-   
- end
+  end
  
  def set_default_role
    self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer] if self.user_role.blank?
  end
- 
+
  def set_company_name
-   
    if (self.customer_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
        cust = account.customers.domains_like(email_domain).first
        self.customer_id = cust.id unless cust.nil?    
-     
    end
-   
  end
  
  def drop_authorization
@@ -486,6 +494,15 @@ class User < ActiveRecord::Base
     user
   end
 
+  def self.find_by_an_unique_id(options = {})
+    options.delete_if { |key, value| value.blank? }
+    
+    #return self.find(options[:id]) if options.key?(:id)
+    return self.find_by_email(options[:email]) if options.key?(:email)
+    return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
+    return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
+  end 
+  
   private
 
     def account_admin_updated?
@@ -503,5 +520,9 @@ class User < ActiveRecord::Base
 
     def user_role_updated?
       @all_changes.has_key?(:user_role)
+    end
+    
+    def update_admin_to_billing
+      Resque.enqueue(Billing::AddToBilling::UpdateAdmin, self.id)
     end
 end

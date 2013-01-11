@@ -152,15 +152,24 @@
 	}
 }
 
+.ui-tooltip-response{
+	margin-left:10px;
+}
+
+.ui-tooltip-response, .ui-tooltip-ticket {
+	.ui-tooltip-content{
+		padding:0.8em 1em;
+		color:#000000;
+		text-align:left;
+		font-size:1.0em;
+		background-color:#FFFDE1;
+		border-color:#d0cdaa;
+	}	
+}
+
 .ui-tooltip-ticket .ui-tooltip-content{
-	padding:0.8em 1em;
-	width: 500px;
-	color:#000000;
-	text-align:left;
-	font-size:1.0em;
-	background-color:#FFFDE1;
-	border-color:#d0cdaa;
 	margin-left:-14px; 
+	width: 500px;
 }
 
 .ui-tooltip-ticket.hasReplying, .ui-tooltip-ticket.hasViewers{

@@ -14,15 +14,15 @@
       <div class="inline-radio">
   	    <label class="inline-radio">
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], true, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
-  		    <%= t('admin.canned_responses.form.me_only') %>
+  		    <%= t('admin.canned_responses.responses.form.me_only') %>
   	    </label>
   	    <label class="inline-radio">
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], false, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
-  		    <%= t('admin.canned_responses.form.all_agents') %>
+  		    <%= t('admin.canned_responses.responses.form.all_agents') %>
   	    </label>
   	    <label class="inline-radio">
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], false,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
-  		    <%= t('admin.canned_responses.form.groups') %>
+  		    <%= t('admin.canned_responses.responses.form.groups') %>
   	    </label>
   		    <div style="display:none;" class="tabbed" id="accessible_group">
             <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name) %>

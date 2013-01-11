@@ -34,8 +34,8 @@
 		<div class="request_details">   
   		<div class="breadcrumbs">
   			<%= link_to(t('forum.title'), categories_path) %> &rarr;
-  			<%= link_to( "#{@forum_category.name}", category_path(@forum_category)) %> &rarr;
-  			<%= link_to( "#{@forum.name}", category_forum_path(@forum_category, @forum)) %> 
+  			<%= link_to( "#{h(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
+  			<%= link_to( "#{h(@forum.name)}", category_forum_path(@forum_category, @forum)) %> 
   		</div>
 	    	<div class="requestCnt request-cnt-first">  
 			  <h3 class="forum-title">
@@ -74,7 +74,12 @@
               <% if @topic.editable_by?(current_user) -%>
                 <div class="action_buttons">
                   <%= link_to(t('topic.edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %>
-                </div>		
+                </div>
+                <div class="action_buttons">
+                <%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
+		              update_lock_category_forum_topic_path(@forum_category,@forum, @topic),
+		              :method => :put, :class => "last" )	if logged_in? && current_user.has_manage_forums? %>
+		        </div>
               <% end %>
 						  <div class="floatr"> 
                 <% if privilege?(:create_forum_topic) %>
@@ -106,12 +111,9 @@
 					<% end %>             
 					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-           <%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
-              update_lock_category_forum_topic_path(@forum_category,@forum, @topic),
-              :method => :put,  :title => "Discussion comments", :class => "uiButton" )	if privilege?(:manage_forums) %>
-            <% if privilege?(:post_in_forums) %>    
-              <%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "uiButton special") if logged_in? && !@topic.locked? %>
-            <% end %>
+		<% if privilege?(:post_in_forums) %>    
+           <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if logged_in? && !@topic.locked? %>
+        <% end %>
           </div>
 					</div>   
         </div>
@@ -134,3 +136,17 @@
       <% end %>
       <div id="edit"></div>
     </div>
+    <% javascript_tag do %>
+    	(function($) {
+		    $('.requestCnt').on('click', '.reset_button, .save_button', function(ev){
+		    	var id = $(this).data('id');
+		    	$('#post_' + id + '_body_html').destroyEditor();
+				$('#edit_post_' + id).hide();
+				$('#loading_' + id).removeClass('hide');
+				if($(this).hasClass('reset_button')) {
+					$('#post_details_' + id).html($(this).data('html'));
+					$('#loading_' + id).addClass('hide');
+				}
+			});
+		})(jQuery)
+    <% end %>

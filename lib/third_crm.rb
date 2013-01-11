@@ -40,8 +40,10 @@ class ThirdCRM
   
   def add_contact(account)
     account_admin = account.account_admin
+    name = account_admin.name.split(" ", 2)
     lead_contact = {}
-    lead_contact[:LastName] = account_admin.name
+    lead_contact[:LastName] = name[0]
+    lead_contact[:FirstName] = name[1] if name.size > 1
     lead_contact[:Phone] = account_admin.phone
     lead_contact[:Email ] = account_admin.email
     lead_contact[:Company ] = account.name
@@ -59,6 +61,7 @@ class ThirdCRM
     lead_custom_field[:Plan__c ] = subscription.subscription_plan.name 
     lead_custom_field[:Amount__c] = subscription.amount 
     lead_custom_field[:Customer_Status__c] = subscription.state
+    lead_custom_field[:Customer_Status__c_contact] = subscription.state
     lead_custom_field
   end
   

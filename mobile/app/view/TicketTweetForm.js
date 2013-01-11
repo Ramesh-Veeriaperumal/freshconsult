@@ -70,7 +70,8 @@ Ext.define('Freshdesk.view.TicketTweetForm', {
                         errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]
                     }
                     Ext.Msg.alert('Errors', errorHtml, Ext.emptyFn);
-                }
+                },
+                headers : { 'Accept': 'application/json' }
             });
         }
     },

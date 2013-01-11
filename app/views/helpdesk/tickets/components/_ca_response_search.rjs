@@ -1,0 +1,2 @@
+    page.replace_html 'search-list', :partial => 'helpdesk/tickets/components/ca_responses'
+    page << "jQuery('#search-list').removeClass('loading-center');"

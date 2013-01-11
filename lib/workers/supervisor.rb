@@ -34,7 +34,7 @@ class Workers::Supervisor
       rescue
         puts "something went wrong"
       end
-      Account.reset_current_account
     end
+    Account.reset_current_account
   end
 end

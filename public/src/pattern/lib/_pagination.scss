@@ -1,0 +1,77 @@
+//
+// Pagination (multiple pages)
+// --------------------------------------------------
+
+
+.pagination {
+  height: $baseLineHeight * 2;
+  margin: $baseLineHeight 0;
+ }
+.pagination ul {
+  display: inline-block;
+  @include ie7-inline-block();
+  margin-left: 0;
+  margin-bottom: 0;
+  @include border-radius(3px);
+  @include box-shadow(0 1px 2px rgba(0,0,0,.05));
+}
+.pagination ul > li {
+  display: inline;
+}
+.pagination ul > li > a,
+.pagination ul > li > span {
+  float: left;
+  padding: 0 14px;
+  line-height: ($baseLineHeight * 2) - 2;
+  text-decoration: none;
+  background-color: $paginationBackground;
+  border: 1px solid $paginationBorder;
+  border-left-width: 0;
+}
+.pagination ul > li > a:hover{
+  background-color: #c6c6c6;
+  border-color:#c6c6c6;
+}
+.pagination ul > .active > a,
+.pagination ul > .active > span,
+.pagination ul > .active > a:hover{
+  background-color: #7f7f7f;
+  border-color:#7f7f7f;
+}
+
+.pagination ul > .active > a,
+.pagination ul > .active > span {
+  color: $paginationBackground;
+  cursor: default;
+}
+.pagination ul > .disabled > span,
+.pagination ul > .disabled > a,
+.pagination ul > .disabled > a:hover {
+  color: $grayLight;
+  background-color: transparent;
+  cursor: default;
+  .arrow-left{border-right-color: $paginationBorder;}
+  .arrow-right{border-left-color: $paginationBorder;;}
+  .arrow-up{border-bottom-color: $paginationBorder;}
+  .arrow-down{border-top-color: $paginationBorder;}
+}
+.pagination ul > li:first-child > a,
+.pagination ul > li:first-child > span {
+  border-left-width: 1px;
+  @include border-radius(3px 0 0 3px);
+}
+.pagination ul > li:last-child > a,
+.pagination ul > li:last-child > span {
+  @include border-radius(0 3px 3px 0);
+}
+.pagination a:hover, .pagination a:focus {
+  text-decoration: none;
+  color:  $paginationBackground;
+}
+// Centered
+.pagination-centered {
+  text-align: center;
+}
+.pagination-right {
+  text-align: right;
+}

@@ -11,13 +11,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
   belongs_to :user
   
-  Max_Attachment_Size = 15.megabyte
   include Mobile::Actions::Note
 
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
     
   has_one :tweet,
     :as => :tweetable,
@@ -159,7 +155,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def to_json(options = {})
     options[:include] = [:attachments]
-    options[:methods] = [:user_name]
+    options[:methods] = [:user_name,:source_name] unless options[:human].blank?
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
   end
@@ -180,7 +176,13 @@ class Helpdesk::Note < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :attachments,:except => [:account_id,:notable_id,:notable_type]) 
+      super(:builder => xml, :skip_instruct => true, :include=>:attachments, 
+                          :except => [:account_id,:notable_id,:notable_type]) do |xml|
+        unless options[:human].blank?
+          xml.tag!(:source_name,self.source_name)
+          xml.tag!(:user_name,user.name)
+        end
+      end
    end
 
   def create_fwd_note_activity(to_emails)

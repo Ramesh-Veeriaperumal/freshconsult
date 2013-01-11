@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
   
-  before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
+  before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
@@ -16,6 +16,17 @@ class Helpdesk::NotesController < ApplicationController
     @notes = @parent.conversation(params[:page])
     if request.xhr?
       render(:partial => "helpdesk/tickets/note", :collection => @notes)
+    else 
+      options = {}
+      options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
+      respond_to do |format|
+        format.xml do
+         render :xml => @notes.to_xml(options) 
+        end
+        format.json do
+          render :json => @notes.to_json(options)
+        end
+      end
     end    
   end
   

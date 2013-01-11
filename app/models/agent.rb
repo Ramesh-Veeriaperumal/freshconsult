@@ -45,6 +45,7 @@ class Agent < ActiveRecord::Base
     [ :assigned_tickets, 3 ]
   ]
  
+  named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
@@ -83,8 +84,8 @@ def signature_htm
   self.signature_html
 end
 
-def self.filter(page, state = "active")
-  paginate :per_page => 30, :page => page,
+def self.filter(page, state = "active", per_page = 20)
+  paginate :per_page => per_page, :page => page,
            :include => [ {:user => :avatar} ], 
            :conditions => { :users => { :deleted  => !state.eql?("active") } }
 end

@@ -13,7 +13,7 @@ class HomeController < ApplicationController
       @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
     end
 
-    if params[:format] == "mobile"
+    if params[:format] == "mob"
       @user_session = current_account.user_sessions.new
       redirect_to login_path
     end

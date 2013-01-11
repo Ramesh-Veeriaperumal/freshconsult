@@ -203,6 +203,57 @@ $animation_timing: .2s;
 		}
 	}
 }
+
+/* resque failed jobs page starts*/
+.failed{
+
+	word-wrap: break-word;
+
+	li{
+	padding: 10px;
+	background: #fafafa;
+	margin: 15px 0px;
+	border: 1px #ccc solid;
+	@include border-radius(7px);
+	@include box-shadow( 0px 2px 10px #ccc);
+	}
+}
+.failed_heading
+{
+	font-size: 24px;
+}
+#redirect_button{
+	float:right;
+}
+
+.failed_category
+{
+	font-size: 15px;
+	font-weight: 500;
+
+} 
+.resque_worker
+{
+	color: #5F9F9F;	
+	font-size: 13px;
+}
+#resque_btn
+{
+	float: right;
+}
+.resque_time
+{
+	font-size: 12px;
+}
+.retried
+{
+	
+	color: #ff0000;	
+	font-size: 13px;	
+}
+
+/* resque failed jobs page end*/
+
 @include keyframes(helpdesk_beat) {
 	from {
 		@include box-shadow($hover_boxshadow_start $helpdesk_hover_color);
@@ -214,6 +265,49 @@ $animation_timing: .2s;
 		@include box-shadow($hover_boxshadow_final $helpdesk_hover_color);
 	}
 }
+
+/* queues section */
+
+.queues-wrapper{
+ 		font-family: 'Helvetica Neue', Tahoma, Arial, Helvetica, sans-serif;
+	h1{
+		color: #f00;
+		font-size: 18px;
+		padding-bottom: 10px;
+	}
+
+
+
+	table{
+		width: 70%;
+		margin: 20px 0px;
+		display: table;
+		border: 1px #ccc solid;
+		border-collapse: collapse !important;
+
+		#worker_time{
+			font-size: 9px;
+
+		}
+
+		th{
+			background: #ccc;
+			color: #333;
+			font-weight: bold;
+			padding: 10px;
+		}
+
+		td{
+			padding: 10px;
+			border-bottom: 1px #ccc solid;
+		}
+	}
+}
+
+.queues-table{
+		border: 1px #ccc solid;
+		border-collapse: collapse !important;
+	}
 
 /* Helpdesk Productivity Animation */
 @include keyframes(HelpdeskProductivity_beat) {

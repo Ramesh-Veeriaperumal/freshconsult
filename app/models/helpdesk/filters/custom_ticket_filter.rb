@@ -26,9 +26,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
 
+  def self.trashed_condition(input)
+    { "condition" => 
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}", 
+      "operator" => "is", "value" => input}
+  end
+
+
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
-                      "deleted" =>  [spam_condition(false),deleted_condition(true)],
+                      "deleted" =>  [deleted_condition(true),trashed_condition(false)],
                       "overdue" =>  [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},spam_condition(false),deleted_condition(false) ],
                       "pending" => [{ "condition" => "status", "operator" => "is_in", "value" => PENDING},spam_condition(false),deleted_condition(false)],
                       "open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},spam_condition(false),deleted_condition(false)],
@@ -76,11 +83,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
       end
       #Custome fields
-      Account.current.ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+      Account.current.custom_dropdown_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
 
-      Account.current.ticket_fields.nested_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+      Account.current.nested_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
         col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
           defs[get_id_from_field(nested_col).to_sym] = {get_op_list('dropdown').to_sym => 'dropdown' ,:name => nested_col.label , :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
@@ -91,6 +98,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
+      defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
       defs[:requester_id] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => :requester_id, :container => :dropdown})  # Added for email based custom view, which will be used in integrations.
       defs[:"helpdesk_tickets.id"] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_tickets.id", :container => :dropdown})
       defs
@@ -101,6 +109,20 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     'created_at'
   end
   
+  def order_clause
+    @order_clause ||= begin
+      order_columns = order
+      #Performence reseason we are using id instead of created_at.
+      order_columns = "id" if "created_at".eql?(order_columns)
+      order_parts = order_columns.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+    end  
+  end
+
   def default_filter(filter_name)
      self.name = filter_name.blank? ? "new_my_open" : filter_name
      if "on_hold".eql?filter_name
@@ -134,7 +156,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
     self.name =  params[:filter_name]     unless params[:filter_name].blank?
-    
+
     @fields = []
     unless params[:wf_export_fields].blank?
       params[:wf_export_fields].split(",").each do |fld|
@@ -260,11 +282,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                                       :conditions => all_conditions, :joins => all_joins)
       end
 
-      select = "helpdesk_tickets.* "
+      select = "helpdesk_tickets.*"
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
 
       recs = model_class.paginate(:select => select,
-                                  :include => [:ticket_states, :ticket_status, :responder, {:requester => :avatar}],
+                                  :include => [:ticket_states, :ticket_status, :responder,:requester],
                                   :order => order_clause, :page => page, 
                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
                                   :total_entries => count_without_query)
@@ -281,9 +303,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def get_joins(all_conditions)
     all_joins = joins
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
+    all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins
+  end
+
+  def schema_less_join
+    " INNER JOIN helpdesk_schema_less_tickets ON helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id 
+                                      AND helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id "
   end
 
   def tags_join
@@ -307,6 +335,19 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def order_field
     "helpdesk_tickets.#{@order}"    
+  end
+
+  def order_clause
+    @order_clause ||= begin
+      order_columns = order
+      order_columns = "id" if "created_at".eql?(order_columns)
+      order_parts = order_columns.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+    end  
   end
   
   def previous_ticket_sql(ticket, account, user)   

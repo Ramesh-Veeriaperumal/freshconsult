@@ -1,9 +1,9 @@
 <% selected ||= category.folders.first %>
-<h3 class="title"><%= category.name %></h3>
+<h3 class="title"><%= h(category.name) %></h3>
 <ul class="solution_list" id="folder_list"> 
 	<% category.folders.visible(current_user).each do |folder| %>  
 		<li class = "<%= ( folder == selected ) ? 'active' : '' %>" > 
-			<%= link_to folder.name,  solution_category_folder_path(category,folder)  %> 
+			<%= link_to h(folder.name),  solution_category_folder_path(category,folder)  %> 
 			<span>
 				<% if privilege?(:publish_solution) %>
 					(<%= folder.articles.size %>)

@@ -8,6 +8,8 @@
 					<!--a href="#" class="button">Edit</a-->
 					<% if current_selector == [:deleted] %>
 					  <%= link_to_function("Undelete", "Helpdesk.sel.submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+					  <%= link_to_function("Delete Forever", "Helpdesk.sel.submit('#{ delete_forever_helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
+					  
 					<% else %>
 					  <%= link_to_function("Delete", "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
 					<% end %>

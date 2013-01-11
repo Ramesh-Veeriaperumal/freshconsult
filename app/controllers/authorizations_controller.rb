@@ -33,8 +33,10 @@ class AuthorizationsController < ApplicationController
       create_for_facebook(params)
     elsif @omniauth['provider'] == "google"
       create_for_google(params)
-    elsif @omniauth['provider'] == "salesforce"
-      create_for_salesforce(params)
+    elsif OAUTH2_PROVIDERS.include?(@omniauth['provider'])
+      create_for_oauth2(@omniauth['provider'], params)
+    elsif EMAIL_MARKETING_PROVIDERS.include?(@omniauth['provider'])
+      create_for_email_marketing_oauth(@omniauth['provider'], params)
     end
   end
 
@@ -71,24 +73,44 @@ class AuthorizationsController < ApplicationController
     end
   end
 
-  def create_for_salesforce(params)
+  def create_for_oauth2(provider, params)
     Account.reset_current_account
     portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
-    access_token = get_oauth2_access_token(@omniauth.credentials.refresh_token)
+    access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token)
     portal = Portal.find_by_id(portal_id)
     account = portal.account
     domain = portal.host
     protocol = (account.ssl_enabled?) ? "https://" : "http://"
-    app_name = Integrations::Constants::APP_NAMES[:salesforce]
     instance_url = access_token.params['instance_url']
-    config_params = "{'app_name':'#{app_name}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{instance_url}'}"
+    config_params = "{'app_name':'#{provider}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{instance_url}'}"
     config_params = config_params.gsub("'","\"")
-    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, 'salesforce_oauth_config')
+    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, provider+'_oauth_config')
     key_value_pair.delete unless key_value_pair.blank?
-    #KeyValuePair is used to store salesforce configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
-    create_key_value_pair("salesforce_oauth_config", config_params, account.id) 
+    #KeyValuePair is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
+    create_key_value_pair(provider+"_oauth_config", config_params, account.id) 
     
-    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/salesforce"
+    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/"+provider
+     
+    redirect_to redirect_url
+  end
+
+    def create_for_email_marketing_oauth(provider, params)
+    config_params = {}
+    Account.reset_current_account
+    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    portal = Portal.find_by_id(portal_id)
+    account = portal.account
+    domain = portal.host
+    protocol = (account.ssl_enabled?) ? "https://" : "http://"
+    config_params["mailchimp"] = "{'app_name':'#{provider}', 'api_endpoint':'#{@omniauth.extra.metadata.api_endpoint}', 'oauth_token':'#{@omniauth.credentials.token}'}" if provider == "mailchimp"
+    config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}', 'uid':'#{@omniauth.uid}'}" if provider == "constantcontact"
+    config_params = config_params[provider].gsub("'","\"")
+    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, provider+'_oauth_config')
+    key_value_pair.delete unless key_value_pair.blank?
+    #KeyValuePair is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
+    create_key_value_pair(provider+"_oauth_config", config_params, account.id) 
+    
+    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/"+provider
      
     redirect_to redirect_url
   end
@@ -192,4 +214,7 @@ class AuthorizationsController < ApplicationController
     @authorization.destroy
     redirect_to root_url
   end
+
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2"]
+  EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
 end

@@ -11,7 +11,7 @@ class Solution::CategoriesController < ApplicationController
       (main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories)
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { @page_canonical = solution_categories_url }# index.html.erb
       format.xml  { render :xml => @categories }
       format.json  { render :json => @categories.to_json(:except => [:account_id,:import_id],
                                                          :include => fetch_folder_scope) }
@@ -27,7 +27,7 @@ class Solution::CategoriesController < ApplicationController
         store_location
         format.html {redirect_to login_url }
       else
-        format.html # index.html.erb
+        format.html { @page_canonical = solution_category_url(@item) }# index.html.erb
       end
       format.xml {  render :xml => @item.to_xml(:include => fetch_folder_scope) }
       format.json  { render :json => @item.to_json(:except => [:account_id,:import_id],

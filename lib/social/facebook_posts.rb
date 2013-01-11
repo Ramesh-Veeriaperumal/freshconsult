@@ -47,7 +47,7 @@ class Social::FacebookPosts
           :product_id => @fb_page.product_id,
           :group_id => group_id,
           :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-          :created_at => Time.zone.parse(feed[:created_time]),
+          :created_at => Time.zone.at(feed[:created_time]),
           :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id} )
       
        if @ticket.save
@@ -72,7 +72,7 @@ class Social::FacebookPosts
      desc = post[:description] || ""
      html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a>" +
                      "<div><p><a href=\"#{post[:link]}\" target=\"_blank\">"+post[:name]+"</a></p>"+
-                     "<p><strong>"+post[:caption]+"</strong></p>"+
+                     "<p><strong>"+post[:message]+"</strong></p>"+
                      "<p>"+desc+"</p>"+
                      "</div></div>"
       
