@@ -25,14 +25,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   layout :choose_layout 
   
-<<<<<<< HEAD
-  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-=======
-
   before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
     :close_multiple ,:pick_tickets, :delete_forever ]  
   
->>>>>>> refs/heads/Master
   skip_before_filter :load_item
   alias :load_ticket :load_item
   before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :update_ticket_properties, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
