@@ -33,8 +33,7 @@ module Helpdesk::TicketActions
     file = Tempfile.new([params[:screenshot][:name]]) 
     file.binmode
     file.write decoded_file
-    attachment = @ticket.attachments.build
-    attachment.content = file
+    attachment = @ticket.attachments.build(:content => file, :account_id => @ticket.account_id)
     file.close
   end
 
