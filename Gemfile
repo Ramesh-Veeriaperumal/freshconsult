@@ -74,12 +74,13 @@ gem 'resque-retry', "0.2.2"
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
-gem 'after_commit', "~> 1.0.10"
+
+gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
+gem 'after_commit', :git => "git://github.com/freshdesk/after_commit.git"
 gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
-gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
 
 group :development,:test do
    #gem "rspec", "1.3.1"
