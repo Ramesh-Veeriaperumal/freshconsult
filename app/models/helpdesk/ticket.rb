@@ -821,8 +821,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-    twt_handles = self.product ? self.product.twitter_handles : account.twitter_handles
-    twt_handles.first.id unless twt_handles.blank?
+    if tweet
+      tweet.twitter_handle_id 
+    else            #default handle is set if twitter_handle_id is nil (for old tweets without twitter_handle_id)
+      twt_handles = self.product ? self.product.twitter_handles : account.twitter_handles
+      twt_handles.first.id unless twt_handles.blank?
+    end
   end
   
   def portal_host
