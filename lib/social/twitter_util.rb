@@ -9,8 +9,7 @@ def add_tweet_as_ticket twt , twt_handle , twt_type
       :product_id => twt_handle.product_id,
       :group_id => ( twt_handle.product ? twt_handle.product.primary_email_config.group_id : nil) ,
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-      :tweet_attributes => {:tweet_id => twt.id,  
-                            :tweet_type => twt_type.to_s, :twitter_handle_id => twt_handle.id} )
+      :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id , :tweet_type => twt_type.to_s} )
       
       if ticket.save
         puts "This ticket has been saved"
@@ -38,8 +37,7 @@ def add_tweet_as_ticket twt , twt_handle , twt_type
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
         :account_id => twt_handle.account_id,
         :user_id => @user.id ,
-        :tweet_attributes => {:tweet_id => twt.id,
-                              :tweet_type => twt_type.to_s, :twitter_handle_id => twt_handle.id}
+        :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id , :tweet_type => twt_type.to_s}
        )
       if note.save
         puts "This note has been added"

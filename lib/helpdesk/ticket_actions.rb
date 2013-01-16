@@ -3,7 +3,6 @@ module Helpdesk::TicketActions
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
   include ExportCsvUtil
-  include Helpdesk::ToggleEmailNotification
   
   def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
@@ -122,8 +121,8 @@ module Helpdesk::TicketActions
                                }  
     unless @note.tweet.nil?
       tweet_hash = {:twitter_id => @note.user.twitter_id,
-                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id,
-                                          :twitter_handle_id => @note.tweet.twitter_handle_id }}
+                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id, 
+                                          :account_id => current_account.id}}
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
@@ -202,9 +201,9 @@ module Helpdesk::TicketActions
   end
   
   def close_source_ticket
-    disable_notification
+    EmailNotification.disable_notification(current_account)
     @source_ticket.update_attribute(:status , CLOSED)
-    enable_notification
+    EmailNotification.enable_notification(current_account)
   end
   
   def add_note_to_source_ticket

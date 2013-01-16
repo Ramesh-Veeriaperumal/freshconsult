@@ -252,6 +252,14 @@ protected
       session[:helpdesk_history] = history
     end
   end 
+  
+   def disable_notification    
+     Thread.current["notifications_#{@current_account.id}"] = EmailNotification::DISABLE_NOTIFICATION   
+  end
+  
+  def enable_notification
+    Thread.current["notifications_#{@current_account.id}"] = nil
+  end
 
   def fetch_item_attachments
     return unless @item.is_a? Helpdesk::Note and @item.fwd_email?
