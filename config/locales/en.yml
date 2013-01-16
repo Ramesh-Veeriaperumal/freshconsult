@@ -740,7 +740,7 @@ en:
         success: The reply has been sent.
       notes: 
         create: 
-          invalid_email: Please enter a valid Email address
+          invalid_email: You are not authorized to add a note
           failure: There was a problem adding the note to your ticket. Please try again.
           success: The note has been added to your ticket.
       empty_spam: 
