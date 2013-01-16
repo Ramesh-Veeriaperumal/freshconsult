@@ -3,6 +3,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   belongs_to :ticket , :class_name =>'Helpdesk::Ticket', :foreign_key =>'ticket_id'
   belongs_to :user
   
+  before_validation :set_default_values 
+
   after_create :create_new_activity
   after_update :update_timer_activity , :if  => :timer_running_changed?
   
@@ -143,5 +145,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
    
  end
 
+  def set_default_values
+    self.executed_at ||= self.created_at
+  end
   
 end
