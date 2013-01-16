@@ -1,3 +1,4 @@
+require RAILS_ROOT+'/app/models/solution/folder.rb'
 
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"

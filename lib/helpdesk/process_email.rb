@@ -265,6 +265,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       build_attachments(ticket, note)
       # ticket.save
+      note.notable = ticket
       note.save
     end
     

@@ -34,8 +34,7 @@ module Helpdesk::TicketActions
     file = Tempfile.new([params[:screenshot][:name]]) 
     file.binmode
     file.write decoded_file
-    attachment = @ticket.attachments.build
-    attachment.content = file
+    attachment = @ticket.attachments.build(:content => file, :account_id => @ticket.account_id)
     file.close
   end
 
@@ -294,6 +293,19 @@ module Helpdesk::TicketActions
       total_entries = current_account.tickets.permissible(current_user).count(options)
     end
     @ticket_count = total_entries.to_i
+  end
+
+  def clear_filter
+    if params[:requester_id]
+      params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
+                            "condition"=>"requester_id", "value"=> params[:requester_id] }]
+
+      @ticket_filter.query_hash = [{"operator"=>"is_in", "condition"=>"requester_id", 
+                                    "value"=> params[:requester_id] }]
+                                    
+      cache_filter_params
+      @requester_id_param = params[:requester_id]
+    end
   end
 
 end
