@@ -4,8 +4,6 @@
 <h3 class="title"><%=t('agent.new')%></h3>
 <% form_for @agent, :html => { :multipart => true } do |f| %>
 	<%= f.error_messages %>	
-	<%= include_stylesheets :redactor  %>
-	<%= include_javascripts :redactor  %>	
  	<%= render :partial => "agent_form" %>
 	<div class="button-container">
    		<%= f.submit 'Save', { :class => "uiButton" } %>

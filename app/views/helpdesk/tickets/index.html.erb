@@ -20,7 +20,6 @@
 <% end %>
 <%= render :partial => "collision_index" if feature?(:agent_collision) %>
 <% content_for :layoutType do -%>ticket_list<%- end %>
-<%= javascript_include_tag "sisyphus" %>
 <div class="containerFull">
   <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != 'deleted' && @current_view != 'spam' && @current_view != 'monitored_by') ? 'block' : 'none' %>">
     <div id="ticket-leftFilter" rel="remote" class="leftFilter">   
@@ -31,5 +30,8 @@
     <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } , :inline => true %>
   </div>
 </div>
-
-<%= javascript_include_tag "ticket_list" %>
+<% content_for :pagefixed do %>
+  <% javascript_tag do %>
+      TicketListEvents();
+  <% end %>
+<% end %>
