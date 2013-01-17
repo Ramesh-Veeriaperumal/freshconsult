@@ -64,41 +64,80 @@ jQuery(document).ready(function() {
 <% end %>
 <% end %>
 
-<div class="grid report">	
+<div class="grid report" id="agent_ticket_summary">	
 	<table width="100%" id="summary_report" class="tablesorter">
 		<thead>
-		<tr>
-			<th><%= @current_report[:title] %></th>
-			<th><%= t('reports.summary_report.tickets_resolved') %></th>
-			<th><%= t('reports.summary_report.on_time_resolution') %></th>
-			<th><%= t('reports.summary_report.fcr_count') %></th>
-			<th><%= t('reports.summary_report.avg_1st_response_time') %></th>
-		</tr>
+			<tr>
+				<th>
+					<%= @current_report[:title] %>
+				</th>
+
+				<th>
+					<%= t('reports.summary_report.tickets_resolved') %>
+				</th>
+
+				<th>
+					<%= t('reports.summary_report.on_time_resolution') %>
+				</th>
+
+				<th>
+					<%= t('reports.summary_report.fcr_count') %>
+				</th>
+
+				<th>
+					<%= t('reports.summary_report.avg_1st_response_time') %>
+				</th>
+
+				<th>
+					<%= t('reports.summary_report.avg_response_time') %>
+				</th>
+			</tr>
 		</thead>
 		<% @current_object.each do |obj| %>
 		<tr class="<%= cycle("odd", "even") %>">
 			<% case @current_report[:name] 
 					when "responder" %>
-						<td><%= obj.user.name_details %></td>
+						<td>
+							<%= obj.user.name_details %>
+						</td>
 						<% data = @report_data.fetch(obj.user_id, {}) %>
 			<%	when "group" %>
-						<td><%= obj.name %></td>
+						<td>
+							<%= obj.name %>
+						</td>
 						<% data = @report_data.fetch(obj.id, {}) %>	
 			<% end 
 
 			resolved_count = data.fetch(:tot_tkts, 0).to_i
+			otr_percentage = percentage(data.fetch(:tkt_res_on_time,0).to_i,resolved_count)
+			fcr_percentage = percentage(data.fetch(:fcr,0).to_i,resolved_count)
+			afrt = data.fetch(:average_first_response_time, 0)
+			art = data.fetch(:average_response_time, 0)
 
 			%>
-			<td><%= resolved_count %></td>
 			<td>
-				<%= percentage(data.fetch(:tkt_res_on_time,0).to_i,resolved_count) %> 
-				(<%= data.fetch(:tkt_res_on_time, 0) %>)
+				<%= resolved_count %>
 			</td>
 			<td>
-				<%= percentage(data.fetch(:fcr,0).to_i,resolved_count) %> 
-				(<%= data.fetch(:fcr, 0) %>)
+				<%= otr_percentage %> 
+				<% count = data.fetch(:tkt_res_on_time, 0) %>
+				<% if count != 0 %>
+					(<%= count %>)
+				<% end %>
 			</td>
-			<td><%= timediff_in_words(data.fetch(:average_first_response_time, 0)) %></td>
+			<td>
+				<%= fcr_percentage %> 
+				<% count = data.fetch(:fcr, 0) %>
+				<% if count != 0 %>
+					(<%= count %>)
+				<% end %>
+			</td>
+			<td>
+				<%= timediff_in_words(afrt) %>
+			</td>
+			<td>
+				<%= timediff_in_words(art) %>
+			</td>
 		</tr>
 		<% end %>
 	</table>	

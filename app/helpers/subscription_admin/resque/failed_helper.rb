@@ -1,9 +1,8 @@
 module SubscriptionAdmin::Resque::FailedHelper
 
 	def load_failed_array(start, queue_name, failed_in_given_queue, count)
-		failed_count = Resque::Failure.count #in all queues
-		batch_size = [range(start), (failed_count - start)].min			
-		failed_in_all_qs =  Resque::Failure.all(start,batch_size)	
+		failed_count = Resque::Failure.count #in all queues			
+		failed_in_all_qs =  Resque::Failure.all(start,range(start))	
 		failed_in_all_qs.each do |qjob|			
 			if qjob['queue'] == queue_name 
 				if count >= 10

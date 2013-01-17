@@ -47,7 +47,7 @@
             <% else %>
                 <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete, :class => "uiButton",:id => "resque_btn" } %>
                 
-                <%= link_to 'retry', requeue_admin_resque_failed_path(id, :job => job, :failed => failed), { :method => :put, :class => "uiButton" , :id => "resque_btn" } %>
+                <%= link_to 'retry', requeue_admin_resque_failed_path(id), { :method => :put, :class => "uiButton" , :id => "resque_btn" } %>
             <% end %>
           </dd>
           <dt class='failed_category'>Class</dt>

@@ -17,18 +17,21 @@ stylesheets:
 
   app:
     - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/lib/select2.css    
     - public/stylesheets/app/satisfaction.css
     - public/stylesheets/app/gamification.css
     - public/stylesheets/app/lib/hacks.css
     - public/stylesheets/app/lib/ie.css
 
   # !PATTERN TODO These css files will be migrated in to the pattern library at a later point
-  non_pattern:
+  non_pattern_1:
     - public/stylesheets/app/lib/defaults.css
     - public/stylesheets/app/lib/layout.css
     - public/stylesheets/app/lib/table.css
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/admin.css
+
+  non_pattern_2:
     - public/stylesheets/app/app-bootstrap.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
@@ -112,6 +115,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
@@ -119,7 +123,7 @@ javascripts:
     - public/javascripts/frameworks/socket.io.js
   visitor:
     - public/javascripts/frameworks/session.js            
-  workspace: 
+  workspace:  
     - public/javascripts/bootstrap/twipsy.js
     - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js

@@ -5,6 +5,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
   before_filter :load_installed_apps, :only => [:index, :create, :edit, :update, :toggle_timer, :destroy]  
+  before_filter :check_agents_in_account, :only =>[:create]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
@@ -62,6 +63,10 @@ class Helpdesk::TimeSheetsController < ApplicationController
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
+    unless params[:time_entry][:user_id].blank?
+      raise ActiveRecord::RecordNotFound if current_account.agents.find_by_user_id(params[:time_entry][:user_id]).blank? 
+    end
+
       if @time_entry.update_attributes(time_entry)
         respond_to_format @time_entry
       end
@@ -198,6 +203,13 @@ private
 
   def load_installed_apps
     @installed_apps_hash = current_account.installed_apps_hash
+  end
+
+
+  def check_agents_in_account
+    #ADDED for SECURITY ISSUE: Users from other account are allowed to be added
+    #by specifying user_id in the api.
+   handle_error(StandardError.new("Agent not found for given user_id")) if current_account.agents.find_by_user_id(params[:time_entry][:user_id]).blank?
   end
 
 end

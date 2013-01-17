@@ -26,9 +26,6 @@ class Workers::Sla
 
   def self.run account
     overdue_tickets = account.tickets.visible.find(:all, 
-                                                   :joins => "inner join helpdesk_ticket_states 
-                                                     on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
-                                                     and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
                                                     :readonly => false, 
                                                     :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
                                                      Time.zone.now.to_s(:db),false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
@@ -48,7 +45,9 @@ class Workers::Sla
       ticket.update_attribute(:isescalated , true)
     end
     
-    froverdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states , :readonly => false , 
+    froverdue_tickets = account.tickets.visible.find(:all, :joins => "inner join helpdesk_ticket_states 
+                                                     on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+                                                     and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , :readonly => false , 
                         :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
                           helpdesk_ticket_states.first_response_time IS ?', 
                           Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )

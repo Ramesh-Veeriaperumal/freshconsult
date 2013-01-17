@@ -72,7 +72,7 @@ class Social::FacebookPosts
      desc = post[:description] || ""
      html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a>" +
                      "<div><p><a href=\"#{post[:link]}\" target=\"_blank\">"+post[:name]+"</a></p>"+
-                     "<p><strong>"+post[:caption]+"</strong></p>"+
+                     "<p><strong>"+post[:message]+"</strong></p>"+
                      "<p>"+desc+"</p>"+
                      "</div></div>"
       

@@ -59,7 +59,7 @@ module SubscriptionSystem
       @current_portal = Portal.fetch_by_url request.host 
       return @current_portal.account if @current_portal
       
-      account = Account.fetch_by_full_domain request.host || 
+      account = Account.fetch_by_full_domain(request.host) || 
                   (Rails.env.development? ? Account.first : nil)
       (raise ActiveRecord::RecordNotFound and return) unless account
       

@@ -54,6 +54,15 @@ class Admin::VaRulesController < Admin::AutomationsController
     def load_config
       super
       
+      @agents = current_account.users.technicians.inject([["", I18n.t('ticket.none')]]) do |agents, au|
+                agents << [au.id, au.name]
+                agents
+              end
+      @groups  = current_account.groups.find(:all, :order=>'name').inject([["", I18n.t('ticket.none')]]) do |groups, ag|
+                groups << [ag.id, ag.name]
+                groups
+              end
+
       filter_hash   = [
         { :name => -1, :value => "--- #{t('click_to_select_filter')} ---" },
         { :name => "from_email", :value => t('from_email'), :domtype => "autocompelete", 
@@ -76,6 +85,10 @@ class Admin::VaRulesController < Admin::AutomationsController
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
         { :name => "source", :value => t('ticket.source'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => "responder_id", :value => I18n.t('ticket.agent'), :domtype => "dropdown",
+          :operatortype => "object_id", :choices => @agents },
+        { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => "dropdown",
+          :operatortype => "object_id", :choices => @groups },
         { :name => -1, :value => "------------------------------" },
         { :name => "contact_name", :value => t('contact_name'), :domtype => "text", 
           :operatortype => "text" },

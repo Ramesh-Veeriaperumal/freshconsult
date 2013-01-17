@@ -57,9 +57,10 @@ class User < ActiveRecord::Base
   has_many :support_scores, :dependent => :delete_all
 
   before_create :set_time_zone , :set_company_name , :set_language
-  before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
+  before_save :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   after_update :update_admin_in_crm , :if => :account_admin_updated?
+  after_update :update_admin_to_billing , :if => :account_admin_updated?
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
@@ -400,7 +401,7 @@ class User < ActiveRecord::Base
   end
   
   def get_info
-    (email) || (twitter_id) || (external_id)
+    (email) || (twitter_id) || (external_id) || (name)
   end
   
   def twitter_style_id
@@ -427,7 +428,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+      super(:builder => xml,:root=>options[:root], :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
                                                               :user_role,:fb_profile_id,:external_id,:language,:address]) 
   end
@@ -472,12 +473,9 @@ class User < ActiveRecord::Base
   end
 
   protected
-    def set_account_id_in_children
-      self.avatar.account_id = account_id unless avatar.nil?
-  end
 
   def set_contact_name 
-    if self.name.blank?
+    if self.name.blank? && email
       self.name = (self.email.split("@")[0]).capitalize
     end
   end
@@ -537,5 +535,9 @@ class User < ActiveRecord::Base
 
     def user_role_updated?
       @all_changes.has_key?(:user_role)
+    end
+    
+    def update_admin_to_billing
+      Resque.enqueue(Billing::AddToBilling::UpdateAdmin, self.id)
     end
 end

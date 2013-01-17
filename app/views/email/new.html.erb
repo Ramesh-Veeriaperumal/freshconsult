@@ -1,4 +1,6 @@
-<% form_tag '/email' do -%>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
+<% form_tag '/email', :multipart => true, :id => "EmailTicketForm" do -%>
 
   <label for="from">From email</label>
   <input id="from" name="from" size="30" type="text" />
@@ -14,8 +16,25 @@
   
   <input id="type" name="charsets" value= '{"to":"UTF-8","html":"UTF-8","subject":"UTF-8","from":"UTF-8","text":"UTF-8"}' size="30" type="hidden" />
   
-  <label for="attachments">Attachments</label>
-  <input id="attachments" name="attachments" size="30" type="text" />
+  <div id="form-uploads">
+    <label>Attach a file</label>
+    <input type="file" id="email_attachment_file" name="emptyfile" nameWhenFilled="attachment" fileContainer="attachment-container" fileList="attachments-list" sendFocusTo="email_attachment-body" />
+    <div class="info-data">
+      <%=t('attachment_help_info')%>
+    </div>    
+  </div>
+  <input type="hidden" id="attachments-count" name="attachments" />
+<script id="file-list-template" type="text/x-jquery-tmpl">      
+  <div class="item">
+    <span>
+      ${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
+  </span>
+  </div>
+</script>
+<div class="attachments" id="attachment-container" style="display:none">
+  <div id="attachments-list"></div>
+</div>
+  
   
   <label for="subject">Subject</label>
   <input id="subject" name="subject" size="30" type="text" />
@@ -28,3 +47,19 @@
 	
   <div><%= submit_tag 'Save' %></div>
 <% end -%>
+<% content_for :onload_script do -%> 
+jQuery('#html').redactor({ focus: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+<%- end %>
+
+
+<script type="text/javascript">
+  jQuery("#EmailTicketForm").bind("submit", function(){
+    var _uploads = jQuery("#form-uploads input[name=attachment]")
+    jQuery.each(_uploads, function(i, item){
+      item.name += i+1
+    })
+    console.log(_uploads.size())
+    jQuery("#attachments-count").val(_uploads.size())
+  })
+
+</script>

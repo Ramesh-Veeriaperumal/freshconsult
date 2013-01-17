@@ -38,38 +38,18 @@ strong {
 }
 .table th, .table td {
       padding: 12px;
-    }
-    .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-        background-color:#fbfbfb;        
-    }
-    .pagination ul > li > a:hover, .pagination ul > .active > a, .pagination ul > .active > span {
-        background-color: #7f7f7f;
-        border-color:#7f7f7f;
-        color:#fff;
-    }
-    .pagination ul > li > a:hover{
-      background-color:#c6c6c6;
-      border-color:#c6c6c6;
-    }
-    .tabs{
-      margin-right: -20px;
-      margin-left: -20px;
-      padding-right: 20px;
-      padding-left:20px;
-    }
+}
+.tabs{
+  margin-right: -20px;
+  margin-left: -20px;
+  padding-right: 20px;
+  padding-left:20px;
+}
 .pagination ul > li > a:hover{ 
-        .arrow-up {
-            border-bottom-color: #fff;
-        }
-        .arrow-right {
-            border-left-color: #fff;
-        }         
-        .arrow-down {
-            border-top-color: #fff;
-        }
-        .arrow-left {
-            border-right-color: #fff;
-        }    
+        .arrow-up {border-bottom-color: #fff;}
+        .arrow-right {border-left-color: #fff;}         
+        .arrow-down {border-top-color: #fff;}
+        .arrow-left {border-right-color: #fff;}    
 }
 .arrow-right,
 .arrow-left,
@@ -135,10 +115,9 @@ strong {
 }
 
 
-/* This is class is overriding app-common css. */
+/* This class overriding app-common css. */
 
-.pagination 
-{
+.pagination{
   border-bottom:0 ;
   a{
    font-weight:normal;
@@ -146,4 +125,10 @@ strong {
     text-decoration:none;
    }
   }
+}
+
+/* This class overriding app-bootstrap css. */
+
+.dropdown-toggle:after{
+  border-top:0;
 }
