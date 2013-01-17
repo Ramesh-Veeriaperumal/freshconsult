@@ -110,7 +110,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
   end
 
-  def choices
+  def choices(ticket = nil)
      case field_type
        when "custom_dropdown" then
          picklist_values.collect { |c| [c.value, c.value] }
@@ -123,7 +123,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_ticket_type" then
          account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
        when "default_agent" then
-         account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+        return group_agents(ticket.group_id)
        when "default_group" then
          account.groups_from_cache.collect { |c| [c.name, c.id] }
        when "default_product" then
@@ -248,6 +248,17 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
   
   protected
+
+    def group_agents(group_id)
+      return account.agent_groups.find( :all,
+                                        :joins =>:user,
+                                        :conditions => { :group_id => group_id,
+                                                         :users => { :deleted => false }
+                                                        }
+                                      ).collect{ |c| [c.user.name, c.user.id]} if group_id
+      return account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+    end
+
     def populate_choices
       return unless @choices
       if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))
