@@ -1,4 +1,18 @@
-<%  form_remote_tag(:url => execute_scenario_helpdesk_ticket_path(ticket), :method => :post) do %>
+<%  form_remote_tag(
+			:url => execute_scenario_helpdesk_ticket_path(ticket), 
+			:method => :post,
+			:before => "
+				if ((jQuery('#execute_scenario input[type=radio]:checked').length == 0)) {
+					jQuery('#execute_scenario [data-submit=modal]').button('reset');
+					return false;
+				}
+			", #JS Validation to check if there is atleast one scenario selected.
+			:after => "
+				jQuery('#execute_scenario form').hide(); 
+				jQuery('#execute_scenario .modal-body .loading-box').remove(); 
+				jQuery('#execute_scenario .modal-body').append('<div class=loading-box />');
+				jQuery('#execute_scenario [data-submit=modal]').button('loading');
+				") do %>
 <div class="dialog-well">
 <table class="table table-striped selected_to_yellow">
   <% current_account.scn_automations.each do |scenario| %>

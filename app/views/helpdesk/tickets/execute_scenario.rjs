@@ -1,2 +1,7 @@
 show_ajax_flash page
-page << "try { jQuery('#execute_scenario').modal('hide'); } catch(e) {}"
+page << "try { 
+	jQuery('#execute_scenario').modal('hide'); 
+	jQuery('#execute_scenario form').show().resetForm();
+	jQuery('#execute_scenario [data-submit=modal]').button('reset');
+	jQuery('#execute_scenario .loading-box').remove();
+} catch(e) {}"

@@ -56,8 +56,11 @@
 		if(this.options.templateFooter != ""){		
 			this.$closeBtn = $('<a href="#" data-dismiss="modal" class="btn">' +
 								this.options.closeLabel + '</a>')
-			this.$submitBtn = $('<a href="#" data-submit="modal" class="btn btn-primary">' +
+			this.$submitBtn = $('<a href="#" data-submit="modal" class="btn btn-primary" data-toggle="button">' +
 								this.options.submitLabel + '</a>')
+			if(this.options.submitLoading != "") {
+				this.$submitBtn.data('loadingText',this.options.submitLoading )
+			}
 
 			this.$footer = $(this.options.templateFooter)
 							.append(this.$closeBtn).append(this.$submitBtn)
@@ -77,7 +80,10 @@
 
 			var form = this.$dynamicTarget.find('form:first')
 
-			if(form.get(0)) form.submit()
+			if(form.get(0)){
+				if(this.options.submitLoading != "") this.$submitBtn.button('loading');
+				form.submit();
+			} 
 		}
 	}
 
@@ -100,6 +106,7 @@
 	  	width: 		"710px",
 		title: 		'',
 		classes: 	'',
+		keyboard: 	true, 
 		templateHeader: '<div class="modal-header">' +
 							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
 							'<h3 class="ellipsis modal-title"></h3>' +
@@ -107,6 +114,7 @@
 		templateBody:	'<div class="modal-body"><div class="loading-box"></div></div>',
         templateFooter: '<div class="modal-footer"></div>',
         submitLabel: 	"Submit",
+        submitLoading: 	"", 
         closeLabel: 	"Close"
 	}
 
