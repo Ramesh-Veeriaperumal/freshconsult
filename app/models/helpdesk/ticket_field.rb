@@ -123,7 +123,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_ticket_type" then
          account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
        when "default_agent" then
-        return group_agents(ticket.group_id)
+        return group_agents(ticket)
        when "default_group" then
          account.groups_from_cache.collect { |c| [c.name, c.id] }
        when "default_product" then
@@ -249,14 +249,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   protected
 
-    def group_agents(group_id)
+    def group_agents(ticket)
       return account.agent_groups.find( :all,
-                                        :joins =>:user,
-                                        :conditions => { :group_id => group_id,
-                                                         :users => { :deleted => false }
-                                                        }
-                                      ).collect{ |c| [c.user.name, c.user.id]} if group_id
-      return account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+                      :joins =>:user,
+                      :conditions => { :group_id => ticket.group_id, :users => {:deleted => false}
+                                      }
+                    ).collect{ |c| [c.user.name, c.user.id]} if ticket && ticket.group_id
+      
+      account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
     end
 
     def populate_choices
