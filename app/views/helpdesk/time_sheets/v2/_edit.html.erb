@@ -1,7 +1,3 @@
-<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "ui-form" } do |f| %>
+<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "timesheet_form" } do |f| %>
   <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => {:edit => edit} %>
- 	<div class="button-container absolute-button-container">
- 	<%= submit_tag "Update", :class => "uiButton special submit", "data-loading-text" => "Saving time entry..." %>
-    <%= link_to t('cancel'), "", :class => "uiButton", :rel => "close-modal" %>
- 	</div>
 <% end %>

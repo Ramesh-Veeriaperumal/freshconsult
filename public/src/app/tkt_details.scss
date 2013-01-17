@@ -1425,118 +1425,87 @@ ol.conversation_thread{
 #timeentry_add, .timeentry_edit {
 	margin: 5px;
 	padding: 0;
+	clear: both;
+
+	#timeentry_apps_add {
+		clear: both;
+	}
 }
 
-.modal-body .ui-form {
-	.full_width {
-		width: 100%;
-		margin: 5px 0;
-		float:left;
+
+#time_integration fieldset.integration {
+	border: none;
+}
+
+#time_integration fieldset.integration .integration_container {
+	padding: 30px 0 10px;
+	.field {
+		label {
+			display: inline-block;
+			width: 70px;
+		}
+
+		select {
+			display: inline-block;
+			width: 290px;
+			&.hide {
+				display: none;
+			}
+		}
+
+		.loading-fb {
+			display: inline-block;
+			width: 150px;
+			background-position: center;
+
+			&.hide {
+				display: none;
+			}
+		}
+	}
+}
+
+#time_integration fieldset.integration .app-logo {
+	padding-left: 25px;
+	background-color:transparent;
+	border: none;
+
+	input[type=checkbox] {
+		right: auto;
+		left: 2px;
+		top: 4px;
+	}
+}
+
+
+.modal-body .timesheet_form {
+
+	dd, dt {
+		display: block;
+		float: left;
+		width: 70px;
+		margin-bottom: 10px;
 	}
 
-	.one_third {
-		width: 33%;
-		float: left;
-		margin-right: 1%;
+	dt {
+		clear: both;
 	}
 
-	.two_third {
-		width: 66%;
-		float: left;
+	dd {
+		float: right;
+		width: 290px;
 	}
 
 	label {
-		color: #000;
+		display: inline-block;
+	}
+
+	.hours a {
 		font-weight: bold;
 	}
-
-	label.billable_hours {
-		font-size: 11px;
-	}
-
-	.executed_at {
-		label {
-			display: inline-block;
-		}
-
-		cursor: pointer;
-		input {
-			border: none;
-			@include box-shadow(none);
-		}
-
-		&:hover input{
-			border: 1px solid #C6C6C6;
-			@include box-shadow(inset, 1px 1px 2px #dfdfdf);
-		}
-	}
-	.agent {
-		label {
-			display: inline-block;
-			width: 50px;
-		}
-
-		.select2-container {
-			width: 300px;
-	    	.select2-choice {
-	    		background: none;
-	    		border-color: #FFF;
-
-	    		div b {
-	    			display: none;
-	    		}
-	    	}
-	    }
-
-	    &:hover {
-	    	.select2-container .select2-choice {
-			    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
-			    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-			    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-			    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
-			    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-			    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
-			    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-			    border: 1px solid #aaa;
-			    outline: none;
-
-			    //Copied from Select2
-
-
-	    		div b {
-	    			display: block;
-	    		}
-	    	}
-	    }
-
-	    .select2-container-active .select2-choice {
-	    	background-color: #fff;
-		    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
-		    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-		    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-		    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
-		    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-		    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
-		    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-	    	border: 1px solid #5897fb;
-			    //Copied from Select2
-
-	    }
-
-	    .select2-container-active.select2-dropdown-open .select2-choice {
-	    	background-color: #fff;
-		    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
-		    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-		    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-		    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
-		    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-		    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
-		    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-	    	border: 1px solid #AAA;
-			//Copied from Select2
-
-	    }
-	}
+	.select2-container {
+		width: 100%;
+    }
 }
 
 

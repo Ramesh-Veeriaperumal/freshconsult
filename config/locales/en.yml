@@ -2055,7 +2055,6 @@ en:
           toggle_timer_false: "Stop timer"
         new:
           title: "New time entry"
-          start_timer: "Start Timer"
         ticket: Ticket
         customer: Customer
         executed_at: Date
@@ -2068,6 +2067,8 @@ en:
           no_timeentry: "No data available"
           total: Total
         form:
+          start_timer: "Start Timer"
+          add_entry: "Add Time Entry"
           agent: Agent
           hours: Hours
           billing_hours: Billable
@@ -2963,6 +2964,7 @@ en:
   conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
   saved_draft: "Saved"
   saving_draft: "Saving..."
+  saving: "Saving..."
   draft: "Draft"
   last_draft: "Your last draft"
   clear_draft_text: "Are you sure you want to clear saved draft?"

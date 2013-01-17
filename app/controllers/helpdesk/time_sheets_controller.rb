@@ -31,6 +31,15 @@ class Helpdesk::TimeSheetsController < ApplicationController
   def new
     render :layout => false
   end
+
+  def edit
+    respond_to do |format|
+      format.html do
+        render :layout => false
+      end
+      format.js
+    end
+  end
   
   def create
     hours_spent = params[:time_entry][:hours]

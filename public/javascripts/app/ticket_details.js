@@ -254,7 +254,7 @@ swapEmailNote = function(formid, link){
 }
 
 var activeTinyMce = null;
-show_canned_response = function(button, ticket_id){
+showCannedResponse = function(button, ticket_id){
 	$("#canned_response_container").css($(button).offset());
 
 	activeTinyMce = $(button).data("tinyMceId") || "";
@@ -302,24 +302,24 @@ insertIntoConversation = function(value,element_id){
 	return;
 }
 
-getCannedResponse = function(ticket_id, ca_resp_id){
-	jQuery("#canned_response_container").addClass("loading")
-	jQuery.ajax({   
-					type: 'POST',
-					url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
-					contentType: 'application/text',
-					async: false,
-					success: function(data){        
-						insertIntoConversation(data,activeTinyMce);
+getCannedResponse = function(ticket_id, ca_resp_id, element) {
+	$("#canned_response_container").addClass("loading")
+	$(element).addClass("response-loading");
+	$.ajax({
+		type: 'POST',
+		url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
+		contentType: 'application/text',
+		async: false,
+		success: function(data){	
+			insertIntoConversation(data);
+			$(element).removeClass("response-loading");
+			$(element).qtip('hide');
+			$('.ui-icon-closethick').trigger('click');
 
-						jQuery("#canned_response_list")
-						  .removeClass("loading")
-						  .hide(300);
-					}
-				});
+		}
+	});
 	return true;
 }
-
 //  End of Old Show page copy
 
 
@@ -651,7 +651,12 @@ $(document).ready(function() {
 			clearSavedDraft();
 			stopDraftSaving();
 		}
-	})
+	});
+
+	$('#time_integration .app-logo input:checkbox').live('change', function(ev) {
+		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
+	});
+
 	$(".conversation_thread .request_panel form").live('submit', function(ev) {
 		ev.preventDefault();
 

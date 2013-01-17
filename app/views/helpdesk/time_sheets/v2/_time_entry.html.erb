@@ -6,8 +6,9 @@
                     :class => 'toggle_timer') %>
     <%= link_to ( t('edit'), 
                   edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry), 
-                  "data-activate" => 'dialog',
+                  "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
                   "data-width" => 400,
+                  "data-submit-label" => t('update'),
                   :title => 'Edit Timesheet' ) unless time_entry.timer_running %>
     <%= link_to_remote( "delete",
                     { :url => helpdesk_time_sheet_url(time_entry),
