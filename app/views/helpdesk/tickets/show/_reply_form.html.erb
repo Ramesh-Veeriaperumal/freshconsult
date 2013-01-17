@@ -132,7 +132,7 @@
         <% end %> 
 
         <label class="post_in_forum">
-          <%= check_box_tag :quoted_text, "true" %><%= t("ticket.include_quoted_text") %>
+          <%= check_box_tag :quoted_text, 1, true %><%= t("ticket.include_quoted_text") %>
         </label>
       </div>
       <div class="clearfix" ></div>
@@ -142,8 +142,6 @@
         <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
       </div>
       <div class="f-right">
- 
-
         <span><%= submit_tag(t('cancel'), :class => "uiButton cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>   </span>
         <span><%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('resolved'); changeStatusToResolved();" , :class => "uiButton", :id => "send_resolve_btn") %></span>
         <span><%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %></span>
@@ -171,9 +169,6 @@
           fromEmail = selectObj.val();
           form['helpdesk_note[from_email]'].value = fromEmail;
     })
-
-    <%# render(:partial => '/helpdesk/shared/reply_draft') %>
-   
 
   <% end %>
 <% end %>
