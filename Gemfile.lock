@@ -7,6 +7,13 @@ GIT
       savon_model
 
 GIT
+  remote: git://github.com/freshdesk/after_commit.git
+  revision: af3e83dc6f071ae261478dbb7134d2ff534bc0a9
+  specs:
+    after_commit (1.0.11)
+      activerecord (< 3.0.0, >= 1.15.6)
+
+GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
   revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
   specs:
@@ -21,7 +28,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/seamless_database_pool.git
-  revision: bb8aef2ce2edf780e145f6c9cd1f6bd6a9af19cf
+  revision: bfdd97f80edfc84b7cff2196ac5b1193174a07c5
   specs:
     seamless_database_pool (1.0.12)
       activerecord (>= 2.2.2)
@@ -71,8 +78,6 @@ GEM
       activesupport (= 2.3.8)
     activesupport (2.3.8)
     addressable (2.2.7)
-    after_commit (1.0.10)
-      activerecord (>= 1.15.6, < 3.0.0)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
@@ -98,7 +103,6 @@ GEM
       sass (~> 3.1)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
-    crack (0.1.8)
     daemons (1.1.8)
     delayed_job (1.8.4)
     factory_girl (1.2.3)
@@ -117,8 +121,9 @@ GEM
     hashie (1.2.0)
     html2textile (1.0.0.beta1)
     http_accept_language (1.0.1)
-    httparty (0.6.1)
-      crack (= 0.1.8)
+    httparty (0.10.0)
+      multi_json (~> 1.0)
+      multi_xml
     httpclient (2.2.4)
     httpi (0.9.7)
       rack
@@ -320,7 +325,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.3)
   SystemTimer (= 1.2.3)
-  after_commit (~> 1.0.10)
+  after_commit!
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   aws-s3 (= 0.6.2)
@@ -334,7 +339,7 @@ DEPENDENCIES
   forgery (= 0.5.0)
   html2textile (~> 1.0.0.beta1)
   http_accept_language (= 1.0.1)
-  httparty (= 0.6.1)
+  httparty (= 0.10.0)
   i18n (= 0.4.2)
   insensitive_hash (= 0.2.3)
   jammit (= 0.6.5)

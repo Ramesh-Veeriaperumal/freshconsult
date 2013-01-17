@@ -1,4 +1,4 @@
-<% if @items.size == 1 and @items.first.respond_to?("name") %>
+<% if @items.size == 1 and !@items.first.name.nil? %>
 	<%= "#{@items.first.name} was restored" %>
 <% else %>
 	<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were") %> restored

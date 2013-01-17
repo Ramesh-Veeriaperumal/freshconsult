@@ -740,7 +740,7 @@ en:
         success: The reply has been sent.
       notes: 
         create: 
-          invalid_email: Please enter a valid Email address
+          invalid_email: You are not authorized to add a note
           failure: There was a problem adding the note to your ticket. Please try again.
           success: The note has been added to your ticket.
       empty_spam: 
@@ -1636,10 +1636,21 @@ en:
     helpcard:
       tour1: Help me setup my support email
       tour2: Help me configure multiple mailboxes
-      info5: Your default support email address is <a target="_blank" href="{{solution_url}}">support@demo.freshdesk.com</a>. Any email sent here gets automatically converted into a ticket that you can get working on.
-      info19: You can configure your Freshdesk account to use a support email in your own domain, like support@mycompany.com by forwarding emails from this address to <a target="_blank" href="{{solution_url}}">demo.freshdesk.com</a>. To create a new support email box, click “Edit” under global email settings.
+      info5: Your default support email address is 
+                      <a target="_blank" href="https://{{solution_url}}">
+                        support@{{solution_url}}</a>. 
+                      Any email sent here gets automatically converted into a ticket that you can 
+                      get working on.
+      info19: You can configure your Freshdesk account to use a support email in your own domain, 
+                      like support@mycompany.com by forwarding emails from this address to 
+                      <a target="_blank" href="https://{{solution_url}}">
+                        {{solution_url}}</a>. 
+                        To create a new support email box, click “Edit” under global email 
+                      settings.
       info20: Using Multiple Mailboxes
-      info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to automatically assign emails from each mailbox to a specific group.
+      info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, 
+                      sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to
+                       automatically assign emails from each mailbox to a specific group.
     primary_supp_email: Primary support email
     info16: Tickets will be assigned to
     info7: This is also your Reply-to address eg. support@yourcompany.com
@@ -2671,12 +2682,13 @@ en:
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
-        tickets_resolved: "Tickets Resolved"
-        on_time_resolution: "On time Resolution"
+        tickets_resolved: "Tickets <br> Resolved"
+        on_time_resolution: "On Time <br> Resolution"
         on_time_resolution_percent: "OTR %"
-        fcr_count: "First Contact Resolution"
+        fcr_count: "First Contact <br> Resolution"
         fcr_percent: "FCR %"
-        avg_1st_response_time: "Avg. first response time"
+        avg_1st_response_time: "Average First <br> Response Time"
+        avg_response_time: "Average Response <br> Time"
         helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"

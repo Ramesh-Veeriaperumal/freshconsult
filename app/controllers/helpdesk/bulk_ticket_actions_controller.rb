@@ -20,9 +20,9 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
-      # ticket.save
+      ticket.save
       begin
-        ticket.save unless reply_multiple reply_content, ticket
+        reply_multiple reply_content, ticket
       rescue Exception => e
         if e.is_a?(HelpdeskExceptions::AttachmentLimitException)
           flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')  
