@@ -1,4 +1,4 @@
-<span class="arrow-right"></span>
+<span class="arrow-top"></span>
 
 <div class="watcher_label">
 	<span> 
@@ -13,12 +13,11 @@
 <div id="watcherlist">
 	<div class="add_watcher_text">
 		<% if @ticket.unsubscribed_agents.present? %>
-			<%= link_to_function t('helpdesk.tickets.add_watcher.add_watcher_link'), 
-			                      "jQuery('#watcherlist').hide(); jQuery('#addwatcher').show();"%>    
+			<%= link_to_function t('helpdesk.tickets.add_watcher.add_watcher_link')%>    
 		<% else %>
-			<%= link_to_function( t('helpdesk.tickets.add_watcher.add_watcher_link') , "#", 
-			                     :id => "link_disabled", 
-			                     :title => t('helpdesk.tickets.add_watcher.all_agents_watching')) %>    
+			<span title="<%=t('helpdesk.tickets.add_watcher.all_agents_watching')%>" class="link_disabled">
+				<%= t('helpdesk.tickets.add_watcher.add_watcher_link') %>
+			</span>
 		<% end %>
 	</div>
 	<div>
@@ -38,19 +37,21 @@
 						</div>
 						<% if subscription.user.id == current_user.id %>
 							<div class="watcher_list">
-								<b>
-									<%= t('helpdesk.tickets.add_watcher.me') %>
-								</b> 
-								(<%= current_user.name %>)
+								<b><%= t('helpdesk.tickets.add_watcher.me') %></b>&nbsp;
+								<span class="agent_name" title="<%=current_user.name%>"> 
+									(<%= current_user.name %>)
+								</span>
 							</div>
 							<div class="unwatch" 
-							     title=<%=t('helpdesk.tickets.add_watcher.unwatch')%> >
+							     title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
 								<%= link_to_remote(image_tag("/images/delete.png"), :url => unwatch_helpdesk_ticket_helpdesk_subscriptions_path(@ticket), 
 								    :method => "delete") %>
 							</div>
 						<% else %>
 							<div class="watcher_list">
-									<%= subscription.user.name %> 
+									<span class="agent_name" title="<%=subscription.user.name%>"> 
+										<%= subscription.user.name %> 
+									</span>
 							</div>
 						<% end %>
 					</li>
@@ -70,8 +71,7 @@
 
 <div id="addwatcher" style="display:none">
 	<div class="view_watcher_text">
-		<%= link_to_function( t('helpdesk.tickets.add_watcher.view_watchers_link'), 
-							  "jQuery('#addwatcher').hide(); jQuery('#watcherlist').show();") %>
+		<%= link_to_function( t('helpdesk.tickets.add_watcher.view_watchers_link') ) %>
 	</div>
 	<% form_remote_tag(:url => create_watchers_helpdesk_ticket_helpdesk_subscriptions_path(@ticket), 
 					   :method => :post,
@@ -86,7 +86,6 @@
 						</div>
 		<div class="add_cancel_buttons">
 			<%= link_to_function(t("helpdesk.tickets.add_watcher.cancel"), 
-			                    "jQuery('#addwatcher').hide(); jQuery('#watcherlist').show();", 
 			                    :class => "btn cancel_watcher" ) %>
 			<%= submit_tag t('helpdesk.tickets.add_watcher.add_button'), 
 			               "data-loading-text" => "Adding...", 
@@ -108,5 +107,17 @@ jQuery(".watcher_input").live('change',function() {
 		jQuery('.submit_watcher').attr('disabled', false);
 	else
 		jQuery('.submit_watcher').attr('disabled', true);
+});
+
+jQuery(".add_watcher_text").click(function(){
+	if (!jQuery(".add_watcher_text").children().hasClass("link_disabled")) {
+		jQuery("#watcherlist").hide();
+		jQuery("#addwatcher").fadeIn(500);
+	}
+});
+
+jQuery(".view_watcher_text, .cancel_watcher").click(function(){
+	jQuery("#addwatcher").hide();
+	jQuery("#watcherlist").fadeIn(500);
 });
 <% end %>
