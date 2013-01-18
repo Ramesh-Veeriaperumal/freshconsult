@@ -134,7 +134,7 @@ var $J = jQuery.noConflict();
         e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-        hideActivePopovers(ev);
+        hideActivePopovers(e);
         widgetPopup = $(this).popover('show');
       });
 
