@@ -1,4 +1,4 @@
-class Integrations::IntegratedResourcesController < Admin::AdminController
+class Integrations::IntegratedResourcesController < ApplicationController
 
   before_filter :add_account_id
 

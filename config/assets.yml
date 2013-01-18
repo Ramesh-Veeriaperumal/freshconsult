@@ -114,7 +114,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.tinymce.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
@@ -127,6 +126,9 @@ javascripts:
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io.js
+    - public/javascripts/sisyphus.js
+    - public/javascripts/ticket_list.js
+    - public/javascripts/AsyncJSLoader.js
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace:  
@@ -174,6 +176,9 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/feedback_widget_form.js
   custom_widget:
+    - public/javascripts/base64.js
+    - public/javascripts/frameworks/underscore-min.js
+    - public/javascripts/strftime-min.js
     - public/javascripts/custom_widget.js  
   subscription:                    
     - public/javascripts/prototype.js  
@@ -215,7 +220,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.tinymce.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js

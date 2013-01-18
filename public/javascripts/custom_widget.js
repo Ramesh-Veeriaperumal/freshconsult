@@ -63,7 +63,7 @@ Freshdesk.Widget.prototype={
 
 	call_init_requests: function() {
 		if(this.options.init_requests){
-			cw=this;
+			var cw=this;
 			this.options.init_requests.each(function(reqData){
 				if(reqData) cw.request(reqData); 
 			});
@@ -1116,17 +1116,17 @@ var UIUtil = {
 	}
 }
 
-var CustomWidget =  {
-	include_js: function(jslocation) {
-		widget_script = document.createElement('script');
-		widget_script.type = 'text/javascript';
-		widget_script.src = jslocation + "?" + (new Date().getTime());
-		document.getElementsByTagName('head')[0].appendChild(widget_script);
-	}
-};
-CustomWidget.include_js("/javascripts/base64.js");
-CustomWidget.include_js("/javascripts/frameworks/underscore-min.js");
-CustomWidget.include_js("/javascripts/strftime-min.js");
+// var CustomWidget =  {
+// 	include_js: function(jslocation) {
+// 		widget_script = document.createElement('script');
+// 		widget_script.type = 'text/javascript';
+// 		widget_script.src = jslocation + "?" + (new Date().getTime());
+// 		document.getElementsByTagName('head')[0].appendChild(widget_script);
+// 	}
+// };
+// CustomWidget.include_js("/javascripts/base64.js");
+// CustomWidget.include_js("/javascripts/frameworks/underscore-min.js");
+// CustomWidget.include_js("/javascripts/strftime-min.js");
 
 var XmlUtil = {
 	extractEntities:function(resStr, lookupTag){
