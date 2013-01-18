@@ -416,7 +416,9 @@ var $J = jQuery.noConflict();
           start_time = new Date();
           jQuery('#cf_cache').remove();
           jQuery('#response_dialog').remove();
-          jQuery('#agent_collision_container').remove();
+          jQuery('.ui-dialog').remove();
+          jQuery('#bulkcontent').remove();
+          // jQuery('#agent_collision_container').remove();
           var bHeight = $('#body-container').height(),
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');

@@ -9,7 +9,7 @@ gem "html2textile", "~> 1.0.0.beta1"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
-gem "httparty", "0.6.1"
+gem "httparty", "0.10.0"
 gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "rufus-scheduler", :require =>"rufus/scheduler"

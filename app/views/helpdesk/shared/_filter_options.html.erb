@@ -46,7 +46,6 @@
     jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
   }
   </script>
-  <%= will_filter_scripts_tag %>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h3 class="title"><%= t("tickets_filter.title") %></h3>
     <form id="FilterOptions" action="#">
