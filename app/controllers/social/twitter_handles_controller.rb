@@ -163,7 +163,7 @@ class Social::TwitterHandlesController < ApplicationController
         :account_id => current_account.id,
         :user_id => user.id ,
         :tweet_attributes => {:tweet_id => params[:helpdesk_tickets][:tweet_attributes][:tweet_id], 
-                                          :account_id => current_account.id}
+                                          :twitter_handle_id => tweet.twitter_handle_id}
        )
        @note
     else
