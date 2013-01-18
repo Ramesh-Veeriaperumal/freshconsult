@@ -3602,6 +3602,7 @@ div.addReminder{
 					*position:static;
 					text-overflow: ellipsis;
 					-o-text-overflow: ellipsis;
+					-moz-text-overflow: ellipsis;
 					-webkit-text-overflow: ellipsis;
 					overflow:hidden;
 					white-space:nowrap;
@@ -5982,6 +5983,9 @@ a.close{
 		display: block;
 		overflow-x: hidden;
 		text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		-moz-text-overflow: ellipsis;
+		-webkit-text-overflow: ellipsis;
 		margin: 5px 95px;
 		background: url(/images/integrations/campaign-link.png) left -2px no-repeat;
 		padding-left: 20px;
@@ -6253,6 +6257,9 @@ a.close{
 	  width: inherit;
 	  overflow: hidden;
 	  text-overflow: ellipsis;
+	  -o-text-overflow: ellipsis;
+	  -moz-text-overflow: ellipsis;
+	  -webkit-text-overflow: ellipsis;
 	  white-space: nowrap;
 	  display: inline-block;
 	}
@@ -7281,6 +7288,7 @@ a[rel="load-rjs"] {
 @import "../animate-custom";
 
 .arrow-right,
+.arrow-top,
 .arrow-down {
   
    /*
@@ -7316,10 +7324,14 @@ a[rel="load-rjs"] {
 
 /* Add Watcher Start */
 
+div.monitor_div{
+	display: inline-block;
+}
+
 div.watchers_tooltip{
     position: absolute;
     border: 1px solid #aaa;
-    margin: -41px 0px 0px -288px;
+    margin: 6px 0px 0px -9px;
     @include min-height(84px);
     height: auto;
     width: 275px;
@@ -7340,6 +7352,24 @@ div.watchers_tooltip{
     #watcherlist{
     	clear: both;
     	padding-bottom: 15px;
+
+    	.agent_name{
+	    	max-width: 157px;
+			white-space: nowrap;
+			overflow: hidden;
+			display: inline-block;
+			-webkit-text-overflow: ellipsis;
+			-moz-text-overflow: ellipsis;
+			-ms-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+    	}
+	    	ul{
+	    		width: 100%;
+	    	}
+
+	    	 li{
+		    	width: 100%;
+		    }
     }
 
     ul{
@@ -7369,14 +7399,14 @@ div.watchers_tooltip{
     }
 
     .add_watcher_text{
-		margin-top: -15px;
+		margin-top: -16px;
 	}
 
 	.view_watcher_text{
 		margin-top: 16px;
 	}
 
-    #link_disabled{
+    .link_disabled{
     	opacity: .4;
 		color: #3F3F3F;
 		cursor: default;
@@ -7395,12 +7425,17 @@ div.watchers_tooltip{
     	margin-left: 3px;
     	text-align: center;
     	padding-top: 15px;
+    	padding-right: 10px;
     }
 
     .watcher_list{
     	float: left;
         padding-top: 4px;
         font-size: 13px;
+
+        b{
+        	float: left;
+        }
     }
 
     .user_image{
@@ -7422,7 +7457,7 @@ div.watchers_tooltip{
 
 	.unwatch{
 		float: left;
-		margin-top: 6px;
+		margin-top: 5px;
 		margin-left: 10px;
 		img{
 			height: 16px;
@@ -7430,22 +7465,23 @@ div.watchers_tooltip{
 		}
 	}
 
-	.arrow-right{
-		right: -20px;
+	.arrow-top{
 		position: absolute;
-		border-left-color: #999;
-		top: 15px;
+		left: 11px;
+		top: -20px;
+		border-bottom-color: #999;
+		border-bottom: 10px solid #999;
 		border-width: 10px;
 		&:before{
-			border-bottom: 9px solid transparent;
-			border-left: 9px solid white;
-			border-top: 9px solid transparent;
+			border-left: 9px solid transparent;
+			border-bottom: 9px solid white;
+			border-right: 9px solid transparent;
 			height: 0;
 			width: 0;
 			content: " ";
 			position: absolute;
-			top: -9px;
-			left: -10px;
+			top: 1px;
+			left: -9px;
 		}
 	}
 
@@ -8618,5 +8654,9 @@ height: auto;
 	.btn-primary:hover{
 		color: white;
 		background-color: #222;
+	}
+	.btn-primary[disabled]:hover{
+		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+		background-color: #373737;
 	}
 }
