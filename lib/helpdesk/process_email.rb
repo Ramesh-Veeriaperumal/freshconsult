@@ -11,7 +11,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
-      clip_large_html
+      # clip_large_html
       account.make_current
       encode_stuffs
       kbase_email = account.kbase_email
@@ -46,7 +46,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     user = get_user(account, from_email,email_config)
     
     article_params[:title] = params[:subject].gsub(Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]"),"")
-    article_params[:description] = @description_html || params[:text]
+    article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
     article_params[:user] = user.id
     article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
@@ -98,7 +98,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def orig_email_from_text #To process mails fwd'ed from agents
-      content = params[:text] || @description_html 
+      content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html])
       if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
                             content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
                             content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
@@ -166,7 +166,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :account_id => account.id,
         :subject => params[:subject],
         :description => params[:text],
-        :description_html => @description_html,
+        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -230,7 +230,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return if user.blocked? #Mails are dropped if the user is blocked
       if can_be_added_to_ticket?(ticket,user)        
         body = show_quoted_text(params[:text],ticket.reply_email)
-        body_html = show_quoted_text(@description_html, ticket.reply_email)
+        body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
         from_fwd_recipients = from_fwd_emails?(ticket, from_email)
         parsed_cc_emails = parse_cc_email
         parsed_cc_emails.delete(ticket.account.kbase_email)
@@ -265,6 +265,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       build_attachments(ticket, note)
       # ticket.save
+      note.notable = ticket
       note.save
     end
     

@@ -1,4 +1,6 @@
 en:
+  meta:
+   language_name: 'English'
   enabled: "Enabled"
   disabled: "Disabled"
   tip_on: "Click to Enable"
@@ -14,6 +16,7 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  your_email: "Your email"
   filter_options:
     status: "Status"
     responder_id: "Agents"
@@ -24,13 +27,12 @@ en:
     due_by: "Due By"
     customers: "Customers"
     tags: "Tags"
+    requester: "Requesters"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
-  meta:
-   language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: Attachment(s) size can be up to 15 MB
+  attachment_help_info: Attachment(s) size can be up to 20 MB
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
@@ -738,6 +740,7 @@ en:
         success: The reply has been sent.
       notes: 
         create: 
+          invalid_email: You are not authorized to add a note
           failure: There was a problem adding the note to your ticket. Please try again.
           success: The note has been added to your ticket.
       empty_spam: 
@@ -751,6 +754,10 @@ en:
         success: The trash was emptied.
       delete_forever:
         success: %{tickets} deleted.
+      unwatch: 
+        success: %{tickets} removed from the watch-list.
+        failure: Ticket unwatch action failed.
+        unsubscribe_success: This ticket has been removed from your watch-list.
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1021,7 +1028,7 @@ en:
   delete_topic_msg: Delete this topic forever
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
-  import_note_info: The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email.
+  import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
@@ -1372,6 +1379,7 @@ en:
     info3: Background information of %{nick_name}
     working: Working at
     info4: Recent tickets from %{nick_name}
+    show_more: Show more tickets from %{nick_name} »
     form_placeholder: 
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
     info5: User has not created any ticket till now
@@ -1487,7 +1495,7 @@ en:
   save: Save
   import_added_newly: Added Newly
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
-  import_warning_info: An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc.
+  import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered
@@ -1628,10 +1636,21 @@ en:
     helpcard:
       tour1: Help me setup my support email
       tour2: Help me configure multiple mailboxes
-      info5: Your default support email address is <a target="_blank" href="{{solution_url}}">support@demo.freshdesk.com</a>. Any email sent here gets automatically converted into a ticket that you can get working on.
-      info19: You can configure your Freshdesk account to use a support email in your own domain, like support@mycompany.com by forwarding emails from this address to <a target="_blank" href="{{solution_url}}">demo.freshdesk.com</a>. To create a new support email box, click “Edit” under global email settings.
+      info5: Your default support email address is 
+                      <a target="_blank" href="https://{{solution_url}}">
+                        support@{{solution_url}}</a>. 
+                      Any email sent here gets automatically converted into a ticket that you can 
+                      get working on.
+      info19: You can configure your Freshdesk account to use a support email in your own domain, 
+                      like support@mycompany.com by forwarding emails from this address to 
+                      <a target="_blank" href="https://{{solution_url}}">
+                        {{solution_url}}</a>. 
+                        To create a new support email box, click “Edit” under global email 
+                      settings.
       info20: Using Multiple Mailboxes
-      info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to automatically assign emails from each mailbox to a specific group.
+      info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, 
+                      sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to
+                       automatically assign emails from each mailbox to a specific group.
     primary_supp_email: Primary support email
     info16: Tickets will be assigned to
     info7: This is also your Reply-to address eg. support@yourcompany.com
@@ -1690,6 +1709,11 @@ en:
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_requester_responded_at: "From: %{username}, Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_created_at: "From: %{username}, Created: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_closed_at: "Closed: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_resolved_at: "Resolved: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_agent_responded_at: "Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_requester_responded_at: "Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
+    ticket_user_list_status_created_at: "Created: <span class='emphasize'>%{time_ago} ago</span>"
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
@@ -1741,6 +1765,7 @@ en:
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
+    unwatch: Unwatch
     submit_ticket_title: Submit a ticket
     create_ticket_title: Create a ticket
     convert_ticket_title: Convert as a ticket
@@ -2040,6 +2065,33 @@ en:
         priority: "Priority"
         time_ago: "%{time_in_words} ago"
         sla: "Due By"
+      add_watcher:
+        add_watcher_link: Add Watcher
+        add_button: Add
+        no_agents: No agent is watching this ticket
+        ticket_watchers: Ticket Watchers
+        me: Me
+        cancel: Cancel
+        view_watchers_link: View Watchers
+        no_watcher_text: No agent is watching this ticket
+        watcher_text: Agents added as watchers receive email alerts when the ticket is updated
+        unwatch: Unwatch
+        pick_agents: Add agents
+        all_agents_watching: All agents are watching this ticket
+        mail:
+          hi: Hi
+          added_as_watcher: %{agent_name} has added you as a watcher of a ticket
+          new_activity: New activity on your watched ticket
+          activity: Activity
+          ticket: Ticket
+          requester: Requester
+          customer: The Customer
+          status_change:  %{agent_name} has %{status} a ticket you are watching
+          response: %{responder} has responded to a ticket you are watching
+          ticket_details: Ticket Description
+          customer_response: Customer Response
+          agent_response: Agent Response
+          stop_emails: "Stop watching this ticket"
       customview:
         new:
           give_a_name: Give a name for this view
@@ -2099,7 +2151,7 @@ en:
         my_on_hold: My Tickets On Hold
         select: Select View...
         spam: Spam
-        monitored_by: Tickets I'm Monitoring
+        monitored_by: Tickets I'm Watching
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by
@@ -2118,7 +2170,7 @@ en:
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
+           exceed: Oops! Your attachment exceeds 20 MB. Please attach a smaller file.
     merge:
       merge:
         merge_into: Merge into?
@@ -2630,12 +2682,13 @@ en:
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
-        tickets_resolved: "Tickets Resolved"
-        on_time_resolution: "On time Resolution"
+        tickets_resolved: "Tickets <br> Resolved"
+        on_time_resolution: "On Time <br> Resolution"
         on_time_resolution_percent: "OTR %"
-        fcr_count: "First Contact Resolution"
+        fcr_count: "First Contact <br> Resolution"
         fcr_percent: "FCR %"
-        avg_1st_response_time: "Avg. first response time"
+        avg_1st_response_time: "Average First <br> Response Time"
+        avg_response_time: "Average Response <br> Time"
         helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"

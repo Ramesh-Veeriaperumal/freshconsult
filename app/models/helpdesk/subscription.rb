@@ -8,7 +8,7 @@ class Helpdesk::Subscription < ActiveRecord::Base
   belongs_to :user,
     :class_name => 'User'
     
-  attr_protected :ticket_id, :user_id
+  attr_protected :ticket_id, :account_id
 
   validates_uniqueness_of :ticket_id, :scope => :user_id
   validates_numericality_of :ticket_id, :user_id
@@ -16,6 +16,6 @@ class Helpdesk::Subscription < ActiveRecord::Base
 
   private
     def set_account_id
-      self.account_id = user.account_id
+      self.account_id = ticket.account_id
     end
 end

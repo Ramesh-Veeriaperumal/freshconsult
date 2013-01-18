@@ -1,7 +1,7 @@
 <div class="sidepanel wordwrap">
 	<h3 class="title"><%=t('email_configs.title')%></h3>		
-	<p><%=t(:'email_configs.helpcard.info5',:solution_url => 'https://support@demo.freshdesk.com')%></p>
-	<p><%=t(:'email_configs.helpcard.info19',:solution_url => 'https://demo.freshdesk.com')%></p>
+	<p><%=t(:'email_configs.helpcard.info5',:solution_url => current_account.full_domain)%></p>
+	<p><%=t(:'email_configs.helpcard.info19',:solution_url => current_account.full_domain)%></p>
 	<%= tour_button(t('email_configs.helpcard.tour1'), '5007f779e13a460684000024') %>
 	</br>
 	<h3 class="title"><%=t('email_configs.helpcard.info20')%></h3>

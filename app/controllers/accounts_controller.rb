@@ -6,7 +6,7 @@ class AccountsController < ApplicationController
   layout :choose_layout 
   
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
-  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update]
+  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_fav, :show]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   

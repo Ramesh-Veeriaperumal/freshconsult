@@ -257,7 +257,11 @@
 
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
+                                                        :unsubscribe => :get,
+                                                        :unwatch => :delete,
+                                                        :unwatch_multiple => :delete },
+                                       :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_' 
@@ -282,6 +286,7 @@
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
+    helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
@@ -341,6 +346,12 @@
   
   map.namespace :anonymous do |anonymous|
     anonymous.resources :requests
+  end
+
+  map.namespace :public do |p|
+     p.resources :tickets do |ticket|
+        ticket.resources :notes
+    end
   end
 
   map.namespace :mobile do |mobile|

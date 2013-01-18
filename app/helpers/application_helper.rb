@@ -13,7 +13,11 @@ module ApplicationHelper
   ASSETIMAGE = { :help => "/images/helpimages" }
   
   def format_float_value(val)
-    sprintf( "%0.02f", val) unless val.nil? 
+    if !(val.is_a? Fixnum)
+      sprintf( "%0.01f", val)
+    else
+      return val.to_s
+    end
   end
 
   def timediff_in_words(interval)
@@ -30,13 +34,13 @@ module ApplicationHelper
     if (interval.to_i <= 0) 
       "-"
     elsif days > 0
-      "#{days} days and #{hours % 24} hours"
+      "#{days} days  #{hours % 24} hrs"
     elsif hours > 0
-      "#{hours} hours and #{mins % 60} minutes"
+      "#{hours} hrs  #{mins % 60} mins"
     elsif mins > 0
-      "#{mins} minutes and #{secs % 60} seconds"
+      "#{mins} mins  #{secs % 60} secs"
     elsif secs >= 0
-      "#{secs} seconds"
+      "#{secs} secs"
     end
 
   end
@@ -299,6 +303,7 @@ module ApplicationHelper
       ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
       ['{{ticket.description}}',      'Description',        'Ticket description.'],
       ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
+      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login'],
       ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
       ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
       ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],
@@ -332,8 +337,8 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v2","avatar",profile_size,user],options.fetch(:expiry,300)) do
-      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+    avatar_content = MemcacheKeys.fetch(["v3","avatar",profile_size,user],30.days.to_i) do
+      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
   end
@@ -422,6 +427,7 @@ module ApplicationHelper
 
   def widget_script(installed_app, widget, liquid_objs)
     replace_objs = liquid_objs || {}
+    replace_objs = replace_objs.merge({"current_user"=>current_user})
     # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
     replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, "application" => installed_app.application}) unless installed_app.blank?# Application name based liquid obj values.
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
@@ -474,12 +480,8 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    if dom_type == "requester"
-      field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
-      rfield = add_requester_field
-      field_label += rfield if rfield  
-    end
-    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
+    field_label    += '<span class="required_start">*</span>' if required
+    field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
@@ -505,7 +507,10 @@ module ApplicationHelper
           element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
-        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + select(object_name, field_name, 
+                                              field.choices(@ticket), 
+                                              {:include_blank => "...", :selected => field_value}, 
+                                              {:class => element_class})
       when "nested_field" then
         element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
@@ -530,7 +535,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    render(:partial => "/shared/add_requester") if (current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && current_user && current_user.can_view_all_tickets?)
   end
   
   def add_name_field

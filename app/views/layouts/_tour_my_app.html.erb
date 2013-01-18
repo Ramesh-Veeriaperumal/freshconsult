@@ -1,13 +1,15 @@
 <link rel="stylesheet" href="https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.css" type="text/css">
-	<script type="text/javascript" src="https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.js"></script>
+<!-- <script type="text/javascript" src="https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.js"></script> -->
  
 	<script type="text/javascript">
-	var tour;
-	jQuery(document).ready(function() {
-	    tour = new TourMyApp("freshdesk");
-	    if (window.location.href.indexOf("freshpo.com") != -1) {
-    		tour.setOptions({"test_mode": true});
-  		}
-	    tour.start();
-	});
+	AsyncJSLoader('https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.js', function(){
+		var tour;
+		jQuery(document).ready(function() {
+		    tour = new TourMyApp("freshdesk");
+		    if (window.location.href.indexOf("freshpo.com") != -1) {
+	    		tour.setOptions({"test_mode": true});
+	  		}
+		    tour.start();
+		});
+	})
 	</script>
