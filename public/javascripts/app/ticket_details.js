@@ -156,6 +156,13 @@ changeStatusToResolved = function() {
 	$('#helpdesk_ticket_status').trigger('change');
 }
 
+changeStatusTo = function(status) {
+	$('#helpdesk_ticket_status option').prop('selected', false);
+	$('#helpdesk_ticket_status option[value=' + status + ']').prop('selected', true);
+	dontAjaxUpdate = true;
+	$('#helpdesk_ticket_status').trigger('change');
+}
+
 refreshStatusBox = function() {
 	$.ajax({
 		url: TICKET_DETAILS_DATA['status_refresh_url'],

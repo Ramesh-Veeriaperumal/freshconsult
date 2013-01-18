@@ -141,17 +141,50 @@
         <div class="close-img" id="clear-draft"><span></span></div>
         <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
       </div>
-      <div class="f-right">
-        <span><%= submit_tag(t('cancel'), :class => "uiButton cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>   </span>
-        <span><%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('resolved'); changeStatusToResolved();" , :class => "uiButton", :id => "send_resolve_btn") %></span>
-        <span><%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %></span>
+      <div class="btn-toolbar">
+        <div class="btn-group">
+          <%= submit_tag(t('ticket.reply_form.send'), :class => "btn btn-inverse" ) %>
+        </div>
+        <div class="btn-group">
+          <a class="btn" rel="custom-reply-status" data-status-name='resolved' data-status-val="4">
+            <%= t('ticket.reply_form.send_and_resolve') %>
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              <span class="caret"></span>
+            </a>
+          </a>
+          <ul class="dropdown-menu">
+            <%
+            ticket_statuses = current_account.ticket_statuses.reject{|status| [2,4].include?(status.status_id) }
+            %>
+            <% ticket_statuses.each do |status| %>
+            <li>
+              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-status-val='<%= status.status_id %>' >
+                ... and Set as <%= status.name %>
+              </a>
+            </li>
+            <% end %>
+          </ul>
+        </div>
+        <div class="btn-group">
+          <%= submit_tag(t('cancel'), :class => "btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+        </div>
+        
       </div>
 
     <% end %>
-
+    <div class="clearfix" ></div>
 </div>
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
+
+    jQuery('[rel=custom-reply-status]').bind('click', function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      jQuery('#reply_ticket_status_<%= cntid %>}').val(jQuery(this).data('statusVal'));
+      changeStatusTo(jQuery(this).data('statusVal'));
+      jQuery("#HelpdeskReply").trigger('submit');
+    });
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){
       if(!jQuery('#include_cc').is(':checked'))

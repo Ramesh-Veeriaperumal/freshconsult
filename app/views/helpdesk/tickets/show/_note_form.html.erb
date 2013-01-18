@@ -61,6 +61,7 @@
       <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
     </div>
   <% end %>
+  <div class="clearfix" ></div>
 </div> 
 <% content_for :pagefixed do %>
   <%= javascript_include_tag "helpdesk/page_switcher" %>

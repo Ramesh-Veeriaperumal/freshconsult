@@ -600,6 +600,17 @@ p strong{
     	}
     }
 
+    .btn-toolbar {
+    	float: right;
+    	clear: right;
+    	width: 350px;
+
+    	.btn-group {
+    		float: right;
+    		width: auto;
+    		margin:0 0 0 10px;
+    	}
+    }
 }
 
 .list_agents_replying {
@@ -664,7 +675,7 @@ ol.conversation_thread{
 
     .request_panel {
     	border: none;
-    	overflow:hidden;
+    	overflow:visible;
     	padding: 0;
     }
 

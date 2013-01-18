@@ -117,6 +117,7 @@
   <span><%= submit_tag(t('cancel'), :class => "uiButton cancel_btn", "data-show-pseudo-reply" => conv_id.nil?.to_s, "data-cnt-id" => cntid ) %>   </span>
   <span><%= submit_tag(t('forward'), :onclick => "", :class => "uiButton special") %></span>
 </div>
+<div class="clearfix" ></div>
 <% if conv_id.present? %>
 <script type="text/javascript">
   invokeRedactor('<%= "#{cntid}-body" %>');
