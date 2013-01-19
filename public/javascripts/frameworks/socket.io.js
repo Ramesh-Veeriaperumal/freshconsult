@@ -1347,7 +1347,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
       var self = this;
 
       this.closeTimeout = setTimeout(function () {
-        self.onDisconnect();
+        self.onDisconnectSync();
       }, this.socket.closeTimeout);
     }
   };
@@ -1545,7 +1545,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         (!this.isXDomain() || io.util.ua.hasCORS)) {
       var self = this;
       io.util.on(global, 'beforeunload', function () {
-        self.disconnect();
+        self.disconnectSync();
       }, false);
     }
 
