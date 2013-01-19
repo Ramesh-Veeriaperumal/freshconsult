@@ -1347,7 +1347,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
       var self = this;
 
       this.closeTimeout = setTimeout(function () {
-        self.onDisconnectSync();
+        self.onDisconnect();
       }, this.socket.closeTimeout);
     }
   };
