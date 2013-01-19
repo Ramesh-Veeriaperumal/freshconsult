@@ -613,6 +613,33 @@ p strong{
     }
 }
 
+.open_in_new {
+	display: inline-block;
+	height: 14px;
+	width: 16px;
+	margin: 0 5px;
+	background:sprite($symbol, open_in_new) no-repeat transparent;
+}
+.search_text_box{
+	
+	input {
+		@include corners(5px);
+		padding: 5px 20px 5px 10px;
+		border: solid 1px #CCC;
+		@include box-shadow(rgba(0,0,0,0.1) 0px 0px 5px inset);
+	}
+
+	.btn {
+		display: block;
+		height: 15px;
+		width: 15px;
+		position: absolute;
+		top: 3px;
+		right: 2px;
+		background:sprite($symbol, search) no-repeat transparent;
+	}
+}
+
 .list_agents_replying {
 	float: right;
 	margin-top: -19px;
@@ -1286,8 +1313,15 @@ ol.conversation_thread{
 				width: auto;
 			}
 
-			input[type=text] {
-				width: 297px;
+			& > input[type=text] {
+				width: 295px;
+				@include box-shadow( inset 0 1px 5px rgba(0,0,0,.15));
+			}
+
+			textarea {
+				width: 295px;
+				height: 100px;
+				@include box-shadow( inset 0 1px 5px rgba(0,0,0,.15));
 			}
 
 			&.nested_field{

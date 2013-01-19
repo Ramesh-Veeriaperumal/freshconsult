@@ -1,10 +1,7 @@
 <form id="searchmoreform" action="#">
-	<div class="input-append">
-	  <input name="solution[search]" id="solution_search" placeholder="Search solutions">
-	  <input type="submit" class="btn" value="Search" />
-	</div>
+	  <input class="search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
 </form>
-<div class="dialog-well">
+<div class="dialog-well links">
   <div id="default_solution_suggestions" class="request_well">
   	<table class="table table-striped">
     <%= each_or_message("helpdesk/tickets/show/article", @articles, t(:'ticket.suggested_solutions.no_result')) %>
@@ -13,6 +10,11 @@
   <div id="more_search_results"></div>
 </div>
 <script type="text/javascript">
+
+jQuery('#searchmoreform')
+	.parentsUntil('.modal')
+	.siblings('.modal-header')
+	.append(jQuery('#searchmoreform').detach());
 
 function respondWithSol(select, sol_id, url){	
 	if (select == "url"){
@@ -40,7 +42,9 @@ function insertSuggestions(value)
     	jQuery("#"+element_id).getEditor().focus();
 		restoreCaretPosition(element_id);//method in ticket show page.
    		jQuery("#"+element_id).insertHtml(value);
-	}  
+	}
+
+	jQuery('#related_solutions').modal('hide');
 }
 
 //Method to restore the caret position when editor loses focus.[Suggest solutions]

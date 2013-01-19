@@ -37,7 +37,7 @@ strong {
   }
 }
 .table th, .table td {
-      padding: 12px;
+      padding: 15px;
 }
 .tabs{
   margin-right: -20px;
@@ -193,6 +193,16 @@ table.selected_to_yellow tbody tr td {
   border-top: 3px solid #f1f1f1;
   border-bottom: 8px solid #f1f1f1;
   @include corners(5px);
+
+  .actions-menu {
+    float: right;
+  }
+
+  &.links {
+    td:hover {
+      background:#fffad8;
+    }
+  }
 }
 /* This class overriding app-common css. */
 

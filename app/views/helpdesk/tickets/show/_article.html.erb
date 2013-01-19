@@ -1,17 +1,17 @@
 <% unless article.nil? %>
 <% article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article) %> 
 <tr><td>
-  <%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
-  <%= article.excerpts.title %>
 	<div class="actions-menu">
-	<%= link_to_function t(:'ticket.suggested_solutions.insert_content'), "respondWithSol('content', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_content_tip'), :class => "custom-tip" %>
-	|
-	<%if article.folder.visible?(current_user)%>
-		<%= link_to_function t(:'ticket.suggested_solutions.insert_url'), "respondWithSol('url', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_url_tip'), :class => "custom-tip" %>
-	<%end%> 
-	|
-	<%= link_to "View Solution", article_url, :target => "blank", :title => truncate ( article.desc_un_html, 100) %> 
-	  
+		<%= t('ticket.insert') %>:
+		<%if article.folder.visible?(current_user)%>
+			<%= link_to_function t('ticket.suggested_solutions.link'), "respondWithSol('url', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
+		<%end%>
+		<%= link_to_function t('ticket.suggested_solutions.content'), "respondWithSol('content', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
 	</div>
+
+	<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
+	
+	<%= article.excerpts.title %>
+	<%= link_to "", article_url, :target => "blank", :title => truncate ( article.desc_un_html, 100), :class => "open_in_new" %> 
 </td></tr>
 <% end %>

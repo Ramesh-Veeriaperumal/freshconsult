@@ -269,8 +269,7 @@ class Helpdesk::TicketsController < ApplicationController
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_attributes(params[nscname])
 
-      update_tags
-      #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
+      update_tags unless params[:helpdesk].blank? or  params[:helpdesk][:tags].blank?
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)

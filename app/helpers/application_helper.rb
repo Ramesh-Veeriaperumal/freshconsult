@@ -393,8 +393,12 @@ module ApplicationHelper
    color
  end
  
+ # def get_time_in_hours seconds
+ #   sprintf( "%0.02f", seconds/3600)
+ # end
+ 
  def get_time_in_hours seconds
-   sprintf( "%0.02f", seconds/3600)
+   Time.at(seconds).utc.strftime("%H:%M")
  end
  
  def get_total_time time_sheets

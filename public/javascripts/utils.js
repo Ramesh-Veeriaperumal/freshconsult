@@ -48,11 +48,21 @@ function plural( count, text1, text2 ){
 
 function totalTime(listClass, updateId){
  total_hours = $$(listClass)
-                .collect(function(t){ return t.innerHTML; })
+                .collect(function(t){ return jQuery(t).data('runningTime'); })
                 .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
  
- jQuery(updateId).html(sprintf( "%0.02f", total_hours));    
+ jQuery(updateId).html(time_in_hhmm(total_hours));    
 }
+
+function time_in_hhmm(seconds) {
+  var hh = parseInt(seconds/3600), mm = parseInt((seconds % 3600) / 60), ss = seconds % 60;
+  return pad2(hh) + ":" + pad2(mm); 
+}
+
+function pad2(number) {
+  return (number < 10 ? '0' : '') + number;
+}
+
 
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){

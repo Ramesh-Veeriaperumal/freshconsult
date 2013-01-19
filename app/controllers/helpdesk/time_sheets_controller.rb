@@ -60,7 +60,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
                                              :executed_at => Time.zone.now(),
-                                             :time_spent => get_time_in_second(hours_spent),
+                                             :time_spent => convert_duration(hours_spent),
                                              :timer_running => hours_spent.blank?,
                                              :billable => true})
 
@@ -77,7 +77,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   def update  
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
-    time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
+    time_entry = params[:time_entry].merge!({:time_spent => convert_duration(hours_spent)})
 
     unless params[:time_entry][:user_id].blank?
       raise ActiveRecord::RecordNotFound if current_account.agents.find_by_user_id(params[:time_entry][:user_id]).blank? 
@@ -130,6 +130,18 @@ private
      
   def get_time_in_second time_hour
     s = time_hour.to_f * 60 * 60 
+  end
+
+  def convert_duration(duration)
+    if duration =~ /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+      time_pieces = duration.split(":")
+      hours = time_pieces[0].to_i
+      minutes = (time_pieces[1].to_f/60.0)
+
+      duration = hours + minutes
+    end
+
+    (duration.to_f * 60 * 60).to_i
   end
   
   def load_time_entry
