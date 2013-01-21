@@ -34,10 +34,7 @@ class User < ActiveRecord::Base
   has_many :user_roles, :dependent => :destroy
   has_many :roles, :through => :user_roles, :class_name => 'Admin::Role'
   
-  accepts_nested_attributes_for :user_roles, :reject_if => proc { |attrs| attrs.all? { |k, v| v.to_i.zero? } }, 
-                                :allow_destroy => true
- 
-  validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.account_admin  == true }
+  validates_uniqueness_of :account_admin, :scope => :account_id, :if => Proc.new { |user| user.account_admin  == true }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
@@ -60,6 +57,8 @@ class User < ActiveRecord::Base
   has_many :support_scores, :dependent => :delete_all
 
   before_create :set_time_zone , :set_company_name , :set_language
+  before_create :account_admin_privilege, :if => :account_admin?
+  before_create :customer_privilege, :if => :customer?
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   after_update :update_admin_in_crm , :if => :account_admin_updated?
@@ -96,19 +95,20 @@ class User < ActiveRecord::Base
   end
   
   validates_presence_of :email, :unless => :customer?
+  validates_presence_of :user_roles, :unless => [:customer?, :account_admin?]
 
-   def user_roles_attributes=(user_attr)
+  def user_roles_attributes=(user_attr)
     # delete records if update
     user_roles.destroy_all unless user_roles.blank?
     role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
     # build user_roles
     role_ids.each { |id| user_roles.build({:role_id => id}) }
     # set privileges based on chosen roles
-    privilege_masks = Admin::Role.find(:all, :select => "privileges",
+    privilege_masks = account.roles.find(:all, :select => "privileges",
                  :conditions => ["id IN (?)", role_ids])
     self.privileges = union_privileges(privilege_masks).to_s
   end
-  
+
   def check_email_value
     if email.blank?
       self.email = nil
@@ -161,7 +161,7 @@ class User < ActiveRecord::Base
   attr_accessor :import
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language, :address, :user_roles_attributes, :privileges
+                  :deleted , :fb_profile_id , :language, :address, :user_roles_attributes
 
   #Sphinx configuration starts
   define_index do
@@ -198,6 +198,8 @@ class User < ActiveRecord::Base
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
     self.user_role = params[:user][:user_role]
+    self.user_roles_attributes = params[:user][:user_roles_attributes] if
+           params[:user].key?(:user_roles_attributes)
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
@@ -523,8 +525,17 @@ class User < ActiveRecord::Base
     def user_role_updated?
       @all_changes.has_key?(:user_role)
     end
-    
+
     def update_admin_to_billing
       Resque.enqueue(Billing::AddToBilling::UpdateAdmin, self.id)
+    end
+
+    def account_admin_privilege
+      user_roles.build({:role_id => account.roles.find_by_name("Administrator").id})  
+      self.privileges = Admin::Role.privileges_mask(Helpdesk::Roles::ADMINISTRATOR).to_s  
+    end
+
+    def customer_privilege
+      self.privileges = Admin::Role.privileges_mask(Helpdesk::Roles::CUSTOMER).to_s
     end
 end

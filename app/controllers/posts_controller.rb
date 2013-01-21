@@ -2,6 +2,7 @@ class PostsController < ApplicationController
   
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
+  before_filter :require_user, :only => :create
   before_filter :find_forum_topic, :only => :create
   before_filter :find_post,      :except =>  [:monitored, :create]
   #before_filter :login_required, :except => [:index, :monitored, :search, :show]

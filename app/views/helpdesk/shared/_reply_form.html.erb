@@ -78,7 +78,7 @@
                 <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => bind_last_reply(conv_item, @signature) %>
             </div>
         </li>
-        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) and privilege?(:post_in_forums) %>
+        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) and privilege?(:view_forums) %>
         <li class="inline-field field">
             <div class="fields">
                 <label>

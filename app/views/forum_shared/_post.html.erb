@@ -18,22 +18,25 @@
 					</li>
 					<li class="menu-item">
 						<%if post != @posts.first and @forum.questions? %> 
-								<% if privilege?(:manage_forums) %>
+            <!-- Is this correct ? -->
+								<% if privilege?(:manage_tickets) %>
 									<%= link_to (t(".unmark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), :method=>:put ) if post.answer?  %>
 									<%= link_to (t(".mark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
 								<%end%> 
 						<%end%>
 					</li>
-					<li class="menu-item">
-							<%= link_to(t(".delete_comment"), post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :method => :delete, :confirm => t(".delete_comment_confirm")[:delete_post_conf]) %>
-					</li>
+          <% if privilege?(:edit_forum_topic) %>
+  					<li class="menu-item">
+  							<%= link_to(t(".delete_comment"), post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :method => :delete, :confirm => t(".delete_comment_confirm")[:delete_post_conf]) %>
+  					</li>
+          <% end %>
 				</ul>
 			</li>
 			<% end %>
 		</ul>
 	</div>
 	<%= content_tag(:div, t(".answer"), :class => "stamp_answer floatr", :title => t(".post_accepted_as_a_good_answer")) if post.answer? %>
-	<% if privilege?(:manage_forums) and feature?(:gamification) %>
+	<% if privilege?(:manage_tickets) and feature?(:gamification) %>
 		<textarea id='<%= "post-agent-hovercard_#{post.id}" %>' style="display:none;">
 			<div class="contact_hover" style="min-height:50px;">
 			  <%= user_avatar(post.user) if post.user %>
@@ -56,7 +59,7 @@
 			<h4><%= pluralize(post.attachments.size, 'attachment')%></h4>
 			<ul class="attachment_list">
         <%= render :partial => '/helpdesk/shared/attachment', :collection => post.attachments, 
-            :locals => {:show_delete => (logged_in? && (post.editable_by?(current_user) || privilege?(:manage_forums)), :url => [post] } %>
+            :locals => {:show_delete => (logged_in? && post.editable_by?(current_user), :url => [post] } %>
 			</ul>
 	<% end %>	
 </div>

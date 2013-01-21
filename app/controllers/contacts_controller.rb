@@ -1,5 +1,4 @@
 class ContactsController < ApplicationController
-    before_filter :requires_all_tickets_access 
     
    include HelpdeskControllerMethods
    include ExportCsvUtil
@@ -143,7 +142,12 @@ class ContactsController < ApplicationController
   end
   
   def make_agent    
-    @item.update_attributes(:delete =>false, :user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:agent])      
+    @item.update_attributes(:delete =>false,
+     :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:agent],
+     :user_roles_attributes => { 
+        :role_id => [current_account.roles.find_by_name("Agent").id] 
+      }
+    )      
     @agent = current_account.agents.new
     @agent.user = @item 
     @item.deleted = false
@@ -183,10 +187,6 @@ class ContactsController < ApplicationController
     end
   end
 
-  def requires_all_tickets_access              
-        access_denied unless current_user.can_view_all_tickets?
-  end
-  
 protected
 
   def initialize_new_user

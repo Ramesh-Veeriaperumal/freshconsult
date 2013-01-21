@@ -55,14 +55,18 @@
 	}
 <% end %>
 <div class="customers-toolbar" id="customers-toolbar">
-	<input type="checkbox" id="customers-select-all" />
-	<div class="bulk-action">
-		<%= button_to_function(t('contacts.send_activation'), "bulk_send_activation()",  :class => "btn", :disabled => "disabled" ) if params[:state].eql?("unverified")%>
-		<% if params[:state].eql?("deleted") %>
-			<%= button_to_function(t('contacts.restore'), "validate_then_submit(
-			'#{ path }/restore', 'restore')", :class => "btn", :disabled => "disabled") %>
-		<% else %> 
-			<%= button_to_function(t('delete'), "delete_customer()", :class => "btn", :disabled => "disabled") %>
-		<% end %>
-	</div>
+  <% if privilege?(:manage_users) || privilege?(:delete_contact) %>
+  	<input type="checkbox" id="customers-select-all" />
+  	<div class="bulk-action">
+      <% if privilege?(:manage_users) %>
+  		  <%= button_to_function(t('contacts.send_activation'), "bulk_send_activation()",  :class => "btn", :disabled => "disabled" ) if params[:state].eql?("unverified")%>
+      <% end %>
+  		<% if params[:state].eql?("deleted") && privilege?(:delete_contact) %>
+    			<%= button_to_function(t('contacts.restore'), "validate_then_submit(
+    			'#{ path }/restore', 'restore')", :class => "btn", :disabled => "disabled") %>
+  		<% elsif privilege?(:delete_contact) %> 
+  			<%= button_to_function(t('delete'), "delete_customer()", :class => "btn", :disabled => "disabled") %>
+  		<% end %>
+  	</div>
+  <% end %>
 </div>

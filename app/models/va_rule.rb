@@ -67,6 +67,7 @@ class VARule < ActiveRecord::Base
   
   def trigger_actions(evaluate_on)
     Va::Action.initialize_activities
+    return false unless check_user_privilege
     actions.each { |a| a.trigger(evaluate_on) }
   end
   
@@ -94,5 +95,17 @@ class VARule < ActiveRecord::Base
       deserialize_them
       errors.add_to_base(I18n.t("errors.actions_empty")) if(action_data.blank?)
     end
-  
+
+    def check_user_privilege
+      return true unless rule_type == VAConfig::SCENARIO_AUTOMATION
+      
+      actions.each do |action|
+        if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)
+          return false unless
+            User.current.privilege?(Va::Action::ACTION_PRIVILEGE[action.action_key.to_sym])
+        end
+      end
+      true
+    end
+
 end

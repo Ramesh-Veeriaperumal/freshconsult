@@ -119,10 +119,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_source" then
          Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-        Helpdesk::TicketStatus.statuses_from_cache(account).reject do |status|
-          status[1] == Helpdesk::Ticketfields::TicketStatus::CLOSED &&
-                   !User.current.privilege?(:close_ticket)
-        end
+         Helpdesk::TicketStatus.statuses_from_cache(account)
        when "default_ticket_type" then
          account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
        when "default_agent" then

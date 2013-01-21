@@ -339,8 +339,16 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def execute_scenario 
-    va_rule = current_account.scn_automations.find(params[:scenario_id])    
-    va_rule.trigger_actions(@item)
+    va_rule = current_account.scn_automations.find(params[:scenario_id])
+    unless va_rule.trigger_actions(@item)
+      respond_to do |format|
+        format.html { 
+          flash[:notice] = I18n.t("admin.automations.failure")
+          redirect_to :back 
+        }
+      end
+    end
+    
     update_custom_field @item    
     @item.save
     @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
@@ -441,7 +449,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def change_due_by
-    raise I18n.t('change_due_by_error') unless privilege?(:due_by_time)    
     due_date = get_due_by_time    
     @item.update_attributes(:due_by => due_date)
     render :partial => "due_by", :object => @item.due_by
@@ -670,9 +677,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def allowed_quick_assign_fields
-      fields = ['agent', 'status']
-      fields << 'priority' if privilege?(:ticket_priority)
-      fields
+      ['agent', 'status', 'priority']
     end
 
     def cache_filter_params

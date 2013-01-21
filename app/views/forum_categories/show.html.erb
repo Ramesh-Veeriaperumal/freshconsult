@@ -9,7 +9,7 @@
 <div class="forum_list">
 	<div class="forum-group">
 		<div class="search-grey-box">
-			<% if privilege?(:manage_forums) -%>
+			<% if privilege?(:create_edit_forum_category) -%>
 				<div class="action_buttons no_margin">
 					<%= link_to(t('reorder'),'#', :id => "forums_reorder_button", :class => "first") unless (@forum_category.send("#{@content_scope}forums").size <= 1) %>
 			  	<%= link_to  t('forum.new'), new_category_forum_path(@forum_category), :class => "add_new icon" %>
@@ -22,6 +22,6 @@
 	</div>		
 </div>
 
-<% if privilege?(:manage_forums) -%>	
+<% if privilege?(:create_edit_forum_category) -%>	
 	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_category.send("#{@content_scope}forums"),  :action_url => reorder_category_forums_path(@forum_category), :title => :name, :container_id => "forums_sort", :reorder_id => "forums_reorder_button", :list_id => "forums_list"} %>
 <% end %>

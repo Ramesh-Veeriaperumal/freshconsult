@@ -500,8 +500,6 @@ module ApplicationHelper
       when "dropdown" then
         if (field.field_type == "default_status" and in_portal)
           element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
-        elsif (field.field_type == "default_status" && field_value == Helpdesk::Ticketfields::TicketStatus::CLOSED)
-          element = label + select(object_name, field_name, Helpdesk::TicketStatus.statuses(account), {:selected => field_value},{:class => element_class})
         else
           element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
         end
@@ -651,8 +649,8 @@ module ApplicationHelper
       privilege?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
     end
     
-  
   def company_tickets_tab
+    # this should be handled in self service portal
     tab = ['support/company_tickets', :company_tickets , !privilege?(:manage_tickets) , current_user.customer.name] if privilege?(:client_manager)
     tab || ""
   end

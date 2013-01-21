@@ -1,3 +1,10 @@
+<% javascript_tag do %>
+  jQuery(document).ready(function(){
+    if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
+      jQuery('div.action_buttons').show();
+    }
+});
+<% end %>
 <% content_for :layoutType do -%>bg_pulp<%-end %>
 <% content_for :sidebar do %> 
 	<div class="sidepanel">
@@ -32,7 +39,7 @@
 		</div>
 		<% end %>
 	</div>
-  <% if privilege?(:add_contact) %> 
+  <% if privilege?(:add_or_edit_contact) %> 
   	<div class="sidepanel">
   	<h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=@customer.name%></span></h4> 
   	
@@ -59,9 +66,11 @@
   <% end %>
 <% end %>
 <div class="company_box">
-	<div class="action_buttons">
-		<%= link_to t('edit'), edit_customer_path(@customer), :class => "last" %>
-	</div>
+  	<div class="action_buttons hide">
+      <% if privilege?(:add_or_edit_contact) %>
+  		  <%= link_to t('edit'), edit_customer_path(@customer), :class => "last" %>
+      <% end %>
+  	</div>
 	<h3 class="title"><%= h @customer.name %></h3>
 	<div><%=@customer.description.gsub(/\n/, '<br />') unless @customer.description.blank? %></div>
 </div> 
@@ -71,9 +80,11 @@
 		<%=t('company.info5')%>
 	</label>
 	<%= f.text_area :note, :class=> "sp_paragraph", :id => "comp_notes" %>
-	<div class="alignright"> 
-		<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
-	</div>
+  <% if privilege?(:add_or_edit_contact) %>
+  	<div class="alignright"> 
+  		<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
+  	</div>
+  <% end %>
 <% end %>	  
 
 <% unless @customer.users.empty? %>

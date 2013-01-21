@@ -8,7 +8,7 @@
         <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30) %>
       </div>
     </li>
-    <% if privilege?(:create_ticket_view) %>
+    <% if privilege?(:manage_users) %>
     <li class="inline-field">
       <label><%= t('.visible_to') %>:</label>
       <div class="inline-radio">

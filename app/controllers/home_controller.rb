@@ -25,7 +25,7 @@ class HomeController < ApplicationController
   
     def set_content_scope
       @content_scope = 'portal_'
-      @content_scope = 'user_'  if privilege?(:post_in_forums)
+      @content_scope = 'user_'  if privilege?(:view_forums)
     end
   
     def recent_topics

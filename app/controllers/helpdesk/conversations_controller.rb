@@ -17,15 +17,15 @@ class Helpdesk::ConversationsController < ApplicationController
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   def reply
-    build_attachments
+    build_attachments @item, :helpdesk_note
     if @item.save
       add_forum_post if params[:post_forums]
       begin
-        create_article
+        create_article if @publish_solution
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      send_reply_email
+      send_email
       post_persist
     else
       create_error
@@ -33,10 +33,10 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def forward
-    build_attachments
+    build_attachments @item, :helpdesk_note
     if @item.save
       add_forum_post if params[:post_forums]
-      send_reply_email
+      send_email
       @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails])
       post_persist
     else

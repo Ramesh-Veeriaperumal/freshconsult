@@ -68,10 +68,8 @@ class UsersController < ApplicationController
     User.transaction do
       if current_account.account_admin.id != params[:account_admin].to_i
         @pre_owner = current_account.account_admin
-        @pre_owner = current_account.account_admin
-        @pre_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:agent]
         @pre_owner.account_admin =  false
-        @new_owner = current_account.agents.find(params[:account_admin])
+        @new_owner = current_account.technicians.find(params[:account_admin])
         @new_owner.account_admin = true
         pre_owner_saved = @pre_owner.save
         new_owner_saved = @new_owner.save

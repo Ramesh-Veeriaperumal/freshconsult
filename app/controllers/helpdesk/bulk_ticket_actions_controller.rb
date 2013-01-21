@@ -7,18 +7,9 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
 
-  before_filter { |c| c.requires_permission :manage_tickets }
-
   before_filter :load_multiple_items, :validate_attachment_size, :only => :update_multiple
 
-  def update_multiple
-
-    raise I18n.t('set_priority_error') if
-              !params[nscname][:priority].blank? && !privilege?(:ticket_priority)
-    raise I18n.t('close_ticket_error') if
-              (params[nscname][:status] == Helpdesk::Ticketfields::TicketStatus::CLOSED) &&
-              !privilege?(:close_ticket)
-              
+  def update_multiple             
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
     #           params[nscname][:custom_field].nil?
     reply_content = params[:helpdesk_note][:body_html]
@@ -29,7 +20,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       end
       ticket.save
       begin
-        reply_multiple reply_content, ticket
+        reply_multiple reply_content, ticket if privilege?(:reply_ticket)
       rescue Exception => e
         failed_tickets.push(ticket)
         NewRelic::Agent.notice_error(e)

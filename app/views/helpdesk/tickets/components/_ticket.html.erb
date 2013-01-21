@@ -1,3 +1,8 @@
+<% unless privilege?(:edit_ticket_properties) %>
+  <% javascript_tag do %> 
+    jQuery('#custom_ticket_form').find('select, input').attr('disabled', 'disabled');
+  <% end %>
+<% end %>
 <% javascript_tag do %> 
 	changeAggentList = function(group_id)
 	{
@@ -31,9 +36,15 @@
 		<h3 class="title"><%= h(@ticket.status_name) %></h3>
 		<p>
 			<%=t('ticket_due_by_time')%>
-			<a id="edit-due-by-time" data-placement="topRight" href="#" data-widget-container="due-date-dialog-container">
-				<%= formated_date(ticket.due_by) %>
-			</a>
+      <% if privilege?(:edit_ticket_properties) %>
+			  <a id="edit-due-by-time" data-placement="topRight" href="#" data-widget-container="due-date-dialog-container">
+				  <%= formated_date(ticket.due_by) %>
+			  </a>
+      <% else %>
+        <span id="edit-due-by-time" data-placement="topRight" data-widget-container="due-date-dialog-container">
+          <%= formated_date(ticket.due_by) %>
+        </span>
+      <% end %>
 		</p>
 	<% else %>
 		<% if @ticket.ticket_status.deleted? %>
@@ -52,7 +63,6 @@
 	   <ul class="cnt">
 		   <!--form values starts here-->
 		   <% current_portal.ticket_fields.each do |field| %>
-         <% next if field.field_type == "default_priority" && !privilege?(:ticket_priority) %> 
 		     <% if field.visible_in_view_form? %>
 		      <% 
 		          field_value = (field.is_default_field?) ? ticket.send(field.field_name) : @ticket.get_ff_value(field.name)

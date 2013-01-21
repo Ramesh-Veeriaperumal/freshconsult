@@ -471,6 +471,7 @@ en:
     automations:
       edit:
         title: Edit Scenario
+      failure: You do not have the privileges to execute all actions in the scenario  
     security: 
       index: 
         shared_secret: Shared Secret
@@ -609,6 +610,7 @@ en:
         email-settings: Email Setup
         everything: Everything
         helpdesk: Helpdesk
+        roles: Roles
         else: else
         settings: Settings
         productivity: Productivity
@@ -722,6 +724,14 @@ en:
         not_allowed: You don't have access to delete it!
       create: 
         success: The Agent has been created and activation instructions sent to %{email}!
+      edit:
+        not_allowed: You cannot edit this agent
+    roles:
+      create:
+        success: The role "%{name}" has been created
+      update:
+        success: The role "%{name}" has been updated
+      default_roles: You cannot modify default roles    
     contacts_import: 
       failure: Please try again
       no_file: Please upload a file
@@ -736,6 +746,7 @@ en:
         wrong_ticket_id: Please enter a valid ticket id
       reply: 
         success: The reply has been sent.
+        without_kbase: The reply has been sent. You do not have privilege to create solution.
       notes: 
         create: 
           failure: There was a problem adding the note to your ticket. Please try again.
@@ -1298,6 +1309,8 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
+    role: Role
+    scope: Agent scope
     admin: Administrator
     supervisor: Supervisor
     global: Agent (Global Access)
@@ -2693,9 +2706,6 @@ en:
   mark_as_spam: "Mark as Spam"
   bulk_actions: "Bulk Actions"
   update_multiple_tickets: "Update Multiple Tickets"
-  set_priority_error: "You do not have the privilege to set priority"
-  close_ticket_error: "You do not have the privilege to close a ticket"
-  change_due_by_error: "You do not have the privilege to set due by time"
   no_change: "No Change"
   select: "Select ..."
   ticket_update_multiple_button: "Update"

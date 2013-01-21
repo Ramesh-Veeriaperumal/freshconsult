@@ -1,20 +1,22 @@
 <%= include_stylesheets :pattern %>
 <%= include_javascripts :pattern %>
 <div id="customers-page">
-	<%content_for :sidebar do%>
-		<div class="sidepanel">
-		<h3 class="title"><%=t('company.quick_company')%></h3> 
-		<% form_tag :action=> :quick, :method =>:post do %> 
-		<ul class="ui-form">
-		<li> 
-			 <label for="customer_name"><%=t('company.name')%></label> 
-			 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
-		</li> 
-		</ul>
-	  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
-		<% end %>
-		</div>
-	<%end%> 
+  	<%content_for :sidebar do%>
+      <% if privilege?(:add_or_edit_contact) %>
+    		<div class="sidepanel">
+    		  <h3 class="title"><%=t('company.quick_company')%></h3> 
+    		  <% form_tag :action=> :quick, :method =>:post do %> 
+        		<ul class="ui-form">
+        		<li> 
+        			 <label for="customer_name"><%=t('company.name')%></label> 
+        			 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
+        		</li> 
+        		</ul>
+        	  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
+    		  <% end %>
+    		</div>
+      <% end %>
+  	<%end%>
 	<div id="cust-list" class="cust_list_table">
 		<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
 		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "company", :path => customers_path})%>
@@ -26,7 +28,9 @@
 						<% @customers.each do |customer| %>
 							<tr>
 								<td class="selector-box">
-									<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
+                  <% if privilege?(:delete_contact) %>
+									  <%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
+                  <% end %>
 								</td>
 								<td class="name">
 									<p class="text-info">
@@ -42,10 +46,12 @@
 								</td>
 								<td>
 									<div class="item_actions" align="right">
+                    <% if privilege?(:add_or_edit_contact) %>
 								    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "btn btn-mini") %>
 								    	<%= link_to "<i class='icon-trash'></i>", {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
 								    		"#{t('company.info11')} #{customer.name}?\n#{t('company.info10')}", 
 								    		:method => 'delete', :class => "btn btn-mini" %>
+                    <% end %>
 									</div> 
 								</td>
 							</tr>

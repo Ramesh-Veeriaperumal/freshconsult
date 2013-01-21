@@ -74,8 +74,8 @@ class ForumCategoriesController < ApplicationController
   
     def content_scope
       @content_scope = 'portal_' 
-      @content_scope = 'user_'  if privilege?(:post_in_forums)
-      @content_scope = '' if privilege?(:manage_forums)
+      @content_scope = 'user_'  if privilege?(:view_forums)
+      @content_scope = '' if privilege?(:manage_tickets)
     end
     
     def scoper
@@ -100,7 +100,7 @@ class ForumCategoriesController < ApplicationController
     end
     
     def fetch_forum_scope
-      if privilege?(:manage_forums)
+      if privilege?(:manage_tickets)
       :forums
      elsif current_user
       :user_forums

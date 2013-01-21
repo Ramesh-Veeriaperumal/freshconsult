@@ -1,0 +1,32 @@
+<%= render :partial => 'form' %>
+
+<% javascript_tag do %>
+
+  (function($) {
+    $.fn.editFormSpecial = function(){
+      return this.each(function(){
+        if(!($(this).hasClass('permanent_disable')))
+        {
+          this.disabled = false;
+        }
+        if($(this).hasClass('nested'))
+          $('input.' + this.id).prop('disabled', false);
+      });
+    };
+
+    $.fn.editFormAnotherSpecial = function(){
+      return this.each(function(){
+        if($(this).hasClass('nested'))
+          $('input.' + this.id).prop('disabled', true);
+          $('input.' + this.id).prop('checked', false);
+      });
+    };
+
+    $(document).ready(function() {
+      $('input:checked').editFormSpecial();
+      $('input:radio:unchecked').editFormAnotherSpecial();
+    });
+
+  })(jQuery);
+
+<% end %>

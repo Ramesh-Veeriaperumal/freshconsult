@@ -1,4 +1,4 @@
-<% if privilege?(:publish_solution) %>
+<% if privilege?(:manage_tickets) %>
 	<%= render :partial => "agent_show", :locals => { :article => @article } %>
 <%else%>
 	<%= render :partial => "portal_show", :locals => { :article =>@article } %>

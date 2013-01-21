@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
+  include HelpdeskSystem
   
   include SslRequirement
   include SubscriptionSystem

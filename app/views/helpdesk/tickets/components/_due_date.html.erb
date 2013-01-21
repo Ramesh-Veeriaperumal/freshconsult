@@ -43,7 +43,7 @@
 		<% end %>
    </div>
 </div>
-<% if privilege?(:due_by_time) %>
+<% if privilege?(:edit_ticket_properties) %>
   <% javascript_tag do %>	
   	var ticket_created_on = new Date("<%= ticket.created_at.strftime("%B %e, %Y %H:%M") %>");
   	

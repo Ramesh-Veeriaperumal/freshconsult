@@ -3,10 +3,10 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and topic_id = ? and active = ?', current_user.id, @topic.id, true]).zero? %>
 
 <% content_for :sidebar do -%>
-	<% if logged_in? && current_user.has_manage_forums? %>
+	<% if privilege?(:manage_tickets) %>
 	<div class="rtCnt sidepanel">
 		<div class="rtDetails_forum">
-		<% if logged_in? && current_user.has_manage_forums? %>
+		<% if privilege?(:manage_tickets) %>
 			<% if @forum.ideas? %>
 				<%= content_tag(:h4, t(".mark_this_idea_as"), :class => "title") %>
 				<div class="mark_action">
@@ -41,7 +41,7 @@
 			  </h3>
 				<% first_post = @posts.first %>
 				<div class="description">
-					<% if permission?(:manage_forums) and feature?(:gamification) %>
+					<% if privilege?(:manage_tickets) and feature?(:gamification) %>
 						<textarea id="agent-hovercard" style="display:none;">
 							<div class="contact_hover" style="min-height:50px;">
 							  <%= user_avatar(@topic.user) if @topic.user %>
@@ -76,7 +76,7 @@
                 <div class="action_buttons">
                 <%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
 		              update_lock_category_forum_topic_path(@forum_category,@forum, @topic),
-		              :method => :put, :class => "last" )	if logged_in? && current_user.has_manage_forums? %>
+		              :method => :put, :class => "last" )	if logged_in? && privilege?(:create_forum_topic) %>
 		        </div>
               <% end %>
 						  <div class="floatr"> 
@@ -107,9 +107,7 @@
 					<% end %>             
 					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-           <% if privilege?(:post_in_forums) %>    
-            <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if !@topic.locked? %>
-           <% end %>
+           <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if current_user && !@topic.locked? %>
           </div>
 					</div>   
         </div>

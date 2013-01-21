@@ -5,11 +5,14 @@ class AgentsController < ApplicationController
   include Gamification::GamificationUtil
 
   before_filter :authorized_to_view_agents, :only => :show
-
+ 
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password ,:convert_to_contact ]
+  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
+    :convert_to_contact ]
+  before_filter :load_roles, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
+  before_filter :restrict_current_user, :only => [ :edit, :update ]
   before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
   before_filter :check_agent_limit, :only =>  :restore
   before_filter :set_selected_tab
@@ -25,7 +28,7 @@ class AgentsController < ApplicationController
       redirect_to :back  
     end    
   end
-  
+
   def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
       flash[:notice] = t(:'flash.not_allowed_in_demo_site')
@@ -207,5 +210,16 @@ class AgentsController < ApplicationController
 
   def set_selected_tab
     @selected_tab = :admin
+  end
+
+  def load_roles
+    @roles = current_account.roles.all
+  end
+
+  def restrict_current_user
+    if @agent.user == current_user
+      flash[:notice] = t(:'flash.agents.edit.not_allowed')
+      redirect_to :back  
+    end    
   end
 end

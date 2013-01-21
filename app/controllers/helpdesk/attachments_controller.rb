@@ -34,13 +34,13 @@ class Helpdesk::AttachmentsController < ApplicationController
       @items.each do |attachment|
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
           ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
-          can_destroy = true if privilege?(:edit_ticket) or (current_user && ticket.requester_id == current_user.id)
+          can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
         elsif ['Solution::Article'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:edit_solution) or (current_user && attachment.attachable.user_id == current_user.id)
+          can_destroy = true if privilege?(:publish_solution) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['Account'].include? attachment.attachable_type
           can_destroy = true if privilege?(:manage_account)
         elsif ['Post'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:manage_forums) or (current_user && attachment.attachable.user_id == current_user.id)
+          can_destroy = true if privilege?(:edit_forum_topic) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['User'].include? attachment.attachable_type
           can_destroy = true if privilege?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
         end
@@ -77,10 +77,8 @@ class Helpdesk::AttachmentsController < ApplicationController
       # Is the attachment on a solution  If so, it's always downloadable.
 
       elsif ['Solution::Article'].include? @attachment.attachable_type
-        return true if permission?(:manage_knowledgebase)
         return @attachment.attachable.folder.visible?(current_user) 
       elsif ['Post'].include? @attachment.attachable_type      
-        return true if permission?(:manage_forums)
         return @attachment.attachable.forum.visible?(current_user)     
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true     

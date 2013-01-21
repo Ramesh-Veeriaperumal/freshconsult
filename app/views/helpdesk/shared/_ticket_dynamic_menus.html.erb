@@ -1,10 +1,6 @@
 <div id="ticket_statuses" class="hide">
 	<%
-    if privilege?(:close_ticket)
-     statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account) 
-    else
-     statuses = Helpdesk::TicketStatus.status_names_without_close(current_account) 
-    end
+    statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account)
   	statuses.each do |status|
 	%>
 		<a data-value="<%= status.first %>" class="action_assign" data-assign-action="status" tabindex = '99'><%=status.second%></a>

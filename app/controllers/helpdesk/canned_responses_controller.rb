@@ -1,6 +1,5 @@
 class Helpdesk::CannedResponsesController < ApplicationController
-  before_filter { |c| c.requires_permission :manage_tickets }
-
+  
   before_filter :load_canned_response, :set_mobile, :only => :show
   before_filter :load_ticket , :if => :ticket_present?
 

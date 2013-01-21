@@ -23,6 +23,7 @@ class Account < ActiveRecord::Base
   has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
   has_many :products, :order => "name"
+  has_many :roles, :class_name => 'Admin::Role', :dependent => :delete_all
   has_many :portals
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
 
@@ -205,7 +206,7 @@ class Account < ActiveRecord::Base
   
   before_update :check_default_values, :update_users_time_zone
     
-  after_create :create_portal, :create_admin
+  after_create :create_portal
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
@@ -575,18 +576,17 @@ class Account < ActiveRecord::Base
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
     
-    def create_admin
-      self.user.active = true  
-      self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:agent]  
-      self.user.account_admin = true
-      self.user.build_agent()
-      self.user.agent.account = self
-      self.user.save
-      User.current = self.user
-      
+    def self.create_admin(account)
+      account.user.active = true  
+      account.user.account = account #?!?!?!
+      account.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:agent]  
+      account.user.account_admin = true
+      account.user.build_agent()
+      account.user.agent.account = account
+      account.user.save
+      User.current = account.user
     end
-    
+
     def create_portal
       self.primary_email_config.account = self
       self.primary_email_config.save

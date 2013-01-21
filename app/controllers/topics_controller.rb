@@ -189,10 +189,10 @@ end
       @topic.user     = current_user if @topic.new_record?
       @topic.account_id = current_account.id
       # admins and moderators can sticky and lock topics
-      return unless privilege?(:manage_forums) or current_user.moderator_of?(@topic.forum)
+      return unless privilege?(:manage_users) or current_user.moderator_of?(@topic.forum)
       @topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked] 
       # only admins can move
-      return unless privilege?(:manage_forums)
+      return unless privilege?(:manage_users)
       @topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
     end
     
@@ -227,7 +227,7 @@ end
     end
 
     def check_announcement_permission  
-      if @forum.announcement? && !privilege?(:manage_forums)
+      if @forum.announcement? && !privilege?(:manage_tickets)
         flash[:error] = I18n.t(:'flash.general.access_denied')
         redirect_to category_forum_path(@forum_category, @forum)
       end

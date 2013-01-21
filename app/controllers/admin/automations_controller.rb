@@ -94,6 +94,8 @@ class Admin::AutomationsController < Admin::AdminController
 
       @products = current_account.products.collect {|p| [p.id, p.name]}
       
+      # IMPORTANT - If an action requires a privilege to be executed, then add it
+      # in ACTION_PRIVILEGE in Va::Action class
       action_hash     = [
         { :name => -1, :value => "--- #{t('click_select_action')} ---" },
         { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown", 

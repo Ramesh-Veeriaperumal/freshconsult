@@ -73,17 +73,14 @@
         </div>
         <% unless @ticket.deleted %>
           <div class="ticket_actions">            
-            <% if privilege?(:edit_ticket) || privilege?(:delete_ticket) %>
               <div class="item-right-actions">
                 <ul class="nav-drop"> 
                   <li>
                     <a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
                     <ul class="menu-box">
-                      <% if privilege?(:edit_ticket) %>
                         <li class="menu-item"> 
                            <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
                         </li>  
-                      <% end %>
                       <% if privilege?(:delete_ticket) %>
                         <li class="menu-item">
                           <%= link_to(t('ticket.delete_btn'), helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :delete, :title => t('ticket.delete_btn_title')) %>
@@ -93,13 +90,12 @@
                   </li> 
                 </ul>
               </div>
-            <% end %> 
             <div class="action_buttons clearfix">
               <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
               <% if privilege?(:merge_or_split_ticket) %>
                 <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket", "data-ajax-dialog" => true %>
               <% end %>
-              <% if privilege?(:close_ticket) %>
+              <% if privilege?(:edit_ticket_properties) %>
                 <%= link_to(t('ticket.close_btn'), "#", :title  => t('ticket.close_btn_title'), :class => "last" , :id=>"close_ticket_btn" , :"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
               <% end %>
             </div>  

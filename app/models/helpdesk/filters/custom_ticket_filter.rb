@@ -68,9 +68,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   
   def self.edit_ticket_filters(user)
+    # need to rewrite this sql
     self.find( :all, 
                :joins =>"JOIN admin_user_accesses acc ON acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter'  LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id" +
-                        " INNER JOIN users ON (acc.user_id = users.id and users.id = #{user.id}) OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} AND users.id = #{user.id} AND users.user_role in (#{User::USER_ROLES_KEYS_BY_TOKEN[:admin]},#{User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]}))" +
+                        " INNER JOIN users ON (acc.user_id = users.id and users.id = #{user.id}) OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} AND users.id = #{user.id} AND users.account_admin = true)" +
                         " OR (acc.VISIBILITY = #{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]} and agent_groups.user_id = users.id and users.id = #{user.id}) OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id = #{user.id})")
   end
   

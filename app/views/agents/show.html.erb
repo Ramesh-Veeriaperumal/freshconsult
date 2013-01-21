@@ -54,11 +54,11 @@ function setUserRole(){
 	<%end%>
 <%- end %> 
 <div class="contact-box clearfix">
-	  <% if manage_agents? %>
+	  <% if privilege?(:manage_users) %>
 		<div id="reset_password_template" >
 			<%= render :partial=> "reset_password" %>
 		</div>
-		<div class="action_buttons">
+		<div class="action_buttons hide">
 
 			<%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user) %>
 			
@@ -67,7 +67,7 @@ function setUserRole(){
 			<%end%>
 
 			<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put'  if can_destroy?(@agent) %> 
-			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last"  %>
+			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last" unless (@agent.user == current_user) %>
 		</div>
 	  <% end %>
 
@@ -83,7 +83,7 @@ function setUserRole(){
 			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
 			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
-		<% if ((@user.deleted || !@user.active?) && manage_agents?) %>
+		<% if ((@user.deleted || !@user.active?) && privilege?(:manage_users)) %>
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('agent_deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) }") if @user.deleted %>
 			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>
@@ -112,4 +112,14 @@ function confirm_password()
        title: '<%= t('reset_password_title') %>'
     });
  }
+
+jQuery(document).ready(function(){
+  if (jQuery.trim( jQuery('div.info-highlight').text() ).length != 0) {
+    jQuery('div.info-highlight').show();
+  }
+
+  if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
+    jQuery('div.action_buttons').show();
+  }
+});
 <%end%>

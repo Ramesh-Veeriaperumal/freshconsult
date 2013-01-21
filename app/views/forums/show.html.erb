@@ -4,7 +4,8 @@
 		<% if logged_in? %>	
 		    <div class="floatr">
 			   <%= link_to (t('forum.start_topic'), new_category_forum_topic_path(@forum_category, @forum), :class => 
-			   "uiButton special") unless @forum.announcement? && !permission?(:manage_forums) %>
+			   "uiButton special") if !@forum.announcement? &&
+                 privilege?(:manage_tickets) && privilege?(:create_forum_topic) %>
 			</div>
 		<% end %>
 		<h3 class="title">
@@ -16,7 +17,7 @@
 	
 	<div class="forum-group">
 		<div class="search-grey-box">
-			<% if privilege?(:manage_forums) -%>
+			<% if privilege?(:create_edit_forum_category) -%>
 				<div class="action_buttons no_margin">
 					<%= link_to t("forum.edit"), edit_category_forum_path(@forum_category, @forum), :class => "last"  %>
 				</div>

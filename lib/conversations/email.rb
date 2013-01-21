@@ -1,13 +1,11 @@
 module Conversations::Email
   def create_article
-    if @kbase_email_exists
-      body_html = params[:helpdesk_note][:body_html]
-      attachments = params[:helpdesk_note][:attachments]
-      Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
-    end
+    body_html = params[:helpdesk_note][:body_html]
+    attachments = params[:helpdesk_note][:attachments]
+    Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
   end
 
-  def send_reply_email      
+  def send_email      
     add_cc_email     
     if @item.fwd_email?
       Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
@@ -15,7 +13,8 @@ module Conversations::Email
     else        
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
               :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
-      flash[:notice] = t(:'flash.tickets.reply.success')
+      flash[:notice] =  (@publish_solution == false) ?
+        t(:'flash.tickets.reply.without_kbase') : t(:'flash.tickets.reply.success')
     end
   end
 
@@ -55,7 +54,7 @@ module Conversations::Email
         (params[:helpdesk_note][:cc_emails] && params[:helpdesk_note][:cc_emails].include?(kbase_email)))
       @item.bcc_emails.delete(kbase_email)
       @item.cc_emails.delete(kbase_email)
-      @kbase_email_exists = true
+      @publish_solution = privilege?(:publish_solution) 
     end
   end
 end
