@@ -1545,7 +1545,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         (!this.isXDomain() || io.util.ua.hasCORS)) {
       var self = this;
       io.util.on(global, 'beforeunload', function () {
-        self.disconnectSync();
+        self.disconnect();
       }, false);
     }
 
