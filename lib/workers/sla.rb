@@ -5,22 +5,17 @@ class Workers::Sla
   @retry_limit = 3
   @retry_delay = 60*2
   
-  include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation  
  
   def self.perform(account_id)
     begin
       account = Account.find(account_id)
       account.make_current
-      NewRelic::Agent.manual_start 
-      # perform_action_with_newrelic_trace(:name => "RakeTasks::Sla", :category => "OtherTransaction/Rake") do 
       run(account)
-      # end
     rescue Exception => e
       puts "something is wrong: #{e.message}"
     rescue 
       puts "something went wrong"
     end
-    NewRelic::Agent.shutdown
     Account.reset_current_account 
   end
 
