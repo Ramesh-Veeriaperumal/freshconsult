@@ -40,7 +40,7 @@ class Helpdesk::AuthorizationsController < ApplicationController
       :conditions => ["name like ? or email like ? or phone like ?", "%#{params[:v]}%", "%#{params[:v]}%","%#{params[:v]}%"], 
       :limit => 1000)
 
-    r = {:results => items.map {|i| {:details => i.name_details, :user_id => i.id}}}
+    r = {:results => items.map {|i| {:details => i.name_details, :user_id => i.id, :value => i.name}}}
     r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
     
     respond_to do |format|

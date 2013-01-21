@@ -265,7 +265,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       build_attachments(ticket, note)
       # ticket.save
-      note.notable = ticket  # Vikram - Dirty fix to retain the ticket dirty values changed by email commands or any other code
+      note.notable = ticket
       note.save
     end
     

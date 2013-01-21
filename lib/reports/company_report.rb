@@ -44,6 +44,18 @@ module Reports::CompanyReport
      :conditions => [" users.customer_id = ? and #{vals[:column_name]} is NOT NULL",params[:customer_id]],
      :group => "#{vals[:column_name]}")
   end
+
+  #added to display the nested fields reports in the customer reports
+  def get_nested_data(column_names,orderby_column)
+    scoper.find( 
+    :all,
+    :joins =>"INNER JOIN flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id and helpdesk_tickets.account_id = flexifields.account_id 
+              INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id ",
+    :select =>"count(*) count, #{column_names}",
+    :conditions => ["#{orderby_column} is NOT NULL and users.customer_id = ?",params[:customer_id]],
+    :group=>"#{column_names}",
+    :order =>"#{orderby_column}")
+  end
   
   def group_tkts_by_timeline(type)
     Account.current.tickets.visible.find(

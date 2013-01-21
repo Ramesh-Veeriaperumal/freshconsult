@@ -16,7 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include RedisKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
-                            "header_info", "st_survey_rating", "trashed"]
+                            "header_info", "st_survey_rating", "trashed", "access_token"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
@@ -39,6 +39,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :refresh_display_id, :create_meta_note
 
   before_update :assign_email_config, :load_ticket_status, :update_dueby
+
+  before_validation_on_create :set_token
   
   before_save :update_ticket_changes
 
@@ -522,8 +524,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if @ticket_changes.key?(:status)
-      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == RESOLVED)
-      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == CLOSED)
+      if (status == RESOLVED)
+        notify_by_email(EmailNotification::TICKET_RESOLVED) 
+        notify_watchers("resolved")
+        return
+      end
+      if (status == CLOSED)
+        notify_by_email(EmailNotification::TICKET_CLOSED)
+        notify_watchers("closed")
+        return
+      end
+    end
+  end
+
+  def notify_watchers(status)
+    self.subscriptions.each do |subscription|
+      if subscription.user.id != User.current.id
+        Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_status_change, self, 
+                                              subscription, status, "#{User.current.name}")
+      end
     end
   end
   
@@ -929,6 +948,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def unsubscribed_agents
+    user_ids = subscriptions.map(&:user_id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
 
 
   private
@@ -1149,6 +1172,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
       fire_event(:update) unless disable_observer
     end
 
+    def set_token   
+      self.access_token ||= generate_token(Helpdesk::SECRET_2)     
+    end
+
+    def generate_token(secret)
+      Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
+    end
+
+    def populate_access_token
+      set_token
+      save
+    end
+    
     def populate_requester
       return if requester
 

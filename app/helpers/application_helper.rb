@@ -13,7 +13,11 @@ module ApplicationHelper
   ASSETIMAGE = { :help => "/images/helpimages" }
   
   def format_float_value(val)
-    sprintf( "%0.02f", val) unless val.nil? 
+    if !(val.is_a? Fixnum)
+      sprintf( "%0.01f", val)
+    else
+      return val.to_s
+    end
   end
 
   def timediff_in_words(interval)
@@ -30,13 +34,13 @@ module ApplicationHelper
     if (interval.to_i <= 0) 
       "-"
     elsif days > 0
-      "#{days} days and #{hours % 24} hours"
+      "#{days} days  #{hours % 24} hrs"
     elsif hours > 0
-      "#{hours} hours and #{mins % 60} minutes"
+      "#{hours} hrs  #{mins % 60} mins"
     elsif mins > 0
-      "#{mins} minutes and #{secs % 60} seconds"
+      "#{mins} mins  #{secs % 60} secs"
     elsif secs >= 0
-      "#{secs} seconds"
+      "#{secs} secs"
     end
 
   end
@@ -299,6 +303,7 @@ module ApplicationHelper
       ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
       ['{{ticket.description}}',      'Description',        'Ticket description.'],
       ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
+      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login'],
       ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
       ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
       ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],

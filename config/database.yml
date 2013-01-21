@@ -7,6 +7,20 @@ development:
   username: root
   password: 
 
+# development:
+#   adapter: seamless_database_pool
+#   database: helpkit1
+#   username: root
+#   password: 
+#   pool_adapter: mysql
+#   port: 3306
+#   master:
+#     pool_weight: 0
+#     username: root
+#     password: 
+#   read_pool:
+
+
 slave:
   adapter: mysql
   encoding: utf8
@@ -15,11 +29,18 @@ slave:
   password:
 
 staging:
-  adapter: mysql
-  encoding: utf8
-  database: facebook_testing
-  username: deploy
-  password: 584BKS2NRD
+  adapter: seamless_database_pool
+  database: helpkit1
+  username: root
+  password: 
+  pool_adapter: mysql
+  port: 3306
+  master:
+    host: 127.0.0.1
+    pool_weight: 0
+    username: root
+    password: 
+  read_pool:
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

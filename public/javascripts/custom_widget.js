@@ -63,7 +63,7 @@ Freshdesk.Widget.prototype={
 
 	call_init_requests: function() {
 		if(this.options.init_requests){
-			cw=this;
+			var cw=this;
 			this.options.init_requests.each(function(reqData){
 				if(reqData) cw.request(reqData); 
 			});
