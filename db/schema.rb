@@ -1088,6 +1088,18 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
 
   add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
 
+  create_table "roles", :force => true do |t|
+    t.string   "name"
+    t.string   "privileges"
+    t.text     "description"
+    t.boolean  "default_role",              :default => false
+    t.integer  "account_id",   :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "roles", ["account_id", "name"], :name => "index_roles_on_account_id_and_name"
+
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "points"
@@ -1440,6 +1452,17 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
 
+  create_table "user_roles", :force => true do |t|
+    t.integer  "user_id",    :limit => 8
+    t.integer  "role_id",    :limit => 8
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_roles", ["account_id", "role_id", "user_id"], :name => "index_user_roles_on_account_id_and_role_id_and_user_id"
+  add_index "user_roles", ["account_id", "user_id"], :name => "index_user_roles_on_account_id_and_user_id"
+
   create_table "users", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                    :null => false
     t.string   "name",                             :default => "",    :null => false
@@ -1480,6 +1503,8 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.string   "address"
     t.datetime "deleted_at"
     t.boolean  "whitelisted",                      :default => false
+    t.string   "privileges"
+    t.boolean  "account_admin",                    :default => false
     t.string   "external_id"
     t.string   "string_uc01"
     t.text     "text_uc01"

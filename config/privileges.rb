@@ -71,7 +71,7 @@ Authority::Authorization::PrivilegeList.draw do
   end
 
   delete_ticket do
-    resource :"helpdesk/ticket", :only => [:destroy, :restore]
+    resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :empty_trash]
   end
 
   # ************** SOLUTIONS **************************

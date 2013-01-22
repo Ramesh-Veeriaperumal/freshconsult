@@ -26,7 +26,7 @@ class Helpdesk::ConversationsController < ApplicationController
         NewRelic::Agent.notice_error(e)
       end
       send_email
-      post_persist
+      process_and_redirect
     else
       create_error
     end
@@ -38,7 +38,7 @@ class Helpdesk::ConversationsController < ApplicationController
       add_forum_post if params[:post_forums]
       send_email
       @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails])
-      post_persist
+      process_and_redirect
     else
       create_error
     end
@@ -61,7 +61,7 @@ class Helpdesk::ConversationsController < ApplicationController
         Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item, 
           @parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
       end
-      post_persist
+      process_and_redirect
     else
       create_error
     end
@@ -72,7 +72,7 @@ class Helpdesk::ConversationsController < ApplicationController
       twt_type = params[:tweet_type] || :mention.to_s
       twt = send("send_tweet_as_#{twt_type}")
       @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
-      post_persist
+      process_and_redirect
     else
       create_error
     end
@@ -81,7 +81,7 @@ class Helpdesk::ConversationsController < ApplicationController
   def facebook
     if @item.save
       send_facebook_reply  
-      post_persist
+      process_and_redirect
     else
       create_error
     end
@@ -125,7 +125,7 @@ class Helpdesk::ConversationsController < ApplicationController
       :back
     end
 
-    def process_item
+    def process_and_redirect
       Thread.current[:notifications] = current_account.email_notifications
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
@@ -134,6 +134,12 @@ class Helpdesk::ConversationsController < ApplicationController
         end
       @parent.save
       Thread.current[:notifications] = nil
+
+      respond_to do |format|
+        format.html { redirect_to item_url }
+        format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
+        format.json { render :json => @item.to_json(options) }
+      end
     end
 
     def create_error

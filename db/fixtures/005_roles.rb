@@ -8,9 +8,9 @@ Admin::Role.seed_many(:account_id, :name, [
   ].map do |role|
     {
       :name => role[0],
-      :privileges => role[1],
+      :privilege_list => role[1],
       :description => role[2],
-      :default => true,
+      :default_role => true,
       :account_id => account.id
     }
   end

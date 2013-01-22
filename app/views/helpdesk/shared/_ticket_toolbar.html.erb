@@ -9,38 +9,36 @@
         <% if privilege?(:delete_ticket) %>
 		    	<% if @current_view == "deleted" %>
             <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/restore', 'put');" type="button" value="<%=t('undelete')%>" disabled="disabled">
+            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/delete_forever', 'delete');" type="button" value="<%=t('ticket.delete_forever')%>" disabled="disabled">
     			<% else %>
             <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple', 'delete');" type="button"
               value="<%=t('delete')%>" disabled="disabled">
     			<% end %>
+        <% end %>
         
-    			<% if @current_view == "spam" %>
+  			<% if @current_view == "spam" %>
           <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button" value="<%=t('ticket.unflag_spam')%>" disabled="disabled"> 
-    			<% else %>
-            <% if @current_view == "deleted" %>
-              <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/delete_forever', 'delete');" type="button" value="<%=t('ticket.delete_forever')%>" disabled="disabled">
-            <% else %>
-              <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" value="<%=t('ticket.flag_spam')%>" disabled="disabled">
-            <% end %>
-    			<% end %> 
-        <% end %>     
+  			<% end %>     
 			
     		<% if @current_view != "deleted" && @current_view != "spam" %>
-          <% if privilege?(:close_ticket) %>
-            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" type="button" value="<%=t('close')%>" disabled="disabled">
-          <% end %>
-
+          
             <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button" value="<%=t('ticket.pick_up')%>" disabled="disabled">
 
-            <button class="button dialog2" data-url="/helpdesk/tickets/assign_to_agent" data-width="360" title="<%=t('ticket.assign_to_agent')%>" disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
+            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" value="<%=t('ticket.flag_spam')%>" disabled="disabled">
 
-            <button class="button dialog2" data-url="/helpdesk/tickets/update_multiple_tickets" data-width="667" title="<%=t('bulk_actions')%>" disabled="disabled"><%=t('bulk_actions')%></button>
+            <% if privilege?(:edit_ticket_properties) %>
+              <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" type="button" value="<%=t('close')%>" disabled="disabled">
+          
+              <button class="button dialog2" data-url="/helpdesk/tickets/assign_to_agent" data-width="360" title="<%=t('ticket.assign_to_agent')%>" disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
+
+              <button class="button dialog2" data-url="/helpdesk/tickets/update_multiple_tickets" data-width="667" title="<%=t('bulk_actions')%>" disabled="disabled"><%=t('bulk_actions')%></button>
+            <% end %>
 
           <% end %>
           	</th>
           	<th class="toolbar_right">
               <% if @current_view == "deleted" %>
-                <%= link_to t('ticket.empty_trash'),empty_trash_helpdesk_tickets_path, :method => 'delete', :class => 'padding6', :id => 'empty_trash' %>
+                <%= link_to t('ticket.empty_trash'),empty_trash_helpdesk_tickets_path, :method => 'delete', :class => 'padding6', :id => 'empty_trash' if privilege?(:delete_ticket) %>
               <% else %>
                 <a href="/helpdesk/tickets/configure_export" class="padding6 dialog2" title="Export to CSV"  "data-width" ="650" id = 'export_tickets'><%= t('ticket.export')%></a>
               <% end %>
