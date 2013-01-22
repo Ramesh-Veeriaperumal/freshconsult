@@ -1238,6 +1238,10 @@ en:
       delete_comment: Delete Comment
       answer: Answer
   half: 30 Minutes
+  premium_sla_times:
+    five_minutes: 5 Minutes
+    ten_minutes: 10 Minutes
+    fifteen_minutes: 15 Minutes
   between_range: Between Range
   back_to_admin: Back to Admin
   group: 

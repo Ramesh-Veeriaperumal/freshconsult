@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130115131554) do
+ActiveRecord::Schema.define(:version => 20130122101153) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20130115131554) do
     t.text     "sso_options"
     t.string   "google_domain"
     t.boolean  "ssl_enabled",                    :default => false
+    t.boolean  "premium",                        :default => false
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true

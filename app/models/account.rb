@@ -226,6 +226,10 @@ class Account < ActiveRecord::Base
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
               :joins => [:subscription]
+
+  named_scope :premium_accounts, {:conditions => {:premium => true}}
+              
+  named_scope :non_premium_accounts, {:conditions => {:premium => false}}
              
   
   Limits = {
