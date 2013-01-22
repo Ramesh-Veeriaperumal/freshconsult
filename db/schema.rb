@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121218133527) do
+ActiveRecord::Schema.define(:version => 20130115131554) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1154,6 +1154,7 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.datetime "updated_at"
     t.integer  "account_id"
     t.string   "tweet_type",                  :default => "mention"
+    t.integer  "twitter_handle_id", :limit => 8
   end
 
   add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"tweetable_type"=>"15", "account_id"=>nil, "tweetable_id"=>nil}
