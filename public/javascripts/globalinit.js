@@ -134,7 +134,7 @@ var $J = jQuery.noConflict();
         e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-        hideActivePopovers(ev);
+        hideActivePopovers(e);
         widgetPopup = $(this).popover('show');
       });
 
@@ -429,6 +429,8 @@ var $J = jQuery.noConflict();
           // $('#body-container .wrapper').css('visibility','hidden');
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
+
+          hideActivePopovers();
 
           return true;
       }).bind('pjax:end',function(){
