@@ -210,7 +210,6 @@ JiraWidget.prototype= {
 		ticketSummary = (summary) ? summary : jiraBundle.ticketSubject;
 		//ticketData = "Freshdesk Ticket #"+jiraBundle.ticketId+" -- " + document.URL;
 		ticketData = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
-		console.log(jQuery('#jira-note').html());
 		reqData = {
 				"domain":jiraBundle.domain,
 				"projectId": projectId,
