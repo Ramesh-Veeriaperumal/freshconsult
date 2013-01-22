@@ -17,7 +17,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :to_emails
 	serialize :header_info
 
-	validates_uniqueness_of :string_tc01, :scope => :account_id
+	validates_uniqueness_of :string_tc01, :scope => :account_id,:allow_nil => true
 
 	def self.trashed_column
 		:boolean_tc02
