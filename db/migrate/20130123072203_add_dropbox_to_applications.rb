@@ -2,13 +2,12 @@ class AddDropboxToApplications < ActiveRecord::Migration
 	@app_name = "dropbox"
 
   	def self.up	
-   		dropbox = Integrations::Application.create(
+   	Integrations::Application.create(
 	        :name => @app_name,
 	        :display_name => "integrations.dropbox.label", 
 	        :description => "integrations.dropbox.desc", 
 	        :listing_order => 19,
 	        :options => {:no_settings => true})
-   		dropbox.save
 	end
 
   def self.down
