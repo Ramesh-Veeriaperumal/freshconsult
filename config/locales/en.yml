@@ -32,7 +32,7 @@ en:
   forward: "Forward"
   apply: "Apply"
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: Attachment(s) size can be up to 20 MB
+  attachment_help_info: "File size < 15 MB"
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
@@ -55,6 +55,9 @@ en:
   working: Working at
   attachment: Attachment
   attachments: Attachments
+  attach_file_local: Attach a file from your computer
+  dropbox_attach_label: Attach from
+  dropbox_choose_file: Choose file
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   resolved_on_time: Resolved on time
@@ -2659,6 +2662,9 @@ en:
         api_password: "API Password"
         api_url: "API URL"
         api_url_info: "To get your API URL, go to https://app.icontact.com/icp/core/externallogin and copy the API URL from &quot;Account Information&quot; section. "
+    dropbox:
+      label: "DropBox"
+      desc: "Attach and Share your data/files from DropBox."
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
