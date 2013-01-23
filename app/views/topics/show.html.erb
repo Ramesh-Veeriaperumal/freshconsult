@@ -107,7 +107,7 @@
 					<% end %>             
 					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-           <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if current_user && !@topic.locked? %>
+           <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if logged_in? && !@topic.locked? %>
           </div>
 					</div>   
         </div>

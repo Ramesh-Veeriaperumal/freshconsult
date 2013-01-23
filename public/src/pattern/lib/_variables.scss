@@ -60,9 +60,9 @@ $headingsColor:         inherit !default; // empty to use BS default, $textColor
 // Tables
 // -------------------------
 $tableBackground:                   transparent !default; // overall background-color
-$tableBackgroundAccent:             #f9f9f9 !default; // for striping
+$tableBackgroundAccent:             #FBFBFB !default; // for striping
 $tableBackgroundHover:              #f5f5f5 !default; // for hover
-$tableBorder:                       #f1f1f1 !default; // table and cell border
+$tableBorder:                       #eee !default; // table and cell border
 
 // Buttons
 // -------------------------
@@ -169,6 +169,7 @@ $navbarLinkColorHover:            $grayDark !default;
 $navbarLinkColorActive:           $gray !default;
 $navbarLinkBackgroundHover:       transparent !default;
 $navbarLinkBackgroundActive:      darken($navbarBackground, 5.25%) !default;
+$navtabbordercolor:				  #ccc;
 
 $navbarBrandColor:                $navbarLinkColor !default;
 
@@ -276,3 +277,13 @@ $fluidGridGutterWidth1200:     percentage($gridGutterWidth1200/$gridRowWidth1200
 // 768px-979px
 $fluidGridColumnWidth768:      percentage($gridColumnWidth768/$gridRowWidth768) !default;
 $fluidGridGutterWidth768:      percentage($gridGutterWidth768/$gridRowWidth768) !default;
+
+
+//Admin Page admin-breadcrum-size
+//-----------------------------------------------------
+// Arrow mark in the breadcrum is based on this two variable
+
+$admin-breadcrum-padding : 12px;
+$admin-font-size : 1.4em;
+$admin-arrow-size: 23px;
+$admin-breadcrum-color:  $grayLighter;

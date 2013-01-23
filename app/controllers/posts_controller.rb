@@ -69,8 +69,8 @@ class PostsController < ApplicationController
     @post  = @topic.posts.build(params[:post])
     @post.user = current_user
     @post.account_id = current_account.id
+    build_attachments
     @post.save!
-    create_attachments
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
@@ -87,10 +87,10 @@ class PostsController < ApplicationController
     end
   end
   
-   def create_attachments
+   def build_attachments
    return unless @post.respond_to?(:attachments)
     (params[:post][:attachments] || []).each do |a|
-      @post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+      @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
     end
   end
   

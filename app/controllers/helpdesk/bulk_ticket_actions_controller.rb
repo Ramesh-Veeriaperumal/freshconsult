@@ -7,7 +7,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
 
-  before_filter :load_multiple_items, :validate_attachment_size, :only => :update_multiple
+  before_filter :load_multiple_items, :only => :update_multiple
 
   def update_multiple             
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
@@ -22,6 +22,10 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       begin
         reply_multiple reply_content, ticket if privilege?(:reply_ticket)
       rescue Exception => e
+        if e.is_a?(HelpdeskExceptions::AttachmentLimitException)
+          flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')  
+          redirect_to helpdesk_tickets_path and return 
+        end
         failed_tickets.push(ticket)
         NewRelic::Agent.notice_error(e)
         Rails.logger.error("Error while sending reply")

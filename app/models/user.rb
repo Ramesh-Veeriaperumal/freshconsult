@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name , :set_language
   before_create :account_admin_privilege, :if => :account_admin?
   before_create :customer_privilege, :if => :customer?
-  before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
+  before_save :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   after_update :update_admin_in_crm , :if => :account_admin_updated?
   after_update :update_admin_to_billing , :if => :account_admin_updated?
@@ -459,12 +459,9 @@ class User < ActiveRecord::Base
   end
 
   protected
-    def set_account_id_in_children
-      self.avatar.account_id = account_id unless avatar.nil?
-  end
 
   def set_contact_name 
-    if self.name.blank?
+    if self.name.blank? && email
       self.name = (self.email.split("@")[0]).capitalize
     end
   end

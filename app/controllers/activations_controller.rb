@@ -1,8 +1,8 @@
 class ActivationsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
- 
-  skip_before_filter :check_privilege, :only => [:new, :create]
 
+  skip_before_filter :check_privilege, :only => [:new, :create]
+  
   def send_invite
     user = current_account.all_users.find params[:id]
     user.deliver_activation_instructions!(current_portal, true) if user and user.has_email?

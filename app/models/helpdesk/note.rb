@@ -11,13 +11,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
   belongs_to :user
   
-  Max_Attachment_Size = 15.megabyte
   include Mobile::Actions::Note
 
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
     
   has_one :tweet,
     :as => :tweetable,
