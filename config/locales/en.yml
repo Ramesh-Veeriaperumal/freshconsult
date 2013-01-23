@@ -1645,7 +1645,7 @@ en:
       tour2: Help me configure multiple mailboxes
       info5: Your default support email address is 
                       <a target="_blank" href="https://{{solution_url}}">
-                        support@{{solution_url}}</a>. 
+                      {{solution_url}}</a>. 
                       Any email sent here gets automatically converted into a ticket that you can 
                       get working on.
       info19: You can configure your Freshdesk account to use a support email in your own domain, 
