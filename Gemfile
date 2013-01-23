@@ -75,6 +75,7 @@ gem 'resque-retry', "0.2.2"
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 gem 'after_commit', "~> 1.0.10"
+gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"

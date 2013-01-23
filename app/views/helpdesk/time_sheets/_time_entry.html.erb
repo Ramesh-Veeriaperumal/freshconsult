@@ -1,16 +1,18 @@
 <% content_tag :div, :id => "timeentry_#{time_entry.id}", :class => (time_entry.timer_running) ? "time_running" : "" do %>
   <div class="timeentry" id="timeentry_view_<%= time_entry.id %>">     
-      <div class="actions">
-  	    <%= link_to_remote( t('edit'), 
-  	                    { :url => edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry),
-  	                      :method => :get },
-  	                    { :class => "slim-button timeedit" } ) %> 
-  	    <%= link_to_remote( "",
-                        { :url => helpdesk_time_sheet_url(time_entry),
-                          :method => :delete ,
-                          :confirm => "Delete this time entry?" },
-                        { :class => "close-button" }) %>
-      </div> 
+      <% if privilege?(:edit_time_entries, time_entry) %>
+        <div class="actions">
+    	    <%= link_to_remote( t('edit'), 
+    	                    { :url => edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry),
+    	                      :method => :get },
+    	                    { :class => "slim-button timeedit" } ) %> 
+    	    <%= link_to_remote( "",
+                          { :url => helpdesk_time_sheet_url(time_entry),
+                            :method => :delete ,
+                            :confirm => "Delete this time entry?" },
+                          { :class => "close-button" }) %>
+        </div> 
+      <% end %>
     	<div class="user_details">
     		<%= user_avatar(time_entry.user) if time_entry.user %>
     		<%= link_to_user(time_entry.user, :class => "user_name") %>

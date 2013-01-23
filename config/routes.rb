@@ -63,9 +63,7 @@
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
-  
-  map.resources :activations, :member => { :send_invite => :put },
-                              :collection => { :bulk_send_invite => :put }
+  map.resources :activations, :member => { :send_invite => :put }
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
@@ -120,6 +118,7 @@
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
+    admin.resources :roles
   end
   
   map.resources :reports
@@ -172,6 +171,12 @@
   map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
     subdom.with_options(:namespace => 'partner_admin/', :name_prefix => 'partner_', :path_prefix => nil) do |partner|
       partner.resources :affiliates, :collection => {:add_affiliate_transaction => :post}
+    end
+  end
+
+  map.with_options(:conditions => { :subdomain => AppConfig['billing_subdomain'] }) do |subdom|
+    subdom.with_options(:namespace => 'billing/', :path_prefix => nil) do |billing|
+      billing.resources :billing, :collection => { :trigger => :post }
     end
   end
 
@@ -257,8 +262,11 @@
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
                                     :change_due_by => :put, :split_the_ticket =>:post, 
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get, 
-                                    :clear_draft => :delete, :save_draft => :post } do |ticket|
+                                    :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
 
+
+      ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
+                                       :twitter => :post, :facebook => :post}
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'

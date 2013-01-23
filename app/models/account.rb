@@ -23,6 +23,7 @@ class Account < ActiveRecord::Base
   has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
   has_many :products, :order => "name"
+  has_many :roles, :class_name => 'Admin::Role', :dependent => :delete_all
   has_many :portals
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
 
@@ -74,9 +75,8 @@ class Account < ActiveRecord::Base
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
   
-  has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
-  has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
-  has_many :all_admins, :class_name => "User", :conditions => ["user_role in (?,?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:account_admin],false] ,:order => "name desc"
+  has_one :account_admin, :class_name => "User", :conditions => { :account_admin => true } #has_one ?!?!?!?!
+  has_many :technicians, :class_name => "User", :conditions => ["user_role in (?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:agent], false] ,:order => "name desc"
   
   has_one :subscription
   has_many :subscription_payments
@@ -85,12 +85,12 @@ class Account < ActiveRecord::Base
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :customers
-  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
+  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer] , :deleted =>false}
   has_many :all_agents, :through =>:users, :order => "users.name"
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
-  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
+  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
@@ -207,11 +207,16 @@ class Account < ActiveRecord::Base
   
   before_update :check_default_values, :update_users_time_zone
     
-  after_create :create_portal, :create_admin
+  after_create :create_portal
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
   after_update :update_users_language
+
+  before_destroy :update_crm
+
+  after_commit_on_create :add_to_billing
+  before_destroy :update_billing
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache
@@ -574,17 +579,17 @@ class Account < ActiveRecord::Base
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
     
-    def create_admin
-      self.user.active = true  
-      self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
-      self.user.build_agent()
-      self.user.agent.account = self
-      self.user.save
-      User.current = self.user
-      
+    def self.create_admin(account)
+      account.user.active = true  
+      account.user.account = account #?!?!?!
+      account.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:agent]  
+      account.user.account_admin = true
+      account.user.build_agent()
+      account.user.agent.account = account
+      account.user.save
+      User.current = account.user
     end
-    
+
     def create_portal
       self.primary_email_config.account = self
       self.primary_email_config.save
@@ -604,11 +609,24 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
-   
     def backup_changes
       @old_object = self.clone
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
+    end
+
+  private 
+
+    def add_to_billing
+      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
+    end 
+
+    def update_billing
+      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
+    end
+
+    def update_crm
+      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
 
 end

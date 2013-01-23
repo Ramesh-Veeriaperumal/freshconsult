@@ -1,5 +1,6 @@
 class Support::SignupsController < SupportController
-  
+ 
+  skip_before_filter :check_privilege 
   before_filter { |c| c.requires_feature :signup_link }
   
   before_filter :chk_for_logged_in_usr

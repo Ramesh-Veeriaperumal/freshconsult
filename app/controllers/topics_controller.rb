@@ -3,17 +3,9 @@ class TopicsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
   before_filter :find_forum_and_topic, :except => :index 
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :post_in_forums
-  end
-  
-  before_filter :only => [:update_stamp,:remove_stamp,:destroy] do |c| 
-    c.requires_permission :manage_forums
-  end
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission,:only => [:edit,:update] 
   before_filter :check_announcement_permission, :only => [:create]
   
   before_filter :set_selected_tab
@@ -25,12 +17,6 @@ class TopicsController < ApplicationController
   #caches_formatted_page :rss, :show
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
-  def check_user_permission
-    if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
-          flash[:notice] =  t(:'flash.general.access_denied')
-          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    end
-  end
     
   def index
     respond_to do |format|
@@ -85,13 +71,14 @@ class TopicsController < ApplicationController
       @post.account_id = current_account.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
+      @topic.monitorships.build(:user_id => current_user.id,:active => true) if params[:monitor] 
+      build_attachments  
       topic_saved = @topic.save if @post.valid?
       post_saved = @post.save 
     end
 		
 		if topic_saved && post_saved
-      @topic.monitorships.create(:user_id => current_user.id,:active => true) if params[:monitor] 
-      create_attachments  
+      
 			respond_to do |format| 
 				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
 				format.xml  { render  :xml => @topic }
@@ -114,11 +101,12 @@ class TopicsController < ApplicationController
       @post = @topic.posts.first
       @post.attributes = post_param
       @topic.body_html = @post.body_html 
+      build_attachments
       topic_saved = @topic.save
       post_saved = @post.save
     end
     if topic_saved && post_saved
-      create_attachments
+      
       respond_to do |format|
         format.html { redirect_to category_forum_topic_path(@topic.forum.forum_category_id,@topic.forum_id, @topic) }
         format.xml  { head 200 }
@@ -189,11 +177,11 @@ def users_voted
     render :partial => "forum_shared/topic_voted_users", :object => @topic
 end
 
- def create_attachments
+ def build_attachments
    return unless @topic.posts.first.respond_to?(:attachments) 
     unless params[:post].nil?
     (params[:post][:attachments] || []).each do |a|
-      @topic.posts.first.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
+      @topic.posts.first.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
     end
    end
   end
@@ -204,10 +192,10 @@ end
       @topic.user     = current_user if @topic.new_record?
       @topic.account_id = current_account.id
       # admins and moderators can sticky and lock topics
-      return unless admin? or current_user.moderator_of?(@topic.forum)
+      return unless privilege?(:manage_users) or current_user.moderator_of?(@topic.forum)
       @topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked] 
       # only admins can move
-      return unless admin?
+      return unless privilege?(:manage_users)
       @topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
     end
     
@@ -242,7 +230,7 @@ end
     end
 
     def check_announcement_permission  
-      if @forum.announcement? && !permission?(:manage_forums)
+      if @forum.announcement? && !privilege?(:manage_tickets)
         flash[:error] = I18n.t(:'flash.general.access_denied')
         redirect_to category_forum_path(@forum_category, @forum)
       end

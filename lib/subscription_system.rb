@@ -4,7 +4,8 @@ module SubscriptionSystem
   def self.included(base)
     #base.send :before_filter, :login_required
     base.send :before_filter, :set_affiliate_cookie
-    base.send :helper_method, :current_account, :admin?, :admin_subdomain?, :feature?,
+    #:admin?
+    base.send :helper_method, :current_account, :admin_subdomain?, :feature?,
         :allowed_in_portal?, :current_portal, :main_portal?
     base.send :filter_parameter_logging, :password
   end
@@ -32,9 +33,9 @@ module SubscriptionSystem
       current_portal.main_portal
     end
     
-    def admin?
-      logged_in? && current_user.admin?
-    end
+    # def admin?
+    #   logged_in? && current_user.admin?
+    #end
     
     def admin_subdomain?
       request.subdomains.first == AppConfig['admin_subdomain']

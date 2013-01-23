@@ -1,16 +1,19 @@
 class AgentsController < ApplicationController
   include AgentsHelper
   helper AgentsHelper
+  include APIHelperMethods
   
   include Gamification::GamificationUtil
 
-  before_filter :authorized_to_manage_agents, :except => :show
   before_filter :authorized_to_view_agents, :only => :show
-
+ 
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password ,:convert_to_contact ]
+  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
+    :convert_to_contact ]
+  before_filter :load_roles, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
+  before_filter :restrict_current_user, :only => [ :edit, :update ]
   before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
   before_filter :check_agent_limit, :only =>  :restore
   before_filter :set_selected_tab
@@ -26,7 +29,7 @@ class AgentsController < ApplicationController
       redirect_to :back  
     end    
   end
-  
+
   def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
       flash[:notice] = t(:'flash.not_allowed_in_demo_site')
@@ -35,10 +38,18 @@ class AgentsController < ApplicationController
   end
     
   def index    
-    @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
+    unless params[:query].blank?
+      #for using query string in api calls
+      @agents = current_account.all_agents.with_conditions(convert_query_to_conditions(params[:query])).filter(params[:page], params.fetch(:state, "active")) 
+    else
+      @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
+    end
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @agents }
+      format.xml  { render :xml => @agents.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
+      format.json  { render :json => @agents.to_json({:except=>[:account_id,:google_viewer_id] ,:include=>{:user=>{:only=>[:id,:name,:email,:created_at,:updated_at,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address] }}}) } #Adding the attributes from user as that is what is needed
     end
   end
 
@@ -208,5 +219,16 @@ class AgentsController < ApplicationController
 
   def set_selected_tab
     @selected_tab = :admin
+  end
+
+  def load_roles
+    @roles = current_account.roles.all
+  end
+
+  def restrict_current_user
+    if @agent.user == current_user
+      flash[:notice] = t(:'flash.agents.edit.not_allowed')
+      redirect_to :back  
+    end    
   end
 end

@@ -1,0 +1,14 @@
+<div class="well">
+  <%= link_to "New Role", new_admin_role_path() %>
+  <br><br>
+  <ol>
+    <% @roles.each do |role|%>
+      <li>
+        <h4><%= role.name %></h4>
+        <%= link_to "view", admin_role_path(role)%> |
+        <%= link_to "edit", edit_admin_role_path(role)%> |
+        <%= link_to "delete", admin_role_path(role), :method => :delete, :confirm => "delete?"%>
+      </li><br>
+    <% end %>
+<ol>
+</div>

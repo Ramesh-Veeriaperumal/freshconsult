@@ -145,7 +145,6 @@ de:
             send_test_mail_response_yes: "Herzlichen Glückwunsch! Sie haben Ihre Supportmail erfolgreich mit Ihrem Helpdesk-Portal verbunden. Viel Spaß mit dem Support!"
             send_test_mail_response_no1: "Es scheint ein Problem vorzuliegen ->"
             send_test_mail_response_no2: "(Erfahren Sie mehr)"
-            send_test_mail_response_no3: "um E-Mails an <b>%{to_email}</b> weiterzuleiten und testen Sie den %{send_test_mail_link} erneut. Falls Sie die E-Mail nicht in Ihrem Postfach empfangen haben, warten Sie bitte einige Minuten, und falls das Problem weiterhin besteht, <a href=&quot;https://support.freshdesk.com/&quot; target=&quot;_blank&quot;>lassen Sie es uns bitte wissen</a>."
 
         index:
             config-support-email-address: "Konfigurieren Sie Ihre Support-E-Mail-Adresse"

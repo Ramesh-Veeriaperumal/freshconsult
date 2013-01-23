@@ -9,7 +9,7 @@
 <% user = @profile %>
 <% user = @profile.user unless current_user.customer? %>
  
-<% fields_for "users", @profile do |usr| %>
+<% fields_for "user", @profile do |usr| %>
     <%= error_messages_for :user %> 
  	<ul class="ui-form">
 		<li>

@@ -3,7 +3,7 @@
 		jQuery('#AvatarPic').toggle();
 		jQuery('#AvatarInput').toggle();		
 	}
-
+	
 	deletePic = function() {
 	    jQuery("#AvatarControls").remove();
 		jQuery('#AvatarPic').remove();
@@ -11,7 +11,7 @@
 	}
 <% end %>
 
-<%= label(:user, :photo, t('user.photo')) %>
+<%#= label(:user, :photo, t('user.photo')) %>
 <% if(type == "edit" &&  user.avatar) %>				
 	<div class="profile_pic" id="AvatarPic">
 		<%= image_tag user.avatar.expiring_url(:medium) %>
@@ -22,9 +22,10 @@
 			<%= avatar_form.file_field :content %>				
 		<% end %>
 	</div>
-	<div id="AvatarControls">
-		<%= link_to_function("Change", "changeProfilePic()", :class => "button") %>
-		<%= link_to_remote('Delete', 
+	<div id="AvatarControls" class="avatar-controls">
+		Not Agent Name? <br />
+		<%= link_to_function("Change Photo", "changeProfilePic()") %>
+		<%#= link_to_remote('Delete', 
 				:url => { :action => "delete_avatar", :id => user.id },
 				:success => "deletePic()",
 				:confirm => 'Are you sure you want to delete this Profile Photo',

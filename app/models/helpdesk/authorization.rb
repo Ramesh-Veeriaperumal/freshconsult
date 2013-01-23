@@ -17,12 +17,4 @@ class Helpdesk::Authorization < ActiveRecord::Base
     user.name
   end
 
-  def permission?(p)
-    role[:permissions][p]
-  end
-
-  def self.find_all_by_permission(p)
-    self.find(:all).select { |a| a.permission?(p) }
-  end
-
 end

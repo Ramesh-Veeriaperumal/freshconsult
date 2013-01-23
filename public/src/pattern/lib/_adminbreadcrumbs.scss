@@ -1,0 +1,96 @@
+//
+// Breadcrumbs
+// --------------------------------------------------
+.admin-breadcrumb { 
+  margin: 0 0 $baseLineHeight;
+  padding: 0px $admin-breadcrum-padding / 2;
+  list-style: none;
+  position:relative;
+  background-color: $admin-breadcrum-color;
+  @include border-top-radius(4px);
+  border:1px solid lighten($admin-breadcrum-color, 4%);
+  border-bottom:1px solid darken($admin-breadcrum-color, 10%);
+  li {
+    padding: $admin-breadcrum-padding;
+    padding-left:$admin-breadcrum-padding * 2 + 4;
+    display: inline-block;
+    position:relative;
+    font-size: $admin-font-size;
+    @include ie7-inline-block();
+    @include text-shadow(0 1px 0 $white);
+    &.pull-right{
+      &:first-child{
+        padding-left:0;
+      }
+    }
+    &:first-child{
+      padding: $admin-breadcrum-padding;
+    }
+    a{
+      color:$grayLight;
+      :hover{
+        color:#00438A;
+      }
+      &.btn{
+        color:$grayDark;
+      }
+      &.btn-primary,.btn-info, .btn-success, .btn-warning, .btn-danger, .btn-inverse{
+        color:$grayLighter;
+      }
+    }
+    &:after {
+      content: " ";
+      width: 0;
+      height: 0;
+      border-top: $admin-arrow-size solid transparent;
+      border-bottom: $admin-arrow-size solid transparent;
+      border-left: 11px solid  $admin-breadcrum-color;
+      position: absolute;
+      top:0;
+      left:-1px;
+    }
+    &:before {
+      content: " ";
+      width: 0;
+      height: 0;
+      border-top: $admin-arrow-size solid transparent;
+      border-bottom: $admin-arrow-size solid transparent;
+      border-left: 11px solid  darken($admin-breadcrum-color, 20%);
+      position: absolute;
+      top: 0;
+      left:0;
+    }
+  }
+  .non-arrow{
+      padding-left: 0px;
+      padding-right: $admin-breadcrum-padding / 2;
+      &:after{
+        border:0;
+      }
+      &:before{
+        border:0;
+      }
+    }
+    .divider {
+      color: #ccc;
+      
+    }
+    .active {
+      color: $gray;
+      font-weight: bold;
+    }
+  .btn{
+    margin-top:-4px;
+    padding-top:$admin-breadcrum-padding / 2;
+    padding-bottom:$admin-breadcrum-padding / 2;
+  }
+}
+
+.breadcum-footer{
+
+  @include border-top-radius(0px);
+  border-bottom:0;
+  @include border-bottom-radius(4px);
+  border-top:1px solid darken($admin-breadcrum-color, 10%);
+
+}

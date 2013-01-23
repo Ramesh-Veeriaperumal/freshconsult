@@ -16,7 +16,7 @@
 						<span class="icon"></span>
 						<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket, :class => "big") %>
 						<span class="light"><%= "Requested by, <b>#{ticket.requester}</b>" %> </span>
-						<p><%= ticket.excerpts.description %></p>
+						<p><%= ticket.description %></p>
 					</div>
 				<% end %>
 			</li>
@@ -35,7 +35,7 @@
 											"#{user.job_title} at #{user.customer.name}" %></span> 
 							<% end %>
 						<% else %>
-							<span class="light"><%= user.admin? ? "Administrator" : "Agent" %></span>
+							<span class="light"><%= user.account_admin? ? "Administrator" : "Agent" %></span>
 						<% end %>
 						
 					</div>

@@ -17,13 +17,18 @@
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
 			<span id="agent_replying_message_bottom" style="color:#048b00; font-size:12px;"></span>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
-			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
-				:id => "FwdButton", :class => "button forward reply") %>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
+      <% if privilege?(:reply_ticket) %>
+  			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
+        <%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
+        <%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
+      <% end %>
+      <% if privilege?(:forward_ticket) %>
+			  <%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", :id => "FwdButton", :class => "button forward reply") %>
+      <% end %>
 			<%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
-			<%= link_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
+      <% if privilege?(:view_time_entries) %>
+			 <%= link_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
+      <% end %>
 		</div>
 	<% end %>
 </div>		

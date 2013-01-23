@@ -27,7 +27,7 @@ module Helpdesk::TicketsHelper
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties'),         "ticket"],
-            ["RelatedSolutions", t('ticket.suggest_solutions'),  "related_solutions"],
+            ["RelatedSolutions", t('ticket.suggest_solutions'),  "related_solutions", privilege?(:view_solutions)],
             ["Scenario",         t('ticket.execute_scenario'),   "scenarios",       feature?(:scenario_automations)],
             ["RequesterInfo",    t('ticket.requestor_info'),     "requesterinfo"],
             ["Reminder",         t('to_do'),                     "todo"],
@@ -58,7 +58,7 @@ module Helpdesk::TicketsHelper
     tabs = [['Pages',     t(".conversation"), @ticket_notes.total_entries],
             ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
                                                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
-                                               feature?(:timesheets)]]
+                                               feature?(:timesheets) && privilege?(:view_time_entries)]]
     
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]
@@ -381,6 +381,14 @@ module Helpdesk::TicketsHelper
     end
     content << "</div>" if full_pagination
     content
+  end
+
+  def requester(ticket)
+    if privilege?(:view_contacts)
+      "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>"
+    else
+      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>"
+    end
   end
 
 end

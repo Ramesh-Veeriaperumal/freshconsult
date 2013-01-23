@@ -1,5 +1,19 @@
 class Va::Action
   attr_accessor :action_key, :act_hash
+
+  ACTION_PRIVILEGE =
+    {  
+      :priority                => :edit_ticket_properties,
+      :ticket_type             => :edit_ticket_properties,
+      :status                  => :edit_ticket_properties,
+      :responder_id            => :edit_ticket_properties,
+      :group_id                => :edit_ticket_properties,
+      :product_id              => :edit_ticket_properties,
+      :send_email_to_group     => :reply_ticket,
+      :send_email_to_agent     => :reply_ticket,
+      :send_email_to_requester => :reply_ticket,
+      :delete_ticket           => :delete_ticket
+    }
   
   def initialize(act_hash)
     @act_hash = act_hash

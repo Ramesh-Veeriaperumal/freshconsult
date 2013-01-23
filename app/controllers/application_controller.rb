@@ -40,8 +40,8 @@ class ApplicationController < ActionController::Base
   end
  
   def check_account_state
-    if !current_account.active? 
-      if permission?(:manage_account)
+    unless current_account.active? 
+      if privilege?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
         return redirect_to(plan_subscription_url)
       else
@@ -81,9 +81,9 @@ class ApplicationController < ActionController::Base
   end
 
   def render_404
-     NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
-                                                                  :referer => request.referer,
-                                                                  :request_params => params})
+     # NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
+     #                                                              :referer => request.referer,
+     #                                                              :request_params => params})
     render :file => "#{Rails.root}/public/404.html", :status => :not_found
   end
   

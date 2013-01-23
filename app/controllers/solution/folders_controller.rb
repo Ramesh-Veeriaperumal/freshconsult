@@ -2,9 +2,6 @@ class Solution::FoldersController < ApplicationController
     include Helpdesk::ReorderUtility
 
   before_filter :portal_check
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :manage_knowledgebase
-  end
   
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?
@@ -29,7 +26,7 @@ class Solution::FoldersController < ApplicationController
     @item = current_category.folders.find(params[:id], :include => :articles)
     
     respond_to do |format|
-      if (@item.is_default? && !permission?(:manage_knowledgebase))
+      if (@item.is_default? && !privilege?(:manage_tickets))
         store_location
         format.html {redirect_to login_url }
       else
@@ -166,7 +163,7 @@ class Solution::FoldersController < ApplicationController
   end
   
   def fetch_articles_scope
-    if current_user && current_user.has_manage_solutions?
+    if current_user && privilege?(:manage_tickets)
       :articles
     else
       :published_articles 

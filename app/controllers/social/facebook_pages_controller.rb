@@ -1,10 +1,7 @@
 class Social::FacebookPagesController < Admin::AdminController
   
+  skip_before_filter :check_privilege, :only => :event_listener
   before_filter { |c| c.requires_feature :facebook }
-  
-  before_filter :except => [:event_listener] do |c| 
-    c.requires_permission :manage_users
-  end
   
   before_filter :fb_client , :only => [:authdone, :index,:edit]
   before_filter :build_item, :only => [:authdone]

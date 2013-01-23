@@ -31,7 +31,7 @@
 		<% unless ticket.requester.nil? %>
 			<div class="info-data hideForList">
 				<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, 
-						:username => "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>", 
+						:username => requester(ticket), 
 						:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) 
 						%>
 				<div class="emphasize"><%= sla_status(ticket,@onhold_and_closed_statuses) %></div>
@@ -48,8 +48,9 @@
   		>  </div>
   </td>
   <td class="assign hideForList">
+    <% quick_action = privilege?(:edit_ticket_properties) ? 'quick-action dynamic-menu' : '' %>
 	  	<ul>
-	  		<li class="quick-action dynamic-menu" title="Change Agent" 
+	  		<li class="<%= quick_action %>" title="Change Agent" 
 	  			data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="agent"  
 	  			data-options="#ticket_agents" >
 
@@ -61,11 +62,11 @@
 				<% end %>
 			</li>
 
-	  		<li class="quick-action dynamic-menu" title="Change Status"  data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
+	  		<li class="<%= quick_action %>" title="Change Status"  data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
 				<label><%=t('ticket.status')%>: </label>
 				<span class="result"><%= h(ticket.status_name) %></span>
 			</li>
-			<li class="quick-action dynamic-menu" title="Change Priority"  data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
+			<li class="<%= quick_action %>" title="Change Priority"  data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
 				<label><%=t('ticket.priority')%>: </label>
 				<span class="result"><%= h(ticket.priority_name) %></span>
 			</li>

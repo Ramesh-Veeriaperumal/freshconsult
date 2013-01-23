@@ -25,7 +25,7 @@ class SAAS::SubscriptionActions
   private
     
     def drop_except_account_admin(account)
-      account.users.update_all({:deleted => true}, ["user_role in (?,?)", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]] )
+      account.users.update_all({:deleted => true}, ["user_role in (?) and account_admin = false", User::USER_ROLES_KEYS_BY_TOKEN[:agent]] )
     end
     
     def update_features(account, old_subscription)

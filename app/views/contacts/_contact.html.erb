@@ -1,6 +1,8 @@
 <tr>
 	<td class="selector-box">
-		<%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+    <% if privilege?(:manage_users) || privilege?(:delete_contact) %>
+		  <%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
+    <% end %>
 	</td>
 	<td >
 		<a href="#" class="cust-list-avatar">
@@ -28,12 +30,20 @@
 	</td>
 	<td>
 		<div class="user_actions" align="right">
-			<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? %>
-			<%= link_to(t('contacts.send_activation'), send_invite_activation_path(contact), "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
-					"data-loading-text" => t('admin.getting_started.index.next_please_wait'), 
-					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>") if !contact.active? and !contact.deleted and !contact.email.blank? %>
-			<%= link_to(t('edit'), edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? %>
-			<%= link_to("<i class='icon-trash'></i>", {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('company.info11')} #{contact.name}?", :class => "btn btn-mini") if contact != current_user and !contact.deleted? %>
+      <% if privilege?(:delete_contact) %>
+			  <%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? %>
+      <% end %>
+      <% if privilege?(:manage_users) %>
+  			<%= link_to(t('contacts.send_activation'), send_invite_activation_path(contact), "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
+  					"data-loading-text" => t('admin.getting_started.index.next_please_wait'), 
+  					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>") if !contact.active? and !contact.deleted and !contact.email.blank? %>
+      <% end %>
+      <% if privilege?(:add_or_edit_contact) %>
+			  <%= link_to(t('edit'), edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? %>
+      <% end %>
+      <% if privilege?(:delete_contact) %>
+			  <%= link_to("<i class='icon-trash'></i>", {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('company.info11')} #{contact.name}?", :class => "btn btn-mini") if contact != current_user and !contact.deleted? %>
+      <% end %>
 		</div>
 	</td>
 </tr>

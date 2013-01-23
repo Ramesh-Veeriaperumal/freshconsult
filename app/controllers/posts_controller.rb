@@ -2,16 +2,13 @@ class PostsController < ApplicationController
   
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
+  before_filter :require_user, :only => :create
   before_filter :find_forum_topic, :only => :create
   before_filter :find_post,      :except =>  [:monitored, :create]
   #before_filter :login_required, :except => [:index, :monitored, :search, :show]
-  before_filter :except => [:index, :monitored, :search, :show] do |c| 
-    c.requires_permission :post_in_forums
-  end
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission,:only => [:edit,:destroy,:update] 
   
   @@query_options = { :select => "#{Post.table_name}.*, #{Topic.table_name}.title as topic_title, #{Forum.table_name}.name as forum_name", :joins => "inner join #{Topic.table_name} on #{Post.table_name}.topic_id = #{Topic.table_name}.id inner join #{Forum.table_name} on #{Topic.table_name}.forum_id = #{Forum.table_name}.id" }
 
@@ -22,13 +19,7 @@ class PostsController < ApplicationController
   
   uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
   
-  def check_user_permission
-    if (current_user.id != @post.user_id and  !current_user.has_manage_forums?)
-          flash[:notice] =  t(:'flash.general.access_denied')
-          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    end
-  end
-
+  
   def index
 #    conditions = []
 #    [:user_id, :forum_id, :topic_id].each { |attr| conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.#{attr} = ?", params[attr]]) if params[attr] }
@@ -78,8 +69,8 @@ class PostsController < ApplicationController
     @post  = @topic.posts.build(params[:post])
     @post.user = current_user
     @post.account_id = current_account.id
+    build_attachments
     @post.save!
-    create_attachments
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
@@ -96,10 +87,10 @@ class PostsController < ApplicationController
     end
   end
   
-   def create_attachments
+   def build_attachments
    return unless @post.respond_to?(:attachments)
     (params[:post][:attachments] || []).each do |a|
-      @post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+      @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
     end
   end
   

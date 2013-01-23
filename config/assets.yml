@@ -32,12 +32,14 @@ stylesheets:
     # - public/stylesheets/portal/responsive.css 
 
   # !PATTERN TODO These css files will be migrated in to the pattern library at a later point
-  non_pattern:
+  non_pattern_1:
     - public/stylesheets/app/lib/defaults.css
     - public/stylesheets/app/lib/layout.css
     - public/stylesheets/app/lib/table.css
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/admin.css
+
+  non_pattern_2:
     - public/stylesheets/app/app-bootstrap.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css

@@ -1,15 +1,6 @@
 class ContactsController < ApplicationController
-
-    before_filter :except => [:make_agent] do |c| 
-      c.requires_permission :manage_tickets
-    end
-
-    before_filter :only => [:make_agent] do |c| 
-      c.requires_permission :manage_users
-    end
-
-    before_filter :requires_all_tickets_access 
     
+   include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
@@ -42,7 +33,9 @@ class ContactsController < ApplicationController
       end
 
       format.json  do
-        render :json => @contacts.to_json
+        render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address] })#avoiding the secured attributes like tokens
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -152,7 +145,12 @@ class ContactsController < ApplicationController
   end
   
   def make_agent    
-    @item.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
+    @item.update_attributes(:delete =>false,
+     :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:agent],
+     :user_roles_attributes => { 
+        :role_id => [current_account.roles.find_by_name("Agent").id] 
+      }
+    )      
     @agent = current_account.agents.new
     @agent.user = @item 
     @item.deleted = false
@@ -192,10 +190,6 @@ class ContactsController < ApplicationController
     end
   end
 
-  def requires_all_tickets_access              
-        access_denied unless current_user.can_view_all_tickets?
-  end
-  
 protected
 
   def initialize_new_user
@@ -221,11 +215,7 @@ protected
       current_account.all_contacts
     end
   end
-
-  def authorized?
-      (logged_in? && self.action_name == 'index') || admin?
-  end
-    
+   
   def set_selected_tab
       @selected_tab = :customers
   end
@@ -244,33 +234,6 @@ protected
   end
 
   private
-    def convert_query_to_conditions(query_str)
-      matches = query_str.split(/((\S+)\s*(is|like)\s*("([^\\"]|\\"|\\\\)*"|(\S+))\s*(or|and)?\s*)/)
-      if matches.size > 1
-        conditions = []; c_i=0
-        matches.size.times{|i| 
-          pos = i%7
-          conditions[0] = "#{conditions[0]}#{matches[i]} " if(pos == 2) # property
-          if(pos == 3) # operator
-            oper = matches[i] == "is" ? "=" : matches[i]
-            conditions[0] = "#{conditions[0]}#{oper} "
-          end
-          if(pos == 4) # match value
-            conditions[0] = "#{conditions[0]}? "
-            matches[i] = matches[i][1..-1] if matches[i][0] == 34 # remove opening double quote
-            matches[i] = matches[i][0..-2] if matches[i][-1] == 34 # remove closing double quote
-            matches[i] = matches[i].gsub("\\\\", "\\") # remove escape chars
-            matches[i] = matches[i].gsub("\\\"", "\"") # remove escape chars
-            matches[i] = "%#{matches[i]}%" if matches[i-1] == "like"
-            conditions[c_i+=1] = matches[i]
-          end
-          conditions[0] = "#{conditions[0]}#{matches[i]} " if(pos == 6) # condition and/or
-        }
-        conditions
-      else
-        raise "Not able to parse the query."
-      end
-    end
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.

@@ -4,10 +4,6 @@ class ForumCategoriesController < ApplicationController
   
   before_filter :portal_check
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
-
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :manage_forums
-  end
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -79,8 +75,8 @@ class ForumCategoriesController < ApplicationController
   
     def content_scope
       @content_scope = 'portal_' 
-      @content_scope = 'user_'  if permission?(:post_in_forums) 
-      @content_scope = ''  if permission?(:manage_forums)
+      @content_scope = 'user_'  if privilege?(:view_forums)
+      @content_scope = '' if privilege?(:manage_tickets)
     end
     
     def scoper
@@ -105,7 +101,7 @@ class ForumCategoriesController < ApplicationController
     end
     
     def fetch_forum_scope
-      if current_user && current_user.has_manage_forums?
+      if privilege?(:manage_tickets)
       :forums
      elsif current_user
       :user_forums

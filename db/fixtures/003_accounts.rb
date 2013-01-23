@@ -1,9 +1,8 @@
-require RAILS_ROOT+'/app/models/user.rb'
-
 unless Account.current
   if Account.count == 0
     user = User.new(:name => 'Support', :password => 'test', :password_confirmation => 'test', 
-                    :email => 'sample@freshdesk.com', :role_token => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
+                    :email => 'sample@freshdesk.com', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:agent])
+    user.account_admin = true
     
     a = Account.new(:name => 'Test Account', :domain => 'localhost', :plan => SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate]), :user => user)
     a.full_domain = 'localhost'

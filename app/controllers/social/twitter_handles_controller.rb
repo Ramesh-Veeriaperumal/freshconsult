@@ -4,14 +4,6 @@ class Social::TwitterHandlesController < ApplicationController
   
   before_filter { |c| c.requires_feature :twitter }
   
-  before_filter :except => [:create_twicket,:feed, :user_following,:tweet_exists] do |c| 
-    c.requires_permission :manage_users
-  end
-  
-  before_filter :only => [ :create_twicket,:feed, :user_following,:tweet_exists] do |c| 
-    c.requires_permission :manage_tickets
-  end
-  
   prepend_before_filter :load_product, :only => [ :signin, :authdone ]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]       

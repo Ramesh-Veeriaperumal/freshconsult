@@ -22,7 +22,13 @@ module AuthenticationSystem
     end
   
     def is_allowed_to_assume?(user)
-      !is_assumed_user? && !user.deleted && !user.account_admin? && (current_user.account_admin? || current_user.admin? || ((current_user.supervisor?) && !user.admin?))
+      return false unless can_be_assumed?(user)
+      current_user.account_admin? || privilege?(:manage_users)
+    end
+
+    def can_be_assumed?(user) #Can I assume myself? Needs to be verified.
+      !(is_assumed_user? or user.account_admin? or user.deleted?)
+      # !is_assumed_user? && !user.deleted && !user.account_admin? && (current_user.account_admin? || current_user.admin? || ((current_user.supervisor?) && !user.admin?))
     end
 
     def assume_identity_for_user(user)

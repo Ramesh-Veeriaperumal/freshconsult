@@ -49,7 +49,11 @@ module AdminControllerMethods
        #logger.debug "LOGIN FROM BASIC AUTH called in AdminControllerMethods..."
        authenticate_or_request_with_http_basic do |username, password|
          # This has to return true to let the user in
-           username == 'freshdesk' && password == '1M5MUSD40$'
+         if Rails.env.production?
+            username == 'freshdesk' && Digest::MD5.hexdigest(password) == "8fb52088220a703c6e478392802815ce"
+         else
+            username == 'freshdesk' && password == "USD40$" 
+         end
        end
      end
 

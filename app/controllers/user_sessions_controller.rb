@@ -11,7 +11,7 @@ require 'oauth/signature/rsa/sha1'
 require 'openssl'
 
 include RedisKeys
-  
+  skip_before_filter :check_privilege  
   before_filter :set_mobile, :only => [:create, :destroy, :new]
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state

@@ -49,7 +49,7 @@
 	<td><%= sla.select :response_time , Helpdesk::SlaDetail::RESPONSETIME_OPTIONS %></td>
     <td><%= sla.select :resolution_time, Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS %></td>
     <td> 
-    <%= sla.collection_select :escalateto, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>
+    <%= sla.collection_select :escalateto, current_account.technicians, :id, :name %>
 	</td>
 	 <td>
 	    	<%= sla.check_box :override_bhrs%>

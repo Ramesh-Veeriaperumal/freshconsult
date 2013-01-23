@@ -1,6 +1,5 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
@@ -58,7 +57,7 @@ module ApplicationHelper
   end   
 
   def show_announcements                                                    
-    if permission?(:manage_tickets)
+    if privilege?(:manage_tickets)
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
       render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
     end     
@@ -153,16 +152,16 @@ module ApplicationHelper
 
   def navigation_tabs
     tabs = [
-      ['/home',               :home,        !permission?(:manage_tickets) ],
-      ['/helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
-      ['/helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
+      ['/home',               :home,        !privilege?(:manage_tickets) ],
+      ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
+      ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
-      ['/contacts',           :customers,    (current_user && current_user.can_view_all_tickets?)],
-      ['/support/tickets',     :checkstatus, !permission?(:manage_tickets)],
-      ['/reports',            :reports,      permission?(:manage_reports) ],
-      ['/admin/home',         :admin,        permission?(:manage_users)],
+      ['/contacts',           :customers,    privilege?(:view_contacts)],
+      ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
+      ['/reports',            :reports,      privilege?(:view_reports) ],
+      ['/admin/home',         :admin,        privilege?(:view_admin)],
       company_tickets_tab
     ]
 
@@ -200,7 +199,7 @@ module ApplicationHelper
   end
 
   def show_contact_hovercard(user, options=nil)
-    if current_user.can_view_all_tickets?
+    if privilege?(:view_contacts)
       link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
     else
       link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
@@ -382,7 +381,7 @@ module ApplicationHelper
   
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
-    if current_user && !current_user.customer?
+    if privilege?(:view_contacts)
       link_to(user.display_name, user, options)
     else 
       content_tag(:strong, user.display_name, options)
@@ -440,6 +439,7 @@ module ApplicationHelper
 
   def widget_script(installed_app, widget, liquid_objs)
     replace_objs = liquid_objs || {}
+    replace_objs = replace_objs.merge({"current_user"=>current_user})
     # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
     replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, "application" => installed_app.application}) unless installed_app.blank?# Application name based liquid obj values.
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
@@ -492,20 +492,17 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    if dom_type == "requester"
-      field_label += " #{ (required) ? ' <span class="required_star">*</span>' : '' }" 
-      field_label += add_requester_field  
-    end
-    field_label    += " #{ (required) ? '<span class="required_star">*</span>' : '' }" unless dom_type == "requester"
+    field_label    += '<span class="required_start">*</span>' if required
+    field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
-        element+= hidden_field(object_name, :requester_id)  
+        element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         unless is_edit or params[:format] == 'widget'
-          element = add_cc_field_tag element, field
+          element = add_cc_field_tag element, field  
         end
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
@@ -547,7 +544,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    render(:partial => "/shared/add_requester") if (current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && current_user && current_user.can_view_all_tickets?)
   end
   
   def add_name_field
@@ -636,10 +633,10 @@ module ApplicationHelper
   private
     def solutions_tab
       if current_portal.main_portal?
-        ['/solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+        ['/solution/categories', :solutions, solutions_visibility?]
       elsif current_portal.solution_category
         [solution_category_path(current_portal.solution_category), :solutions, 
-              allowed_in_portal?(:open_solutions)]
+              solutions_visibility?]
       else
         ['#', :solutions, false]
       end
@@ -655,17 +652,21 @@ module ApplicationHelper
       end
     end
     
+    def solutions_visibility?
+      allowed_in_portal?(:open_solutions) && privilege?(:view_solutions)
+    end
+
     def forums_visibility?
-      feature?(:forums) && allowed_in_portal?(:open_forums)
+      feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
     
     def can_view_twitter?
-      permission?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
+      privilege?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
     end
     
-  
   def company_tickets_tab
-    tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
+    # this should be handled in self service portal
+    tab = ['support/company_tickets', :company_tickets , !privilege?(:manage_tickets) , current_user.customer.name] if privilege?(:client_manager)
     tab || ""
   end
 

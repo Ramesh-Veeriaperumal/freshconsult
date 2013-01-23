@@ -1,0 +1,8 @@
+<div class="well">
+  <%= @role.name %>
+  <ul>
+  <% @role.abilities.each do |power| %>
+  <li><%=power%></li>
+  <% end %>
+  </ul>
+</div>

@@ -2,7 +2,6 @@ class Mobile::TicketsController < ApplicationController
   include Helpdesk::TicketsHelper
 
   before_filter :require_user_login, :set_mobile
-  before_filter :check_permistions, :only => :get_suggested_solutions
   
   FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
   CUSTOMER_FILTER_NAMES = [ :all, :open_or_pending, :resolved_or_closed, :all_company_tickets ]
@@ -85,10 +84,6 @@ class Mobile::TicketsController < ApplicationController
           });
     end
   end
-
-  def check_permistions 
-    requires_permission :manage_tickets
-  end 
 
   def customer_view_list
     view_list = []

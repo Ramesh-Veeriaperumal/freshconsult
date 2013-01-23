@@ -2,7 +2,7 @@
 <div class="folder-2col">
   <div class="folder_section" id="folder-section">
 	  <%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item.category, :selected => @item } %>
-	  <% if permission?(:manage_knowledgebase) %>
+	  <% if privilege?(:create_edit_category_folder) %>
 	   	  <%= render :partial => "/shared/reorder_list", :locals => { :items => @item.category.folders.visible(current_user), :action_url => reorder_solution_category_folders_path(@item.category), :title => :name, :container_id => "folder_sort", :reorder_id => "folder_reorder_button", :list_id => "folder_list"} %>
 		  <span class="seperator"></span>
 		  <div class="alignright">
@@ -19,7 +19,7 @@
 	<div class="search-grey-box">
 	  <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.category.name)), :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>
 	</div>
-	 <% if logged_in? && current_user.has_manage_solutions? %>
+	 <% if privilege?(:manage_tickets) %>
 	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
 	  <%else%>
 	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item.category, :folder => @item } %>

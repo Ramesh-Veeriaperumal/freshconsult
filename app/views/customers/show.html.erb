@@ -1,3 +1,10 @@
+<% javascript_tag do %>
+  jQuery(document).ready(function(){
+    if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
+      jQuery('div.action_buttons').show();
+    }
+});
+<% end %>
 <% content_for :layoutType do -%>bg_pulp<%-end %>
 <% content_for :sidebar do %> 
 	<div class="sidepanel">
@@ -31,35 +38,39 @@
 			</p>	
 		</div>
 		<% end %>
-	</div> 
-	<div class="sidepanel">
-	<h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=@customer.name%></span></h4> 
-	
-		<% form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
-		<%= hidden_field_tag 'customer_id', params[:id] %> 	
-		<ul class="ui-form">
-		<li> 
-			<label for="user_name"><%=t('user.full_name')%></label> 
-			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
-		</li> 
-		<li>
-			<label for="email_primary"><%=t('user.email')%></label> 
-			<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
-		</li>
-		<li>
-			<label for="user_phone"><%=t('user.phone_no')%></label> 
-			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
-		</li>
-		<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
-		</ul>
-		<div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
-		<% end %>
 	</div>
+  <% if privilege?(:add_or_edit_contact) %> 
+  	<div class="sidepanel">
+  	<h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=@customer.name%></span></h4> 
+  	
+  		<% form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
+  		<%= hidden_field_tag 'customer_id', params[:id] %> 	
+  		<ul class="ui-form">
+  		<li> 
+  			<label for="user_name"><%=t('user.full_name')%></label> 
+  			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+  		</li> 
+  		<li>
+  			<label for="email_primary"><%=t('user.email')%></label> 
+  			<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
+  		</li>
+  		<li>
+  			<label for="user_phone"><%=t('user.phone_no')%></label> 
+  			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
+  		</li>
+  		<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
+  		</ul>
+  		<div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
+  		<% end %>
+  	</div>
+  <% end %>
 <% end %>
 <div class="company_box">
-	<div class="action_buttons">
-		<%= link_to t('edit'), edit_customer_path(@customer), :class => "last" %>
-	</div>
+  	<div class="action_buttons hide">
+      <% if privilege?(:add_or_edit_contact) %>
+  		  <%= link_to t('edit'), edit_customer_path(@customer), :class => "last" %>
+      <% end %>
+  	</div>
 	<h3 class="title"><%= h @customer.name %></h3>
 	<div><%=@customer.description.gsub(/\n/, '<br />') unless @customer.description.blank? %></div>
 </div> 
@@ -69,9 +80,11 @@
 		<%=t('company.info5')%>
 	</label>
 	<%= f.text_area :note, :class=> "sp_paragraph", :id => "comp_notes" %>
-	<div class="alignright"> 
-		<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
-	</div>
+  <% if privilege?(:add_or_edit_contact) %>
+  	<div class="alignright"> 
+  		<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
+  	</div>
+  <% end %>
 <% end %>	  
 
 <% unless @customer.users.empty? %>

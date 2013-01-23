@@ -1,0 +1,113 @@
+<% form_for @role, :html => {:class => "well", :id => 'new_role'} do |role_form| %>
+  <%= error_messages_for :role %>
+
+  <%= role_form.label :name %> 
+  <%= role_form.text_field :name %>
+
+  <%= role_form.label :description %> 
+  <%= role_form.text_field :description %>
+
+  <!-- default has been set in mysql as false, do i need to pass hidden value ? -->
+  
+  <ul class = "parent">
+    <%= new_role_form %>
+  </ul>
+  <%= hidden_field_tag "admin_role[privilege_list][]"%>
+  <div class="button-container">
+    <%= role_form.submit "Register", :class =>"btn" %>
+  </div>
+<% end %>
+
+<% javascript_tag do %>
+  
+  (function($) {
+    $.fn.toggleDisabled = function(status){
+        return this.each(function(){
+          if(!($(this).hasClass('permanent_disable')))
+          {
+            this.disabled = !status;
+          }
+          if(status == false)
+          {
+            if(this.type == "radio" && $(this).hasClass('default'))
+              this.checked = true;
+            else
+              this.checked = status; 
+            if($(this).hasClass('nested'))
+            {
+              $('input.' + this.id).toggleDisabled(status);
+            }
+          }
+
+        });
+    };
+
+    $.fn.specialToggleDisabled = function(status){
+        return this.each(function(){
+          if($(this).hasClass('nested'))
+          {
+            $('input.' + this.id).toggleDisabled(false);
+          }
+          
+        });
+    };
+
+    $('#new_role').submit( function(ev) {
+
+      if($('input.operational_admin:checked').length == 0)
+      {
+        $('#operational_admin').prop('checked', false);
+        $('#operational_admin').prop('disabled', true);
+      }
+
+      $.each($('input.radio:checked'), function() {
+        $('<input>').attr({
+          type: 'hidden',
+          name: 'admin_role[privilege_list][]',
+          value: $(this).val()
+        }).appendTo('#new_role');
+        $(this).removeAttr('name');
+      });
+    });
+
+    $(document).ready(function() {
+
+      $('input.nested:checkbox, input.nested:radio').change(function() {
+        $('input.' + this.id).toggleDisabled(this.checked);
+      });
+
+      $('input:radio').change(function() {
+        $("input[name = '" + this.name + "']:unchecked").specialToggleDisabled(this.checked);
+      });
+
+      $('input.permanent_disable').each(function(){
+          this.disabled = true;
+          this.checked = true;
+          if($(this).hasClass('nested'))
+            $('input.' + this.id).prop('disabled', false);
+      });
+
+      var radio_groups = {}
+      $(":radio").each(function(){
+        radio_groups[this.name] = true;
+      })
+
+      for(group in radio_groups){
+        checked = !$(":radio[name='"+group+"']:checked").length;
+        if(checked)
+        {
+          $(":radio[name='" + group + "'].default").prop('checked', true);
+        }
+      }
+
+    });
+
+  })(jQuery);
+
+<% end %>
+
+<style>
+  ul.children  {
+    margin-left: 25px;
+  }
+</style>

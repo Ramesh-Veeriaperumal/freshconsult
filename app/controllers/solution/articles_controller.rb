@@ -1,14 +1,13 @@
 class Solution::ArticlesController < ApplicationController
-  
+
+  # => same as forum posts, what about non logged in users ?
+  # => what will happen ?
   include Helpdesk::ReorderUtility
   
   before_filter :set_selected_tab, :portal_check
   
   before_filter :check_solution_permission, :only => [:show]
   before_filter { |c| c.check_portal_scope :open_solutions }
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :manage_knowledgebase
-  end
   before_filter :page_title 
   
   uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
@@ -60,10 +59,10 @@ class Solution::ArticlesController < ApplicationController
 
    redirect_to_url = @article
    redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
-   
+   build_attachments
+   set_solution_tags
    respond_to do |format|
       if @article.save
-        post_persist 
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
@@ -80,10 +79,11 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    @article = current_account.solution_articles.find(params[:id])     
+    @article = current_account.solution_articles.find(params[:id]) 
+    build_attachments
+    set_solution_tags    
     respond_to do |format|    
        if @article.update_attributes(params[nscname])  
-          post_persist
           format.html { redirect_to @article }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
        else
@@ -116,19 +116,6 @@ class Solution::ArticlesController < ApplicationController
 
       
   end
-
-def post_persist
-  
-  create_attachments
-  set_solution_tags
-  
-end
- def create_attachments
-    return unless @article.respond_to?(:attachments)
-    (params[nscname][:attachments] || []).each do |a|
-      @article.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @article.account_id)
-    end
-  end
   
 protected
 
@@ -136,6 +123,12 @@ protected
     eval "Solution::#{cname.classify}"
   end
 
+ def build_attachments
+    return unless @article.respond_to?(:attachments)
+    (params[nscname][:attachments] || []).each do |a|
+      @article.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @article.account_id)
+    end
+  end
   
   def reorder_scoper
     current_account.solution_articles.find(:all, :conditions => {:folder_id => params[:folder_id] })
