@@ -6,7 +6,7 @@ namespace :sla do
     if sla_should_run?(queue_name)
       puts "SLA violation check called at #{Time.zone.now}."
       Account.active_accounts.non_premium_accounts.each do |account|        
-        Resque.enqueue(Workers::Sla, account.id)
+        Resque.enqueue(Workers::Sla::AccountSLA, account.id)
       end
     end
     puts "SLA rule check finished at #{Time.zone.now}."
@@ -18,7 +18,7 @@ namespace :sla do
     if sla_should_run?(queue_name)
         puts "SLA violation check for Premium accounts called at #{Time.zone.now}."
         Account.active_accounts.premium_accounts.each do |account|
-          Resque.enqueue(Workers::Sla, account.id)
+          Resque.enqueue(Workers::Sla::PremiumSLA, account.id)
         end
     end
     puts "SLA rule check finished at #{Time.zone.now}."
