@@ -17,6 +17,11 @@ strong {
   font-weight: bold;
 }
 
+.checkbox  input[type="checkbox"]:checked{
+  font-weight: bold;
+  margin-left: 50px;
+}
+
 .muted {
   color: #999999;
 }
@@ -114,6 +119,13 @@ strong {
   vertical-align: middle;
 }
 
+.admin-breadcrumb{
+  margin: -14px -20px;
+  margin-bottom: 10px;
+  &.breadcum-footer{
+    margin-bottom: -14px;
+  }
+}
 
 /* This class overriding app-common css. */
 

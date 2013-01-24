@@ -1,1 +1,163 @@
-<%= render :partial => 'form' %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern  %>
+<% content_for :sidebar do %>
+  <%= render :partial => "agents/helpnote_without_tour" %>
+<% end %>
+<% form_for @role, :html => { :id => 'new_role'} do |role_form| %>
+<ul class="admin-breadcrumb">
+  <li class="non-arrow"><a href="#">Admin</a><span class="divider"></span></li>
+  <li><a href="#">Role</a> <span class="divider"></span></li>
+  <li class="active ">New Role</li>
+  <li class="non-arrow pull-right">
+  		<a href="/agents" class="btn btn-primary">Save</a>
+  </li>
+  <li class="non-arrow pull-right">
+		<input class="btn " id="agent_submit" name="commit" type="submit" value="Cancel">
+  </li>
+</ul>
+<div class="row-fluid new-role">
+	<div>
+		<ul class="clearfix unstyled">
+ 			<li>
+ 				<%= role_form.label :name, t('name'), :class =>'control-label span2' %> 
+				<div class="span10">
+					<%= role_form.text_field :name , :class => "text span10", :placeholder => "Agent Name"%>
+				</div>
+			</li>	
+			<li>
+				<%= role_form.label :description, t('description'), :class =>'control-label span2' %> 
+				<div class="span10">
+					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", :placeholder => "Description"%>		
+				</div>
+			</li>	
+		</ul>
+		<div>
+			<p class="lead-title lead">
+				<span>Permissions</span>
+			</p>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<ul class="role-nav">
+			<li>Scroll to ></li>
+			<li><a href="#tickets">Tickets</a></li>
+			<li><a href="#solution">Solution</a></li>
+			<li><a href="#forum">Forum</a></li>
+			<li><a href="#customers" class="disabled">Customers</a></li>
+			<li><a href="#reports" class="disabled">Reports</a></li>
+			<li><a href="#administration" class="disabled">Administration</a></li>
+		</ul>
+	</div>
+	
+ 		<div id="tickets" class="row-fluid margin-bottom">
+ 			<div>
+				<div class="span2"><p class="lead">Tickets</p></div>
+				<div class="span10 role-section">
+					<%= label(:agent, :signature_html, "<b>Agent can</b>") %>
+					<ul class="unstyled">
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Reply a ticket
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Forward a ticket
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Edit conversations
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Reply a ticket
+								<ul class="nested-ul">
+									<li>
+										<label class="checkbox">
+											<input type="checkbox"> Edit conversations
+										</label>
+									</li>
+									<li>
+										<label class="checkbox">
+											<input type="checkbox"> Edit conversations
+										</label>
+									</li>
+								</ul>
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Edit conversations
+							</label>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="solution" class="row-fluid margin-bottom">
+ 			
+ 			<div>
+ 				<div class="span2"><p class="lead">Solution</p></div>
+				<div class="span10 role-section">
+					<%= label(:agent, :signature_html, "<b>Agent can</b>") %>
+					<ul class="unstyled">
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> View Solution Tab
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Approve a solution
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Delete a solution
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Create / Edit Category or folder
+							</label>
+						</li>
+						<li>
+							<label class="checkbox">
+								<input type="checkbox"> Edit conversations
+							</label>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+</div>
+<ul class="admin-breadcrumb breadcum-footer clearfix">
+  	<li class="non-arrow pull-right">
+  		<a href="/agents" class="btn btn-primary">Save</a>
+  	</li>
+  	<li class="non-arrow pull-right">
+  		<input class="btn" id="agent_submit" name="commit" type="submit" value="Cancel">
+  	</li>
+</ul>
+ <% end %>
+
+ <script>
+	jQuery(function(){ // document ready
+		jQuery('a[href*=#]:not([href=#])').click(function() {
+		    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
+		        || location.hostname == this.hostname) {
+
+		        var target = jQuery(this.hash);
+		        target = target.length ? target : jQuery('[name=' + this.hash.slice(1) +']');
+		           if (target.length) {
+		             jQuery('html,body').animate({
+		                 scrollTop: target.offset().top
+		            }, 1000);
+		            return false;
+		        }
+		    }
+		});
+	});
+</script>

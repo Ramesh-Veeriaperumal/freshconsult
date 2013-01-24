@@ -1,5 +1,33 @@
-<%= render :partial => 'form' %>
-
+<% content_for :sidebar do %>
+  <%= render :partial => "agents/helpnote_without_tour" %>
+<% end %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern  %>
+<% form_for @role, :html => {:class => "well", :id => 'new_role'} do |role_form| %>
+<ul class="admin-breadcrumb">
+  <li class="non-arrow"><a href="#">Admin</a><span class="divider"></span></li>
+  <li><a href="#">Role</a> <span class="divider"></span></li>
+  <li class="active ">New Role</li>
+  <li class="non-arrow pull-right">
+      <a href="/agents" class="btn btn-primary">Update</a>
+  </li>
+  <li class="non-arrow pull-right">
+    <input class="btn " id="agent_submit" name="commit" type="submit" value="Cancel">
+  </li>
+</ul>
+<%= render :partial => 'form', :locals => {:role_form => role_form} %>
+<ul class="admin-breadcrumb">
+  <li class="non-arrow"><a href="#">Admin</a><span class="divider"></span></li>
+  <li><a href="#">Role</a> <span class="divider"></span></li>
+  <li class="active ">New Role</li>
+  <li class="non-arrow pull-right">
+      <a href="/agents" class="btn btn-primary">Update</a>
+  </li>
+  <li class="non-arrow pull-right">
+    <input class="btn " id="agent_submit" name="commit" type="submit" value="Cancel">
+  </li>
+</ul>
+<% end %>
 <% javascript_tag do %>
 
   (function($) {

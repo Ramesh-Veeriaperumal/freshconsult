@@ -1,4 +1,3 @@
-<% form_for @role, :html => {:class => "well", :id => 'new_role'} do |role_form| %>
   <%= error_messages_for :role %>
 
   <%= role_form.label :name %> 
@@ -16,7 +15,6 @@
   <div class="button-container">
     <%= role_form.submit "Register", :class =>"btn" %>
   </div>
-<% end %>
 
 <% javascript_tag do %>
   

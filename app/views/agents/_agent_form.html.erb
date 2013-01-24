@@ -115,7 +115,6 @@
 					<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
 					</div>
 				</li>
-				<% unless( @agent.user.permission?(:manage_account) ) %>
 				<li class="seperator"></li>
 				<li class="row-fluid">
 					<p class="lead">
@@ -171,7 +170,6 @@
 						</ul>
 					</div>
 				</li>
-				<% end %>
      		</ul>
      	</div>
      	<!-- Modal -->
@@ -274,4 +272,3 @@ jQuery('#my-modal').modal({
   keyboard: true
 })
 </script>
->>>>>>> 88613e3dfd3f2484f71a645bfc57b809cc638a34
