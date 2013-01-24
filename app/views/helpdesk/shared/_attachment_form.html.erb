@@ -2,12 +2,41 @@
 	attach_id ||= "ticket" 
 	nsc_param = nsc_param || "helpdesk_ticket"
 %>
+  <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js" id="dropboxjs" data-app-key=""></script>
+  <div class="attach_wrapper clearfix">
+    <div class="attach_file">
+      <label><%= t('attach_file_local') %></label>
+      <input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="<%=nsc_param%>[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+      <div class="info-data">
+        <%=t('attachment_help_info')%>
+      </div>
+    </div>
+    <div  class="dropbox_div">
+      <% isDropboxEnabled = Integrations::InstalledApplication.with_name("dropbox").empty?   %>
+      <% unless isDropboxEnabled %>
+      <div class="db-chooser">
+        <label><%= t('dropbox_attach_label') %></label>
+          <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[dropbox_url][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body">
+          <input type="button" class="dropbox_button" name="selected-file" id="db-chooser" data-holder="<%=attach_id%>_url" onclick='initDropbox(this);' value="<%=t('dropbox_choose_file')%>">
+          <script type="text/javascript">
+                    function initDropbox(inp){
+                      Dropbox.choose({success:function(files){
 
-<label>Attach a file</label>
-<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="<%=nsc_param%>[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-<div class="info-data">
-  <%=t('attachment_help_info')%>
-</div>
+                          //console.log(jQuery(inp).data('holder')+':::: ');
+                          var inputElement = jQuery(inp).data('holder');
+
+                          jQuery('#'+inputElement).val(unescape(files[0].link))
+
+                          Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
+                          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));
+                          jQuery(inp).data('holder',newInput.attr('id'));
+                      }})
+                    }
+          </script>
+      </div>
+      <%end%>
+    </div>
+  </div>
 <div class="attachments" id="<%=attach_id%>-container" style="display:none">
   <div id="<%=attach_id%>-attachments"></div>
 </div>

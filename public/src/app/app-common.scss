@@ -8660,3 +8660,34 @@ height: auto;
 		background-color: #373737;
 	}
 }
+div.db-chooser{
+	label{
+	margin-right: 50%;
+
+	}
+	.dropbox_button{
+		background: url("/images/dropbox-attach.png") no-repeat left -11px #f3f2f2;
+	    height: 26px;
+	    padding-left:90px;
+	    border:1px solid #d6d6d6;
+	    border-radius:4px;
+		cursor:pointer;
+		text-shadow: 1px 1px 0px #fff;
+	    &:hover{
+			background-color:darken(#f2f2f2, 5%);
+		}
+	}
+}
+.attach_wrapper{
+	width:100%;
+	.dropbox_div{
+	border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
+	div.db-chooser .dropbox_button{
+		cursor: pointer;
+	}
+	}
+	.attach_file{
+		float:left; padding-right:20px
+	}
+}
+
