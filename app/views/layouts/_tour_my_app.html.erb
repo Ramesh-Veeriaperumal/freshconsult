@@ -3,12 +3,12 @@
  
 	<script type="text/javascript">
 	AsyncJSLoader('https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.js', function(){
-		var tour;
 		jQuery(document).ready(function() {
 		    tour = new TourMyApp("freshdesk");
 		    if (window.location.href.indexOf("freshpo.com") != -1) {
 	    		tour.setOptions({"test_mode": true});
 	  		}
+	  		tour.setUserReference("<%= current_account.full_domain%>");
 		    tour.start();
 		});
 	})
