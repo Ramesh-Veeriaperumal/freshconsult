@@ -26,4 +26,9 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	def self.find_by_access_token(token)
 		find_by_string_tc01(token)
 	end
+
+	#updating access_token for old tickets
+	def update_access_token(token)  #for avoiding call back have put as separate method
+		update_attribute(:string_tc01, token)
+	end
 end

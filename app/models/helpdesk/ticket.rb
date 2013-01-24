@@ -378,6 +378,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     PRIORITY_TOKEN_BY_KEY[priority]
   end
 
+  def populate_access_token #for generating access_token for old tickets
+    set_token
+    schema_less_ticket.update_access_token(self.access_token) # wrote a separate method for avoiding callback
+  end
+
   def create_activity(user, description, activity_data = {}, short_descr = nil)
     activities.create(
       :description => description,
@@ -1178,11 +1183,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def generate_token(secret)
       Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
-    end
-
-    def populate_access_token
-      set_token
-      save
     end
     
     def populate_requester
