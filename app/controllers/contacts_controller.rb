@@ -96,7 +96,7 @@ class ContactsController < ApplicationController
     if ids
       User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
         [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
-         ids, Time.now.to_s(:db), Time.now.to_s(:db), current_account.id])
+         ids, (Time.now+5.days).to_s(:db), (Time.now+5.days).to_s(:db), current_account.id])
       enqueue_worker(Workers::RestoreSpamTickets, current_account.id, ids)
       flash[:notice] = t(:'flash.contacts.whitelisted')
     end
