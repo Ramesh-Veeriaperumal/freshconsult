@@ -3932,7 +3932,6 @@ div.addReminder{
 			}
 		}		
 
-
 		&:hover {
 			div.item_actions{
 				visibility: visible;
@@ -3945,7 +3944,7 @@ div.addReminder{
 		div.item_information{
 			@include clearfix;
 			float:left;
-			width:55%;
+			width:70%;
 			.info_data{
 				padding:2px 2px;
 				font-size:12px;
@@ -4253,26 +4252,250 @@ div.addReminder{
 		} 
 }
 
+#ChangePlan{
+	margin-top: 25px;
+}
+
+.payment-info{
+	.caption{
+		font-size: 16px;
+		font-weight: bold;
+		text-transform: capitalize;
+	}
+	.fields{
+		margin-top: 10px;
+	}
+	.billing-address{
+		display: block;
+		color: #777;
+		margin: 12px 0 3px;
+		font-size: 13px;
+	}
+}
+.classic-account{
+	font-size: 10px;
+	padding: 1px 3px;
+	background-color: #999;
+	color: white;
+	font-weight: bold;
+	border-radius: 4px;
+	text-transform: uppercase;
+	width: 43px;
+	display: block;
+}
+
+.free-plan{
+	h4{
+		display: inline-block;
+		padding-right: 20px;
+	}
+	label{ display: inline-block; }
+	.free-plan-payment{
+		color: #777;
+		font-weight: bold;
+	}
+	.current-plan{
+		margin-bottom: 8px;
+	}
+	.free-plan-agents, .free-plan-since{
+		display: inline-block;
+		margin-top: 10px;
+	}
+	.free-plan-agents{
+		width: 50%;
+		padding-bottom: 15px;
+		vertical-align: top;
+	}
+}
+.plan-name{
+	display: inline-block;
+	vertical-align: middle;
+}
+.current-plan{
+	& > .caption{
+		font-size: 16px;
+		width: 100%;
+		b, .classic-account{
+			margin-left: 20px;
+		}
+	}
+	.big-text{
+		margin-left: 20px;
+	}
+	.subscribed-plan-details, .billing-details{
+		float: left;
+		width: 50%;
+		margin-top: 5px; 
+	}
+	.subscribed-plan-details{ 
+		input.text{ width: 30% }
+		td:first-child{
+			width: 20%;
+		}
+		td > label{
+			display: inline-block;
+			padding-right: 7px;
+		}
+	}
+	.billing-details{
+		.sub-end{ color: red; }
+	}
+	#billing-template{ 
+		float: left;
+	}
+	.agents-split{
+		background: rgba(238, 238, 238, 0.44) !important;
+	}
+}
+
+#billing-template{
+	.billing-cost{
+		margin-top: 10px;
+		h2{ font-size: 15px; }
+		dl{ margin-top: 7px; }
+		dd, dt{
+			display: inline-block;
+		}
+		dd{
+			input[type=text]{
+				width: 45px;
+			}
+		}
+		dt{
+			width: 35%;
+			text-align: center;
+			font-weight: bold;
+		}
+		.agents-split{
+			border: 1px solid #EEE;
+			width: 75%;
+			margin: 0 auto;
+			margin-top: 14px;
+			padding-bottom: 8px;
+			text-align: center;
+			background: rgba(245, 245, 178, 0.44);
+			@include box-shadow(0 0 10px 0px #EEE);
+			#cost-per-agent{ 
+				font-weight: bold;
+				color: #666;
+	 		}
+		}
+		.tr-total{
+			border-top: 1px solid #EEE;
+			margin-top: 10px;
+			padding-top: 5px;
+			input[type=submit]{
+				margin: 10px;
+			}
+			dl{ text-align: center; }
+		}
+	}
+}
+
+.agent-details td{
+	font-weight: 500;
+	color: #666;
+}
+
+.plan-expand{
+	font-weight: bold;
+	font-size: 13px;
+	&:before {
+	 content:"";
+	 border:6px solid;   
+	 border-color: transparent transparent transparent #777;
+	 height:0;
+	 width:0; /* Firefox 3.0 damage limitation */
+	 font-size:0px;
+	 vertical-align: 4px;
+  }
+}
+
+.plan-expand-click:before{
+  border-color: #777 transparent transparent transparent;
+}
+
+.trial-info{
+	text-align: center;
+	.trial-message{
+		margin-top: 25px;
+		font-size: 20px;
+		color: #666;
+		padding-bottom: 5px;
+	}
+	.choose-plan{
+		line-height: 1.5;
+	}
+	.plan-name{
+		margin-left: 15px;
+	}
+	.caption{
+		font-size: 16px;
+		width: 100%;
+		float: none !important;
+		text-align: left;
+	}
+}
+
+.choose-plan-title{
+	margin-top: 10px;
+	padding-bottom: 4px;
+} 
+
+.activate-options{ display: none;}
+
+.free-plan-options{
+	.activate-options{
+		display: block;
+		border-top: 1px solid #EFEFEF;
+		padding-top: 8px;
+		text-align: center;
+		margin-top: 8px;
+		div{ padding: 5px;}
+		h2{
+			padding-top: 5px;
+			font-size: 15px;
+			font-weight: bold;
+			padding-bottom: 32px;
+		}
+		.add-more{
+			border-bottom: 1px solid #EFEFEF;
+		}
+	}	
+	#plan_form{
+		display: none;
+	}
+	#billing-template{ 
+		min-height: 0;
+		border: 0;
+		padding: 0; 
+	}
+}
+
 .plans{
-	background:#ededed;
+
+	background:#F8F8F8;
 	border:1px solid #cccccc;
 	table{ width:100%; }
-	td{ vertical-align:top;border:1px solid #dadada;	padding:8px 13px; }
+	td{ 
+		vertical-align:top;
+		border:1px solid #dadada;
+		padding:8px 13px;
+		overflow: hidden;
+		position: relative;
+	}
+		.pricelist:hover{
+			background: rgba(234, 234, 234, 0.33);
+		}
 	.plan-details{ 
-		h2, h4{	text-transform:uppercase; font-weight:bold; }
+		h2, h4{ font-weight:bold; }
 		h2{
-			font-size:22px;
+			font-size:16px;
 			color:$default_txt_color;
 		}
 		h3{
 			font-size:18px;
 			font-weight:normal;
-			padding-bottom:3px;
-		}
-		h4{
-			font-size:14px;
-			color:#5f892c;
-			padding-bottom:6px;
 		}
 		p{
 			font-size:13px;
@@ -4280,7 +4503,11 @@ div.addReminder{
 		p.plan-details{
 			color:#666666;		
 			line-height:1.65em;
-			@include min-height(90px);
+			@include min-height(150px);
+		}
+		.plan-brief{
+			font-size: 11px;
+			padding-bottom: 12px;
 		}
 	}
 	.discount-strikethrough{
@@ -4294,12 +4521,28 @@ div.addReminder{
 		font-size:13px; 
 	}
 	.info-data{
-		font-size:14px;
 		color:$default_txt_color;
 	}
 	.active{
 		border:0px;
-		background-color:#f4fded;
+		background-color:#FFFFDD;
+		top:0; right:0;
+		@include box-shadow(0px 0px 14px 4px #DADADA);
+		overflow: visible;
+		&:hover{
+			background-color:#FFFFDD;
+		}
+
+		&:before {
+			content:"";
+			display: block;
+			height: 6px;
+			position:absolute;
+			top: -7px;
+			left:0;
+			background: #4D3636;
+			width: 100%;
+		}
 		.plan-button{
 			display:none;
 		}
@@ -4312,22 +4555,20 @@ div.addReminder{
 		border-top:1px dotted #afafaf;
 		margin:8px -10px;
 		padding:6px 0px;
-		font-size:14px;
+		min-height: 150px;
 		td{ 
 			border:0px; 
 			vertical-align:middle;
-			padding:3px 10px;
+			padding:4px 5px;
 			input{
 				width:auto !important;
 			}
 		}
-		td.numbers{
-			font-size:18px;
-			text-align:right;
-		}
 		.tr-total td{
 			border-top:1px solid #efefef;
-			vertical-align:top;
+			vertical-align: baseline;
+			font-weight: bold;
+			font-size: 13px;
 			.total{ 
 				font-size:18px;
 				font-weight:bold;
@@ -4758,7 +4999,7 @@ a.close{
    background-image:url('/images/load.gif');
 	background-repeat:no-repeat;
 	background-position: center;
-   table{
+   div{
       visibility:hidden;
    }
 }
@@ -5410,6 +5651,8 @@ a.close{
 	li {
 		margin: 25px 40px 25px 20px;
 		float:left;
+		position: relative;
+		overflow: hidden;
 		a {
 			min-height:26px;
 			display: block;
@@ -5428,6 +5671,18 @@ a.close{
 				@include inset-shadows(rgba(0,0,0, 0.2), 0, 1px, 2px);	
 			}
 		}
+	}
+}
+
+.label-locked-feature{
+	.caption{
+		font-weight: bold;
+		background: url(/images/lock.png) no-repeat center right;
+		background-size: 10px 12px;
+		padding-right: 16px;
+	}
+	.info-data{
+		clear: both;
 	}
 }
 
@@ -6845,6 +7100,13 @@ margin:10px;
 	}
 }
 
+.locked{
+	background: #EEE url(/images/lock.png) no-repeat 5px 8px !important;
+	padding: 6px 6px 6px 22px !important;
+	background-size: 10px 12px !important;
+	cursor: default;
+}
+
 .email-settings-bcc{
 	position: relative;
 	label{
@@ -6865,6 +7127,22 @@ margin:10px;
 		top: 1px;
 		right: 0px;
 	}
+}
+
+.unsupported-message{
+	background: rgba(238, 238, 238, 0.43);
+	font-size: 16px;
+	line-height: 2;
+	a{
+		text-decoration: none;
+		@include link-colors(#336699, #00438a);
+	}
+}
+
+.upgrade-message{
+	float: right;
+	clear : both;
+	color: #369;
 }
 
 /* SURVEY REPORT RELATED STYLES ENDS */
@@ -8690,4 +8968,3 @@ div.db-chooser{
 		float:left; padding-right:20px
 	}
 }
-

@@ -15,6 +15,7 @@ class AccountsController < ApplicationController
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
+  before_filter :validate_custom_domain_feature, :only => [:update]
   
   before_filter :only => [:update, :edit, :delete_logo, :delete_fav, :thanks] do |c| 
     c.requires_permission :manage_users
@@ -239,13 +240,12 @@ class AccountsController < ApplicationController
       render :action => 'new'#, :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
     end
   end
-  
+
   def update
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
-    
     if @account.save
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to admin_home_index_path
@@ -373,8 +373,13 @@ class AccountsController < ApplicationController
     
     def admin_selected_tab
       @selected_tab = :admin
-    end    
-    
+    end   
+
+    def validate_custom_domain_feature
+      unless @account.features?(:cname)
+        params[:account][:main_portal_attributes][:portal_url] = nil
+      end
+    end
     
     def build_metrics
 
