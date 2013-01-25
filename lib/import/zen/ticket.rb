@@ -102,7 +102,7 @@ def ticket_post_process ticket_prop , ticket
   #Attachment
   ticket_prop.attachments.each do |attachment|   
     #Delayed::Job.enqueue Import::Attachment.new(ticket.id , URI.encode(attachment.url), :ticket )
-    Resque.enqueue( Import::Zen::ZendeskAttachmentImport,ticket.id ,URI.encode(attachment.url), :ticket)
+    Resque.enqueue( Import::Zen::ZendeskAttachmentImport,ticket.id ,URI.encode(attachment.url), :ticket, @current_account.id)
   end 
   ticket_prop.comments.each do |comment| 
     user = @current_account.all_users.find_by_import_id(comment.user_id)
@@ -114,7 +114,7 @@ def ticket_post_process ticket_prop , ticket
     @note.save
     comment.attachments.each do |attachment| 
       #Delayed::Job.enqueue Import::Attachment.new(@note.id ,URI.encode(attachment.url), :note)
-      Resque.enqueue( Import::Zen::ZendeskAttachmentImport ,@note.id , URI.encode(attachment.url), :note)
+      Resque.enqueue( Import::Zen::ZendeskAttachmentImport ,@note.id , URI.encode(attachment.url), :note, @current_account.id)
     end
   end
 end
