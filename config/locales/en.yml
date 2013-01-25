@@ -850,7 +850,7 @@ en:
   note: "Note: "
   warning: WARNING
   facebook: Facebook
-  import_user_notification: "Send User activation email while importing "
+  import_user_notification: "You can send the User activation mail for the imported contacts from the Customers tab "
   what_is_cvv: What is cvv?
   pro_details: Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support.
   open: Open
