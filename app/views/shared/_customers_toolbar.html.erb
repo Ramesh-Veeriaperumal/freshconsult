@@ -61,6 +61,9 @@
 		<% if params[:state].eql?("deleted") %>
 			<%= button_to_function(t('contacts.restore'), "validate_then_submit(
 			'#{ path }/restore', 'restore')", :class => "btn", :disabled => "disabled") %>
+		<% elsif params[:state].eql?("blocked")%>
+			<%= button_to_function(t('unblock'), "validate_then_submit(
+			'#{ path }/unblock', 'unblock')", :class => "btn", :disabled => "disabled") %>
 		<% else %> 
 			<%= button_to_function(t('delete'), "delete_customer()", :class => "btn", :disabled => "disabled") %>
 		<% end %>

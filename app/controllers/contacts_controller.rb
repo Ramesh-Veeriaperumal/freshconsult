@@ -13,6 +13,8 @@ class ContactsController < ApplicationController
    include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
+   include RedisKeys
+
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
@@ -87,6 +89,19 @@ class ContactsController < ApplicationController
         format.js
       end
     end
+  end
+
+  def unblock
+    ids = params[:ids] || Array(params[:id])
+    if ids
+      User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
+        [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
+         ids, Time.now.to_s(:db), Time.now.to_s(:db), current_account.id])
+      enqueue_worker(Workers::RestoreSpamTickets, current_account.id, ids)
+      flash[:notice] = t(:'flash.contacts.whitelisted')
+    end
+    redirect_to contacts_path and return if params[:ids]
+    redirect_to contact_path and return if params[:id]
   end
 
   def hover_card

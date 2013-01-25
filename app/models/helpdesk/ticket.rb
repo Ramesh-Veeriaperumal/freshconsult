@@ -212,6 +212,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
 
+  named_scope :spam_created_in, lambda { |user| { :conditions => [ 
+    "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
+
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -306,6 +309,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
+
+  validate_on_create do |ticket|
+    ticket.spam = true if ticket.requester.deleted?
+    if ticket.requester.blocked?
+        Rails.logger.debug "User blocked! No more tickets allowed for this user" 
+        ticket.errors.add_to_base("User blocked! No more tickets allowed for this user")
+    end
+  end
 
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))

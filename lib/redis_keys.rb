@@ -9,6 +9,12 @@ module RedisKeys
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	
+	def enqueue_worker(worker, *args)
+		Resque.enqueue(worker, *args)
+		rescue Exception => e
+			NewRelic::Agent.notice_error(e)
+	end
+
 	def get_key(key)
 		begin
 			$redis.get(key)
