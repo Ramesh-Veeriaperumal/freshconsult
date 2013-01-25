@@ -4,9 +4,9 @@
 
 <div class="contact-box clearfix">
 		<div class="action_buttons">
-			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
+			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) if !@user.blocked? and !@user.spam?%>
 			<%= link_to t('assume_identity_button'), assume_identity_user_path(@user) if is_allowed_to_assume?(@user) %>
-			<%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) if (current_user.admin? && @user.has_email?)%>
+			<%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) if (current_user.admin? && @user.has_email? and !@user.blocked? and !@user.spam?)%>
 		</div>
 		<%= user_avatar(@user, :medium, "profile_pic") %>
 		<h1 class="title"><%= @user.display_name %></h1>
@@ -24,10 +24,11 @@
 			<%= content_tag (:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>") unless @user.fb_profile_id.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
-		<% if @user.deleted || (!@user.active? and @user.has_email?) %>
+		<% if @user.deleted || (!@user.active? and @user.has_email?) || @user.blocked? %>
 		<div class="info-highlight">
-			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? %>
+			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted and !@user.spam?%>
+			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked?%>
+			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }") if @user.blocked? || @user.spam? %>
 		</div>
 		<% end %>
 </div>

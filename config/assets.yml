@@ -74,6 +74,7 @@ stylesheets:
     - public/stylesheets/subscription/bootstrap.css
     - public/stylesheets/subscription/bootstrap-responsive.css
     - public/stylesheets/subscription/subscription.css
+    - public/stylesheets/app/lib/buttons.css
 
   reports:
     - public/stylesheets/app/reports.css
@@ -172,6 +173,8 @@ javascripts:
     - public/javascripts/prototype.js  
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.itoggle.js
   conditional:
     - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
