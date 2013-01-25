@@ -405,7 +405,7 @@ class User < ActiveRecord::Base
           "#{letter}%", state.eql?("deleted")]
       when "blocked"
         [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
-          "#{letter}%", true, Time.now.to_s(:db), true, Time.now.to_s(:db)  ]
+          "#{letter}%", true, 5.days.ago(Time.now).to_s(:db), true, 5.days.ago(Time.now).to_s(:db)  ]
     end                                      
   end
   

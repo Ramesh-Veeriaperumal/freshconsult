@@ -1367,7 +1367,7 @@ en:
     no_contacts: No contacts
     title: Contacts
     emailnotverified: Email has not been verified for this contact!
-    blocked_message: This is a blcoked contact.
+    blocked_message: This is a blocked contact.
     spam_message: This is a spam contact.
     showing: "Showing:"
     info1: Are you sure you want to delete this contact?
