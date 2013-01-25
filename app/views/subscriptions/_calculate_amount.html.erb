@@ -1,37 +1,38 @@
 <% form_tag plan_subscription_url, :id => "plan_form" do %>
-	<table>
-		<tr>
-			<td>
-			  <%= t('agents') %>
-			</td>
-			<td>
-			  <input type="text" size="4" value="<%= @subscription.agent_limit || current_account.agents.count %>" name="agent_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$<%= @subscription.subscription_plan.amount %></b>
-			<br />	  
-			</td>
-		</tr>
-		<tr>
-		  <td>
-		    Billing
-		  </td>
-		  <td>
-	    	<%= select_tag :billing_cycle, options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a, @subscription.renewal_period) %>
-		  </td>
-		</tr>  
-		
-    <tr class="tr-total" id="total-cost">
-    	<td>
-    		<%= content_tag(:h3, t('total_price'), :class => "title") %>
-    	</td>
-    	<td class="numbers">
-    		<b class="total" id="total-cost-per-agent">$<%= amount %></b>
-    	</td>
-    </tr>
-		<tr>
-			<td colspan="2">
-				<input type="hidden" id="plan_id" name="plan_id" value="" />
-					<input name="commit" type="submit" id="commit" class="uiButton" value="<%= (@subscription.state == 'trial')? t('enter_payment') : t('change_my_plan') %>" />
-			</td>
-		</tr>
-	</table>
-<% end %>
+<div class="billing-cost">
+	<dl>
+    <dt><%=t('subscription.billing')%></dt>
+  	<dd><%= select_tag :billing_cycle, options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a, @subscription.renewal_period) %></dd>
+  </dl>
+
+  <dl>
+		<dt> <%= t('agents') %> </dt>
+		<dd>
+		  <input type="text" size="4" value="<%= @subscription.agent_limit || current_account.full_time_agents.count %>" name="agent_limit" id="agents-text-box" class="text" />
+		</dd>
+		  <% if @subscription.free_agents > 0 %>
+	  		<div class="agents-split">
+		  		<dl><dd> <b><%=t('subscription.free')%></b> : <%= @subscription.available_free_agents %> </dd></dl>
+		  		<dl><dd> <b><%=t('subscription.paid')%></b> : <%= @subscription.non_free_agents %> x <span id="cost-per-agent">$<%= @subscription.subscription_plan.amount %></span></dd></dl>
+				</div>
+		  <% else %>
+		  	<dd>x <b id="cost-per-agent">$<%= @subscription.subscription_plan.amount %></b></dd>
+		  <% end %>
+		</dl>
+  <dl class="tr-total" id="total-cost">
+  	<dt>
+  		<%= t('total_price')%>
+  	</dt>
+  	<dd class="numbers">
+  		<h2><b class="total" id="total-cost-per-agent">$<%= amount %></b></h2>
+  	</dd>
+  </tr>
 	
+	<dl><dd>
+		<input type="hidden" id="plan_id" name="plan_id" value="" />
+		<% downgrade_confirm_text = ( @subscription.subscription_plan_id < Subscription.find(current_account.subscription.id).subscription_plan_id ) ? t('downgrade_confirm') : nil%>
+		<input type="submit" class="uiButton billing-cancel" value="Cancel"/>
+		<%= submit_tag( ((@subscription.state == 'trial' and !(@subscription.non_free_agents <= @subscription.free_agents)) ? t('enter_payment') : t('change_my_plan')), :class => "uiButton billing-submit", :id => "commit", :name => "commit", :confirm => downgrade_confirm_text ) %>
+	</dd></dl>
+</div>
+<% end %>	

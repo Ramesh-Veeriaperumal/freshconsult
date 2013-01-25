@@ -188,7 +188,7 @@ class Account < ActiveRecord::Base
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
   validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
   validate :valid_domain?
-  validate :valid_helpdesk_url?
+  validate :valid_helpdesk_url? 
   validate :valid_sso_options?
   validate_on_create :valid_user?
   validate_on_create :valid_plan?
@@ -246,7 +246,7 @@ class Account < ActiveRecord::Base
   end
   
   PLANS_AND_FEATURES = {
-    :basic => { :features => [ :twitter ] },
+    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
@@ -264,7 +264,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :custom_domain, :multiple_emails ],
       :inherits => [ :sprout ]
     },
     
@@ -272,10 +272,31 @@ class Account < ActiveRecord::Base
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
       :inherits => [ :blossom ]
     },
+
     :estate => {
       :features => [ :gamification, :agent_collision ],
       :inherits => [ :garden ]
+    },
+
+    :sprout_classic => {
+      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails ]
+    },
+    
+    :blossom_classic => {
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :inherits => [ :sprout ]
+    },
+    
+    :garden_classic => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :inherits => [ :blossom ]
+    },
+
+    :estate_classic => {
+      :features => [ :gamification, :agent_collision ],
+      :inherits => [ :garden ]
     }
+
   }
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
