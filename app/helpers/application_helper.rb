@@ -507,7 +507,10 @@ module ApplicationHelper
           element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
-        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + select(object_name, field_name, 
+                                              field.choices(@ticket), 
+                                              {:include_blank => "...", :selected => field_value}, 
+                                              {:class => element_class})
       when "nested_field" then
         element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
