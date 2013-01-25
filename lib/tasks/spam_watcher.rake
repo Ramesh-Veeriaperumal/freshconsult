@@ -72,11 +72,11 @@ def check_for_spam(table,column_name, id_limit, threshold)
   return if results.blank?
   puts ":::::::::->#{results.inspect}"
   user_ids = []
-  account_ids = []
-  results.each{ |x| user_ids << x[column_name]; account_ids << x['account_id'] }
+  account_ids = Hash.new
+  results.each{ |x| user_ids << x[column_name]; }
   
   user_sql = <<-eos
-    select id,deleted,deleted_at from users where user_role in (#{User::USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]})
+    select id,deleted,deleted_at, account_id from users where user_role in (#{User::USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]})
     and blocked = 0 and whitelisted = 0 and id in (#{user_ids*","})
   eos
   puts user_sql
@@ -86,7 +86,11 @@ def check_for_spam(table,column_name, id_limit, threshold)
   puts "::::::::#{users.inspect}"
   users.each do |usr|
     blocked_users << usr["id"] if "1".eql?(usr["deleted"]) and (usr["deleted_at"] and Time.zone.parse(usr["deleted_at"]) < 60.minutes.ago(current_time))
-    deleted_users << usr["id"] unless "1".eql?(usr["deleted"])
+    unless "1".eql?(usr["deleted"])
+      deleted_users << usr["id"] 
+      account_ids[usr["account_id"]] << usr["id"] if account_ids[usr["account_id"]]
+      account_ids[usr["account_id"]] = [usr["id"]] unless account_ids[usr["account_id"]]
+    end
   end
   puts "deleted_users::::#{deleted_users.inspect}::::#{deleted_users.blank?}"
   ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}', deleted=0 where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
@@ -94,8 +98,8 @@ def check_for_spam(table,column_name, id_limit, threshold)
   deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 
     :deleted_users => deleted_users, :blocked_users => blocked_users}) unless user_ids.empty?
 
-  accounts = Account.find(:all,:conditions => ["accounts.id in (?)",account_ids])
-  accounts.each do |account|
+  account_ids.keys.each do |account_id|
+    account = Account.find(account_id)    
     puts "::::account->#{account}"
     $redis.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
     puts "deleted_users 1::::::::->#{deleted_users}"
