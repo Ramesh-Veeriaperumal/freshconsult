@@ -30,7 +30,7 @@ class Subscription < ActiveRecord::Base
   after_update :update_features,:send_invoice
   after_update :add_to_crm, :if => :free_customer?
   
-  after_update :update_billing
+  after_update :update_billing, :if => :active?
   after_update :add_card_to_billing, :if => :card_number_changed?
   after_update :activate_paid_customer_in_billing, :if => :card_number_changed?
   after_update :activate_free_customer_in_billing, :if => :free_plan_selected?

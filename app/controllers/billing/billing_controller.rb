@@ -5,9 +5,7 @@ class Billing::BillingController < ApplicationController
   skip_before_filter :set_time_zone, :set_locale, :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
 
-  before_filter :ensure_right_parameters, :retrieve_account, :unless => :ping_event?
-
-  PING_EVENT = "ping"
+  before_filter :ensure_right_parameters, :retrieve_account, :if => :event_monitored?
 
   EVENTS = [ "subscription_renewed", "payment_succeeded" ]
 
@@ -18,7 +16,7 @@ class Billing::BillingController < ApplicationController
 
 
   def trigger
-    send(params[:event_type], params[:content]) if EVENTS.include?(params[:event_type])
+    send(params[:event_type], params[:content]) if event_monitored?
 
     respond_to do |format|
       format.xml { head 200 }
@@ -40,8 +38,8 @@ class Billing::BillingController < ApplicationController
       render :json => ArgumentError, :status => 500 if (Rails.env.production? and !request.ssl?)
     end
 
-    def ping_event?
-      params[:event_type].eql?(PING_EVENT)
+    def event_monitored?
+      EVENTS.include?(params[:event_type])
     end
 
     def ensure_right_parameters
