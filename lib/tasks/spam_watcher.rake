@@ -103,6 +103,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
     puts "::::account->#{account}"
     $redis.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
     puts "deleted_users 1::::::::->#{deleted_users}"
+    deleted_users = account_ids[account_id]
     unless deleted_users.empty?
       puts "deleted_users 2::::::::->#{deleted_users}"
       deleted_users = account.all_users.find(deleted_users)
