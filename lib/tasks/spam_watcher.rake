@@ -37,7 +37,9 @@ def check_for_slave_db
 end
 
 def execute_sql_on_slave(query_str)
-  ActiveRecord::Base.establish_connection(@db_to_connect).connection.select_all(query_str)
+ SeamlessDatabasePool.use_persistent_read_connection do
+  ActiveRecord::Base.connection.select_all(query_str)
+ end
 end
 
 def check_for_users_and_unblock
@@ -139,7 +141,7 @@ def check_for_notes_spam(table,column_name, threshold)
   current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 4891917
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 5891917
     group by #{column_name} having total > #{threshold}
   eos
   requesters = execute_sql_on_slave(query_str)
