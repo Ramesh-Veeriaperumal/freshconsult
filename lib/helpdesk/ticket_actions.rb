@@ -33,8 +33,7 @@ module Helpdesk::TicketActions
     file = Tempfile.new([params[:screenshot][:name]]) 
     file.binmode
     file.write decoded_file
-    attachment = @ticket.attachments.build
-    attachment.content = file
+    attachment = @ticket.attachments.build(:content => file, :account_id => @ticket.account_id)
     file.close
   end
 
@@ -84,7 +83,7 @@ module Helpdesk::TicketActions
       params[:later] = true
       Resque.enqueue(Helpdesk::TicketsExport, params)
       flash[:notice] = t("export_data.mail.info")
-      redirect_to :back
+      redirect_to helpdesk_tickets_path
     else
       csv_tickets_string = Helpdesk::TicketsExport.perform(params)
       send_data csv_tickets_string, 
@@ -280,4 +279,32 @@ module Helpdesk::TicketActions
     @user = current_account.users.new
     render :partial => "contacts/add_requester_form"
   end
+
+  def full_paginate
+    total_entries = params[:total_entries]
+    if(total_entries.blank? || total_entries.to_i == 0)
+      load_cached_ticket_filters
+      load_ticket_filter
+      @ticket_filter.deserialize_from_params(params)
+      joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+      options = { :joins => joins, :conditions => @ticket_filter.sql_conditions, :select => :id}
+      options[:distinct] = true if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+      total_entries = current_account.tickets.permissible(current_user).count(options)
+    end
+    @ticket_count = total_entries.to_i
+  end
+
+  def clear_filter
+    if params[:requester_id]
+      params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
+                            "condition"=>"requester_id", "value"=> params[:requester_id] }]
+
+      @ticket_filter.query_hash = [{"operator"=>"is_in", "condition"=>"requester_id", 
+                                    "value"=> params[:requester_id] }]
+                                    
+      cache_filter_params
+      @requester_id_param = params[:requester_id]
+    end
+  end
+
 end

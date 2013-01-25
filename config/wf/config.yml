@@ -41,6 +41,7 @@ defaults: &defaults
     filter_list:          Wf::Containers::FilterList
     dropdown:             Wf::Containers::TextDelimited
     due_by:               Wf::Containers::DueBy
+    requester:            Wf::Containers::TextDelimited
     
   data_types:             # mapping between data types and containers 
     nil:                  [nil]
@@ -66,6 +67,7 @@ defaults: &defaults
          due_by:             [due_by]
          boolean:            [boolean]
  
+         requester:          [requester]
     
 
   operators:              # operators precedence

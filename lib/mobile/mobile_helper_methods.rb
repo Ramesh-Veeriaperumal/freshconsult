@@ -35,8 +35,11 @@ module Mobile::MobileHelperMethods
     end
 
     def set_mobile
-      Rails.logger.debug "mobile ::: #{mobile?}"
-      params[:format] = "mobile" if mobile?
+      Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
+      if mobile?
+        params[:format] = "mob"
+        params[:format] = "mobile" if request.headers['HTTP_ACCEPT'] && request.headers['HTTP_ACCEPT'].eql?("application/json")
+      end
     end
 
     def require_user_login
@@ -53,7 +56,7 @@ module Mobile::MobileHelperMethods
     end
 
     def redirect_to_mobile_url
-      if !current_user.nil? and mobile? and !"mobile".eql?(params[:format]) and mobile_view?
+      if !current_user.nil? and mobile? and !"mobile".eql?(params[:format]) and !"mob".eql?(params[:format]) and mobile_view?
          redirect_to mobile_url
       end
     end

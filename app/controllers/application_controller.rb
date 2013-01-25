@@ -2,6 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+
+  layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
   
   before_filter :reset_current_account, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
@@ -10,6 +12,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale
 
   rescue_from ActionController::RoutingError, :with => :render_404
+  rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -78,12 +81,44 @@ class ApplicationController < ActionController::Base
   end
 
   def render_404
-     NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
-                                                                  :referer => request.referer,
-                                                                  :request_params => params})
+     # NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
+     #                                                              :referer => request.referer,
+     #                                                              :request_params => params})
     render :file => "#{Rails.root}/public/404.html", :status => :not_found
   end
   
+  def record_not_found (exception)
+    Rails.logger.debug "Error  =>" + exception
+    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
+    respond_to do |format|
+      format.html {
+        unless @current_account
+          render("/errors/invalid_domain")
+        else
+          render_404
+        end
+      }
+      format.xml do 
+        result = {:error=>"Record Not Found"}
+        render :xml =>result.to_xml(:indent =>2,:root=> :errors),:status =>:not_found
+      end
+      format.json do 
+        render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
+      end
+    end
+  end
+
+
+  def handle_error (error)
+    Rails.logger.debug "API::Error  =>" + error
+    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
+    result = {:error => error.message}
+    respond_to do | format|
+      format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
+      format.json { render :json => {:errors =>result}.to_json and return } 
+    end
+  end
+
   protected
     def silence_logging
       @bak_log_level = logger.level 

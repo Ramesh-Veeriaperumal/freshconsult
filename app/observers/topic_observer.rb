@@ -1,7 +1,8 @@
 class TopicObserver < ActiveRecord::Observer
 
 	include Gamification::GamificationUtil
-
+  include ActionController::UrlWriter
+  
 	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
 
 	def before_create(topic)
@@ -29,8 +30,13 @@ class TopicObserver < ActiveRecord::Observer
 		update_forum_counter_cache(topic)
 	end
 
+  def after_create(topic)
+    create_activity(topic, 'new_topic')
+  end
+
 	def after_destroy(topic)
 		update_forum_counter_cache(topic)
+    create_activity(topic, 'delete_topic')
 	end
 
 	def add_resque_job(topic)
@@ -80,5 +86,27 @@ private
   	@topic_changes = topic.changes.clone
   end
 
+  def create_activity(topic, type)
+    topic.activities.create(
+      :description => "activities.forums.#{type}.long",
+      :short_descr => "activities.forums.#{type}.short",
+      :account       => topic.account,
+      :user          => topic.user,
+      :activity_data => { 
+                          :path        => category_forum_topic_path(topic.forum.forum_category_id,
+                                          topic.forum_id, topic.id),
+                          'forum_name' => h(topic.forum.to_s),
+                          :url_params  => { 
+                                            :category_id => topic.forum.forum_category_id, 
+                                            :forum_id => topic.forum_id, 
+                                            :topic_id => topic.id,
+                                            :path_generator => 'category_forum_topic_path'
+                                          },
+                          :title        => h(topic.to_s),
+                          :version      => 2
+                        }
+    )
+  end
+  
 end
 

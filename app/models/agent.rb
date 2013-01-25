@@ -1,7 +1,8 @@
 class Agent < ActiveRecord::Base
   
+  belongs_to_account
   include Notifications::MessageBroker
-  include Gamification::Scoreboard::Memcache #Need to refactor this!
+  include Cache::Memcache::Agent
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
@@ -33,6 +34,7 @@ class Agent < ActiveRecord::Base
   
   before_create :set_default_ticket_permission
   before_update :update_agents_level
+  before_create :set_account_id
 
   after_save  :update_agent_levelup
   after_update :publish_game_notifications
@@ -43,6 +45,7 @@ class Agent < ActiveRecord::Base
     [ :assigned_tickets, 3 ]
   ]
  
+  named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
@@ -76,9 +79,16 @@ end
     user.account.scoreboard_levels.next_level_for_points(points).first
   end
 
-  def clear_leaderboard_cache! #Refactor this code!
-    memcache_delete(user)
-  end
+def signature_htm
+  puts "#{self.signature_html}"
+  self.signature_html
+end
+
+def self.filter(page, state = "active", per_page = 20)
+  paginate :per_page => per_page, :page => page,
+           :include => [ {:user => :avatar} ], 
+           :conditions => { :users => { :deleted  => !state.eql?("active") } }
+end
 
 protected
   
@@ -105,6 +115,10 @@ protected
     if level and ((points ? points : 0) < new_point)
       SupportScore.add_agent_levelup_score(user, new_point)
     end 
+  end
+
+  def set_account_id
+    account_id = user.account_id
   end
 
 end

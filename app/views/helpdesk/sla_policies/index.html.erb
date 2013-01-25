@@ -1,16 +1,5 @@
 <% content_for :sidebar do %>
-	<div class="sidepanel">
-		<h3 class="title"><%=t('sla_policy.title')%></h3>
-			<p>
-				<%=t('sla_policy.info1')%>
-			</p>
-			<p>
-				<%=t('sla_policy.info2')%>
-			</p>
-			<p>
-				<%=t('sla_policy.info3')%>.
-			</p>
-	</div>	
+	<%= render :partial => "helpnote" %>
 <% end %>
 <div class="floatr">
 	<%= (link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "uiButton") if feature?(:customer_slas) %>

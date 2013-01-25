@@ -17,7 +17,7 @@
 		  	<li>
 		  		<%= f.submit t('.login'), { :class => "uiButton"} %>
 				<%if feature?(:signup_link)%>
-				 or <%= link_to( t('signup') , new_support_registration_path)%>
+				 <%= t('or') %> <%= link_to( t('signup') , new_support_registration_path)%>
 				<%end%>
 			</li>
 			<li>

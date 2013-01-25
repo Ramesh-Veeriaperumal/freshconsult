@@ -1,6 +1,7 @@
 class AgentsController < ApplicationController
   include AgentsHelper
   helper AgentsHelper
+  include APIHelperMethods
   
   include Gamification::GamificationUtil
 
@@ -9,10 +10,11 @@ class AgentsController < ApplicationController
 
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update,:destroy,:restore,:edit, :reset_password ]
+  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password ,:convert_to_contact ]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
-  before_filter :check_user_permission, :only => :destroy
+  before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
   before_filter :check_agent_limit, :only =>  :restore
+  before_filter :set_selected_tab
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -20,7 +22,7 @@ class AgentsController < ApplicationController
   end
   
   def check_user_permission
-    if (@agent.user == current_user) || (@agent.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
+    unless can_destroy?(@agent)
       flash[:notice] = t(:'flash.agents.delete.not_allowed')
       redirect_to :back  
     end    
@@ -34,18 +36,19 @@ class AgentsController < ApplicationController
   end
     
   def index    
-    @agents = current_account.agents.list.paginate(:page => params[:page], :per_page => 30)
+    unless params[:query].blank?
+      #for using query string in api calls
+      @agents = current_account.all_agents.with_conditions(convert_query_to_conditions(params[:query])).filter(params[:page], params.fetch(:state, "active")) 
+    else
+      @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
+    end
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @agents }
+      format.xml  { render :xml => @agents.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
+      format.json  { render :json => @agents.to_json({:except=>[:account_id,:google_viewer_id] ,:include=>{:user=>{:only=>[:id,:name,:email,:created_at,:updated_at,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address] }}}) } #Adding the attributes from user as that is what is needed
     end
-  end
-
-  def convert_to_user
-    user = current_account.all_users.first(:include=>:agent, :conditions=>["agents.id=?",params[:id]])
-    user.agent.delete
-    user.user_role=3
-    user.save!
   end
 
   def show    
@@ -150,6 +153,13 @@ class AgentsController < ApplicationController
      
   end
 
+  def convert_to_contact
+      user = @agent.user
+      user.make_customer
+      flash[:notice] = t(:'flash.agents.to_contact')
+      redirect_to contact_path(user)
+  end
+  
   def destroy    
     if @agent.user.update_attribute(:deleted, true)    
        @restorable = true
@@ -203,5 +213,9 @@ class AgentsController < ApplicationController
     flash[:notice] = t('maximum_agents_msg')
     redirect_to :back 
    end
+  end
+
+  def set_selected_tab
+    @selected_tab = :admin
   end
 end

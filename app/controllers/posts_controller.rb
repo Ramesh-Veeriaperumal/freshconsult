@@ -1,4 +1,7 @@
 class PostsController < ApplicationController
+  
+  rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
+
   before_filter :find_forum_topic, :only => :create
   before_filter :find_post,      :except =>  [:monitored, :create]
   #before_filter :login_required, :except => [:index, :monitored, :search, :show]
@@ -75,8 +78,8 @@ class PostsController < ApplicationController
     @post  = @topic.posts.build(params[:post])
     @post.user = current_user
     @post.account_id = current_account.id
+    build_attachments
     @post.save!
-    create_attachments
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
@@ -93,10 +96,10 @@ class PostsController < ApplicationController
     end
   end
   
-   def create_attachments
+   def build_attachments
    return unless @post.respond_to?(:attachments)
     (params[:post][:attachments] || []).each do |a|
-      @post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+      @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
     end
   end
   
@@ -121,7 +124,7 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    flash[:notice] = "Post of '{title}' was deleted."[:post_deleted_message, @post.topic.title]
+    flash[:notice] = I18n.t('flash.post.deleted')[:post_deleted_message, h(@post.topic.title)]
     respond_to do |format|
       format.html do
         redirect_to(@post.topic.frozen? ? 
@@ -177,4 +180,10 @@ class PostsController < ApplicationController
         format.xml  { render :xml => @posts.to_xml }
       end
     end
+
+    def RecordNotFoundHandler
+      flash[:notice] = I18n.t(:'flash.post.page_not_found')
+      redirect_to categories_path
+    end
+    
 end

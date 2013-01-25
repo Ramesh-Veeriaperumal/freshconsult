@@ -80,7 +80,8 @@ LogMeInWidget.prototype= {
 	assignTechnicianTicket:function(response){
 		response = response.responseText;
 		if(response.indexOf('OK') >= 0){
-			logmeinWidget.techlink = response.substr(3);
+			//logmeinWidget.techlink = response.substr(3);
+			logmeinWidget.techlink = response.split("OK:")[1];
 			this.renderTechConsole(logmeinWidget.techlink, logmeinBundle.pincode, logmeinBundle.pinTime);
 			jQuery("#logmein_widget").removeClass('loading-fb');
 			if(logmeinBundle.pincode != ""){
@@ -97,10 +98,10 @@ LogMeInWidget.prototype= {
 	},
 
 	processPincode:function(response){	
-		if(response.responseText.substr(0,2) == 'OK') {
+		if(response.responseText.indexOf('OK') >= 0) {
 			jQuery('#pinsubmit').prop('value', 'New Remote Session');
 			jQuery('#pinsubmit').removeAttr('disabled');
-			pincode = response.responseText.substr(12);
+			pincode = response.responseText.split("PINCODE:")[1].slice(0,-1);
 			logmeinBundle.pincode = pincode;
 			logmeinBundle.pinTime = "";
 			if(pincode != ""){
@@ -130,7 +131,8 @@ LogMeInWidget.prototype= {
 	authcodeSuccess: function(response){
 		response = response.responseText;
 		if(response.indexOf('OK') >= 0){
-			logmeinBundle.authcode = response.substring(13);
+			//logmeinBundle.authcode = response.substring(13);
+			logmeinBundle.authcode = response.split("AUTHCODE:")[1].slice(0,-1);
 			this.updateAuthcode();
 			this.generatePincode();
 		}

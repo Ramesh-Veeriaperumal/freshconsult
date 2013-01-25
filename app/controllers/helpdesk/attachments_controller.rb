@@ -72,11 +72,18 @@ class Helpdesk::AttachmentsController < ApplicationController
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
         return (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-          (current_user.client_manager?  && ticket.requester.customer == current_user.customer)))
+          (current_user.client_manager?  && ticket.requester.customer == current_user.customer))) || 
+          (params[:access_token] && ticket.access_token == params[:access_token])
   
       # Is the attachment on a solution  If so, it's always downloadable.
-      
-      elsif ['Solution::Article', 'Post', 'Account', 'Portal'].include? @attachment.attachable_type
+
+      elsif ['Solution::Article'].include? @attachment.attachable_type
+        return true if permission?(:manage_knowledgebase)
+        return @attachment.attachable.folder.visible?(current_user) 
+      elsif ['Post'].include? @attachment.attachable_type      
+        return true if permission?(:manage_forums)
+        return @attachment.attachable.forum.visible?(current_user)     
+      elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
         return true if permission?(:manage_users)

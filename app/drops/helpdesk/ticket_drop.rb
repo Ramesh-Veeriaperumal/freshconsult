@@ -38,7 +38,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def requester_status_name
-		Helpdesk::TicketStatus.translate_status_name(@source.ticket_status, "customer_display_name")
+		@source.requester_status_name
 	end
 
 	def priority
@@ -67,6 +67,12 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	def url
 		helpdesk_ticket_url(@source, :host => @source.account.host, :protocol=> @source.url_protocol)
+	end
+
+	def public_url
+		@source.populate_access_token if @source.access_token.blank?
+
+		public_ticket_url(@source.access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
 	end
 
 	def portal_url

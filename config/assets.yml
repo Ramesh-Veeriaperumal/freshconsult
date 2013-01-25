@@ -10,25 +10,38 @@ stylesheets:
     - public/stylesheets/print/print.css
 
   common:
-    - public/stylesheets/app/lib/defaults.css
-    - public/stylesheets/app/lib/layout.css
-    - public/stylesheets/app/lib/validation.css
-    - public/stylesheets/app/lib/table.css
+    - public/stylesheets/app/lib/validation.css    
     - public/stylesheets/app/lib/autocomplete.css
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
 
   app:
-    - public/stylesheets/app/app-common.css
-    - public/stylesheets/app/admin.css
-    - public/stylesheets/app/app-bootstrap.css
-    - public/stylesheets/app/lib/form.css
-    - public/stylesheets/app/lib/buttons.css
     - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/lib/select2.css    
     - public/stylesheets/app/satisfaction.css
     - public/stylesheets/app/gamification.css
     - public/stylesheets/app/lib/hacks.css
     - public/stylesheets/app/lib/ie.css
+
+  # !PATTERN TODO These css files will be migrated in to the pattern library at a later point
+  non_pattern_1:
+    - public/stylesheets/app/lib/defaults.css
+    - public/stylesheets/app/lib/layout.css
+    - public/stylesheets/app/lib/table.css
+    - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/admin.css
+
+  non_pattern_2:
+    - public/stylesheets/app/app-bootstrap.css
+    - public/stylesheets/app/lib/form.css
+    - public/stylesheets/app/lib/buttons.css
+
+  pattern:
+    - public/stylesheets/pattern/pattern.css
+
+  tour_my_app:
+    - public/stylesheets/app/tourmyapp.css
+    - public/stylesheets/app/lib/gritter.css
 
   notifications:
     - public/stylesheets/app/lib/gritter.css
@@ -86,6 +99,7 @@ javascripts:
     - public/javascripts/application.js
   frameworks:
     - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.cookie.js
@@ -101,14 +115,19 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/socket.io.js
   visitor:
     - public/javascripts/frameworks/session.js            
-  workspace: 
-    - public/javascripts/bootstrap/*.js
+  workspace:  
+    - public/javascripts/bootstrap/twipsy.js
+    - public/javascripts/bootstrap/modal.js
+    - public/javascripts/bootstrap/tabs.js
+    - public/javascripts/bootstrap/popover.js
     - public/javascripts/dyn_menu.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
@@ -117,6 +136,20 @@ javascripts:
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
+    - public/javascripts/navsearch.js
+  pattern:
+    - public/javascripts/pattern/bootstrap-affix.js
+    # - public/javascripts/pattern/bootstrap-alert.js
+    - public/javascripts/pattern/bootstrap-button.js
+    # - public/javascripts/pattern/bootstrap-carousel.js
+    # - public/javascripts/pattern/bootstrap-collapse.js
+    - public/javascripts/pattern/bootstrap-dropdown.js
+    # - public/javascripts/pattern/bootstrap-modal.js
+    # - public/javascripts/pattern/bootstrap-scrollspy.js
+    - public/javascripts/pattern/bootstrap-transition.js
+    - public/javascripts/pattern/bootstrap-tab.js
+    #- public/javascripts/pattern/bootstrap-tooltip.js    
+    # - public/javascripts/pattern/bootstrap-popover.js
   timesheet:
     - public/javascripts/timesheet.js
   freshwidget:
@@ -159,6 +192,47 @@ javascripts:
     - public/javascripts/notifications.js
   excanvas:
     - public/javascripts/excanvas.js
+  freshdesk:
+    - public/javascripts/prototype.js
+    - public/javascripts/effects.js
+    - public/javascripts/dragdrop.js
+    - public/javascripts/controls.js
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery.pjax.js
+    - public/javascripts/frameworks/sprintf.js
+    - public/javascripts/frameworks/plugins/jquery.chosen.js
+    - public/javascripts/frameworks/plugins/jquery.cookie.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.noblecount.js
+    - public/javascripts/frameworks/plugins/jquery.overlabel.js
+    - public/javascripts/frameworks/plugins/jquery.pageless.js
+    - public/javascripts/frameworks/plugins/jquery.qtip.js
+    - public/javascripts/frameworks/plugins/jquery.tinymce.js
+    - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
+    - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/frameworks/plugins/jquery.itoggle.js
+    - public/javascripts/frameworks/plugins/jquery.ui.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/hackz.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/session.js            
+    # - public/javascripts/bootstrap/*.js
+    - public/javascripts/dyn_menu.js
+    - public/javascripts/utils.js
+    - public/javascripts/fast_autocompleter.js    
+    - public/javascripts/humane.js
+    - public/javascripts/factory_ui.js
+    - public/javascripts/lib/json2.js
+    - public/javascripts/globalinit.js
+    - public/javascripts/navsearch.js
+    - public/javascripts/jquery.gritter/jquery.gritter.js
+    - public/javascripts/requestAnimFrame.js
+    - public/javascripts/notifications.js
+    - public/javascripts/application.js
+
   gs_defaults: 
     - public/javascripts/prototype.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js

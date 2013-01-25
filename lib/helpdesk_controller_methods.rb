@@ -22,17 +22,19 @@ module HelpdeskControllerMethods
     #create_attachments 
     flash.now[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     process_item #    
+    options = {}
+    options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
     #redirect_back_or_default redirect_url
     respond_to do |format|
       format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
-      format.xml  { render :xml => @item, :status => :created, :location => url_for(@item) }
+      format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
       format.mobile {
         render :json => {:success => true,:item => @item}.to_json
       }
       format.json { 
-        render :json => @item.to_json
+        render :json => @item.to_json(options)
       }
     end
   end
@@ -74,6 +76,7 @@ module HelpdeskControllerMethods
       end
     end
     
+    options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}
     respond_to do |expects|
       expects.html do 
         process_destroy_message  
@@ -81,6 +84,8 @@ module HelpdeskControllerMethods
       end
       expects.json  { render :json => :deleted}
       expects.js { after_destory_js }
+      #until we impl query based retrieve we show only limited data on deletion.
+      expects.xml{ render :xml => @items.to_xml(options)}
     end
 
   end
@@ -89,11 +94,17 @@ module HelpdeskControllerMethods
     @items.each do |item|
       item.update_attribute(:deleted, false)
     end
+    options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}
 
-    flash[:notice] = render_to_string(
-      :partial => '/helpdesk/shared/flash/restore_notice')
-
-    redirect_to after_restore_url
+    respond_to do |result|
+      result.html{
+        flash[:notice] = render_to_string(
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
+        redirect_to after_restore_url 
+      }
+      result.xml {  render :xml => @items.to_xml(options) }
+      result.json {  render :json => @items.to_json(options) }
+    end
   end
 
   def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan
@@ -201,34 +212,6 @@ protected
     end
   end
 
-  def validate_attachment_size 
-    fetch_item_attachments if @item.is_a? Helpdesk::Note and @item.fwd_email?
-    total_size = (params[:helpdesk_note][:attachments] || []).collect{|a| a[:resource].size}.sum
-    if total_size > Helpdesk::Note::Max_Attachment_Size    
-      flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
-      redirect_to :back  
-    end
-  end
-
-  def fetch_item_attachments
-    (params[nscname][:attachments] || []).each do |a|
-      begin
-        if a[:resource].is_a?(String) and Integer(a[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
-          attachment_obj = current_account.attachments.find_by_id(a[:resource])
-          url = attachment_obj.authenticated_s3_get_url
-          io = open(url)
-          if io
-            def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-          end
-          a[:resource] = io
-        end
-        rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        Rails.logger.error("Error while fetching item attachments using ID")
-      end
-    end
-  end
-
   def item_url 
     @item
   end
@@ -242,9 +225,8 @@ protected
   end
   
   def after_restore_url
+    return :back if params[:redirect_back] or @items.size>1
     return @items.first if @items.size == 1
-    
-    :back
   end
 
   def add_to_history(item = false, cls = false)
@@ -279,5 +261,24 @@ protected
     Thread.current["notifications_#{@current_account.id}"] = nil
   end
 
+  def fetch_item_attachments
+    return unless @item.is_a? Helpdesk::Note and @item.fwd_email?
+    (params[nscname][:attachments] || []).each do |a|
+      begin
+        if a[:resource].is_a?(String) and Integer(a[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
+          attachment_obj = current_account.attachments.find_by_id(a[:resource])
+          url = attachment_obj.authenticated_s3_get_url
+          io  = open(url)
+          if io
+            def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+          end
+          a[:resource] = io
+        end
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
+          Rails.logger.error("Error while fetching item attachments using ID")
+      end
+    end
+  end
 
 end

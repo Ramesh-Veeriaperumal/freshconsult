@@ -9,7 +9,7 @@ gem "html2textile", "~> 1.0.0.beta1"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
-gem "httparty", "0.6.1"
+gem "httparty", "0.10.0"
 gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "rufus-scheduler", :require =>"rufus/scheduler"
@@ -20,6 +20,9 @@ gem "omniauth-openid"
 gem "omniauth-google"
 gem "omniauth-facebook"
 gem "omniauth-salesforce"
+gem "omniauth-mailchimp", "~> 1.0.3"
+gem "omniauth-constantcontact2", "~> 1.0.4"
+gem "nori", "1.1.4"
 
 gem "jira4r", "0.3.0"
 gem "ruby-openid", "2.1.8", :require => "openid"
@@ -46,11 +49,12 @@ gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/s
 # This tinymce vendor plugin is update with the tinymce verion 3.4.7
 gem "tiny_mce", "0.1.9", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/tiny_mce-0.1.9"
 gem "jammit", "0.6.5"
+gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
-gem "newrelic_rpm","3.0.0"
+gem "newrelic_rpm","3.5.3.25"
 
 gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
 gem "sanitize", "2.0.3"
@@ -71,7 +75,10 @@ gem 'resque-retry', "0.2.2"
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
-gem 'after_commit', "~> 1.0.10"
+
+gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
+gem 'after_commit', :git => "git://github.com/freshdesk/after_commit.git"
+gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
@@ -88,6 +95,8 @@ end
 group :assets do
 	gem "sass", "3.2.1"
 	gem "compass-rails"
+	# Portal grid system is done using susy grids
+	gem "susy" 
 end
 
 

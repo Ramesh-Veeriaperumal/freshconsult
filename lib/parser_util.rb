@@ -6,7 +6,7 @@ module ParserUtil
 VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
 
 	def parse_email_text(email_text)
-		if email_text =~ /(.+) <(.+?)>/
+		if email_text =~ /"?(.+?)"?\s+<(.+?)>/
         	{:name => $1, :email => $2}
       	elsif email_text =~ /<(.+?)>/
        		{:name => "", :email => $1}
@@ -34,8 +34,11 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
       if email_array.is_a? String
         email_array = email_array.split(/,|;/)
       end
-      email_array = email_array.collect {|email|  scan_for_valid_email(email)}.compact
-      email_array = email_array.uniq
+      email_array = email_array.collect do |email|  
+        scanned_email = scan_for_valid_email(email)
+        scanned_email.strip if scanned_email
+      end
+      email_array = email_array.compact.uniq
     else
       email_array = []
     end

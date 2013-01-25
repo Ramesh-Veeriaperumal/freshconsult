@@ -8,6 +8,10 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :topic
   
+  has_many :activities, 
+    :class_name => 'Helpdesk::Activity', 
+    :as => 'notable'
+
   named_scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
 
@@ -16,11 +20,8 @@ class Post < ActiveRecord::Base
         :conditions => ["posts.user_id = ? and posts.user_id != topics.user_id", user.id ] 
       }
   }
-
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  
+  has_many_attachments
 
   #format_attribute :body
   
@@ -41,6 +42,10 @@ class Post < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
+  end
+
+  def to_s
+    topic.title
   end
   
 end

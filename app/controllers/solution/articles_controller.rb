@@ -22,13 +22,12 @@ class Solution::ArticlesController < ApplicationController
     @article = current_account.solution_articles.find(params[:id], :include => :folder) 
     wrong_portal and return unless(main_portal? || 
         (@article.folder.category_id == current_portal.solution_category_id))
-    
-    @page_title = @article.title
-    @page_description = "#{@article.title}. #{@article.folder.name}. #{@article.folder.category.name}" 
-    @page_keywords = @article.tags.join(", ")
+    @page_title = @article.article_title
+    @page_description = @article.article_description
+    @page_keywords = @article.article_keywords
         
     respond_to do |format|
-      format.html
+      format.html { @page_canonical = solution_category_folder_article_url(@article.folder.category, @article.folder.id, @article) }
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
       format.json  { render :json => @article.to_json(:include => {:folder => {:except => [:is_default]}}) }
     end    
@@ -61,10 +60,10 @@ class Solution::ArticlesController < ApplicationController
 
    redirect_to_url = @article
    redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
-   
+   build_attachments
+   set_solution_tags
    respond_to do |format|
       if @article.save
-        post_persist 
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
@@ -81,10 +80,11 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    @article = current_account.solution_articles.find(params[:id])     
+    @article = current_account.solution_articles.find(params[:id]) 
+    build_attachments
+    set_solution_tags    
     respond_to do |format|    
        if @article.update_attributes(params[nscname])  
-          post_persist
           format.html { redirect_to @article }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
        else
@@ -117,19 +117,6 @@ class Solution::ArticlesController < ApplicationController
 
       
   end
-
-def post_persist
-  
-  create_attachments
-  set_solution_tags
-  
-end
- def create_attachments
-    return unless @article.respond_to?(:attachments)
-    (params[nscname][:attachments] || []).each do |a|
-      @article.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @article.account_id)
-    end
-  end
   
 protected
 
@@ -137,6 +124,12 @@ protected
     eval "Solution::#{cname.classify}"
   end
 
+ def build_attachments
+    return unless @article.respond_to?(:attachments)
+    (params[nscname][:attachments] || []).each do |a|
+      @article.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @article.account_id)
+    end
+  end
   
   def reorder_scoper
     current_account.solution_articles.find(:all, :conditions => {:folder_id => params[:folder_id] })

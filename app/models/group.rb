@@ -1,5 +1,11 @@
 class Group < ActiveRecord::Base
   
+  include Cache::Memcache::Group
+
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
+  after_commit_on_update :clear_cache
+
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   
@@ -48,6 +54,21 @@ class Group < ActiveRecord::Base
       "name"  => name,
       "assign_time_mins" => (assign_time || 0).div(60)
     }
+  end
+
+  def to_xml(options ={})
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    #options for the user which is included within the groups as agents is set for root node.
+    super(:builder=>xml, :skip_instruct => options[:skip_instruct],:include=>{:agents=>{:root=>'agent',:skip_instruct=>true}},:except=>[:account_id,:import_id,:email_on_assign])
+  end
+
+  def to_json(options = {})
+    #options for user which is included within the groups as agents
+    options ={:except=>[:account_id,:email_on_assign,:import_id] ,:include=>{:agents=>{:only=>[:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address] }}}
+    super options
   end
   
 end

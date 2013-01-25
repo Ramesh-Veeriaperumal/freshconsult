@@ -1,0 +1,46 @@
+<%
+	campaign_apps=[:mailchimp, :constantcontact, :icontact, :campaignmonitor]
+	installed_apps = []
+	contact_id = contact.id unless contact.blank?
+
+	current_account.installed_applications.each{ |installed_app|
+  	app = installed_app.application
+  	installed_apps.push(app.name.to_sym) if campaign_apps.include?(app.name.to_sym)
+  }
+  
+	if installed_apps.length > 0 %>
+	<span class="email_marketing_apps">
+		<% if installed_apps.length > 1 %>
+				<a class="drop-right nav-trigger" href="#" menuid= "#app-menu-<%=contact_id%>">
+			    <%= "Email Marketing" %> 
+			  </a>
+			  <div class="email-apps">
+					<div class="fd-menu" id="app-menu-<%=contact_id%>" style="display:none;">
+					  <ul>             
+					     <% installed_apps.each do |iapp| %>       
+					       <% content_tag :li do %>
+					       		<%= link_to_function( Integrations::Constants::APP_NAMES[iapp], "displayAsModal('#{Integrations::Constants::APP_NAMES[iapp]}')", :class => Integrations::Constants::APP_NAMES[iapp].downcase + '-logo') %>
+					       <% end %>
+					     <% end %>
+					  </ul>
+					</div>
+				</div>
+		<% else %>
+			<% iapp = Integrations::Constants::APP_NAMES[installed_apps[0]] %>
+			<%= link_to_function( image_tag("/images/application-logo/#{iapp.downcase}.png", :title => iapp + " Activity", :height => 30, :width => 80), "displayAsModal('#{iapp}')" ) %>
+		<% end %>
+		</span>
+	<% end
+%>
+
+<% javascript_tag do %>
+	displayAsModal = function(app) {
+		var contact_title = cw.title[app.toLowerCase()] || "<%= contact.name %>";
+		jQuery('#' + app + '_widget .parent-tmpl, #' + app + '_widget .email_marketing').removeClass('hide');
+	  jQuery('#' + app.toLowerCase() + '_widget').dialog({ 
+      show: "slide",
+      title: contact_title, 
+      width: '600px', height: 'auto', modal: true, resizable: false 
+    });
+	}
+<% end %>

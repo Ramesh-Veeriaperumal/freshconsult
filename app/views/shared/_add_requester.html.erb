@@ -1,9 +1,10 @@
-<div class="add_requester_button">
-  <%= link_to t('add_new_requester'), add_requester_helpdesk_tickets_path,  :class => "dialog2", :id => "add_requester_btn", :title => t('contacts.add_new_requester'), "data-width" => "500" %>
-</div>
+
+   or  <%= link_to t('add_new_requester'), add_requester_helpdesk_tickets_path, :class => "add_requester_button dialog2", :id => "add_requester_btn", :title => t('contacts.add_new_requester'), "data-width" => "500" %>
 <% javascript_tag do %>
 
-jQuery("#add_requester_btn").click( function() {
+jQuery("#add_requester_btn").click( function(ev) {
+
+	ev.preventDefault();
   if(jQuery("#add_requester_form").length) {
     
     /* reset the form and error messages div */

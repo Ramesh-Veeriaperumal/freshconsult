@@ -2,8 +2,8 @@
 # overrides AuthenticatedSystem methods to use browser-based
 # authentication rather using a login form.
 module AdminControllerMethods
-  
-  def self.included(base)
+
+   def self.included(base)
     base.send :prepend_before_filter, :check_admin_subdomain
     base.send :skip_before_filter, :set_time_zone
     base.send :skip_before_filter, :set_locale
@@ -13,6 +13,10 @@ module AdminControllerMethods
     base.send :layout, "subscription_admin"
     base.send :prepend_before_filter,:login_from_basic_auth
     base.send :prepend_before_filter,:set_time_zone
+    base.class_eval do
+      include SeamlessDatabasePool::ControllerFilter
+      use_database_pool :all => :persistent
+    end
   end
   
   protected
@@ -49,11 +53,11 @@ module AdminControllerMethods
        #logger.debug "LOGIN FROM BASIC AUTH called in AdminControllerMethods..."
        authenticate_or_request_with_http_basic do |username, password|
          # This has to return true to let the user in
-         if password == 'X'
-           username == ''
+         if Rails.env.production?
+            username == 'freshdesk' && Digest::MD5.hexdigest(password) == "8fb52088220a703c6e478392802815ce"
          else
-           username == 'freshdesk' && password == '1M5MUSD40$'
-        end
+            username == 'freshdesk' && password == "USD40$" 
+         end
        end
      end
 

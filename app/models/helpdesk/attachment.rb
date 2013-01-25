@@ -25,13 +25,21 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
     
-   
+ named_scope :gallery_images,  
+    {
+      :conditions => ['description = ? and attachable_type = ?', 
+      'public', 'Image Upload'],
+      :order => "created_at DESC",
+      :limit => 20
+    }
+
  
   
     #before_validation_on_create :set_random_secret
     before_post_process :image?
     #before_post_process :set_content_dispositon
     before_create :set_content_type
+    before_save :set_account_id
 
    def s3_permissions
     public_permissions? ? "public-read" : "private"
@@ -96,6 +104,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def lookup_by_extension(extension)
     MIME_TYPE_MAPPING[extension]
+  end
+
+  def set_account_id
+    self.account_id = attachable.account_id if attachable
   end
   
 

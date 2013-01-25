@@ -17,7 +17,10 @@ if (typeof RELANG === 'undefined')
 {
 	var RELANG = {};
 }
-
+//⌘⇧7
+var ctrlkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⌘" : "Ctrl-"
+var shiftkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⇧" : "Shift-"
+var altkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "-Alt-" : "Alt-"
 var RLANG = {
 	html: 'HTML',
 	video: 'Insert Video...',
@@ -34,14 +37,16 @@ var RLANG = {
 	header2: 'Header 2',
 	header3: 'Header 3',
 	header4: 'Header 4',
-	bold:  'Bold',
-	italic: 'Italic',
+	bold:  'Bold (' + ctrlkeyname + 'B)',
+	italic: 'Italic (' + ctrlkeyname + 'I)',
 	fontcolor: 'Font Color',
+	fontname: 'Font',
+	fontsize: 'Font Size',
 	backcolor: 'Back Color',
-	unorderedlist: 'Unordered List',
-	orderedlist: 'Ordered List',
-	outdent: 'Outdent',
-	indent: 'Indent',
+	unorderedlist: 'Unordered List (' + ctrlkeyname + shiftkeyname + '7)',
+	orderedlist: 'Ordered List (' + ctrlkeyname + shiftkeyname + '8)',
+	outdent: 'Outdent (' + shiftkeyname + 'Tab)',
+	indent: 'Indent (Tab)',
 	cancel: 'Cancel',
 	insert: 'Insert',
 	save: 'Save',
@@ -63,26 +68,30 @@ var RLANG = {
 	none: 'None',
 	left: 'Left',
 	right: 'Right',
-	image_web_link: 'Image Web Link',
+	image_web_link: 'Image URL',
 	text: 'Text',
 	mailto: 'Email',
 	web: 'URL',
-	video_html_code: 'Video Embed Code',
+	video_html_code: 'Enter the video embed code, copied from popular websites like YouTube, Vimeo etc. here',
 	file: 'Insert File...',	
 	upload: 'Upload',
 	download: 'Download',
-	choose: 'Choose',
+	choose: 'Select Existing',
+	choose_text: 'Showing recent 20 images',
 	or_choose: 'Or choose',
-	drop_file_here: 'Drop file here',
-	align_left:	'Align Left',	
-	align_center: 'Align Center',
-	align_right: 'Align Right',
-	align_justify: 'Justify',
+	drop_file_here: 'Drop and Drop Image file here to upload',
+	align_left:	'Align Left (' + ctrlkeyname + shiftkeyname + 'L)',	
+	align_center: 'Align Center (' + ctrlkeyname + shiftkeyname + 'E)',
+	align_right: 'Align Right (' + ctrlkeyname + shiftkeyname + 'R)',
+	align_justify: 'Justify (' + ctrlkeyname + shiftkeyname + 'J)',
 	horizontalrule: 'Insert Horizontal Rule',
-	deleted: 'Deleted',
-	underline: 'Underline',
+	deleted: 'Strikethrough',
+	underline: 'Underline (' + ctrlkeyname + 'U)',
 	anchor: 'Anchor',
-	link_new_tab: 'Open link in new tab'
+	link_new_tab: 'Open link in new tab',
+	removeFormat: 'Remove formatting (' + ctrlkeyname + '\\)',
+	invalid_image_file: 'Please upload a valid image file',
+	confirm_remove_format_for_entire_content: 'Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?'
 };
 
 
@@ -156,19 +165,36 @@ var Redactor = function(element, options)
 		observeImages: true,
 		overlay: true, // modal overlay
 		
-		allowedTags: ["code", "span", "div", "label", "a", "br", "p", "b", "i", "del", "strike", 
-				"img", "video", "audio", "iframe", "object", "embed", "param", "blockquote", 
-				"mark", "cite", "small", "ul", "ol", "li", "hr", "dl", "dt", "dd", "sup", "sub", 
-				"big", "pre", "code", "figure", "figcaption", "strong", "em", "table", "tr", "td", 
-				"th", "tbody", "thead", "tfoot", "h1", "h2", "h3", "h4", "h5", "h6"],
+		allowedTags: ["code", "span", "div", "a", "br", "p", "b", "i", "del", "strike", "u",
+					"img", "video", "audio", "iframe", "object", "embed", "param", "blockquote",
+					"mark", "cite", "small", "ul", "ol", "li", "hr", "dl", "dt", "dd", "sup", "sub",
+					"big", "pre", "code", "figure", "figcaption", "strong", "em", "table", "tr", "td",
+					"th", "tbody", "thead", "tfoot", "h1", "h2", "h3", "h4", "h5", "h6", "abbr", "acronym",
+					"address", "dfn", "kbd", "ins", "q", "s", "samp", "tt", "canvas", "details", "figure", 
+					"figcaption", "output", "section", "summary", "time", "mark", "audio", "video"],
 		
 		buttonsCustom: {},
 		buttonsAdd: [],
-		buttons: ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', 'underline', '|', 'unorderedlist', 'orderedlist', 'outdent', 'indent', '|',
-				'image', 'video', 'file', 'table', 'link', '|',
-				'fontcolor', 'backcolor', '|', 'alignleft', 'aligncenter', 'alignright', 'justify', '|', 'horizontalrule'],
+		buttons: ['formatting', 'fontname', 'fontsize', 
+				'fontcolor', 'backcolor', 'bold', 'italic', 'underline', 'deleted', '|', 'alignleft', 'aligncenter', 'alignright', 'justify', 
+				'|', 'unorderedlist', 'orderedlist', 'indent', 'outdent', '|', 'link', 'table', 'image', 'video', 'file', 'horizontalrule',  '|', 
+				'removeFormat', '|', 'html',],
 
 		airButtons: ['formatting', '|', 'bold', 'italic', 'deleted', '|', 'unorderedlist', 'orderedlist', 'outdent', 'indent', '|', 'fontcolor', 'backcolor'],
+
+		activeButtons: ['deleted', 'italic', 'bold', 'underline', 'unorderedlist', 'orderedlist', 'alignleft', 'aligncenter', 'alignright', 'justify'],
+		
+		activeButtonsStates: {
+			b: 'bold',
+			strong: 'bold',
+			i: 'italic',
+			em: 'italic',
+			del: 'deleted',
+			strike: 'deleted',
+			ul: 'unorderedlist',
+			ol: 'orderedlist',
+			u: 'underline'
+		},
 
 		colors: [
 			'#ffffff', '#000000', '#eeece1', '#1f497d', '#4f81bd', '#c0504d', '#9bbb59', '#8064a2', '#4bacc6', '#f79646', '#ffff00',
@@ -177,7 +203,14 @@ var Redactor = function(element, options)
 			'#a5a5a5', '#262626', '#494429', '#17365d', '#366092', '#953734', '#76923c', '#5f497a', '#92cddc', '#e36c09', '#c09100',
 			'#7f7f7f', '#0c0c0c', '#1d1b10', '#0f243e', '#244061', '#632423', '#4f6128', '#3f3151', '#31859b', '#974806', '#7f6000',
 			'#808080',  '#00CCFF', '#0000FF', '#3366FF', '#666699','#FF0000', '#339966',   '#800080', '#33CCCC', '#008080', '#FF9900'],
-
+		fontnames: [
+			'Arial', 'Verdana', 'Helvetica', "Helvetica Neue", 'Arial Black', 'Impact', 'Tahoma', 'Trebuchet MS',
+			'Terminal', 'Courier New', 'Comic Sans MS', 'Andale Mono', 'Georgia', 'Book Antiqua', 'Times New Roman',
+			'Symbol', 'Webdings', 'Windings'],
+		fontsizes: [2, 4, 5, 6, 7],
+		fontsize_levels: {2:10, 4:13, 5:18, 6:24, 7:36},
+		fontsize_levels_reverse: {'10px':2, '13px':4, '18px':5, '24px':6, '36px':7},
+		fontsize_naming: ['Tiny', 'Small', 'Medium', 'Large', 'Huge'],
 		// private
 		allEmptyHtml: '<p><br /></p>',
 		mozillaEmptyHtml: '<p>&nbsp;</p>',
@@ -187,7 +220,7 @@ var Redactor = function(element, options)
 		// modal windows container
 		modal_file: String() + 
 			'<form id="redactorUploadFileForm" method="post" action="" enctype="multipart/form-data">' +
-				'<label>Name (optional)</label>' +
+				'<label for="redactor_filename">Name (optional)</label>' +
 				'<input type="text" id="redactor_filename" class="redactor_input" />' +
 				'<div style="margin-top: 7px;">' +
 					'<input type="file" id="redactor_file" name="file" />' +
@@ -195,21 +228,21 @@ var Redactor = function(element, options)
 			'</form>',
 
 		modal_image_edit: String() + 
-			'<label>' + RLANG.title + '</label>' +
+			'<label for="redactor_file_alt">' + RLANG.title + '</label>' +
 			'<input id="redactor_file_alt" class="redactor_input" />' +
-			'<label>' + RLANG.link + '</label>' +
+			'<label for="redactor_file_link">' + RLANG.link + '</label>' +
 			'<input id="redactor_file_link" class="redactor_input" />' +
-			'<label>' + RLANG.image_position + '</label>' +
+			'<label for="redactor_form_image_align">' + RLANG.image_position + '</label>' +
 			'<select id="redactor_form_image_align">' +
 				'<option value="none">' + RLANG.none + '</option>' +
 				'<option value="left">' + RLANG.left + '</option>' +
 				'<option value="right">' + RLANG.right + '</option>' +
 			'</select>' +
 			'<div id="redactor_modal_footer">' +
-				'<a href="javascript:void(null);" id="redactor_image_delete_btn" style="color: #000;">' + RLANG._delete + '</a>' +
+				'<a href="javascript:void(null);" class="uiButton" id="redactor_image_delete_btn" style="color: #000;">' + RLANG._delete + '</a>' +
 				'<span class="redactor_btns_box">' +
-					'<input type="button" name="save" id="redactorSaveBtn" value="' + RLANG.save + '" />' +
-					'<a href="javascript:void(null);" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="uiButton" name="save" id="redactorSaveBtn" value="' + RLANG.save + '" />' +
 				'</span>' +
 			'</div>',
 
@@ -218,23 +251,24 @@ var Redactor = function(element, options)
 				'<a href="javascript:void(null);" class="redactor_tabs_act">' + RLANG.upload + '</a>' +
 				'<a href="javascript:void(null);">' + RLANG.choose + '</a>' +
 				'<a href="javascript:void(null);">' + RLANG.link + '</a>' +
+				'<div id="redactor_image_choose_help_text">' + RLANG.choose_text + '</div>' +
 			'</div>' +
 			'<form id="redactorInsertImageForm" method="post" action="" enctype="multipart/form-data">' +
 				'<div id="redactor_tab1" class="redactor_tab">' +
-					'<input type="file" id="redactor_file" name="file" />' +
+					'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
 				'</div>' +
 				'<div id="redactor_tab2" class="redactor_tab" style="display: none;">' +
 					'<div id="redactor_image_box"></div>' +
 				'</div>' +
 			'</form>' +
 			'<div id="redactor_tab3" class="redactor_tab" style="display: none;">' +
-				'<label>' + RLANG.image_web_link + '</label>' +
+				'<label for="redactor_file_link">' + RLANG.image_web_link + '</label>' +
 				'<input name="redactor_file_link" id="redactor_file_link" class="redactor_input"  />' +
 			'</div>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<input type="button" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
-					'<a href="javascript:void(null);" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="uiButton" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
 
@@ -247,49 +281,48 @@ var Redactor = function(element, options)
 				'</div>' +
 				'<input type="hidden" id="redactor_tab_selected" value="1" />' +
 				'<div class="redactor_tab" id="redactor_tab1">' +
-					'<label>URL</label><input id="redactor_link_url" class="redactor_input"  />' +
-					'<label>' + RLANG.text + '</label><input class="redactor_input redactor_link_text" id="redactor_link_url_text" />' +
-					'<label><input type="checkbox" id="redactor_link_blank"> ' + RLANG.link_new_tab + 
+					'<label for="redactor_link_url">URL</label><input id="redactor_link_url" class="redactor_input" />' +
+					'<label for="redactor_link_url_text">' + RLANG.text + '</label><input class="redactor_input redactor_link_text" id="redactor_link_url_text" />' +
+					'<label for="redactor_link_blank"><input type="checkbox" id="redactor_link_blank"> ' + RLANG.link_new_tab + '</label>' +
 				'</div>' +
 				'<div class="redactor_tab" id="redactor_tab2" style="display: none;">' +
-					'<label>Email</label><input id="redactor_link_mailto" class="redactor_input" />' +
-					'<label>' + RLANG.text + '</label><input class="redactor_input redactor_link_text" id="redactor_link_mailto_text" />' +
+					'<label for="redactor_link_mailto">Email</label><input id="redactor_link_mailto" class="redactor_input" />' +
+					'<label for="redactor_link_mailto_text">' + RLANG.text + '</label><input class="redactor_input redactor_link_text" id="redactor_link_mailto_text" />' +
 				'</div>' +
 				'<div class="redactor_tab" id="redactor_tab3" style="display: none;">' +
-					'<label>' + RLANG.anchor + '</label><input class="redactor_input" id="redactor_link_anchor"  />' +
-					'<label>' + RLANG.text + '</label><input class="redactor_input redactor_link_text" id="redactor_link_anchor_text" />' +
+					'<label for="redactor_link_anchor">' + RLANG.anchor + '</label><input class="redactor_input" id="redactor_link_anchor"  />' +
+					'<label for="redactor_link_anchor_text">' + RLANG.text + '</label><input class="redactor_input redactor_link_text" id="redactor_link_anchor_text" />' +
 				'</div>' +
 			'</form>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<input type="button" id="redactor_insert_link_btn" value="' + RLANG.insert + '" />' +
-					'<a href="javascript:void(null);" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="uiButton" id="redactor_insert_link_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
-		
-		modal_table: String() + 
-				'<label>' + RLANG.rows + '</label>' +
-				'<input size="5" value="2" id="redactor_table_rows" />' +
-				'<label>' + RLANG.columns + '</label>' +
-				'<input size="5" value="3" id="redactor_table_columns" />' +
-				'<div id="redactor_modal_footer">' +
-					'<span class="redactor_btns_box">' +
-						'<input type="button" name="upload" id="redactor_insert_table_btn" value="' + RLANG.insert + '" />' +
-						'<a href="javascript:void(null);" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'</span>' +
-				'</div>',
-		
 		modal_video: String() + 
 			'<form id="redactorInsertVideoForm">' +
-				'<label>' + RLANG.video_html_code + '</label>' +
+				'<label for="redactor_insert_video_area">' + RLANG.video_html_code + '</label>' +
 				'<textarea id="redactor_insert_video_area" style="width: 99%; height: 160px;"></textarea>' +
 			'</form>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<input type="button" id="redactor_insert_video_btn" value="' + RLANG.insert + '" />' +
-					'<a href="javascript:void(null);" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-				'</span>' +
+					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="uiButton" id="redactor_insert_video_btn" value="' + RLANG.insert + '" />' +
+				'</span>' + 
 			'</div>',
+		modal_table: String() + 
+				'<label for="redactor_table_rows">' + RLANG.rows + '</label>' +
+				'<input size="5" value="2" id="redactor_table_rows" />' +
+				'<label for="redactor_table_columns">' + RLANG.columns + '</label>' +
+				'<input size="5" value="3" id="redactor_table_columns" />' +
+				'<div id="redactor_modal_footer">' +
+					'<span class="redactor_btns_box">' +
+						'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+						'<input type="button" class="uiButton" name="upload" id="redactor_insert_table_btn" value="' + RLANG.insert + '" />' +
+					'</span>' +
+				'</div>',
+		
 
 
 		toolbar: {
@@ -307,6 +340,7 @@ var Redactor = function(element, options)
 					p:
 					{
 						title: RLANG.paragraph,
+						titleText: "(" + ctrlkeyname + altkeyname + "0)",
 						exec: 'formatblock'
 					},
 					blockquote:
@@ -325,27 +359,47 @@ var Redactor = function(element, options)
 					{
 						title: RLANG.header1,
 						exec: 'formatblock',
+						titleText: "(" + ctrlkeyname + altkeyname + "1)",
 						className: 'redactor_format_h1'
 					},
 					h2:
 					{
 						title: RLANG.header2,
 						exec: 'formatblock',
+						titleText: "(" + ctrlkeyname + altkeyname + "2)",
 						className: 'redactor_format_h2'
 					},
 					h3:
 					{
 						title: RLANG.header3,
 						exec: 'formatblock',
+						titleText: "(" + ctrlkeyname + altkeyname + "3)",
 						className: 'redactor_format_h3'
 					},
 					h4:
 					{
 						title: RLANG.header4,
 						exec: 'formatblock',
+						titleText: "(" + ctrlkeyname + altkeyname + "4)",
 						className: 'redactor_format_h4'
 					}
 				}
+			},
+			fontname:
+			{ 
+				title: RLANG.fontname,
+				func: 'showCurrentFont'
+			},
+			fontsize:
+			{ 
+				title: RLANG.fontsize,
+				className: 'fontSize_dropdown',
+				func: 'showCurrentFont'
+			},
+			removeFormat:
+			{ 
+				title: RLANG.removeFormat,
+				func: 'buildremoveFormat'
 			},
 			bold:
 			{ 
@@ -405,7 +459,7 @@ var Redactor = function(element, options)
 			table:
 			{ 
 				title: RLANG.table,
-				func: 'show',
+				func: 'toggleTableOptions',
 				dropdown:
 				{
 					insert_table:	
@@ -415,60 +469,72 @@ var Redactor = function(element, options)
 					},
 					separator_drop1:
 					{
-						name: 'separator'
+						name: 'separator',
+						className: 'table_optional'
 					},
 					insert_row_above:
 					{
 						title: RLANG.insert_row_above,
-						func: 'insertRowAbove'
+						func: 'insertRowAbove',
+						className: 'table_optional'
 					},
 					insert_row_below:
 					{
 						title: RLANG.insert_row_below,
-						func: 'insertRowBelow'
+						func: 'insertRowBelow',
+						className: 'table_optional'
 					},
 					insert_column_left:
 					{
 						title: RLANG.insert_column_left,
-						func: 'insertColumnLeft'
+						func: 'insertColumnLeft',
+						className: 'table_optional'
 					},
 					insert_column_right:
 					{
 						title: RLANG.insert_column_right,
-						func: 'insertColumnRight'
+						func: 'insertColumnRight',
+						className: 'table_optional'
 					},
 					separator_drop2:
 					{
-						name: 'separator'
+						name: 'separator',
+						className: 'table_optional'
 					},
 					add_head:
 					{
 						title: RLANG.add_head,
-						func: 'addHead'
+						func: 'addHead',
+						className: 'table_optional'
 					},
 					delete_head:
 					{
 						title: RLANG.delete_head,
-						func: 'deleteHead'
+						func: 'deleteHead',
+						className: 'table_optional'
 					},
 					separator_drop3:
 					{
-						name: 'separator'
+						name: 'separator',
+						className: 'table_optional'
 					},
 					delete_column:
 					{
 						title: RLANG.delete_column,
-						func: 'deleteColumn'
+						func: 'deleteColumn',
+						className: 'table_optional'
 					},
 					delete_row:
 					{
 						title: RLANG.delete_row,
-						func: 'deleteRow'
+						func: 'deleteRow',
+						className: 'table_optional'
 					},
 					delete_table:
 					{
 						title: RLANG.delete_table,
-						func: 'deleteTable'
+						func: 'deleteTable',
+						className: 'table_optional'
 					}
 				}
 			},
@@ -481,11 +547,13 @@ var Redactor = function(element, options)
 					link:
 					{
 						title: RLANG.link_insert,
+						titleText: "(" + ctrlkeyname + "K)",
 						func: 'showLink'
 					},
 					unlink: 
 					{
 						title: RLANG.unlink,
+						titleText: "(" + ctrlkeyname +  shiftkeyname + "K)",
 						exec: 'unlink'
 					}
 				}
@@ -588,7 +656,16 @@ Redactor.prototype = {
 		this.enableAir();		
 		
 		// toolbar
-		this.buildToolbar();				
+		this.buildToolbar();	
+
+		// observe formatting of currently selected element and accordingly set those 
+		// style button as active in toolbar
+		if (this.opts.activeButtons !== false && this.opts.toolbar !== false)
+		{
+			var observeFormatting = $.proxy(function() { this.observeFormatting(); }, this);
+			this.$editor.click(observeFormatting).keyup(observeFormatting).keydown(observeFormatting);
+			this.$toolbar.click(observeFormatting);
+		}
 
 		// paste
 		if (this.isMobile(true) === false)
@@ -663,11 +740,20 @@ Redactor.prototype = {
 		}
 		
 	},
-	shortcuts: function(e, cmd)
+	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
+	//formatblock cmd needs additional params for execution and so 'params' argument has been added
+	shortcuts: function(e, cmd, params)
 	{
 		e.preventDefault();
-		
-		this.execCommand(cmd, false);
+		if (cmd == "removeFormat")
+			this.buildremoveFormat();
+		else if (cmd == "formatblock")
+			this.execCommand(cmd, params);
+		else if (cmd == "link") 
+			this.showLink();
+		else
+			this.execCommand(cmd, false);
+
 	},		
 	keyup: function()
 	{
@@ -706,7 +792,8 @@ Redactor.prototype = {
 			var parent = this.getParentNode();
 			var pre = false;
 			var ctrl = e.ctrlKey || e.metaKey;
-			
+			var shift = e.shiftKey;
+			var alt = e.altKey;
 			if (parent && $(parent).get(0).tagName === 'PRE')
 			{
 				pre = true;
@@ -717,29 +804,79 @@ Redactor.prototype = {
 			{
 				this.opts.keydownCallback(this, e);	
 			}
-			
+
 			if (ctrl)
 			{
-				if (key === 90)
+				if(shift)
+				{
+					if(key === 82) {
+						this.shortcuts(e, 'JustifyRight');	// Ctrl + Shift + R
+					}
+					else if(key === 76) {
+						this.shortcuts(e, 'JustifyLeft');	// Ctrl + Shift + L
+					}
+					else if(key === 69) {
+						this.shortcuts(e, 'JustifyCenter');	// Ctrl + Shift + E
+					}
+					else if(key === 74) {
+						this.shortcuts(e, 'justifyfull');	// Ctrl + Shift + J
+					}
+					else if (key === 55) 
+					{
+						this.shortcuts(e, 'insertunorderedlist'); // Ctrl + Shift + 7
+					}
+					else if (key === 56)
+					{
+						this.shortcuts(e, 'insertorderedlist'); // Ctrl + Shift + 8
+					}
+					else if (key === 75)
+					{
+						this.shortcuts(e, 'unlink'); // Ctrl + Shift + K
+					}
+				}
+				else if(alt) 
+				{	
+					if(key === 48) {
+						this.shortcuts(e, 'formatblock', 'p');	// Ctrl + Alt + 0
+					}
+					else if(key === 49) {
+						this.shortcuts(e, 'formatblock', 'h1');	// Ctrl + Alt + 1
+					}
+					else if(key === 50) {
+						this.shortcuts(e, 'formatblock', 'h2');	// Ctrl + Alt + 2
+					}
+					else if(key === 51) {
+						this.shortcuts(e, 'formatblock', 'h3');	// Ctrl + Alt + 3
+					}
+					else if(key === 52) {
+						this.shortcuts(e, 'formatblock', 'h4');	// Ctrl + Alt + 4
+					}
+					else if(key === 53) {
+						this.shortcuts(e, 'formatblock', 'h5');	// Ctrl + Alt + 5
+					}
+					else if(key === 54) {
+						this.shortcuts(e, 'formatblock', 'h6');	// Ctrl + Alt + 6
+					}
+				}
+				else if (key === 90)
 				{
 					if (this.opts.buffer !== false)
 					{
 						e.preventDefault();
 						this.getBuffer();
 					}
+					else if (e.shiftKey)
+					{
+						this.shortcuts(e, 'redo');	// Ctrl + Shift + z
+					}
 					else
 					{
-					// 	this.shortcuts(e, 'undo'); // Ctrl + z ((removing for polish character issue))
-					//Ctrl +z works by default this.shortcuts() eats up the default events hence removing it.
+						this.shortcuts(e, 'undo'); // Ctrl + z
 					}
 				}
-				else if (key === 90 && e.shiftKey)
+				else if (key === 220)
 				{
-					this.shortcuts(e, 'redo');	// Ctrl + Shift + z
-				}
-				else if (key === 77)
-				{
-					this.shortcuts(e, 'removeFormat'); // Ctrl + m
+					this.shortcuts(e, 'removeFormat'); // Ctrl + \
 				}
 				else if (key === 66)
 				{
@@ -748,14 +885,6 @@ Redactor.prototype = {
 				else if (key === 73)
 				{
 					this.shortcuts(e, 'italic'); // Ctrl + i
-				}
-				else if (key === 74) 
-				{
-					this.shortcuts(e, 'insertunorderedlist'); // Ctrl + j
-				}
-				else if (key === 75)
-				{
-					this.shortcuts(e, 'insertorderedlist'); // Ctrl + k
 				}
 				else if (key === 76)
 				{
@@ -777,7 +906,11 @@ Redactor.prototype = {
 						e.preventDefault();
 						this.getSelection().modify("move", "backward", "lineboundary");
 					}
-				}							
+				}	
+				else if (key === 75)
+				{
+					this.shortcuts(e, 'link'); // Ctrl + k
+				}				
 			}	
 			
 			// clear undo buffer
@@ -797,15 +930,19 @@ Redactor.prototype = {
 			// tab
 			if (!e.shiftKey && key === 9)
 			{
-				if (pre === false)
+				if($(this.getCurrentNode()).parents('table').length) {
+					e.preventDefault();
+				}
+				else if (pre === false)
 				{
-				//	this.shortcuts(e, 'indent'); // Tab
+					this.shortcuts(e, 'indent'); // Tab
 				}
 				else
 				{
 					e.preventDefault();
-				
-					this.insertNodeAtCaret(document.createTextNode('\t'));
+					this.insertNodeAtCaret(this.document.createTextNode('\t'));
+					this.syncCode();
+					return false;
 				}
 			}
 			else if (e.shiftKey && key === 9 )
@@ -996,6 +1133,69 @@ Redactor.prototype = {
 	// end API functions
 
 	// OBSERVERS
+	// Checks if current node has any of the FORMATTING style specified in opts.activeButtonsStates 
+	observeFormatting: function()
+	{
+		var parent = this.getCurrentNode();
+
+		// Set all formatting button to be inactive
+		this.inactiveAllButtons();
+		$.each(this.opts.activeButtonsStates, $.proxy(function(i,s)
+		{
+			if ($(parent).closest(i,this.$editor.get()[0]).length != 0)
+			{
+				this.setBtnActive(s);
+			}
+
+		}, this));
+
+		var tag = $(parent).closest(['p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'td']);
+
+		if (typeof tag[0] !== 'undefined' && typeof tag[0].elem !== 'undefined' && $(tag[0].elem).size() != 0)
+		{
+			var align = $(tag[0].elem).css('text-align');
+
+			switch (align)
+			{
+				case 'right':
+					this.setBtnActive('alignright');
+				break;
+				case 'center':
+					this.setBtnActive('aligncenter');
+				break;
+				case 'justify':
+					this.setBtnActive('justify');
+				break;
+				default:
+					this.setBtnActive('alignleft');
+				break;
+			}
+		}
+	},
+	// Used to mark the active font of the parent node in fontsize and fontname dropdowns
+	showCurrentFont: function()
+	{
+		var parent = this.getParentNode();
+		if(!$.browser.opera) {
+			$(".redactor_font_link").find('span').remove();
+			this.observeFontStyle(parent, 'font-family');
+			this.observeFontStyle(parent, 'font-size');
+		}
+
+	},
+	// Helper for showCurrentFont
+	observeFontStyle: function(parent, css_property)
+	{
+		var fontstyle = $(parent).css(css_property) || this.$editor.css(css_property);
+		fontstyle = fontstyle.split(",")[0];
+		if (css_property == 'font-size')
+			element = $('[rel=' + this.opts.fontsize_levels_reverse[fontstyle] + '].redactor_font_link');
+		else
+			element = $('[rel=' + fontstyle + '].redactor_font_link');
+		if(element.length) {
+			element.html("<span class='icon ticksymbol'></span>" + element.html());
+		}
+	},
 	observeImages: function()
 	{
 		if (this.opts.observeImages === false)
@@ -1123,16 +1323,16 @@ Redactor.prototype = {
 				{
 					document.execCommand(cmd, false, param);
 				}
-			}				
+			}		
 			else
 			{
 				document.execCommand(cmd, false, param);
 			}	
-			
 			if (cmd === 'inserthorizontalrule')
 			{
 				this.$editor.find('hr').removeAttr('id');
 			}
+			
 			
 			this.syncCode();
 			
@@ -1373,7 +1573,9 @@ Redactor.prototype = {
 		}
 		
 		// remove span
-		html = html.replace(/<span>([\w\W]*?)<\/span>/gi, '$1');
+		// Commented so that span won't be removed from copied text and hence the style of 
+		// text specified inside span will be same as that in the source
+		//html = html.replace(/<span>([\w\W]*?)<\/span>/gi, '$1');
 		
 		html = html.replace(/\n{3,}/gi, '\n');
 	
@@ -1506,7 +1708,12 @@ Redactor.prototype = {
 			html = $.trim(this.formatting(html));
 				
 			this.$el.height(this.$editor.innerHeight()).val(html).show().focus();
-			
+			// Used to hide all 'li' elements in toolbar except the 'html' button and 
+			// the seperator before that
+			this.$toolbar.find('li').each( function(){
+				if ($(this).attr('class') == undefined || $(this).attr('class') == "redactor_separator")
+					$(this).hide();
+			});
 			this.setBtnActive('html');
 			this.opts.visual = false;
 		}
@@ -1514,7 +1721,8 @@ Redactor.prototype = {
 		{
 			this.$el.hide();
 			
-			this.$editor.html(this.$el.val());
+			try{ this.$editor.html(this.$el.val());	} catch(e){ }
+
 			this.$editor.show();
 
 			if (this.$editor.html() === '')
@@ -1532,7 +1740,11 @@ Redactor.prototype = {
 			}
 
 			this.$editor.focus();
-			
+			// Used to show all 'li' elements in toolbar 
+			this.$toolbar.find('li').each( function(){
+				if ($(this).attr('class') == undefined || $(this).attr('class') == "redactor_separator")
+					$(this).show();
+			});
 			this.setBtnInactive('html');
 			this.opts.visual = true;
 			
@@ -1585,15 +1797,23 @@ Redactor.prototype = {
 			
 				var li = $('<li>');
 				var a = this.buildButton(key, s);
-
+				
 				// dropdown
-				if (key === 'backcolor' || key === 'fontcolor' || typeof(s.dropdown) !== 'undefined')
+				if (key === 'backcolor' || key === 'fontcolor' || typeof(s.dropdown) !== 'undefined' || key === 'fontname' || key === 'fontsize')
 				{
 					var dropdown = $('<div class="redactor_dropdown" style="display: none;">');
 					
 					if (key === 'backcolor' || key === 'fontcolor')
 					{
 						dropdown = this.buildColorPicker(dropdown, key);
+					}
+					else if (key === 'fontname')
+					{
+						dropdown = this.buildFontNamePicker(dropdown, key);
+					}
+					else if (key === 'fontsize')
+					{
+						dropdown = this.buildFontSizePicker(dropdown, key);
 					}
 					else
 					{
@@ -1604,12 +1824,22 @@ Redactor.prototype = {
 
 					// observing dropdown
 					this.hdlHideDropDown = $.proxy(function(e) { this.hideDropDown(e, dropdown, key); }, this);
-					this.hdlShowDropDown = $.proxy(function(e) { this.showDropDown(e, dropdown, key); }, this);
+					this.hdlShowDropDown = $.proxy(function(e) { 
+						if(!$.browser.opera)
+							this.$editor.focus();
+						this.showDropDown(e, dropdown, key); 
+					}, this);
 
 					a.click(this.hdlShowDropDown);
 				}
-				
+				if(key == 'html') {
+					$(li).attr('class', 'button_right');
+				}
+
 				this.$toolbar.append($(li).append(a));
+
+				if(key == 'html')
+					this.$toolbar.append($('<li class="redactor_separator button_right"></li>'));
 			}
 
 			
@@ -1626,24 +1856,33 @@ Redactor.prototype = {
 	},
 	buildButton: function(key, s)
 	{
-		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '"></a>');
+		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '" tabindex="-1"></a>');
 		
 		if (typeof s.func === 'undefined')
 		{
-			button.click($.proxy(function() { this.execCommand(s.exec, key); }, this));
+			button.click($.proxy(function() { 
+				if(!$.browser.opera)
+					this.$editor.focus();
+				this.execCommand(s.exec, key); 
+			}, this));
 		}
 		else if (s.func !== 'show')
 		{
 			button.click($.proxy(function(e) {
-			
+				
+				if(!$.browser.opera)
+					this.$editor.focus();
 				this[s.func](e); 
 				
 			}, this));
 		}
-
 		if (typeof s.callback !== 'undefined') 
 		{
-			button.click($.proxy(function(e) { s.callback(this, e, key); }, this));
+			button.click($.proxy(function(e) {  
+				if(!$.browser.opera)
+					this.$editor.focus();
+				s.callback(this, e, key); 
+			}, this));
 		}
 
 		return button;
@@ -1657,15 +1896,20 @@ Redactor.prototype = {
 				{
 					d.className = '';
 				}
-				
+
+				if (typeof(d.titleText) === 'undefined')
+				{
+					d.titleText = '';
+				}
+
 				var drop_a;
 				if (typeof d.name !== 'undefined' && d.name === 'separator')
 				{
-					drop_a = $('<a class="redactor_separator_drop">');
+					drop_a = $('<a class="redactor_separator_drop ' + d.className + ' ">');
 				}
 				else
 				{
-					drop_a = $('<a href="javascript:void(null);" class="' + d.className + '">' + d.title + '</a>');
+					drop_a = $('<a href="javascript:void(null);" class="' + d.className + '" title = "' + d.titleText + '">' + d.title + '</a>');
 
 					if (typeof(d.func) === 'undefined')
 					{
@@ -1721,11 +1965,8 @@ Redactor.prototype = {
 				
 				if (mode === 'forecolor')
 				{
-					_self.$editor.find('font').replaceWith(function() {
-						
-						return $('<span style="color: ' + $(this).attr('color') + ';">' + $(this).html() + '</span>');
-						
-					});
+					_self.cleanUpFont('color');
+					_self.cleanUpSpan();
 				}
 				
 				if ($.browser.msie && mode === 'BackColor')
@@ -1740,30 +1981,134 @@ Redactor.prototype = {
 			});
 		}
 
-		var elnone = $('<a href="javascript:void(null);" class="redactor_color_none"></a>').html(RLANG.none);
+		return dropdown;
+	},
+	buildFontNamePicker: function(dropdown, key)
+	{
+		$(dropdown).width(210);
+		$(dropdown).height(175);
 
-		if (key === 'backcolor')
+		var len = this.opts.fontnames.length;
+		for (var i = 0; i < len; ++i)
 		{
-			elnone.click($.proxy(this.setBackgroundNone, this));
+			var fontname = this.opts.fontnames[i];
+			var swatch = $('<a rel="' + fontname + '" href="javascript:void(null);" class="redactor_font_link">' + fontname + '</a>').css({ 'font-family': fontname });
+			// Special case
+			// Text with font-family Symbol and Webdings cannot be read and so font-family of these two
+			// fonts in fontname dropdown is set to 'Helvetica Neue'. Font-family is still applied to selected text.
+			if(fontname === 'Symbol' || fontname === 'Webdings')
+				swatch.css({'font-family': 'Helvetica Neue'});
+			$(dropdown).append(swatch);
+			var _self = this;
+			$(swatch).click(function() 
+			{ 
+				_self.execCommand('fontName', $(this).attr('rel'));
+				_self.cleanUpFont('font-family');
+				_self.cleanUpSpan();
+			});
+		}
+		return dropdown;
+	},
+	buildFontSizePicker: function(dropdown, key)
+	{
+		$(dropdown).width(210);
+		$(dropdown).height(190);
+
+		var len = this.opts.fontsizes.length;
+		for (var i = 0; i < len; ++i)
+		{
+			var fontsize_level = this.opts.fontsize_levels[this.opts.fontsizes[i]];
+			var fontsize = this.opts.fontsizes[i];
+			var name = this.opts.fontsize_naming[i];
+			var swatch = $('<a rel="' + fontsize + '" href="javascript:void(null);" class="redactor_font_link '+ name +'" >' + name + ' </a>').css({ 'font-size': fontsize_level, 'line-height': (fontsize_level + 8) + 'px' });
+			$(dropdown).append(swatch);
+			var _self = this;
+			$(swatch).click(function() 
+			{ 
+				_self.execCommand('fontSize', Number($(this).attr('rel')));
+				_self.cleanUpFont('font-size');
+				_self.cleanUpSpan();
+			});
+		}
+		return dropdown;
+	},
+	buildremoveFormat: function()
+	{
+		var replacehtml;
+		if(this.getSelectedHtml() == "") {
+			if (confirm(RLANG.confirm_remove_format_for_entire_content)) {
+				replacehtml = this.removeFormatGetSelection();
+				// <br /> tag not need in case of I.E.
+				if ($.browser.msie)
+					replacehtml = replacehtml.replace(/\n+/g, "</p><p>");
+				else
+					replacehtml = replacehtml.replace(/\n+/g, "<br /></p><p>");
+				this.setCode("<p>" + replacehtml);
+			}
 		}
 		else
 		{
-			elnone.click($.proxy(this.setColorNone, this));
+			replacehtml = this.removeFormatGetSelection();
+
+			//Trim leading and trailing new line spaces
+			replacehtml = replacehtml.replace(/^\n+|\n+$/,'');
+			
+			var span = $('<span />');
+			// Default css applied to span
+			span.css({
+				'font-family': this.$editor.css('font-family'),
+				'font-size': this.$editor.css('font-size'),
+				'color': this.$editor.css('color'),
+				'background-color': this.$editor.css('background-color')
+			});
+			span.attr('rel', 'tempredactor');
+			var replacestring = replacehtml;
+			replacehtml = "";
+			// Used to check for the first occurance of new line
+			var isnotfirst = 0;
+			// split based on new lines
+			$.each(replacestring.split("\n"), function() {	
+				if(this.toString().trim() != "") {	
+					if (isnotfirst == 1) {
+						if ($.browser.msie)
+							replacehtml += "</p><p>";
+						else
+							replacehtml += "<br /></p><p>";
+					}
+					else
+						isnotfirst = 1;
+					span.html(this.toString());
+					var tempspan = $("<span />").html(span);
+
+					replacehtml += tempspan.html();
+				}
+			});
+			// Replace multiple new line characters with single new line character
+			replacehtml = replacehtml.replace(/\n+/g,'\n');
+			// Special condition for mozilla and I.E.
+			// Removes the unclosed <p> tag from replacehtml
+			if($.browser.mozilla || $.browser.msie)
+				replacehtml = replacehtml.split("").reverse().join("").replace(/\>p\</,'').split("").reverse().join("");
+			this.insertHtml(replacehtml);
 		}
+		this.cleanUpRedundant();
+		this.cleanUpSpan();
 
-		$(dropdown).append(elnone);
-
-		return dropdown;
-	},
-	setBackgroundNone: function()
-	{
-		$(this.getParentNode()).css('background-color', 'transparent');
 		this.syncCode();
 	},
-	setColorNone: function()
+	removeFormatGetSelection: function() 
 	{
-		$(this.getParentNode()).attr('color', '').css('color', '');
-		this.syncCode();
+		this.execCommand('removeFormat', '');
+
+		if(this.getSelectedHtml() == "")
+			var selectedhtml = $("<span>" + this.getCode() + "</span>"); //Replace entire content
+		else
+			var selectedhtml = $("<span>" + this.getSelectedHtml() + "</span>"); // Replace selected content
+
+		selectedhtml.html(this.formatting(selectedhtml.html().replace(/<br>/g,'\n'))); // Format the html
+		replacehtml = selectedhtml.text().replace(/\n+/g,'\n'); // Obtain innertext of the selected content
+
+		return replacehtml;
 	},
 
 	
@@ -1876,31 +2221,37 @@ Redactor.prototype = {
 	},
 	getParentNode: function()
 	{
-		if (typeof window.getSelection !== 'undefined')
-		{
-			var s = window.getSelection();
-			if (s.rangeCount > 0) 
+		try {
+			if (typeof window.getSelection !== 'undefined')
 			{
-				return this.getSelection().getRangeAt(0).startContainer.parentNode;
+				var s = window.getSelection();
+				if (s.rangeCount > 0) 
+				{
+					return this.getSelection().getRangeAt(0).startContainer.parentNode;
+				}
+				else return false;
+				
 			}
-			else return false;
-			
+			else if (typeof document.selection !== 'undefined')
+			{
+				return this.getSelection().parentElement();
+			}
 		}
-		else if (typeof document.selection !== 'undefined')
-		{
-			return this.getSelection().parentElement();
-		}
+		catch(e){}
 	},
 	getCurrentNode: function()
 	{
-		if (typeof window.getSelection !== 'undefined')
-		{
-			return this.getSelection().getRangeAt(0).startContainer;
+		try {
+			if (typeof window.getSelection !== 'undefined')
+			{
+				return this.getSelection().getRangeAt(0).startContainer;
+			}
+			else if (typeof document.selection !== 'undefined')
+			{
+				return this.getSelection();
+			}
 		}
-		else if (typeof document.selection !== 'undefined')
-		{
-			return this.getSelection();
-		}
+		catch(e) {}
 	},
 	setFocusNode: function(node)
 	{
@@ -1913,14 +2264,13 @@ Redactor.prototype = {
 	
 			var range = document.createRange();
 			var selection = this.getSelection();
-
 			if (selection !== null)
 			{
 				range.selectNodeContents(node);
 				selection.addRange(range);
 				selection.collapse(node, 0);
 			}
-
+		
 			this.$editor.focus();
 		
 		} catch (e) { }
@@ -1999,6 +2349,14 @@ Redactor.prototype = {
 	{
 		this.getBtn(key).removeClass('act');
 	},
+	inactiveAllButtons: function()
+	{
+		$.each(this.opts.activeButtons, $.proxy(function(i,s)
+		{
+			this.setBtnInactive(s);
+
+		}, this));
+	},
 	
 	// RESIZE IMAGES
 	resizeImage: function(resize)
@@ -2071,6 +2429,10 @@ Redactor.prototype = {
 	},
 
 	// TABLE
+	toggleTableOptions: function()
+	{
+		$('.table_optional').toggle($(this.getCurrentNode()).parents('table').length != 0);
+	},
 	showTable: function()
 	{
 		this.saveSelection();
@@ -2250,19 +2612,20 @@ Redactor.prototype = {
 		this.modalInit(RLANG.video, 'video', 600, $.proxy(function()
 			{
 				$('#redactor_insert_video_btn').click($.proxy(this.insertVideo, this));
-			}, this),
-			
-			function()
-			{
-				$('#redactor_insert_video_area').focus();
-			}
+
+				// setTimeout(function()
+				// {
+					$('#redactor_insert_video_area').focus();
+				// }, 200);
+
+			}, this)
 		);
 	},
 	insertVideo: function()
 	{
 		var data = $('#redactor_insert_video_area').val();
 		data = this.stripTags(data);
-		
+
 		this.restoreSelection();
 		this.execCommand('inserthtml', data);
 		this.modalClose();
@@ -2390,10 +2753,10 @@ Redactor.prototype = {
 								folderclass = '.redactorfolder' + folderkey;
 							}
 						}
-						
-						var img = $('<img src="' + val.thumb + '" class="redactorfolder redactorfolder' + folderkey + '" rel="' + val.image + '" title="' + thumbtitle + '" />');
-						$('#redactor_image_box').append(img);
-						$(img).click($.proxy(this.imageSetThumb, this));
+						var a = $('<a />').addClass('redactor_image_element').css({'backgroundImage': 'url(\'' + val.thumb + '\')'});
+						a.attr({'rel': val.image, 'title': thumbtitle, 'href': 'javascript:void(null);'});
+						$('#redactor_image_box').append(a);
+						$(a).click($.proxy(this.imageSetThumb, this));
 						
 						
 					}, this));
@@ -2503,14 +2866,19 @@ Redactor.prototype = {
 	_imageSet: function(json, link)
 	{
 		this.restoreSelection();		
-	
+		var validupload = true;
 		if (json !== false)
 		{
 			var html = '', data = '';
 			if (link !== true)
 			{
-				data = $.parseJSON(json);		
-				html = '<p><img src="' + data.filelink + '" /></p>';
+				data = $.parseJSON(json);
+				if(data.filelink != undefined)		
+					html = '<p><img src="' + data.filelink + '" /></p>';
+				else {
+					alert(RLANG.invalid_image_file);
+					validupload = false;
+				}
 			}
 			else
 			{
@@ -2525,9 +2893,10 @@ Redactor.prototype = {
 				this.opts.imageUploadCallback(this, data);
 			}
 		}
-		
-		this.modalClose();
-		this.observeImages();
+		if (validupload) {
+			this.modalClose();
+			this.observeImages();
+		}
 	},
 
 	// INSERT LINK
@@ -2803,15 +3172,11 @@ Redactor.prototype = {
 				{
 					$('#redactor_tabs a').removeClass('redactor_tabs_act');
 					$(this).addClass('redactor_tabs_act');
-					$('.redactor_tab').hide();
-					$('#redactor_tab' + i).show();
+					$('.redactor_tab').slideUp('fast');
+					$('#redactor_tab' + i).slideDown('fast');
+					(url == "image" && (i <= 2)) ? $('#redactor_upload_btn').hide() : $('#redactor_upload_btn').show();
+					(url == "image" && i == 2) ? $('#redactor_image_choose_help_text').show() : $('#redactor_image_choose_help_text').hide();
 					$('#redactor_tab_selected').val(i);
-					
-					if (that.isMobile() === false)
-					{
-						var height = $('#redactor_modal').outerHeight();
-						$('#redactor_modal').css('margin-top', '-' + (height+10)/2 + 'px');
-					}
 				});
 			});
 		}
@@ -2829,7 +3194,7 @@ Redactor.prototype = {
 
 		if (this.isMobile() === false)
 		{		
-			$('#redactor_modal').css({ position: 'fixed', top: '50%', left: '50%', width: width + 'px', height: 'auto', minHeight: 'auto', marginTop: '-' + (height+10)/2 + 'px', marginLeft: '-' + (width+60)/2 + 'px' }).fadeIn('fast');
+			$('#redactor_modal').css({ position: 'fixed', top: '50%', left: '50%', width: width + 'px', height: 'auto', minHeight: 'auto', marginTop: '-255px', marginLeft: '-' + (width+60)/2 + 'px' }).fadeIn('fast');
 			
 			this.modalSaveBodyOveflow = $(document.body).css('overflow');
 			$(document.body).css('overflow', 'hidden');			
@@ -2838,7 +3203,11 @@ Redactor.prototype = {
 		{
 			$('#redactor_modal').css({ position: 'fixed', width: '100%', height: '100%', top: '0', left: '0', margin: '0', minHeight: '300px' }).show();			
 		}
-
+		
+		if (url == "image") { 
+			$('#redactor_upload_btn').hide();
+			$('#redactor_image_choose_help_text').hide();
+		}
 		// end callback
 		if (typeof(endCallback) === 'function')
 		{
@@ -3065,8 +3434,86 @@ Redactor.prototype = {
 		{
 			return false;
 		}
-	}
+	},
+	// Used to remove span tag with empty style attribute
+	cleanUpSpan: function()
+	{
+		$.each(this.$editor.find('span'), function() {
+			if($(this).attr('style') == undefined || $(this).attr('style') == "")
+				$(this).replaceWith($(this).html());
+		});
+	},
+	// Used to replace Font tags with span tags
+	cleanUpFont: function(css_property)
+	{
+		_redactor = this;
+		this.$editor.find('font').replaceWith(function() {
+			if ($.browser.msie)
+					$(this).find('span').css(css_property, '');
+			var span = $("<span />");
+			span.html($(this).html());
+			span.css({
+				'font-family': $(this).attr('face'),
+				'font-size': _redactor.opts.fontsize_levels[$(this).attr('size')],
+				'color': $(this).attr('color')
+			});	
+			return $(span);	
+		});
+		this.cleanUpRedundant();
+		this.cleanUpSpan();
+	},
+	// Used to clean up unnecessary tags
+	cleanUpRedundant: function() 
+	{
+		var _redactor = this;
+		// rel tag here is used to check if the text upon which removeFormat has any unclosed tag before it
+		// Tags mentioned below are closed manually
+		$.each(this.$editor.find('[rel=tempredactor]'), function() {
+			_element = $(this);
+			$.each(["li", "ol", "ul", "h1", "h2", "h3", "h4", "h5", "h6"], function() {
+				if(_element.text() == _element.parent().text().trim() && _element.parent().is(this.toString())) {
+					_element.parent().replaceWith(_element);
+				}
+			});
+			// Font-weight cannot be applied to text inserted through 'insertHtml'
+			// So font-weight is set here
+			$(this).css('font-weight', 'normal');
+			$(this).removeAttr('rel')
+		});
 
+		// Check if current span and parent span enclose same text
+		// If so the styles are concatenated 
+		// Style of child is retained in case of conflict
+		$.each(this.$editor.find('span'), function() {
+			if($(this).text() == $(this).parent().text() && $(this).parent().is("span")) {
+				parentstyle = $(this).parent().attr('style');
+				childstyle = $(this).attr('style');
+				$(this).parent().attr('style', parentstyle + ';' + childstyle);
+				$(this).replaceWith($(this).html());
+			}
+		});
+		// Remove unnecessary css applied to a span by comparing a span's style to that of its parent
+		$.each(this.$editor.find('span'), function() {
+			if($(this).css('color') == $(this).parent().css('color')) {
+				$(this).css('color','');
+			}
+			if($(this).css('font-size') == $(this).parent().css('font-size')) {
+				$(this).css('font-size','');
+			}
+			if($(this).css('font-family') == $(this).parent().css('font-family')) {
+				$(this).css('font-family','');
+			}
+			if($(this).css('font-weight') == $(this).parent().css('font-weight')) {
+				$(this).css('font-weight','');
+			}
+			if($(this).css('background-color') == $(this).parent().css('background-color') || 
+				($(this).css('background-color') == _redactor.$editor.css('background-color') &&
+					$(this).parent().css('background-color') == "transparent")) {
+				$(this).css('background-color','');
+			}
+		});
+	}
+	
 };
 
 
@@ -3217,7 +3664,7 @@ $.fn.execCommand = function(cmd, param)
 					}	
 					
 					// append file data
-					fd.append('file', file);
+					fd.append('image[uploaded_data]', file);
 					
 
 					$.ajax({

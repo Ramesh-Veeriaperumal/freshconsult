@@ -1,0 +1,41 @@
+<div class="wrapper">
+	<title><%= page_title %></title>
+	<% 
+	body_class= yield :layoutType 
+	body_class = "single #{body_class}" unless @content_for_sidebar 
+	%>
+	<% javascript_tag do %>
+		jQuery('body').attr('class','<%=body_class%>');
+		jQuery('ul.header-tabs li.active').removeClass('active');
+		jQuery('li[data-tab-name="<%=@selected_tab%>"]').addClass('active')
+	<% end %>
+	<%= render(:partial => '/search/navsearch') %>
+	<div id="inner"> 
+		<% if @content_for_sidebar %>
+			<div class="sidebar" id="Sidebar"> 
+				<%= yield :sidebar %>					
+			</div>
+		<% end %>  
+		<div class="leftcontent">  
+			<%= show_announcements %>
+			<%= show_flash %>
+			<div class="flash_info notice" id="noticeajax" style="display:none;"></div>
+			<%= yield :pagetop %>
+			<div class="pagearea" id="Pagearea">
+				<%= yield %>
+			</div>
+		</div>
+	</div> 
+</div>
+<%= yield :dialogs   %>
+<%= yield :pagefixed %>
+<% if request.headers['X-PJAX'] %>
+	<% javascript_tag do %>
+		setTimeout(function(){
+			<!-- $J("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2(); -->
+			<%= yield :onload_script -%>
+		}, 50);
+	<% end %>
+<% end %>
+<%= render :partial => "layouts/integrations" %>
+<%= render :partial => "layouts/tour_my_app" %>

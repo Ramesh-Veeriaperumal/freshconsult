@@ -12,7 +12,9 @@
 	<% end %>
   </div>	
   <div class="name">
-    <%= link_to truncate(h(attachment.content_file_name), 23), attachment, :popup => true %>
+    <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), attachment, :popup => true if current_user %>
+    <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), 
+    	helpdesk_attachment_path(attachment, :access_token => params[:id]), :popup => true unless current_user %>
   </div>
 
   <div class="size">

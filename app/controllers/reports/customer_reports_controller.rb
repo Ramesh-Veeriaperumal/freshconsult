@@ -1,4 +1,5 @@
 class Reports::CustomerReportsController < ApplicationController
+  include ReadsToSlave
   include Reports::CompanyReport
    
   before_filter { |c| c.requires_feature :advanced_reporting }
@@ -9,6 +10,8 @@ class Reports::CustomerReportsController < ApplicationController
 
   def generate
     @pie_charts_hash = {}
+
+    @bar_charts_hash ={}
     unless params[:customer_id].nil?  
      fetch_activity
      calculate_resolved_on_time
@@ -31,6 +34,10 @@ class Reports::CustomerReportsController < ApplicationController
     current_account.ticket_fields.custom_dropdown_fields.each do |f|
       @show_fields[ "flexifields.#{f.flexifield_def_entry.flexifield_name}"] = f.label
       @pie_chart_labels.store "flexifields.#{f.flexifield_def_entry.flexifield_name}" , f.label
+    end
+    #added for the nested fields customer activity reports
+    current_account.ticket_fields.nested_fields.each do |fields|
+      @show_fields["flexifields.#{fields.flexifield_def_entry.flexifield_name}"] = fields.label
     end
   end
   

@@ -1,17 +1,17 @@
+require RAILS_ROOT+'/app/models/solution/folder.rb'
 
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
-  
+  serialize :seo_data, Hash
+
   acts_as_list :scope => :folder
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
   belongs_to :account
   
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
+  
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable',
@@ -137,5 +137,19 @@ class Solution::Article < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
+
+  def article_title
+    (seo_data[:meta_title].blank?) ? title : seo_data[:meta_title]
+  end
+
+  def article_description
+    (seo_data[:meta_description].blank?) ? "#{title}. #{folder.name}. #{folder.category.name}" : 
+                                            seo_data[:meta_description]
+  end
+
+  def article_keywords
+    (seo_data[:meta_keywords].blank?) ? tags.join(", ") : seo_data[:meta_keywords]
+  end
+
  
 end

@@ -11,13 +11,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
   belongs_to :user
   
-  Max_Attachment_Size = 15.megabyte
   include Mobile::Actions::Note
 
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
     
   has_one :tweet,
     :as => :tweetable,
@@ -38,9 +34,9 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_protected :attachments, :notable_id
   
   before_create :validate_schema_less_note
-  before_save :update_category
+  before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit_on_create :update_ticket_states   
+  after_commit_on_create :update_ticket_states, :notify_ticket_monitor
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -72,6 +68,17 @@ class Helpdesk::Note < ActiveRecord::Base
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
   ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
+
+  TICKET_NOTE_SOURCE_MAPPING = { 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal] => SOURCE_KEYS_BY_TOKEN["email"] ,
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum] => SOURCE_KEYS_BY_TOKEN["email"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => SOURCE_KEYS_BY_TOKEN["twitter"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"],
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:mobi_help] => SOURCE_KEYS_BY_TOKEN["email"]
+  }
 
   CATEGORIES = {
     :customer_response => 1,
@@ -148,7 +155,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def to_json(options = {})
     options[:include] = [:attachments]
-    options[:methods] = [:user_name]
+    options[:methods] = [:user_name,:source_name] unless options[:human].blank?
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
   end
@@ -169,7 +176,13 @@ class Helpdesk::Note < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :attachments,:except => [:account_id,:notable_id,:notable_type]) 
+      super(:builder => xml, :skip_instruct => true, :include=>:attachments, 
+                          :except => [:account_id,:notable_id,:notable_type]) do |xml|
+        unless options[:human].blank?
+          xml.tag!(:source_name,self.source_name)
+          xml.tag!(:user_name,user.name)
+        end
+      end
    end
 
   def create_fwd_note_activity(to_emails)
@@ -180,6 +193,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def respond_to?(attribute)
+    return false if [:to_ary].include? attribute.to_sym
     super(attribute) || (load_schema_less_note && schema_less_note.respond_to?(attribute))
   end
 
@@ -327,6 +341,15 @@ class Helpdesk::Note < ActiveRecord::Base
       fire_event(:create) unless disable_observer
     end
 
+    def notify_ticket_monitor
+      notable.subscriptions.each do |subscription|
+        if subscription.user.id != user_id
+          Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply, 
+                                                notable, subscription, self)
+        end
+      end
+    end
+
     def update_category
       schema_less_note.category = CATEGORIES[:meta_response]
       return unless human_note_for_ticket?
@@ -341,7 +364,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end 
 
     def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private?
+      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private? || zendesk_import?
     end
 
     def update_avg_response_time(ticket_state)
