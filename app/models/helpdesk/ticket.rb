@@ -35,6 +35,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
   has_many_attachments
+
+  has_many_dropboxes
   
   after_create :refresh_display_id, :create_meta_note
 
@@ -1173,7 +1175,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def fire_update_event
-      fire_event(:update) unless disable_observer
+      fire_event(:update, @ticket_changes) unless disable_observer
     end
 
     def set_token   

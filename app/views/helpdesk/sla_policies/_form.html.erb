@@ -39,10 +39,10 @@
 							<%= sla.hidden_field :id, { :value => slas.id} %>		
 						</td>	   
 						<td>
-							<%= sla.select :response_time , Helpdesk::SlaDetail::RESPONSETIME_OPTIONS %>
+							<%= sla.select :response_time , response_time_options %>
 						</td>
 						<td>
-						  	<%= sla.select :resolution_time, Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS %>
+						  	<%= sla.select :resolution_time, resolution_time_options %>
 						</td>
 						<% if feature?(:business_hours) %> <td><%= sla.select :override_bhrs, Helpdesk::SlaDetail::SLA_TIME_OPTIONS %></td> <% end %>
 						<td> 

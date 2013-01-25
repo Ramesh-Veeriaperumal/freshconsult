@@ -1,0 +1,13 @@
+<div class = "payment-info">
+	<%= content_tag(:label, t('payment_info'), :class => "caption") %>
+	<div class="fields"> 
+	   <div class="action_buttons">
+	    <%= link_to( "#{t('change')} &rsaquo;", billing_subscription_url, :class => "last" ) %>
+	   </div>
+	   <%= @subscription.card_number %>
+	 <% if @subscription.billing_address %>
+	 <span class = "billing-address"> <%= t('billing_address') %> </span>
+	 	<%= @subscription.billing_address.humanize.gsub("\n","<br>") %>
+	 <% end %>
+	</div>
+</div>

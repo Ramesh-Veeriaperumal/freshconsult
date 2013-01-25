@@ -1,17 +1,30 @@
-<li class="inline-field">
-    <%= content_tag(:h4, t('current_plan'), :class => "caption title") %>  
-    <div class="fields">
-      <div class="action_buttons">
-        <%= link_to( "#{t('change_free_plan')} &rsaquo;", free_subscription_url, :class => "last" ) %>
-      </div> 
-      <div class="big-text">
-        <%= " #{ t('current_plan_details',
-            :plan_name  => @subscription.subscription_plan.name,
-            :agent_limit => @subscription.agent_limit) }" %>
-      </div> 
+<ul class="ui-form">
+  <li class="inline-field">
+    <div class="free-plan">
+      <div class="current-plan">
+        <div class="caption">
+          <%= t('current_free_plan') %>
+          <div class="plan-name">
+            <b class="big-text"> <%= " #{ @subscription.subscription_plan.name }" %></b>
+          </div>
+        </div>
+      </div>
+      
+      <div class="subscribed-plan-details">
+        <div class="free-plan-agents">
+          <%= content_tag(:h4, t('subscription.agents')) %>
+          <%= content_tag(:label, "<strong> #{ @subscription.agent_limit } </strong>") %>
+          <%= content_tag(:p, "Add more agents at $#{@subscription.subscription_plan.amount.to_i} #{t('plan_amount')}", :class => "free-plan-payment") %>
+        </div>
+        <div class="free-plan-since">
+          <%= content_tag(:h4, t('account.active_since')) %>
+          <%= content_tag(:label, "<strong> #{ formated_date(current_account.created_at) }</strong>") %>
+        </div>
+        <div class="free-plan-payment">
+          <p><%= link_to t('enter_payment_details_to_add'), billing_subscription_url%></p>
+        </div>
+      </div>
     </div>
-    <br />
-    <div class="button-container">
-      <%= link_to t('enter_payment_details_to_add'), billing_subscription_url, :class => "uiButton floatl special" %>
-    </div>
-</li>
+  </li>
+</ul>
+
