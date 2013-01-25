@@ -5,43 +5,45 @@
 				<% plans.each do |plan| %>
 					<% plan_name = plan.name.downcase %>
 					<% unless plan_name == "free"  %>
-						<% unless plan.id == subscription.subscription_plan_id  %>
-							<td class="pricelist" id = "plan-<%= plan.name %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
-									<div class="plan-details">			
-										<div class="plan-title">
-											<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
-											<%= content_tag(:h2, plan.name) %>
-											<%= content_tag(:div, t("#{plan_name}_brief"), :class => "plan-brief" ) %>
-											<% if(bool_beta_plan) %>
-												<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
-											<% else %> 
-													<% if plan_name == "sprout" %>
-														<%= content_tag(:h3, "Free") %>
-														<%= content_tag(:div, t('free_plan_agents', :free_agents => plan.free_agents), :class => "info-data") %>
-													<% else %>
-														<%= content_tag(:h3, "$#{plan.amount.to_i}") %>
-														<%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
-													<% end %>
-											<% end %>								
-											<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
-										</div>
-										<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
-									</div>
-									<% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
-									<% if subscribe_direct_flag %> 
-										<div class="activate-options">
-											<%= content_tag(:div, " #{plan.free_agents} Agents Free") %>
-											<div class = "add-more">
-												<a href="javascript:;" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan.name }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
+						<% unless plan.id == subscription.subscription_plan_id and !subscription.trial? %>
+							<% unless subscription.trial? and plan.classic? %>
+								<td class="pricelist" id = "plan-<%= plan.name %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
+										<div class="plan-details">			
+											<div class="plan-title">
+												<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
+												<%= content_tag(:h2, plan.name) %>
+												<%= content_tag(:div, t("#{plan_name}_brief"), :class => "plan-brief" ) %>
+												<% if(bool_beta_plan) %>
+													<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
+												<% else %> 
+														<% if plan_name == "sprout" %>
+															<%= content_tag(:h3, "Free") %>
+															<%= content_tag(:div, t('free_plan_agents', :free_agents => plan.free_agents), :class => "info-data") %>
+														<% else %>
+															<%= content_tag(:h3, "$#{plan.amount.to_i}") %>
+															<%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
+														<% end %>
+												<% end %>								
+												<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
 											</div>
-											<%= content_tag(:h2, t('total_price') + " : $0") %>
-											<% downgrade_confirm_text = ( plan.id < current_account.subscription.subscription_plan_id ) ? t('downgrade_confirm') : nil%>
-											<%= link_to( t('select_plan'), convert_subscription_to_free_subscription_url, :method => :put, :class => "uiButton", :confirm => downgrade_confirm_text  ) %>
+											<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
 										</div>
-									<% end %>
-									<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id="<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
-									<div id="billing-<%= plan.name %>"></div>
-							</td>
+										<% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
+										<% if subscribe_direct_flag %> 
+											<div class="activate-options">
+												<%= content_tag(:div, " #{plan.free_agents} Agents Free") %>
+												<div class = "add-more">
+													<a href="javascript:;" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan.name }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
+												</div>
+												<%= content_tag(:h2, t('total_price') + " : $0") %>
+												<% downgrade_confirm_text = ( plan.id < current_account.subscription.subscription_plan_id ) ? t('downgrade_confirm') : nil%>
+												<%= link_to( t('select_plan'), convert_subscription_to_free_subscription_url, :method => :put, :class => "uiButton", :confirm => downgrade_confirm_text  ) %>
+											</div>
+										<% end %>
+										<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id="<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
+										<div id="billing-<%= plan.name %>"></div>
+								</td>
+							<% end %>
 						<% end %>
 					<% else %>
 					  <% @free_plan_id = plan.id %>
