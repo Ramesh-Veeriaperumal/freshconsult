@@ -403,9 +403,9 @@ class User < ActiveRecord::Base
       when "deleted", "all"
         [ ' name like ? and deleted = ? and deleted_at IS NULL and blocked = false', 
           "#{letter}%", state.eql?("deleted")]
-      when "blocked"
-        [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
-          "#{letter}%", true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db)  ]
+      # when "blocked"
+      #   [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
+      #     "#{letter}%", true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db)  ]
     end                                      
   end
   

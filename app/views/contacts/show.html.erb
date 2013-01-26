@@ -28,7 +28,6 @@
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted and !@user.spam?%>
 			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked?%>
-			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }") if @user.blocked? || @user.spam? %>
 		</div>
 		<% end %>
 </div>
