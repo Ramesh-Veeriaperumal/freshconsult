@@ -10,7 +10,7 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
      authenticate_or_request_with_http_basic do |username, password|
        # This has to return true to let the user in
        if Rails.env.production?
-          username == 'freshdesk' && Digest::MD5.hexdigest(password) == "5f9b30a49cc0f618998e5708b936d29"
+          username == 'freshdesk' && Digest::MD5.hexdigest(password) == "6acadd7bf81f9a0ed8ae3a0531f4b824"
        else
           username == 'freshdesk' && password == "USD40$" 
        end
