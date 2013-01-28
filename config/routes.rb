@@ -302,8 +302,6 @@
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
     helpdesk.resources :attachments
-
-    helpdesk.resources :dropboxes
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
     

@@ -77,14 +77,6 @@
 			    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 			</ul>
 		<% end %>
-		<% unless note.dropboxes.empty? %>
-			<ul class="attachment_list">
-					<%note.dropboxes.each do |dropbox| %> 
-					<%= render :partial => '/helpdesk/shared/dropbox.html',:locals => {:dropbox=>dropbox,           :show_delete => true, :url => [@item] } %>
-
-					<%end%> 
-			</ul>
-		<% end %>
 	</div>
 
 	<%= content_tag :div, "", :id => "#{edit_id}", :class => "hide", :rel => "remote", 

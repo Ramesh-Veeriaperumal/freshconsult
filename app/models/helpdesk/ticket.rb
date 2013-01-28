@@ -35,8 +35,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
   has_many_attachments
-
-  has_many_dropboxes
   
   after_create :refresh_display_id, :create_meta_note
 
