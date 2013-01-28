@@ -435,6 +435,8 @@ var $J = jQuery.noConflict();
           return true;
       }).bind('pjax:end',function(){
         //$('.load-mask').hide();
+
+        jQuery('.popover').remove();
         jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
         jQuery('.top-loading-wrapper').addClass('hide','slow');
         // $('#body-container .wrapper').css('visibility','visible');

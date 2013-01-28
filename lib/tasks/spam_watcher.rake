@@ -52,11 +52,14 @@ def check_for_tickets_spam(table,column_name, threshold)
   current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}'  and id > 5961998
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}'  and id > 7000000
     group by #{column_name} having total > #{threshold}
   eos
-  requesters = execute_sql_on_slave(query_str)
   puts query_str
+  requesters =[]
+  SeamlessDatabasePool.use_persistent_read_connection do
+    requesters = ActiveRecord::Base.connection.select_values(query_str)
+  end
   deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
   
   # unless requesters.empty?
@@ -83,11 +86,14 @@ def check_for_notes_spam(table,column_name, threshold)
   current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 4891917
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 6000000
     group by #{column_name} having total > #{threshold}
   eos
-  requesters = execute_sql_on_slave(query_str)
   puts query_str
+  requesters =[]
+  SeamlessDatabasePool.use_persistent_read_connection do
+    requesters = ActiveRecord::Base.connection.select_values(query_str)
+  end
   deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
 end
 
