@@ -40,7 +40,7 @@ en:
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
-  signup: sign up
+  signup: <b>Sign up</b>
   signup_title: "Sign up to %{current_portal}"
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
@@ -1473,6 +1473,8 @@ en:
   import: Import
   contains: Contains
   import_solution_article_info: "Note: We will not save the forum comments"
+  no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
+  no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   portal: 
     search: 
       placeholder: Search using a keyword or a full question
@@ -1586,7 +1588,7 @@ en:
     welcome: Welcome
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
-    login: login
+    login: <b>Login</b>
     assumed_text: "You are viewing as"
     tabs:
       reports: Reports
