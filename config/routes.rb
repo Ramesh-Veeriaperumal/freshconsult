@@ -155,7 +155,7 @@
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
         resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
       end
-      admin.resources :analytics 
+      # admin.resources :analytics 
       admin.resources :spam_watch, :only => :index
       admin.spam_details '/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
       admin.spam_user '/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
