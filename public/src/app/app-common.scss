@@ -2764,6 +2764,25 @@ a.page_title{
 	padding-top:5px;
 }
 
+.front_page_title{
+	float: left;
+	margin-bottom: 10px;
+}
+
+.force_signup{
+	float: right;
+	display: inline-block;
+	margin-right: -7px;
+	margin-bottom: 10px;
+	border: 1px solid #F5F6D3;
+	background-color: #FEFFF1;
+	padding: 8px;
+	padding-right: 12px;
+	padding-left: 12px;
+	@include corners(4px);
+	font-weight: lighter;
+}
+
 .crumbs{ 
 	background-color: #f8f8f8;
     border-bottom: 1px solid #E8E8E8;
