@@ -1276,13 +1276,21 @@ ActiveRecord::Schema.define(:version => 20130122103655) do
   end
 
   create_table "subscription_events", :force => true do |t|
-    t.integer  "account_id"
-    t.string   "code"
+    t.integer  "account_id",                :limit => 8
+    t.integer  "code"
     t.text     "info"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "subscription_plan_id"
+    t.integer  "renewal_period"
+    t.integer  "total_agents"
+    t.integer  "free_agents"
+    t.integer  "subscription_affiliate_id"
+    t.integer  "subscription_discount_id"
+    t.boolean  "revenue_type"
+    t.decimal  "cmrr",                                   :precision => 10, :scale => 2
   end
-  
+
   create_table "subscription_payments", :force => true do |t|
     t.integer  "account_id",                :limit => 8
     t.integer  "subscription_id",           :limit => 8
