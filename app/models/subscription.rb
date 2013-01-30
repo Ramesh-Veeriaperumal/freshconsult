@@ -7,6 +7,12 @@ class Subscription < ActiveRecord::Base
   AGENTS_FOR_FREE_PLAN = 3
 
   NO_PRORATION_PERIOD_CYCLES = [1, 3]
+
+  SUBSCRIPTION_ATTRIBUTES = { :account_id => :account_id, :amount => :amount, :state => :state,
+                              :subscription_plan_id => :subscription_plan_id, :agent_limit => :agent_limit,
+                              :free_agents => :free_agents, :renewal_period => :renewal_period, 
+                              :subscription_discount_id => :subscription_discount_id }
+
   
   ACTIVE = "active"
   TRIAL = "trial"
@@ -34,6 +40,9 @@ class Subscription < ActiveRecord::Base
   after_update :add_card_to_billing, :if => :card_number_changed?
   after_update :activate_paid_customer_in_billing, :if => :card_number_changed?
   after_update :activate_free_customer_in_billing, :if => :free_plan_selected?
+
+  after_update :add_subscription_event
+  before_destroy :add_churn
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -509,6 +518,7 @@ class Subscription < ActiveRecord::Base
 
   private
 
+    #CRM
     def free_customer?
       (amount == 0 and active? ) || free?
     end
@@ -526,6 +536,7 @@ class Subscription < ActiveRecord::Base
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
     end
 
+    #Billing
     def update_billing
       Resque.enqueue(Billing::AddToBilling::UpdateSubscription, id, !no_prorate?)
     end 
@@ -540,6 +551,20 @@ class Subscription < ActiveRecord::Base
 
     def activate_free_customer_in_billing
       Resque.enqueue(Billing::AddToBilling::ActivateSubscription, id)
+    end
+
+    #Subscription Events
+    def subscription_info(subscription)
+      subscription_attributes = SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
+      subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
+    end
+
+    def add_subscription_event
+      Resque.enqueue(Subscription::Events::AddEvent, id, subscription_info(@old_subscription))
+    end
+
+    def add_churn
+      Resque.enqueue(Subscription::Events::AddDeletedEvent, subscription_info(self)) if active?
     end
 
  end

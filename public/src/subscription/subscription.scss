@@ -34,3 +34,68 @@ section{ padding-top:30px;}
 .free{
     background-color:#CFE5E5;
 }
+
+#page-header{
+	margin : 10px;
+}
+
+#page-content{
+  margin : 10px;		
+}
+
+#pick_period select{
+	width : 125px;
+	margin-bottom : 0px;
+}
+
+.event-container{
+	width : 90%;
+	position : relative;
+	padding : 10px;
+	margin: 20px 10px 10px 10px;
+	background-color: #FCFCFC;
+	border : 1px solid #E5E5E5;
+	font-size : 14px;
+	border-radius : 10px;
+}
+
+#slide-down{
+	cursor: pointer;
+}
+
+.event-overview{
+	list-style-type : none;
+	position : absolute;
+	top : 10px;
+	right : 5px;
+}
+
+.event-overview li{
+	margin : 5px;
+	padding-right : 10px;
+	display : inline;
+}
+
+.event-details{
+	margin : 25px;
+	padding : 5px;
+}
+
+.table-details{
+	width : 100%;
+	border : solid 1px #CCC;
+	border-radius : 5px;
+  padding: 0px;
+  margin: 0px;
+	th, td{
+		text-align : center;
+		word-wrap : break-word;
+	}
+}
+
+.event-summary{
+  width : 95%;
+  padding: 10px;
+  margin: 10px;
+}
+

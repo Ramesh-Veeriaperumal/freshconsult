@@ -160,6 +160,7 @@
       admin.spam_details '/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
       admin.spam_user '/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
       admin.block_user '/block_user/:user_id', :controller => :spam_watch, :action => :block_user
+      admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
     end
   end
   
