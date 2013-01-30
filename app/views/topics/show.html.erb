@@ -124,8 +124,8 @@
             <% unless (post == first_post) %>
               <%= render :partial => "forum_shared/post", :object => post %>							
             <% end %>
-            <%= will_paginate @posts %>
           <% end %> 
+          <%= will_paginate @posts %>
         </div>  
       <% end %>
       <div id="edit"></div>
