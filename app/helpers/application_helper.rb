@@ -86,7 +86,11 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+    options = {:"data-pjax" => "#body-container"}
+    if tab_name.eql?(:tickets)
+      options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
+    end
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options ), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
