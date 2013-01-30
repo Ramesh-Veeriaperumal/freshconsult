@@ -42,7 +42,7 @@
      		<ul class="unstyled">
      			<li class="row-fluid">
      				<p class="lead">
-						Agent Information
+     					 <%= t('agent_info_title') %>
 					</p>
      			</li>
      			<li class="row-fluid">
@@ -181,6 +181,39 @@
 				</div>
 				<div class="modal-body">
 					<ul class="unstyled">
+						 <div id="agent_role">
+				          <h3 class="title border"><%=t('agent.role')%></h3>
+				          <ul>
+				            <!-- UserRoles Form -->
+				            <% usr.fields_for :user_roles_attributes do |user_role| %>
+				              <% @roles.each do |role|%>
+				                <li>
+				                 <%= user_role.check_box :role_id, { :multiple => true, :checked => @agent.user.roles.include?(role) }, role.id, nil %>
+				                  <%= role.name %>   
+				                </li>
+				              <% end %> 
+				            <% end %> 
+				          </ul>
+				        </div>
+
+				        <div id="agent_ticket_permission">
+				          <h3 class="title border"><%=t('agent.scope')%></h3>
+				          <ul>
+				            <li>
+				              <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets"}) %> 
+				              <%=t('agent.global')%> - <%= content_tag( :span, t('agent.global_info'), :class => "info-data" ) %> 
+				              
+				            </li>
+				            <li>
+				               <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets"}) %> 
+				               <%=t('agent.group')%> - <%= content_tag( :span, t('agent.group_info'), :class => "info-data" ) %>
+				            </li>
+				            <li>
+				               <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets"}) %> 
+				               <%=t('agent.individual')%> - <%= content_tag( :span, t('agent.individual_info'), :class => "info-data" ) %>
+				            </li>
+				          </ul>
+				        </div>
 						<li>
 								<%#= radio_button( :agent ,:ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"user_role_admin"}) %>
 								<%= label( :agent, :ticket_permission, "<input type='checkbox' /> #{t('agent.admin')} <p class='muted'>#{t('agent.admin_info')}</p>", :class => "checkbox" ) %>
@@ -225,44 +258,12 @@
 					</ul>
 				</div>
         <!-- gautham changes -->
-        <div id="agent_role">
-          <h3 class="title border"><%=t('agent.role')%></h3>
-          <ul>
-            <!-- UserRoles Form -->
-            <% usr.fields_for :user_roles_attributes do |user_role| %>
-              <% @roles.each do |role|%>
-                <li>
-                 <%= user_role.check_box :role_id, { :multiple => true, :checked => @agent.user.roles.include?(role) }, role.id, nil %>
-                  <%= role.name %>   
-                </li>
-              <% end %> 
-            <% end %> 
-          </ul>
-        </div>
-
-        <div id="agent_ticket_permission">
-          <h3 class="title border"><%=t('agent.scope')%></h3>
-          <ul>
-            <li>
-              <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets"}) %> 
-              <%=t('agent.global')%> - <%= content_tag( :span, t('agent.global_info'), :class => "info-data" ) %> 
-              
-            </li>
-            <li>
-               <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets"}) %> 
-               <%=t('agent.group')%> - <%= content_tag( :span, t('agent.group_info'), :class => "info-data" ) %>
-            </li>
-            <li>
-               <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets"}) %> 
-               <%=t('agent.individual')%> - <%= content_tag( :span, t('agent.individual_info'), :class => "info-data" ) %>
-            </li>
-          </ul>
-        </div>
+       
           
          <%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:agent] ) %>
 				<div class="modal-footer">
-					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-					<a href="#" class="btn btn-primary">Save changes</a>
+					<button class="btn" data-dismiss="modal" aria-hidden="true"><%= t('close') %></button>
+					<a href="#" class="btn btn-primary"><%= t('save') %></a>
 				</div>			
 			</div>
      </div>	 	

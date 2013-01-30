@@ -42,14 +42,11 @@ end %>
         		<div class="row-fluid">
         			<div class="span4">
 			            <div class="dropdown">
-			               Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">Last login date<b class="caret"></b></a> </strong>
+			               Sorted by:<a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#"><b>active</b><b class="caret"></b></a>
 			                <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
-		                        <li><a href="http://google.com">Action</a></li>
-		                        <li><a href="#anotherAction">Another action</a></li>
-		                        <li><a href="#">Something else here</a></li>
-		                        <li class="divider"></li>
-		                        <li><a href="#">Separated link</a></li>
-		                      </ul>
+		                        <li><a href="/agents/filter/active">active</a></li>
+		                        <li><a href="/agents/filter/inactive">Inactive</a></li>
+		                    </ul>
 			            </div>
 		        	</div>
 		        </div>
@@ -70,7 +67,13 @@ end %>
 										<p ><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 									</td>
 									<td>
-										<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
+										<p>
+											<%= agent.user.last_login_at ? "Last logged in "+distance_of_time_in_words_to_now(agent.user.last_login_at)+" ago" : "Never logged in" %>
+											<br/>
+											
+											Used <%= agent.user.day_pass_usages.length %> day pass till date
+											
+										</p>
 									</td>
 									<td>
 										<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
@@ -94,13 +97,10 @@ end %>
 		        <div class="row-fluid">
         			<div class="span4">
 			            <div class="dropdown">
-			                Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">Last login date<b class="caret"></b></a></strong>
+			                Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="/agents/active">Active<b class="caret"></b></a></strong>
 			                <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
-		                        <li><a href="http://google.com">Action</a></li>
-		                        <li><a href="#anotherAction">Another action</a></li>
-		                        <li><a href="#">Something else here</a></li>
-		                        <li class="divider"></li>
-		                        <li><a href="#">Separated link</a></li>
+		                        <li><a href="/agents/active">Active</a></li>
+		                        <li><a href="/agents/inactive">Inactive</a></li>
 		                      </ul>
 			            </div>
 		        	</div>
@@ -120,7 +120,10 @@ end %>
 									<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 								</td>
 								<td>
-									<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
+									<p>
+										<%= agent.user.last_login_at ? "Last logged in "+distance_of_time_in_words_to_now(agent.user.last_login_at)+" ago" : "Never logged in" %>
+										<br/>Used 30 day pass till date
+									</p>
 								</td>
 								<td>
 									<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
@@ -138,17 +141,15 @@ end %>
 		        	<% end %>
               	</div>
 			</div>
+			<!-- Deleted Agent tab code start -->
 			<div class="tab-pane fade" id="Deleted">
 		        <div class="row-fluid">
         			<div class="span4">
 			            <div class="dropdown">
-			                Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">Last login date<b class="caret"></b></a></strong>
+			                Sorted by:<strong> <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">Active<b class="caret"></b></a></strong>
 			                <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
-		                        <li><a href="http://google.com">Action</a></li>
-		                        <li><a href="#anotherAction">Another action</a></li>
-		                        <li><a href="#">Something else here</a></li>
-		                        <li class="divider"></li>
-		                        <li><a href="#">Separated link</a></li>
+		                        <li><a href="/agents/filter/active">Active</a></li>
+		                        <li><a href="/agents/filter/inactive">Inactive</a></li>
 		                      </ul>
 			            </div>
 		        	</div>
@@ -168,7 +169,10 @@ end %>
 									<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 								</td>
 								<td>
-									<p>Last login: 3 days ago<br/>Used 30 day pass till date</p>
+									<p>
+										<%= agent.user.last_login_at ? "Last logged in "+distance_of_time_in_words_to_now(agent.user.last_login_at)+" ago" : "Never logged in" %>
+										<br/>Used 30 day pass till date
+									</p>
 								</td>
 								<td>
 									<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>

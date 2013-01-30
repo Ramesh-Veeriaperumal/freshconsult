@@ -86,8 +86,8 @@ end
 
 def self.filter(page, state = "active", per_page = 20)
   paginate :per_page => per_page, :page => page,
-           :include => [ {:user => :avatar} ], 
-           :conditions => { :users => { :deleted  => !state.eql?("active") } }
+           :include => [ {:user => :avatar} ] 
+           # ,:conditions => { :users => { :deleted  => !state.eql?("active") } }
 end
 
 protected

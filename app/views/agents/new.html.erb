@@ -8,11 +8,11 @@
 <% form_for @agent, :html => { :multipart => true } do |f| %>
 	<%= f.error_messages %>	
 	<ul class="admin-breadcrumb">
-	  <li class="non-arrow"><a href="#">Home</a><span class="divider"></span></li>
-	  <li><a href="#">Agent</a> <span class="divider"></span></li>
+	  <li class="non-arrow"><a href="/admin/home">Home</a><span class="divider"></span></li>
+	  <li><a href="/agent/">Agent</a> <span class="divider"></span></li>
 	  <li class="active "><%=t('agent.new')%></li>
 	  <li class="non-arrow pull-right">
-			<%= f.submit t('agent.update'), { :class => "btn  btn-primary" } %>
+			<%= f.submit t('save'), { :class => "btn  btn-primary" } %>
 	  </li>
 	  <li class="non-arrow pull-right">
 	  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
@@ -21,7 +21,7 @@
  	<%= render :partial => "agent_form" %>
 	<ul class="admin-breadcrumb breadcum-footer clearfix">
 	  	<li class="non-arrow pull-right">
-	  		<%= f.submit 'Save', { :class => "btn btn-primary" } %>
+	  		<%= f.submit t('save'), { :class => "btn btn-primary" } %>
 	  	</li>
 	  	<li class="non-arrow pull-right">
 	  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>

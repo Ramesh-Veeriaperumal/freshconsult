@@ -24,6 +24,7 @@ body {
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
    	@extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
+	@include border-radius(5px);
 }
 
 .sidepanel, .rtCnt{

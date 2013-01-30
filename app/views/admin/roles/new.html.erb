@@ -9,10 +9,10 @@
   <li><a href="#">Role</a> <span class="divider"></span></li>
   <li class="active ">New Role</li>
   <li class="non-arrow pull-right">
-  		<a href="/agents" class="btn btn-primary">Save</a>
+  		<a href="/agents" class="btn btn-primary"><%= t('save')%></a>
   </li>
   <li class="non-arrow pull-right">
-		<input class="btn " id="agent_submit" name="commit" type="submit" value="Cancel">
+		<input class="btn " id="agent_submit" name="commit" type="submit" value="<%= t('cancel')%>">
   </li>
 </ul>
 <div class="row-fluid new-role">
@@ -135,10 +135,10 @@
 </div>
 <ul class="admin-breadcrumb breadcum-footer clearfix">
   	<li class="non-arrow pull-right">
-  		<a href="/agents" class="btn btn-primary">Save</a>
+  		<a href="/agents" class="btn btn-primary"><%= t('save')%></a>
   	</li>
   	<li class="non-arrow pull-right">
-  		<input class="btn" id="agent_submit" name="commit" type="submit" value="Cancel">
+  		<input class="btn" id="agent_submit" name="commit" type="submit" value="<%= t('cancel')%>">
   	</li>
 </ul>
  <% end %>

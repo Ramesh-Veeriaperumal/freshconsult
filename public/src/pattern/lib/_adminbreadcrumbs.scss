@@ -9,7 +9,7 @@
   background-color: $admin-breadcrum-color;
   @include border-top-radius(4px);
   border:1px solid lighten($admin-breadcrum-color, 4%);
-  border-bottom:1px solid darken($admin-breadcrum-color, 10%);
+  border-bottom:1px solid darken($admin-breadcrum-color, 9%);
   li {
     padding: $admin-breadcrum-padding;
     padding-left:$admin-breadcrum-padding * 2 + 4;
@@ -28,7 +28,7 @@
     }
     a{
       color:$grayLight;
-      :hover{
+      &:hover{
         color:#00438A;
       }
       &.btn{
@@ -55,7 +55,7 @@
       height: 0;
       border-top: $admin-arrow-size solid transparent;
       border-bottom: $admin-arrow-size solid transparent;
-      border-left: 11px solid  darken($admin-breadcrum-color, 20%);
+      border-left: 11px solid  darken($admin-breadcrum-color, 15%);
       position: absolute;
       top: 0;
       left:0;

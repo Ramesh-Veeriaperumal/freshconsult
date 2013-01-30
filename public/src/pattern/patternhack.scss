@@ -7,6 +7,7 @@ body{
   font-size: 21px;
   font-weight: 200;
   line-height: 30px;
+  text-transform: capitalize;
 }
 
 small {
@@ -15,11 +16,6 @@ small {
 
 strong {
   font-weight: bold;
-}
-
-.checkbox  input[type="checkbox"]:checked{
-  font-weight: bold;
-  margin-left: 50px;
 }
 
 .muted {
