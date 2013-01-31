@@ -32,7 +32,7 @@ module Subscription::Events::AssignEventCode
 					CODES[:upgrades] + additive(subscription, old_subscription)
 
 				when downgrade?(subscription, old_subscription)
-					SubscriptionNotifier.deliver_subscription_downgraded(subscription, old_subscription)
+					notify_via_email(subscription, old_subscription)
 					CODES[:downgrades] + additive(subscription, old_subscription)
 
 				else
@@ -84,7 +84,8 @@ module Subscription::Events::AssignEventCode
 		end
 
 		def downgrade?(subscription, old_subscription)
-			previously_active?(old_subscription) and (subscription.amount < old_subscription[:amount])
+			previously_active?(old_subscription) and (subscription.amount < old_subscription[:amount]) and
+																						!additive(subscription, old_subscription).eql?(0)
 		end
 
 		def additive(subscription, old_subscription)
@@ -107,5 +108,9 @@ module Subscription::Events::AssignEventCode
 									ADDITIVE_VALUES[:no_change] : ADDITIVE_VALUES[:period_change]
 		end
 
+		def notify_via_email(subscription, old_subscription)
+			SubscriptionNotifier.deliver_subscription_downgraded(subscription, 
+																							old_subscription) if Rails.env.production?
+		end
 	end
 end
